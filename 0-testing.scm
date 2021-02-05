@@ -5,4 +5,4 @@
 (define-syntax check!
   (syntax-rules ()
     ((_ (pred . args))
-     (or (pred . args) (error "Check failed: " '(pred . args) . args)))))
+     (or (pred . args) (error 'check! "check failed:" '(pred . args) 'reduced 'to (list 'pred . args))))))
