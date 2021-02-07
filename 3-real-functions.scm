@@ -1,3 +1,4 @@
+;;;; Chapter III. Trivial objects, the naive OO on top of poof
 (displayln "III. Prototypes for non-object functions")
 
 ;; Prototypes and prototype inheritance is not just for "objects",

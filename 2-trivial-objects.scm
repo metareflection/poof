@@ -1,8 +1,7 @@
-;;;; II. Trivial objects, the naive OO on top of poof
+;;;; Chapter II. Trivial objects, the naive OO on top of poof
 
 (displayln "II. Defining trivial object system")
 
-;;; --------------------------------------------------------------------------
 ;; II.1. Trivial "objects" as unary functions from keys to values
 ;;
 ;; Let's define our "objects" as functions that receive a "message",
@@ -46,4 +45,5 @@
   (instance (field 'x 1) polar-from-rect (field 'y 2)))
 (check! (= (my-object2 'rho) (sqrt 5)))
 
-
+;; Note how all the functions defined above are pure functional!
+;; No side-effect was used whatsoever. No set! no tricky use of call/cc.
