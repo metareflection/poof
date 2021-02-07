@@ -1,6 +1,6 @@
 
 ;; Quick prelude
-(load "0-testing.scm")
+(load "0-prelude.scm")
 
 ;; Chapters
 (load "1-prototypes.scm")
