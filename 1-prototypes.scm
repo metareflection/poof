@@ -35,9 +35,9 @@
 ;; and all functions involved have the same arbitrary function type A.
 ;;
 ;; In a suitable type system, a function prototype is an entity of a type as follows:
-#;(deftype (Proto A B) (Fun A <- A B) st: (<: A B Function))
+#;(deftype (Proto A B) (Fun A B => A) st: (<: A B Function))
 ;; where
-;;   (Fun O ... <- I ...)
+;;   (Fun I ... -> O ...)
 ;;     is the type of functions multiple yielding output values of types O ...
 ;;     from input values of types I ...
 ;; where (st: being a keyword short for "such that")
@@ -67,7 +67,7 @@
 ;; I.3. Instantiating a function prototype through a fixed-point.
 ;;
 ;; The fixed-point function fix, defined above, with have type as follows:
-#;(: fix (Fun A <- (Proto A B) B))
+#;(: fix (Fun (Proto A B) B -> A))
 ;;
 ;; A more thorough explanation of the fixed-point function is in Appendix A
 
@@ -79,7 +79,7 @@
 ;; prototype can incrementally contribute part of the computation,
 ;; e.g. define or refine the values associated with some particular fields.
 ;; Mixing is done through the above-defined function mix of type as follows:
-#;(: mix (Fun (Proto A C) <- (Proto A B) (Proto B C)))
+#;(: mix (Fun (Proto A B) (Proto B C) -> (Proto A C)))
 
 ;; The same function with more readable names could be defined as follows:
 (define (compose-proto this parent)
@@ -120,8 +120,8 @@
 ;; We will write this type as follows, using "obvious" conventions the precise
 ;; decoding of which is left as an exercise to the reader:
 #;(: compose-proto*
-     (Fun (Proto (A_ 0) (A_ (Card I)))
-       <-  (IndexedList I (lambda (i) (Proto (A_ i) (A_ (1+ i)))))))
+     (Fun (IndexedList I (lambda (i) (Proto (A_ i) (A_ (1+ i)))))
+       -> (Proto (A_ 0) (A_ (Card I)))))
 (define (compose-proto* l)
   (cond
    ((null? l) identity-proto)
@@ -138,11 +138,11 @@
 
 ;; If we don't care to specify a base function, we can define a bottom / zero
 ;; element as a universal base function that is member of all function types:
-#;(: bottom (Fun O ... <- I ...))
+#;(: bottom (Fun I ... -> O ...))
 (define (bottom . x) (apply error "bottom" x))
 
 ;; Then, we instantiate the combination of a bunch of prototypes in one go:
-#;(: instance (Fun (A_ 0) <- (IndexedList I (lambda (i) (Proto (A_ i) (A_ (1+ i)))))...))
+#;(: instance (Fun (IndexedList I (lambda (i) (Proto (A_ i) (A_ (1+ i)))))... -> (A_ 0)))
 (define (instance . prototypes) (fix (compose-proto* prototypes) bottom))
 
 ;; If you do want to use a nicer-behaving function better-base instead of

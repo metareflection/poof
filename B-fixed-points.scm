@@ -4,7 +4,7 @@
 ;; that we used to instantiate prototypes.
 ;;
 ;; Reminder:
-;; A function prototype (Proto A B) is function p : A <- A B
+;; A function prototype (Proto A B) is function p : A B -> A
 ;; where A and B and function types, and A is a subtype of B.
 ;; Thus, p takes a function f of type A, and a function B of type B,
 ;; and returns a new function f' of same type A.
@@ -49,8 +49,8 @@
   f)
 ;; But in this only works if p accepts and returns delayed computations,
 ;; rather than direct function values. Then we have will have
-;;   (DelayedProto A B) == (Delayed A) <- (Delayed A) (Delay B)
-;; delayed-fix : (Delayed A) <- (DelayedProto A B) (Delayed B)
+;;   (DelayedProto A B) == (Delayed A) (Delay B) -> (Delayed A)
+;; delayed-fix : (DelayedProto A B) (Delayed B) -> (Delayed A)
 ;; On the other hand, this works for arbitrary types A and B,
 ;; and not just for function types!
 

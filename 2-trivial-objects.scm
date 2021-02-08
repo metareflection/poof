@@ -10,7 +10,7 @@
 ;; returns a field value of type (A_ k).
 ;;
 ;; Assuming some suitable dependent type notation, we could define
-#;(deftype (Object A_) (Fun (A_ k) <- (: k Any)))
+#;(deftype (Object A_) (Fun (: k Any) -> (A_ k)))
 
 ;; But first, as a temporary convention, let's use a prefix $
 ;; to indicate prototypes or functions that return prototypes,
