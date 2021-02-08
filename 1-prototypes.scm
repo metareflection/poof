@@ -8,16 +8,17 @@
 (define (mix p q) (lambda (f b) (p f (q f b))))
 ;; The two functions above sum up the essence of OO. The rest in commentary.
 
-;; Note for code minimalists: this isn't valid in Chez Scheme and many
-;; other dialects, but in MIT Scheme or Gerbil Scheme, we could write:
+;;; Now for commentary... the rest of this repository.
+
+;; I.1.1. Note for code minimalists.
+;; This isn't valid in Chez Scheme and many other dialects, but in MIT Scheme
+;; or in other dialects after it including Gerbil Scheme, we could write:
 ;(define ((mix p q) f b) (p f (q f b)))
 ;; And then we'd have Object Orientation in 100 characters only.
-;; Then again, in Gerbil Scheme, we could get down to only 86:
+;; Then again, in Gerbil Scheme, we could get it down to only 86:
 ;(def (fix p b) (def f (p (λ i (apply f i)) b)) f) (def ((mix p q) f b) (p f (q f b)))
 ;;Or, compressing spaces, 74 (including newline, excluding semi-colon):
 ;(def(fix p b)(def f(p(λ i(apply f i))b))f)(def((mix p q)f b)(p f(q f b)))
-
-;;; Now for the commentary.
 
 ;;; --------------------------------------------------------------------------
 ;; I.2. Types for prototypes

@@ -157,16 +157,16 @@
 
 (define my-binary-dict
   (foldl (lambda (kv t) ((symbol-tree-map 'acons) (car kv) (cdr kv) t))
-         (symbol-tree-map 'empty) '((a . 1) (b . 2) (c . 3) (d . 4) (e . 5))))
+         (symbol-tree-map 'empty) '((a . "I") (b . "II") (c . "III") (d . "IV") (e . "V"))))
 ;; Oh noes! This tree is heavily skewed left, height 5.
 (check! (equal? my-binary-dict
-                '(((((() ((a . 1)) ()) ((b . 2)) ()) ((c . 3)) ()) ((d . 4)) ()) ((e . 5)) ())))
+                '(((((() ((a . "I")) ()) ((b . "II")) ()) ((c . "III")) ()) ((d . "IV")) ()) ((e . "V")) ())))
 ;; But it otherwise works
-(check! (equal? ((symbol-tree-map 'ref) 'a my-binary-dict bottom) 1))
-(check! (equal? ((symbol-tree-map 'ref) 'b my-binary-dict bottom) 2))
-(check! (equal? ((symbol-tree-map 'ref) 'c my-binary-dict bottom) 3))
-(check! (equal? ((symbol-tree-map 'ref) 'd my-binary-dict bottom) 4))
-(check! (equal? ((symbol-tree-map 'ref) 'e my-binary-dict bottom) 5))
+(check! (equal? ((symbol-tree-map 'ref) 'a my-binary-dict bottom) "I"))
+(check! (equal? ((symbol-tree-map 'ref) 'b my-binary-dict bottom) "II"))
+(check! (equal? ((symbol-tree-map 'ref) 'c my-binary-dict bottom) "III"))
+(check! (equal? ((symbol-tree-map 'ref) 'd my-binary-dict bottom) "IV"))
+(check! (equal? ((symbol-tree-map 'ref) 'e my-binary-dict bottom) "V"))
 (check! (equal? ((symbol-tree-map 'ref) 'z my-binary-dict (lambda () -1)) -1))
 
 ;; Example incremental definition of data structures:
@@ -206,15 +206,15 @@
 
 (define my-avl-dict
   (foldl (lambda (kv t) ((symbol-avl-map 'acons) (car kv) (cdr kv) t))
-         (symbol-avl-map 'empty) '((a . 1) (b . 2) (c . 3) (d . 4) (e . 5))))
+         (symbol-avl-map 'empty) '((a . "I") (b . "II") (c . "III") (d . "IV") (e . "V"))))
 ;; Yay! Now this tree is well balanced, height 3!
 (check! (equal? my-avl-dict
-                '(((() ((a . 1) . 1) ()) ((b . 2) . 2) (() ((c . 3) . 1) ()))
-                  ((d . 4) . 3) (() ((e . 5) . 1) ()))))
+                '(((() ((a . "I") . 1) ()) ((b . "II") . 2) (() ((c . "III") . 1) ()))
+                  ((d . "IV") . 3) (() ((e . "V") . 1) ()))))
 ;; But it otherwise works
-(check! (equal? ((symbol-avl-map 'ref) 'a my-avl-dict bottom) 1))
-(check! (equal? ((symbol-avl-map 'ref) 'b my-avl-dict bottom) 2))
-(check! (equal? ((symbol-avl-map 'ref) 'c my-avl-dict bottom) 3))
-(check! (equal? ((symbol-avl-map 'ref) 'd my-avl-dict bottom) 4))
-(check! (equal? ((symbol-avl-map 'ref) 'e my-avl-dict bottom) 5))
+(check! (equal? ((symbol-avl-map 'ref) 'a my-avl-dict bottom) "I"))
+(check! (equal? ((symbol-avl-map 'ref) 'b my-avl-dict bottom) "II"))
+(check! (equal? ((symbol-avl-map 'ref) 'c my-avl-dict bottom) "III"))
+(check! (equal? ((symbol-avl-map 'ref) 'd my-avl-dict bottom) "IV"))
+(check! (equal? ((symbol-avl-map 'ref) 'e my-avl-dict bottom) "V"))
 (check! (equal? ((symbol-avl-map 'ref) 'z my-avl-dict (lambda () -1)) -1))
