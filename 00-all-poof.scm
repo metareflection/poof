@@ -6,6 +6,9 @@
 (load "1-prototypes.scm")
 (load "2-trivial-objects.scm")
 (load "3-real-functions.scm")
+(load "4-better-objects.scm")
+(load "5-classes.scm")
+(load "6-mutable-objects.scm")
 
 ;; Appendices
 (load "A-type-notation.scm")

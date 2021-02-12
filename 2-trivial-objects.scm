@@ -53,7 +53,7 @@
 
 ;; Let's use prototypes to build some simple data structures.
 ;; First, write prototypes that offer an abstract over the ability
-;; to compare entities of a same type, in this case,
+;; to compare elements of a same type at hand, in this case,
 ;; either numbers or strings.
 
 (define ($number-order self super)
@@ -72,7 +72,7 @@
       ((>) (lambda (x y) (string>? x y)))
       (else (super msg)))))
 
-;; Now, add a "mixin" for an compare operator that summarizes in one call
+;; We can add a "mixin" for an compare operator that summarizes in one call
 ;; the result of comparing two elements of the type being described.
 ;; A mixin is a prototype meant to extend other prototypes.
 ;; See how this mixin can be used to extend either of the prototypes above.

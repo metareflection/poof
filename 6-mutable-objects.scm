@@ -1,5 +1,5 @@
-;;;; Chapter V. Stateful Objects.
-(displayln "V. Stateful Objects.")
+;;;; Chapter VI. Stateful Objects.
+(displayln "VI. Stateful Objects.")
 
 ;; Note how all the functions defined in the previous chapter were pure:
 ;; They didn't use any side-effect whatsoever.

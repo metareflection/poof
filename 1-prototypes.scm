@@ -3,14 +3,26 @@
 (displayln "I. Defining function prototypes")
 
 ;;; --------------------------------------------------------------------------
-;; I.1. (Prototype) Object Orientation in 109 characters:
+;; I.1. (Prototype) Object Orientation in 109 characters of standard Scheme:
 (define (fix p b) (define f (p (lambda i (apply f i)) b)) f)
 (define (mix p q) (lambda (f b) (p f (q f b))))
-;; The two functions above sum up the essence of OO. The rest in commentary.
+;; The rest is commentary.
 
-;;; Now for commentary... the rest of this repository.
+;;; Now for commentary, i.e., the rest of this repository.
 
-;; I.1.1. Note for code minimalists.
+;; I.1.1 Shortest explanation of the above formulas
+;;
+;; The two functions above sum up the essence of OO:
+;; 0. Prototypes are increments of computations that take two parameters, self and super,
+;;   and return an extended self.
+;; 1. Instantiating a prototype is computing a fixed-point for this self, as per function fix.
+;; 2. Combining prototypes by "inheritance" consists in chaining the computations via the
+;;   super arguments while computing the same self, as per function mix.
+;; In the end, this "open recursion" scheme enables specifying programs in an incremental way,
+;; and all the usual "object oriented" notions can be easily recovered from there.
+
+
+;; I.1.2. Note for code minimalists.
 ;; This isn't valid in Chez Scheme and many other dialects, but in MIT Scheme
 ;; or in other dialects after it including Gerbil Scheme, we could write:
 ;(define ((mix p q) f b) (p f (q f b)))
