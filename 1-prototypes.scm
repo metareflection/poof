@@ -2,163 +2,192 @@
 
 (displayln "I. Defining function prototypes")
 
-;;; --------------------------------------------------------------------------
-;; I.1. (Prototype) Object Orientation in 109 characters of standard Scheme:
+(displayln "I.1. Object Orientation in 109 characters of standard Scheme")
 (define (fix p b) (define f (p (lambda i (apply f i)) b)) f)
 (define (mix p q) (lambda (f b) (p f (q f b))))
-;; The rest is commentary.
-
-;;; Now for commentary, i.e., the rest of this repository.
-
-;; I.1.1 Shortest explanation of the above formulas
+;; We contend that the above two definitions summarize
+;; the essence of object-oriented programming, and that
+;; all the usual "object oriented" concepts can be easily recovered from them.
 ;;
-;; The two functions above sum up the essence of OO:
-;; 0. Prototypes are increments of computations that take two parameters, self and super,
-;;   and return an extended self.
-;; 1. Instantiating a prototype is computing a fixed-point for this self, as per function fix.
-;; 2. Combining prototypes by "inheritance" consists in chaining the computations via the
-;;   super arguments while computing the same self, as per function mix.
-;; In the end, this "open recursion" scheme enables specifying programs in an incremental way,
-;; and all the usual "object oriented" notions can be easily recovered from there.
+;; The rest of this essay will make this case.
 
+(displayln "I.1.1. The Essence of OOP in words")
 
-;; I.1.2. Note for code minimalists.
-;; This isn't valid in Chez Scheme and many other dialects, but in MIT Scheme
-;; or in other dialects after it including Gerbil Scheme, we could write:
-;(define ((mix p q) f b) (p f (q f b)))
-;; And then we'd have Object Orientation in 100 characters only.
-;; Then again, in Gerbil Scheme, we could get it down to only 86:
-;(def (fix p b) (def f (p (λ i (apply f i)) b)) f) (def ((mix p q) f b) (p f (q f b)))
-;;Or, compressing spaces, 74 (including newline, excluding semi-colon):
-;(def(fix p b)(def f(p(λ i(apply f i))b))f)(def((mix p q)f b)(p f(q f b)))
+;; OOP is about specifying code in modular increments, that we shall call
+;; "prototypes". Prototypes are functions of two arguments, `self` and `super`,
+;; or, above `f` (fixed-point, self) and `b` (base value, super).
+;; Function `fix` *instantiates* a prototype `p` given a super/base value `b`.
+;; Function `mix` composes two prototypes into one by inheritance, wherein they
+;; operate on the same fixed-point `f` while chaining their effects on `b`.
 
-;;; --------------------------------------------------------------------------
-;; I.2. Types for prototypes
+;; _Application to arbitrary programming languages_:
+;; The above definitions are readily available to any language with closures
+;; and either dynamic types or dependent types. However, their potential is not
+;; fully realized in languages with mere parametric polymorphism.
+;; We will also require lazy evaluation (or side effects to implement them)
+;; as a language feature to *efficiently* implement objects with our formulas,
+;; but do not otherwise require side-effects --- though they can be used
+;; for the usual optimizations in the common "linear" case.
+
+(displayln "I.2. Trivial objects")
+; How do the two above functions relate to objects?
+
+(displayln "I.2.1. Records as functions")
+;; First, let's use the following trivial encoding of "records" as functions
+;; from symbol (the name of a slot) to value (bound to the slot).
 ;;
-;; A function prototype of A from B is a way to get a function of type A
-;; starting from a base function of type B, where A is a subtype of B.
+;; Thus, the function `x1-y2` below encodes a record with two fields
+;; `x` and `y` bound respectively to `1` and `2`.
+(define (x1-y2 msg)
+  (case msg
+    ((x) 1)
+    ((y) 2)
+    (else (error "unbound slot" msg))))
+
+;; We can check that we can indeed access the record slots
+;; and get the expected values:
+(check! (= (x1-y2 'x) 1))
+(check! (= (x1-y2 'y) 2))
+
+;; Note that we use Lisp symbols for legibility, but in poorer languages,
+;; "symbols" could be any large enough type with decidable equality,
+;; e.g. integers or strings, etc.
 ;;
-;; In a typical use of a prototype object system, function of types A and B
-;; will both map field names (symbols) to values of an appropriate types for
-;; each field. A being a subtype of B means that A specifies more fields and/or
-;; fields with stricter types than B. But the definitions in this file are
-;; more general than that and work for any function types with a subtype
-;; relation, with a trivial monomorphic case where we always have A=B,
-;; and all functions involved have the same arbitrary function type A.
-;;
-;; In a suitable type system, a function prototype is an entity of a type as follows:
-#;(deftype (Proto A B) (Fun A B => A) st: (<: A B Function))
-;; where
-;;   (Fun I ... -> O ...)
-;;     is the type of functions multiple yielding output values of types O ...
-;;     from input values of types I ...
-;; where (st: being a keyword short for "such that")
-;;   st: Constraint1 Constraint2 ...
-;; specifies constraints on the defined type, and
-;; where
-;;   (<: A B C ...)
-;; is the subtyping constraint that A is a subtype of B, etc.
-;;
-;; Thus a function prototype for A from B computes an A given an A and a B.
-;; Conceptually, the prototype is partial information about the computation of
-;; a function of type A, than given given some (other?) function of type A and
-;; a base function of type B, contributes to complete a computation of type A.
+;; In accordance with Lisp tradition, we will say "slot" instead of "field"
+;; or "member" or "method", and say that the slot is bound to the given value
+;; rather than it "containing" the value or any such thing.
 
-;; The purpose of a prototype of A from B is to be able to extract a function
-;; of type A from the prototype and a base function of type B.
-;; But since the prototype already requires a function of type A as argument,
-;; how do we get the first argument of type A to provide to the prototype,
-;; to begin with? Using a *fixed-point* function. The first argument will be
-;; the fixed-point of the computation, passed as argument, to only be called
-;; recursively with "simpler" arguments, or passed as function value to be
-;; called later with "simpler" arguments. For whatever notion of "simpler"
-;; allows the computation to make progress towards termination (or continued
-;; operation) without forever recursing on the same computation.
+(displayln "I.2.2. Prototypes for Records")
+;; A *prototype* for a record is a function of two arguments `self` and `super`
+;; (both records) to an `extended-self` record.
 
-;;; --------------------------------------------------------------------------
-;; I.3. Instantiating a function prototype through a fixed-point.
-;;
-;; The fixed-point function fix, defined above, with have type as follows:
-#;(: fix (Fun (Proto A B) B -> A))
-;;
-;; A more thorough explanation of the fixed-point function is in Appendix A
+;; Thus, this prototype extends or overrides its super-record with
+;; a slot `x` unconditionally bound to `3`:
+(define ($x3 self super)
+  (lambda (msg) (if (eq? msg 'x) 3 (super msg))))
 
-;;; --------------------------------------------------------------------------
-;; I.4. Composing prototypes via prototype inheritance
-;;
-;; What makes function prototypes interesting is that they can be composed,
-;; in a process called *prototype inheritance*, a.k.a. mixing, such that each
-;; prototype can incrementally contribute part of the computation,
-;; e.g. define or refine the values associated with some particular fields.
-;; Mixing is done through the above-defined function mix of type as follows:
-#;(: mix (Fun (Proto A B) (Proto B C) -> (Proto A C)))
+;; This prototype computes a complex number slot `z` based on real and
+;; imaginary values bound to the respective slots `x` and `y` of its `self`:
+(define ($z<-xy self super)
+  (lambda (msg)
+    (case msg
+      ((z) (+ (self 'x) (* 0+1i (self 'y))))
+      (else (super msg)))))
 
-;; The same function with more readable names could be defined as follows:
-(define (compose-proto this parent)
-  (lambda (self super) (this self (parent self super))))
-;; Note the types of the variables and intermediate expressions:
-; this : (Proto A B)
-; parent : (Proto B C)
-; self : A
-; super : C
-; (parent self super) : B
-; (this self (parent self super)) : A
-;; When writing long-form functions instead of vying for conciseness, we will
-;; use the same naming conventions as in the function above:
-;; - this for a prototype at hand, in leftmost position;
-;; - parent for a prototype it is being mixed with, in latter position;
-;; - self for the intended fixed point of the computation;
-;; - super for the base (or so-far accumulated) value of the computation.
+;; That prototype doubles the number in slot `x` from its `super` record.
+;; We say that it *inherits* the value for slot `x`:
+(define ($double-x self super)
+  (lambda (msg)
+    (if (eq? msg 'x) (* 2 (super 'x)) (super msg))))
 
-;; Mixing is associative, and has the following neutral element:
-;; identity-proto : (Proto A A)
-(define (identity-proto _self super) super)
+;; More generally a record prototype extends its `super` record with new slots
+;; and/or overrides the values bound to its existing slots, and may in the
+;; process refer to both the records `self` and `super` and their slots, with
+;; some obvious restrictions to avoid infinite loops from circular definitions.
 
-;; Mixing prototypes doesn't in general commute: the computations of the
-;; first (child, leftmost) prototype can override (ignore) or call and transform
-;; computations of the second (parent, super, rightmost) prototype.
-;;
-;; As an example, consider these nullary prototypes for thunks yielding integers:
-(define (b0) 0)
-(define (p1+ _ b) (lambda () (+ 1 (b))))
-(define (p2* _ b) (lambda () (* 2 (b))))
-(check! (= ((fix (mix p1+ p2*) b0)) 1))
-(check! (= ((fix (mix p2* p1+) b0)) 2))
+;; Note that we use the name prefix $ for a prototype.
 
-;; We can also mix a list of prototypes, assuming each prototype in the list is
-;; of a type suitable to be mixed with the previous or next one as applicable.
-;; The operation can be typed with some indexed types, which could be expressed
-;; with full dependent types, but also presumably with suitable staged types.
-;; We will write this type as follows, using "obvious" conventions the precise
-;; decoding of which is left as an exercise to the reader:
-#;(: compose-proto*
-     (Fun (IndexedList I (lambda (i) (Proto (A_ i) (A_ (1+ i)))))
-       -> (Proto (A_ 0) (A_ (Card I)))))
-(define (compose-proto* l)
-  (cond
-   ((null? l) identity-proto)
-   ((null? (cdr l)) (car l))
-   ((null? (cddr l)) (compose-proto (car l) (cadr l)))
-   (else (lambda (a b) ((car l) a ((compose-proto* (cdr l)) a b))))))
+;; But how do we test the above prototypes?
 
-;; The above could also have been written as follows:
-(define (compose-proto*--1 l) (foldr mix identity-proto l))
+;; We can use the above record x1-y2 as a base value and use the fix operator:
 
+(define x3-y2 (fix $x3 x1-y2))
+(check! (= (x3-y2 'x) 3))
+(check! (= (x3-y2 'y) 2))
 
-;;; --------------------------------------------------------------------------
-;; I.5. A universal base function
+(define z1+2i (fix $z<-xy x1-y2))
+(check! (= (z1+2i 'x) 1))
+(check! (= (z1+2i 'y) 2))
+(check! (= (z1+2i 'z) 1+2i))
 
-;; If we don't care to specify a base function, we can define a bottom / zero
-;; element as a universal base function that is member of all function types:
-#;(: bottom (Fun I ... -> O ...))
-(define (bottom . x) (apply error "bottom" x))
+(define x2-y2 (fix $double-x x1-y2))
+(check! (= (x2-y2 'x) 2))
+(check! (= (x2-y2 'y) 2))
 
-;; Then, we instantiate the combination of a bunch of prototypes in one go:
-#;(: instance (Fun (IndexedList I (lambda (i) (Proto (A_ i) (A_ (1+ i)))))... -> (A_ 0)))
-(define (instance . prototypes) (fix (compose-proto* prototypes) bottom))
+;; We can also `mix` these prototypes together before to compute the `fix`:
+(define z6+2i (fix (mix $z<-xy (mix $double-x $x3)) x1-y2))
+(check! (= (z6+2i 'x) 6))
+(check! (= (z6+2i 'y) 2))
+(check! (= (z6+2i 'z) 6+2i))
 
-;; If you do want to use a nicer-behaving function better-base instead of
-;; the above bottom function, you can do it by putting at the end of the
-;; prototype list you instantiate, as the rightmost element, in tail position,
-;; the following prototype:
-;;(define (use-better-base f b) better-base)
+;; And since the `$z<-xy` prototype got the x and y values from the `self`
+;; and not the `super`, we can freely commute it with the other two prototypes
+;; that do not affect either override slot 'z or inherit from it:
+(check! (= 6+2i ((fix (mix $z<-xy (mix $double-x $x3)) x1-y2) 'z)))
+(check! (= 6+2i ((fix (mix $double-x (mix $z<-xy $x3)) x1-y2) 'z)))
+(check! (= 6+2i ((fix (mix $double-x (mix $x3 $z<-xy)) x1-y2) 'z)))
+
+;; `mix` is associative, and therefore we also have
+(check! (= 6+2i ((fix (mix (mix $z<-xy $double-x) $x3) x1-y2) 'z)))
+(check! (= 6+2i ((fix (mix (mix $double-x $z<-xy) $x3) x1-y2) 'z)))
+(check! (= 6+2i ((fix (mix (mix $double-x $x3) $z<-xy) x1-y2) 'z)))
+;; But the result of mix is slightly more efficient in the former form
+;; (fold right) than the present form (fold left).
+
+;; However, since `$double-x` inherits slot `x` that `$x3` overrides, there is
+;; clearly a dependency between the two that prevents them from commuting:
+(define x6-y2 (fix (mix $double-x $x3) x1-y2))
+(define x3-y2 (fix (mix $x3 $double-x) x1-y2))
+(check! (= 6 (x6-y2 'x)))
+(check! (= 6 (x3-y2 'x)))
+
+(displayln "I.2.3. Record prototype generators")
+;; Now that we understand record prototypes, we can look at various utility
+;; functions to build them.
+
+;; To define an object with a field `k` mapped to a value `v`, use:
+(define ($field k v) ;; k v: constant key and value for this defined field
+  (lambda (self super) ;; self super: usual prototype variables
+    (lambda (msg) ;; msg: message received by the object, a.k.a. method name.
+      (if (equal? msg k) v ;; if the message matches the key, return the value
+        (super msg))))) ;; otherwise, recurse to the object's super object
+
+;; What of inheritance? Well, we can modify an inherited field using:
+(define ($field-modify k modify) ;; k: constant key; modify: function from super-value to sub-value.
+  (lambda (self super)
+    (lambda (msg)
+      (if (equal? msg k) (modify (super msg))
+        (super msg)))))
+
+;; What if a field depends on other fields? We can use this function
+(define ($field-compute k fun) ;; k: constant key; fun: function from self to value.
+  (lambda (self super)
+    (lambda (msg)
+      (if (equal? msg k) (fun self)
+        (super msg)))))
+
+;; A very general form of slot compute-and-override would take as parameters both
+;; the `self` argument and a `next-method` function to inherit the slot value
+;; from the `super` argument
+(define ($field-gen k fun) ;; k: constant key; fun: function from self to value.
+  (lambda (self super)
+    (lambda (msg)
+      (if (equal? msg k) (fun self (lambda () (super msg)))
+          (super msg)))))
+
+;; We could redefine the former ones in terms of that latter:
+(define ($field k v)
+  ($field-gen k (lambda (_self _next-method) v)))
+(define ($field-modify k modify)
+  ($field-gen k (lambda (_self next-method) (modify (next-method)))))
+(define ($field-compute k fun)
+  ($field-gen k (lambda (self _next-method) (fun self))))
+
+;; Thus you can re-define the above prototypes as:
+(define $x3 ($field 'x 3))
+(define $double-x ($field-modify 'x (lambda (x) (* 2 x))))
+(define $z<-xy ($field-compute 'z (lambda (self) (+ (self 'x) (* 0+1i (self 'y))))))
+
+;; Here is a universal bottom function to use as the base for fix:
+(define (bottom-record msg) (error "unbound slot" msg))
+
+;; To define a record with a single field foo bound to 0, we can use:
+(define x3 (fix $x3 bottom-record))
+(check! (= (x3 'x) 3))
+
+;; To define a record with two fields `x` and `y` bound to `1` and `2`
+;; respectively, we can use:
+(define x1-y2 (fix (mix ($field 'x 1) ($field 'y 2)) bottom-record))
+(check! (= (x1-y2 'x) 1))
+(check! (= (x1-y2 'y) 2))
+

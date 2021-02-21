@@ -1,10 +1,17 @@
-;;;; Chapter II. Trivial objects, the naive OO on top of poof
+;;;; Chapter II. Trivial Object-Oriented Programming
 
-(displayln "II. Defining trivial object system")
+(displayln "II. Trivial Object-Oriented Programming")
 
-;; II.1. Trivial "objects" as unary functions from keys to values
+;; II.1. Trivial "records" as unary functions from keys to values
 ;;
-;; Let's define our "objects" as functions that receive a "message",
+;; Let's represent "objects" more or less the same way as
+;; Jonathan Rees did in 1981 in Yale T Scheme:
+;; As functions from symbol to method value.
+;; (Except that T assumed methods were to be function-valued and immediately called,
+;; and would directly take extra arguments to pass down to the method function).
+follow (up to different currying) the same convention
+;; 
+;; Let's define our "records" as functions that receive a "message",
 ;; being a symbol typically bound to variable msg,
 ;; and depending on which key k the message matches,
 ;; returns a field value of type (A_ k).
@@ -16,7 +23,7 @@
 ;; to indicate prototypes or functions that return prototypes,
 ;; and no prefix for an instances.
 
-(displayln "II.1.1. Simple objects with constant field-value mapping")
+(displayln "II.1.1. Simple records with constant field-value mapping")
 ;; To define an object with field k mapped to constant value v,
 ;; we could thus use this function:
 (define ($field k v) ;; k v: constant key and value for this defined field
@@ -26,9 +33,12 @@
         (super msg))))) ;; otherwise, recurse to the object's super object
 
 ;; Let's test simple objects.
+
+;; Here's an object with a single field, foo, bound to 0.
 (define foo0 (instance ($field 'foo 0)))
 (check! (= (foo0 'foo) 0))
 
+;; And here is another object, with two fields x and y, respectively bound to 1 and 2.
 (define x1-y2 (instance ($field 'x 1) ($field 'y 2)))
 (check! (= (x1-y2 'x) 1))
 (check! (= (x1-y2 'y) 2))
@@ -179,22 +189,19 @@
     (define (right t) (caddr t))
     (define (balance t) (if (null? t) 0 (- (height (right t)) (height (left t)))))
     (define (mk l kv r)
-      (define lh (height l))
-      (define rh (height r))
-      (check! (member (- rh lh) '(-1 0 1)))
-      (list l (cons kv (1+ (max lh rh))) r))
+      (let ((lh (height l)) (rh (height r)))
+        (check! (member (- rh lh) '(-1 0 1)))
+        (list l (cons kv (1+ (max lh rh))) r)))
     (define (node l ckv r)
       (case (- (height r) (height l))
         ((-1 0 1) (mk l ckv r))
         ((-2) (case (balance l)
                 ((-1 0) (mk (left l) (kv l) (mk (right l) ckv r))) ;; LL rebalance
                 ((1) (mk (mk (left l) (kv l) (left (right l))) ;; LR rebalance
-                         (kv (right l))
-                         (mk (right (right l)) ckv r)))))
+                         (kv (right l)) (mk (right (right l)) ckv r)))))
         ((2) (case (balance r)
                ((-1) (mk (mk l ckv (left (left r))) ;; RL rebalance
-                         (kv (left r))
-                         (mk (right (left r)) (kv r) (right r))))
+                         (kv (left r)) (mk (right (left r)) (kv r) (right r))))
                ((0 1) (mk (mk l ckv (left r)) (kv r) (right r))))))) ;; RR rebalance
     (case msg
       ((node) node)
@@ -218,3 +225,8 @@
 (check! (equal? ((symbol-avl-map 'ref) 'd my-avl-dict bottom) "IV"))
 (check! (equal? ((symbol-avl-map 'ref) 'e my-avl-dict bottom) "V"))
 (check! (equal? ((symbol-avl-map 'ref) 'z my-avl-dict (lambda () -1)) -1))
+
+
+;; TODO:
+;; To override just a method foo that can only use its super, we have:
+;; self <: super => selfmethod <: supermethod => ComplexProto self super selfmethod supermethod = Lens supermethod selfmethod super self -> self -> supermethod -> self
