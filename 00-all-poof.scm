@@ -3,8 +3,8 @@
 
 ;; Chapters
 (load "1-prototypes.scm")
-(load "2-trivial-oop.scm")
 (load "3-general-prototypes.scm")
+(load "2-trivial-oop.scm")
 (load "4-better-objects.scm")
 (load "5-classes.scm")
 (load "6-mutable-objects.scm")
