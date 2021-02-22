@@ -130,7 +130,7 @@
 (define x6-y2 (fix (mix $double-x $x3) x1-y2))
 (define x3-y2 (fix (mix $x3 $double-x) x1-y2))
 (check! (= 6 (x6-y2 'x)))
-(check! (= 6 (x3-y2 'x)))
+(check! (= 3 (x3-y2 'x)))
 
 (displayln "1.2.3. Record prototype generators")
 ;; Now that we understand record prototypes, we can look at various utility
