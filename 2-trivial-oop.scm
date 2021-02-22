@@ -1,6 +1,6 @@
-;;;; Chapter II. Trivial Object-Oriented Programming
+;;;; Chapter 2. Object-Oriented Programming
 
-(displayln "II. Trivial Object-Oriented Programming")
+(displayln "2. Using prototypes to incrementally define simple data structures")
 
 ;; II.1. Trivial "records" as unary functions from keys to values
 ;;
@@ -9,8 +9,8 @@
 ;; As functions from symbol to method value.
 ;; (Except that T assumed methods were to be function-valued and immediately called,
 ;; and would directly take extra arguments to pass down to the method function).
-follow (up to different currying) the same convention
-;; 
+;; follow (up to different currying) the same convention
+;;
 ;; Let's define our "records" as functions that receive a "message",
 ;; being a symbol typically bound to variable msg,
 ;; and depending on which key k the message matches,
@@ -22,44 +22,6 @@ follow (up to different currying) the same convention
 ;; But first, as a temporary convention, let's use a prefix $
 ;; to indicate prototypes or functions that return prototypes,
 ;; and no prefix for an instances.
-
-(displayln "II.1.1. Simple records with constant field-value mapping")
-;; To define an object with field k mapped to constant value v,
-;; we could thus use this function:
-(define ($field k v) ;; k v: constant key and value for this defined field
-  (lambda (self super) ;; self super: usual variables for prototype fixed-point
-    (lambda (msg) ;; msg: message received by the object
-      (if (equal? msg k) v ;; if the message matches the key, return the value
-        (super msg))))) ;; otherwise, recurse to the object's super object
-
-;; Let's test simple objects.
-
-;; Here's an object with a single field, foo, bound to 0.
-(define foo0 (instance ($field 'foo 0)))
-(check! (= (foo0 'foo) 0))
-
-;; And here is another object, with two fields x and y, respectively bound to 1 and 2.
-(define x1-y2 (instance ($field 'x 1) ($field 'y 2)))
-(check! (= (x1-y2 'x) 1))
-(check! (= (x1-y2 'y) 2))
-
-(displayln "II.1.2. methods that refer to other fields")
-;; An object prototype may define some fields (in this case, z, rho and theta)
-;; by referring to other fields of the object (in this case, x and y):
-(define ($polar-from-rect self super)
-  (lambda (msg)
-    (case msg
-      ((z) (+ (self 'x) (* 0+i (self 'y))))
-      ((rho) (magnitude (self 'z)))
-      ((theta) (angle (self 'z)))
-      (else (super msg)))))
-
-;; NB: not that these prototypes commute, since there is no override:
-(define my-object2
-  (instance ($field 'x 1) $polar-from-rect ($field 'y 2)))
-(check! (= (my-object2 'rho) (sqrt 5)))
-
-(displayln "II.2. Using prototypes to incrementally define simple data structures")
 
 ;; Let's use prototypes to build some simple data structures.
 ;; First, write prototypes that offer an abstract over the ability

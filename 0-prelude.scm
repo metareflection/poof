@@ -16,7 +16,7 @@
 
 (displayln "0.2. General library functions")
 
-;; Apparently this isn't defined in Chez Scheme.
+;; Apparently this isn't defined in Chez Scheme (it's called fold-left instead).
 (define (foldl Cons Nil l)
   (if (null? l) '() (Cons (car l) (foldl Cons Nil (cdr l)))))
 

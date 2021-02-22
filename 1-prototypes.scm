@@ -1,8 +1,8 @@
-;;;; Chapter I. Function prototypes, in the most universal sense
+;;;; Chapter 1. Function prototypes, in the most universal sense
 
-(displayln "I. Defining function prototypes")
+(displayln "1. Defining function prototypes")
 
-(displayln "I.1. Object Orientation in 109 characters of standard Scheme")
+(displayln "1.1. Object Orientation in 109 characters of standard Scheme")
 (define (fix p b) (define f (p (lambda i (apply f i)) b)) f)
 (define (mix p q) (lambda (f b) (p f (q f b))))
 ;; We contend that the above two definitions summarize
@@ -11,7 +11,7 @@
 ;;
 ;; The rest of this essay will make this case.
 
-(displayln "I.1.1. The Essence of OOP in words")
+(displayln "1.1.1. The Essence of OOP in words")
 
 ;; OOP is about specifying code in modular increments, that we shall call
 ;; "prototypes". Prototypes are functions of two arguments, `self` and `super`,
@@ -20,7 +20,8 @@
 ;; Function `mix` composes two prototypes into one by inheritance, wherein they
 ;; operate on the same fixed-point `f` while chaining their effects on `b`.
 
-;; _Application to arbitrary programming languages_:
+(displayln "1.1.2. Application to arbitrary programming languages")
+
 ;; The above definitions are readily available to any language with closures
 ;; and either dynamic types or dependent types. However, their potential is not
 ;; fully realized in languages with mere parametric polymorphism.
@@ -29,10 +30,10 @@
 ;; but do not otherwise require side-effects --- though they can be used
 ;; for the usual optimizations in the common "linear" case.
 
-(displayln "I.2. Trivial objects")
+(displayln "1.2. Trivial objects")
 ; How do the two above functions relate to objects?
 
-(displayln "I.2.1. Records as functions")
+(displayln "1.2.1. Records as functions")
 ;; First, let's use the following trivial encoding of "records" as functions
 ;; from symbol (the name of a slot) to value (bound to the slot).
 ;;
@@ -57,7 +58,7 @@
 ;; or "member" or "method", and say that the slot is bound to the given value
 ;; rather than it "containing" the value or any such thing.
 
-(displayln "I.2.2. Prototypes for Records")
+(displayln "1.2.2. Prototypes for Records")
 ;; A *prototype* for a record is a function of two arguments `self` and `super`
 ;; (both records) to an `extended-self` record.
 
@@ -131,7 +132,7 @@
 (check! (= 6 (x6-y2 'x)))
 (check! (= 6 (x3-y2 'x)))
 
-(displayln "I.2.3. Record prototype generators")
+(displayln "1.2.3. Record prototype generators")
 ;; Now that we understand record prototypes, we can look at various utility
 ;; functions to build them.
 
