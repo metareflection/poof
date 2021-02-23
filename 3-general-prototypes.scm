@@ -1,9 +1,6 @@
-(displayln "II. General Prototypes")
+(displayln "3. General Prototypes")
 
-(displayln "II.1. General Prototypes")
-
-
-
+(displayln "3.1. General Prototypes")
 
 ;; I.2- Short explanation of the above formulas
 ;;
@@ -93,44 +90,6 @@
 ;;Or, compressing spaces, 74 (including newline, excluding semi-colon):
 ;(def(fix p b)(def f(p(λ i(apply f i))b))f)(def((mix p q)f b)(p f(q f b)))
 
-;;; --------------------------------------------------------------------------
-;; I.3. Instantiating a function prototype through a fixed-point.
-;;
-;; The fixed-point function fix, defined above, with have type as follows:
-#;(: fix (Fun (Proto A B) B -> A))
-;;
-;; A more thorough explanation of the fixed-point function is in Appendix A
-
-;;; --------------------------------------------------------------------------
-;; I.4. Composing prototypes via prototype inheritance
-;;
-;; What makes function prototypes interesting is that they can be composed,
-;; in a process called *prototype inheritance*, a.k.a. mixing, such that each
-;; prototype can incrementally contribute part of the computation,
-;; e.g. define or refine the values associated with some particular fields.
-;; Mixing is done through the above-defined function mix of type as follows:
-#;(: mix (Fun (Proto A B) (Proto B C) -> (Proto A C)))
-
-;; The same function with more readable names could be defined as follows:
-(define (compose-proto this parent)
-  (lambda (self super) (this self (parent self super))))
-;; Note the types of the variables and intermediate expressions:
-; this : (Proto A B)
-; parent : (Proto B C)
-; self : A
-; super : C
-; (parent self super) : B
-; (this self (parent self super)) : A
-;; When writing long-form functions instead of vying for conciseness, we will
-;; use the same naming conventions as in the function above:
-;; - this for a prototype at hand, in leftmost position;
-;; - parent for a prototype it is being mixed with, in latter position;
-;; - self for the intended fixed point of the computation;
-;; - super for the base (or so-far accumulated) value of the computation.
-
-;; Mixing is associative, and has the following neutral element:
-;; identity-proto : (Proto A A)
-(define (identity-proto _self super) super)
 
 ;; Mixing prototypes doesn't in general commute: the computations of the
 ;; first (child, leftmost) prototype can override (ignore) or call and transform
@@ -143,47 +102,10 @@
 (check! (= ((fix (mix p1+ p2*) b0)) 1))
 (check! (= ((fix (mix p2* p1+) b0)) 2))
 
-;; We can also mix a list of prototypes, assuming each prototype in the list is
-;; of a type suitable to be mixed with the previous or next one as applicable.
-;; The operation can be typed with some indexed types, which could be expressed
-;; with full dependent types, but also presumably with suitable staged types.
-;; We will write this type as follows, using "obvious" conventions the precise
-;; decoding of which is left as an exercise to the reader:
-#;(: compose-proto*
-     (Fun (IndexedList I (lambda (i) (Proto (A_ i) (A_ (1+ i)))))
-       -> (Proto (A_ 0) (A_ (Card I)))))
-(define (compose-proto* l)
-  (cond
-   ((null? l) identity-proto)
-   ((null? (cdr l)) (car l))
-   ((null? (cddr l)) (compose-proto (car l) (cadr l)))
-   (else (lambda (a b) ((car l) a ((compose-proto* (cdr l)) a b))))))
-
-;; The above could also have been written as follows:
-(define (compose-proto*--1 l) (foldr mix identity-proto l))
 
 
-;;; --------------------------------------------------------------------------
-;; I.5. A universal base function
-
-;; If we don't care to specify a base function, we can define a bottom / zero
-;; element as a universal base function that is member of all function types:
-#;(: bottom (Fun I ... -> O ...))
-(define (bottom . x) (apply error "bottom" x))
-
-;; Then, we instantiate the combination of a bunch of prototypes in one go:
-#;(: instance (Fun (IndexedList I (lambda (i) (Proto (A_ i) (A_ (1+ i)))))... -> (A_ 0)))
-(define (instance . prototypes) (fix (compose-proto* prototypes) bottom))
-
-;; If you do want to use a nicer-behaving function better-base instead of
-;; the above bottom function, you can do it by putting at the end of the
-;; prototype list you instantiate, as the rightmost element, in tail position,
-;; the following prototype:
-;;(define (use-better-base f b) better-base)
-
-
-;;;; Chapter III. Trivial objects, the naive OO on top of poof
-(displayln "III. Prototypes for non-object functions")
+;;;; Chapter 3. Trivial objects, the naive OO on top of poof
+(displayln "3. Prototypes for non-object functions")
 
 ;; Prototypes and prototype inheritance is not just for "objects",
 ;; i.e. functions taking a symbol as a message argument,
@@ -193,7 +115,7 @@
 ;; from reals to reals.
 ;; We'll use "rfp" to mean "real function prototype".
 
-(displayln "III.1.1. A prototype for the identity function.")
+(displayln "3.1.1. A prototype for the identity function.")
 (define (just x) (lambda _ x))
 
 (define id-rfp (just (lambda (x) x)))
@@ -201,7 +123,7 @@
 (define id (instance id-rfp))
 (check! (= (id 42) 42))
 
-(displayln "III.1.2. Prototypes to incrementally specify numeric functions.")
+(displayln "3.1.2. Prototypes to incrementally specify numeric functions.")
 
 ;; A prototype for an even function, that computes for positive values, and
 ;; returns the image of the opposite for negative values.

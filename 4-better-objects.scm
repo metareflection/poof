@@ -2,7 +2,12 @@
 
 (displayln "IV. Better objects, still pure")
 
-;; In chapter II, we explained how to implement a trivial object system
+;; In chapter II, we explained how to implement a rudimentary object system
+;;
+;; Compared to mainstream systems, it already featured powerful notions:
+;; - Mixins, more general than single-inheritance, yet requires much more
+;;   maintenance than multiple inheritance; using isn't modular.
+
 ;; Now, let's try to build a more featureful one.
 
 ;; 1. One downside of the previous object system is that

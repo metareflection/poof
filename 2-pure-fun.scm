@@ -1,6 +1,6 @@
-;;;; Chapter 2. Object-Oriented Programming
+(displayln "2. Pure Objective Fun")
 
-(displayln "2. Using prototypes to incrementally define simple data structures")
+(displayln "2.1. Using prototypes to incrementally define simple data structures")
 
 ;; II.1. Trivial "records" as unary functions from keys to values
 ;;

@@ -1,16 +1,3 @@
-;; II- Building usable prototype OO
-
-;; II.1- Basic utility functions
-
-;; II.1.1- Keeping nesting and indentation under control
-
-(define-syntax nest
-  (syntax-rules ()
-    ((nest (x ...) y z ...) (x ... (nest y z ...)))
-    ((nest x) x)))
-
-(check! (= (nest (+ 1 2) (* 3 4) (- 5 6)) -9)
-
 ;; II.1.2- Memoizing values, so field access isn't O(n) every time.
 ;; Usage: Put memoize-proto as first prototype.
 ;; NB1: Memoization uses side-effects internally, but does not expose them.
@@ -141,5 +128,4 @@ to use delay and force systematically (and/or SRFI-45 lazy) so that
 the entire program be effectively written in a lazy language.
 
 ftp://www.cs.indiana.edu/pub/techreports/TR276.pdf
-|#
 |#
