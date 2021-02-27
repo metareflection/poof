@@ -4,7 +4,7 @@
 
 (displayln "1.1. Object Orientation in 109 characters of standard Scheme")
 (define (fix p b) (define f (p (lambda i (apply f i)) b)) f)
-(define (mix p q) (lambda (f b) (p f (q f b))))
+(define (mix c p) (lambda (f b) (c f (p f b))))
 ;; We contend that the above two definitions summarize
 ;; the essence of object-oriented programming, and that
 ;; all the usual "object oriented" concepts can be easily recovered from them.
@@ -12,14 +12,45 @@
 ;; The rest of this essay will make the case.
 
 (displayln "1.1.1. The Essence of OOP in words")
+'("
+Object-Oriented Programming consists in specifying code in modular increments
+that each compute their part from the combined whole and the computation so far.
 
-;; Object-Oriented Programming is about specifying code in modular increments.
-;; We shall implement these modular increments as "prototypes",
-;; functions of two arguments: `self` (or, above, `f`, for fixed-point),
-;; and `super` (or, above, `b`, for base or bottom value).
-;; Function `fix` *instantiates* a prototype `p` given a super/base value `b`.
-;; Function `mix` composes two prototypes into one by inheritance, wherein they
-;; operate on the same fixed-point `f` while chaining their effects on `b`.
+Here we implement these increments as *prototypes*: functions of two arguments,
+`self` and `super` (or, above, `f` and `b`, for fixed-point and base value).
+Function `fix` *instantiates* a prototype `p` given a super/base value `b`.
+Function `mix` has *child* prototype `c` *inherit* from *parent* prototype `p`
+so they operate on a same fixed-point `f` while chaining their effects on `b`.
+
+Given some arbitrary instance type Self, and a super-type Super of Self,
+a prototype for Self from Super will thus be
+a function from Self and Super to Self.
+
+The first argument `self` of type Self will hold the instance
+resulting as a fixed point from the entire computation.
+When composing multiple prototypes, every prototype will receive
+the *same* value as their self argument:
+the complete instance that results from applying the every prototype in order.
+This allows prototypes to "cooperate" with each other
+on *different* aspects of the computation,
+wherein one prototype defines some aspect (e.g. a "method" in some dictionary)
+while relying on aspects to be defined by other prototypes (e.g. other methods),
+accessed through the `self` argument in what is called "late binding".
+
+The second argument `super` by contrast holds the partial result of the
+fixed-point computation after applying only the "next" prototypes.
+When composing multiple prototypes, each prototype will (presumably) receive
+a different value. The last prototype in the list (rightmost, most ancestral
+parent) will receive the "base" or "bottom" value from the fix function
+(often literally the bottom value or function in the language), then the
+"previous" prototype (its child, to the left) will receive ("inherit")
+the result of that "next" computation (its parent, to the right), and so on
+until the first prototype (leftmost, most recent child) inherits
+its `super` value from the rest and computes the final instance.
+This allows prototypes to cooperate with other prototypes on a *same* aspect
+of the instance computation, wherein children prototypes can accumulate, modify
+or override the method values inherited from the parent prototypes.
+")
 
 (displayln "1.1.2. Applicability to arbitrary Programming Languages")
 
