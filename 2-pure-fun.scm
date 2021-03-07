@@ -112,11 +112,11 @@
                  ((=) tv)
                  ((<) ((self 'ref) k tl e))
                  ((>) ((self 'ref) k tr e)))))))
-      ((afoldl)
+      ((afoldr)
        (lambda (acons empty t)
          (if ((self 'empty?) t) empty
              (let ((tl (car t)) (tk (caaadr t)) (tv (cdaadr t)) (tr (caddr t)))
-               ((self 'afoldl) acons (acons tk tv ((self 'afoldl) acons empty tl)) tr)))))
+               ((self 'afoldr) acons (acons tk tv ((self 'afoldr) acons empty tl)) tr)))))
       (else (super msg)))))
 
 (define ($key-is-symbol self super)

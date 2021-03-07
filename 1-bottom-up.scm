@@ -245,21 +245,20 @@ or override the method values inherited from the parent prototypes.
 (check! (= (x1-y2 'x) 1))
 (check! (= (x1-y2 'y) 2))
 
-
 (displayln "1.3. Prototype Basics")
 
 (displayln "1.3.1. Composing prototypes")
 
 ;; The identity prototype, neutral element for mix, is as follows:
-;; idproto : (Proto X X)
-(define (idproto f b) b)
+;; $id : (Proto X X)
+(define ($id f b) b)
 ;; It doesn't override any information from the super/base object,
 ;; but only passes it through. It also doesn't consult information in
 ;; the final fixed-point nor refers to it.
 
 ;; But maybe this prototype business is easier to understood when written in
 ;; "long form", with long identifiers, and traditional arguments "self" and
-;; "super". Thus, idproto becomes:
+;; "super". Thus, $id becomes:
 ;; identity-prototype : (Proto Instance Instance)
 (define (identity-prototype self super) super)
 
@@ -268,9 +267,9 @@ or override the method values inherited from the parent prototypes.
 (define (instantiate-prototype prototype base-super)
   (define self (prototype (lambda i (apply self i)) base-super))
   self)
-;; A more thorough explanation of this fixed-point function is in Appendix A.
+"A more thorough explanation of this fixed-point function is in Appendix A."
 
-;; And (mix p q) becomes:
+"And (mix p q) becomes:"
 ;; compose-prototypes : (Fun (Proto Self Super) (Proto Super Super2) -> (Proto Self Super2) st: (<: Self Super Super2))
 (define (compose-prototypes child parent)
   (lambda (self super) (child self (parent self super))))
@@ -281,25 +280,25 @@ or override the method values inherited from the parent prototypes.
 ;; super : Super2
 ;; (parent self super) : Super
 ;; (this self (parent self super)) : Self
-;;
-;; When writing long-form functions instead of vying for conciseness, we will
-;; use the same naming conventions as in the function above:
-;; - `child` (or `this`) for a *prototype* at hand, in leftmost position;
-;; - `parent` for a *prototype* it is being mixed with, in latter position;
-;; - `self` for the *instance* that is a fixed point of the computation;
-;; - `super` for the base (or so-far accumulated) *instance* of the computation.
-;;
-;; Note the important distinction between *prototypes* and *instances*.
-;; Instances are elements of some function type, and are themselves
-;; the results of the computation whereby prototypes are instantiated.
-;; Prototypes are increments of computation, functions from instance (of a
-;; subtype `Self`) and instance (of a supertype `Super`) to instance of the
-;; subtype `Self`.
 
-;; Now, prototypes are interesting because `mix` (a.k.a. `compose-prototypes`)
-;; is an associative operator with neutral element `idproto` (a.k.a.
-;; `identity-prototype`). Thus prototypes form a monoid, and you can compose
-;; or instantiate a list of prototypes:
+"When writing long-form functions instead of vying for conciseness, we will
+use the same naming conventions as in the function above:
+- `child` (or `this`) for a *prototype* at hand, in leftmost position;
+- `parent` for a *prototype* it is being mixed with, in latter position;
+- `self` for the *instance* that is a fixed point of the computation;
+- `super` for the base (or so-far accumulated) *instance* of the computation.
+
+Note the important distinction between *prototypes* and *instances*.
+Instances are elements of some function type, and are themselves
+the results of the computation whereby prototypes are instantiated.
+Prototypes are increments of computation, functions from instance (of a
+subtype `Self`) and instance (of a supertype `Super`) to instance of the
+subtype `Self`."
+
+"Now, prototypes are interesting because `mix` (a.k.a. `compose-prototypes`)
+is an associative operator with neutral element `$id` (a.k.a.
+`identity-prototype`). Thus prototypes form a monoid, and you can compose
+or instantiate a list of prototypes:"
 ;; compose-protototype-list : (Fun (IndexedList I (lambda (i) (Proto (A_ i) (A_ (1+ i))))) -> (Proto (A_ 0) (A_ (Card I))))
 (define (compose-prototype-list l)
   (cond
@@ -308,49 +307,76 @@ or override the method values inherited from the parent prototypes.
    ((null? (cddr l)) (compose-prototypes (car l) (cadr l)))
    (else (compose-prototypes (car l) (compose-prototype-list (cdr l))))))
 
-;; A more succint way to write the same function is:
+"A more succint way to write the same function is:"
+;; compose-protototype-list : (Fun (IndexedList I (lambda (i) (Proto (A_ i) (A_ (1+ i))))) (A_ (Card I)) -> (Proto (A_ 0) (A_ (1+ i))))
 (define (compose-prototype-list prototype-list)
   (foldr compose-prototypes identity-prototype prototype-list))
 
-;; compose-protototype-list : (Fun (IndexedList I (lambda (i) (Proto (A_ i) (A_ (1+ i))))) (A_ (Card I)) -> (A_ 0))
+;; instantiate-protototype-list : (Fun (IndexedList I (lambda (i) (Proto (A_ i) (A_ (1+ i))))) (A_ (Card I)) -> (A_ 0))
 (define (instantiate-prototype-list prototype-list base-super)
   (instantiate-prototype (compose-prototype-list prototype-list) base-super))
 
-;; Prototype composition is notably more expressive than "single inheritance"
-;; as commonly used in many "simple" object systems:
-;; Object systems with "single inheritance" require programmers to `cons`
-;; objects (or classes) one component at a time in the front of a rigid list of
-;; "parent" objects (or classes), where the base object (or class) is set.
-;; Prototype object systems enable programmers to `append` list of prototypes
-;; independently from any base object, to compose and recompose prototypes
-;; in different orders and combinations.
-;; Prototypes are thus more akin to the "mixins" or "traits" of more advanced
-;; objects systems.
-;;
-;; Prototype composition however, does not by itself subsume multiple
-;; inheritance. We will show in chapter 4 how to combine the two.
+'("Prototype composition is notably more expressive than "single inheritance"
+as commonly used in many "simple" object systems:
+Object systems with "single inheritance" require programmers to `cons`
+objects (or classes) one component at a time in the front of a rigid list of
+"parent" objects (or classes), where the base object (or class) is set.
+Prototype object systems enable programmers to `append` list of prototypes
+independently from any base object, to compose and recompose prototypes
+in different orders and combinations.
+Prototypes are thus more akin to the "mixins" or "traits" of more advanced
+objects systems.
+
+Prototype composition however, does not by itself subsume multiple
+inheritance. We will show in chapter 4 how to combine the two.")
 
 (displayln "1.3.2. The Bottom of it")
 
-;; In a language with partial functions, such as Scheme, there is a practical
-;; choice for a universal function to use as the `base-super` argument to
-;; `instantiate-prototype`: the `bottom` function, that never returns,
-;; but instead, for enhanced usability, throws an error that can be caught.
+"In a language with partial functions, such as Scheme, there is a practical
+choice for a universal function to use as the `base-super` argument to
+`instantiate-prototype`: the `bottom` function, that never returns,
+but instead, for enhanced usability, throws an error that can be caught."
 ;; bottom : (Fun I ... -> O ...)
 (define (bottom . args)
   (error "bottom" args))
 
-;; Thus, in dialects with optional arguments, we could make `bottom` the default
-;; value for `base-super`. Furthermore, in any variant of Scheme, we can define
-;; the following function `instantiate` that takes the rest of its arguments as
-;; a list of prototypes, and instantiates the composition of them:
+"Thus, in dialects with optional arguments, we could make `bottom` the default
+value for `base-super`. Furthermore, in any variant of Scheme, we can define
+the following function `instantiate` that takes the rest of its arguments as
+a list of prototypes, and instantiates the composition of them:"
 ;; instance : (Fun (IndexedList I (lambda (i) (Proto (A_ i) (A_ (1+ i)))))... -> (A_ 0)))
 (define (instance . prototype-list)
   (instantiate-prototype-list prototype-list bottom))
 
-;; What if you *really* wanted to instantiate your list of prototypes with some
-;; value `b` as the base super instance? You can "just" tuck
-;; `(base-prototype b)` at the tail end of your protototype list:
-;; base-prototype : (Fun A -> (Proto A _))
-(define (base-prototype base-super)
+"What if you *really* wanted to instantiate your list of prototypes with some
+value `b` as the base super instance? You can "just" tuck
+`(base-prototype b)` at the tail end of your protototype list:"
+;; constant-prototype : (Fun A -> (Proto A _))
+(define (constant-prototype base-super)
   (lambda (_self _super) base-super))
+
+"Or the same with a shorter name and a familiar definition as a combinator"
+;; $const : (Fun A -> (Proto A _))
+(define ($const b) (lambda _ b))
+
+"Small puzzle for the points-free Haskellers reading this essay:
+what change of representation will allow you to compose prototypes
+with regular function composition instead of applying binary function mix?"
+
+"ROT13'ed answer:
+gur pbzcbfnoyr cebgbglcr sbe cebgbglcr c vf (p c) = (ynzoqn (d) (zvk c d)),
+naq gb erpbire gur hfhny cebgbglcr sebz vg, lbh whfg unir gb nccyl vg gb $vq."
+
+(displayln "1.3.3. Note for code minimalists")
+
+"We described the fix and mix functions in only 109 characters of Scheme.
+We can do even shorter with various extensions.
+MIT Scheme and after it Racket, Gerbil Scheme, and more, allow you to write:"
+(define ((mix p q) f b) (p f (q f b)))
+"And then we'd have Object Orientation in 100 characters only."
+
+"Then again, in Gerbil Scheme, we could get it down to only 86 (counting newline):"
+(def (fix p b) (def f (p (lambda i (apply f i)) b)) f)
+
+"Of, compressing spaces, to 78 (not counting newline, since we don't count spaces):"
+(def(fix p b)(def f(p(lambda i(apply f i))b))f)(def((mix p q)f b)(p f(q f b)))
