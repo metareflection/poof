@@ -28,6 +28,8 @@
 ;; to compare elements of a same type at hand, in this case,
 ;; either numbers or strings.
 
+(displayln "2.1.1. Prototypes for Order")
+
 (define ($number-order self super)
   (lambda (msg)
     (case msg
@@ -60,6 +62,8 @@
                          (else (error "incomparable" x y)))))
       (else (super msg)))))
 
+(instance $number-order)
+(instance $compare<-order)
 ;; Here are two concrete instances, for numbers, and for strings:
 (define number-order (instance $number-order $compare<-order))
 (define string-order (instance $string-order $compare<-order))
@@ -85,6 +89,8 @@
 (check! (eq? ((symbol-order 'compare) 'alice 'bob) '<))
 (check! (eq? ((symbol-order 'compare) 'b 'c) '<))
 (check! (eq? ((symbol-order 'compare) 'a 'c) '<))
+
+(displayln "2.1.2. Prototypes for Binary Trees")
 
 ;; What can we do with that? Well, for instance, a binary tree!
 
@@ -130,9 +136,9 @@
 (define my-binary-dict
   (foldl (lambda (kv t) ((symbol-tree-map 'acons) (car kv) (cdr kv) t))
          (symbol-tree-map 'empty) '((a . "I") (b . "II") (c . "III") (d . "IV") (e . "V"))))
-;; Oh noes! This tree is heavily skewed left, height 5.
+;; Oh noes! This tree is heavily skewed right, height 5.
 (check! (equal? my-binary-dict
-                '(((((() ((a . "I")) ()) ((b . "II")) ()) ((c . "III")) ()) ((d . "IV")) ()) ((e . "V")) ())))
+                '(() ((a . "I")) (() ((b . "II")) (() ((c . "III")) (() ((d . "IV")) (() ((e . "V")) ())))))))
 ;; But it otherwise works
 (check! (equal? ((symbol-tree-map 'ref) 'a my-binary-dict bottom) "I"))
 (check! (equal? ((symbol-tree-map 'ref) 'b my-binary-dict bottom) "II"))
@@ -140,6 +146,8 @@
 (check! (equal? ((symbol-tree-map 'ref) 'd my-binary-dict bottom) "IV"))
 (check! (equal? ((symbol-tree-map 'ref) 'e my-binary-dict bottom) "V"))
 (check! (equal? ((symbol-tree-map 'ref) 'z my-binary-dict (lambda () -1)) -1))
+
+(displayln "2.1.3. Prototypes for *Balanced* AVL Binary Trees")
 
 ;; Example incremental definition of data structures:
 ;; add automatic rebalancing of your binary trees by just overriding one method!
@@ -178,8 +186,9 @@
          (symbol-avl-map 'empty) '((a . "I") (b . "II") (c . "III") (d . "IV") (e . "V"))))
 ;; Yay! Now this tree is well balanced, height 3!
 (check! (equal? my-avl-dict
-                '(((() ((a . "I") . 1) ()) ((b . "II") . 2) (() ((c . "III") . 1) ()))
-                  ((d . "IV") . 3) (() ((e . "V") . 1) ()))))
+                '((() ((a . "I") . 1) ()) ((b . "II") . 3)
+                  ((() ((c . "III") . 1) ()) ((d . "IV") . 2) (() ((e . "V") . 1) ())))))
+
 ;; But it otherwise works
 (check! (equal? ((symbol-avl-map 'ref) 'a my-avl-dict bottom) "I"))
 (check! (equal? ((symbol-avl-map 'ref) 'b my-avl-dict bottom) "II"))

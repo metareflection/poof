@@ -12,15 +12,15 @@ Indeed, let's see how prototypes can be used to build numeric functions.
 
 ;; A prototype for an even function, that computes for positive values, and
 ;; returns the image of the opposite for negative values.
-(define (even-rfp self super)
+(define ($even self super)
   (lambda (x) (if (< x 0) (self (- x)) (super x))))
 
 ;; A prototype mixin for squaring the parent value
-(define (cube-rfp self super)
+(define ($cube self super)
   (lambda (x) (let ((y (super x))) (* y y y))))
 
 ;; Assembling a function out of prototypes.
-(define absx3 (instance even-rfp cube-rfp id-rfp))
+(define absx3 (instance $even $cube ($const (lambda (x) x))))
 (check! (= (absx3 3) 27))
 (check! (= (absx3 -2) 8))
 (check! (= (absx3 0) 0))

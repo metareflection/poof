@@ -349,7 +349,7 @@ a list of prototypes, and instantiates the composition of them:"
   (instantiate-prototype-list prototype-list bottom))
 
 "What if you *really* wanted to instantiate your list of prototypes with some
-value `b` as the base super instance? You can "just" tuck
+value `b` as the base super instance? You can \"just\" tuck
 `(base-prototype b)` at the tail end of your protototype list:"
 ;; constant-prototype : (Fun A -> (Proto A _))
 (define (constant-prototype base-super)
@@ -368,7 +368,7 @@ gur pbzcbfnoyr cebgbglcr sbe cebgbglcr c vf (p c) = (ynzoqn (d) (zvk c d)),
 naq gb erpbire gur hfhny cebgbglcr sebz vg, lbh whfg unir gb nccyl vg gb $vq."
 
 (displayln "1.3.3. Note for code minimalists")
-
+'(
 "We described the fix and mix functions in only 109 characters of Scheme.
 We can do even shorter with various extensions.
 MIT Scheme and after it Racket, Gerbil Scheme, and more, allow you to write:"
@@ -380,3 +380,4 @@ MIT Scheme and after it Racket, Gerbil Scheme, and more, allow you to write:"
 
 "Of, compressing spaces, to 78 (not counting newline, since we don't count spaces):"
 (def(fix p b)(def f(p(lambda i(apply f i))b))f)(def((mix p q)f b)(p f(q f b)))
+)
