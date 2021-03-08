@@ -1,4 +1,4 @@
-#lang scribble/acmart
+#lang scribble/acmart @acmsmall
 
 @(require (only-in scribble/manual racket racketblock litchar itemize item)
           (only-in scribble/example examples make-base-eval)
@@ -475,11 +475,9 @@ what change of representation will allow you to compose prototypes
 with regular function composition instead of applying the
 binary function @racket[mix]?
 
-@margin-note{
 ROT13'ed answer:
 gur pbzcbfnoyr cebgbglcr sbe cebgbglcr c vf (p c) = (ynzoqn (d) (zvk c d)),
 naq gb erpbire gur hfhny cebgbglcr sebz vg, lbh whfg unir gb nccyl vg gb $vq.
-}
 
 @subsubsection{Note for code minimalists}
 
