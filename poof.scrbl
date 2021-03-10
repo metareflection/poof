@@ -1,6 +1,7 @@
 #lang scribble/acmart @acmsmall @review
 
-@(require (only-in scribble/manual racket racketblock litchar itemize item)
+@(require scriblib/autobib
+          (only-in scribble/manual racket racketblock litchar itemize item)
           (only-in scribble/example examples make-base-eval)
           "util/examples-module.rkt"
           (for-label racket))
@@ -17,6 +18,21 @@
 @author[#:affiliation "Mutual Knowledge Systems, Inc."]{Francois-Rene Rideau}
 @author[#:affiliation "Mutual Knowledge Systems, Inc."]{Alex Knauth}
 @author[#:affiliation "Harvard University"]{Nada Amin}
+
+@(define-cite ~cite citet generate-bibliography)
+
+@(define plt-tr1
+   (make-bib
+    #:title    "Reference: Racket"
+    #:author   (authors "Matthew Flatt" "PLT")
+    #:date     "2010"
+    #:location (techrpt-location #:institution "PLT Inc."
+                                 #:number "PLT-TR-2010-1")
+    #:url      "http://racket-lang.org/tr1/"))
+
+Racket is fun@~cite[plt-tr1].
+
+Racket has a contract library.@~cite[(in-bib plt-tr1 ", §8")]
 
 @section{Prototypes, bottom up}
 
@@ -527,4 +543,5 @@ Of, compressing spaces, to 78 (not counting newline, since we don't count spaces
 
 @section{Chapter X: On Typing Prototypes}
 
+@(generate-bibliography)
 @(finalize-examples/module poof)
