@@ -15,8 +15,8 @@
 @title{Prototype Object-Orientation Functionally}
 
 @author[#:affiliation "Mutual Knowledge Systems, Inc."]{Francois-Rene Rideau}
-@author[#:affiliation "Harvard University"]{Nada Amin}
 @author[#:affiliation "Mutual Knowledge Systems, Inc."]{Alex Knauth}
+@author[#:affiliation "Harvard University"]{Nada Amin}
 
 @section{Prototypes, bottom up}
 
