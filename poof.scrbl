@@ -75,7 +75,8 @@ a function from @r[Self] and @r[Super] to @r[Self].
 @racketblock[
 (deftype (Proto Self Super) (Fun Self Super -> Self st: (<: Self Super)))
 fix : (Fun (Proto Self Super) Super -> Self st: (<: Self Super))
-mix : (Fun (Proto Self Super) (Proto Super Sup2) -> (Proto Self Sup2) st: (<: Self Super Sup2))
+mix : (Fun (Proto Self Super) (Proto Super Sup2) -> (Proto Self Sup2)
+        st: (<: Self Super Sup2))
 ]
 
 The first argument @r[self] of type @r[Self] will hold the instance
@@ -132,10 +133,9 @@ Thus, the function @r[x1-y2] below encodes a record with two slots
 
 @Examples[
 (code:comment "x1-y2 : (Fun 'x -> Nat | 'y -> Nat)")
-(define (x1-y2 msg) (case msg
-                      ((x) 1)
-                      ((y) 2)
-                      (else (error "unbound slot" msg))))
+(define (x1-y2 msg) (case msg ((x) 1)
+                              ((y) 2)
+                              (else (error "unbound slot" msg))))
 ]
 
 We can check that we can indeed access the record slots
@@ -160,8 +160,7 @@ Thus, the following prototype extends or overrides its super-record with
 a slot @r[x] unconditionally bound to @r[3]:
 @Examples[
 (code:comment "$x3 : (Proto (Fun 'x -> Nat | A) A)")
-(define ($x3 self super)
-  (lambda (msg) (if (eq? msg 'x) 3 (super msg))))
+(define ($x3 self super) (λ (msg) (if (eq? msg 'x) 3 (super msg))))
 ]
 
 This prototype computes a complex number slot @r[z] based on real and
@@ -170,7 +169,7 @@ imaginary values bound to the respective slots @r[x] and @r[y] of its
 @Examples[
 (code:comment "$z<-xy : (Proto (Fun (Or 'x 'y) -> Real | 'z -> Complex | A) (Fun (Or 'x 'y) -> Real | A))")
 (define ($z<-xy self super)
-  (lambda (msg)
+  (λ (msg)
     (case msg
       ((z) (+ (self 'x) (* 0+1i (self 'y))))
       (else (super msg)))))
@@ -181,8 +180,7 @@ We say that it @emph{inherits} the value for slot @r[x]:
 @Examples[
 (code:comment "$double-x : (Proto (Fun 'x -> Number | A) (Fun 'x -> Number | A))")
 (define ($double-x self super)
-  (lambda (msg)
-    (if (eq? msg 'x) (* 2 (super 'x)) (super msg))))
+  (λ (msg) (if (eq? msg 'x) (* 2 (super 'x)) (super msg))))
 ]
 
 More generally a record prototype extends its @r[super] record with new slots
@@ -196,28 +194,22 @@ With the @r[fix] operator using the above record @r[x1-y2] as base value:
 @Checks[
 (code:comment "x3-y2 : (Fun 'x -> Nat | 'y -> Nat)")
 (define x3-y2 (fix $x3 x1-y2))
-(eval:check (x3-y2 'x) 3)
-(eval:check (x3-y2 'y) 2)
+(eval:check (list (x3-y2 'x) (x3-y2 'y)) '(3 2))
 
 (code:comment "z1+2i : (Fun 'x -> Nat | 'y -> Nat | 'z -> Complex)")
 (define z1+2i (fix $z<-xy x1-y2))
-(eval:check (z1+2i 'x) 1)
-(eval:check (z1+2i 'y) 2)
-(eval:check (z1+2i 'z) 1+2i)
+(eval:check (list (z1+2i 'x) (z1+2i 'y) (z1+2i 'z)) '(1 2 1+2i))
 
 (code:comment "x2-y2 : (Fun 'x -> Nat | 'y -> Nat)")
 (define x2-y2 (fix $double-x x1-y2))
-(eval:check (x2-y2 'x) 2)
-(eval:check (x2-y2 'y) 2)
+(eval:check (list (x2-y2 'x) (x2-y2 'y)) '(2 2))
 ]
 
 We can also @r[mix] these prototypes together before to compute the @r[fix]:
 @Checks[
 (code:comment "z6+2i : (Fun 'x -> Nat | 'y -> Nat | 'z -> Complex)")
 (define z6+2i (fix (mix $z<-xy (mix $double-x $x3)) x1-y2))
-(eval:check (z6+2i 'x) 6)
-(eval:check (z6+2i 'y) 2)
-(eval:check (z6+2i 'z) 6+2i)
+(eval:check (map z6+2i '(x y z)) '(6 2 6+2i))
 ]
 
 And since the @r[$z<-xy] prototype got the @r[x] and @r[y] values
@@ -230,25 +222,22 @@ that do not affect either override slot @r['z] or inherit from it:
 (eval:check ((fix (mix $double-x (mix $x3 $z<-xy)) x1-y2) 'z) 6+2i)
 ]
 
-@r[mix] is associative, and therefore we also have
+@r[mix] is associative, and therefore the following forms are equivalent to the previous ones,
+though the forms above (fold right) are slightly more efficient than the forms below (fold left):
 @Checks[
 (eval:check ((fix (mix (mix $z<-xy $double-x) $x3) x1-y2) 'z) 6+2i)
 (eval:check ((fix (mix (mix $double-x $z<-xy) $x3) x1-y2) 'z) 6+2i)
 (eval:check ((fix (mix (mix $double-x $x3) $z<-xy) x1-y2) 'z) 6+2i)
 ]
 
-But the result of @r[mix] is slightly more efficient in the former form
-(fold right) than the present form (fold left).
-
-However, since @r[$double-x] inherits slot @r[x] that @r[$x3] overrides,
+Now, since @r[$double-x] inherits slot @r[x] that @r[$x3] overrides,
 there is clearly a dependency between the two that prevents them from commuting:
 @Checks[
 (code:comment "x6-y2 : (Fun 'x -> Nat | 'y -> Nat)")
 (define x6-y2 (fix (mix $double-x $x3) x1-y2))
 (code:comment "x3-y2 : (Fun 'x -> Nat | 'y -> Nat)")
 (define x3-y2 (fix (mix $x3 $double-x) x1-y2))
-(eval:check (x6-y2 'x) 6)
-(eval:check (x3-y2 'x) 3)
+(eval:check (list (x6-y2 'x) (x3-y2 'x)) '(6 3))
 ]
 
 @subsubsection{Record prototype generators}
@@ -260,8 +249,8 @@ To define an object with a slot @r[k] mapped to a value @r[v], use:
 @Definitions[
 (code:comment "$slot : (Fun k:Symbol V -> (Proto (Fun 'k -> V | A) A))")
 (define ($slot k v) (code:comment "k v: constant key and value for this defined slot")
-  (lambda (self super) (code:comment "self super: usual prototype variables")
-    (lambda (msg) (code:comment "msg: message received by the object, a.k.a. method name.")
+  (λ (self super) (code:comment "self super: usual prototype variables")
+    (λ (msg) (code:comment "msg: message received by the object, a.k.a. method name.")
       (if (equal? msg k) v (code:comment "if the message matches the key, return the value")
         (super msg))))) (code:comment "otherwise, recur to the object's super object")
 ]
@@ -269,19 +258,18 @@ To define an object with a slot @r[k] mapped to a value @r[v], use:
 What of inheritance? Well, we can modify an inherited slot using:
 @Definitions[
 (code:comment "$slot-modify : (Fun k:Symbol (Fun V -> W) -> (Proto (Fun 'k -> W | A) (Fun 'k -> V | A) A) st: (<: V W))")
-(define ($slot-modify k modify) (code:comment "k: key; modify: function from super-value to value.")
-  (lambda (self super)
-    (lambda (msg)
-      (if (equal? msg k) (modify (super msg))
-        (super msg)))))
+(define ($slot-modify k modify) (code:comment "modify: function from super-value to value")
+  (λ (self super) (λ (msg)
+    (if (equal? msg k) (modify (super msg))
+      (super msg)))))
 ]
 
 What if a slot depends on other slots? We can use this function
 @Definitions[
 (code:comment "$slot-compute : (Fun k:Symbol (Fun A -> V) -> (Proto (Fun 'k -> V | A) A))")
-(define ($slot-compute k fun) (code:comment "k: key; fun: function from self to value.")
-  (lambda (self super)
-    (lambda (msg)
+(define ($slot-compute k fun) (code:comment "fun: function from self to value.")
+  (λ (self super)
+    (λ (msg)
       (if (equal? msg k) (fun self)
         (super msg)))))
 ]
@@ -291,25 +279,28 @@ the @r[self] argument and a @r[next-method] function to inherit the
 slot value from the @r[super] argument
 @Definitions[
 (code:comment "$slot-gen : (Fun k:Symbol (Fun A (Fun -> V) -> W) -> (Proto (Fun 'k -> W | A) (Fun 'k -> V | A) A) st: (<: V W))")
-(define ($slot-gen k fun) (code:comment "k: key; fun: function from self and super-value thunk to value.")
-  (lambda (self super)
-    (lambda (msg)
-      (if (equal? msg k) (fun self (lambda () (super msg)))
-          (super msg)))))
+(define ($slot-gen k fun) (code:comment "fun: from self and super-value thunk to value.")
+  (λ (self super)
+    (λ (msg)
+      (if (equal? msg k) (fun self (λ () (super msg)))
+        (super msg)))))
 ]
 
 We could redefine the former ones in terms of that latter:
 @Examples[
-(define ($slot k v) ($slot-gen k (lambda (_self _next-method) v)))
-(define ($slot-modify k modify) ($slot-gen k (lambda (_self next-method) (modify (next-method)))))
-(define ($slot-compute k fun) ($slot-gen k (lambda (self _next-method) (fun self))))
+(define ($slot k v)
+  ($slot-gen k (λ (_self _next-method) v)))
+(define ($slot-modify k modify)
+  ($slot-gen k (λ (_self next-method) (modify (next-method)))))
+(define ($slot-compute k fun)
+  ($slot-gen k (λ (self _next-method) (fun self))))
 ]
 
 Thus you can re-define the above prototypes as:
 @Examples[
 (define $x3 ($slot 'x 3))
-(define $double-x ($slot-modify 'x (lambda (x) (* 2 x))))
-(define $z<-xy ($slot-compute 'z (lambda (self) (+ (self 'x) (* 0+1i (self 'y))))))
+(define $double-x ($slot-modify 'x (λ (x) (* 2 x))))
+(define $z<-xy ($slot-compute 'z (λ (self) (+ (self 'x) (* 0+1i (self 'y))))))
 ]
 
 Here is a universal bottom function to use as the base for fix:
@@ -330,26 +321,25 @@ and @r[2] respectively, we can use:
 @Checks[
 (code:comment "x1-y2 : (Fun 'x -> Nat | 'y -> Nat)")
 (define x1-y2 (fix (mix ($slot 'x 1) ($slot 'y 2)) bottom-record))
-(eval:check (x1-y2 'x) 1)
-(eval:check (x1-y2 'y) 2)
+(eval:check (map x1-y2 '(x y)) '(1 2))
 ]
 
 @subsubsection{Back to 1981!}
 
 Interestingly, the above approach to objects is essentially equivalent,
-though not exactly isomorphic, to what Jonathan Rees implemented in T in 1981,
-that was notably reprised by Ken Dickey's YASOS in 1992 and distributed with SLIB since.
-@; TODO: bib reference!
-@; Norman Adams and Jonathan Rees, "Object-Oriented Programming in Scheme", 1989. http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.46.954
-@; Ken Dickey, "Scheming with Objects", AI Expert 7(10):24-33, 1992. http://www.cs.cmu.edu/afs/cs/project/ai-repository/ai/lang/scheme/oop/yasos/swob.txt
-As a minor difference, T assumes methods are all function-valued,
-to be immediately called with extra arguments when methods are looked up,
-while our representation doesn't make such an assumption and such a call.
+though not exactly isomorphic, to what Yale T had in 1981 @~cite{Adams89object-orientedprogramming},
+that was notably reprised by YASOS in 1992 @~cite{dickey1992scheming}
+and distributed with SLIB since.
+There are minor differences: what we call “instance”, T calls “object” or “instance”,
+but instead of “prototypes” it has “components” with a slightly different API.
+Also T assumes methods are all function-valued, to be immediately called
+when methods are looked up, as if all accesses to an object went through the @r[operate] function below.
 Methods in T can be directly represented as slots with a function value in our approach.
 Non-function-valued slots in our approach above can be represented in T
-by nullary methods returning the value.
-What we call “instances”, T calls “objects” or “instances”,
-while what we call “prototypes” correspond to T “components”.
+by nullary methods returning the constant value.
+@Definitions[
+(define (operate instance selector . args) (apply (instance selector) args))
+]
 
 @subsection{Prototype Basics}
 
@@ -361,7 +351,7 @@ Thus, the instantiation function @r[(fix p b)] becomes:
 @Definitions[
 (code:comment "instantiate-prototype : (Fun (Proto Self Super) Super -> Self)")
 (define (instantiate-prototype prototype base-super)
-  (define self (prototype (lambda i (apply self i)) base-super))
+  (define self (prototype (λ i (apply self i)) base-super))
   self)
 ]
 
@@ -370,7 +360,7 @@ Meanwhile, the composition function @r[(mix p q)] becomes:
 @Definitions[
 (code:comment "compose-prototypes : (Fun (Proto Self Super) (Proto Super Super2) -> (Proto Self Super2) st: (<: Self Super Super2))")
 (define (compose-prototypes child parent)
-  (lambda (self super2) (child self (parent self super2))))
+  (λ (self super2) (child self (parent self super2))))
 ]
 
 Note the types of the variables and intermediate expressions:
@@ -420,7 +410,7 @@ is an associative operator with neutral element @r[$id] (a.k.a. @r[identity-prot
 Thus prototypes form a monoid, and you can compose
 or instantiate a list of prototypes:
 @Definitions[
-(code:comment "compose-prototype-list : (Fun (IndexedList I (lambda (i) (Proto (A_ i) (A_ (1+ i))))) -> (Proto (A_ 0) (A_ (Card I))))")
+(code:comment "compose-prototype-list : (Fun (IndexedList I (λ (i) (Proto (A_ i) (A_ (1+ i))))) -> (Proto (A_ 0) (A_ (Card I))))")
 (define (compose-prototype-list l)
   (cond
    ((null? l) identity-prototype)
@@ -436,7 +426,7 @@ A more succint way to write the same function is:
 ]
 
 @Definitions[
-(code:comment "instantiate-prototype-list : (Fun (IndexedList I (lambda (i) (Proto (A_ i) (A_ (1+ i))))) (A_ (Card I)) -> (A_ 0))")
+(code:comment "instantiate-prototype-list : (Fun (IndexedList I (λ (i) (Proto (A_ i) (A_ (1+ i))))) (A_ (Card I)) -> (A_ 0))")
 (define (instantiate-prototype-list prototype-list base-super)
   (instantiate-prototype (compose-prototype-list prototype-list) base-super))
 ]
@@ -471,7 +461,7 @@ value for @r[base-super]. Furthermore, in any variant of Scheme, we can define
 the following function @r[instance] that takes the rest of its arguments as
 a list of prototypes, and instantiates the composition of them:
 @Definitions[
-(code:comment "instance : (Fun (IndexedList I (lambda (i) (Proto (A_ i) (A_ (1+ i)))))... -> (A_ 0)))")
+(code:comment "instance : (Fun (IndexedList I (λ (i) (Proto (A_ i) (A_ (1+ i)))))... -> (A_ 0)))")
 (define (instance . prototype-list)
   (instantiate-prototype-list prototype-list bottom))
 ]
@@ -481,21 +471,20 @@ value @r[b] as the base super instance? You can “just” tuck
 @r[(constant-prototype b)] at the tail end of your prototype list:
 @Definitions[
 (code:comment "constant-prototype : (Fun A -> (Proto A _))")
-(define (constant-prototype base-super)
-  (lambda (_self _super) base-super))
+(define (constant-prototype base-super) (λ (_self _super) base-super))
 ]
 
 Or the same with a shorter name and a familiar definition as a combinator
 @Definitions[
 (code:comment "$const : (Fun A -> (Proto A _))")
-(define ($const b) (lambda _ b))
+(define ($const b) (λ _ b))
 ]
 
 Small puzzle for the points-free Haskellers reading this essay:
 what change of representation will enable prototypes to be composed like regular functions
 without having to apply a binary function like @r[mix]? Solution in footnote.@note{
 Represent prototype @r[p] as
-@r[(lambda (q) (mix p q)) : (Fun (Proto Super S2) -> (Proto Self S2))].
+@r[(λ (q) (mix p q)) : (Fun (Proto Super S2) -> (Proto Self S2))].
 To recover @r[p] from that, just apply to @r[$id].
 }
 
@@ -511,17 +500,17 @@ to compare elements of a same type at hand, in this case,
 either numbers or strings.
 @Definitions[
 (define ($number-order self super)
-  (lambda (msg) (case msg
-                  ((<) (lambda (x y) (< x y)))
-                  ((=) (lambda (x y) (= x y)))
-                  ((>) (lambda (x y) (> x y)))
-                  (else (super msg)))))
+  (λ (msg) (case msg
+             ((<) (λ (x y) (< x y)))
+             ((=) (λ (x y) (= x y)))
+             ((>) (λ (x y) (> x y)))
+             (else (super msg)))))
 (define ($string-order self super)
-  (lambda (msg) (case msg
-                  ((<) (lambda (x y) (string<? x y)))
-                  ((=) (lambda (x y) (string=? x y)))
-                  ((>) (lambda (x y) (string>? x y)))
-                  (else (super msg)))))
+  (λ (msg) (case msg
+             ((<) (λ (x y) (string<? x y)))
+             ((=) (λ (x y) (string=? x y)))
+             ((>) (λ (x y) (string>? x y)))
+             (else (super msg)))))
 ]
 
 We can add a “mixin” for a @r[compare] operator that summarizes in one call
@@ -532,13 +521,13 @@ Also notice how, to refer to other slots in the eventual instance,
 we call @r[(self '<)] and suches.
 @Definitions[
 (define ($compare<-order self super)
-  (lambda (msg) (case msg
-                  ((compare) (lambda (x y)
-                               (cond (((self '<) x y) '<)
-                                     (((self '>) x y) '>)
-                                     (((self '=) x y) '=)
-                                     (else (error "incomparable" x y)))))
-                  (else (super msg)))))
+  (λ (msg) (case msg
+             ((compare) (λ (x y)
+                          (cond (((self '<) x y) '<)
+                                (((self '>) x y) '>)
+                                (((self '=) x y) '=)
+                                (else (error "incomparable" x y)))))
+             (else (super msg)))))
 (define number-order (instance $number-order $compare<-order))
 (define string-order (instance $string-order $compare<-order))]
 @Checks[
@@ -552,10 +541,10 @@ we call @r[(self '<)] and suches.
 We can define a order on symbols by delegating to strings!
 @Definitions[
 (define ($symbol-order self super)
-  (lambda (msg) (case msg
-                  ((< = > compare)
-                   (lambda (x y) ((string-order msg) (symbol->string x) (symbol->string y))))
-                  (else (super msg)))))
+  (λ (msg) (case msg
+             ((< = > compare)
+              (λ (x y) ((string-order msg) (symbol->string x) (symbol->string y))))
+             (else (super msg)))))
 (define symbol-order (instance $symbol-order))]
 @Checks[
 (eval:check ((symbol-order '<) 'aardvark 'aaron) #t)
@@ -574,15 +563,15 @@ list of key-value pair and ancillary data, and right-branch,
 which preserves the order of keys when printed:
 @Definitions[
 (define ($binary-tree-map self super)
-  (lambda (msg)
+  (λ (msg)
     (define (node l kv r) ((self 'node) l kv r))
     (case msg
       ((empty) '())
       ((empty?) null?)
-      ((node) (lambda (l kv r) (list l (list kv) r)))
-      ((singleton) (lambda (k v) (node '() (cons k v) '())))
+      ((node) (λ (l kv r) (list l (list kv) r)))
+      ((singleton) (λ (k v) (node '() (cons k v) '())))
       ((acons)
-       (lambda (k v t)
+       (λ (k v t)
          (if ((self 'empty?) t) ((self 'singleton) k v)
              (let* ((tl (car t)) (tkv (caadr t)) (tk (car tkv)) (tr (caddr t)))
                (case (((self 'Key) 'compare) k tk)
@@ -590,7 +579,7 @@ which preserves the order of keys when printed:
                  ((<) (node ((self 'acons) k v tl) tkv tr))
                  ((>) (node tl tkv ((self 'acons) k v tr))))))))
       ((ref)
-       (lambda (t k e)
+       (λ (t k e)
          (if ((self 'empty?) t) (e)
              (let ((tl (car t)) (tk (caaadr t)) (tv (cdaadr t)) (tr (caddr t)))
                (case (((self 'Key) 'compare) k tk)
@@ -598,10 +587,11 @@ which preserves the order of keys when printed:
                  ((<) ((self 'ref) tl k e))
                  ((>) ((self 'ref) tr k e)))))))
       ((afoldr)
-       (lambda (acons empty t)
+       (λ (acons empty t)
          (if ((self 'empty?) t) empty
-             (let ((tl (car t)) (tk (caaadr t)) (tv (cdaadr t)) (tr (caddr t)))
-               ((self 'afoldr) acons (acons tk tv ((self 'afoldr) acons empty tl)) tr)))))
+           (let ((tl (car t)) (tk (caaadr t)) (tv (cdaadr t)) (tr (caddr t)))
+             ((self 'afoldr)
+              acons (acons tk tv ((self 'afoldr) acons empty tl)) tr)))))
       (else (super msg)))))]
 
 With this scaffolding, we can define a dictionary data structure
@@ -614,13 +604,14 @@ trees will too often be skewed, leading to long access times,
 especially so when building them from an already ordered list:
 @Checks[
 (define my-binary-dict (code:comment "heavily skewed right, height 5")
-  (foldl (lambda (kv t) ((symbol-tree-map 'acons) (car kv) (cdr kv) t))
-         (symbol-tree-map 'empty) '((a . "I") (b . "II") (c . "III") (d . "IV") (e . "V"))))
+  (foldl (λ (kv t) ((symbol-tree-map 'acons) (car kv) (cdr kv) t))
+         (symbol-tree-map 'empty)
+         '((a . "I") (b . "II") (c . "III") (d . "IV") (e . "V"))))
 (eval:check my-binary-dict '(() ((a . "I")) (() ((b . "II")) (() ((c . "III")) (() ((d . "IV")) (() ((e . "V")) ()))))))]
 
 But binary trees otherwise work:
 @Checks[
-(eval:check (map (lambda (k) ((symbol-tree-map 'ref) my-binary-dict k (lambda () #f))) '(a b c d e z))
+(eval:check (map (λ (k) ((symbol-tree-map 'ref) my-binary-dict k (λ () #f))) '(a b c d e z))
             '("I" "II" "III" "IV" "V" #f))]
 
 @subsubsection{Prototypes for @emph{Balanced} Binary Trees}
@@ -630,7 +621,7 @@ We can incrementally define a balanced tree data structure
 by overriding a single method of the original binary tree prototype:
 @Definitions[
 (define ($avl-tree-rebalance self super)
-  (lambda (msg)
+  (λ (msg)
     (define (left t) (car t))
     (define (kv t) (caadr t))
     (define (height t) (if (null? t) 0 (cdadr t)))
@@ -652,17 +643,19 @@ by overriding a single method of the original binary tree prototype:
                          (kv (left r)) (mk (right (left r)) (kv r) (right r))))
                ((0 1) (mk (mk l ckv (left r)) (kv r) (right r))))))) ;; RR rebalance
     (case msg ((node) node) (else (super msg)))))
-(define symbol-avl-map (instance $avl-tree-rebalance $binary-tree-map ($slot 'Key symbol-order)))]
+(define symbol-avl-map
+  (instance $avl-tree-rebalance $binary-tree-map ($slot 'Key symbol-order)))]
 
 Our dictionary is now well-balanced, height 3, and the tests still pass:
 @Checks[
 (define my-avl-dict
-  (foldl (lambda (kv t) ((symbol-avl-map 'acons) (car kv) (cdr kv) t))
-         (symbol-avl-map 'empty) '((a . "I") (b . "II") (c . "III") (d . "IV") (e . "V"))))
+  (foldl (λ (kv t) ((symbol-avl-map 'acons) (car kv) (cdr kv) t))
+         (symbol-avl-map 'empty)
+         '((a . "I") (b . "II") (c . "III") (d . "IV") (e . "V"))))
 (eval:check my-avl-dict
                 '((() ((a . "I") . 1) ()) ((b . "II") . 3)
                   ((() ((c . "III") . 1) ()) ((d . "IV") . 2) (() ((e . "V") . 1) ()))))
-(eval:check (map (lambda (k) ((symbol-avl-map 'ref) my-avl-dict k (lambda () #f))) '(a b c d e z))
+(eval:check (map (λ (k) ((symbol-avl-map 'ref) my-avl-dict k (λ () #f))) '(a b c d e z))
             '("I" "II" "III" "IV" "V" #f))
 ]
 
@@ -679,20 +672,17 @@ that delegates to other prototypes the images of positive values
 and returns the image of the opposite for negative values:
 @Examples[
 (define ($even self super)
-  (lambda (x) (if (< x 0) (self (- x)) (super x))))
+  (λ (x) (if (< x 0) (self (- x)) (super x))))
 ]
 The following prototype is a mixin for squaring the parent value:
 @Examples[
 (define ($cube self super)
-  (lambda (x) (let ((y (super x))) (* y y y))))
+  (λ (x) (let ((y (super x))) (* y y y))))
 ]
 We can instantiate a function out of those of prototypes, and test it:
 @Checks[
-(define absx3 (instance $even $cube ($const (lambda (x) x))))
-(eval:check (absx3 3) 27)
-(eval:check (absx3 -2) 8)
-(eval:check (absx3 0) 0)
-(eval:check (absx3 -1) 1)
+(define absx3 (instance $even $cube ($const (λ (x) x))))
+(eval:check (map absx3 '(3 -2 0 -1)) '(27 8 0 1))
 ]
 
 @subsubsection{Number Thunks}
@@ -703,8 +693,8 @@ They are just computations of no argument that yield a number.
 
 @Checks[
 (define (b0) 0)
-(define (p1+ _ b) (lambda () (+ 1 (b))))
-(define (p2* _ b) (lambda () (* 2 (b))))
+(define (p1+ _ b) (λ () (+ 1 (b))))
+(define (p2* _ b) (λ () (* 2 (b))))
 (eval:check ((fix (mix p1+ p2*) b0)) 1)
 (eval:check ((fix (mix p2* p1+) b0)) 2)
 ]
@@ -742,10 +732,10 @@ Now, let's try to build a more featureful one.
 A few possible solutions to the first issue:
 @itemize[
 @item{
-  Have prototype functions respond to a special magic message 'keys.
+  Have prototype functions respond to a special magic message @r['keys].
   It is the responsibility of the programmer to make sure this message
-  is and remains in synch with the actual list of messages supported
-  --- or we could provide some macros for it.
+  is and remains in synch with the actual list of messages supported---or
+  we could provide some macros for it.
 }@item{
   Instead of passing around prototype functions alone, we could pass around
   a product of a function and a list of keys, as a list or other structure.
