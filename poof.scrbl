@@ -2,13 +2,14 @@
 
 @(require (only-in scribble/manual racket racketblock litchar itemize item)
           (only-in scribble/example examples make-base-eval)
+          (only-in scriblib/footnote note)
           (for-label racket))
 
 @(define ev (make-base-eval))
 @(define-syntax defrule (syntax-rules () ((_ (mac . pat) . bod) (define-syntax mac (syntax-rules () ((mac . pat) . bod))))))
 @(defrule (r . a) (racket . a))
 @(defrule (Definitions . a) (examples #:no-result #:eval ev . a))
-@(defrule (Code . a) (examples #:label #f #:eval ev . a))
+@(defrule (Checks . a) (examples #:label #f #:eval ev . a))
 
 @title{Prototype Object-Orientation Functionally}
 
@@ -94,7 +95,7 @@ or override the method values inherited from the parent prototypes.
 The two definitions above can be easily translated to any language with closures
 and either dynamic types or dependent types. However, their potential is not
 fully realized in languages with mere parametric polymorphism.
-@; TODO: insert above reference to correct section.
+@; TODO: insert above reference to type discussion?
 Furthermore, for an @emph{efficient} implementation of objects with our formulas,
 we will also require lazy evaluation (or side effects to implement them)
 as a optional or ubiquitous language feature.
@@ -128,7 +129,7 @@ Thus, the function @r[x1-y2] below encodes a record with two slots
 We can check that we can indeed access the record slots
 and get the expected values:
 
-@Code[
+@Checks[
 (eval:check (x1-y2 'x) 1)
 (eval:check (x1-y2 'y) 2)
 ]
@@ -180,20 +181,20 @@ with some obvious restrictions to avoid infinite loops from circular definitions
 @subsubsection{Basic testing} How to test these prototypes?
 With the @r[fix] operator using the above record @r[x1-y2] as base value:
 
-@Code[(code:comment "x3-y2 : (Fun 'x -> Nat | 'y -> Nat)")
+@Checks[(code:comment "x3-y2 : (Fun 'x -> Nat | 'y -> Nat)")
 (define x3-y2 (fix $x3 x1-y2))
 (eval:check (x3-y2 'x) 3)
 (eval:check (x3-y2 'y) 2)
 ]
 
-@Code[(code:comment "z1+2i : (Fun 'x -> Nat | 'y -> Nat | 'z -> Complex)")
+@Checks[(code:comment "z1+2i : (Fun 'x -> Nat | 'y -> Nat | 'z -> Complex)")
 (define z1+2i (fix $z<-xy x1-y2))
 (eval:check (z1+2i 'x) 1)
 (eval:check (z1+2i 'y) 2)
 (eval:check (z1+2i 'z) 1+2i)
 ]
 
-@Code[(code:comment "x2-y2 : (Fun 'x -> Nat | 'y -> Nat)")
+@Checks[(code:comment "x2-y2 : (Fun 'x -> Nat | 'y -> Nat)")
 (define x2-y2 (fix $double-x x1-y2))
 (eval:check (x2-y2 'x) 2)
 (eval:check (x2-y2 'y) 2)
@@ -201,7 +202,7 @@ With the @r[fix] operator using the above record @r[x1-y2] as base value:
 
 We can also @r[mix] these prototypes together before to compute the
 @r[fix]:
-@Code[(code:comment "z6+2i : (Fun 'x -> Nat | 'y -> Nat | 'z -> Complex)")
+@Checks[(code:comment "z6+2i : (Fun 'x -> Nat | 'y -> Nat | 'z -> Complex)")
 (define z6+2i (fix (mix $z<-xy (mix $double-x $x3)) x1-y2))
 (eval:check (z6+2i 'x) 6)
 (eval:check (z6+2i 'y) 2)
@@ -212,13 +213,13 @@ And since the @r[$z<-xy] prototype got the @r[x] and @r[y] values
 from the @r[self]
 and not the @r[super], we can freely commute it with the other two prototypes
 that do not affect either override slot @r['z] or inherit from it:
-@Code[(eval:check ((fix (mix $z<-xy (mix $double-x $x3)) x1-y2) 'z) 6+2i)
+@Checks[(eval:check ((fix (mix $z<-xy (mix $double-x $x3)) x1-y2) 'z) 6+2i)
 (eval:check ((fix (mix $double-x (mix $z<-xy $x3)) x1-y2) 'z) 6+2i)
 (eval:check ((fix (mix $double-x (mix $x3 $z<-xy)) x1-y2) 'z) 6+2i)
 ]
 
 @r[mix] is associative, and therefore we also have
-@Code[(eval:check ((fix (mix (mix $z<-xy $double-x) $x3) x1-y2) 'z) 6+2i)
+@Checks[(eval:check ((fix (mix (mix $z<-xy $double-x) $x3) x1-y2) 'z) 6+2i)
 (eval:check ((fix (mix (mix $double-x $z<-xy) $x3) x1-y2) 'z) 6+2i)
 (eval:check ((fix (mix (mix $double-x $x3) $z<-xy) x1-y2) 'z) 6+2i)
 ]
@@ -229,7 +230,7 @@ But the result of @r[mix] is slightly more efficient in the former form
 However, since @r[$double-x] inherits slot @r[x] that @r[$x3]
 overrides, there is
 clearly a dependency between the two that prevents them from commuting:
-@Code[(code:comment "x6-y2 : (Fun 'x -> Nat | 'y -> Nat)")
+@Checks[(code:comment "x6-y2 : (Fun 'x -> Nat | 'y -> Nat)")
 (define x6-y2 (fix (mix $double-x $x3) x1-y2))
 (code:comment "x3-y2 : (Fun 'x -> Nat | 'y -> Nat)")
 (define x3-y2 (fix (mix $x3 $double-x) x1-y2))
@@ -306,14 +307,14 @@ Here is a universal bottom function to use as the base for fix:
 
 To define a record with a single slot @r[foo] bound to @r[0], we can
 use:
-@Code[(code:comment "x3 : (Fun 'x -> Nat)")
+@Checks[(code:comment "x3 : (Fun 'x -> Nat)")
 (define x3 (fix $x3 bottom-record))
 (eval:check (x3 'x) 3)
 ]
 
 To define a record with two slots @r[x] and @r[y] bound to @r[1]
 and @r[2] respectively, we can use:
-@Code[(code:comment "x1-y2 : (Fun 'x -> Nat | 'y -> Nat)")
+@Checks[(code:comment "x1-y2 : (Fun 'x -> Nat | 'y -> Nat)")
 (define x1-y2 (fix (mix ($slot 'x 1) ($slot 'y 2)) bottom-record))
 (eval:check (x1-y2 'x) 1)
 (eval:check (x1-y2 'y) 2)
@@ -484,41 +485,179 @@ Or the same with a shorter name and a familiar definition as a combinator
 ]
 
 Small puzzle for the points-free Haskellers reading this essay:
-what change of representation will allow you to compose prototypes
-with regular function composition instead of applying binary function mix?
-
-@; TODO: Put the answer at the end of the essay instead, with links both ways
-ROT13'ed answer:
-gur pbzcbfnoyr cebgbglcr sbe cebgbglcr c vf (p c) = (ynzoqn (d) (zvk c d)),
-naq gb erpbire gur hfhny cebgbglcr sebz vg, lbh whfg unir gb nccyl vg gb $vq.
-
-@subsection{Note for code minimalists} ;; TODO: move to Appendix
-
-We described the fix and mix functions in only 109 characters of Scheme.
-We can do even shorter with various extensions.
-MIT Scheme and after it Racket, Gerbil Scheme, and more, allow you to write:
-@Definitions[
-(define ((mix p q) f b) (p f (q f b)))
-]
-And then we'd have Object Orientation in 100 characters only.
-
-Then again, in Gerbil Scheme, we could get it down to only 86, counting newline:
-@racketblock[
-(def (fix p b) (def f (p (lambda i (apply f i)) b)) f)
-]
-
-Or, compressing spaces, to 78, not counting newline, since we don't count spaces:
-@racketblock[
-(def(fix p b)(def f(p(lambda i(apply f i))b))f)(def((mix p q)f b)(p f(q f b)))
-]
-
+what change of representation will enable prototypes to be composed like regular functions
+without having to apply a binary function like @r[mix]? Solution in footnote.@note{
+Represent prototype @r[p] as
+@r[(lambda (q) (mix p q)) : (Fun (Proto Super S2) -> (Proto Self S2))].
+To recover @r[p] from that, just apply to @r[$id].
+}
 
 @section{Pure Objective Fun}
 
 @subsection{Using prototypes to incrementally define simple data structures}
 
-@subsubsection{Trivial "records" as unary functions from keys to values}
+@subsubsection{Prototypes for Order}
 
+Let's use prototypes to build some simple data structures.
+First, we'll write prototypes that offer an abstraction for the ability
+to compare elements of a same type at hand, in this case,
+either numbers or strings.
+@Definitions[
+(define ($number-order self super)
+  (lambda (msg) (case msg
+                  ((<) (lambda (x y) (< x y)))
+                  ((=) (lambda (x y) (= x y)))
+                  ((>) (lambda (x y) (> x y)))
+                  (else (super msg)))))
+(define ($string-order self super)
+  (lambda (msg) (case msg
+                  ((<) (lambda (x y) (string<? x y)))
+                  ((=) (lambda (x y) (string=? x y)))
+                  ((>) (lambda (x y) (string>? x y)))
+                  (else (super msg)))))
+]
+
+We can add a "mixin" for a @r[compare] operator that summarizes in one call
+the result of comparing two elements of the type being described.
+A mixin is a prototype meant to extend other prototypes.
+See how this mixin can be used to extend either of the prototypes above.
+Also notice how, to refer to other slots in the eventual instance,
+we call @r[(self '<)] and suches.
+@Definitions[
+(define ($compare<-order self super)
+  (lambda (msg) (case msg
+                  ((compare) (lambda (x y)
+                               (cond (((self '<) x y) '<)
+                                     (((self '>) x y) '>)
+                                     (((self '=) x y) '=)
+                                     (else (error "incomparable" x y)))))
+                  (else (super msg)))))
+(define number-order (instance $number-order $compare<-order))
+(define string-order (instance $string-order $compare<-order))]
+@Checks[
+(eval:check ((number-order '<) 23 42) #t)
+(eval:check ((number-order 'compare) 8 4) '>)
+(eval:check ((string-order '<) "Hello" "World") #t)
+(eval:check ((string-order 'compare) "Foo" "FOO") '>)
+(eval:check ((string-order 'compare) "42" "42") '=)
+]
+
+We can define a order on symbols by delegating to strings!
+@Definitions[
+(define ($symbol-order self super)
+  (lambda (msg) (case msg
+                  ((< = > compare)
+                   (lambda (x y) ((string-order msg) (symbol->string x) (symbol->string y))))
+                  (else (super msg)))))
+(define symbol-order (instance $symbol-order))]
+@Checks[
+(eval:check ((symbol-order '<) 'aardvark 'aaron) #t)
+(eval:check ((symbol-order '=) 'zzz 'zzz) #t)
+(eval:check ((symbol-order '>) 'aa 'a) #t)
+(eval:check ((symbol-order 'compare) 'alice 'bob) '<)
+(eval:check ((symbol-order 'compare) 'b 'c) '<)
+(eval:check ((symbol-order 'compare) 'a 'c) '<)]
+
+@subsubsection{Prototypes for Binary Trees}
+
+We can use the above @r[order] prototypes to build binary trees
+over a suitable ordered key type @r[Key].
+We'll represent a tree as a list of left-branch,
+list of key-value pair and ancillary data, and right-branch,
+which preserves the order of keys when printed:
+@Definitions[
+(define ($binary-tree-map self super)
+  (lambda (msg)
+    (define (node l kv r) ((self 'node) l kv r))
+    (case msg
+      ((empty) '())
+      ((empty?) null?)
+      ((node) (lambda (l kv r) (list l (list kv) r)))
+      ((singleton) (lambda (k v) (node '() (cons k v) '())))
+      ((acons)
+       (lambda (k v t)
+         (if ((self 'empty?) t) ((self 'singleton) k v)
+             (let* ((tl (car t)) (tkv (caadr t)) (tk (car tkv)) (tr (caddr t)))
+               (case (((self 'Key) 'compare) k tk)
+                 ((=) (node tl (cons k v) tr))
+                 ((<) (node ((self 'acons) k v tl) tkv tr))
+                 ((>) (node tl tkv ((self 'acons) k v tr))))))))
+      ((ref)
+       (lambda (t k e)
+         (if ((self 'empty?) t) (e)
+             (let ((tl (car t)) (tk (caaadr t)) (tv (cdaadr t)) (tr (caddr t)))
+               (case (((self 'Key) 'compare) k tk)
+                 ((=) tv)
+                 ((<) ((self 'ref) tl k e))
+                 ((>) ((self 'ref) tr k e)))))))
+      ((afoldr)
+       (lambda (acons empty t)
+         (if ((self 'empty?) t) empty
+             (let ((tl (car t)) (tk (caaadr t)) (tv (cdaadr t)) (tr (caddr t)))
+               ((self 'afoldr) acons (acons tk tv ((self 'afoldr) acons empty tl)) tr)))))
+      (else (super msg)))))]
+
+With this scaffolding, we can define a dictionary data structure
+that we can use later to differently represent objects:
+@Definitions[
+(define symbol-tree-map (instance ($slot 'Key symbol-order) $binary-tree-map))
+]
+However, when we use it, we immediately find an issue:
+trees will too often be skewed, leading to long access times,
+especially so when building them from an already ordered list:
+@Checks[
+(define my-binary-dict (code:comment "heavily skewed right, height 5")
+  (foldl (lambda (kv t) ((symbol-tree-map 'acons) (car kv) (cdr kv) t))
+         (symbol-tree-map 'empty) '((a . "I") (b . "II") (c . "III") (d . "IV") (e . "V"))))
+(eval:check my-binary-dict '(() ((a . "I")) (() ((b . "II")) (() ((c . "III")) (() ((d . "IV")) (() ((e . "V")) ()))))))]
+
+But binary trees otherwise work:
+@Checks[
+(eval:check (map (lambda (k) ((symbol-tree-map 'ref) my-binary-dict k (lambda () #f))) '(a b c d e z))
+            '("I" "II" "III" "IV" "V" #f))]
+
+@subsubsection{Prototypes for @emph{Balanced} Binary Trees}
+
+We can incrementally define a balanced tree data structure
+(in this case, using the AVL balancing algorithm)
+by overriding a single method of the original binary tree prototype:
+@Definitions[
+(define ($avl-tree-rebalance self super)
+  (lambda (msg)
+    (define (left t) (car t))
+    (define (kv t) (caadr t))
+    (define (height t) (if (null? t) 0 (cdadr t)))
+    (define (right t) (caddr t))
+    (define (balance t) (if (null? t) 0 (- (height (right t)) (height (left t)))))
+    (define (mk l kv r)
+      (let ((lh (height l)) (rh (height r)))
+        (or (member (- rh lh) '(-1 0 1)) (error "tree unbalanced!"))
+        (list l (cons kv (+ 1 (max lh rh))) r)))
+    (define (node l ckv r)
+      (case (- (height r) (height l))
+        ((-1 0 1) (mk l ckv r))
+        ((-2) (case (balance l)
+                ((-1 0) (mk (left l) (kv l) (mk (right l) ckv r))) ;; LL rebalance
+                ((1) (mk (mk (left l) (kv l) (left (right l))) ;; LR rebalance
+                         (kv (right l)) (mk (right (right l)) ckv r)))))
+        ((2) (case (balance r)
+               ((-1) (mk (mk l ckv (left (left r))) ;; RL rebalance
+                         (kv (left r)) (mk (right (left r)) (kv r) (right r))))
+               ((0 1) (mk (mk l ckv (left r)) (kv r) (right r))))))) ;; RR rebalance
+    (case msg ((node) node) (else (super msg)))))
+(define symbol-avl-map (instance $avl-tree-rebalance $binary-tree-map ($slot 'Key symbol-order)))]
+
+Our dictionary is now well-balanced, height 3, and the tests still pass:
+@Checks[
+(define my-avl-dict
+  (foldl (lambda (kv t) ((symbol-avl-map 'acons) (car kv) (cdr kv) t))
+         (symbol-avl-map 'empty) '((a . "I") (b . "II") (c . "III") (d . "IV") (e . "V"))))
+(eval:check my-avl-dict
+                '((() ((a . "I") . 1) ()) ((b . "II") . 3)
+                  ((() ((c . "III") . 1) ()) ((d . "IV") . 2) (() ((e . "V") . 1) ()))))
+(eval:check (map (lambda (k) ((symbol-avl-map 'ref) my-avl-dict k (lambda () #f))) '(a b c d e z))
+            '("I" "II" "III" "IV" "V" #f))
+]
 
 
 @section{General Prototypes}
@@ -539,5 +678,24 @@ Or, compressing spaces, to 78, not counting newline, since we don't count spaces
 
 @section[#:tag "Appendix_B"]{Appendix B: Fixed-Point functions}
 
-@section{Chapter X: On Typing Prototypes}
+@section[#:tag "Appendix_C"]{Appendix C: Note for code minimalists}
 
+In our introduction, we described the @r[fix] and @r[mix] functions
+in only 109 characters of Scheme.
+We can do even shorter with various extensions.
+MIT Scheme and after it Racket, Gerbil Scheme, and more, allow you to write:
+@Definitions[
+(define ((mix p q) f b) (p f (q f b)))
+]
+And then we'd have Object Orientation in 100 characters only.
+
+Then again, in Gerbil Scheme, we could get it down to only 86, counting newline:
+@racketblock[
+(def (fix p b) (def f (p (lambda i (apply f i)) b)) f)
+]
+
+Or, compressing spaces, to 78,
+not counting newline, since we elide spaces:
+@racketblock[
+(def(fix p b)(def f(p(lambda i(apply f i))b))f)(def((mix p q)f b)(p f(q f b)))
+]
