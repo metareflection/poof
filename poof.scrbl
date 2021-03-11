@@ -659,7 +659,7 @@ Our dictionary is now well-balanced, height 3, and the tests still pass:
             '("I" "II" "III" "IV" "V" #f))
 ]
 
-@section{Prototypes beyond Objects}
+@section{Beyond Objects and back}
 
 Prototypes are not just for records as functions from symbol to value:
 they can be used to incrementally specify any kind of functions!
@@ -687,10 +687,7 @@ We can instantiate a function out of those of prototypes, and test it:
 
 @subsubsection{Number Thunks}
 
-The simplest numeric functions: thunks (nullary functions) that yield a number.
-
-They are just computations of no argument that yield a number.
-
+Now, the simplest numeric functions are thunks: nullary functions that yield a number.
 @Checks[
 (define (b0) 0)
 (define (p1+ _ b) (λ () (+ 1 (b))))
@@ -699,10 +696,38 @@ They are just computations of no argument that yield a number.
 (eval:check ((fix (mix p2* p1+) b0)) 2)
 ]
 
-... instead of thunks, lazy!
-... call-by-push-value: computations vs values
-... prototypes are partial computations, not partial values.
-... instances are the values returned by the complete computations.
+@subsection{Prototypes are for Computations not Values}
+
+Prototypes for number thunks can be generalized to prototypes for any kind of thunks:
+you may incrementally specify instances of arbitrary types using prototypes,
+by first wrapping values of that type into a thunk.
+An alternative to thunks would be to use Scheme's @r[delay] special form,
+or whatever form of @emph{lazy evaluation} is available in the language at hand.
+To reprise the Call-By-Push-Value paradigm @~cite{conf/tlca/Levy99},
+prototypes incrementally specify @emph{computations} rather than @emph{values};
+in applicative languages we reify these computations as values one way or the other,
+as functions or delayed values.
+
+@Definitions[
+(code:comment "(deftype (DelayedProto Self Super) (Fun (Delayed Self) (Delayed Super) -> Self))")
+(code:comment "delayed-fix : (Fun (DelayedProto Self Super) (Delayed Super) -> (Delayed Self))")
+(define (delayed-fix p b) (define f (delay (p f b))) f)
+(code:comment "delayed-mix : (Fun (DelayedProto Self Super) (DelayedProto Super Super2) -> (DelayedProto Self Super2))")
+(define (delayed-mix c p) (λ (f b) (c f (delay (p f b)))))
+(code:comment "delayed-$id : (DelayedProto X X)")
+(define (delayed-$id f b) (λ (_self super) (force super)))
+]
+
+Interestingly, this is exactly how objects are encoded since 2015 in
+the pure lazy functional dynamically typed language Nix @~cite{dolstra2008nixos}:
+instances (called “attribute sets”) are mappings from strings to values,
+and their variants of prototypes (called “extensions”) are functions
+from attribute sets @r[self] and @r[super] to an attribute set
+that is meant to extend and override @r[super] as incremental contribution
+to the computation of @r[self].
+As a special twist though, XXXX
+
+Also interestingly, Jsonnet @~cite{jsonnet}... @; TODO: XXXXX
 
 @section[#:tag "Better_objects"]{Better objects, still pure}
 

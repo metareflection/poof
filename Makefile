@@ -4,7 +4,7 @@ all: view
 
 pdf: poof.pdf
 
-poof.pdf: poof.scrbl
+poof.pdf: poof.scrbl poof.bib util/eval-check.rkt util/examples-module.rkt
 	scribble --pdf poof.scrbl
 
 test: poof.scrbl
