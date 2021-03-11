@@ -668,17 +668,145 @@ Our dictionary is now well-balanced, height 3, and the tests still pass:
 
 @section{Prototypes beyond Objects}
 
+Prototypes are not just for records as functions from symbol to value:
+they can be used to incrementally specify any kind of functions!
+
 @subsection{Prototypes for Numeric Functions}
 
-@subsubsection{Prototypes to incrementally specify numeric functions}
+Let's see how prototypes can be used to build functions from real numbers to real numbers.
+The following prototype is a mixin for an even function,
+that delegates to other prototypes the images of positive values
+and returns the image of the opposite for negative values:
+@Examples[
+(define ($even self super)
+  (lambda (x) (if (< x 0) (self (- x)) (super x))))
+]
+The following prototype is a mixin for squaring the parent value:
+@Examples[
+(define ($cube self super)
+  (lambda (x) (let ((y (super x))) (* y y y))))
+]
+We can instantiate a function out of those of prototypes, and test it:
+@Checks[
+(define absx3 (instance $even $cube ($const (lambda (x) x))))
+(eval:check (absx3 3) 27)
+(eval:check (absx3 -2) 8)
+(eval:check (absx3 0) 0)
+(eval:check (absx3 -1) 1)
+]
 
 @subsubsection{Number Thunks}
 
+The simplest numeric functions: thunks (nullary functions) that yield a number.
+
+They are just computations of no argument that yield a number.
+
+@Checks[
+(define (b0) 0)
+(define (p1+ _ b) (lambda () (+ 1 (b))))
+(define (p2* _ b) (lambda () (* 2 (b))))
+(eval:check ((fix (mix p1+ p2*) b0)) 1)
+(eval:check ((fix (mix p2* p1+) b0)) 2)
+]
+
+... instead of thunks, lazy!
+... call-by-push-value: computations vs values
+... prototypes are partial computations, not partial values.
+... instances are the values returned by the complete computations.
+
 @section[#:tag "Better_objects"]{Better objects, still pure}
+
+In chapter II, we explained how to implement a rudimentary object system
+
+Compared to mainstream systems, it already featured powerful notions:
+@itemize[
+@item{Mixins, more general than single-inheritance, yet requires much more
+maintenance than multiple inheritance; using isn't modular.}
+]
+
+Now, let's try to build a more featureful one.
+@itemize[
+@item{
+   One downside of the previous object system is that
+   there was no introspection as to what keys were provided by a prototype.
+}@item{
+   Another downside was that we had to separately manipulate two different
+   kinds of entities, prototypes and instances, even though, often,
+   we want to deal with only one entity that can play either/both roles.
+}@item{
+   Finally, the object system was barebones and doesn't support additional
+   features like multiple inheritance, type annotations, method combinations,
+   multiple-dispatch, ...
+}]
+
+A few possible solutions to the first issue:
+@itemize[
+@item{
+  Have prototype functions respond to a special magic message 'keys.
+  It is the responsibility of the programmer to make sure this message
+  is and remains in synch with the actual list of messages supported
+  --- or we could provide some macros for it.
+}@item{
+  Instead of passing around prototype functions alone, we could pass around
+  a product of a function and a list of keys, as a list or other structure.
+  There again, macros can do that for us, and even abstract over which
+  encoding is used, whether the above or any.
+}@item{
+  Directly pass around a structure that embodies a dictionary mapping
+  symbols to functions, e.g. a hash-table from SRFI-125, or even just
+  the pure symbol-avl-map we just implemented in chapter II.
+}]
+
+Possible solutions to the second issue:
+@itemize[
+@item{
+  Use the prototypes as a way to compute the instance through fixed-point,
+  but use a wrapper to present a better interface to the result, that
+  among other things will keep the prototype information available together
+  with the instance information, in a single entity.
+  Separating instance computation and instance usage also allows us to
+  provide two distinct representations for the same information, one
+  optimized for construction, the other for consumption.
+}]
+
+Possible solutions to the third issue:
+@itemize[
+@item{
+  Consider that the composable "prototype information" isn't just
+  a function prototype, but also other meta-information like
+  a list of direct super prototypes (for multiple inheritance),
+  a separate prototype for type declarations, (or a merged prototype
+  with separate calling conventions for type information), yet another
+  prototype for method combinations, etc.
+}@item{
+  Instead of a long litany of features hardwired in an ad hoc way in
+  a giant object system, a composable Meta-Object Protocol that enables
+  all the features in a modular fashion.
+}]
 
 @section{Classes}
 
 @section{Stateful Objects}
+
+Note how all the functions defined in the previous chapter were pure:
+They didn't use any side-effect whatsoever.
+No @r[set!], no tricky use of @r[call/cc].
+
+But what if we are OK with using side-effects? How much does that simplify things?
+
+We can do away with one of the two self super arguments, and instead pass a single mutable value
+as argument, where the identity provides the self, and the current state of the value provides the super.
+
+Thus, we could for instance use @r[(deftype Proto (Fun MutableHashTable ->))],
+where the hash-table contains the effective methods to compute each slot as thunks
+or lazy computations already closed over the hash-table.
+Overriding a slot would replace the effective method based on the new method, the self and super method.
+Thus, individual methods would still be parameterized over self and super,
+even though the object prototype only has the self as parameter.
+
+Alternatively, each individual slot contains an object, and the methods are prototypes
+for these "objects", with the same mutable signature. But that means that only mutable objects
+are allowed as values in the language. Yikes.
 
 @section[#:tag "Appendix_A"]{Appendix A: A Digression about type notation}
 
