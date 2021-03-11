@@ -29,7 +29,7 @@ a function from Self and Super to Self.
 The first argument `self` of type Self will hold the instance
 resulting as a fixed point from the entire computation.
 When composing multiple prototypes, every prototype will receive
-the *same* value as their self argument:
+the *same* value as their `self` argument:
 the complete instance that results from applying the every prototype in order.
 This allows prototypes to "cooperate" with each other
 on *different* aspects of the computation,
@@ -281,16 +281,16 @@ or override the method values inherited from the parent prototypes.
 ;; (parent self super) : Super
 ;; (this self (parent self super)) : Self
 
-"When writing long-form functions instead of vying for conciseness, we will
+"When writing long-form functions, instead of vying for conciseness, we will
 use the same naming conventions as in the function above:
 - `child` (or `this`) for a *prototype* at hand, in leftmost position;
-- `parent` for a *prototype* it is being mixed with, in latter position;
+- `parent` for a *prototype* that is being mixed with, in latter position;
 - `self` for the *instance* that is a fixed point of the computation;
 - `super` for the base (or so-far accumulated) *instance* of the computation.
 
 Note the important distinction between *prototypes* and *instances*.
 Instances are elements of some function type, and are themselves
-the results of the computation whereby prototypes are instantiated.
+the results of the computation wherein prototypes are instantiated.
 Prototypes are increments of computation, functions from instance (of a
 subtype `Self`) and instance (of a supertype `Super`) to instance of the
 subtype `Self`."
@@ -308,7 +308,7 @@ or instantiate a list of prototypes:"
    (else (compose-prototypes (car l) (compose-prototype-list (cdr l))))))
 
 "A more succint way to write the same function is:"
-;; compose-protototype-list : (Fun (IndexedList I (lambda (i) (Proto (A_ i) (A_ (1+ i))))) (A_ (Card I)) -> (Proto (A_ 0) (A_ (1+ i))))
+;; compose-protototype-list : (Fun (IndexedList I (lambda (i) (Proto (A_ i) (A_ (1+ i))))) -> (Proto (A_ 0) (A_ (Card I))))
 (define (compose-prototype-list prototype-list)
   (foldr compose-prototypes identity-prototype prototype-list))
 
@@ -321,7 +321,7 @@ as commonly used in many "simple" object systems:
 Object systems with "single inheritance" require programmers to `cons`
 objects (or classes) one component at a time in the front of a rigid list of
 "parent" objects (or classes), where the base object (or class) is set.
-Prototype object systems enable programmers to `append` list of prototypes
+Prototype object systems enable programmers to `append` lists of prototypes
 independently from any base object, to compose and recompose prototypes
 in different orders and combinations.
 Prototypes are thus more akin to the "mixins" or "traits" of more advanced
@@ -378,6 +378,6 @@ MIT Scheme and after it Racket, Gerbil Scheme, and more, allow you to write:"
 "Then again, in Gerbil Scheme, we could get it down to only 86 (counting newline):"
 (def (fix p b) (def f (p (lambda i (apply f i)) b)) f)
 
-"Of, compressing spaces, to 78 (not counting newline, since we don't count spaces):"
+"Or, compressing spaces, to 78 (not counting newline, since we don't count spaces):"
 (def(fix p b)(def f(p(lambda i(apply f i))b))f)(def((mix p q)f b)(p f(q f b)))
 )
