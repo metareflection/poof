@@ -1,6 +1,6 @@
 #lang scribble/acmart @acmsmall @review
 
-@(require scriblib/autobib
+@(require scriblib/bibtex
           (only-in scribble/manual racket racketblock litchar itemize item)
           (only-in scribble/example examples make-base-eval)
           "util/examples-module.rkt"
@@ -19,20 +19,10 @@
 @author[#:affiliation "Mutual Knowledge Systems, Inc."]{Alex Knauth}
 @author[#:affiliation "Harvard University"]{Nada Amin}
 
-@(define-cite ~cite citet generate-bibliography)
+@(define-bibtex-cite "poof.bib" ~cite citet generate-bibliography)
 
-@(define plt-tr1
-   (make-bib
-    #:title    "Reference: Racket"
-    #:author   (authors "Matthew Flatt" "PLT")
-    #:date     "2010"
-    #:location (techrpt-location #:institution "PLT Inc."
-                                 #:number "PLT-TR-2010-1")
-    #:url      "http://racket-lang.org/tr1/"))
-
-Racket is fun@~cite[plt-tr1].
-
-Racket has a contract library.@~cite[(in-bib plt-tr1 ", §8")]
+TAPL by @citet{tapl} is relevant.
+TAPL@~cite{tapl} has a relevant chapter (§32).
 
 @section{Prototypes, bottom up}
 
