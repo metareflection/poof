@@ -1,15 +1,23 @@
-#lang scribble/acmart
+#lang scribble/acmart @acmsmall @review
 
-@(require (only-in scribble/manual racket racketblock litchar itemize item)
+@(require scriblib/bibtex
+          (only-in scribble/manual racket racketblock litchar itemize item)
           (only-in scribble/example examples make-base-eval)
           (only-in scriblib/footnote note)
+          syntax/parse/define
+          "util/examples-module.rkt"
           (for-label racket))
 
-@(define ev (make-base-eval))
-@(define-syntax defrule (syntax-rules () ((_ (mac . pat) . bod) (define-syntax mac (syntax-rules () ((mac . pat) . bod))))))
-@(defrule (r . a) (racket . a))
-@(defrule (Definitions . a) (examples #:no-result #:eval ev . a))
-@(defrule (Checks . a) (examples #:label #f #:eval ev . a))
+@(declare-examples/module poof racket
+   (provide (all-defined-out)))
+@examples/module[poof #:hidden
+(require (only-in racket/base [define def])
+         "util/eval-check.rkt")]
+
+@(define-simple-macro (r a ...) (racket a ...))
+@(define-simple-macro (Definitions a ...) (examples/module poof #:no-result a ...))
+@(define-simple-macro (Examples a ...) (examples #:eval poof #:no-result a ...))
+@(define-simple-macro (Checks a ...) (examples #:eval poof #:label #f a ...))
 
 @title{Prototype Object-Orientation Functionally}
 
@@ -25,6 +33,11 @@
   #:email (email "namin@seas.harvard.edu")
   #:affiliation (affiliation #:institution @institution{@emph{Harvard University}})
 ]{Nada Amin}
+
+@(define-bibtex-cite "poof.bib" ~cite citet generate-bibliography)
+
+TAPL by @citet{tapl} is relevant.
+TAPL@~cite{tapl} has a relevant chapter (§32).
 
 @section{Prototypes, bottom up}
 
@@ -117,13 +130,12 @@ rather than it "containing" the value or any such thing.
 Thus, the function @r[x1-y2] below encodes a record with two slots
 @r[x] and @r[y] bound respectively to @r[1] and @r[2].
 
-@Definitions[
+@Examples[
 (code:comment "x1-y2 : (Fun 'x -> Nat | 'y -> Nat)")
-(define (x1-y2 msg)
-  (case msg
-    ((x) 1)
-    ((y) 2)
-    (else (error "unbound slot" msg))))
+(define (x1-y2 msg) (case msg
+                      ((x) 1)
+                      ((y) 2)
+                      (else (error "unbound slot" msg))))
 ]
 
 We can check that we can indeed access the record slots
@@ -146,7 +158,7 @@ To distinguish prototypes from instances and other values,
 we will follow the convention of prefixing with @litchar{$} the names of prototypes.
 Thus, the following prototype extends or overrides its super-record with
 a slot @r[x] unconditionally bound to @r[3]:
-@Definitions[
+@Examples[
 (code:comment "$x3 : (Proto (Fun 'x -> Nat | A) A)")
 (define ($x3 self super)
   (lambda (msg) (if (eq? msg 'x) 3 (super msg))))
@@ -155,7 +167,7 @@ a slot @r[x] unconditionally bound to @r[3]:
 This prototype computes a complex number slot @r[z] based on real and
 imaginary values bound to the respective slots @r[x] and @r[y] of its
 @r[self]:
-@Definitions[
+@Examples[
 (code:comment "$z<-xy : (Proto (Fun (Or 'x 'y) -> Real | 'z -> Complex | A) (Fun (Or 'x 'y) -> Real | A))")
 (define ($z<-xy self super)
   (lambda (msg)
@@ -166,7 +178,7 @@ imaginary values bound to the respective slots @r[x] and @r[y] of its
 
 That prototype doubles the number in slot @r[x] from its @r[super] record.
 We say that it @emph{inherits} the value for slot @r[x]:
-@Definitions[
+@Examples[
 (code:comment "$double-x : (Proto (Fun 'x -> Number | A) (Fun 'x -> Number | A))")
 (define ($double-x self super)
   (lambda (msg)
@@ -181,28 +193,27 @@ with some obvious restrictions to avoid infinite loops from circular definitions
 @subsubsection{Basic testing} How to test these prototypes?
 With the @r[fix] operator using the above record @r[x1-y2] as base value:
 
-@Checks[(code:comment "x3-y2 : (Fun 'x -> Nat | 'y -> Nat)")
+@Checks[
+(code:comment "x3-y2 : (Fun 'x -> Nat | 'y -> Nat)")
 (define x3-y2 (fix $x3 x1-y2))
 (eval:check (x3-y2 'x) 3)
 (eval:check (x3-y2 'y) 2)
-]
 
-@Checks[(code:comment "z1+2i : (Fun 'x -> Nat | 'y -> Nat | 'z -> Complex)")
+(code:comment "z1+2i : (Fun 'x -> Nat | 'y -> Nat | 'z -> Complex)")
 (define z1+2i (fix $z<-xy x1-y2))
 (eval:check (z1+2i 'x) 1)
 (eval:check (z1+2i 'y) 2)
 (eval:check (z1+2i 'z) 1+2i)
-]
 
-@Checks[(code:comment "x2-y2 : (Fun 'x -> Nat | 'y -> Nat)")
+(code:comment "x2-y2 : (Fun 'x -> Nat | 'y -> Nat)")
 (define x2-y2 (fix $double-x x1-y2))
 (eval:check (x2-y2 'x) 2)
 (eval:check (x2-y2 'y) 2)
 ]
 
-We can also @r[mix] these prototypes together before to compute the
-@r[fix]:
-@Checks[(code:comment "z6+2i : (Fun 'x -> Nat | 'y -> Nat | 'z -> Complex)")
+We can also @r[mix] these prototypes together before to compute the @r[fix]:
+@Checks[
+(code:comment "z6+2i : (Fun 'x -> Nat | 'y -> Nat | 'z -> Complex)")
 (define z6+2i (fix (mix $z<-xy (mix $double-x $x3)) x1-y2))
 (eval:check (z6+2i 'x) 6)
 (eval:check (z6+2i 'y) 2)
@@ -213,13 +224,15 @@ And since the @r[$z<-xy] prototype got the @r[x] and @r[y] values
 from the @r[self]
 and not the @r[super], we can freely commute it with the other two prototypes
 that do not affect either override slot @r['z] or inherit from it:
-@Checks[(eval:check ((fix (mix $z<-xy (mix $double-x $x3)) x1-y2) 'z) 6+2i)
+@Checks[
+(eval:check ((fix (mix $z<-xy (mix $double-x $x3)) x1-y2) 'z) 6+2i)
 (eval:check ((fix (mix $double-x (mix $z<-xy $x3)) x1-y2) 'z) 6+2i)
 (eval:check ((fix (mix $double-x (mix $x3 $z<-xy)) x1-y2) 'z) 6+2i)
 ]
 
 @r[mix] is associative, and therefore we also have
-@Checks[(eval:check ((fix (mix (mix $z<-xy $double-x) $x3) x1-y2) 'z) 6+2i)
+@Checks[
+(eval:check ((fix (mix (mix $z<-xy $double-x) $x3) x1-y2) 'z) 6+2i)
 (eval:check ((fix (mix (mix $double-x $z<-xy) $x3) x1-y2) 'z) 6+2i)
 (eval:check ((fix (mix (mix $double-x $x3) $z<-xy) x1-y2) 'z) 6+2i)
 ]
@@ -227,10 +240,10 @@ that do not affect either override slot @r['z] or inherit from it:
 But the result of @r[mix] is slightly more efficient in the former form
 (fold right) than the present form (fold left).
 
-However, since @r[$double-x] inherits slot @r[x] that @r[$x3]
-overrides, there is
-clearly a dependency between the two that prevents them from commuting:
-@Checks[(code:comment "x6-y2 : (Fun 'x -> Nat | 'y -> Nat)")
+However, since @r[$double-x] inherits slot @r[x] that @r[$x3] overrides,
+there is clearly a dependency between the two that prevents them from commuting:
+@Checks[
+(code:comment "x6-y2 : (Fun 'x -> Nat | 'y -> Nat)")
 (define x6-y2 (fix (mix $double-x $x3) x1-y2))
 (code:comment "x3-y2 : (Fun 'x -> Nat | 'y -> Nat)")
 (define x3-y2 (fix (mix $x3 $double-x) x1-y2))
@@ -286,14 +299,14 @@ slot value from the @r[super] argument
 ]
 
 We could redefine the former ones in terms of that latter:
-@Definitions[
+@Examples[
 (define ($slot k v) ($slot-gen k (lambda (_self _next-method) v)))
 (define ($slot-modify k modify) ($slot-gen k (lambda (_self next-method) (modify (next-method)))))
 (define ($slot-compute k fun) ($slot-gen k (lambda (self _next-method) (fun self))))
 ]
 
 Thus you can re-define the above prototypes as:
-@Definitions[
+@Examples[
 (define $x3 ($slot 'x 3))
 (define $double-x ($slot-modify 'x (lambda (x) (* 2 x))))
 (define $z<-xy ($slot-compute 'z (lambda (self) (+ (self 'x) (* 0+1i (self 'y))))))
@@ -305,16 +318,17 @@ Here is a universal bottom function to use as the base for fix:
 (define (bottom-record msg) (error "unbound slot" msg))
 ]
 
-To define a record with a single slot @r[foo] bound to @r[0], we can
-use:
-@Checks[(code:comment "x3 : (Fun 'x -> Nat)")
+To define a record with a single slot @r[foo] bound to @r[0], we can use:
+@Checks[
+(code:comment "x3 : (Fun 'x -> Nat)")
 (define x3 (fix $x3 bottom-record))
 (eval:check (x3 'x) 3)
 ]
 
 To define a record with two slots @r[x] and @r[y] bound to @r[1]
 and @r[2] respectively, we can use:
-@Checks[(code:comment "x1-y2 : (Fun 'x -> Nat | 'y -> Nat)")
+@Checks[
+(code:comment "x1-y2 : (Fun 'x -> Nat | 'y -> Nat)")
 (define x1-y2 (fix (mix ($slot 'x 1) ($slot 'y 2)) bottom-record))
 (eval:check (x1-y2 'x) 1)
 (eval:check (x1-y2 'y) 2)
@@ -387,7 +401,7 @@ of the subtype @r[Self], both inputs and outputs of composition.
 
 @subsubsection{Composing prototypes}
 
-The identity prototype, neutral element for mix, is as follows:
+The identity prototype as follows is neutral element for mix:
 @Definitions[
 (code:comment "$id : (Proto X X)")
 (define ($id f b) b)
@@ -395,41 +409,34 @@ The identity prototype, neutral element for mix, is as follows:
 
 It doesn't override any information from the super/base object,
 but only passes it through. It also doesn't consult information in
-the final fixed-point nor refers to it.
-
-But maybe this prototype business is easier to understood when written in
-"long form", with long identifiers, and traditional arguments @r[self] and
-@r[super]. Thus, @r[$id] becomes:
+the final fixed-point nor refers to it. In "long form", it becomes:
 @Definitions[
 (code:comment "identity-prototype : (Proto Instance Instance)")
 (define (identity-prototype self super) super)
 ]
 
-
-Now, prototypes are interesting because @r[mix]
-(a.k.a. @r[compose-prototypes])
-is an associative operator with neutral element @r[$id]
-(a.k.a. @r[identity-prototype]).
+Now, prototypes are interesting because @r[mix] (a.k.a. @r[compose-prototypes])
+is an associative operator with neutral element @r[$id] (a.k.a. @r[identity-prototype]).
 Thus prototypes form a monoid, and you can compose
 or instantiate a list of prototypes:
 @Definitions[
-(code:comment "compose-protototype-list : (Fun (IndexedList I (lambda (i) (Proto (A_ i) (A_ (1+ i))))) -> (Proto (A_ 0) (A_ (Card I))))")
+(code:comment "compose-prototype-list : (Fun (IndexedList I (lambda (i) (Proto (A_ i) (A_ (1+ i))))) -> (Proto (A_ 0) (A_ (Card I))))")
 (define (compose-prototype-list l)
   (cond
-   ((null? l) identity-proto)
+   ((null? l) identity-prototype)
    ((null? (cdr l)) (car l))
    ((null? (cddr l)) (compose-prototypes (car l) (cadr l)))
    (else (compose-prototypes (car l) (compose-prototype-list (cdr l))))))
 ]
 
 A more succint way to write the same function is:
-@Definitions[
+@Examples[
 (define (compose-prototype-list prototype-list)
   (foldr compose-prototypes identity-prototype prototype-list))
 ]
 
 @Definitions[
-(code:comment "instantiate-protototype-list : (Fun (IndexedList I (lambda (i) (Proto (A_ i) (A_ (1+ i))))) (A_ (Card I)) -> (A_ 0))")
+(code:comment "instantiate-prototype-list : (Fun (IndexedList I (lambda (i) (Proto (A_ i) (A_ (1+ i))))) (A_ (Card I)) -> (A_ 0))")
 (define (instantiate-prototype-list prototype-list base-super)
   (instantiate-prototype (compose-prototype-list prototype-list) base-super))
 ]
@@ -471,7 +478,7 @@ a list of prototypes, and instantiates the composition of them:
 
 What if you @emph{really} wanted to instantiate your list of prototypes with some
 value @r[b] as the base super instance? You can "just" tuck
-@r[(base-prototype b)] at the tail end of your protototype list:
+@r[(constant-prototype b)] at the tail end of your prototype list:
 @Definitions[
 (code:comment "constant-prototype : (Fun A -> (Proto A _))")
 (define (constant-prototype base-super)
@@ -659,14 +666,13 @@ Our dictionary is now well-balanced, height 3, and the tests still pass:
             '("I" "II" "III" "IV" "V" #f))
 ]
 
+@section{Prototypes beyond Objects}
 
-@section{General Prototypes}
-
-@subsection{Prototypes for non-object functions}
-
-@subsubsection{A prototype for the identity function}
+@subsection{Prototypes for Numeric Functions}
 
 @subsubsection{Prototypes to incrementally specify numeric functions}
+
+@subsubsection{Number Thunks}
 
 @section[#:tag "Better_objects"]{Better objects, still pure}
 
@@ -684,7 +690,7 @@ In our introduction, we described the @r[fix] and @r[mix] functions
 in only 109 characters of Scheme.
 We can do even shorter with various extensions.
 MIT Scheme and after it Racket, Gerbil Scheme, and more, allow you to write:
-@Definitions[
+@Examples[
 (define ((mix p q) f b) (p f (q f b)))
 ]
 And then we'd have Object Orientation in 100 characters only.
@@ -699,3 +705,6 @@ not counting newline, since we elide spaces:
 @racketblock[
 (def(fix p b)(def f(p(lambda i(apply f i))b))f)(def((mix p q)f b)(p f(q f b)))
 ]
+
+@(generate-bibliography)
+@(finalize-examples/module poof)
