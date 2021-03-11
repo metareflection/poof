@@ -50,7 +50,7 @@ TAPL@~cite{tapl} has a relevant chapter (§32).
 
 We contend that the above two definitions summarize
 the essence of object-oriented programming, and that
-all the usual "object oriented" concepts can be easily recovered from them.
+all the usual “object oriented” concepts can be easily recovered from them.
 The rest of this essay will make the case.
 
 @subsubsection{The Essence of OOP}
@@ -83,20 +83,20 @@ resulting as a fixed point from the entire computation.
 When composing multiple prototypes, every prototype will receive
 the @emph{same} value as their @r[self] argument:
 the complete instance that results from applying the every prototype in order.
-This allows prototypes to "cooperate" with each other
+This allows prototypes to “cooperate” with each other
 on @emph{different} aspects of the computation,
-wherein one prototype defines some aspect (e.g. a "method" in some dictionary)
+wherein one prototype defines some aspect (e.g. a “method” in some dictionary)
 while relying on aspects to be defined by other prototypes (e.g. other methods),
-accessed through the @r[self] argument in what is called "late binding".
+accessed through the @r[self] argument in what is called “late binding”.
 
 The second argument @r[super] by contrast holds the partial result of the
-fixed-point computation after applying only the "next" prototypes.
+fixed-point computation after applying only the “next” prototypes.
 When composing multiple prototypes, each prototype will (presumably) receive
 a different value. The last prototype in the list (rightmost, most ancestral
-parent) will receive the "base" or "bottom" value from the fix function
+parent) will receive the “base” or “bottom” value from the fix function
 (often literally the bottom value or function in the language), then the
 "previous" prototype (its child, to the left) will receive ("inherit")
-the result of that "next" computation (its parent, to the right), and so on
+the result of that “next” computation (its parent, to the right), and so on
 until the first prototype (leftmost, most recent child) inherits
 its @r[super] value from the rest and computes the final instance.
 This allows prototypes to cooperate with other prototypes on a @emph{same} aspect
@@ -113,19 +113,19 @@ Furthermore, for an @emph{efficient} implementation of objects with our formulas
 we will also require lazy evaluation (or side effects to implement them)
 as a optional or ubiquitous language feature.
 We do not otherwise require side-effects---though they can be used
-for the usual optimizations in the common "linear" case.
+for the usual optimizations in the common “linear” case.
 
 @subsection{A minimal object system}
 
 @subsubsection{Records as functions}
 
 Let us relate the above two functions to objects,
-by first encoding "records" of multiple named values as functions
+by first encoding “records” of multiple named values as functions
 from symbol (the name of a slot) to value (bound to the slot).
 In accordance with Lisp tradition,
-we will say "slot" where others may say "field" or "member" or "method",
+we will say “slot” where others may say “field” or “member” or “method”,
 and say that the slot is bound to the given value
-rather than it "containing" the value or any such thing.
+rather than it “containing” the value or any such thing.
 
 Thus, the function @r[x1-y2] below encodes a record with two slots
 @r[x] and @r[y] bound respectively to @r[1] and @r[2].
@@ -348,8 +348,8 @@ while our representation doesn't make such an assumption and such a call.
 Methods in T can be directly represented as slots with a function value in our approach.
 Non-function-valued slots in our approach above can be represented in T
 by nullary methods returning the value.
-What we call "instances", T calls "objects" or "instances",
-while what we call "prototypes" correspond to T "components".
+What we call “instances”, T calls “objects” or “instances”,
+while what we call “prototypes” correspond to T “components”.
 
 @subsection{Prototype Basics}
 
@@ -409,7 +409,7 @@ The identity prototype as follows is neutral element for mix:
 
 It doesn't override any information from the super/base object,
 but only passes it through. It also doesn't consult information in
-the final fixed-point nor refers to it. In "long form", it becomes:
+the final fixed-point nor refers to it. In “long form”, it becomes:
 @Definitions[
 (code:comment "identity-prototype : (Proto Instance Instance)")
 (define (identity-prototype self super) super)
@@ -441,15 +441,15 @@ A more succint way to write the same function is:
   (instantiate-prototype (compose-prototype-list prototype-list) base-super))
 ]
 
-Prototype composition is notably more expressive than "single inheritance"
-as commonly used in many "simple" object systems:
-Object systems with "single inheritance" require programmers to @r[cons]
+Prototype composition is notably more expressive than “single inheritance”
+as commonly used in many “simple” object systems:
+Object systems with “single inheritance” require programmers to @r[cons]
 objects (or classes) one component at a time in the front of a rigid list of
 "parent" objects (or classes), where the base object (or class) is set.
 Prototype object systems enable programmers to @r[append] lists of prototypes
 independently from any base object, to compose and recompose prototypes
 in different orders and combinations.
-Prototypes are thus more akin to the "mixins" or "traits" of more advanced
+Prototypes are thus more akin to the “mixins” or “traits” of more advanced
 objects systems.
 Prototype composition however, does not by itself subsume multiple
 inheritance. We will show in @seclink["Better_objects"]{chapter 4} how to
@@ -477,7 +477,7 @@ a list of prototypes, and instantiates the composition of them:
 ]
 
 What if you @emph{really} wanted to instantiate your list of prototypes with some
-value @r[b] as the base super instance? You can "just" tuck
+value @r[b] as the base super instance? You can “just” tuck
 @r[(constant-prototype b)] at the tail end of your prototype list:
 @Definitions[
 (code:comment "constant-prototype : (Fun A -> (Proto A _))")
@@ -524,7 +524,7 @@ either numbers or strings.
                   (else (super msg)))))
 ]
 
-We can add a "mixin" for a @r[compare] operator that summarizes in one call
+We can add a “mixin” for a @r[compare] operator that summarizes in one call
 the result of comparing two elements of the type being described.
 A mixin is a prototype meant to extend other prototypes.
 See how this mixin can be used to extend either of the prototypes above.
