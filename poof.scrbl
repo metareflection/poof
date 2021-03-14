@@ -1,5 +1,7 @@
 #lang scribble/acmart @acmsmall @review
 
+@; To be submitted to OOPSLA 2021? https://2021.splashcon.org/track/splash-2021-oopsla
+
 @(require scriblib/bibtex
           (only-in scribble/manual racket racketblock litchar itemize item)
           (only-in scribble/example examples make-base-eval)
@@ -36,8 +38,8 @@
 
 @(define-bibtex-cite "poof.bib" ~cite citet generate-bibliography)
 
-TAPL by @citet{tapl} is relevant.
-TAPL@~cite{tapl} has a relevant chapter (§32).
+@;TAPL by @citet{tapl} is relevant.
+@;TAPL@~cite{tapl} has a relevant chapter (§32).
 
 @section{Prototypes, bottom up}
 
@@ -703,10 +705,21 @@ you may incrementally specify instances of arbitrary types using prototypes,
 by first wrapping values of that type into a thunk.
 An alternative to thunks would be to use Scheme's @r[delay] special form,
 or whatever form of @emph{lazy evaluation} is available in the language at hand.
+
 To reprise the Call-By-Push-Value paradigm @~cite{conf/tlca/Levy99},
-prototypes incrementally specify @emph{computations} rather than @emph{values};
+prototypes incrementally specify @emph{computations} rather than @emph{values}.
 in applicative languages we reify these computations as values one way or the other,
 as functions or delayed values.
+
+Indeed, most interesting prototypes will only lead to error or divergence if you try
+to instantiate them by themselves---they are “mixins”. The whole entire point of
+incrementally specifying computations is that you want to manipulate fragments
+that are not complete specifications. To use these fragments in a total language
+where all computations terminates will require attaching to each prototype some
+side-condition as to which aspects of a computation it provides that other
+prototypes may rely on, and which aspects of a computation it requires that other
+prototypes must provide. This side-condition may well be a type in one of the
+many existing type systems for objects @~cite{Abadi97atheory} @~cite{tapl}.
 
 @Definitions[
 (code:comment "(deftype (DelayedProto Self Super) (Fun (Delayed Self) (Delayed Super) -> Self))")
@@ -718,16 +731,78 @@ as functions or delayed values.
 (define (delayed-$id f b) (λ (_self super) (force super)))
 ]
 
-Interestingly, this is exactly how objects are encoded since 2015 in
-the pure lazy functional dynamically typed language Nix @~cite{dolstra2008nixos}:
-instances (called “attribute sets”) are mappings from strings to values,
-and their variants of prototypes (called “extensions”) are functions
-from attribute sets @r[self] and @r[super] to an attribute set
-that is meant to extend and override @r[super] as incremental contribution
-to the computation of @r[self].
-As a special twist though, XXXX
+@subsection{Prototypes in Lazy Pure Functional Dynamic Languages}
 
-Also interestingly, Jsonnet @~cite{jsonnet}... @; TODO: XXXXX
+Interestingly, this is exactly how objects are encoded in
+the pure lazy functional dynamically typed language Nix @~cite{dolstra2008nixos}.
+
+Since 2015, the Nix standard library contains variants of the @r[fix] et @r[mix] functions,
+wherein instances of its “attribute sets” mapping from strings to values
+can be defined in terms of some base definition and one or many “extensions”
+that are functions from attribute sets @r[self] and @r[super] to
+an attribute set that is meant to extend and override @r[super]
+as incremental contribution to the computation of the @r[self] fixed-point.
+Apart from minor details and their construction being specialized for “attribute sets”,
+this is the very same construction that we are presenting,
+even though Nix's extension system was not even consciously meant
+as an object system when it was designed.
+This is not a coincidence, since the present essay started with
+an effort to formalize the essence of objects as understood from Nix and Jsonnet.
+
+Indeed, Jsonnet @~cite{jsonnet}, another lazy pure functional dynamic language,
+sports an object system that is semantically equivalent to that of Nix.
+Jsonnet itself was invented as a simplified semantic reconstruction of the essential ideas
+behind GCL, the decade-older configuration language used everywhere inside Google.
+GCL also wasn't explicitly designed as an object system, yet ended up having discovered
+an excellent point in the design space, despite the overall clunkiness of the language.
+That across several decades, closely matching designs were independently reinvented many times
+without the intention to do so, is a good sign that this design is a “fixed point in design space”,
+akin to the notion of “fixed point in time” in Dr Who: @; TODO: citation needed?
+however you may try to reach a different conclusion, you still end-up with that fixed-point eventually.
+
+Still, there are ways in which Jsonnet and Nix improved upon
+the prototype object systems as initially designed in ThingLab @~cite{Borning77} or T @~cite{Rees82t:a},
+or later made popular by SELF or JavaScript @; cite
+As in these previous inventions, Jsonnet and Nix use first-class functions to construct objects.
+They also rely on dynamic types to avoid the need for dependent types and internal type theories
+required to statically type first-class prototypes in the most general case.
+But unlike previous incarnations, they also rely on lazy evaluation as a way to express
+first-class computations that can be manipulated whether or not they terminate,
+without a clumsy explicit wrapping in a thunk or a lazy constructor.
+They thus prove that lazy pure functional programming is useful way beyond
+Haskell's popular package-deal of this programming model with a mediocrely-expressive type system:
+Haskell like ML provides a typesystem with parametric polymorphism but no dependent types,
+for the dubious sake of a program-independent theoretical computability guarantee,
+thus rejecting most interesting uses of prototypes.
+
+Now, there is another special way in which Jsonnet and Nix improve upon T's objects,
+that provides insight into Object-Oriented Programming:
+they unify instances and prototypes as objects.
+We'll come back to that later. @; TODO: use @seclink
+
+@subsection{Prototypes are Useful Even Without Subtyping}
+
+The above example of prototypes for numeric functions also illustrate that
+even if you language's only subtyping relationship is
+the identity whereby each type is the one and only subtype or itself
+(or something slightly richer with syntactic variable substitution in parametric polymorphism),
+then you can use prototypes to incrementally specify computations,
+with the following monomorphic types:
+@racketblock[
+(deftype (MProto A) (Fun A A -> A))
+fix : (Fun (MProto A) A -> A)
+mix : (Fun (MProto A) (MProto A) -> (MProto A))
+]
+As per the previous discussion, if your language doesn't use lazy evaluation,
+you may have to constrain the @r[A]'s to be functions, or to
+wrap the @r[A]'s in naked input position inside a @r[Lazy] type constructor.
+
+Lack of subtyping greatly reduces the expressive power of prototypes;
+yet, as we'll see, @; TODO: add suitable @seclink
+the most popular use of prototypes in Object-Oriented Programming is completely monomorphic:
+prototypes for type descriptors, a.k.a. classes;
+only this common use of prototypes happens at the meta-level,
+classes being second-class objects (pun not intended by the clueless practitioners).
 
 @section[#:tag "Better_objects"]{Better objects, still pure}
 
