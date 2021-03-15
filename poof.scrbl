@@ -41,7 +41,7 @@
 @;TAPL by @citet{tapl} is relevant.
 @;TAPL@~cite{tapl} has a relevant chapter (§32).
 
-@section{Prototypes, bottom up}
+@section[#:tag "Prototypes_bottom_up"]{Prototypes, bottom up}
 
 @subsection{Object Orientation in 109 characters of standard Scheme}
 
@@ -711,15 +711,18 @@ prototypes incrementally specify @emph{computations} rather than @emph{values}.
 in applicative languages we reify these computations as values one way or the other,
 as functions or delayed values.
 
-Indeed, most interesting prototypes will only lead to error or divergence if you try
-to instantiate them by themselves---they are “mixins”. The whole entire point of
-incrementally specifying computations is that you want to manipulate fragments
-that are not complete specifications. To use these fragments in a total language
-where all computations terminates will require attaching to each prototype some
-side-condition as to which aspects of a computation it provides that other
-prototypes may rely on, and which aspects of a computation it requires that other
-prototypes must provide. This side-condition may well be a type in one of the
-many existing type systems for objects @~cite{Abadi97atheory} @~cite{tapl}.
+Now, most interesting prototypes will only lead to error or divergence if you try
+to instantiate them by themselves---they are “mixins”,
+just like $r[$compare<-order] or $r[$avl-tree-rebalance] above,
+designed to be combined with other prototypes.
+Indeed, the whole entire point of incrementally specifying computations is
+that you want to manipulate fragments that are not complete specifications.
+To use these fragments in a total language where all computations terminates
+will require attaching to each prototype some side-condition as to
+which aspects of a computation it provides that other prototypes may rely on,
+and which aspects of a computation it requires that other prototypes must provide.
+This side-condition may well be a type in one of the many existing type systems
+for objects @~cite{Abadi97atheory} @~cite{tapl}.
 
 @Definitions[
 (code:comment "(deftype (DelayedProto Self Super) (Fun (Delayed Self) (Delayed Super) -> Self))")
@@ -757,7 +760,7 @@ GCL also wasn't explicitly designed as an object system, yet ended up having dis
 an excellent point in the design space, despite the overall clunkiness of the language.
 That across several decades, closely matching designs were independently reinvented many times
 without the intention to do so, is a good sign that this design is a “fixed point in design space”,
-akin to the notion of “fixed point in time” in Dr Who: @; TODO: citation needed?
+akin to the notion of “fixed point in time” in Dr Who @~cite{DrWhoFPIT}:
 however you may try to reach a different conclusion, you still end-up with that fixed-point eventually.
 
 Still, there are ways in which Jsonnet and Nix improved upon
@@ -769,16 +772,27 @@ required to statically type first-class prototypes in the most general case.
 But unlike previous incarnations, they also rely on lazy evaluation as a way to express
 first-class computations that can be manipulated whether or not they terminate,
 without a clumsy explicit wrapping in a thunk or a lazy constructor.
-They thus prove that lazy pure functional programming is useful way beyond
-Haskell's popular package-deal of this programming model with a mediocrely-expressive type system:
-Haskell like ML provides a typesystem with parametric polymorphism but no dependent types,
-for the dubious sake of a program-independent theoretical computability guarantee,
-thus rejecting most interesting uses of prototypes.
+They also do without having to resort to side-effects;
+the pure functional semantics are thus not only especially clean and simple,
+fitting in a few hundreds of characters,
+but reveal an underlying mathematical structure of universal interest.
+
+The success of Jsonnet and Nix at modularly managing complex configurations
+through object extensions suggest that pure lazy functional programming is useful
+way beyond the popular package offered by Haskell, of this programming model
+with ML-like static typesystem that sports parametric polymorphism but no dependent types.
+That typesystem rejects most interesting uses of prototypes,
+thereby neglecting an important application domain for pure lazy functional programming.
+Thus, though some claim the ML typesystem is at a "sweet spot",
+wherein it provides good expressiveness while still being computable
+and providing understandable error messages @~cite{minsky08},
+maybe the spot is too sweet to be healthy, and
+is lacking in proteins, or at least in prototypes.
 
 Now, there is another special way in which Jsonnet and Nix improve upon T's objects,
 that provides insight into Object-Oriented Programming:
 they unify instances and prototypes as objects.
-We'll come back to that later. @; TODO: use @seclink
+We'll come back to that in section 4. @; TODO: use @seclink
 
 @subsection{Prototypes are Useful Even Without Subtyping}
 
@@ -806,8 +820,8 @@ classes being second-class objects (pun not intended by the clueless practitione
 
 @section[#:tag "Better_objects"]{Better objects, still pure}
 
-In chapter II, we explained how to implement a rudimentary object system
-
+In @seclink["Prototypes_bottom_up"]{section 1},
+we implemented a rudimentary object system on top of prototypes.
 Compared to mainstream systems, it already featured powerful notions:
 @itemize[
 @item{Mixins, more general than single-inheritance, yet requires much more
