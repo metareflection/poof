@@ -6,6 +6,7 @@
           (only-in scribble/manual racket racketblock litchar itemize item)
           (only-in scribble/example examples make-base-eval)
           (only-in scriblib/footnote note)
+          (only-in scribble-abbrevs appendix)
           syntax/parse/define
           "util/examples-module.rkt"
           (for-label racket))
@@ -916,11 +917,13 @@ Alternatively, each individual slot contains an object, and the methods are prot
 for these "objects", with the same mutable signature. But that means that only mutable objects
 are allowed as values in the language. Yikes.
 
-@section[#:tag "Appendix_A"]{Appendix A: A Digression about type notation}
+@(generate-bibliography)
 
-@section[#:tag "Appendix_B"]{Appendix B: Fixed-Point functions}
+@section[#:tag "Appendix_A"]{Digression about type notation} @appendix
 
-@section[#:tag "Appendix_C"]{Appendix C: Note for code minimalists}
+@section[#:tag "Appendix_B"]{Fixed-Point functions}
+
+@section[#:tag "Appendix_C"]{Note for code minimalists}
 
 In our introduction, we described the @r[fix] and @r[mix] functions
 in only 109 characters of Scheme.
@@ -942,5 +945,4 @@ not counting newline, since we elide spaces:
 (def(fix p b)(def f(p(lambda i(apply f i))b))f)(def((mix p q)f b)(p f(q f b)))
 ]
 
-@(generate-bibliography)
 @(finalize-examples/module poof)

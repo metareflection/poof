@@ -4,7 +4,7 @@
 ;; Package Info
 
 (define collection "poof")
-(define deps '("base" "scribble-lib" "rackunit-lib"))
+(define deps '("base" "scribble-lib" "rackunit-lib" "scribble-abbrevs"))
 
 ;; ---------------------------------------------------------
 ;; Collection Info
