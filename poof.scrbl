@@ -741,15 +741,19 @@ the pure lazy functional dynamically typed language Nix @~cite{dolstra2008nixos}
 
 Since 2015, the Nix standard library contains variants of the @r[fix] et @r[mix] functions,
 wherein instances of its “attribute sets” mapping from strings to values
-can be defined in terms of some base definition and one or many “extensions”
-that are functions from attribute sets @r[self] and @r[super] to
+can be defined in terms of some base definition and one or many “extensions”.
+These “extensions” are functions from attribute sets @r[self] and @r[super] to
 an attribute set that is meant to extend and override @r[super]
 as incremental contribution to the computation of the @r[self] fixed-point.
+This is a reasonable restriction on how prototypes may affect super values,
+that totally matches usual object-oriented practice, and suggests that
+an object-oriented protocols
+
 Apart from minor details and their construction being specialized for “attribute sets”,
-this is the very same construction that we are presenting,
+this is the very same design as the one we are presenting,
 even though Nix's extension system was not even consciously meant
 as an object system when it was designed.
-This is not a coincidence, since the present essay started with
+This is not a coincidence, since the present essay emerged from
 an effort to formalize the essence of objects as understood from Nix and Jsonnet.
 
 Indeed, Jsonnet @~cite{jsonnet}, another lazy pure functional dynamic language,
