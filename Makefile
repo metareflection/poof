@@ -1,6 +1,14 @@
 all: view
 
-.DUMMY: all test pdf PDF eval
+.DUMMY: all test pdf PDF eval prerequisites
+
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+PDFVIEWER=evince --presentation
+endif
+ifeq ($(UNAME_S),Darwin)
+PDFVIEWER=open
+endif
 
 pdf: poof.pdf
 
@@ -10,7 +18,8 @@ poof.pdf: poof.scrbl poof.bib util/eval-check.rkt util/examples-module.rkt
 test: poof.scrbl
 	racket poof.scrbl
 
-PDFVIEWER=evince --presentation
-
 view: poof.pdf
 	$(PDFVIEWER) $<
+
+prerequisites:
+	raco pkg install scribble-abbrevs

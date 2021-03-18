@@ -737,7 +737,8 @@ for objects @~cite{Abadi97atheory} @~cite{tapl}.
 
 @subsection{Prototypes in Lazy Pure Functional Dynamic Languages}
 
-Interestingly, this is exactly how objects are encoded in
+Interestingly, prototypes for lazy mappings from keys to values
+is exactly how objects are encoded in
 the pure lazy functional dynamically typed language Nix @~cite{dolstra2008nixos}.
 
 Since 2015, the Nix standard library contains variants of the @r[fix] et @r[mix] functions,
