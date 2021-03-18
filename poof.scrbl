@@ -855,15 +855,15 @@ maintenance than multiple inheritance; using isn't modular.}
 
 Now, let's try to build a more featureful one.
 @itemize[
-@item{
-   One downside of the previous object system is that
-   there was no introspection as to what keys were provided by a prototype.
-}@item{
-   Another downside was that we had to separately manipulate two different
+@item{First,
+   one downside of the previous object system is that
+   there is no introspection as to what keys are provided by a prototype.
+}@item{Second,
+   another downside was that we have to separately manipulate two different
    kinds of entities, prototypes and instances, even though, often,
    we want to deal with only one entity that can play either/both roles.
-}@item{
-   Finally, the object system was barebones and doesn't support additional
+}@item{Third,
+   finally, the object system is barebones and doesn't support additional
    features like multiple inheritance, type annotations, method combinations,
    multiple-dispatch, ...
 }]
