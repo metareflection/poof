@@ -741,29 +741,49 @@ Interestingly, this is exactly how objects are encoded in
 the pure lazy functional dynamically typed language Nix @~cite{dolstra2008nixos}.
 
 Since 2015, the Nix standard library contains variants of the @r[fix] et @r[mix] functions,
-wherein instances of its “attribute sets” mapping from strings to values
-can be defined in terms of some base definition and one or many “extensions”.
+wherein “attribute sets” or attrsets, mapping from strings to values,
+are defined as fixed-points of functions obtained from a “base” function
+and a list of composable “extensions”.
 These “extensions” are functions from attribute sets @r[self] and @r[super] to
 an attribute set that is meant to extend and override @r[super]
 as incremental contribution to the computation of the @r[self] fixed-point.
 This is a reasonable restriction on how prototypes may affect super values,
-that totally matches usual object-oriented practice, and suggests that
-an object-oriented protocols
+that totally matches usual object-oriented practice, and suggests where
+an extension point could be in a general meta-object protocol. @; TODO: seclink ??
+The “base” function is a function from attrset @r[self] to attrset;
+this makes the API slightly less uniform than ours and introduces an extra type,
+but is otherwise isomorphic to our approach of using @r[bottom] as an base @r[super] argument
+that gets ignored by the last prototype in the list to be instantiated.
 
-Apart from minor details and their construction being specialized for “attribute sets”,
+Apart from the minor details above,
 this is the very same design as the one we are presenting,
 even though Nix's extension system was not even consciously meant
 as an object system when it was designed.
 This is not a coincidence, since the present essay emerged from
 an effort to formalize the essence of objects as understood from Nix and Jsonnet.
+We also simplify their approach (e.g. with respect to the base case of open-recursion)
+and generalize it to arbitrary instance types (i.e. not just attrsets);
+and in the following section @; TODO: @seclink
+we further improve on it.
 
-Indeed, Jsonnet @~cite{jsonnet}, another lazy pure functional dynamic language,
-sports an object system that is semantically equivalent to that of Nix.
+Now, Jsonnet @~cite{jsonnet}, another lazy pure functional dynamic language,
+sports an object system that is semantically equivalent to that of Nix,
+published one year before Nix's extension system was invented.
 Jsonnet itself was invented as a simplified semantic reconstruction of the essential ideas
 behind GCL, the decade-older configuration language used everywhere inside Google.
 GCL also wasn't explicitly designed as an object system, yet ended up having discovered
 an excellent point in the design space, despite the overall clunkiness of the language.
-That across several decades, closely matching designs were independently reinvented many times
+
+A notable difference is that the object is builtin in Jsonnet, with a nice syntax,
+when in Nix it is a set of library functions that fit a few tens of lines of code.
+Also, Jsonnet uses the empty object as the implicit base super object for inheritance;
+this is equivalent to the bottom function in the representation from our section 1, @; TODO: seclink
+but not in theirs;
+unlike the representation from our section 1, @; TODO seclink
+the Jsonnet representation (as Nix's) allows for introspection of what slots are bound.
+Finally, Jsonnet has builtin support for fields being either visible or hidden when printing.
+
+The fact that, across several decades, closely matching designs were independently reinvented many times
 without the intention to do so, is a good sign that this design is a “fixed point in design space”,
 akin to the notion of “fixed point in time” in Dr Who @~cite{DrWhoFPIT}:
 however you may try to reach a different conclusion, you still end-up with that fixed-point eventually.
