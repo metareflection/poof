@@ -44,6 +44,29 @@
 
 @section[#:tag "Prototypes_bottom_up"]{Prototypes, bottom up}
 
+This paper is about the unexpectedly happy marriage of Object-Orientation Programming and Pure Lazy Functional Programming -- with Dynamic (or Dependent) Types.
+
+Pitch: With 20 lines of code you can have an OO system in a dynamic language. Why do it? Because you can make your system more extensible. For another 30 lines, you can add multiple in inheritance.
+
+Direct predecessors that inspire our development: GCL (Google Configuration Language), Jsonnet, Nix.
+
+Nix OO system is implemented in 20 lines of Nix.
+Being able to extend a configuration without rewriting everything by reinventing prototype object systems.
+
+POOF: this is isomorphic to a prototype object system. Not just a curiosity but allows us to capitalize on all the work of prototype object systems throughout history. In addition, we can have multiple inheritance.
+
+Nix allows to specify in a declarative and deterministic fashion an entire linux installation. With POOF, you can write specifications more modularly. In Nix, you could do multiple inheritance but not modularly. Now the system manages the DAG. Use case in Nix for multiple inheritance: for multiple people to extend the system in a modular fashion without being synchronized. If you have multiple axes of extensions, four aspects say, there are 16 combinations. Instead, generate combinations.
+
+
+Prototype Object Systems:
+T,
+Self,
+JavaScript.
+
+Multiple Inheritance:
+Clos,
+Closette.
+
 @subsection{Object Orientation in 109 characters of standard Scheme}
 
 @Definitions[
