@@ -3,6 +3,7 @@
 @; To be submitted to OOPSLA 2021? https://2021.splashcon.org/track/splash-2021-oopsla
 
 @(require scriblib/bibtex
+          (only-in scribble/core make-paragraph make-style)
           (only-in scribble/manual racket racketblock litchar itemize item)
           (only-in scribble/example examples make-base-eval)
           (only-in scriblib/footnote note)
@@ -10,6 +11,12 @@
           syntax/parse/define
           "util/examples-module.rkt"
           (for-label racket))
+
+@(define (pretitle #:raw (raw #f) content)
+  (make-paragraph
+   (make-style 'pretitle (if raw '(exact-chars) '()))
+   content))
+@(pretitle @elem[#:style (make-style "setcopyright" '())]{none})
 
 @(declare-examples/module poof racket
    (provide (all-defined-out)))
