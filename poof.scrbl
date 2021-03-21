@@ -205,7 +205,8 @@ This prototype computes a complex number slot @r[z] based on real and
 imaginary values bound to the respective slots @r[x] and @r[y] of its
 @r[self]:
 @Examples[
-(code:comment "$z<-xy : (Proto (Fun (Or 'x 'y) -> Real | 'z -> Complex | A) (Fun (Or 'x 'y) -> Real | A))")
+(code:comment "$z<-xy : (Proto (Fun (Or 'x 'y) -> Real | 'z -> Complex | A)")
+(code:comment "                (Fun (Or 'x 'y) -> Real | A))")
 (define ($z<-xy self super)
   (λ (msg)
     (case msg
@@ -295,7 +296,8 @@ To define an object with a slot @r[k] mapped to a value @r[v], use:
 
 What of inheritance? Well, we can modify an inherited slot using:
 @Definitions[
-(code:comment "$slot-modify : (Fun k:Symbol (Fun V -> W) -> (Proto (Fun 'k -> W | A) (Fun 'k -> V | A) A) st: (<: V W))")
+(code:comment "$slot-modify : (Fun k:Symbol (Fun V -> W)")
+(code:comment "  -> (Proto (Fun 'k -> W | A) (Fun 'k -> V | A) A) st: (<: V W))")
 (define ($slot-modify k modify) (code:comment "modify: function from super-value to value")
   (λ (self super) (λ (msg)
     (if (equal? msg k) (modify (super msg))
@@ -316,7 +318,8 @@ A very general form of slot compute-and-override would take as parameters both
 the @r[self] argument and a @r[next-method] function to inherit the
 slot value from the @r[super] argument
 @Definitions[
-(code:comment "$slot-gen : (Fun k:Symbol (Fun A (Fun -> V) -> W) -> (Proto (Fun 'k -> W | A) (Fun 'k -> V | A) A) st: (<: V W))")
+(code:comment "$slot-gen : (Fun k:Symbol (Fun A (Fun -> V) -> W)")
+(code:comment "  -> (Proto (Fun 'k -> W | A) (Fun 'k -> V | A) A) st: (<: V W))")
 (define ($slot-gen k fun) (code:comment "fun: from self and super-value thunk to value.")
   (λ (self super)
     (λ (msg)
@@ -396,7 +399,8 @@ Thus, the instantiation function @r[(fix p b)] becomes:
 A more thorough explanation of the above fixed-point function is in @seclink["Appendix_B"]{Appendix B}.
 Meanwhile, the composition function @r[(mix p q)] becomes:
 @Definitions[
-(code:comment "compose-prototypes : (Fun (Proto Self Super) (Proto Super Super2) -> (Proto Self Super2) st: (<: Self Super Super2))")
+(code:comment "compose-prototypes : (Fun (Proto Self Super) (Proto Super Super2)")
+(code:comment "  -> (Proto Self Super2) st: (<: Self Super Super2))")
 (define (compose-prototypes child parent)
   (λ (self super2) (child self (parent self super2))))
 ]
@@ -448,7 +452,8 @@ is an associative operator with neutral element @r[$id] (a.k.a. @r[identity-prot
 Thus prototypes form a monoid, and you can compose
 or instantiate a list of prototypes:
 @Definitions[
-(code:comment "compose-prototype-list : (Fun (IndexedList I (λ (i) (Proto (A_ i) (A_ (1+ i))))) -> (Proto (A_ 0) (A_ (Card I))))")
+(code:comment "compose-prototype-list : (Fun (IndexedList I (λ (i)")
+(code:comment "  (Proto (A_ i) (A_ (1+ i))))) -> (Proto (A_ 0) (A_ (Card I))))")
 (define (compose-prototype-list l)
   (cond
    ((null? l) identity-prototype)
@@ -464,7 +469,8 @@ A more succint way to write the same function is:
 ]
 
 @Definitions[
-(code:comment "instantiate-prototype-list : (Fun (IndexedList I (λ (i) (Proto (A_ i) (A_ (1+ i))))) (A_ (Card I)) -> (A_ 0))")
+(code:comment "instantiate-prototype-list : (Fun (IndexedList I (λ (i)")
+(code:comment "  (Proto (A_ i) (A_ (1+ i))))) (A_ (Card I)) -> (A_ 0))")
 (define (instantiate-prototype-list prototype-list base-super)
   (instantiate-prototype (compose-prototype-list prototype-list) base-super))
 ]
