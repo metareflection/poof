@@ -1046,7 +1046,6 @@ XXXXX
 (define (remove-next next tails)
   (remove-nulls (map (lambda (l) (if (equal? (car l) next) (cdr l) l)) tails)))
 
-(code:comment "get-name is purely for debugging in case of inconsistent graph")
 (code:comment "c3-compute-precedence-list : A (A -> (List A)) (A -> (NonEmptyList A))")
 (code:comment "  -> (NonEmptyList A)")
 (define (c3-compute-precedence-list x get-supers get-precedence-list)
@@ -1064,6 +1063,9 @@ XXXXX
           ((null? (cdr tails)) (append-reverse rhead (car tails)))
           (else (let ((next (c3-select-next tails)))
                   (loop (cons next rhead) (remove-next next tails)))))))
+])
+
+@(define c3-extra-definitions @Definitions[
 
 (define (pair-tree-for-each! x f)
   (let loop ((x x))
@@ -1120,6 +1122,9 @@ Alternatively, each individual slot contains an object, and the methods are prot
 for these "objects", with the same mutable signature. But that means that only mutable objects
 are allowed as values in the language. Yikes.
 
+@(let ((x @~cite{Barrett96amonotonic}))
+   (void))
+
 @(generate-bibliography)
 
 @section[#:tag "Appendix_A"]{Digression about type notation} @appendix
@@ -1134,7 +1139,16 @@ Initially introduced in Dylan @~cite{Barrett96amonotonic},
 it has since been adopted by all modern languages unhampered by backward compatibility:
 Python, Raku, Parrot, Solidity.
 
+The algorithm ensures that the precedence list of an object always contains as an ordered sub-list
+(though not necessarily with consecutive elements) the precedence list of
+each of the object's super-objects, as well as the list of direct supers.
+It also favors direct supers appearing as early as possible in the precedence list.
+
 @c3-definitions
+
+To help with defining multiple inheritance, we'll also define the following helper functions:
+
+@c3-extra-definitions
 
 @section[#:tag "Appendix_D"]{Note for code minimalists}
 
