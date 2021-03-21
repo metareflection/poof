@@ -4,13 +4,16 @@
 
 @(require scriblib/bibtex
           (only-in scribble/core make-paragraph make-style)
-          (only-in scribble/manual racket racketblock litchar itemize item)
+          (only-in scribble/manual racket racketblock code codeblock litchar itemize item)
           (only-in scribble/example examples make-base-eval)
           (only-in scriblib/footnote note)
           (only-in scribble-abbrevs appendix)
+          scribble/minted
           syntax/parse/define
           "util/examples-module.rkt"
           (for-label racket))
+
+@(current-pygmentize-default-style 'colorful)
 
 @(define (pretitle #:raw (raw #f) content)
   (make-paragraph
@@ -28,6 +31,8 @@
 @(define-simple-macro (Definitions a ...) (examples/module poof #:no-result a ...))
 @(define-simple-macro (Examples a ...) (examples #:eval poof #:no-result a ...))
 @(define-simple-macro (Checks a ...) (examples #:eval poof #:label #f a ...))
+
+@(define (section1) @seclink["Prototypes_bottom_up"]{section 1})
 
 @title{Prototype Object-Orientation Functionally}
 
@@ -516,12 +521,14 @@ Or the same with a shorter name and a familiar definition as a combinator
 Small puzzle for the points-free Haskellers reading this essay:
 what change of representation will enable prototypes to be composed like regular functions
 without having to apply a binary function like @r[mix]? Solution in footnote.@note{
-Represent prototype @r[p] as
+A general purpose trick to embed an arbitrary monoid into usual composable functions is
+to curry the composition function (here, @r[mix]) with the object to be composed.
+Thus, the functional embedding of prototype @r[p] will be
 @r[(λ (q) (mix p q)) : (Fun (Proto Super S2) -> (Proto Self S2))].
-To recover @r[p] from that, just apply to @r[$id].
+To recover @r[p] from that embedding, just apply it to @r[$id].
 }
 
-@section{Pure Objective Fun}
+@section["pure_objective_fun"]{Pure Objective Fun}
 
 @subsection{Using prototypes to incrementally define simple data structures}
 
@@ -676,19 +683,19 @@ by overriding a single method of the original binary tree prototype:
                          (kv (left r)) (mk (right (left r)) (kv r) (right r))))
                ((0 1) (mk (mk l ckv (left r)) (kv r) (right r))))))) ;; RR rebalance
     (case msg ((node) node) (else (super msg)))))
-(define symbol-avl-map
+(define Dict
   (instance $avl-tree-rebalance $binary-tree-map ($slot 'Key symbol-order)))]
 
 Our dictionary is now well-balanced, height 3, and the tests still pass:
 @Checks[
 (define my-avl-dict
-  (foldl (λ (kv t) ((symbol-avl-map 'acons) (car kv) (cdr kv) t))
-         (symbol-avl-map 'empty)
+  (foldl (λ (kv t) ((Dict 'acons) (car kv) (cdr kv) t))
+         (Dict 'empty)
          '((a . "I") (b . "II") (c . "III") (d . "IV") (e . "V"))))
 (eval:check my-avl-dict
                 '((() ((a . "I") . 1) ()) ((b . "II") . 3)
                   ((() ((c . "III") . 1) ()) ((d . "IV") . 2) (() ((e . "V") . 1) ()))))
-(eval:check (map (λ (k) ((symbol-avl-map 'ref) my-avl-dict k (λ () #f))) '(a b c d e z))
+(eval:check (map (λ (k) ((Dict 'ref) my-avl-dict k (λ () #f))) '(a b c d e z))
             '("I" "II" "III" "IV" "V" #f))
 ]
 
@@ -722,11 +729,10 @@ We can instantiate a function out of those of prototypes, and test it:
 
 Now, the simplest numeric functions are thunks: nullary functions that yield a number.
 @Checks[
-(define (b0) 0)
 (define (p1+ _ b) (λ () (+ 1 (b))))
 (define (p2* _ b) (λ () (* 2 (b))))
-(eval:check ((fix (mix p1+ p2*) b0)) 1)
-(eval:check ((fix (mix p2* p1+) b0)) 2)
+(eval:check ((fix (mix p1+ p2*) (λ () 30))) 61)
+(eval:check ((fix (mix p2* p1+) (λ () 30))) 62)
 ]
 
 @subsection{Prototypes are for Computations not Values}
@@ -756,17 +762,18 @@ This side-condition may well be a type in one of the many existing type systems
 for objects @~cite{Abadi97atheory} @~cite{tapl}.
 
 @Definitions[
-(code:comment "(deftype (DelayedProto Self Super) (Fun (Delayed Self) (Delayed Super) -> Self))")
-(code:comment "delayed-fix : (Fun (DelayedProto Self Super) (Delayed Super) -> (Delayed Self))")
-(define (delayed-fix p b) (define f (delay (p f b))) f)
-(code:comment "delayed-mix : (Fun (DelayedProto Self Super) (DelayedProto Super Super2) -> (DelayedProto Self Super2))")
-(define (delayed-mix c p) (λ (f b) (c f (delay (p f b)))))
-(code:comment "delayed-$id : (DelayedProto X X)")
-(define (delayed-$id f b) (λ (_self super) (force super)))
+(code:comment "(deftype (δProto Self Super) (Fun (Delayed Self) (Delayed Super) -> Self))")
+(code:comment "δfix : (Fun (δProto Self Super) (Delayed Super) -> (Delayed Self))")
+(define (δfix p b) (define f (delay (p f b))) f)
+(code:comment "δmix : (Fun (δProto Self Mid) (δProto Mid Super) -> (δProto Self Super))")
+(define (δmix c p) (λ (f b) (c f (delay (p f b)))))
+(code:comment "δ$id : (δProto X X)")
+(define (δ$id f b) (λ (_self super) (force super)))
 ]
 
 @subsection{Prototypes in Lazy Pure Functional Dynamic Languages}
 
+@subsubsection{Prototypes in Nix}
 Interestingly, prototypes for lazy mappings from keys to values
 is exactly how objects are encoded in
 the pure lazy functional dynamically typed language Nix @~cite{dolstra2008nixos}.
@@ -797,6 +804,7 @@ and generalize it to arbitrary instance types (i.e. not just attrsets);
 and in the following section @; TODO: @seclink
 we further improve on it.
 
+@subsubsection{Prototypes in Jsonnet}
 Now, Jsonnet @~cite{jsonnet}, another lazy pure functional dynamic language,
 sports an object system that is semantically equivalent to that of Nix,
 published one year before Nix's extension system was invented.
@@ -808,10 +816,10 @@ an excellent point in the design space, despite the overall clunkiness of the la
 A notable difference is that the object is builtin in Jsonnet, with a nice syntax,
 when in Nix it is a set of library functions that fit a few tens of lines of code.
 Also, Jsonnet uses the empty object as the implicit base super object for inheritance;
-this is equivalent to the bottom function in the representation from our section 1, @; TODO: seclink
-but not in theirs;
-unlike the representation from our section 1, @; TODO seclink
-the Jsonnet representation (as Nix's) allows for introspection of what slots are bound.
+this is equivalent to the bottom function in the representation from our
+@seclink["Prototypes_bottom_up"]{section 1}—but not in theirs!
+Unlike the representation from our @seclink["Prototypes_bottom_up"]{section 1},
+the Jsonnet representation (as Nix's) also allows for introspection of what slots are bound.
 Finally, Jsonnet has builtin support for fields being either visible or hidden when printing.
 
 The fact that, across several decades, closely matching designs were independently reinvented many times
@@ -819,6 +827,7 @@ without the intention to do so, is a good sign that this design is a “fixed po
 akin to the notion of “fixed point in time” in Dr Who @~cite{DrWhoFPIT}:
 however you may try to reach a different conclusion, you still end-up with that fixed-point eventually.
 
+@subsubsection{A Pure Lazy Fit}
 Still, there are ways in which Jsonnet and Nix improved upon
 the prototype object systems as initially designed in ThingLab @~cite{Borning77} or T @~cite{Rees82t:a},
 or later made popular by SELF or JavaScript @; cite
@@ -878,71 +887,168 @@ classes being second-class objects (pun not intended by the clueless practitione
 
 In @seclink["Prototypes_bottom_up"]{section 1},
 we implemented a rudimentary object system on top of prototypes.
-Compared to mainstream systems, it already featured powerful notions:
-@itemize[
-@item{Mixins, more general than single-inheritance, yet requires much more
-maintenance than multiple inheritance; using isn't modular.}
+Compared to mainstream object systems, it not only was much simpler to define,
+but also enabled mixins, making it more powerful than common single-inheritance systems.
+Still, many bells and whistles found in other object systems are missing.
+
+@subsection{Field Introspection}
+
+@subsubsection{Both feature or bug in OOP snake-oil literature}
+When representing objects as functions from symbol to value,
+it isn't generally possible to access the list of symbols that constitute valid keys.
+Most “object” systems do not allow for this kind of introspection at runtime,
+and a 1990s marketing department would probably tout that
+as some kind of “information hiding” feature to be sold as part of
+the “object-oriented” package deal of the day.
+Yet, introspection can be useful to e.g. automatically
+input and output human-readable or network-exchangeable representations of an instance.
+Thus, the same 1990s marketing departments have long sold “reflection” as
+an extra feature to their previous “information hiding” feature.
+
+@subsubsection{Same concrete representation, abstract constructor}
+Field introspection can be achieved while keeping instances as functions from keys to values,
+by adding a “special” key, for instance @r['keys],
+that will be bound to the list of valid keys.
+To save themselves the error-prone burden of maintaining the list of keys by hand,
+programmers would then use a variant of @r[$slot-gen] that maintains this list, as in:
+@Definitions[
+(define ($slot-gen/keys k fun)
+  (λ (self super)
+    (λ (msg)
+      (cond
+        ((equal? msg k) (fun self (λ () (super msg))))
+        ((equal? msg 'keys) (cons k (super 'keys)))
+        (else (super msg))))))
 ]
 
-Now, let's try to build a more featureful one.
-@itemize[
-@item{First,
-   one downside of the previous object system is that
-   there is no introspection as to what keys are provided by a prototype.
-}@item{Second,
-   another downside was that we have to separately manipulate two different
-   kinds of entities, prototypes and instances, even though, often,
-   we want to deal with only one entity that can play either/both roles.
-}@item{Third,
-   finally, the object system is barebones and doesn't support additional
-   features like multiple inheritance, type annotations, method combinations,
-   multiple-dispatch, ...
-}]
+@subsubsection{Different instance representation}
+Field introspection can also be achieved by using a different representation for instances.
+Just like in Nix, instances could be mappings from symbols to value,
+internally implemented as hash-tables, or, preferrably for pure usage, balanced trees.
+Purposefully, we included an implementation of such balanced trees in
+@seclink["pure_objective_fun"]{section 2}.
+Thus, we could represent objects as thunks that return @r[symbol-avl-map], as follows:
+@Definitions[
+(define ($slot-gen/dict k fun)
+  (λ (self super)
+    (define (super-value-thunk) (Dict 'ref (super) k bottom))
+    (λ () (Dict 'acons k (fun self super-value-thunk) (super)))))
+]
+However, while the above definition yields the correct result,
+it potentially recomputes the entire dictionary @r[(super)] twice at every symbol lookup,
+with exponential explosion as the number of super prototypes increases.
+We could carefully implement sharing by precomputing @r[(define super-dict (super))].
+But the instance is itself a thunk that would recomputing the entire dictionary at every call,
+and is better evaluated only once.
+Now, if we adopt lazy evaluation as in Nix, we can automatically share results
+across both copies of computations and multiple consumers of a same copy of computation,
+without having to manually reimplement this caching every time.
+Thus, using @r[δfix] and @r[δmix] instead of @r[fix] and @r[mix], we can have:
+@Definitions[
+(define (δ$slot-gen/dict k fun)
+  (λ (self super)
+    (delay
+      (let* ((super-dict (force super))
+             (super-value
+               (call/cc (λ (return)
+                 (Dict 'ref super-dict k (λ () (return (delay (bottom)))))))))
+        (Dict 'acons k (delay (fun self super-value)) super-dict)))))
+]
 
-A few possible solutions to the first issue:
-@itemize[
-@item{
-  Have prototype functions respond to a special magic message @r['keys].
-  It is the responsibility of the programmer to make sure this message
-  is and remains in synch with the actual list of messages supported---or
-  we could provide some macros for it.
-}@item{
-  Instead of passing around prototype functions alone, we could pass around
-  a product of a function and a list of keys, as a list or other structure.
-  There again, macros can do that for us, and even abstract over which
-  encoding is used, whether the above or any.
-}@item{
-  Directly pass around a structure that embodies a dictionary mapping
-  symbols to functions, e.g. a hash-table from SRFI-125, or even just
-  the pure symbol-avl-map we just implemented in chapter II.
-}]
+@subsubsection{Same instance representation, different prototype representation}
+Finally, field introspection can be achieved while preserving the same instance representation
+by instead changing the representation for @emph{prototypes}.
+Though the concise functional representation we offered gives an enlightening
+expression of the essence of object systems, we can maintain equivalent semantics
+with a more efficient implementation, for instance a pair @r[pk] of
+the same prototype as before and a list of keys. The @r[mix] and @r[fix] functions become:
+@Definitions[
+(define (mix/pk child parent)
+  (cons (mix (car child) (car parent))
+        (append (cdr child) (cdr parent))))
+(define (fix/pk proto base)
+  (fix (mix ($slot 'keys (cdr proto)) (car proto)) base))
+]
+One could also put @r[$slot] invocation after the @r[(car proto)] rather than before it,
+to allow prototypes to intercept field introspection.
 
-Possible solutions to the second issue:
-@itemize[
-@item{
-  Use the prototypes as a way to compute the instance through fixed-point,
-  but use a wrapper to present a better interface to the result, that
-  among other things will keep the prototype information available together
-  with the instance information, in a single entity.
-  Separating instance computation and instance usage also allows us to
-  provide two distinct representations for the same information, one
-  optimized for construction, the other for consumption.
-}]
+@subsubsection{Abstracting over representations}
+We can generalize the above solutions by realizing that
+both instances and prototypes may be represented in a variety of ways;
+the representation given in @(section1) is a good guide for object semantics,
+but instance and prototype as functions may be wrapped or unwrapped in various ways,
+and augmented with various other information,
+when designing and implementing an object system for usability and performance.
+Still, the distinction between instance and prototype
+is essential to understanding and simplifying the semantics of object systems.
 
-Possible solutions to the third issue:
-@itemize[
-@item{
-  Consider that the composable "prototype information" isn't just
-  a function prototype, but also other meta-information like
-  a list of direct super prototypes (for multiple inheritance),
-  a separate prototype for type declarations, (or a merged prototype
-  with separate calling conventions for type information), yet another
-  prototype for method combinations, etc.
-}@item{
-  Instead of a long litany of features hardwired in an ad hoc way in
-  a giant object system, a composable Meta-Object Protocol that enables
-  all the features in a modular fashion.
-}]
+@subsection{Unifying Instances and Prototypes}
+
+While the distinction between instance and prototype is essential to simplify semantics,
+it leads to a strange situation wherein we have been doing “Object-Oriented Programming”
+without any actual object!
+This is a practical problem, as having to maintain the distinction means that
+all APIs may have to be doubled at every point that may be either one or the other.
+This is particularly a pain when writing extensible configurations for recursive data structures,
+wherein you then need to decide for each field of each data structure at each stage of computation
+whether it contains an extensible prototype or an instance to call the proper API.
+This incurs both a psychological cost to programmers and a runtime cost to evaluating programs,
+that in the worst case might recompute some sub-expressions exponentially often.
+
+Once again, Jsonnet and Nix confront and solve this issue elegantly
+and the very same way with one small trick:
+they bundle and conflate together instance and prototype in a same single entity, the “object”.
+Indeed, in a pure context, and given the base super value for the given prototype representation,
+there is one and only one instance associated to a prototype up to any testable equality,
+and so we may usefully cache the computation of this instance together with the prototype.
+The same “object” entity can thus be seen as an instance and queried for method values,
+or seen as a prototype and composed with other objects (also seen as prototypes) into a new object.
+
+In Jsonnet, this conflation is done implicitly as part of the builtin object system implementation.
+In Nix, interestingly, there are several unassuming variants of the same object system,
+that each store the prototype information in one or several special fields of the @r[attrset]
+that is otherwise used for instance information.
+Thus, what we could write:
+@racketblock[(mix ($slot 'x 1) ($slot-compute 'y (λ (self) (+ 2 (self 'x)))))]
+would be written in the simplest Nix object system as
+@minted["nix"]|{
+fix' (self: { x = 1; y = 2 + self.x; })
+}|
+and evaluate to an attrset equivalent to:
+@minted["nix"]|{
+{ x = 1; y = 3; __unfix__ = self: { x = 1; y = 2 + self.x; }; }
+}|
+Other variants use one or several of @r[extend], @r[override], @r[overrideDerivation], @r[meta], etc.,
+to store composable prototype information.
+
+Thanks to the conflation of instance and prototype as two aspects of a same object,
+configurations can be written in either language
+that can refer to other parts of the configuration
+without having to track and distinguish which parts are instantiated at which point,
+and it all just works.
+
+@subsection{Multiple Inheritance}
+
+Now that we have a nice and simple semantic framework for “objects”,
+can we also reimplement the more advanced features of object systems of yore?
+What about multiple inheritance?
+
+XXXXX
+
+Consider that the composable “prototype information” isn't just
+a function prototype, but also other meta-information like
+a list of direct super prototypes (for multiple inheritance),
+a separate prototype for type declarations, (or a merged prototype
+with separate calling conventions for type information), yet another
+prototype for method combinations, etc.
+
+Instead of a long litany of features hardwired in an ad hoc way in
+a giant object system, a composable Meta-Object Protocol that enables
+all the features in a modular fashion.
+
+@subsection{Method Combination}
+
+@subsection{Multiple Dispatch}
 
 @section{Classes}
 
@@ -950,7 +1056,7 @@ Possible solutions to the third issue:
 
 Note how all the functions defined in the previous chapter were pure:
 They didn't use any side-effect whatsoever.
-No @r[set!], no tricky use of @r[call/cc].
+No @r[set!], no tricky use of @r[call/cc]
 
 But what if we are OK with using side-effects? How much does that simplify things?
 

@@ -3,6 +3,7 @@ compiled/
 
 # Scribble-generated files
 poof.pdf
+minted-colorful-style.tex
 
 # Editor-generated files
 *~
