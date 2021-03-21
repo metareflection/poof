@@ -766,7 +766,7 @@ will require attaching to each prototype some side-condition as to
 which aspects of a computation it provides that other prototypes may rely on,
 and which aspects of a computation it requires that other prototypes must provide.
 This side-condition may well be a type in one of the many existing type systems
-for objects @~cite{Abadi97atheory} @~cite{tapl}.
+for objects @~cite{Abadi97atheory tapl}.
 
 @Definitions[
 (code:comment "(deftype (δProto Self Super) (Fun (Delayed Self) (Delayed Super) -> Self))")
