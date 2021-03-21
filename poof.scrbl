@@ -961,7 +961,7 @@ Thus, using @r[δfix] and @r[δmix] instead of @r[fix] and @r[mix], we can have:
         (Dict 'acons k (delay (fun self super-value)) super-dict)))))
 ]
 
-@subsubsection{Same instance representation, different prototype representation}
+@subsubsection[#:tag "Different_prototype"]{Same instance representation, different prototype representation}
 Finally, field introspection can be achieved while preserving the same instance representation
 by instead changing the representation for @emph{prototypes}.
 Though the concise functional representation we offered gives an enlightening
@@ -1039,7 +1039,60 @@ Now that we have a nice and simple semantic framework for “objects”,
 can we also reimplement the more advanced features of object systems of yore?
 What about multiple inheritance?
 
-XXXXX
+@subsubsection{The inheritance modularity issue}
+To write incremental OO programs, developers need to be able to express dependencies
+between objects, such that an object @r[Z]
+depends on super objects @r[K1], @r[K2], @r[K3] being present after it
+in the list of prototypes to be instantiated.
+We'll also say that @r[Z] @emph{inherits from} from these super objects,
+or @emph{extends} them, or that they are its direct super objects.
+But what if @r[K1], @r[K2], @r[K3] themselves inherit from super objects @r[A], @r[B], @r[C], @r[D], @r[E],
+e.g. with @r[K1] inheriting from direct supers @r[A B C],
+@r[K2] inheriting from direct supers @r[D B E], and
+@r[K3] inheriting from direct supers @r[D A], and what more
+each of @r[A], @r[B], @r[C], @r[D], @r[E] inheriting from a base super object @r[O]?
+
+With the basic object model offered by Nix and Jsonnet and our code so far,
+these dependencies couldn't be represented in the prototype itself.
+If the programmer tried to “always pre-mix” its dependencies into a prototype,
+then @r[K1] would be a pre-mix @r[K1 A B C O],
+@r[K2] would be a pre-mix @r[K2 D B E O],
+@r[K3] would be a pre-mix @r[K3 D A O],
+and when trying to specify @r[Z], the pre-mix
+@r[Z K1 A B C O K2 D B E O K3 D A O] would be incorrect,
+with unwanted repetitions of @r[A], @r[B], @r[D], @r[O]
+redoing or undoing overrides made by @r[K2] and @r[K3].
+Instead, the programmer would have to somehow remember and track those dependencies,
+such that when he decides instantiates @r[Z], he won't write just @r[Z],
+but @r[Z] followed a topologically sorted @emph{precedence list}
+where each of the transitive dependencies appears once and only once,
+e.g. @r[Z K1 K2 K3 D A B C E O].
+
+Not only does this activity entail a lot of tedious and error-prone bookkeeping,
+it is not modular:
+if these various objects are maintained by different people as part of separate libraries,
+each object's author must keep track not just of their direct dependencies,
+but all their transitive indirect dependencies, with a proper ordering;
+then they must not only propagate those changes to their own objects,
+but notify the authors of objects that depend on theirs;
+to get a change fully propagated might required hundreds of modifications
+being sent and accepted by tens of different maintainers, some of whom might not be responsive.
+In other words, while possible, manual maintenance of a precedence list is a modularity nightmare.
+
+@subsubsection{Multiple inheritance to the rescue}
+With multiple inheritance, programmers can declare the dependencies
+between objects and their direct super objects,
+and the object system will automatically compute
+a suitable precedence list in which order to compose the object prototypes.
+Thus, defining objects with dependencies becomes modular.
+
+The algorithm to extract this precedence list from the inheritance graph is called a linearization.
+This algorithm can also automatically detect any ordering inconsistency or a circular dependency
+wherein the inheritance graph isn't a directed acyclic graph (DAG)
+and therefore no precedence list can satisfy all the ordering constraints;
+in such a situation, an error can be raised with some helpful explanation to help debug the issue.
+Modern object systems have settled on the C3 linearization algorithm, as described in
+@seclink["Appendix_C"]{Appendix C}.
 
 @(define c3-definitions @Definitions[
 (code:comment "not-null? : Any -> Bool")
@@ -1088,17 +1141,21 @@ XXXXX
   (call-with-list-builder (lambda (c) (pair-tree-for-each! x c))))
 ])
 
+@subsubsection{A prototype is more than a function}
+But where is the inheritance information to be stored?
+A prototype must contain more than the function being composed to implement open-recursion.
+@italic{A minima} it must also contain the list of direct super objects
+that the current object depends on;
+we saw @seclink["Different_prototype"]{above} that we might also want to remember
+a list or set of keys being defined or overridden.
+While we're at it, we may also want to cache the precedence list,
+and any amount of other meta-information to be used when eventually computing the instance,
+or to allow suitable introspection into the object or other reflective access:
+type declarations, method combinations, and any imaginable future feature.
 
-Consider that the composable “prototype information” isn't just
-a function prototype, but also other meta-information like
-a list of direct super prototypes (for multiple inheritance),
-a separate prototype for type declarations, (or a merged prototype
-with separate calling conventions for type information), yet another
-prototype for method combinations, etc.
-
-Instead of a long litany of features hardwired in an ad hoc way in
-a giant object system, a composable Meta-Object Protocol that enables
-all the features in a modular fashion.
+We could include a long litany of @italic{ad hoc} features hardwired in a giant object system;
+or some kind of a composable Meta-Object Protocol could enable
+all these features in a modular fashion.
 
 @subsection{Method Combination}
 
