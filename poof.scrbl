@@ -54,7 +54,6 @@
 @;TAPL by @citet{tapl} is relevant.
 @;TAPL@~cite{tapl} has a relevant chapter (§32).
 
-@section[#:tag "Prototypes_bottom_up"]{Prototypes, bottom up}
 
 This paper is about the unexpectedly happy marriage of Object-Orientation Programming and Pure Lazy Functional Programming -- with Dynamic (or Dependent) Types.
 
@@ -78,6 +77,8 @@ JavaScript.
 Multiple Inheritance:
 Clos,
 Closette.
+
+@section[#:tag "Prototypes_bottom_up"]{Prototypes, bottom up}
 
 @subsection{Object Orientation in 109 characters of standard Scheme}
 
