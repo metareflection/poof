@@ -1035,6 +1035,52 @@ What about multiple inheritance?
 
 XXXXX
 
+@(define c3-definitions @Definitions[
+(code:comment "not-null? : Any -> Bool")
+(define (not-null? l) (not (null? l)))
+
+(code:comment "remove-nulls : (List (List X)) -> (List (NonEmptyList X))")
+(define (remove-nulls l) (filter not-null? l))
+
+(code:comment "remove-next : X (List (NonEmptyList X)) -> (List (NonEmptyList X))")
+(define (remove-next next tails)
+  (remove-nulls (map (lambda (l) (if (equal? (car l) next) (cdr l) l)) tails)))
+
+(code:comment "get-name is purely for debugging in case of inconsistent graph")
+(code:comment "c3-compute-precedence-list : A (A -> (List A)) (A -> (NonEmptyList A))")
+(code:comment "  -> (NonEmptyList A)")
+(define (c3-compute-precedence-list x get-supers get-precedence-list)
+  (define supers (get-supers x)) ;; : (List A)
+  (define super-precedence-lists (map get-precedence-list supers)) ;; : (List (NonEmptyList A))
+  (define (c3-select-next tails) ;; : (NonEmptyList (NonEmptyList A)) -> A
+    (define (candidate? c) (every (lambda (tail) (not (member c (cdr tail)))) tails)) ;; : A -> Bool
+    (let loop ((ts tails))
+      (when (null? ts) (error "Inconsistent precedence graph"))
+      (define c (caar ts))
+      (if (candidate? c) c (loop (cdr ts)))))
+  (let loop ((rhead (list x)) ;; : (NonEmptyList X)
+             (tails (remove-nulls (append super-precedence-lists [supers])))) ;; : (List (NonEmptyList X))
+    (cond ((null? tails) (reverse rhead))
+          ((null? (cdr tails)) (append-reverse rhead (car tails)))
+          (else (let ((next (c3-select-next tails)))
+                  (loop (cons next rhead) (remove-next next tails)))))))
+
+(define (pair-tree-for-each! x f)
+  (let loop ((x x))
+    (cond ((pair? x) (loop (car x)) (loop (cdr x)))
+          ((null? x) (void))
+          (else (f x)))))
+
+(define (call-with-list-builder f)
+  (define l '())
+  (f (λ (x) (set! l (cons x l))))
+  (reverse l))
+
+(define (flatten-pair-tree x)
+  (call-with-list-builder (lambda (c) (pair-tree-for-each! x c))))
+])
+
+
 Consider that the composable “prototype information” isn't just
 a function prototype, but also other meta-information like
 a list of direct super prototypes (for multiple inheritance),
@@ -1080,7 +1126,17 @@ are allowed as values in the language. Yikes.
 
 @section[#:tag "Appendix_B"]{Fixed-Point functions}
 
-@section[#:tag "Appendix_C"]{Note for code minimalists}
+@section[#:tag "Appendix_C"]{C3 Linearization Algorithm}
+
+Below is the C3 Linearization algorithm to topologically sort an inheritance DAG
+into a precedence list such that direct supers are all included before indirect supers.
+Initially introduced in Dylan @~cite{Barrett96amonotonic},
+it has since been adopted by all modern languages unhampered by backward compatibility:
+Python, Raku, Parrot, Solidity.
+
+@c3-definitions
+
+@section[#:tag "Appendix_D"]{Note for code minimalists}
 
 In our introduction, we described the @r[fix] and @r[mix] functions
 in only 109 characters of Scheme.
