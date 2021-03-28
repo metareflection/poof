@@ -77,7 +77,7 @@ JavaScript.
 
 Multiple Inheritance:
 Mixin-based inheritance@~cite{bracha1990mixin},
-Clos,
+Clos@~cite{gabriel1991clos},
 Closette.
 
 @; TODO: comment out before to submit:
