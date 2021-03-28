@@ -799,7 +799,7 @@ an attribute set that is meant to extend and override @r[super]
 as incremental contribution to the computation of the @r[self] fixed-point.
 This is a reasonable restriction on how prototypes may affect super values,
 that totally matches usual object-oriented practice, and suggests where
-an extension point could be in a general meta-object protocol. @; TODO: seclink ??
+an extension point could be in a general meta-object protocol@~cite{amop}. @; TODO: seclink ??
 The “base” function is a function from attrset @r[self] to attrset;
 this makes the API slightly less uniform than ours and introduces an extra type,
 but is otherwise isomorphic to our approach of using @r[bottom] as an base @r[super] argument
