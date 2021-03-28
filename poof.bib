@@ -80,27 +80,60 @@ abstract = {A type system is a syntactic method for automatically checking the a
     pages = {114--122}
 }
 
-@Article{chambers1989efficient,
-  title={An efficient implementation of SELF a dynamically-typed object-oriented language based on prototypes},
-  author={Chambers, Craig and Ungar, David and Lee, Elgin},
-  journal={ACM Sigplan Notices},
-  volume={24},
-  number={10},
-  pages={49--70},
-  year={1989},
-  publisher={ACM New York, NY, USA}
+@InProceedings{chambers1989efficient,
+author = {Chambers, C. and Ungar, D. and Lee, E.},
+title = {An Efficient Implementation of SELF a Dynamically-Typed Object-Oriented Language Based on Prototypes},
+year = {1989},
+isbn = {0897913337},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/74877.74884},
+doi = {10.1145/74877.74884},
+abstract = {We have developed and implemented techniques that double the performance of dynamically-typed object-oriented languages. Our SELF implementation runs twice as fast as the fastest Smalltalk implementation, despite SELF's lack of classes and explicit variables.To compensate for the absence of classes, our system uses implementation-level maps to transparently group objects cloned from the same prototype, providing data type information and eliminating the apparent space overhead for prototype-based systems. To compensate for dynamic typing, user-defined control structures, and the lack of explicit variables, our system dynamically compiles multiple versions of a source method, each customized according to its receiver's map. Within each version the type of the receiver is fixed, and thus the compiler can statically bind and inline all messages sent to self. Message splitting and type prediction extract and preserve even more static type information, allowing the compiler to inline many other messages. Inlining dramatically improves performance and eliminates the need to hard-wire low-level methods such as +,==, and ifTrue:.Despite inlining and other optimizations, our system still supports interactive programming environments. The system traverses internal dependency lists to invalidate all compiled methods affected by a programming change. The debugger reconstructs inlined stack frames from compiler-generated debugging information, making inlining invisible to the SELF programmer.},
+booktitle = {Conference Proceedings on Object-Oriented Programming Systems, Languages and Applications},
+pages = {49–70},
+numpages = {22},
+location = {New Orleans, Louisiana, USA},
+series = {OOPSLA '89}
 }
 
-@Article{bracha1990mixin,
-  title={Mixin-based inheritance},
-  author={Bracha, Gilad and Cook, William},
-  journal={ACM Sigplan Notices},
-  volume={25},
-  number={10},
-  pages={303--311},
-  year={1990},
-  publisher={ACM New York, NY, USA}
+
+@InProceedings{bracha1990mixin,
+author = {Bracha, Gilad and Cook, William},
+title = {Mixin-Based Inheritance},
+year = {1990},
+isbn = {0897914112},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/97945.97982},
+doi = {10.1145/97945.97982},
+abstract = {The diverse inheritance mechanisms provided by Smalltalk, Beta, and CLOS are interpreted as different uses of a single underlying construct. Smalltalk and Beta differ primarily in the direction of class hierarchy growth. These inheritance mechanisms are subsumed in a new inheritance model based on composition of mixins, or abstract subclasses. This form of inheritance can also encode a CLOS multiple-inheritance hierarchy, although changes to the encoded hierarchy that would violate encapsulation are difficult. Practical application of mixin-based inheritance is illustrated in a sketch of an extension to Modula-3.},
+booktitle = {Proceedings of the European Conference on Object-Oriented Programming on Object-Oriented Programming Systems, Languages, and Applications},
+pages = {303–311},
+numpages = {9},
+location = {Ottawa, Canada},
+series = {OOPSLA/ECOOP '90}
 }
+
+@article{10.1145/97946.97982,
+author = {Bracha, Gilad and Cook, William},
+title = {Mixin-Based Inheritance},
+year = {1990},
+issue_date = {Oct. 1990},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {25},
+number = {10},
+issn = {0362-1340},
+url = {https://doi.org/10.1145/97946.97982},
+doi = {10.1145/97946.97982},
+abstract = {The diverse inheritance mechanisms provided by Smalltalk, Beta, and CLOS are interpreted as different uses of a single underlying construct. Smalltalk and Beta differ primarily in the direction of class hierarchy growth. These inheritance mechanisms are subsumed in a new inheritance model based on composition of mixins, or abstract subclasses. This form of inheritance can also encode a CLOS multiple-inheritance hierarchy, although changes to the encoded hierarchy that would violate encapsulation are difficult. Practical application of mixin-based inheritance is illustrated in a sketch of an extension to Modula-3.},
+journal = {SIGPLAN Not.},
+month = sep,
+pages = {303–311},
+numpages = {9}
+}
+
 
 @Article{gabriel1991clos,
   title={CLOS: Integrating object-oriented and functional programming},
