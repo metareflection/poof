@@ -72,7 +72,7 @@ Nix allows to specify in a declarative and deterministic fashion an entire linux
 
 Prototype Object Systems:
 T,
-Self,
+Self@~cite{chambers1989efficient},
 JavaScript.
 
 Multiple Inheritance:
