@@ -1198,6 +1198,22 @@ that they usually aren't.
 
 @subsection{Multiple Dispatch}
 
+@subsubsection{Extending previous objects}
+There is an issue with dynamically adding new functions or methods,
+which is necessary for multiple dispatch, but present even without it.
+You can have new functions provide a default method (as done in T),
+or equivalently add to a global default bottom object (as the T paper mentions),
+but either way it's problematic in case objects were already defined
+that depended on the previous method being absent,
+and their slot values already pre-computed and cached.
+Which should be uncached?
+
+Partial solution? Instead of symbols, use lexical identifiers as keys,
+with the same hygiene mechanism as macros;
+therefore, regular programs not using reflection cannot possibly have referred
+to the newly-defined method.
+
+
 @section{Classes}
 
 Classes are “just” prototypes for type descriptors.
