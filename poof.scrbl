@@ -33,6 +33,7 @@
 @(define-simple-macro (Checks a ...) (examples #:eval poof #:label #f a ...))
 
 @(define (section1) @seclink["Prototypes_bottom_up"]{section 1})
+@(define (section2) @seclink["pure_objective_fun"]{section 2})
 
 @title{Prototype Object-Orientation Functionally}
 
@@ -77,6 +78,10 @@ JavaScript.
 Multiple Inheritance:
 Clos,
 Closette.
+
+@; TODO: comment out before to submit:
+@table-of-contents[]
+@;only works for HTML output: @local-table-of-contents[#:style 'immediate-only]
 
 @section[#:tag "Prototypes_bottom_up"]{Prototypes, bottom up}
 
@@ -1158,6 +1163,21 @@ We could include a long litany of @italic{ad hoc} features hardwired in a giant 
 or some kind of a composable Meta-Object Protocol could enable
 all these features in a modular fashion.
 
+@subsubsection{Representing objects}
+For the sake of this article, we'll represent an object as a pair of an instance and a prototype.
+The instance itself will be a @r[Dict] (as per @(section2)),
+mapping symbols to slot values.
+The prototype could just a @r[(δProto Dict Dict)]
+to achieve a semantics similar to that of Jsonnet.
+But since we will be adding features to the object system,
+we will instead represent the prototype as a list,
+the first element of which will itself be a @r[Dict],
+where the symbol @r['function] will point to a @r[(δProto Dict Dict)],
+and the symbol @r['supers] will point to a list of super-objects to inherit from.
+Further symbols in the prototype will be used to extend the object implementation;
+further elements of the list will be used to implement a meta-object protocol,
+whereby the object implementation can be extended from the inside.
+
 @subsection{Method Combination}
 
 @subsection{Multiple Dispatch}
@@ -1195,20 +1215,28 @@ are allowed as values in the language. Yikes.
 
 @section[#:tag "Appendix_B"]{Fixed-Point functions}
 
-@section[#:tag "Appendix_C"]{C3 Linearization Algorithm}
+@section[#:tag "Appendix_C"]{Code Library}
+
+The object system implementation in our article above relies on the following code library
+of relatively obvious or well-known functions, that have provide no original insight,
+but are included here for the sake of completeness and reproducibility.
+
+@subsection{C3 Linearization Algorithm}
 
 Below is the C3 Linearization algorithm to topologically sort an inheritance DAG
 into a precedence list such that direct supers are all included before indirect supers.
 Initially introduced in Dylan @~cite{Barrett96amonotonic},
-it has since been adopted by all modern languages unhampered by backward compatibility:
-Python, Raku, Parrot, Solidity.
+it has since been adopted by many modern languages, including at least
+Python, Raku, Parrot, Solidity, PGF/TikZ.
 
-The algorithm ensures that the precedence list of an object always contains as an ordered sub-list
+The algorithm ensures that the precedence list of an object always contains as ordered sub-lists
 (though not necessarily with consecutive elements) the precedence list of
 each of the object's super-objects, as well as the list of direct supers.
 It also favors direct supers appearing as early as possible in the precedence list.
 
 @c3-definitions
+
+@subsection{More Helper Functions}
 
 To help with defining multiple inheritance, we'll also define the following helper functions:
 
