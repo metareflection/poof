@@ -20,6 +20,9 @@
    (make-style 'pretitle (if raw '(exact-chars) '()))
    content))
 @(pretitle @elem[#:style (make-style "setcopyright" '())]{none})
+@;@(pretitle @elem[#:style (make-style "setcounter{tocdepth}" '())]{2})
+
+@(define (~nocite . x) (let ((_ (apply @~cite x))) (void)))
 
 @(declare-examples/module poof racket
    (provide (all-defined-out)))
@@ -261,7 +264,7 @@ We can also @r[mix] these prototypes together before to compute the @r[fix]:
 And since the @r[$z<-xy] prototype got the @r[x] and @r[y] values
 from the @r[self]
 and not the @r[super], we can freely commute it with the other two prototypes
-that do not affect either override slot @r['z] or inherit from it:
+that do not affect either override slot @r[z] or inherit from it:
 @Checks[
 (eval:check ((fix (mix $z<-xy (mix $double-x $x3)) x1-y2) 'z) 6+2i)
 (eval:check ((fix (mix $double-x (mix $z<-xy $x3)) x1-y2) 'z) 6+2i)
@@ -758,21 +761,8 @@ or whatever form of @emph{lazy evaluation} is available in the language at hand.
 
 To reprise the Call-By-Push-Value paradigm @~cite{conf/tlca/Levy99},
 prototypes incrementally specify @emph{computations} rather than @emph{values}.
-in applicative languages we reify these computations as values one way or the other,
-as functions or delayed values.
-
-Now, most interesting prototypes will only lead to error or divergence if you try
-to instantiate them by themselves---they are “mixins”,
-just like $r[$compare<-order] or $r[$avl-tree-rebalance] above,
-designed to be combined with other prototypes.
-Indeed, the whole entire point of incrementally specifying computations is
-that you want to manipulate fragments that are not complete specifications.
-To use these fragments in a total language where all computations terminates
-will require attaching to each prototype some side-condition as to
-which aspects of a computation it provides that other prototypes may rely on,
-and which aspects of a computation it requires that other prototypes must provide.
-This side-condition may well be a type in one of the many existing type systems
-for objects @~cite{Abadi97atheory tapl}.
+In applicative languages we can reify these computations as values
+either as functions (as in @(section1)), or as delayed values as follows:
 
 @Definitions[
 (code:comment "(deftype (δProto Self Super) (Fun (Delayed Self) (Delayed Super) -> Self))")
@@ -783,6 +773,19 @@ for objects @~cite{Abadi97atheory tapl}.
 (code:comment "δ$id : (δProto X X)")
 (define (δ$id f b) (λ (_self super) (force super)))
 ]
+
+Now, most interesting prototypes will only lead to error or divergence if you try
+to instantiate them by themselves---they are “mixins”,
+just like @r[$compare<-order] or @r[$avl-tree-rebalance] above,
+designed to be combined with other prototypes.
+Indeed, the whole entire point of incrementally specifying computations is
+that you want to manipulate fragments that are not complete specifications.
+To use these fragments in a total language where all computations terminates
+will require attaching to each prototype some side-condition as to
+which aspects of a computation it provides that other prototypes may rely on,
+and which aspects of a computation it requires that other prototypes must provide.
+This side-condition may well be a type in one of the many existing type systems
+for objects @~cite{Abadi97atheory tapl}.
 
 @subsection{Prototypes in Lazy Pure Functional Dynamic Languages}
 
@@ -916,11 +919,11 @@ the “object-oriented” package deal of the day.
 Yet, introspection can be useful to e.g. automatically
 input and output human-readable or network-exchangeable representations of an instance.
 Thus, the same 1990s marketing departments have long sold “reflection” as
-an extra feature to their previous “information hiding” feature.
+an extra feature counter-acting their previous “information hiding” feature.
 
 @subsubsection{Same concrete representation, abstract constructor}
 Field introspection can be achieved while keeping instances as functions from keys to values,
-by adding a “special” key, for instance @r['keys],
+by adding a “special” key, for instance @r[keys],
 that will be bound to the list of valid keys.
 To save themselves the error-prone burden of maintaining the list of keys by hand,
 programmers would then use a variant of @r[$slot-gen] that maintains this list, as in:
@@ -1021,17 +1024,16 @@ In Jsonnet, this conflation is done implicitly as part of the builtin object sys
 In Nix, interestingly, there are several unassuming variants of the same object system,
 that each store the prototype information in one or several special fields of the @r[attrset]
 that is otherwise used for instance information.
-Thus, what we could write:
-@racketblock[(mix ($slot 'x 1) ($slot-compute 'y (λ (self) (+ 2 (self 'x)))))]
-would be written in the simplest Nix object system as
+Thus, in the simplest Nix object system, one could write a definition such as
 @minted["nix"]|{
 fix' (self: { x = 1; y = 2 + self.x; })
 }|
-and evaluate to an attrset equivalent to:
+and it would evaluate to an attrset equivalent to:
 @minted["nix"]|{
 { x = 1; y = 3; __unfix__ = self: { x = 1; y = 2 + self.x; }; }
 }|
-Other variants use one or several of @r[extend], @r[override], @r[overrideDerivation], @r[meta], etc.,
+Nix contains many variants of the same object system, that use one or several of
+@r[extend], @r[override], @r[overrideDerivation], @r[meta], etc., instead of @r[__unfix__]
 to store composable prototype information.
 
 Thanks to the conflation of instance and prototype as two aspects of a same object,
@@ -1046,6 +1048,7 @@ Now that we have a nice and simple semantic framework for “objects”,
 can we also reimplement the more advanced features of object systems of yore?
 What about multiple inheritance?
 
+@; TODO: citations required on modularity, inheritance, multiple inheritance
 @subsubsection{The inheritance modularity issue}
 To write incremental OO programs, developers need to be able to express dependencies
 between objects, such that an object @r[Z]
@@ -1076,13 +1079,13 @@ where each of the transitive dependencies appears once and only once,
 e.g. @r[Z K1 K2 K3 D A B C E O].
 
 Not only does this activity entail a lot of tedious and error-prone bookkeeping,
-it is not modular:
-if these various objects are maintained by different people as part of separate libraries,
+it is not modular.
+If these various objects are maintained by different people as part of separate libraries,
 each object's author must keep track not just of their direct dependencies,
-but all their transitive indirect dependencies, with a proper ordering;
-then they must not only propagate those changes to their own objects,
-but notify the authors of objects that depend on theirs;
-to get a change fully propagated might required hundreds of modifications
+but all their transitive indirect dependencies, with a proper ordering.
+Then they must not only propagate those changes to their own objects,
+but notify the authors of objects that depend on theirs.
+To get a change fully propagated might required hundreds of modifications
 being sent and accepted by tens of different maintainers, some of whom might not be responsive.
 In other words, while possible, manual maintenance of a precedence list is a modularity nightmare.
 
@@ -1171,13 +1174,25 @@ mapping symbols to slot values.
 The prototype could just a @r[(δProto Dict Dict)]
 to achieve a semantics similar to that of Jsonnet.
 But since we will be adding features to the object system,
-we will instead represent the prototype as a list,
-the first element of which will itself be a @r[Dict],
-where the symbol @r['function] will point to a @r[(δProto Dict Dict)],
-and the symbol @r['supers] will point to a list of super-objects to inherit from.
-Further symbols in the prototype will be used to extend the object implementation;
-further elements of the list will be used to implement a meta-object protocol,
+we will instead represent the prototype as a follows.
+
+The prototype will itself be a pair, the first element of which will be a @r[Dict].
+In that prototype @r[Dict], the symbol @r[function] will point to a @r[(δProto Dict Dict)],
+and the symbol @r[supers] will point to a list of super-objects to inherit from.
+Further symbols in the prototype @r[Dict] will be used to extend the object implementation,
+starting with a precomputed cache of the precedence list bound to symbol @r[precedence-list].
+Making the prototype a pair of a @r[Dict] and further data also means that the same functions
+as used to construct or query an object can be used to first construct or query its prototype;
+this lays the foundation for a meta-object protocol @~cite{AMOP},
 whereby the object implementation can be extended from the inside.
+
+Note that, in a more robust implementation, we would use an extension to the language Scheme
+to define a special constructor for objects as pairs of instance and prototype,
+disjoint from the regular pair constructor.
+Thus, we can distinguish objects from regular lists, and
+hook into the printer to offer a nice way to print instance information
+that users are usually interested in while skipping prototype information
+that they usually aren't.
 
 @subsection{Method Combination}
 
@@ -1185,30 +1200,44 @@ whereby the object implementation can be extended from the inside.
 
 @section{Classes}
 
+Classes are “just” prototypes for type descriptors.
+Usually done at the meta-level in languages without “first-class” classes,
+only “second-class” classes.
+At the meta-level, type descriptors are themselves of a same concrete type,
+so the meta-language only needs and uses monomorphic prototypes!
+
 @section{Stateful Objects}
 
 Note how all the functions defined in the previous chapter were pure:
 They didn't use any side-effect whatsoever.
-No @r[set!], no tricky use of @r[call/cc]
+No @r[set!], no tricky use of @r[call/cc], no non-determinism.
+Only laziness at times.
 
 But what if we are OK with using side-effects? How much does that simplify things?
 
-We can do away with one of the two self super arguments, and instead pass a single mutable value
-as argument, where the identity provides the self, and the current state of the value provides the super.
+An obvious implementation of mutable objects is simply to reuse our pure objects
+wherein some slots contain a reference to mutable cell rather than an immutable value.
+But there are mutability also allows for various optimizations,
+assuming objects follow the usual linearity constraint of
+not depending on some values once they are consumed.
 
-Thus, we could for instance use @r[(deftype Proto (Fun MutableHashTable ->))],
-where the hash-table contains the effective methods to compute each slot as thunks
-or lazy computations already closed over the hash-table.
-Overriding a slot would replace the effective method based on the new method, the self and super method.
-Thus, individual methods would still be parameterized over self and super,
-even though the object prototype only has the self as parameter.
+Thus, a prototype for a mutable object can be implemented
+with a single mutable data structure argument self
+instead of two immutable value arguments self and super:
+the identity of that data structure provides the self, and
+the current state of the data structure provides the super.
+A prototype function would then be of type @r[(deftype μProto (Fun Object ->))],
+where the @r[Object]'s instance component contains a mutable hash-table
+mapping slot names (symbols) to effective methods to compute each slot value.
+These effective methods would be either thunks or lazy computations,
+and would already close over the identity of the object.
+Overriding a slot would update the effective method in place,
+based on the new method, the self (identity of the object) and
+super method (previous entry in the hash-table).
 
-Alternatively, each individual slot contains an object, and the methods are prototypes
-for these "objects", with the same mutable signature. But that means that only mutable objects
-are allowed as values in the language. Yikes.
-
-@(let ((x @~cite{Barrett96amonotonic}))
-   (void))
+@;;; Here, we silently cite things that only appear in the appendices,
+@;;; so they appear in the bibliography
+@~nocite{Barrett96amonotonic}
 
 @(generate-bibliography)
 
@@ -1227,7 +1256,7 @@ but are included here for the sake of completeness and reproducibility.
 Below is the C3 Linearization algorithm to topologically sort an inheritance DAG
 into a precedence list such that direct supers are all included before indirect supers.
 Initially introduced in Dylan @~cite{Barrett96amonotonic},
-it has since been adopted by many modern languages, including at least
+it has since been adopted by many modern languages, including
 Python, Raku, Parrot, Solidity, PGF/TikZ.
 
 The algorithm ensures that the precedence list of an object always contains as ordered sub-lists
@@ -1248,7 +1277,8 @@ To help with defining multiple inheritance, we'll also define the following help
 In our introduction, we described the @r[fix] and @r[mix] functions
 in only 109 characters of Scheme.
 We can do even shorter with various extensions.
-MIT Scheme and after it Racket, Gerbil Scheme, and more, allow you to write:
+MIT Scheme and after it Racket, Gerbil Scheme, and more,
+allow you to curried function definitions:
 @Examples[
 (define ((mix p q) f b) (p f (q f b)))
 ]

@@ -3,7 +3,9 @@ compiled/
 
 # Scribble-generated files
 poof.pdf
+poof.tex
 minted-colorful-style.tex
+acmart.cls
 
 # Editor-generated files
 *~
