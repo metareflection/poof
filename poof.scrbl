@@ -76,6 +76,7 @@ Self@~cite{chambers1989efficient},
 JavaScript.
 
 Multiple Inheritance:
+Mixin-based inheritance@~cite{bracha1990mixin},
 Clos,
 Closette.
 
