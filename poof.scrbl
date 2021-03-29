@@ -1168,11 +1168,22 @@ or some kind of a composable Meta-Object Protocol could enable
 all these features in a modular fashion.
 
 @subsubsection{Representing objects}
-For the sake of this article, we'll represent an object as a pair of an instance and a prototype.
-The instance itself will be a @r[Dict] (as per @(section2)),
-mapping symbols to slot values.
-The prototype could just a @r[(δProto Dict Dict)]
-to achieve a semantics similar to that of Jsonnet.
+For the sake of this article, we'll represent an object as a pair of an instance and a prototype:
+@Definitions[
+(define (object-instance object) (car object))
+(define (object-prototype object) (cdr object))
+]
+
+The instance itself will be a delayed @r[Dict] (as per @(section2)),
+mapping symbols as slot names to delayed values as slot computations:
+@Definitions[
+(code:comment "slot-ref : (Fun (Object_ A) k:Symbol -> (A k))")
+(define (slot-ref object slot)
+  (force (Dict 'ref (force (object-instance object)) slot bottom)))
+]
+
+What about the prototype? We could have it be just a @r[(δProto Object Object)],
+and achieve similar semantics to that of Jsonnet@~cite{jsonnet}.
 But since we will be adding features to the object system,
 we will instead represent the prototype as a follows.
 
@@ -1193,6 +1204,27 @@ Thus, we can distinguish objects from regular lists, and
 hook into the printer to offer a nice way to print instance information
 that users are usually interested in while skipping prototype information
 that they usually aren't.
+
+@Definitions[
+(define (object-supers object)
+  (slot-ref (object-prototype object) 'supers))
+(define (object-precedence-list object)
+  (slot-ref (object-prototype object) 'precedence-list))
+(define (compute-precedence-list object)
+  ('c3-compute-precedence-list object object-supers object-precedence-list))
+(define (object-prototype-function object)
+  (slot-ref (object-prototype object) 'function))
+(define (object supers function)
+  (define base
+    (list (Dict 'empty) @code:comment{base instance}
+          (Dict 'acons 'function (delay function)
+           (Dict 'acons 'supers (delay supers)
+            (Dict 'cons 'precedence-list (delay precedence-list)
+             (Dict 'empty))))))
+  (define precedence-list (compute-precedence-list base))
+  (define prototype-functions (map object-prototype-function precedence-list))
+  (instantiate-prototype-list prototype-functions base))
+]
 
 @subsection{Method Combination}
 
