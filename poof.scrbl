@@ -28,12 +28,28 @@
    (provide (all-defined-out)))
 @examples/module[poof #:hidden
 (require (only-in racket/base [define def])
-         "util/eval-check.rkt")]
+         srfi/1
+         "util/eval-check.rkt")
+@;{TODO:
+Some lighter syntax than code:comment.
+Get scribble/comment-reader to work?
+Manual traversal of the syntax object?
+}
+]
+
 
 @(define-simple-macro (r a ...) (racket a ...))
 @(define-simple-macro (Definitions a ...) (examples/module poof #:no-result a ...))
 @(define-simple-macro (Examples a ...) (examples #:eval poof #:no-result a ...))
 @(define-simple-macro (Checks a ...) (examples #:eval poof #:label #f a ...))
+
+@;{TODO: For Checks, instead of
+> (+ 1 1)
+2
+rather have
+(+ 1 1)
+;=> 2
+}
 
 @(define (section1) @seclink["Prototypes_bottom_up"]{section 1})
 @(define (section2) @seclink["pure_objective_fun"]{section 2})
@@ -57,7 +73,6 @@
 
 @;TAPL by @citet{tapl} is relevant.
 @;TAPL@~cite{tapl} has a relevant chapter (§32).
-
 
 This paper is about the unexpectedly happy marriage of Object-Orientation Programming and Pure Lazy Functional Programming -- with Dynamic (or Dependent) Types.
 
@@ -378,8 +393,8 @@ and @r[2] respectively, we can use:
 @subsubsection{Back to 1981!}
 
 Interestingly, the above approach to objects is essentially equivalent,
-though not exactly isomorphic, to what Yale T had in 1981 @~cite{Adams89object-orientedprogramming},
-that was notably reprised by YASOS in 1992 @~cite{dickey1992scheming}
+though not exactly isomorphic, to what Yale T had in 1981@~cite{Adams89object-orientedprogramming},
+that was notably reprised by YASOS in 1992@~cite{dickey1992scheming}
 and distributed with SLIB since.
 There are minor differences: what we call “instance”, T calls “object” or “instance”,
 but instead of “prototypes” it has “components” with a slightly different API.
@@ -544,7 +559,7 @@ Thus, the functional embedding of prototype @r[p] will be
 To recover @r[p] from that embedding, just apply it to @r[$id].
 }
 
-@section["pure_objective_fun"]{Pure Objective Fun}
+@section[#:tag "pure_objective_fun"]{Pure Objective Fun}
 
 @subsection{Using prototypes to incrementally define simple data structures}
 
@@ -759,7 +774,7 @@ by first wrapping values of that type into a thunk.
 An alternative to thunks would be to use Scheme's @r[delay] special form,
 or whatever form of @emph{lazy evaluation} is available in the language at hand.
 
-To reprise the Call-By-Push-Value paradigm @~cite{conf/tlca/Levy99},
+To reprise the Call-By-Push-Value paradigm@~cite{conf/tlca/Levy99},
 prototypes incrementally specify @emph{computations} rather than @emph{values}.
 In applicative languages we can reify these computations as values
 either as functions (as in @(section1)), or as delayed values as follows:
@@ -785,14 +800,14 @@ will require attaching to each prototype some side-condition as to
 which aspects of a computation it provides that other prototypes may rely on,
 and which aspects of a computation it requires that other prototypes must provide.
 This side-condition may well be a type in one of the many existing type systems
-for objects @~cite{Abadi97atheory tapl}.
+for objects@~cite{Abadi97atheory tapl}.
 
 @subsection{Prototypes in Lazy Pure Functional Dynamic Languages}
 
 @subsubsection{Prototypes in Nix}
 Interestingly, prototypes for lazy mappings from keys to values
 is exactly how objects are encoded in
-the pure lazy functional dynamically typed language Nix @~cite{dolstra2008nixos}.
+the pure lazy functional dynamically typed language Nix@~cite{dolstra2008nixos}.
 
 Since 2015, the Nix standard library contains variants of the @r[fix] et @r[mix] functions,
 wherein “attribute sets” or attrsets, mapping from strings to values,
@@ -821,7 +836,7 @@ and in the following section @; TODO: @seclink
 we further improve on it.
 
 @subsubsection{Prototypes in Jsonnet}
-Now, Jsonnet @~cite{jsonnet}, another lazy pure functional dynamic language,
+Now, Jsonnet@~cite{jsonnet}, another lazy pure functional dynamic language,
 sports an object system that is semantically equivalent to that of Nix,
 published one year before Nix's extension system was invented.
 Jsonnet itself was invented as a simplified semantic reconstruction of the essential ideas
@@ -840,12 +855,12 @@ Finally, Jsonnet has builtin support for fields being either visible or hidden w
 
 The fact that, across several decades, closely matching designs were independently reinvented many times
 without the intention to do so, is a good sign that this design is a “fixed point in design space”,
-akin to the notion of “fixed point in time” in Dr Who @~cite{DrWhoFPIT}:
+akin to the notion of “fixed point in time” in Dr Who@~cite{DrWhoFPIT}:
 however you may try to reach a different conclusion, you still end-up with that fixed-point eventually.
 
 @subsubsection{A Pure Lazy Fit}
 Still, there are ways in which Jsonnet and Nix improved upon
-the prototype object systems as initially designed in ThingLab @~cite{Borning77} or T @~cite{Rees82t:a},
+the prototype object systems as initially designed in ThingLab@~cite{Borning77} or T@~cite{Rees82t:a},
 or later made popular by SELF or JavaScript @; cite
 As in these previous inventions, Jsonnet and Nix use first-class functions to construct objects.
 They also rely on dynamic types to avoid the need for dependent types and internal type theories
@@ -866,7 +881,7 @@ That typesystem rejects most interesting uses of prototypes,
 thereby neglecting an important application domain for pure lazy functional programming.
 Thus, though some claim the ML typesystem is at a "sweet spot",
 wherein it provides good expressiveness while still being computable
-and providing understandable error messages @~cite{minsky08},
+and providing understandable error messages@~cite{minsky08},
 maybe the spot is too sweet to be healthy, and
 is lacking in proteins, or at least in prototypes.
 
@@ -1104,7 +1119,7 @@ in such a situation, an error can be raised with some helpful explanation to hel
 Modern object systems have settled on the C3 linearization algorithm, as described in
 @seclink["Appendix_C"]{Appendix C}.
 
-@(define c3-definitions @Definitions[
+@(define/local-expand c3-definitions @Definitions[
 (code:comment "not-null? : Any -> Bool")
 (define (not-null? l) (not (null? l)))
 
@@ -1134,8 +1149,7 @@ Modern object systems have settled on the C3 linearization algorithm, as describ
                   (loop (cons next rhead) (remove-next next tails)))))))
 ])
 
-@(define c3-extra-definitions @Definitions[
-
+@(define/local-expand c3-extra-definitions @Definitions[
 (define (pair-tree-for-each! x f)
   (let loop ((x x))
     (cond ((pair? x) (loop (car x)) (loop (cdr x)))
@@ -1149,6 +1163,15 @@ Modern object systems have settled on the C3 linearization algorithm, as describ
 
 (define (flatten-pair-tree x)
   (call-with-list-builder (lambda (c) (pair-tree-for-each! x c))))
+
+(define (alist->Dict alist)
+  (foldl (lambda (kv a) ((Dict 'acons) (car kv) (cdr kv) a)) (Dict 'empty) alist))
+
+(define (Dict->alist dict)
+  ((Dict 'afoldr) (lambda (k v a) (cons (cons k v) a)) '() dict))
+
+(define (Dict-merge override-dict base-dict)
+  ((Dict 'afoldr) (Dict 'acons) base-dict override-dict))
 ])
 
 @subsubsection{A prototype is more than a function}
@@ -1170,32 +1193,10 @@ all these features in a modular fashion.
 @subsubsection{Representing objects}
 For the sake of this article, we'll represent an object as a pair of an instance and a prototype:
 @Definitions[
+(define (make-object instance prototype) (cons instance prototype))
 (define (object-instance object) (car object))
 (define (object-prototype object) (cdr object))
 ]
-
-The instance itself will be a delayed @r[Dict] (as per @(section2)),
-mapping symbols as slot names to delayed values as slot computations:
-@Definitions[
-(code:comment "slot-ref : (Fun (Object_ A) k:Symbol -> (A k))")
-(define (slot-ref object slot)
-  (force (Dict 'ref (force (object-instance object)) slot bottom)))
-]
-
-What about the prototype? We could have it be just a @r[(δProto Object Object)],
-and achieve similar semantics to that of Jsonnet@~cite{jsonnet}.
-But since we will be adding features to the object system,
-we will instead represent the prototype as a follows.
-
-The prototype will itself be a pair, the first element of which will be a @r[Dict].
-In that prototype @r[Dict], the symbol @r[function] will point to a @r[(δProto Dict Dict)],
-and the symbol @r[supers] will point to a list of super-objects to inherit from.
-Further symbols in the prototype @r[Dict] will be used to extend the object implementation,
-starting with a precomputed cache of the precedence list bound to symbol @r[precedence-list].
-Making the prototype a pair of a @r[Dict] and further data also means that the same functions
-as used to construct or query an object can be used to first construct or query its prototype;
-this lays the foundation for a meta-object protocol @~cite{AMOP},
-whereby the object implementation can be extended from the inside.
 
 Note that, in a more robust implementation, we would use an extension to the language Scheme
 to define a special constructor for objects as pairs of instance and prototype,
@@ -1205,22 +1206,73 @@ hook into the printer to offer a nice way to print instance information
 that users are usually interested in while skipping prototype information
 that they usually aren't.
 
+The instance itself will be a delayed @r[Dict] (as per @(section2)),
+mapping symbols as slot names to delayed values as slot computations:
 @Definitions[
-(define (object-supers object)
-  (slot-ref (object-prototype object) 'supers))
-(define (object-precedence-list object)
-  (slot-ref (object-prototype object) 'precedence-list))
-(define (compute-precedence-list object)
-  ('c3-compute-precedence-list object object-supers object-precedence-list))
+(code:comment "slot-ref : (Fun (Object A) k:Symbol -> (A k))")
+(define (slot-ref object slot)
+  (force (Dict 'ref (force (object-instance object)) slot bottom)))
+]
+
+Prototype functions are then of type @r[(δProto Object Object)],
+with the following slot generator:
+@Definitions[
+(define ($slot-gen/object k fun)
+  (λ (self super)
+    (make-object (Dict 'acons k (fun self (delay (slot-ref super k)))
+                  (object-instance (force super)))
+                 (object-prototype (force super)))))
+]
+
+We could let the prototype be just a prototype function as above,
+and we would achieve similar semantics to those of Jsonnet@~cite{jsonnet}.
+However, to support multiple inheritance, the prototype shall contain
+not only a prototype function, but also a list of super-objects to inherit from.
+We could make the prototype a pair of the above, or, if more data elements are later needed,
+a vector with the above at fixed locations.
+But since we may be adding further features to the object system,
+we will instead use the following extensible representation for the prototype.
+
+The prototype will itself be a pair, the first element of which will be a @r[Dict].
+Thus, the same functions as used to query the slot values of an object's instance
+can be used to query the data elements of the prototype.
+But also, the functions used to construct an object can be used to construct a prototype,
+which lays the foundation for a meta-object protocol@~cite{amop},
+that allows the object implementation to be extended from the inside.
+
+For now, the slots of a prototype will be a prototype function bound to symbol @r[function],
+and a list of super objects to inherit from bound to symbol @r[supers],
+as well as a precomputed cache of the precedence list bound to symbol @r[precedence-list].
+We will also specially recognize the empty list as a prototype with a @r[function]
+that overrides its super with constant fields and an empty @r[supers] list,
+so that every @r[Dict] can trivially be turned into an object,
+and including every prototype representation.
+
+@Definitions[
+(define (Dict->Object dict) (make-object dict '()))
 (define (object-prototype-function object)
-  (slot-ref (object-prototype object) 'function))
+  (define prototype (object-prototype object))
+  (if (null? prototype)
+    (λ (self super)
+      (make-object (Dict-merge (object-instance object) (object-instance super))
+                   (object-prototype super)))
+    (slot-ref prototype 'precedence-list)))
+(define (object-supers object)
+  (define prototype (object-prototype object))
+  (if (null? prototype) '() (slot-ref prototype 'supers)))
+(define (object-precedence-list object)
+  (define prototype (object-prototype object))
+  (if (null? prototype) '() (slot-ref prototype 'precedence-list)))
+(define (compute-precedence-list object)
+  (c3-compute-precedence-list object object-supers object-precedence-list))
+(define base-dict (Dict 'empty))
 (define (object supers function)
-  (define base
-    (list (Dict 'empty) @code:comment{base instance}
-          (Dict 'acons 'function (delay function)
-           (Dict 'acons 'supers (delay supers)
-            (Dict 'cons 'precedence-list (delay precedence-list)
-             (Dict 'empty))))))
+  (define proto
+    (Dict->Object (Dict 'acons 'function (delay function)
+                   (Dict 'acons 'supers (delay supers)
+                    (Dict 'cons 'precedence-list (delay precedence-list)
+                     (Dict 'empty))))))
+  (define base (make-object base-dict proto))
   (define precedence-list (compute-precedence-list base))
   (define prototype-functions (map object-prototype-function precedence-list))
   (instantiate-prototype-list prototype-functions base))
@@ -1258,8 +1310,7 @@ so the meta-language only needs and uses monomorphic prototypes!
 
 Note how all the functions defined in the previous chapter were pure:
 They didn't use any side-effect whatsoever.
-No @r[set!], no tricky use of @r[call/cc], no non-determinism.
-Only laziness at times.
+No @r[set!], no tricky use of @r[call/cc]. Only laziness at times.
 
 But what if we are OK with using side-effects? How much does that simplify things?
 
@@ -1303,7 +1354,7 @@ but are included here for the sake of completeness and reproducibility.
 
 Below is the C3 Linearization algorithm to topologically sort an inheritance DAG
 into a precedence list such that direct supers are all included before indirect supers.
-Initially introduced in Dylan @~cite{Barrett96amonotonic},
+Initially introduced in Dylan@~cite{Barrett96amonotonic},
 it has since been adopted by many modern languages, including
 Python, Raku, Parrot, Solidity, PGF/TikZ.
 

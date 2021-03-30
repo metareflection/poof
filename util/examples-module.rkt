@@ -2,7 +2,8 @@
 
 (provide declare-examples/module
          finalize-examples/module
-         examples/module)
+         examples/module
+         define/local-expand)
 
 (require rackunit
          syntax/parse/define
@@ -71,3 +72,7 @@
                  (map syntax-local-introduce
                       (remove-comments (attribute dat)))))]
   (examples #:eval ev opts.options ... dat ...))
+
+(define-simple-macro (define/local-expand x:id e:expr)
+  #:with e* (local-expand #'e 'expression '())
+  (define x e*))
