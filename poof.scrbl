@@ -766,7 +766,7 @@ Now, the simplest numeric functions are thunks: nullary functions that yield a n
 (eval:check ((fix (mix p2* p1+) (λ () 30))) 62)
 ]
 
-@subsection{Prototypes are for Computations not Values}
+@subsection[#:tag "computations_not_values"]{Prototypes are for Computations not Values}
 
 Prototypes for number thunks can be generalized to prototypes for any kind of thunks:
 you may incrementally specify instances of arbitrary types using prototypes,
@@ -921,6 +921,8 @@ we implemented a rudimentary object system on top of prototypes.
 Compared to mainstream object systems, it not only was much simpler to define,
 but also enabled mixins, making it more powerful than common single-inheritance systems.
 Still, many bells and whistles found in other object systems are missing.
+Now that we have a nice and simple semantic framework for “objects”,
+can we also reimplement the more advanced features of object systems of yore?
 
 @subsection{Field Introspection}
 
@@ -986,7 +988,7 @@ Thus, using @r[δfix] and @r[δmix] instead of @r[fix] and @r[mix], we can have:
         (Dict 'acons k (delay (fun self super-value)) super-dict)))))
 ]
 
-@subsubsection[#:tag "Different_prototype"]{Same instance representation, different prototype representation}
+@subsubsection[#:tag "different_prototype"]{Same instance representation, different prototype representation}
 Finally, field introspection can be achieved while preserving the same instance representation
 by instead changing the representation for @emph{prototypes}.
 Though the concise functional representation we offered gives an enlightening
@@ -1015,25 +1017,39 @@ is essential to understanding and simplifying the semantics of object systems.
 
 @subsection{Unifying Instances and Prototypes}
 
-While the distinction between instance and prototype is essential to simplify semantics,
-it leads to a strange situation wherein we have been doing “Object-Oriented Programming”
-without any actual object!
-This is a practical problem, as having to maintain the distinction means that
+@subsubsection{OOP without Objects}
+While the distinction between instance and prototype is essential
+to simplify and understand the semantics of objects,
+neither instances nor prototypes are arguably “object”.
+We are thus in a strange situation wherein we have been doing
+“Object-Oriented Programming” without any actual object!
+
+This is a practical problem, as having to maintain this distinction means that
 all APIs may have to be doubled at every point that may be either one or the other.
-This is particularly a pain when writing extensible configurations for recursive data structures,
-wherein you then need to decide for each field of each data structure at each stage of computation
+In particular, writing extensible configurations for recursive data structures this way is painful:
+you need to decide for each field of each data structure at each stage of computation
 whether it contains an extensible prototype or an instance to call the proper API.
 This incurs both a psychological cost to programmers and a runtime cost to evaluating programs,
 that in the worst case might recompute some sub-expressions exponentially often.
 
-Once again, Jsonnet and Nix confront and solve this issue elegantly
-and the very same way with one small trick:
+@subsubsection{Conflation without confusion}
+Jsonnet and Nix both confront and elegantly solve the above issue,
+and the very same way, with one small trick:
 they bundle and conflate together instance and prototype in a same single entity, the “object”.
 Indeed, in a pure context, and given the base super value for the given prototype representation,
 there is one and only one instance associated to a prototype up to any testable equality,
 and so we may usefully cache the computation of this instance together with the prototype.
 The same “object” entity can thus be seen as an instance and queried for method values,
 or seen as a prototype and composed with other objects (also seen as prototypes) into a new object.
+
+Thanks to the conflation of instance and prototype as two aspects of a same object,
+configurations can be written in either language
+that can refer to other parts of the configuration
+without having to track and distinguish which parts are instantiated at which point,
+and it all just works.
+Still, distinguishing the two concepts of instance and prototype is important
+to dispel the confusion that can often reign in even the most experienced OO practitioner
+regarding the fine behavior of objects when trying to assemble or debug programs.
 
 In Jsonnet, this conflation is done implicitly as part of the builtin object system implementation.
 In Nix, interestingly, there are several unassuming variants of the same object system,
@@ -1051,17 +1067,41 @@ Nix contains many variants of the same object system, that use one or several of
 @r[extend], @r[override], @r[overrideDerivation], @r[meta], etc., instead of @r[__unfix__]
 to store composable prototype information.
 
-Thanks to the conflation of instance and prototype as two aspects of a same object,
-configurations can be written in either language
-that can refer to other parts of the configuration
-without having to track and distinguish which parts are instantiated at which point,
-and it all just works.
+@subsubsection{Practical Conflation for Fun and Profit}
+For the sake of this article, we'll represent an object as a pair of an instance and a prototype:
+@Definitions[
+(define (make-object instance prototype) (cons instance prototype))
+(define (object-instance object) (car object))
+(define (object-prototype object) (cdr object))
+]
+
+In a more robust implementation, we would use an extension to the language Scheme
+to define a special structure type for objects as pairs of instance and prototype,
+disjoint from the regular pair type.
+Thus, we can distinguish objects from regular lists, and
+hook into the printer to offer a nice way to print instance information
+that users are usually interested in while skipping prototype information
+that they usually aren't.
+
+To reproduce the semantics of Jsonnet@~cite{jsonnet},
+instances will be a delayed @r[Dict] (as per @(section2)),
+mapping symbols as slot names to delayed values as slot computations;
+meanwhile the prototype will be a prototype function of type @r[(δProto Object Object)]
+(as in @seclink["computations_not_values"]{section 4.1.3}),
+that preserves the prototype while acting on the instance.
+Thus the basic function to access a slot, and the basic prototype to define one,
+are as follow:
+@Definitions[
+(define (slot-ref object slot)
+  (force (Dict 'ref (force (object-instance object)) slot bottom)))
+(define ($slot-gen/object k fun)
+  (λ (self super)
+    (make-object (Dict 'acons k (fun self (delay (slot-ref super k)))
+                  (object-instance (force super)))
+                 (object-prototype (force super)))))
+]
 
 @subsection{Multiple Inheritance}
-
-Now that we have a nice and simple semantic framework for “objects”,
-can we also reimplement the more advanced features of object systems of yore?
-What about multiple inheritance?
 
 @; TODO: citations required on modularity, inheritance, multiple inheritance
 @subsubsection{The inheritance modularity issue}
@@ -1111,11 +1151,15 @@ and the object system will automatically compute
 a suitable precedence list in which order to compose the object prototypes.
 Thus, defining objects with dependencies becomes modular.
 
-The algorithm to extract this precedence list from the inheritance graph is called a linearization.
-This algorithm can also automatically detect any ordering inconsistency or a circular dependency
-wherein the inheritance graph isn't a directed acyclic graph (DAG)
-and therefore no precedence list can satisfy all the ordering constraints;
-in such a situation, an error can be raised with some helpful explanation to help debug the issue.
+The algorithm to compute this precedence list is called a linearization:
+It considers the dependencies as defining a directed acyclic graph (DAG),
+or equivalently, a partial order;
+it completes this partial order into a total (or linear) order,
+that is a superset of the ordering relations in the partial order.
+The algorithm can also detect any ordering inconsistency or circular dependency
+whereby the dependencies as declared fail to constitute a DAG;
+in such a situation, no precedence list can satisfy all the ordering constraints,
+and instead an error is raised.
 Modern object systems have settled on the C3 linearization algorithm, as described in
 @seclink["Appendix_C"]{Appendix C}.
 
@@ -1176,77 +1220,33 @@ Modern object systems have settled on the C3 linearization algorithm, as describ
 
 @subsubsection{A prototype is more than a function}
 But where is the inheritance information to be stored?
-A prototype must contain more than the function being composed to implement open-recursion.
+A prototype must contain more than the function being composed to implement open-recursion;
 @italic{A minima} it must also contain the list of direct super objects
-that the current object depends on;
-we saw @seclink["Different_prototype"]{above} that we might also want to remember
-a list or set of keys being defined or overridden.
-While we're at it, we may also want to cache the precedence list,
-and any amount of other meta-information to be used when eventually computing the instance,
-or to allow suitable introspection into the object or other reflective access:
-type declarations, method combinations, and any imaginable future feature.
+that the current object depends on.
+We saw in @seclink["different_prototype"]{4.1.4} that and how we can and sometimes must indeed
+include additional information in a prototype.
+Such additional information will include a precomputed cache for the precedence list below,
+but could also conceivably include
+type declarations, method combinations, and support for any imaginable future feature.
 
-We could include a long litany of @italic{ad hoc} features hardwired in a giant object system;
-or some kind of a composable Meta-Object Protocol could enable
-all these features in a modular fashion.
-
-@subsubsection{Representing objects}
-For the sake of this article, we'll represent an object as a pair of an instance and a prototype:
-@Definitions[
-(define (make-object instance prototype) (cons instance prototype))
-(define (object-instance object) (car object))
-(define (object-prototype object) (cdr object))
-]
-
-Note that, in a more robust implementation, we would use an extension to the language Scheme
-to define a special constructor for objects as pairs of instance and prototype,
-disjoint from the regular pair constructor.
-Thus, we can distinguish objects from regular lists, and
-hook into the printer to offer a nice way to print instance information
-that users are usually interested in while skipping prototype information
-that they usually aren't.
-
-The instance itself will be a delayed @r[Dict] (as per @(section2)),
-mapping symbols as slot names to delayed values as slot computations:
-@Definitions[
-(code:comment "slot-ref : (Fun (Object A) k:Symbol -> (A k))")
-(define (slot-ref object slot)
-  (force (Dict 'ref (force (object-instance object)) slot bottom)))
-]
-
-Prototype functions are then of type @r[(δProto Object Object)],
-with the following slot generator:
-@Definitions[
-(define ($slot-gen/object k fun)
-  (λ (self super)
-    (make-object (Dict 'acons k (fun self (delay (slot-ref super k)))
-                  (object-instance (force super)))
-                 (object-prototype (force super)))))
-]
-
-We could let the prototype be just a prototype function as above,
-and we would achieve similar semantics to those of Jsonnet@~cite{jsonnet}.
-However, to support multiple inheritance, the prototype shall contain
-not only a prototype function, but also a list of super-objects to inherit from.
-We could make the prototype a pair of the above, or, if more data elements are later needed,
-a vector with the above at fixed locations.
+We could start by making the prototype a pair of prototype function and list of supers;
+if more data elements are later needed, we could use a vector with every element at a fixed location.
 But since we may be adding further features to the object system,
-we will instead use the following extensible representation for the prototype.
-
-The prototype will itself be a pair, the first element of which will be a @r[Dict].
+we will instead make the prototype itself an object,
+with a special base case to break the infinite recursion.
 Thus, the same functions as used to query the slot values of an object's instance
-can be used to query the data elements of the prototype.
+can be used to query the data elements of the prototype (modulo this special case).
 But also, the functions used to construct an object can be used to construct a prototype,
 which lays the foundation for a meta-object protocol@~cite{amop},
-that allows the object implementation to be extended from the inside.
+wherein object implementation can be extended from the inside.
 
-For now, the slots of a prototype will be a prototype function bound to symbol @r[function],
-and a list of super objects to inherit from bound to symbol @r[supers],
-as well as a precomputed cache of the precedence list bound to symbol @r[precedence-list].
-We will also specially recognize the empty list as a prototype with a @r[function]
-that overrides its super with constant fields and an empty @r[supers] list,
-so that every @r[Dict] can trivially be turned into an object,
-and including every prototype representation.
+When it is an object, a prototype will have
+slot @r[function] bound to a prototype function as previously, and
+slot @r[supers] bound to a list of super objects to inherit from,
+as well as a slot @r[precedence-list] bound to a precomputed cache of the precedence list.
+When it is the special base case, for which we below chose the empty list,
+slots @r[supers] and @r[precedence-list] are bound to empty lists, and slot @r[function]
+is bound to a function that overrides its super with constant fields from the instance.
 
 @Definitions[
 (define (Dict->Object dict) (make-object dict '()))
@@ -1278,8 +1278,6 @@ and including every prototype representation.
   (instantiate-prototype-list prototype-functions base))
 ]
 
-@subsection{Method Combination}
-
 @subsection{Multiple Dispatch}
 
 @subsubsection{Extending previous objects}
@@ -1297,6 +1295,7 @@ with the same hygiene mechanism as macros;
 therefore, regular programs not using reflection cannot possibly have referred
 to the newly-defined method.
 
+@subsection{Method Combinations}
 
 @section{Classes}
 
