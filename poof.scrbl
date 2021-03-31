@@ -1064,7 +1064,7 @@ and it would evaluate to an attrset equivalent to:
 { x = 1; y = 3; __unfix__ = self: { x = 1; y = 2 + self.x; }; }
 }|
 Nix contains many variants of the same object system, that use one or several of
-@r[extend], @r[override], @r[overrideDerivation], @r[meta], etc., instead of @r[__unfix__]
+@r[extend], @r[override], @r[overrideDerivation], @r[meta], etc., instead of @tt{__unfix__}
 to store composable prototype information.
 
 @subsubsection{Practical Conflation for Fun and Profit}
@@ -1126,7 +1126,7 @@ then @r[K1] would be a pre-mix @r[K1 A B C O],
 and when trying to specify @r[Z], the pre-mix
 @r[Z K1 A B C O K2 D B E O K3 D A O] would be incorrect,
 with unwanted repetitions of @r[A], @r[B], @r[D], @r[O]
-redoing or undoing overrides made by @r[K2] and @r[K3].
+redoing their effects too many times and possibly undoing overrides made by @r[K2] and @r[K3].
 Instead, the programmer would have to somehow remember and track those dependencies,
 such that when he decides instantiates @r[Z], he won't write just @r[Z],
 but @r[Z] followed a topologically sorted @emph{precedence list}
@@ -1142,26 +1142,29 @@ Then they must not only propagate those changes to their own objects,
 but notify the authors of objects that depend on theirs.
 To get a change fully propagated might required hundreds of modifications
 being sent and accepted by tens of different maintainers, some of whom might not be responsive.
-In other words, while possible, manual maintenance of a precedence list is a modularity nightmare.
+Even when the sets of dependencies are properly propagated, inconsistencies between
+the orders chosen by different maintainers at different times may cause subtle miscalculations
+that are hard to detect or debug.
+In other words, while possible, manual maintenance of precedence lists is a modularity nightmare.
 
 @subsubsection{Multiple inheritance to the rescue}
-With multiple inheritance, programmers can declare the dependencies
-between objects and their direct super objects,
-and the object system will automatically compute
+With multiple inheritance, programmers only need declare the dependencies
+between objects and their direct super objects:
+the object system will automatically compute
 a suitable precedence list in which order to compose the object prototypes.
 Thus, defining objects with dependencies becomes modular.
 
-The algorithm to compute this precedence list is called a linearization:
+The algorithm that computes this precedence list is called a linearization:
 It considers the dependencies as defining a directed acyclic graph (DAG),
-or equivalently, a partial order;
+or equivalently, a partial order, and
 it completes this partial order into a total (or linear) order,
 that is a superset of the ordering relations in the partial order.
 The algorithm can also detect any ordering inconsistency or circular dependency
 whereby the dependencies as declared fail to constitute a DAG;
 in such a situation, no precedence list can satisfy all the ordering constraints,
 and instead an error is raised.
-Modern object systems have settled on the C3 linearization algorithm, as described in
-@seclink["Appendix_C"]{Appendix C}.
+Recent modern object systems seem to have settled on the C3 linearization algorithm,
+as described in @seclink["Appendix_C"]{Appendix C}.
 
 @(define/local-expand c3-definitions @Definitions[
 (code:comment "not-null? : Any -> Bool")
@@ -1172,7 +1175,7 @@ Modern object systems have settled on the C3 linearization algorithm, as describ
 
 (code:comment "remove-next : X (List (NonEmptyList X)) -> (List (NonEmptyList X))")
 (define (remove-next next tails)
-  (remove-nulls (map (lambda (l) (if (equal? (car l) next) (cdr l) l)) tails)))
+  (remove-nulls (map (λ (l) (if (equal? (car l) next) (cdr l) l)) tails)))
 
 (code:comment "c3-compute-precedence-list : A (A -> (List A)) (A -> (NonEmptyList A))")
 (code:comment "  -> (NonEmptyList A)")
@@ -1180,7 +1183,7 @@ Modern object systems have settled on the C3 linearization algorithm, as describ
   (define supers (get-supers x)) ;; : (List A)
   (define super-precedence-lists (map get-precedence-list supers)) ;; : (List (NonEmptyList A))
   (define (c3-select-next tails) ;; : (NonEmptyList (NonEmptyList A)) -> A
-    (define (candidate? c) (every (lambda (tail) (not (member c (cdr tail)))) tails)) ;; : A -> Bool
+    (define (candidate? c) (every (λ (tail) (not (member c (cdr tail)))) tails)) ;; : A -> Bool
     (let loop ((ts tails))
       (when (null? ts) (error "Inconsistent precedence graph"))
       (define c (caar ts))
@@ -1206,13 +1209,13 @@ Modern object systems have settled on the C3 linearization algorithm, as describ
   (reverse l))
 
 (define (flatten-pair-tree x)
-  (call-with-list-builder (lambda (c) (pair-tree-for-each! x c))))
+  (call-with-list-builder (λ (c) (pair-tree-for-each! x c))))
 
 (define (alist->Dict alist)
-  (foldl (lambda (kv a) ((Dict 'acons) (car kv) (cdr kv) a)) (Dict 'empty) alist))
+  (foldl (λ (kv a) ((Dict 'acons) (car kv) (cdr kv) a)) (Dict 'empty) alist))
 
 (define (Dict->alist dict)
-  ((Dict 'afoldr) (lambda (k v a) (cons (cons k v) a)) '() dict))
+  ((Dict 'afoldr) (λ (k v a) (cons (cons k v) a)) '() dict))
 
 (define (Dict-merge override-dict base-dict)
   ((Dict 'afoldr) (Dict 'acons) base-dict override-dict))
@@ -1270,7 +1273,7 @@ is bound to a function that overrides its super with constant fields from the in
   (define proto
     (Dict->Object (Dict 'acons 'function (delay function)
                    (Dict 'acons 'supers (delay supers)
-                    (Dict 'cons 'precedence-list (delay precedence-list)
+                    (Dict 'acons 'precedence-list (delay precedence-list)
                      (Dict 'empty))))))
   (define base (make-object base-dict proto))
   (define precedence-list (compute-precedence-list base))
