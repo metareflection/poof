@@ -1283,6 +1283,16 @@ is bound to a function that overrides its super with constant fields from the in
 
 @subsection{Multiple Dispatch}
 
+@subsubsection{Generic Functions}
+The Common Lisp Object System@~cite{gabriel1991clos} features the ability to define
+generic functions, that are not defined as part of an object,
+but can be specialized for various objects and those that inherit from them.
+What more, specialized behavior is not necessarily tied to the first argument
+of the generic function, as with most object systems, but can specified based
+on the types of multiple arguments. For instance, a generic multiplication operation
+will invoke different methods when called with two integers, two floating-point numbers,
+an integer and a floating-point number, a complex number and a vector of complex numbers, etc.
+
 @subsubsection{Extending previous objects}
 There is an issue with dynamically adding new functions or methods,
 which is necessary for multiple dispatch, but present even without it.
@@ -1299,6 +1309,10 @@ therefore, regular programs not using reflection cannot possibly have referred
 to the newly-defined method.
 
 @subsection{Method Combinations}
+
+Function in multiple fragments. Just like object in multiple fragments?
+Prototypes for more than objects.
+Just like base, wrapper.
 
 @section{Classes}
 
