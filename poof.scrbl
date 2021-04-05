@@ -1375,8 +1375,8 @@ an arbitrary set of sorted, labelled (multi)methods
 
 @subsubsection{Generalized Prototype Combination}
 
-As determined above, generic functions are made of many fragments (multi-methods);
-these fragments are sorted according to some partial or total order;
+As determined above, generic functions are made of many labelled fragments (multi-methods);
+fragments of a same label are sorted according to some partial or total order;
 they are then composed via some representation-dependent mixing function;
 a fixed-point is extracted from the composed fragments, with some base value;
 finally a representation-dependent wrapper is applied to the fixed-point
@@ -1385,6 +1385,31 @@ this is very much like an object!
 Actually, since we have accepted in @(section3) that prototypes and “object orientation”
 are not just to compute records that map field names to values, but for arbitrary computations,
 then we may realize that what we need is a general protocol for computing with prototypes.
+
+@;{ @para{
+A generalized prototype is defined in the context of covariant functors
+@r[Raw] and @r[Cooked], and bi-covariant functor @r[Lens],
+@Definitions[
+(code:comment "(deftype (ObjectWrapper Raw Cooked)")
+(code:comment "  (Forall (Object) (Fun (Raw Object) -> (Cooked Object))))")
+(code:comment "(deftype (CookedProto Cooked)")
+(code:comment "  (Forall (ObjectSuper ObjectSelf MethodSuper MethodSelf) ; s t a b")
+(code:comment "    (Fun (Cooked ObjectSelf) (Delayed MethodSuper) -> MethodSelf)))")
+(code:comment "(deftype (MethodSetter Raw)")
+(code:comment "  (Forall (ObjectSuper ObjectSelf MethodSelf) ; s t b")
+(code:comment "    (Fun MethodSelf (Raw ObjectSuper) -> (Raw ObjectSelf))))")
+(code:comment "(deftype (MethodGetter Raw)")
+(code:comment "  (Forall (Object Method) ; s a")
+(code:comment "    (Fun (Raw Object) -> Method)))")
+(code:comment "(deftype (MethodWrapper Cooked RawProto)")
+(code:comment "  (Fun (RawProto Cooked) -> (CookedProto Cooked)))")
+]
+TODO: implement multimethods + method combination? Based on AMOP?
+@;@Definitions[
+(define ($lens-gen setter getter fun)
+  (λ (cooked-self raw-super) (setter (fun cooked-self (delay (getter raw-super))) raw-super)))
+]
+}}
 
 @section{Classes}
 
