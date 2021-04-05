@@ -1,36 +1,67 @@
 @InProceedings{Borning77,
-    author = {Alan Borning},
-    title = {{ThingLab} --- an object-oriented system for building simulations using constraints'},
-    booktitle={5th Internatoinal Conference on Artificial Intelligence},
-    pages={497--498},
-    month = {August},
-    year = {1977}
+  author = {Alan Borning},
+  title = {{ThingLab} --- an object-oriented system for building simulations using constraints'},
+  booktitle={5th Internatoinal Conference on Artificial Intelligence},
+  pages={497--498},
+  month = {August},
+  year = {1977}
 }
+
+% TODO: cite Flavors for multimethods, alongside CommonLoops and CLOS.
 
 % Norman I. Adams, IV -- but the IV doesn't get processed correctly
 @InProceedings{Rees82t:a,
-    author = {Jonathan A. Rees and Norman I. Adams},
-    title = {T: a dialect of LISP or, Lambda: the ultimate software tool},
-    booktitle = {Symposium on Lisp and Functional Programming, ACM},
-    year = {1982},
-    pages = {114--122}
+  author = {Jonathan A. Rees and Norman I. Adams},
+  title = {T: a dialect of LISP or, Lambda: the ultimate software tool},
+  booktitle = {Symposium on Lisp and Functional Programming, ACM},
+  pages = {114--122},
+  year = {1982}
+}
+
+@Misc{Cannon82,
+  title={Flavors: A non-hierarchical approach to object-oriented programming},
+  author={Howard Cannon},
+  publisher={Symbolics Inc.},
+  year={1982}
+}
+
+@InProceedings{borning86,
+  title={Classes Versus Prototypes in Object-Oriented Languages},
+  author={Alan H. Borning},
+  booktitle={1986 Fall Joint Computer Conference},
+  pages={36--40},
+  year={1986},
+}
+
+@Article{bobrow86commonloops,
+  title={CommonLoops: Merging Lisp and Object-Oriented Programming},
+  author={Daniel G. Bobrow and Kenneth Kahn and Gregor Kiczales and Larry Masinter and Mark Stefyk and Frank Zdybel},
+  journal={OOPSLA},
+  year={1986}
+}
+
+@Article{bobrow88clos,
+  title={Common Lisp Object Specification X3J13},
+  author={D. G. Bobrow and L. D. DeMichiel and R. P. Gabriel and S. E. Kleene and G. Kiczales and D. A. Moon},
+  journal={SIGPLAN Notices 23 (Special Issue)},
+  year={1988}
 }
 
 @InProceedings{chambers1989efficient,
-author = {Chambers, C. and Ungar, D. and Lee, E.},
-title = {An Efficient Implementation of SELF a Dynamically-Typed Object-Oriented Language Based on Prototypes},
-year = {1989},
-isbn = {0897913337},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-url = {https://doi.org/10.1145/74877.74884},
-doi = {10.1145/74877.74884},
-abstract = {We have developed and implemented techniques that double the performance of dynamically-typed object-oriented languages. Our SELF implementation runs twice as fast as the fastest Smalltalk implementation, despite SELF's lack of classes and explicit variables.To compensate for the absence of classes, our system uses implementation-level maps to transparently group objects cloned from the same prototype, providing data type information and eliminating the apparent space overhead for prototype-based systems. To compensate for dynamic typing, user-defined control structures, and the lack of explicit variables, our system dynamically compiles multiple versions of a source method, each customized according to its receiver's map. Within each version the type of the receiver is fixed, and thus the compiler can statically bind and inline all messages sent to self. Message splitting and type prediction extract and preserve even more static type information, allowing the compiler to inline many other messages. Inlining dramatically improves performance and eliminates the need to hard-wire low-level methods such as +,==, and ifTrue:.Despite inlining and other optimizations, our system still supports interactive programming environments. The system traverses internal dependency lists to invalidate all compiled methods affected by a programming change. The debugger reconstructs inlined stack frames from compiler-generated debugging information, making inlining invisible to the SELF programmer.},
-booktitle = {Conference Proceedings on Object-Oriented Programming Systems, Languages and Applications},
-pages = {49–70},
-numpages = {22},
-location = {New Orleans, Louisiana, USA},
-series = {OOPSLA '89}
+  author = {Chambers, C. and Ungar, D. and Lee, E.},
+  title = {An Efficient Implementation of SELF a Dynamically-Typed Object-Oriented Language Based on Prototypes},
+  year = {1989},
+  isbn = {0897913337},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/74877.74884},
+  doi = {10.1145/74877.74884},
+  abstract = {We have developed and implemented techniques that double the performance of dynamically-typed object-oriented languages. Our SELF implementation runs twice as fast as the fastest Smalltalk implementation, despite SELF's lack of classes and explicit variables.To compensate for the absence of classes, our system uses implementation-level maps to transparently group objects cloned from the same prototype, providing data type information and eliminating the apparent space overhead for prototype-based systems. To compensate for dynamic typing, user-defined control structures, and the lack of explicit variables, our system dynamically compiles multiple versions of a source method, each customized according to its receiver's map. Within each version the type of the receiver is fixed, and thus the compiler can statically bind and inline all messages sent to self. Message splitting and type prediction extract and preserve even more static type information, allowing the compiler to inline many other messages. Inlining dramatically improves performance and eliminates the need to hard-wire low-level methods such as +,==, and ifTrue:.Despite inlining and other optimizations, our system still supports interactive programming environments. The system traverses internal dependency lists to invalidate all compiled methods affected by a programming change. The debugger reconstructs inlined stack frames from compiler-generated debugging information, making inlining invisible to the SELF programmer.},
+  booktitle = {Conference Proceedings on Object-Oriented Programming Systems, Languages and Applications},
+  pages = {49–70},
+  numpages = {22},
+  location = {New Orleans, Louisiana, USA},
+  series = {OOPSLA '89}
 }
 
 @Misc{Adams89object-orientedprogramming,
@@ -41,39 +72,39 @@ series = {OOPSLA '89}
 }
 
 @InProceedings{bracha1990mixin,
-author = {Bracha, Gilad and Cook, William},
-title = {Mixin-Based Inheritance},
-year = {1990},
-isbn = {0897914112},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-url = {https://doi.org/10.1145/97945.97982},
-doi = {10.1145/97945.97982},
-abstract = {The diverse inheritance mechanisms provided by Smalltalk, Beta, and CLOS are interpreted as different uses of a single underlying construct. Smalltalk and Beta differ primarily in the direction of class hierarchy growth. These inheritance mechanisms are subsumed in a new inheritance model based on composition of mixins, or abstract subclasses. This form of inheritance can also encode a CLOS multiple-inheritance hierarchy, although changes to the encoded hierarchy that would violate encapsulation are difficult. Practical application of mixin-based inheritance is illustrated in a sketch of an extension to Modula-3.},
-booktitle = {Proceedings of the European Conference on Object-Oriented Programming on Object-Oriented Programming Systems, Languages, and Applications},
-pages = {303–311},
-numpages = {9},
-location = {Ottawa, Canada},
-series = {OOPSLA/ECOOP '90}
+  author = {Bracha, Gilad and Cook, William},
+  title = {Mixin-Based Inheritance},
+  year = {1990},
+  isbn = {0897914112},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/97945.97982},
+  doi = {10.1145/97945.97982},
+  abstract = {The diverse inheritance mechanisms provided by Smalltalk, Beta, and CLOS are interpreted as different uses of a single underlying construct. Smalltalk and Beta differ primarily in the direction of class hierarchy growth. These inheritance mechanisms are subsumed in a new inheritance model based on composition of mixins, or abstract subclasses. This form of inheritance can also encode a CLOS multiple-inheritance hierarchy, although changes to the encoded hierarchy that would violate encapsulation are difficult. Practical application of mixin-based inheritance is illustrated in a sketch of an extension to Modula-3.},
+  booktitle = {Proceedings of the European Conference on Object-Oriented Programming on Object-Oriented Programming Systems, Languages, and Applications},
+  pages = {303–311},
+  numpages = {9},
+  location = {Ottawa, Canada},
+  series = {OOPSLA/ECOOP '90}
 }
 
 @article{10.1145/97946.97982,
-author = {Bracha, Gilad and Cook, William},
-title = {Mixin-Based Inheritance},
-year = {1990},
-issue_date = {Oct. 1990},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-volume = {25},
-number = {10},
-issn = {0362-1340},
-url = {https://doi.org/10.1145/97946.97982},
-doi = {10.1145/97946.97982},
-abstract = {The diverse inheritance mechanisms provided by Smalltalk, Beta, and CLOS are interpreted as different uses of a single underlying construct. Smalltalk and Beta differ primarily in the direction of class hierarchy growth. These inheritance mechanisms are subsumed in a new inheritance model based on composition of mixins, or abstract subclasses. This form of inheritance can also encode a CLOS multiple-inheritance hierarchy, although changes to the encoded hierarchy that would violate encapsulation are difficult. Practical application of mixin-based inheritance is illustrated in a sketch of an extension to Modula-3.},
-journal = {SIGPLAN Not.},
-month = sep,
-pages = {303–311},
-numpages = {9}
+  author = {Bracha, Gilad and Cook, William},
+  title = {Mixin-Based Inheritance},
+  year = {1990},
+  issue_date = {Oct. 1990},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume = {25},
+  number = {10},
+  issn = {0362-1340},
+  url = {https://doi.org/10.1145/97946.97982},
+  doi = {10.1145/97946.97982},
+  abstract = {The diverse inheritance mechanisms provided by Smalltalk, Beta, and CLOS are interpreted as different uses of a single underlying construct. Smalltalk and Beta differ primarily in the direction of class hierarchy growth. These inheritance mechanisms are subsumed in a new inheritance model based on composition of mixins, or abstract subclasses. This form of inheritance can also encode a CLOS multiple-inheritance hierarchy, although changes to the encoded hierarchy that would violate encapsulation are difficult. Practical application of mixin-based inheritance is illustrated in a sketch of an extension to Modula-3.},
+  journal = {SIGPLAN Not.},
+  month = sep,
+  pages = {303–311},
+  numpages = {9}
 }
 
 @Article{gabriel1991clos,
@@ -94,6 +125,15 @@ numpages = {9}
   Publisher={MIT press}
 }
 
+%@InProceedings{Ungar91organizingprograms,
+%  Title = {Organizing Programs Without Classes},
+%  author = {David Ungar and Craig Chambers and Bay-Wei Chang and Urs Hölzle},
+%  journal = {Lisp and Symbolic Computation},
+%  year = {1991},
+%  pages = {223--242},
+%  publisher = {Kluwer Academic Publishers}
+%}
+
 @Article{dickey1992scheming,
   title={Scheming with objects},
   author={Dickey, Ken},
@@ -105,24 +145,46 @@ numpages = {9}
   year={1992}
 }
 
+@inproceedings{chambers92objectoriented,
+  author = {Craig Chambers},
+  title = {Object-oriented multi-methods in Cecil},
+  booktitle = {Proceedings of the 6th European Conference on Object-Oriented Programming ({ECOOP})},
+  volume = "615",
+  publisher = "Springer-Verlag",
+  address = "Berlin, Heidelberg, New York, Tokyo",
+  editor = "Ole Lehrmann Madsen",
+  isbn = "3-540-55668-0",
+  pages = "33--56",
+  year = "1992",
+  url = "http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.121.134"
+}
+
 @Misc{Barrett96amonotonic,
-    author = {Kim Barrett and Bob Cassels and Paul Haahr and David A. Moon and Keith Playford and P. Tucker Withington},
-    title = {A Monotonic Superclass Linearization for Dylan},
-    year = {1996}
+  author = {Kim Barrett and Bob Cassels and Paul Haahr and David A. Moon and Keith Playford and P. Tucker Withington},
+  title = {A Monotonic Superclass Linearization for Dylan},
+  year = {1996}
 }
 
 @Book{Abadi97atheory,
-    author = {Martín Abadi and Luca Cardelli},
-    title = {A theory of objects},
-    year = {1997}
+  author = {Martín Abadi and Luca Cardelli},
+  title = {A theory of objects},
+  year = {1997}
+}
+
+@InProceedings{aop97,
+  author = {Kiczales, G. and Lamping, J. and Mendhekar, A. and Maeda, C. and Lopes, C. and Loingtier, J. M. and Irwin, J.},
+  title = {Aspect-oriented programming},
+  booktitle = {11th European Conference on Object-Oriented Programming ({ECOOP})},
+  pages = {220--242},
+  year = {1997}
 }
 
 @InProceedings{conf/tlca/Levy99,
-	title = {Call-by-Push-Value: A Subsuming Paradigm.},
-	year = {1999},
-	author = {Blain Levy, Paul},
-	publisher = {Springer},
-	booktitle = {Typed Lambda Calculi and Applications, 4th International Conference, TLCA'99, L'Aquila, Italy, April 7-9, 1999, Proceedings}
+  title = {Call-by-Push-Value: A Subsuming Paradigm.},
+  year = {1999},
+  author = {Blain Levy, Paul},
+  publisher = {Springer},
+  booktitle = {Typed Lambda Calculi and Applications, 4th International Conference, TLCA'99, L'Aquila, Italy, April 7-9, 1999, Proceedings}
 }
 
 @Book{tapl,
@@ -132,6 +194,13 @@ numpages = {9}
   ISBN = {0262162091},
   Publisher = {MIT Press},
   Edition = {1st},
+}
+
+@InProceedings{Salzman05prototypeswith,
+  author = {Lee Salzman and Jonathan Aldrich},
+  title = {Prototypes with multiple dispatch: An expressive and dynamic object model},
+  booktitle = {ECOOP 2005, Proceedings, LNCS},
+  year = {2005}
 }
 
 @InProceedings{dolstra2008nixos,
@@ -144,27 +213,27 @@ numpages = {9}
 
 % April 2
 @Misc{minsky08,
-    author = {Yaron Minsky},
-    title = {The {ML} sweet spot},
-    year = 2008,
-    url = {https://blog.janestreet.com/the-ml-sweet-spot/},
-    urldate = {2021-03-14}
+  author = {Yaron Minsky},
+  title = {The {ML} sweet spot},
+  year = 2008,
+  url = {https://blog.janestreet.com/the-ml-sweet-spot/},
+  urldate = {2021-03-14}
 }
 
 @Misc{jsonnet,
-    author = {Dave Cunningham},
-    title = {Jsonnet},
-    year = 2014,
-    url = {https://jsonnet.org},
-    urldate = {2021-03-11}
+  author = {Dave Cunningham},
+  title = {Jsonnet},
+  year = 2014,
+  url = {https://jsonnet.org},
+  urldate = {2021-03-11}
 }
 
 @Misc{DrWhoFPIT,
-    author = {Unknown},
-    title = {Fixed Point in Time},
-    year = 2021,
-    url = {https://tardis.fandom.com/wiki/Fixed_point_in_time},
-    urldate = {2021-03-14}
+  author = {Unknown},
+  title = {Fixed Point in Time},
+  year = 2021,
+  url = {https://tardis.fandom.com/wiki/Fixed_point_in_time},
+  urldate = {2021-03-14}
 }
 % Maybe cite the last episode of this story instead, that explains the concept?
 % https://en.wikipedia.org/wiki/Earthshock

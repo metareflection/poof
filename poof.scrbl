@@ -53,6 +53,7 @@ rather have
 
 @(define (section1) @seclink["Prototypes_bottom_up"]{section 1})
 @(define (section2) @seclink["pure_objective_fun"]{section 2})
+@(define (section3) @seclink["beyond_objects"]{section 3})
 
 @title{Prototype Object-Orientation Functionally}
 
@@ -730,7 +731,7 @@ Our dictionary is now well-balanced, height 3, and the tests still pass:
             '("I" "II" "III" "IV" "V" #f))
 ]
 
-@section{Beyond Objects and back}
+@section[#:tag "beyond_objects"]{Beyond Objects and back}
 
 Prototypes are not just for records as functions from symbol to value:
 they can be used to incrementally specify any kind of functions!
@@ -860,7 +861,8 @@ however you may try to reach a different conclusion, you still end-up with that 
 
 @subsubsection{A Pure Lazy Fit}
 Still, there are ways in which Jsonnet and Nix improved upon
-the prototype object systems as initially designed in ThingLab@~cite{Borning77} or T@~cite{Rees82t:a},
+the prototype object systems as initially designed in ThingLab@~cite{Borning77 Borning86}
+or T@~cite{Rees82t:a Adams89object-orientedprogramming},
 or later made popular by SELF or JavaScript @; cite
 As in these previous inventions, Jsonnet and Nix use first-class functions to construct objects.
 They also rely on dynamic types to avoid the need for dependent types and internal type theories
@@ -924,7 +926,7 @@ Still, many bells and whistles found in other object systems are missing.
 Now that we have a nice and simple semantic framework for “objects”,
 can we also reimplement the more advanced features of object systems of yore?
 
-@subsection{Field Introspection}
+@subsection[#:tag "field_introspection"]{Field Introspection}
 
 @subsubsection{Both feature or bug in OOP snake-oil literature}
 When representing objects as functions from symbol to value,
@@ -1284,35 +1286,105 @@ is bound to a function that overrides its super with constant fields from the in
 @subsection{Multiple Dispatch}
 
 @subsubsection{Generic Functions}
-The Common Lisp Object System@~cite{gabriel1991clos} features the ability to define
-generic functions, that are not defined as part of an object,
-but can be specialized for various objects and those that inherit from them.
-What more, specialized behavior is not necessarily tied to the first argument
-of the generic function, as with most object systems, but can specified based
-on the types of multiple arguments. For instance, a generic multiplication operation
-will invoke different methods when called with two integers, two floating-point numbers,
+Some object systems with classes @~cite{bobrow86commonloops bobrow88clos}
+or prototypes @~cite{chambers92objectoriented Salzman05prototypeswith}
+feature the ability to define “generic functions” the behavior of which
+can be specialized on each of multiple arguments.
+For instance, a generic multiplication operation
+will invoke different methods when called with two integers, two complex numbers,
 an integer and a floating-point number, a complex number and a vector of complex numbers, etc.
 
-@subsubsection{Extending previous objects}
-There is an issue with dynamically adding new functions or methods,
-which is necessary for multiple dispatch, but present even without it.
-You can have new functions provide a default method (as done in T),
-or equivalently add to a global default bottom object (as the T paper mentions),
-but either way it's problematic in case objects were already defined
-that depended on the previous method being absent,
-and their slot values already pre-computed and cached.
-Which should be uncached?
+Selection of behavior based on multiple arguments is called “multiple dispatch”,
+as contrasted with “single dispatch” which is selection of behavior based on a single argument.
+Methods that may specialize on multiple arguments are sometimes called “multi-methods”
+to distinguish them from single dispatch methods.
+It is possible to macro-expand multiple dispatch into single dispatch,
+@; TODO @~cite{} ?
+by chaining dispatch of the first argument into a collection of functions
+that each dispatch on the second argument, and so on.
+But the process is tedious and non-local, and better left to be
+handled by an automated implementation of multiple dispatch.
 
-Partial solution? Instead of symbols, use lexical identifiers as keys,
-with the same hygiene mechanism as macros;
-therefore, regular programs not using reflection cannot possibly have referred
-to the newly-defined method.
+@subsubsection{Extending previous objects}
+Since generic functions and their multi-methods are associated to multiple objects,
+they cannot be defined as part of the definition of a single object;
+these methods, and the generic function that they are part of,
+are necessarily defined outside of objects.
+Therefore, language designers and implementers must resolve a first issue
+before they may implement generic functions:
+adding “multi-methods” to existing functions or objects after they have been initially defined.
+Indeed, generic functions when introduced, involve adding new methods
+that specialize the behavior of the new function on existing objects;
+and when new objects are introduced, they often involve adding new methods
+to specialized the behavior of the existing functions on the new objects.
+
+Moreover, when generic functions and objects are introduced in independent code libraries
+(for instance, some graphical user-interface library and some data structure library),
+the specialized behavior might be introduced in yet another library
+(that defines a graphical interface for this data structure).
+Worse, there might be conflicts between several such libraries;
+even without conflicting definitions,
+a definition might conflict in time with the absence of the same definition,
+if there is any chance that some code depending on its presence is compiled or run
+both before and after the definition was evaluated.
+
+That is why, for instance, the Haskell compiler @;TODO @~cite{GHC}
+issues warnings if you declare an “orphan instance”:
+a typeclass instance (rough analogue to methods of generic functions)
+in a file other than one where either the typeclass is defined (rough analogue to generic functions)
+or the type is defined (rough analogue to objects).
+The language offers weak guarantees in such situations.
+Another approach suitable in a more dynamic language would be to maintain at runtime
+a “negative” cache of methods previously assumed to be absent,
+and issue a warning or error when a new method is introduced that conflicts with such an assumption.
+
+Then again, a solution might be to eschew purity and embrace side-effects:
+the original T just didn't cache method invocation results, and
+re-ran fixed-point computations, with their possible side-effects,
+at every method invocation (objects can specify their own explicit cache when desired).
+The behavior of new generic functions on previously existing objects would be optionally specified
+in a default method, to be called in lieu of raising a “method not found” error.
+The T object paper@~cite{Adams89object-orientedprogramming} mentions an alternate approach
+that was rejected in its implementation, though it is essentially equivalent in behavior,
+wherein default methods are added to a “default” object used as the base super value
+instead of an empty object when (re)computing instance fixed-points.
 
 @subsection{Method Combinations}
 
-Function in multiple fragments. Just like object in multiple fragments?
-Prototypes for more than objects.
-Just like base, wrapper.
+@subsubsection{Combining Method Fragments}
+With method combination, as pioneered in Flavors@~cite{Cannon82},
+then standardized by CLOS@~cite{bobrow88clos} via @~cite{bobrow86commonloops}
+and made slightly popular outside the Lisp tradition by Aspect-Oriented Programming@~cite{aop97},
+object methods to be specified in multiple fragments
+that can be subsequently combined into the “effective method” that will be called.
+
+Thus, in CLOS, “primary” methods are composed the usual way,
+but “before” methods are executed beforehand for side-effects from most-specific to least-specific,
+and “after” methods are executed afterwards for side-effects from least-specific to most-specific,
+and “around” methods wrap all the above, with from most-specific wrapper outermost
+to least-specific inner-most.
+
+Furthermore, programmers may override the above standard “method combinations”
+with alternative method combinations, either builtin or user-specified.
+The builtin method combinations, @r[progn + list nconc and max or append min] in CLOS,
+behave as if the calls to the (suitably sorted) methods had been wrapped in
+one of the corresponding Lisp special form or function.
+User-specified method combinations allow for arbitrary behavior based on
+an arbitrary set of sorted, labelled (multi)methods
+(though, in CLOS, with a fixed finite set of labels).
+
+@subsubsection{Generalized Prototype Combination}
+
+As determined above, generic functions are made of many fragments (multi-methods);
+these fragments are sorted according to some partial or total order;
+they are then composed via some representation-dependent mixing function;
+a fixed-point is extracted from the composed fragments, with some base value;
+finally a representation-dependent wrapper is applied to the fixed-point
+to instantiate the effective method...
+this is very much like an object!
+Actually, since we have accepted in @(section3) that prototypes and “object orientation”
+are not just to compute records that map field names to values, but for arbitrary computations,
+then we may realize that what we need is a general protocol for computing with prototypes.
 
 @section{Classes}
 
