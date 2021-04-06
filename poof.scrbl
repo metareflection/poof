@@ -54,6 +54,8 @@ rather have
 @(define (section1) @seclink["Prototypes_bottom_up"]{section 1})
 @(define (section2) @seclink["pure_objective_fun"]{section 2})
 @(define (section3) @seclink["beyond_objects"]{section 3})
+@(define (section4) @seclink["Better_objects"]{section 4})
+@(define (section5) @seclink["Classes"]{section 5})
 
 @title{Prototype Object-Orientation Functionally}
 
@@ -819,7 +821,7 @@ an attribute set that is meant to extend and override @r[super]
 as incremental contribution to the computation of the @r[self] fixed-point.
 This is a reasonable restriction on how prototypes may affect super values,
 that totally matches usual object-oriented practice, and suggests where
-an extension point could be in a general meta-object protocol@~cite{amop}. @; TODO: seclink ??
+an extension point could be in a general meta-object protocol@~cite{amop}.
 The “base” function is a function from attrset @r[self] to attrset;
 this makes the API slightly less uniform than ours and introduces an extra type,
 but is otherwise isomorphic to our approach of using @r[bottom] as an base @r[super] argument
@@ -833,7 +835,7 @@ This is not a coincidence, since the present essay emerged from
 an effort to formalize the essence of objects as understood from Nix and Jsonnet.
 We also simplify their approach (e.g. with respect to the base case of open-recursion)
 and generalize it to arbitrary instance types (i.e. not just attrsets);
-and in the following section @; TODO: @seclink
+and in the following @(section4)
 we further improve on it.
 
 @subsubsection{Prototypes in Jsonnet}
@@ -890,7 +892,7 @@ is lacking in proteins, or at least in prototypes.
 Now, there is another special way in which Jsonnet and Nix improve upon T's objects,
 that provides insight into Object-Oriented Programming:
 they unify instances and prototypes as objects.
-We'll come back to that in section 4. @; TODO: use @seclink
+We'll come back to that in @(section4).
 
 @subsection{Prototypes are Useful Even Without Subtyping}
 
@@ -910,7 +912,7 @@ you may have to constrain the @r[A]'s to be functions, or to
 wrap the @r[A]'s in naked input position inside a @r[Lazy] type constructor.
 
 Lack of subtyping greatly reduces the expressive power of prototypes;
-yet, as we'll see, @; TODO: add suitable @seclink
+yet, as we'll see in @(section5),
 the most popular use of prototypes in Object-Oriented Programming is completely monomorphic:
 prototypes for type descriptors, a.k.a. classes;
 only this common use of prototypes happens at the meta-level,
@@ -1298,15 +1300,16 @@ as contrasted with “single dispatch” which is selection of behavior based on
 Methods that may specialize on multiple arguments are sometimes called “multi-methods”
 to distinguish them from single dispatch methods.
 It is possible to macro-expand multiple dispatch into single dispatch,
-@; TODO @~cite{} ?
+@; TODO @~cite{} double dispatch?
 by chaining dispatch of the first argument into a collection of functions
 that each dispatch on the second argument, and so on.
 But the process is tedious and non-local, and better left to be
 handled by an automated implementation of multiple dispatch.
 
-Since this feature was already included in
+Since this feature was already implemented in
 previous prototype systems@~cite{chambers92objectoriented Salzman05prototypeswith},
-we'll restrict our discussion to additional challenges presented in a pure functional setting.
+we'll restrict our discussion to additional challenges presented in
+a pure or mostly pure functional setting.
 
 @subsubsection{Extending previous objects}
 Since generic functions and their multi-methods are associated to multiple objects,
@@ -1394,9 +1397,8 @@ as an exercise for the reader, or as a topic for future work.
 As a hint, though, we will provide the definition of a generalized prototype for method definition
 that subsumes the above @r[$slot-gen] or @r[$slot-gen/object].
 A generalized prototype is defined in the context of:
-(a) a @emph{lens}
-@; TODO: cite Jeremy Gibbons on Profunctor Optics, and
-@; TODO: re-cite his citations of Foster, Kmett, Laarhoven?
+(a) a @emph{lens}@~cite{Foster2007CombinatorsFB Pickering_2017}
+@; TODO: re-cite Kmett, Laarhoven from the Pickering_2017 article? Cite earlier Pierce on Lens?
 that extract or update the method from the current partial computation
 of the raw prototype fixed-point;
 (b) an object-wrapper that “cooks” the raw prototype fixed-point into a referenceable
