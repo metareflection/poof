@@ -394,8 +394,8 @@ and @r[2] respectively, we can use:
 @subsubsection{Back to 1981!}
 
 Interestingly, the above approach to objects is essentially equivalent,
-though not exactly isomorphic, to what Yale T had in 1981@~cite{Adams89object-orientedprogramming},
-that was notably reprised by YASOS in 1992@~cite{dickey1992scheming}
+though not exactly isomorphic, to what Yale T had in 1981@~cite{Adams89object-orientedprogramming}.
+T was notably reprised by YASOS in 1992@~cite{dickey1992scheming}
 and distributed with SLIB since.
 There are minor differences: what we call “instance”, T calls “object” or “instance”,
 but instead of “prototypes” it has “components” with a slightly different API.
