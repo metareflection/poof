@@ -22,4 +22,6 @@ view: poof.pdf
 	$(PDFVIEWER) $<
 
 prerequisites:
-	raco pkg install scribble-abbrevs
+	for i in scribble-abbrevs scribble-minted scribble-math ; do \
+	  raco pkg install $$i ; \
+	done

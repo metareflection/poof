@@ -8,6 +8,7 @@
           (only-in scribble/example examples make-base-eval)
           (only-in scriblib/footnote note)
           (only-in scribble-abbrevs appendix)
+          (only-in scribble-math/dollar $)
           scribble/minted
           syntax/parse/define
           "util/examples-module.rkt"
@@ -77,7 +78,7 @@ rather have
 @;TAPL by @citet{tapl} is relevant.
 @;TAPL@~cite{tapl} has a relevant chapter (§32).
 
-This paper is about the unexpectedly happy marriage of Object-Orientation Programming and Pure Lazy Functional Programming -- with Dynamic (or Dependent) Types.
+This paper is about the unexpectedly happy marriage of Object-Orientation Programming and Pure Lazy Functional Programming---when using Dynamic (or Dependent) Types.
 
 Pitch: With 20 lines of code you can have an OO system in a dynamic language. Why do it? Because you can make your system more extensible. For another 30 lines, you can add multiple in inheritance.
 
@@ -88,8 +89,7 @@ Being able to extend a configuration without rewriting everything by reinventing
 
 POOF: this is isomorphic to a prototype object system. Not just a curiosity but allows us to capitalize on all the work of prototype object systems throughout history. In addition, we can have multiple inheritance.
 
-Nix allows to specify in a declarative and deterministic fashion an entire linux installation. With POOF, you can write specifications more modularly. In Nix, you could do multiple inheritance but not modularly. Now the system manages the DAG. Use case in Nix for multiple inheritance: for multiple people to extend the system in a modular fashion without being synchronized. If you have multiple axes of extensions, four aspects say, there are 16 combinations. Instead, generate combinations.
-
+Nix allows to specify in a declarative and deterministic fashion an entire linux installation. With POOF, you can write specifications more modularly. In Nix, you could kind of do multiple inheritance but not modularly. Now the system manages the DAG. Use case in Nix for multiple inheritance: for multiple people to extend the system in a modular fashion without being synchronized. If you have multiple axes of extensions, four aspects say, there are 16 combinations. Instead, generate combinations.
 
 Prototype Object Systems:
 T,
@@ -865,7 +865,7 @@ however you may try to reach a different conclusion, you still end-up with that 
 Still, there are ways in which Jsonnet and Nix improved upon
 the prototype object systems as initially designed in ThingLab@~cite{Borning77 Borning86}
 or T@~cite{Rees82t:a Adams89object-orientedprogramming},
-or later made popular by SELF or JavaScript @; cite
+or later made popular by SELF@~cite{chambers1989efficient} or JavaScript @; TODO: cite for JS
 As in these previous inventions, Jsonnet and Nix use first-class functions to construct objects.
 They also rely on dynamic types to avoid the need for dependent types and internal type theories
 required to statically type first-class prototypes in the most general case.
@@ -930,17 +930,17 @@ can we also reimplement the more advanced features of object systems of yore?
 
 @subsection[#:tag "field_introspection"]{Field Introspection}
 
-@subsubsection{Both feature or bug in OOP snake-oil literature}
+@subsubsection{Both feature and bug in OOP snake-oil literature}
 When representing objects as functions from symbol to value,
 it isn't generally possible to access the list of symbols that constitute valid keys.
 Most “object” systems do not allow for this kind of introspection at runtime,
 and a 1990s marketing department would probably tout that
-as some kind of “information hiding” feature to be sold as part of
+as some kind of “encapsulation” or “information hiding” feature to be sold as part of
 the “object-oriented” package deal of the day.
 Yet, introspection can be useful to e.g. automatically
 input and output human-readable or network-exchangeable representations of an instance.
 Thus, the same 1990s marketing departments have long sold “reflection” as
-an extra feature counter-acting their previous “information hiding” feature.
+an extra feature counter-acting their previous “feature”.
 
 @subsubsection{Same concrete representation, abstract constructor}
 Field introspection can be achieved while keeping instances as functions from keys to values,
@@ -952,10 +952,9 @@ programmers would then use a variant of @r[$slot-gen] that maintains this list, 
 (define ($slot-gen/keys k fun)
   (λ (self super)
     (λ (msg)
-      (cond
-        ((equal? msg k) (fun self (λ () (super msg))))
-        ((equal? msg 'keys) (cons k (super 'keys)))
-        (else (super msg))))))
+      (cond ((equal? msg k) (fun self (λ () (super msg))))
+            ((equal? msg 'keys) (cons k (super 'keys)))
+            (else (super msg))))))
 ]
 
 @subsubsection{Different instance representation}
@@ -1392,16 +1391,14 @@ Actually, since we have accepted in @(section3) that prototypes and “object or
 are not just to compute records that map field names to values, but for arbitrary computations,
 then we may realize that what we need is a general protocol for computing with prototypes.
 
-We leave the implementation of method combination using generalized prototypes
-as an exercise for the reader, or as a topic for future work.
-As a hint, though, we will provide the definition of a generalized prototype for method definition
-that subsumes the above @r[$slot-gen] or @r[$slot-gen/object].
-A generalized prototype is defined in the context of:
+A full treatment of generalized prototypes is a topic for future work.
+Still, here are a few hints as to what they could be.
+A generalized prototype would involve:
 (a) a @emph{lens}@~cite{Foster2007CombinatorsFB Pickering_2017}
-@; TODO: re-cite Kmett, Laarhoven from the Pickering_2017 article? Cite earlier Pierce on Lens?
-that extract or update the method from the current partial computation
+@; TODO: re-cite Kmett, Laarhoven from the Pickering_2017 article? Cite 2006 Pierce on Lens rather than 2007, see later Gibbons article
+that can extract or update the method from the current partial computation
 of the raw prototype fixed-point;
-(b) an object-wrapper that “cooks” the raw prototype fixed-point into a referenceable
+(b) an object-setter that “cooks” the raw prototype fixed-point into a referenceable
 @r[self] object;
 (c) a method-wrapper that turns the user-provided “method” into a composable prototype.
 
@@ -1410,7 +1407,7 @@ generalizes the fetching or storing of a method as the entry in a @r[Dict],
 or as the response to a message;
 it can express that you are overriding some specific fragment of some specific method
 in some specific sub-sub-object, encoded in some specific way.
-The object-wrapper may apply a method combination to extract a function from fragments;
+The object-setter may apply a method combination to extract a function from fragments;
 it may transcode an object from a representation suitable for object production
 to a representation suitable for object consumption;
 it may be the setter from a lens making the prototype-based computation
@@ -1423,11 +1420,13 @@ for instance, in a @r[+] combination, it would, given an number,
 return the prototype that increments the super result by that number;
 it may also handle the merging of a @r[Dict] override returned by the method
 into the super @r[Dict] provided by its super method; etc.
-Thus, the generalization of @r[$slot-gen] becomes:
+
+Here then is a generalization that subsumes the above @r[$slot-gen] or @r[$slot-gen/object]:
 @Definitions[
 (define ($lens-gen setter getter wrapper method)
   (λ (cooked-self raw-super)
-    (setter ((wrapper method) cooked-self (delay (getter raw-super))) raw-super)))
+    (setter ((wrapper method) cooked-self (delay (getter raw-super)))
+            raw-super)))
 ]
 
 @;{ @para{
@@ -1461,21 +1460,28 @@ so the meta-language only needs and uses monomorphic prototypes!
 
 Note how all the functions defined in the previous chapter were pure:
 They didn't use any side-effect whatsoever.
-No @r[set!], no tricky use of @r[call/cc]. Only laziness at times.
+No @r[set!], no tricky use of @r[call/cc]. Only laziness at times, which still counts as pure.
+But what if we are OK with using side-effects? How much does that simplify computations?
+And what insight does that give into usual linearity constraints of the pure functional case?
 
-But what if we are OK with using side-effects? How much does that simplify things?
+A simple implementation of mutable objects is to store pure object values into mutable cells.
+Conversely, a mutable object can be viewed as a monadic thread of pure object state references,
+with an enforced linearity constraint wherein effectful operations return a new state reference
+after invalidating the previous one. Indeed, this is not just a theoretical categorical isomorphism,
+but a practical transformation that can be automated by Lisp macros@~cite{LIL2012}.
 
-An obvious implementation of mutable objects is simply to reuse our pure objects
-wherein some slots contain a reference to mutable cell rather than an immutable value.
-But there are mutability also allows for various optimizations,
-assuming objects follow the usual linearity constraint of
-not depending on some values once they are consumed.
+But mutability also allows for various optimizations,
+wherein objects follow common linearity constraints of consuming some arguments
+that are never referenced again after use, at which point their parts
+can be transformed or recycled “in place” with local modifications in @${O(1)} machine operations,
+rather than global copies in @${O(\log n)} or @${O(n)} machine operations.
+@;TODO cite regarding state vs linearity
 
 Thus, a prototype for a mutable object can be implemented
 with a single mutable data structure argument self
 instead of two immutable value arguments self and super:
-the identity of that data structure provides the self, and
-the current state of the data structure provides the super.
+the identity of that data structure provides the self (handle to future complete computation),
+the current state of the data structure provides the super (computation so far)
 A prototype function would then be of type @r[(deftype μProto (Fun Object ->))],
 where the @r[Object]'s instance component contains a mutable hash-table
 mapping slot names (symbols) to effective methods to compute each slot value.
@@ -1486,7 +1492,7 @@ based on the new method, the self (identity of the object) and
 super method (previous entry in the hash-table).
 
 @;;; Here, we silently cite things that only appear in the appendices,
-@;;; so they appear in the bibliography
+@;;; so they appear in the bibliography, that is being computed before the appendices.
 @~nocite{Barrett96amonotonic}
 
 @(generate-bibliography)

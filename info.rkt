@@ -5,7 +5,7 @@
 
 (define collection "poof")
 (define deps '("base" "scribble-lib" "rackunit-lib"
-               "scribble-abbrevs" "scribble-minted"))
+               "scribble-abbrevs" "scribble-minted" "scribble-math"))
 
 ;; ---------------------------------------------------------
 ;; Collection Info
