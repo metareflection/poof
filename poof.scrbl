@@ -533,7 +533,8 @@ value for @r[base-super]. Furthermore, in any variant of Scheme, we can define
 the following function @r[instance] that takes the rest of its arguments as
 a list of prototypes, and instantiates the composition of them:
 @Definitions[
-(code:comment "instance : (Fun (IndexedList I (λ (i) (Proto (A_ i) (A_ (1+ i)))))... -> (A_ 0)))")
+(code:comment "instance : (Fun (IndexedList I (λ (i) (Proto (A_ i) (A_ (1+ i)))))...")
+(code:comment "  -> (A_ 0)))")
 (define (instance . prototype-list)
   (instantiate-prototype-list prototype-list bottom))
 ]
@@ -1010,8 +1011,8 @@ to allow prototypes to intercept field introspection.
 
 @subsubsection{Abstracting over representations}
 We can generalize the above solutions by realizing that
-both instances and prototypes may be represented in a variety of ways;
-the representation given in @(section1) is a good guide for object semantics,
+both instances and prototypes may be represented in a variety of ways.
+The representation given in @(section1) is a good guide for object semantics,
 but instance and prototype as functions may be wrapped or unwrapped in various ways,
 and augmented with various other information,
 when designing and implementing an object system for usability and performance.
@@ -1032,12 +1033,12 @@ all APIs may have to be doubled at every point that may be either one or the oth
 In particular, writing extensible configurations for recursive data structures this way is painful:
 you need to decide for each field of each data structure at each stage of computation
 whether it contains an extensible prototype or an instance to call the proper API.
-This incurs both a psychological cost to programmers and a runtime cost to evaluating programs,
+This incurs both a psychological cost to programmers and a runtime cost to evaluation,
 that in the worst case might recompute some sub-expressions exponentially often.
 
 @subsubsection{Conflation without confusion}
 Jsonnet and Nix both confront and elegantly solve the above issue,
-and the very same way, with one small trick:
+and in the very same way, with one small trick:
 they bundle and conflate together instance and prototype in a same single entity, the “object”.
 Indeed, in a pure context, and given the base super value for the given prototype representation,
 there is one and only one instance associated to a prototype up to any testable equality,
@@ -1305,40 +1306,47 @@ that each dispatch on the second argument, and so on.
 But the process is tedious and non-local, and better left to be
 handled by an automated implementation of multiple dispatch.
 
-Since this feature was already implemented in
+Since this feature is rather involved yet was already implemented in
 previous prototype systems@~cite{chambers92objectoriented Salzman05prototypeswith},
 we'll restrict our discussion to additional challenges presented in
 a pure or mostly pure functional setting.
 
 @subsubsection{Extending previous objects}
-Since generic functions and their multi-methods are associated to multiple objects,
-they cannot be defined as part of the definition of a single object;
+Generic functions and their multi-methods are associated to multiple objects,
+thus they cannot be defined as part of the definition of a single object;
 these methods, and the generic function that they are part of,
-are necessarily defined outside of objects.
+are necessarily defined outside of (some) objects.
 Therefore, language designers and implementers must resolve a first issue
 before they may implement generic functions:
-adding “multi-methods” to existing functions or objects after they have been initially defined.
+adding “multi-methods” to existing functions or objects
+after they have been initially defined.
 Indeed, generic functions when introduced, involve adding new methods
 that specialize the behavior of the new function on existing objects;
 and when new objects are introduced, they often involve adding new methods
 to specialized the behavior of the existing functions on the new objects.
 
 Moreover, when generic functions and objects are introduced in independent code libraries
-(for instance, some graphical user-interface library and some data structure library),
+(e.g. some graphical user-interface library and some data structure library),
 the specialized behavior might be introduced in yet another library
-(that defines a graphical interface for this data structure).
-Worse, there might be conflicts between several such libraries;
-even without conflicting definitions,
+(e.g. that defines a graphical interface for this data structure).
+Worse, there might be conflicts between several such libraries.
+Even without conflicting definitions,
 a definition might conflict in time with the absence of the same definition,
 if there is any chance that some code depending on its presence is compiled or run
 both before and after the definition was evaluated.
 
-That is why, for instance, the Haskell compiler @;TODO @~cite{GHC}
+That is why, for instance, the Glasgow Haskell Compiler @;TODO @~cite{GHC}
 issues warnings if you declare an “orphan instance”:
 a typeclass instance (rough analogue to methods of generic functions)
-in a file other than one where either the typeclass is defined (rough analogue to generic functions)
-or the type is defined (rough analogue to objects).
+in a file other than one where either the typeclass is defined (analogous to generic functions)
+or the type is defined (analogous to objects).
 The language offers weak guarantees in such situations.
+One way to avoid orphan situations might be to declare
+either new typeclasses (new generic functions) or newtype aliases (new objects)
+that will shadow or replace the previous ones in the rest of the program;
+but this is a non-local and non-composable transformation
+that potentially involves wrapping over all the transitive dependencies of an application,
+and defeat the purpose of incremental program specification.
 Another approach suitable in a more dynamic language would be to maintain at runtime
 a “negative” cache of methods previously assumed to be absent,
 and issue a warning or error when a new method is introduced that conflicts with such an assumption.
@@ -1458,35 +1466,66 @@ so the meta-language only needs and uses monomorphic prototypes!
 
 @section{Stateful Objects}
 
-Note how all the functions defined in the previous chapter were pure:
+@subsection{Mutability}
+@subsubsection{From Pure to Mutable and Back}
+Note how all the objects and functions defined in the previous sections were pure,
+as contrasted with all object literature from the 1960s to the early 1990s:
 They didn't use any side-effect whatsoever.
 No @r[set!], no tricky use of @r[call/cc]. Only laziness at times, which still counts as pure.
 But what if we are OK with using side-effects? How much does that simplify computations?
-And what insight does that give into usual linearity constraints of the pure functional case?
+What insights does the pure case offer on the mutable case, and vice versa?
 
 A simple implementation of mutable objects is to store pure object values into mutable cells.
 Conversely, a mutable object can be viewed as a monadic thread of pure object state references,
 with an enforced linearity constraint wherein effectful operations return a new state reference
-after invalidating the previous one. Indeed, this is not just a theoretical categorical isomorphism,
-but a practical transformation that can be automated by Lisp macros@~cite{LIL2012}.
+after invalidating the previous one.
+Indeed, this isomorphism is not just a curiosity from category theory,
+it is a pair of transformations that can be and have been automated
+for practical purposes@~cite{LIL2012}.
 
-But mutability also allows for various optimizations,
+@subsubsection{Combining Mutable and Functional Wins}
+Mutability allows for various optimizations,
 wherein objects follow common linearity constraints of consuming some arguments
 that are never referenced again after use, at which point their parts
 can be transformed or recycled “in place” with local modifications in @${O(1)} machine operations,
 rather than global copies in @${O(\log n)} or @${O(n)} machine operations.
 @;TODO cite regarding state vs linearity
+As a notable simplification, the “super” computation as inherited by a prototype is linear
+(or more precisely, affine: the prototype may either consume the super value, or ignore it).
+Thus, the entire fixed-point computation can be done in-place by updating slots as they are defined.
+This is a win for mutability over purity.
 
-Thus, a prototype for a mutable object can be implemented
-with a single mutable data structure argument self
-instead of two immutable value arguments self and super:
-the identity of that data structure provides the self (handle to future complete computation),
-the current state of the data structure provides the super (computation so far)
+Yet, even mutable (or linear) rather than pure (and persistent),
+the functional approach solves an important problem with the traditional imperative approach:
+traditionally, programmers must be very careful to initialize object slots in a suitable order,
+even though there is no universal solution that possibly works
+for all future definitions of inheriting objects.
+The traditional approach is thus programmer-intensive in a subtle way, which leads to many
+errors from handling of unbound slots, or worse, if slot accesses are unchecked,
+to @emph{null pointer} exceptions or the local programming language's equivalent,
+whereby some default value is propagated along the program until it is detected, too late,
+by a catastrophic error with little explanation.
+By defining objects functionally and lazily rather than imperatively and eagerly,
+programmers can let the implementation gracefully handle mutual references between slots;
+an initialization order can be automatically inferred wherein slots are defined before they are used,
+with a useful error detected and raised (at runtime) if no such order exists.
+@; TODO: cite Tony Hoare regarding the billion-dollar mistake of NULL?
+
+@subsubsection{Simplified Prototype Protocol}
+A prototype for a mutable object can be implemented
+with a single mutable data structure argument @r[self]
+instead of two immutable value arguments @r[self] and @r[super]:
+the @emph{identity} of that data structure
+provides the handle to future complete computation,
+as previously embodied in the @r[self] argument;
+and the current @emph{storage} of the data structure provides state of the computation so far,
+as previously embodied in the @r[super] argument.
+
 A prototype function would then be of type @r[(deftype μProto (Fun Object ->))],
-where the @r[Object]'s instance component contains a mutable hash-table
+where the @r[Object]'s instance component would typically contain a mutable hash-table
 mapping slot names (symbols) to effective methods to compute each slot value.
 These effective methods would be either thunks or lazy computations,
-and would already close over the identity of the object.
+and would already close over the identity of the object as well as reuse its previous state.
 Overriding a slot would update the effective method in place,
 based on the new method, the self (identity of the object) and
 super method (previous entry in the hash-table).
