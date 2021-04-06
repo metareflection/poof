@@ -746,7 +746,7 @@ and returns the image of the opposite for negative values:
 (define ($even self super)
   (λ (x) (if (< x 0) (self (- x)) (super x))))
 ]
-The following prototype is a mixin for squaring the parent value:
+The following prototype is a mixin for taking the cube of the parent value:
 @Examples[
 (define ($cube self super)
   (λ (x) (let ((y (super x))) (* y y y))))
