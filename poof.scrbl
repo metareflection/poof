@@ -1,4 +1,4 @@
-#lang scribble/acmart @acmsmall @review
+#lang scribble/acmart @acmsmall @review @anonymous
 
 @; To be submitted to OOPSLA 2021? https://2021.splashcon.org/track/splash-2021-oopsla
 
@@ -95,10 +95,6 @@ Mixin-based inheritance@~cite{bracha1990mixin},
 Clos@~cite{gabriel1991clos},
 Closette.
 }
-
-@; TODO: comment out before to submit:
-@table-of-contents[]
-@;only works for HTML output: @local-table-of-contents[#:style 'immediate-only]
 
 @section[#:tag "Prototypes_bottom_up"]{Prototypes, bottom up}
 
@@ -1614,3 +1610,7 @@ not counting newline, since we elide spaces:
 ]
 
 @(finalize-examples/module poof)
+
+@; TODO: comment out before to submit:
+@table-of-contents[]
+@;only works for HTML output: @local-table-of-contents[#:style 'immediate-only]
