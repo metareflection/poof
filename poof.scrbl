@@ -139,10 +139,10 @@ and a super-type @r[Super] of @r[Self],
 a prototype for @r[Self] from @r[Super] will thus be
 a function from @r[Self] and @r[Super] to @r[Self].
 @racketblock[
-(deftype (Proto Self Super) (Fun Self Super -> Self st: (<: Self Super)))
-fix : (Fun (Proto Self Super) Super -> Self st: (<: Self Super))
-mix : (Fun (Proto Self Super) (Proto Super Sup2) -> (Proto Self Sup2)
-        st: (<: Self Super Sup2))
+(code:comment "(deftype (Proto Self Super) (Fun Self Super -> Self st: (<: Self Super)))")
+(code:comment "fix : (Fun (Proto Self Super) Super -> Self st: (<: Self Super))")
+(code:comment "mix : (Fun (Proto Self Super) (Proto Super Sup2) -> (Proto Self Sup2)")
+(code:comment "        st: (<: Self Super Sup2))")
 ]
 
 The first argument @r[self] of type @r[Self] will hold the instance
@@ -904,9 +904,9 @@ the identity whereby each type is the one and only subtype or itself
 then you can use prototypes to incrementally specify computations,
 with the following monomorphic types:
 @racketblock[
-(deftype (MProto A) (Fun A A -> A))
-fix : (Fun (MProto A) A -> A)
-mix : (Fun (MProto A) (MProto A) -> (MProto A))
+(code:comment "(deftype (MProto A) (Fun A A -> A))")
+(code:comment "fix : (Fun (MProto A) A -> A)")
+(code:comment "mix : (Fun (MProto A) (MProto A) -> (MProto A))")
 ]
 As per the previous discussion, if your language doesn't use lazy evaluation,
 you may have to constrain the @r[A]'s to be functions, or to
@@ -1505,7 +1505,7 @@ errors from handling of unbound slots, or worse, if slot accesses are unchecked,
 to @emph{null pointer} exceptions or the local programming language's equivalent,
 whereby some default value is propagated along the program until it is detected, too late,
 by a catastrophic error with little explanation.
-By defining objects functionally and lazily rather than imperatively and eagerly,
+By defining objects functionally or lazily rather than imperatively and eagerly,
 programmers can let the implementation gracefully handle mutual references between slots;
 an initialization order can be automatically inferred wherein slots are defined before they are used,
 with a useful error detected and raised (at runtime) if no such order exists.
@@ -1529,6 +1529,34 @@ and would already close over the identity of the object as well as reuse its pre
 Overriding a slot would update the effective method in place,
 based on the new method, the self (identity of the object) and
 super method (previous entry in the hash-table).
+
+@subsection{Cache invalidation}
+@italic{There are two hard things in computer science:
+cache invalidation, naming things, and off-by-one errors} (Phil Karton).
+One issue with making objects mutable is that modifications may make
+some previously computed results invalid. There are several options then,
+none universally satisfactory.
+
+The object system may embrace mutation and just
+never implicitly cache the result of any computation,
+as in T, and let the users deal with the issue.
+But constant recomputation can be extremely expensive, and
+many heavy computations, like that of precedence lists for multiple inheritance,
+may be below the level at which users may intervene.
+
+At the opposite end of the spectrum, the object system may assume purity-by-default
+and cache all the computations it can.
+It is then up to users to explicitly create cells to make some things mutable,
+or flush some caches when appropriate,
+as in the Gerbil-POO system@~cite{GerbilPOO}.
+
+In between these two opposites, the system can automatically track which mutations happen,
+and invalidate those caches that need be, with a tradeoff between how cheap it will be
+to use caches versus to mutate objects.
+However, to be completely correct, this mutation tracking and cache invalidation
+must be pervasive in the entire language, not just the object system implementation,
+at which point the language is more in the style of higher-order
+reactive or incremental programming. @;TODO: @~cite{}
 
 @;;; Here, we silently cite things that only appear in the appendices,
 @;;; so they appear in the bibliography, that is being computed before the appendices.
