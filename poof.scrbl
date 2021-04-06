@@ -147,7 +147,7 @@ The first argument @r[self] of type @r[Self] will hold the instance
 resulting as a fixed point from the entire computation.
 When composing multiple prototypes, every prototype will receive
 the @emph{same} value as their @r[self] argument:
-the complete instance that results from applying the every prototype in order.
+the complete instance that results from applying each prototype in order.
 This allows prototypes to “cooperate” with each other
 on @emph{different} aspects of the computation,
 wherein one prototype defines some aspect (e.g. a “method” in some dictionary)
@@ -403,7 +403,7 @@ Also T assumes methods are all function-valued, to be immediately called
 when methods are looked up, as if all accesses to an object went through the @r[operate] function below.
 Methods in T can be directly represented as slots with a function value in our approach.
 Non-function-valued slots in our approach above can be represented in T
-by nullary methods returning the constant value.
+by nullary methods returning a constant value.
 @Definitions[
 (define (operate instance selector . args) (apply (instance selector) args))
 ]
@@ -1286,8 +1286,7 @@ is bound to a function that overrides its super with constant fields from the in
 @subsection{Multiple Dispatch}
 
 @subsubsection{Generic Functions}
-Some object systems with classes @~cite{bobrow86commonloops bobrow88clos}
-or prototypes @~cite{chambers92objectoriented Salzman05prototypeswith}
+Some object systems, starting with CommonLoops @~cite{bobrow86commonloops bobrow88clos},
 feature the ability to define “generic functions” the behavior of which
 can be specialized on each of multiple arguments.
 For instance, a generic multiplication operation
@@ -1304,6 +1303,10 @@ by chaining dispatch of the first argument into a collection of functions
 that each dispatch on the second argument, and so on.
 But the process is tedious and non-local, and better left to be
 handled by an automated implementation of multiple dispatch.
+
+Since this feature was already included in
+previous prototype systems@~cite{chambers92objectoriented Salzman05prototypeswith},
+we'll restrict our discussion to additional challenges presented in a pure functional setting.
 
 @subsubsection{Extending previous objects}
 Since generic functions and their multi-methods are associated to multiple objects,
@@ -1386,9 +1389,47 @@ Actually, since we have accepted in @(section3) that prototypes and “object or
 are not just to compute records that map field names to values, but for arbitrary computations,
 then we may realize that what we need is a general protocol for computing with prototypes.
 
+We leave the implementation of method combination using generalized prototypes
+as an exercise for the reader, or as a topic for future work.
+As a hint, though, we will provide the definition of a generalized prototype for method definition
+that subsumes the above @r[$slot-gen] or @r[$slot-gen/object].
+A generalized prototype is defined in the context of:
+(a) a @emph{lens}
+@; TODO: cite Jeremy Gibbons on Profunctor Optics, and
+@; TODO: re-cite his citations of Foster, Kmett, Laarhoven?
+that extract or update the method from the current partial computation
+of the raw prototype fixed-point;
+(b) an object-wrapper that “cooks” the raw prototype fixed-point into a referenceable
+@r[self] object;
+(c) a method-wrapper that turns the user-provided “method” into a composable prototype.
+
+The lens, here passed as two function arguments @r[getter] and @r[setter],
+generalizes the fetching or storing of a method as the entry in a @r[Dict],
+or as the response to a message;
+it can express that you are overriding some specific fragment of some specific method
+in some specific sub-sub-object, encoded in some specific way.
+The object-wrapper may apply a method combination to extract a function from fragments;
+it may transcode an object from a representation suitable for object production
+to a representation suitable for object consumption;
+it may be the setter from a lens making the prototype-based computation
+that of a narrow component in a wider computation,
+at which point the corresponding getter allows a method to retrieve the computation at hand
+from the overall computation;
+it may be a composition of some of the above and more.
+The method-wrapper may to automate some of the builtin method combinations;
+for instance, in a @r[+] combination, it would, given an number,
+return the prototype that increments the super result by that number;
+it may also handle the merging of a @r[Dict] override returned by the method
+into the super @r[Dict] provided by its super method; etc.
+Thus, the generalization of @r[$slot-gen] becomes:
+@Definitions[
+(define ($lens-gen setter getter wrapper method)
+  (λ (cooked-self raw-super)
+    (setter ((wrapper method) cooked-self (delay (getter raw-super))) raw-super)))
+]
+
 @;{ @para{
-A generalized prototype is defined in the context of covariant functors
-@r[Raw] and @r[Cooked], and bi-covariant functor @r[Lens],
+The types might look a bit as follows:
 @Definitions[
 (code:comment "(deftype (ObjectWrapper Raw Cooked)")
 (code:comment "  (Forall (Object) (Fun (Raw Object) -> (Cooked Object))))")
@@ -1403,11 +1444,6 @@ A generalized prototype is defined in the context of covariant functors
 (code:comment "    (Fun (Raw Object) -> Method)))")
 (code:comment "(deftype (MethodWrapper Cooked RawProto)")
 (code:comment "  (Fun (RawProto Cooked) -> (CookedProto Cooked)))")
-]
-TODO: implement multimethods + method combination? Based on AMOP?
-@;@Definitions[
-(define ($lens-gen setter getter fun)
-  (λ (cooked-self raw-super) (setter (fun cooked-self (delay (getter raw-super))) raw-super)))
 ]
 }}
 
