@@ -75,22 +75,16 @@ rather have
 
 @(define-bibtex-cite "poof.bib" ~cite citet generate-bibliography)
 
-@;TAPL by @citet{tapl} is relevant.
-@;TAPL@~cite{tapl} has a relevant chapter (§32).
+@abstract{
 
-This paper is about the unexpectedly happy marriage of Object-Orientation Programming and Pure Lazy Functional Programming---when using Dynamic (or Dependent) Types.
+This paper elucidates the essence of Object-Oriented Programming (OOP), independent of idiosyncrasies of past incarnations.
+We reconstruct OOP in a pure lazy functional style with dynamic or dependent types. We build protototype-based objects first, then class-based objects as a special case.
+We illustrate our reconstruction in Scheme.
 
-Pitch: With 20 lines of code you can have an OO system in a dynamic language. Why do it? Because you can make your system more extensible. For another 30 lines, you can add multiple in inheritance.
+Using our approach, any language that contains the untyped lambda calculus can now implement an object system in handful of functions or roughly 20 lines of code. Multiple inheritance can be implemented in an additional 30 lines of code.
+}
 
-Direct predecessors that inspire our development: GCL (Google Configuration Language), Jsonnet, Nix.
-
-Nix OO system is implemented in 20 lines of Nix.
-Being able to extend a configuration without rewriting everything by reinventing prototype object systems.
-
-POOF: this is isomorphic to a prototype object system. Not just a curiosity but allows us to capitalize on all the work of prototype object systems throughout history. In addition, we can have multiple inheritance.
-
-Nix allows to specify in a declarative and deterministic fashion an entire linux installation. With POOF, you can write specifications more modularly. In Nix, you could kind of do multiple inheritance but not modularly. Now the system manages the DAG. Use case in Nix for multiple inheritance: for multiple people to extend the system in a modular fashion without being synchronized. If you have multiple axes of extensions, four aspects say, there are 16 combinations. Instead, generate combinations.
-
+@;{ TODO: cite when relevant
 Prototype Object Systems:
 T,
 Self@~cite{chambers1989efficient},
@@ -100,6 +94,7 @@ Multiple Inheritance:
 Mixin-based inheritance@~cite{bracha1990mixin},
 Clos@~cite{gabriel1991clos},
 Closette.
+}
 
 @; TODO: comment out before to submit:
 @table-of-contents[]
