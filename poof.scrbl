@@ -1,4 +1,4 @@
-#lang scribble/acmart @acmsmall @review @anonymous
+#lang scribble/acmart @acmsmall @10pt @review @anonymous @natbib
 
 @; To be submitted to OOPSLA 2021? https://2021.splashcon.org/track/splash-2021-oopsla
 
@@ -9,12 +9,13 @@
           (only-in scriblib/footnote note)
           (only-in scribble-abbrevs appendix)
           (only-in scribble-math/dollar $)
-          scribble/minted
+@;          scribble/minted
           syntax/parse/define
           "util/examples-module.rkt"
           (for-label racket))
 
-@(current-pygmentize-default-style 'colorful)
+@;@(current-pygmentize-default-style 'colorful)
+@(define (minted x . foo) (apply verbatim foo))
 
 @(define (pretitle #:raw (raw #f) content)
   (make-paragraph
@@ -57,6 +58,7 @@ rather have
 @(define (section3) @seclink["beyond_objects"]{section 3})
 @(define (section4) @seclink["Better_objects"]{section 4})
 @(define (section5) @seclink["Classes"]{section 5})
+@(define (section6) @seclink["Mutability"]{section 6})
 
 @title{Prototype Object-Orientation Functionally}
 
@@ -84,18 +86,6 @@ We illustrate our reconstruction in Scheme.
 Using our approach, any language that contains the untyped lambda calculus can now implement an object system in handful of functions or roughly 20 lines of code. Multiple inheritance can be implemented in an additional 30 lines of code.
 }
 
-@;{ TODO: cite when relevant
-Prototype Object Systems:
-T,
-Self@~cite{chambers1989efficient},
-JavaScript.
-
-Multiple Inheritance:
-Mixin-based inheritance@~cite{bracha1990mixin},
-Clos@~cite{gabriel1991clos},
-Closette.
-}
-
 @section[#:tag "Prototypes_bottom_up"]{Prototypes, bottom up}
 
 @subsection{Object Orientation in 109 characters of standard Scheme}
@@ -105,15 +95,15 @@ Closette.
 (define (mix c p) (lambda (f b) (c f (p f b))))
 ]
 
-We contend that the above two definitions summarize
-the essence of object-oriented programming, and that
-all the usual “object oriented” concepts can be easily recovered from them.
-The rest of this essay will make the case.
+We will make the case that the above two definitions summarize
+the essence of Object-Oriented Programming (OOP), and that
+all the usual OOP concepts can be easily recovered from them.
 
 @subsubsection{The Essence of OOP}
 
-Object-Oriented Programming consists in specifying code in modular increments
-that each compute their part from the combined whole and the computation so far.
+OOP consists in specifying computations in modular increments
+that each contribute their part based on
+the combined whole and the computation so far.
 
 We will realize these increments as @emph{prototypes}:
 functions of two arguments, @r[self] and @r[super]
@@ -168,10 +158,10 @@ and either dynamic types or dependent types. However, their potential is not
 fully realized in languages with mere parametric polymorphism.
 @; TODO: insert above reference to type discussion?
 Furthermore, for an @emph{efficient} implementation of objects with our formulas,
-we will also require lazy evaluation (or side effects to implement them)
-as a optional or ubiquitous language feature.
+we will also require lazy evaluation (or side-effects to implement it),
+whether an optional or an ubiquitous language feature.
 We do not otherwise require side-effects---though they can be used
-for the usual optimizations in the common “linear” case.
+for the usual optimizations in the common “linear” case (see @(section6)).
 
 @subsection{A minimal object system}
 
@@ -185,8 +175,8 @@ we will say “slot” where others may say “field” or “member” or “me
 and say that the slot is bound to the given value
 rather than it “containing” the value or any such thing.
 
-Thus, the function @r[x1-y2] below encodes a record with two slots
-@r[x] and @r[y] bound respectively to @r[1] and @r[2].
+Thus function @r[x1-y2] below encodes a record with two slots
+@r[x], @r[y] bound respectively to @r[1] and @r[2].
 
 @Examples[
 (code:comment "x1-y2 : (Fun 'x -> Nat | 'y -> Nat)")
@@ -199,22 +189,22 @@ We can check that we can indeed access the record slots
 and get the expected values:
 
 @Checks[
-(eval:check (x1-y2 'x) 1)
-(eval:check (x1-y2 'y) 2)
+(eval:check (list (x1-y2 'x) (x1-y2 'y)) '(1 2))
 ]
 
-Note that we use Lisp symbols for legibility, but in poorer languages,
-"symbols" could be any large enough type with decidable equality,
-e.g. integers or strings, etc.
+Note that we use Scheme symbols for legibility.
+Poorer languages could instead use any large enough type with decidable equality,
+such as integers or strings.
+Richer languages (e.g. Racket or Gerbil Scheme) could use resolved hygienic identifiers.
 
 @subsubsection{Prototypes for Records}
 
-A @emph{prototype} for a record is a function of two arguments @r[self] and
-@r[super] (both records) to an @r[extended-self] record.
-To distinguish prototypes from instances and other values,
+A @emph{prototype} for a record is a function of two record arguments @r[self],
+@r[super] that returns a record extending @r[super].
+To easily distinguish prototypes from instances and other values,
 we will follow the convention of prefixing with @litchar{$} the names of prototypes.
 Thus, the following prototype extends or overrides its super-record with
-a slot @r[x] unconditionally bound to @r[3]:
+slot @r[x] bound to @r[3]:
 @Examples[
 (code:comment "$x3 : (Proto (Fun 'x -> Nat | A) A)")
 (define ($x3 self super) (λ (msg) (if (eq? msg 'x) 3 (super msg))))
@@ -227,14 +217,12 @@ imaginary values bound to the respective slots @r[x] and @r[y] of its
 (code:comment "$z<-xy : (Proto (Fun (Or 'x 'y) -> Real | 'z -> Complex | A)")
 (code:comment "                (Fun (Or 'x 'y) -> Real | A))")
 (define ($z<-xy self super)
-  (λ (msg)
-    (case msg
-      ((z) (+ (self 'x) (* 0+1i (self 'y))))
-      (else (super msg)))))
+  (λ (msg) (case msg
+             ((z) (+ (self 'x) (* 0+1i (self 'y))))
+             (else (super msg)))))
 ]
 
-That prototype doubles the number in slot @r[x] from its @r[super] record.
-We say that it @emph{inherits} the value for slot @r[x]:
+That prototype doubles the number in slot @r[x] that it @emph{inherits} from its @r[super] record:
 @Examples[
 (code:comment "$double-x : (Proto (Fun 'x -> Number | A) (Fun 'x -> Number | A))")
 (define ($double-x self super)
@@ -275,17 +263,19 @@ from the @r[self]
 and not the @r[super], we can freely commute it with the other two prototypes
 that do not affect either override slot @r[z] or inherit from it:
 @Checks[
-(eval:check ((fix (mix $z<-xy (mix $double-x $x3)) x1-y2) 'z) 6+2i)
-(eval:check ((fix (mix $double-x (mix $z<-xy $x3)) x1-y2) 'z) 6+2i)
-(eval:check ((fix (mix $double-x (mix $x3 $z<-xy)) x1-y2) 'z) 6+2i)
+(eval:check (list ((fix (mix $z<-xy (mix $double-x $x3)) x1-y2) 'z)
+                  ((fix (mix $double-x (mix $z<-xy $x3)) x1-y2) 'z)
+                  ((fix (mix $double-x (mix $x3 $z<-xy)) x1-y2) 'z))
+            '(6+2i 6+2i 6+2i))
 ]
 
 @r[mix] is associative, and therefore the following forms are equivalent to the previous ones,
 though the forms above (fold right) are slightly more efficient than the forms below (fold left):
 @Checks[
-(eval:check ((fix (mix (mix $z<-xy $double-x) $x3) x1-y2) 'z) 6+2i)
-(eval:check ((fix (mix (mix $double-x $z<-xy) $x3) x1-y2) 'z) 6+2i)
-(eval:check ((fix (mix (mix $double-x $x3) $z<-xy) x1-y2) 'z) 6+2i)
+(eval:check (list ((fix (mix (mix $z<-xy $double-x) $x3) x1-y2) 'z)
+                  ((fix (mix (mix $double-x $z<-xy) $x3) x1-y2) 'z)
+                  ((fix (mix (mix $double-x $x3) $z<-xy) x1-y2) 'z))
+            '(6+2i 6+2i 6+2i))
 ]
 
 Now, since @r[$double-x] inherits slot @r[x] that @r[$x3] overrides,
@@ -503,7 +493,8 @@ Prototype object systems enable programmers to @r[append] lists of prototypes
 independently from any base object, to compose and recompose prototypes
 in different orders and combinations.
 Prototypes are thus more akin to the “mixins” or “traits” of more advanced
-objects systems.
+objects systems@~cite{Cannon82 bracha1990mixin Flatt06schemewith}.
+@; TODO: cite Flavors for mixins? Some PLT paper? The one from asplas06? What about traits?
 Prototype composition however, does not by itself subsume multiple
 inheritance. We will show in @seclink["Better_objects"]{chapter 4} how to
 combine the two.
@@ -757,8 +748,9 @@ Now, the simplest numeric functions are thunks: nullary functions that yield a n
 @Checks[
 (define (p1+ _ b) (λ () (+ 1 (b))))
 (define (p2* _ b) (λ () (* 2 (b))))
-(eval:check ((fix (mix p1+ p2*) (λ () 30))) 61)
-(eval:check ((fix (mix p2* p1+) (λ () 30))) 62)
+(eval:check (list ((fix (mix p1+ p2*) (λ () 30)))
+                  ((fix (mix p2* p1+) (λ () 30))))
+            '(61 62))
 ]
 
 @subsection[#:tag "computations_not_values"]{Prototypes are for Computations not Values}
@@ -835,17 +827,18 @@ Now, Jsonnet@~cite{jsonnet}, another lazy pure functional dynamic language,
 sports an object system that is semantically equivalent to that of Nix,
 published one year before Nix's extension system was invented.
 Jsonnet itself was invented as a simplified semantic reconstruction of the essential ideas
-behind GCL, the decade-older configuration language used everywhere inside Google.
+behind GCL, the decade-older Google Configuration Language used everywhere inside the company.
 GCL also wasn't explicitly designed as an object system, yet ended up having discovered
 an excellent point in the design space, despite the overall clunkiness of the language.
 
-A notable difference is that the object is builtin in Jsonnet, with a nice syntax,
-when in Nix it is a set of library functions that fit a few tens of lines of code.
+A notable difference between Nix and Jsonnet is that
+Jsonnet supports objects as builtins with a nice syntax, when
+in Nix they are implemented as a handful library functions in under 20 lines of code.
 Also, Jsonnet uses the empty object as the implicit base super object for inheritance;
 this is equivalent to the bottom function in the representation from our
 @seclink["Prototypes_bottom_up"]{section 1}—but not in theirs!
-Unlike the representation from our @seclink["Prototypes_bottom_up"]{section 1},
-the Jsonnet representation (as Nix's) also allows for introspection of what slots are bound.
+Unlike the representation from our @(section1),
+Jsonnet's representation (as Nix's) also allows for introspection of what slots are bound.
 Finally, Jsonnet has builtin support for fields being either visible or hidden when printing.
 
 The fact that, across several decades, closely matching designs were independently reinvented many times
@@ -912,7 +905,7 @@ classes being second-class objects (pun not intended by the clueless practitione
 
 @section[#:tag "Better_objects"]{Better objects, still pure}
 
-In @seclink["Prototypes_bottom_up"]{section 1},
+In @(section1),
 we implemented a rudimentary object system on top of prototypes.
 Compared to mainstream object systems, it not only was much simpler to define,
 but also enabled mixins, making it more powerful than common single-inheritance systems.
@@ -936,7 +929,7 @@ an extra feature counter-acting their previous “feature”.
 
 @subsubsection{Same concrete representation, abstract constructor}
 Field introspection can be achieved while keeping instances as functions from keys to values,
-by adding a “special” key, for instance @r[keys],
+by adding a “special” key, e.g. @r[keys],
 that will be bound to the list of valid keys.
 To save themselves the error-prone burden of maintaining the list of keys by hand,
 programmers would then use a variant of @r[$slot-gen] that maintains this list, as in:
@@ -959,8 +952,8 @@ Thus, we could represent objects as thunks that return @r[symbol-avl-map], as fo
 @Definitions[
 (define ($slot-gen/dict k fun)
   (λ (self super)
-    (define (super-value-thunk) (Dict 'ref (super) k bottom))
-    (λ () (Dict 'acons k (fun self super-value-thunk) (super)))))
+    (define (super-slot-value) (Dict 'ref (super) k bottom))
+    (λ () (Dict 'acons k (fun self super-slot-value) (super)))))
 ]
 However, while the above definition yields the correct result,
 it potentially recomputes the entire dictionary @r[(super)] twice at every symbol lookup,
@@ -977,10 +970,8 @@ Thus, using @r[δfix] and @r[δmix] instead of @r[fix] and @r[mix], we can have:
   (λ (self super)
     (delay
       (let* ((super-dict (force super))
-             (super-value
-               (call/cc (λ (return)
-                 (Dict 'ref super-dict k (λ () (return (delay (bottom)))))))))
-        (Dict 'acons k (delay (fun self super-value)) super-dict)))))
+             (super-slot-value (Dict 'ref super-dict k (λ () (delay (bottom))))))
+        (Dict 'acons k (delay (fun self super-slot-value)) super-dict)))))
 ]
 
 @subsubsection[#:tag "different_prototype"]{Same instance representation, different prototype representation}
@@ -1050,7 +1041,7 @@ In Jsonnet, this conflation is done implicitly as part of the builtin object sys
 In Nix, interestingly, there are several unassuming variants of the same object system,
 that each store the prototype information in one or several special fields of the @r[attrset]
 that is otherwise used for instance information.
-Thus, in the simplest Nix object system, one could write a definition such as
+Thus, in the simplest Nix object system, one could write:
 @minted["nix"]|{
 fix' (self: { x = 1; y = 2 + self.x; })
 }|
@@ -1279,7 +1270,8 @@ is bound to a function that overrides its super with constant fields from the in
 @subsection{Multiple Dispatch}
 
 @subsubsection{Generic Functions}
-Some object systems, starting with CommonLoops @~cite{bobrow86commonloops bobrow88clos},
+Some object systems, starting with CommonLoops@~cite{bobrow86commonloops}
+then CLOS@~cite{bobrow88clos gabriel1991clos},
 feature the ability to define “generic functions” the behavior of which
 can be specialized on each of multiple arguments.
 For instance, a generic multiplication operation
@@ -1388,10 +1380,10 @@ to instantiate the effective method...
 this is very much like an object!
 Actually, since we have accepted in @(section3) that prototypes and “object orientation”
 are not just to compute records that map field names to values, but for arbitrary computations,
-then we may realize that what we need is a general protocol for computing with prototypes.
+then we realize there is a more general protocol for computing with prototypes.
 
 A full treatment of generalized prototypes is a topic for future work.
-Still, here are a few hints as to what they could be.
+Still, here are a few hints as to what they would be.
 A generalized prototype would involve:
 (a) a @emph{lens}@~cite{Foster2007CombinatorsFB Pickering_2017}
 @; TODO: re-cite Kmett, Laarhoven from the Pickering_2017 article? Cite 2006 Pierce on Lens rather than 2007, see later Gibbons article
@@ -1401,10 +1393,10 @@ of the raw prototype fixed-point;
 @r[self] object;
 (c) a method-wrapper that turns the user-provided “method” into a composable prototype.
 
-The lens, here passed as two function arguments @r[getter] and @r[setter],
+The lens, passed below as two function arguments @r[getter] and @r[setter],
 generalizes the fetching or storing of a method as the entry in a @r[Dict],
 or as the response to a message;
-it can express that you are overriding some specific fragment of some specific method
+it expresses how a prototype overrides some specific fragment of some specific method
 in some specific sub-sub-object, encoded in some specific way.
 The object-setter may apply a method combination to extract a function from fragments;
 it may transcode an object from a representation suitable for object production
@@ -1455,12 +1447,12 @@ only “second-class” classes.
 At the meta-level, type descriptors are themselves of a same concrete type,
 so the meta-language only needs and uses monomorphic prototypes!
 
-@section{Stateful Objects}
+@section[#:tag "Mutability"]{Mutability}
 
-@subsection{Mutability}
+@subsection{Mutability as Pure Linearity}
 @subsubsection{From Pure to Mutable and Back}
 Note how all the objects and functions defined in the previous sections were pure,
-as contrasted with all object literature from the 1960s to the early 1990s:
+as contrasted with all OOP literature from the 1960s to the early 1990s and most since:
 They didn't use any side-effect whatsoever.
 No @r[set!], no tricky use of @r[call/cc]. Only laziness at times, which still counts as pure.
 But what if we are OK with using side-effects? How much does that simplify computations?
@@ -1521,6 +1513,14 @@ Overriding a slot would update the effective method in place,
 based on the new method, the self (identity of the object) and
 super method (previous entry in the hash-table).
 
+@;
+@Definitions[
+(define ($slot-gen/hash k fun)
+  (λ (self) (let ((super-slot-computation (λ () ((hash-ref self k)))))
+              (hash-set! self k (λ () (fun self super-slot-computation))))
+              self))
+]
+
 @subsection{Cache invalidation}
 @italic{There are two hard things in computer science:
 cache invalidation, naming things, and off-by-one errors} (Phil Karton).
@@ -1538,8 +1538,8 @@ may be below the level at which users may intervene.
 At the opposite end of the spectrum, the object system may assume purity-by-default
 and cache all the computations it can.
 It is then up to users to explicitly create cells to make some things mutable,
-or flush some caches when appropriate,
-as in the Gerbil-POO system@~cite{GerbilPOO}.
+or flush some caches when appropriate.
+@; , as in the Gerbil-POO system@~cite{GerbilPOO}.
 
 In between these two opposites, the system can automatically track which mutations happen,
 and invalidate those caches that need be, with a tradeoff between how cheap it will be
