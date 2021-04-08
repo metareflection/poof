@@ -343,7 +343,7 @@ What if a slot depends on other slots? We can use this function
 ]
 
 A general function to compute and override a slot would take as arguments both @r[self]
-and a function to @r[inherit] the @r[super] slot value,
+and a function to @r[inherit] the super slot value,
 akin to @r[call-next-method] in CLOS@~cite{gabriel1991clos}.
 @Definitions[
 (code:comment "$slot-gen : (Fun k:Symbol (Fun A (Fun -> V) -> W)")
@@ -810,19 +810,20 @@ is exactly how objects are encoded in
 the pure lazy functional dynamically typed language Nix@~cite{dolstra2008nixos}.
 
 Since 2015, the Nix standard library contains variants of the @r[fix] et @r[mix] functions,
-wherein “attribute sets” or attrsets, mapping from strings to values,
+wherein “attribute sets” or @emph{attrsets}, mapping from strings to values,
 are defined as fixed-points of functions obtained from a “base” function
 and a list of composable “extensions”.
-These “extensions” are functions from attribute sets @r[self] and @r[super] to
-an attribute set that is meant to extend and override @r[super]
+These “extensions” are functions from attrsets @r[self] and @r[super] to
+an attrset that is meant to extend and override @r[super]
 as incremental contribution to the computation of the @r[self] fixed-point.
 This is a reasonable restriction on how prototypes may affect super values,
-that totally matches usual object-oriented practice, and suggests where
+that matches usual object-oriented practice, and suggests where
 an extension point could be in a general meta-object protocol@~cite{amop}.
-The “base” function is a function from attrset @r[self] to attrset;
-this makes the API slightly less uniform than ours and introduces an extra type,
-but is otherwise isomorphic to our approach of using @r[bottom] as an base @r[super] argument
-that gets ignored by the last prototype in the list to be instantiated.
+The “base” is a function from attrset @r[self] to attrset;
+this makes the API slightly less uniform than ours, introducing an extra type,
+but is otherwise isomorphic to our approach wherein
+the last prototype in the list to be instantiated ignores
+the @r[bottom] passed as its @r[super] argument.
 
 Apart from the minor details above,
 this is the very same design as the one we are presenting,
@@ -840,9 +841,9 @@ Now, Jsonnet@~cite{jsonnet}, another lazy pure functional dynamic language,
 sports an object system that is semantically equivalent to that of Nix,
 published one year before Nix's extension system was invented.
 Jsonnet itself was invented as a simplified semantic reconstruction of the essential ideas
-behind GCL, the decade-older Google Configuration Language used everywhere inside the company.
-GCL also wasn't explicitly designed as an object system, yet ended up having discovered
-an excellent point in the design space, despite the overall clunkiness of the language.
+behind GCL, the decade-older Google Configuration Language used everywhere inside Google.
+GCL also wasn't explicitly designed as OOP, yet ended up having discovered
+an excellent point in the design space, despite the reputed overall clunkiness of the language.
 
 A notable difference between Nix and Jsonnet is that
 Jsonnet supports objects as builtins with a nice syntax, when
@@ -887,16 +888,15 @@ and providing understandable error messages@~cite{minsky08},
 maybe the spot is too sweet to be healthy, and
 is lacking in proteins, or at least in prototypes.
 
-Now, there is another special way in which Jsonnet and Nix improve upon T's objects,
-that provides insight into Object-Oriented Programming:
-they unify instances and prototypes as objects.
-We'll come back to that in @(section4).
+Now, there is another special way by which Jsonnet and Nix improve upon T's objects,
+that provides insight into OOP:
+they unify instances and prototypes as objects. See @(section4).
 
 @subsection{Prototypes are Useful Even Without Subtyping}
 
-The above example of prototypes for numeric functions also illustrate that
-even if you language's only subtyping relationship is
-the identity whereby each type is the one and only subtype or itself
+The above prototypes for numeric functions also illustrate that
+even if a language's only subtyping relationship is the identity
+whereby each type is the one and only subtype or itself
 (or something slightly richer with syntactic variable substitution in parametric polymorphism),
 then you can use prototypes to incrementally specify computations,
 with the following monomorphic types:
@@ -905,9 +905,9 @@ with the following monomorphic types:
 (code:comment "fix : (Fun (MProto A) A -> A)")
 (code:comment "mix : (Fun (MProto A) (MProto A) -> (MProto A))")
 ]
-As per the previous discussion, if your language doesn't use lazy evaluation,
-you may have to constrain the @r[A]'s to be functions, or to
-wrap the @r[A]'s in naked input position inside a @r[Lazy] type constructor.
+As per the previous discussion, if the language doesn't use lazy evaluation,
+@r[A]'s may be constrained to be functions, or to they may have to be wrapped
+inside a @r[Lazy] or @r[delay] special form.
 
 Lack of subtyping greatly reduces the expressive power of prototypes;
 yet, as we'll see in @(section5),
@@ -933,8 +933,8 @@ When representing objects as functions from symbol to value,
 it isn't generally possible to access the list of symbols that constitute valid keys.
 Most “object” systems do not allow for this kind of introspection at runtime,
 and a 1990s marketing department would probably tout that
-as some kind of “encapsulation” or “information hiding” feature to be sold as part of
-the “object-oriented” package deal of the day.
+as some kind of ill-defined “encapsulation” or “information hiding” feature
+sold as part of the “object-oriented” package deal of the day.
 Yet, introspection can be useful to e.g. automatically
 input and output human-readable or network-exchangeable representations of an instance.
 Thus, the same 1990s marketing departments have long sold “reflection” as
@@ -1004,30 +1004,30 @@ to allow prototypes to intercept field introspection.
 
 @subsubsection{Abstracting over representations}
 We can generalize the above solutions by realizing that
-both instances and prototypes may be represented in a variety of ways.
-The representation given in @(section1) is a good guide for object semantics,
-but instance and prototype as functions may be wrapped or unwrapped in various ways,
+both instances and prototypes may be
+may be wrapped, unwrapped or otherwise represented in a variety of ways,
 and augmented with various other information,
 when designing and implementing an object system for usability and performance.
-Still, the distinction between instance and prototype
-is essential to understanding and simplifying the semantics of object systems.
+Yet, the representation given in @(section1) is a good guide to the semantics of OOP,
+and the conceptual distinction between instance and prototype is instrumental to keeping this semantics
+simple and understandable.
 
 @subsection{Unifying Instances and Prototypes}
 
 @subsubsection{OOP without Objects}
-While the distinction between instance and prototype is essential
-to simplify and understand the semantics of objects,
-neither instances nor prototypes are arguably “object”.
+While the distinction between instance and prototype is essential,
+neither instances nor prototypes are arguably “objects”.
 We are thus in a strange situation wherein we have been doing
 “Object-Oriented Programming” without any actual object!
 
-This is a practical problem, as having to maintain this distinction means that
-all APIs may have to be doubled at every point that may be either one or the other.
-In particular, writing extensible configurations for recursive data structures this way is painful:
+This is a practical problem, not a mere curiosity, as this distinction
+makes it painful to write extensible specifications for nested or recursive data structures:
 you need to decide for each field of each data structure at each stage of computation
 whether it contains an extensible prototype or an instance to call the proper API.
 This incurs both a psychological cost to programmers and a runtime cost to evaluation,
-that in the worst case might recompute some sub-expressions exponentially often.
+that without careful design may in the worst case cause an exponential explosion
+of the code the programmers must write and/or of the recomputations of sub-expressions
+that the evaluator will do at runtime.
 
 @subsubsection{Conflation without confusion}
 Jsonnet and Nix both confront and elegantly solve the above issue,
@@ -1114,7 +1114,7 @@ e.g. with @r[K1] inheriting from direct supers @r[A B C],
 @r[K3] inheriting from direct supers @r[D A], and what more
 each of @r[A], @r[B], @r[C], @r[D], @r[E] inheriting from a base super object @r[O]?
 
-With the basic object model offered by Nix and Jsonnet and our code so far,
+With the basic object model offered by Nix, Jsonnet, or our @(section1),
 these dependencies couldn't be represented in the prototype itself.
 If the programmer tried to “always pre-mix” its dependencies into a prototype,
 then @r[K1] would be a pre-mix @r[K1 A B C O],
@@ -1125,7 +1125,7 @@ and when trying to specify @r[Z], the pre-mix
 with unwanted repetitions of @r[A], @r[B], @r[D], @r[O]
 redoing their effects too many times and possibly undoing overrides made by @r[K2] and @r[K3].
 Instead, the programmer would have to somehow remember and track those dependencies,
-such that when he decides instantiates @r[Z], he won't write just @r[Z],
+such that when he instantiates @r[Z], he won't write just @r[Z],
 but @r[Z] followed a topologically sorted @emph{precedence list}
 where each of the transitive dependencies appears once and only once,
 e.g. @r[Z K1 K2 K3 D A B C E O].
@@ -1283,7 +1283,7 @@ is bound to a function that overrides its super with constant fields from the in
 @subsubsection{Generic Functions}
 Some object systems, starting with CommonLoops@~cite{bobrow86commonloops}
 then CLOS@~cite{bobrow88clos},
-feature the ability to define “generic functions” the behavior of which
+feature the ability to define “generic functions” whose behavior
 can be specialized on each of multiple arguments.
 For instance, a generic multiplication operation
 will invoke different methods when called with two integers, two complex numbers,
