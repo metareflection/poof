@@ -60,6 +60,7 @@ rather have
 @(define (section4) @seclink["Better_objects"]{section 4})
 @(define (section5) @seclink["Classes"]{section 5})
 @(define (section6) @seclink["Mutability"]{section 6})
+@(define (section7) @seclink["Future_Work"]{section 7})
 
 @title{Prototype Object-Orientation Functionally}
 
@@ -116,10 +117,10 @@ and identify how they have a special place in computer science.
 In @(section4), we examine how our model can be extended to support
 more advanced features of OOP.
 In @(section5), we demonstrate how classes are “just” prototypes for type descriptors.
-Finally, in @(section6), we discuss our pure functional model relates
+In @(section6), we discuss our pure functional model relates
 to models with mutable objects.
-Along the way, we relate our approach to both OOP and FP traditions, both decades-old and recent,
-and propose a path for further research (notably in @(section4)).
+Finally in @(section7), we propose a path for further research.
+Along the way, we relate our approach to both OOP and FP traditions, both decades-old and recent.
 
 @subsubsection{Modular Increments of Computation}
 OOP consists in specifying computations in modular increments
@@ -1426,7 +1427,8 @@ an arbitrary set of sorted, labelled (multi)methods
 @subsubsection{Generalized Prototype Combination}
 
 As determined above, generic functions are made of many labelled fragments (multi-methods);
-fragments of a same label are sorted according to some partial or total order;
+fragments of a same label are sorted according to some partial or total order
+(and, in the case of multiple dispatch, filtered for applicability);
 they are then composed via some representation-dependent mixing function;
 a fixed-point is extracted from the composed fragments, with some base value;
 finally a representation-dependent wrapper is applied to the fixed-point
@@ -1608,6 +1610,24 @@ reactive or incremental programming. @;TODO: @~cite{}
 @;;; Here, we silently cite things that only appear in the appendices,
 @;;; so they appear in the bibliography, that is being computed before the appendices.
 @~nocite{Barrett96amonotonic}
+
+@section[#:tag "Future_Work"]{Future Work}
+
+Using the ideas in this essay, we have implemented in both Nix and Scheme
+object systems with unified instances and prototypes and multiple inheritance,
+that are being used in an actual application.
+In the future, we would like to explore the Generalize Prototypes mentioned in @(section4)
+to also implement multiple dispatch and method combination.
+Method combination in particular will require attaching meta-data to method prototypes
+regarding how they are to be combined in the end,
+which means we will have to explore what insights our approach may bring into
+Meta-Object Protocols@~cite{amop}.
+Another important kind of meta-data we may want to attach to prototypes is type information
+and/or logical constraints, that may be enforced either at runtime or at compile-time.
+Finally, we may want to study how prototype OOP interacts
+with staged computations or cache invalidation
+so as to require less-than-dependent types, or enable various optimizations at compile-time
+especially with respect to object representation.
 
 @(generate-bibliography)
 
