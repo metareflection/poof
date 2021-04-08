@@ -88,7 +88,9 @@ Using our approach, any language that contains the untyped lambda calculus can n
 
 @section[#:tag "Prototypes_bottom_up"]{Prototypes, bottom up}
 
-@subsection{Object Orientation in 109 characters of standard Scheme}
+@subsection{The Essence of OOP}
+
+@subsubsection{Object Orientation in 109 characters of standard Scheme}
 
 @Definitions[
 (define (fix p b) (define f (p (lambda i (apply f i)) b)) f)
@@ -97,13 +99,29 @@ Using our approach, any language that contains the untyped lambda calculus can n
 
 We will make the case that the above two definitions summarize
 the essence of Object-Oriented Programming (OOP), and that
-all the usual OOP concepts can be easily recovered from them.
+all the usual OOP concepts can be easily recovered from them—all while
+staying within the framework for pure Functional Programming (FP).
 
-@subsubsection{The Essence of OOP}
+@subsubsection{Plan of this Essay}
 
+In @(section1) we explain how the above functions
+implement a minimal but recognizable model of OOP,
+with open recursion and inheritance.
+In @(section2) we illustrate this OOP model actually enables
+incremental definition of complex data structures.
+In @(section3) we show how prototypes are useful beyond traditional notions of objects,
+and identify how they have a special place in computer science.
+In @(section4) we examine how our model can be extended to support
+more advanced features of OOP.
+In @(section5) we demonstrate how classes are “just” prototypes for type descriptors.
+Finally, in @(section6) we discuss our pure functional model relates
+to models with mutable objects.
+Along the way, we relate our approach to both OOP and FP traditions, both decades-old and recent,
+and propose a path for further research.
+
+@subsubsection{Modular Increments of Computation}
 OOP consists in specifying computations in modular increments
-that each contribute their part based on
-the combined whole and the computation so far.
+each contributing their part based on the combined whole and the computation so far.
 
 We will realize these increments as @emph{prototypes}:
 functions of two arguments, @r[self] and @r[super]
