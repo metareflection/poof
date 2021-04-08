@@ -23,6 +23,7 @@
    content))
 @(pretitle @elem[#:style (make-style "setcopyright" '())]{none})
 @;@(pretitle @elem[#:style (make-style "setcounter{tocdepth}" '())]{2})
+@(define (noindent) @elem[#:style (make-style #f '(exact-chars))]{\noindent})
 
 @(define (~nocite . x) (let ((_ (apply @~cite x))) (void)))
 
@@ -97,6 +98,7 @@ Using our approach, any language that contains the untyped lambda calculus can n
 (define (mix c p) (lambda (f b) (c f (p f b))))
 ]
 
+@(noindent)
 We will make the case that the above two definitions summarize
 the essence of Object-Oriented Programming (OOP), and that
 all the usual OOP concepts can be easily recovered from them—all while
@@ -144,6 +146,7 @@ a function from @r[Self] and @r[Super] to @r[Self].
 (code:comment "        st: (<: Self Super Sup2))")
 ]
 
+@(noindent)
 The first argument @r[self] of type @r[Self] will hold the instance
 resulting as a fixed point from the entire computation.
 When composing multiple prototypes, every prototype will receive
@@ -204,6 +207,7 @@ Thus function @r[x1-y2] below encodes a record with two slots
                               (else (error "unbound slot" msg))))
 ]
 
+@(noindent)
 We can check that we can indeed access the record slots
 and get the expected values:
 
@@ -211,6 +215,7 @@ and get the expected values:
 (eval:check (list (x1-y2 'x) (x1-y2 'y)) '(1 2))
 ]
 
+@(noindent)
 Note that we use Scheme symbols for legibility.
 Poorer languages could instead use any large enough type with decidable equality,
 such as integers or strings.
@@ -230,6 +235,7 @@ slot @r[x] bound to @r[3]:
 (define ($x3 self super) (λ (msg) (if (eq? msg 'x) 3 (super msg))))
 ]
 
+@(noindent)
 This prototype computes a complex number slot @r[z] based on real and
 imaginary values bound to the respective slots @r[x] and @r[y] of its
 @r[self]:
@@ -242,6 +248,7 @@ imaginary values bound to the respective slots @r[x] and @r[y] of its
              (else (super msg)))))
 ]
 
+@(noindent)
 That prototype doubles the number in slot @r[x] that it @emph{inherits} from its @r[super] record:
 @Examples[
 (code:comment "$double-x : (Proto (Fun 'x -> Number | A) (Fun 'x -> Number | A))")
@@ -249,6 +256,7 @@ That prototype doubles the number in slot @r[x] that it @emph{inherits} from its
   (λ (msg) (if (eq? msg 'x) (* 2 (super 'x)) (super msg))))
 ]
 
+@(noindent)
 More generally a record prototype extends its @r[super] record with new slots
 and/or overrides the values bound to its existing slots, and may in the
 process refer to both the records @r[self] and @r[super] and their slots,
@@ -271,6 +279,7 @@ With the @r[fix] operator using the above record @r[x1-y2] as base value:
 (eval:check (list (x2-y2 'x) (x2-y2 'y)) '(2 2))
 ]
 
+@(noindent)
 We can also @r[mix] these prototypes together before to compute the @r[fix]:
 @Checks[
 (code:comment "z6+2i : (Fun 'x -> Nat | 'y -> Nat | 'z -> Complex)")
@@ -278,6 +287,7 @@ We can also @r[mix] these prototypes together before to compute the @r[fix]:
 (eval:check (map z6+2i '(x y z)) '(6 2 6+2i))
 ]
 
+@(noindent)
 And since the @r[$z<-xy] prototype got the @r[x] and @r[y] values
 from @r[self] and not @r[super], we can freely commute it with the other two prototypes
 that do not affect either override slot @r[z] or inherit from it:
@@ -288,6 +298,7 @@ that do not affect either override slot @r[z] or inherit from it:
             '(6+2i 6+2i 6+2i))
 ]
 
+@(noindent)
 @r[mix] is associative, and therefore the following forms are equivalent to the previous ones,
 though the forms above (fold right) are slightly more efficient than the forms below (fold left):
 @Checks[
@@ -297,6 +308,7 @@ though the forms above (fold right) are slightly more efficient than the forms b
             '(6+2i 6+2i 6+2i))
 ]
 
+@(noindent)
 Now, since @r[$double-x] inherits slot @r[x] that @r[$x3] overrides,
 there is clearly a dependency between the two that prevents them from commuting:
 @Checks[
@@ -322,6 +334,7 @@ To define an object with a slot @r[k] mapped to a value @r[v], use:
         (super msg))))) (code:comment "otherwise, recur to the object's super object")
 ]
 
+@(noindent)
 What of inheritance? Well, we can modify an inherited slot using:
 @Definitions[
 (code:comment "$slot-modify : (Fun k:Symbol (Fun V -> W)")
@@ -332,6 +345,7 @@ What of inheritance? Well, we can modify an inherited slot using:
       (super msg)))))
 ]
 
+@(noindent)
 What if a slot depends on other slots? We can use this function
 @Definitions[
 (code:comment "$slot-compute : (Fun k:Symbol (Fun A -> V) -> (Proto (Fun 'k -> V | A) A))")
@@ -342,6 +356,7 @@ What if a slot depends on other slots? We can use this function
         (super msg)))))
 ]
 
+@(noindent)
 A general function to compute and override a slot would take as arguments both @r[self]
 and a function to @r[inherit] the super slot value,
 akin to @r[call-next-method] in CLOS@~cite{gabriel1991clos}.
@@ -355,6 +370,7 @@ akin to @r[call-next-method] in CLOS@~cite{gabriel1991clos}.
       (if (equal? msg k) (fun self inherit) (inherit)))))
 ]
 
+@(noindent)
 We could redefine the former ones in terms of that latter:
 @Examples[
 (define ($slot k v) ($slot-gen k (λ (__self __inherit) v)))
@@ -362,6 +378,7 @@ We could redefine the former ones in terms of that latter:
 (define ($slot-compute k fun) ($slot-gen k (λ (self __) (fun self))))
 ]
 
+@(noindent)
 Thus you can re-define the above prototypes as:
 @Examples[
 (define $x3 ($slot 'x 3))
@@ -369,12 +386,14 @@ Thus you can re-define the above prototypes as:
 (define $z<-xy ($slot-compute 'z (λ (self) (+ (self 'x) (* 0+1i (self 'y))))))
 ]
 
+@(noindent)
 Here is a universal bottom function to use as the base for fix:
 @Definitions[
 (code:comment "bottom-record : (Fun Symbol -> _)")
 (define (bottom-record msg) (error "unbound slot" msg))
 ]
 
+@(noindent)
 To define a record with a single slot @r[foo] bound to @r[0], we can use:
 @Checks[
 (code:comment "x3 : (Fun 'x -> Nat)")
@@ -382,6 +401,7 @@ To define a record with a single slot @r[foo] bound to @r[0], we can use:
 (eval:check (x3 'x) 3)
 ]
 
+@(noindent)
 To define a record with two slots @r[x] and @r[y] bound to @r[1]
 and @r[2] respectively, we can use:
 @Checks[
@@ -421,6 +441,7 @@ Thus, the instantiation function @r[(fix p b)] becomes:
   self)
 ]
 
+@(noindent)
 A more thorough explanation of the above fixed-point function is in @seclink["Appendix_B"]{Appendix B}.
 Meanwhile, the composition function @r[(mix p q)] becomes:
 @Definitions[
@@ -430,6 +451,7 @@ Meanwhile, the composition function @r[(mix p q)] becomes:
   (λ (self super2) (child self (parent self super2))))
 ]
 
+@(noindent)
 Note the types of the variables and intermediate expressions:
 @tabular[
 (list (list
@@ -442,6 +464,7 @@ parent : (Proto Super Super2)
 super2 : Super2
 (parent self super2) : Super]))]
 
+@(noindent)
 When writing long-form functions, instead of vying for conciseness, we will
 use the same naming conventions as in the function above:
 @itemize[
@@ -469,6 +492,7 @@ the final fixed-point nor refers to it.
 (define (identity-prototype self super) super)
 ]
 
+@(noindent)
 Now, prototypes are interesting because @r[compose-prototypes] (a.k.a. @r[mix])
 is an associative operator with neutral element @r[identity-prototype].
 Thus prototypes form a monoid, and you can compose
@@ -485,6 +509,7 @@ or instantiate a list of prototypes:
 ]
 @; TODO: if we need space, delete the above or move it to an appendix.
 
+@(noindent)
 A more succint way to write the same function is:
 @Examples[
 (define (compose-prototype-list prototype-list)
@@ -498,6 +523,7 @@ A more succint way to write the same function is:
   (instantiate-prototype (compose-prototype-list prototype-list) base-super))
 ]
 
+@(noindent)
 Prototype composition is notably more expressive than “single inheritance”
 as commonly used in many “simple” object systems:
 Object systems with “single inheritance” require programmers to @r[cons]
@@ -523,6 +549,7 @@ but instead, for enhanced usability, may throw a helpful error.
 (define (bottom . args) (error "bottom" args))
 ]
 
+@(noindent)
 Thus, in dialects with optional arguments, we could make @r[bottom] the default
 value for @r[base-super]. Furthermore, in any variant of Scheme, we can define
 the following function @r[instance] that takes the rest of its arguments as
@@ -534,6 +561,7 @@ a list of prototypes, and instantiates the composition of them:
   (instantiate-prototype-list prototype-list bottom))
 ]
 
+@(noindent)
 What if you @emph{really} wanted to instantiate your list of prototypes with some
 value @r[b] as the base super instance? “Just” tuck
 @r[(constant-prototype b)] at the tail end of your prototype list:
@@ -542,12 +570,14 @@ value @r[b] as the base super instance? “Just” tuck
 (define (constant-prototype base-super) (λ (__self __super) base-super))
 ]
 
+@(noindent)
 Or the same with a shorter name and a familiar definition as a combinator
 @Definitions[
 (code:comment "$const : (Fun A -> (Proto A _))")
 (define ($const b) (λ _ b))
 ]
 
+@(noindent)
 Small puzzle for the points-free Haskellers reading this essay:
 what change of representation will enable prototypes to be composed like regular functions
 without having to apply a binary function like @r[mix]? Solution in footnote.@note{
@@ -583,6 +613,7 @@ either numbers or strings.
              (else (super msg)))))
 ]
 
+@(noindent)
 We can add a “mixin” for a @r[compare] operator that summarizes in one call
 the result of comparing two elements of the type being described.
 A mixin is a prototype meant to extend other prototypes.
@@ -608,6 +639,7 @@ we call @r[(self '<)] and suches.
 (eval:check ((string-order 'compare) "42" "42") '=)
 ]
 
+@(noindent)
 We can define a order on symbols by delegating to strings!
 @Definitions[
 (define ($symbol-order self super)
@@ -664,11 +696,13 @@ which preserves the order of keys when printed:
               acons (acons tk tv ((self 'afoldr) acons empty tl)) tr)))))
       (else (super msg)))))]
 
+@(noindent)
 With this scaffolding, we can define a dictionary data structure
 that we can use later to differently represent objects:
 @Definitions[
 (define symbol-tree-map (instance ($slot 'Key symbol-order) $binary-tree-map))
 ]
+@(noindent)
 However, when we use it, we immediately find an issue:
 trees will too often be skewed, leading to long access times,
 especially so when building them from an already ordered list:
@@ -679,6 +713,7 @@ especially so when building them from an already ordered list:
          '((a . "I") (b . "II") (c . "III") (d . "IV") (e . "V"))))
 (eval:check my-binary-dict '(() ((a . "I")) (() ((b . "II")) (() ((c . "III")) (() ((d . "IV")) (() ((e . "V")) ()))))))]
 
+@(noindent)
 But binary trees otherwise work:
 @Checks[
 (eval:check (map (λ (k) ((symbol-tree-map 'ref) my-binary-dict k (λ () #f))) '(a b c d e z))
@@ -716,6 +751,7 @@ by overriding a single method of the original binary tree prototype:
 (define Dict
   (instance $avl-tree-rebalance $binary-tree-map ($slot 'Key symbol-order)))]
 
+@(noindent)
 Our dictionary is now well-balanced, height 3, and the tests still pass:
 @Checks[
 (define my-avl-dict
@@ -744,11 +780,13 @@ and returns the image of the opposite for negative values:
 (define ($even self super)
   (λ (x) (if (< x 0) (self (- x)) (super x))))
 ]
+@(noindent)
 The following prototype is a mixin for taking the cube of the parent value:
 @Examples[
 (define ($cube self super)
   (λ (x) (let ((y (super x))) (* y y y))))
 ]
+@(noindent)
 We can instantiate a function out of those of prototypes, and test it:
 @Checks[
 (define absx3 (instance $even $cube ($const (λ (x) x))))
@@ -789,6 +827,7 @@ either as functions (as in @(section1)), or as delayed values as follows:
 (define (δ$id f b) (λ (__self super) (force super)))
 ]
 
+@(noindent)
 Now, most interesting prototypes will only lead to error or divergence if you try
 to instantiate them by themselves---they are “mixins”,
 just like @r[$compare<-order] or @r[$avl-tree-rebalance] above,
@@ -905,6 +944,7 @@ with the following monomorphic types:
 (code:comment "fix : (Fun (MProto A) A -> A)")
 (code:comment "mix : (Fun (MProto A) (MProto A) -> (MProto A))")
 ]
+@(noindent)
 As per the previous discussion, if the language doesn't use lazy evaluation,
 @r[A]'s may be constrained to be functions, or to they may have to be wrapped
 inside a @r[Lazy] or @r[delay] special form.
@@ -968,6 +1008,7 @@ Thus, we could represent objects as thunks that return @r[symbol-avl-map], as fo
     (define (inherit) (Dict 'ref (super) k bottom))
     (λ () (Dict 'acons k (fun self inherit) (super)))))
 ]
+@(noindent)
 However, while the above definition yields the correct result,
 it potentially recomputes the entire dictionary @r[(super)] twice at every symbol lookup,
 with exponential explosion as the number of super prototypes increases.
@@ -999,6 +1040,7 @@ the same prototype as before and a list of keys. The @r[mix] and @r[fix] functio
 (define (fix/pk proto base)
   (fix (mix ($slot 'keys (cdr proto)) (car proto)) base))
 ]
+@(noindent)
 One could also put @r[$slot] invocation after the @r[(car proto)] rather than before it,
 to allow prototypes to intercept field introspection.
 
@@ -1072,6 +1114,7 @@ For the sake of this article, we'll represent an object as a pair of an instance
 (define (object-prototype object) (cdr object))
 ]
 
+@(noindent)
 In a more robust implementation, we would use an extension to the language Scheme
 to define a special structure type for objects as pairs of instance and prototype,
 disjoint from the regular pair type.
@@ -1609,6 +1652,7 @@ allow you to curried function definitions:
 @Examples[
 (define ((mix p q) f b) (p f (q f b)))
 ]
+@(noindent)
 And then we'd have Object Orientation in 100 characters only.
 
 Then again, in Gerbil Scheme, we could get it down to only 86, counting newline:
@@ -1616,6 +1660,7 @@ Then again, in Gerbil Scheme, we could get it down to only 86, counting newline:
 (def (fix p b) (def f (p (lambda i (apply f i)) b)) f)
 ]
 
+@(noindent)
 Or, compressing spaces, to 78,
 not counting newline, since we elide spaces:
 @racketblock[
