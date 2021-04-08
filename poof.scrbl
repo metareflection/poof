@@ -1522,14 +1522,16 @@ These effective methods would be either thunks or lazy computations,
 and would already close over the identity of the object as well as reuse its previous state.
 Overriding a slot would update the effective method in place,
 based on the new method, the self (identity of the object) and
-super method (previous entry in the hash-table).
+the super-inherited entry previously in the hash-table.
+Since this protocol is based on side-effects, no need to return @r[self] in the end;
+the fix operator variant will also rely on side-effects.
 
-@;
 @Definitions[
-(define ($slot-gen/hash k fun)
-  (λ (self) (let ((super-slot-computation (λ () ((hash-ref self k)))))
-              (hash-set! self k (λ () (fun self super-slot-computation))))
-              self))
+(define (fix! p b) (def f (hash-copy b)) (p f) f)
+(define (mix! p q) (λ (f) (q f) (p f)))
+(define ($slot-gen! k fun)
+  (λ (self) (define inherit (hash-ref self k (delay (bottom))))
+            (hash-set! self k (fun self inherit))))
 ]
 
 @subsection{Cache invalidation}
@@ -1625,3 +1627,5 @@ not counting newline, since we elide spaces:
 @; TODO: comment out before to submit:
 @table-of-contents[]
 @;only works for HTML output: @local-table-of-contents[#:style 'immediate-only]
+
+@; TODO: add tests and examples beyond section 2, if only in an appendix.
