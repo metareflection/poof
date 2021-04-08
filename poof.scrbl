@@ -903,7 +903,7 @@ however you may try to reach a different conclusion, you still end-up with that 
 @subsubsection{A Pure Lazy Fit}
 Still, there are ways in which Jsonnet and Nix improved upon
 the prototype object systems as initially designed in ThingLab@~cite{Borning77 Borning86}
-or T@~cite{Rees82t:a Adams89object-orientedprogramming},
+or T@~cite{Rees82t:a adams88oopscheme},
 or later made popular by SELF@~cite{chambers1989efficient} or JavaScript @; TODO: cite for JS
 As in these previous inventions, Jsonnet and Nix use first-class functions to construct objects.
 They also rely on dynamic types to avoid the need for dependent types and internal type theories
@@ -1395,7 +1395,7 @@ re-ran fixed-point computations, with their possible side-effects,
 at every method invocation (objects can specify their own explicit cache when desired).
 The behavior of new generic functions on previously existing objects would be optionally specified
 in a default method, to be called in lieu of raising a “method not found” error.
-The T object paper@~cite{Adams89object-orientedprogramming} mentions an alternate approach
+The T object paper@~cite{adams88oopscheme} mentions an alternate approach
 that was rejected in its implementation, though it is essentially equivalent in behavior,
 wherein default methods are added to a “default” object used as the base super value
 instead of an empty object when (re)computing instance fixed-points.
