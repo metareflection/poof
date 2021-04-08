@@ -1633,6 +1633,82 @@ especially with respect to object representation.
 
 @section[#:tag "Appendix_A"]{Digression about type notation} @appendix
 
+@subsection{Variables and Type Variables}
+
+We will use lowercase letters, such as a, f, x, to denote variables,
+that may be bound any value in the language.
+We will use uppercase letters, such as A, F, X, to denote *type variables*.
+That is, variables representing a type, that is not currently specified,
+but such that the formulas we write must hold for any type,
+in a hypothetical type system that one could layer on top of the language.
+
+@subsection{Variable Rows and Type Variable Rows}
+
+We will write a @r[...] for a "row" of multiple values, such as may be used
+as input arguments to a function, or return values of a function.
+We will write A @r[...] for a "row" of multiple types, such as may be used
+to type the inputs or outputs of a function.
+Indeed, in Scheme, a function may take multiple inputs arguments and
+and return multiple output values.
+
+For instance, a row of types could be:
+@racketblock[Integer]
+@(noindent)
+for the single type of integers, or:
+@racketblock[String]
+@(noindent)
+for the single type of strings, or:
+@racketblock[Integer String]
+@(noindent)
+for the two types (in order) @r[Integer] and @r[String], or:
+@racketblock[Integer Symbol ...]
+@(noindent)
+for the types of one integer followed by zero or many symbols.
+
+@subsection{Function Types}
+
+The type of functions that take inputs @r[I ...] and return outputs @r[O ...]
+we will write as any one of the following:
+@racketblock[
+  I ... -> O ...
+  O ... <- I ...
+  (I ... -> O ...)
+  (O ... <- I ...)
+  (Fun I ... -> O ...)
+  (Fun O ... <- I ...)
+]
+@(noindent)
+As usual, the arrows are associative such that these denote the same type:
+@racketblock[
+  A -> B -> C
+  A -> (B -> C)
+  C <- B <- A
+  (C <- B) <- A
+]
+@(noindent)
+In papers such as this essay, or when contributing to other people's code bases,
+we will use the conventional left-to-right arrows.
+However, in our own codebase, we favor right-to-left arrows, that are covariant with
+the right-to-left flow of information from arguments to function in the traditional
+prefix notation for function application.
+However, we revert to left-to-right arrows when we use concatenative languages
+or stack virtual machines that use the “Reverse Polish Notation”
+as in FORTH, PostScript or the much missed HP RPL.
+
+@subsection{Type Constraints}
+
+We will use the keyword @r[st:] (being a keyword short for "such that")
+to denote type constraints in a Function type, as in:
+@racketblock[
+  st: Constraint1 Constraint2 ...
+]
+@(noindent)
+The constraints we will consider will be subtyping constraints of the form:
+@racketblock[
+  (<: A B C ...)
+]
+meaning @r[A] is a subtype of @r[B], which is a subtype of @r[C], etc.
+
 @section[#:tag "Appendix_B"]{Fixed-Point functions}
 
 @section[#:tag "Appendix_C"]{Code Library}
