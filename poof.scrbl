@@ -1097,11 +1097,11 @@ that each store the prototype information in one or several special fields of th
 that is otherwise used for instance information.
 Thus, in the simplest Nix object system, one could write:
 @minted["nix"]|{
-fix' (self: { x = 1; y = 2 + self.x; })
+  fix' (self: { x = 1; y = 2 + self.x; })
 }|
 and it would evaluate to an attrset equivalent to:
 @minted["nix"]|{
-{ x = 1; y = 3; __unfix__ = self: { x = 1; y = 2 + self.x; }; }
+  { x = 1; y = 3; __unfix__ = self: { x = 1; y = 2 + self.x; }; }
 }|
 Nix contains many variants of the same object system, that use one or several of
 @r[extend], @r[override], @r[overrideDerivation], @r[meta], etc., instead of @tt{__unfix__}
@@ -1633,11 +1633,17 @@ especially with respect to object representation.
 
 @section[#:tag "Appendix_A"]{Digression about type notation} @appendix
 
+There is no standard type system for the language Scheme,
+so we will keep our type declarations as comments that are unenforced by the compiler,
+yet that will informally document what the types for our functions would be
+in a hypothetical dependent type system (with possible effect extensions?)
+that would be powerful enough to describe our computations.
+
 @subsection{Variables and Type Variables}
 
-We will use lowercase letters, such as a, f, x, to denote variables,
+We will use lowercase letters, such as @r[a], @r[f], @r[x], to denote variables,
 that may be bound any value in the language.
-We will use uppercase letters, such as A, F, X, to denote *type variables*.
+We will use uppercase letters, such as @r[A], @r[F], @r[X], to denote @emph{type variables}.
 That is, variables representing a type, that is not currently specified,
 but such that the formulas we write must hold for any type,
 in a hypothetical type system that one could layer on top of the language.
@@ -1691,14 +1697,14 @@ we will use the conventional left-to-right arrows.
 However, in our own codebase, we favor right-to-left arrows, that are covariant with
 the right-to-left flow of information from arguments to function in the traditional
 prefix notation for function application.
-However, we revert to left-to-right arrows when we use concatenative languages
+Still, we revert to left-to-right arrows when we use concatenative languages
 or stack virtual machines that use the “Reverse Polish Notation”
 as in FORTH, PostScript or the much missed HP RPL.
 
 @subsection{Type Constraints}
 
 We will use the keyword @r[st:] (being a keyword short for "such that")
-to denote type constraints in a Function type, as in:
+to denote type constraints, as in:
 @racketblock[
   st: Constraint1 Constraint2 ...
 ]
@@ -1710,6 +1716,133 @@ The constraints we will consider will be subtyping constraints of the form:
 meaning @r[A] is a subtype of @r[B], which is a subtype of @r[C], etc.
 
 @section[#:tag "Appendix_B"]{Fixed-Point functions}
+
+In @(section1), we quickly went over the fixed-point function @r[fix]
+that we used to instantiate prototypes.
+
+Reminder:
+A function prototype @r[(Proto A B)] is function @r[p : (Fun A B -> A)]
+where @r[A] and @r[B] are function types, and @r[A] is a subtype of @r[B].
+Thus, @r[p] takes a function @r[f] of type @r[A], and a function @r[B] of type @r[B],
+and returns a new function @r[g] of same type @r[A].
+
+To instantiate a prototype is get a function of type @r[A]
+from a function of type @r[B].
+Given these premises, there is one and only one construction that
+allows us to and only one way to get an @r[A]: it's by calling @r[p].
+But to call @r[p], we need to already have an @r[A]!
+Where do we get this function of type @r[A] to begin with?
+That's where the magic of fixed-point functions comes in:
+they will somehow @emph{tie a knot}, and get a reference to the
+function being defined, even before the function is defined.
+
+Here is how we want a fixed point to look like:
+@Examples[
+(define (well-typed-but-invalid p b)
+  (define f (p f b))
+  f)
+]
+@(noindent)
+Unhappily, this doesn't work in Scheme, because Scheme is eager:
+the call to @r[p] needs to fully evaluate its arguments,
+but @r[f] hasn't been fully defined yet, so the call is invalid.
+Some Scheme implementations may detect that this definition tries to use
+@r[f] before it is defined and raise an error at compile-time.
+Some implementations will initially bind @r[f] to a magic “unbound” marker,
+and trying to use @r[f] before it is defined will result in an error at runtime.
+In yet other implementations, @r[f] will initially be bound to
+some default “null” value such as @r[#f] or @r[(void)]
+that will be used without immediately raising an error---until
+you try to call @r[f] while expecting it to be a function, and then
+the implementation will raise a runtime error while you are left wondering
+why the program is trying to call this null value.
+Finally, some reckless implementations may try to use @r[f]
+before the data frame was even properly initialized at all,
+and some random low-level value is used that might not make sense with
+respect to the garbage collector, and you'll eventually dance fandango on core.
+
+Yet, in a lazy languages, the above definition works!
+Indeed in Nix, you can write the equivalent definition:
+@minted["nix"]{
+  let fix = p: b: let f = p f b; in f
+}
+@(noindent)
+In Scheme, we can similarly write:
+@Examples[
+(define (delayed-fix p b)
+  (define df (delay (p f b)))
+  f)
+]
+@(noindent)
+But in this only works if @r[p] accepts and returns delayed computations,
+rather than direct function values. Then we have will have:
+@racketblock[
+  (code:comment "(deftype (DelayedProto A B) (Fun (Delayed A) (Delayed B) -> A))")
+  (code:comment "delayed-fix : (Fun (DelayedProto A B) (Delayed B) -> (Delayed A))")
+]
+@(noindent)
+On the other hand, this works for arbitrary types @r[A] and @r[B],
+and not just for function types!
+
+So, how do we get around this issue without delay?
+One solution would be as follows---can you tell why it works,
+and why it isn't fully satisfactory?
+@Examples[
+(define (fix--0 p b)
+  (define (f . i) (apply (p f b) i))
+  f)
+]
+@(noindent)
+First, why it works: by making @r[f] a function, we can recursively refer to @r[f]
+from within the body of function @r[f] itself, since by the time this reference
+is used, @r[f] was called, and by the time @r[f] was called, @r[f] was defined.
+Thus we can give @r[f] to @r[p] to compute the fixed-point value @r[(p f b)].
+But by that time, we're trying to call the fixed point, so
+we take all the input arguments passed to @r[f] in a list @r[i],
+and we pass them all forward to the fixed-point expression
+using the builtin function @r[apply].
+All is well. Try it, it works.
+
+However, there is an issue:
+@r[fix--0] calls @r[p] again at every invocation of the fixed-point @r[f].
+Therefore, if @r[p] makes expensive computations,
+it will pay to recompute them every time from scratch.
+Worse, if @r[p] wants to build data structures
+meant to be shared between invocations, such as a cache,
+this sharing will be lost between calls to @r[f].
+There can be no sharing of information between calls to @r[f].
+No pre-computation, no cacheing, no memoization, no shared mutable state.
+
+Therefore a better solution, that does allow for sharing computations
+and state between invocations of the fixed-point result, is:
+@Examples[
+(define (fix--1 p b)
+  (define f (p (lambda i (apply f i)) b))
+  f)
+]
+@(noindent)
+That's the same as the fix function from @(section1).
+Note how the anonymous lambda closure does part of the “protection”
+or “delay” whereby the recursive data structure will only be called
+after @r[f] is defined, but relies on @r[p] not causing its first argument
+to be called during its evaluation, only stored in a data structure
+or in a closure to be called later after @r[p] has returned.
+
+If you don't like internal defines, you can write the same function
+equivalently using @r[letrec], as:
+@Examples[
+(define (fix--2 p b)
+  (letrec ((f (p (lambda i (apply f i)) b)))
+    f))
+]
+
+@(noindent)
+And if you don't even like @r[letrec], you can use a Y-combinator variant: @; TODO cite
+@Examples[
+(define (fix--3 p b)
+  ((lambda (yf) (yf yf))
+   (lambda (yf) (p (lambda i (apply (yf yf) i)) b))))
+]
 
 @section[#:tag "Appendix_C"]{Code Library}
 
