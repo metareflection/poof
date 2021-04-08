@@ -414,7 +414,7 @@ and @r[2] respectively, we can use:
 @subsubsection{Back to 1981!}
 
 Interestingly, the above approach to objects is essentially equivalent,
-though not exactly isomorphic, to what Yale T had in 1981@~cite{Adams89object-orientedprogramming}.
+though not exactly isomorphic, to what Yale T had in 1981@~cite{adams88oopscheme}.
 T was notably reprised by YASOS in 1992@~cite{dickey1992scheming}
 and distributed with SLIB since.
 There are minor differences: what we call “instance”, T calls “object” or “instance”,
@@ -1870,6 +1870,42 @@ It also favors direct supers appearing as early as possible in the precedence li
 To help with defining multiple inheritance, we'll also define the following helper functions:
 
 @c3-extra-definitions
+
+@;{ Memoizing?
+;; II.1.2- Memoizing values, so field access isn't O(n) every time.
+;; Usage: Put memoize-proto as first prototype.
+;; NB1: Memoization uses side-effects internally, but does not expose them.
+;; NB2: It's still O(n^2) overall rather than O(n); we can do better, later.
+(define (memoize f)
+  (nest (let ((cache (make-hash)))) (λ x) (apply values) (hash-ref! cache x)
+        (λ ()) (call-with-values (λ () (apply f x))) list))
+
+(define (make-counter)
+  (nest (let ((count 0))) (λ ())
+        (let ((result count)) (set! count (+ count 1)) result)))
+
+(define my-counter (make-counter))
+(define my-memo-counter (memoize my-counter))
+
+(check! (= (my-counter) 0)
+(check! (= (my-memo-counter) 1)
+(check! (= (my-counter) 2)
+(check! (= (my-memo-counter) 1)
+
+(define (memoize-proto self super) (memoize super))
+
+(define (count-proto self super)
+  (make-counter))
+
+(define count-fun (instance count-proto))
+(check! (= (count-fun) 0)
+(check! (= (count-fun) 1)
+(check! (= (count-fun) 2)
+
+(define zero-fun (instance memoize-proto count-proto))
+(check! (= (zero-fun) 0))
+(check! (= (zero-fun) 0))
+}
 
 @section[#:tag "Appendix_D"]{Note for code minimalists}
 
