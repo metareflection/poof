@@ -100,24 +100,24 @@ Using our approach, any language that contains the untyped lambda calculus can n
 We will make the case that the above two definitions summarize
 the essence of Object-Oriented Programming (OOP), and that
 all the usual OOP concepts can be easily recovered from them—all while
-staying within the framework for pure Functional Programming (FP).
+staying within the framework of pure Functional Programming (FP).
 
 @subsubsection{Plan of this Essay}
 
-In @(section1) we explain how the above functions
+In @(section1), we explain how the above functions
 implement a minimal but recognizable model of OOP,
 with open recursion and inheritance.
-In @(section2) we illustrate this OOP model actually enables
+In @(section2), we illustrate this OOP model actually enables
 incremental definition of complex data structures.
-In @(section3) we show how prototypes are useful beyond traditional notions of objects,
+In @(section3), we show how prototypes are useful beyond traditional notions of objects,
 and identify how they have a special place in computer science.
-In @(section4) we examine how our model can be extended to support
+In @(section4), we examine how our model can be extended to support
 more advanced features of OOP.
-In @(section5) we demonstrate how classes are “just” prototypes for type descriptors.
-Finally, in @(section6) we discuss our pure functional model relates
+In @(section5), we demonstrate how classes are “just” prototypes for type descriptors.
+Finally, in @(section6), we discuss our pure functional model relates
 to models with mutable objects.
 Along the way, we relate our approach to both OOP and FP traditions, both decades-old and recent,
-and propose a path for further research.
+and propose a path for further research (notably in @(section4)).
 
 @subsubsection{Modular Increments of Computation}
 OOP consists in specifying computations in modular increments
@@ -176,8 +176,9 @@ and either dynamic types or dependent types. However, their potential is not
 fully realized in languages with mere parametric polymorphism.
 @; TODO: insert above reference to type discussion?
 Furthermore, for an @emph{efficient} implementation of objects with our formulas,
-we will also require lazy evaluation (or side-effects to implement it),
-whether an optional or an ubiquitous language feature.
+we will also require lazy evaluation (see @(section3)),
+whether an ubiquitous language feature or an optional one
+(possibly user-implemented with side-effects).
 We do not otherwise require side-effects---though they can be used
 for the usual optimizations in the common “linear” case (see @(section6)).
 
@@ -213,7 +214,8 @@ and get the expected values:
 Note that we use Scheme symbols for legibility.
 Poorer languages could instead use any large enough type with decidable equality,
 such as integers or strings.
-Richer languages (e.g. Racket or Gerbil Scheme) could use resolved hygienic identifiers.
+Richer languages (e.g. Racket or Gerbil Scheme) could use resolved hygienic identifiers,
+thereby avoiding accidental clashes.
 
 @subsubsection{Prototypes for Records}
 
@@ -277,8 +279,7 @@ We can also @r[mix] these prototypes together before to compute the @r[fix]:
 ]
 
 And since the @r[$z<-xy] prototype got the @r[x] and @r[y] values
-from the @r[self]
-and not the @r[super], we can freely commute it with the other two prototypes
+from @r[self] and not @r[super], we can freely commute it with the other two prototypes
 that do not affect either override slot @r[z] or inherit from it:
 @Checks[
 (eval:check (list ((fix (mix $z<-xy (mix $double-x $x3)) x1-y2) 'z)
@@ -341,27 +342,24 @@ What if a slot depends on other slots? We can use this function
         (super msg)))))
 ]
 
-A very general form of slot compute-and-override would take as parameters both
-the @r[self] argument and a @r[next-method] function to inherit the
-slot value from the @r[super] argument
+A general function to compute and override a slot would take as arguments both @r[self]
+and a function to @r[inherit] the @r[super] slot value,
+akin to @r[call-next-method] in CLOS@~cite{gabriel1991clos}.
 @Definitions[
 (code:comment "$slot-gen : (Fun k:Symbol (Fun A (Fun -> V) -> W)")
 (code:comment "  -> (Proto (Fun 'k -> W | A) (Fun 'k -> V | A) A) st: (<: V W))")
 (define ($slot-gen k fun) (code:comment "fun: from self and super-value thunk to value.")
   (λ (self super)
     (λ (msg)
-      (if (equal? msg k) (fun self (λ () (super msg)))
-        (super msg)))))
+      (define (inherit) (super msg))
+      (if (equal? msg k) (fun self inherit) (inherit)))))
 ]
 
 We could redefine the former ones in terms of that latter:
 @Examples[
-(define ($slot k v)
-  ($slot-gen k (λ (_self _next-method) v)))
-(define ($slot-modify k modify)
-  ($slot-gen k (λ (_self next-method) (modify (next-method)))))
-(define ($slot-compute k fun)
-  ($slot-gen k (λ (self _next-method) (fun self))))
+(define ($slot k v) ($slot-gen k (λ (__self __inherit) v)))
+(define ($slot-modify k modify) ($slot-gen k (λ (__ inherit) (modify (inherit)))))
+(define ($slot-compute k fun) ($slot-gen k (λ (self __) (fun self))))
 ]
 
 Thus you can re-define the above prototypes as:
@@ -433,14 +431,16 @@ Meanwhile, the composition function @r[(mix p q)] becomes:
 ]
 
 Note the types of the variables and intermediate expressions:
+@tabular[
+(list (list
 @racketblock[
 child : (Proto Self Super)
-parent : (Proto Super Super2)
 self : Self
+(child self (parent self super2)) : Self]
+@racketblock[
+parent : (Proto Super Super2)
 super2 : Super2
-(parent self super2) : Super
-(this self (parent self super2)) : Self
-]
+(parent self super2) : Super]))]
 
 When writing long-form functions, instead of vying for conciseness, we will
 use the same naming conventions as in the function above:
@@ -452,30 +452,25 @@ use the same naming conventions as in the function above:
 ]
 
 Note the important distinction between @emph{prototypes} and @emph{instances}.
-Instances are elements of some function type, and are themselves
-the outputs of the instantiation wherein prototypes are inputs.
-Prototypes are increments of computation, functions from instance (of a
-subtype @r[Self]) and instance (of a supertype @r[Super]) to instance
-of the subtype @r[Self], both inputs and outputs of composition.
+Instances are the non-composable complete outputs of instantiation,
+whereas prototypes are the composable partial inputs of instantiation.
+Prototypes, increments of computation, are functions from an instance (of a
+subtype @r[Self]) and another instance (of a supertype @r[Super])
+to yet another instance of the subtype @r[Self].
 
 @subsubsection{Composing prototypes}
 
-The identity prototype as follows is neutral element for mix:
-@Definitions[
-(code:comment "$id : (Proto X X)")
-(define ($id f b) b)
-]
-
+The identity prototype as follows is neutral element for mix.
 It doesn't override any information from the super/base object,
 but only passes it through. It also doesn't consult information in
-the final fixed-point nor refers to it. In “long form”, it becomes:
+the final fixed-point nor refers to it.
 @Definitions[
 (code:comment "identity-prototype : (Proto Instance Instance)")
 (define (identity-prototype self super) super)
 ]
 
-Now, prototypes are interesting because @r[mix] (a.k.a. @r[compose-prototypes])
-is an associative operator with neutral element @r[$id] (a.k.a. @r[identity-prototype]).
+Now, prototypes are interesting because @r[compose-prototypes] (a.k.a. @r[mix])
+is an associative operator with neutral element @r[identity-prototype].
 Thus prototypes form a monoid, and you can compose
 or instantiate a list of prototypes:
 @Definitions[
@@ -488,6 +483,7 @@ or instantiate a list of prototypes:
    ((null? (cddr l)) (compose-prototypes (car l) (cadr l)))
    (else (compose-prototypes (car l) (compose-prototype-list (cdr l))))))
 ]
+@; TODO: if we need space, delete the above or move it to an appendix.
 
 A more succint way to write the same function is:
 @Examples[
@@ -514,15 +510,14 @@ Prototypes are thus more akin to the “mixins” or “traits” of more advanc
 objects systems@~cite{Cannon82 bracha1990mixin Flatt06schemewith}.
 @; TODO: cite Flavors for mixins? Some PLT paper? The one from asplas06? What about traits?
 Prototype composition however, does not by itself subsume multiple
-inheritance. We will show in @seclink["Better_objects"]{chapter 4} how to
-combine the two.
+inheritance. We will show in @(section4) how to combine the two.
 
 @subsubsection{The Bottom of it}
 
 In a language with partial functions, such as Scheme, there is a practical
-choice for a universal function to use as the @r[base-super] argument to
+choice for a universal base super instance to pass to
 @r[instantiate-prototype]: the @r[bottom] function, that never returns,
-but instead, for enhanced usability, throws an error that can be caught.
+but instead, for enhanced usability, may throw a helpful error.
 @Definitions[
 (code:comment "bottom : (Fun I ... -> O ...)")
 (define (bottom . args) (error "bottom" args))
@@ -540,11 +535,11 @@ a list of prototypes, and instantiates the composition of them:
 ]
 
 What if you @emph{really} wanted to instantiate your list of prototypes with some
-value @r[b] as the base super instance? You can “just” tuck
+value @r[b] as the base super instance? “Just” tuck
 @r[(constant-prototype b)] at the tail end of your prototype list:
 @Definitions[
 (code:comment "constant-prototype : (Fun A -> (Proto A _))")
-(define (constant-prototype base-super) (λ (_self _super) base-super))
+(define (constant-prototype base-super) (λ (__self __super) base-super))
 ]
 
 Or the same with a shorter name and a familiar definition as a combinator
@@ -560,7 +555,7 @@ A general purpose trick to embed an arbitrary monoid into usual composable funct
 to curry the composition function (here, @r[mix]) with the object to be composed.
 Thus, the functional embedding of prototype @r[p] will be
 @r[(λ (q) (mix p q)) : (Fun (Proto Super S2) -> (Proto Self S2))].
-To recover @r[p] from that embedding, just apply it to @r[$id].
+To recover @r[p] from that embedding, just apply it to @r[identity-prototype].
 }
 
 @section[#:tag "pure_objective_fun"]{Pure Objective Fun}
@@ -764,8 +759,8 @@ We can instantiate a function out of those of prototypes, and test it:
 
 Now, the simplest numeric functions are thunks: nullary functions that yield a number.
 @Checks[
-(define (p1+ _ b) (λ () (+ 1 (b))))
-(define (p2* _ b) (λ () (* 2 (b))))
+(define (p1+ __ b) (λ () (+ 1 (b))))
+(define (p2* __ b) (λ () (* 2 (b))))
 (eval:check (list ((fix (mix p1+ p2*) (λ () 30)))
                   ((fix (mix p2* p1+) (λ () 30))))
             '(61 62))
@@ -791,7 +786,7 @@ either as functions (as in @(section1)), or as delayed values as follows:
 (code:comment "δmix : (Fun (δProto Self Mid) (δProto Mid Super) -> (δProto Self Super))")
 (define (δmix c p) (λ (f b) (c f (delay (p f b)))))
 (code:comment "δ$id : (δProto X X)")
-(define (δ$id f b) (λ (_self super) (force super)))
+(define (δ$id f b) (λ (__self super) (force super)))
 ]
 
 Now, most interesting prototypes will only lead to error or divergence if you try
@@ -970,8 +965,8 @@ Thus, we could represent objects as thunks that return @r[symbol-avl-map], as fo
 @Definitions[
 (define ($slot-gen/dict k fun)
   (λ (self super)
-    (define (super-slot-value) (Dict 'ref (super) k bottom))
-    (λ () (Dict 'acons k (fun self super-slot-value) (super)))))
+    (define (inherit) (Dict 'ref (super) k bottom))
+    (λ () (Dict 'acons k (fun self inherit) (super)))))
 ]
 However, while the above definition yields the correct result,
 it potentially recomputes the entire dictionary @r[(super)] twice at every symbol lookup,
@@ -986,10 +981,8 @@ Thus, using @r[δfix] and @r[δmix] instead of @r[fix] and @r[mix], we can have:
 @Definitions[
 (define (δ$slot-gen/dict k fun)
   (λ (self super)
-    (delay
-      (let* ((super-dict (force super))
-             (super-slot-value (Dict 'ref super-dict k (λ () (delay (bottom))))))
-        (Dict 'acons k (delay (fun self super-slot-value)) super-dict)))))
+    (delay (let ((inherit (Dict 'ref (force super) k (λ () (delay (bottom))))))
+             (Dict 'acons k (delay (fun self inherit)) (force super))))))
 ]
 
 @subsubsection[#:tag "different_prototype"]{Same instance representation, different prototype representation}
@@ -1289,7 +1282,7 @@ is bound to a function that overrides its super with constant fields from the in
 
 @subsubsection{Generic Functions}
 Some object systems, starting with CommonLoops@~cite{bobrow86commonloops}
-then CLOS@~cite{bobrow88clos gabriel1991clos},
+then CLOS@~cite{bobrow88clos},
 feature the ability to define “generic functions” the behavior of which
 can be specialized on each of multiple arguments.
 For instance, a generic multiplication operation
