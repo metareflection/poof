@@ -2,6 +2,24 @@
 % Bobrow, Daniel G., and Winograd. Terry, "An Overview of KRL, A Knowledge Representation Language". Cognitive Science, V. 1, No. 1, 1977.
 % Hewitt, Carl, Viewing Control Structures as Patterns of Passing Messages, MIT AI Lab Memo 410, Dec 1976.
 
+% Adding POP to Nixpkgs:
+% https://github.com/NixOS/rfcs/pull/91/
+% https://github.com/NixOS/nixpkgs/pull/116275
+
+% Gilad Bracha's Newspeak? It's class-based only, though.
+
+% C2 wiki?
+% https://wiki.c2.com/?PrototypeBasedProgramming
+% https://wiki.c2.com/?ClassesPrototypesComparison
+% https://wiki.c2.com/?PrototypeBasedLanguage
+% "Popular" Prototype language: NewtonScript, LambdaMOO, Io, REBOL, Lua...
+
+@Misc{Strachey67,
+  Author = {Christopher Strachey},
+  Title = {Fundamental Concepts in Programming Languages},
+  Year = {1967},
+  url = {http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.332.3161},
+}
 
 @InProceedings{Borning77,
   author = {Alan Borning},
@@ -148,6 +166,15 @@
 %  publisher = {Kluwer Academic Publishers}
 %}
 
+@TechReport{eppl91,
+  Author={Matthias Felleisen},
+  Title={On the Expressive Power of Programming Languages},
+  Institution={Rice University},
+  Year={1991},
+}
+%  Note={\myurl{http://www.cs.rice.edu/CS/PLT/Publications/}}
+
+
 @Article{dickey1992scheming,
   title={Scheming with objects},
   author={Dickey, Ken},
@@ -176,7 +203,8 @@
 @Misc{Barrett96amonotonic,
   author = {Kim Barrett and Bob Cassels and Paul Haahr and David A. Moon and Keith Playford and P. Tucker Withington},
   title = {A Monotonic Superclass Linearization for Dylan},
-  year = {1996}
+  year = {1996},
+  url = {https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.19.3910}
 }
 
 @Book{Abadi97atheory,
@@ -258,6 +286,56 @@
   year = 2012
 }
 
+@book{EcmaScript:15,
+  added-at = {2015-08-28T15:36:26.000+0200},
+  address = {Geneva},
+  author = {{Ecma International}},
+  biburl = {https://www.bibsonomy.org/bibtex/28d67e2ebf933f3b6f684fcfb1f53b020/gron},
+  edition = {6th},
+  interhash = {8212a5bb4b7ac3137534f10d599cb526},
+  intrahash = {8d67e2ebf933f3b6f684fcfb1f53b020},
+  keywords = {JavaScript spec specification},
+  month = {June},
+  timestamp = {2015-08-28T15:37:30.000+0200},
+  title = {{ECMAScript 2015 Language Specification}},
+  url = {http://www.ecma-international.org/ecma-262/6.0/ECMA-262.pdf},
+  year = 2015
+}
+
+% This article is great in desugaring the prototype sublanguage of JS,
+% but doesn't cover classes.
+@article{DBLP:journals/corr/GuhaSK15,
+  author    = {Arjun Guha and
+               Claudiu Saftoiu and
+               Shriram Krishnamurthi},
+  title     = {The Essence of JavaScript},
+  journal   = {CoRR},
+  volume    = {abs/1510.00925},
+  year      = {2015},
+  url       = {http://arxiv.org/abs/1510.00925},
+  archivePrefix = {arXiv},
+  eprint    = {1510.00925},
+  timestamp = {Mon, 13 Aug 2018 16:46:22 +0200},
+  biburl    = {https://dblp.org/rec/journals/corr/GuhaSK15.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+@book{EcmaScript:15,
+  added-at = {2015-08-28T15:36:26.000+0200},
+  address = {Geneva},
+  author = {{Ecma International}},
+  biburl = {https://www.bibsonomy.org/bibtex/28d67e2ebf933f3b6f684fcfb1f53b020/gron},
+  edition = {6th},
+  interhash = {8212a5bb4b7ac3137534f10d599cb526},
+  intrahash = {8d67e2ebf933f3b6f684fcfb1f53b020},
+  keywords = {JavaScript spec specification},
+  month = {June},
+  timestamp = {2015-08-28T15:37:30.000+0200},
+  title = {{ECMAScript 2015 Language Specification}},
+  url = {http://www.ecma-international.org/ecma-262/6.0/ECMA-262.pdf},
+  year = 2015
+}
+
 @article{Pickering_2017,
   title={Profunctor Optics: Modular Data Accessors},
   volume={1},
@@ -289,13 +367,20 @@
   urldate = {2021-03-11}
 }
 
+% Withhold citation until after deanomization
 @Misc{GerbilPOO,
-  author = {François-René Rideau},
-  title = {Gerbil-POO},
-  year = 2020,
-  url = {https://github.com/fare/gerbil-poo},
-  urldate = {2021-04-06}
+  author = {Author withheld},
+  title = {Title withheld},
+  url = {https://github.com/repository/withheld},
+  year = 2020
 }
+%@Misc{GerbilPOO,
+%  author = {François-René Rideau},
+%  title = {Gerbil-POO},
+%  year = 2020,
+%  url = {https://github.com/fare/gerbil-poo},
+%  urldate = {2021-04-06}
+%}
 
 @Misc{DrWhoFPIT,
   author = {Unknown},
@@ -308,3 +393,4 @@
 % https://en.wikipedia.org/wiki/Earthshock
 % On citing TV series:
 % https://www.easybib.com/guides/citation-guides/how-do-i-cite-a/how-to-cite-movie-tv-netflix/
+

@@ -57,6 +57,7 @@ rather have
 @(define (section1) @seclink["Prototypes_bottom_up"]{section 1})
 @(define (section2) @seclink["pure_objective_fun"]{section 2})
 @(define (section3) @seclink["beyond_objects"]{section 3})
+@(define (section34) @seclink["without_subtyping"]{section 3.4})
 @(define (section4) @seclink["Better_objects"]{section 4})
 @(define (section5) @seclink["Classes"]{section 5})
 @(define (section6) @seclink["Mutability"]{section 6})
@@ -81,11 +82,15 @@ rather have
 
 @abstract{
 
-This paper elucidates the essence of Object-Oriented Programming (OOP), independent of idiosyncrasies of past incarnations.
-We reconstruct OOP in a pure lazy functional style with dynamic or dependent types. We build protototype-based objects first, then class-based objects as a special case.
+This paper elucidates the essence of Object-Oriented Programming (OOP),
+independent of idiosyncrasies of past incarnations.
+We reconstruct OOP in a pure lazy functional style with dynamic or dependent types.
+We build protototype-based objects first, then class-based objects as a special case.
 We illustrate our reconstruction in Scheme.
 
-Using our approach, any language that contains the untyped lambda calculus can now implement an object system in handful of functions or roughly 20 lines of code. Multiple inheritance can be implemented in an additional 30 lines of code.
+Using our approach, any language that contains the untyped lambda calculus
+can now implement an object system in handful of functions or roughly 20 lines of code.
+Multiple inheritance can be implemented in an additional 30 lines of code.
 }
 
 @section[#:tag "Prototypes_bottom_up"]{Prototypes, bottom up}
@@ -220,8 +225,8 @@ and get the expected values:
 Note that we use Scheme symbols for legibility.
 Poorer languages could instead use any large enough type with decidable equality,
 such as integers or strings.
-Richer languages (e.g. Racket or Gerbil Scheme) could use resolved hygienic identifiers,
-thereby avoiding accidental clashes.
+Richer languages (e.g. Racket or some Scheme with @r[syntax-case])
+could use resolved hygienic identifiers, thereby avoiding accidental clashes.
 
 @subsubsection{Prototypes for Records}
 
@@ -904,7 +909,8 @@ however you may try to reach a different conclusion, you still end-up with that 
 Still, there are ways in which Jsonnet and Nix improved upon
 the prototype object systems as initially designed in ThingLab@~cite{Borning77 Borning86}
 or T@~cite{Rees82t:a adams88oopscheme},
-or later made popular by SELF@~cite{chambers1989efficient} or JavaScript@~cite{ecmascript}.
+or later made popular by SELF@~cite{chambers1989efficient}
+or JavaScript@~cite{ecmascript DBLP:journals/corr/GuhaSK15}
 As in these previous inventions, Jsonnet and Nix use first-class functions to construct objects.
 They also rely on dynamic types to avoid the need for dependent types and internal type theories
 required to statically type first-class prototypes in the most general case.
@@ -932,7 +938,7 @@ Now, there is another special way by which Jsonnet and Nix improve upon T's obje
 that provides insight into OOP:
 they unify instances and prototypes as objects. See @(section4).
 
-@subsection{Prototypes are Useful Even Without Subtyping}
+@subsection[#:tag "without_subtyping"]{Prototypes are Useful Even Without Subtyping}
 
 The above prototypes for numeric functions also illustrate that
 even if a language's only subtyping relationship is the identity
@@ -1497,11 +1503,58 @@ The types might look a bit as follows:
 
 @section{Classes}
 
-Classes are “just” prototypes for type descriptors.
-Usually done at the meta-level in languages without “first-class” classes,
-only “second-class” classes.
-At the meta-level, type descriptors are themselves of a same concrete type,
-so the meta-language only needs and uses monomorphic prototypes!
+@subsection{Classes on top of Prototypes}
+@subsubsection{Layering Language Features}
+So far we have reconstructed prototype-based OOP;
+yet class-based OOP comes first both in history and in popularity.
+@; TODO cite Simula? Smalltalk? C++? Newspeak?
+There have been implementations of classes on top of prototypes in the past,
+notably for JavaScript@~cite{EcmaScript:15}.
+@; TODO: CECIL?
+They were designed for efficiency in the context of an existing language,
+and relied heavily on side-effects in a particular object encoding.
+Thus, they are not simple, and not very enlightening
+as to the essence of the relationship between classes and prototypes.
+Instead we will propose our own reconstruction on how to
+@emph{macro-express}@~cite{eppl91} classes on top of our pure functional prototypes,
+a technique we used in a real-world library@~cite{GerbilPOO}.
+
+@subsubsection{Prototypes for Type Descriptors}
+In our reconstruction, a @emph{class} is “just” a prototype for type descriptors.
+Type descriptors, as detailed below, are just a runtime data structure
+describing what operations are available to recognize and deal with elements of the given type.
+Type descriptors therefore don't have to themselves be objects,
+and no mention of objects is required to describe type descriptors themselves.
+They can be just a type on which to apply the monomorphic prototypes of @(section34).
+
+Every compiler or language processor for a statically typed language
+necessarily has type descriptors, since the language's compile-time is the compiler's runtime.
+But in most statically typed languages, there are no dependent types,
+and the types themselves (and the classes that are their prototypes)
+are not first-class entities available at runtime,
+only second-class entities at compile-time only@~cite{Strachey67}.
+Therefore, class-based languages only have second-class classes
+whereas only prototype-based languages have first-class classes.
+
+@subsection{Type Descriptors}
+One common programming problem is validation of data at the inputs and outputs of programs.
+Static types solve the easy cases of validation in languages that have them.
+Dynamically typed languages can't use this tool so often grow libraries
+of “type descriptors” or “data schemas”, etc., available at runtime.
+
+These runtime type descriptors often contain more information
+than typically available in a static type, such as:
+methods to encode and decode values, to print and parse them,
+to display them or interact with them in a graphical interface;
+default values for use in user interfaces or simple tests;
+pseudo-random value generators and value compressors
+for use in automated testing and other search algorithms;
+algebraic operations whereby this type implements an interface,
+satisfies a constraint, or instantiates a typeclass; etc.
+Therefore, even statically typed languages often have type descriptors,
+and the better ones will automatically generate them via “reflection”.
+@; TODO cite scala? java? C#?
+
 
 @section[#:tag "Mutability"]{Mutability}
 
@@ -1588,16 +1641,19 @@ none universally satisfactory.
 
 The object system may embrace mutation and just
 never implicitly cache the result of any computation,
-as in T, and let the users deal with the issue.
-But constant recomputation can be extremely expensive, and
-many heavy computations, like that of precedence lists for multiple inheritance,
-may be below the level at which users may intervene.
+and let the users explicitly insert any cache desired.
+That's the design commonly followed by prototype systems
+in effectful languages from T to JavaScript.
+But constant recomputation can be extremely expensive;
+moreover, many heavy computations may be below the level at which users may intervene—including
+computing precedence lists. This probably explains why these languages tend
+not to support multiple inheritance, and if so to handle it specially.
 
 At the opposite end of the spectrum, the object system may assume purity-by-default
 and cache all the computations it can.
 It is then up to users to explicitly create cells to make some things mutable,
 or flush some caches when appropriate.
-@; , as in the Gerbil-POO system@~cite{GerbilPOO}.
+We used this option in@citet{GerbilPOO}.
 
 In between these two opposites, the system can automatically track which mutations happen,
 and invalidate those caches that need be, with a tradeoff between how cheap it will be
