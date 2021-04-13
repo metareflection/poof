@@ -904,7 +904,7 @@ however you may try to reach a different conclusion, you still end-up with that 
 Still, there are ways in which Jsonnet and Nix improved upon
 the prototype object systems as initially designed in ThingLab@~cite{Borning77 Borning86}
 or T@~cite{Rees82t:a adams88oopscheme},
-or later made popular by SELF@~cite{chambers1989efficient} or JavaScript @; TODO: cite for JS
+or later made popular by SELF@~cite{chambers1989efficient} or JavaScript@~cite{ecmascript}.
 As in these previous inventions, Jsonnet and Nix use first-class functions to construct objects.
 They also rely on dynamic types to avoid the need for dependent types and internal type theories
 required to statically type first-class prototypes in the most general case.
