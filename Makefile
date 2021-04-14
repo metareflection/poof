@@ -1,6 +1,6 @@
 all: view
 
-.DUMMY: all test pdf PDF eval prerequisites
+.DUMMY: all pdf view test repl prerequisites
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
@@ -10,16 +10,19 @@ ifeq ($(UNAME_S),Darwin)
 PDFVIEWER=open
 endif
 
-pdf: poof.pdf
-
 poof.pdf: poof.scrbl poof.bib util/eval-check.rkt util/examples-module.rkt
 	scribble --pdf poof.scrbl
+
+pdf: poof.pdf
+
+view: poof.pdf
+	$(PDFVIEWER) $<
 
 test: poof.scrbl
 	racket poof.scrbl
 
-view: poof.pdf
-	$(PDFVIEWER) $<
+repl:
+	racket --lib racket/base --require main.rkt --repl
 
 prerequisites:
 	for i in scribble-abbrevs scribble-minted scribble-math ; do \

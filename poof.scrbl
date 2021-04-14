@@ -1931,8 +1931,9 @@ In Scheme, we can similarly write:
   f)
 ]
 @(noindent)
-But in this only works if @r[p] accepts and returns delayed computations,
-rather than direct function values. Then we have will have:
+But in this only works if @r[p] accepts delayed computations as arguments
+rather than direct function values (and still eagerly computes the result from them).
+Then we have will have:
 @racketblock[
   (code:comment "(deftype (DelayedProto A B) (Fun (Delayed A) (Delayed B) -> A))")
   (code:comment "delayed-fix : (Fun (DelayedProto A B) (Delayed B) -> (Delayed A))")
@@ -2063,6 +2064,16 @@ To help with defining multiple inheritance, we'll also define the following help
 (check! (= (zero-fun) 0))
 (check! (= (zero-fun) 0))
 }
+
+@subsection{Extra tests}
+
+Here are some tests to check that our functions are working:
+
+@Examples{
+(eval:check (map not-null? '(() (1) (a b c) nil)) '(#f #t #t #t))
+(eval:check (remove-nulls '((a b c) () (d e) () (f) () ())) '((a b c) (d e) (f)))
+}
+
 
 @section[#:tag "Appendix_D"]{Note for code minimalists}
 
