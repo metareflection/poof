@@ -1632,11 +1632,33 @@ Thus, monomorphic lists might be:
 }
 
 @subsubsection{More Elaborate Types}
-In a few hundreds of lines of code, we can define type descriptors for dicts,
-for objects, for objects having specific slots with values of specific types,
-for type descriptors themselves, for functions with given input and output types,
-for functions that compute type descriptors from type descriptors or other values, etc.
+By using object prototypes, we can, in a few hundreds of lines of code,
+define type descriptors for functions with given input and output types;
+for dicts, objects, and objects having specific slots with values of specific types;
+for slot and type descriptors, and functions that compute type descriptors
+from type descriptors or other values; etc.
 @; TODO: add that in appendix? Cite GerbilPOO again?
+The type descriptor system can describe itself as well as all pieces of the system,
+generating routines for all kinds of automation or user interaction.
+
+Along the way, prototype-based OOP enables a compact and extensible style of programming,
+leveraging all the advantages of classes or typeclasses
+for defining pure functional types.
+
+@subsubsection{Classes and Typeclasses}
+Runtime type descriptors correspond to the “dictionaries”
+passed around at runtime in implementations of typeclasses@~cite{ImplementingTypeClasses}
+in various FP languages.
+They also correspond to the “vtable” describing an “object”'s type at runtime
+in implementations of class-based OOP languages.
+Indeed, the correspondance can be made formal, with automated transformations
+between the two styles@~cite{LIL2012}.
+Not however how “object” denotes very different notions in the two styles:
+what is called “object” in class-based OOP is the notional pair of
+the type descriptor and the type element,
+whereas the type descriptor is (an instance of) an “object” in our prototype-based formalism,
+handled independently from the values of described types,
+that themselves may or may not be objects.
 
 @section[#:tag "Mutability"]{Mutability}
 
