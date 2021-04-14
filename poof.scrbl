@@ -501,9 +501,19 @@ the final fixed-point nor refers to it.
 @(noindent)
 Now, prototypes are interesting because @r[compose-prototypes] (a.k.a. @r[mix])
 is an associative operator with neutral element @r[identity-prototype].
-Thus prototypes form a monoid, and you can compose
-or instantiate a list of prototypes:
+Thus prototypes form a monoid, and you can compose or instantiate a list of prototypes:
 @Definitions[
+(code:comment "compose-prototype-list : (Fun (IndexedList I (λ (i)")
+(code:comment "  (Proto (A_ i) (A_ (1+ i))))) -> (Proto (A_ 0) (A_ (Card I))))")
+(define (compose-prototype-list prototype-list)
+  (foldr compose-prototypes identity-prototype prototype-list))
+(code:comment "instantiate-prototype-list : (Fun (IndexedList I (λ (i)")
+(code:comment "  (Proto (A_ i) (A_ (1+ i))))) (A_ (Card I)) -> (A_ 0))")
+(define (instantiate-prototype-list prototype-list base-super)
+  (instantiate-prototype (compose-prototype-list prototype-list) base-super))
+]
+
+@;|{@Definitions[
 (code:comment "compose-prototype-list : (Fun (IndexedList I (λ (i)")
 (code:comment "  (Proto (A_ i) (A_ (1+ i))))) -> (Proto (A_ 0) (A_ (Card I))))")
 (define (compose-prototype-list l)
@@ -522,11 +532,20 @@ A more succint way to write the same function is:
   (foldr compose-prototypes identity-prototype prototype-list))
 ]
 
+@(noindent)
+You can also instantiate a list of prototypes:
 @Definitions[
 (code:comment "instantiate-prototype-list : (Fun (IndexedList I (λ (i)")
 (code:comment "  (Proto (A_ i) (A_ (1+ i))))) (A_ (Card I)) -> (A_ 0))")
 (define (instantiate-prototype-list prototype-list base-super)
   (instantiate-prototype (compose-prototype-list prototype-list) base-super))
+]
+}|
+@(noindent)
+And we can define syntactic short-cuts that apply the above functions to their list of arguments:
+@Definitions[
+(define ($compose . proto-list) (compose-prototype-list proto-list))
+(define ($instantiate . proto-list) (instantiate-prototype-list proto-list))
 ]
 
 @(noindent)
@@ -1136,17 +1155,30 @@ mapping symbols as slot names to delayed values as slot computations;
 meanwhile the prototype will be a prototype function of type @r[(δProto Object Object)]
 (as in @seclink["computations_not_values"]{section 4.1.3}),
 that preserves the prototype while acting on the instance.
-Thus the basic function to access a slot, and the basic prototype to define one,
-are as follow:
+Thus the basic function @r[slot-ref] to access a slot, and
+the basic prototypes to define one, analogous to the above
+@r[$slot-gen], @r[$slot], @r[$slot-modify], @r[$slot-compute] are as follow:
 @Definitions[
 (define (slot-ref object slot)
   (force (Dict 'ref (force (object-instance object)) slot bottom)))
-(define ($slot-gen/object k fun)
+(define ($slot/gen k fun)
   (λ (self super)
     (make-object (Dict 'acons k (fun self (delay (slot-ref super k)))
                   (object-instance (force super)))
-                 (object-prototype (force super)))))
+                  (object-prototype (force super)))))
+(define ($slot/value k v) ($slot/gen k (λ (__self __inherit) v)))
+(define ($slot/modify k modify) ($slot/gen k (λ (__ inherit) (modify (inherit)))))
+(define ($slot/compute k fun) ($slot/gen k (λ (self __) (fun self))))
 ]
+
+@(noindent)
+And for the common case of just overriding some slots with constant values, we could use:
+@Definitions[
+(define ($slot/values . kvs)
+  (if (null? kvs) identity-prototype
+    ($compose ($slot/value (car kvs) (cadr kvs)) (apply $slot/values (cddr kvs)))))
+]
+
 
 @subsection{Multiple Inheritance}
 
@@ -1316,7 +1348,7 @@ is bound to a function that overrides its super with constant fields from the in
 (define (compute-precedence-list object)
   (c3-compute-precedence-list object object-supers object-precedence-list))
 (define base-dict (Dict 'empty))
-(define (object supers function)
+(define (instantiate function supers)
   (define proto
     (Dict->Object (Dict 'acons 'function (delay function)
                    (Dict 'acons 'supers (delay supers)
@@ -1326,6 +1358,7 @@ is bound to a function that overrides its super with constant fields from the in
   (define precedence-list (compute-precedence-list base))
   (define prototype-functions (map object-prototype-function precedence-list))
   (instantiate-prototype-list prototype-functions base))
+(define (object function . supers) (instantiate function supers))
 ]
 
 @subsection{Multiple Dispatch}
@@ -1526,21 +1559,26 @@ describing what operations are available to recognize and deal with elements of 
 Type descriptors therefore don't have to themselves be objects,
 and no mention of objects is required to describe type descriptors themselves.
 They can be just a type on which to apply the monomorphic prototypes of @(section34).
+Still, it is typical in OOP to conflate into a “class” both the instance of a type descriptor
+and the prototype for the type descriptor. Our distinction of the two concepts can then help avoid
+a lot of the confusion present in classical presentations of OOP.
 
-Every compiler or language processor for a statically typed language
+Every compiler or language processor for a statically typed language (even without OOP)
 necessarily has type descriptors, since the language's compile-time is the compiler's runtime.
 But in most statically typed languages, there are no dependent types,
 and the types themselves (and the classes that are their prototypes)
-are not first-class entities available at runtime,
-only second-class entities at compile-time only@~cite{Strachey67}.
+are not first-class entities@~cite{Strachey67}
+that can be arguments and results of runtime computations,
+only second-class entities that are fully resolved at compile-time.
 Therefore, class-based languages only have second-class classes
 whereas only prototype-based languages have first-class classes.
 
 @subsection{Type Descriptors}
+@subsubsection{I/O Validation and Beyond}
 One common programming problem is validation of data at the inputs and outputs of programs.
 Static types solve the easy cases of validation in languages that have them.
 Dynamically typed languages can't use this tool so often grow libraries
-of “type descriptors” or “data schemas”, etc., available at runtime.
+of “type descriptors” or “data schemas”, etc.
 
 These runtime type descriptors often contain more information
 than typically available in a static type, such as:
@@ -1551,10 +1589,41 @@ pseudo-random value generators and value compressors
 for use in automated testing and other search algorithms;
 algebraic operations whereby this type implements an interface,
 satisfies a constraint, or instantiates a typeclass; etc.
-Therefore, even statically typed languages often have type descriptors,
-and the better ones will automatically generate them via “reflection”.
-@; TODO cite scala? java? C#?
+Therefore, even statically typed languages often involve runtime type descriptors.
+Better languages will provide “reflection” facilities or “macros”
+to automatically generate those descriptors without having humans attempt
+to keep two different representations in synch as programs evolve.
+@; TODO cite reflection mechanism for Java? C#? Scala?
 
+@subsubsection{Simple Types}
+In a dynamic language, all types would have at least a recognizer slot @r[is?],
+containing a function to recognize at runtime whether a value is element of the type or not.
+In the most basic types, @r[Top] (that tells nothing about everything) and
+@r[Bottom] (that tells everything about nothing),
+this might be the only slot (though an additional @r[name] slot would help), with trivial values:
+@;@Definitions[
+@verbatim{
+(define Top (object ($slot/value 'is? (λ (_) #t))))
+(define Bottom (object ($slot/value 'is? (λ (_) #f))))
+}
+Other simple types might include the type of representable values;
+here they will sport a single additional method @r[->sexp] to turn a value into
+a type-specific source expression, but a real library would have many more I/O operations.
+Numbers would also have various arithmetic operations.
+@;@Definitions[(define Representable (object ($slot/value '->sexp (λ (x) (list 'quote x))) Top))
+@verbatim{
+(define Number (object ($slot/values 'is? number? '->sexp identity
+                          '+ + '- - 'zero 0 'one 1)))
+}
+
+@subsubsection{Parametric Types}
+A parametric type can be represented at runtime as a function that return a type descriptor
+given its parameter, itself a type descriptor. Thus, monomorphic lists might be:
+@verbatim{
+(define (list-of? t x) (or (null? x)
+  (and (pair? x) ((slot-ref is? t) (car x)) (list-of? t (cdr x)))))
+(define (ListOf t) (object ($slot/value 'is? (λ (x) (list-of? t x)))))
+}
 
 @section[#:tag "Mutability"]{Mutability}
 
@@ -1562,7 +1631,7 @@ and the better ones will automatically generate them via “reflection”.
 @subsubsection{From Pure to Mutable and Back}
 Note how all the objects and functions defined in the previous sections were pure,
 as contrasted with all OOP literature from the 1960s to the early 1990s and most since:
-They didn't use any side-effect whatsoever.
+They didn't use any side-effect.
 No @r[set!], no tricky use of @r[call/cc]. Only laziness at times, which still counts as pure.
 But what if we are OK with using side-effects? How much does that simplify computations?
 What insights does the pure case offer on the mutable case, and vice versa?
@@ -1592,16 +1661,16 @@ the functional approach solves an important problem with the traditional imperat
 traditionally, programmers must be very careful to initialize object slots in a suitable order,
 even though there is no universal solution that possibly works
 for all future definitions of inheriting objects.
-The traditional approach is thus programmer-intensive in a subtle way, which leads to many
-errors from handling of unbound slots, or worse, if slot accesses are unchecked,
-to @emph{null pointer} exceptions or the local programming language's equivalent,
-whereby some default value is propagated along the program until it is detected, too late,
-by a catastrophic error with little explanation.
+The traditional approach is thus programmer-intensive in a subtle way,
+and leads to many errors from handling of unbound slots.
+Depending on the quality of the implementation, the consequences may range from
+a error being raised with a helpful message at compile-time or at runtime,
+to useless results, wrong results, memory corruption, or catastrophic failures.
+@; TODO: cite Tony Hoare regarding the billion-dollar mistake of NULL?
 By defining objects functionally or lazily rather than imperatively and eagerly,
 programmers can let the implementation gracefully handle mutual references between slots;
 an initialization order can be automatically inferred wherein slots are defined before they are used,
 with a useful error detected and raised (at runtime) if no such order exists.
-@; TODO: cite Tony Hoare regarding the billion-dollar mistake of NULL?
 
 @subsubsection{Simplified Prototype Protocol}
 A prototype for a mutable object can be implemented
