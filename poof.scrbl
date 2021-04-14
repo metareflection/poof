@@ -477,7 +477,7 @@ use the same naming conventions as in the function above:
  @item{@r[child] (or @r[this]) for a @emph{prototype} at hand, in leftmost position;}
  @item{@r[parent] for a @emph{prototype} that is being mixed with, in latter position;}
  @item{@r[self] for the @emph{instance} that is a fixed point of the computation;}
- @item{@r[super] for the base (or so-far accumulated) @emph{instance} of the computation.}
+ @item{@r[super] for the @emph{instance} so-far accumulated or at the base of the computation.}
 ]
 
 Note the important distinction between @emph{prototypes} and @emph{instances}.
@@ -591,16 +591,16 @@ What if you @emph{really} wanted to instantiate your list of prototypes with som
 value @r[b] as the base super instance? “Just” tuck
 @r[(constant-prototype b)] at the tail end of your prototype list:
 @Definitions[
-(code:comment "constant-prototype : (Fun A -> (Proto A _))")
-(define (constant-prototype base-super) (λ (__self __super) base-super))
+(code:comment "$constant-prototype : (Fun A -> (Proto A _))")
+(define ($constant-prototype base-super) (λ (__self __super) base-super))
 ]
-
+@;{
 @(noindent)
 Or the same with a shorter name and a familiar definition as a combinator
 @Definitions[
 (code:comment "$const : (Fun A -> (Proto A _))")
 (define ($const b) (λ _ b))
-]
+]}
 
 @(noindent)
 Small puzzle for the points-free Haskellers reading this essay:
@@ -657,11 +657,10 @@ we call @r[(self '<)] and suches.
 (define number-order (instance $number-order $compare<-order))
 (define string-order (instance $string-order $compare<-order))]
 @Checks[
-(eval:check ((number-order '<) 23 42) #t)
-(eval:check ((number-order 'compare) 8 4) '>)
-(eval:check ((string-order '<) "Hello" "World") #t)
-(eval:check ((string-order 'compare) "Foo" "FOO") '>)
-(eval:check ((string-order 'compare) "42" "42") '=)
+(eval:check (list ((number-order '<) 23 42) ((number-order 'compare) 8 4)
+  ((string-order '<) "Hello" "World") ((string-order 'compare) "Foo" "FOO")
+  ((string-order 'compare) "42" "42"))
+  '(#t > #t > =))
 ]
 
 @(noindent)
@@ -674,12 +673,11 @@ We can define a order on symbols by delegating to strings!
              (else (super msg)))))
 (define symbol-order (instance $symbol-order))]
 @Checks[
-(eval:check ((symbol-order '<) 'aardvark 'aaron) #t)
-(eval:check ((symbol-order '=) 'zzz 'zzz) #t)
-(eval:check ((symbol-order '>) 'aa 'a) #t)
-(eval:check ((symbol-order 'compare) 'alice 'bob) '<)
-(eval:check ((symbol-order 'compare) 'b 'c) '<)
-(eval:check ((symbol-order 'compare) 'a 'c) '<)]
+(eval:check (list ((symbol-order '<) 'aardvark 'aaron) ((symbol-order '=) 'zzz 'zzz)
+  ((symbol-order '>) 'aa 'a) ((symbol-order 'compare) 'alice 'bob) ((symbol-order 'compare) 'b 'c)
+  ((symbol-order 'compare) 'c 'a))
+  '(#t #t #t < < >))
+]
 
 @subsubsection{Prototypes for Binary Trees}
 
@@ -814,7 +812,7 @@ The following prototype is a mixin for taking the cube of the parent value:
 @(noindent)
 We can instantiate a function out of those of prototypes, and test it:
 @Checks[
-(define absx3 (instance $even $cube ($const (λ (x) x))))
+(define absx3 (instance $even $cube ($constant-prototype (λ (x) x))))
 (eval:check (map absx3 '(3 -2 0 -1)) '(27 8 0 1))
 ]
 
@@ -1589,15 +1587,21 @@ pseudo-random value generators and value compressors
 for use in automated testing and other search algorithms;
 algebraic operations whereby this type implements an interface,
 satisfies a constraint, or instantiates a typeclass; etc.
+Types used at compile-time would have additional data to deal with
+how to infer them, how their lead to further inferences,
+how to compute unions or intersections with other types,
+how to generate code for operations that deals with them,
+etc.
+
 Therefore, even statically typed languages often involve runtime type descriptors.
 Better languages will provide “reflection” facilities or “macros”
-to automatically generate those descriptors without having humans attempt
-to keep two different representations in synch as programs evolve.
+to automatically generate those descriptors without humans having to
+try keeping two different representations in synch as programs evolve.
 @; TODO cite reflection mechanism for Java? C#? Scala?
 
 @subsubsection{Simple Types}
 In a dynamic language, all types would have at least a recognizer slot @r[is?],
-containing a function to recognize at runtime whether a value is element of the type or not.
+bound to a function to recognize whether a runtime value is element of the type.
 In the most basic types, @r[Top] (that tells nothing about everything) and
 @r[Bottom] (that tells everything about nothing),
 this might be the only slot (though an additional @r[name] slot would help), with trivial values:
@@ -1616,14 +1620,23 @@ Numbers would also have various arithmetic operations.
                           '+ + '- - 'zero 0 'one 1)))
 }
 
-@subsubsection{Parametric Types}
-A parametric type can be represented at runtime as a function that return a type descriptor
-given its parameter, itself a type descriptor. Thus, monomorphic lists might be:
+@subsubsection{Parameterized Types}
+A parameterized type at runtime can be function that return a type descriptor
+given its parameter, itself a type descriptor,
+or any runtime value (yielding a runtime dependent type).
+Thus, monomorphic lists might be:
 @verbatim{
 (define (list-of? t x) (or (null? x)
   (and (pair? x) ((slot-ref is? t) (car x)) (list-of? t (cdr x)))))
 (define (ListOf t) (object ($slot/value 'is? (λ (x) (list-of? t x)))))
 }
+
+@subsubsection{More Elaborate Types}
+In a few hundreds of lines of code, we can define type descriptors for dicts,
+for objects, for objects having specific slots with values of specific types,
+for type descriptors themselves, for functions with given input and output types,
+for functions that compute type descriptors from type descriptors or other values, etc.
+@; TODO: add that in appendix? Cite GerbilPOO again?
 
 @section[#:tag "Mutability"]{Mutability}
 
