@@ -1540,19 +1540,16 @@ So far we have reconstructed prototype-based OOP;
 yet class-based OOP comes first both in history and in popularity.
 @; TODO cite Simula? Smalltalk? C++? Newspeak?
 There have been implementations of classes on top of prototypes in the past,
-notably for JavaScript@~cite{EcmaScript:15}.
-@; TODO: CECIL?
-They were designed for efficiency in the context of an existing language,
-and relied heavily on side-effects in a particular object encoding.
-Thus, they are not simple, and not very enlightening
-as to the essence of the relationship between classes and prototypes.
+notably for JavaScript@~cite{EcmaScript:15}. @; TODO: CECIL?
+But these implementations relied heavily on side-effects over some object encoding,
+to achieve efficiency within some existing language.
 Instead we will propose our own reconstruction on how to
-@emph{macro-express}@~cite{eppl91} classes on top of our pure functional prototypes,
-a technique we used in a real-world library@~cite{GerbilPOO}.
+@emph{macro-express}@~cite{eppl91} classes on top of our pure functional prototypes.
+This reconstruction will shed light on the essence of the relationship between classes and prototypes.
 
 @subsubsection{Prototypes for Type Descriptors}
 In our reconstruction, a @emph{class} is “just” a prototype for type descriptors.
-Type descriptors, as detailed below, are just a runtime data structure
+Type descriptors, as detailed below, are a runtime data structure
 describing what operations are available to recognize and deal with elements of the given type.
 Type descriptors therefore don't have to themselves be objects,
 and no mention of objects is required to describe type descriptors themselves.
@@ -1588,7 +1585,7 @@ for use in automated testing and other search algorithms;
 algebraic operations whereby this type implements an interface,
 satisfies a constraint, or instantiates a typeclass; etc.
 Types used at compile-time would have additional data to deal with
-how to infer them, how their lead to further inferences,
+how to infer them, how they lead to further inferences,
 how to compute unions or intersections with other types,
 how to generate code for operations that deals with them,
 etc.
@@ -1632,8 +1629,8 @@ Thus, monomorphic lists might be:
 }
 
 @subsubsection{More Elaborate Types}
-By using object prototypes, we can, in a few hundreds of lines of code,
-define type descriptors for functions with given input and output types;
+By using object prototypes, we have, in a few hundreds of lines of code@~cite{GerbilPOO},
+defined type descriptors for functions with given input and output types;
 for dicts, objects, and objects having specific slots with values of specific types;
 for slot and type descriptors, and functions that compute type descriptors
 from type descriptors or other values; etc.
