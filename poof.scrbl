@@ -674,8 +674,8 @@ We can define a order on symbols by delegating to strings!
 (define symbol-order (instance $symbol-order))]
 @Checks[
 (eval:check (list ((symbol-order '<) 'aardvark 'aaron) ((symbol-order '=) 'zzz 'zzz)
-  ((symbol-order '>) 'aa 'a) ((symbol-order 'compare) 'alice 'bob) ((symbol-order 'compare) 'b 'c)
-  ((symbol-order 'compare) 'c 'a))
+  ((symbol-order '>) 'aa 'a) ((symbol-order 'compare) 'alice 'bob)
+  ((symbol-order 'compare) 'b 'c) ((symbol-order 'compare) 'c 'a))
   '(#t #t #t < < >))
 ]
 
