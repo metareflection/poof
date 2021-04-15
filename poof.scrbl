@@ -91,6 +91,8 @@ rather have
 @(define (section5) @seclink["Classes"]{section 5})
 @(define (section6) @seclink["Mutability"]{section 6})
 @(define (section7) @seclink["Future_Work"]{section 7})
+@(define (AppendixA) @seclink["Appendix_A"]{Appendix A})
+@(define (AppendixB) @seclink["Appendix_B"]{Appendix B})
 @(define (AppendixC) @seclink["Appendix_C"]{Appendix C})
 
 @(define-bibtex-cite "poof.bib" ~cite citet generate-bibliography)
@@ -449,7 +451,7 @@ Thus, the instantiation function @r[(fix p b)] becomes:
 ]
 
 @(noindent)
-A more thorough explanation of the above fixed-point function is in @seclink["Appendix_B"]{Appendix B}.
+A more thorough explanation of the above fixed-point function is in @(AppendixC).
 Meanwhile, the composition function @r[(mix p q)] becomes:
 @Definitions[
 (code:comment "compose-prototypes : (Fun (Proto Self Super) (Proto Super Super2)")
@@ -1196,7 +1198,7 @@ e.g. with @r[K1] inheriting from direct supers @r[A B C],
 @r[K2] inheriting from direct supers @r[D B E], and
 @r[K3] inheriting from direct supers @r[D A], and what more
 each of @r[A], @r[B], @r[C], @r[D], @r[E] inheriting from a base super object @r[O]?
-(See @(AppendixC) for details on this example.)
+(See @(AppendixA) for details on this example.)
 
 With the basic object model offered by Nix, Jsonnet, or our @(section1),
 these dependencies couldn't be represented in the prototype itself.
@@ -1245,7 +1247,7 @@ whereby the dependencies as declared fail to constitute a DAG;
 in such a situation, no precedence list can satisfy all the ordering constraints,
 and instead an error is raised.
 Recent modern object systems seem to have settled on the C3 linearization algorithm,
-as described in @seclink["Appendix_C"]{Appendix C}.
+as described in @(AppendixB).
 
 @(define/local-expand c3-definitions @Definitions[
 (code:comment "The (require srfi/1) below imports SRFI 1 list functions into Racket")
@@ -1282,20 +1284,6 @@ as described in @seclink["Appendix_C"]{Appendix C}.
 ])
 
 @(define/local-expand c3-extra-definitions @Definitions[
-(define (pair-tree-for-each! x f)
-  (let loop ((x x))
-    (cond ((pair? x) (loop (car x)) (loop (cdr x)))
-          ((null? x) (void))
-          (else (f x)))))
-
-(define (call-with-list-builder f)
-  (define l '())
-  (f (λ (x) (set! l (cons x l))))
-  (reverse l))
-
-(define (flatten-pair-tree x)
-  (call-with-list-builder (λ (c) (pair-tree-for-each! x c))))
-
 (define (alist->Dict alist)
   (foldl (λ (kv a) ((Dict 'acons) (car kv) (cdr kv) a)) (Dict 'empty) alist))
 
@@ -1306,9 +1294,10 @@ as described in @seclink["Appendix_C"]{Appendix C}.
   ((Dict 'afoldr) (Dict 'acons) base-dict override-dict))
 ])
 
+
 @subsubsection{A prototype is more than a function}
 But where is the inheritance information to be stored?
-A prototype must contain more than the function being composed to implement open-recursion;
+A prototype must contain more than the function being composed to implement open-recursion.
 @italic{A minima} it must also contain the list of direct super objects
 that the current object depends on.
 We saw in @seclink["different_prototype"]{4.1.4} that and how we can and sometimes must indeed
@@ -1796,7 +1785,147 @@ especially with respect to object representation.
 
 @(generate-bibliography)
 
-@section[#:tag "Appendix_A"]{Digression about type notation} @appendix
+@section[#:tag "Appendix_A"]{Code Library} @appendix
+
+@emph{We have used Racket to develop this document in such a way that the very same file is used
+as source file for a reusable Racket library, a test module, and the printable document.}
+Adapting the code to run on any Scheme implementation should take minimal effort.
+Alternatively, you could use the full-fledged library we built on the same general model
+with practical optimizations and syntactic abstractions for enhanced usability@~cite{GerbilPOO}.
+
+In this appendix, we include library code of relatively obvious or well-known functions,
+that provide no original insight, yet that we rely upon in the implementation of the object system.
+This code is included for the sake of completeness and reproducibility.
+It is also required to get this file running, though we could have kept it hidden.
+
+@subsection{C3 Linearization Algorithm}
+
+Below is the C3 Linearization algorithm to topologically sort an inheritance DAG
+into a precedence list such that direct supers are all included before indirect supers.
+Initially introduced in Dylan@~cite{Barrett96amonotonic},
+it has since been adopted by many modern languages, including
+Python, Raku, Parrot, Solidity, PGF/TikZ.
+
+The algorithm ensures that the precedence list of an object always contains as ordered sub-lists
+(though not necessarily with consecutive elements) the precedence list of
+each of the object's super-objects, as well as the list of direct supers.
+It also favors direct supers appearing as early as possible in the precedence list.
+
+We import the standard library @r[srfi/1] for the sake of
+the standard functions @r[every] and @r[filter].
+
+@c3-definitions
+
+@(noindent)
+We will now test this linearization algorithm on the inheritance graph from @(section43).
+This test case was originally taken from the Wikipedia article on C3 linearization@~cite{wikiC3},
+that usefully includes the following diagram:
+
+@(noindent) @image[#:scale 0.67]{C3_linearization_example.eps}
+@;;; NB: The EPS file was converted using inkscape from the SVG originally at
+@;;; https://en.wikipedia.org/wiki/C3_linearization
+
+@(noindent)
+The definitions for this test case are as follows:
+
+@Examples[
+(define test-inheritance-dag-alist
+  '((O) (A O) (B O) (C O) (D O) (E O)
+    (K1 A B C) (K2 D B E) (K3 D A) (Z K1 K2 K3)))
+(define (test-get-supers x) (cdr (assoc x test-inheritance-dag-alist)))
+(define (test-compute-precedence-list x)
+  (c3-compute-precedence-list x test-get-supers test-compute-precedence-list))
+]
+
+@(noindent)
+And the test are thus:
+@Checks[
+(eval:check (map not-null? '(() (1) (a b c) nil)) '(#f #t #t #t))
+(eval:check (remove-nulls '((a b c) () (d e) () (f) () ())) '((a b c) (d e) (f)))
+(eval:check (map test-compute-precedence-list '(O A K1 Z))
+  '((O) (A O) (K1 A B C O) (Z K1 K2 K3 D A B C E O)))
+]
+
+@subsection{More Helper Functions}
+
+To help with defining multiple inheritance, we'll also define the following helper functions:
+
+@c3-extra-definitions
+
+@;{ Memoizing?
+;; II.1.2- Memoizing values, so field access isn't O(n) every time.
+;; Usage: Put memoize-proto as first prototype.
+;; NB1: Memoization uses side-effects internally, but does not expose them.
+;; NB2: It's still O(n^2) overall rather than O(n); we can do better, later.
+(define (memoize f)
+  (nest (let ((cache (make-hash)))) (λ x) (apply values) (hash-ref! cache x)
+        (λ ()) (call-with-values (λ () (apply f x))) list))
+
+(define (make-counter)
+  (nest (let ((count 0))) (λ ())
+        (let ((result count)) (set! count (+ count 1)) result)))
+
+(define my-counter (make-counter))
+(define my-memo-counter (memoize my-counter))
+
+(check! (= (my-counter) 0)
+(check! (= (my-memo-counter) 1)
+(check! (= (my-counter) 2)
+(check! (= (my-memo-counter) 1)
+
+(define (memoize-proto self super) (memoize super))
+
+(define (count-proto self super)
+  (make-counter))
+
+(define count-fun (instance count-proto))
+(check! (= (count-fun) 0)
+(check! (= (count-fun) 1)
+(check! (= (count-fun) 2)
+
+(define zero-fun (instance memoize-proto count-proto))
+(check! (= (zero-fun) 0))
+(check! (= (zero-fun) 0))
+}
+
+@subsection{Extra tests}
+
+Here are some tests to check that our functions are working.
+
+@Examples[
+(define test-instance
+  (alist->Dict `((a . ,(delay 1)) (b . ,(delay 2)) (c . ,(delay 3)))))
+(define test-prototype
+  (alist->Dict `((function . ,(delay (λ (self super)
+                                (Dict-merge (force test-instance) (force super)))))
+                 (supers . ,(delay '()))
+                 (precedence-list . ,(delay '())))))
+(define test-object (make-object test-instance test-prototype))
+(define test-p1 ($slot/value 'foo 1))
+]
+
+@;{
+(define (pair-tree-for-each! x f)
+  (let loop ((x x))
+    (cond ((pair? x) (loop (car x)) (loop (cdr x)))
+          ((null? x) (void))
+          (else (f x)))))
+(define (call-with-list-builder f)
+  (define l '())
+  (f (λ (x) (set! l (cons x l))))
+  (reverse l))
+(define (flatten-pair-tree x)
+  (call-with-list-builder (λ (c) (pair-tree-for-each! x c))))
+}
+
+@Checks[
+(eval:check (map (λ (x) (slot-ref test-object x)) '(a b c)) '(1 2 3))
+(eval:check (slot-ref (instantiate '() test-p1) 'foo) 1)
+(eval:check (map (slot-ref (ListOf Number) 'is?) '(() (1 2 3) (1 a 2) (1 . 2)))
+  '(#t #t #f #f))
+]
+
+@section[#:tag "Appendix_B"]{Digression about type notation}
 
 There is no standard type system for the language Scheme,
 so we will keep our type declarations as comments that are unenforced by the compiler,
@@ -1880,7 +2009,7 @@ The constraints we will consider will be subtyping constraints of the form:
 ]
 meaning @r[A] is a subtype of @r[B], which is a subtype of @r[C], etc.
 
-@section[#:tag "Appendix_B"]{Fixed-Point functions}
+@section[#:tag "Appendix_C"]{Fixed-Point functions}
 
 In @(section1), we quickly went over the fixed-point function @r[fix]
 that we used to instantiate prototypes.
@@ -2008,119 +2137,6 @@ And if you don't even like @r[letrec], you can use a Y-combinator variant: @; TO
 (define (fix--3 p b)
   ((lambda (yf) (yf yf))
    (lambda (yf) (p (lambda i (apply (yf yf) i)) b))))
-]
-
-@section[#:tag "Appendix_C"]{Code Library}
-
-The object system implementation in our article above relies on the following code library
-of relatively obvious or well-known functions, that have provide no original insight,
-but are included here for the sake of completeness and reproducibility.
-
-Indeed, we have used Racket to develop this document in such a way that the very same file is used
-as source file for a reusable Racket module, a test module, and the printable document.
-Adapting the code to run on any Scheme implementation should take minimal effort.
-
-@subsection{C3 Linearization Algorithm}
-
-Below is the C3 Linearization algorithm to topologically sort an inheritance DAG
-into a precedence list such that direct supers are all included before indirect supers.
-Initially introduced in Dylan@~cite{Barrett96amonotonic},
-it has since been adopted by many modern languages, including
-Python, Raku, Parrot, Solidity, PGF/TikZ.
-
-The algorithm ensures that the precedence list of an object always contains as ordered sub-lists
-(though not necessarily with consecutive elements) the precedence list of
-each of the object's super-objects, as well as the list of direct supers.
-It also favors direct supers appearing as early as possible in the precedence list.
-
-@c3-definitions
-
-@subsection{More Helper Functions}
-
-To help with defining multiple inheritance, we'll also define the following helper functions:
-
-@c3-extra-definitions
-
-@;{ Memoizing?
-;; II.1.2- Memoizing values, so field access isn't O(n) every time.
-;; Usage: Put memoize-proto as first prototype.
-;; NB1: Memoization uses side-effects internally, but does not expose them.
-;; NB2: It's still O(n^2) overall rather than O(n); we can do better, later.
-(define (memoize f)
-  (nest (let ((cache (make-hash)))) (λ x) (apply values) (hash-ref! cache x)
-        (λ ()) (call-with-values (λ () (apply f x))) list))
-
-(define (make-counter)
-  (nest (let ((count 0))) (λ ())
-        (let ((result count)) (set! count (+ count 1)) result)))
-
-(define my-counter (make-counter))
-(define my-memo-counter (memoize my-counter))
-
-(check! (= (my-counter) 0)
-(check! (= (my-memo-counter) 1)
-(check! (= (my-counter) 2)
-(check! (= (my-memo-counter) 1)
-
-(define (memoize-proto self super) (memoize super))
-
-(define (count-proto self super)
-  (make-counter))
-
-(define count-fun (instance count-proto))
-(check! (= (count-fun) 0)
-(check! (= (count-fun) 1)
-(check! (= (count-fun) 2)
-
-(define zero-fun (instance memoize-proto count-proto))
-(check! (= (zero-fun) 0))
-(check! (= (zero-fun) 0))
-}
-
-@subsection{Extra tests}
-
-Here are some tests to check that our functions are working.
-Note how the example inheritance graph we described in @(section43)
-and use as a test case below is taken from
-the Wikipedia article on C3 linearization@~cite{wikiC3},
-that usefully includes the following diagram:
-
-@(noindent) @image[#:scale 0.67]{C3_linearization_example.eps}
-@;;; NB: The EPS file was converted using inkscape from the SVG originally at
-@;;; https://en.wikipedia.org/wiki/C3_linearization
-
-@(noindent)
-To test the linearization algorithm, we may use the following definitions:
-@Examples[
-(define test-inheritance-dag-alist
-  '((O) (A O) (B O) (C O) (D O) (E O)
-    (K1 A B C) (K2 D B E) (K3 D A) (Z K1 K2 K3)))
-(define (test-get-supers x) (cdr (assoc x test-inheritance-dag-alist)))
-(define (test-compute-precedence-list x)
-  (c3-compute-precedence-list x test-get-supers test-compute-precedence-list))
-
-(define test-instance
-  (alist->Dict `((a . ,(delay 1)) (b . ,(delay 2)) (c . ,(delay 3)))))
-(define test-prototype
-  (alist->Dict `((function . ,(delay (λ (self super)
-                                (Dict-merge (force test-instance) (force super)))))
-                 (supers . ,(delay '()))
-                 (precedence-list . ,(delay '())))))
-(define test-object (make-object test-instance test-prototype))
-(define test-p1 ($slot/value 'foo 1))
-]
-@(noindent)
-Test are then as follows:
-@Checks[
-(eval:check (map not-null? '(() (1) (a b c) nil)) '(#f #t #t #t))
-(eval:check (remove-nulls '((a b c) () (d e) () (f) () ())) '((a b c) (d e) (f)))
-(eval:check (map test-compute-precedence-list '(O A K1 Z))
-  '((O) (A O) (K1 A B C O) (Z K1 K2 K3 D A B C E O)))
-
-(eval:check (map (λ (x) (slot-ref test-object x)) '(a b c)) '(1 2 3))
-(eval:check (slot-ref (instantiate '() test-p1) 'foo) 1)
-(eval:check (map (slot-ref (ListOf Number) 'is?) '(() (1 2 3) (1 a 2) (1 . 2)))
-  '(#t #t #f #f))
 ]
 
 @section[#:tag "Appendix_D"]{Note for code minimalists}
