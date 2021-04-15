@@ -6,6 +6,8 @@ that reconstructs the essence of Object-Oriented Programming (OOP)
 from the point of view of pure Functional Programming (FP) with dynamic or dependent types,
 using Scheme as the illustration language.
 
+The document was submitted to [OOPSLA 2021](https://2021.splashcon.org/track/splash-2021-oopsla).
+
 To create the document:
 
     make
@@ -14,3 +16,8 @@ To create the document:
 To run the tests:
 
     make test
+
+
+To load the library and experiment with it at the REPL:
+
+    make repl
