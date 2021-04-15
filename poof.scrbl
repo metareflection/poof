@@ -2118,6 +2118,8 @@ Test are then as follows:
 
 (eval:check (map (λ (x) (slot-ref test-object x)) '(a b c)) '(1 2 3))
 (eval:check (slot-ref (instantiate '() test-p1) 'foo) 1)
+(eval:check (map (slot-ref (ListOf Number) 'is?) '(() (1 2 3) (1 a 2) (1 . 2)))
+  '(#t #t #f #f))
 ]
 
 @section[#:tag "Appendix_D"]{Note for code minimalists}
