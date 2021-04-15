@@ -87,6 +87,7 @@ rather have
 @(define (section3) @seclink["beyond_objects"]{section 3})
 @(define (section34) @seclink["without_subtyping"]{section 3.4})
 @(define (section4) @seclink["Better_objects"]{section 4})
+@(define (section43) @seclink["multiple_inheritance"]{section 4.3})
 @(define (section5) @seclink["Classes"]{section 5})
 @(define (section6) @seclink["Mutability"]{section 6})
 @(define (section7) @seclink["Future_Work"]{section 7})
@@ -149,8 +150,7 @@ a function from @r[Self] and @r[Super] to @r[Self].
 @racketblock[
 (code:comment "(deftype (Proto Self Super) (Fun Self Super -> Self st: (<: Self Super)))")
 (code:comment "fix : (Fun (Proto Self Super) Super -> Self st: (<: Self Super))")
-(code:comment "mix : (Fun (Proto Self Super) (Proto Super Sup2) -> (Proto Self Sup2)")
-(code:comment "        st: (<: Self Super Sup2))")
+(code:comment "mix : (Fun (Proto Self Super) (Proto Super Sup2) -> (Proto Self Sup2))")
 ]
 
 @(noindent)
@@ -546,7 +546,8 @@ You can also instantiate a list of prototypes:
 And we can define syntactic short-cuts that apply the above functions to their list of arguments:
 @Definitions[
 (define ($compose . proto-list) (compose-prototype-list proto-list))
-(define ($instantiate . proto-list) (instantiate-prototype-list proto-list))
+(define ($instantiate . proto-list)
+  (instantiate-prototype-list proto-list bottom-record))
 ]
 
 @(noindent)
@@ -560,9 +561,8 @@ independently from any base object, to compose and recompose prototypes
 in different orders and combinations.
 Prototypes are thus more akin to the “mixins” or “traits” of more advanced
 objects systems@~cite{Cannon82 bracha1990mixin Flatt06schemewith}.
-@; TODO: cite Flavors for mixins? Some PLT paper? The one from asplas06? What about traits?
-Prototype composition however, does not by itself subsume multiple
-inheritance. We will show in @(section4) how to combine the two.
+Prototype composition however, does not by itself subsume multiple inheritance.
+We will show in @(section4) how to combine the two.
 
 @subsubsection{The Bottom of it}
 
@@ -1178,8 +1178,7 @@ And for the common case of just overriding some slots with constant values, we c
     ($compose ($slot/value (car kvs) (cadr kvs)) (apply $slot/values (cddr kvs)))))
 ]
 
-
-@subsection{Multiple Inheritance}
+@subsection[#:tag "multiple_inheritance"]{Multiple Inheritance}
 
 @; TODO: citations required on modularity, inheritance, multiple inheritance
 @subsubsection{The inheritance modularity issue}
@@ -1248,6 +1247,10 @@ Recent modern object systems seem to have settled on the C3 linearization algori
 as described in @seclink["Appendix_C"]{Appendix C}.
 
 @(define/local-expand c3-definitions @Definitions[
+(code:comment "The (require srfi/1) below imports SRFI 1 list functions into Racket")
+(code:comment "YMMV if you use another Scheme implementation")
+(require srfi/1)
+
 (code:comment "not-null? : Any -> Bool")
 (define (not-null? l) (not (null? l)))
 
@@ -1610,7 +1613,7 @@ this might be the only slot (though an additional @r[name] slot would help), wit
 @verbatim{
 (define Top (object ($slot/value 'is? (λ (_) #t))))
 (define Bottom (object ($slot/value 'is? (λ (_) #f))))
-}
+}@;]
 Other simple types might include the type of representable values;
 here they will sport a single additional method @r[->sexp] to turn a value into
 a type-specific source expression, but a real library would have many more I/O operations.
@@ -1665,11 +1668,11 @@ that themselves may or may not be objects.
 
 @subsection{Mutability as Pure Linearity}
 @subsubsection{From Pure to Mutable and Back}
-Note how all the objects and functions defined in the previous sections were pure,
-as contrasted with all OOP literature from the 1960s to the early 1990s and most since:
+Note how all the objects and functions defined in previous sections were pure.
 They didn't use any side-effect.
-No @r[set!], no tricky use of @r[call/cc]. Only laziness at times, which still counts as pure.
-But what if we are OK with using side-effects? How much does that simplify computations?
+No @r[set!]. No @r[call/cc]. Only laziness at times, which still counts as pure.
+This contrasts with all OOP literature from the 1960s to the 1980s, and most since.
+But what if we are OK with side-effects? How much does that simplify computations?
 What insights does the pure case offer on the mutable case, and vice versa?
 
 A simple implementation of mutable objects is to store pure object values into mutable cells.
@@ -1770,7 +1773,7 @@ reactive or incremental programming. @;TODO: @~cite{}
 
 @;;; Here, we silently cite things that only appear in the appendices,
 @;;; so they appear in the bibliography, that is being computed before the appendices.
-@~nocite{Barrett96amonotonic}
+@~nocite{Barrett96amonotonic wikiC3}
 
 @section[#:tag "Future_Work"]{Future Work}
 
@@ -2012,6 +2015,10 @@ The object system implementation in our article above relies on the following co
 of relatively obvious or well-known functions, that have provide no original insight,
 but are included here for the sake of completeness and reproducibility.
 
+Indeed, we have used Racket to develop this document in such a way that the very same file is used
+as source file for a reusable Racket module, a test module, and the printable document.
+Adapting the code to run on any Scheme implementation should take minimal effort.
+
 @subsection{C3 Linearization Algorithm}
 
 Below is the C3 Linearization algorithm to topologically sort an inheritance DAG
@@ -2071,30 +2078,33 @@ To help with defining multiple inheritance, we'll also define the following help
 
 @subsection{Extra tests}
 
-Here are some tests to check that our functions are working:
+Here are some tests to check that our functions are working.
+Note how the example inheritance graph we described in @(section43)
+and use as a test case below is taken from
+the Wikipedia article on C3 linearization@~cite{wikiC3},
+that usefully includes the following diagram:
+@image[#:scale 0.64]{C3_linearization_example.eps}
+@;;; NB: The EPS file was converted using inkscape from the SVG originally at
+@;;; https://en.wikipedia.org/wiki/C3_linearization
 
-@;TODO: insert figure from Wikipedia article, with citation, and explanation.
-@;https://en.wikipedia.org/wiki/C3_linearization#/media/File:C3_linearization_example.svgg
-
+@(noindent)
+To test the linearization algorithm, we may use the following definitions:
 @Examples[
-(eval:check (map not-null? '(() (1) (a b c) nil)) '(#f #t #t #t))
-(eval:check (remove-nulls '((a b c) () (d e) () (f) () ())) '((a b c) (d e) (f)))
-
 (define test-inheritance-dag-alist
   '((O) (A O) (B O) (C O) (D O) (E O)
     (K1 A B C) (K2 D B E) (K3 D A) (Z K1 K2 K3)))
 (define (test-get-supers x) (cdr (assoc x test-inheritance-dag-alist)))
 (define (test-compute-precedence-list x)
-  (c3-compute-precedence-list x test-get-supers
-    (λ (x) (test-compute-precedence-list x))))
-
+  (c3-compute-precedence-list x test-get-supers test-compute-precedence-list))
 ]
-@;{
-'(eval:check (test-compute-precedence-list 'O) '(O))
-'(eval:check (test-compute-precedence-list 'A) '(A O))
-'(eval:check (test-compute-precedence-list 'K1) '(K1 A B C O))
-'(eval:check (test-compute-precedence-list 'Z) '(Z K1 K2 K3 D A B C E O))
-}
+@(noindent)
+Test are then as follows:
+@Checks[
+(eval:check (map not-null? '(() (1) (a b c) nil)) '(#f #t #t #t))
+(eval:check (remove-nulls '((a b c) () (d e) () (f) () ())) '((a b c) (d e) (f)))
+(eval:check (map test-compute-precedence-list '(O A K1 Z))
+  '((O) (A O) (K1 A B C O) (Z K1 K2 K3 D A B C E O)))
+]
 
 @section[#:tag "Appendix_D"]{Note for code minimalists}
 
