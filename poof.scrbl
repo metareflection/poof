@@ -1165,7 +1165,8 @@ the basic prototypes to define one, analogous to the above
                   (object-instance (force super)))
                  (object-prototype (force super)))))
 (define ($slot/value k v) ($slot/gen k (λ (__self __inherit) (delay v))))
-(define ($slot/modify k modify) ($slot/gen k (λ (__ inherit) (delay (modify (force inherit))))))
+(define ($slot/modify k modify)
+  ($slot/gen k (λ (__ inherit) (delay (modify (force inherit))))))
 (define ($slot/compute k fun) ($slot/gen k (λ (self __) (delay (fun self)))))
 ]
 
