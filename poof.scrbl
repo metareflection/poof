@@ -1254,6 +1254,7 @@ as described in @(AppendixB).
 (code:comment "YMMV if you use another Scheme implementation")
 (require srfi/1)
 
+
 (code:comment "not-null? : Any -> Bool")
 (define (not-null? l) (not (null? l)))
 
@@ -1789,14 +1790,17 @@ especially with respect to object representation.
 
 @emph{We have used Racket to develop this document in such a way that the very same file is used
 as source file for a reusable Racket library, a test module, and the printable document.}
-Adapting the code to run on any Scheme implementation should take minimal effort.
+The code is available under the Apache License, version 2.0, and
+adapting it to run on any Scheme implementation should take minimal effort.
 Alternatively, you could use the full-fledged library we built on the same general model
-with practical optimizations and syntactic abstractions for enhanced usability@~cite{GerbilPOO}.
+in another Scheme dialect@~cite{GerbilPOO}:
+it features many practical optimizations and syntactic abstractions for enhanced usability,
+as well as a extensive support for type descriptors.
 
 In this appendix, we include library code of relatively obvious or well-known functions,
 that provide no original insight, yet that we rely upon in the implementation of the object system.
 This code is included for the sake of completeness and reproducibility.
-It is also required to get this file running, though we could have kept it hidden.
+It is also required to get this file running, though we could have kept the code hidden.
 
 @subsection{C3 Linearization Algorithm}
 

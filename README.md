@@ -8,6 +8,9 @@ using Scheme as the illustration language.
 
 The document was submitted to [OOPSLA 2021](https://2021.splashcon.org/track/splash-2021-oopsla).
 
+The code herein is available as free software under the Apache License, version 2.0.
+See the file [LICENSE](LICENSE).
+
 To create the document:
 
     make
