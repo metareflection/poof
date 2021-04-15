@@ -541,14 +541,13 @@ You can also instantiate a list of prototypes:
 (define (instantiate-prototype-list prototype-list base-super)
   (instantiate-prototype (compose-prototype-list prototype-list) base-super))
 ]
-}|
+
 @(noindent)
-And we can define syntactic short-cuts that apply the above functions to their list of arguments:
+And we can define a syntactic short-cut that composes prototypes in its list of arguments:
 @Definitions[
 (define ($compose . proto-list) (compose-prototype-list proto-list))
-(define ($instantiate . proto-list)
-  (instantiate-prototype-list proto-list bottom-record))
 ]
+}|
 
 @(noindent)
 Prototype composition is notably more expressive than “single inheritance”
@@ -1175,7 +1174,8 @@ And for the common case of just overriding some slots with constant values, we c
 @Definitions[
 (define ($slot/values . kvs)
   (if (null? kvs) identity-prototype
-    ($compose ($slot/value (car kvs) (cadr kvs)) (apply $slot/values (cddr kvs)))))
+    (compose-prototypes ($slot/value (car kvs) (cadr kvs))
+                        (apply $slot/values (cddr kvs)))))
 ]
 
 @subsection[#:tag "multiple_inheritance"]{Multiple Inheritance}
