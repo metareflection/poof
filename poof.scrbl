@@ -1030,8 +1030,8 @@ Thus, we could represent objects as thunks that return @r[symbol-avl-map], as fo
 @Definitions[
 (define ($slot-gen/dict k fun)
   (λ (self super)
-    (define (inherit) (Dict 'ref (super) k bottom))
-    (λ () (Dict 'acons k (fun self inherit) (super)))))
+    (define (inherit) ((Dict 'ref) (super) k bottom))
+    (λ () ((Dict 'acons) k (fun self inherit) (super)))))
 ]
 @(noindent)
 However, while the above definition yields the correct result,
@@ -1047,8 +1047,8 @@ Thus, using @r[δfix] and @r[δmix] instead of @r[fix] and @r[mix], we can have:
 @Definitions[
 (define (δ$slot-gen/dict k fun)
   (λ (self super)
-    (delay (let ((inherit (Dict 'ref (force super) k (λ () (delay (bottom))))))
-             (Dict 'acons k (delay (fun self inherit)) (force super))))))
+    (delay (let ((inherit ((Dict 'ref) (force super) k (λ () (delay (bottom))))))
+             ((Dict 'acons) k (delay (fun self inherit)) (force super))))))
 ]
 
 @subsubsection[#:tag "different_prototype"]{Same instance representation, different prototype representation}
@@ -1159,15 +1159,15 @@ the basic prototypes to define one, analogous to the above
 @r[$slot-gen], @r[$slot], @r[$slot-modify], @r[$slot-compute] are as follow:
 @Definitions[
 (define (slot-ref object slot)
-  (force (Dict 'ref (force (object-instance object)) slot bottom)))
+  (force ((Dict 'ref) (force (object-instance object)) slot bottom)))
 (define ($slot/gen k fun)
   (λ (self super)
-    (make-object (Dict 'acons k (fun self (delay (slot-ref super k)))
+    (make-object ((Dict 'acons) k (fun self (delay (slot-ref super k)))
                   (object-instance (force super)))
-                  (object-prototype (force super)))))
-(define ($slot/value k v) ($slot/gen k (λ (__self __inherit) v)))
-(define ($slot/modify k modify) ($slot/gen k (λ (__ inherit) (modify (inherit)))))
-(define ($slot/compute k fun) ($slot/gen k (λ (self __) (fun self))))
+                 (object-prototype (force super)))))
+(define ($slot/value k v) ($slot/gen k (λ (__self __inherit) (delay v))))
+(define ($slot/modify k modify) ($slot/gen k (λ (__ inherit) (delay (modify (force inherit))))))
+(define ($slot/compute k fun) ($slot/gen k (λ (self __) (delay (fun self)))))
 ]
 
 @(noindent)
@@ -1343,7 +1343,7 @@ is bound to a function that overrides its super with constant fields from the in
     (λ (self super)
       (make-object (Dict-merge (object-instance object) (object-instance super))
                    (object-prototype super)))
-    (slot-ref prototype 'precedence-list)))
+    (slot-ref prototype 'function)))
 (define (object-supers object)
   (define prototype (object-prototype object))
   (if (null? prototype) '() (slot-ref prototype 'supers)))
@@ -1353,17 +1353,17 @@ is bound to a function that overrides its super with constant fields from the in
 (define (compute-precedence-list object)
   (c3-compute-precedence-list object object-supers object-precedence-list))
 (define base-dict (Dict 'empty))
-(define (instantiate function supers)
+(define (instantiate supers function)
   (define proto
-    (Dict->Object (Dict 'acons 'function (delay function)
-                   (Dict 'acons 'supers (delay supers)
-                    (Dict 'acons 'precedence-list (delay precedence-list)
+    (Dict->Object ((Dict 'acons) 'function (delay function)
+                   ((Dict 'acons) 'supers (delay supers)
+                    ((Dict 'acons) 'precedence-list (delay precedence-list)
                      (Dict 'empty))))))
   (define base (make-object base-dict proto))
   (define precedence-list (compute-precedence-list base))
   (define prototype-functions (map object-prototype-function precedence-list))
-  (instantiate-prototype-list prototype-functions base))
-(define (object function . supers) (instantiate function supers))
+  (instantiate-prototype-list prototype-functions (delay base)))
+(define (object function . supers) (instantiate supers function))
 ]
 
 @subsection{Multiple Dispatch}
@@ -1618,22 +1618,22 @@ Other simple types might include the type of representable values;
 here they will sport a single additional method @r[->sexp] to turn a value into
 a type-specific source expression, but a real library would have many more I/O operations.
 Numbers would also have various arithmetic operations.
-@;@Definitions[(define Representable (object ($slot/value '->sexp (λ (x) (list 'quote x))) Top))
-@verbatim{
+@;@verbatim{(define Representable (object ($slot/value '->sexp (λ (x) (list 'quote x))) Top))
+@Definitions[
 (define Number (object ($slot/values 'is? number? '->sexp identity
                           '+ + '- - 'zero 0 'one 1)))
-}
+]
 
 @subsubsection{Parameterized Types}
 A parameterized type at runtime can be function that return a type descriptor
 given its parameter, itself a type descriptor,
 or any runtime value (yielding a runtime dependent type).
 Thus, monomorphic lists might be:
-@verbatim{
+@Definitions[
 (define (list-of? t x) (or (null? x)
-  (and (pair? x) ((slot-ref is? t) (car x)) (list-of? t (cdr x)))))
+  (and (pair? x) ((slot-ref t 'is?) (car x)) (list-of? t (cdr x)))))
 (define (ListOf t) (object ($slot/value 'is? (λ (x) (list-of? t x)))))
-}
+]
 
 @subsubsection{More Elaborate Types}
 By using object prototypes, we have, in a few hundreds of lines of code@~cite{GerbilPOO},
@@ -2083,7 +2083,8 @@ Note how the example inheritance graph we described in @(section43)
 and use as a test case below is taken from
 the Wikipedia article on C3 linearization@~cite{wikiC3},
 that usefully includes the following diagram:
-@image[#:scale 0.64]{C3_linearization_example.eps}
+
+@(noindent) @image[#:scale 0.64]{C3_linearization_example.eps}
 @;;; NB: The EPS file was converted using inkscape from the SVG originally at
 @;;; https://en.wikipedia.org/wiki/C3_linearization
 
@@ -2096,6 +2097,16 @@ To test the linearization algorithm, we may use the following definitions:
 (define (test-get-supers x) (cdr (assoc x test-inheritance-dag-alist)))
 (define (test-compute-precedence-list x)
   (c3-compute-precedence-list x test-get-supers test-compute-precedence-list))
+
+(define test-instance
+  (alist->Dict `((a . ,(delay 1)) (b . ,(delay 2)) (c . ,(delay 3)))))
+(define test-prototype
+  (alist->Dict `((function . ,(delay (λ (self super)
+                                (Dict-merge (force test-instance) (force super)))))
+                 (supers . ,(delay '()))
+                 (precedence-list . ,(delay '())))))
+(define test-object (make-object test-instance test-prototype))
+(define test-p1 ($slot/value 'foo 1))
 ]
 @(noindent)
 Test are then as follows:
@@ -2104,6 +2115,9 @@ Test are then as follows:
 (eval:check (remove-nulls '((a b c) () (d e) () (f) () ())) '((a b c) (d e) (f)))
 (eval:check (map test-compute-precedence-list '(O A K1 Z))
   '((O) (A O) (K1 A B C O) (Z K1 K2 K3 D A B C E O)))
+
+(eval:check (map (λ (x) (slot-ref test-object x)) '(a b c)) '(1 2 3))
+(eval:check (slot-ref (instantiate '() test-p1) 'foo) 1)
 ]
 
 @section[#:tag "Appendix_D"]{Note for code minimalists}
