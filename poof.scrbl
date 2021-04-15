@@ -1,6 +1,33 @@
 #lang scribble/acmart @acmsmall @10pt @review @anonymous @natbib
-
 @; To be submitted to OOPSLA 2021? https://2021.splashcon.org/track/splash-2021-oopsla
+
+@title{Prototype Object-Orientation Functionally}
+
+@abstract{
+This paper elucidates the essence of Object-Oriented Programming (OOP),
+independent of idiosyncrasies of past incarnations.
+We reconstruct OOP in a pure lazy functional style with dynamic or dependent types.
+We build protototype-based objects first, then class-based objects as a special case.
+We illustrate our reconstruction in Scheme.
+
+Using our approach, any language that contains the untyped lambda calculus
+can now implement an object system in handful of functions or about 30 lines of code.
+Multiple inheritance can be implemented in an additional 50 lines of code.
+}
+
+@author[
+  #:email (email "fare@mukn.io")
+  #:affiliation (affiliation #:institution @institution{@emph{Mutual Knowledge Systems, Inc.}})
+]{Francois-Rene Rideau}
+@author[
+  #:email (email "alexknauth@mukn.io")
+  #:affiliation (affiliation #:institution @institution{@emph{Mutual Knowledge Systems, Inc.}})
+]{Alex Knauth}
+@author[
+  #:email (email "namin@seas.harvard.edu")
+  #:affiliation (affiliation #:institution @institution{@emph{Harvard University}})
+]{Nada Amin}
+
 
 @(require scriblib/bibtex
           (only-in scribble/core make-paragraph make-style)
@@ -13,6 +40,7 @@
           syntax/parse/define
           "util/examples-module.rkt"
           (for-label racket))
+
 
 @;@(current-pygmentize-default-style 'colorful)
 @(define (minted x . foo) (apply verbatim foo))
@@ -62,36 +90,9 @@ rather have
 @(define (section5) @seclink["Classes"]{section 5})
 @(define (section6) @seclink["Mutability"]{section 6})
 @(define (section7) @seclink["Future_Work"]{section 7})
-
-@title{Prototype Object-Orientation Functionally}
-
-@author[
-  #:email (email "fare@mukn.io")
-  #:affiliation (affiliation #:institution @institution{@emph{Mutual Knowledge Systems, Inc.}})
-]{Francois-Rene Rideau}
-@author[
-  #:email (email "alexknauth@mukn.io")
-  #:affiliation (affiliation #:institution @institution{@emph{Mutual Knowledge Systems, Inc.}})
-]{Alex Knauth}
-@author[
-  #:email (email "namin@seas.harvard.edu")
-  #:affiliation (affiliation #:institution @institution{@emph{Harvard University}})
-]{Nada Amin}
+@(define (AppendixC) @seclink["Appendix_C"]{Appendix C})
 
 @(define-bibtex-cite "poof.bib" ~cite citet generate-bibliography)
-
-@abstract{
-
-This paper elucidates the essence of Object-Oriented Programming (OOP),
-independent of idiosyncrasies of past incarnations.
-We reconstruct OOP in a pure lazy functional style with dynamic or dependent types.
-We build protototype-based objects first, then class-based objects as a special case.
-We illustrate our reconstruction in Scheme.
-
-Using our approach, any language that contains the untyped lambda calculus
-can now implement an object system in handful of functions or roughly 20 lines of code.
-Multiple inheritance can be implemented in an additional 30 lines of code.
-}
 
 @section[#:tag "Prototypes_bottom_up"]{Prototypes, bottom up}
 
@@ -1188,11 +1189,14 @@ depends on super objects @r[K1], @r[K2], @r[K3] being present after it
 in the list of prototypes to be instantiated.
 We'll also say that @r[Z] @emph{inherits from} from these super objects,
 or @emph{extends} them, or that they are its direct super objects.
-But what if @r[K1], @r[K2], @r[K3] themselves inherit from super objects @r[A], @r[B], @r[C], @r[D], @r[E],
+
+But what if @r[K1], @r[K2], @r[K3] themselves
+inherit from super objects @r[A], @r[B], @r[C], @r[D], @r[E],
 e.g. with @r[K1] inheriting from direct supers @r[A B C],
 @r[K2] inheriting from direct supers @r[D B E], and
 @r[K3] inheriting from direct supers @r[D A], and what more
 each of @r[A], @r[B], @r[C], @r[D], @r[E] inheriting from a base super object @r[O]?
+(See @(AppendixC) for details on this example.)
 
 With the basic object model offered by Nix, Jsonnet, or our @(section1),
 these dependencies couldn't be represented in the prototype itself.
@@ -1266,7 +1270,7 @@ as described in @seclink["Appendix_C"]{Appendix C}.
       (define c (caar ts))
       (if (candidate? c) c (loop (cdr ts)))))
   (let loop ((rhead (list x)) ;; : (NonEmptyList X)
-             (tails (remove-nulls (append super-precedence-lists [supers])))) ;; : (List (NonEmptyList X))
+             (tails (remove-nulls (append super-precedence-lists (list supers))))) ;; : (List (NonEmptyList X))
     (cond ((null? tails) (reverse rhead))
           ((null? (cdr tails)) (append-reverse rhead (car tails)))
           (else (let ((next (c3-select-next tails)))
@@ -2069,11 +2073,28 @@ To help with defining multiple inheritance, we'll also define the following help
 
 Here are some tests to check that our functions are working:
 
-@Examples{
+@;TODO: insert figure from Wikipedia article, with citation, and explanation.
+@;https://en.wikipedia.org/wiki/C3_linearization#/media/File:C3_linearization_example.svgg
+
+@Examples[
 (eval:check (map not-null? '(() (1) (a b c) nil)) '(#f #t #t #t))
 (eval:check (remove-nulls '((a b c) () (d e) () (f) () ())) '((a b c) (d e) (f)))
-}
 
+(define test-inheritance-dag-alist
+  '((O) (A O) (B O) (C O) (D O) (E O)
+    (K1 A B C) (K2 D B E) (K3 D A) (Z K1 K2 K3)))
+(define (test-get-supers x) (cdr (assoc x test-inheritance-dag-alist)))
+(define (test-compute-precedence-list x)
+  (c3-compute-precedence-list x test-get-supers
+    (λ (x) (test-compute-precedence-list x))))
+
+]
+@;{
+'(eval:check (test-compute-precedence-list 'O) '(O))
+'(eval:check (test-compute-precedence-list 'A) '(A O))
+'(eval:check (test-compute-precedence-list 'K1) '(K1 A B C O))
+'(eval:check (test-compute-precedence-list 'Z) '(Z K1 K2 K3 D A B C E O))
+}
 
 @section[#:tag "Appendix_D"]{Note for code minimalists}
 
@@ -2102,8 +2123,8 @@ not counting newline, since we elide spaces:
 
 @(finalize-examples/module poof)
 
-@; TODO: comment out before to submit:
-@table-of-contents[]
-@;only works for HTML output: @local-table-of-contents[#:style 'immediate-only]
+@;;; TODO: comment out before to submit:
+@;@table-of-contents[]
+@;;;only works for HTML output: @local-table-of-contents[#:style 'immediate-only]
 
-@; TODO: add tests and examples beyond section 2, if only in an appendix.
+@;;; TODO: add tests and examples beyond section 2, if only in an appendix.
