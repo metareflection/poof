@@ -1512,7 +1512,7 @@ return the prototype that increments the super result by that number;
 it may also handle the merging of a @r[Dict] override returned by the method
 into the super @r[Dict] provided by its super method; etc.
 
-Here then is a generalization that subsumes the above @r[$slot-gen] or @r[$slot-gen/object]:
+Here then is a generalization that subsumes the above @r[$slot-gen] or @r[$slot/gen]:
 @Definitions[
 (define ($lens-gen setter getter wrapper method)
   (λ (cooked-self raw-super)
