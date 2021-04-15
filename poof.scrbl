@@ -2084,7 +2084,7 @@ and use as a test case below is taken from
 the Wikipedia article on C3 linearization@~cite{wikiC3},
 that usefully includes the following diagram:
 
-@(noindent) @image[#:scale 0.64]{C3_linearization_example.eps}
+@(noindent) @image[#:scale 0.67]{C3_linearization_example.eps}
 @;;; NB: The EPS file was converted using inkscape from the SVG originally at
 @;;; https://en.wikipedia.org/wiki/C3_linearization
 
