@@ -1,19 +1,7 @@
-#lang scribble/acmart @acmsmall @10pt @review @anonymous @natbib
-@; To be submitted to OOPSLA 2021? https://2021.splashcon.org/track/splash-2021-oopsla
+#lang scribble/acmart @acmsmall @10pt @natbib
+@; Submitted to OOPSLA 2021 https://2021.splashcon.org/track/splash-2021-oopsla
 
-@title{Prototype Object-Orientation Functionally}
-
-@abstract{
-This paper elucidates the essence of Object-Oriented Programming (OOP),
-independent of idiosyncrasies of past incarnations.
-We reconstruct OOP in a pure lazy functional style with dynamic or dependent types.
-We build protototype-based objects first, then class-based objects as a special case.
-We illustrate our reconstruction in Scheme.
-
-Using our approach, any language that contains the untyped lambda calculus
-can now implement an object system in handful of functions or about 30 lines of code.
-Multiple inheritance can be implemented in an additional 50 lines of code.
-}
+@title{Prototypes: Object-Orientation, Functionally}
 
 @author[
   #:email (email "fare@mukn.io")
@@ -28,6 +16,17 @@ Multiple inheritance can be implemented in an additional 50 lines of code.
   #:affiliation (affiliation #:institution @institution{@emph{Harvard University}})
 ]{Nada Amin}
 
+@abstract{
+This paper elucidates the essence of Object-Oriented Programming (OOP),
+independent of idiosyncrasies of past incarnations.
+We reconstruct OOP in a pure lazy functional style with dynamic or dependent types.
+We build protototype-based objects first, then class-based objects as a special case.
+We illustrate our reconstruction in Scheme.
+
+Using our approach, any language that contains the untyped lambda calculus
+can now implement an object system in handful of functions or about 30 lines of code.
+Multiple inheritance can be implemented in an additional 50 lines of code.
+}
 
 @(require scriblib/bibtex
           (only-in scribble/core make-paragraph make-style)
@@ -41,17 +40,23 @@ Multiple inheritance can be implemented in an additional 50 lines of code.
           "util/examples-module.rkt"
           (for-label racket))
 
-
 @;@(current-pygmentize-default-style 'colorful)
 @(define (minted x . foo) (apply verbatim foo))
 
-@(define (pretitle #:raw (raw #f) content)
-  (make-paragraph
-   (make-style 'pretitle (if raw '(exact-chars) '()))
-   content))
-@(pretitle @elem[#:style (make-style "setcopyright" '())]{none})
-@;@(pretitle @elem[#:style (make-style "setcounter{tocdepth}" '())]{2})
-@(define (noindent) @elem[#:style (make-style #f '(exact-chars))]{\noindent})
+@(define (pretitle content) (make-paragraph (make-style 'pretitle '()) content))
+@(define (tex . args) (apply elem #:style (make-style #f '(exact-chars)) args))
+@(define (noindent) @tex{\noindent})
+
+@pretitle{@tex{
+\acmYear{2021}
+\copyrightyear{2021}
+\acmConference[IN SUBMISSION]{some future conference that will hopefully accept this paper}{some future date}{some future place}
+%\acmConference[IN SUBMISSION TO OOPSLA 2021]{some future conference that will hopefully accept this paper}{October 17--22 2021}{Chicago, Illinois}
+\acmISBN{978-1-xxxx-xxxx-x/21/10}
+\acmPrice{00.00}
+\acmDOI{https://dx.doi.org/xx.xxxx/xxxxxxx.xxxxxxx}
+\setcopyright{none}
+}}
 
 @(define (~nocite . x) (let ((_ (apply @~cite x))) (void)))
 
@@ -423,7 +428,7 @@ and @r[2] respectively, we can use:
 
 Interestingly, the above approach to objects is essentially equivalent,
 though not exactly isomorphic, to what Yale T had in 1981@~cite{adams88oopscheme}.
-T was notably reprised by YASOS in 1992@~cite{dickey1992scheming}
+This object system was notably reprised by YASOS in 1992@~cite{dickey1992scheming}
 and distributed with SLIB since.
 There are minor differences: what we call “instance”, T calls “object” or “instance”,
 but instead of “prototypes” it has “components” with a slightly different API.
@@ -477,7 +482,7 @@ super2 : Super2
 When writing long-form functions, instead of vying for conciseness, we will
 use the same naming conventions as in the function above:
 @itemize[
- @item{@r[child] (or @r[this]) for a @emph{prototype} at hand, in leftmost position;}
+ @item{@r[child] for a @emph{prototype} at hand, in leftmost position;}
  @item{@r[parent] for a @emph{prototype} that is being mixed with, in latter position;}
  @item{@r[self] for the @emph{instance} that is a fixed point of the computation;}
  @item{@r[super] for the @emph{instance} so-far accumulated or at the base of the computation.}
@@ -1414,7 +1419,7 @@ a typeclass instance (rough analogue to methods of generic functions)
 in a file other than one where either the typeclass is defined (analogous to generic functions)
 or the type is defined (analogous to objects).
 The language offers weak guarantees in such situations.
-One way to avoid orphan situations might be to declare
+One way to avoid “orphan” situations might be to declare
 either new typeclasses (new generic functions) or newtype aliases (new objects)
 that will shadow or replace the previous ones in the rest of the program;
 but this is a non-local and non-composable transformation
@@ -1823,7 +1828,9 @@ the standard functions @r[every] and @r[filter].
 @(noindent)
 We will now test this linearization algorithm on the inheritance graph from @(section43).
 This test case was originally taken from the Wikipedia article on C3 linearization@~cite{wikiC3},
-that usefully includes the following diagram:
+that usefully includes the following diagram
+(that nevertheless fails to represent the ordering constraints imposed on A, B, C, D, E
+by their order of appearance in the supers list of K1, K2, K3):
 
 @(noindent) @image[#:scale 0.67]{C3_linearization_example.eps}
 @;;; NB: The EPS file was converted using inkscape from the SVG originally at
@@ -2170,8 +2177,6 @@ not counting newline, since we elide spaces:
 
 @(finalize-examples/module poof)
 
-@;;; TODO: comment out before to submit:
+@;;; Make sure to comment this out before to submit:
 @;@table-of-contents[]
 @;;;only works for HTML output: @local-table-of-contents[#:style 'immediate-only]
-
-@;;; TODO: add tests and examples beyond section 2, if only in an appendix.

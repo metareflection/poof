@@ -4,6 +4,10 @@ compiled/
 # Scribble-generated files
 poof.pdf
 poof.tex
+poof.aux
+poof.log
+poof.out
+C3_linearization_example-eps-converted-to.pdf
 minted-colorful-style.tex
 acmart.cls
 

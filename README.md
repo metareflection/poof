@@ -1,10 +1,11 @@
-# POOF: Prototype Object Orientation Functionally
+# Prototypes: Object Orientation, Functionally
 
-This directory contains a Racket Scribble document [`poof.scrbl`](poof.scrbl)
-that is simultaneously a printable document and a runnable library,
+This directory contains a Racket Scribble document [`poof.scrbl`](poof.scrbl),
+simultaneously a printable document and a runnable library,
 that reconstructs the essence of Object-Oriented Programming (OOP)
-from the point of view of pure Functional Programming (FP) with dynamic or dependent types,
-using Scheme as the illustration language.
+from the point of view of pure Functional Programming (FP), with dynamic or dependent types,
+using Prototypes as the fundamental abstraction,
+and Scheme as the illustration language.
 
 The document was submitted to [OOPSLA 2021](https://2021.splashcon.org/track/splash-2021-oopsla).
 
