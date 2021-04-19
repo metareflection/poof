@@ -1,4 +1,5 @@
 #lang scribble/acmart @acmsmall @10pt @natbib
+@; @authordraft
 @; Submitted to OOPSLA 2021 https://2021.splashcon.org/track/splash-2021-oopsla
 
 @title{Prototypes: Object-Orientation, Functionally}
@@ -6,7 +7,7 @@
 @author[
   #:email (email "fare@mukn.io")
   #:affiliation (affiliation #:institution @institution{@emph{Mutual Knowledge Systems, Inc.}})
-]{Francois-Rene Rideau}
+]{François-René Rideau}
 @author[
   #:email (email "alexknauth@mukn.io")
   #:affiliation (affiliation #:institution @institution{@emph{Mutual Knowledge Systems, Inc.}})
@@ -40,52 +41,19 @@ Multiple inheritance can be implemented in an additional 50 lines of code.
           "util/examples-module.rkt"
           (for-label racket))
 
-@;@(current-pygmentize-default-style 'colorful)
-@(define (minted x . foo) (apply verbatim foo))
-
+@;@(define (nix . foo) (apply minted "nix" foo))
+@(define (nix . foo) (apply verbatim foo))
 @(define (pretitle content) (make-paragraph (make-style 'pretitle '()) content))
 @(define (tex . args) (apply elem #:style (make-style #f '(exact-chars)) args))
 @(define (noindent) @tex{\noindent})
-
-@pretitle{@tex{
-\acmYear{2021}
-\copyrightyear{2021}
-\acmConference[IN SUBMISSION]{some future conference that will hopefully accept this paper}{some future date}{some future place}
-%\acmConference[IN SUBMISSION TO OOPSLA 2021]{some future conference that will hopefully accept this paper}{October 17--22 2021}{Chicago, Illinois}
-\acmISBN{978-1-xxxx-xxxx-x/21/10}
-\acmPrice{00.00}
-\acmDOI{https://dx.doi.org/xx.xxxx/xxxxxxx.xxxxxxx}
-\setcopyright{none}
-}}
-
 @(define (~nocite . x) (let ((_ (apply @~cite x))) (void)))
-
-@(declare-examples/module poof racket
-   (provide (all-defined-out)))
-@examples/module[poof #:hidden
-(require (only-in racket/base [define def])
-         srfi/1
-         "util/eval-check.rkt")
-@;{TODO:
-Some lighter syntax than code:comment.
-Get scribble/comment-reader to work?
-Manual traversal of the syntax object?
-}
-]
-
 
 @(define-simple-macro (r a ...) (racket a ...))
 @(define-simple-macro (Definitions a ...) (examples/module poof #:no-result a ...))
 @(define-simple-macro (Examples a ...) (examples #:eval poof #:no-result a ...))
 @(define-simple-macro (Checks a ...) (examples #:eval poof #:label #f a ...))
 
-@;{TODO: For Checks, instead of
-> (+ 1 1)
-2
-rather have
-(+ 1 1)
-;=> 2
-}
+@(define-bibtex-cite "poof.bib" ~cite citet generate-bibliography)
 
 @(define (section1) @seclink["Prototypes_bottom_up"]{section 1})
 @(define (section2) @seclink["pure_objective_fun"]{section 2})
@@ -100,7 +68,39 @@ rather have
 @(define (AppendixB) @seclink["Appendix_B"]{Appendix B})
 @(define (AppendixC) @seclink["Appendix_C"]{Appendix C})
 
-@(define-bibtex-cite "poof.bib" ~cite citet generate-bibliography)
+@(declare-examples/module poof racket
+   (provide (all-defined-out)))
+@examples/module[poof #:hidden
+(require (only-in racket/base [define def])
+         srfi/1
+         "util/eval-check.rkt")
+@;{TODO:
+Some lighter syntax than code:comment.
+Get scribble/comment-reader to work?
+Manual traversal of the syntax object?
+}
+]
+
+@;{TODO: For Checks, instead of
+> (+ 1 1)
+2
+rather have
+(+ 1 1)
+;=> 2
+}
+
+@;@(current-pygmentize-default-style 'colorful)
+@pretitle{
+@tex{
+\acmYear{2021}
+\copyrightyear{2021}
+\acmConference[IN SUBMISSION]{some future conference that will hopefully accept this paper}{2021 or later}{some future place}
+%\acmConference[IN SUBMISSION TO OOPSLA 2021]{some future conference that will hopefully accept this paper}{October 17--22 2021}{Chicago, Illinois}
+\acmISBN{978-1-xxxx-xxxx-x/21/10}
+\acmPrice{00.00}
+\acmDOI{https://dx.doi.org/xx.xxxx/xxxxxxx.xxxxxxx}
+\setcopyright{none}
+}}
 
 @section[#:tag "Prototypes_bottom_up"]{Prototypes, bottom up}
 
@@ -1126,11 +1126,11 @@ In Nix, interestingly, there are several unassuming variants of the same object 
 that each store the prototype information in one or several special fields of the @r[attrset]
 that is otherwise used for instance information.
 Thus, in the simplest Nix object system, one could write:
-@minted["nix"]|{
+@nix|{
   fix' (self: { x = 1; y = 2 + self.x; })
 }|
 and it would evaluate to an attrset equivalent to:
-@minted["nix"]|{
+@nix|{
   { x = 1; y = 3; __unfix__ = self: { x = 1; y = 2 + self.x; }; }
 }|
 Nix contains many variants of the same object system, that use one or several of
@@ -2068,7 +2068,7 @@ respect to the garbage collector, and you'll eventually dance fandango on core.
 
 Yet, in a lazy languages, the above definition works!
 Indeed in Nix, you can write the equivalent definition:
-@minted["nix"]{
+@nix{
   let fix = p: b: let f = p f b; in f
 }
 @(noindent)

@@ -11,7 +11,8 @@ PDFVIEWER=open
 endif
 
 poof.pdf: poof.scrbl poof.bib header.tex util/eval-check.rkt util/examples-module.rkt
-	scribble --pdf --style header.tex poof.scrbl
+#scribble --pdf --style header.tex poof.scrbl
+	scribble --pdf poof.scrbl
 
 pdf: poof.pdf
 
