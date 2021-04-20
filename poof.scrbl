@@ -1653,7 +1653,7 @@ They also correspond to the “vtable” describing an “object”'s type at ru
 in implementations of class-based OOP languages.
 Indeed, the correspondance can be made formal, with automated transformations
 between the two styles@~cite{LIL2012}.
-Not however how “object” denotes very different notions in the two styles:
+Note however how “object” denotes very different notions in the two styles:
 what is called “object” in class-based OOP is the notional pair of
 the type descriptor and the type element,
 whereas the type descriptor is (an instance of) an “object” in our prototype-based formalism,
@@ -1757,7 +1757,7 @@ At the opposite end of the spectrum, the object system may assume purity-by-defa
 and cache all the computations it can.
 It is then up to users to explicitly create cells to make some things mutable,
 or flush some caches when appropriate.
-We used this option in@citet{GerbilPOO}.
+We used this option in @citet{GerbilPOO}.
 
 In between these two opposites, the system can automatically track which mutations happen,
 and invalidate those caches that need be, with a tradeoff between how cheap it will be
