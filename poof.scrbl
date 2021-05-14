@@ -158,6 +158,7 @@ a function from @r[Self] and @r[Super] to @r[Self].
 (code:comment "(deftype (Proto Self Super) (Fun Self Super -> Self st: (<: Self Super)))")
 (code:comment "fix : (Fun (Proto Self Super) Super -> Self st: (<: Self Super))")
 (code:comment "mix : (Fun (Proto Self Super) (Proto Super Sup2) -> (Proto Self Sup2))")
+(code:comment "Note: \"<:\" is a Type Constraint for subtyping (see Appendix B.4)")
 ]
 
 @(noindent)
@@ -263,7 +264,7 @@ imaginary values bound to the respective slots @r[x] and @r[y] of its
 ]
 
 @(noindent)
-That prototype doubles the number in slot @r[x] that it @emph{inherits} from its @r[super] record:
+This prototype doubles the number in slot @r[x] that it @emph{inherits} from its @r[super] record:
 @Examples[
 (code:comment "$double-x : (Proto (Fun 'x -> Number | A) (Fun 'x -> Number | A))")
 (define ($double-x self super)
