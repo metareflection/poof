@@ -106,7 +106,7 @@ rather have
 
 @subsection{The Essence of OOP}
 
-@subsubsection{Object Orientation in 109 characters of standard Scheme}
+@subsubsection{Object Orientation in 26 symbols of standard Scheme}
 
 @Definitions[
 (define (fix p b) (define f (p (lambda i (apply f i)) b)) f)
@@ -2153,26 +2153,27 @@ And if you don't even like @r[letrec], you can use a Y-combinator variant: @; TO
 @section[#:tag "Appendix_D"]{Note for code minimalists}
 
 In our introduction, we described the @r[fix] and @r[mix] functions
-in only 109 characters of Scheme.
+in only 26 symbols or 109 characters of Scheme.
 We can do even shorter with various extensions.
 MIT Scheme and after it Racket, Gerbil Scheme, and more,
-allow you to curried function definitions:
+allow you to curried function definitions, to cut 1 symbol and 9 characters.
 @Examples[
 (define ((mix p q) f b) (p f (q f b)))
 ]
 @(noindent)
-And then we'd have Object Orientation in 100 characters only.
+And then we'd have Object Orientation in only 25 symbols, 100 characters.
 
-Then again, in Gerbil Scheme, we could get it down to only 86, counting newline:
+Then again, in Gerbil Scheme, we could get it down to only 24 symbols,
+and 88 characters, counting newline:
 @racketblock[
-(def (fix p b) (def f (p (lambda i (apply f i)) b)) f)
+(def (fix p b) (def f (p (cut apply f <>) b)) f)
 ]
 
 @(noindent)
-Or, compressing spaces, to 78,
+Or, compressing spaces, to 24 symbols and 73 characters,
 not counting newline, since we elide spaces:
 @racketblock[
-(def(fix p b)(def f(p(lambda i(apply f i))b))f)(def((mix p q)f b)(p f(q f b)))
+(def(fix p b)(def f(p(cut apply f <>)b))f)(def((mix p q)f b)(p f(q f b)))
 ]
 
 @(finalize-examples/module poof)
