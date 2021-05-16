@@ -29,3 +29,8 @@ prerequisites:
 	for i in scribble-abbrevs scribble-minted scribble-math ; do \
 	  raco pkg install $$i ; \
 	done
+
+# Publishing on fare's server http://fare.tunes.org/files/cs/poof.pdf
+fare: poof.pdf
+	cp $< ~/files/cs/
+	rsync -av $< bespin:files/cs/
