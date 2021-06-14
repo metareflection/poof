@@ -7,8 +7,12 @@ from the point of view of pure Functional Programming (FP), with dynamic or depe
 using Prototypes as the fundamental abstraction,
 and Scheme as the illustration language.
 
+## License
+
 The code herein is available as free software under the Apache License, version 2.0.
 See the file [LICENSE](LICENSE).
+
+## Build instructions
 
 To create the document:
 
@@ -23,3 +27,10 @@ To run the tests:
 To load the library and experiment with it at the REPL:
 
     make repl
+
+## Related Talk by Same Authors
+
+- François-René Rideau, *Prototype Object Programming in Gerbil Scheme*,
+  talk given on 2020-11-07 at LispNYC,
+  [video](https://vimeo.com/495817581),
+  [notes](https://github.com/fare/gerbil-poo/blob/master/doc/prototypes.md).

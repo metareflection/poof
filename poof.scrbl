@@ -1,4 +1,5 @@
-#lang scribble/acmart @acmsmall @10pt @natbib
+#lang scribble/acmart @acmsmall @review @anonymous
+@; @10pt @natbib
 @; @authordraft
 @; Submitted to OOPSLA 2021 https://2021.splashcon.org/track/splash-2021-oopsla
 
@@ -19,14 +20,16 @@
 
 @abstract{
 This paper elucidates the essence of Object-Oriented Programming (OOP),
-independent of idiosyncrasies of past incarnations.
-We reconstruct OOP in a pure lazy functional style with dynamic or dependent types.
-We build protototype-based objects first, then class-based objects as a special case.
-We illustrate our reconstruction in Scheme.
-
-Using our approach, any language that contains the untyped lambda calculus
-can now implement an object system in handful of functions or about 30 lines of code.
-Multiple inheritance can be implemented in an additional 50 lines of code.
+using a constructive approach:
+we identify a minimal basis of concepts with which to synthesize
+all existing and potential object systems.
+We reduce them to constructions atop the pure untyped lambda calculus,
+thereby obtaining both denotational semantics and effective implementation.
+We start from the simplest recognizable model of prototype-based OOP,
+so simple it arguably does not even have “objects” as such.
+We build further models of increasing sophistication, reproducing a growing subset of features
+found in past object systems, including original combinations.
+We also examine how our approach can deal with issues like typing, modularity, classes, mutation.
 }
 
 @(require scriblib/bibtex
@@ -53,20 +56,26 @@ Multiple inheritance can be implemented in an additional 50 lines of code.
 @(define-simple-macro (Examples a ...) (examples #:eval poof #:no-result a ...))
 @(define-simple-macro (Checks a ...) (examples #:eval poof #:label #f a ...))
 
+@;@(define (simplelist . l) (map (lambda (x) (list (linebreak) x)) l))
+@(define (simplelist . l) (apply itemize (map (lambda (x) (item x)) l)))
+
 @(define-bibtex-cite "poof.bib" ~cite citet generate-bibliography)
 
-@(define (section1) @seclink["Prototypes_bottom_up"]{section 1})
-@(define (section2) @seclink["pure_objective_fun"]{section 2})
-@(define (section3) @seclink["beyond_objects"]{section 3})
-@(define (section34) @seclink["without_subtyping"]{section 3.4})
-@(define (section4) @seclink["Better_objects"]{section 4})
-@(define (section43) @seclink["multiple_inheritance"]{section 4.3})
-@(define (section5) @seclink["Classes"]{section 5})
-@(define (section6) @seclink["Mutability"]{section 6})
-@(define (section7) @seclink["Future_Work"]{section 7})
-@(define (AppendixA) @seclink["Appendix_A"]{Appendix A})
-@(define (AppendixB) @seclink["Appendix_B"]{Appendix B})
-@(define (AppendixC) @seclink["Appendix_C"]{Appendix C})
+@(define-simple-macro (defsection name tag text) (define (name (x text)) (seclink tag x)))
+@(defsection section1 "Prototypes_bottom_up" "section 1")
+@(defsection section2 "pure_objective_fun" "section 2")
+@(defsection section3 "beyond_objects" "section 3")
+@(defsection section34 "without_subtyping" "section 3.4")
+@(defsection section4 "Better_objects" "section 4")
+@(defsection section42 "unifying_instance_prototype" "section 4.2")
+@(defsection section43 "multiple_inheritance" "section 4.3")
+@(defsection section5 "Classes" "section 5")
+@(defsection section6 "Mutability" "section 6")
+@(defsection section7 "Related_Works" "section 7")
+@(defsection section8 "Future_Works" "section 8")
+@(defsection AppendixA "Appendix_A" "Appendix A")
+@(defsection AppendixB "Appendix_B" "Appendix B")
+@(defsection AppendixC "Appendix_C" "Appendix C")
 
 @(declare-examples/module poof racket
    (provide (all-defined-out)))
@@ -95,7 +104,6 @@ rather have
 \acmYear{2021}
 \copyrightyear{2021}
 \acmConference[IN SUBMISSION]{some future conference that will hopefully accept this paper}{2021 or later}{some future place}
-%\acmConference[IN SUBMISSION TO OOPSLA 2021]{some future conference that will hopefully accept this paper}{October 17--22 2021}{Chicago, Illinois}
 \acmISBN{978-1-xxxx-xxxx-x/21/10}
 \acmPrice{00.00}
 \acmDOI{https://dx.doi.org/xx.xxxx/xxxxxxx.xxxxxxx}
@@ -119,7 +127,25 @@ the essence of Object-Oriented Programming (OOP), and that
 all the usual OOP concepts can be easily recovered from them—all while
 staying within the framework of pure Functional Programming (FP).
 
-@subsubsection{Plan of this Essay}
+@subsubsection{Claims}
+Our approach emphasizes the following original contributions:
+@simplelist[
+@list{(a) the conceptual distinction between
+  instances, prototypes, generators and wrappers @section1{(1)},
+  objects @section42{(4.2)}, classes and class instances @section5{(5)},}
+@list{(b) @emph{composition} of wrappers rather than their @emph{application} to a generator
+  as the algebraic structure of interest (@section1{1}, @section3{3})}
+@list{(c) explanations of both @emph{why} multiple inheritance is useful
+  and @emph{how} to formalize it @section43{(4.3)},}
+@list{(d) how to derive class OOP from the more primitive prototype OOP @section5{(5)},}
+@list{(e) a pure functional approach that provides not only denotational semantics
+  atop the pure untyped lambda-calculus, but also a practical constructive implementation,}
+@list{(f) a constructive model that unlike common in OOP implementations
+  does not rely on mutation (@section1{1}, @section2{2}, @section3{3}),
+  yet that can be extended to play well with it @section6{(6)}.}
+]
+
+@subsubsection{Plan}
 
 In @(section1), we explain how the above functions
 implement a minimal but recognizable model of OOP,
@@ -133,7 +159,8 @@ more advanced features of OOP.
 In @(section5), we demonstrate how classes are “just” prototypes for type descriptors.
 In @(section6), we discuss our pure functional model relates
 to models with mutable objects.
-Finally in @(section7), we propose a path for further research.
+In @(section7), we compare our work to salient papers in fifty years of research on OOP.
+Finally in @(section8), we propose a path for further research.
 Along the way, we relate our approach to both OOP and FP traditions, both decades-old and recent.
 
 @subsubsection{Modular Increments of Computation}
@@ -408,7 +435,7 @@ Here is a universal bottom function to use as the base for fix:
 ]
 
 @(noindent)
-To define a record with a single slot @r[foo] bound to @r[0], we can use:
+To define a record with a single slot @r[x] bound to @r[3], we can use:
 @Checks[
 (code:comment "x3 : (Fun 'x -> Nat)")
 (define x3 (fix $x3 bottom-record))
@@ -498,8 +525,8 @@ to yet another instance of the subtype @r[Self].
 @subsubsection{Composing prototypes}
 
 The identity prototype as follows is neutral element for mix.
-It doesn't override any information from the super/base object,
-but only passes it through. It also doesn't consult information in
+It does not override any information from the super/base object,
+but only passes it through. It also does not consult information in
 the final fixed-point nor refers to it.
 @Definitions[
 (code:comment "identity-prototype : (Proto Instance Instance)")
@@ -911,7 +938,7 @@ sports an object system that is semantically equivalent to that of Nix,
 published one year before Nix's extension system was invented.
 Jsonnet itself was invented as a simplified semantic reconstruction of the essential ideas
 behind GCL, the decade-older Google Configuration Language used everywhere inside Google.
-GCL also wasn't explicitly designed as OOP, yet ended up having discovered
+GCL also was not explicitly designed as OOP, yet ended up having discovered
 an excellent point in the design space, despite the reputed overall clunkiness of the language.
 
 A notable difference between Nix and Jsonnet is that
@@ -976,7 +1003,7 @@ with the following monomorphic types:
 (code:comment "mix : (Fun (MProto A) (MProto A) -> (MProto A))")
 ]
 @(noindent)
-As per the previous discussion, if the language doesn't use lazy evaluation,
+As per the previous discussion, if the language does not use lazy evaluation,
 @r[A]'s may be constrained to be functions, or to they may have to be wrapped
 inside a @r[Lazy] or @r[delay] special form.
 
@@ -1001,7 +1028,7 @@ can we also reimplement the more advanced features of object systems of yore?
 
 @subsubsection{Both feature and bug in OOP snake-oil literature}
 When representing objects as functions from symbol to value,
-it isn't generally possible to access the list of symbols that constitute valid keys.
+it is not generally possible to access the list of symbols that constitute valid keys.
 Most “object” systems do not allow for this kind of introspection at runtime,
 and a 1990s marketing department would probably tout that
 as some kind of ill-defined “encapsulation” or “information hiding” feature
@@ -1085,7 +1112,7 @@ Yet, the representation given in @(section1) is a good guide to the semantics of
 and the conceptual distinction between instance and prototype is instrumental to keeping this semantics
 simple and understandable.
 
-@subsection{Unifying Instances and Prototypes}
+@subsection[#:tag "unifying_instance_prototype"]{Unifying Instances and Prototypes}
 
 @subsubsection{OOP without Objects}
 While the distinction between instance and prototype is essential,
@@ -1152,7 +1179,7 @@ disjoint from the regular pair type.
 Thus, we can distinguish objects from regular lists, and
 hook into the printer to offer a nice way to print instance information
 that users are usually interested in while skipping prototype information
-that they usually aren't.
+that they usually are not.
 
 To reproduce the semantics of Jsonnet@~cite{jsonnet},
 instances will be a delayed @r[Dict] (as per @(section2)),
@@ -1206,7 +1233,7 @@ each of @r[A], @r[B], @r[C], @r[D], @r[E] inheriting from a base super object @r
 (See @(AppendixA) for details on this example.)
 
 With the basic object model offered by Nix, Jsonnet, or our @(section1),
-these dependencies couldn't be represented in the prototype itself.
+these dependencies could not be represented in the prototype itself.
 If the programmer tried to “always pre-mix” its dependencies into a prototype,
 then @r[K1] would be a pre-mix @r[K1 A B C O],
 @r[K2] would be a pre-mix @r[K2 D B E O],
@@ -1216,7 +1243,7 @@ and when trying to specify @r[Z], the pre-mix
 with unwanted repetitions of @r[A], @r[B], @r[D], @r[O]
 redoing their effects too many times and possibly undoing overrides made by @r[K2] and @r[K3].
 Instead, the programmer would have to somehow remember and track those dependencies,
-such that when he instantiates @r[Z], he won't write just @r[Z],
+such that when he instantiates @r[Z], he will not write just @r[Z],
 but @r[Z] followed a topologically sorted @emph{precedence list}
 where each of the transitive dependencies appears once and only once,
 e.g. @r[Z K1 K2 K3 D A B C E O].
@@ -1430,7 +1457,7 @@ a “negative” cache of methods previously assumed to be absent,
 and issue a warning or error when a new method is introduced that conflicts with such an assumption.
 
 Then again, a solution might be to eschew purity and embrace side-effects:
-the original T just didn't cache method invocation results, and
+the original T just did not cache method invocation results, and
 re-ran fixed-point computations, with their possible side-effects,
 at every method invocation (objects can specify their own explicit cache when desired).
 The behavior of new generic functions on previously existing objects would be optionally specified
@@ -1554,7 +1581,7 @@ This reconstruction will shed light on the essence of the relationship between c
 In our reconstruction, a @emph{class} is “just” a prototype for type descriptors.
 Type descriptors, as detailed below, are a runtime data structure
 describing what operations are available to recognize and deal with elements of the given type.
-Type descriptors therefore don't have to themselves be objects,
+Type descriptors therefore do not have to themselves be objects,
 and no mention of objects is required to describe type descriptors themselves.
 They can be just a type on which to apply the monomorphic prototypes of @(section34).
 Still, it is typical in OOP to conflate into a “class” both the instance of a type descriptor
@@ -1575,7 +1602,7 @@ whereas only prototype-based languages have first-class classes.
 @subsubsection{I/O Validation and Beyond}
 One common programming problem is validation of data at the inputs and outputs of programs.
 Static types solve the easy cases of validation in languages that have them.
-Dynamically typed languages can't use this tool so often grow libraries
+Dynamically typed languages cannot use this tool so often grow libraries
 of “type descriptors” or “data schemas”, etc.
 
 These runtime type descriptors often contain more information
@@ -1665,7 +1692,7 @@ that themselves may or may not be objects.
 @subsection{Mutability as Pure Linearity}
 @subsubsection{From Pure to Mutable and Back}
 Note how all the objects and functions defined in previous sections were pure.
-They didn't use any side-effect.
+They did not use any side-effect.
 No @r[set!]. No @r[call/cc]. Only laziness at times, which still counts as pure.
 This contrasts with all OOP literature from the 1960s to the 1980s, and most since.
 But what if we are OK with side-effects? How much does that simplify computations?
@@ -1771,7 +1798,9 @@ reactive or incremental programming. @;TODO: @~cite{}
 @;;; so they appear in the bibliography, that is being computed before the appendices.
 @~nocite{Barrett96amonotonic wikiC3}
 
-@section[#:tag "Future_Work"]{Future Work}
+@section[#:tag "Relatred_Works"]{Related Works}
+
+@section[#:tag "Future_Works"]{Future Works}
 
 Using the ideas in this essay, we have implemented in both Nix and Scheme
 object systems with unified instances and prototypes and multiple inheritance,
@@ -1864,7 +1893,7 @@ To help with defining multiple inheritance, we'll also define the following help
 @c3-extra-definitions
 
 @;{ Memoizing?
-;; II.1.2- Memoizing values, so field access isn't O(n) every time.
+;; II.1.2- Memoizing values, so field access is not O(n) every time.
 ;; Usage: Put memoize-proto as first prototype.
 ;; NB1: Memoization uses side-effects internally, but does not expose them.
 ;; NB2: It's still O(n^2) overall rather than O(n); we can do better, later.
@@ -2048,9 +2077,9 @@ Here is how we want a fixed point to look like:
   f)
 ]
 @(noindent)
-Unhappily, this doesn't work in Scheme, because Scheme is eager:
+Unhappily, this does not work in Scheme, because Scheme is eager:
 the call to @r[p] needs to fully evaluate its arguments,
-but @r[f] hasn't been fully defined yet, so the call is invalid.
+but @r[f] has not been fully defined yet, so the call is invalid.
 Some Scheme implementations may detect that this definition tries to use
 @r[f] before it is defined and raise an error at compile-time.
 Some implementations will initially bind @r[f] to a magic “unbound” marker,
@@ -2066,7 +2095,7 @@ before the data frame was even properly initialized at all,
 and some random low-level value is used that might not make sense with
 respect to the garbage collector, and you'll eventually dance fandango on core.
 
-Yet, in a lazy languages, the above definition works!
+Yet, in a lazy language, the above definition works!
 Indeed in Nix, you can write the equivalent definition:
 @nix{
   let fix = p: b: let f = p f b; in f
@@ -2092,7 +2121,7 @@ and not just for function types!
 
 So, how do we get around this issue without delay?
 One solution would be as follows---can you tell why it works,
-and why it isn't fully satisfactory?
+and why it is not fully satisfactory?
 @Examples[
 (define (fix--0 p b)
   (define (f . i) (apply (p f b) i))
@@ -2134,7 +2163,7 @@ after @r[f] is defined, but relies on @r[p] not causing its first argument
 to be called during its evaluation, only stored in a data structure
 or in a closure to be called later after @r[p] has returned.
 
-If you don't like internal defines, you can write the same function
+If you do not like internal defines, you can write the same function
 equivalently using @r[letrec], as:
 @Examples[
 (define (fix--2 p b)
@@ -2143,7 +2172,7 @@ equivalently using @r[letrec], as:
 ]
 
 @(noindent)
-And if you don't even like @r[letrec], you can use a Y-combinator variant: @; TODO cite
+And if you do not even like @r[letrec], you can use a Y-combinator variant: @; TODO cite
 @Examples[
 (define (fix--3 p b)
   ((lambda (yf) (yf yf))
