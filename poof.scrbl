@@ -57,9 +57,6 @@ We also examine how our approach can deal with issues like typing, modularity, c
 @(define-simple-macro (Examples a ...) (examples #:eval poof #:no-result a ...))
 @(define-simple-macro (Checks a ...) (examples #:eval poof #:label #f a ...))
 
-@;@(define (simplelist . l) (map (lambda (x) (list (linebreak) x)) l))
-@(define (simplelist . l) (apply itemize (map (lambda (x) (item x)) l)))
-
 @(define-bibtex-cite "poof.bib" ~cite citet generate-bibliography)
 
 @(define-simple-macro (defsection name tag text) (define (name (x text)) (seclink tag x)))
@@ -130,18 +127,19 @@ staying within the framework of pure Functional Programming (FP).
 
 @subsubsection{Claims}
 Our approach emphasizes the following original contributions:
-@simplelist[
-@list{(a) the conceptual distinction between
+@itemlist[
+#:style enumparenalph
+@item{the conceptual distinction between
   instances, prototypes, generators and wrappers @section1{(1)},
   objects @section42{(4.2)}, classes and class instances @section5{(5)},}
-@list{(b) @emph{composition} of wrappers rather than their @emph{application} to a generator
+@item{@emph{composition} of wrappers rather than their @emph{application} to a generator
   as the algebraic structure of interest (@section1{1}, @section3{3})}
-@list{(c) explanations of both @emph{why} multiple inheritance is useful
+@item{explanations of both @emph{why} multiple inheritance is useful
   and @emph{how} to formalize it @section43{(4.3)},}
-@list{(d) how to derive class OOP from the more primitive prototype OOP @section5{(5)},}
-@list{(e) a pure functional approach that provides not only denotational semantics
+@item{how to derive class OOP from the more primitive prototype OOP @section5{(5)},}
+@item{a pure functional approach that provides not only denotational semantics
   atop the pure untyped lambda-calculus, but also a practical constructive implementation,}
-@list{(f) a constructive model that unlike common in OOP implementations
+@item{a constructive model that unlike common in OOP implementations
   does not rely on mutation (@section1{1}, @section2{2}, @section3{3}),
   yet that can be extended to play well with it @section6{(6)}.}
 ]
