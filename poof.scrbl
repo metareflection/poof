@@ -166,20 +166,28 @@ Along the way, we relate our approach to both OOP and FP traditions, both decade
 OOP consists in specifying computations in modular increments
 each contributing their part based on the combined whole and the computation so far.
 
-We will realize these increments as @emph{prototypes}:
-functions of two arguments, @r[self] and @r[super]
+In general, we will call @emph{prototype} such a computation increment.
+In the rest of @(section1), we will present an initial model
+where a @emph{prototype} will be encoded as @emph{prototype function}:
+a function of two arguments, @r[self] and @r[super]
 (or, above, @r[f] and @r[b], for fixed-point and base value).
+In @(section4), we will enrich prototypes to be more than prototype functions,
+so as to model more advanced OOP features;
+but until then, we will use the two interchangeably.
+
+Prototypes come with two primary operations.
 Function @r[fix] @emph{instantiates} a prototype @r[p]
 given a super/base value @r[b].
 Function @r[mix] has @emph{child} prototype @r[c] @emph{inherit}
 from @emph{parent} prototype @r[p]
 so they operate on a same fixed-point @r[f]
-while chaining their effects on @r[b].
+while chaining their effects on @r[b], yielding a new prototype.
 
-Given some arbitrary instance type @r[Self],
+Given some instance type @r[Self]
 and a super-type @r[Super] of @r[Self],
 a prototype for @r[Self] from @r[Super] will thus be
 a function from @r[Self] and @r[Super] to @r[Self].
+In the type notation of @(AppendixB):
 @racketblock[
 (code:comment "(deftype (Proto Self Super) (Fun Self Super -> Self st: (<: Self Super)))")
 (code:comment "fix : (Fun (Proto Self Super) Super -> Self st: (<: Self Super))")
@@ -216,7 +224,7 @@ or override the method values inherited from the parent prototypes.
 
 The two definitions above can be easily translated to any language with closures
 and either dynamic types or dependent types. However, their potential is not
-fully realized in languages with mere parametric polymorphism.
+fully realized in languages with mere parametric polymorphism (see @(section34)).
 @; TODO: insert above reference to type discussion?
 Furthermore, for an @emph{efficient} implementation of objects with our formulas,
 we will also require lazy evaluation (see @(section3)),
@@ -276,9 +284,9 @@ slot @r[x] bound to @r[3]:
 ]
 
 @(noindent)
-This prototype computes a complex number slot @r[z] based on real and
-imaginary values bound to the respective slots @r[x] and @r[y] of its
-@r[self]:
+This prototype extends an a record with a new slot @r[z]
+bound to a complex number computed from real and imaginary values
+bound to the respective slots @r[x] and @r[y] of its @r[self]:
 @Examples[
 (code:comment "$z<-xy : (Proto (Fun (Or 'x 'y) -> Real | 'z -> Complex | A)")
 (code:comment "                (Fun (Or 'x 'y) -> Real | A))")
@@ -450,23 +458,6 @@ and @r[2] respectively, we can use:
 (eval:check (map x1-y2 '(x y)) '(1 2))
 ]
 
-@subsubsection{Back to 1981!}
-
-Interestingly, the above approach to objects is essentially equivalent,
-though not exactly isomorphic, to what Yale T had in 1981@~cite{adams88oopscheme}.
-This object system was notably reprised by YASOS in 1992@~cite{dickey1992scheming}
-and distributed with SLIB since.
-There are minor differences: what we call “instance”, T calls “object” or “instance”,
-but instead of “prototypes” it has “components” with a slightly different API.
-Also T assumes methods are all function-valued, to be immediately called
-when methods are looked up, as if all accesses to an object went through the @r[operate] function below.
-Methods in T can be directly represented as slots with a function value in our approach.
-Non-function-valued slots in our approach above can be represented in T
-by nullary methods returning a constant value.
-@Definitions[
-(define (operate instance selector . args) (apply (instance selector) args))
-]
-
 @subsection{Prototype Basics}
 
 @subsubsection{Long-form Basics}
@@ -622,7 +613,7 @@ a list of prototypes, and instantiates the composition of them:
 @(noindent)
 What if you @emph{really} wanted to instantiate your list of prototypes with some
 value @r[b] as the base super instance? “Just” tuck
-@r[(constant-prototype b)] at the tail end of your prototype list:
+@r[($constant-prototype b)] at the tail end of your prototype list:
 @Definitions[
 (code:comment "$constant-prototype : (Fun A -> (Proto A _))")
 (define ($constant-prototype base-super) (λ (__self __super) base-super))
@@ -1797,21 +1788,219 @@ reactive or incremental programming. @;TODO: @~cite{}
 @;;; so they appear in the bibliography, that is being computed before the appendices.
 @~nocite{Barrett96amonotonic wikiC3}
 
-@section[#:tag "Relatred_Works"]{Related Works}
+@section[#:tag "Related_Works"]{Related Works}
+
+@subsection{Prototype Object Systems}
+
+@subsubsection{Director and ThingLab}
+The first prototype object system might have been Director @~cite{Kahn1976 Kahn1979},
+an actor system to create animations from story constraints, written in MacLisp at MIT,
+and interoperating with LOGO, with inspiration from Smalltalk and AI research.
+The description published at UODIGS'76 is informal, but includes
+a modifiable hierarchy of message-passing objects that inherit from other objects
+to which they “pass the buck” when they receive a message that doesn't match any of
+the patterns they directly have rules for. The word “prototype” does not appear.
+
+At about the same time, ThingLab @~cite{Borning77 Borning86} implemented
+a “classless” object system atop Smalltalk,
+in which to specify the constraints of an environment to simulate.
+The project is in many ways very similar to Director, though implemented independently
+as part of a different tradition, with relatively little overlap between the two.
+
+Both systems were followed by many other similar systems in their respective traditions.
+
+@subsubsection{T}
+In 1981, Yale T Scheme included a mature variant of such an object system
+as part of a general-purpose programming environment.
+A paper was later published describing the object system@~cite{adams88oopscheme}.
+The implementation was optimized for efficiency using low-level tricks;
+no attempt was made at either generality or clean simple formal semantics.
+The T design was notably reprised by YASOS in 1992@~cite{dickey1992scheming}
+and distributed with SLIB since.
+@; TODO: cite!
+
+T's object system is already essentially equivalent to the initial design in our @(section1),
+though not exactly isomorphic.
+The major differences stem from T's heavy reliance on mutation whereas we aim at purity:
+T was running on resource-limited platforms by today's standards, and
+mutation was naturally ubiquitous, with explicit state management, and
+no attempt at implicitly caching effective method values.
+
+There are minor differences between our model and T's.
+Importantly, T lives by the slogan that “closures are a poor man's objects”
+and “objects are a poor man's closures”:
+T objects are callable functions that have extra named entry points;
+in our model we can add a special method for the default entry point,
+but we need language support to hook the regular function call syntax into that method.
+As for nomenclature, what we call “instance”, T calls “object” or “instance”,
+and instead of “prototypes” it has “components” with a slightly different API.
+Also, T assumes methods are all function-valued, to be immediately called when looked up,
+as if all accesses to an object in our model went through the @r[operate] function below.
+Methods in T can be directly represented as slots with a function value in our approach.
+Non-function-valued slots in our approach above can be represented in T
+by nullary methods returning a constant value.
+@Definitions[
+(define (operate instance selector . args) (apply (instance selector) args))
+]
+
+@subsubsection{1986 and beyond}
+In 1986 there were many publications@~cite{Lieberman1986 Borning86}
+that popularized the term and concept of “prototype”
+(and to a point of “delegation” for the variant of inheritance associated with prototypes).
+@;TODO: cite!
+
+That year also appeared SELF, a language in the Smalltalk tradition
+but with prototypes instead of classes.
+SELF was influential, notably thanks to its complete graphical environment
+that could run on SparcStations, then widespread in universities and research centers.
+However, SELF could only usably run on high-end workstations,
+despite many innovation to make it efficient@~cite{chambers1989efficient}.
+The optimization effort and ubiquitous mutation including of the inheritance hierarchy
+contributed to making its semantic model complex.
+
+JavaScript came out in 1994,
+with a prototype object system @~cite{EcmaScript:15 DBLP:journals/corr/GuhaSK15},
+and brought prototype object orientation to the masses.
+
+These systems were born in a time when resources were
+As with T above, these efforts happened in a stateful rather than pure context,
+optimizing for efficient implementation, and neither for
+generality nor for simplicity of the concepts and their semantics.
+
+@subsection{The Pure Functional Tradition}
+
+@subsubsection{Denotational Semantics}
+Kamin @; TODO Cite
+and Reddy@~cite{ObjectsAsClosures} used the objects as closures
+to offer formal semantics for Smalltalk.
+Cook@~cite{Cook1989} independently took the same approach, but made it more general.
+Cook's base model of inheritance is essentially the same that we use in @(section1),
+except specialized for records only.
+He calls “wrapper” what we call “prototype function”,
+and focuses on their application to “generators” without noting that they are composable.
+Cook then shows how his model can be adapted to successfully describe object inheritance
+in many statically typed class-based languages of his day.
+However, Cook doesn't try to account for any prototype object systems.
+Also, his informal treatment of multiple inheritance and other advanced features of Flavors
+fails to provide adequate formal account for their why and how.
+
+@subsubsection{GCL, Jsonnet, Nix}
+Dave Cunningham's Jsonnet in 2014 was the first publicly available language with prototype objects
+in the context of a pure lazy functional language with dynamic types.
+Jsonnet was the first language that made prototype composition
+the primary algebraic operation on objects;
+it also prominently features objects as combining two aspects,
+as instance and as prototype, in a same entity.
+As a minor yet notable point, Jsonnet also adds a feature to flag fields as either
+visible or hidden for the purpose of printing instances as JSON.
+Otherwise, the semantics of Jsonnet is essentially a direct instance of Cook's 1989 design.
+Jsonnet was initially made as a semantically and syntactically cleaner of GCL,
+the Google Configuration Lnguage, which remains unpublished.
+No academic publication was made on either GCL or Jsonnet,
+so it is unclear at this point what GCL did or did not contribute and when.
+
+Nix, another pure lazy functional language with dynamic types,
+used for configuring the NixOS operating system and nixpkgs software distribution,
+has been using many variants of an “extension system” since 2015.
+The initial one was contributed by Peter Simons to enable simultaneous support
+for multiple versions of GHC, which required overriding various parameters and library versions
+depending on the compiler version.
+It is essentially equivalent to Jsonnet's object system (minus the feature to flag fields as hidden),
+except done purely in userland in a couple of functions following Cook's 1989 model,
+when Jsonnet does it the hard way in C++ as builtin language constructs.
+However, the Nix community in general is largely in denial that its extension systems
+are themselves instances of prototype object systems, and it is unclear
+how much familiarity the author had with these systems when he built the first one.
+Also, although it does support prototype composition internally,
+the Nix API in practice is focused on the application of prototypes to generators,
+rather than on using prototypes as composable first-class entities in their own right.
+
+These two languages illustrate how prototype objects are a great fit
+to express complex yet flexible configurations.
+Pure functional programmers have unjustly neglected prototypes until recently
+because they do not fit in the type systems so far popular in their languages.
+
+@subsection{Types for Objects}
+
+@subsubsection{Encoding}
+Object Systems present a great challenge to authors of static type systems.
+This challenge is well summarized by Bruce et al.@~cite{BruceCardelliPierce2006},
+who describe the main typing models used when encoding objects in class-based languages,
+with an emphasis on enabling decidable static type inference.
+Their simplest model, OR, describes Cook's 1989 and our base inheritance model.
+The types we offer are similar, except that we make explicit a subtyping constraint they leave implicit.
+Importantly though, they focus on class-based systems.
+Most prototype computations would happen at the type-level in their model,
+which would require dependent types, or some notion of staged computations.
+Finally, they focus on generators, and no model of prototype functions as such,
+their composition, the conflation or not of instance and prototypes, multiple inheritance, etc.
+Their three other encodings OE, ORE, ORBE seem to be tailored to class-based OOP,
+and might not directly apply to prototype-based OOP.
+Yet, we conjecture they might naturally emerge when using our reduction of class-based OOP
+to prototype-based OOP; the differences between these encodings could then be expressed as
+different applications of the lens-based approach we propose in our section 4.5.2.
+
+@subsection{Other Relevant Object Systems}
+
+@subsubsection{The Lisp tradition}
+The Lisp tradition also included many object systems
+that adopted mainstream class-based OOP, yet innovated in different ways:
+Flavors@~cite{Cannon82} brought multiple inheritance, mixins, extensible method combinations,
+default initialization values, etc.
+CommonLoops@~cite{bobrow86commonloops} brought generic functions and multiple dispatch,
+meta-object protocols, etc.
+CLOS@~cite{bobrow88clos} standardized it all.
+Dylan brought sealing @;TODO CITE
+and the C3 linearization algorithm@~cite{Barrett96amonotonic}.
+
+Some of these innovations have been individually copied here and there,
+but by and large, CLOS remains decades ahead of all object systems outside the Lisp tradition.
+The only feature CLOS crucially lacks is support for static typing,
+and formal semantics beyond the sample implementations;
+but the criticism goes both ways.
+
+@subsubsection{Haskell tradition}
+The limited type system of Haskell makes it impossible for it to express
+either class-based OOP or prototype-based OOP with rich types.
+Yet, Haskell popularized a different variant of @emph{ad hoc} polymorphism@~cite{Strachey67},
+in the form of typeclasses.
+@;TODO CITE
+
+In a very different approach, Oliveira@~cite{MonadsMixins}
+uses the a construction essentially similar to the one we propose in our @(section1),
+albeit limited by the type system as described in our @(section34).
+Oliveira explicitly relates his approach to Cook's formalization@~cite{Cook1989}.
+He calls “mixin” what we call “prototype function”.
+He takes an ugly though minor shortcut in omitting a base object to his fixed-point function
+and passing the “self” a second time instead.
+Importantly, though, Oliveira correctly identifies composition rather than application
+as the interesting algebraic structure
+(but incorrectly equates it with Cook's boxed composition).
+Also importantly, Oliveira leverages constraints on higher-kinded types
+to push his concept of mixins surprisingly far,
+despite the type limitations that makes his construction unsuitable as a model for typed OOP.
 
 @section[#:tag "Future_Works"]{Future Works}
 
 Using the ideas in this essay, we have implemented in both Nix and Scheme
 object systems with unified instances and prototypes and multiple inheritance,
 that are being used in an actual application.
+
 In the future, we would like to explore the Generalize Prototypes mentioned in @(section4)
 to also implement multiple dispatch and method combination.
 Method combination in particular will require attaching meta-data to method prototypes
 regarding how they are to be combined in the end,
 which means we will have to explore what insights our approach may bring into
 Meta-Object Protocols@~cite{amop}.
+
 Another important kind of meta-data we may want to attach to prototypes is type information
 and/or logical constraints, that may be enforced either at runtime or at compile-time.
+For a fully formal treatment, we would have to formalize such type information
+in a dependent type system.
+While Church-style systems like Coq, Lean, Agda, or Idris are more popular,
+we suspect that a Curry-style system like Cedille might be more appropriate
+to seamlessly extend our untyped approach into a dependently typed one.
+
 Finally, we may want to study how prototype OOP interacts
 with staged computations or cache invalidation
 so as to require less-than-dependent types, or enable various optimizations at compile-time
@@ -1967,8 +2156,9 @@ Here are some tests to check that our functions are working.
 @section[#:tag "Appendix_B"]{Digression about type notation}
 
 There is no standard type system for the language Scheme,
-so we will keep our type declarations as comments that are unenforced by the compiler,
-yet that will informally document what the types for our functions would be
+so we will keep our type declarations as semi-formal comments
+that are unenforced by the compiler,
+yet that document what the types for our functions would be
 in a hypothetical dependent type system (with possible effect extensions?)
 that would be powerful enough to describe our computations.
 
@@ -1981,11 +2171,15 @@ That is, variables representing a type, that is not currently specified,
 but such that the formulas we write must hold for any type,
 in a hypothetical type system that one could layer on top of the language.
 
+As common in programming languages such as ML and Haskell, we will assume that
+each top-level function type declaration introduces its own scope,
+wherein free variables are implicitly universally quantified.
+
 @subsection{Variable Rows and Type Variable Rows}
 
-We will write a @r[...] for a "row" of multiple values, such as may be used
+We will write a @r[...] for a “row” of multiple values, such as may be used
 as input arguments to a function, or return values of a function.
-We will write A @r[...] for a "row" of multiple types, such as may be used
+We will write A @r[...] for a “row” of multiple types, such as may be used
 to type the inputs or outputs of a function.
 Indeed, in Scheme, a function may take multiple inputs arguments and
 and return multiple output values.
@@ -2009,34 +2203,40 @@ for the types of one integer followed by zero or many symbols.
 The type of functions that take inputs @r[I ...] and return outputs @r[O ...]
 we will write as any one of the following:
 @racketblock[
+  (Fun I ... -> O ...)
+]
+@;{
   I ... -> O ...
   O ... <- I ...
   (I ... -> O ...)
   (O ... <- I ...)
-  (Fun I ... -> O ...)
   (Fun O ... <- I ...)
-]
+}
+
 @(noindent)
 As usual, the arrows are associative such that these denote the same type:
 @racketblock[
-  A -> B -> C
-  A -> (B -> C)
+  (Fun A -> B -> C)
+  (Fun A -> (Fun B -> C))
+]
+@;{
   C <- B <- A
   (C <- B) <- A
-]
+}
+
 @(noindent)
-In papers such as this essay, or when contributing to other people's code bases,
-we will use the conventional left-to-right arrows.
-However, in our own codebase, we favor right-to-left arrows, that are covariant with
-the right-to-left flow of information from arguments to function in the traditional
-prefix notation for function application.
+Note that in this paper we follow the common convention of left-to-right arrows, as above.
+We also follow this convention when contributing to other people's code bases that follow it.
+However, in our own code base, we favor an opposite convention of right-to-left arrows,
+that makes them covariant with the right-to-left flow of information from arguments to function
+in the traditional prefix notation for function application.
 Still, we revert to left-to-right arrows when we use concatenative languages
 or stack virtual machines that use the “Reverse Polish Notation”
 as in FORTH, PostScript or the much missed HP RPL.
 
 @subsection{Type Constraints}
 
-We will use the keyword @r[st:] (being a keyword short for "such that")
+We will use the keyword @r[st:] (being a short form for “such that”)
 to denote type constraints, as in:
 @racketblock[
   st: Constraint1 Constraint2 ...
@@ -2047,6 +2247,12 @@ The constraints we will consider will be subtyping constraints of the form:
   (<: A B C ...)
 ]
 meaning @r[A] is a subtype of @r[B], which is a subtype of @r[C], etc.
+
+Thus, the type @r[(Fun Self Super -> Self st: (<: Self Super))] means
+“for all types @r[Self] and @r[Super] such that @r[Self] is a subtype of @r[Super],
+a function of two arguments of respective types @r[Self] and @r[Super],
+returning a value of type @r[Self]”,
+the universal quantification being implicit, at the top-level declaration.
 
 @section[#:tag "Appendix_C"]{Fixed-Point functions}
 
