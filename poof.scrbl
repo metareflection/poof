@@ -42,6 +42,7 @@ We also examine how our approach can deal with issues like typing, modularity, c
 @;          scribble/minted
           syntax/parse/define
           "util/examples-module.rkt"
+          "util/enumitem.rkt"
           (for-label racket))
 
 @;@(define (nix . foo) (apply minted "nix" foo))
