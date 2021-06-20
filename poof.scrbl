@@ -74,6 +74,7 @@ We also examine how our approach can deal with issues like typing, modularity, c
 @(defsection AppendixA "Appendix_A" "Appendix A")
 @(defsection AppendixB "Appendix_B" "Appendix B")
 @(defsection AppendixC "Appendix_C" "Appendix C")
+@(defsection AppendixD "Appendix_D" "Appendix D")
 
 @(declare-examples/module poof racket
    (provide (all-defined-out)))
@@ -130,7 +131,7 @@ Our approach emphasizes the following original contributions:
 @itemlist[
 #:style enumparenalph
 @item{the conceptual distinction between
-  instances, prototypes, generators and wrappers @section1{(1)},
+  instances, prototypes, wrappers and generators @section1{(1)},
   objects @section42{(4.2)}, classes and class instances @section5{(5)},}
 @item{@emph{composition} of wrappers rather than their @emph{application} to a generator
   as the algebraic structure of interest (@section1{1}, @section3{3})}
@@ -139,8 +140,7 @@ Our approach emphasizes the following original contributions:
 @item{how to derive class OOP from the more primitive prototype OOP @section5{(5)},}
 @item{a pure functional approach that provides not only denotational semantics
   atop the pure untyped lambda-calculus, but also a practical constructive implementation,}
-@item{a constructive model that unlike common in OOP implementations
-  does not rely on mutation (@section1{1}, @section2{2}, @section3{3}),
+@item{a constructive model that does not rely on mutation (@section1{1}, @section2{2}, @section3{3}),
   yet that can be extended to play well with it @section6{(6)}.}
 ]
 
@@ -165,13 +165,15 @@ Along the way, we relate our approach to both OOP and FP traditions, both decade
 @subsubsection{Modular Increments of Computation}
 OOP consists in specifying computations in modular increments
 each contributing their part based on the combined whole and the computation so far.
+The ability to abstract over which increments are part of a computation is called
+@emph{ad hoc} polymorphism@~cite{Strachey67}.
 
 In general, we will call @emph{prototype} such a computation increment.
 In the rest of @(section1), we will present an initial model
-where a @emph{prototype} will be encoded as @emph{prototype function}:
+where a @emph{prototype} will be encoded as prototype @emph{wrapper}:
 a function of two arguments, @r[self] and @r[super]
 (or, above, @r[f] and @r[b], for fixed-point and base value).
-In @(section4), we will enrich prototypes to be more than prototype functions,
+In @(section4), we will enrich prototypes to be more than prototype wrappers,
 so as to model more advanced OOP features;
 but until then, we will use the two interchangeably.
 
@@ -187,7 +189,7 @@ Given some instance type @r[Self]
 and a super-type @r[Super] of @r[Self],
 a prototype for @r[Self] from @r[Super] will thus be
 a function from @r[Self] and @r[Super] to @r[Self].
-In the type notation of @(AppendixB):
+In the type notation of @(AppendixC):
 @racketblock[
 (code:comment "(deftype (Proto Self Super) (Fun Self Super -> Self st: (<: Self Super)))")
 (code:comment "fix : (Fun (Proto Self Super) Super -> Self st: (<: Self Super))")
@@ -367,11 +369,9 @@ there is clearly a dependency between the two that prevents them from commuting:
 (eval:check (list (x6-y2 'x) (x3-y2 'x)) '(6 3))
 ]
 
-@subsubsection{Record prototype generators}
+@subsubsection{Building record prototypes}
 
-Now that we understand record prototypes, we can look at various utility
-functions to build them.
-
+Here are general utility functions to build record prototypes.
 To define an object with a slot @r[k] mapped to a value @r[v], use:
 @Definitions[
 (code:comment "$slot : (Fun k:Symbol V -> (Proto (Fun 'k -> V | A) A))")
@@ -473,7 +473,7 @@ Thus, the instantiation function @r[(fix p b)] becomes:
 ]
 
 @(noindent)
-A more thorough explanation of the above fixed-point function is in @(AppendixC).
+A more thorough explanation of the above fixed-point function is in @(AppendixD).
 Meanwhile, the composition function @r[(mix p q)] becomes:
 @Definitions[
 (code:comment "compose-prototypes : (Fun (Proto Self Super) (Proto Super Super2)")
@@ -573,20 +573,6 @@ And we can define a syntactic short-cut that composes prototypes in its list of 
 ]
 }|
 
-@(noindent)
-Prototype composition is notably more expressive than “single inheritance”
-as commonly used in many “simple” object systems:
-Object systems with “single inheritance” require programmers to @r[cons]
-objects (or classes) one component at a time in the front of a rigid list of
-"parent" objects (or classes), where the base object (or class) is set.
-Prototype object systems enable programmers to @r[append] lists of prototypes
-independently from any base object, to compose and recompose prototypes
-in different orders and combinations.
-Prototypes are thus more akin to the “mixins” or “traits” of more advanced
-objects systems@~cite{Cannon82 bracha1990mixin Flatt06schemewith}.
-Prototype composition however, does not by itself subsume multiple inheritance.
-We will show in @(section4) how to combine the two.
-
 @subsubsection{The Bottom of it}
 
 In a language with partial functions, such as Scheme, there is a practical
@@ -636,6 +622,47 @@ Thus, the functional embedding of prototype @r[p] will be
 @r[(λ (q) (mix p q)) : (Fun (Proto Super S2) -> (Proto Self S2))].
 To recover @r[p] from that embedding, just apply it to @r[identity-prototype].
 }
+
+@subsubsection{Single Inheritance}
+Most object systems do not offer programmers prototype composition,
+but only a much less expressive operation: prototype application.
+
+Consider a @emph{generator} to be a function from a function type to itself.
+To instantiate a generator is to compute its fixed point.
+There is a surjection from prototype and base value to generator,
+such that instantiating the generator is same as
+instantiating the prototype with the base value.
+Applying prototype @r[p] to the generator obtained
+from prototype @r[q] and base value @r[b] is the same as
+obtaining a generator from @r[(mix p q)] and @r[b].
+@Definitions[
+(code:comment "(deftype (Generator A) (Fun A -> A))")
+(code:comment "fix-generator : (Fun (Generator A) -> A)")
+(define (fix-generator g) (define f (g (λ i (apply f i)))) f)
+(code:comment "proto->generator : (Fun (Proto A B) B -> (Generator A))")
+(define (proto->generator p b) (λ (f) (p f b)))
+(code:comment "(== (fix-generator (proto->generator p b)) (fix p b))")
+(code:comment "apply-proto : (Fun (Proto A B) (Generator B) -> (Generator A))")
+(define (apply-proto p g) (λ (f) (p f (g f))))
+(code:comment "(== (apply-proto p (proto->generator q b)) (proto->generator (mix p q) b))")
+]
+
+“Single inheritance” consists in prototypes being second-class entities
+that you can only apply to generators immediately after having defined them,
+with a fixed base object for all generators.
+Instead of being able to abstract over prototypes and compose them,
+you can only use constant prototypes and apply them to generators
+(that themselves are usually also second-class entities but can be abstracted over somewhat).
+To incrementally define an object, you must @r[cons] prototypes one by one onto
+the list to instantiate.
+
+Composition of first-class prototypes is obviously more expressive than single-inheritance.
+You can @r[mix] prototypes or @r[append] prototype lists, and
+programmatically compose code from many increments of code.
+Prototypes are thus more akin to the “mixins” or “traits” of more advanced
+objects systems@~cite{Cannon82 bracha1990mixin Flatt06schemewith}.
+Prototype composition however, does not by itself subsume multiple inheritance,
+that we will study in @(section4).
 
 @section[#:tag "pure_objective_fun"]{Pure Objective Fun}
 
@@ -824,14 +851,12 @@ The following prototype is a mixin for an even function,
 that delegates to other prototypes the images of positive values
 and returns the image of the opposite for negative values:
 @Examples[
-(define ($even self super)
-  (λ (x) (if (< x 0) (self (- x)) (super x))))
+(define ($even self super) (λ (x) (if (< x 0) (self (- x)) (super x))))
 ]
 @(noindent)
 The following prototype is a mixin for taking the cube of the parent value:
 @Examples[
-(define ($cube self super)
-  (λ (x) (let ((y (super x))) (* y y y))))
+(define ($cube self super) (λ (x) (let ((y (super x))) (* y y y))))
 ]
 @(noindent)
 We can instantiate a function out of those of prototypes, and test it:
@@ -879,14 +904,12 @@ Now, most interesting prototypes will only lead to error or divergence if you tr
 to instantiate them by themselves---they are “mixins”,
 just like @r[$compare<-order] or @r[$avl-tree-rebalance] above,
 designed to be combined with other prototypes.
-Indeed, the whole entire point of incrementally specifying computations is
-that you want to manipulate fragments that are not complete specifications.
-To use these fragments in a total language where all computations terminates
+Indeed, the whole entire point of incremental programming is that you want to
+define and manipulate fragments that are not complete specifications.
+To use these fragments in a total language where all computations terminate
 will require attaching to each prototype some side-condition as to
 which aspects of a computation it provides that other prototypes may rely on,
 and which aspects of a computation it requires that other prototypes must provide.
-This side-condition may well be a type in one of the many existing type systems
-for objects@~cite{Abadi97atheory tapl}.
 
 @subsection{Prototypes in Lazy Pure Functional Dynamic Languages}
 
@@ -1016,6 +1039,7 @@ can we also reimplement the more advanced features of object systems of yore?
 
 @subsection[#:tag "field_introspection"]{Field Introspection}
 
+@; TODO: refactor that. Explain that both abstraction and reflection can be features.
 @subsubsection{Both feature and bug in OOP snake-oil literature}
 When representing objects as functions from symbol to value,
 it is not generally possible to access the list of symbols that constitute valid keys.
@@ -1174,7 +1198,7 @@ that they usually are not.
 To reproduce the semantics of Jsonnet@~cite{jsonnet},
 instances will be a delayed @r[Dict] (as per @(section2)),
 mapping symbols as slot names to delayed values as slot computations;
-meanwhile the prototype will be a prototype function of type @r[(δProto Object Object)]
+meanwhile the prototype will be a prototype wrapper of type @r[(δProto Object Object)]
 (as in @seclink["computations_not_values"]{section 4.1.3}),
 that preserves the prototype while acting on the instance.
 Thus the basic function @r[slot-ref] to access a slot, and
@@ -1220,7 +1244,7 @@ e.g. with @r[K1] inheriting from direct supers @r[A B C],
 @r[K2] inheriting from direct supers @r[D B E], and
 @r[K3] inheriting from direct supers @r[D A], and what more
 each of @r[A], @r[B], @r[C], @r[D], @r[E] inheriting from a base super object @r[O]?
-(See @(AppendixA) for details on this example.)
+(See @(AppendixB) for details on this example.)
 
 With the basic object model offered by Nix, Jsonnet, or our @(section1),
 these dependencies could not be represented in the prototype itself.
@@ -1269,7 +1293,7 @@ whereby the dependencies as declared fail to constitute a DAG;
 in such a situation, no precedence list can satisfy all the ordering constraints,
 and instead an error is raised.
 Recent modern object systems seem to have settled on the C3 linearization algorithm,
-as described in @(AppendixB).
+as described in @(AppendixC).
 
 @(define/local-expand c3-definitions @Definitions[
 (code:comment "The (require srfi/1) below imports SRFI 1 list functions into Racket")
@@ -1329,7 +1353,7 @@ Such additional information will include a precomputed cache for the precedence 
 but could also conceivably include
 type declarations, method combinations, and support for any imaginable future feature.
 
-We could start by making the prototype a pair of prototype function and list of supers;
+We could start by making the prototype a pair of prototype wrapper and list of supers;
 if more data elements are later needed, we could use a vector with every element at a fixed location.
 But since we may be adding further features to the object system,
 we will instead make the prototype itself an object,
@@ -1341,7 +1365,7 @@ which lays the foundation for a meta-object protocol@~cite{amop},
 wherein object implementation can be extended from the inside.
 
 When it is an object, a prototype will have
-slot @r[function] bound to a prototype function as previously, and
+slot @r[function] bound to a prototype wrapper as previously, and
 slot @r[supers] bound to a list of super objects to inherit from,
 as well as a slot @r[precedence-list] bound to a precomputed cache of the precedence list.
 When it is the special base case, for which we below chose the empty list,
@@ -1379,178 +1403,13 @@ is bound to a function that overrides its super with constant fields from the in
 (define (object function . supers) (instantiate supers function))
 ]
 
-@subsection{Multiple Dispatch}
+@subsection{Further Features}
 
-@subsubsection{Generic Functions}
-Some object systems, starting with CommonLoops@~cite{bobrow86commonloops}
-then CLOS@~cite{bobrow88clos},
-feature the ability to define “generic functions” whose behavior
-can be specialized on each of multiple arguments.
-For instance, a generic multiplication operation
-will invoke different methods when called with two integers, two complex numbers,
-an integer and a floating-point number, a complex number and a vector of complex numbers, etc.
-
-Selection of behavior based on multiple arguments is called “multiple dispatch”,
-as contrasted with “single dispatch” which is selection of behavior based on a single argument.
-Methods that may specialize on multiple arguments are sometimes called “multi-methods”
-to distinguish them from single dispatch methods.
-It is possible to macro-expand multiple dispatch into single dispatch,
-@; TODO @~cite{} double dispatch?
-by chaining dispatch of the first argument into a collection of functions
-that each dispatch on the second argument, and so on.
-But the process is tedious and non-local, and better left to be
-handled by an automated implementation of multiple dispatch.
-
-Since this feature is rather involved yet was already implemented in
-previous prototype systems@~cite{chambers92objectoriented Salzman05prototypeswith},
-we'll restrict our discussion to additional challenges presented in
-a pure or mostly pure functional setting.
-
-@subsubsection{Extending previous objects}
-Generic functions and their multi-methods are associated to multiple objects,
-thus they cannot be defined as part of the definition of a single object;
-these methods, and the generic function that they are part of,
-are necessarily defined outside of (some) objects.
-Therefore, language designers and implementers must resolve a first issue
-before they may implement generic functions:
-adding “multi-methods” to existing functions or objects
-after they have been initially defined.
-Indeed, generic functions when introduced, involve adding new methods
-that specialize the behavior of the new function on existing objects;
-and when new objects are introduced, they often involve adding new methods
-to specialized the behavior of the existing functions on the new objects.
-
-Moreover, when generic functions and objects are introduced in independent code libraries
-(e.g. some graphical user-interface library and some data structure library),
-the specialized behavior might be introduced in yet another library
-(e.g. that defines a graphical interface for this data structure).
-Worse, there might be conflicts between several such libraries.
-Even without conflicting definitions,
-a definition might conflict in time with the absence of the same definition,
-if there is any chance that some code depending on its presence is compiled or run
-both before and after the definition was evaluated.
-
-That is why, for instance, the Glasgow Haskell Compiler @;TODO @~cite{GHC}
-issues warnings if you declare an “orphan instance”:
-a typeclass instance (rough analogue to methods of generic functions)
-in a file other than one where either the typeclass is defined (analogous to generic functions)
-or the type is defined (analogous to objects).
-The language offers weak guarantees in such situations.
-One way to avoid “orphan” situations might be to declare
-either new typeclasses (new generic functions) or newtype aliases (new objects)
-that will shadow or replace the previous ones in the rest of the program;
-but this is a non-local and non-composable transformation
-that potentially involves wrapping over all the transitive dependencies of an application,
-and defeat the purpose of incremental program specification.
-Another approach suitable in a more dynamic language would be to maintain at runtime
-a “negative” cache of methods previously assumed to be absent,
-and issue a warning or error when a new method is introduced that conflicts with such an assumption.
-
-Then again, a solution might be to eschew purity and embrace side-effects:
-the original T just did not cache method invocation results, and
-re-ran fixed-point computations, with their possible side-effects,
-at every method invocation (objects can specify their own explicit cache when desired).
-The behavior of new generic functions on previously existing objects would be optionally specified
-in a default method, to be called in lieu of raising a “method not found” error.
-The T object paper@~cite{adams88oopscheme} mentions an alternate approach
-that was rejected in its implementation, though it is essentially equivalent in behavior,
-wherein default methods are added to a “default” object used as the base super value
-instead of an empty object when (re)computing instance fixed-points.
-
-@subsection{Method Combinations}
-
-@subsubsection{Combining Method Fragments}
-With method combination, as pioneered in Flavors@~cite{Cannon82},
-then standardized by CLOS@~cite{bobrow88clos} via @~cite{bobrow86commonloops}
-and made slightly popular outside the Lisp tradition by Aspect-Oriented Programming@~cite{aop97},
-object methods to be specified in multiple fragments
-that can be subsequently combined into the “effective method” that will be called.
-
-Thus, in CLOS, “primary” methods are composed the usual way,
-but “before” methods are executed beforehand for side-effects from most-specific to least-specific,
-and “after” methods are executed afterwards for side-effects from least-specific to most-specific,
-and “around” methods wrap all the above, with from most-specific wrapper outermost
-to least-specific inner-most.
-
-Furthermore, programmers may override the above standard “method combinations”
-with alternative method combinations, either builtin or user-specified.
-The builtin method combinations, @r[progn + list nconc and max or append min] in CLOS,
-behave as if the calls to the (suitably sorted) methods had been wrapped in
-one of the corresponding Lisp special form or function.
-User-specified method combinations allow for arbitrary behavior based on
-an arbitrary set of sorted, labelled (multi)methods
-(though, in CLOS, with a fixed finite set of labels).
-
-@subsubsection{Generalized Prototype Combination}
-
-As determined above, generic functions are made of many labelled fragments (multi-methods);
-fragments of a same label are sorted according to some partial or total order
-(and, in the case of multiple dispatch, filtered for applicability);
-they are then composed via some representation-dependent mixing function;
-a fixed-point is extracted from the composed fragments, with some base value;
-finally a representation-dependent wrapper is applied to the fixed-point
-to instantiate the effective method...
-this is very much like an object!
-Actually, since we have accepted in @(section3) that prototypes and “object orientation”
-are not just to compute records that map field names to values, but for arbitrary computations,
-then we realize there is a more general protocol for computing with prototypes.
-
-A full treatment of generalized prototypes is a topic for future work.
-Still, here are a few hints as to what they would be.
-A generalized prototype would involve:
-(a) a @emph{lens}@~cite{Foster2007CombinatorsFB Pickering_2017}
-@; TODO: re-cite Kmett, Laarhoven from the Pickering_2017 article? Cite 2006 Pierce on Lens rather than 2007, see later Gibbons article
-that can extract or update the method from the current partial computation
-of the raw prototype fixed-point;
-(b) an object-setter that “cooks” the raw prototype fixed-point into a referenceable
-@r[self] object;
-(c) a method-wrapper that turns the user-provided “method” into a composable prototype.
-
-The lens, passed below as two function arguments @r[getter] and @r[setter],
-generalizes the fetching or storing of a method as the entry in a @r[Dict],
-or as the response to a message;
-it expresses how a prototype overrides some specific fragment of some specific method
-in some specific sub-sub-object, encoded in some specific way.
-The object-setter may apply a method combination to extract a function from fragments;
-it may transcode an object from a representation suitable for object production
-to a representation suitable for object consumption;
-it may be the setter from a lens making the prototype-based computation
-that of a narrow component in a wider computation,
-at which point the corresponding getter allows a method to retrieve the computation at hand
-from the overall computation;
-it may be a composition of some of the above and more.
-The method-wrapper may to automate some of the builtin method combinations;
-for instance, in a @r[+] combination, it would, given an number,
-return the prototype that increments the super result by that number;
-it may also handle the merging of a @r[Dict] override returned by the method
-into the super @r[Dict] provided by its super method; etc.
-
-Here then is a generalization that subsumes the above @r[$slot-gen] or @r[$slot/gen]:
-@Definitions[
-(define ($lens-gen setter getter wrapper method)
-  (λ (cooked-self raw-super)
-    (setter ((wrapper method) cooked-self (delay (getter raw-super)))
-            raw-super)))
-]
-
-@;{ @para{
-The types might look a bit as follows:
-@Definitions[
-(code:comment "(deftype (ObjectWrapper Raw Cooked)")
-(code:comment "  (Forall (Object) (Fun (Raw Object) -> (Cooked Object))))")
-(code:comment "(deftype (CookedProto Cooked)")
-(code:comment "  (Forall (ObjectSuper ObjectSelf MethodSuper MethodSelf) ; s t a b")
-(code:comment "    (Fun (Cooked ObjectSelf) (Delayed MethodSuper) -> MethodSelf)))")
-(code:comment "(deftype (MethodSetter Raw)")
-(code:comment "  (Forall (ObjectSuper ObjectSelf MethodSelf) ; s t b")
-(code:comment "    (Fun MethodSelf (Raw ObjectSuper) -> (Raw ObjectSelf))))")
-(code:comment "(deftype (MethodGetter Raw)")
-(code:comment "  (Forall (Object Method) ; s a")
-(code:comment "    (Fun (Raw Object) -> Method)))")
-(code:comment "(deftype (MethodWrapper Cooked RawProto)")
-(code:comment "  (Fun (RawProto Cooked) -> (CookedProto Cooked)))")
-]
-}}
+Other advanced OOP features found in CLOS@~cite{bobrow88clos},
+such as multi-methods (a.k.a multiple dispatch) or method combinations,
+can also be expressed in a pure setting.
+However, they require further extensions to the model we propose,
+that we discuss in our @(AppendixA).
 
 @section{Classes}
 
@@ -1734,7 +1593,7 @@ as previously embodied in the @r[self] argument;
 and the current @emph{storage} of the data structure provides state of the computation so far,
 as previously embodied in the @r[super] argument.
 
-A prototype function would then be of type @r[(deftype μProto (Fun Object ->))],
+A mutable prototype wrapper would then be of type @r[(deftype μProto (Fun Object ->))],
 where the @r[Object]'s instance component would typically contain a mutable hash-table
 mapping slot names (symbols) to effective methods to compute each slot value.
 These effective methods would be either thunks or lazy computations,
@@ -1786,7 +1645,7 @@ reactive or incremental programming. @;TODO: @~cite{}
 
 @;;; Here, we silently cite things that only appear in the appendices,
 @;;; so they appear in the bibliography, that is being computed before the appendices.
-@~nocite{Barrett96amonotonic wikiC3}
+@~nocite{chambers92objectoriented Salzman05prototypeswith Barrett96amonotonic wikiC3 aop97 Foster2007CombinatorsFB Pickering_2017}
 
 @section[#:tag "Related_Works"]{Related Works}
 
@@ -1874,77 +1733,70 @@ Kamin @; TODO Cite
 and Reddy@~cite{ObjectsAsClosures} used the objects as closures
 to offer formal semantics for Smalltalk.
 Cook@~cite{Cook1989} independently took the same approach, but made it more general.
-Cook's base model of inheritance is essentially the same that we use in @(section1),
-except specialized for records only.
-He calls “wrapper” what we call “prototype function”,
-and focuses on their application to “generators” without noting that they are composable.
-Cook then shows how his model can be adapted to successfully describe object inheritance
-in many statically typed class-based languages of his day.
-However, Cook doesn't try to account for any prototype object systems.
-Also, his informal treatment of multiple inheritance and other advanced features of Flavors
-fails to provide adequate formal account for their why and how.
+Cook uses the same model as in our @(section1),
+just restricted to records (unlike our @(section3)),
+and with single inheritance only, no composition.
+Cook then shows how to adapt this model to describe many class-based languages of his day.
+Cook doesn't address prototype systems, and mentions but doesn't adequately tackle
+multiple inheritance and other advanced features from Flavors.
 
 @subsubsection{GCL, Jsonnet, Nix}
 Dave Cunningham's Jsonnet in 2014 was the first publicly available language with prototype objects
 in the context of a pure lazy functional language with dynamic types.
 Jsonnet was the first language that made prototype composition
-the primary algebraic operation on objects;
-it also prominently features objects as combining two aspects,
-as instance and as prototype, in a same entity.
-As a minor yet notable point, Jsonnet also adds a feature to flag fields as either
-visible or hidden for the purpose of printing instances as JSON.
-Otherwise, the semantics of Jsonnet is essentially a direct instance of Cook's 1989 design.
-Jsonnet was initially made as a semantically and syntactically cleaner of GCL,
+the primary algebraic operation on objects: the model of our @(section1), restricted to records.
+Jsonnet objects also combine in a same entity the two aspects, instance and prototype,
+as in our @(section42).
+Jsonnet has introspection on object fields, and also flags fields as either visible or hidden
+for the sake of exporting JSON.
+Jsonnet started as a redesign with cleaner syntax and semantics of GCL,
 the Google Configuration Lnguage, which remains unpublished.
 No academic publication was made on either GCL or Jsonnet,
 so it is unclear at this point what GCL did or did not contribute and when.
 
-Nix, another pure lazy functional language with dynamic types,
-used for configuring the NixOS operating system and nixpkgs software distribution,
-has been using many variants of an “extension system” since 2015.
-The initial one was contributed by Peter Simons to enable simultaneous support
-for multiple versions of GHC, which required overriding various parameters and library versions
-depending on the compiler version.
-It is essentially equivalent to Jsonnet's object system (minus the feature to flag fields as hidden),
-except done purely in userland in a couple of functions following Cook's 1989 model,
-when Jsonnet does it the hard way in C++ as builtin language constructs.
-However, the Nix community in general is largely in denial that its extension systems
-are themselves instances of prototype object systems, and it is unclear
-how much familiarity the author had with these systems when he built the first one.
-Also, although it does support prototype composition internally,
-the Nix API in practice is focused on the application of prototypes to generators,
-rather than on using prototypes as composable first-class entities in their own right.
+Nix, the pure lazy dynamic functional configuration language for NixOS,
+has several variations of an “extension system”, all of them
+essentially equivalent to Jsonnet's object system (minus field visibility flagging),
+except done purely in userland in a couple of functions rather than builtin.
+Peter Simons wrote the initial one in 2015 to support for multiple versions of the GHC ecosystem.
+However, the Nix community is largely in denial of its using prototype objects,
+and though it implements prototype composition, the codebase tends to stick to single inheritance.
+There was no academic publication on these extension systems, and
+it is unclear how much familiarity the authors had with previous systems.
 
-These two languages illustrate how prototype objects are a great fit
-to express complex yet flexible configurations.
-Pure functional programmers have unjustly neglected prototypes until recently
-because they do not fit in the type systems so far popular in their languages.
+Jsonnet and Nix illustrate how prototype objects are a great fit
+to simply express flexible configurations.
+Pure functional programmers may have unjustly neglected prototypes until recently
+because of the limitations of their languages' type systems.
 
-@subsection{Types for Objects}
+@subsubsection{Types for Objects}
+Object Systems present many challenges
+to authors of static type systems@~cite{Abadi97atheory tapl}.
+Proper treatment of common usage requires existential types to deal with fixed-points,
+subtypes for ad hoc polymorphism,
+covariance or contravariance to commute subtypes with fixed-points,
+row polymorphism to support records, etc.
+One logical feature too many and the type system will become undecidable, or worse, inconsistent.
+@;TODO CITE
 
-@subsubsection{Encoding}
-Object Systems present a great challenge to authors of static type systems.
-This challenge is well summarized by Bruce et al.@~cite{BruceCardelliPierce2006},
-who describe the main typing models used when encoding objects in class-based languages,
-with an emphasis on enabling decidable static type inference.
-Their simplest model, OR, describes Cook's 1989 and our base inheritance model.
-The types we offer are similar, except that we make explicit a subtyping constraint they leave implicit.
-Importantly though, they focus on class-based systems.
-Most prototype computations would happen at the type-level in their model,
-which would require dependent types, or some notion of staged computations.
-Finally, they focus on generators, and no model of prototype functions as such,
-their composition, the conflation or not of instance and prototypes, multiple inheritance, etc.
-Their three other encodings OE, ORE, ORBE seem to be tailored to class-based OOP,
-and might not directly apply to prototype-based OOP.
-Yet, we conjecture they might naturally emerge when using our reduction of class-based OOP
-to prototype-based OOP; the differences between these encodings could then be expressed as
-different applications of the lens-based approach we propose in our section 4.5.2.
+Bruce et al.@~cite{BruceCardelliPierce2006} summarize one basic challenge in encoding objects.
+Their first model, OR, fits our section 1.
+Their other three, OE, OBE, ORE, do not apply to prototype-based OOP,
+but are tailored to class-based OOP.
+OE and ORBE naturally emerge when using our reduction of class-based OOP to prototype-based OOP,
+OE as our “typeclass” representation, ORBE as our “class” representation.
+
+Most object typing papers, like the one above, focus on class-based OOP and generators only,
+because it makes for much simpler types.
+Prototypes and wrappers are reduced away at the type-level at compile-time,
+distinction between instance and prototype is static, etc.
+Handling full prototype OOP would require dependent types or some notion of staged computations.
 
 @subsection{Other Relevant Object Systems}
 
 @subsubsection{The Lisp tradition}
-The Lisp tradition also included many object systems
-that adopted mainstream class-based OOP, yet innovated in different ways:
+The Lisp tradition includes many object systems that were class-based
+but innovated in other ways:
 Flavors@~cite{Cannon82} brought multiple inheritance, mixins, extensible method combinations,
 default initialization values, etc.
 CommonLoops@~cite{bobrow86commonloops} brought generic functions and multiple dispatch,
@@ -1952,33 +1804,30 @@ meta-object protocols, etc.
 CLOS@~cite{bobrow88clos} standardized it all.
 Dylan brought sealing @;TODO CITE
 and the C3 linearization algorithm@~cite{Barrett96amonotonic}.
-
 Some of these innovations have been individually copied here and there,
-but by and large, CLOS remains decades ahead of all object systems outside the Lisp tradition.
-The only feature CLOS crucially lacks is support for static typing,
-and formal semantics beyond the sample implementations;
-but the criticism goes both ways.
+but by and large, CLOS remains decades ahead of object systems outside the Lisp tradition
+in most ways but static typing.
 
 @subsubsection{Haskell tradition}
-The limited type system of Haskell makes it impossible for it to express
-either class-based OOP or prototype-based OOP with rich types.
-Yet, Haskell popularized a different variant of @emph{ad hoc} polymorphism@~cite{Strachey67},
+The limited type system of Haskell does not support OOP for first-class entities.
+Yet Haskell popularized a form of second-class @emph{ad hoc} polymorphism
 in the form of typeclasses.
 @;TODO CITE
-
-In a very different approach, Oliveira@~cite{MonadsMixins}
-uses the a construction essentially similar to the one we propose in our @(section1),
-albeit limited by the type system as described in our @(section34).
-Oliveira explicitly relates his approach to Cook's formalization@~cite{Cook1989}.
-He calls “mixin” what we call “prototype function”.
-He takes an ugly though minor shortcut in omitting a base object to his fixed-point function
-and passing the “self” a second time instead.
-Importantly, though, Oliveira correctly identifies composition rather than application
-as the interesting algebraic structure
-(but incorrectly equates it with Cook's boxed composition).
-Also importantly, Oliveira leverages constraints on higher-kinded types
-to push his concept of mixins surprisingly far,
-despite the type limitations that makes his construction unsuitable as a model for typed OOP.
+Despite these limitations, Oliveira@~cite{MonadsMixins} uses
+essentially our @(section1) construction to amazing effects.
+Remarkably, he doesn't try at all to model records, which wouldn't work,
+but instead uses prototype wrappers (that he calls “mixins”)
+for arbitrary function types, as in our @(section3).
+He then leverages typeclass constraints on the context
+to incrementally specify the @emph{means} of a computation,
+even though the monomorphic type limitation won't allow
+incremental specification of a computation's @emph{results}.
+Oliveira explicitly relates his work to Cook's@~cite{Cook1989},
+yet importantly identifies composition rather than application
+as the interesting algebraic structure.
+@; (but incorrectly equates it with Cook's boxed composition).
+@; He takes an ugly though minor shortcut in omitting a base object to his fixed-point function
+@; and passing the “self” a second time instead.
 
 @section[#:tag "Future_Works"]{Future Works}
 
@@ -2008,7 +1857,182 @@ especially with respect to object representation.
 
 @(generate-bibliography)
 
-@section[#:tag "Appendix_A"]{Code Library} @appendix
+@section[#:tag "Appendix_A"]{Advanced OOP} @appendix
+
+@subsection{Multiple Dispatch}
+
+@subsubsection{Generic Functions}
+Some object systems, starting with CommonLoops@~cite{bobrow86commonloops}
+then CLOS@~cite{bobrow88clos},
+feature the ability to define “generic functions” whose behavior
+can be specialized on each of multiple arguments.
+For instance, a generic multiplication operation
+will invoke different methods when called with two integers, two complex numbers,
+an integer and a floating-point number, a complex number and a vector of complex numbers, etc.
+
+Selection of behavior based on multiple arguments is called “multiple dispatch”,
+as contrasted with “single dispatch” which is selection of behavior based on a single argument.
+Methods that may specialize on multiple arguments are sometimes called “multi-methods”
+to distinguish them from single dispatch methods.
+It is possible to macro-expand multiple dispatch into single dispatch,
+@; TODO @~cite{} double dispatch?
+by chaining dispatch of the first argument into a collection of functions
+that each dispatch on the second argument, and so on.
+But the process is tedious and non-local, and better left to be
+handled by an automated implementation of multiple dispatch.
+
+Since this feature is rather involved yet was already implemented in
+previous prototype systems@~cite{chambers92objectoriented Salzman05prototypeswith},
+we'll restrict our discussion to additional challenges presented in
+a pure or mostly pure functional setting.
+
+@subsubsection{Extending previous objects}
+Generic functions and their multi-methods are associated to multiple objects,
+thus they cannot be defined as part of the definition of a single object;
+these methods, and the generic function that they are part of,
+are necessarily defined outside of (some) objects.
+Therefore, language designers and implementers must resolve a first issue
+before they may implement generic functions:
+adding “multi-methods” to existing functions or objects
+after they have been initially defined.
+Indeed, generic functions when introduced, involve adding new methods
+that specialize the behavior of the new function on existing objects;
+and when new objects are introduced, they often involve adding new methods
+to specialized the behavior of the existing functions on the new objects.
+
+Moreover, when generic functions and objects are introduced in independent code libraries
+(e.g. some graphical user-interface library and some data structure library),
+the specialized behavior might be introduced in yet another library
+(e.g. that defines a graphical interface for this data structure).
+Worse, there might be conflicts between several such libraries.
+Even without conflicting definitions,
+a definition might conflict in time with the absence of the same definition,
+if there is any chance that some code depending on its presence is compiled or run
+both before and after the definition was evaluated.
+
+That is why, for instance, the Glasgow Haskell Compiler @;TODO @~cite{GHC}
+issues warnings if you declare an “orphan instance”:
+a typeclass instance (rough analogue to methods of generic functions)
+in a file other than one where either the typeclass is defined (analogous to generic functions)
+or the type is defined (analogous to objects).
+The language offers weak guarantees in such situations.
+One way to avoid “orphan” situations might be to declare
+either new typeclasses (new generic functions) or newtype aliases (new objects)
+that will shadow or replace the previous ones in the rest of the program;
+but this is a non-local and non-composable transformation
+that potentially involves wrapping over all the transitive dependencies of an application,
+and defeat the purpose of incremental program specification.
+Another approach suitable in a more dynamic language would be to maintain at runtime
+a “negative” cache of methods previously assumed to be absent,
+and issue a warning or error when a new method is introduced that conflicts with such an assumption.
+
+Then again, a solution might be to eschew purity and embrace side-effects:
+the original T just did not cache method invocation results, and
+re-ran fixed-point computations, with their possible side-effects,
+at every method invocation (objects can specify their own explicit cache when desired).
+The behavior of new generic functions on previously existing objects would be optionally specified
+in a default method, to be called in lieu of raising a “method not found” error.
+The T object paper@~cite{adams88oopscheme} mentions an alternate approach
+that was rejected in its implementation, though it is essentially equivalent in behavior,
+wherein default methods are added to a “default” object used as the base super value
+instead of an empty object when (re)computing instance fixed-points.
+
+@subsection{Method Combinations}
+
+@subsubsection{Combining Method Fragments}
+With method combination, as pioneered in Flavors@~cite{Cannon82},
+then standardized by CLOS@~cite{bobrow88clos} via @~cite{bobrow86commonloops}
+and made slightly popular outside the Lisp tradition by Aspect-Oriented Programming@~cite{aop97},
+object methods to be specified in multiple fragments
+that can be subsequently combined into the “effective method” that will be called.
+
+Thus, in CLOS, “primary” methods are composed the usual way,
+but “before” methods are executed beforehand for side-effects from most-specific to least-specific,
+and “after” methods are executed afterwards for side-effects from least-specific to most-specific,
+and “around” methods wrap all the above, with from most-specific wrapper outermost
+to least-specific inner-most.
+
+Furthermore, programmers may override the above standard “method combinations”
+with alternative method combinations, either builtin or user-specified.
+The builtin method combinations, @r[progn + list nconc and max or append min] in CLOS,
+behave as if the calls to the (suitably sorted) methods had been wrapped in
+one of the corresponding Lisp special form or function.
+User-specified method combinations allow for arbitrary behavior based on
+an arbitrary set of sorted, labelled (multi)methods
+(though, in CLOS, with a fixed finite set of labels).
+
+@subsubsection[#:tag "generalized_prototype_combination"]{Generalized Prototype Combination}
+
+As determined above, generic functions are made of many labelled fragments (multi-methods);
+fragments of a same label are sorted according to some partial or total order
+(and, in the case of multiple dispatch, filtered for applicability);
+they are then composed via some representation-dependent mixing function;
+a fixed-point is extracted from the composed fragments, with some base value;
+finally a representation-dependent wrapper is applied to the fixed-point
+to instantiate the effective method...
+this is very much like an object!
+Actually, since we have accepted in @(section3) that prototypes and “object orientation”
+are not just to compute records that map field names to values, but for arbitrary computations,
+then we realize there is a more general protocol for computing with prototypes.
+
+A full treatment of generalized prototypes is a topic for future work.
+Still, here are a few hints as to what they would be.
+A generalized prototype would involve:
+(a) a @emph{lens}@~cite{Foster2007CombinatorsFB Pickering_2017}
+@; TODO: re-cite Kmett, Laarhoven from the Pickering_2017 article? Cite 2006 Pierce on Lens rather than 2007, see later Gibbons article
+that can extract or update the method from the current partial computation
+of the raw prototype fixed-point;
+(b) an object-setter that “cooks” the raw prototype fixed-point into a referenceable
+@r[self] object;
+(c) a method-wrapper that turns the user-provided “method” into a composable prototype.
+
+The lens, passed below as two function arguments @r[getter] and @r[setter],
+generalizes the fetching or storing of a method as the entry in a @r[Dict],
+or as the response to a message;
+it expresses how a prototype overrides some specific fragment of some specific method
+in some specific sub-sub-object, encoded in some specific way.
+The object-setter may apply a method combination to extract a function from fragments;
+it may transcode an object from a representation suitable for object production
+to a representation suitable for object consumption;
+it may be the setter from a lens making the prototype-based computation
+that of a narrow component in a wider computation,
+at which point the corresponding getter allows a method to retrieve the computation at hand
+from the overall computation;
+it may be a composition of some of the above and more.
+The method-wrapper may to automate some of the builtin method combinations;
+for instance, in a @r[+] combination, it would, given an number,
+return the prototype that increments the super result by that number;
+it may also handle the merging of a @r[Dict] override returned by the method
+into the super @r[Dict] provided by its super method; etc.
+
+Here then is a generalization that subsumes the above @r[$slot-gen] or @r[$slot/gen]:
+@Definitions[
+(define ($lens-gen setter getter wrapper method)
+  (λ (cooked-self raw-super)
+    (setter ((wrapper method) cooked-self (delay (getter raw-super)))
+            raw-super)))
+]
+
+@;{ @para{
+The types might look a bit as follows:
+@Definitions[
+(code:comment "(deftype (ObjectWrapper Raw Cooked)")
+(code:comment "  (Forall (Object) (Fun (Raw Object) -> (Cooked Object))))")
+(code:comment "(deftype (CookedProto Cooked)")
+(code:comment "  (Forall (ObjectSuper ObjectSelf MethodSuper MethodSelf) ; s t a b")
+(code:comment "    (Fun (Cooked ObjectSelf) (Delayed MethodSuper) -> MethodSelf)))")
+(code:comment "(deftype (MethodSetter Raw)")
+(code:comment "  (Forall (ObjectSuper ObjectSelf MethodSelf) ; s t b")
+(code:comment "    (Fun MethodSelf (Raw ObjectSuper) -> (Raw ObjectSelf))))")
+(code:comment "(deftype (MethodGetter Raw)")
+(code:comment "  (Forall (Object Method) ; s a")
+(code:comment "    (Fun (Raw Object) -> Method)))")
+(code:comment "(deftype (MethodWrapper Cooked RawProto)")
+(code:comment "  (Fun (RawProto Cooked) -> (CookedProto Cooked)))")
+]
+}}
+
+@section[#:tag "Appendix_B"]{Code Library}
 
 @emph{We have used Racket to develop this document in such a way that the very same file is used
 as source file for a reusable Racket library, a test module, and the printable document.}
@@ -2153,7 +2177,7 @@ Here are some tests to check that our functions are working.
   '(#t #t #f #f))
 ]
 
-@section[#:tag "Appendix_B"]{Digression about type notation}
+@section[#:tag "Appendix_C"]{Digression about type notation}
 
 There is no standard type system for the language Scheme,
 so we will keep our type declarations as semi-formal comments
@@ -2254,7 +2278,7 @@ a function of two arguments of respective types @r[Self] and @r[Super],
 returning a value of type @r[Self]”,
 the universal quantification being implicit, at the top-level declaration.
 
-@section[#:tag "Appendix_C"]{Fixed-Point functions}
+@section[#:tag "Appendix_D"]{Fixed-Point functions}
 
 In @(section1), we quickly went over the fixed-point function @r[fix]
 that we used to instantiate prototypes.
@@ -2357,7 +2381,7 @@ Therefore a better solution, that does allow for sharing computations
 and state between invocations of the fixed-point result, is:
 @Examples[
 (define (fix--1 p b)
-  (define f (p (lambda i (apply f i)) b))
+  (define f (p (λ i (apply f i)) b))
   f)
 ]
 @(noindent)
@@ -2372,7 +2396,7 @@ If you do not like internal defines, you can write the same function
 equivalently using @r[letrec], as:
 @Examples[
 (define (fix--2 p b)
-  (letrec ((f (p (lambda i (apply f i)) b)))
+  (letrec ((f (p (λ i (apply f i)) b)))
     f))
 ]
 
@@ -2380,11 +2404,10 @@ equivalently using @r[letrec], as:
 And if you do not even like @r[letrec], you can use a Y-combinator variant: @; TODO cite
 @Examples[
 (define (fix--3 p b)
-  ((lambda (yf) (yf yf))
-   (lambda (yf) (p (lambda i (apply (yf yf) i)) b))))
+  ((λ (yf) (yf yf)) (λ (yf) (p (λ i (apply (yf yf) i)) b))))
 ]
 
-@section[#:tag "Appendix_D"]{Note for code minimalists}
+@section[#:tag "Appendix_E"]{Note for code minimalists}
 
 In our introduction, we described the @r[fix] and @r[mix] functions
 in only 26 symbols or 109 characters of Scheme.
