@@ -951,7 +951,7 @@ can we also reimplement the more advanced features of object systems of yore?
 @subsubsection{Bug and feature}
 When representing objects as functions from symbol to value,
 it is not generally possible to access the list of symbols that constitute valid keys.
-Most “object” systems do not allow for this kind of introspection at runtime,
+Most object systems do not allow for this kind of introspection at runtime,
 and further introduce scoping or access control rules to enable modular reasoning about slot accesses,
 advertising such restrictions as “encapsulation” or “information hiding” features.
 Yet, introspection can be useful to e.g. automatically input and output
@@ -1575,8 +1575,8 @@ Both systems were followed by many other similar systems in their respective tra
 In 1981, Yale T Scheme@~cite{Rees82t:a} included a mature variant of such an object system
 as part of a general-purpose programming environment.
 A paper was later published describing the object system@~cite{adams88oopscheme}.
-The implementation was optimized for efficiency using low-level tricks;
-no attempt was made at either generality or clean simple formal semantics.
+@; The implementation was optimized for efficiency using low-level tricks;
+@; no attempt was made at either generality or clean simple formal semantics.
 The T design was notably reprised by YASOS in 1992@~cite{dickey1992scheming}
 and distributed with SLIB since.
 @; TODO: cite!
@@ -1645,7 +1645,7 @@ multiple inheritance and other advanced features from Flavors.
 
 @subsubsection{GCL, Jsonnet, Nix}
 
-Dave Cunningham's Jsonnet@~cite{jsonnet} in 2014 was
+Jsonnet@~cite{jsonnet} in 2014 was
 the first publicly available language with prototype objects
 in the context of a pure lazy functional language with dynamic types.
 Jsonnet was the first language that made prototype composition
@@ -1656,7 +1656,7 @@ as in our @(section42).
 Note that Jsonnet uses the empty object as the implicit base super object for inheritance;
 this is equivalent to using the bottom function in the representation from our @(section1),
 but not in theirs!
-Jsonnet has introspection on object fields, and also flags fields as either visible or hidden
+Jsonnet has field introspection, and also flags fields as either visible or hidden
 for the sake of exporting JSON.
 
 Jsonnet itself started as a simplified reconstruction and cleanup of GCL,
