@@ -946,23 +946,21 @@ Still, many bells and whistles found in other object systems are missing.
 Now that we have a nice and simple semantic framework for “objects”,
 can we also reimplement the more advanced features of object systems of yore?
 
-@subsection[#:tag "field_introspection"]{Field Introspection}
+@subsection[#:tag "slot_introspection"]{Slot Introspection}
 
-@; TODO: refactor that. Explain that both abstraction and reflection can be features.
-@subsubsection{Both feature and bug in OOP snake-oil literature}
+@subsubsection{Bug and feature}
 When representing objects as functions from symbol to value,
 it is not generally possible to access the list of symbols that constitute valid keys.
 Most “object” systems do not allow for this kind of introspection at runtime,
-and a 1990s marketing department would probably tout that
-as some kind of ill-defined “encapsulation” or “information hiding” feature
-sold as part of the “object-oriented” package deal of the day.
-Yet, introspection can be useful to e.g. automatically
-input and output human-readable or network-exchangeable representations of an instance.
-Thus, the same 1990s marketing departments have long sold “reflection” as
-an extra feature counter-acting their previous “feature”.
+and further introduce scoping or access control rules to enable modular reasoning about slot accesses,
+advertising such restrictions as “encapsulation” or “information hiding” features.
+Yet, introspection can be useful to e.g. automatically input and output
+human-readable or network-exchangeable representations of an instance,
+and has also been advertised as a “reflection” feature.
+Some languages even offer both contradictory sets of features.
 
 @subsubsection{Same concrete representation, abstract constructor}
-Field introspection can be achieved while keeping instances as functions from keys to values,
+Slot introspection can be achieved while keeping instances as functions from keys to values,
 by adding a “special” key, e.g. @r[keys],
 that will be bound to the list of valid keys.
 To save themselves the error-prone burden of maintaining the list of keys by hand,
@@ -977,7 +975,7 @@ programmers would then use a variant of @r[$slot-gen] that maintains this list, 
 ]
 
 @subsubsection{Different instance representation}
-Field introspection can also be achieved by using a different representation for instances.
+Slot introspection can also be achieved by using a different representation for instances.
 Just like in Nix, instances could be mappings from symbols to value,
 internally implemented as hash-tables, or, preferrably for pure usage, balanced trees.
 Purposefully, we included an implementation of such balanced trees in
@@ -1008,7 +1006,7 @@ Thus, using @r[δfix] and @r[δmix] instead of @r[fix] and @r[mix], we can have:
 ]
 
 @subsubsection[#:tag "different_prototype"]{Same instance representation, different prototype representation}
-Finally, field introspection can be achieved while preserving the same instance representation
+Finally, slot introspection can be achieved while preserving the same instance representation
 by instead changing the representation for @emph{prototypes}.
 Though the concise functional representation we offered gives an enlightening
 expression of the essence of object systems, we can maintain equivalent semantics
@@ -1023,7 +1021,7 @@ the same prototype as before and a list of keys. The @r[mix] and @r[fix] functio
 ]
 @(noindent)
 One could also put @r[$slot] invocation after the @r[(car proto)] rather than before it,
-to allow prototypes to intercept field introspection.
+to allow prototypes to intercept slot introspection.
 
 @subsubsection{Abstracting over representations}
 We can generalize the above solutions by realizing that
@@ -1045,7 +1043,7 @@ We are thus in a strange situation wherein we have been doing
 
 This is a practical problem, not a mere curiosity, as this distinction
 makes it painful to write extensible specifications for nested or recursive data structures:
-you need to decide for each field of each data structure at each stage of computation
+you need to decide for each slot of each data structure at each stage of computation
 whether it contains an extensible prototype or an instance to call the proper API.
 This incurs both a psychological cost to programmers and a runtime cost to evaluation,
 that without careful design may in the worst case cause an exponential explosion
@@ -1279,7 +1277,7 @@ slot @r[supers] bound to a list of super objects to inherit from,
 as well as a slot @r[precedence-list] bound to a precomputed cache of the precedence list.
 When it is the special base case, for which we below chose the empty list,
 slots @r[supers] and @r[precedence-list] are bound to empty lists, and slot @r[function]
-is bound to a function that overrides its super with constant fields from the instance.
+is bound to a function that overrides its super with constant slots from the instance.
 
 @Definitions[
 (define (Dict->Object dict) (make-object dict '()))
@@ -1626,16 +1624,15 @@ JavaScript came out in 1994,
 with a prototype object system @~cite{EcmaScript:15 DBLP:journals/corr/GuhaSK15},
 and brought prototype object orientation to the masses.
 
-These systems were born in a time when resources were
-As with T above, these efforts happened in a stateful rather than pure context,
-optimizing for efficient implementation, and neither for
-generality nor for simplicity of the concepts and their semantics.
+All the above efforts happened in a stateful rather than pure context,
+optimizing for efficient implementation where memory and computation are expensive.
+None of them sought to establish a general model for all OOP, what more with simple semantics.
 
 @subsection{The Pure Functional Tradition}
 
 @subsubsection{Denotational Semantics}
-Kamin @; TODO Cite
-and Reddy@~cite{ObjectsAsClosures} used the objects as closures
+@; Kamin and @; TODO Cite
+Reddy@~cite{ObjectsAsClosures} used objects as closures
 to offer formal semantics for Smalltalk.
 Cook@~cite{Cook1989} independently took the same approach, but made it more general.
 Cook uses the same model as in our @(section1),
@@ -1740,7 +1737,7 @@ Prototypes and wrappers are reduced away at the type-level at compile-time,
 distinction between instance and prototype is static, etc.
 Handling full prototype OOP would require dependent types or some notion of staged computations.
 
-@subsection{Other Relevant Object Systems}
+@subsection{Other Relevant Works}
 
 @subsubsection{The Lisp tradition}
 The Lisp tradition includes many object systems that were class-based
@@ -1779,11 +1776,11 @@ as the interesting algebraic structure.
 
 @section[#:tag "Future_Works"]{Future Works}
 
-Using the ideas in this essay, we have implemented in both Nix and Scheme
+@;{Using the ideas in this essay, we have implemented in both Nix and Scheme
 object systems with unified instances and prototypes and multiple inheritance,
-that are being used in an actual application.
+that are being used in an actual application.}
 
-In the future, we would like to explore the Generalize Prototypes mentioned in @(section4)
+In the future, we would like to explore the Generalize Prototypes mentioned in @(AppendixA)
 to also implement multiple dispatch and method combination.
 Method combination in particular will require attaching meta-data to method prototypes
 regarding how they are to be combined in the end,
@@ -1920,7 +1917,7 @@ finally a representation-dependent wrapper is applied to the fixed-point
 to instantiate the effective method...
 this is very much like an object!
 Actually, since we have accepted in @(section3) that prototypes and “object orientation”
-are not just to compute records that map field names to values, but for arbitrary computations,
+are not just to compute records that map slot names to values, but for arbitrary computations,
 then we realize there is a more general protocol for computing with prototypes.
 
 A full treatment of generalized prototypes is a topic for future work.
@@ -2053,7 +2050,7 @@ To help with defining multiple inheritance, we'll also define the following help
 @c3-extra-definitions
 
 @;{ Memoizing?
-;; II.1.2- Memoizing values, so field access is not O(n) every time.
+;; II.1.2- Memoizing values, so slot access is not O(n) every time.
 ;; Usage: Put memoize-proto as first prototype.
 ;; NB1: Memoization uses side-effects internally, but does not expose them.
 ;; NB2: It's still O(n^2) overall rather than O(n); we can do better, later.
