@@ -911,97 +911,6 @@ will require attaching to each prototype some side-condition as to
 which aspects of a computation it provides that other prototypes may rely on,
 and which aspects of a computation it requires that other prototypes must provide.
 
-@subsection{Prototypes in Lazy Pure Functional Dynamic Languages}
-
-@subsubsection{Prototypes in Nix}
-Interestingly, prototypes for lazy mappings from keys to values
-is exactly how objects are encoded in
-the pure lazy functional dynamically typed language Nix@~cite{dolstra2008nixos}.
-
-Since 2015, the Nix standard library contains variants of the @r[fix] et @r[mix] functions,
-wherein “attribute sets” or @emph{attrsets}, mapping from strings to values,
-are defined as fixed-points of functions obtained from a “base” function
-and a list of composable “extensions”.
-These “extensions” are functions from attrsets @r[self] and @r[super] to
-an attrset that is meant to extend and override @r[super]
-as incremental contribution to the computation of the @r[self] fixed-point.
-This is a reasonable restriction on how prototypes may affect super values,
-that matches usual object-oriented practice, and suggests where
-an extension point could be in a general meta-object protocol@~cite{amop}.
-The “base” is a function from attrset @r[self] to attrset;
-this makes the API slightly less uniform than ours, introducing an extra type,
-but is otherwise isomorphic to our approach wherein
-the last prototype in the list to be instantiated ignores
-the @r[bottom] passed as its @r[super] argument.
-
-Apart from the minor details above,
-this is the very same design as the one we are presenting,
-even though Nix's extension system was not even consciously meant
-as an object system when it was designed.
-This is not a coincidence, since the present essay emerged from
-an effort to formalize the essence of objects as understood from Nix and Jsonnet.
-We also simplify their approach (e.g. with respect to the base case of open-recursion)
-and generalize it to arbitrary instance types (i.e. not just attrsets);
-and in the following @(section4)
-we further improve on it.
-
-@subsubsection{Prototypes in Jsonnet}
-Now, Jsonnet@~cite{jsonnet}, another lazy pure functional dynamic language,
-sports an object system that is semantically equivalent to that of Nix,
-published one year before Nix's extension system was invented.
-Jsonnet itself was invented as a simplified semantic reconstruction of the essential ideas
-behind GCL, the decade-older Google Configuration Language used everywhere inside Google.
-GCL also was not explicitly designed as OOP, yet ended up having discovered
-an excellent point in the design space, despite the reputed overall clunkiness of the language.
-
-A notable difference between Nix and Jsonnet is that
-Jsonnet supports objects as builtins with a nice syntax, when
-in Nix they are implemented as a handful library functions in under 20 lines of code.
-Also, Jsonnet uses the empty object as the implicit base super object for inheritance;
-this is equivalent to the bottom function in the representation from our
-@seclink["Prototypes_bottom_up"]{section 1}—but not in theirs!
-Unlike the representation from our @(section1),
-Jsonnet's representation (as Nix's) also allows for introspection of what slots are bound.
-Finally, Jsonnet has builtin support for fields being either visible or hidden when printing.
-
-The fact that, across several decades, closely matching designs were independently reinvented many times
-without the intention to do so, is a good sign that this design is a “fixed point in design space”,
-akin to the notion of “fixed point in time” in Dr Who@~cite{DrWhoFPIT}:
-however you may try to reach a different conclusion, you still end-up with that fixed-point eventually.
-
-@subsubsection{A Pure Lazy Fit}
-Still, there are ways in which Jsonnet and Nix improved upon
-the prototype object systems as initially designed in ThingLab@~cite{Borning77 Borning86}
-or T@~cite{Rees82t:a adams88oopscheme},
-or later made popular by SELF@~cite{chambers1989efficient}
-or JavaScript@~cite{ecmascript DBLP:journals/corr/GuhaSK15}
-As in these previous inventions, Jsonnet and Nix use first-class functions to construct objects.
-They also rely on dynamic types to avoid the need for dependent types and internal type theories
-required to statically type first-class prototypes in the most general case.
-But unlike previous incarnations, they also rely on lazy evaluation as a way to express
-first-class computations that can be manipulated whether or not they terminate,
-without a clumsy explicit wrapping in a thunk or a lazy constructor.
-They also do without having to resort to side-effects;
-the pure functional semantics are thus not only especially clean and simple,
-fitting in a few hundreds of characters,
-but reveal an underlying mathematical structure of universal interest.
-
-The success of Jsonnet and Nix at modularly managing complex configurations
-through object extensions suggest that pure lazy functional programming is useful
-way beyond the popular package offered by Haskell, of this programming model
-with ML-like static typesystem that sports parametric polymorphism but no dependent types.
-That typesystem rejects most interesting uses of prototypes,
-thereby neglecting an important application domain for pure lazy functional programming.
-Thus, though some claim the ML typesystem is at a "sweet spot",
-wherein it provides good expressiveness while still being computable
-and providing understandable error messages@~cite{minsky08},
-maybe the spot is too sweet to be healthy, and
-is lacking in proteins, or at least in prototypes.
-
-Now, there is another special way by which Jsonnet and Nix improve upon T's objects,
-that provides insight into OOP:
-they unify instances and prototypes as objects. See @(section4).
-
 @subsection[#:tag "without_subtyping"]{Prototypes are Useful Even Without Subtyping}
 
 The above prototypes for numeric functions also illustrate that
@@ -1144,7 +1053,7 @@ of the code the programmers must write and/or of the recomputations of sub-expre
 that the evaluator will do at runtime.
 
 @subsubsection{Conflation without confusion}
-Jsonnet and Nix both confront and elegantly solve the above issue,
+Jsonnet and Nix (see @(section7)) both confront and elegantly solve the above issue,
 and in the very same way, with one small trick:
 they bundle and conflate together instance and prototype in a same single entity, the “object”.
 Indeed, in a pure context, and given the base super value for the given prototype representation,
@@ -1195,7 +1104,7 @@ hook into the printer to offer a nice way to print instance information
 that users are usually interested in while skipping prototype information
 that they usually are not.
 
-To reproduce the semantics of Jsonnet@~cite{jsonnet},
+To reproduce the semantics of Jsonnet,
 instances will be a delayed @r[Dict] (as per @(section2)),
 mapping symbols as slot names to delayed values as slot computations;
 meanwhile the prototype will be a prototype wrapper of type @r[(δProto Object Object)]
@@ -1653,23 +1562,19 @@ reactive or incremental programming. @;TODO: @~cite{}
 
 @subsubsection{Director and ThingLab}
 The first prototype object system might have been Director @~cite{Kahn1976 Kahn1979},
-an actor system to create animations from story constraints, written in MacLisp at MIT,
-and interoperating with LOGO, with inspiration from Smalltalk and AI research.
-The description published at UODIGS'76 is informal, but includes
-a modifiable hierarchy of message-passing objects that inherit from other objects
-to which they “pass the buck” when they receive a message that doesn't match any of
-the patterns they directly have rules for. The word “prototype” does not appear.
-
-At about the same time, ThingLab @~cite{Borning77 Borning86} implemented
-a “classless” object system atop Smalltalk,
-in which to specify the constraints of an environment to simulate.
-The project is in many ways very similar to Director, though implemented independently
-as part of a different tradition, with relatively little overlap between the two.
-
+an actor system to create animations from story constraints, written in MacLisp at MIT.
+@; interoperating with LOGO, with inspiration from Smalltalk and AI research.
+The system is informally described as a modifiable hierarchy of message-passing objects
+that inherit from other objects to which they “pass the buck” when they receive a message
+that doesn't match any of the patterns they directly have rules for.
+At about the same time, ThingLab@~cite{Borning1977 Borning1979 Borning1981}
+implemented a classless object system atop Smalltalk, and introduced the term “prototype”,
+as part of a similar project to specify the constraints of an environment to simulate.
 Both systems were followed by many other similar systems in their respective traditions.
+@; TODO. Mention inspiration by KRL and its frames? Prototype systems by Luc Steels?
 
 @subsubsection{T}
-In 1981, Yale T Scheme included a mature variant of such an object system
+In 1981, Yale T Scheme@~cite{Rees82t:a} included a mature variant of such an object system
 as part of a general-purpose programming environment.
 A paper was later published describing the object system@~cite{adams88oopscheme}.
 The implementation was optimized for efficiency using low-level tricks;
@@ -1702,14 +1607,14 @@ by nullary methods returning a constant value.
 (define (operate instance selector . args) (apply (instance selector) args))
 ]
 
-@subsubsection{1986 and beyond}
-In 1986 there were many publications@~cite{Lieberman1986 Borning86}
-that popularized the term and concept of “prototype”
-(and to a point of “delegation” for the variant of inheritance associated with prototypes).
+@subsubsection{Prototypes become mainstream}
+In 1986, several publications@~cite{Lieberman1986 Borning1986}
+popularized the term and concept of prototypes,
+and to a point that of “delegation” for the variant of inheritance associated with them.
 @;TODO: cite!
 
 That year also appeared SELF, a language in the Smalltalk tradition
-but with prototypes instead of classes.
+but with prototypes instead of classes. @; TODO CITE
 SELF was influential, notably thanks to its complete graphical environment
 that could run on SparcStations, then widespread in universities and research centers.
 However, SELF could only usably run on high-end workstations,
@@ -1737,37 +1642,80 @@ Cook uses the same model as in our @(section1),
 just restricted to records (unlike our @(section3)),
 and with single inheritance only, no composition.
 Cook then shows how to adapt this model to describe many class-based languages of his day.
+He notably factors the record extension mechanism as a parameter of his protocol.
 Cook doesn't address prototype systems, and mentions but doesn't adequately tackle
 multiple inheritance and other advanced features from Flavors.
 
 @subsubsection{GCL, Jsonnet, Nix}
-Dave Cunningham's Jsonnet in 2014 was the first publicly available language with prototype objects
+
+Dave Cunningham's Jsonnet@~cite{jsonnet} in 2014 was
+the first publicly available language with prototype objects
 in the context of a pure lazy functional language with dynamic types.
 Jsonnet was the first language that made prototype composition
-the primary algebraic operation on objects: the model of our @(section1), restricted to records.
+the primary algebraic operation on objects:
+the model of our @(section1), restricted to records extensions.
 Jsonnet objects also combine in a same entity the two aspects, instance and prototype,
 as in our @(section42).
+Note that Jsonnet uses the empty object as the implicit base super object for inheritance;
+this is equivalent to using the bottom function in the representation from our @(section1),
+but not in theirs!
 Jsonnet has introspection on object fields, and also flags fields as either visible or hidden
 for the sake of exporting JSON.
-Jsonnet started as a redesign with cleaner syntax and semantics of GCL,
-the Google Configuration Lnguage, which remains unpublished.
-No academic publication was made on either GCL or Jsonnet,
-so it is unclear at this point what GCL did or did not contribute and when.
 
-Nix, the pure lazy dynamic functional configuration language for NixOS,
+Jsonnet itself started as a simplified reconstruction and cleanup of GCL,
+the decade-older and reputedly clunky Google Configuration Language, which remains unpublished.
+No academic publication was made on either GCL or Jsonnet,
+and it is unclear which contributed what and when, and what awareness the authors had
+of previous prototype object systems.
+
+Nix@~cite{dolstra2008nixos}, the pure lazy dynamic functional configuration language for NixOS,
 has several variations of an “extension system”, all of them
 essentially equivalent to Jsonnet's object system (minus field visibility flagging),
-except done purely in userland in a couple of functions rather than builtin.
+except done as a handful of user-defined functions, rather than as builtin primitives.
 Peter Simons wrote the initial one in 2015 to support for multiple versions of the GHC ecosystem.
 However, the Nix community is largely in denial of its using prototype objects,
-and though it implements prototype composition, the codebase tends to stick to single inheritance.
+and though it implements prototype composition,
+the codebase tends to stick to single inheritance.
 There was no academic publication on these extension systems, and
 it is unclear how much familiarity the authors had with previous systems.
+
+@;{
+As in these previous inventions, Jsonnet and Nix use first-class functions to construct objects.
+They also rely on dynamic types to avoid the need for dependent types and internal type theories
+required to statically type first-class prototypes in the most general case.
+But unlike previous incarnations, they also rely on lazy evaluation as a way to express
+first-class computations that can be manipulated whether or not they terminate,
+without a clumsy explicit wrapping in a thunk or a lazy constructor.
+They also do without having to resort to side-effects;
+the pure functional semantics are thus not only especially clean and simple,
+fitting in a few hundreds of characters,
+but reveal an underlying mathematical structure of universal interest.
+
+The success of Jsonnet and Nix at modularly managing complex configurations
+through object extensions suggest that pure lazy functional programming is useful
+way beyond the popular package offered by Haskell, of this programming model
+with ML-like static typesystem that sports parametric polymorphism but no dependent types.
+That typesystem rejects most interesting uses of prototypes,
+thereby neglecting an important application domain for pure lazy functional programming.
+Thus, though some claim the ML typesystem is at a "sweet spot",
+wherein it provides good expressiveness while still being computable
+and providing understandable error messages@~cite{minsky08},
+maybe the spot is too sweet to be healthy, and
+is lacking in proteins, or at least in prototypes.
+}
 
 Jsonnet and Nix illustrate how prototype objects are a great fit
 to simply express flexible configurations.
 Pure functional programmers may have unjustly neglected prototypes until recently
 because of the limitations of their languages' type systems.
+These two object systems in turn inspired the present authors
+to use, study and improve prototype object systems.
+
+The fact that, across several decades, closely matching designs
+were independently reinvented many times without the intention to do so,
+is a good sign that this design is a “fixed point in design space”,
+akin to the notion of “fixed point in time” in Dr Who@~cite{DrWhoFPIT}:
+however you may try to reach a different conclusion, you still end-up with that fixed-point eventually.
 
 @subsubsection{Types for Objects}
 Object Systems present many challenges
@@ -1811,7 +1759,7 @@ in most ways but static typing.
 @subsubsection{Haskell tradition}
 The limited type system of Haskell does not support OOP for first-class entities.
 Yet Haskell popularized a form of second-class @emph{ad hoc} polymorphism
-in the form of typeclasses.
+in the form of typeclasses@~cite{ImplementingTypeClasses}.
 @;TODO CITE
 Despite these limitations, Oliveira@~cite{MonadsMixins} uses
 essentially our @(section1) construction to amazing effects.
