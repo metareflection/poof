@@ -22,7 +22,7 @@
 This paper elucidates the essence of Object-Oriented Programming (OOP),
 using a constructive approach:
 we identify a minimal basis of concepts with which to synthesize
-all existing and potential object systems.
+existing and potential object systems.
 We reduce them to constructions atop the pure untyped lambda calculus,
 thereby obtaining both denotational semantics and effective implementation.
 We start from the simplest recognizable model of prototype-based OOP,
