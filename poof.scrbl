@@ -30,6 +30,7 @@ so simple it arguably does not even have “objects” as such.
 We build further models of increasing sophistication, reproducing a growing subset of features
 found in past object systems, including original combinations.
 We also examine how our approach can deal with issues like typing, modularity, classes, mutation.
+We use Scheme to illustrate our approach.
 }
 
 @(require scriblib/bibtex
