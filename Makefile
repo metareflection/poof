@@ -27,7 +27,7 @@ repl:
 
 prerequisites:
 	for i in scribble-abbrevs scribble-minted scribble-math ; do \
-	  raco pkg install $$i ; \
+	  raco pkg install --auto --update-deps $$i ; \
 	done
 
 # Publishing on fare's server http://fare.tunes.org/files/cs/poof.pdf

@@ -1795,6 +1795,7 @@ in a dependent type system.
 While Church-style systems like Coq, Lean, Agda, or Idris are more popular,
 we suspect that a Curry-style system like Cedille might be more appropriate
 to seamlessly extend our untyped approach into a dependently typed one.
+@; TODO cite ?
 
 Finally, we may want to study how prototype OOP interacts
 with staged computations or cache invalidation
@@ -2359,7 +2360,7 @@ In our introduction, we described the @r[fix] and @r[mix] functions
 in only 26 symbols or 109 characters of Scheme.
 We can do even shorter with various extensions.
 MIT Scheme and after it Racket, Gerbil Scheme, and more,
-allow you to curried function definitions, to cut 1 symbol and 9 characters.
+allow you to write curried function definitions, to cut 1 symbol and 9 characters.
 @Examples[
 (define ((mix p q) f b) (p f (q f b)))
 ]
@@ -2378,6 +2379,19 @@ not counting newline, since we elide spaces:
 @racketblock[
 (def(fix p b)(def f(p(cut apply f <>)b))f)(def((mix p q)f b)(p f(q f b)))
 ]
+
+Science in general, and Computer Science in particular,
+is about conceptual minimalism.
+@; TODO cite Occam's Razor? Charles Sanders Pierce on abductive reasoning?
+While algorithmic complexity @; TODO cite Li & Vitanyi about Kolmogorov Complexity?
+is defined only up to an additive constant
+determined up to a choice of a base computing system,
+simple variants of the λ-calculus provide sensible conventional such bases,
+and the pure subset of Scheme we use is one of them.
+The above “code golf” then suggests that our proposed approach
+to formalizing Object-Oriented Programming indeed provides
+simple foundational principles.
+
 
 @(finalize-examples/module poof)
 
