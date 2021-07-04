@@ -14,15 +14,17 @@ See the file [LICENSE](LICENSE).
 
 ## Build instructions
 
+To install dependencies:
+
+    make prerequisites
+
 To create the document:
 
     make
 
-
 To run the tests:
 
     make test
-
 
 To load the library and experiment with it at the REPL:
 
