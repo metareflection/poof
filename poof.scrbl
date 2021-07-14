@@ -1,5 +1,5 @@
-#lang scribble/acmart @acmsmall @review @anonymous
-@; @10pt @natbib
+#lang scribble/acmart @acmsmall @screen @nonacm @review @anonymous
+@; Default already: @10pt @natbib
 @; @authordraft
 @; Submitted to OOPSLA 2021 https://2021.splashcon.org/track/splash-2021-oopsla
 
@@ -132,17 +132,18 @@ Our approach emphasizes the following original contributions:
 @itemlist[
 #:style enumparenalph
 @item{the conceptual distinction between
-  instances, prototypes, wrappers and generators @section1{(1)},
-  objects @section42{(4.2)}, classes and class instances @section5{(5)},}
+  instances, prototypes, wrappers and generators (sect. @section1{1}),
+  objects (sect. @section42{4.2}), classes and class instances (sect. @section5{5}),}
 @item{@emph{composition} of wrappers rather than their @emph{application} to a generator
-  as the algebraic structure of interest (@section1{1}, @section3{3})}
+  as the algebraic structure of interest (sect. @section1{1}, @section3{3})}
 @item{explanations of both @emph{why} multiple inheritance is useful
-  and @emph{how} to formalize it @section43{(4.3)},}
-@item{how to derive class OOP from the more primitive prototype OOP @section5{(5)},}
+  and @emph{how} to formalize it (sect. @section43{4.3}),}
+@item{how to derive class OOP from the more primitive prototype OOP (sect. @section5{5}),}
 @item{a pure functional approach that provides not only denotational semantics
   atop the pure untyped lambda-calculus, but also a practical constructive implementation,}
-@item{a constructive model that does not rely on mutation (@section1{1}, @section2{2}, @section3{3}),
-  yet that can be extended to play well with it @section6{(6)}.}
+@item{a constructive model that does not rely on mutation
+  (sect. @section1{1}, @section2{2}, @section3{3}),
+  yet that can be extended to play well with it (sect. @section6{6}).}
 ]
 
 @subsubsection{Plan}
@@ -677,17 +678,15 @@ to compare elements of a same type at hand, in this case,
 either numbers or strings.
 @Definitions[
 (define ($number-order self super)
-  (λ (msg) (case msg
-             ((<) (λ (x y) (< x y)))
-             ((=) (λ (x y) (= x y)))
-             ((>) (λ (x y) (> x y)))
-             (else (super msg)))))
+  (λ (msg) (case msg ((<) (λ (x y) (< x y)))
+                     ((=) (λ (x y) (= x y)))
+                     ((>) (λ (x y) (> x y)))
+                     (else (super msg)))))
 (define ($string-order self super)
-  (λ (msg) (case msg
-             ((<) (λ (x y) (string<? x y)))
-             ((=) (λ (x y) (string=? x y)))
-             ((>) (λ (x y) (string>? x y)))
-             (else (super msg)))))
+  (λ (msg) (case msg ((<) (λ (x y) (string<? x y)))
+                     ((=) (λ (x y) (string=? x y)))
+                     ((>) (λ (x y) (string>? x y)))
+                     (else (super msg)))))
 ]
 
 @(noindent)
@@ -700,11 +699,10 @@ we call @r[(self '<)] and suches.
 @Definitions[
 (define ($compare<-order self super)
   (λ (msg) (case msg
-             ((compare) (λ (x y)
-                          (cond (((self '<) x y) '<)
-                                (((self '>) x y) '>)
-                                (((self '=) x y) '=)
-                                (else (error "incomparable" x y)))))
+             ((compare) (λ (x y) (cond (((self '<) x y) '<)
+                                       (((self '>) x y) '>)
+                                       (((self '=) x y) '=)
+                                       (else (error "incomparable" x y)))))
              (else (super msg)))))
 (define number-order (instance $number-order $compare<-order))
 (define string-order (instance $string-order $compare<-order))]
@@ -1560,7 +1558,7 @@ reactive or incremental programming. @;TODO: @~cite{}
 @subsection{Prototype Object Systems}
 
 @subsubsection{Director and ThingLab}
-The first prototype object system might have been Director @~cite{Kahn1976 Kahn1979},
+The first prototype object system might have been Director a.k.a. Ani @~cite{Kahn1976 Kahn1979},
 an actor system to create animations from story constraints, written in MacLisp at MIT.
 @; interoperating with LOGO, with inspiration from Smalltalk and AI research.
 The system is informally described as a modifiable hierarchy of message-passing objects
@@ -1569,7 +1567,7 @@ that doesn't match any of the patterns they directly have rules for.
 At about the same time, ThingLab@~cite{Borning1977 Borning1979 Borning1981}
 implemented a classless object system atop Smalltalk, and introduced the term “prototype”,
 as part of a similar project to specify the constraints of an environment to simulate.
-Both systems were followed by many other similar systems in their respective traditions.
+Both systems were followed by many others in their respective traditions.
 @; TODO. Mention inspiration by KRL and its frames? Prototype systems by Luc Steels?
 
 @subsubsection{T}
@@ -1754,7 +1752,7 @@ Some of these innovations have been individually copied here and there,
 but by and large, CLOS remains decades ahead of object systems outside the Lisp tradition
 in most ways but static typing.
 
-@subsubsection{Haskell tradition}
+@subsubsection{The Haskell tradition}
 The limited type system of Haskell does not support OOP for first-class entities.
 Yet Haskell popularized a form of second-class @emph{ad hoc} polymorphism
 in the form of typeclasses@~cite{ImplementingTypeClasses}.
@@ -1781,7 +1779,7 @@ as the interesting algebraic structure.
 object systems with unified instances and prototypes and multiple inheritance,
 that are being used in an actual application.}
 
-In the future, we would like to explore the Generalize Prototypes mentioned in @(AppendixA)
+In the future, we would like to explore the Generalized Prototypes mentioned in @(AppendixA)
 to also implement multiple dispatch and method combination.
 Method combination in particular will require attaching meta-data to method prototypes
 regarding how they are to be combined in the end,
