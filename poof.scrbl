@@ -1,7 +1,7 @@
-#lang scribble/acmart @acmsmall @screen @nonacm @review @anonymous
+#lang scribble/acmart @acmsmall @screen @review
 @; Default already: @10pt @natbib
-@; @authordraft
-@; Submitted to OOPSLA 2021 https://2021.splashcon.org/track/splash-2021-oopsla
+@; @nonacm @anonymous @authordraft
+@; Accepted at the Scheme Workshop 2021 https://icfp21.sigplan.org/home/scheme-2021
 
 @title{Prototypes: Object-Orientation, Functionally}
 
@@ -103,7 +103,7 @@ rather have
 @tex{
 \acmYear{2021}
 \copyrightyear{2021}
-\acmConference[IN SUBMISSION]{some future conference that will hopefully accept this paper}{2021 or later}{some future place}
+\acmConference[Scheme]{Scheme and Functional Programming Workshop}{2021}{online}
 \acmISBN{978-1-xxxx-xxxx-x/21/10}
 \acmPrice{00.00}
 \acmDOI{https://dx.doi.org/xx.xxxx/xxxxxxx.xxxxxxx}

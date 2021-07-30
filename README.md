@@ -7,6 +7,8 @@ from the point of view of pure Functional Programming (FP), with dynamic or depe
 using Prototypes as the fundamental abstraction,
 and Scheme as the illustration language.
 
+See [this PDF](http://fare.tunes.org/files/cs/poof.pdf).
+
 ## License
 
 The code herein is available as free software under the Apache License, version 2.0.
