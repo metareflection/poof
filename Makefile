@@ -16,6 +16,9 @@ poof.pdf: poof.scrbl poof.bib header.tex util/eval-check.rkt util/examples-modul
 
 pdf: poof.pdf
 
+slides: poof-slides.rkt
+	slideshow --preview --comment-on-slide --elapsed-time poof-slides.rkt
+
 view: poof.pdf
 	$(PDFVIEWER) $<
 
