@@ -70,8 +70,8 @@ We use Scheme to illustrate our approach.
 @(defsection section43 "multiple_inheritance" "section 4.3")
 @(defsection section5 "Classes" "section 5")
 @(defsection section6 "Mutability" "section 6")
-@(defsection section7 "Related_Works" "section 7")
-@(defsection section8 "Future_Works" "section 8")
+@(defsection section7 "Related_Work" "section 7")
+@(defsection section8 "Future_Work" "section 8")
 @(defsection AppendixA "Appendix_A" "Appendix A")
 @(defsection AppendixB "Appendix_B" "Appendix B")
 @(defsection AppendixC "Appendix_C" "Appendix C")
@@ -132,17 +132,17 @@ Our approach emphasizes the following original contributions:
 @itemlist[
 #:style enumparenalph
 @item{the conceptual distinction between
-  instances, prototypes, wrappers and generators (sect. @section1{1}),
-  objects (sect. @section42{4.2}), classes and class instances (sect. @section5{5}),}
+  instances, prototypes, wrappers and generators (section @section1{1}),
+  objects (section @section42{4.2}), classes and class instances (section @section5{5}),}
 @item{@emph{composition} of wrappers rather than their @emph{application} to a generator
-  as the algebraic structure of interest (sect. @section1{1}, @section3{3})}
-@item{explanations of both @emph{why} multiple inheritance is useful
-  and @emph{how} to formalize it (sect. @section43{4.3}),}
-@item{how to derive class OOP from the more primitive prototype OOP (sect. @section5{5}),}
+  as the algebraic structure of interest (section @section1{1}, @section3{3})}
+@item{both @emph{why} multiple inheritance is useful
+  and @emph{how} to formalize it (section @section43{4.3}),}
+@item{how to derive class OOP from the more primitive prototype OOP (section @section5{5}),}
 @item{a pure functional approach that provides not only denotational semantics
   atop the pure untyped lambda-calculus, but also a practical constructive implementation,}
 @item{a constructive model that does not rely on mutation
-  (sect. @section1{1}, @section2{2}, @section3{3}),
+  (section @section1{1}, @section2{2}, @section3{3}),
   yet that can be extended to play well with it (sect. @section6{6}).}
 ]
 
@@ -288,7 +288,7 @@ slot @r[x] bound to @r[3]:
 ]
 
 @(noindent)
-This prototype extends an a record with a new slot @r[z]
+This prototype extends a record with a new slot @r[z]
 bound to a complex number computed from real and imaginary values
 bound to the respective slots @r[x] and @r[y] of its @r[self]:
 @Examples[
@@ -352,7 +352,7 @@ that do not affect either override slot @r[z] or inherit from it:
 
 @(noindent)
 @r[mix] is associative, and therefore the following forms are equivalent to the previous ones,
-though the forms above (fold right) are slightly more efficient than the forms below (fold left):
+though the forms above (folding right) are slightly more efficient than the forms below (folding left):
 @Checks[
 (eval:check (list ((fix (mix (mix $z<-xy $double-x) $x3) x1-y2) 'z)
                   ((fix (mix (mix $double-x $z<-xy) $x3) x1-y2) 'z)
@@ -695,7 +695,7 @@ the result of comparing two elements of the type being described.
 A mixin is a prototype meant to extend other prototypes.
 See how this mixin can be used to extend either of the prototypes above.
 Also notice how, to refer to other slots in the eventual instance,
-we call @r[(self '<)] and suches.
+we call @r[(self '<)] and such.
 @Definitions[
 (define ($compare<-order self super)
   (λ (msg) (case msg
@@ -903,7 +903,7 @@ Now, most interesting prototypes will only lead to error or divergence if you tr
 to instantiate them by themselves---they are “mixins”,
 just like @r[$compare<-order] or @r[$avl-tree-rebalance] above,
 designed to be combined with other prototypes.
-Indeed, the whole entire point of incremental programming is that you want to
+Indeed, the entire point of incremental programming is that you want to
 define and manipulate fragments that are not complete specifications.
 To use these fragments in a total language where all computations terminate
 will require attaching to each prototype some side-condition as to
@@ -1019,6 +1019,7 @@ the same prototype as before and a list of keys. The @r[mix] and @r[fix] functio
   (fix (mix ($slot 'keys (cdr proto)) (car proto)) base))
 ]
 @(noindent)
+One could represent sets of keys by a data structure with a union more efficient than list @r[append].
 One could also put @r[$slot] invocation after the @r[(car proto)] rather than before it,
 to allow prototypes to intercept slot introspection.
 
@@ -1035,8 +1036,9 @@ simple and understandable.
 @subsection[#:tag "unifying_instance_prototype"]{Unifying Instances and Prototypes}
 
 @subsubsection{OOP without Objects}
-While the distinction between instance and prototype is essential,
-neither instances nor prototypes are arguably “objects”.
+We have so far insisted on the distinction between instance and prototype.
+Each embody one aspect of what is usually meant by “object”,
+yet neither embody all it.
 We are thus in a strange situation wherein we have been doing
 “Object-Oriented Programming” without any actual object!
 
@@ -1060,8 +1062,7 @@ The same “object” entity can thus be seen as an instance and queried for met
 or seen as a prototype and composed with other objects (also seen as prototypes) into a new object.
 
 Thanks to the conflation of instance and prototype as two aspects of a same object,
-configurations can be written in either language
-that can refer to other parts of the configuration
+configurations can be written that can refer to other parts of the configuration
 without having to track and distinguish which parts are instantiated at which point,
 and it all just works.
 Still, distinguishing the two concepts of instance and prototype is important
@@ -1553,7 +1554,7 @@ reactive or incremental programming. @;TODO: @~cite{}
 @;;; so they appear in the bibliography, that is being computed before the appendices.
 @~nocite{chambers92objectoriented Salzman05prototypeswith Barrett96amonotonic wikiC3 aop97 Foster2007CombinatorsFB Pickering_2017}
 
-@section[#:tag "Related_Works"]{Related Works}
+@section[#:tag "Related_Work"]{Related Work}
 
 @subsection{Prototype Object Systems}
 
@@ -1625,7 +1626,7 @@ and brought prototype object orientation to the masses.
 
 All the above efforts happened in a stateful rather than pure context,
 optimizing for efficient implementation where memory and computation are expensive.
-None of them sought to establish a general model for all OOP, what more with simple semantics.
+None of them sought to establish a general model for all OOP, what is more with simple semantics.
 
 @subsection{The Pure Functional Tradition}
 
@@ -1669,8 +1670,9 @@ has several variations of an “extension system”, all of them
 essentially equivalent to Jsonnet's object system (minus field visibility flagging),
 except done as a handful of user-defined functions, rather than as builtin primitives.
 Peter Simons wrote the initial one in 2015 to support for multiple versions of the GHC ecosystem.
-However, the Nix community is largely in denial of its using prototype objects,
-and though it implements prototype composition,
+However, neither the code nor its documentation describe to these systems as object systems,
+though each has a small comment about object-orientation;
+furthermore, while prototype composition is implemented,
 the codebase tends to stick to single inheritance.
 There was no academic publication on these extension systems, and
 it is unclear how much familiarity the authors had with previous systems.
@@ -1736,7 +1738,7 @@ Prototypes and wrappers are reduced away at the type-level at compile-time,
 distinction between instance and prototype is static, etc.
 Handling full prototype OOP would require dependent types or some notion of staged computations.
 
-@subsection{Other Relevant Works}
+@subsection{Other Relevant Work}
 
 @subsubsection{The Lisp tradition}
 The Lisp tradition includes many object systems that were class-based
@@ -1773,7 +1775,7 @@ as the interesting algebraic structure.
 @; He takes an ugly though minor shortcut in omitting a base object to his fixed-point function
 @; and passing the “self” a second time instead.
 
-@section[#:tag "Future_Works"]{Future Works}
+@section[#:tag "Future_Work"]{Future Work}
 
 @;{Using the ideas in this essay, we have implemented in both Nix and Scheme
 object systems with unified instances and prototypes and multiple inheritance,
