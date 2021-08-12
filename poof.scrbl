@@ -56,6 +56,10 @@ We use Scheme to illustrate our approach.
 @(define (noindent) @tex{\noindent})
 @(define (~nocite . x) (let ((_ (apply @~cite x))) (void)))
 
+@;; Suppress the page count for the Camera-ready version
+@tex{\thispagestyle{empty}\pagestyle{empty}}
+@;@elem[#:style (make-style #f '(exact-chars))]{\thispagestyle{empty}\pagestyle{empty}}
+
 @(define-simple-macro (r a ...) (racket a ...))
 @(define-simple-macro (Definitions a ...) (examples/module poof #:no-result a ...))
 @(define-simple-macro (Examples a ...) (examples #:eval poof #:no-result a ...))
