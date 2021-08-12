@@ -1,21 +1,24 @@
-#lang scribble/acmart @acmsmall @screen @review
+#lang scribble/acmart @acmsmall @screen @nonacm
 @; Default already: @10pt @natbib
-@; @nonacm @anonymous @authordraft
+@; @anonymous @authordraft @authorversion @timestamp
 @; Accepted at the Scheme Workshop 2021 https://icfp21.sigplan.org/home/scheme-2021
 
 @title{Prototypes: Object-Orientation, Functionally}
 
 @author[
   #:email (email "fare@mukn.io")
-  #:affiliation (affiliation #:institution @institution{@emph{Mutual Knowledge Systems, Inc.}})
+  #:affiliation (affiliation #:institution @institution{@emph{Mutual Knowledge Systems, Inc.}}
+                             #:country "USA")
 ]{François-René Rideau}
 @author[
   #:email (email "alexknauth@mukn.io")
-  #:affiliation (affiliation #:institution @institution{@emph{Mutual Knowledge Systems, Inc.}})
+  #:affiliation (affiliation #:institution @institution{@emph{Mutual Knowledge Systems, Inc.}}
+                             #:country "USA")
 ]{Alex Knauth}
 @author[
   #:email (email "namin@seas.harvard.edu")
-  #:affiliation (affiliation #:institution @institution{@emph{Harvard University}})
+  #:affiliation (affiliation #:institution @institution{@emph{Harvard University}}
+                             #:country "USA")
 ]{Nada Amin}
 
 @abstract{
