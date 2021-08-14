@@ -143,15 +143,15 @@ Our approach emphasizes the following original contributions:
   instances, prototypes, wrappers and generators (section @section1{1}),
   objects (section @section42{4.2}), classes and class instances (section @section5{5}),}
 @item{@emph{composition} of wrappers rather than their @emph{application} to a generator
-  as the algebraic structure of interest (section @section1{1}, @section3{3})}
+  as the algebraic structure of interest (sections @section1{1}, @section3{3})}
 @item{both @emph{why} multiple inheritance is useful
   and @emph{how} to formalize it (section @section43{4.3}),}
 @item{how to derive class OOP from the more primitive prototype OOP (section @section5{5}),}
 @item{a pure functional approach that provides not only denotational semantics
   atop the pure untyped lambda-calculus, but also a practical constructive implementation,}
 @item{a constructive model that does not rely on mutation
-  (section @section1{1}, @section2{2}, @section3{3}),
-  yet that can be extended to play well with it (sect. @section6{6}).}
+  (sections @section1{1}, @section2{2}, @section3{3}),
+  yet that can be extended to play well with it (section @section6{6}).}
 ]
 
 @subsubsection{Plan}
@@ -214,7 +214,7 @@ the @emph{same} value as their @r[self] argument:
 the complete instance that results from applying each prototype in order.
 This allows prototypes to “cooperate” with each other
 on @emph{different} aspects of the computation,
-wherein one prototype defines some aspect (e.g. a “method” in some dictionary)
+wherein one prototype defines some aspects (e.g. “methods” in some dictionary)
 while relying on aspects to be defined by other prototypes (e.g. other methods),
 accessed through the @r[self] argument in what is called “late binding”.
 
@@ -253,8 +253,8 @@ Let us relate the above two functions to objects,
 by first encoding “records” of multiple named values as functions
 from symbol (the name of a slot) to value (bound to the slot).
 In accordance with Lisp tradition,
-we will say “slot” where others may say “field” or “member” or “method”,
-and say that the slot is bound to the given value
+we will say @emph{slot} where others may say “field” or “member” or “method”,
+and say that the slot is @emph{bound} to the given value
 rather than it “containing” the value or any such thing.
 
 Thus function @r[x1-y2] below encodes a record with two slots
@@ -382,14 +382,14 @@ there is clearly a dependency between the two that prevents them from commuting:
 @subsubsection{Building record prototypes}
 
 Here are general utility functions to build record prototypes.
-To define an object with a slot @r[k] mapped to a value @r[v], use:
+To define a record with a slot @r[k] mapped to a value @r[v], use:
 @Definitions[
 (code:comment "$slot : (Fun k:Symbol V -> (Proto (Fun 'k -> V | A) A))")
 (define ($slot k v) (code:comment "k v: constant key and value for this defined slot")
   (λ (self super) (code:comment "self super: usual prototype variables")
-    (λ (msg) (code:comment "msg: message received by the object, a.k.a. method name.")
+    (λ (msg) (code:comment "msg: message received by the instance, a.k.a. method name.")
       (if (equal? msg k) v (code:comment "if the message matches the key, return the value")
-        (super msg))))) (code:comment "otherwise, recur to the object's super object")
+        (super msg))))) (code:comment "otherwise, recurse to the super instance")
 ]
 
 @(noindent)
@@ -417,7 +417,7 @@ What if a slot depends on other slots? We can use this function
 @(noindent)
 A general function to compute and override a slot would take as arguments both @r[self]
 and a function to @r[inherit] the super slot value,
-akin to @r[call-next-method] in CLOS@~cite{gabriel1991clos}.
+akin to @r[call-next-method] in CLOS@~cite{gabriel1991clos}:
 @Definitions[
 (code:comment "$slot-gen : (Fun k:Symbol (Fun A (Fun -> V) -> W)")
 (code:comment "  -> (Proto (Fun 'k -> W | A) (Fun 'k -> V | A) A) st: (<: V W))")
@@ -524,8 +524,8 @@ to yet another instance of the subtype @r[Self].
 
 @subsubsection{Composing prototypes}
 
-The identity prototype as follows is neutral element for mix.
-It does not override any information from the super/base object,
+The identity prototype as follows is a neutral element for mix.
+It does not override any information from the super/base instance,
 but only passes it through. It also does not consult information in
 the final fixed-point nor refers to it.
 @Definitions[
@@ -627,7 +627,7 @@ Small puzzle for the points-free Haskellers reading this essay:
 what change of representation will enable prototypes to be composed like regular functions
 without having to apply a binary function like @r[mix]? Solution in footnote.@note{
 A general purpose trick to embed an arbitrary monoid into usual composable functions is
-to curry the composition function (here, @r[mix]) with the object to be composed.
+to curry the composition function (here, @r[mix]) with the value to be composed.
 Thus, the functional embedding of prototype @r[p] will be
 @r[(λ (q) (mix p q)) : (Fun (Proto Super S2) -> (Proto Self S2))].
 To recover @r[p] from that embedding, just apply it to @r[identity-prototype].
@@ -659,11 +659,11 @@ obtaining a generator from @r[(mix p q)] and @r[b].
 
 “Single inheritance” consists in prototypes being second-class entities
 that you can only apply to generators immediately after having defined them,
-with a fixed base object for all generators.
+with a fixed base instance for all generators.
 Instead of being able to abstract over prototypes and compose them,
 you can only use constant prototypes and apply them to generators
 (that themselves are usually also second-class entities but can be abstracted over somewhat).
-To incrementally define an object, you must @r[cons] prototypes one by one onto
+To incrementally define an instance, you must @r[cons] prototypes one by one onto
 the list to instantiate.
 
 Composition of first-class prototypes is obviously more expressive than single-inheritance.
@@ -722,7 +722,7 @@ we call @r[(self '<)] and such.
 ]
 
 @(noindent)
-We can define a order on symbols by delegating to strings!
+We can define an order on symbols by delegating to strings!
 @Definitions[
 (define ($symbol-order self super)
   (λ (msg) (case msg
@@ -941,7 +941,7 @@ yet, as we'll see in @(section5),
 the most popular use of prototypes in Object-Oriented Programming is completely monomorphic:
 prototypes for type descriptors, a.k.a. classes;
 only this common use of prototypes happens at the meta-level,
-classes being second-class objects (pun not intended by the clueless practitioners).
+classes being second-class objects (pun not intended by unaware practitioners).
 
 @section[#:tag "Better_objects"]{Better objects, still pure}
 
@@ -956,7 +956,7 @@ can we also reimplement the more advanced features of object systems of yore?
 @subsection[#:tag "slot_introspection"]{Slot Introspection}
 
 @subsubsection{Bug and feature}
-When representing objects as functions from symbol to value,
+When representing records as functions from symbol to value,
 it is not generally possible to access the list of symbols that constitute valid keys.
 Most object systems do not allow for this kind of introspection at runtime,
 and further introduce scoping or access control rules to enable modular reasoning about slot accesses,
@@ -967,7 +967,7 @@ and has also been advertised as a “reflection” feature.
 Some languages even offer both contradictory sets of features.
 
 @subsubsection{Same concrete representation, abstract constructor}
-Slot introspection can be achieved while keeping instances as functions from keys to values,
+Slot introspection can be achieved while keeping records as functions from keys to values,
 by adding a “special” key, e.g. @r[keys],
 that will be bound to the list of valid keys.
 To save themselves the error-prone burden of maintaining the list of keys by hand,
@@ -975,19 +975,17 @@ programmers would then use a variant of @r[$slot-gen] that maintains this list, 
 @Definitions[
 (define ($slot-gen/keys k fun)
   (λ (self super)
-    (λ (msg)
-      (cond ((equal? msg k) (fun self (λ () (super msg))))
-            ((equal? msg 'keys) (cons k (super 'keys)))
-            (else (super msg))))))
+    (λ (msg) (cond ((equal? msg k) (fun self (λ () (super msg))))
+                   ((equal? msg 'keys) (cons k (super 'keys)))
+                   (else (super msg))))))
 ]
 
 @subsubsection{Different instance representation}
-Slot introspection can also be achieved by using a different representation for instances.
-Just like in Nix, instances could be mappings from symbols to value,
-internally implemented as hash-tables, or, preferrably for pure usage, balanced trees.
-Purposefully, we included an implementation of such balanced trees in
-@seclink["pure_objective_fun"]{section 2}.
-Thus, we could represent objects as thunks that return @r[symbol-avl-map], as follows:
+Slot introspection can also be achieved by using a different representation for records.
+Instead of functions, mappings from symbols to value could be represented
+using hash-tables, or, preferrably in a pure setting, balanced trees.
+Purposefully, we implemented such balanced trees in @(section2).
+Thus, we could represent records as thunks that return a @r[symbol-avl-map], as follows:
 @Definitions[
 (define ($slot-gen/dict k fun)
   (λ (self super)
@@ -999,10 +997,10 @@ However, while the above definition yields the correct result,
 it potentially recomputes the entire dictionary @r[(super)] twice at every symbol lookup,
 with exponential explosion as the number of super prototypes increases.
 We could carefully implement sharing by precomputing @r[(define super-dict (super))].
-But the instance is itself a thunk that would recomputing the entire dictionary at every call,
+But the instance is itself a thunk that would be recomputing the entire dictionary at every call,
 and is better evaluated only once.
-Now, if we adopt lazy evaluation as in Nix, we can automatically share results
-across both copies of computations and multiple consumers of a same copy of computation,
+Now, if we adopt lazy evaluation, we can automatically share results across
+multiple copies of a computation as well as multiple consumers of a same copy,
 without having to manually reimplement this caching every time.
 Thus, using @r[δfix] and @r[δmix] instead of @r[fix] and @r[mix], we can have:
 @Definitions[
@@ -1046,7 +1044,7 @@ simple and understandable.
 @subsubsection{OOP without Objects}
 We have so far insisted on the distinction between instance and prototype.
 Each embody one aspect of what is usually meant by “object”,
-yet neither embody all it.
+yet neither embody all of it.
 We are thus in a strange situation wherein we have been doing
 “Object-Oriented Programming” without any actual object!
 
@@ -1094,7 +1092,7 @@ Nix contains many variants of the same object system, that use one or several of
 to store composable prototype information.
 
 @subsubsection{Practical Conflation for Fun and Profit}
-For the sake of this article, we'll represent an object as a pair of an instance and a prototype:
+In the rest of this article, we'll represent an object as a pair of an instance and a prototype:
 @Definitions[
 (define (make-object instance prototype) (cons instance prototype))
 (define (object-instance object) (car object))
@@ -1262,8 +1260,8 @@ But where is the inheritance information to be stored?
 A prototype must contain more than the function being composed to implement open-recursion.
 @italic{A minima} it must also contain the list of direct super objects
 that the current object depends on.
-We saw in @seclink["different_prototype"]{4.1.4} that and how we can and sometimes must indeed
-include additional information in a prototype.
+We saw in @seclink["different_prototype"]{4.1.4} how we can and sometimes must
+indeed include additional information in a prototype.
 Such additional information will include a precomputed cache for the precedence list below,
 but could also conceivably include
 type declarations, method combinations, and support for any imaginable future feature.
@@ -1624,7 +1622,7 @@ but with prototypes instead of classes. @; TODO CITE
 SELF was influential, notably thanks to its complete graphical environment
 that could run on SparcStations, then widespread in universities and research centers.
 However, SELF could only usably run on high-end workstations,
-despite many innovation to make it efficient@~cite{chambers1989efficient}.
+despite many innovations to make it efficient@~cite{chambers1989efficient}.
 The optimization effort and ubiquitous mutation including of the inheritance hierarchy
 contributed to making its semantic model complex.
 
@@ -1656,7 +1654,7 @@ multiple inheritance and other advanced features from Flavors.
 Jsonnet@~cite{jsonnet} in 2014 was
 the first publicly available language with prototype objects
 in the context of a pure lazy functional language with dynamic types.
-Jsonnet was the first language that made prototype composition
+It was also the first language that made prototype composition
 the primary algebraic operation on objects:
 the model of our @(section1), restricted to records extensions.
 Jsonnet objects also combine in a same entity the two aspects, instance and prototype,
@@ -1664,14 +1662,10 @@ as in our @(section42).
 Note that Jsonnet uses the empty object as the implicit base super object for inheritance;
 this is equivalent to using the bottom function in the representation from our @(section1),
 but not in theirs!
-Jsonnet has field introspection, and also flags fields as either visible or hidden
+Jsonnet also has field introspection, and flags fields as either visible or hidden
 for the sake of exporting JSON.
-
 Jsonnet itself started as a simplified reconstruction and cleanup of GCL,
 the decade-older and reputedly clunky Google Configuration Language, which remains unpublished.
-No academic publication was made on either GCL or Jsonnet,
-and it is unclear which contributed what and when, and what awareness the authors had
-of previous prototype object systems.
 
 Nix@~cite{dolstra2008nixos}, the pure lazy dynamic functional configuration language for NixOS,
 has several variations of an “extension system”, all of them
@@ -1682,8 +1676,6 @@ However, neither the code nor its documentation describe to these systems as obj
 though each has a small comment about object-orientation;
 furthermore, while prototype composition is implemented,
 the codebase tends to stick to single inheritance.
-There was no academic publication on these extension systems, and
-it is unclear how much familiarity the authors had with previous systems.
 
 @;{
 As in these previous inventions, Jsonnet and Nix use first-class functions to construct objects.
@@ -1717,8 +1709,12 @@ because of the limitations of their languages' type systems.
 These two object systems in turn inspired the present authors
 to use, study and improve prototype object systems.
 
-The fact that, across several decades, closely matching designs
-were independently reinvented many times without the intention to do so,
+No academic publication was made on any of GCL, Jsonnet or Nix, and it is unclear
+which of their design elements were influenced by which previous systems,
+and which were original inventions or independent reconstructions.
+Still, we suspect that the influence of previous prototype systems on these three languages
+was indirect and weak. If this suspicion is correct, then the fact that, across several decades,
+closely matching designs were independently reinvented many times without explicit intent to do so,
 is a good sign that this design is a “fixed point in design space”,
 akin to the notion of “fixed point in time” in Dr Who@~cite{DrWhoFPIT}:
 however you may try to reach a different conclusion, you still end-up with that fixed-point eventually.
@@ -1734,7 +1730,7 @@ One logical feature too many and the type system will become undecidable, or wor
 @;TODO CITE
 
 Bruce et al.@~cite{BruceCardelliPierce2006} summarize one basic challenge in encoding objects.
-Their first model, OR, fits our section 1.
+Their first model, OR, fits our @(section1).
 Their other three, OE, OBE, ORE, do not apply to prototype-based OOP,
 but are tailored to class-based OOP.
 OE and ORBE naturally emerge when using our reduction of class-based OOP to prototype-based OOP,
