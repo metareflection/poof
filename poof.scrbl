@@ -122,7 +122,7 @@ rather have
 
 @subsection{The Essence of OOP}
 
-@subsubsection{Object Orientation in 26 symbols of standard Scheme}
+@subsubsection{Object Orientation in 38 @r[cons] cells of standard Scheme}
 
 @Definitions[
 (define (fix p b) (define f (p (lambda i (apply f i)) b)) f)
@@ -1213,7 +1213,6 @@ as described in @(AppendixC).
 (code:comment "YMMV if you use another Scheme implementation")
 (require srfi/1)
 
-
 (code:comment "not-null? : Any -> Bool")
 (define (not-null? l) (not (null? l)))
 
@@ -1787,7 +1786,8 @@ that are being used in an actual application.}
 
 In the future, we would like to explore the Generalized Prototypes mentioned in @(AppendixA)
 to also implement multiple dispatch and method combination.
-Method combination in particular will require attaching meta-data to method prototypes
+Multiple dispatch raises interesting questions regarding the semantics of extending existing objects.
+Method combination meanwhile may require attaching meta-data to method prototypes
 regarding how they are to be combined in the end,
 which means we will have to explore what insights our approach may bring into
 Meta-Object Protocols@~cite{amop}.
@@ -2252,7 +2252,7 @@ function being defined, even before the function is defined.
 
 Here is how we want a fixed point to look like:
 @Examples[
-(define (well-typed-but-invalid p b)
+(define (overly-simple-fix p b)
   (define f (p f b))
   f)
 ]
@@ -2284,7 +2284,7 @@ Indeed in Nix, you can write the equivalent definition:
 In Scheme, we can similarly write:
 @Examples[
 (define (delayed-fix p b)
-  (define df (delay (p f b)))
+  (define f (delay (p f b)))
   f)
 ]
 @(noindent)
@@ -2358,28 +2358,35 @@ And if you do not even like @r[letrec], you can use a Y-combinator variant: @; T
   ((λ (yf) (yf yf)) (λ (yf) (p (λ i (apply (yf yf) i)) b))))
 ]
 
+@(noindent)
+In practice, a lazy variant such as the one using @r[delay] above
+will be the most usable as well as the most general,
+though laziness is not colloquial in the applicative language Scheme.
+
 @section[#:tag "Appendix_E"]{Note for code minimalists}
 
 In our introduction, we described the @r[fix] and @r[mix] functions
-in only 26 symbols or 109 characters of Scheme.
+in only 38 @r[cons] cells or 109 characters of Scheme
+(counting one extra @r[cons] cell per top-level form,
+but no @r[cons] cell for the implicit @r[begin]).
 We can do even shorter with various extensions.
 MIT Scheme and after it Racket, Gerbil Scheme, and more,
-allow you to write curried function definitions, to cut 1 symbol and 9 characters.
+allow you to write curried function definitions, to cut 2 @r[cons] cells and 9 characters.
 @Examples[
 (define ((mix p q) f b) (p f (q f b)))
 ]
 @(noindent)
-And then we'd have Object Orientation in only 25 symbols, 100 characters.
+And then we'd have Object Orientation in only 36 @r[cons] cells, 100 characters.
 
-Then again, in Gerbil Scheme, we could get it down to only 24 symbols,
+Then again, in Gerbil Scheme, we could get it down to only 34 @r[cons] cells,
 and 88 characters, counting newline:
 @racketblock[
 (def (fix p b) (def f (p (cut apply f <>) b)) f)
 ]
 
 @(noindent)
-Or, compressing spaces, to 24 symbols and 73 characters,
-not counting newline, since we elide spaces:
+Or, compressing spaces, to 24 @r[cons] cells and 73 characters,
+not counting newline, since we elide unnecessary spaces:
 @racketblock[
 (def(fix p b)(def f(p(cut apply f <>)b))f)(def((mix p q)f b)(p f(q f b)))
 ]
@@ -2393,9 +2400,8 @@ determined up to a choice of a base computing system,
 simple variants of the λ-calculus provide sensible conventional such bases,
 and the pure subset of Scheme we use is one of them.
 The above “code golf” then suggests that our proposed approach
-to formalizing Object-Oriented Programming indeed provides
+to formalizing Object-Oriented Programming indeed exhibits
 simple foundational principles.
-
 
 @(finalize-examples/module poof)
 
