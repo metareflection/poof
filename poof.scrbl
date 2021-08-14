@@ -139,7 +139,7 @@ staying within the framework of pure Functional Programming (FP).
 Our approach emphasizes the following original contributions:
 @itemlist[
 #:style enumparenalph
-@item{the conceptual distinction between
+@item{the explicit conceptual distinction between
   instances, prototypes, wrappers and generators (section @section1{1}),
   objects (section @section42{4.2}), classes and class instances (section @section5{5}),}
 @item{@emph{composition} of wrappers rather than their @emph{application} to a generator
@@ -147,11 +147,11 @@ Our approach emphasizes the following original contributions:
 @item{both @emph{why} multiple inheritance is useful
   and @emph{how} to formalize it (section @section43{4.3}),}
 @item{how to derive class OOP from the more primitive prototype OOP (section @section5{5}),}
-@item{a pure functional approach that provides not only denotational semantics
-  atop the pure untyped lambda-calculus, but also a practical constructive implementation,}
 @item{a constructive model that does not rely on mutation
   (sections @section1{1}, @section2{2}, @section3{3}),
-  yet that can be extended to play well with it (section @section6{6}).}
+  yet that can be extended to play well with it (section @section6{6}),}
+@item{overall, a pure functional approach that provides not only denotational semantics
+  atop the untyped lambda-calculus, but also a practical constructive implementation.}
 ]
 
 @subsubsection{Plan}
