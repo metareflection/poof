@@ -1,0 +1,45 @@
+@subsubsection{Motivation}
+
+@;{
+For decades, Object-Oriented Programming (OOP) and Functional Programming (FP)
+have been sold by various industrial and academic actors as antithetic
+package deals of features, each supposed to be a programming panacea,
+with communities refusing to acknowledge anything contribution from the other one,
+even when slowly adopting features from the other side.
+OOP, the dominant paradigm, was always presented in terms of as many different
+complexes of features as there were rival languages,
+its conceptual essence never clearly identified.
+FP was previously used as an underlying platform on top of which various object systems
+were built, advanced explained in terms of simpler ones
+(e.g. visibility as scoping, row types for object subtyping, etc.).
+However, it was never used to provide a clear elucidation of the essence of OOP,
+reduced its minimal expression, as in the 109 characters above.
+@; TODO: cite
+}
+
+In this paper we reconstitute a minimal model of OOP in FP using a constructive approach.
+We unbundle the many features of either OOP and FP, to rebuild a minimal OOP core,
+object prototypes, on top of a minimal FP language — the pure untyped lambda calculus.
+We illustrate by example how our approach recognizably enables
+the incremental definition of programs typical of OOP.
+We provide a layered constructive bootstrapping of richer and more familiar object systems
+from our minimal core, including objects as tables of field values, multiple inheritance.
+We justify the use of lazy evaluation to achieve efficient sharing of computations
+without necessitating side-effects.
+We also explain how the familiar concepts of classes and mutable objects
+can be layered on top of our construction.
+The definitions included in this paper constitute a runnable Racket library,
+the source code of the paper being its own self-testing software artifact.
+We also built a production-quality object system based on the same concepts,
+that we actually use in an industrial context.
+
+@;{
+Ultimately, the issue we address with this paper is social and philosophical,
+though our solution takes the form of a technical demonstration.
+We want to dispel the notion that FP and OO are opposite.
+We want to unbundle the concepts traditionally associated to one or the other,
+identify their essence, and show how they can be recombined in better, simpler ways.
+Along the way, produce a modern OO system in about 80 lines of code,
+that works in any modern language with higher-order functions and dynamic types or rich enough types.
+}
+

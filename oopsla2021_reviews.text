@@ -1,0 +1,286 @@
+## Publishing Status
+
+The document was submitted to [OOPSLA 2021](https://2021.splashcon.org/track/splash-2021-oopsla).
+
+https://oopsla2021.hotcrp.com/paper/21#R2response
+
+OOPSLA 2021 Homefahree@gmail.com   Profile · Help · Sign out
+R2 response deadline in 21 hours
+#21   Prototype Object-Orientation Functionally
+[Main] Main[Edit] Edit
+Your submissions
+(All)
+  Search
+Email notification
+Select to receive email on updates to reviews and comments.
+PC conflicts
+Anitha Gollamudi
+Mira Mezini
+Nada Amin
+OOPSLA 2021 #21
+Review #21A
+Review #21B
+Review #21C
+Draft R2 Response
+Submitted
+
+[PDF] Submission (559kB) 15 Apr 2021 4:45:04am AoE ·  8b2ed155
+
+Abstract
+This paper elucidates the essence of Object-Oriented Programming (OOP), independent of idiosyncrasies of past incarnations. We reconstruct OOP in a pure lazy functional style with dynamic or dependent types. We build protototype-based objects first, then class-based objects as a special case. We illustrate our reconstruction in Scheme.
+
+Using our approach, any language that contains the untyped lambda calculus can now implement an object system in handful of functions or roughly 30 lines of code. Multiple inheritance can be implemented in an additional 50 lines of code.
+
+[more]
+Authors (blind)
+F. Rideau, A. Knauth, N. Amin [details]
+Attendance Preferences (potentially)
+Yes
+Topics
+OveMer	RevCon
+Review #21A		1	3
+Review #21B		1	3
+Review #21C		2	3
+1 Comment: Draft R2 Response (N. Amin)
+You are an author of this submission.
+
+[Edit] Edit submission[Edit draft response] Edit draft R2 response
+
+[Text] Reviews and comments in plain text
+
+Review #21A
+Overall merit
+1. 
+Reject
+
+Review confidence
+3. 
+High
+
+Paper summary
+This paper attempts to present a functional architecture in which one can create a flexible object system. Unfortunately, the paper concentrates on demonstrating the breadth of the architecture, without clearly explaining what the architecture is, or how it is different from classic functional models of OOP.
+
+Strengths and Weaknesses
+PROS:
+
+The paper presents a possibly-novel architecture for doing object-oriented programming in functional setting.
+
+CONS:
+
+The paper does not clearly explain what the architecture is or how it is novel.
+
+The paper is rambling and is not written like a conventional academic paper, which makes it more difficult to extract the novel content.
+
+Comments for author
+This paper attempts to present a functional architecture in which one can create a flexible object system. Unfortunately, the paper concentrates on demonstrating the breadth of the architecture, without clearly explaining what the architecture is, or how it is different from classic functional models of OOP.
+
+The fundamental concepts of the architecture are prototypes and instances. A prototype is a composable layer like a trait or a mixin. Prototypes typically compose via delegation to an unknown base class ("open recursion"). Eventually one closes the composition by supplying it with a known base class and explicitly closing the recursion; this turns the delegation into inheritance. The API of a prototype gives the prototype a handle to the eventually-closed value. The result of closing the recursion is called an "instance".
+
+All this is presented in a very discursive fashion. At no time does the paper explain what an object "is", or how it is represented in the system. For instance, the paper could have said something like:
+
+A record is modeled as a map from keys (typically symbols) to
+values.
+
+An object is a record in which some of the values are functions
+(typically called "methods") that contain a reference to the
+record in which they occur.
+The examples are not helpful in elucidating the novel features of the system. For example:
+
+L 38: "fix instantiates a prototype p given a super/base value b". The distinction between prototypes and instances turns out to be crucial. Why not explain this up front?
+
+L 41: "Given some arbitrary instance type Self, and a super-type Super of Self, a prototype for Self from Super will thus be a function from Self and Super to Self." In the proposed system, what is a "type"? What is an "instance type"?
+
+L 44: We would hope that that the formalism, even if incomplete, would help explain things. But how is the reader supposed to parse
+
+(Fun Self Super -> Self st: (<: Self Super))
+Eventually, the correct reading is revealed, on page 28: No need to worry about the precedence of 'Fun' vs. '->'; (Fun I ... -> O) simply means the same thing as (I ... -> O). So a prototype from Self to Super is a function that takes an element of Self and an element of Super, and returns an element of Self. I'm still not sure about the scope of (<: Self Super). Does this Self refer to the first occurrence of 'Self' or the second?
+
+L 96. On the other hand, Sec 1.2.2 says: "A prototype for a record sia function of two record arguments self, and super that returns a record extending super." So maybe the (<: Self Super) is a side condition of the result of the prototype.
+
+It might also be worth saying that the condition (<: Self Super) only holds because all the prototypes that are used end with (else (super msg)).
+
+The examples on page 3 are somewhat helpful. The definition of $x3 makes clear that it is record-extender. But it doesn't use the self argument. The first use of self is in $z<-xy. But how does $z<-xy work? We have one example, on line 128, but no explanation. Why are x and y not dead in z1+2i?
+
+Sec 2.1.2 $binary-tree-map is helpful in understanding the imagined use of the system.
+
+Page 14. Now the reader is half-way through the paper. They imagine they are getting the idea, and then they are confronted with this sentence:
+
+"While the distinction between instance and prototype is essential, neither instances nor prototypes are arguably 'objects.'"
+
+Wait! The reader has been thinking up to now that "instances" play the role of objects in the paper's ontology. But no: "We are thus in a strange situation wherein we have been doing 'Object-Oriented Programming' without any actual object[s]."
+
+At this point, the major defects of the paper are evident, and require rectification by the authors.
+
+Smaller comments:
+
+L 214-219: Example doesn't match text.
+
+Sec 1.2.5: Section belongs in "related work"
+
+L 229: "What we call 'instance,' T calls "object" or "instance". This makes page 14 even more of a surprise.
+
+L 287 et seq: This is important. It needs to be said much earlier.
+
+L 475: why the exclamation point?
+
+L 533: "et"
+
+L 585-587: good joke. haha!
+
+Sec 4.1.1: now we have too many jokes. Conference papers are serious business-- you want people to be attracted by your ideas, not to be put off by snarky comments.
+
+Sec 4.2: I didn't understand this section at all. It could have used some examples.
+
+Sec 4.2.3: Is this the paper's attempt to supply the definitions I hypothesized above? If so, it needs to be placed near the beginning of the paper.
+
+Secs 4.3-6: These sections give the impression of half-thought-out ideas. The paper would be stronger if these topics were deferred to another paper.
+
+Appendix A: "We have used Racket to develop this document in such a way...". We don't care. Use the extra space to do a better job of explaining what you've done. Instead, say "The additional materials include a version of this paper in which ..."
+
+Appendix B, especially B.3: Don't force the reader to parse 6 different notations for a function type. Choose one and stick with it. And if the notation is infix, please indicate precedence and/or associativity, as you've done on LL1361-1364.
+
+Appendix B.4: What is the scope of a type constraint? (see comments above).
+
+Appendix C. Most of this is well-known to any potential reader of this paper.
+
+Appendix D. This is science, not code golf.
+
+Review #21B
+Overall merit
+1. 
+Reject
+
+Review confidence
+3. 
+High
+
+Paper summary
+This paper talks about an object encoding in a functional language.
+
+Strengths and Weaknesses
+Object encodings are a very old topic with a lot of existing work. Unfortunately, this work isn't put into the context of existing work on object encodings. No contributions relative to prior work are claimed. There are no case studies, no proofs. The purpose of this work is very unclear. Also, the actual challenge of object encodings is usually in the static typing, which isn't addressed in the paper.
+
+My advice to the authors is to start the paper with a specific problem that is not addressed properly by existing work on object encodings and then demonstrate how your approach solves that problem.
+
+The paper "Comparing object encodings" from Bruce et al gives a good overview of existing work until the late 1990s.
+
+Review #21C
+Overall merit
+2. 
+Weak reject
+
+Review confidence
+3. 
+High
+
+Paper summary
+This paper argues that the essence of OOP can be captured in (dynamically typed) lazy functional programming. The basic idea is that objects with self references can be modelled with fixpoints; and forms of composition (inheritance) can be modelled with a simple combinator (which the authors call mix).
+
+The authors argue that such model has been independently rediscovered several times in various existing systems, such as Nix or Jsonnet. They illustrate various things, including the use of prototypes for things other
+
+Strengths and Weaknesses
+Pros:
+
+The topic of the paper is a very interesting one to me.
+
+I agree with the authors that such denotational model of objects is powerful, and that lazy functional languages can concisely model expressive OOP features.
+
+Cons:
+
+Lack of novelty. The authors do not clearly state what is novel (or rather I think that what they believe is novel is not actually novel), and they seem to be oblivious of most closely related work.
+
+Writing style. The paper felt like a tutorial to me, and it is writen in an unconventional style for a research paper.
+
+Comments for author
+This is a paper on a topic close to my heart, and I quite enjoyed reading it. However, I think there is a very fundamental problem with the work as it stands: I cannot see the novelty of the work. I think there are two different issues:
+
+1) The authors seem to be unware of the "denotational model of inheritance" and how the denotational model fits nicely with lazy functional programming. The denotational model of inheritance is well-understood in the literature and it has been known for over 30 years. It is also known that lazy functional languages, such as Haskell, can be used to directly "implement" such denotational model. Moreover, it is also known that the denotational model is interesting, not just for objects, but also for other domains. In short, my feeling is that the authors are making alot of points/claims in their paper that are well-known.
+
+2) The writing style employed by the authors does not emphasize novelty. For example, they mention a previous approach by Adams and Rees in their paper, but do not clearly state what is the delta of that work. They merely state that the approach is essentially similar.
+
+I wonder if the authors intention was not to have a research paper, but rather a pearl or essay. At least I see the word "essay" being used in the paper. If that's the case, I think that perhaps a pearl/essay could be written with some of this material, and I think I'd be happy to see that happening. However, OOPSLA (as far as I know) does not accept pearls or essays. Onwards, ECOOP or the Programming Journal would be possible alternatives for such kind of paper.
+
+Detailed comments:
+
+Related Work:
+1) Denotational Semantics of Inheritance:
+
+The authors start by claimining that the essence of OOP is the two lines of code in the introduction. To a great extent I agree with that, but this is something well-known. Actually the two lines presented in the introduction capture the essence of a particular model of OOP. There are several different models. I strongly suggest the authors to look at Cook's thesis:
+
+William Cook, A Denotational Semantics of Inheritance, PhD thesis, 1989 Available at: https://www.cs.utexas.edu/~wcook/papers/thesis/cook89.pdf
+
+Cook investigates different variants for models of OOP using a denotational semantics based on fixed points (he chooses different composition operators for different models). See also the journal paper:
+
+Cook and Palsberg, A Denotational Semantics of Inheritance and Its Correctness, Information and Computation 1994
+
+Besides Cook's work, I should also mention Reddy's work, which also presents a denotational semantics for inheritance but focusing on Smalltalk only:
+
+U. S. Reddy. Objects as closures: Abstract semantics of object-oriented languages. In Proc. of the ACM Conf. on Lisp and Functional Programming, pages 289–297, 1988.
+
+2) Using the denotational semantics of inheritance in lazy functional programming:
+
+It has also been observed before that we can take the denotational semantics of inheritance and use it in a rather direct and convenient way in lazy functional programming.
+
+There are quite a few papers on using the denotational semantics of inheritance in Haskell. Furthermore, this is useful to model things other than objects. See, for example:
+
+Brown and Cook, Function Inheritance: Monadic Memoization Mixins Brazilian Symposium on Programming Languages (SBLP), 2009.
+
+Oliveira, Schrijvers and Cook. EffectiveAdvice: Disciplined advice with explicit effects Proceedings of the 9th International Conference on Aspect-Oriented Software Development 2010
+
+The particular model that the authors use seems to be close to:
+
+http://ropas.snu.ac.kr/%7Ebruno/papers/MixinAspects.pdf
+
+See Figure 2, and Section 4.4 for an explanation of how it relates to the models in Cook's thesis.
+
+Given the above related work, I'm left wondering what the novelty of this work is.
+What I could see as a novel technical contribution is that Scheme "liberates" us from types, and that the denotational models would be more flexible in a language like Scheme. In Haskell, as the works mentioned above show, we often need to employ more advanced type-theoretic concepts to type certain programs, especially those involving some form of side-effect.
+
+Thus I could envision a paper where the argument would be something like: by employing the denotational model in a language like Scheme we can quickly build a powerful and expressive OOP framework.
+
+However, as the authors observe, Adams and Rees already describe a similar approach in Scheme so I think even the argument above would need to be further refined to focus on the extras over Adams and Rees approach. Perhaps a small difference is that Adams and Rees do not identify fix and mix?
+
+In any case, this is something that the authors really need to think about.
+
+Section 2:
+What's the motivation/goal in this section? It would be helpful to be upfront about this. I found the section a bit odd. I understand that it presents a few examples, but it felt a bit unmotivated.
+
+"even though Nix’s extension system was not even consciously meant as an object system when it was designed"
+Are you sure about the above statement? I can tell for a fact that Andres L\"oh (one of the authors of Nix) was aware of some of the Haskell work using the denotational model of inheritance mentioned above by 2015 (which according to the authors is when such system was implemented in Nix). I'd expect that such work was an influence to the design of Nix.
+
+Field introspection in S4 could potentially be a source of novelty. I don't think I've seen that before.
+
+I find the writing style to be understandable, but strange for a research paper. Some complains are:
+
+1) the lack of focus (for instance on novelty);
+
+2) Some side-divertions, such as bringing up very Haskell-specific analogies in the middle of some discussion. An example is the discussion in 883-893. I think such discussions will make little sense for non-Haskell programmers. Also, since this is not a Haskell paper, the authors can make it more approachable by removing such discussions.
+
+3) Related work discussions are spread throughout the paper, instead of being in a separate Related Work section. Moreover, it would greatly help your novelty arguments to state and compare most closely related work right at the introduction.
+
+4) There are a few discussions across the paper where basically there is some argument that fix/mix is useful, not just for objects, but for other things. For instance, the discussions in 4.5 are about method combination, and earlier there was some discussion on 3.1 on prototypes for numeric functions. Again, such topics have been discussed before (see work on Haskell above).
+
+typos/language
+The writing is mostly ok in terms of grammar/typos, though it is a bit colloquial at points. For instance there are plenty of uses of abbreviations, such as "don't" (instead of "do not").
+
+l1007 they will support
+
+Draft R2 ResponseAuthor [Nada Amin]15 Jun 2021
+Reviewers can’t see this draft response.
+
+Dear authors, Author responses can change the course of the deliberations of the review committee by providing missing clarifications. We encourage you to submit a brief response, and to format it in three parts: #1 Overview: a short summary of the main points you want     to convey to all the reviewers. #2 Changes: if accepted the changes that you envision     possible in the time at hand. #3 Detailed comments: for each reviewer, provide     answers to explicit questions as well as key points     raised in the text. Feel free to quote the reviews     for context. There is no fixed word limit to your reply as some reviewers have provided you with many questions and issues. But endeavour to be as brief as humanly possible; meandering replies are likely to cause reviewers to skim the author response.   Best wishes, Sophia Drossopoulou  OOPSLA 2021 RC Chair
+
+The response deadline is 17 Jun 2021 7:59am your time.
+
+Markdown styling and LaTeX math supported · Preview
+We thank all the reviewers for their insightful reviews.
+We thank reviewer 1 for walking us through issues in the paper.
+We thank reviewer 3 for the encouragement and the useful pointers to related work.
+The response is ready for review
+
+
+Cancel
+Save draft
+We thank all the reviewers for their insightful reviews.
+We thank reviewer 1 for walking us through issues in the paper.
+We thank reviewer 3 for the encouragement and the useful pointers to related work....HotCRP

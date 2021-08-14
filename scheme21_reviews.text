@@ -1,0 +1,145 @@
+Dear authors,
+
+The Scheme and Functional Programming Workshop 2021 (Scheme 2021)
+program committee is delighted to inform you that your submission #91
+has been accepted to appear in the conference.
+
+       Title: Prototypes: Object-Orientation, Functionally
+     Authors: François-René Rideau (Mutual Knowledge Systems, Inc.)
+              Alex Knauth (Mutual Knowledge Systems, Inc.)
+              Nada Amin (Harvard University)
+        Site: https://scheme2021.hotcrp.com/paper/91?
+
+9 of 11 submissions were accepted. Congratulations!
+
+Visit the submission site for reviews, comments, and related
+information. Reviews and comments are also included below.
+
+Contact webyrd@uab.edu with any questions or concerns.
+
+Cheers,
+
+--Olin and Will
+
+Review #91A
+===========================================================================
+
+Overall merit
+-------------
+5. Strong accept
+
+Reviewer expertise
+------------------
+3. Knowledgeable
+
+Paper summary
+-------------
+This reviews and synthesizes ways of building object systems using a scheme / λ-calculus substrate. Delegation is used, and various advanced facilities (inheritance, etc) are supported.
+
+Comments for author
+-------------------
+Modeling object systems was part of the original motivation for the development of the Scheme language. But that was quite informal. This is a nice modern take on the issue.
+
+This is a thoughtful exploration of a topic covered a bit less formally in many intro scheme classes. The use of fixedpoints to model mutation is pretty clever: usually the systems built are either pure or just use mutation.
+
+I enjoyed reading it, and don't have any substantive suggestions!
+
+TYPOS
+
+L1020, typo: "what more with", should read "whats more with"
+
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+
+Review #91B
+===========================================================================
+
+Overall merit
+-------------
+4. Accept
+
+Reviewer expertise
+------------------
+2. Some familiarity
+
+Paper summary
+-------------
+The authors reconstruct object-oriented programming from simple principles, using Scheme as their language of discourse, and backing up their reconstruction with comprehensive bibliographic references.
+
+Comments for author
+-------------------
+In Section 1.1.2, do "(1)", "(4.2)", etc. refer to sections numbers?
+Then better write "(Section 1)", "(Section 4.2)", etc. to diminish the number of occurrences of "(x)",
+where "x" stands for "OOP" and "FP", in Section 1.1.1., "a", "b", etc. in Section 1.1.2, etc.
+
+"(fold right)" and "(fold left)" are mentioned on Line 176 but way too implicitly.
+It would be simpler to say that since mix is associative, it can be associated to the right, as above, or to the left, as below.
+
+Probably all the occurrences of "works" in the titles of Sections 7 and 8 should read "work", as should be checked with a native speaker.
+
+The name "fix" is usually associated with fixed-point combinators, but OK.
+
+Overall, this is a beautiful paper, thanks for writing it.
+
+
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+
+Review #91C
+===========================================================================
+
+Overall merit
+-------------
+5. Strong accept
+
+Reviewer expertise
+------------------
+2. Some familiarity
+
+Paper summary
+-------------
+The author uses lambda calculus to build (surprisingly) minimal models
+of object-oriented programming, starting with prototype/delegation
+models and then progressing to class-oriented structures.
+
+Quite a well written paper -- passionately and gracefully written, by
+someone with deep and broad knowledge of the semantic structures of
+OOP.
+
+The key idea is assembling prototypes into a single instance by
+the obvious and simple (that is... once you've seen it!) means
+of tying them together with a suitably tweaked variation on the
+Y combinator. One of the privileges of doing everything in lambda!
+
+I am not expert or well-versed in the related literature.
+
+Comments for author
+-------------------
+
+Should take a look at Pearlmutter & Lang's Oaklisp,
+a system which tightly integrates OOP & functional programming.
+
+128.5 a an
+
+193 you say 'k when I think you mean k.
+
+377 "suches" is not a word.
+
+549.5 "whole entire" is redundant.
+
+631.5 You combine fields with APPEND. This can accumulate repeated
+entries, yes? You need some way of doing a set union, not a list
+append. Perhaps you could do something object-oriented and have an
+abstract set-of-symbols collection type? After all, a good set
+implementation could easily be done as a variant of your AVL code.
+(Or just put this discussion in a footnote and don't bother with all
+the machinery.)
+
+4.2.1 You say instances are not objects. Can you say why? By this point
+in the paper, I have a very concrete understanding of what an instance
+is. But not an object. So I'm at sea.
+
+I would recommend toning down or removing more judgemental attributions
+(opinions, not facts) about communities and practitioners. (E.g., "being
+in denial" and a few other snarky comments.) There are 2-3 of these.
