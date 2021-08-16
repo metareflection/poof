@@ -141,7 +141,7 @@ Our approach emphasizes the following original contributions:
 #:style enumparenalph
 @item{the explicit conceptual distinction between
   instances, prototypes, wrappers and generators (section @section1{1}),
-  objects (section @section42{4.2}), classes and class instances (section @section5{5}),}
+  objects (section @section42{4.2}), classes and elements (section @section5{5}),}
 @item{@emph{composition} of wrappers rather than their @emph{application} to a generator
   as the algebraic structure of interest (sections @section1{1}, @section3{3})}
 @item{both @emph{why} multiple inheritance is useful
@@ -1443,9 +1443,9 @@ Indeed, the correspondance can be made formal, with automated transformations
 between the two styles@~cite{LIL2012}.
 Note however how “object” denotes very different notions in the two styles:
 what is called “object” in class-based OOP is the notional pair of
-the type descriptor and the type element,
+the type descriptor and an element of the described type,
 whereas the type descriptor is (an instance of) an “object” in our prototype-based formalism,
-handled independently from the values of described types,
+handled independently from the elements of the described type,
 that themselves may or may not be objects.
 
 @section[#:tag "Mutability"]{Mutability}
