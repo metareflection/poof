@@ -1632,6 +1632,8 @@ and brought prototype object orientation to the masses.
 All the above efforts happened in a stateful rather than pure context,
 optimizing for efficient implementation where memory and computation are expensive.
 None of them sought to establish a general model for all OOP, what is more with simple semantics.
+An exception is Bracha, who first documented and implemented Prototype Composition in 1990
+@~cite{bracha1990mixin}, though he called his extension to Modula-3 “mixins”.
 
 @subsection{The Pure Functional Tradition}
 

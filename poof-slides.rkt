@@ -300,13 +300,14 @@
 
 (slide
  #:title "Simplest Instances: Records as Functions"
+ @P{Record: Symbol → Value}
  )
 
 (slide
  #:title "Simplest Prototypes: Wrappers"
  (code
    (code:comment "(deftype (Proto Self Super)                              :")
-   (code:comment "  (Fun Self Super -> Self st: (<: Self Super))))         :"))
+   (code:comment "  (Fun Self Super → Self st: (⊂ Self Super))))"))
  (code
    (code:comment ": (Proto Self Super) Super -> Self")
    (define (instantiate proto base)                           :
@@ -328,6 +329,10 @@
    values is called the ‘base’ value,
    which means all the way below. WTF?
  })
+
+(slide
+  #:title "Wrappers at work"
+  )
 
 (slide
  #:title "Compare: Single Inheritance"
