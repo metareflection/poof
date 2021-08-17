@@ -142,10 +142,10 @@ Our approach emphasizes the following original contributions:
 @item{the explicit conceptual distinction between
   instances, prototypes, wrappers and generators (section @section1{1}),
   objects (section @section42{4.2}), classes and elements (section @section5{5}),}
-@item{@emph{composition} of wrappers rather than their @emph{application} to a generator
+@item{promoting @emph{composition} of wrappers rather than their @emph{application} to a generator
   as the algebraic structure of interest (sections @section1{1}, @section3{3})}
-@item{both @emph{why} multiple inheritance is useful
-  and @emph{how} to formalize it (section @section43{4.3}),}
+@item{both @emph{how} to implement multiple inheritance with pure prototypes and
+  @emph{why} use them based on a model of modularity (section @section43{4.3}),}
 @item{how to derive class OOP from the more primitive prototype OOP (section @section5{5}),}
 @item{a constructive model that does not rely on mutation
   (sections @section1{1}, @section2{2}, @section3{3}),
@@ -1632,15 +1632,13 @@ and brought prototype object orientation to the masses.
 All the above efforts happened in a stateful rather than pure context,
 optimizing for efficient implementation where memory and computation are expensive.
 None of them sought to establish a general model for all OOP, what is more with simple semantics.
-An exception is Bracha, who first documented and implemented Prototype Composition in 1990
-@~cite{bracha1990mixin}, though he called his extension to Modula-3 “mixins”.
 
 @subsection{The Pure Functional Tradition}
 
-@subsubsection{Denotational Semantics}
+@subsubsection{Denotational and Operational Semantics}
 @; Kamin and @; TODO Cite
 Reddy@~cite{ObjectsAsClosures} used objects as closures
-to offer formal semantics for Smalltalk.
+to offer denotational semantics for Smalltalk.
 Cook@~cite{Cook1989} independently took the same approach, but made it more general.
 Cook uses the same model as in our @(section1),
 just restricted to records (unlike our @(section3)),
@@ -1650,13 +1648,25 @@ He notably factors the record extension mechanism as a parameter of his protocol
 Cook doesn't address prototype systems, and mentions but doesn't adequately tackle
 multiple inheritance and other advanced features from Flavors.
 
+Bracha first documented and implemented prototype composition,
+which he called mixin composition @~cite{bracha1990mixin},
+then in his thesis @~cite{bracha1992jigsaw} generalized the concept and vastly expanded on it.
+He notably explained how to express single and multiple inheritance
+in terms of this composition, and relating it to both previous class and prototype OOP.
+A lot of the concepts in the present paper are explicitly present or a least latent in
+Bracha's work, though we arrange them in slightly different ways:
+Bracha has more of a deconstructive approach, breaking down the elementary mechanisms
+with which to reconstruct any past and future system of modules, objects or first-class environments;
+our paper has a more constructive presentation of the same ideas,
+emphasizing the simplicity of minimal definitions of object systems on top of FP.
+
 @subsubsection{GCL, Jsonnet, Nix}
 
 Jsonnet@~cite{jsonnet} in 2014 was
 the first publicly available language with prototype objects
 in the context of a pure lazy functional language with dynamic types.
-It was also the first language that made prototype composition
-the primary algebraic operation on objects:
+It was also the first widely-used language (excluding Bracha's experiments above)
+that made prototype composition the primary algebraic operation on objects:
 the model of our @(section1), restricted to records extensions.
 Jsonnet objects also combine in a same entity the two aspects, instance and prototype,
 as in our @(section42).
