@@ -209,9 +209,9 @@
  #:title "What is Object-Orientation about?"
  @P{Incrementality}
  @P{Modularity}
- (blank-line)
- @P{Ad hoc Polymorphism}
+ (blank-line) ;; make it a table / square to match open recursion w/ incrementality, etc.?
  @P{Open Recursion}
+ @P{Ad hoc Polymorphism}
  @comment{
    The core concept of OO is
    incrementality. OO is the ability to
@@ -226,8 +226,9 @@
 
    Modularity. If I played buzzword bingo,
    I would say ‘Abstraction’, but that word
-   has many precise & unprecise meanings
-   none of them precisely right but many
+   has many precise & unprecise
+   meanings none of them precisely right
+   but many
    of them precisely wrong to characterize
    OO. Modularity is when specifications,
    whether incremental or not, can be
@@ -251,16 +252,6 @@
  }
  'next
  @comment{
-
-   Everyone in FP is familiar with
-   parametric polymorphism. Yet, the
-   same famous 1967 Strachey paper
-   that introduced the term also
-   introduced the dual notion of ad hoc
-   polymorphism, wrongfully neglected by
-   FPers. OO is about this dual form of
-   polymorphism.
-
    Open Recursion. This means
    manipulating operators of which you
    intend to compute the fixed-point, but
@@ -272,6 +263,18 @@
    commutes with the taking of this
    fixed-point. But that's a secondary
    concern really.
+
+   Everyone in FP is familiar with
+   parametric polymorphism. Yet, the
+   same famous 1967 Strachey paper
+   that introduced the term also
+   introduced the dual notion of ad hoc
+   polymorphism, wrongfully neglected by
+   FPers. OO is about this dual form of
+   polymorphism.
+   Programming against an interface
+   that can be implemented in many ways.
+   Modularity!
   })
 
 (slide
@@ -301,7 +304,15 @@
 (slide
  #:title "Simplest Instances: Records as Functions"
  @P{Record: Symbol → Value}
- )
+ @code[(define (x1-y2 k)                                          :
+         (case k ((x) 1)
+                 ((y) 2)
+                 (else (error "invalid field"))))
+
+       > (x1-y2 'y)
+       2]
+ @comment{
+ })
 
 (slide
  #:title "Simplest Prototypes: Wrappers"
@@ -331,8 +342,10 @@
  })
 
 (slide
-  #:title "Wrappers at work"
-  )
+ #:title "Wrappers at work"
+ @comment{
+   TODO: show how it works
+ })
 
 (slide
  #:title "Compare: Single Inheritance"
@@ -346,10 +359,20 @@
    functions and automatic memory
    management, and instead imposed an
    inexpressive typesystem.
+   (and in the olden days, it did matter
+   for memory and/or speed)
+
+   And you can save a bit in slot and method
+   access performance
    Once you play by those rules, you
    might not have any IQ points left
    to go beyond single inheritance.
  })
+
+;;
+;; Computations, not values
+;; Hence laziness
+;; Laziness can be implemented as caching with side-effects
 
 #;
 (slide
@@ -400,7 +423,15 @@
 (slide
  #:title "Classes"
  @P{Class OO = Prototype OO at type-level}
- @P{Abstract vs Concrete Class = Prototype vs Instance})
+ @P{Class = Prototype Type, Type = Instance of Type}
+ @P{Abstract vs Concrete Class = Prototype vs Instance}
+ @P{Subclass ≠ Subtype}
+ @comment{
+   Inheritance of class membership is the idea that subtyping *should*, always, commute with fixed-points.
+   A trivial logical falsehood. A terrible design constraint.
+   A moronic industrial slogan. An academic pissing contest.
+   All due to confusion between instance and prototype.
+ })
 
 (slide
  #:title "From Pure to Stateful"
@@ -430,7 +461,7 @@
  @P{Haskell:
      2000s Mixins (Oliveira...)}
  @P{Pure Functional Prototypes:
-     2014 Jsonnet, 2015 Nix}
+     2004 GCL, 2014 Jsonnet, 2015 Nix}
  @comment{
  })
 
@@ -469,7 +500,9 @@
  @P{Gerbil Scheme implementation:
    @tt{https://github.com/fare/gerbil-poo}}
  @P{Nix implementation:
-   @tt{https://github.com/NixOS/nixpkgs/pull/116275}})
+   @tt{https://github.com/NixOS/nixpkgs/pull/116275}}
+ (blank-line)
+ @P{We're hiring at MuKn.io !})
 
 #;@P{
 Back in the 1990s to 2000s, I saw many USENET flamewars about OOP vs FP. Neither side ever tried to listen to the other, address their concern, nor speak their language. I vainly yearned for an explanation of how the two were related, complementary, maybe even dual.
