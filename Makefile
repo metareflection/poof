@@ -16,6 +16,11 @@ poof.pdf: poof.scrbl poof.bib header.tex util/eval-check.rkt util/examples-modul
 
 pdf: poof.pdf
 
+# Previewing the slides. make preslides p=14 to start at page 14.
+# NB: Alt-M for the mouse!
+preslides: poof-slides.rkt
+	slideshow --comment-on-slide --elapsed-time --start $${p:-1} poof-slides.rkt
+
 slides: poof-slides.rkt
 	slideshow --preview --comment-on-slide --elapsed-time poof-slides.rkt
 
