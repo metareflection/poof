@@ -34,7 +34,7 @@ repl:
 	racket --lib racket/base --require main.rkt --repl
 
 prerequisites:
-	for i in scribble-abbrevs scribble-minted scribble-math ; do \
+	for i in scribble-abbrevs scribble-minted scribble-math unstable-lib slideshow-text-style ; do \
 	  raco pkg install --auto --update-deps $$i ; \
 	done
 

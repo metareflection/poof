@@ -6,9 +6,12 @@
 
 (require slideshow/code
          slideshow/text
-         (only-in pict/color white))
+         (only-in pict/color white)
+         (only-in unstable/gui/slideshow tabular)
+         (only-in slideshow-text-style with-text-style))
 
 (define (P . x) (apply para #:align 'left x))
+(define (C . x) (apply para #:align 'center x))
 
 (slide
  #:title "Prototypes: Object-Orientation, Functionally"
@@ -83,13 +86,11 @@
     these core concepts, and omit others.
 
     Single inheritance has been well
-    understood for decades. But wrapper
-    composition was only described
-    recently and never in its full
-    generality. And there was no
-    satisfactory formal treatment of
-    multiple inheritance, how it relates
-    to the previous, and why it matters.
+    understood for decades. But few
+    seem to understand wrapper
+    composition, its relationship to
+    single or multiple inheritance,
+    and why it matters.
 
     We formally relate Prototype OO and
     Class OO, explain why Prototype OO
@@ -111,14 +112,16 @@
     Our construction is applicable on top
     of any language that contains the
     untyped lambda calculus.
+    In 30 lines of code, you get OOP;
+    in 80, multiple inheritance.
   })
 
 (slide
  #:title "What is NOT in the Paper"
   'next
-  @P{Controversial opinions}
-  (blank-line)
   @P{Guiding insights}
+  (blank-line)
+  @P{Hot Takes} ;; Controversial opinions
 
   @comment{
    But frankly, it would be pointless for
@@ -128,11 +131,11 @@
    a shorter convincing argument, I would
    just have written a shorter paper.
 
-   And so instead, I will treat you to all
-   the controversial opinions that were
-   not fit to print in an academic paper.
-   To the insights that guided me in
-   writing it.
+   And so instead, I will treat you to
+   some of the key insights that guided
+   me in writing the paper — and my
+   controversial opinions that were not
+   fit to print in an academic paper.
   })
 
 (slide
@@ -184,11 +187,11 @@
    This *idiotic* claim was indeed made
    by many proponents and opponents of
    OO alike. But inheritance and
-   composition being *different* concepts,
-   they are by trivial consequence no
-   substitute for one another.
-   Each applies to situations where
-   the other doesn't.
+   composition being *different*
+   concepts, they are by trivial
+   consequence no substitute for one
+   another. Each applies to situations
+   where the other doesn't.
 
    OO is often associated to imperative
    programming: mutation is used to
@@ -206,12 +209,10 @@
  })
 
 (slide
- #:title "What is Object-Orientation about?"
- @P{Incrementality}
- @P{Modularity}
- (blank-line) ;; make it a table / square to match open recursion w/ incrementality, etc.?
- @P{Open Recursion}
- @P{Ad hoc Polymorphism}
+#:title "What is Object-Orientation about?"
+ @tabular[(list "Incrementality" "" "Open Recursion")
+          (list "" "                             " "")
+          (list "Modularity" "" "Ad hoc Polymorphism")]
  @comment{
    The core concept of OO is
    incrementality. OO is the ability to
@@ -283,7 +284,7 @@
  @P{Inheritance: Wrappers and Generators}
  @P{Generality: Prototypes beyond records}
  @P{Multiple inheritance: modular dependencies}
- @P{Conflation: Object = instance + prototype}
+ @P{Conflation: Object = Instance × Prototype}
  @P{Type Prototypes: Classes and Elements})
 
 (slide
@@ -293,8 +294,8 @@
  @P{Prototype: increment of specification}
  @(blank-line)
  'next
- @P{Instantiate: prototype → instance}
- @P{Inherit: prototype prototype → prototype}
+ @tt{instantiate: prototype → instance       }
+ @tt{inherit: prototype prototype → prototype}
  @comment{
    Simplest OO design: take the latter
    equations as literal types, and find
@@ -304,6 +305,7 @@
 (slide
  #:title "Simplest Instances: Records as Functions"
  @P{Record: Symbol → Value}
+ @(blank-line)
  @code[(define (x1-y2 k)                                          :
          (case k ((x) 1)
                  ((y) 2)
@@ -343,15 +345,56 @@
 
 (slide
  #:title "Wrappers at work"
+ @code[
+   (define ($x3 self super)
+     (λ (msg) (if (eq? msg 'x) 3 (super msg))))
+
+   (define ($z<-xy self super)
+     (λ (msg) (case msg
+                ((z) (+ (self 'x) (* 0+1i (self 'y))))         :
+                (else (super msg)))))
+
+   (define ($double-x self super)
+     (λ (msg) (if (eq? msg 'x) (* 2 (super 'x)) (super msg))))
+
+   (define z6+2i
+     (instantiate (inherit $z<-xy (inherit $double-x $x3))
+                  x1-y2))
+
+   > (z6+2i 'z)
+   6+2i]
  @comment{
    TODO: show how it works
  })
 
+;; TODO: skip in the 25' version
 (slide
  #:title "Compare: Single Inheritance"
+ (code
+  (code:comment "(deftype (Gen A) (Fun A -> A))")
+  (code:comment "instantiate-generator : (Fun (Gen A) -> A)")
+  (define (instantiate-generator g)
+    (define f (g (λ i (apply f i)))) f)
+  (code:comment "")
+  (code:comment "proto->generator : (Fun (Proto A B) B -> (Gen A))")
+  (define (proto->generator p b) (λ (f) (p f b)))
+  (code:comment "(== (instantiate-generator (proto->generator p b))")
+  (code:comment "    (instantiate p b))")
+  (code:comment "")
+  (code:comment "apply-proto : (Fun (Proto A B) (Gen B) -> (Gen A))")
+  (define (apply-proto p g) (λ (f) (p f (g f))))
+  (code:comment "(== (apply-proto p (proto->generator q b))")
+  (code:comment "    (proto->generator (inherit p q) b))"))
+
  @comment{
-   Why would anyone ever implement or use
-   single inheritance over the much
+   Composition of wrappers is a much more
+   interesting algebraic structure than
+   their application to a generator.
+   Gilad Bracha has relently pushed for
+   "mixins" (Newspeak, Racket, Scala).
+
+   Why would anyone ever implement or
+   use single inheritance over the much
    simpler and much more powerful mixin
    composition?
    … because the Handicapper General
@@ -374,94 +417,138 @@
 ;; Hence laziness
 ;; Laziness can be implemented as caching with side-effects
 
-#;
 (slide
- #:title "Lazy Record Representation"
- (item "Records with Lazy Fields")
- (item "Prototypes for Lazy Computations")
- (small (para (code (delay f)) "instead of" (code (lambda i (apply f i)))
-              "                              "
-              "Used in δfix:"
-              (code (define (δfix p b) (define f (delay (p f b))) f))))
- (comment "Prototypes are for Computations not Values."
-          "Using laziness directly inside the fixpoint instantiation."))
+ #:title "Beyond Simple Records"
+ @P{Prototypes for any type of instance...}
+ (blank-line)
+ @P{computations, not values}
+ @P{thunks, delayed values, lazy values}
+ (blank-line)
+ @P{Useful even without record subtyping}
+ @comment{
+ })
 
-#;
-(slide
- (item "Distinctions")
- (item "Composition")
- (item "Multiple inheritance")
- (item "Classes")
- (item "Pure")
- (item "Mutation")
- (comment "Distictions: The conceptual distinction between"
-          "instances, prototypes, wrappers and generators,"
-          "objects, classes and class instances."
-          "Composition: Composition of wrappers rather than their application to a generator"
-          "as the algebraic structure of interest."
-          "Multiple inheritance: Explanations of both why multiple inheritance is useful"
-          "and how to formalize it."
-          "Classes: How to derive class OOP from the more primitive prototype OOP."
-          "Pure: A pure functional approach that provides not only denotational semantics"
-          "atop the pure untyped lambda-calculus, but also a practical constructive implementation."
-          "Mutation: A constructive model that does not rely on mutation,"
-          "yet that can be extended to play well with it.")
- (comment "Instance is a record."
-          "Wrapper is (Self Super -> Self) where (Self <: Super),"
-          "Wrapper is one way of representing a prototype."
-          "Generator of A is (A -> A),"
-          "Single Inheritance is a much less expressive special case."
-          "Prototype is a modular increment of computation"
-          "Object is often a bundle/conflation of an instance and a prototype."
-          "Class is a prototype for type descriptors."
-          "Class Instance is vtable / method-dictionary"))
-
+;; TODO: skip in the 25' version
 (slide
  #:title "Multiple Inheritance"
- @P{Modular dependencies})
+ @P{Make @tt{Wrapper} dependencies modular}
+ (blank-line)
+ @P{Users specify dependency DAG in local increments}
+ @P{System computes and linearizes global DAG}
+ (blank-line)
+ @tt{Prototype = Wrapper × List(Prototype) × …}
+ @comment{
+ })
+
+;; TODO: skip in the 25' version
+(slide
+ #:title "Conflation of Instance and Prototype"
+ @P{We can do all OOP without “objects”,}
+ @P{maintaining instance/prototype distinction, but…}
+ (blank-line)
+ @tt{Object = Instance × Prototype}
+ (blank-line)
+ @P{Conflation works better with purity}
+ @P{Conflation without Distinction ⇒ Confusion}
+ @comment{
+   GCL 2004, Jsonnet 2014, Nix 2015.
+ })
 
 (slide
  #:title "Classes"
- @P{Class OO = Prototype OO at type-level}
- @P{Class = Prototype Type, Type = Instance of Type}
+ @P{Class OO = Prototype OO at meta-level}
+ @P{Instance = Type (descriptor), Class = Prototype}
+ (blank-line)
  @P{Abstract vs Concrete Class = Prototype vs Instance}
  @P{Subclass ≠ Subtype}
+ (blank-line)
+ @P{Classes: pure at meta-level (but multimethods…)}
  @comment{
-   Inheritance of class membership is the idea that subtyping *should*, always, commute with fixed-points.
-   A trivial logical falsehood. A terrible design constraint.
-   A moronic industrial slogan. An academic pissing contest.
-   All due to confusion between instance and prototype.
+   Class OOP can be derived from
+   prototype OOP:
+   A class is a prototype for
+   a type descriptor.
+   A class instance at runtime is akin to
+   a vtable in C++ or
+   a method-dictionary in Haskell.
+   Prototype OOP is therefore more
+   primitive than Class OOP.
+
+   However note that class OOP calls
+   "object" is NOT (necessarily) an object
+   in prototype OOP.
+   The class itself is a prototype object,
+   at the meta-level.
+   The "elements" of the class or just
+   the elements of the type described
+   by the type descriptor *instance*.
+   The class as a prototype is not a
+   type-descriptor, but some kind of
+   wrapper function that returns a
+   type-descriptor plus other meta-data.
+
+   Inheritance of class membership is the
+   idea that subtyping *should*, always,
+   commute with fixed-points.
+   A trivial logical falsehood.
+   A terrible design constraint.
+   A moronic industrial slogan.
+   An academic pissing contest.
+   All due to confusion between
+   instance and prototype.
+ })
+
+;; TODO: skip in the 25' version
+(slide
+ #:title "Mutation"
+ @P{Easy to extend pure model with mutation}
+ (blank-line)
+ @P{More efficient in linear case, less with sharing}
+ @P{Simplified @tt{self/super} protocol}
+ (blank-line)
+ @P{Challenge: cache invalidation}
+ @item{mutable slots vs derived slots}
+ @item{mutable supers vs precedence list}
+ @comment{
+   Single self/super variable;
+   its identity is the self;
+   its storage is the super.
+
+   There are two hard things in
+   computer science:
+   cache invalidation, naming things,
+   and off-by-one errors.
  })
 
 (slide
- #:title "From Pure to Stateful"
- @P{Pure: denotational semantics AND practical}
- @P{Is laziness pure? Is anything?}
+ #:title "Constructive Semantics"
+ @P{Denotational Semantics × Practical Implementation}
+ (blank-line)
+ @P{30 loc prototype OOP in any λ language}
+ @P{50 loc more for multiple inheritance}
+ (blank-line)
+ @P{No side-effect needed, but better with laziness}
+ @P{Records need subtyping or dynamic types}
+ @P{Classes also need staging or dependent types}
  @comment{
+   Is laziness pure? Is anything?
    One man's purity is another man's effects, and vice versa.
- })
-
-(slide
- #:title "Mutation Challenges"
- @P{Caching computations}
- @P{Mutate slot definitions? Super list?}
- @P{Slot values, precedence list}
- @comment{
  })
 
 (slide
  #:title "Related Work"
  @P{(Stateful) Prototypes:
-     1970s: Director, ThingLab
-     1980s: T, SELF
+     1970s: Director, ThingLab;
+     1980s: T, SELF;
      1990s: JavaScript}
  @P{Semantics:
-     1980s Semantics (Reddy; Cook...)
+     1980s Semantics (Reddy; Cook...);
      1990s Types (Cardelli; Pierce...)}
- @P{Haskell:
-     2000s Mixins (Oliveira...)}
- @P{Pure Functional Prototypes:
-     2004 GCL, 2014 Jsonnet, 2015 Nix}
+ @P{Composable Mixins:
+     1990s StrongTalk… (Bracha);
+     2000s Racket, Scala, Haskell…}
+ @P{Pure Functional Prototypes: 2004 GCL (Google);
+     2014 Jsonnet, 2015 Nix}
  @comment{
  })
 
@@ -487,22 +574,24 @@
  #:title "Meta Claims"
  @P{Humility, not fanaticism}
  @P{Incommensurable paradigms? Go wider!}
+ (blank-line)
  @P{Simplicity matters}
  @P{λ's for Semantics, macros for Syntax}
  @comment{
    Foundations, not fundamentalism
  })
 
+(with-text-style ([smaller #:size 24])
 (slide
  #:title "Questions?"
- @P{Paper:
+ @P{Paper @smaller{(23 pages, 33 w/ appendices)}
    @tt{https://github.com/metareflection/poof}}
- @P{Gerbil Scheme implementation:
+ @P{Gerbil Scheme implementation @smaller{(3 kloc w/ library)}
    @tt{https://github.com/fare/gerbil-poo}}
- @P{Nix implementation:
+ @P{Nix implementation @smaller{(~80 loc w/ multiple inheritance)}
    @tt{https://github.com/NixOS/nixpkgs/pull/116275}}
  (blank-line)
- @P{We're hiring at MuKn.io !})
+ @C{We're hiring at MuKn.io !}))
 
 #;@P{
 Back in the 1990s to 2000s, I saw many USENET flamewars about OOP vs FP. Neither side ever tried to listen to the other, address their concern, nor speak their language. I vainly yearned for an explanation of how the two were related, complementary, maybe even dual.
