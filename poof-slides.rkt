@@ -6,24 +6,29 @@
 
 (require slideshow/code
          slideshow/text
+         syntax/parse/define
          (only-in pict/color white)
          (only-in unstable/gui/slideshow tabular)
          (only-in slideshow-text-style with-text-style))
 
-(define (P . x) (apply para #:align 'left x))
 (define (C . x) (apply para #:align 'center x))
+(define (P . x) (apply para #:align 'left x))
+(define (W . x) (parameterize ((current-para-width 1024)) (apply P x)))
+(define-simple-macro (Code . x) (W (code . x)))
 
 (slide
  #:title "Prototypes: Object-Orientation, Functionally"
  (t "François-René Rideau, Alex Knauth, and Nada Amin")
  (blank-line)
- (code (define (fix p b)                                          :
+ (Code (define (fix p b)
          (define f (p (lambda i (apply f i)) b))
          f))
-
- (code (define (mix c p)                                          :
+ (Code (define (mix c p)
          (lambda (f s)
            (c f (p f s)))))
+ (blank-line)
+ (blank-line)
+ @tt{https://github.com/metareflection/poof}
  @comment{
    Hi, I am Faré Rideau.
    The paper my colleagues and I
@@ -37,13 +42,16 @@
  #:title "Prototypes: Object-Orientation, Functionally"
  (t "François-René Rideau, Alex Knauth, and Nada Amin")
  (blank-line)
- (code (define (instantiate proto base)                           :
+ (Code (define (instantiate proto base)
          (define self (proto (lambda i (apply self i)) base))
          self))
-
- (code (define (inherit child parent)                             :
+ (Code
+       (define (inherit child parent)
          (lambda (self super)
            (child self (parent self super)))))
+ (blank-line)
+ (blank-line)
+ @tt{https://github.com/metareflection/poof}
  @comment{
    OK, these are the same definitions
    just with longer identifiers
@@ -139,76 +147,6 @@
   })
 
 (slide
- #:title "What is Object-Orientation NOT about?"
- @P{Classes}
- (blank-line)
- @P{“Encapsulation”}
- (blank-line)
- @P{Inheritance instead of Composition}
- (blank-line)
- @P{Mutation everywhere}
- @comment{
-   Let's start with what OO is NOT
-   despite decades of successful
-   marketing by big software company
-   salescritters.
-
-   OO is not about Classes.
-   Don't get me wrong:
-   Classes are an important concept.
-   Yet there are OO languages wholly
-   without Classes. Classes therefore
-   cannot be the central concept of OO,
-   only a secondary one. Just like
-   there can be FP without Types.
-   We can actually formalize the
-   relationship between Classes and
-   Types. But for who seeks to
-   understand the fundamental principles
-   of OO, classes are a huge distraction
-   and an abysmally wrong starting point.
-
-   OO is not about “encapsulation”.
-   Some OO languages provide no such
-   feature whatsoever, and those that do
-   have completely different, unrelated
-   designs. Scoping, visibility,
-   namespaces, access control, functional
-   abstraction, are important concepts,
-   that exist completely independently
-   from OO. In the end, “encapsulation”
-   is empty slogan from crooks who sell
-   snake oil to the gullible.
- }
- 'next
- @comment{
-   OO is not about using inheritance as
-   an *alternative* to FP's composition.
-   This *idiotic* claim was indeed made
-   by many proponents and opponents of
-   OO alike. But inheritance and
-   composition being *different*
-   concepts, they are by trivial
-   consequence no substitute for one
-   another. Each applies to situations
-   where the other doesn't.
-
-   OO is often associated to imperative
-   programming: mutation is used to
-   implement OO, and OO is used to
-   implement mutable objects. These
-   objects are initialized by mutating
-   uninitialized fields, and are later
-   used by further mutating these
-   initialized fields. But this is all
-   historical accidents and wrongful
-   neglect by the academic community.
-   OO like everything is best defined
-   and understood in the context of
-   pure FP.
- })
-
-(slide
 #:title "What is Object-Orientation about?"
  @tabular[(list "Incrementality" "" "Open Recursion")
           (list "" "                             " "")
@@ -279,12 +217,82 @@
   })
 
 (slide
+ #:title "What is Object-Orientation NOT about?"
+ @P{Classes}
+ (blank-line)
+ @P{“Encapsulation”}
+ (blank-line)
+ @P{Inheritance being opposed to Composition}
+ (blank-line)
+ @P{Mutation everywhere}
+ @comment{
+   Let's start with what OO is NOT
+   despite decades of successful
+   marketing by big software company
+   salescritters.
+
+   OO is not about Classes.
+   Don't get me wrong:
+   Classes are an important concept.
+   Yet there are OO languages wholly
+   without Classes. Classes therefore
+   cannot be the central concept of OO,
+   only a secondary one. Just like
+   there can be FP without Types.
+   We can actually formalize the
+   relationship between Classes and
+   Types. But for who seeks to
+   understand the fundamental principles
+   of OO, classes are a huge distraction
+   and an abysmally wrong starting point.
+
+   OO is not about “encapsulation”.
+   Some OO languages provide no such
+   feature whatsoever, and those that do
+   have completely different, unrelated
+   designs. Scoping, visibility,
+   namespaces, access control, functional
+   abstraction, are important concepts,
+   that exist completely independently
+   from OO. In the end, “encapsulation”
+   is empty slogan from crooks who sell
+   snake oil to the gullible.
+ }
+ 'next
+ @comment{
+   OO is not about using inheritance as
+   an *alternative* to FP's composition.
+   This *idiotic* claim was indeed made
+   by many proponents and opponents of
+   OO alike. But inheritance and
+   composition being *different*
+   concepts, they are by trivial
+   consequence no substitute for one
+   another. Each applies to situations
+   where the other doesn't.
+
+   OO is often associated to imperative
+   programming: mutation is used to
+   implement OO, and OO is used to
+   implement mutable objects. These
+   objects are initialized by mutating
+   uninitialized fields, and are later
+   used by further mutating these
+   initialized fields. But this is all
+   historical accidents and wrongful
+   neglect by the academic community.
+   OO like everything is best defined
+   and understood in the context of
+   pure FP.
+ })
+
+(slide
  #:title "Fundamental Concepts"
  @P{Incrementality: Instances and Prototypes}
  @P{Inheritance: Wrappers and Generators}
  @P{Generality: Prototypes beyond records}
  @P{Multiple inheritance: modular dependencies}
- @P{Conflation: Object = Instance × Prototype}
+ @P{Conflation: Object = Prototype × Instance}
  @P{Type Prototypes: Classes and Elements})
 
 (slide
@@ -294,19 +302,22 @@
  @P{Prototype: increment of specification}
  @(blank-line)
  'next
- @tt{instantiate: prototype → instance       }
- @tt{inherit: prototype prototype → prototype}
+ @P[@tt{instantiate: prototype → instance}]
+ @P[@tt{inherit: prototype prototype → prototype}]
  @comment{
    Simplest OO design: take the latter
    equations as literal types, and find
    the simplest matching functions.
  })
+ ;; TODO: mention "expression problem"?
+ ;; Or is that breakdown only for Class OOP?
+
 
 (slide
  #:title "Simplest Instances: Records as Functions"
  @P{Record: Symbol → Value}
  @(blank-line)
- @code[(define (x1-y2 k)                                          :
+ @Code[(define (x1-y2 k)
          (case k ((x) 1)
                  ((y) 2)
                  (else (error "invalid field"))))
@@ -318,17 +329,17 @@
 
 (slide
  #:title "Simplest Prototypes: Wrappers"
- (code
-   (code:comment "(deftype (Proto Self Super)                              :")
+ (Code
+   (code:comment "(deftype (Proto Self Super)")
    (code:comment "  (Fun Self Super → Self st: (⊂ Self Super))))"))
- (code
+ (Code
    (code:comment ": (Proto Self Super) Super -> Self")
-   (define (instantiate proto base)                           :
+   (define (instantiate proto base)
      (define self (proto (λ i (apply self i)) base))
      self))
- (code
+ (Code
    (code:comment ": (Proto Self Super) (Proto Super S2) -> (Proto Self S2)")
-   (define (inherit child parent)                             :
+   (define (inherit child parent)
      (lambda (self super)
        (child self (parent self super)))))
  @comment{
@@ -344,24 +355,26 @@
  })
 
 (slide
- #:title "Wrappers at work"
- @code[
+ #:title "Simple Prototypes at work"
+ @Code[
+   (define (x1-y2 k) (case k ((x) 1) ((y) 2) (else (bottom))))
+ ]
+ 'next
+ @Code[
    (define ($x3 self super)
-     (λ (msg) (if (eq? msg 'x) 3 (super msg))))
-
-   (define ($z<-xy self super)
-     (λ (msg) (case msg
-                ((z) (+ (self 'x) (* 0+1i (self 'y))))         :
-                (else (super msg)))))
-
+     (λ (k) (if (eq? k 'x) 3 (super k))))
    (define ($double-x self super)
-     (λ (msg) (if (eq? msg 'x) (* 2 (super 'x)) (super msg))))
-
-   (define z6+2i
-     (instantiate (inherit $z<-xy (inherit $double-x $x3))
-                  x1-y2))
-
-   > (z6+2i 'z)
+     (λ (k) (if (eq? k 'x) (* 2 (super 'x)) (super k))))
+   (define ($z<-xy self super)
+     (λ (k) (case k
+              ((z) (+ (self 'x) (* 0+1i (self 'y))))
+              (else (super k)))))
+ ]
+ 'next
+ @Code[
+   (define $a (inherit $z<-xy (inherit $double-x $x3)))
+   (define a (instantiate $a x1-y2))
+   > (a 'z)
    6+2i]
  @comment{
    TODO: show how it works
@@ -370,7 +383,7 @@
 ;; TODO: skip in the 25' version
 (slide
  #:title "Compare: Single Inheritance"
- (code
+ (Code
   (code:comment "(deftype (Gen A) (Fun A -> A))")
   (code:comment "instantiate-generator : (Fun (Gen A) -> A)")
   (define (instantiate-generator g)
@@ -412,19 +425,15 @@
    to go beyond single inheritance.
  })
 
-;;
-;; Computations, not values
-;; Hence laziness
-;; Laziness can be implemented as caching with side-effects
-
 (slide
  #:title "Beyond Simple Records"
  @P{Prototypes for any type of instance...}
  (blank-line)
- @P{computations, not values}
- @P{thunks, delayed values, lazy values}
+ @P{Prototypes build computations, not values (CBPV)}
+ @P{Functions, thunks, delayed or lazy values}
  (blank-line)
  @P{Useful even without record subtyping}
+ ;; TODO: include delayed fix and mix?
  @comment{
  })
 
@@ -436,7 +445,7 @@
  @P{Users specify dependency DAG in local increments}
  @P{System computes and linearizes global DAG}
  (blank-line)
- @tt{Prototype = Wrapper × List(Prototype) × …}
+ @P[@tt{Prototype = Wrapper × List(Prototype) × …}]
  @comment{
  })
 
@@ -446,7 +455,7 @@
  @P{We can do all OOP without “objects”,}
  @P{maintaining instance/prototype distinction, but…}
  (blank-line)
- @tt{Object = Instance × Prototype}
+ @tt{Object = Prototype × Instance}
  (blank-line)
  @P{Conflation works better with purity}
  @P{Conflation without Distinction ⇒ Confusion}
@@ -457,12 +466,14 @@
 (slide
  #:title "Classes"
  @P{Class OO = Prototype OO at meta-level}
- @P{Instance = Type (descriptor), Class = Prototype}
+ @P{Instance = Type descriptor (fields, operations…)}
+ @P{Class = Prototype for Type descriptor} ;; mention Typeclass
  (blank-line)
  @P{Abstract vs Concrete Class = Prototype vs Instance}
  @P{Subclass ≠ Subtype}
  (blank-line)
  @P{Classes: pure at meta-level (but multimethods…)}
+ @P{‘object’, ‘instance’ meanings differ in Class vs Proto}
  @comment{
    Class OOP can be derived from
    prototype OOP:
@@ -473,6 +484,9 @@
    a method-dictionary in Haskell.
    Prototype OOP is therefore more
    primitive than Class OOP.
+
+   TODO: discuss Typeclass as
+   more general than Class.
 
    However note that class OOP calls
    "object" is NOT (necessarily) an object
@@ -532,7 +546,8 @@
  @P{Classes also need staging or dependent types}
  @comment{
    Is laziness pure? Is anything?
-   One man's purity is another man's effects, and vice versa.
+   One man's purity is another man's
+   effects, and vice versa.
  })
 
 (slide
@@ -579,6 +594,11 @@
  @P{λ's for Semantics, macros for Syntax}
  @comment{
    Foundations, not fundamentalism
+
+   FP: accept dynamic types, or add richer
+   types than just simple ML types
+   OOP: accept closures, higher-order types,
+   embrace logical consistency
  })
 
 (with-text-style ([smaller #:size 24])
@@ -591,7 +611,8 @@
  @P{Nix implementation @smaller{(~80 loc w/ multiple inheritance)}
    @tt{https://github.com/NixOS/nixpkgs/pull/116275}}
  (blank-line)
- @C{We're hiring at MuKn.io !}))
+ @C{We're hiring at MuKn!}
+ @C{@tt{jobs@"@"mukn.io}}))
 
 #;@P{
 Back in the 1990s to 2000s, I saw many USENET flamewars about OOP vs FP. Neither side ever tried to listen to the other, address their concern, nor speak their language. I vainly yearned for an explanation of how the two were related, complementary, maybe even dual.
