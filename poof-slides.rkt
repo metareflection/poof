@@ -4,6 +4,15 @@
 ;; - have a plan and automatically inserts slides about where you are in the plan between every slide?
 ;; - maybe use reveal.rkt as a backend instead of slideshow?
 
+;; TODO: rename (object, prototype, instance) => (prototype, mixin, value) ?
+
+;; Be clear early on that I claim prototype OO subsumes class OO.
+;; Mixin inheritance is a special case of composition.
+;; Mutation: talk about it, or don't
+;; rename x1-y2 to (my-point msg)
+;; define the terms: records, encapsulation, subclassing, subtyping
+;; Say fewer things in a clearer way
+
 (require slideshow/code
          slideshow/text
          syntax/parse/define
@@ -124,7 +133,7 @@
     in 80, multiple inheritance.
   })
 
-(slide
+#;(slide
  #:title "What is NOT in the Paper"
   'next
   @P{Guiding insights}
@@ -220,7 +229,7 @@
  #:title "What is Object-Orientation NOT about?"
  @P{Classes}
  (blank-line)
- @P{“Encapsulation”}
+ @P{“Encapsulation”} ;; What does it even mean?
  (blank-line)
  @P{Inheritance being opposed to Composition}
  (blank-line)
@@ -317,12 +326,12 @@
  #:title "Simplest Instances: Records as Functions"
  @P{Record: Symbol → Value}
  @(blank-line)
- @Code[(define (x1-y2 k)
-         (case k ((x) 1)
-                 ((y) 2)
-                 (else (error "invalid field"))))
+ @Code[(define (my-point msg)
+         (case msg ((x) 1)
+                   ((y) 2)
+                   (else (error "invalid field"))))
 
-       > (x1-y2 'y)
+       > (my-point 'y)
        2]
  @comment{
  })
@@ -357,24 +366,24 @@
 (slide
  #:title "Simple Prototypes at work"
  @Code[
-   (define (x1-y2 k) (case k ((x) 1) ((y) 2) (else (bottom))))
+   (define (my-point msg) (case msg ((x) 1) ((y) 2) (else (⊥))))
  ]
  'next
  @Code[
    (define ($x3 self super)
-     (λ (k) (if (eq? k 'x) 3 (super k))))
+     (λ (msg) (if (eq? msg 'x) 3 (super msg))))
    (define ($double-x self super)
-     (λ (k) (if (eq? k 'x) (* 2 (super 'x)) (super k))))
+     (λ (msg) (if (eq? msg 'x) (* 2 (super 'x)) (super msg))))
    (define ($z<-xy self super)
-     (λ (k) (case k
+     (λ (msg) (case msg
               ((z) (+ (self 'x) (* 0+1i (self 'y))))
-              (else (super k)))))
+              (else (super msg)))))
  ]
  'next
  @Code[
-   (define $a (inherit $z<-xy (inherit $double-x $x3)))
-   (define a (instantiate $a x1-y2))
-   > (a 'z)
+   (define $your-point (inherit $z<-xy (inherit $double-x $x3)))
+   (define your-point (instantiate $your-point my-point))
+   > (your-point 'z)
    6+2i]
  @comment{
    TODO: show how it works
@@ -388,12 +397,12 @@
   (code:comment "instantiate-generator : (Fun (Gen A) -> A)")
   (define (instantiate-generator g)
     (define f (g (λ i (apply f i)))) f)
-  (code:comment "")
+  \ 
   (code:comment "proto->generator : (Fun (Proto A B) B -> (Gen A))")
   (define (proto->generator p b) (λ (f) (p f b)))
   (code:comment "(== (instantiate-generator (proto->generator p b))")
   (code:comment "    (instantiate p b))")
-  (code:comment "")
+  \ 
   (code:comment "apply-proto : (Fun (Proto A B) (Gen B) -> (Gen A))")
   (define (apply-proto p g) (λ (f) (p f (g f))))
   (code:comment "(== (apply-proto p (proto->generator q b))")

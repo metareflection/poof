@@ -22,7 +22,10 @@ preslides: poof-slides.rkt
 	slideshow --comment-on-slide --elapsed-time --start $${p:-1} poof-slides.rkt
 
 slides: poof-slides.rkt
-	slideshow --preview --comment-on-slide --elapsed-time poof-slides.rkt
+	slideshow --preview --elapsed-time poof-slides.rkt
+
+slides-pdf: poof-slides.rkt
+	slideshow --pdf poof-slides.rkt
 
 view: poof.pdf
 	$(PDFVIEWER) $<
