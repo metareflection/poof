@@ -1,11 +1,15 @@
 # Prototypes: Object Orientation, Functionally
 
 This directory contains the source for our paper
-“Prototypes: Object Orientation, Functionally”, as accepted at the
-[Scheme and Functional Programming Workshop 2021](https://icfp21.sigplan.org/home/scheme-2021).
+“Prototypes: Object Orientation, Functionally”.
 View the [precompiled PDF](http://fare.tunes.org/files/cs/poof.pdf).
 The same [Racket Scribble source](poof.scrbl) can produces
 simultaneously a printable document and a runnable library.
+
+One version of this paper was published and presented at the
+[Scheme and Functional Programming Workshop 2021](https://icfp21.sigplan.org/home/scheme-2021),
+see (git tags `Scheme-Workshop-2021-paper` and `Scheme-Workshop-2021-slides`).
+
 
 ## Abstract
 

@@ -1675,8 +1675,9 @@ this is equivalent to using the bottom function in the representation from our @
 but not in theirs!
 Jsonnet also has field introspection, and flags fields as either visible or hidden
 for the sake of exporting JSON.
-Jsonnet itself started as a simplified reconstruction and cleanup of BCL and GCL @~cite{gclviewer2008},
-the decade-older (circa 2004) and reputedly clunky Google Configuration Language, which remains unpublished.
+Jsonnet itself started as a simplified reconstruction and cleanup of GCL @~cite{gclviewer2008} (née BCL),
+the decade-older (circa 2004) Google Configuration Language, which remains unpublished,
+and is reputedly clunky due to its dynamic scoping.
 
 Nix@~cite{dolstra2008nixos}, the pure lazy dynamic functional configuration language for NixOS,
 has several variations of an “extension system”, all of them
@@ -1720,6 +1721,7 @@ because of the limitations of their languages' type systems.
 These two object systems in turn inspired the present authors
 to use, study and improve prototype object systems.
 
+@; TODO: include information from personal communication with mpvl
 No academic publication was made on any of GCL, Jsonnet or Nix, and it is unclear
 which of their design elements were influenced by which previous systems,
 and which were original inventions or independent reconstructions.
