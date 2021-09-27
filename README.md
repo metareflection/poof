@@ -8,8 +8,9 @@ simultaneously a printable document and a runnable library.
 
 One version of this paper was published and presented at the
 [Scheme and Functional Programming Workshop 2021](https://icfp21.sigplan.org/home/scheme-2021),
-see (git tags `Scheme-Workshop-2021-paper` and `Scheme-Workshop-2021-slides`).
-
+see the [presentation video](https://www.youtube.com/watch?v=2szKoUQoNm8&list=PLyrlk8Xaylp7NvZ1r-eTIUHdyHQg0auvo&index=10),
+with the source code at git tags `Scheme-Workshop-2021-paper` for the paper as published then,
+and `Scheme-Workshop-2021-slides` for the slides as presented.
 
 ## Abstract
 
