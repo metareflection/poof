@@ -34,67 +34,20 @@
 %\newcommand{\lipicsauthor}[2]{\author{#1}{#2}}
 %\newcommand{\lipicsabstract}[1]{\abstract{#1}}
 %\newcommand{\lipicsaffil}[2]{\affil{#1}{#2}}
+\bibstyle{plain}
 }
 
 @title{Prototypes: Object-Orientation, Functionally}
 
 @author[#:affil-no "1"]{François-René Rideau}
-@;@author[#:affil-no 1]{Alex Knauth}
-@;@author[#:affil-no 2]{Nada Amin}
+@author[#:affil-no "1"]{Alex Knauth}
+@author[#:affil-no "2"]{Nada Amin}
 @affil[#:affil-no "1"]{Mutual Knowledge Systems, Inc.}
-@;@affil[#:affil-no 2]{Harvard University}
+@affil[#:affil-no "2"]{Harvard University}
 @author-running{F.-R. Rideau and A. Knauth and N. Amin}
 @title-running{Prototypes: Object-Orientation, Functionally}
 @copyright{F.-R. Rideau and A. Knauth and N. Amin}
-@;@subject-classification{
-\begin{CCSXML}
-<ccs2012>
-<concept>
-<concept_id>10011007.10011006.10011008.10011009.10011011</concept_id>
-<concept_desc>Software and its engineering~Object oriented languages</concept_desc>
-<concept_significance>500</concept_significance>
-</concept>
-<concept>
-<concept_id>10011007.10011006.10011008.10011009.10011012</concept_id>
-<concept_desc>Software and its engineering~Functional languages</concept_desc>
-<concept_significance>500</concept_significance>
-</concept>
-<concept>
-<concept_id>10011007.10011006.10011008.10011024.10011029</concept_id>
-<concept_desc>Software and its engineering~Classes and objects</concept_desc>
-<concept_significance>500</concept_significance>
-</concept>
-<concept>
-<concept_id>10011007.10011006.10011008.10011024.10011026</concept_id>
-<concept_desc>Software and its engineering~Inheritance</concept_desc>
-<concept_significance>500</concept_significance>
-</concept>
-<concept>
-<concept_id>10011007.10011006.10011039.10011311</concept_id>
-<concept_desc>Software and its engineering~Semantics</concept_desc>
-<concept_significance>500</concept_significance>
-</concept>
-<concept>
-<concept_id>10003752.10010124.10010125.10010128</concept_id>
-<concept_desc>Theory of computation~Object oriented constructs</concept_desc>
-<concept_significance>500</concept_significance>
-</concept>
-<concept>
-<concept_id>10003752.10010124.10010131.10010133</concept_id>
-<concept_desc>Theory of computation~Denotational semantics</concept_desc>
-<concept_significance>300</concept_significance>
-</concept>
-</ccs2012>
-\end{CCSXML}
-
-\ccsdesc[500]{Software and its engineering~Object oriented languages}
-\ccsdesc[500]{Software and its engineering~Functional languages}
-\ccsdesc[500]{Software and its engineering~Classes and objects}
-\ccsdesc[500]{Software and its engineering~Inheritance}
-\ccsdesc[500]{Software and its engineering~Semantics}
-\ccsdesc[500]{Theory of computation~Object oriented constructs}
-\ccsdesc[300]{Theory of computation~Denotational semantics}
-}
+@;@subject-classification{ ... }
 @keywords{Object-Oriented, Prototypes, Classes, Functional, Semantics}
 @doi{10.4230/LIPIcs.xxx.yyy.p}
 @;@volume-info["Billy Editor and Bill Editors" "2" "Conf title" "1" "1" "1"]
@@ -127,6 +80,7 @@ We use Scheme to illustrate our approach.
 @(define-simple-macro (Examples a ...) (examples #:eval poof #:no-result a ...))
 @(define-simple-macro (Checks a ...) (examples #:eval poof #:label #f a ...))
 
+@;@(define-cite ~cite citet generate-bibliography #:style lipics-style)
 @(define-bibtex-cite "poof.bib" ~cite citet generate-bibliography #:style lipics-style)
 
 @(define-simple-macro (defsection name tag text) (define (name (x text)) (seclink tag x)))

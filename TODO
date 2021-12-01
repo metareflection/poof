@@ -7,3 +7,55 @@ wrapper, prototype function, (), the composable function that takes the partial 
 element, class instance, (object), what is called "object" in class OO, an element of the type incrementally specified as a class (that is itself the prototype/object whose target/instance is a type)
 record, record, (structure, instance, labeled product, table, object), a mapping from name/symbol to values, that typically serves as both targets and elements above, but can be considered without any OO
 tagged record,,, a record with special entries (mapping for special labels?) for the metadata such as the mixin used to compute the record or the variant of a sum type or caches used by the MOP.
+
+
+
+@((lambda x '()) '@subject-classification{
+\begin{CCSXML}
+<ccs2012>
+<concept>
+<concept_id>10011007.10011006.10011008.10011009.10011011</concept_id>
+<concept_desc>Software and its engineering~Object oriented languages</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10011007.10011006.10011008.10011009.10011012</concept_id>
+<concept_desc>Software and its engineering~Functional languages</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10011007.10011006.10011008.10011024.10011029</concept_id>
+<concept_desc>Software and its engineering~Classes and objects</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10011007.10011006.10011008.10011024.10011026</concept_id>
+<concept_desc>Software and its engineering~Inheritance</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10011007.10011006.10011039.10011311</concept_id>
+<concept_desc>Software and its engineering~Semantics</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10003752.10010124.10010125.10010128</concept_id>
+<concept_desc>Theory of computation~Object oriented constructs</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10003752.10010124.10010131.10010133</concept_id>
+<concept_desc>Theory of computation~Denotational semantics</concept_desc>
+<concept_significance>300</concept_significance>
+</concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Software and its engineering~Object oriented languages}
+\ccsdesc[500]{Software and its engineering~Functional languages}
+\ccsdesc[500]{Software and its engineering~Classes and objects}
+\ccsdesc[500]{Software and its engineering~Inheritance}
+\ccsdesc[500]{Software and its engineering~Semantics}
+\ccsdesc[500]{Theory of computation~Object oriented constructs}
+\ccsdesc[300]{Theory of computation~Denotational semantics}
+})
