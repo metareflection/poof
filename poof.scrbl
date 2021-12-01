@@ -26,6 +26,7 @@
 @(define (noindent) @tex{\noindent})
 @(define (~nocite . x) (let ((_ (apply @~cite x))) (void)))
 @(define (seclink tag . x) x) @; Workaround hyperref seemingly not working with lipics
+@(define (tabular x) x) @; tabular also won't work with lipics
 
 @tex{
 % FOO
