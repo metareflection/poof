@@ -11,8 +11,7 @@ PDFVIEWER=open
 endif
 
 poof.pdf: poof.scrbl poof.bib header.tex util/eval-check.rkt util/examples-module.rkt
-#scribble --pdf --style header.tex poof.scrbl
-	scribble --pdf poof.scrbl
+	scribble --pdf --style header.tex poof.scrbl
 
 pdf: poof.pdf
 
@@ -37,7 +36,7 @@ repl:
 	racket --lib racket/base --require main.rkt --repl
 
 prerequisites:
-	for i in scribble-abbrevs scribble-minted scribble-math unstable-lib slideshow-text-style ; do \
+	for i in lipics scribble-abbrevs scribble-minted scribble-math unstable-lib slideshow-text-style ; do \
 	  raco pkg install --auto --update-deps $$i ; \
 	done
 
@@ -45,3 +44,6 @@ prerequisites:
 fare: poof.pdf
 	cp $< ~/files/cs/
 	rsync -av $< bespin:files/cs/
+
+poof.tex: poof.scrbl header.tex util/eval-check.rkt util/examples-module.rkt
+	scribble --latex --style header.tex poof.scrbl

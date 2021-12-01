@@ -1,42 +1,12 @@
-#lang scribble/acmart @acmsmall @screen @nonacm
-@; Default already: @10pt @natbib
-@; @anonymous @authordraft @authorversion @timestamp
-@; Accepted at the Scheme Workshop 2021 https://icfp21.sigplan.org/home/scheme-2021
+#lang lipics
+@; Older version accepted at the Scheme Workshop 2021 https://icfp21.sigplan.org/home/scheme-2021
+@; see git tags Scheme-Workshop-2021-paper Scheme-Workshop-2021-slides
 
-@title{Prototypes: Object-Orientation, Functionally}
-
-@author[
-  #:email (email "fare@mukn.io")
-  #:affiliation (affiliation #:institution @institution{@emph{Mutual Knowledge Systems, Inc.}}
-                             #:country "USA")
-]{François-René Rideau}
-@author[
-  #:email (email "alexknauth@mukn.io")
-  #:affiliation (affiliation #:institution @institution{@emph{Mutual Knowledge Systems, Inc.}}
-                             #:country "USA")
-]{Alex Knauth}
-@author[
-  #:email (email "namin@seas.harvard.edu")
-  #:affiliation (affiliation #:institution @institution{@emph{Harvard University}}
-                             #:country "USA")
-]{Nada Amin}
-
-@abstract{
-This paper elucidates the essence of Object-Oriented Programming (OOP),
-using a constructive approach:
-we identify a minimal basis of concepts with which to synthesize
-existing and potential object systems.
-We reduce them to constructions atop the pure untyped lambda calculus,
-thereby obtaining both denotational semantics and effective implementation.
-We start from the simplest recognizable model of prototype-based OOP,
-so simple it arguably does not even have “objects” as such.
-We build further models of increasing sophistication, reproducing a growing subset of features
-found in past object systems, including original combinations.
-We also examine how our approach can deal with issues like typing, modularity, classes, mutation.
-We use Scheme to illustrate our approach.
-}
-
-@(require scriblib/bibtex
+@(require
+          scriblib/autobib
+          scriblib/bibtex
+          scriblib/figure
+          scriblib/footnote
           (only-in scribble/core make-paragraph make-style)
           (only-in scribble/manual racket racketblock code codeblock litchar itemize item)
           (only-in scribble/example examples make-base-eval)
@@ -56,6 +26,95 @@ We use Scheme to illustrate our approach.
 @(define (noindent) @tex{\noindent})
 @(define (~nocite . x) (let ((_ (apply @~cite x))) (void)))
 
+@tex{
+% FOO
+%\newcommand{\FigureTarget}{}
+%\newcommand{\lipicsauthor}[2]{\author{#1}{#2}}
+%\newcommand{\lipicsabstract}[1]{\abstract{#1}}
+%\newcommand{\lipicsaffil}[2]{\affil{#1}{#2}}
+}
+
+@title{Prototypes: Object-Orientation, Functionally}
+
+@author[#:affil-no "1"]{François-René Rideau}
+@;@author[#:affil-no 1]{Alex Knauth}
+@;@author[#:affil-no 2]{Nada Amin}
+@affil[#:affil-no "1"]{Mutual Knowledge Systems, Inc.}
+@;@affil[#:affil-no 2]{Harvard University}
+@author-running{F.-R. Rideau and A. Knauth and N. Amin}
+@title-running{Prototypes: Object-Orientation, Functionally}
+@copyright{F.-R. Rideau and A. Knauth and N. Amin}
+@;@subject-classification{
+\begin{CCSXML}
+<ccs2012>
+<concept>
+<concept_id>10011007.10011006.10011008.10011009.10011011</concept_id>
+<concept_desc>Software and its engineering~Object oriented languages</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10011007.10011006.10011008.10011009.10011012</concept_id>
+<concept_desc>Software and its engineering~Functional languages</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10011007.10011006.10011008.10011024.10011029</concept_id>
+<concept_desc>Software and its engineering~Classes and objects</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10011007.10011006.10011008.10011024.10011026</concept_id>
+<concept_desc>Software and its engineering~Inheritance</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10011007.10011006.10011039.10011311</concept_id>
+<concept_desc>Software and its engineering~Semantics</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10003752.10010124.10010125.10010128</concept_id>
+<concept_desc>Theory of computation~Object oriented constructs</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10003752.10010124.10010131.10010133</concept_id>
+<concept_desc>Theory of computation~Denotational semantics</concept_desc>
+<concept_significance>300</concept_significance>
+</concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Software and its engineering~Object oriented languages}
+\ccsdesc[500]{Software and its engineering~Functional languages}
+\ccsdesc[500]{Software and its engineering~Classes and objects}
+\ccsdesc[500]{Software and its engineering~Inheritance}
+\ccsdesc[500]{Software and its engineering~Semantics}
+\ccsdesc[500]{Theory of computation~Object oriented constructs}
+\ccsdesc[300]{Theory of computation~Denotational semantics}
+}
+@keywords{Object-Oriented, Prototypes, Classes, Functional, Semantics}
+@doi{10.4230/LIPIcs.xxx.yyy.p}
+@;@volume-info["Billy Editor and Bill Editors" "2" "Conf title" "1" "1" "1"]
+@event-short-name{ECOOP 2022}
+
+
+
+@abstract{
+This paper elucidates the essence of Object-Oriented Programming (OOP),
+using a constructive approach:
+we identify a minimal basis of concepts with which to synthesize
+existing and potential object systems.
+We reduce them to constructions atop the pure untyped lambda calculus,
+thereby obtaining both denotational semantics and effective implementation.
+We start from the simplest recognizable model of prototype-based OOP,
+so simple it arguably does not even have “objects” as such.
+We build further models of increasing sophistication, reproducing a growing subset of features
+found in past object systems, including original combinations.
+We also examine how our approach can deal with issues like typing, modularity, classes, mutation.
+We use Scheme to illustrate our approach.
+}
+
 @;; Suppress the page count for the Camera-ready version by uncommenting the below.
 @;@tex{\thispagestyle{empty}\pagestyle{empty}}
 @;; Instead, we could set the start page for the document with:
@@ -66,7 +125,7 @@ We use Scheme to illustrate our approach.
 @(define-simple-macro (Examples a ...) (examples #:eval poof #:no-result a ...))
 @(define-simple-macro (Checks a ...) (examples #:eval poof #:label #f a ...))
 
-@(define-bibtex-cite "poof.bib" ~cite citet generate-bibliography)
+@(define-bibtex-cite "poof.bib" ~cite citet generate-bibliography #:style lipics-style)
 
 @(define-simple-macro (defsection name tag text) (define (name (x text)) (seclink tag x)))
 @(defsection section1 "Prototypes_bottom_up" "section 1")
@@ -109,14 +168,15 @@ rather have
 @;@(current-pygmentize-default-style 'colorful)
 @pretitle{
 @tex{
-\acmYear{2021}
-\copyrightyear{2021}
-\acmConference[Scheme]{Scheme and Functional Programming Workshop}{2021}{online}
-\acmISBN{978-1-xxxx-xxxx-x/21/10}
-\acmPrice{00.00}
-\acmDOI{https://dx.doi.org/xx.xxxx/xxxxxxx.xxxxxxx}
-\setcopyright{none}
+%\acmYear{2021}
+%\copyright{2021}
+%\acmConference[Scheme]{Scheme and Functional Programming Workshop}{2021}{online}
+%\acmISBN{978-1-xxxx-xxxx-x/21/10}
+%\acmPrice{00.00}
+%\acmDOI{https://dx.doi.org/xx.xxxx/xxxxxxx.xxxxxxx}
+%\setcopyright{none}
 }}
+
 
 @section[#:tag "Prototypes_bottom_up"]{Prototypes, bottom up}
 
