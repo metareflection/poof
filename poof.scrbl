@@ -25,6 +25,7 @@
 @(define (tex . args) (apply elem #:style (make-style #f '(exact-chars)) args))
 @(define (noindent) @tex{\noindent})
 @(define (~nocite . x) (let ((_ (apply @~cite x))) (void)))
+@(define (seclink tag . x) x) @; Workaround hyperref seemingly not working with lipics
 
 @tex{
 % FOO
