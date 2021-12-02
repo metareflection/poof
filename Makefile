@@ -11,7 +11,9 @@ PDFVIEWER=open
 endif
 
 poof.pdf: poof.scrbl poof.bib header.tex util/eval-check.rkt util/examples-module.rkt
-	scribble --pdf --style header.tex poof.scrbl
+#	scribble --pdf --style header.tex poof.scrbl
+#	scribble --pdf poof.scrbl
+	scribble --latex poof.scrbl && pdflatex poof.tex && pdflatex poof.tex
 
 pdf: poof.pdf
 
@@ -46,4 +48,5 @@ fare: poof.pdf
 	rsync -av $< bespin:files/cs/
 
 poof.tex: poof.scrbl header.tex util/eval-check.rkt util/examples-module.rkt
-	scribble --latex --style header.tex poof.scrbl
+#	scribble --latex --style header.tex poof.scrbl
+	scribble --latex poof.scrbl

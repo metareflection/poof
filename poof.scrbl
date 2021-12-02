@@ -3,12 +3,11 @@
 @; see git tags Scheme-Workshop-2021-paper Scheme-Workshop-2021-slides
 
 @(require
-          scriblib/autobib
-          scriblib/bibtex
-          scriblib/figure
-          scriblib/footnote
-          (only-in scribble/core make-paragraph make-style)
           (only-in scribble/manual racket racketblock code codeblock litchar itemize item)
+          @;scriblib/autobib
+          (only-in scriblib/figure figure Figure-ref)
+          (only-in scriblib/bibtex define-bibtex-cite)
+          (only-in scribble/core make-paragraph make-style)
           (only-in scribble/example examples make-base-eval)
           (only-in scriblib/footnote note)
           (only-in scribble-abbrevs appendix)
@@ -25,20 +24,10 @@
 @(define (tex . args) (apply elem #:style (make-style #f '(exact-chars)) args))
 @(define (noindent) @tex{\noindent})
 @(define (~nocite . x) (let ((_ (apply @~cite x))) (void)))
-@(define (seclink tag . x) x) @; Workaround hyperref seemingly not working with lipics
-@(define (tabular x) x) @; tabular also won't work with lipics
-
-@tex{
-% FOO
-%\newcommand{\FigureTarget}{}
-%\newcommand{\lipicsauthor}[2]{\author{#1}{#2}}
-%\newcommand{\lipicsabstract}[1]{\abstract{#1}}
-%\newcommand{\lipicsaffil}[2]{\affil{#1}{#2}}
-\bibstyle{plain}
-}
+@;@(define (seclink tag . x) x) @; Workaround hyperref seemingly not working with lipics
+@;@(define (tabular x) x) @; tabular also won't work with lipics
 
 @title{Prototypes: Object-Orientation, Functionally}
-
 @author[#:affil-no "1"]{François-René Rideau}
 @author[#:affil-no "1"]{Alex Knauth}
 @author[#:affil-no "2"]{Nada Amin}
@@ -52,8 +41,6 @@
 @doi{10.4230/LIPIcs.xxx.yyy.p}
 @;@volume-info["Billy Editor and Bill Editors" "2" "Conf title" "1" "1" "1"]
 @event-short-name{ECOOP 2022}
-
-
 
 @abstract{
 This paper elucidates the essence of Object-Oriented Programming (OOP),
@@ -124,15 +111,7 @@ rather have
 @;@(current-pygmentize-default-style 'colorful)
 @pretitle{
 @tex{
-%\acmYear{2021}
-%\copyright{2021}
-%\acmConference[Scheme]{Scheme and Functional Programming Workshop}{2021}{online}
-%\acmISBN{978-1-xxxx-xxxx-x/21/10}
-%\acmPrice{00.00}
-%\acmDOI{https://dx.doi.org/xx.xxxx/xxxxxxx.xxxxxxx}
-%\setcopyright{none}
 }}
-
 
 @section[#:tag "Prototypes_bottom_up"]{Prototypes, bottom up}
 
@@ -1879,11 +1858,13 @@ the standard functions @r[every] and @r[filter].
 @(noindent)
 We will now test this linearization algorithm on the inheritance graph from @(section43).
 This test case was originally taken from the Wikipedia article on C3 linearization@~cite{wikiC3},
-that usefully includes the following diagram
+that usefully includes the diagram in @Figure-ref["c3_linearization_example"]
 (that nevertheless fails to represent the ordering constraints imposed on A, B, C, D, E
-by their order of appearance in the supers list of K1, K2, K3):
+by their order of appearance in the supers list of K1, K2, K3).
 
-@(noindent) @image[#:scale 0.67]{C3_linearization_example.eps}
+@(noindent)
+@figure["c3_linearization_example" "C3 linearization example"]{
+@image[#:scale 0.67]{C3_linearization_example.eps}}
 @;;; NB: The EPS file was converted using inkscape from the SVG originally at
 @;;; https://en.wikipedia.org/wiki/C3_linearization
 
@@ -2241,7 +2222,7 @@ that makes them covariant with the right-to-left flow of information from argume
 in the traditional prefix notation for function application.
 Still, we revert to left-to-right arrows when we use concatenative languages
 or stack virtual machines that use the “Reverse Polish Notation”
-as in FORTH, PostScript or the much missed HP RPL.
+as in FORTH, PostScript, Factor, or the much missed HP RPL.
 
 @subsection{Type Constraints}
 
