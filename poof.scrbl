@@ -28,14 +28,15 @@
 @;@(define (tabular x) x) @; tabular also won't work with lipics
 
 @title{Prototypes: Object-Orientation, Functionally}
-@author[#:affil-no "1"]{François-René Rideau}
-@author[#:affil-no "1"]{Alex Knauth}
-@author[#:affil-no "2"]{Nada Amin}
-@affil[#:affil-no "1"]{Mutual Knowledge Systems, Inc.}
-@affil[#:affil-no "2"]{Harvard University}
-@author-running{F.-R. Rideau and A. Knauth and N. Amin}
+@author{Author(s) withheld pending review}
+@;@author[#:affil-no "1"]{François-René Rideau}
+@;@author[#:affil-no "1"]{Alex Knauth}
+@;@author[#:affil-no "2"]{Nada Amin}
+@;@affil[#:affil-no "1"]{Mutual Knowledge Systems, Inc.}
+@;@affil[#:affil-no "2"]{Harvard University}
+@;@author-running{F.-R. Rideau and A. Knauth and N. Amin}
 @title-running{Prototypes: Object-Orientation, Functionally}
-@copyright{F.-R. Rideau and A. Knauth and N. Amin}
+@;@copyright{F.-R. Rideau and A. Knauth and N. Amin}
 @;@subject-classification{ ... }
 @keywords{Object-Oriented, Prototypes, Classes, Functional, Semantics}
 @doi{10.4230/LIPIcs.xxx.yyy.p}
@@ -2006,7 +2007,7 @@ Therefore, language designers and implementers must resolve a first issue
 before they may implement generic functions:
 adding “multi-methods” to existing functions or objects
 after they have been initially defined.
-Indeed, generic functions when introduced, involve adding new methods
+Indeed, generic functions, when introduced, involve adding new methods
 that specialize the behavior of the new function on existing objects;
 and when new objects are introduced, they often involve adding new methods
 to specialized the behavior of the existing functions on the new objects.
