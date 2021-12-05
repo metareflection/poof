@@ -1,12 +1,3 @@
-Proposed renaming:
-proposed new name, name in current paper, other possibilities, meaning
-target, instance, (computation, value, fixed-point, self, result), the result (?value of the) computation that was incrementally specified
-mixin, prototype, (increment, specification, spec, component, trait), the increment of computational specification
-prototype, object, (mixin, trait), the conflation of mixin and target (prototype and instance) in a single entity
-wrapper, prototype function, (), the composable function that takes the partial computation so far and extends it
-element, class instance, (object), what is called "object" in class OO, an element of the type incrementally specified as a class (that is itself the prototype/object whose target/instance is a type)
-record, record, (structure, instance, labeled product, table, object), a mapping from name/symbol to values, that typically serves as both targets and elements above, but can be considered without any OO
-tagged record,,, a record with special entries (mapping for special labels?) for the metadata such as the mixin used to compute the record or the variant of a sum type or caches used by the MOP.
 
 
 
