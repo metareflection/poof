@@ -75,7 +75,7 @@ We use Scheme to illustrate our approach.
 @(defsection section1 "Prototypes_bottom_up" "section 1")
 @(defsection section2 "pure_objective_fun" "section 2")
 @(defsection section3 "beyond_objects" "section 3")
-@(defsection section34 "without_subtyping" "section 3.4")
+@(defsection section33 "without_subtyping" "section 3.3")
 @(defsection section4 "Better_objects" "section 4")
 @(defsection section42 "unifying_instance_prototype" "section 4.2")
 @(defsection section43 "multiple_inheritance" "section 4.3")
@@ -232,7 +232,7 @@ or override the method values inherited from the parent prototypes.
 
 The two definitions above can be easily translated to any language with closures
 and either dynamic types or dependent types. However, their potential is not
-fully realized in languages with mere parametric polymorphism (see @(section34)).
+fully realized in languages with mere parametric polymorphism (see @(section33)).
 @; TODO: insert above reference to type discussion?
 Furthermore, for an @emph{efficient} implementation of objects with our formulas,
 we will also require lazy evaluation (see @(section3)),
@@ -1340,7 +1340,7 @@ Type descriptors, as detailed below, are a runtime data structure
 describing what operations are available to recognize and deal with elements of the given type.
 Type descriptors therefore do not have to themselves be objects,
 and no mention of objects is required to describe type descriptors themselves.
-They can be just a type on which to apply the monomorphic prototypes of @(section34).
+They can be just a type on which to apply the monomorphic prototypes of @(section33).
 Still, it is typical in OOP to conflate into a “class” both the instance of a type descriptor
 and the prototype for the type descriptor. Our distinction of the two concepts can then help avoid
 a lot of the confusion present in classical presentations of OOP.
