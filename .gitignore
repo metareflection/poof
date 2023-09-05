@@ -2,16 +2,15 @@
 compiled/
 
 # Scribble-generated files
-poof.pdf
+*.log
+*.out
+*.aux
+*.vtc
+*.pdf
+*.cls
 poof.tex
-poof.aux
-poof.log
-poof.out
-C3_linearization_example-eps-converted-to.pdf
 minted-colorful-style.tex
 minted-default-style.tex
-acmart.cls
-poof-slides.pdf
 
 # Editor-generated files
 *~

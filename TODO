@@ -7,3 +7,75 @@ wrapper, prototype function, (), the composable function that takes the partial 
 element, class instance, (object), what is called "object" in class OO, an element of the type incrementally specified as a class (that is itself the prototype/object whose target/instance is a type)
 record, record, (structure, instance, labeled product, table, object), a mapping from name/symbol to values, that typically serves as both targets and elements above, but can be considered without any OO
 tagged record,,, a record with special entries (mapping for special labels?) for the metadata such as the mixin used to compute the record or the variant of a sum type or caches used by the MOP.
+
+
+It's not "recent research" so much as simplification and extraction of the essence of OO, as developed since the late 1960s, reduced to its core and implemented since the late 1970s, formalized since the late 1980s, made ubiquitous since the late 1990s, rediscovered in a pure functional setting in the late 2000s, and finally done right since the late 2010s.
+
+
+
+Is a Computation "just" a Promise?
+No. Promise maps Computation inside Value, just like Literal (or Quote) maps Value into Computation.
+
+How do you deal *purely* with adding (multi)methods to *other classes*
+to deal with newly [dr]efined aspects?
+By manipulating not one class at a time, but an entire configuration DAG of classes.
+Keeping all your code in a vast open recursion until the very last moment.
+Now doing it in a pure way means that instead of a single global context that you side-effect,
+you can have many lexical variants of context that you update non-destructively.
+Being able to use multiple variants is a great power, that comes with great responsibility.
+Furthermore, making this context explicit, makes you realize that beyond the language core,
+you're growing an ecosystem-wide namespace of library items and conventional extension-points,
+across all user packages.
+Hopefully, the class namespace hierarchy is well-integrated with your language's module system
+so users don't have to learn multiple parallel naming conventions just to use anything.
+If you've built large configurations with Nix (or Jsonnet, GCL, etc.) you are probably familiar
+with open recursion with a large context, how powerful the paradigm is, and
+how quickly things can get out of hand in absence of strong curation of the context namespace.
+
+If you want let extenders add methods to Num for the new aspects they handle (and you usually do),
+then yes even simple arithmetics remains open until the last.
+Just like in NixOS you have to consistently modify several packages
+at different places in the package DAG.
+Thus, cultivating the naming conventions for the DAG is
+an essential part of the language ecosystem development process.
+Whether this DAG is unique/global/implicit and side-effected,
+or duplicatable/lexical/explicit and modified purely.
+But doing it purely forces you to be more explicit about this cultivation indeed.
+The context namespace is for the entire ecosystem and not just for a single program.
+Beware of multiple inconsistent copies of the context: you have the power to make them,
+and the responsibility to manage them. Also, it can be a very heavy thing to duplicate.
+
+When you realize you are extending one point in the DAG, it becomes more obvious
+that extension is through a lens in a larger object. Such goes for updating a method
+within a method combination of a generic function involving multiple classes
+and/or singleton objects in a hierarchy.
+The single hierarchy also makes the need for conflation more obvious,
+as a same name/path can denote both prototype and instance.
+
+
+Slide(s) to explain why multiple inheritance matters:
+- Show a dependency graph between mixins, with module boundaries.
+- Show that mixin style forces users to write the entire list, in order.
+- Show that mixin style forces users to write the entire list, in CONSISTENT order, or else.
+- Show that mixin style forces downstream module users to rewrite their list when yours change.
+- Show that mixin style forces downstream module users to make changes based on indirect dependencies they didn't know of.
+- Sure you can explicitly call some kind of compute-dependency-list function...
+  or then again you should use multiple inheritance which does it for you,
+  except it's more declarative and you can't get it wrong by accidentally forgetting it or mistyping it.
+
+
+When I started in Computer Science, Object-Orientation—or OO—was the future in the Industry. And Functional Programming—or FP—was the future in Academia. But OO and FP people were talking past each other (when they remained polite). 30 years later, most languages have adopted OO, then FP. A few FP, then OO. But OO and FP people still talk past each other. I was raised in academia and made career in the industry, and always wanted to read a paper that would have reconciled OO and FP. A paper that would have explained what OO is and why it matters. Well, you know what they say? If there's a paper you'd like the read that no one else is writing, the only way to read it is to first write it yourself. ==> 1 min. To be cut in half.
+
+
+
+
+When I started in Computer Science, Object-Orientation—or OO—was the future in the Industry. And Functional Programming—or FP—was the future in Academia. But OO and FP people were talking past each other (when they remained polite). 30 years later, most languages have adopted OO, then FP. A few FP, then OO. But OO and FP people still talk past each other. I was raised in academia and made career in the industry, and always wanted to read a paper that would have reconciled OO and FP. A paper that would have explained what OO is and why it matters. Well, you know what they say? If there's a paper you'd like the read that no one else is writing, the only way to read it is to first write it yourself. ==> 1 min. To be cut in half.
+
+I grew up in academia where Functional Programming, FP, reigns supreme. And I made career in the industry, where Object Orientation, OO, is The Thing. For 30 years, I've wanted an explanation, in the terms of FP, of what OO is and why it matters. But OO and FP people have always talked right past each other. Yet one day I discovered... Nix. And that's how I found the explanation, that I will now share with you.
+
+
+TODO: include (in appendix?) an example of the exponential explosion when you fail to conflate instance and prototype.
+
+TODO: include (in appendix?) an example of the maintenance mess when you fail to use multiple inheritance.
+
+TODO: define multiple inheritance purely on top of mixin inheritance wherein you define a definer prototype (the meta object) from which the actual object is extracted by calling a method.

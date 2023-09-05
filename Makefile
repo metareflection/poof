@@ -1,3 +1,4 @@
+# NB: If racket complains about some modules missing, try: make prerequisites
 all: view
 
 .DUMMY: all pdf view test repl prerequisites
@@ -18,14 +19,19 @@ pdf: poof.pdf
 
 # Previewing the slides. make preslides p=14 to start at page 14.
 # NB: Alt-M for the mouse!
-preslides: poof-slides.rkt
-	slideshow --comment-on-slide --elapsed-time --start $${p:-1} poof-slides.rkt
+%.preview: %.rkt
+	slideshow --comment-on-slide --elapsed-time --start $${p:-1} $<
+%.view: %.rkt
+	slideshow --preview --elapsed-time $<
+%.pdf: %.rkt
+	slideshow --pdf $<
 
-slides: poof-slides.rkt
-	slideshow --preview --elapsed-time poof-slides.rkt
-
-slides-pdf: poof-slides.rkt
-	slideshow --pdf poof-slides.rkt
+preslides: poof-slides.preview
+slides: poof-slides.view
+slides-pdf: poof-slides.pdf
+preslides-2023: poof-slides-2023.preview
+slides-2023: poof-slides-2023.viewrkt
+slides-pdf-2023: poof-slides-2023.pdf
 
 view: poof.pdf
 	$(PDFVIEWER) $<
