@@ -18,15 +18,22 @@ This document is available under the bugroff license.
 (require scribble/html
          "util/util.rkt"
          "util/coop.rkt"
+         (rename-in "util/coop.rkt" (|@| $))
          "util/protodoc.rkt"
          "util/reveal.rkt")
+
+(def (make-table lists)
+  (table style: "border-bottom-width:0;"
+   (map (lambda (l)
+          (tr style: "border-bottom-width:0;"
+              (map (lambda (x) (td style: "border-bottom-width:0;" x)) l)))
+        lists)))
 
 (def doc
   (docfix
     $top-doc
     ($title "Prototypes: Object-Orientation, Functionally")
-    (app
-      $kv 'slide
+    ($ $kv 'slide
       (list
        @div[class: 'logo]{
        @img[src: "resources/pic/mukn-name.svg"
@@ -60,37 +67,219 @@ This document is available under the bugroff license.
        @div[style: "font-size: 50%;" (~)]
        @table[style: "text-align: left; padding-left: 0; margin-left: 0; width: 100%; font-size: 50%;"
          (tr @td{@code{PgDn}: next} @td{@code{PgUp}: previous} @td{@code{↑ ↓ ← → ESC ⏎}
-             @td{Touchscreen: swipe down until you must swipe right}})]))))
-
-#|
-(slide-group*
-(x-slide () @h1{Paper: OO System@em{s} in λ-calculus}
-  @Li{@em{Simple} Constructive Semantics of OO in pure FP}
-  @Li{Demystify fundamental concepts of OO}
-  @Li{Prototypes before Classes, Purity before Mutation}
-  @Li{@em{Why} it matters, @em{Why} it's that way}
- @comment{
-(Thesis)
-})
-
-(x-slide () @h1{Language Wars: OO vs FP}
-  @Li{Two sides. Gabriel: “Incommensurable paradigms”}
-  @Li{Insults, misunderstanding}
-  @Li{Videos, Books, University Courses... all wrong.}
-  @Li{And yet, in practice: mutual adoption!})
-
-(x-slide () @h1{OO for FP}
-  @Li{Academics tend to understand FP better}
-  @Li{That's my tribe — probably yours}
-  @Li{Yet in my experience OO matters}
-  @Li{And yet, in practice: mutual adoption!})
-
-(x-slide () @h1{What OO isn't about}
-  @Li{Classes}
-  @Li{“Encapsulation”, “Information Hiding”}
-  @Li{Inheritance vs Composition vs ...}
-  @Li{Mutation everywhere})
-)
-|#
+             @td{Touchscreen: swipe down until you must swipe right}})]))
+    ($subdoc
+     ($title "Introduction: Wherefore OO?")
+     $plan-slide
+     ($xslide @list{Paper: OO System@em{@u{s}} in λ-calculus} ;; Thesis
+        @Li{@em{Simple} Constructive Semantics of OO in pure FP}
+        @Li{Demystify fundamental concepts of OO}
+        @Li{Prototypes before Classes, Purity before Mutation}
+        @Li{@em{Why} it matters, @em{Why} it's that way})
+     ($xslide "Language Wars: OO vs FP"
+        @Li{Two sides. Gabriel: “Incommensurable paradigms”}
+        @Li{FP in Academia, OO in Industry}
+        @Li{Misunderstanding, Scorn}
+        @Li{Videos, Books, University Courses... all wrong }
+        @list{... And yet in practice: mutual adoption!})
+     ($xslide "OO for FP"
+        @Li{FP is my tribe — probably yours}
+        @Li{Vast evidence that OO matters}
+        @Li{FP makes semantics simpler}
+        @Li{Let's understand what and why OO})
+     ($xslide "What OO isn't about"
+        @Li{Classes}
+        @Li{“Encapsulation”, “Information Hiding”}
+        @Li{Inheritance vs Composition vs ...}
+        @Li{Mutation everywhere})
+     ($xslide @list{What OO @em{is} about}
+        (make-table
+         `(("Incrementality" ,nbsp "Modularity")
+           (,nbsp ,nbsp ,nbsp)
+           ("Open Recursion" ,nbsp "Ad Hoc Polymorphism")))))
+    ($subdoc
+     ($title "Minimal OO: Mixin Functions")
+     $plan-slide
+     ($xslide "Simplest OO Concept"
+        @L{@code{Instance}: value to specify incrementally}
+        @L{@code{Prototype}: modular increment of specification}
+        @L{@code{Instantiate: Prototype → Instance}}
+        @L{@code{Inherit: Prototype → Prototype → Prototype}})
+     ($xslide "Prototypes as Mixin Functions"
+        @L{Inputs: whole spec (other aspects), previous spec @(br)
+           Output: more complete spec}
+        @L{@code{Mixin = Instance → Instance → Instance}}
+        @L{@code{Mixin Self Super = Self → Super → Self @(br)
+                 @(~ 3) | Self ⊂ Super}} ;|}}
+        @L{@code{fix: Mixin Instance Top → Top → Instance} @(br)
+           @code{mix: Mixin S T → Mixin T U → Mixin S U}})
+     ($xslide "The Simplest Solution"
+        @L{@code{Mixin Self Super = Self → Super → Self @(br)
+                 @(~ 3) | Self ⊂ Super}} ;|}}
+        @L{@code{fix : Mixin Self Top → Top → Self} @(br)
+           @code{fix = (λ (p t) (Y (λ (s) (p s t))))}}
+        @L{@code{mix : Mixin S T → Mixin T U → Mixin S U} @(br)
+           @code{mix = (λ (p q) (λ (s u) (p s (q s u))))}})
+     ($xslide "Mixins as “Prototypical” OO"
+        @Li{Theory: Bracha & Cook, "Mixins" 1990 (w/ records)}
+        @Li{Practice: Nix 2015 (Jsonnet 2014)}
+        @Li{Mutable: Director '76, ThingLab '77, T '82, Self '86, JS '95}
+        @Li{Classes: Simula '67, Smalltalk '71, *Flavors* '82}
+        @Li{Typeful: Cool hack in Haskell Oliveira 2009 (w/o records)}))
+    ($subdoc
+     ($title "Is it OO? Mixins for Records")
+     $plan-slide
+     ($xslide "Instances as Records"
+        @L{@code{top = (λ (msg) (error "No such method" msg))}}
+        @L{@code{rcons = (λ (k v r) (λ (m) @(br)
+                 @(~ 30) (if (eq? k m) v (r m))))}}
+        @L{@code{point = (rcons 'a 3 (rcons 'b 4 top))}}
+        @L{@code{(point 'a)} ⟶ @code{3}})
+     ($xslide "Prototypes for Records"
+        @L{@code{KV = (λ (k v) (λ (s t) λ (m) @(br)
+                 @(~ 18) (if (eq? k m) v (t m))))}}
+        @L{@code{point = (fix (mix (KV 'a 3) (KV 'b 4)) top)}}
+        @L{@code{(point 'a)} ⟶ @code{3}})
+     ($xslide "Non-Constant Prototypes"
+        @L{@code{method = (λ (k f) (λ (s t) (λ (m) @(br)
+                 @(~ 5) (if (eq? k m) (f s (λ () (t m))) (t m)))))}}
+        @L{@code{(method 'x @(br)
+                 @(~ 5) (λ (self next) (* (self 'fudge) (next))))}}
+        @L{@code{(method 'p @(br)
+                 @(~ 5) (λ (self _) (* (self 'x) (self 'y))))}}))
+    ($subdoc
+     ($title "Prototypes: OO without Objects")
+     $plan-slide
+     ($xslide "Single Inheritance: Generators"
+        @L{@code{Gen Self = Self → Self} @(~ 28)(@code{Top} is given)}
+        @L{@code{fixGen : Gen Self → Self} @(~ 19)(= @code{Y} itself!)}
+        @L{@code{mixGen = Mixin S T → Gen T → Gen S}}
+        @L{You can @code{cons} (@code{apply}) but can’t @code{append} (@code{compose}) a mixin})
+     ($xslide "Multiple Inheritance: Dependency Graph"
+        @img[alt: "c3 linearization example"
+             src: "resources/pic/C3_linearization_example.svg.png"]
+        @nbsp
+        @L{Must @em{linearize} the DAG into a @em{precedence list}}
+        @L{e.g. @code{(Z K1 K3 K2 C A B D E O)}})
+     ($xslide "Multiple Inheritance: Precedence Lists"
+        @L{easy precedence lists: @code{(O) (A O) (B O) (C O)}}
+        @L{bad precedence lists: @(br)
+           @(~ 20) @code{(K1 C O A O B O)} @(br)
+           @(~ 20) @code{(Z K1 K2 K3 A B C D E O)}}
+        @L{C3: preserve coherence properties @(br)
+           @(~ 20) @code{(K1 C A B O)} @(br)
+           @(~ 20) @code{(Z K1 C K3 A K2 B D E O)}})
+     ($xslide "Multiple Inheritance: Modular Dependencies"
+        @L{What if you change @code{K2} ?}
+        @L{Manual curation: @br
+           @(~ 20) - users must update when dependencies change @br
+           @(~ 20) - users must track @em{transitive} dependencies}
+        @L{Modularity: implementation computes precedence lists @br
+           @(~ 20) - users needn’t update when dependencies change @br
+           @(~ 20) - users only must track @em{direct} dependencies})
+     ($xslide "Prototypes beyond Mixin Functions"
+        @L{@code{Proto = Mixin × (List Proto)}}
+        @L{@code{Proto S T = Mixin ? ? × (List (Proto ? ?))}}
+        @L{@code{Proto = Mixin × (List Proto) × Defaults}}
+        @L{More: “No Such Message” handler, Constraints, Types, etc.})
+     ($xslide "How is it Object-Orientation?"
+        @Li{So far, no classes}
+        @Li{So far, no objects}
+        @Li{Only prototypes and instances}
+        @Li{Yet, we recognize (almost?) all of OO!}))
+    ($subdoc
+     ($title "Conflation: Object = Proto × Instance")
+     $plan-slide
+     ($xslide "Modular Extensibility"
+        @Li{Instance: Configuration as DAG of records}
+        @Li{Prototype: Modular Incremental Specification}
+        @Li{Which records in the DAG are extension points?}
+        @Li{None | Exponential explosion | All of them})
+     ($xslide "Conflation: Prototype & Instance"
+        @L{Ubiquitous Extensibility at every level}
+        @L{Every “object” is both Prototype and Instance}
+        @L{@code{Object = Proto × Instance} @br
+           @(~ 5) (or @(~ 2) @code{Proto = … × Instance})}
+        @L{Purity ⇒ Instance unique up to observation})
+     ($xslide "Not just for “records”"
+        @Li{Prototypes for numerical functions, for integers}
+        @Li{“records”, but with very different representations}
+        @Li{Eager Y: only functions. Lazy Y: delay/lazy values.}
+        @Li{Computations vs Values (CBPV 1999)})
+     ($xslide "Secret to Semantic Simplicity"
+        @Li{Recognizing two distinct entities, Prototype and Instance}
+        @Li{Conflation without Distinction = Confusion !}
+        @Li{Lack of awareness ⇒ formalizations that miss the point}
+        @Li{Jsonnet (2014) [“Components” in T (1982)]}))
+    ($subdoc
+     ($title "Class = Proto Type Top")
+     $plan-slide
+     ($xslide "Where are the Classes?"
+        @Li{Simula, Smalltalk, C++, CLOS, Java, C#, Python…}
+        @Li{So much in common… yet very different!}
+        @Li{Is it even the same paradigm?}
+        @Li{What relationship between Prototypes and Classes?})
+     ($xslide "Type descriptors!"
+        @Li{Instance: Type descriptor (see ML module)}
+        @Li{Prototype: add or override methods for Type}
+        @Li{Abstract Class vs Concrete Class}
+        @Li{“Object”: type descriptor? prototype? type element?})
+     ($xslide "From Type Descriptor to Type"
+        @Li{Dependent types, Staging, Existential types?}
+        @Li{Most PLs have limited type-level computations}
+        @Li{Mixin vs single- vs multiple- inheritance matter}
+        @Li{Singleton Class, but lack or dynamism})
+     ($xslide "Class vs Typeclass"
+        @Li{Class vs Typeclass, vtable vs “dictionary”}
+        @Li{Pre-vtable constructor vs burden of dictionary}
+        @Li{Type-directed synthesis as meta-level computation}
+        @Li{Automated translation, see LIL (2012)}))
+    ($subdoc
+     ($title "Pure Challenges")
+     $plan-slide
+     ($xslide "Identity for DAG"
+        @Li{Multiple Inheritance in Nix: no @code{===} for DAG}
+        @Li{Unique tag: non-determinism? side-effect?}
+        @Li{“Solutions”: State? Monads? Opaque tag? Explicit labels?}
+        @Li{Labeling convention: moving computation to wetware})
+     ($xslide "Side-Effects"
+        @Li{Multiple instances? Evolving DAG? Cloning vs Sharing?}
+        @Li{Class OO: all prototypes are pure… at compile-time}
+        @Li{Linearity: +Optimizations -Enforcement}
+        @Li{Caching: +Sharing -Invalidation})
+     ($xslide "Purity vs non-local specification increments"
+        @Li{Multimethods, Mutually recursive classes, Friend classes?}
+        @Li{Haskell problem: orphan typeclass instances}
+        @Li{Hack: side-effect global table, hope for no conflict}
+        @Li{Nix solution: the Open Loop is Global})
+     ($xslide "Advanced OOP, purely?"
+        @Li{Optics: generalize @code{method} to use @code{lens}}
+        @Li{Advice, CLOS, AOP, before/after/around methods}
+        @Li{Method combination: @code{list}, @code{and}, @code{+}, or user-specified}
+        @Li{Any advanced topic in OOP?}))
+    ($subdoc
+     ($title "Conclusion: OO is FP")
+     $plan-slide
+     ($xslide @list{Paper: OO System@em{@u{s}} in λ-calculus} ;; Thesis
+        @Li{@em{Simple} Constructive Semantics of OO in pure FP}
+        @Li{Demystify fundamental concepts of OO}
+        @Li{Prototypes before Classes, Purity before Mutation}
+        @Li{@em{Why} it matters, @em{Why} it's that way})
+     ($xslide "Key Concepts"
+        @Li{Incrementality & Modularity}
+        @Li{Mixin Functions, compose beyond apply}
+        @Li{Multiple inheritance: @(~ 3) modular dependencies}
+        @Li{Conflation: @(~ 4) @code{Prototype = Mixin × Target}}
+        @Li{@code{Class = Proto Type Top}})
+     ($xslide "Meta-Thesis"
+        @Li{Humility, not fanaticism}
+        @Li{Incommensurable paradigms? Go wider!}
+        @Li{Simplicity matters}
+        @Li{λ's for Semantics, macros for Syntax})
+     ($xslide "Thank You!"
+        @Li{Theory: @(~ 8) @Url{https://github.com/metareflection/poof}}
+        @Li{Practice: @(~ 5) @Url{https://github.com/fare/gerbil-poo}}
+        @Li{OO in 30 loc — 80 loc with multiple inheritance}
+        @Li{Hire me! @(~ 5) @code{<fare@"@"mukn.com>}}))))
 
 (reveal-doc doc)

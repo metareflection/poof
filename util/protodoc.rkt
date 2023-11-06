@@ -20,7 +20,7 @@
     parent: (OrFalse Doc) ;; parent section
     path: (List Nat) ;; path from top document to current section
     slide: Xexpr ;; top slide (thunked)
-    sections-r: (List Doc))) ;; subsections of this document
+    subdocs-r: (List Doc))) ;; subdocs of this document
 
 ;; Empty / Top value of type doc
 ;; : Doc
@@ -30,32 +30,34 @@
     parent #f
     path '()
     slide #f
-    sections-r '()))
+    n-subdocs 0
+    subdocs (λ (i) top-doc)))
 
 (def ($top-doc self super) top-doc)
 
 ;; : Doc -> Doc
 (def (doc-top doc)
-  (def parent (doc'parent))
+ (def parent (doc'parent))
   (if parent (doc-top parent) doc))
 
 ;; : Doc -> (List Section)
-(def (doc-sections doc)
-  (if doc (reverse (doc'sections-r)) '()))
+(def (doc-subdocs doc)
+  (if doc
+    (for/list ((i (in-range (doc'n-subdocs))))
+      (@ doc 'subdocs i))
+    '()))
 
 ;; : Doc -> (List Section)
 (def (doc-contents doc)
+  ;;(eprintf "doc-contents ~s ~s ~a ~a\n" (doc'path) (doc'title) (doc'n-subdocs) (and (doc'slide) #t))
   (def slide (doc'slide))
-  (def sections-contents (map doc-contents (doc-sections doc)))
+  (def subdocs-contents (map doc-contents (doc-subdocs doc)))
   (if slide
-    (cons (section '() slide) sections-contents)
-    sections-contents))
+    (cons (section slide) subdocs-contents)
+    (section subdocs-contents)))
 
 ;; : String -> $Proto Doc
 (def $title ($kv 'title))
-
-;; : Doc -> Slide -> $Proto Doc
-(def $slide ($method 'slide))
 
 (def (parent-title doc)
   (def parent (doc'parent))
@@ -66,40 +68,54 @@
   (when/list title
     (p align: 'right valign: 'top (font size: 4 (b title)))))
 
-(def (n-sections doc)
-  (length (doc'sections-r)))
+(define ($subdoc . protos)
+  (λ (self super)
+    (def i (super'n-subdocs))
+    (def (doc _)
+      (apply docfix
+        ($record
+          parent self
+          path (cons i (super'path)))
+        protos))
+    ;;(eprintf "$subdoc ~s ~s ~a ~a ~s\n" (super'path) (super'title) (super'n-subdocs) i (doc'title))
+    (record n-subdocs (+ i 1)
+            subdocs (@ rcons* i doc (super'subdocs))
+            super)))
 
 (def (plan-slide self super)
-  (def plan-title (or (super'title) "Plan"))
-  (def current-section (n-sections super))
-  (def sections (doc-sections self))
-  (def len (length sections))
-  (def titles (map (getField 'title) sections))
+  (def plan-title (or (parent-title super) "Plan"))
+  (def current-section (car (super'path)))
+  (def subdocs (doc-subdocs (self'parent)))
+  (def len (length subdocs))
+  (def titles (map (getField 'title) subdocs))
   (def hilit-titles
     (for/list ((t titles) (i (in-naturals)))
-      (if (= i current-section) (b t) t)))
+      (if (= i current-section) (li class: 'current-section (b t)) (li t))))
+  ;;(eprintf "plan-slide ~s ~s ~s ~s\n" (super'path) (super'title) current-section len)
   (list*
    (parent-title-para super)
    (h1 plan-title)
-   (~)
-   (if (<= len 4)
-     (spacing* hilit-titles (~))
-     hilit-titles)))
+   (ul hilit-titles)))
 
 (def ($plan-slide self super)
-  (@ rcons 'slide (@ plan-slide (self'parent) (super'parent)) super))
+  (@ $subdoc
+     ($record
+        title "Plan"
+        slide (@ plan-slide self super))
+     self super))
 
-(def ($add-slide title xexpr self super)
-  (def doc
-    (record
-     title title
-     slide xexpr
-     parent self
-     path (cons (n-sections super) (super'path))
-     sections-r '()))
-  (@ rcons 'sections-r (cons doc (super'sections-r)) super))
+(define ($xslide title . exprs)
+  (λ (self super)
+    (@ $subdoc
+       ($record
+          title title
+          slide (list*
+                 (parent-title-para super)
+                 (h1 title)
+                 (spacing* exprs)))
+       self super)))
 
-(define (docfix . l) (@ fix (apply rcompose l) top-doc))
+(define (docfix . l) (@ fix (apply rmix* l) top-doc))
 
 (def (reveal-doc doc)
   (reveal (doc'title) (doc-contents doc)))

@@ -1,4 +1,5 @@
 (import
+  :std/debug/DBG
   :std/test
   "coop.ss")
 
@@ -22,4 +23,14 @@
       (define point2 (rfix (@ $method/const 'x 3) (@ $kv 'y 4)))
       (check (map point2 '(x y)) => '(3 4))
       (check (map (rfix ($record x 1 y 2 z 3)) '(x y z)) => '(1 2 3))
-      (check (map (@ fix ($methods 'x 1 'y 2 'z 3) top) '(x y z)) => '(1 2 3)))))
+      (check (map (@ fix ($methods 'x 1 'y 2 'z 3) top) '(x y z)) => '(1 2 3)))
+    (test-case "inheritance tests"
+      (def point1 (rfix (mix*
+                         (@ $method/next 'y (λ (next) (+ 10 (next '_))))
+                         (@ $kv 'x 1) ($record x 2 y 3))))
+      (check (map point1 '(x y)) => '(1 13))
+      (def point2 (rfix (rmix*
+                         (@ $method/self 'z (λ (self) (+ (self 'y) (self 'x))))
+                         (@ $kv 'x 1) ($record x 2 y 3))))
+      (check (map point2 '(x y z)) => '(2 3 5))
+      )))

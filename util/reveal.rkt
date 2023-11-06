@@ -205,5 +205,8 @@
          Reveal.initialize({
            dependencies: [
              {src: "@reveal-url{plugin/highlight/highlight.js}",
-              async: true, callback: () => hljs.initHighlightingOnLoad()}],
+              async: true,
+              controls: true,
+              controlsLayout: 'bottom-right',
+              callback: () => hljs.initHighlightingOnLoad()}],
            controls: false})}}}))

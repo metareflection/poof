@@ -60,7 +60,11 @@
 
 ;; Y combinator: return fixed-point x such that x = (f x).
 ;; : (s -> x -> r) -> (μ s . s -> x -> r) ???
-(def (Y f) (@ D (@ comp f D)))
+#;(def (Y f) (@ D (@ comp f D)))
+;; More efficient implementation of the same
+(def (Y f)
+  (def (fix x) ((f fix) x))
+  fix)
 
 ;;; 1.3. Macros and functions to call curried functions with n-ary Lisp syntax
 
@@ -109,8 +113,14 @@
 
 ;; Applicative variant of rcons that thunks the value to protect evaluation
 ;; : k -> (_ -> v) -> (k -> v) -> k -> v
-(def (rcons* key thunk record msg)
+#;(def (rcons* key thunk record msg)
   (if (equal? key msg) (thunk '_) (record msg)))
+;; Same but with promise for sharing vs recomputation
+;; -- useful for performance, necessary to converge in cases of circularity
+(def (rcons* key thunk)
+  (def promise (delay (thunk '_)))
+  (λ (record msg)
+    (if (equal? key msg) (force promise) (record msg))))
 
 ;;; 2.2. n-ary functions and syntax for records
 
@@ -178,6 +188,7 @@
   (cond ((null? ps) $ix)
         ((null? (cdr ps)) (car ps))
         (else (@ mix (car ps) (apply mix* (cdr ps))))))
+(define (rmix* . ps) (apply mix* (reverse ps)))
 
 ;;; 4. Prototypes for Records
 ;; We adopt the convention of a $ prefix for prototype functions

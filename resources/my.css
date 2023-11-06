@@ -95,7 +95,7 @@ html {
   text-transform: none;
 }
 .reveal h1 {
-  font-size: 150%;
+  font-size: 125%;
   font-weight: bold;
   color: #55f;
 }
@@ -106,3 +106,7 @@ html {
   font-weight: normal;
   color: #fff; }
 
+.current-section {
+  font-weight: bold;
+  color: #f8a;
+}

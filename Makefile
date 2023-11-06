@@ -53,7 +53,7 @@ fare: poof.pdf
 	rsync -av $< bespin:files/cs/
 
 # Slide for njpls2023
-njpls2023-slides.html: njpls2023-slides.rkt util/reveal.rkt
-	racket $< > $@.tmp && mv $@.tmp $@ || rm $@.tmp
+njpls2023-slides.html: njpls2023-slides.rkt util/reveal.rkt util/util.rkt util/coop.rkt util/protodoc.rkt
+	racket $< > $@.tmp && mv $@.tmp $@ || { rm -f $@.tmp ; exit 42;}
 
 slides: njpls2023-slides.html
