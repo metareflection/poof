@@ -79,3 +79,121 @@ TODO: include (in appendix?) an example of the exponential explosion when you fa
 TODO: include (in appendix?) an example of the maintenance mess when you fail to use multiple inheritance.
 
 TODO: define multiple inheritance purely on top of mixin inheritance wherein you define a definer prototype (the meta object) from which the actual object is extracted by calling a method.
+
+
+TODO: add more structure to the presentation, table of contents, etc. mileposts / sections.
+have a finishing slide or set of slides wrap-up / takeaways
+more practice
+mention message-passing vs methods / multimethods
+
+PꚘF, pꚙf
+
+
+
+
+
+------>8------>8------>8------>8------>8------>8------>8------>8------>8------
+We elucidate the essence of Object-Oriented Programming (OOP)
+using a constructive approach: we identify a minimal basis of concepts with which to synthesize existing and potential object systems. We reduce them to constructions atop the pure untyped lambda calculus, thereby obtaining both denotational semantics and effective implementation.
+
+We start from the simplest recognizable model of prototype-based OOP, so simple it arguably does not even have “objects” as such. We build further models of increasing sophistication, reproducing a growing subset of features found in past object systems, including original combinations.
+
+We discuss how to deal with issues like types, modularity, classes, mutation—and associated tradeoffs. We use Scheme to illustrate our approach.
+------>8------>8------>8------>8------>8------>8------>8------>8------>8------
+
+This talk is a reprise of a paper and talk given at the Scheme Workshop 2021 (in a work done with Alex Knauth and Nada Amin)—with new answers to a couple of then-open questions. The code can be presented in any language with lambdas, and we'll be glad to use whichever language the audience is most familiar with (please advise). Lazy evaluation is slightly preferred (or else side-effects to emulate it). However, subtyping is required for non-trivial types (type discussion included in the talk). The ideas go back to the 1970s and their formalization to the early 1990s, but some of the developments are recent and the point of view on putting it all together is fresh.
+
+
+
+------>8------>8------>8------>8------>8------>8------>8------>8------>8------
+
+type Lens s t a b = forall f. Functor f => (a -> f b) -> (s -> f t)
+
+lens: Lens super self inherited field | self <: super | field <: inherited
+
+type Mixin self super = self <: super => self -> super -> self
+fix :: Mixin self super -> super -> self
+fix mixin base = let self = mixin self base in self
+mix :: Mixin self super -> Mixin super sup2 -> Mixin self sup2
+mix child parent self super = child self (parent self super)
+
+
+
+
+methodOverride :: (self <: super, method <: inherited) => Lens super self inherited method -> (self inherited -> method) -> Mixin self super
+methodOverride lens body self super = lens (body self) super
+
+lensedMixin :: (self <: super, method <: inherited) => Lens super self inherited method -> Mixin method inherited -> Mixin self super
+lensedMixin lens mixin self super = over lens (mixin (get lens self)) super
+
+
+
+
+------>8------>8------>8------>8------>8------>8------>8------>8------>8------
+(define *plan*
+  '("Introduction"
+    "Prelude: What is OO?"
+    "Minimal OO: Mixin Functions"
+    "For Instance: Records"
+    "Prototypes: OO without Objects"
+    "Conflation: Object = Proto × Instance"
+    "Class = Proto Type"
+    "Purity Challenges"
+    "Conclusion"))
+
+(define (plan (n #f))
+  (x-slide () @h1{Plan}
+    (apply append
+      (for/list ((i (in-naturals 1))
+                 (s *plan*))
+        (list (if (equal? i n)
+                (Li (b s))
+                (Li s)))))))
+
+;; TODO: do the opposite, if possible: the definitions create the TOC.
+(define-syntax-rule (slide-group* body ...)
+  (let* ((n (next-section))
+         (title (list-ref *plan* (- n 1))))
+    (slide-group title (plan n) body ...)))
+------>8------>8------>8------>8------>8------>8------>8------>8------>8------
+;; ------>8------>8------>8------>8------>8------>8------>8------>8------>8------
+#| Different variant of prototypes, wherein self is lazy.
+(define (fix^ p t) (define s (p (delay s) t)) s)
+(define (((slot^ k v^) s^ t) m) (if (eq? m k) (force v) (t k)))
+(define (((slotGen^ k f) s^ t) m) (if (eq? m k) (f s^ (delay (t k))) (t k)))
+|#
+
+
+;; reveal: Xexpr ->
+
+;; document->expr : Document -> Xexpr
+
+;; document-title : Document -> String
+(define (document>>title s) (fieldLens 'title))
+;; document-sections-r : Document -> (List Document)
+(define (document>>sections-r s) ((fieldLens 'sections-r)))
+(define (document->section s) (reverse (@ get document>>sections-r s)))
+
+(define (new-doc) (record 'title #f 'sections-r '()))
+
+;; context : Object Context
+;; context-document-lens : Context -> Lens Context Document
+;; context-document : Context -> Document = get context-document-lens
+;; context-position : Context -> Nat = (@ get document- context-document
+
+;; BaseContext : Object Context
+(define BaseContext
+  (record 'document (new-doc)
+          'document-lens (fieldLens 'document)))
+
+
+;; Title : Object Context
+
+;; Slide : Object Context
+
+
+;;(define-values [get-slides slide]
+;;  (let ([slides '()])
+;;    (values (λ () (reverse slides))
+;;            (λ stuff (set! slides (cons (apply section stuff) slides))))))
+|#

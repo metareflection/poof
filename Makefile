@@ -1,7 +1,10 @@
 # NB: If racket complains about some modules missing, try: make prerequisites
-all: view
+all: slides
 
-.DUMMY: all pdf view test repl prerequisites
+.DUMMY: all pdf view test repl prerequisites \
+  poof-preslides poof-slides poof-slides-pdf \
+  slides \
+  %.preview %.view
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
@@ -26,12 +29,9 @@ pdf: poof.pdf
 %.pdf: %.rkt
 	slideshow --pdf $<
 
-preslides: poof-slides.preview
-slides: poof-slides.view
-slides-pdf: poof-slides.pdf
-preslides-2023: poof-slides-2023.preview
-slides-2023: poof-slides-2023.viewrkt
-slides-pdf-2023: poof-slides-2023.pdf
+poof-preslides: poof-slides.preview
+poof-slides: poof-slides.view
+poof-slides-pdf: poof-slides.pdf
 
 view: poof.pdf
 	$(PDFVIEWER) $<
@@ -51,3 +51,9 @@ prerequisites:
 fare: poof.pdf
 	cp $< ~/files/cs/
 	rsync -av $< bespin:files/cs/
+
+# Slide for njpls2023
+njpls2023-slides.html: njpls2023-slides.rkt util/reveal.rkt
+	racket $< > $@.tmp && mv $@.tmp $@ || rm $@.tmp
+
+slides: njpls2023-slides.html

@@ -76,7 +76,7 @@
 
 % http://worrydream.com/refs/Borning%20-%20The%20Programming%20Language%20Aspects%20of%20ThingLab.pdf
 % https://dl.acm.org/doi/abs/10.1145/357146.357147
-@article{Borning1981,
+@Article{Borning1981,
   author = {Borning, Alan Hamilton},
   title = {The Programming Language Aspects of ThingLab, a Constraint-Oriented Simulation Laboratory},
   year = {1981},
@@ -203,11 +203,31 @@
   Year = {1989}
 }
 
+% Introduction of Typeclasses
+% https://www.research.ed.ac.uk/en/publications/how-to-make-ad-hoc-polymorphism-less-ad-hoc
+@InProceedings{typeclasses,
+  title = "How to make ad-hoc polymorphism less ad hoc",
+  abstract = "This paper presents type classes, a new approach to ad-hoc polymorphism. Type classes permit overloading of arithmetic operators such as multiplication, and generalise the {"}eqtype variables{"} of Standard ML. Type classes extend the Hindley/Milner polymorphic type system, and provide a new approach to issues that arise in object-oriented programming, bounded type quantification, and abstract data types. This paper provides an informal introduction to type classes, and defines them formally by means of type inference rules. ",
+  author = "P. Wadler and S. Blott",
+  year = "1989",
+  doi = "10.1145/75277.75283",
+  language = "English",
+  isbn = "0-89791-294-2",
+  pages = "60--76",
+  booktitle = "POPL '89 Proceedings of the 16th ACM SIGPLAN-SIGACT symposium on Principles of programming languages",
+  publisher = "ACM",
+}
+
+% 10.1145/97946.97982
 @InProceedings{bracha1990mixin,
   author = {Bracha, Gilad and Cook, William},
   title = {Mixin-Based Inheritance},
   year = {1990},
+  issue_date = {Oct. 1990},
   isbn = {0897914112},
+  volume = {25},
+  number = {10},
+  issn = {0362-1340},
   publisher = {Association for Computing Machinery},
   address = {New York, NY, USA},
   %url = {https://doi.org/10.1145/97945.97982},
@@ -217,22 +237,7 @@
   pages = {303–311},
   numpages = {9},
   location = {Ottawa, Canada},
-  series = {OOPSLA/ECOOP '90}
-}
-
-@article{10.1145/97946.97982,
-  author = {Bracha, Gilad and Cook, William},
-  title = {Mixin-Based Inheritance},
-  year = {1990},
-  issue_date = {Oct. 1990},
-  publisher = {Association for Computing Machinery},
-  address = {New York, NY, USA},
-  volume = {25},
-  number = {10},
-  issn = {0362-1340},
-  %url = {https://doi.org/10.1145/97946.97982},
-  doi = {10.1145/97946.97982},
-  abstract = {The diverse inheritance mechanisms provided by Smalltalk, Beta, and CLOS are interpreted as different uses of a single underlying construct. Smalltalk and Beta differ primarily in the direction of class hierarchy growth. These inheritance mechanisms are subsumed in a new inheritance model based on composition of mixins, or abstract subclasses. This form of inheritance can also encode a CLOS multiple-inheritance hierarchy, although changes to the encoded hierarchy that would violate encapsulation are difficult. Practical application of mixin-based inheritance is illustrated in a sketch of an extension to Modula-3.},
+  series = {OOPSLA/ECOOP '90},
   journal = {SIGPLAN Not.},
   month = sep,
   pages = {303–311},
@@ -308,11 +313,14 @@
 }
 
 % https://www.cs.bham.ac.uk/~udr/papers/oosem.pdf
-Two Semantic Models of Object-Oriented Languages∗
-Samuel N. Kamin
-Uday S. Reddy
-University of Illinois at Urbana-Champaign
-October 4, 1993
+% University of Illinois at Urbana-Champaign
+% October 4, 1993
+@InProceedings{Kamin1994TwoSM,
+  title={Two semantic models of object-oriented languages},
+  author={Samuel N. Kamin and Uday S. Reddy},
+  year={1994},
+  url={https://api.semanticscholar.org/CorpusID:16832709}
+}
 
 @InProceedings{ImplementingTypeClasses,
   title = "Implementing Type Classes",
@@ -325,7 +333,7 @@ October 4, 1993
 }
 % http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.53.3952
 
-@article{Cook1994,
+@Article{Cook1994,
   title={A Denotational Semantics of Inheritance and Its Correctness},
   author={W. Cook and J. Palsberg},
   journal={Information and Computation},
@@ -356,6 +364,7 @@ October 4, 1993
   year = {1997}
 }
 
+% CBPV
 @InProceedings{conf/tlca/Levy99,
   title = {Call-by-Push-Value: A Subsuming Paradigm.},
   year = {1999},
@@ -364,7 +373,7 @@ October 4, 1993
   booktitle = {Typed Lambda Calculi and Applications, 4th International Conference, TLCA'99, L'Aquila, Italy, April 7-9, 1999, Proceedings}
 }
 
-@misc{ecmascript,
+@Misc{ecmascript,
   title={ECMAScript Language Specification},
   author={ECMA, Final Draft},
   year={1999}
@@ -407,7 +416,7 @@ October 4, 1993
 
 % NB: Extended version of the seminal 2005 TOPLAS paper.
 % For a history of lenses, see Jules Hedges' https://julesh.com/2018/08/16/lenses-for-philosophers/
-@article{Foster2007CombinatorsFB,
+@Article{Foster2007CombinatorsFB,
   title={Combinators for bidirectional tree transformations: A linguistic approach to the view-update problem},
   author={Nate Foster and M. Greenwald and J. T. Moore and B. Pierce and A. Schmitt},
   journal={ACM Trans. Program. Lang. Syst.},
@@ -481,7 +490,7 @@ October 4, 1993
   urldate = {2021-03-11}
 }
 
-@book{EcmaScript:15,
+@Book{EcmaScript:15,
   added-at = {2015-08-28T15:36:26.000+0200},
   address = {Geneva},
   author = {{Ecma International}},
@@ -499,7 +508,7 @@ October 4, 1993
 
 % This article is great in desugaring the prototype sublanguage of JS,
 % but doesn't cover classes.
-@article{DBLP:journals/corr/GuhaSK15,
+@Article{DBLP:journals/corr/GuhaSK15,
   author    = {Arjun Guha and
                Claudiu Saftoiu and
                Shriram Krishnamurthi},
@@ -515,7 +524,7 @@ October 4, 1993
   bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
-@book{EcmaScript:15,
+@Book{EcmaScript:15,
   added-at = {2015-08-28T15:36:26.000+0200},
   address = {Geneva},
   author = {{Ecma International}},
@@ -531,7 +540,7 @@ October 4, 1993
   year = 2015
 }
 
-@article{Pickering_2017,
+@Article{Pickering_2017,
   title={Profunctor Optics: Modular Data Accessors},
   volume={1},
   ISSN={2473-7321},
@@ -552,6 +561,7 @@ October 4, 1993
   url = {https://github.com/repository/withheld},
   year = 2020
 }
+
 @Misc{GerbilPOO,
   author = {François-René Rideau},
   title = {Gerbil-POO},

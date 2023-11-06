@@ -40,9 +40,15 @@
  @tt{https://github.com/metareflection/poof}
  @comment{
    Hi, I am Faré Rideau.
-   The paper my colleagues and I
-   are presenting today argues that
-   the two definitions above
+   This presentation is based on work
+   I originally presented at
+   the Scheme Workshop 2021.
+   It was done with Alex Knauth for
+   the macrology & Racket magic and
+   Nada Amin for the scientific rigor.
+
+   In this talk, I will argue that
+   the two following definitions
    epitomize the essence of all
    Object Oriented Programming.
  })
@@ -66,6 +72,18 @@
    just with longer identifiers
    so it's easier to explain them.
    But I'll get back to that later.
+
+   First...
+ })
+
+(slide
+ #:title "Language Wars: OO vs FP"
+ @P{Inheritance vs Composition}
+ @P{Information Hiding / Encapsulation}
+ @P{Modelling vs Math}
+ @comment{
+   Back when I was young, in the 1990s,
+   people on 
  })
 
 (slide
