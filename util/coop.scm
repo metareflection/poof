@@ -6,20 +6,51 @@
 
 ;;; 1.1. Macros for curried functions
 
+;;; 1.1.1. The identity function
+;; : x -> x
+(define (identity x) x)
+
+;; 1.1.2. Apply a curried function to a list of argument
+(define (%app . a)
+  (cond ((null? a) identity)
+        ((null? (cdr a)) (car a))
+        ((null? (cddr a)) ((car a) (cadr a)))
+        (else (apply %app ((car a) (cadr a)) (cddr a)))))
+
+(define-syntax %app/list
+  (syntax-rules ()
+    ((_) identity)
+    ((_ fun) fun)
+    ((_ fun arg) (fun arg))
+    ((_ fun arg . more) (@ (fun arg) . more))))
+
+;; This indirection into three definitions is necessary because
+;; Gerbil Scheme and Racket (and presumably others) disagree on how to define an identifier macro
+(define-identifier-macro @ %app/list %app)
+
+;; 1.1.3. Mutually recursive fun and defn
+
 ;; Unicode lambda to define curried function
-(define-syntax λ
+
+(define-syntax fn
   (syntax-rules ()
     ((_ () . body) (begin . body))
-    ((_ (x) . body) (lambda (x) . body))
-    ((_ (x . y) . body) (lambda (x) (λ y . body)))
-    ((_ v . body) (lambda (v) . body)))) ;; also accept a single var without paren
+    ((_ (x) . body) (lambda (v) (defn x v) . body))
+    ((_ (x . y) . body) (fn (x) (fn y . body)))
+    ((_ v . body) (fn (v) . body)))) ;; also accept a single var without paren, same as with paren
 
-;; def
-(define-syntax def
+;; defn
+(define-syntax defn
   (syntax-rules ()
-    ((_ (pat . vars) . body) (define pat (λ vars . body)))
-    ((_ pat expr) (define pat expr))
-    ((_ pat . body) (define pat (begin . body)))))
+    ((_ (pat . vars) . body)
+     (defn pat (fn vars . body)))
+    ((_ v . body)
+     (begin (define x (begin . body))
+            (define-syntax x/app (syntax-rules () ((_ . a) (@ x . a))))
+            (define-identifier-macro v x x/app)))))
+
+(define-identifier-macro λ fn)
+(define-identifier-macro def defn)
 
 ;;; 1.2. Basic combinators
 
@@ -27,7 +58,8 @@
 
 ;; identity - Identitätsfunktion
 ;; : x -> x
-(def (id x) x)
+;(def (id x x))
+(def id identity) ;; already defined above, but this time it's autocurrying!
 
 ;; constant - Konstanzfunktion
 ;; : x -> y -> x
@@ -35,11 +67,11 @@
 
 ;; verSchmelzungsfunktion: amalgamation function; Smelting; Schoenfinkel
 ;; : (z -> yz -> r) -> (z -> yz) -> z -> r
-(def (sc x y z) ((x z) (y z)))
+(def (sc x y z) (x z (y z)))
 
 ;; verTauschungsfunktion (exchange funcTion); flip in Haskell
 ;; : (z -> y -> r) -> y -> z -> r
-(def (ta x y z) ((x z) y))
+(def (ta x y z) (x z y))
 
 ;; Zusammensetzungsfunktion (compoZition function); (.) in Haskell
 ;; : (yz -> r) -> (z -> yz) -> z -> r
@@ -56,44 +88,30 @@
 ;; Applicative D combinator: protect the (x x) from over-eager evaluation with
 ;; eta-conversion with a layer of (λ (y) (... y)). Unnecessary for lazy D.
 ;; : (μ x . x -> y -> r) -> y -> r
-(def (D x y) ((x x) y))
+(def (D x y) (x x y))
 
 ;; Y combinator: return fixed-point x such that x = (f x).
 ;; : (s -> x -> r) -> (μ s . s -> x -> r) ???
-#;(def (Y f) (@ D (@ comp f D)))
+#;(def (Y f) (D (comp f D)))
 ;; More efficient implementation of the same
 (def (Y f)
-  (def (fix x) ((f fix) x))
+  (def (fix x) (f fix x))
   fix)
 
 ;;; 1.3. Macros and functions to call curried functions with n-ary Lisp syntax
-
-;; Apply a curried function to a list of argument
-(define (app . a)
-  (cond ((null? a) id)
-        ((null? (cdr a)) (car a))
-        ((null? (cddr a)) ((car a) (cadr a)))
-        (else (apply app ((car a) (cadr a)) (cddr a)))))
-
-(define-syntax @
-  (syntax-rules ()
-    ((_) id)
-    ((_ fun) fun)
-    ((_ fun arg) (fun arg))
-    ((_ fun arg . more) (@ (fun arg) . more))
-    #;(_ app))) ;; not valid in racket
+;; TODO: the macro optimization is left as an exercise to the reader
 
 (define (compose . l) ;; n-ary composition
   (cond
    ((null? l) id)
    ((null? (cdr l)) (car l))
-   (else (@ comp (car l) (apply compose (cdr l))))))
+   (else (comp (car l) (apply compose (cdr l))))))
 
 (define (rcompose . l) ;; n-ary composition left-to-right flow
   (cond
    ((null? l) id)
    ((null? (cdr l)) (car l))
-   (else (@ pmoc (car l) (apply rcompose (cdr l))))))
+   (else (pmoc (car l) (apply rcompose (cdr l))))))
 
 ;;; 2. Functional Records
 ;; Let's define "records" as functions from message to value
@@ -113,7 +131,8 @@
 
 ;; Applicative variant of rcons that thunks the value to protect evaluation
 ;; : k -> (_ -> v) -> (k -> v) -> k -> v
-#;(def (rcons* key thunk record msg)
+#;
+(def (rcons* key thunk record msg)
   (if (equal? key msg) (thunk '_) (record msg)))
 ;; Same but with promise for sharing vs recomputation
 ;; -- useful for performance, necessary to converge in cases of circularity
@@ -148,10 +167,10 @@
 
 ;;; 3.1. We can define our two magic functions this way:
 ;; : Proto self top -> top -> self
-(def (fix p t) (Y (λ (s) (@ p s t)))) ;; instantiate a prototype with top value
+(def (fix p t) (Y (λ (s) (p s t)))) ;; instantiate a prototype with top value
 
 ;; : Proto self super -> Proto super s2 -> Proto self s2
-(def (mix p q s t) (@ p s (@ q s t))) ;; compose prototypes p and q
+(def (mix p q s t) (p s (q s t))) ;; compose prototypes p and q
 
 ;; : Proto self self
 (def ($ix s t) t) ;; neutral prototype -- $ prefix for prototypes
@@ -159,12 +178,12 @@
 ;; With longer names, in Lispier style with implicit recursion rather than using Y.
 ;; : Proto self top -> top -> self
 (def (instantiate proto top)
-  (def self (@ proto (λ (msg) (self msg)) top))
+  (def self (proto (λ (msg) (self msg)) top))
   self)
 ;; : Proto self super -> Proto super s2 -> Proto self s2
 (def (inherit child parent)
   (λ (self super)
-    (@ child self (@ parent self super))))
+    (child self (parent self super))))
 
 ;;; 3.2. Directly composable representation for prototype functions
 ;; type CProto self super = Proto super s2 -> Proto self s2
@@ -175,7 +194,7 @@
 (def (cp->p cp) (cp $ix))
 
 ;; : CProto self top -> top -> self
-(def (cfix cp t) (Y (λ (s) (@ cp $ix s t))))
+(def (cfix cp t) (Y (λ (s) (cp $ix s t))))
 
 ;; : CProto self super -> CProto super s2 -> CProto self s2
 (def cmix comp)
@@ -187,7 +206,7 @@
 (define (mix* . ps)
   (cond ((null? ps) $ix)
         ((null? (cdr ps)) (car ps))
-        (else (@ mix (car ps) (apply mix* (cdr ps))))))
+        (else (mix (car ps) (apply mix* (cdr ps))))))
 (define (rmix* . ps) (apply mix* (reverse ps)))
 
 ;;; 4. Prototypes for Records
@@ -198,32 +217,32 @@
 ;; self <: k -> v => k -> (self -> (_ -> v) -> v) -> Proto self super
 (def ($method name body self super)
   (def (next-method _) (super name))
-  (@ rcons* name (λ (_) (@ body self next-method)) super))
+  (rcons* name (λ (_) (body self next-method)) super))
 
 ;;; Trivial variants thereof
 
 ;; self <: k -> v => k -> v -> Proto self super
 (def ($method/const name value)
-  (@ $method name (λ (_self _next-method) value)))
+  ($method name (λ (_self _next-method) value)))
 
 ;; self <: k -> v => k -> ((_ -> v) -> v) -> Proto self super
 (def ($method/next name f)
-  (@ $method name (λ (_self next-method) (f next-method))))
+  ($method name (λ (_self next-method) (f next-method))))
 
 ;; self <: k -> v => k -> (self -> v) -> Proto self super
 (def ($method/self name f)
-  (@ $method name (λ (self _next-method) (f self))))
+  ($method name (λ (self _next-method) (f self))))
 
 ;; self <: k -> v => k -> v -> Proto self super
-(def ($kv k v s t) (@ rcons k v t)) ;; indeed the same as $method/const
+(def ($kv k v s t) (rcons k v t)) ;; indeed the same as $method/const
 
 ;; self <: k -> v => k -> (self -> (_ -> v) -> v) -> Proto self super
-(def ($kb k b s t) (@ rcons* k (λ (_) (b s (λ (_) (t k)))) t)) ;; indeed the same as $method
+(def ($kb k b s t) (rcons* k (λ (_) (b s (λ (_) (t k)))) t)) ;; indeed the same as $method
 
 ;;; 4.2. n-ary functions and syntax to deal with record prototypes
 
 ;; Quickly instantiate a record from prototypes
-(define (rfix . ps) (@ fix (apply mix* ps) top))
+(define (rfix . ps) (fix (apply mix* ps) top))
 
 ;; Multiple methods in one call
 (define ($methods . l)
@@ -254,13 +273,13 @@
 ;; type SimpleLens s a = Lens s s a a
 
 ;; : (s -> a) -> (s -> b -> t) -> Lens s t a b
-(def (lens getter setter fmap k x) (@ fmap (setter x) (k (getter x))))
+(def (lens getter setter fmap k x) (fmap (setter x) (k (getter x))))
 
 ;; : SimpleLens s a -> s -> a -> s
-(def (set lens s a) (@ lens id (ko a) s))
+(def (set lens s a) (lens id (ko a) s))
 
 ;; : SimpleLens s a -> s -> a
-(def (get lens s) (@ lens (ko id) id s))
+(def (get lens s) (lens (ko id) id s))
 
 ;;; 5.2. Fields for records
 
@@ -269,7 +288,7 @@
 (def (getField name record) (record name))
 
 ;; : k -> (k -> v) -> v -> k -> v
-(def (setField name record value) (@ rcons name value record))
+(def (setField name record value) (rcons name value record))
 
 ;; : k -> SimpleLens (k -> v) v
 (def (field name) (lens getField setField))
@@ -280,7 +299,7 @@
 (def (getField* name record) (λ (_) (record name)))
 
 ;; : k -> (k -> v) -> (_ -> v) -> k -> v
-(def (setField* name record thunk) (@ rcons* name thunk record))
+(def (setField* name record thunk) (rcons* name thunk record))
 
 ;; : k -> SimpleLens (k -> v) (_ -> v)
 (def (field* name) (lens getField* setField*))
@@ -298,7 +317,7 @@
 ;; type Method self super mself msuper = self <: super => mself <: msuper => self -> msuper -> mself
 ;; : Lens self vself /\ Lens super vsuper -> Method self super mself msuper -> Proto self super
 (def ($Method lens body self super)
-  (set lens super (@ body self (get lens super))))
+  (set lens super (body self (get lens super))))
 
 ;; Mixing in a proto for a subvalue at lens
 ;; The lens specifies which aspect of the self will be overridden
@@ -309,7 +328,7 @@
 ;; : Lens Global Local
 ;; : Lens self vself /\ Lens super vsuper -> Proto mself msuper -> Proto self super
 (def ($Mix lens subproto self super)
-  (set lens super (@ subproto (get lens self) (get lens super))))
+  (set lens super (subproto (get lens self) (get lens super))))
 
 ;;; 6. Algebraic data structures
 

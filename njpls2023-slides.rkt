@@ -95,7 +95,7 @@ This document is available under the bugroff license.
      ($xslide @list{What OO @em{is} about}
         (make-table
          `(("Incrementality" ,nbsp "Modularity")
-           (,nbsp ,nbsp ,nbsp)
+           (,nbsp            ,nbsp ,nbsp)
            ("Open Recursion" ,nbsp "Ad Hoc Polymorphism")))))
     ($subdoc
      ($title "Minimal OO: Mixin Functions")
@@ -136,8 +136,7 @@ This document is available under the bugroff license.
         @L{@code{point = (rcons 'a 3 (rcons 'b 4 top))}}
         @L{@code{(point 'a)} ⟶ @code{3}})
      ($xslide "Prototypes for Records"
-        @L{@code{KV = (λ (k v) (λ (s t) λ (m) @(br)
-                 @(~ 18) (if (eq? k m) v (t m))))}}
+        @L{@code{KV = (λ (k v) (λ (s t) (rcons k v t)))}}
         @L{@code{point = (fix (mix (KV 'a 3) (KV 'b 4)) top)}}
         @L{@code{(point 'a)} ⟶ @code{3}})
      ($xslide "Non-Constant Prototypes"
@@ -215,7 +214,7 @@ This document is available under the bugroff license.
      ($title "Class = Proto Type Top")
      $plan-slide
      ($xslide "Where are the Classes?"
-        @Li{Simula, Smalltalk, C++, CLOS, Java, C#, Python…}
+        @Li{Simula '67, Smalltalk, C++, CLOS, Java, C#, Python…}
         @Li{So much in common… yet very different!}
         @Li{Is it even the same paradigm?}
         @Li{What relationship between Prototypes and Classes?})
