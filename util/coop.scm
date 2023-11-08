@@ -2,6 +2,9 @@
 ;; Here "Categorical" means that we use unary functions everywhere,
 ;; with lots of Haskell-like combinators.
 
+;; NB: For an example of the Prototypes at work, see protodoc.rkt,
+;; itself used by ../slides-2023-njpls.rkt or ../slides-2024-lambdaconf.rkt
+
 ;;; 1. Categorical Functional Programming in Scheme
 
 ;;; 1.1. Macros for curried functions
@@ -22,11 +25,11 @@
     ((_) identity)
     ((_ fun) fun)
     ((_ fun arg) (fun arg))
-    ((_ fun arg . more) (@ (fun arg) . more))))
+    ((_ fun arg . more) (%app/list (fun arg) . more))))
 
 ;; This indirection into three definitions is necessary because
 ;; Gerbil Scheme and Racket (and presumably others) disagree on how to define an identifier macro
-(define-identifier-macro @ %app/list %app)
+(define-identifier-macro @ %app %app/list)
 
 ;; 1.1.3. Mutually recursive fun and defn
 
@@ -45,9 +48,14 @@
     ((_ (pat . vars) . body)
      (defn pat (fn vars . body)))
     ((_ v . body)
-     (begin (define x (begin . body))
-            (define-syntax x/app (syntax-rules () ((_ . a) (@ x . a))))
-            (define-identifier-macro v x x/app)))))
+     (begin
+       ;; Allow autocurrying self-reference in the definition body
+       (define tmp (let ()
+                     (define-syntax tmp/app (syntax-rules () ((_ . a) (%app/list tmp . a))))
+                     (define-identifier-macro v tmp tmp/app)
+                     . body))
+       (define-syntax tmp/app (syntax-rules () ((_ . a) (%app/list tmp . a))))
+       (define-identifier-macro v tmp tmp/app)))))
 
 (define-identifier-macro λ fn)
 (define-identifier-macro def defn)
@@ -95,8 +103,8 @@
 #;(def (Y f) (D (comp f D)))
 ;; More efficient implementation of the same
 (def (Y f)
-  (def (fix x) (f fix x))
-  fix)
+  (define (fixed-point x) (f fixed-point x))
+  fixed-point)
 
 ;;; 1.3. Macros and functions to call curried functions with n-ary Lisp syntax
 ;; TODO: the macro optimization is left as an exercise to the reader
@@ -129,6 +137,7 @@
 (def (rcons key val record msg)
   (if (eq? msg key) val (record msg)))
 
+
 ;; Applicative variant of rcons that thunks the value to protect evaluation
 ;; : k -> (_ -> v) -> (k -> v) -> k -> v
 #;
@@ -146,7 +155,7 @@
 (define (make-record . l) ;; plist syntax for record
   (cond ((null? l) top)
         ((null? (cdr l)) (car l))
-        (else (@ rcons (car l) (cadr l) (apply make-record (cddr l))))))
+        (else (rcons (car l) (cadr l) (apply make-record (cddr l))))))
 
 (define-syntax record
   (syntax-rules () ((_ . a) (record1 () . a))))
@@ -158,7 +167,8 @@
 (define-syntax record0
   (syntax-rules ()
     ((_ top (key expr ...) ...)
-     (lambda (msg) (case msg ((key) expr ...) ... (else (top msg)))))))
+     (let ((key (delay (begin expr ...))) ...)
+       (lambda (msg) (case msg ((key) (force key)) ... (else (top msg))))))))
 
 ;;; 3. Prototypes as Mixin Functions
 
