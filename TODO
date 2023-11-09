@@ -130,32 +130,6 @@ lensedMixin lens mixin self super = over lens (mixin (get lens self)) super
 
 
 ------>8------>8------>8------>8------>8------>8------>8------>8------>8------
-(define *plan*
-  '("Introduction"
-    "Prelude: What is OO?"
-    "Minimal OO: Mixin Functions"
-    "For Instance: Records"
-    "Prototypes: OO without Objects"
-    "Conflation: Object = Proto × Instance"
-    "Class = Proto Type"
-    "Purity Challenges"
-    "Conclusion"))
-
-(define (plan (n #f))
-  (x-slide () @h1{Plan}
-    (apply append
-      (for/list ((i (in-naturals 1))
-                 (s *plan*))
-        (list (if (equal? i n)
-                (Li (b s))
-                (Li s)))))))
-
-;; TODO: do the opposite, if possible: the definitions create the TOC.
-(define-syntax-rule (slide-group* body ...)
-  (let* ((n (next-section))
-         (title (list-ref *plan* (- n 1))))
-    (slide-group title (plan n) body ...)))
------->8------>8------>8------>8------>8------>8------>8------>8------>8------
 ;; ------>8------>8------>8------>8------>8------>8------>8------>8------>8------
 #| Different variant of prototypes, wherein self is lazy.
 (define (fix^ p t) (define s (p (delay s) t)) s)
@@ -164,36 +138,11 @@ lensedMixin lens mixin self super = over lens (mixin (get lens self)) super
 |#
 
 
-;; reveal: Xexpr ->
 
-;; document->expr : Document -> Xexpr
-
-;; document-title : Document -> String
-(define (document>>title s) (fieldLens 'title))
-;; document-sections-r : Document -> (List Document)
-(define (document>>sections-r s) ((fieldLens 'sections-r)))
-(define (document->section s) (reverse (@ get document>>sections-r s)))
-
-(define (new-doc) (record 'title #f 'sections-r '()))
-
-;; context : Object Context
-;; context-document-lens : Context -> Lens Context Document
-;; context-document : Context -> Document = get context-document-lens
-;; context-position : Context -> Nat = (@ get document- context-document
-
-;; BaseContext : Object Context
-(define BaseContext
-  (record 'document (new-doc)
-          'document-lens (fieldLens 'document)))
-
-
-;; Title : Object Context
-
-;; Slide : Object Context
-
-
-;;(define-values [get-slides slide]
-;;  (let ([slides '()])
-;;    (values (λ () (reverse slides))
-;;            (λ stuff (set! slides (cons (apply section stuff) slides))))))
-|#
+    ($section "Conclusion: OO is FP"
+     $plan-slide
+     ($slide "Pure Functional Prototypes are Cool"
+        @Li{Great for Theory}
+        @Li{Great for Practice}
+        @Li{Yields Great Insights}
+        @Li{Incremental, Modular, Concise code})

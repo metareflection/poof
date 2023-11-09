@@ -31,7 +31,6 @@ This document is available under the bugroff license.
 
 (def doc
   (docfix
-    $top-doc
     ($title "Prototypes: Object-Orientation, Functionally")
     ($ $kv 'slide
       (list
@@ -55,7 +54,7 @@ This document is available under the bugroff license.
        @(br clear: 'all)
        @p{@small{@(~)}}
        @L{@code{@(~ 18) fix = (λ (p t) (Y (λ (s) (p s t))))} @(br)
-          @code{@(~ 18) mix = (λ (p q) (λ (s t) (p s (q s t))))}}
+          @code{@(~ 18) mix = (λ (p q) (λ (s u) (p s (q s u))))}}
        @p{@small{@(~)}}
        @C[style: "font-size: 66%"]{
            François-René Rideau @(email "<fare@mukn.com>") @(br)
@@ -68,32 +67,88 @@ This document is available under the bugroff license.
        @table[style: "text-align: left; padding-left: 0; margin-left: 0; width: 100%; font-size: 50%;"
          (tr @td{@code{PgDn}: next} @td{@code{PgUp}: previous} @td{@code{↑ ↓ ← → ESC ⏎}
              @td{Touchscreen: swipe down until you must swipe right}})]))
-    ($section "Introduction: In Lieu of a Presentation")
+    ($section "Introduction: In Lieu of a Presentation"
      $plan-slide
      ($slide "The Talk I Won’t be Giving Today"
-        @Li{Repeat of my Scheme Workshop 2021 Presentation}
-        @Li{In Depth Explanation of Prototype Objects}
+        @Li{Repeat of Scheme Workshop 2021 Talk}
+        @Li{In Depth Presentation of Prototypes}
         @Li{In Depth Much Anything}
         @Li{Computer Science})
      ($slide "The Talk I’ll Be Giving Instead"
         @Li{Computing Arts}
-        @Li{Why you should care about Prototype OO}
-        @Li{How (not) to be a Good Researcher}
-        @Li{… Going Meta!})
-    ($section
-     ($title "Conclusion: OO is FP")
-     $plan-slide
-     ($slide @list{Paper: OO System@em{@u{s}} in λ-calculus} ;; Thesis
-        @Li{@em{Simple} Constructive Semantics of OO in pure FP}
-        @Li{Demystify fundamental concepts of OO}
-        @Li{Prototypes before Classes, Purity before Mutation}
-        @Li{@em{Why} it matters, @em{Why} it's that way})
-     ($slide "Key Concepts"
+        @Li{Why care about Prototype OO}
+        @Li{Insights learned along the way}
+        @Li{How (not) to be a Good Researcher})
+     ($slide "Prototype OO in a nutshell"
+        @Li{OO w/o Classes… sometimes w/o Objects!}
         @Li{Incrementality & Modularity}
-        @Li{Mixin Functions, compose beyond apply}
-        @Li{Multiple inheritance: @(~ 3) modular dependencies}
-        @Li{Conflation: @(~ 4) @code{Prototype = Mixin × Target}}
-        @Li{@code{Class = Proto Type Top}})
+        @Li{Open Recursion, Ad Hoc Polymorphism}
+        @Li{@code{(λ (self super) body ...)}}))
+    ($section "Why Pure Functional Prototype OO ?"
+     $plan-slide
+     ($slide "Great Insight"
+        @Li{OO semantics simplest & clearest}
+        @Li{More fundamental than classes}
+        @Li{Simplest OO types — and no simpler}
+        @Li{Add OO to your language under 100 loc!})
+     ($slide "Great System Configuration"
+        @Li{GCL (2004), Jsonnet (2014), Nix (2015)…}
+        @Li{Mixins provide or consume methods / slots}
+        @Li{Large DAG where every node is an extension point}
+        @Li{Global open recursion for extensibility})
+     ($slide "Runtime Composable Type Descriptors"
+        @Li{Type Descriptors + Codecs (à la GNU poke)}
+        @Li{Dynamic configurations, User-definable}
+        @Li{Tries in 10x less code than Go, 2x less than OCaml}
+        @Li{Lightweight, first addition to any dynamic language})
+     ($slide "Class OO is but Prototype OO at type-level"
+        @Li{@code{Class = Proto Type}}
+        @Li{Squint and all OO is Prototypes}
+        @Li{Use Prototypes & you can do all OO @em{and more}}
+        @Li{… JS has prototypes!})
+     ($slide "This very Presentation!"
+        @Li{Pure functional, declarative}
+        @Li{How can the toc include yet-unwritten section titles?}
+        @Li{Prototype for slides w/ toc in ~125 loc}
+        ;; @Li{FP + OO system in 350 loc including autocurry macros}
+        @Li{… demo time!}))
+    ($section "My Scheme Workshop 2021 Paper"
+     $plan-slide
+     ($slide "OO from Scratch"
+        @Li{Prototypes: Incremental Specification}
+        @Li{Self: Complete Instance being specified}
+        @Li{Super: Partial Instance so far}
+        @Li{Inheritance: Single, Mixin, Multiple})
+     ($slide "Objects"
+        @Li{Just did OO without Objects!}
+        @Li{Objects: modular extension points}
+        @Li{Conflation: @(~ 4) @code{Prototype = Mixin × Instance}}
+        @Li{Confusion: vocabulary conflict, conflation w/o distinction})
+     ($slide "Unexpected Insights"
+        @Li{Computations vs Values... Laziness matters}
+        @Li{Subclassing cannot be subtyping}
+        @Li{Purity comes before Mutation}
+        @Li{Global open loop, library curation}))
+    ($section "Conclusion: Paradigm War and Peace"
+     $plan-slide
+     ($slide "Why did I care about Prototype OO?"
+        @Li{Great Usenet Flamewars of OO vs FP}
+        @Li{Talking Past Each Other… for Decades}
+        @Li{The paper I wished I could have read younger}
+        @Li{Lisp had it all the 1970s})
+     ($slide "Why So Much Blindness?"
+        @Li{Industry doesn’t care enough about Correctness}
+        @Li{Academia doesn’t understand Programming In The Large}
+        @Li{Both like to ignore the Human Factor}
+        @Li{All get stuck in their paradigms})
+     ($xslide "Inhabiting Constraints — But Which?"
+        @C{Every task involves constraint,}
+        @C{Solve the thing without complaint@";"}
+        @C{There are magic links and chains}
+        @C{Forged to loose our rigid brains.}
+        @C{Structures, strictures, though they bind,}
+        @C{Strangely liberate the mind.}
+        @R{— James Falen, as quoted by dughof})
      ($slide "Meta-Thesis"
         @Li{Humility, not fanaticism}
         @Li{Incommensurable paradigms? Go wider!}
@@ -101,7 +156,7 @@ This document is available under the bugroff license.
         @Li{λ's for Semantics, macros for Syntax})
      ($slide "Thank You!"
         @Li{Theory: @(~ 8) @Url{https://github.com/metareflection/poof}}
-        @Li{Practice: @(~ 5) @Url{https://github.com/fare/gerbil-poo}}
+        @Li{Practice: @(~ 5) Gerbil Scheme @Url{https://cons.io}}
         @Li{OO in 30 loc — 80 loc with multiple inheritance}
         @Li{Hire me! @(~ 5) @code{<fare@"@"mukn.com>}}))))
 

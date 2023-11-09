@@ -30,7 +30,6 @@ This document is available under the bugroff license.
 
 (def doc
   (docfix
-    $top-doc
     ($title "Prototypes: Object-Orientation, Functionally")
     ($kv 'slide
       (list
@@ -54,7 +53,7 @@ This document is available under the bugroff license.
        @(br clear: 'all)
        @p{@small{@(~)}}
        @L{@code{@(~ 18) fix = (λ (p t) (Y (λ (s) (p s t))))} @(br)
-          @code{@(~ 18) mix = (λ (p q) (λ (s t) (p s (q s t))))}}
+          @code{@(~ 18) mix = (λ (p q) (λ (s u) (p s (q s u))))}}
        @p{@small{@(~)}}
        @C[style: "font-size: 66%"]{
            François-René Rideau @(email "<fare@mukn.com>") @(br)
@@ -137,8 +136,8 @@ This document is available under the bugroff license.
         @L{@code{point = (fix (mix (KV 'a 3) (KV 'b 4)) top)}}
         @L{@code{(point 'a)} ⟶ @code{3}})
      ($slide "Non-Constant Prototypes"
-        @L{@code{method = (λ (k f) (λ (s t) (λ (m) @(br)
-                 @(~ 5) (if (eq? k m) (f s (λ () (t m))) (t m)))))}}
+        @L{@code{method = (λ (k f) (λ (s t) @(br)
+                 @(~ 5) (rcons k (f s (λ _ (t k))) t)))}}
         @L{@code{(method 'x @(br)
                  @(~ 5) (λ (self next) (* (self 'fudge) (next))))}}
         @L{@code{(method 'p @(br)
@@ -260,7 +259,7 @@ This document is available under the bugroff license.
         @Li{Incrementality & Modularity}
         @Li{Mixin Functions, compose beyond apply}
         @Li{Multiple inheritance: @(~ 3) modular dependencies}
-        @Li{Conflation: @(~ 4) @code{Prototype = Mixin × Target}}
+        @Li{Conflation: @(~ 4) @code{Prototype = Mixin × Instance}}
         @Li{@code{Class = Proto Type Top}})
      ($slide "Meta-Thesis"
         @Li{Humility, not fanaticism}

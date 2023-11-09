@@ -4,7 +4,7 @@
 all: slides
 
 # Default slides: the next talk
-slides: slides-2024-lambdaconf # slides-2023-njpls
+slides: slides-2023-njpls # slides-2024-lambdaconf
 
 .DUMMY: all pdf view test repl prerequisites fare \
   preslides slides \
@@ -59,10 +59,10 @@ fare: poof.pdf
 
 # Slide for njpls2023
 slides-2023-njpls: slides-2023-njpls.html
-slides-2023-njpls.html: slides-2023-njpls.rkt util/reveal.rkt util/util.rkt util/coop.rkt util/protodoc.rkt
+slides-2023-njpls.html: slides-2023-njpls.rkt util/reveal.rkt util/util.rkt util/coop.rkt util/protodoc.rkt util/coop.scm
 	racket $< > $@.tmp && mv $@.tmp $@ || { rm -f $@.tmp ; exit 42;}
 
 # Slides for LambdaConf 2024
 slides-2024-lambdaconf: slides-2024-lambdaconf.html
-slides-2024-lambdaconf.html: slides-2024-lambdaconf.rkt util/reveal.rkt util/util.rkt util/coop.rkt util/protodoc.rkt
+slides-2024-lambdaconf.html: slides-2024-lambdaconf.rkt util/reveal.rkt util/util.rkt util/coop.rkt util/protodoc.rkt util/coop.scm
 	racket $< > $@.tmp && mv $@.tmp $@ || { rm -f $@.tmp ; exit 42;}

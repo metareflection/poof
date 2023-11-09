@@ -50,12 +50,9 @@
     ((_ v . body)
      (begin
        ;; Allow autocurrying self-reference in the definition body
-       (define tmp (let ()
-                     (define-syntax tmp/app (syntax-rules () ((_ . a) (%app/list tmp . a))))
-                     (define-identifier-macro v tmp tmp/app)
-                     . body))
        (define-syntax tmp/app (syntax-rules () ((_ . a) (%app/list tmp . a))))
-       (define-identifier-macro v tmp tmp/app)))))
+       (define-identifier-macro v tmp tmp/app)
+       (define tmp (let () . body))))))
 
 (define-identifier-macro λ fn)
 (define-identifier-macro def defn)
@@ -136,7 +133,6 @@
 ;; : k -> v -> (k -> v) -> k -> v
 (def (rcons key val record msg)
   (if (eq? msg key) val (record msg)))
-
 
 ;; Applicative variant of rcons that thunks the value to protect evaluation
 ;; : k -> (_ -> v) -> (k -> v) -> k -> v
@@ -267,11 +263,11 @@
     ((_ ke) ($record0 . ke ))
     ((_ ke k e . m) ($record1 ((k e) . ke) . m))))
 (define-syntax $record0
-  (syntax-rules (next-method)
+  (syntax-rules ()
     ((_ (key expr ...) ...)
-     (λ (self super msg)
-       (def (next-method _) (super msg))
-       (case msg ((key) expr ...) ... (else (next-method '_)))))))
+     (λ (self super) ;; TODO: a variant that exposes self, super
+       (let ((key (delay (begin expr ...))) ...)
+         (lambda (msg) (case msg ((key) (force key)) ... (else (super msg)))))))))
 
 ;;; 5. Lenses
 
