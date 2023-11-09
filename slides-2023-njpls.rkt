@@ -116,14 +116,14 @@ This document is available under the bugroff license.
      $plan-slide
      ($slide "OO from Scratch"
         @Li{Prototypes: Incremental Specification}
-        @Li{Self: Complete Instance being specified}
-        @Li{Super: Partial Instance so far}
+        @Li{@code{self}: Complete Instance being specified}
+        @Li{@code{super}: Partial Instance so far}
         @Li{Inheritance: Single, Mixin, Multiple})
      ($slide "Objects"
         @Li{Just did OO without Objects!}
         @Li{Objects: modular extension points}
-        @Li{Conflation: @(~ 4) @code{Prototype = Mixin × Instance}}
-        @Li{Confusion: vocabulary conflict, conflation w/o distinction})
+        @Li{Conflation: @(~ 4) @code{Object = Prototype × Instance}}
+        @Li{Confusion: conflation w/o distinction, vocabulary conflict})
      ($slide "Unexpected Insights"
         @Li{Computations vs Values... Laziness matters}
         @Li{Subclassing cannot be subtyping}
@@ -153,7 +153,7 @@ This document is available under the bugroff license.
         @Li{Humility, not fanaticism}
         @Li{Incommensurable paradigms? Go wider!}
         @Li{Simplicity matters}
-        @Li{λ's for Semantics, macros for Syntax})
+        @Li{λ’s for Semantics, macros for Syntax})
      ($slide "Thank You!"
         @Li{Theory: @(~ 8) @Url{https://github.com/metareflection/poof}}
         @Li{Practice: @(~ 5) Gerbil Scheme @Url{https://cons.io}}
