@@ -97,7 +97,7 @@ This document is available under the bugroff license.
         @Li{Large DAG where every node is an extension point}
         @Li{Global open recursion for extensibility})
      ($slide "Runtime Composable Type Descriptors"
-        @Li{Type Descriptors + Codecs (à la GNU poke)}
+        @Li{Type Descriptors + Codecs (GNU poke, QuickCheck)}
         @Li{Dynamic configurations, User-definable}
         @Li{Tries in 10x less code than Go, 2x less than OCaml}
         @Li{Lightweight, first addition to any dynamic language})
