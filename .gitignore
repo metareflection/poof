@@ -8,7 +8,6 @@ compiled/
 *.vtc
 *.pdf
 *.cls
-*.html
 poof.tex
 minted-colorful-style.tex
 minted-default-style.tex
