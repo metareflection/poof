@@ -56,3 +56,14 @@ To load the library and experiment with it at the REPL:
   talk given on 2020-11-07 at LispNYC,
   [video](https://vimeo.com/495817581),
   [notes](https://github.com/fare/gerbil-poo/blob/master/doc/prototypes.md).
+
+## Citation
+```bibtex
+@Conference{poof2021,
+  title = {Prototypes: Object-Orientation, Functionally},
+  author = {François-René Rideau and Alex Knauth and Nada Amin}
+  year = {2021},
+  booktitle = {Scheme and Functional Programming Workshop},
+  url = {https://github.com/metareflection/poof},
+}
+```

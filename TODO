@@ -146,3 +146,4 @@ lensedMixin lens mixin self super = over lens (mixin (get lens self)) super
         @Li{Great for Practice}
         @Li{Yields Great Insights}
         @Li{Incremental, Modular, Concise code})
+

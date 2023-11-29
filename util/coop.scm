@@ -60,6 +60,7 @@
 ;;; 1.2. Basic combinators
 
 ;; S K I combinators https://www.johndcook.com/blog/2014/02/06/schonfinkel-combinators/
+;; See also https://en.wikipedia.org/wiki/Combinatory_logic
 
 ;; identity - Identitätsfunktion
 ;; : x -> x
@@ -78,7 +79,7 @@
 ;; : (z -> y -> r) -> y -> z -> r
 (def (ta x y z) (x z y))
 
-;; Zusammensetzungsfunktion (compoZition function); (.) in Haskell
+;; Zusammensetzungsfunktion (compoZition function); (.) in Haskell; also B combinator
 ;; : (yz -> r) -> (z -> yz) -> z -> r
 (def (zu x y z) (x (y z)))
 

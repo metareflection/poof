@@ -11,6 +11,7 @@
 % Adding POP to Nixpkgs:
 % https://github.com/NixOS/rfcs/pull/91/
 % https://github.com/NixOS/nixpkgs/pull/116275
+% https://github.com/divnix/POP
 
 % Gilad Bracha's Newspeak? It's class-based only, though.
 
@@ -589,6 +590,17 @@
   url = {https://en.wikipedia.org/wiki/C3_linearization},
 }
 
+@Conference{poof2021,
+  title = {Prototypes: Object-Orientation, Functionally},
+  author = {François-René Rideau and Alex Knauth and Nada Amin}
+  year = {2021},
+  booktitle = {Scheme and Functional Programming Workshop},
+  url = {https://github.com/metareflection/poof},
+}
+
+
+%%% ------>8------>8------>8------>8------>8------>8------>8------>8------>8------
+
 %% Further Suggestions to maybe integrate in the paper:
 
 % http://okmij.org/ftp/Computation/Subtyping/
@@ -623,3 +635,112 @@
 
 % https://www.piumarta.com/software/id-objmodel/objmodel2.pdf
 % OOPSLA07
+
+% https://link.springer.com/chapter/10.1007/3-540-07168-7_77
+@InBook{Dennis1975,
+author="Dennis, Jack B.",
+editor="Bauer, F. L.
+and Dennis, J. B.
+and Waite, W. M.
+and Gotlieb, C. C.
+and Graham, R. M.
+and Griffiths, M.
+and Helms, H. J.
+and Morton, B.
+and Poole, P. C.
+and Tsichritzis, D.",
+title="Modularity",
+bookTitle="Software Engineering: An Advanced Course",
+year="1975",
+publisher="Springer Berlin Heidelberg",
+address="Berlin, Heidelberg",
+pages="128--182",
+isbn="978-3-540-37502-9",
+doi="10.1007/3-540-07168-7_77",
+url="https://doi.org/10.1007/3-540-07168-7_77"
+}
+% We take the following statements to be the objectives of modular programming:
+% 1. One must be able to convince himself of the correctness of a program module,
+% independently of the context of its use in building larger units of software.
+% 2. One must be able to conveniently put together program modules written under
+% different authorities without knowledge of their inner workings.
+
+@InProceedings{10.1145/800027.808431,
+author = {DeRemer, Frank and Kron, Hans},
+title = {Programming-in-the Large versus Programming-in-the-Small},
+year = {1975},
+isbn = {9781450373852},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/800027.808431},
+doi = {10.1145/800027.808431},
+abstract = {We distinguish the activity of writing large programs from that of writing small ones. By large programs we mean systems consisting of many small programs (modules), possibly written by different people.We need languages for programming-in-the-small, i.e. languages not unlike the common programming languages of today, for writing modules. We also need a “module interconnection language” for knitting those modules together into an integrated whole and for providing an overview that formally records the intent of the programmer(s) and that can be checked for consistency by a compiler.We explore the software reliability aspects of such an interconnection language. Emphasis is placed on facilities for information hiding and for defining layers of virtual machines.},
+booktitle = {Proceedings of the International Conference on Reliable Software},
+pages = {114–121},
+numpages = {8},
+keywords = {Module interconnection language, Accessibility, Visibility, Protection, Linking, Scope of definition, Virtual machine, Project management tool., Information hiding, External name, System hierarchy},
+location = {Los Angeles, California}
+}
+
+@Article{10.1145/390016.808431,
+author = {DeRemer, Frank and Kron, Hans},
+title = {Programming-in-the Large versus Programming-in-the-Small},
+year = {1975},
+issue_date = {June 1975},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {10},
+number = {6},
+issn = {0362-1340},
+url = {https://doi.org/10.1145/390016.808431},
+doi = {10.1145/390016.808431},
+abstract = {We distinguish the activity of writing large programs from that of writing small ones. By large programs we mean systems consisting of many small programs (modules), possibly written by different people.We need languages for programming-in-the-small, i.e. languages not unlike the common programming languages of today, for writing modules. We also need a “module interconnection language” for knitting those modules together into an integrated whole and for providing an overview that formally records the intent of the programmer(s) and that can be checked for consistency by a compiler.We explore the software reliability aspects of such an interconnection language. Emphasis is placed on facilities for information hiding and for defining layers of virtual machines.},
+journal = {SIGPLAN Not.},
+month = {apr},
+pages = {114–121},
+numpages = {8},
+keywords = {External name, Information hiding, Scope of definition, Accessibility, Project management tool., Visibility, System hierarchy, Protection, Virtual machine, Linking, Module interconnection language}
+}
+
+@Article{10.1145/361598.361623,
+author = {Parnas, D. L.},
+title = {On the Criteria to Be Used in Decomposing Systems into Modules},
+year = {1972},
+issue_date = {Dec. 1972},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {15},
+number = {12},
+issn = {0001-0782},
+url = {https://doi.org/10.1145/361598.361623},
+doi = {10.1145/361598.361623},
+abstract = {This paper discusses modularization as a mechanism for improving the flexibility and comprehensibility of a system while allowing the shortening of its development time. The effectiveness of a “modularization” is dependent upon the criteria used in dividing the system into modules. A system design problem is presented and both a conventional and unconventional decomposition are described. It is shown that the unconventional decompositions have distinct advantages for the goals outlined. The criteria used in arriving at the decompositions are discussed. The unconventional decomposition, if implemented with the conventional assumption that a module consists of one or more subroutines, will be less efficient in most cases. An alternative approach to implementation which does not have this effect is sketched.},
+journal = {Commun. ACM},
+month = {dec},
+pages = {1053–1058},
+numpages = {6},
+keywords = {modules, software, KWIC index, modularity, software engineering, software design}
+}
+
+% Conway's Law
+% Conway, Melvin (1968). "How do committees invent" (PDF). Datamation: 28–31.
+
+@InProceedings{10.1145/503209.503224,
+author = {Sullivan, Kevin J. and Griswold, William G. and Cai, Yuanfang and Hallen, Ben},
+title = {The Structure and Value of Modularity in Software Design},
+year = {2001},
+isbn = {1581133901},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/503209.503224},
+doi = {10.1145/503209.503224},
+abstract = {The concept of information hiding modularity is a cornerstone of modern software design thought, but its formulation remains casual and its emphasis on changeability is imperfectly related to the goal of creating added value in a given context. We need better explanatory and prescriptive models of the nature and value of information hiding. We evaluate the potential of a new theory---developed to account for the influence of modularity on the evolution of the computer industry---to inform software design. The theory uses design structure matrices to model designs and real options techniques to value them. To test the potential utility of the theory for software we apply it to Parnas's KWIC designs. We contribute an extension to design structure matrices, and we show that the options results are consistent with Parnas's conclusions. Our results suggest that such a theory does have potential to help inform software design.},
+booktitle = {Proceedings of the 8th European Software Engineering Conference Held Jointly with 9th ACM SIGSOFT International Symposium on Foundations of Software Engineering},
+pages = {99–108},
+numpages = {10},
+keywords = {real options, design structure matrix, modularity, software},
+location = {Vienna, Austria},
+series = {ESEC/FSE-9}
+}
+
+% https://ngnghm.github.io/blog/2016/04/26/chapter-9-build-systems/
