@@ -1,5 +1,6 @@
 # Racket-generated files
 compiled/
+build/
 
 # Scribble-generated files
 *.log

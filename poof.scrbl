@@ -1557,7 +1557,7 @@ reactive or incremental programming. @;TODO: @~cite{}
 
 @;;; Here, we silently cite things that only appear in the appendices,
 @;;; so they appear in the bibliography, that is being computed before the appendices.
-@~nocite{chambers92objectoriented Salzman05prototypeswith Barrett96amonotonic wikiC3 aop97 Foster2007CombinatorsFB Pickering_2017}
+@~nocite{chambers92objectoriented Salzman05prototypeswith Barrett96amonotonic WikiC3 aop97 Foster2007CombinatorsFB Pickering_2017}
 
 @section[#:tag "Related_Work"]{Related Work}
 

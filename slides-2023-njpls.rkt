@@ -81,7 +81,7 @@ This document is available under the bugroff license.
         @Li{How (not) to be a Good Researcher})
      ($slide "Prototype OO in a nutshell"
         @Li{OO w/o Classes… sometimes w/o Objects!}
-        @Li{Incrementality & Modularity}
+        @Li{Incrementality & Modularity — @em{in} the language}
         @Li{Open Recursion, Ad Hoc Polymorphism}
         @Li{@code{(λ (self super) body ...)}}))
     ($section "Why Pure Functional Prototype OO ?"

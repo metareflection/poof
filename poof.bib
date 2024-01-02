@@ -216,10 +216,13 @@
   isbn = "0-89791-294-2",
   pages = "60--76",
   booktitle = "POPL '89 Proceedings of the 16th ACM SIGPLAN-SIGACT symposium on Principles of programming languages",
-  publisher = "ACM",
+  publisher = "ACM"
 }
 
 % 10.1145/97946.97982
+% https://www.semanticscholar.org/paper/Mixin-based-inheritance-Bracha-Cook/cbc4f2d93bb62d1c287f4fe458de6ac416379282
+% https://bracha.org/oopsla90.pdf
+% url = {https://doi.org/10.1145/97945.97982},
 @InProceedings{bracha1990mixin,
   author = {Bracha, Gilad and Cook, William},
   title = {Mixin-Based Inheritance},
@@ -231,7 +234,6 @@
   issn = {0362-1340},
   publisher = {Association for Computing Machinery},
   address = {New York, NY, USA},
-  %url = {https://doi.org/10.1145/97945.97982},
   doi = {10.1145/97945.97982},
   abstract = {The diverse inheritance mechanisms provided by Smalltalk, Beta, and CLOS are interpreted as different uses of a single underlying construct. Smalltalk and Beta differ primarily in the direction of class hierarchy growth. These inheritance mechanisms are subsumed in a new inheritance model based on composition of mixins, or abstract subclasses. This form of inheritance can also encode a CLOS multiple-inheritance hierarchy, although changes to the encoded hierarchy that would violate encapsulation are difficult. Practical application of mixin-based inheritance is illustrated in a sketch of an extension to Modula-3.},
   booktitle = {Proceedings of the European Conference on Object-Oriented Programming on Object-Oriented Programming Systems, Languages, and Applications},
@@ -443,6 +445,14 @@
   year={2008}
 }
 
+@Misc{nix2015,
+  title={Nixpkgs fixed-points library},
+  author={Peter Simons},
+  url={https://github.com/NixOS/nixpkgs/blob/master/lib/fixed-points.nix},
+  year={2015},
+  urldate={2023-11-29}
+}
+
 % April 2
 @Misc{minsky08,
   author = {Yaron Minsky},
@@ -571,6 +581,14 @@
   urldate = {2021-04-06}
 }
 
+@Misc{ngnghm9,
+  author = {François-René Rideau},
+  title = {Build Systems and Modularity},
+  year = 2016,
+  url = {https://ngnghm.github.io/blog/2016/04/26/chapter-9-build-systems-and-modularity/},
+  urldate = {2023-11-29}
+}
+
 @Misc{DrWhoFPIT,
   author = {Unknown},
   title = {Fixed Point in Time},
@@ -583,21 +601,20 @@
 % On citing TV series:
 % https://www.easybib.com/guides/citation-guides/how-do-i-cite-a/how-to-cite-movie-tv-netflix/
 
-@Misc{wikiC3,
+@Misc{WikiC3,
   title = "C3 linearization",
   author = "Wikipedia",
   year = 2021,
   url = {https://en.wikipedia.org/wiki/C3_linearization},
 }
 
-@Conference{poof2021,
+@InProceedings{poof2021,
   title = {Prototypes: Object-Orientation, Functionally},
-  author = {François-René Rideau and Alex Knauth and Nada Amin}
+  author = {François-René Rideau and Alex Knauth and Nada Amin},
   year = {2021},
   booktitle = {Scheme and Functional Programming Workshop},
   url = {https://github.com/metareflection/poof},
 }
-
 
 %%% ------>8------>8------>8------>8------>8------>8------>8------>8------>8------
 
@@ -637,7 +654,8 @@
 % OOPSLA07
 
 % https://link.springer.com/chapter/10.1007/3-540-07168-7_77
-@InBook{Dennis1975,
+% InBook
+@Misc{Dennis1975,
 author="Dennis, Jack B.",
 editor="Bauer, F. L.
 and Dennis, J. B.
@@ -665,7 +683,7 @@ url="https://doi.org/10.1007/3-540-07168-7_77"
 % 2. One must be able to conveniently put together program modules written under
 % different authorities without knowledge of their inner workings.
 
-@InProceedings{10.1145/800027.808431,
+@InProceedings{DeRemerKron1975,
 author = {DeRemer, Frank and Kron, Hans},
 title = {Programming-in-the Large versus Programming-in-the-Small},
 year = {1975},
@@ -682,27 +700,8 @@ keywords = {Module interconnection language, Accessibility, Visibility, Protecti
 location = {Los Angeles, California}
 }
 
-@Article{10.1145/390016.808431,
-author = {DeRemer, Frank and Kron, Hans},
-title = {Programming-in-the Large versus Programming-in-the-Small},
-year = {1975},
-issue_date = {June 1975},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-volume = {10},
-number = {6},
-issn = {0362-1340},
-url = {https://doi.org/10.1145/390016.808431},
-doi = {10.1145/390016.808431},
-abstract = {We distinguish the activity of writing large programs from that of writing small ones. By large programs we mean systems consisting of many small programs (modules), possibly written by different people.We need languages for programming-in-the-small, i.e. languages not unlike the common programming languages of today, for writing modules. We also need a “module interconnection language” for knitting those modules together into an integrated whole and for providing an overview that formally records the intent of the programmer(s) and that can be checked for consistency by a compiler.We explore the software reliability aspects of such an interconnection language. Emphasis is placed on facilities for information hiding and for defining layers of virtual machines.},
-journal = {SIGPLAN Not.},
-month = {apr},
-pages = {114–121},
-numpages = {8},
-keywords = {External name, Information hiding, Scope of definition, Accessibility, Project management tool., Visibility, System hierarchy, Protection, Virtual machine, Linking, Module interconnection language}
-}
-
-@Article{10.1145/361598.361623,
+%10.1145/361598.361623,
+@Article{Parnas1972,
 author = {Parnas, D. L.},
 title = {On the Criteria to Be Used in Decomposing Systems into Modules},
 year = {1972},
@@ -717,7 +716,7 @@ doi = {10.1145/361598.361623},
 abstract = {This paper discusses modularization as a mechanism for improving the flexibility and comprehensibility of a system while allowing the shortening of its development time. The effectiveness of a “modularization” is dependent upon the criteria used in dividing the system into modules. A system design problem is presented and both a conventional and unconventional decomposition are described. It is shown that the unconventional decompositions have distinct advantages for the goals outlined. The criteria used in arriving at the decompositions are discussed. The unconventional decomposition, if implemented with the conventional assumption that a module consists of one or more subroutines, will be less efficient in most cases. An alternative approach to implementation which does not have this effect is sketched.},
 journal = {Commun. ACM},
 month = {dec},
-pages = {1053–1058},
+pages = {1053--1058},
 numpages = {6},
 keywords = {modules, software, KWIC index, modularity, software engineering, software design}
 }
@@ -725,7 +724,7 @@ keywords = {modules, software, KWIC index, modularity, software engineering, sof
 % Conway's Law
 % Conway, Melvin (1968). "How do committees invent" (PDF). Datamation: 28–31.
 
-@InProceedings{10.1145/503209.503224,
+@InProceedings{SullivanGriswoldCaiHallen2001,
 author = {Sullivan, Kevin J. and Griswold, William G. and Cai, Yuanfang and Hallen, Ben},
 title = {The Structure and Value of Modularity in Software Design},
 year = {2001},
@@ -743,4 +742,21 @@ location = {Vienna, Austria},
 series = {ESEC/FSE-9}
 }
 
-% https://ngnghm.github.io/blog/2016/04/26/chapter-9-build-systems/
+% Why won't InProceedings work in eoo* ?
+@InProceedings{ASDF2,
+  author = {François-René Rideau and Robert Goldman},
+  title = {Evolving ASDF: More Cooperation, Less Coordination},
+  year = {2010},
+  booktitle = {International Lisp Conference},
+  url = {http://common-lisp.net/project/asdf/doc/ilc2010draft.pdf}
+}
+
+% Original DEFSYSTEM is a 1990 paper, but hard to find independently from the others.
+@TechReport{kantrowitz1991,
+  author =       {Mark Kantrowitz},
+  title =        {Portable Utilities for {C}ommon {L}isp},
+  institution =  {School of Computer Science, Carnegie-Mellon University},
+  number =       {CMU-CS-91-143},
+  year =         1991,
+  month =        May
+}

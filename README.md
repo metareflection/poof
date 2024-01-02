@@ -61,7 +61,7 @@ To load the library and experiment with it at the REPL:
 ```bibtex
 @Conference{poof2021,
   title = {Prototypes: Object-Orientation, Functionally},
-  author = {François-René Rideau and Alex Knauth and Nada Amin}
+  author = {François-René Rideau and Alex Knauth and Nada Amin},
   year = {2021},
   booktitle = {Scheme and Functional Programming Workshop},
   url = {https://github.com/metareflection/poof},

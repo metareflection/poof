@@ -6,7 +6,7 @@ all: slides
 # Default slides: the next talk
 slides: slides-2023-njpls # slides-2024-lambdaconf
 
-.DUMMY: all pdf view test repl prerequisites fare \
+.DUMMY: all pdf view test repl prerequisites fare links \
   preslides slides \
   slides-2021-scheme-workshop slides-2023-njpls slides-2024-lambdaconf \
   %.preview %.view
@@ -26,12 +26,13 @@ prerequisites:
 	done
 
 # Main dish: The Scheme Workshop 2021 paper
-poof.pdf: poof.scrbl poof.bib header.tex util/eval-check.rkt util/examples-module.rkt
-#scribble --pdf --style header.tex poof.scrbl
-	scribble --pdf poof.scrbl
-view: poof.pdf
+build/poof.pdf: poof.scrbl poof.bib header.tex util/eval-check.rkt util/examples-module.rkt build/resources
+#scribble --dest build --pdf --style header.tex poof.scrbl
+#	cd build ; scribble --pdf ../poof.scrbl
+	scribble --dest build --pdf poof.scrbl
+view: build/poof.pdf
 	$(PDFVIEWER) $<
-pdf: poof.pdf
+pdf: build/poof.pdf
 
 # Testing the code in the paper itself
 test: poof.scrbl
@@ -49,20 +50,27 @@ slides-2021-scheme-workshop.preview: slides-2021-scheme-workshop.rkt
 	slideshow --comment-on-slide --elapsed-time --start $${p:-1} $<
 slides-2021-scheme-workshop.view: slides-2021-scheme-workshop.rkt
 	slideshow --preview --elapsed-time $<
-slides-2021-scheme-workshop.pdf: slides-2021-scheme-workshop.rkt
-	slideshow --pdf $<
+build/slides-2021-scheme-workshop.pdf: slides-2021-scheme-workshop.rkt
+	slideshow -o $@ --pdf $<
 
 # Publishing it all on fare's server http://fare.tunes.org/files/cs/poof.pdf
 fare: poof.pdf
 	cp $< ~/files/cs/
 	rsync -av $< bespin:files/cs/
 
+links:
+	mkdir -p build ; ln -sf ../resources ../util ../poof.bib ../header.tex ../C3_linearization_example.eps build/
+
 # Slide for njpls2023
-slides-2023-njpls: slides-2023-njpls.html
-slides-2023-njpls.html: slides-2023-njpls.rkt util/reveal.rkt util/util.rkt util/coop.rkt util/protodoc.rkt util/coop.scm
+slides-2023-njpls: build/slides-2023-njpls.html
+build/slides-2023-njpls.html: slides-2023-njpls.rkt util/reveal.rkt util/util.rkt util/coop.rkt util/protodoc.rkt util/coop.scm build/resources
 	racket $< > $@.tmp && mv $@.tmp $@ || { rm -f $@.tmp ; exit 42;}
 
 # Slides for LambdaConf 2024
-slides-2024-lambdaconf: slides-2024-lambdaconf.html
+slides-2024-lambdaconf: build/slides-2024-lambdaconf.html
 slides-2024-lambdaconf.html: slides-2024-lambdaconf.rkt util/reveal.rkt util/util.rkt util/coop.rkt util/protodoc.rkt util/coop.scm
 	racket $< > $@.tmp && mv $@.tmp $@ || { rm -f $@.tmp ; exit 42;}
+
+# New paper for 2024 (?)
+build/eoomi2024.pdf: eoomi2024.scrbl poof.bib header.tex util/eval-check.rkt util/examples-module.rkt build/resources
+	scribble --dest build --pdf $<

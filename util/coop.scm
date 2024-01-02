@@ -61,21 +61,22 @@
 
 ;; S K I combinators https://www.johndcook.com/blog/2014/02/06/schonfinkel-combinators/
 ;; See also https://en.wikipedia.org/wiki/Combinatory_logic
+;; https://writings.stephenwolfram.com/2020/12/where-did-combinators-come-from-hunting-the-story-of-moses-schonfinkel/
 
-;; identity - Identitätsfunktion
+;; identity - Identitätsfunktion - Schönfinkel's I combinator
 ;; : x -> x
 ;(def (id x x))
 (def id identity) ;; already defined above, but this time it's autocurrying!
 
-;; constant - Konstanzfunktion
+;; constant - Konstanzfunktion - Schönfinkel's K combinator
 ;; : x -> y -> x
 (def (ko x y) x)
 
-;; verSchmelzungsfunktion: amalgamation function; Smelting; Schoenfinkel
+;; verSchmelzungsfunktion: amalgamation function; Smelting - Schönfinkel's S combinator
 ;; : (z -> yz -> r) -> (z -> yz) -> z -> r
 (def (sc x y z) (x z (y z)))
 
-;; verTauschungsfunktion (exchange funcTion); flip in Haskell
+;; verTauschungsfunktion (exchange funcTion); flip in Haskell - Schönfinkel's T combinator
 ;; : (z -> y -> r) -> y -> z -> r
 (def (ta x y z) (x z y))
 
