@@ -49,6 +49,7 @@ Along the way, we offer a semi-formal theory of modularity and incrementality.
 @(define-simple-macro (Examples a ...) (examples #:eval poof #:no-result a ...))
 @(define-simple-macro (Checks a ...) (examples #:eval poof #:label #f a ...))
 @(define-simple-macro (λ formals body ...) (lambda formals body ...))
+@(define-simple-macro (TODO body ...) '())
 
 @(declare-examples/module poof racket
    (provide (all-defined-out))
@@ -99,10 +100,11 @@ We can then make our previous claims about OO and Modularity more explicit and l
 
 As original contributions, the present paper does the following:
 
-@; TODO: see defsection in poof.scrbl, use that here and everywhere.
+@TODO{see defsection in poof.scrbl, use that here and everywhere.}
 
 @itemize[
 @;#:style enumparenalph
+@item{Dispel common misconceptions as to what OO is about (1.4).}
 @item{Propose criteria for Modularity (2.1) and Incrementality (2.2)
   in terms of information needed to make software modifications.}
 @item{Elucidate how Incrementality and Modularity go together (2.3).}
@@ -126,6 +128,124 @@ As original contributions, the present paper does the following:
 
 Many of the concepts and relationships we tackle have long been part of OO practice and lore,
 yet have been largely neglected in scientific literature and formalization attempts.
+
+@subsection{What OO is @emph{not} about}
+
+We make the bold claim that the essence of OO is Incremental Modularity.
+Yet, many other slogans or concepts have been claimed to be essential to OO in the past.
+We can summarily dismiss those claims as follows:
+
+@subsubsection{Classes}
+Many think that classes are essential to OO, as introduced by Simula 67@~cite{Simula1968}
+and only ever care to implement, use, formalize, teach or propagandize
+class-based OO (a.k.a. Class OO).
+
+The existence since 1976@~cite{Kahn1976 Borning1977 Kahn1979 Borning1979 Borning1981 Rees82t:a adams88oopscheme}
+of languages using class-less
+prototype-based OO (a.k.a. Prototype OO)@~cite{Lieberman1986 Borning1986 chambers1989efficient Lawall89SelfInScheme},
+and the fact that the most used OO language in the world, JavaScript@~cite{TopPL2022},
+uses prototypes@~cite{EcmaScript:15}, provide clear counter-evidence to this claim.
+The original inventors of OO also later unified classes, procedures and more
+into a more general notion of “patterns”@~cite{kristensen1987beta},
+which also voids any appeal to their authority in declaring classes essential to OO.
+
+Of course, classes @emph{are} an important concept in OO,
+though they are not essential.
+The situation is similar that of types and FP:
+types are an important concept in FP,
+yet they are not essential,
+as evidenced by the historical preexistence of the untyped λ-calculus
+and the wide use of dynamically typed functional languages like Scheme or Nix.
+Actually, we'll demonstrate below in section 5 @;TODO FIX REF
+how classes are a indeed special case of prototypes, and
+how they precisely relate to types.
+
+@subsubsection{Imperative Programming}
+
+Many people assume that OO requires that
+all fields of all objects should be mutable, or be so by default,
+and that OO requires mutation deep in its object initialization protocols.
+Furthermore, they assume the same eager evaluation model
+for function calls and variable definitions as in every common imperative language.
+@TODO{CITE? C++ Perl5 Python Java JavaScript Scala Ruby Go (see GitHub)}
+Meanwhile, many have of late claimed that purity (the lack of side-effects including mutable state)
+is essential to FP and not just its pure functional core, and is thus incompatible with OO.
+Some purists also argue that call-by-name or call-by-need is also essential for true FP,
+making it even more incompatible with OO.
+
+Now there are many good historical reasons,
+having to do with speed and memory limitations at runtime as well as compile-time
+for which the first OO languages, as well as most languages until recently,
+were using state and side-effects everywhere, and an eager evaluation model, at least by default.
+With early 1980s slogans like “objects are a poor man’s closures” and
+“closures are a poor man’s objects”@~cite{adams88oopscheme},
+the problem back then was clearly not whether OO could be done purely with functions,
+but whether it made practical sense to program purely with functions in general.
+That question that would only be slowly answered positively, in theory in the early 1990s
+and in practice in the mid 2000s to mid 2010s, as Haskell grew up to become a practical language.
+@; darcs 2003, cabal 2005, bytestring 2005, "cabal hell" 2006, ghc6 2006, pandoc 2006, xmonad 2007, "Real World Haskell" 2008. Stack 2015 "made non-trivial haskell programs & scripts repeatable"
+@; <Fare> there's obviously a lot of subjectivity there—but I expect an S curve such that whichever arbitrary threshhold criteria you choose the answer would be at about the same time.
+
+Yet, the existence of pure models of OO such as those of
+Kamin, Reddy, Cook and Bracha@~cite{Kamin1988 ObjectsAsClosures Cook1989 bracha1990mixin} @;TODO CHECK
+of pure lazy OO languages such as Jsonnet or Nix@~cite{jsonnet dolstra2008nixos},
+and of pure OO systems such as presented in this paper and its predecessors@~cite{poof2021}
+@;TODO cite ScalaZ, etc.
+@; TODO maybe mention foreshadowing by Oleg Kiselyov ?
+and languages happily combining OO and FP such as Scala
+provide ample evidence that OO does not at all require mutation,
+but can be done in a pure setting, and is very compatible with FP, purity and even with laziness.
+We could even argue that Haskell embodies OO@~cite{typeclasses},
+though its designers might not wholly embrace the OO tradition. @TODO{CITE}
+
+@subsubsection{Inheritance as opposed to Composition}
+Some argue that the essence of OO is to model every possible domain in terms of inheritance,
+especially so where it can be preferred compared to alternatives not involving it,
+and even more so when such alternative involves FP and composition.
+But OO and FP are just distinct concepts neither of which subsumes the other,
+that fit distinct sets of situations.
+@;Each distinct concept has its set of situations that it fits,
+@;distinct from that of any other concept (or else they are actually the same concept);
+@;a concept that fits all situations has no content and is useless;
+@;and two concepts like OO and FP neither of which subsumes the other,
+@;cover sets of situations neither of which is a subset of the other.
+
+It makes no sense to oppose them, especially not when we see that
+OO can be expressed in a few lines of FP, whereas
+most modern OO languages contain FP as a subset.
+@;Even back in the days of those flamewars in the mid 1990s,
+@;Yale T Scheme from 1981 had long shown that the two could be unified.
+@; TODO see section XXX
+As to which whether to use inheritance or not in the modelling of a particular phenomenon,
+the entire point of OO being incrementality, the answer crucially depends on
+the size, evolution and uncertainty of the phenomenon.
+If the phenomenon is small, unchanging and well-understood,
+it doesn't really matter which technique you use to model it.
+But as it grows, evolves and boggles the mind,
+a more modular and incremental approach is more likely to enable adapting the software
+to a moving situation, at which point OO and inheritance can help a lot.
+
+@subsubsection{Encapsulation}
+Many OO pundits claim that an essential concept in OO
+is “encapsulation” also sometimes called “information hiding”,
+though there is no consensus as to what this concept means,
+and no clear definition. @TODO{CITE}
+
+Inasmuch as some people identify encapsulation as the presence
+of specific visibility mechanisms
+(with some methods being public, private or something in–between),
+we'll easily dismiss the claim that it is an essential aspect of OO
+by showing that many quintessential OO languages like Smalltalk or Common Lisp
+lack any such specific mechanism,
+whereas many non-OO languages possess mechanisms to achieve the same effect,
+in the form of modules defining but not exporting identifiers (e.g. declaring them @c{extern} in C),
+or simply lexical scoping as present in FP. @TODO{cite W7 Simula? JS?}
+
+On the other hand, inasmuch as this “encapsulation” informally denotes
+an aspect of modularity, @; TODO cite
+we'll argue that the claim of encapsulation being essential to OO
+partakes in our better formalized argument
+according to which OO is about modularity (and incrementality).
 
 @section{Modularity and Incrementality}
 
@@ -170,9 +290,9 @@ compared to alternative designs that enable less cooperation or require more coo
 given some goals for developers, a space of changes they may be expected to enact in the future, etc.
 
 For instance, the object-oriented design of ASDF@~cite{ASDF2}
-made it simple to configure, to extend, and to refactor to use algorithms in @emph{O(n)} 
-rather than @emph{O(n³)} or worse, all of it
-without any of the clients having to change their code.
+made it simple to configure, to extend, and
+to refactor to use algorithms in @emph{O(n)} rather than @emph{O(n³)} or worse,
+all of it without any of the clients having to change their code.
 This makes it arguably more modular than its predecessor MK-DEFSYSTEM@~cite{kantrowitz1991}
 that shunned use of objects (possibly for portability reasons at the time),
 was notably hard to configure, and resisted several attempts to extend or refactor it.
@@ -181,8 +301,10 @@ was notably hard to configure, and resisted several attempts to extend or refact
 @subsubsection{Small Changes}
 Developers quickly lose direction, motivation, support from management
 and buy-in from investors and customers when they do not have tangible results
-to show for their work. Incrementality is the ability of a system to
-deliver more rewards for fewer efforts—compared to alternatives.
+to show for their work.
+Incrementality is the ability for a system to
+deliver more rewards for fewer efforts, compared to alternatives.
+In other words, incrementality supports a short feedback loop in software development.
 
 @subsubsection{A Developer-Interface Feature}
 Incrementality should be understood within a framework of what changes
@@ -304,6 +426,11 @@ an additional input @c{super} based on which to specify a computation.
 Thus, to embody incremental modularity, a prototype will be or contain
 a prototype function of @c{self} and @c{super} returning an enriched @c{self}.
 
+@TODO{
+  Mixins: The simplest of OO models, pure functional prototypes using mixin inheritance,
+    and how its (λ (super self) ...) pattern directly maps to Incrementality and Modularity,
+    or to Ad Hoc polymorphism and Open Recursion.}
+
 @subsubsection{Prototype Primitives}
 
 Prototypes of course depend on whichever primitive operations support
@@ -401,9 +528,12 @@ OO was indeed invented and developed to facilitate
 the modular and incremental specification of software,
 though there was and still is neither clear nor widespread
 conceptual vocabulary to discuss the fact.
+As we'll see, prototypes embody the primitive core of OO,
+to which other forms of OO can be reduced.
 In the end, we can rightfully claim that the essence of OO is
-incremental modularity embodied as language entities.
-@; cite to substantiate
+incremental modularity embodied as language entities,
+and that prototypes are the most direct form of this embodiment.
+@TODO{cite to substantiate}
 
 @subsection{Working with Records}
 
@@ -416,15 +546,19 @@ are at times called @emph{“methods”}, “slots”, “fields”, “attribut
 depending on the specific sub-tradition.
 
 The records themselves will be suitably wrapped into a proper computation result @emph{instance}:
-a class (in class-based OO), an object (in prototype-based OO),
-a typeclass (in languages with typeclasses, though they may deny the OO moniker),
+a class (in class-based OO, a.k.a. Class OO),
+an object (in prototype-based OO, a.k.a. Prototype OO),
+a typeclass (in functional languages with typeclasses, though they may deny the OO tradition),
 wherein the record will embody the “method dispatch table”,
 “attribute set”, “dictionary” or whatchamacallit of the aforementioned entity.
-Note that this meaning of the word @emph{instance} itself comes from the prototype OO tradition,
+
+Note that this meaning of the word @emph{instance} itself comes from the Prototype OO tradition,
 and does not match what the meaning of the word in the class OO tradition;
 in the latter tradition, “instance” instead refers to an element of the class seen as a type,
 whereas that type would be the instance in the prototype OO tradition.
-More on that later in section 5. @; TODO FIX THIS AND ALL REFERENCES
+For now we will focus on the simplest and most primitive kind of OO, Prototype OO,
+in its simplest form where the instances are the records themselves.
+We will extend our point of view in sections 4 and later. @TODO{FIX REF}
 
 @subsubsection{Encoding Records}
 We will assume that, either with some language primitives,
@@ -451,8 +585,10 @@ mtop = {}
 mcons = λ k v r ↦ {k: v, ...r}}|
 
 Functions are the simplest, but overriding and deletion will leak memory and access time;
-alists solve this problem but like functions still require linear time operations;
-tables can provide logarithmic-time operations, but can be more complex if not provided
+also they don't support iteration over method bindings
+(an introspection operation that is desired in some contexts).
+Alists solve these issues but like functions are inefficient with linear-time operations.
+Tables can provide logarithmic-time operations, but can be more complex if not provided
 as language builtin. (Binding accessor, binding presence test, binding deletion, etc.,
 are left as an exercise to the reader.)
 
@@ -460,6 +596,8 @@ In our previous article@~cite{poof2021} we showed how you could start with
 a simple of records as function, use OO style to incrementally and modularly specify
 a more elaborate mapping table data structure, and thereafter use that data structure
 in the definition of more efficient further records.
+That's our first case of a “meta-object protocol”@~cite{amop}, one that illustrates
+how to @emph{bootstrap} more elaborate variants of OO from simpler variants.
 
 @subsubsection{Mixins and Helpers for Records}
 Abstracting over the specific encoding for records,
@@ -471,7 +609,7 @@ a inherited record @c{t} of type @c{super} and returns a value @c{v}
 to which to bind the method in a record that extends the inherited record,
 according to the record encoding defined by @c{rcons}.
 
-Now in practice, OO language implementations provide a fixed builtin encoding for records,
+In practice, OO language implementations provide a fixed builtin encoding for records,
 with specialized instantiation function @c{fixR} and method-addition mixin @c{methodR}:
 @Code{fixR = fix rtop
 methodR = methodG rcons}
@@ -503,7 +641,7 @@ Giving polymorphic types to these list helpers may require not only subtyping
 but also some form of type indexing for those lists.
 Doing it without requiring full dependent types is left as an exercise to the reader.
 
-@subsubsection{Example Records built with Mixins}
+@subsubsection{Example Records built from Mixins}
 We can now define the usual point and colored-point example as follows,
 where @c{$point} is the @emph{prototype} for the point
 (in our simplest prototypes-as-mixin model),
@@ -513,8 +651,8 @@ and @c{point} its @emph{instance}:
       $blue = (methodK "color" "blue")
       coloredPoint = fixR* [$blue, $point]}
 
-Assuming a primitive @c{assert} to check that a boolean value is true,
-and an equality predicate that behaves properly for records),
+Assuming a primitive @c{assert} that checks that a boolean value is true,
+and an equality predicate that behaves properly for records,
 we can then assert:
 @Code|{assert (point == {x: 3.0, y: 4.0})
        assert (coloredPoint == {x: 3.0, y: 4.0, color: "blue"})}|
@@ -526,10 +664,17 @@ pointWithRadius = fixR* [$radius, $point]
 assert (pointWithRadius == {x: 3.0, y: 4.0, radius: 5.0})}|
 
 @subsubsection{Mixin Caveats}
-Note that in the above examples, we never used inheritance nor overrode any method,
-so all the mixins commute, and we could have changed the order in which we define those methods.
+Note that in the above examples,
+all the mixins commute, and we could have changed the order in which we define those methods
+— because they never use inheritance nor overrode any method, and
+instead pairwise define disjoint sets of methods.
+Such merge of disjoint commuting mixins embodies modularity, but not incrementality:
+incrementality can still be achieved in an extralinguistic way by
+rebuilding modules in different ways from smaller modules,
+but to achieve it intralinguistic, you need a way to operate on existing modules,
+and that by definition is not commutative.
 
-By contrast, the mixins below do override or inherit previous method bindings,
+As a counterpoint, the mixins below do override or inherit previous method bindings,
 and therefore do not commute, and instead yield different results when mixed in different orders:
 @Code|{$v1 = methodK "v" 1
        $v2 = methodK "v" 2
@@ -539,14 +684,61 @@ and therefore do not commute, and instead yield different results when mixed in 
        assert (fixR* [$v1,$v10] == {v: 1})
        assert (fixR* [$v10,$v1] == {v: 10})}|
 
-Finally note that trying to extract a fixed-point for @c{$v10} alone would fail:
+Finally note that trying to instantiate @c{$v10} alone would fail:
 it would try to multiply by 10 the inherited value of @c{v},
 but the base record @c{rtop} has no such value and this would result in an error.
+Even without inheritance, the prototype @c{$radius} above would also fail to instantiate alone,
+because it will try to access undefined methods @c{x} and @c{y}.
 This illustrates how not every prototype can be successfully instantiated,
-which is an essential feature of prototypes (whether implemented as simple mixins or not),
+which is actually an essential feature of prototypes
+(whether implemented as simple mixins or not),
 since the entire point of a prototype is to provide a @emph{partial} specification
 of a small aspect of an overall computation,
 that in general depends on aspects defined by other prototypes.
+
+@section{Mixin, Single and Multiple Inheritance}
+
+@subsection{Flavors of Inheritance}
+What we have described above is called @emph{mixin inheritance},
+and is arguably the simplest kind of inheritance to formalize@~cite{bracha1990mixin}.
+Beside GCL, Jsonnet or Nix, it is notably used in
+the OO system used by Racket's GUI library@~cite{Flatt06schemewith}.
+
+Historically however, the first kind of inheritance that appeared was
+@emph{single inheritance}, introduced in 1967 by Simula @;@~cite{Simula}, @;TODO FIX ME
+and made popular circa 1971 by Smalltalk @;@~cite{Smalltalk} @;TODO FIX ME
+and later circa 1995 by Java@~cite{EcmaScript:15}.
+While it is less advanced, less expressive and less simple to formalize given FP,
+it was simpler to conceive in the world before FP was mature,
+and simpler to implement efficiently.
+For these reasons, it remained a popular favorite form of OO
+until technological progress made these constraints obsolete.
+
+Finally, a third kind of inheritance is @emph{multiple inheritance},
+that historically appeared before mixin inheritance was formalized@~cite{Cannon82},
+and that is more sophisticated than the two above.
+It was popularized by CLOS@~cite{bobrow88clos} and C++ @; TODO cite
+and these days is notably used by Scala or Rust. @; where is C# ?
+While often unjustly overlooked or summarily dismissed by academic literature
+without adequate formalization,@; TODO cite
+we will argue that it is actually more expressive and more modular than the above.
+
+@subsection{Single inheritance}
+
+Less expressive than mixin inheritance.
+Therefore less modular.
+Cases where a class may inherit from more than one super class.
+Copy/paste vs share.
+More code to repeat.
+Repetition is bad factoring when the source code must change for each variant.
+
+Yes mixin inheritance also less modular in that you must remember all the inheritance DAG,
+not just the single parent.
+
+@subsection{Multiple inheritance}
+
+More expressive than single inheritance.
+More modular than both single- and mixin- inheritance.
 
 @section{BLAH START (RE)WRITING FROM HERE}
 
@@ -581,13 +773,7 @@ will also constrain record mixins to be very monomorphic,
 and require its users to resort to awkwardly emulate dynamic types
 on top of static types to achieve desired results.
 
-whereas the above exa
 This also makes them hard to type without subtypes
-
-
-type (or type family) for
-
-
 
 @subsubsection{Mixins Beyond Records}
 Now nothing mandates records of any kind in the two above functions.
@@ -638,8 +824,6 @@ they facilitate the indefinite further specification of ever new aspects
 each described by one or many methods each with its own type,
 usually distinct and independently specialized, modified or overridden.
 
-@section{Mixin, Single and Multiple Inheritance}
-
 @section{BLAH RANDOM STUFF STARTS HERE}
 
 Incrementality, when understood in terms of human changes,
@@ -667,19 +851,7 @@ who often talk past each other and miss key notions proposed by the other “cam
 Here are the concepts we try to elucidate:
 
 @itemize[
-@item{
-  OO 101: Why the essence of OO is Incremental Modularity, and not any of many other slogans
-  often invoked by OO gurus (classes, information hiding, eagerness, mutable state, etc.)}
-@item{
-  Records: or Modularity without Incrementality.}
-@item{
-  Mixins: The simplest of OO models, pure functional prototypes using mixin inheritance,
-    and how its (λ (super self) ...) pattern directly maps to Incrementality and Modularity,
-    or to Ad Hoc polymorphism and Open Recursion.}
-@item{
-  Inheritance: The three common kinds of inheritance, why mixin inheritance
-    is more @emph{expressive} but less @emph{modular} than single inheritance, and
-    why multiple inheritance is simultaneously more @emph{expressive} and @emph{modular} than both.}
+
 @item{
   Combination: specializing inheritance with respect to how increments are combined;
     generalizing precedence lists with DAG attribute grammars; metaobject-compatibility.}

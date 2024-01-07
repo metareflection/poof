@@ -21,12 +21,41 @@
 % https://wiki.c2.com/?PrototypeBasedLanguage
 % "Popular" Prototype language: NewtonScript, LambdaMOO, Io, REBOL, Lua...
 
+% Simula in 1966 has processes and more but does NOT have OO
+@article{Simula1966,
+  author = {Dahl, Ole-Johan and Nygaard, Kristen},
+  title = {SIMULA: An ALGOL-Based Simulation Language},
+  year = {1966},
+  issue_date = {Sept. 1966},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume = {9},
+  number = {9},
+  issn = {0001-0782},
+  url = {https://doi.org/10.1145/365813.365819},
+  doi = {10.1145/365813.365819},
+  abstract = {This paper is an introduction to SIMULA, a programming language designed to provide a systems analyst with unified concepts which facilitate the concise description of discrete event systems. A system description also serves as a source language simulation program. SIMULA is an extension of ALGOL 60 in which the most important new concept is that of quasi-parallel processing.},
+  journal = {Commun. ACM},
+  month = {sep},
+  pages = {671–678},
+  numpages = {8}
+}
+
 @Misc{Strachey67,
   Author = {Christopher Strachey},
   Title = {Fundamental Concepts in Programming Languages},
   Year = {1967},
   %url = {http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.332.3161},
 }
+
+% This is the one that introduces objects and prefix classes
+@Misc{Simula1968,
+  Author = {Ole-Johan Dahl and Bjørn Myhrhaug and Kristen Nygaard},
+  Title = {SIMULA 67 Common Base Language},
+  Year = {1968}
+}
+% Norwegian Computing Center
+% https://web.archive.org/web/20131225084408/http://www.edelweb.fr/Simula/scb-1.pdf
 
 % 10.1145/1024273.1024278
 @InProceedings{Kahn1976,
@@ -111,6 +140,16 @@
   year={1982}
 }
 
+% After discussing multiple inheritance informally, omits it completely from the formal treatment,
+% but does introduce a framework for subtyping of a lambda-calculus with records and fixed-points.
+@InProceedings{Cardelli1984ASO,
+  title={A Semantics of Multiple Inheritance},
+  author={Luca Cardelli},
+  booktitle={Information and Computation},
+  year={1984},
+  url={https://api.semanticscholar.org/CorpusID:13032155}
+}
+
 % https://homepages.cwi.nl/~storm/teaching/reader/Lieberman86.pdf
 @InProceedings{Lieberman1986,
   title={Using Prototypical Objects to Implement Shared Behavior in Object-Oriented Systems},
@@ -134,6 +173,14 @@
   author={Daniel G. Bobrow and Kenneth Kahn and Gregor Kiczales and Larry Masinter and Mark Stefyk and Frank Zdybel},
   journal={OOPSLA},
   year={1986}
+}
+
+@article{kristensen1987beta,
+  title={The BETA programming language},
+  author={Kristensen, Bent Bruun and Madsen, Ole Lehrmann and M{\o}ller-Pedersen, Birger and Nygaard, Kristen},
+  journal={DAIMI Report Series},
+  number={229},
+  year={1987}
 }
 
 @Article{bobrow88clos,
@@ -203,6 +250,27 @@
   %url = "https://legacy.cs.indiana.edu/ftp/techreports/TR276.pdf",
   Year = {1989}
 }
+
+% https://okmij.org/ftp/Computation/typeclass.html#Kaes
+
+% Kaes ESOP 1988
+% Stefan Kaes: Parametric overloading in polymorphic programming languages
+%Proc. ESOP 1988, Springer's LNCS 300, pp. 131-144
+% <http://link.springer.com/chapter/10.1007%2F3-540-19027-9_9>
+
+% Stefan Kaes: Parametrischer Polymorphismus, Ueberladungen und Konversionen
+% Dissertation: TU Darmstadt, Fachbereich Informatik, 2005
+% <http://tuprints.ulb.tu-darmstadt.de/epda/000544/>
+
+% A History of Haskell: being lazy with class
+% Simon Peyton Jones
+% The Third ACM SIGPLAN History of Programming Languages Conference (HOPL-III) | June 2007
+% https://www.microsoft.com/en-us/research/publication/a-history-of-haskell-being-lazy-with-class/
+
+% Haskell's overlooked object system
+% Oleg Kiselyov, Ralf Laemmel
+% https://arxiv.org/abs/cs/0509027
+% 2005
 
 % Introduction of Typeclasses
 % https://www.research.ed.ac.uk/en/publications/how-to-make-ad-hoc-polymorphism-less-ad-hoc
@@ -315,6 +383,16 @@
   %url = "http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.121.134"
 }
 
+@InProceedings{ImplementingTypeClasses,
+  title = "Implementing Type Classes",
+  author = "John Peterson and Mark Jones",
+  booktitle = "Proceedings of ACM SIGPLAN Symposium on Programming Language Design and Implementation",
+  year = "1993",
+  %url = "http://web.cecs.pdx.edu/~mpj/pubs/pldi93.html",
+  publisher = {Elsevier Science},
+}
+% http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.53.3952
+
 % https://www.cs.bham.ac.uk/~udr/papers/oosem.pdf
 % University of Illinois at Urbana-Champaign
 % October 4, 1993
@@ -324,17 +402,6 @@
   year={1994},
   url={https://api.semanticscholar.org/CorpusID:16832709}
 }
-
-@InProceedings{ImplementingTypeClasses,
-  title = "Implementing Type Classes",
-  author = "John Peterson and Mark Jones",
-  booktitle = "Proceedings of the 2000 ACM SIGPLAN Haskell Workshop, volume 41.1 of Electronic Notes in Theoretical Computer Science. Elsevier Science",
-  year = "1993",
-  pages = {227--236},
-  %url = "http://web.cecs.pdx.edu/~mpj/pubs/pldi93.html",
-  publisher = {Elsevier Science},
-}
-% http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.53.3952
 
 @Article{Cook1994,
   title={A Denotational Semantics of Inheritance and Its Correctness},
@@ -381,6 +448,8 @@
   author={ECMA, Final Draft},
   year={1999}
 }
+
+% 2000 Oleg Kiselyov USENET post on okmij.org on the possibility of a pure variant of YASOS ?
 
 % See notably chapter 32.
 @Book{tapl,
@@ -759,4 +828,30 @@ series = {ESEC/FSE-9}
   number =       {CMU-CS-91-143},
   year =         1991,
   month =        May
+}
+
+@Misc{TopPL2022,
+  author =       {GitHub},
+  title =        {The top programming languages},
+  url =          {https://octoverse.github.com/2022/top-programming-languages},
+  year =         2022,
+  note =         "[accessed 2024-01-04]"
+}
+
+% Traces (A cut at the “make isn't generic” problem)
+% Gregor Kiczales
+% 1993
+% https://link.springer.com/chapter/10.1007/3-540-57342-9_64
+@InProceedings{10.1007/3-540-57342-9_64,
+author="Kiczales, Gregor",
+editor="Nishio, Shojiro
+and Yonezawa, Akinori",
+title="Traces (A cut at the ``make isn't generic'' problem)",
+booktitle="Object Technologies for Advanced Software",
+year="1993",
+publisher="Springer Berlin Heidelberg",
+address="Berlin, Heidelberg",
+pages="27--42",
+abstract="Object-oriented techniques are a powerful tool for making a system end-programmer specializable. But, in cases where the system not only accepts objects as input, but also creates objects internally, specialization has been more difficult. This has been referred to as the ``make isn't generic problem.'' We present a new object-oriented language concept, called traces, that we have used successfully to support specialization in cases that were previously cumbersome.",
+isbn="978-3-540-48075-4"
 }
