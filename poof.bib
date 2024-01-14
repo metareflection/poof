@@ -21,7 +21,21 @@
 % https://wiki.c2.com/?PrototypeBasedLanguage
 % "Popular" Prototype language: NewtonScript, LambdaMOO, Io, REBOL, Lua...
 
-% Simula in 1966 has processes and more but does NOT have OO
+% Calls objects and attributes the things being modeled, classes their types
+% Records and fields the things doing the modeling, record classes their types.
+% Introduces null for partial relationships (is that the first null???)
+% No inheritance, sharing of attributes, etc. Classes are mutually exclusive.
+@article{hoare1965record,
+  title={Record handling},
+  author={Hoare, C.A.R.},
+  journal={Algol Bulletin},
+  volume={21},
+  pages={39--69},
+  year={1965},
+  url={http://archive.computerhistory.org/resources/text/Knuth_Don_X4100/PDF_index/k-9-pdf/k-9-u2293-Record-Handling-Hoare.pdf}
+}
+
+% Simula I back in 1966 has processes and more, but DOES NOT have OO
 @article{Simula1966,
   author = {Dahl, Ole-Johan and Nygaard, Kristen},
   title = {SIMULA: An ALGOL-Based Simulation Language},
@@ -57,6 +71,17 @@
 % Norwegian Computing Center
 % https://web.archive.org/web/20131225084408/http://www.edelweb.fr/Simula/scb-1.pdf
 
+% identifies class with procedure that computes an algorithm and constructs a record
+% and yields current values multiple times to other activities with "detach" (call again for next)
+% section 6 has "concatenation" for single inheritance
+@InCollection{dahl1972chapter,
+  title={Chapter III: Hierarchical program structures},
+  author={Dahl, Ole-Johan and Hoare, Charles Antony Richard},
+  booktitle={Structured programming},
+  pages={175--220},
+  year={1972}
+}
+
 % 10.1145/1024273.1024278
 @InProceedings{Kahn1976,
   author = {Kahn, Kenneth Michael},
@@ -73,7 +98,7 @@
   numpages = {7},
   location = {Pittsburgh, PA},
   series = {UODIGS '76},
-  url2 = {https://dspace.mit.edu/handle/1721.1/41950},
+  url2 = {https://dspace.mit.edu/handle/1721.1/41950}
 }
 
 @InProceedings{Borning1977,
@@ -177,7 +202,7 @@
 
 @article{kristensen1987beta,
   title={The BETA programming language},
-  author={Kristensen, Bent Bruun and Madsen, Ole Lehrmann and M{\o}ller-Pedersen, Birger and Nygaard, Kristen},
+  author={Kristensen, Bent Bruun and Madsen, Ole Lehrmann and Møller-Pedersen, Birger and Nygaard, Kristen},
   journal={DAIMI Report Series},
   number={229},
   year={1987}
@@ -191,7 +216,7 @@
 }
 
 @InProceedings{Kamin1988,
-  title={Inheritance in smalltalk-80: a denotational definition},
+  title={Inheritance in Smalltalk-80: A Denotational Definition},
   author={Samuel N. Kamin},
   booktitle={POPL '88},
   year={1988}
@@ -418,6 +443,26 @@
   title = {A Monotonic Superclass Linearization for Dylan},
   year = {1996},
   %url = {https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.19.3910}
+}
+
+@article{inheritance1996,
+  author = {Taivalsaari, Antero},
+  title = {On the Notion of Inheritance},
+  year = {1996},
+  issue_date = {Sept. 1996},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume = {28},
+  number = {3},
+  issn = {0360-0300},
+  url = {https://doi.org/10.1145/243439.243441},
+  doi = {10.1145/243439.243441},
+  abstract = {One of the most intriguing—and at the same time most problematic—notions in object-oriented programing is inheritance. Inheritance is commonly regarded as the feature that distinguishes object-oriented programming from other modern programming paradigms, but researchers rarely agree on its meaning and usage. Yet inheritance of often hailed as a solution to many problems hampering software development, and many of the alleged benefits of object-oriented programming, such as improved conceptual modeling and reusability, are largely credited to it. This article aims at a comprehensive understanding of inheritance, examining its usage, surveying its varieties, and presenting a simple taxonomy of mechanisms that can be seen as underlying different inheritance models.},
+  journal = {ACM Comput. Surv.},
+  month = {sep},
+  pages = {438--479},
+  numpages = {42},
+  keywords = {object-oriented programming, language constructs, delegation, inheritance, incremental modification, programming languages}
 }
 
 @Book{Abadi97atheory,
@@ -854,4 +899,28 @@ address="Berlin, Heidelberg",
 pages="27--42",
 abstract="Object-oriented techniques are a powerful tool for making a system end-programmer specializable. But, in cases where the system not only accepts objects as input, but also creates objects internally, specialization has been more difficult. This has been referred to as the ``make isn't generic problem.'' We present a new object-oriented language concept, called traces, that we have used successfully to support specialization in cases that were previously cumbersome.",
 isbn="978-3-540-48075-4"
+}
+
+% "A Proposal for Simplified, Modern Definitions of "Object" and "Object Oriented"
+% https://wcook.blogspot.com/2012/07/proposal-for-simplified-modern.html
+
+% [1] On understanding data abstraction, revisited. Onward! Essay in Proceedings of the 24th ACM SIGPLAN conference on Object oriented programming systems languages and applications (OOPSLA). pp. 557-572 (2009).
+% https://cs.utexas.edu/~wcook/Drafts/2009/essay.pdf
+
+% [2] Object-Oriented Programming Versus Abstract Data Types In Proceedings of the REX School/Workshop on Foundations of Object-Oriented Languages, Springer-Verlag, pp. 151-178 (1990).
+% http://www.cs.utexas.edu/~wcook/papers/OOPvsADT/CookOOPvsADT90.pdf
+
+
+% Featherweight Jigsaw - Replacing inheritance by composition in Java-like languages
+% https://dl.acm.org/doi/10.1016/j.ic.2012.02.004
+
+% Wegner Zdonik "Inheritance as an incremental modification mechanism or what Like is or isn't like" 1988
+
+
+@inproceedings{cook1989inheritance,
+  title={Inheritance is not subtyping},
+  author={Cook, William R and Hill, Walter and Canning, Peter S},
+  booktitle={Proceedings of the 17th ACM SIGPLAN-SIGACT symposium on Principles of programming languages},
+  pages={125--135},
+  year={1989}
 }
