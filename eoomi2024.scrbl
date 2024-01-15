@@ -4,7 +4,7 @@
 @title{The Essence of Object-Orientation: @linebreak[]
            Modularity and Incrementality, @linebreak[]
        or: @linebreak[]
-           Lambda, the Ultimate Object Prototype}
+           Lambda, the Ultimate Prototype}
 
 @abstract{
 We herein argue that the essence of Object-Orientation (OO)
@@ -156,7 +156,7 @@ Of course, classes are an @emph{important} concept in OO.
 The situation is similar that of types in FP, an important though not essential concept in FP,
 as evidenced by the historical preexistence and continued use of the untyped λ-calculus
 and the wide adoption of dynamically typed functional languages like Scheme or Nix.
-Actually, we'll demonstrate below in section 5 @;TODO FIX REF
+Actually, we'll demonstrate below in section 6 @;TODO FIX REF
 how classes are a indeed special case of prototypes, and
 how they precisely relate to types.
 
@@ -396,7 +396,8 @@ embodied as linguistic expressions @emph{within} a programming language,
 that could be manipulated at runtime and studied formally,
 rather than just as semi-formal meta-linguistic interactions?
 
-Let's dub @emph{prototype} such an embodiment.
+@principle{We dub @emph{prototype} such an embodiment
+of incremental modularity within a language}.
 And to narrow the discussion down to a formal context,
 let's consider programming languages with a functional programming core,
 i.e. that contain some variant of the lambda-calculus as a fragment,
@@ -551,8 +552,8 @@ has thus been proven capable to literally support
 specification and deployment of software on a world-wide scale.
 As we'll see, this design embodies the primitive core of OO,
 to which other forms of OO can be reduced.
-In the end, we can rightfully claim that the essence of OO is
-in historical intent as well as practical extent
+In the end, we can rightfully claim that the essence of OO
+in historical intent as well as practical extent is
 the incremental modularity embodied as language entities,
 and that prototypes are the most direct form of this embodiment.
 @TODO{cite to substantiate}
@@ -633,12 +634,12 @@ how to @emph{bootstrap} more elaborate variants of OO from simpler variants.
 @subsubsection{Mixins and Helpers for Records}
 Abstracting over the specific encoding for records,
 the primitive way to define a mixin that adds a method to a record being specified is with:
-@Code{methodG = λ rcons k f s t ↦ rcons k (f s t) t}
+@Code{methodG = λ rkons k f s t ↦ rkons k (f s t) t}
 wherein the argument @c{k} is a key naming the method,
 @c{f} is a function that takes the instance @c{s} of type @c{self} and
 a inherited record @c{t} of type @c{super} and returns a value @c{v}
 to which to bind the method in a record that extends the inherited record,
-according to the record encoding defined by @c{rcons}.
+according to the record encoding defined by @c{rkons}.
 
 In practice, OO language implementations provide a fixed builtin encoding for records,
 with specialized instantiation function @c{fixR} and method-addition mixin @c{methodR}:
@@ -647,6 +648,7 @@ methodR = methodG rcons}
 
 For a mixin that binds a method to a constant value @c{v}, you can then use
 @Code{methodK k v = methodR k (λ _ _ ↦ v)}
+
 Common helpers could similarly be defined for mixins that bind a method to a value
 that only depends on the instance @c{s} of type @c{self}
 and not the inherited value @c{t} of type @c{super}, or vice versa.
@@ -668,6 +670,7 @@ assuming bracketed and comma-delimited lists, with @c{[head, ...tails]} patterns
       mix* [h, ...t] = mix h (mix* t)
       fix* base l = fix base (mix* l)
       fixR* = fix* rtop)}
+
 Giving polymorphic types to these list helpers may require not only subtyping
 but also some form of type indexing for those lists.
 Doing it without requiring full dependent types is left as an exercise to the reader.
@@ -699,7 +702,7 @@ Note that in the above examples,
 all the mixins commute, and we could have changed the order in which we define those methods
 — because they never use inheritance nor overrode any method, and
 instead pairwise define disjoint sets of methods.
-Such merge of disjoint commuting mixins embodies modularity, but not incrementality:
+Thus @principle{merging disjoint commuting mixins embodies modularity, but not incrementality}:
 incrementality can still be achieved in an extralinguistic way by
 rebuilding modules in different ways from smaller modules;
 but to achieve it intralinguistic, you need a way to operate on existing modules,
@@ -877,7 +880,7 @@ and less modular @;TODO CITE / TODO REF
 than mixin and multiple inheritance.
 
 @subsection{Multiple inheritance}
-
+@subsubsection{More Sophisticated}
 A third kind of inheritance is @emph{multiple inheritance},
 that historically appeared before mixin inheritance was formalized@~cite{Cannon82},
 and that is more sophisticated than the two above.
@@ -896,38 +899,41 @@ between prototypes, such that a prototype can have indirect, transitive dependen
 implicitly included as superprototypes, as well as direct superprototypes.
 The set of direct and indirect super prototypes of a prototype is thus a DAG rather than a list.
 The subprototyping hierarchy is a DAG rather than a tree.
+
+@subsubsection{Overview of Multiple Inheritance Semantics}
 And at a minimum, a prototype will then be not just a mixin function, but
 a tuple of (a) some kind of mixin function, (b) an ordered list of other prototypes it inherits from,
 and (c) some kind of unique tag to identify each prototype as node in the dependency DAG.
 
-@subsubsection{Inherited graph Computing Instances}
 Then comes the questions of how to reduce a DAG of dependencies,
 each with some mixin function attached, into a record of methods or other instance.
-This happens by computing the instance, or seed based on which to compute the instance,
+A general solution is to compute the instance, or
+some seed value based on which to compute the instance,
 as an @emph{inherited attribute} of that dependency DAG.
 
-A general solution is to compute
-a generator (as in single-inheritance above) of which to take a fixed-point, or
-some other core data structure from which to extract the instance or its individual methods,
-by having each mixin function be of type @c{self → super → self}
+For instance, a generator (as in single-inheritance above) of which to take a fixed-point,
+could be computed by having each mixin function be of type @c{self → super → self}
 where each direct superprototype is of type @c{super_i}
 and @c{super} is the @emph{product} of the @c{super_i}.
+Or individual methods could be computed this way, where each method specification
+inherits as many supermethod values as the enclosing prototype has direct superprototypes.
 
-Most object systems with multiple inheritance instead to keep mixin functions
-as @c{self → super → self} where the @c{super} argument is a single (partial) instance
-rather than a tuple of (partial) instances;
+@subsubsection{Precedence Lists}
+The way most object systems deal with multiple inheritance is to keep mixin functions
+as @c{self → super → self} where the @c{super} argument is a @emph{single} (partial) instance
+rather than a tuple or list of (partial) instances;
 the type @c{super} being the @emph{intersection} of the types @c{super_i}
 rather than their product.
 Then mixins have the exact same type structure as for mixin (and single) inheritance,
 and an instance is computed the same way as the fixed-point of a combined list of mixins.
 
 The question is then to @emph{linearize} the DAG of superprototypes
-into a @emph{precedence list} that describes the order based on which to mix the mixins.
-That order will be a total order among prototypes that
-must extend the partial order defined by the DAG.
-This order can be computed by simply walking the DAG,
+into a @emph{precedence list} that describes the order in which to mix the mixins.
+That order will be a total order that extends the partial order defined by the DAG.
+It can be computed by simply walking the DAG depth-first or breadth-first,
 which early languages with multiple inheritance did.
-However, this can lead to incoherence between the orders used by related but different classes.
+However, this will easily lead to incoherence
+between the orders used by related but different classes.
 To ensure better coherence between precedence lists,
 each precedence list can be computed as an inherited attribute that preserves
 the order of each precedence list it inherits as well as of its direct-super list.
@@ -1031,8 +1037,8 @@ Multiple inheritance is often unjustly overlooked, summarily dismissed,
 or left as an exercise to the reader in academic literature
 that discusses the formalization of OO@~cite{Abadi97atheory tapl eopl3 plai}. @TODO{more?}
 A few papers do offer proper treatment of multiple inheritance,
-though often incomplete.
-@TODO{cite Cook, Bracha, and more?}
+@;@TODO{cite Cook, Bracha, and more?}
+though they may be lacking in formalizing other aspects of OO discussed here.
 
 Most computer scientists interested in the semantics of programming languages
 seem to either fail to understand or fail to value
@@ -1048,20 +1054,198 @@ will choose multiple inheritance over the less expressive and less modular alter
 see for instance Common Lisp, C++, Python, Scala, Rust.
 @; TODO cite Scala OO model. What else? Kathleen Fisher's thesis?
 
-@section{OO, Without or With Objects}
+@section{OO, Without Objects, or With}
+@subsection{Instances Beyond Records}
+@subsubsection{Prototypes for Numeric Functions}
+Looking back at the definitions for @c{Mixin}, @c{fix} and @c{mix},
+we see that they specify nothing about records.
+Not only can they be used with arbitrary representations of records,
+they can also be used with arbitrary instance types beyond records,
+thereby allowing the incremental and modular specification of computations
+of any type, shape or form whatsoever@~cite{poof2021}.
+
+For instance, a triangle wave function from real to real could be specified as follows
+by combining three prototypes, wherein the first handles 2-periodicity,
+the second handles parity, and the third the shape of the function on interval @c{[0,1]}:
+@verbatim{twf = (λ p q r ↦ fix (mix p (mix q r)) λ x ↦ ⊥)
+                (λ self super x ↦ if x > 1 then self (x - 2) else super x)
+                (λ self super x ↦ if x < 0 then self (- x) else super x)
+                (λ self super x ↦ x)}
+@TODO{Insert figure!}
+@;           |
+@; \  /\  /\ | /\  /\  /
+@;  \/  \/  \|/  \/  \/
+@; ----------|----------
+@;           |
+@;           |
+The prototypes are reusable and can be combined in other ways:
+for instance, by keeping the first and third prototypes, but
+changing the second prototype to specify an odd rather than even function
+(having the @c{then} case be @c{- self (- x)} instead of @c{self (- x)}),
+we can change the function from a triangle wave function to a sawtooth wave function.
+
+@TODO{Insert figure!}
+@;@verbatim{swf = (λ p q r ↦ fix (mix p (mix q r)) λ x ↦ ⊥)
+@;                (λ self super x ↦ if x > 1 then self (x - 2) else super x)
+@;                (λ self super x ↦ if x < 0 then - self (- x) else super x)
+@;                (λ self super x ↦ x)}
+@;
+@;           |
+@;    /   /  | /   /   /
+@;   /   /   |/   /   /
+@; ----------|----------
+@;  /   /   /|   /   /
+@; /   /   / |  /   /
+
+However these real functions
+are very constraining by their monomorphic type:
+every element of incremental specification has to be part of the function.
+There cannot be a prototype defining some score as MIDI sequence,
+another prototype defining sound fonts, and
+a third producing sound waves from the previous.
+Actually, one could conceivably encode extra information
+as fragments of the real function to escape this stricture,
+but that would be very awkward:
+For instance, one could use the image of floating-point @c{NaN}s
+or the indefinite digits of the image of a special magic number as stores of data.
+But it's much simpler to incrementally define a record,
+then extract from the record a field that is numeric function.
+
+Records are thus a better suited target
+for general-purpose incremental modular specification, since
+they allow the indefinite further specification of new aspects,
+each involving fields and methods of arbitrary types,
+that can be independently specialized, modified or overridden.
+Still, the kernel of OO is agnostic with respect to instance types
+and can be used with arbitrarily refined types
+that may or may not be records, may or may not be functions, and
+may or may not generalize or specialize them in interesting ways.
+
+@subsubsection{Callable Records}
+
+Many languages allow an instance to be simultaneously a record and a function.
+
+Back in 1981, Yale T Scheme@~cite{Rees82t:a} was a general-purpose programming environment
+with a graphical interface written using a prototype object system@~cite{adams88oopscheme}.
+It lived by the dual slogans that “closures are a poor man's objects”
+and “objects are a poor man's closures”;
+its functions could have extra entry points,
+which provided the basic mechanism on top of which methods and records were built.
+
+Many later OO languages offer similar functionality,
+though they build it on top of OO rather than build OO on top of it:
+CLOS has @c{funcallable-instance},
+C++ lets you override @c{operator ()},
+Java has Functional Interfaces,
+and Scala has @c{apply} methods.
+
+Such functionality does not change the expressivity of a language,
+since it is equivalent to having records everywhere,
+with a specially named method instead of direct function calls.
+Yet, it does improve the ergonomics of the language, by reducing the number
+of extra-linguistic concepts, distinctions and syntactic changes required
+for all kinds of refactorings.
+
+@; TODO: subsubsection about using the notion of defaults hiding complexity behind a simple interface,
+@; and enabling, e.g. method combination with a main method and other methods,
+@; with the effective method being more than the plainly named main method.
+
+@subsection{Laziness}
+@subsubsection{It's Easier to be Lazy}
+In a lazy functional language such as Nix, you can use the above definitions
+for @c{fix}, @c{mix}, @c{methodG} and @c{methodR} as is and obtain
+a reasonably efficient object system;
+indeed this is about how “extensions” are defined
+in its standard library@~cite{nix2015}.
+
+However, in an eager (applicative) functional language such as Scheme,
+using these definitions as is will yield correct answers,
+but may cause an explosion in redundant eager recomputations of methods,
+and sometimes infinite loops. Indeed, a pure functional eager language
+has no way to specify sharing of computation results,
+and to avoid infinite loops,
+all computations that may be avoided have to be hidden behind a thunk.
+Moreover, the applicative @c{Y} combinator itself requires
+one extra layer of eta-expansion, such that only functions (including thunks)
+can be directly used as the type for fixed-points.
+The entire experience is syntactically heavy and semantically awkward.
+
+Happily, Scheme has @c{delay} and @c{force} special forms that allow for
+both lazy computation of thunks and sharing of thusly computed values.
+Other applicative functional languages usually have similar primitives.
+When they don't, they usually have stateful side-effects based on which
+the primitives can be implemented.
+Indeed, an applicative functional language isn't very useful
+without such extensions, precisely because it is condemned to endlessly
+recompute expressions without possibility of sharing results
+across branches of evaluation — except by writing everything
+in monadic or continuation-passing style in which the accumulated results
+are sequentially passed around the entire list of steps of the computation.
+
+Thus, we see that contrary to what many may assume from common historical usage,
+not only OO does not require the usual imperative programming paradigm
+of eager procedures and mutable state —
+OO is more easily expressed in a pure lazy functional setting.
+
+@subsubsection{Computations vs Values}
+To reprise the Call-By-Push-Value paradigm@~cite{conf/tlca/Levy99},
+prototypes incrementally specify @emph{computations} rather than @emph{values}:
+instructions for recursive computing processes that may or may not terminate
+(which may involve a suitable monad)
+rather than well-founded data that always terminates in time proportional to its size
+(that only involve evaluating pure total functions).
+Others may say that the fixed-point operation that instantiates prototypes
+is coinductive rather than inductive. @TODO{cite Cook?}
+
+And indeed, laziness is a way to reify a computation as a value,
+bridging between the universes of computations and values.
+A thunk may also bridge between these universes,
+but laziness also enables sharing, and thus efficiency,
+without requiring any stateful side-effect to be observable in the language,
+thus preserving equational reasoning.
+
+@; Note again that there is no guarantee of convergence of a fixed-point
+@; for arbitrary prototypes, and that indeed, inasmuch as
+@; most prototypes are meant as incomplete specifications,
+@; their fixed-points won't converge, or not to anything useful.
+
+@subsubsection{Method Initialization Order}
+Traditional imperative OO languages often have a problem
+with the order of field initialization.
+They require fields must be initialized in a fixed order,
+usually from most specific mixin to least specific, or the other way around.
+But subprototypes may disagree on the order of initialization of their common variables.
+This leads to awkward initialization protocols that are
+(a) inexpressive, forcing developers to make early choices before they have the right information,
+and/or (b) verbose, requiring developers to pass around a lot of arguments to super constructors.
+Often, fields end up initialized with nulls, with later side-effects to fix them up after the fact;
+or a separate cumbersome protocol involves “factories” and “builders”
+to accumulate all the initialization data and process it before to initialize a prototype.
+
+Lazy evaluation enables modular initialization of prototype fields:
+Fields are bound to lazy formulas to compute their values,
+and these formulas may access other fields and inherited values.
+Each prototype may override these formulas, and
+the order of evaluation of fields will be appropriately updated.
+The order needs not be the same across an entire prototype hierarchy,
+without any repetitive and error-prone protocol.
+Yet, there are no nulls, no side-effects, no race condition,
+no computation yielding the wrong value because
+it uses a field before it is fully initialized,
+thereby causing a catastrophic error much later in the execution,
+that will be hard to debug.@note{
+Some imperative object systems, such as CLOS, have a notion of "unbound slot",
+so you also get an error immediately rather than a null causing an error later;
+but they still require somewhat complex initialization protocol.}
+At worst, a circularity is detected, which will cause an error to be raised immediately.
+
+@; @seclink{}
 
 @section{BLAH START (RE)WRITING FROM HERE}
 
-@subsection{Instances Beyond Records}
+@section{BLAH RANDOM STUFF STARTS HERE}
 
-@subsubsection{Callable Objects}
-
-In 1981, Yale T Scheme@~cite{Rees82t:a} included a mature variant of such an object system
-as part of a general-purpose programming environment.
-A paper was later published describing the object system@~cite{adams88oopscheme}.
-Importantly, T lives by the slogan that “closures are a poor man's objects”
-and “objects are a poor man's closures”:
-CLOS has funcallable-instance, Java has Functional Interfaces, Scala apply method.
+@subsection{FOOOOOOOOOOOO}
 
 @subsubsection{Typing Records}
 Now, a type system with suitable indexed types and subtyping
@@ -1082,7 +1266,6 @@ However, the assumption soon proved to be false;
 many attempts were made to find designs that made it true or ignored its falsity,
 but it was soon enough clear to be an impossible mirage. @; TODO CITE
 
-
 Without expressive-enough subtyping
 will also constrain record mixins to be very monomorphic,
 and require its users to resort to awkwardly emulate dynamic types
@@ -1090,73 +1273,9 @@ on top of static types to achieve desired results.
 
 This also makes them hard to type without subtypes
 
-@subsubsection{Mixins Beyond Records}
-Now nothing mandates records of any kind in the two above functions.
-You could use them to incrementally specify computations
-of any type, shape or form whatsoever@~cite{poof2021}.
-For instance, a triangle wave function from real to real could be specified as follows
-by combining three prototypes, wherein the first handles 2-periodicity,
-the second handles parity, and the third the shape of the function on interval @c{[0,1]}:
-@verbatim{twf = (λ p q r ↦ fix (mix p (mix q r)) λ x ↦ ⊥)
-                (λ self super x ↦ if x > 1 then self (x - 2) else super x)
-                (λ self super x ↦ if x < 0 then self (- x) else super x)
-                (λ self super x ↦ x)}
-@;           |
-@; \  /\  /\ | /\  /\  /
-@;  \/  \/  \|/  \/  \/
-@; ----------|----------
-@;           |
-@;           |
-The prototypes are reusable and can be combined in other ways;
-for instance, by keeping the first and third prototypes, but
-changing the second prototype to specify an odd rather than even function
-(having the @c{then} case be @c{- self (- x)} instead of @c{self (- x)}),
-we can change the function from a triangle wave function to a sawtooth wave function.
-
-@;@verbatim{swf = (λ p q r ↦ fix (mix p (mix q r)) λ x ↦ ⊥)
-@;                (λ self super x ↦ if x > 1 then self (x - 2) else super x)
-@;                (λ self super x ↦ if x < 0 then - self (- x) else super x)
-@;                (λ self super x ↦ x)}
-@;
-@;           |
-@;    /   /  | /   /   /
-@;   /   /   |/   /   /
-@; ----------|----------
-@;  /   /   /|   /   /
-@; /   /   / |  /   /
-
-However these real functions
-are very constraining by their monomorphic type:
-every element of incremental specification has to be part of the function.
-One could conceivably encode extra information as fragments of the real function
-to escape this stricture, but that would be very awkward.@note{
-For instance, one could use the image of floating-point @c{NaN}s
-or the indefinitedigits of the image of a special magic number as stores of data.}
-
-Records, by contrast, are a better suited target
-for general-purpose incremental modular specification, since
-they facilitate the indefinite further specification of ever new aspects
-each described by one or many methods each with its own type,
-usually distinct and independently specialized, modified or overridden.
-
-@section{BLAH RANDOM STUFF STARTS HERE}
-
-@subsection{FOOOOOOOOOOOO}
-
-@subsubsection{Combination}
+@subsubsection{Method Combination, Instance Combination}
 specializing inheritance with respect to how increments are combined;
 generalizing precedence lists with DAG attribute grammars; metaobject-compatibility.
-
-@subsubsection{Commutativity}
-The special case of Mixin commutativity,
-the advantages and limits of sticking to it in terms of Modularity and Incrementality.
-Manual linearization of meta-state is not modular.}
-
-@subsubsection{Computations}
-The duality between Computation and Value, and
-why purity and lazy evaluation are a great fit for OO,
-more so than the conventionally accepted state mutability and eager evaluation,
-and notably make instance initialization more modular vs “factories” and “builders”.
 
 @subsubsection{Representation}
 The freedom of representation for objects that follows the above duality,
