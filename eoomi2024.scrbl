@@ -40,6 +40,7 @@ Along the way, we offer a semi-formal theory of modularity and incrementality.
           syntax/parse/define
           "util/examples-module.rkt"
           "util/enumitem.rkt"
+          "util/util.rkt"
           (for-label racket))
 
 @(define-simple-macro (c a ...) (elem #:style 'tt a ...))
@@ -410,8 +411,10 @@ so as to pass it as argument to higher-order functions extracting information
 about arbitrary aspects of it.
 This means the prototype should be or contain a function
 with the computation @c{self} as input for self-reference,
-and returns as output the specified computation @c{self}
-in an @emph{open recursion}; that function then specifies (part of)
+and returns as output a computation with the specified structure
+that uses @c{self} in an @emph{open recursion} for all “self-reference”
+to aspects the final computation (possibly further refined, extended or overridden).
+That function then specifies (part of)
 a larger specification function of which the complete computation will be
 a @emph{fixed-point}.
 
@@ -758,7 +761,7 @@ the text of the resulting class is then the “concatenation”
 of the direct text of all its transitive prefix classes.
 In modern terms, we call the prefix a superclass, the extended class a subclass. @; TODO CITE
 Single inheritance was made popular circa 1971 by Smalltalk @;@~cite{Smalltalk} @;TODO FIX ME
-and later circa 1995 by Java@~cite{EcmaScript:15}.
+and later circa 1995 by Java@~cite{EcmaScript:15}. @;TODO or C#
 
 Single inheritance is easy to implement without higher-order functions;
 method lookup can be compiled into a simple and efficient array lookup at a fixed index
@@ -769,7 +772,8 @@ these features made single inheritance more popular
 than the more expressive but costlier alternatives.
 
 @subsubsection{Semantics of Single Inheritance}
-In single inheritance, the prototypes at stake (embodied increments of modularity)
+In single inheritance, the prototypes at stake,
+i.e. the entities that embodied increments of modularity,
 are not the mixin functions of mixin inheritance,
 but simpler @emph{generators} that only take a @c{self} as open recursion parameter
 and return a record using @c{self} for self-reference.
@@ -777,42 +781,73 @@ The semantics can reduced to the following types and functions:
 : @; TODO CITE Cook
 @Code{Gen self = self → self
 Y : Gen self → self
+base : Gen top → top
+base = λ _ ↦ rtop
 extend : Mixin self super → Gen super → Gen self
 extend = λ mixin parent self ↦ mixin self (parent self)}
+@;     = λ mixin parent self ↦ (mix mixin λ self top ↦ parent self) self top
 
 Note how @c{Gen self} is the type of generators for instances of type @c{self};
 the instantiation function for a generator is the usual fixed-point combinator @c{Y};
+the @c{base} object to extend is the generator that always returns the empty record
+(for whichever encoding is used for records);
 and the @c{extend} function creates a child generator from a parent generator
 and a mixin (as in mixin inheritance above), where @c{self} is constrained
 to be a subtype of @c{super}.
-Mind again that in this paradigm the prototype is the generator, not the mixin.
 
-Compared to mixin inheritance, the types are more awkward and less symmetrical.
-A generator is like a reduced (list of) mixins already applied to the base object @c{top}.
-Defining a sub-prototype still requires a @c{Mixin}, but the mixin is not the prototype,
-just a device that is immediately consumed to extend a previous prototype-as-generator.
+Mind again that in the single-inheritance paradigm,
+@emph{the prototype is the generator, not the mixin}.
+A prototype-as-generator may thus be the @c{base} generator
+that returns the empty record @c{rtop} or otherwise base instance,
+or a generator created by extending
+a @emph{single} @c{parent} generator with a @c{mixin}.
+Since the same constraint applies recursively to the parent generator,
+a prototype-as-generator can be seen as repeatedly extending that @c{base} generator
+with an ordered list of mixins to compose.
+Just like in mixin inheritance, an @emph{instance} can thus still be seen as
+the fixed point of the composition of a list of elementary mixins
+as applied to a base instance.
+However, since generators, not mixins, are the prototypes,
+the “native” view of single inheritance is more to see the parent specified in @c{extend}
+as a direct superprototype, and the transitive parents-of-parents as indirect superprototypes;
+each prototype is considered as not just the mixin it directly contributes,
+but as the list of all mixins directly and indirectly contributed.
 
-Whereas an instance is still the fixed point of a list of elementary mixins
-as applied to an implicit base object,
-you are not allowed to consider a list that is not already applied to the base object,
-and to @emph{append} such lists; you are only allowed to @emph{cons} a new elementary mixin
-at the head of a previous list, and each mixin is @emph{linear} and can only be used once.
-No way is provided for combining mixins independently, and often
-the existence of an independent mixin type is not even considered;
-the type definition is expanded in the model, and
-in practice the mixin is heavily constrained by an ad hoc syntax
-that is restricted to the definition of record methods.
+@subsubsection{Single Inheritance with Second-Class Mixins}
+While single-inheritance requires some form of mixin,
+most single-inheritance object systems don't allow mixins as
+first-class entities that can be independently composed.
+Rather mixins are only linear second-class syntactic entities
+and can only be used once, immediately, as part of an extension.
+You cannot consider a mixin or list of mixins independently,
+and @emph{append} such lists together;
+you cannot abstract a base or super instance away from a generator to extract its mixin;
+you can only @emph{cons} a single new elementary mixin
+to the list of mixins implicit in a previous generator and already applied to its base.
+
 This will particularly matter when we see that in most Class OO languages, @; TODO REF
 prototype inheritance happens in a restricted language at the type level,
 one with limited abstraction and no way to express appending from consing.
 
+Then again, if language starts with single-inheritance OO, but
+@emph{does} allow mixins as first-class entities that can be composed,
+then it actually supports mixin inheritance, not just single inheritance,
+just like the Racket class system does@~cite{Flatt06schemewith},
+or like typical uses of extensions in Nix go.
+It thus only makes sense to speak of single inheritance in a context where
+the language syntax, static type system, dynamic semantics,
+or socially-enforced coding conventions
+somehow disallow or strongly discourage mixins as first-class entities.
+
 @subsubsection{Lack of expressiveness and modularity}
-The semantic limitations to single inheritance translate into relative lack of expressiveness.
+The limitations to single inheritance translate into lack of expressiveness
+relative to mixin inheritance.
 Thus, in an OO language with single inheritance,
 you can define a prototype @c{Point} with two coordinates @c{x} and @c{y}
 with two children prototypes @c{ColoredPoint} and @c{WeightedPoint}
 that respectively extend it with an attribute @c{color} and an attribute @c{weight}.
-But if you want a @c{WeightedColoredPoint}, you have to choose at most
+But if you want a @c{WeightedColoredPoint} that has both @c{color} and @c{weight} attributes,
+you have to choose at most
 one of the two prototypes @c{ColoredPoint} and @c{WeightedPoint} to inherit from,
 and repeat all the definitions of the other's mixin.
 
@@ -821,7 +856,8 @@ in each of two or more long mixins or long lists of mixins are involved,
 you will have to repeat all the definitions from all but one existing list of mixins.
 You can always resort to copy/pasting the definitions from one class to the other;
 but that is unreliable and fragile as maintenance operations now need to happen
-simultaneously in multiple copies, that can easily grow subtly out-of-synch.
+simultaneously in multiple copies that the developer must track down,
+and that can easily grow subtly out-of-synch as the developer is fallible.
 Worse, this is an extra-linguistic means, so that
 inasmuch as you then still achieve incremental modularity,
 it is no longer @emph{within} the language, only @emph{outside} it.
@@ -830,26 +866,177 @@ you could easily combine together
 all the elementary mixins from each of the many prototypes-as-mixins
 that you want to simultaneously extend.
 
-This concludes our proof that mixin inheritance is strictly
-more expressive@~cite{eppl91} and more modular @;TODO CITE
-than single inheritance.
+This concludes our proof that single inheritance is strictly
+less expressive@~cite{eppl91}
+and less modular @;TODO CITE / TODO REF
+than mixin and multiple inheritance.
 
 @subsection{Multiple inheritance}
 
-Finally, a third kind of inheritance is @emph{multiple inheritance},
+A third kind of inheritance is @emph{multiple inheritance},
 that historically appeared before mixin inheritance was formalized@~cite{Cannon82},
 and that is more sophisticated than the two above.
-It was popularized by CLOS@~cite{bobrow88clos} and C++ @; TODO cite
-and these days is notably used by Scala or Rust. @; where is C# ?
-While often unjustly overlooked or summarily dismissed by academic literature
-without adequate formalization,@; TODO cite
-we will argue that it is actually more expressive and more modular than the above.
+It was popularized by Lisp object systems
+Flavors, Common Loops, New Flavors and CLOS@~cite{bobrow88clos},
+then by SELF and C++. @;TODO cite
+@; cite New Flavors and CommonLoops 1986 ?
+@; C++ started in 1982, only has multiple inheritance since v2.0 in 1989.
+These days it is notably used in Python, Scala or Rust.
 
-More expressive than single inheritance.
-More modular than both single- and mixin- inheritance.
+Like mixin inheritance, multiple inheritance allows developer
+to create a new prototype using more than one existing prototype as parent,
+lifting the main limitation of single inheritance.
+Like single inheritance, multiple inheritance allows developer to declare dependencies
+between prototypes, such that a prototype can have indirect, transitive dependencies
+implicitly included as superprototypes, as well as direct superprototypes.
+The set of direct and indirect super prototypes of a prototype is thus a DAG rather than a list.
+The subprototyping hierarchy is a DAG rather than a tree.
+And at a minimum, a prototype will then be not just a mixin function, but
+a tuple of (a) some kind of mixin function, (b) an ordered list of other prototypes it inherits from,
+and (c) some kind of unique tag to identify each prototype as node in the dependency DAG.
 
-Yes mixin inheritance also less modular in that you must remember all the inheritance DAG,
-not just the single parent.
+@subsubsection{Inherited graph Computing Instances}
+Then comes the questions of how to reduce a DAG of dependencies,
+each with some mixin function attached, into a record of methods or other instance.
+This happens by computing the instance, or seed based on which to compute the instance,
+as an @emph{inherited attribute} of that dependency DAG.
+
+A general solution is to compute a generator (as in single-inheritance above)
+of which to take a fixed-point,
+or some other core data structure from which to extract the instance,
+by having each mixin function be of type @c{self → super → self}
+where each direct superprototype is of type @c{super_i}
+and @c{super} is the @emph{product} of the @c{super_i}.
+
+Most object systems with multiple inheritance instead to keep mixin functions
+as @c{self → super → self} where the @c{super} argument is a single (partial) instance
+rather than a tuple of (partial) instances;
+the type @c{super} being the @emph{intersection} of the types @c{super_i}
+rather than their product.
+Then mixins have the exact same type structure as for mixin (and single) inheritance,
+and an instance is computed the same way as the fixed-point of a combined list of mixins.
+
+The question is then to @emph{linearize} the DAG of superprototypes
+into a @emph{precedence list} that describes the order based on which to mix the mixins.
+That order will be a total order among prototypes that
+must extend the partial order defined by the DAG.
+This order can be computed by simply walking the DAG,
+which early languages with multiple inheritance did.
+However, this can lead to incoherence between the orders used by related but different classes.
+To ensure better coherence between precedence lists,
+each precedence list can be computed as an inherited attribute that preserves
+the order of each precedence list it inherits as well as of its direct-super list.
+At that point the precedence list has to be computed
+by the C3 algorithm@~cite{Barrett96amonotonic WikiC3}
+or a close variant thereof
+(the above constraints still leave some leeway in merging those lists).
+
+Complete implementations of prototypes using multiple inheritance
+in a few tens of lines of code are given
+in our previous paper using Scheme@~cite{poof2021},
+our production-quality implementation in Gerbil Scheme@~cite{GerbilPOO},
+or in a proof of concept in Nix@~cite{POP2021}
+
+@subsubsection{More Expressive than Mixin Inheritance}
+The above algorithm is somewhat elaborate in the end
+— a few tens of lines of code@~cite{poof2021 Barrett96amonotonic}.
+Why would anyone use that instead of just using mixins?
+Because it is no less expressive, and more modular.
+
+The multiple inheritance is no less expressive than mixin inheritance
+is simple enough to prove: you can macro-express@~cite{eppl91}
+mixin inheritance within multiple inheritance.
+Replace each mixin function by a prototype using that mixin function,
+a empty direct super list.
+Keep around lists of such prototypes rather than mix them,
+then before you instantiate, create a single prototype with an identity mixin
+that depends on the list of mixins as direct superprototypes,
+where each mixin was given a fresh identity tag,
+to ensure that multiple copies are all used.
+
+This trick with fresh identity tag at the last minute is necessitated because
+multiple inheritance otherwise ensures that a given prototype
+(as identified by its identity tag or address)
+will be used once and only once in the precedence list.
+That's actually a feature, what the users usually want.
+
+@subsubsection{More Modular than Mixin Inheritance}
+In practice there is always a dependency order between prototypes,
+whether it is reified as an automatically managed in-language entity
+as with multiple inheritance,
+or left as an extra-language entity that developers must manually keep track of
+as with mixin inheritance.
+Thus, a prototype may depend on a method having been declared or implemented
+by a (transitive) parent, so it may use or override it.
+That parent that must appear before it in the precedence list of prototypes
+(in the right-to-left order of application to the base instance
+with the convention we use above).
+Moreover, each prototype should appear only once in the precedence list,
+because its effects may not be idempotent,
+or may cancel the effects of other prototypes found in between two copies.
+
+For instance, consider a dependency DAG such as follows,
+where among other things,
+@c{Z} depends on @c{K2} that depends on @c{D} that depends on @c{O}:
+
+@(noindent) @image[#:scale 0.587]{C3_linearization_example.eps}
+
+The only way to compute precedence lists for @c{O}, @c{A}, @c{B}, @c{C}, @c{D}, @c{E}
+yields the respective precedence lists @c{[O]}, @c{[A O]}, @c{[B O]}, @c{[C O]}, @c{[D O]}, @c{[E O]}.
+No problem.
+
+However, consider the precedence list of @c{K1}.
+If computed naively by concatenating the precedence lists
+of the prototypes it directly depends on without eliminating duplicates,
+you get @c{[K1 C O A O B O]}.
+This can be a big problem if re-applying @c{O}
+will undo some of the effects of @c{A} or of @c{B}.
+The problem is the same for @c{K2} and @c{K3} and only worse for @c{Z}.
+Even when all prototypes at stake are idempotent and commute,
+this naive strategy will cause an exponential explosion of prototypes to mix
+as the graph becomes deeper.
+Meanwhile, a proper linearization as given by the C3 algorithm would be
+@c{K1 C A B O} for @c{K1} and @c{Z K1 C K3 A K2 B D E O} for @c{Z}.
+It avoids issues with duplicated prototypes, and grows linearly
+with the total number of prototypes even as the graph grows deeper.
+
+With mixin inheritance, developers would have to manually curate
+the order in which they mix prototypes, extra-linguistically.
+When using prototypes defined in other modules,
+they would have to know not just the prototypes they want to use,
+but all the detail about the transitive prototypes they depend on.
+Their dependency DAG will not be a hidden implementation detail,
+but part of the interface.
+And when some upstream module modifies the dependency DAG of a prototype,
+all the prototypes in all the modules that transitively depend on it
+will have to be updated by their respective maintainers to account for the change.
+
+This requires much more information to understood and provided by developers
+than if these developers were instead using multiple inheritance,
+that automates the production of that precedence list, and
+its update when upstream modules are modified.
+The transitive parts of DAG can largely remain a hidden implementation detail
+from those developers who only care about some direct dependencies.
+Thus, mixin inheritance is indeed less modular than multiple inheritance.
+
+@subsubsection{Under-Formalized}
+Multiple inheritance is often unjustly overlooked, summarily dismissed,
+or left as an exercise to the reader in academic literature
+that discusses the formalization of OO. @; TODO cite TOO, Cook, PLAI, and more?
+
+Most computer scientists interested in the semantics of programming languages
+seem to either fail to understand or fail to value
+the modularity enhancement from multiple inheritance
+over single inheritance or mixin inheritance;
+or they are not ready to deal with the extra complexity
+needed to formalize multiple inheritance, for instance due to
+requiring richer type systems.@~cite{Cardelli1984ASO}
+
+And yet languages that care more about expressiveness, modularity and incrementality
+than about ease of writing performant implementations with simpler type systems,
+will choose multiple inheritance over the less expressive and less modular alternatives.
+@; TODO cite Scala OO model. What else? Kathleen Fisher's thesis?
+
 
 @section{BLAH START (RE)WRITING FROM HERE}
 
@@ -884,7 +1071,7 @@ many attempts were made to find designs that made it true or ignored its falsity
 but it was soon enough clear to be an impossible mirage. @; TODO CITE
 
 
-without expressive-enough subtyping
+Without expressive-enough subtyping
 will also constrain record mixins to be very monomorphic,
 and require its users to resort to awkwardly emulate dynamic types
 on top of static types to achieve desired results.
@@ -900,7 +1087,7 @@ by combining three prototypes, wherein the first handles 2-periodicity,
 the second handles parity, and the third the shape of the function on interval @c{[0,1]}:
 @verbatim{twf = (λ p q r ↦ fix (mix p (mix q r)) λ x ↦ ⊥)
                 (λ self super x ↦ if x > 1 then self (x - 2) else super x)
-                (λ self super x ↦ if x < 0 then self (- x)  else super x)
+                (λ self super x ↦ if x < 0 then self (- x) else super x)
                 (λ self super x ↦ x)}
 @;           |
 @; \  /\  /\ | /\  /\  /

@@ -37,7 +37,6 @@ We use Scheme to illustrate our approach.
 }
 
 @(require scriblib/bibtex
-          (only-in scribble/core make-paragraph make-style)
           (only-in scribble/manual racket racketblock code codeblock litchar itemize item)
           (only-in scribble/example examples make-base-eval)
           (only-in scriblib/footnote note)
@@ -47,13 +46,11 @@ We use Scheme to illustrate our approach.
           syntax/parse/define
           "util/examples-module.rkt"
           "util/enumitem.rkt"
+          "util/util.rkt"
           (for-label racket))
 
 @;@(define (nix . foo) (apply minted "nix" foo))
 @(define (nix . foo) (apply verbatim foo))
-@(define (pretitle content) (make-paragraph (make-style 'pretitle '()) content))
-@(define (tex . args) (apply elem #:style (make-style #f '(exact-chars)) args))
-@(define (noindent) @tex{\noindent})
 @(define (~nocite . x) (let ((_ (apply @~cite x))) (void)))
 
 @;; Suppress the page count for the Camera-ready version by uncommenting the below.
