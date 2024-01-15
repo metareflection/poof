@@ -1845,7 +1845,7 @@ Below is the C3 Linearization algorithm to topologically sort an inheritance DAG
 into a precedence list such that direct supers are all included before indirect supers.
 Initially introduced in Dylan@~cite{Barrett96amonotonic},
 it has since been adopted by many modern languages, including
-Python, Raku, Parrot, Solidity, PGF/TikZ.
+Python, Scala, Raku, Parrot, Solidity, PGF/TikZ.
 
 The algorithm ensures that the precedence list of an object always contains as ordered sub-lists
 (though not necessarily with consecutive elements) the precedence list of

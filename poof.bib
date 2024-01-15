@@ -438,6 +438,18 @@
   %url = {https://www.cs.utexas.edu/~wcook/papers/ic94/ic94.pdf}
 }
 
+% W7
+@PhDThesis{rees1995,
+  author = {Rees, Jonathan Allen and Sussman, Gerald Jay},
+  title = {A Security Kernel Based on the Lambda Calculus},
+  year = {1995},
+  publisher = {Massachusetts Institute of Technology},
+  address = {USA},
+  abstract = {Cooperation between independent agents depends upon establishing a degree of security. Each of the cooperating agents needs assurance that the cooperation will not endanger resources of value to that agent. In a computer system, a computational mechanism can assure safe cooperation among the system's users by mediating resource access according to desired security policy. Such a mechanism, which is called a security kernel, lies at the heart of many operating systems and programming environments. The dissertation describes Scheme 48, a programming environment whose design is guided by established principles of operating system security. Scheme 48's security kernel is small, consisting of the call-by-value $lambda$-calculus with a few simple extensions to support abstract data types, object mutation, and access to hardware resources. Each agent (user or subsystem) has a separate evaluation environment that holds objects representing privileges granted to that agent. Because environments ultimately determine availability of object references, protection and sharing can be controlled largely by the way in which environments are constructed.I will describe experience with Scheme 48 that shows how it serves as a robust and flexible experimental platform. Two successful applications of Scheme 48 are the programming environment for the Cornell mobile robots, where Scheme 48 runs with no (other) operating system support; and a secure multi-user environment that runs on workstations. (Copies available exclusively from MIT Libraries, Rm. 14-0551, Cambridge, MA 02139-4307. Ph. 617-253-5668; Fax 617-253-1690.)},
+  note = {AAI0576129}
+}
+
+
 @Misc{Barrett96amonotonic,
   author = {Kim Barrett and Bob Cassels and Paul Haahr and David A. Moon and Keith Playford and P. Tucker Withington},
   title = {A Monotonic Superclass Linearization for Dylan},
@@ -574,6 +586,17 @@
   year = 2008,
   %url = {https://blog.janestreet.com/the-ml-sweet-spot/},
   urldate = {2021-03-14}
+}
+
+% EOPL only has classes with single inheritance.
+% barely touches multiple inheritance, "powerful, but … problematic", in exercise 9.26,
+% and prototypes in exercise 9.27-9.29
+@book{eopl3,
+  author = {Friedman, Daniel P. and Haynes, Christopher T. and Wand, Mitchell},
+  title = {Essentials of Programming Languages (3rd Ed.)},
+  year = {2008},
+  publisher = {Massachusetts Institute of Technology},
+  address = {USA}
 }
 
 @InProceedings{Brown_functioninheritance:,
@@ -915,3 +938,15 @@ isbn="978-3-540-48075-4"
   url =          {https://github.com/divnix/POP},
   year =         {2021}
 }
+
+@book{plai,
+  author = {Shriram Khrisnamurthi},
+  title = {Programming Languages: Application and Interpretation (1st Ed.)},
+  year = {2008},
+  publisher = {Massachusetts Institute of Technology},
+  address = {USA},
+  url = {https://plai.org/},
+}
+
+% PLAI 1st ed has objects as closures and even prototypes in ch 10.
+% 10.3.3 shits on multiple inheritance. 10.3.5 introduces mixins.
