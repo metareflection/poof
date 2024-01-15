@@ -9,7 +9,7 @@ slides: slides-2023-njpls # slides-2024-lambdaconf
 .DUMMY: all pdf view test repl prerequisites fare links \
   preslides slides \
   slides-2021-scheme-workshop slides-2023-njpls slides-2024-lambdaconf \
-  %.preview %.view
+  %.preview %.view eoomi
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
@@ -74,3 +74,5 @@ slides-2024-lambdaconf.html: slides-2024-lambdaconf.rkt util/reveal.rkt util/uti
 # New paper for 2024 (?)
 build/eoomi2024.pdf: eoomi2024.scrbl poof.bib header.tex util/eval-check.rkt util/examples-module.rkt util/util.rkt build/resources
 	scribble --dest build --pdf $<
+eoomi: build/eoomi2024.pdf
+	$(PDFVIEWER) $<
