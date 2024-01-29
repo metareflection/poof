@@ -1,7 +1,7 @@
 ## NB: If racket complains about some modules missing, try: make prerequisites
 
 # Default target: the latest slides
-all: slides
+all: eoomi
 
 # Default slides: the next talk
 slides: slides-2023-njpls # slides-2024-lambdaconf

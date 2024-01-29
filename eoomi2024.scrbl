@@ -183,8 +183,8 @@ the problem back then was clearly not whether OO could be done purely with funct
 but whether it made practical sense to program purely with functions in general.
 That question that would only be slowly answered positively, in theory in the early 1990s
 and in practice in the mid 2000s to mid 2010s, as Haskell grew up to become a practical language.
-@; darcs 2003, cabal 2005, bytestring 2005, "cabal hell" 2006, ghc6 2006, pandoc 2006, xmonad 2007, "Real World Haskell" 2008. Stack 2015 "made non-trivial haskell programs & scripts repeatable"
-@; <Fare> there's obviously a lot of subjectivity there—but I expect an S curve such that whichever arbitrary threshhold criteria you choose the answer would be at about the same time.
+@; darcs 2003, cabal 2005, bytestring 2005, “cabal hell” 2006, ghc6 2006, pandoc 2006, xmonad 2007, “Real World Haskell” 2008. Stack 2015 “made non-trivial haskell programs & scripts repeatable”
+@; There's obviously a lot of subjectivity there—but I expect an S curve such that whichever arbitrary threshhold criteria you choose the answer would be at about the same time.
 
 Yet, the existence of pure models of OO such as those of
 Kamin, Reddy, Cook and Bracha@~cite{Kamin1988 ObjectsAsClosures Cook1989 bracha1990mixin} @;TODO CHECK
@@ -254,6 +254,40 @@ an aspect of modularity, @; TODO cite
 we'll argue that the claim of encapsulation being essential to OO
 partakes in our better formalized argument
 according to which OO is about modularity (and incrementality).
+
+@subsubsection{Message Passing}
+Alan Kay, who invented Smalltalk and coined the term “Object-Oriented Programming”
+notably explained@~cite{Kay2020} that by that he originally meant
+a metaphor of computation exclusively or mainly seen independent processes communicating
+by passing messages, usually in an asynchronous manner.
+
+However, neither Smalltalk nor any claimed “OO” language fits that metaphor.
+Instead the only commonly used language ever to fit it is Erlang@~cite{OOP2010};
+but it doesn't fit at all in the OO tradition, and its authors have instead
+described its paradigm as “Concurrency-Oriented Programming”.
+The theory of this paradigm has been explored in many “process calculi”,
+that are also foreign to the OO tradition, and largely unembraced by the OO community.
+
+This is a very interesting and fascinating computing paradigm,
+but it is not what we or anyone usually mean by OO, which instead focuses on
+modular code organization and reuse with a notable focus on “inheritance”
+through classes or prototypes (or at times “patterns”),
+most of the time in a synchronous evaluation framework within a single thread.
+
+Moreover, many OO languages generalize and extend their method dispatch mechanism
+from “single dispatch” to “multiple dispatch”@~cite{
+  bobrow86commonloops bobrow88clos CecilMultimethods};
+their “multimethods” are attached to several objects or classes,
+and there is no single object, class, or single independent entity of any kind
+capable of either “receiving” or “sending” a message.
+Mechanisms like typeclasses, while not usually considered part of the OO tradition,
+can be seen as isomorphic to class dispatch@~cite{LIL2012},
+yet also without any specific object present to “receive” a message.
+
+Thus, whatever historical role the paradigm of message-passing processes
+may have had in inspiring the discovery of OO,
+it remains a completely different paradigm,
+with its own mostly disjoint tradition and very different concerns.
 
 @section{Modularity and Incrementality}
 
@@ -362,7 +396,7 @@ by vastly increasing the development costs left out of focus,
 in extra boilerplate and friction, in other modules having to adapt,
 inter-module glue being made harder, or module namespace curation getting more contentious.
 
-For instance microkernels or microservices may make each "service" look smaller,
+For instance microkernels or microservices may make each “service” look smaller,
 but only inasmuch as the overall code has been butchered into parts
 between which artificial runtime barriers were added;
 yet each barrier added involves extra code, actually increasing the incidental
@@ -603,8 +637,9 @@ as a function, an @emph{alist}, or a mapping table.
 Records as functions is the simplest encoding, and
 accessing the value for a key is done by just calling the function with the key.
 However, overriding and deletion will leak memory and access time;
-also they don't support iteration over bindings
-(an introspection operation that is desired in some contexts).
+also they don't support iteration over bindings —
+an introspection operation that is desired in contexts like I/O automation,
+though best kept hidden in contexts like analysis or restriction of software effects.
 The two constructors are as follows:
 @Code|{ftop = ⊤ = λ _ ↦ ⊥
 fcons = λ k v r m ↦ if m == k then v else r m}|
@@ -1054,7 +1089,118 @@ will choose multiple inheritance over the less expressive and less modular alter
 see for instance Common Lisp, C++, Python, Scala, Rust.
 @; TODO cite Scala OO model. What else? Kathleen Fisher's thesis?
 
-@section{OO, Without Objects, or With}
+@section{Missing Insights into OO}
+Here are some underdiscussed topics,
+largely neglected by both academic literature and public discourse,
+yet able to yield essential insights about OO.
+@subsection{Laziness suits OO}
+@subsubsection{Lazy is Easy}
+In a lazy functional language such as Nix,
+you can use the above definitions
+for @c{fix}, @c{mix}, @c{methodG} and @c{methodR} as is and obtain
+a reasonably efficient object system;
+indeed this is about how “extensions” are defined
+in its standard library@~cite{nix2015}.
+
+Now, in an eager functional language such as Scheme,
+using these definitions as-is will also yield correct answers.
+However applicative order evaluation may cause an explosion
+in redundant recomputations of methods, and sometimes infinite loops.
+Moreover, the applicative @c{Y} combinator itself requires
+one extra layer of eta-expansion, such that only functions (including thunks)
+can be directly used as the type for fixed-points.
+Unneeded computations and infinite loops can be averted
+by putting computations in thunks, protected by a λ;
+but computations needed multiple times will lead to
+an exponential duplication of efforts,
+because eager evaluation provides no way to share the results
+between multiple calls to a same thunk,
+especially those from the @c{Y} combinator.
+The entire experience is syntactically heavy and semantically awkward.
+
+Happily, Scheme has @c{delay} and @c{force} special forms that allow for
+both lazy computation of thunks and sharing of thusly computed values.
+Other applicative functional languages usually have similar primitives.
+When they don't, they usually support stateful side-effects
+based on which the primitives can be implemented.
+Indeed, an applicative functional language isn't very useful
+without such extensions, precisely because it is condemned to endlessly
+recompute expressions without possibility of sharing results
+across branches of evaluation — except by writing everything
+in continuation-passing style with some kind of state monad
+to store such data, which would involve quite a non-modular
+cumbersome global code transformation.
+
+Thus, we see that contrary to what many may assume from common historical usage,
+not only OO does not require the usual imperative programming paradigm
+of eager procedures and mutable state —
+OO is more easily expressed in a pure lazy functional setting.
+
+Of course, if you do embrace imperative style and stateful side-effects,
+there are many optimizations you can enjoy.
+The semantics will be much more complex to explain, and more fragile,
+but the execution will be faster.
+See section 7.X@TODO{REF Mutation}.
+
+@subsubsection{Computations vs Values}
+To reprise the Call-By-Push-Value paradigm@~cite{conf/tlca/Levy99},
+prototypes incrementally specify @emph{computations} rather than @emph{values}:
+instructions for recursive computing processes that may or may not terminate
+(which may involve a suitable monad)
+rather than well-founded data that always terminates in time proportional to its size
+(that only involve evaluating pure total functions).
+Others may say that the fixed-point operation that instantiates prototypes
+is coinductive rather than inductive. @TODO{cite Cook?}
+
+And indeed, laziness is a way to reify a computation as a value,
+bridging between the universes of computations and values.
+A thunk may also bridge between these universes,
+but laziness also enables sharing, and thus efficiency,
+without requiring any stateful side-effect to be observable in the language,
+thus preserving equational reasoning.
+
+@; Note again that there is no guarantee of convergence of a fixed-point
+@; for arbitrary prototypes, and that indeed, inasmuch as
+@; most prototypes are meant as incomplete specifications,
+@; their fixed-points won't converge, or not to anything useful.
+
+@subsubsection{Method Initialization Order}
+Traditional imperative OO languages often have a problem
+with the order of field initialization.
+They require fields must be initialized in a fixed order,
+usually from most specific mixin to least specific, or the other way around.
+But subprototypes may disagree on the order of initialization of their common variables.
+This leads to awkward initialization protocols that are
+(a) inexpressive, forcing developers to make early choices before they have the right information,
+and/or (b) verbose, requiring developers to pass around a lot of arguments to super constructors.
+Often, fields end up initialized with nulls, with later side-effects to fix them up after the fact;
+or a separate cumbersome protocol involves “factories” and “builders”
+to accumulate all the initialization data and process it before to initialize a prototype.
+
+Lazy evaluation enables modular initialization of prototype fields:
+Fields are bound to lazy formulas to compute their values,
+and these formulas may access other fields and inherited values.
+Each prototype may override these formulas, and
+the order of evaluation of fields will be appropriately updated.
+The order needs not be the same across an entire prototype hierarchy,
+without any repetitive and error-prone protocol.
+Yet, there are no null value that become ticking bombs at runtime,
+no unbound fields that at least explode immediately,
+no side-effects that complicate reasoning,
+no computation yielding the wrong value because
+it uses a field before it is fully initialized,
+no race condition that is hard to reproduce.
+At worst, a circularity is detected,
+which will cause an error to be raised
+immediately, in the right context, and deterministically.
+
+@subsubsection{If it's so good...}
+Some may wonder why OO languages don't use pure lazy functional programming
+for OO, if the two are meant for each other.
+
+First, they do.
+
+
 @subsection{Instances Beyond Records}
 @subsubsection{Prototypes for Numeric Functions}
 Looking back at the definitions for @c{Mixin}, @c{fix} and @c{mix},
@@ -1064,7 +1210,7 @@ they can also be used with arbitrary instance types beyond records,
 thereby allowing the incremental and modular specification of computations
 of any type, shape or form whatsoever@~cite{poof2021}.
 
-For instance, a triangle wave function from real to real could be specified as follows
+For instance, a triangle wave function from real to real could be specified
 by combining three prototypes, wherein the first handles 2-periodicity,
 the second handles parity, and the third the shape of the function on interval @c{[0,1]}:
 @verbatim{twf = (λ p q r ↦ fix (mix p (mix q r)) λ x ↦ ⊥)
@@ -1146,106 +1292,37 @@ Yet, it does improve the ergonomics of the language, by reducing the number
 of extra-linguistic concepts, distinctions and syntactic changes required
 for all kinds of refactorings.
 
+@subsubsection{Representation}
+The freedom of representation for objects that follows the above duality,
+the extra features it enables such as default values or type constraints,
+and the generalization of OO techniques to arbitrary objects, not just records.
+
+@subsubsection{Objects}
+Introducing Objects as such, and how they crucially enables modular extensibility.
+The key concept of Conflation of Prototype and Instance.
+
+@subsubsection{Distinction and Conflation}
+How both Distinction between Prototype and Instance and Conflation of the two
+are essential to understanding OO, yet have been missed by the theoretical literature so far
+(but not by practical implementations).
+Explicit “Functors” vs their fixed points.
+
+@subsubsection{Method Combination, Instance Combination}
+Specializing inheritance with respect to how increments are combined.
+generalizing precedence lists with DAG attribute grammars.
+Metaobject-compatibility.
+
 @; TODO: subsubsection about using the notion of defaults hiding complexity behind a simple interface,
 @; and enabling, e.g. method combination with a main method and other methods,
 @; with the effective method being more than the plainly named main method.
 
-@subsection{Laziness}
-@subsubsection{It's Easier to be Lazy}
-In a lazy functional language such as Nix, you can use the above definitions
-for @c{fix}, @c{mix}, @c{methodG} and @c{methodR} as is and obtain
-a reasonably efficient object system;
-indeed this is about how “extensions” are defined
-in its standard library@~cite{nix2015}.
-
-However, in an eager (applicative) functional language such as Scheme,
-using these definitions as is will yield correct answers,
-but may cause an explosion in redundant eager recomputations of methods,
-and sometimes infinite loops. Indeed, a pure functional eager language
-has no way to specify sharing of computation results,
-and to avoid infinite loops,
-all computations that may be avoided have to be hidden behind a thunk.
-Moreover, the applicative @c{Y} combinator itself requires
-one extra layer of eta-expansion, such that only functions (including thunks)
-can be directly used as the type for fixed-points.
-The entire experience is syntactically heavy and semantically awkward.
-
-Happily, Scheme has @c{delay} and @c{force} special forms that allow for
-both lazy computation of thunks and sharing of thusly computed values.
-Other applicative functional languages usually have similar primitives.
-When they don't, they usually have stateful side-effects based on which
-the primitives can be implemented.
-Indeed, an applicative functional language isn't very useful
-without such extensions, precisely because it is condemned to endlessly
-recompute expressions without possibility of sharing results
-across branches of evaluation — except by writing everything
-in monadic or continuation-passing style in which the accumulated results
-are sequentially passed around the entire list of steps of the computation.
-
-Thus, we see that contrary to what many may assume from common historical usage,
-not only OO does not require the usual imperative programming paradigm
-of eager procedures and mutable state —
-OO is more easily expressed in a pure lazy functional setting.
-
-@subsubsection{Computations vs Values}
-To reprise the Call-By-Push-Value paradigm@~cite{conf/tlca/Levy99},
-prototypes incrementally specify @emph{computations} rather than @emph{values}:
-instructions for recursive computing processes that may or may not terminate
-(which may involve a suitable monad)
-rather than well-founded data that always terminates in time proportional to its size
-(that only involve evaluating pure total functions).
-Others may say that the fixed-point operation that instantiates prototypes
-is coinductive rather than inductive. @TODO{cite Cook?}
-
-And indeed, laziness is a way to reify a computation as a value,
-bridging between the universes of computations and values.
-A thunk may also bridge between these universes,
-but laziness also enables sharing, and thus efficiency,
-without requiring any stateful side-effect to be observable in the language,
-thus preserving equational reasoning.
-
-@; Note again that there is no guarantee of convergence of a fixed-point
-@; for arbitrary prototypes, and that indeed, inasmuch as
-@; most prototypes are meant as incomplete specifications,
-@; their fixed-points won't converge, or not to anything useful.
-
-@subsubsection{Method Initialization Order}
-Traditional imperative OO languages often have a problem
-with the order of field initialization.
-They require fields must be initialized in a fixed order,
-usually from most specific mixin to least specific, or the other way around.
-But subprototypes may disagree on the order of initialization of their common variables.
-This leads to awkward initialization protocols that are
-(a) inexpressive, forcing developers to make early choices before they have the right information,
-and/or (b) verbose, requiring developers to pass around a lot of arguments to super constructors.
-Often, fields end up initialized with nulls, with later side-effects to fix them up after the fact;
-or a separate cumbersome protocol involves “factories” and “builders”
-to accumulate all the initialization data and process it before to initialize a prototype.
-
-Lazy evaluation enables modular initialization of prototype fields:
-Fields are bound to lazy formulas to compute their values,
-and these formulas may access other fields and inherited values.
-Each prototype may override these formulas, and
-the order of evaluation of fields will be appropriately updated.
-The order needs not be the same across an entire prototype hierarchy,
-without any repetitive and error-prone protocol.
-Yet, there are no nulls, no side-effects, no race condition,
-no computation yielding the wrong value because
-it uses a field before it is fully initialized,
-thereby causing a catastrophic error much later in the execution,
-that will be hard to debug.@note{
-Some imperative object systems, such as CLOS, have a notion of "unbound slot",
-so you also get an error immediately rather than a null causing an error later;
-but they still require somewhat complex initialization protocol.}
-At worst, a circularity is detected, which will cause an error to be raised immediately.
-
-@; @seclink{}
-
 @section{BLAH START (RE)WRITING FROM HERE}
 
-@section{BLAH RANDOM STUFF STARTS HERE}
-
 @subsection{FOOOOOOOOOOOO}
+
+@subsubsection{Classes as Type Prototypes}
+The relationship between Prototype OO and Class OO, and how the latter is a special
+    case of the former—classes being meta-level prototypes for types.
 
 @subsubsection{Typing Records}
 Now, a type system with suitable indexed types and subtyping
@@ -1266,35 +1343,12 @@ However, the assumption soon proved to be false;
 many attempts were made to find designs that made it true or ignored its falsity,
 but it was soon enough clear to be an impossible mirage. @; TODO CITE
 
-Without expressive-enough subtyping
-will also constrain record mixins to be very monomorphic,
-and require its users to resort to awkwardly emulate dynamic types
-on top of static types to achieve desired results.
+Without expressive-enough subtyping,
+prototypes are still possible, but their types will be very monomorphic.
+Users can still use them to store arbitrary data,
+by awkwardly emulating dynamic types on top of static types to achieve desired results.
 
-This also makes them hard to type without subtypes
-
-@subsubsection{Method Combination, Instance Combination}
-specializing inheritance with respect to how increments are combined;
-generalizing precedence lists with DAG attribute grammars; metaobject-compatibility.
-
-@subsubsection{Representation}
-The freedom of representation for objects that follows the above duality,
-the extra features it enables such as default values or type constraints,
-and the generalization of OO techniques to arbitrary objects, not just records.
-
-@subsubsection{Objects}
-Introducing Objects as such, and how they crucially enables modular extensibility.
-The key concept of Conflation of Prototype and Instance.
-
-@subsubsection{Distinction and Conflation}
-How both Distinction between Prototype and Instance and Conflation of the two
-are essential to understanding OO, yet have been missed by the theoretical literature so far
-(but not by practical implementations).
-Explicit “Functors” vs their fixed points.
-
-@subsubsection{Classes as Type Prototypes}
-The relationship between Prototype OO and Class OO, and how the latter is a special
-    case of the former—classes being meta-level prototypes for types.
+This also makes them hard to type without subtypes.
 
 @subsubsection{Mutability}
 The performance optimizations and semantic issues related to mutability in OO.

@@ -340,6 +340,16 @@
   numpages = {9}
 }
 
+% Original DEFSYSTEM is a 1990 paper, but hard to find independently from the others.
+@TechReport{kantrowitz1991,
+  author =       {Mark Kantrowitz},
+  title =        {Portable Utilities for {C}ommon {L}isp},
+  institution =  {School of Computer Science, Carnegie-Mellon University},
+  number =       {CMU-CS-91-143},
+  year =         1991,
+  month =        May
+}
+
 @Article{gabriel1991clos,
   title={CLOS: Integrating object-oriented and functional programming},
   author={Gabriel, Richard P and White, Jon L and Bobrow, Daniel G},
@@ -375,6 +385,18 @@
 }
 %  Note={\myurl{http://www.cs.rice.edu/CS/PLT/Publications/}}
 
+@InProceedings{CecilMultimethods,
+  author="Chambers, Craig",
+  editor="Madsen, Ole Lehrmann",
+  title="Object-oriented multi-methods in Cecil",
+  booktitle="ECOOP '92 European Conference on Object-Oriented Programming",
+  year="1992",
+  publisher="Springer Berlin Heidelberg",
+  address="Berlin, Heidelberg",
+  pages="33--56",
+  abstract="Multiple dispatching provides increased expressive power over single dispatching by guiding method lookup using the values of all arguments instead of only the receiver. However, existing languages with multiple dispatching do not encourage the data-abstraction-oriented programming style that is encouraged by traditional single-dispatching languages; instead existing multiple-dispatching languages tend to foster a function-oriented programming style organized around generic functions. We propose an alternative view of multiple dispatching that is intended to promote a data-abstraction-oriented programming style. Instead of viewing a multi-method as ``outside'' of all objects, we view a multi-method as ``inside'' the objects for which the multi-method applies (on which it dispatches). Because objects are closely connected to the multi-methods implementing their operations, the internals of an object can be encapsulated by being accessible only to the closely-connected multi-methods. We are exploring this object-oriented view of multi-methods in the context of a new programming language named Cecil.",
+  isbn="978-3-540-47268-1"
+}
 
 @PhDThesis{bracha1992jigsaw,
   author = {Gilad Bracha},
@@ -872,14 +894,11 @@ series = {ESEC/FSE-9}
   url = {http://common-lisp.net/project/asdf/doc/ilc2010draft.pdf}
 }
 
-% Original DEFSYSTEM is a 1990 paper, but hard to find independently from the others.
-@TechReport{kantrowitz1991,
-  author =       {Mark Kantrowitz},
-  title =        {Portable Utilities for {C}ommon {L}isp},
-  institution =  {School of Computer Science, Carnegie-Mellon University},
-  number =       {CMU-CS-91-143},
-  year =         1991,
-  month =        May
+@Misc{OOP2010,
+  title={Ralph Johnson, Joe Armstrong on the State of OOP (Interview at QCon)},
+  author={Ralph Johnson, Joe Armstrong},
+  year={2010},
+  url={https://www.infoq.com/interviews/johnson-armstrong-oop/}
 }
 
 @Misc{TopPL2022,
@@ -930,6 +949,13 @@ isbn="978-3-540-48075-4"
   booktitle={Proceedings of the 17th ACM SIGPLAN-SIGACT symposium on Principles of programming languages},
   pages={125--135},
   year={1989}
+}
+
+@Misc{Kay2020,
+  title={What thought process would lead one to invent Object-Oriented Programming?},
+  author={Alan Kay},
+  year={2020},
+  url={https://www.quora.com/What-thought-process-would-lead-one-to-invent-object-oriented-programming/answer/Alan-Kay-11}
 }
 
 @Misc{POP2021,
