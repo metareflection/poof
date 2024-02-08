@@ -51,7 +51,7 @@
   abstract = {This paper is an introduction to SIMULA, a programming language designed to provide a systems analyst with unified concepts which facilitate the concise description of discrete event systems. A system description also serves as a source language simulation program. SIMULA is an extension of ALGOL 60 in which the most important new concept is that of quasi-parallel processing.},
   journal = {Commun. ACM},
   month = {sep},
-  pages = {671–678},
+  pages = {671--678},
   numpages = {8}
 }
 
@@ -59,17 +59,16 @@
   Author = {Christopher Strachey},
   Title = {Fundamental Concepts in Programming Languages},
   Year = {1967},
-  %url = {http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.332.3161},
+  url = {http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.332.3161},
 }
 
 % This is the one that introduces objects and prefix classes
 @Misc{Simula1968,
   Author = {Ole-Johan Dahl and Bjørn Myhrhaug and Kristen Nygaard},
   Title = {SIMULA 67 Common Base Language},
-  Year = {1968}
+  Year = {1968},
+  url = {https://web.archive.org/web/20131225084408/http://www.edelweb.fr/Simula/scb-1.pdf}
 }
-% Norwegian Computing Center
-% https://web.archive.org/web/20131225084408/http://www.edelweb.fr/Simula/scb-1.pdf
 
 % identifies class with procedure that computes an algorithm and constructs a record
 % and yields current values multiple times to other activities with "detach" (call again for next)
@@ -82,7 +81,6 @@
   year={1972}
 }
 
-% 10.1145/1024273.1024278
 @InProceedings{Kahn1976,
   author = {Kahn, Kenneth Michael},
   title = {An Actor-Based Computer Animation Language},
@@ -90,7 +88,6 @@
   isbn = {9781450377898},
   publisher = {Association for Computing Machinery},
   address = {New York, NY, USA},
-  url = {https://doi.org/10.1145/1024273.1024278},
   doi = {10.1145/1024273.1024278},
   abstract = {This paper describes a computer language based upon actor semantics designed especially for computer graphics and animation. The thesis that animation is best facilitated by considering each entity on the display screen as an independent process is discussed and demonstrated by examples. The system is built upon MacLisp and is compatible with Lisp-Logo. The language is designed to be used by both very sophisticated programmers and by school children.},
   booktitle = {Proceedings of the ACM/SIGGRAPH Workshop on User-Oriented Design of Interactive Graphics Systems},
@@ -98,7 +95,7 @@
   numpages = {7},
   location = {Pittsburgh, PA},
   series = {UODIGS '76},
-  url2 = {https://dspace.mit.edu/handle/1721.1/41950}
+  url = {https://dspace.mit.edu/handle/1721.1/41950}
 }
 
 @InProceedings{Borning1977,
@@ -108,7 +105,7 @@
   pages={497--498},
   month = {August},
   year = {1977},
-  %url = {https://www.ijcai.org/Proceedings/77-1/Papers/085.pdf}
+  url = {https://www.ijcai.org/Proceedings/77-1/Papers/085.pdf}
 }
 
 @PhDThesis{Borning1979,
@@ -116,7 +113,7 @@
   title = {{ThingLab} --- A Constraint-Oriented Simulation Laboratory},
   biburl = {https://www.bibsonomy.org/bibtex/263cae088243a5fd341d7d634d8176bb3/n770},
   publisher = {Palo Alto Research Center XEROX},
-  %url = {https://constraints.cs.washington.edu/ui/thinglab-tr.pdf},
+  url = {https://constraints.cs.washington.edu/ui/thinglab-tr.pdf},
   school = {Stanford University},
   year = 1979
 }
@@ -126,7 +123,7 @@
   author = {Kahn, Kenneth Michael},
   school = {MIT},
   year = {1979},
-  %url = {https://dspace.mit.edu/handle/1721.1/16012}
+  url = {https://dspace.mit.edu/handle/1721.1/16012}
 }
 
 % http://worrydream.com/refs/Borning%20-%20The%20Programming%20Language%20Aspects%20of%20ThingLab.pdf
@@ -150,19 +147,22 @@
 }
 
 % Norman I. Adams, IV -- but the IV doesn't get processed correctly
+% Can't find it on http://mumble.net/~jar/tproject/
 @InProceedings{Rees82t:a,
   author = {Jonathan A. Rees and Norman I. Adams},
   title = {T: a dialect of LISP or, Lambda: the ultimate software tool},
   booktitle = {Symposium on Lisp and Functional Programming, ACM},
   pages = {114--122},
-  year = {1982}
+  year = {1982},
+  url = {https://www.researchgate.net/publication/221252249_T_a_dialect_of_Lisp_or_LAMBDA_The_ultimate_software_tool}
 }
 
 @Misc{Cannon82,
   title={Flavors: A non-hierarchical approach to object-oriented programming},
   author={Howard Cannon},
   publisher={Symbolics Inc.},
-  year={1982}
+  year=1982,
+  url={https://www.softwarepreservation.org/projects/LISP/MIT/nnnfla1-20040122.pdf}
 }
 
 % After discussing multiple inheritance informally, omits it completely from the formal treatment,
@@ -175,13 +175,13 @@
   url={https://api.semanticscholar.org/CorpusID:13032155}
 }
 
-% https://homepages.cwi.nl/~storm/teaching/reader/Lieberman86.pdf
 @InProceedings{Lieberman1986,
   title={Using Prototypical Objects to Implement Shared Behavior in Object-Oriented Systems},
   author={Henry Lieberman},
   booktitle={OOPLSA},
   pages={214--223},
   year={1986},
+  url={https://homepages.cwi.nl/~storm/teaching/reader/Lieberman86.pdf}
 }
 
 @InProceedings{Borning1986,
@@ -190,6 +190,7 @@
   booktitle={1986 Fall Joint Computer Conference},
   pages={36--40},
   year={1986},
+  doi={10.5555/324493.324538},
 }
 
 % Also a 1985 report
@@ -197,29 +198,36 @@
   title={CommonLoops: Merging Lisp and Object-Oriented Programming},
   author={Daniel G. Bobrow and Kenneth Kahn and Gregor Kiczales and Larry Masinter and Mark Stefyk and Frank Zdybel},
   journal={OOPSLA},
-  year={1986}
+  year={1986},
+  doi={10.1145/28697.28700}
 }
 
+% https://beta.cs.au.dk/ ?
 @article{kristensen1987beta,
   title={The BETA programming language},
   author={Kristensen, Bent Bruun and Madsen, Ole Lehrmann and Møller-Pedersen, Birger and Nygaard, Kristen},
   journal={DAIMI Report Series},
   number={229},
-  year={1987}
+  year={1987},
+  url={https://www.semanticscholar.org/paper/The-BETA-Programming-Language-Kristensen-Madsen/3971897f708518e13809d3c0772105bd86526e50}
 }
 
 @Article{bobrow88clos,
   title={Common Lisp Object Specification X3J13},
   author={D. G. Bobrow and L. D. DeMichiel and R. P. Gabriel and S. E. Kleene and G. Kiczales and D. A. Moon},
   journal={SIGPLAN Notices 23 (Special Issue)},
-  year={1988}
+  year={1988},
+  doi={10.1007/bf01806962},
+  url={https://link.springer.com/content/pdf/10.1007/bf01806962.pdf}
 }
 
 @InProceedings{Kamin1988,
   title={Inheritance in Smalltalk-80: A Denotational Definition},
   author={Samuel N. Kamin},
   booktitle={POPL '88},
-  year={1988}
+  year={1988},
+  doi={10.1145/73560.73567},
+  %url={https://dl.acm.org/doi/10.1145/73560.73567}
 }
 
 % https://core.ac.uk/download/pdf/42828491.pdf
@@ -236,7 +244,7 @@
 @InProceedings{adams88oopscheme,
   Author = {Norman Adams and Jonathan Rees},
   Title = {Object-Oriented Programming in Scheme},
-  %url = "http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.46.954",
+  url = "http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.46.954",
   booktitle = {ACM Conference on Lisp and Functional Programming},
   pages = {277--288},
   Year = {1988}
@@ -249,7 +257,7 @@
   isbn = {0897913337},
   publisher = {Association for Computing Machinery},
   address = {New York, NY, USA},
-  %url = {https://doi.org/10.1145/74877.74884},
+  url = {https://doi.org/10.1145/74877.74884},
   doi = {10.1145/74877.74884},
   abstract = {We have developed and implemented techniques that double the performance of dynamically-typed object-oriented languages. Our SELF implementation runs twice as fast as the fastest Smalltalk implementation, despite SELF's lack of classes and explicit variables.To compensate for the absence of classes, our system uses implementation-level maps to transparently group objects cloned from the same prototype, providing data type information and eliminating the apparent space overhead for prototype-based systems. To compensate for dynamic typing, user-defined control structures, and the lack of explicit variables, our system dynamically compiles multiple versions of a source method, each customized according to its receiver's map. Within each version the type of the receiver is fixed, and thus the compiler can statically bind and inline all messages sent to self. Message splitting and type prediction extract and preserve even more static type information, allowing the compiler to inline many other messages. Inlining dramatically improves performance and eliminates the need to hard-wire low-level methods such as +,==, and ifTrue:.Despite inlining and other optimizations, our system still supports interactive programming environments. The system traverses internal dependency lists to invalidate all compiled methods affected by a programming change. The debugger reconstructs inlined stack frames from compiler-generated debugging information, making inlining invisible to the SELF programmer.},
   booktitle = {Conference Proceedings on Object-Oriented Programming Systems, Languages and Applications},
@@ -264,7 +272,7 @@
     title = {A Denotational Semantics of Inheritance},
     school = {Brown University},
     year = {1989},
-    %url = {https://www.cs.utexas.edu/~wcook/papers/thesis/cook89.pdf}
+    url = {https://www.cs.utexas.edu/~wcook/papers/thesis/cook89.pdf}
 }
 
 % Not obviously worth citing in this context?
@@ -272,7 +280,7 @@
 @Misc{Lawall89SelfInScheme,
   Author = {Julia L. Lawall and Daniel P. Friedman},
   Title = {Embedding the Self Language in Scheme},
-  %url = "https://legacy.cs.indiana.edu/ftp/techreports/TR276.pdf",
+  url = "https://legacy.cs.indiana.edu/ftp/techreports/TR276.pdf",
   Year = {1989}
 }
 
@@ -314,7 +322,6 @@
 
 % 10.1145/97946.97982
 % https://www.semanticscholar.org/paper/Mixin-based-inheritance-Bracha-Cook/cbc4f2d93bb62d1c287f4fe458de6ac416379282
-% https://bracha.org/oopsla90.pdf
 % url = {https://doi.org/10.1145/97945.97982},
 @InProceedings{bracha1990mixin,
   author = {Bracha, Gilad and Cook, William},
@@ -327,6 +334,7 @@
   issn = {0362-1340},
   publisher = {Association for Computing Machinery},
   address = {New York, NY, USA},
+  url = {https://bracha.org/oopsla90.pdf},
   doi = {10.1145/97945.97982},
   abstract = {The diverse inheritance mechanisms provided by Smalltalk, Beta, and CLOS are interpreted as different uses of a single underlying construct. Smalltalk and Beta differ primarily in the direction of class hierarchy growth. These inheritance mechanisms are subsumed in a new inheritance model based on composition of mixins, or abstract subclasses. This form of inheritance can also encode a CLOS multiple-inheritance hierarchy, although changes to the encoded hierarchy that would violate encapsulation are difficult. Practical application of mixin-based inheritance is illustrated in a sketch of an extension to Modula-3.},
   booktitle = {Proceedings of the European Conference on Object-Oriented Programming on Object-Oriented Programming Systems, Languages, and Applications},
@@ -347,7 +355,8 @@
   institution =  {School of Computer Science, Carnegie-Mellon University},
   number =       {CMU-CS-91-143},
   year =         1991,
-  month =        May
+  month =        May,
+  url =          {https://cl-pdx.com/static/CMU-CS-91-143.pdf}
 }
 
 @Article{gabriel1991clos,
@@ -365,7 +374,8 @@
   Title={The {A}rt of the {M}eta-{O}bject {P}rotocol},
   Author={Kiczales, Gregor and Des Rivières, Jim and Bobrow, Daniel Gureasko},
   Year={1991},
-  Publisher={MIT press}
+  Publisher={MIT press},
+  url={https://direct.mit.edu/books/book/2607/The-Art-of-the-Metaobject-Protocol}
 }
 
 %@InProceedings{Ungar91organizingprograms,
@@ -382,8 +392,8 @@
   Title={On the Expressive Power of Programming Languages},
   Institution={Rice University},
   Year={1991},
+  url={https://www.cs.rice.edu/CS/PLT/Publications/Scheme/}
 }
-%  Note={\myurl{http://www.cs.rice.edu/CS/PLT/Publications/}}
 
 @InProceedings{CecilMultimethods,
   author="Chambers, Craig",
@@ -395,20 +405,22 @@
   address="Berlin, Heidelberg",
   pages="33--56",
   abstract="Multiple dispatching provides increased expressive power over single dispatching by guiding method lookup using the values of all arguments instead of only the receiver. However, existing languages with multiple dispatching do not encourage the data-abstraction-oriented programming style that is encouraged by traditional single-dispatching languages; instead existing multiple-dispatching languages tend to foster a function-oriented programming style organized around generic functions. We propose an alternative view of multiple dispatching that is intended to promote a data-abstraction-oriented programming style. Instead of viewing a multi-method as ``outside'' of all objects, we view a multi-method as ``inside'' the objects for which the multi-method applies (on which it dispatches). Because objects are closely connected to the multi-methods implementing their operations, the internals of an object can be encapsulated by being accessible only to the closely-connected multi-methods. We are exploring this object-oriented view of multi-methods in the context of a new programming language named Cecil.",
-  isbn="978-3-540-47268-1"
+  isbn="978-3-540-47268-1",
+  url="http://www.laputan.org/pub/papers/cecil-ecoop-92.pdf"
 }
 
 @PhDThesis{bracha1992jigsaw,
   author = {Gilad Bracha},
   title = {The Programming Language Jigsaw: Mixins, Modularity and Multiple Inheritance},
   school = {University of Utah},
-  year = {1992}
+  year = {1992},
+  url = {http://www.bracha.org/jigsaw.pdf}
 }
 
 @Article{dickey1992scheming,
   title={Scheming with objects},
   author={Dickey, Ken},
-  %url={http://www.cs.cmu.edu/afs/cs/project/ai-repository/ai/lang/scheme/oop/yasos/swob.txt},
+  url={http://www.cs.cmu.edu/afs/cs/project/ai-repository/ai/lang/scheme/oop/yasos/swob.txt},
   journal={AI Expert},
   volume={7},
   number={10},
@@ -427,7 +439,7 @@
   isbn = "3-540-55668-0",
   pages = "33--56",
   year = "1992",
-  %url = "http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.121.134"
+  url = "http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.121.134"
 }
 
 @InProceedings{ImplementingTypeClasses,
@@ -435,19 +447,19 @@
   author = "John Peterson and Mark Jones",
   booktitle = "Proceedings of ACM SIGPLAN Symposium on Programming Language Design and Implementation",
   year = "1993",
-  %url = "http://web.cecs.pdx.edu/~mpj/pubs/pldi93.html",
+  url = "http://web.cecs.pdx.edu/~mpj/pubs/pldi93.html",
   publisher = {Elsevier Science},
 }
 % http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.53.3952
 
-% https://www.cs.bham.ac.uk/~udr/papers/oosem.pdf
+% https://api.semanticscholar.org/CorpusID:16832709
 % University of Illinois at Urbana-Champaign
 % October 4, 1993
 @InProceedings{Kamin1994TwoSM,
   title={Two semantic models of object-oriented languages},
   author={Samuel N. Kamin and Uday S. Reddy},
   year={1994},
-  url={https://api.semanticscholar.org/CorpusID:16832709}
+  url={https://www.cs.bham.ac.uk/~udr/papers/oosem.pdf}
 }
 
 @Article{Cook1994,
@@ -457,16 +469,19 @@
   year={1994},
   volume={114},
   pages={329--350},
-  %url = {https://www.cs.utexas.edu/~wcook/papers/ic94/ic94.pdf}
+  url = {https://www.cs.utexas.edu/~wcook/papers/ic94/ic94.pdf}
 }
 
 % W7
+% and Sussman, Gerald Jay ???
 @PhDThesis{rees1995,
-  author = {Rees, Jonathan Allen and Sussman, Gerald Jay},
+  author = {Rees, Jonathan Allen},
   title = {A Security Kernel Based on the Lambda Calculus},
   year = {1995},
   publisher = {Massachusetts Institute of Technology},
+  school = {Massachusetts Institute of Technology},
   address = {USA},
+  url = {http://mumble.net/~jar/pubs/secureos/},
   abstract = {Cooperation between independent agents depends upon establishing a degree of security. Each of the cooperating agents needs assurance that the cooperation will not endanger resources of value to that agent. In a computer system, a computational mechanism can assure safe cooperation among the system's users by mediating resource access according to desired security policy. Such a mechanism, which is called a security kernel, lies at the heart of many operating systems and programming environments. The dissertation describes Scheme 48, a programming environment whose design is guided by established principles of operating system security. Scheme 48's security kernel is small, consisting of the call-by-value $lambda$-calculus with a few simple extensions to support abstract data types, object mutation, and access to hardware resources. Each agent (user or subsystem) has a separate evaluation environment that holds objects representing privileges granted to that agent. Because environments ultimately determine availability of object references, protection and sharing can be controlled largely by the way in which environments are constructed.I will describe experience with Scheme 48 that shows how it serves as a robust and flexible experimental platform. Two successful applications of Scheme 48 are the programming environment for the Cornell mobile robots, where Scheme 48 runs with no (other) operating system support; and a secure multi-user environment that runs on workstations. (Copies available exclusively from MIT Libraries, Rm. 14-0551, Cambridge, MA 02139-4307. Ph. 617-253-5668; Fax 617-253-1690.)},
   note = {AAI0576129}
 }
@@ -476,7 +491,7 @@
   author = {Kim Barrett and Bob Cassels and Paul Haahr and David A. Moon and Keith Playford and P. Tucker Withington},
   title = {A Monotonic Superclass Linearization for Dylan},
   year = {1996},
-  %url = {https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.19.3910}
+  url = {https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.19.3910}
 }
 
 @article{inheritance1996,
@@ -502,7 +517,8 @@
 @Book{Abadi97atheory,
   author = {Martín Abadi and Luca Cardelli},
   title = {A theory of objects},
-  year = {1997}
+  year = {1997},
+  doi = {10.1007/978-1-4419-8598-9}
 }
 
 @InProceedings{aop97,
@@ -515,11 +531,12 @@
 
 % CBPV
 @InProceedings{conf/tlca/Levy99,
-  title = {Call-by-Push-Value: A Subsuming Paradigm.},
+  title = {Call-by-Push-Value: A Subsuming Paradigm},
   year = {1999},
   author = {Blain Levy, Paul},
   publisher = {Springer},
-  booktitle = {Typed Lambda Calculi and Applications, 4th International Conference, TLCA'99, L'Aquila, Italy, April 7-9, 1999, Proceedings}
+  booktitle = {Typed Lambda Calculi and Applications, 4th International Conference, TLCA'99, L'Aquila, Italy, April 7-9, 1999, Proceedings},
+  doi = {10.5555/645894.671755},
 }
 
 @Misc{ecmascript,
@@ -531,6 +548,7 @@
 % 2000 Oleg Kiselyov USENET post on okmij.org on the possibility of a pure variant of YASOS ?
 
 % See notably chapter 32.
+% downloaded from https://www.cs.sjtu.edu.cn/~kzhu/cs383/Pierce_Types_Programming_Languages.pdf
 @Book{tapl,
   Author = {Pierce, Benjamin C.},
   Title = {Types and Programming Languages},
@@ -538,6 +556,7 @@
   ISBN = {0262162091},
   Publisher = {MIT Press},
   Edition = {1st},
+  url = {https://www.cis.upenn.edu/~bcpierce/tapl/}
 }
 
 @InProceedings{Salzman05prototypeswith,
@@ -547,12 +566,14 @@
   year = {2005}
 }
 
+% https://www.semanticscholar.org/paper/Classes-and-mixins-Flatt-Krishnamurthi/c20e5f2a424b96209e6b400b23d319558932afa3
 @InProceedings{Flatt06schemewith,
   author = {Matthew Flatt and Robert Bruce Findler and Matthias Felleisen},
   title = {Scheme with classes, mixins, and traits},
   booktitle = {In Asian Symposium on Programming Languages and Systems (APLAS) 2006},
   year = {2006},
-  pages = {270--289}
+  pages = {270--289},
+  url = {https://www2.ccs.neu.edu/racket/pubs/asplas06-fff.pdf}
 }
 
 @InProceedings{BruceCardelliPierce2006,
@@ -572,7 +593,8 @@
   author={Nate Foster and M. Greenwald and J. T. Moore and B. Pierce and A. Schmitt},
   journal={ACM Trans. Program. Lang. Syst.},
   year={2007},
-  volume={29}
+  volume={29},
+  url={https://www.cis.upenn.edu/~bcpierce/papers/lenses-full.pdf}
 }
 
 % Master Thesis
@@ -590,7 +612,17 @@
   author={Dolstra, Eelco and L{\"o}h, Andres},
   booktitle={Proceedings of the 13th ACM SIGPLAN international conference on Functional programming},
   pages={367--378},
-  year={2008}
+  year={2008},
+  url={https://edolstra.github.io/pubs/nixos-jfp-final.pdf}
+}
+
+@inproceedings{allen2011type,
+  title={Type checking modular multiple dispatch with parametric polymorphism and multiple inheritance},
+  author={Allen, Eric and Hilburn, Justin and Kilpatrick, Scott and Luchangco, Victor and Ryu, Sukyoung and Chase, David and Steele, Guy},
+  booktitle={Proceedings of the 2011 ACM international conference on Object oriented programming systems languages and applications},
+  pages={973--992},
+  year={2011},
+  url={https://people.mpi-sws.org/~skilpat/papers/multipoly.pdf}
 }
 
 @Misc{nix2015,
@@ -606,7 +638,7 @@
   author = {Yaron Minsky},
   title = {The {ML} sweet spot},
   year = 2008,
-  %url = {https://blog.janestreet.com/the-ml-sweet-spot/},
+  url = {https://blog.janestreet.com/the-ml-sweet-spot/},
   urldate = {2021-03-14}
 }
 
@@ -618,7 +650,8 @@
   title = {Essentials of Programming Languages (3rd Ed.)},
   year = {2008},
   publisher = {Massachusetts Institute of Technology},
-  address = {USA}
+  address = {USA},
+  url = {https://www.eopl3.com/}
 }
 
 @InProceedings{Brown_functioninheritance:,
@@ -633,7 +666,7 @@
   title = "The Different Aspects of Monads and Mixins",
   author = "Oliveira, Bruno C. d. S.",
   year = {2009},
-  %url = {http://ropas.snu.ac.kr/%7Ebruno/papers/MixinAspects.pdf},
+  url = {http://ropas.snu.ac.kr/%7Ebruno/papers/MixinAspects.pdf},
 }
 
 @InProceedings{Oliveira10effectiveadvice,
@@ -647,7 +680,7 @@
 @InProceedings{LIL2012,
   author = {François-René Rideau},
   title = {{LIL}: {CLOS} ~ Reaches Higher-Order, Sheds Identity and has a Transformative Experience},
-  %url = "http://github.com/fare/lil-ilc2012/",
+  url = "http://github.com/fare/lil-ilc2012/",
   booktitle = {International Lisp Conference},
   year = 2012
 }
@@ -672,7 +705,7 @@
   month = {June},
   timestamp = {2015-08-28T15:37:30.000+0200},
   title = {{ECMAScript 2015 Language Specification}},
-  %url = {http://www.ecma-international.org/ecma-262/6.0/ECMA-262.pdf},
+  url = {http://www.ecma-international.org/ecma-262/6.0/ECMA-262.pdf},
   year = 2015
 }
 
@@ -686,7 +719,7 @@
   journal   = {CoRR},
   volume    = {abs/1510.00925},
   year      = {2015},
-  %url       = {http://arxiv.org/abs/1510.00925},
+  url       = {http://arxiv.org/abs/1510.00925},
   archivePrefix = {arXiv},
   eprint    = {1510.00925},
   timestamp = {Mon, 13 Aug 2018 16:46:22 +0200},
@@ -698,7 +731,7 @@
   title={Profunctor Optics: Modular Data Accessors},
   volume={1},
   ISSN={2473-7321},
-  %url={http://dx.doi.org/10.22152/programming-journal.org/2017/1/7},
+  url={http://dx.doi.org/10.22152/programming-journal.org/2017/1/7},
   DOI={10.22152/programming-journal.org/2017/1/7},
   number={2},
   journal={The Art, Science, and Engineering of Programming},
@@ -768,7 +801,6 @@
 % Barak Pearlmutter & Kevin Lang's Oaklisp https://github.com/barak/oaklisp
 
 % Look at papers that cite Bracha 1990 on Semantic Scholar, including:
-% https://www.semanticscholar.org/paper/Classes-and-mixins-Flatt-Krishnamurthi/c20e5f2a424b96209e6b400b23d319558932afa3
 % https://www.semanticscholar.org/paper/Function-Inheritance-%3A-Monadic-Memoization-Mixins-Brown-Cook/d2bf5dc5c6c6bff91d10a0e2dceaaa13c2064765
 % https://www.semanticscholar.org/paper/Object-Inheritance-Without-Classes-Jones-Homer/3dbc00e08dd1fa7c29faae9b2da544fb7e8d5579
 
@@ -896,7 +928,7 @@ series = {ESEC/FSE-9}
 
 @Misc{OOP2010,
   title={Ralph Johnson, Joe Armstrong on the State of OOP (Interview at QCon)},
-  author={Ralph Johnson, Joe Armstrong},
+  author={Ralph Johnson and Joe Armstrong},
   year={2010},
   url={https://www.infoq.com/interviews/johnson-armstrong-oop/}
 }
@@ -976,3 +1008,15 @@ isbn="978-3-540-48075-4"
 
 % PLAI 1st ed has objects as closures and even prototypes in ch 10.
 % 10.3.3 shits on multiple inheritance. 10.3.5 introduces mixins.
+
+% https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=693f61d2515ac9b032801dd7a603c34f1b725071
+% Wrongly claims that multidispatch forgoes modular typechecking
+% Has no definition of modularity, except maybe for typechecking
+@phdthesis{millstein2003reconciling,
+  title={Reconciling software extensibility with modular program reasoning},
+  author={Millstein, Todd David},
+  year={2003},
+  school={University of Washington},
+  doi={10.5555/997550},
+  url={https://web.cs.ucla.edu/~todd/research/dissertation.pdf}
+}

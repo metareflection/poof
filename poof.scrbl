@@ -1685,6 +1685,12 @@ However, neither the code nor its documentation describe to these systems as obj
 though each has a small comment about object-orientation;
 furthermore, while prototype composition is implemented,
 the codebase tends to stick to single inheritance.
+@;{ Peter says (private communication) his was an independent reinvention,
+however, he was inspired by some discussions with Conor McBride
+and previous code by Andres Löh who worked on an OOHaskell with Ralf Hinze
+who built it with Oleg Kiselyov who knew about T;
+both Conor and Andres were also familiar with the essay by Bruno de Oliveira.
+}
 
 @;{
 As in these previous inventions, Jsonnet and Nix use first-class functions to construct objects.
