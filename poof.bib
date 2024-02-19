@@ -194,10 +194,10 @@
 }
 
 % Also a 1985 report
-@Article{bobrow86commonloops,
+@InProceedings{bobrow86commonloops,
   title={CommonLoops: Merging Lisp and Object-Oriented Programming},
   author={Daniel G. Bobrow and Kenneth Kahn and Gregor Kiczales and Larry Masinter and Mark Stefyk and Frank Zdybel},
-  journal={OOPSLA},
+  booktitle={OOPSLA},
   year={1986},
   doi={10.1145/28697.28700}
 }
@@ -260,11 +260,10 @@
   url = {https://doi.org/10.1145/74877.74884},
   doi = {10.1145/74877.74884},
   abstract = {We have developed and implemented techniques that double the performance of dynamically-typed object-oriented languages. Our SELF implementation runs twice as fast as the fastest Smalltalk implementation, despite SELF's lack of classes and explicit variables.To compensate for the absence of classes, our system uses implementation-level maps to transparently group objects cloned from the same prototype, providing data type information and eliminating the apparent space overhead for prototype-based systems. To compensate for dynamic typing, user-defined control structures, and the lack of explicit variables, our system dynamically compiles multiple versions of a source method, each customized according to its receiver's map. Within each version the type of the receiver is fixed, and thus the compiler can statically bind and inline all messages sent to self. Message splitting and type prediction extract and preserve even more static type information, allowing the compiler to inline many other messages. Inlining dramatically improves performance and eliminates the need to hard-wire low-level methods such as +,==, and ifTrue:.Despite inlining and other optimizations, our system still supports interactive programming environments. The system traverses internal dependency lists to invalidate all compiled methods affected by a programming change. The debugger reconstructs inlined stack frames from compiler-generated debugging information, making inlining invisible to the SELF programmer.},
-  booktitle = {Conference Proceedings on Object-Oriented Programming Systems, Languages and Applications},
+  booktitle = {OOPSLA},
   pages = {49–70},
   numpages = {22},
-  location = {New Orleans, Louisiana, USA},
-  series = {OOPSLA '89}
+  location = {New Orleans, Louisiana, USA}
 }
 
 @PhDThesis{Cook1989,
@@ -337,15 +336,12 @@
   url = {https://bracha.org/oopsla90.pdf},
   doi = {10.1145/97945.97982},
   abstract = {The diverse inheritance mechanisms provided by Smalltalk, Beta, and CLOS are interpreted as different uses of a single underlying construct. Smalltalk and Beta differ primarily in the direction of class hierarchy growth. These inheritance mechanisms are subsumed in a new inheritance model based on composition of mixins, or abstract subclasses. This form of inheritance can also encode a CLOS multiple-inheritance hierarchy, although changes to the encoded hierarchy that would violate encapsulation are difficult. Practical application of mixin-based inheritance is illustrated in a sketch of an extension to Modula-3.},
-  booktitle = {Proceedings of the European Conference on Object-Oriented Programming on Object-Oriented Programming Systems, Languages, and Applications},
+  booktitle = {OOPLSA/ECOOP},
   pages = {303–311},
   numpages = {9},
   location = {Ottawa, Canada},
-  series = {OOPSLA/ECOOP '90},
   journal = {SIGPLAN Not.},
-  month = sep,
-  pages = {303–311},
-  numpages = {9}
+  month = sep
 }
 
 % Original DEFSYSTEM is a 1990 paper, but hard to find independently from the others.
@@ -399,7 +395,7 @@
   author="Chambers, Craig",
   editor="Madsen, Ole Lehrmann",
   title="Object-oriented multi-methods in Cecil",
-  booktitle="ECOOP '92 European Conference on Object-Oriented Programming",
+  booktitle="ECOOP",
   year="1992",
   publisher="Springer Berlin Heidelberg",
   address="Berlin, Heidelberg",
@@ -431,7 +427,7 @@
 @InProceedings{chambers92objectoriented,
   author = {Craig Chambers},
   title = {Object-oriented multi-methods in Cecil},
-  booktitle = {Proceedings of the 6th European Conference on Object-Oriented Programming ({ECOOP})},
+  booktitle = {ECOOP},
   volume = "615",
   publisher = "Springer-Verlag",
   address = "Berlin, Heidelberg, New York, Tokyo",
@@ -486,12 +482,20 @@
   note = {AAI0576129}
 }
 
-
-@Misc{Barrett96amonotonic,
+% The C3 superclass linearization algorithm
+@InProceedings{Barrett96amonotonic,
   author = {Kim Barrett and Bob Cassels and Paul Haahr and David A. Moon and Keith Playford and P. Tucker Withington},
   title = {A Monotonic Superclass Linearization for Dylan},
+  journal={OOPSLA},
+  month = {oct},
+  pages = {69–82},
+  numpages = {14},
   year = {1996},
-  url = {https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.19.3910}
+  booktitle = {OOPSLA},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  doi = {10.1145/236337.236343},
+  %url = {https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.19.3910},
 }
 
 @article{inheritance1996,
@@ -524,7 +528,7 @@
 @InProceedings{aop97,
   author = {Kiczales, G. and Lamping, J. and Mendhekar, A. and Maeda, C. and Lopes, C. and Loingtier, J. M. and Irwin, J.},
   title = {Aspect-oriented programming},
-  booktitle = {11th European Conference on Object-Oriented Programming ({ECOOP})},
+  booktitle = {ECOOP},
   pages = {220--242},
   year = {1997}
 }
@@ -562,9 +566,30 @@
 @InProceedings{Salzman05prototypeswith,
   author = {Lee Salzman and Jonathan Aldrich},
   title = {Prototypes with multiple dispatch: An expressive and dynamic object model},
-  booktitle = {ECOOP 2005, Proceedings, LNCS},
+  booktitle = {ECOOP},
   year = {2005}
 }
+
+@article{10.1145/1103845.1094815,
+  author = {Odersky, Martin and Zenger, Matthias},
+  title = {Scalable component abstractions},
+  year = {2005},
+  issue_date = {October 2005},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume = {40},
+  number = {10},
+  issn = {0362-1340},
+  url = {https://doi.org/10.1145/1103845.1094815},
+  doi = {10.1145/1103845.1094815},
+  abstract = {We identify three programming language abstractions for the construction of reusable components: abstract type members, explicit selftypes, and modular mixin composition. Together, these abstractions enable us to transform an arbitrary assembly of static program parts with hard references between them into a system of reusable components. The transformation maintains the structure of the original system. We demonstrate this approach in two case studies, a subject/observer framework and a compiler front-end.},
+  journal = {SIGPLAN Not.},
+  month = {oct},
+  pages = {41–57},
+  numpages = {17},
+  keywords = {Scala, abstract types, classes, components, mixins}
+}
+
 
 % https://www.semanticscholar.org/paper/Classes-and-mixins-Flatt-Krishnamurthi/c20e5f2a424b96209e6b400b23d319558932afa3
 @InProceedings{Flatt06schemewith,
@@ -616,10 +641,10 @@
   url={https://edolstra.github.io/pubs/nixos-jfp-final.pdf}
 }
 
-@inproceedings{allen2011type,
+@InProceedings{allen2011type,
   title={Type checking modular multiple dispatch with parametric polymorphism and multiple inheritance},
   author={Allen, Eric and Hilburn, Justin and Kilpatrick, Scott and Luchangco, Victor and Ryu, Sukyoung and Chase, David and Steele, Guy},
-  booktitle={Proceedings of the 2011 ACM international conference on Object oriented programming systems languages and applications},
+  booktitle={OOPSLA},
   pages={973--992},
   year={2011},
   url={https://people.mpi-sws.org/~skilpat/papers/multipoly.pdf}
@@ -1020,3 +1045,25 @@ isbn="978-3-540-48075-4"
   doi={10.5555/997550},
   url={https://web.cs.ucla.edu/~todd/research/dissertation.pdf}
 }
+
+% Bracha and Lindstrom 1992 Modularity meets inheritance
+
+@inproceedings{10.1145/1094811.1094815,
+author = {Odersky, Martin and Zenger, Matthias},
+title = {Scalable component abstractions},
+year = {2005},
+isbn = {1595930310},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/1094811.1094815},
+doi = {10.1145/1094811.1094815},
+abstract = {We identify three programming language abstractions for the construction of reusable components: abstract type members, explicit selftypes, and modular mixin composition. Together, these abstractions enable us to transform an arbitrary assembly of static program parts with hard references between them into a system of reusable components. The transformation maintains the structure of the original system. We demonstrate this approach in two case studies, a subject/observer framework and a compiler front-end.},
+booktitle = {Proceedings of the 20th Annual ACM SIGPLAN Conference on Object-Oriented Programming, Systems, Languages, and Applications},
+pages = {41–57},
+numpages = {17},
+keywords = {Scala, abstract types, classes, components, mixins},
+location = {San Diego, CA, USA},
+series = {OOPSLA '05}
+}
+
+% C++ template lambda calculus https://gist.github.com/glaebhoerl/8970f682958826ed36f9
