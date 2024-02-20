@@ -1258,16 +1258,15 @@ And this semantic constraint can be expressed
 in a system that has multiple inheritance.
 
 @subsubsection{Under-Formalized}
-A few notable papers do offer proper treatment of
-multiple inheritance@~cite{allen2011type}. @TODO{cite more: Jonathan Aldrich ? Odersky ?}
-
+Many notable papers offer proper treatment of
+multiple inheritance as such@~cite{allen2011type}. @TODO{cite more: Jonathan Aldrich ? Odersky ?}
 However, multiple inheritance often remains
 unjustly overlooked, summarily dismissed,
 or left as an exercise to the reader in academic literature
-that discusses the formalization of
+that discusses the overall formalization of
 programming languages and OO@~cite{Abadi97atheory tapl eopl3 plai}. @TODO{more?}
 
-Most computer scientists interested in the semantics of programming languages
+Many computer scientists interested in the semantics of programming languages
 seem to either fail to understand or fail to value
 the modularity enhancement from multiple inheritance
 over single inheritance or mixin inheritance;
@@ -1279,7 +1278,7 @@ And yet languages that care more about expressiveness, modularity and incrementa
 than about ease of writing performant implementations with simpler type systems,
 will choose multiple inheritance over the less expressive and less modular alternatives:
 see for instance Common Lisp, C++, Python, Scala, Rust.
-@; TODO cite Scala OO model. What else? Kathleen Fisher’s thesis?
+@TODO{cite Scala OO model. What else? Kathleen Fisher’s thesis?}
 
 @section{Missing Insights into OO}
 Here are some topics largely neglected by
