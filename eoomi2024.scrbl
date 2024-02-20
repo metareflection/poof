@@ -615,7 +615,7 @@ but that would make the types unnecessarily more complex.
 @; many isomorphic ways: change the order of super and self,
 @; use fix and mix, or cfix and idm as basic combinators, etc.
 
-@subsubsection{Stricter, More Modular Types}
+@subsubsection[#:tag "stricter_types"]{Stricter, More Modular Types}
 
 The types given in @seclink{mixin_functions} work well,
 but then must be carefully chosen so the @c{self} and @c{super}
@@ -643,7 +643,7 @@ In exchange for this modularity, the mixin is restricted
 to only act in a uniform manner, that monotonically preserves
 arbitrary additional information passed as arguments to it.
 
-@; Try with higher kinds for self and super, so it's structurally required
+@; Try with higher kinds for self and super, so it’s structurally required
 @; that the mixin should use the eself parameter for reference,
 @; and return an extended super for its structure?
 
@@ -906,7 +906,7 @@ the text of the resulting class is then the “concatenation”
 of the direct text of all its transitive prefix classes.
 In modern terms, we call the prefix a superclass, the extended class a subclass. @; TODO CITE
 Single inheritance was made popular circa 1971 by Smalltalk @;@~cite{Smalltalk} @;TODO FIX ME
-and later circa 1995 by Java@~cite{EcmaScript:15}. @;TODO or C#
+and later circa 1995 by Java@~cite{EcmaScript:15}. @TODO{or C#}
 
 Single inheritance is easy to implement without higher-order functions;
 method lookup can be compiled into a simple and efficient array lookup at a fixed index
@@ -918,7 +918,7 @@ than the more expressive but costlier alternatives.
 Even some more recent languages that support multiple inheritance (@seclink{multiple_inheritance})
 also support single inheritance for some classes (or “structures”),
 and sometimes the consistent combination of the two
-@TODO{cite CLOS, etc.}
+(@seclink{single_and_multiple_inheritance_together}).
 
 @subsubsection{Semantics of Single Inheritance}
 In single inheritance, the prototypes at stake,
@@ -958,7 +958,7 @@ the fixed point of the composition of a list of elementary mixins
 as applied to a base instance.
 However, since generators, not mixins, are the prototypes,
 the “native” view of single inheritance is more to see the parent specified in @c{extend}
-as a direct superprototype, and the transitive parents-of-parents as indirect superprototypes;
+as a direct super prototype, and the transitive supers-of-supers as indirect super prototypes;
 each prototype is considered as not just the mixin it directly contributes,
 but as the list of all mixins directly and indirectly contributed.
 
@@ -1033,81 +1033,102 @@ then by SELF and C++. @;TODO cite
 These days it is notably used in Python, Scala or Rust.
 
 Like mixin inheritance, multiple inheritance allows developer
-to create a new prototype using more than one existing prototype as parent,
+to create a new prototype using more than one existing prototype as super prototype,
 lifting the main limitation of single inheritance.
 Like single inheritance, multiple inheritance allows developer to declare dependencies
 between prototypes, such that a prototype can have indirect, transitive dependencies
-implicitly included as superprototypes, as well as direct superprototypes.
-The set of direct and indirect super prototypes of a prototype is thus
-a Directed Acyclic Graph (DAG) rather than a list.
-The subprototyping hierarchy is a DAG rather than a tree.
+implicitly included as super prototypes, as well as direct super prototypes.
 
-@subsubsection{Extracting Meaning from a DAG}
-And at a minimum, a prototype will then be not just a mixin function,
-but a tuple of
-(a) some kind of mixin function
-    that contributes its increment to the modular specification,
-(b) an ordered list of other prototypes it inherits from,
-    that specificy increments of information on which it depends, and
-(c) some kind of unique tag
-    to identify each prototype as a node in the inheritance DAG.
+@subsubsection{Prototypes as a DAG of mixins}
 
-Then comes the questions of how to reduce the inheritance DAG,
-each with some mixin function attached, into a record of methods or other instance.
+Since each prototype inherits from multiple parents rather than a single one,
+the inheritance hierarchy is not a list, but a Directed Acyclic Graph (DAG).
+Each prototype is a node in the overall DAG.
+The super prototypes explicitly listed as dependencies it inherits from
+when defining it are called its @emph{direct supers}.
+But the set of all a prototype’s super prototypes
+includes not only those direct supers, but also indirectly
+the supers of those supers, etc., in a transitive closure.
+
+The prototype’s supers thus constitute a DAG,
+that is an “initial” sub-DAG of the DAG of all prototypes,
+that includes all the prototypes directly or indirectly “above”
+the considered prototype, that is at the very bottom of its DAG.
+The super prototype relation can also be viewed as a partial order on prototypes
+(and so can its opposite sub prototype relation).
+
+This is in contrast with single inheritance, where this relation is a total order,
+each prototype’s super hierarchy constitute a list, and
+the overall hierarchy of all prototypes is a tree.
+This is also in contrast with mixin inheritance, where
+each mixin’s inheritance hierarchy can be viewed as a composition tree,
+that since it is associative can also be viewed flattened as a list,
+and the overall hierarchy is a multitree… except that a super prototype
+(and its own supers) can appear multiple times in a prototype’s tree.
+
+Each prototype is thus a node in the inheritance DAG.
+To represent it, a prototype will then be not just a mixin function,
+but a tuple of:
+@itemize[#:style enumparenalph
+@item{a mixin function, as in mixin inheritance,
+  that contributes an increment to the modular specification,}
+@item{an ordered list of direct super prototypes it inherits from,
+  that specify increments of information on which it depends, and}
+@item{a unique name (fully qualified path, string, symbol, identifier, or other tag)
+  to identify each prototype as a node in the inheritance DAG.}]
+
+@subsubsection{Precedence Lists}
+
+Then comes the question of how to instantiate a prototype’s inheritance DAG
+into a complete specification,
+of how to reducing it to a @emph{generator} as for single inheritance.
 
 A general solution could be to compute the instance, or
 some seed value based on which to compute the instance,
 as an @emph{inherited attribute} of that inheritance DAG. @TODO{cite attribute grammars?}
 For instance, a generator (as in single-inheritance above) of which to take a fixed-point,
 could be computed by having each mixin function be of type @c{self → super → self}
-where each direct superprototype is of type @c{super_i}
+where each direct super prototype is of type @c{super_i}
 and @c{super} is the @emph{product} of the @c{super_i}.
-Or individual methods could be computed this way, where each method specification
-inherits as many supermethod values as the enclosing prototype has direct superprototypes.
 
 However, the increment of specification from each prototype
 must be taken into account @emph{once and only once} in the overall specification;
 and the order in which these increments are taken into account
 must be @emph{consistent} from one method computation to another.
+If individual mixin functions had to take a tuple or list of inherited attributes,
+they would have a hard time untangling the already mixed in effects of other mixins,
+to reapply them only once, what more in a consistent order.
+
 Therefore, multiple inheritance uses a more refined mechanism, wherein
 the inheritance DAG for a prototype is reduced to a list of prototypes,
-the @emph{precedence list},
-at which point multiple inheritance is reduced to combining that list of mixins
-as per mixin (or single) inheritance.
+the @emph{precedence list}.
+An instance is then as per mixin inheritance (or, equivalently, single inheritance),
+by combining the mixin functions of the supers,
+in the order given by the precedence list, with a universal top value.
+Each mixin function remains of type @c{self → super → self},
+where the @c{super} argument is the @emph{intersection} of the types @c{super_i},
+not just of its direct super prototypes, but, effectively,
+of all the super prototypes after it in the precedence list
+(see @seclink{stricter_types} for handling that gap).
 
-@subsubsection{Precedence Lists}
-When using a precedence list, each mixin function remains of type @c{self → super → self},
-or rather @c{∀ eself ⊂ self, ∀ esuper ⊂ super, eself ⊂ esuper ⇒ eself → esuper → eself},
-where @c{self} and @c{super} are the types associated to the mixin,
-but @c{eself} and @c{esuper} are the @emph{effective} types that will be derived
-
-where the @c{super} argument is a @emph{single} (partial) instance
-rather than a tuple or list of (partial) instances;
-the type @c{super} being the @emph{intersection} of the types @c{super_i}
-rather than their product.
-Then mixins have the exact same type structure as for mixin (and single) inheritance,
-and an instance is computed the same way as the fixed-point of a combined list of mixins.
-
-The question is then to @emph{linearize} the DAG of superprototypes
-into a @emph{precedence list} that describes the order in which to mix the mixins.
-That order will be a total order that extends the partial order defined by the DAG.
-It can be computed by simply walking the DAG depth-first or breadth-first,
-which early languages with multiple inheritance did.
-However, this will easily lead to incoherence
-between the orders used by related but different classes.
-To ensure better coherence between precedence lists,
-each precedence list can be computed as an inherited attribute that preserves
-the order of each precedence list it inherits as well as of its direct-super list.
-At that point the precedence list has to be computed
-by the C3 algorithm@~cite{Barrett96amonotonic WikiC3}
-or a close variant thereof
-(the above constraints still leave a bit of leeway in merging those lists).
+The precedence list is itself computed,
+either by walking the DAG @TODO{cite Flavors, CLOS, C++, scalableComponentAbstractions?}
+or as an inherited attribute,
+using the prototype names to ensure the unique appearance
+of each super in the resulting list.
+The precedence list can be viewed as a total order that extends and completes
+the partial order of the inheritance DAG.
+Modern algorithms like C3@~cite{Barrett96amonotonic WikiC3})
+further ensure “monotonic” consistency between the precedence list of a prototype
+and those of its supers, such that the former extends the latter
+as well as the list of supers itself.
 
 Complete implementations of prototypes using multiple inheritance
 in a few tens of lines of code are given
 in our previous paper using Scheme@~cite{poof2021},
-our production-quality implementation in Gerbil Scheme@~cite{GerbilPOO},
 or in a proof of concept in Nix@~cite{POP2021}.
+Our production-quality implementation in Gerbil Scheme@~cite{GerbilPOO}
+including many features and optimizations fits in about a thousand lines of code.
 
 @subsubsection{More Expressive than Mixin Inheritance}
 Multiple inheritance requires measurably more sophistication than mixin inheritance,
@@ -1124,15 +1145,16 @@ Replace each mixin function by a prototype using that mixin function,
 a empty direct super list.
 Keep around lists of such prototypes rather than mix them,
 then before you instantiate, create a single prototype with an identity mixin
-that depends on the list of mixins as direct superprototypes,
-where each mixin was given a fresh identity tag,
-to ensure that multiple copies are all used.
+that depends on the list of mixins as direct super prototypes,
+where each mixin was given a fresh name,
+to ensure that multiple copies are all used indeed.
 
-This trick with fresh identity tag at the last minute is necessitated because
-multiple inheritance otherwise ensures that a given prototype
-(as identified by its identity tag or address)
-will be used once and only once in the precedence list.
-That’s actually a feature, what the users usually want.
+This trick with fresh names at the last minute is necessary to defeat
+multiple inheritance otherwise ensuring that a given prototype
+(as identified by its name) will be used once and only once in the precedence list.
+But this unicity is actually a feature that the users usually want
+(and if they somehow do want multiple uses of a mixin,
+they can explicitly use multiple copies of it with distinct names).
 
 @subsubsection{More Modular than Mixin Inheritance}
 In practice there is always a dependency order between prototypes,
@@ -1196,7 +1218,7 @@ Thus, mixin inheritance is indeed less modular than multiple inheritance.
 @subsubsection[#:tag "single_and_multiple_inheritance_together"
    ]{Single and Multiple Inheritance Together}
 
-Some languages such as CLOS@~cite{bobrow88clos} @TODO{cite more? Scala-Java?}
+Some languages such as CLOS@~cite{bobrow88clos}
 allow for both single-inheritance @c{struct}s and multiple-inheritance
 @c{class}es with uniform ways of defining object and methods.
 Thus, programmers can benefit from the performance advantage in slot access
@@ -1206,9 +1228,16 @@ in the general case. They can explore without constraint, and
 simply change a flag when later optimizing for performance.
 
 However, in CLOS, structs and classes constitute disjoint hierarchies.
-By contrast, in Gerbil Scheme, structs can inherit from classes and vice versa,
-by suitably extending the C3 algorithm@~cite{Barrett96amonotonic}.
-C3 cleverly frames the problem of superclass linearization in terms of
+Some languages further allow structs and classes to inherit from each other,
+within appropriate constraints.
+Thus Scala@~cite{scalableComponentAbstractions}
+allows a single struct to inherit from classes
+(except, to fit the Java and Smalltalk traditions rather than Lisp tradition,
+it calls the single-inheritance structs “classes”, and the multiple-inheritance classes “traits”).
+Our Gerbil Scheme supports the least set of constraints that preserve the coherence
+of both structs and classes, by suitably extending the C3 algorithm.
+
+C3 crucially frames the problem of superclass linearization in terms of
 constraints between the precedence lists of a class and of its superclasses:
 notably, the precedence list of a superclass must be an ordered subset
 of that of the class, though its elements need not be consecutive.
