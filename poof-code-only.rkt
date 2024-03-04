@@ -7,10 +7,12 @@
          syntax/parse/define
          srfi/1)
 
-(define foo 1)
-
 (define (fix p b) (define f (p (lambda i (apply f i)) b)) f)
 (define (mix c p) (lambda (f b) (c f (p f b))))
+
+#; ;;; Note that we don't need to support vararg functions, supporting unary functions is enough:
+(define (fix p b) (define f (p (lambda (x) (f x)) b)) f)
+
 
 ;; (deftype (Proto Self Super) (Fun Self Super -> Self st: (<: Self Super)))
 ;; fix : (Fun (Proto Self Super) Super -> Self st: (<: Self Super))
@@ -70,8 +72,7 @@
 (define (instantiate-prototype-list prototype-list base-super)
   (instantiate-prototype (compose-prototype-list prototype-list) base-super))
 
-;; Alternatively:
-#;
+#; ;; Alternatively:
 (define (compose-prototype-list l)
   (cond
    ((null? l) identity-prototype)
