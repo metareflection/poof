@@ -1027,7 +1027,7 @@ that historically appeared before mixin inheritance was formalized@~cite{Cannon8
 and that is more sophisticated than the two above.
 It was popularized by Lisp object systems
 Flavors, Common Loops, New Flavors and CLOS@~cite{bobrow88clos},
-then by SELF and C++. @;TODO cite
+then by Self and C++. @;TODO cite
 @; cite New Flavors and CommonLoops 1986 ?
 @; C++ started in 1982, only has multiple inheritance since v2.0 in 1989.
 These days it is notably used in Python, Scala or Rust.
@@ -1234,7 +1234,7 @@ Thus Scala@~cite{scalableComponentAbstractions}
 allows a single struct to inherit from classes
 (except, to fit the Java and Smalltalk traditions rather than Lisp tradition,
 it calls the single-inheritance structs “classes”, and the multiple-inheritance classes “traits”).
-Our Gerbil Scheme supports the least set of constraints that preserve the coherence
+Gerbil Scheme supports the least set of constraints that preserve the coherence
 of both structs and classes, by suitably extending the C3 algorithm.
 
 C3 crucially frames the problem of superclass linearization in terms of
@@ -1242,24 +1242,31 @@ constraints between the precedence lists of a class and of its superclasses:
 notably, the precedence list of a superclass must be an ordered subset
 of that of the class, though its elements need not be consecutive.
 To support structs and their optimizations, we only need add a constraint that
-the precedence list of a struct must be the suffix of that of its substructs
+the precedence list of a struct must be a suffix of that of its substructs
 (when considered in the order from most specific to least specific, as is
 customary in languages with multiple inheritance, after the Lisp original).
 
-At that point, we realize that what characterizes structs is no longer
+At that point, we realize that what characterizes structs is not exactly
 “single inheritance” since a struct can now have multiple superclasses,
 and a class can now inherit from a struct indirectly via multiple superclasses.
-What characterizes structs is this “suffix” constraint on precedence lists,
-which harkens back to the original Simula name of “prefix” for a superclass:
-Simula was then considering the precedence list from the opposite order,
-from least specific to most specific superclass,
-though the vocabulary to say so didn’t exist at the time.
+There is still single inheritance of sorts between structures, in the sense
+that the superstructures of a structure constitute a finite total order,
+when you ignore the other classes in the inheritance.
+But by this observation, by ignoring these other classes, fails to characterize structs.
+Instead, what characterizes structs is this “suffix” constraint on precedence lists,
+which include all classes, not just structs.
+This characterization in turn harkens back to the original Simula name
+of “prefix” for a superclass:
+Simula was then considering its single-inheritance precedence list
+in the opposite order, from least specific to most specific superclass
+(though the vocabulary to say so didn’t exist at the time).
 And this semantic constraint can be expressed
 in a system that has multiple inheritance.
 
 @subsubsection{Under-Formalized}
 Many notable papers offer proper treatment of
-multiple inheritance as such@~cite{allen2011type}. @TODO{cite more: Jonathan Aldrich ? Odersky ?}
+multiple inheritance as such@~cite{allen2011type}.
+@TODO{cite more: Jonathan Aldrich ? Odersky ?}
 However, multiple inheritance often remains
 unjustly overlooked, summarily dismissed,
 or left as an exercise to the reader in academic literature
@@ -1281,14 +1288,15 @@ see for instance Common Lisp, C++, Python, Scala, Rust.
 @TODO{cite Scala OO model. What else? Kathleen Fisher’s thesis?}
 
 @section{Missing Insights into OO}
-Here are some topics largely neglected by
+Here are some topics that are largely neglected by
 both academic literature and public discourse about OO,
+even more so than multiple inheritance,
 yet that can yield essential insights about it.
 Some of these insights may already be known,
 but often only implicitly so, and only by a few experts or implementers.
 
-@subsection{Laziness suits OO}
-@subsubsection{Lazy is Easy}
+@subsection{Pure Laziness}
+@subsubsection{Lazy makes OO Easy}
 In a lazy functional language such as Nix,
 you can use the above definitions
 for @c{fix}, @c{mix}, @c{methodG} and @c{methodR} as is and obtain
@@ -1297,7 +1305,8 @@ indeed this is about how “extensions” are defined
 in the Nix standard library@~cite{nix2015}.
 
 Now, in an eager functional language such as Scheme,
-using these definitions as-is will also yield correct answers.
+using these definitions as-is will also yield correct answers,
+modulo a slightly different @c{Y} combinator.
 However applicative order evaluation may cause an explosion
 in redundant recomputations of methods, and sometimes infinite loops.
 Moreover, the applicative @c{Y} combinator itself requires
@@ -1306,7 +1315,7 @@ can be directly used as the type for fixed-points.
 Unneeded computations and infinite loops can be averted
 by putting computations in thunks, protected by a λ;
 but computations needed multiple times will lead to
-an exponential duplication of efforts,
+an exponential duplication of efforts as computations are nested deeper,
 because eager evaluation provides no way to share the results
 between multiple calls to a same thunk,
 especially those from the @c{Y} combinator.
@@ -1316,7 +1325,7 @@ Happily, Scheme has @c{delay} and @c{force} special forms that allow for
 both lazy computation of thunks and sharing of thusly computed values.
 Other applicative functional languages usually have similar primitives.
 When they don’t, they usually support stateful side-effects
-based on which the primitives can be implemented.
+based on which the lazy computation primitives can be implemented.
 Indeed, an applicative functional language isn’t very useful
 without such extensions, precisely because it is condemned to endlessly
 recompute expressions without possibility of sharing results
@@ -1324,17 +1333,6 @@ across branches of evaluation — except by writing everything
 in continuation-passing style with some kind of state monad
 to store such data, which would involve quite a non-modular
 cumbersome global code transformation.
-
-Thus, we see that contrary to what many may assume from common historical usage,
-not only OO does not require the usual imperative programming paradigm
-of eager procedures and mutable state —
-OO is more easily expressed in a pure lazy functional setting.
-
-Of course, if you do embrace imperative style and stateful side-effects,
-there are many optimizations you can enjoy.
-The semantics will be much more complex to explain, and more fragile,
-but the execution will be faster.
-See @seclink{mutation}.
 
 @subsubsection{Computations vs Values}
 To reprise the Call-By-Push-Value paradigm@~cite{conf/tlca/Levy99},
@@ -1346,12 +1344,16 @@ rather than well-founded data that always terminates in time proportional to its
 Others may say that the fixed-point operation that instantiates prototypes
 is coinductive rather than inductive. @TODO{cite Cook?}
 
-And indeed, laziness is a way to reify a computation as a value,
+And indeed, laziness (call-by-need)
+is the best good way to reify a computation as a value,
 bridging between the universes of computations and values.
-A thunk may also bridge between these universes,
-but laziness also enables sharing, and thus efficiency,
+Compared to mere thunking (call-by-name) that can also bridge between these universes,
+laziness enables sharing, with advantages both in terms of performance and semantic expressiveness,
 without requiring any stateful side-effect to be observable in the language,
 thus preserving equational reasoning.
+Thunking can still be expressed on top of a lazy language,
+but laziness cannot be expressed on top of a language with thunks only,
+without using side-effects.
 
 @; Note again that there is no guarantee of convergence of a fixed-point
 @; for arbitrary prototypes, and that indeed, inasmuch as
@@ -1366,33 +1368,84 @@ usually from most specific mixin to least specific, or the other way around.
 But subprototypes may disagree on the order of initialization of their common variables.
 This leads to awkward initialization protocols that are
 (a) inexpressive, forcing developers to make early choices before they have the right information,
-and/or (b) verbose, requiring developers to pass around a lot of arguments to super constructors.
-Often, fields end up initialized with nulls, with later side-effects to fix them up after the fact;
+and/or (b) verbose, requiring developers to explicitly call super constructors
+in repetitive boilerplate, sometimes passing around a lot of arguments, sometimes unable to do so.
+Often, fields end up undefined or initialized with nulls, with later side-effects
+to fix them up after the fact;
 or a separate cumbersome protocol involves “factories” and “builders”
 to accumulate all the initialization data and process it before to initialize a prototype.
 
-Lazy evaluation enables modular initialization of prototype fields:
+By contrast, lazy evaluation enables modular initialization of prototype fields:
 Fields are bound to lazy formulas to compute their values,
-and these formulas may access other fields and inherited values.
-Each prototype may override these formulas, and
+and these formulas may access other fields as well as inherited values.
+Each prototype may override some formulas, and
 the order of evaluation of fields will be appropriately updated.
-The order needs not be the same across an entire prototype hierarchy,
-without any repetitive and error-prone protocol.
-Yet, there are no null value that become ticking bombs at runtime,
-no unbound fields that at least explode immediately,
-no side-effects that complicate reasoning,
-no computation yielding the wrong value because
-it uses a field before it is fully initialized,
-no race condition that is hard to reproduce.
-At worst, a circularity is detected,
-which will cause an error to be raised
-immediately, in the right context, and deterministically.
+Regular inheritance with further prototypes,
+is thus the regular way to further specify how to initialize
+what fields are not yet fully specified yet.
+
+Pure lazy prototypes offer many advantages over effectful eager object initialization protocols:
+@itemize[
+@;#:style enumparenalph
+@item{The field initialization order needs not be the same across an entire prototype hierarchy:
+      new prototypes can modify or override the order set by previous prototypes.}
+@item{When the order doesn’t require modification, no repetitive boilerplate is required
+      to follow the previous protocol.}
+@item{There are no null values that become ticking bombs at runtime,
+      no unbound fields that at least explode immediately but are still inflexible.}
+@item{There are no side-effects that complicate reasoning,
+      no computation yielding the wrong value because
+      it uses a field before it is fully initialized,
+      no hard-to-reproduce race condition in field initialization.}
+@item{At worst, there is a circular definition,
+      which can always be detected at runtime if not compile-time,
+      and cause an error to be raised immediately and deterministically,
+      with useful context information for debugging purposes.}
+@item{There is seldom the need for the “builder pattern”,
+      and when builders are desired they require less code.}]
 
 @subsubsection{If it’s so good...}
 Some may wonder why OO languages don’t use pure lazy functional programming
 for OO, if the two are meant for each other.
 
-First, they do.
+Well, they do: as we’ll see in @seclink{classes}, class-based OO
+is prototype-based OO at the type-level for type descriptors;
+and the type-level meta-programming language with which to define and use
+those prototypes, thus where OO actually takes place,
+is invariably pure functional.
+That type-level language is often quite limited;
+but some languages have a powerful such type-level language,
+famously including C++ and its “templates”.
+Templates since C++11 support lazy evaluation with @c{using … = …}
+and even when eagerly evaluated, multiple occurrences of
+a same type-level template expression
+share their computed values, similar to lazy evaluation.
+
+As for prototype OO, while early languages with prototypes, like T or Self,
+or later popular ones like JavaScript, were applicative and stateful,
+we already discussed in @seclink{minimal_design_maximal_outreach}
+how in the last ten years, Jsonnet and Nix have brought out
+the happy combination of pure lazy functional programming and prototypes.
+We have also been using in production a lazy functional prototype object system
+as implemented in a few hundred lines of Gerbil Scheme@~cite{GerbilPOO}.
+
+Thus, we see that contrary to what many may assume from common historical usage,
+not only OO does not require the usual imperative programming paradigm
+of eager procedures and mutable state —
+OO is more easily expressed in a pure lazy functional setting.
+Indeed, we could argue that OO @emph{as such} is almost never practiced
+in a mutable setting, but rather as a pure functional static metaprogramming
+technique to define algorithms that often use mutation (but don’t need to).
+
+Of course, it is also possible to embrace imperative style and stateful side-effects
+when either using or implementing OO as such.
+For instance, many Lisp and Scheme object systems have allowed dynamic redefinition
+of prototypes or classes and their inheritance hierarchy, while
+the language Self had mutable @emph{parent slots} to specify prototype inheritance,
+and JavaScript objects have a mutable @c{__proto__} slot.
+Often, mutation makes for much more complex semantics, with uglier edge cases,
+but faster execution in the common case thanks to various optimizations.
+See @seclink{mutation}.
 
 
 @subsection[#:tag "instances_beyond_records"]{Instances Beyond Records}
@@ -1437,7 +1490,7 @@ we can change the function from a triangle wave function to a sawtooth wave func
 @;  /   /   /|   /   /
 @; /   /   / |  /   /
 
-However these real functions
+Now these real functions
 are very constraining by their monomorphic type:
 every element of incremental specification has to be part of the function.
 There cannot be a prototype defining some score as MIDI sequence,
@@ -1476,8 +1529,11 @@ Many later OO languages offer similar functionality,
 though they build it on top of OO rather than build OO on top of it:
 CLOS has @c{funcallable-instance},
 C++ lets you override @c{operator ()},
-Java has Functional Interfaces,
-and Scala has @c{apply} methods.
+Java has Functional Interfaces, @; since Java 8 (2014)
+Scala has @c{apply} methods,
+and JavaScript has proxies that can have not just behave like functions with @c{apply} methods,
+but also like arrays, and more.
+
 
 Such functionality does not change the expressivity of a language,
 since it is equivalent to having records everywhere,
@@ -1549,7 +1605,7 @@ This also makes them hard to type without subtypes.
 The performance optimizations and semantic issues related to mutability in OO.
 
 Also, what the relationship between object systems
-that allow mutation of the inheritance DAG (Smalltalk, SELF, CLOS)
+that allow mutation of the inheritance DAG (Smalltalk, Self, CLOS)
 and their pure sematic models?
 
 Inasmuch as mutation is seen as meaning
