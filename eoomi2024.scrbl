@@ -127,7 +127,7 @@ As original contributions, the present paper does the following:
 @item{Discuss how purity and laziness make OO more modular,
   and solve difficult initialization order issues (section 5.3).}
 @; ^ and are actually used in practice in most OO languages—but only at the metalevel.
-@item{Generalize OO methods from fixed fields to functional lenses,
+@item{Generalize OO methods from fixed slots to functional lenses,
   very simply enable modular features like method combinations (section 6.1).}
 @item{Show how the “typeclass” approach can be more composable and thus
   more modular than the “class” approach (section 6.2).}
@@ -170,7 +170,7 @@ how they precisely relate to types.
 @subsubsection{Imperative Programming}
 
 Many people assume that OO requires that
-all fields of all objects should be mutable, or be so by default,
+all slots of all objects should be mutable, or be so by default,
 and that OO requires mutation deep in its object initialization protocols.
 Furthermore, they assume the same eager evaluation model
 for function calls and variable definitions as in every common imperative language.
@@ -227,11 +227,11 @@ most modern OO languages contain FP as a subset.
 
 The argument is actually a distortion of a legitimate question of OO design, @; TODO cite
 wherein one has to decide whether some aspect of a class (respectively prototype or pattern)
-embodied as fields or method functions, should be included directly in the class
+embodied as slots or method functions, should be included directly in the class
 (a) by inheriting from another class defining the aspect
 (the class @emph{is-a} subclass of it — inheritance of classes), or
-(b) indirectly by the class having a field containing an object of that other class
-(the class @emph{has-a} field that is it —
+(b) indirectly by the class having a slot containing an object of that other class
+(the class @emph{has-a} slot that is it —
 composition of classes seen as object constructor functions).
 
 The answer of course depends on expectations about how the class will be further specialized
@@ -244,7 +244,7 @@ to a changing situation, at which point thoughtful uses of inheritance can help 
 @emph{Is} a car a chassis (inheritance),
 or does it @emph{have} a chassis while not being it (composition)?
 If you’re writing a program that is interested in the length of objects,
-you may model a @c{car} as a @c{lengthy} object with a @c{length} field,
+you may model a @c{car} as a @c{lengthy} object with a @c{length} slot,
 and a @c{chassis} too. Now if your program will only ever be interested
 but in the length of objects, you may altogether skip any object modelling:
 and only use numeric length values directly everywhere for all program variables.
@@ -268,7 +268,7 @@ and no clear definition. @TODO{CITE}
 
 Inasmuch as some people identify encapsulation as the presence
 of specific visibility mechanisms
-(with some fields or methods being public, private or something in–between),
+(with some slots or methods being public, private or something in–between),
 we’ll easily dismiss the claim that it is an essential aspect of OO
 by showing that many quintessential OO languages like Smalltalk or Common Lisp
 lack any such specific mechanism,
@@ -699,8 +699,8 @@ Most OO tradition, including the precedents cited above, follows
 the historical restriction of only enabling modular and incremental specification of
 @emph{“records”} mapping names to values@~cite{hoare1965record Cook1989}.
 The names, the values they are bound to, and/or the bindings,
-are at times called @emph{“methods”}, “slots”, “fields”, “attributes” or otherwise,
-depending on the specific sub-tradition.
+are at times called @emph{“methods”}, “slots”, “fields”, “attributes”, “properties”, “members”,
+“variables”, or otherwise, depending on the specific sub-tradition.
 
 The records themselves will be suitably wrapped into a proper computation result @emph{instance}:
 a class (in class-based OO, a.k.a. Class OO),
@@ -717,7 +717,7 @@ For now we will focus on the simplest and most primitive kind of OO, Prototype O
 in its simplest form where the instances are the records themselves.
 We will extend our point of view in @seclink{inheritance} and later.
 
-@subsubsection{Encoding Records}
+@subsubsection[#:tag "encoding_records"]{Encoding Records}
 We will assume that, either with some language primitives,
 some “builtin modules” to import from,
 or some variant of Church encoding, our Functional Language
@@ -738,21 +738,22 @@ Records as functions is the simplest encoding, and
 accessing the value for a key is done by just calling the function with the key.
 However, overriding and deletion will leak memory and access time;
 also they don’t support iteration over bindings —
-an introspection operation that is desired in contexts like I/O automation,
+an introspection operation that is very much desired in contexts like I/O automation,
 though best kept hidden in contexts like analysis or restriction of software effects.
 The two constructors are as follows:
 @Code|{ftop = ⊤ = λ _ ↦ ⊥
 fcons = λ k v r m ↦ if m == k then v else r m}|
 
-The traditional Lisp “alist” (association list) data structure, list of (key,value) pairs,
-solves the previous encoding’s issues with memory leak and lack of iteration support,
+The traditional Lisp “alist” (association list) data structure,
+singly-linked list of (key,value) pairs,
+solves the previous encoding’s issues with memory leak and lack of introspection,
 but is still inefficient with linear-time operations.
 Its two constructors are as follows:
 @Code|{atop = []
 acons = λ k v r ↦ [(k,v), ...r]}|
 
 Records as pure mapping tables can provide logarithmic-time operations;
-but their implementation can be complex if not provided as language builtin.
+but their implementation can be complex if not provided as a language primitive.
 Binding accessor, binding presence test, binding deletion, etc.,
 are left as an exercise to the reader.
 We will write their constructors as follows:
@@ -1362,41 +1363,41 @@ without using side-effects.
 
 @subsubsection{Method Initialization Order}
 Traditional imperative OO languages often have a problem
-with the order of field initialization.
-They require fields must be initialized in a fixed order,
+with the order of slot initialization.
+They require slots must be initialized in a fixed order,
 usually from most specific mixin to least specific, or the other way around.
 But subprototypes may disagree on the order of initialization of their common variables.
 This leads to awkward initialization protocols that are
 (a) inexpressive, forcing developers to make early choices before they have the right information,
 and/or (b) verbose, requiring developers to explicitly call super constructors
 in repetitive boilerplate, sometimes passing around a lot of arguments, sometimes unable to do so.
-Often, fields end up undefined or initialized with nulls, with later side-effects
+Often, slots end up undefined or initialized with nulls, with later side-effects
 to fix them up after the fact;
 or a separate cumbersome protocol involves “factories” and “builders”
 to accumulate all the initialization data and process it before to initialize a prototype.
 
-By contrast, lazy evaluation enables modular initialization of prototype fields:
-Fields are bound to lazy formulas to compute their values,
-and these formulas may access other fields as well as inherited values.
+By contrast, lazy evaluation enables modular initialization of prototype slots:
+Slots are bound to lazy formulas to compute their values,
+and these formulas may access other slots as well as inherited values.
 Each prototype may override some formulas, and
-the order of evaluation of fields will be appropriately updated.
+the order of evaluation of slots will be appropriately updated.
 Regular inheritance with further prototypes,
 is thus the regular way to further specify how to initialize
-what fields are not yet fully specified yet.
+what slots are not yet fully specified yet.
 
 Pure lazy prototypes offer many advantages over effectful eager object initialization protocols:
 @itemize[
 @;#:style enumparenalph
-@item{The field initialization order needs not be the same across an entire prototype hierarchy:
+@item{The slot initialization order needs not be the same across an entire prototype hierarchy:
       new prototypes can modify or override the order set by previous prototypes.}
 @item{When the order doesn’t require modification, no repetitive boilerplate is required
       to follow the previous protocol.}
 @item{There are no null values that become ticking bombs at runtime,
-      no unbound fields that at least explode immediately but are still inflexible.}
+      no unbound slots that at least explode immediately but are still inflexible.}
 @item{There are no side-effects that complicate reasoning,
       no computation yielding the wrong value because
-      it uses a field before it is fully initialized,
-      no hard-to-reproduce race condition in field initialization.}
+      it uses a slot before it is fully initialized,
+      no hard-to-reproduce race condition in slot initialization.}
 @item{At worst, there is a circular definition,
       which can always be detected at runtime if not compile-time,
       and cause an error to be raised immediately and deterministically,
@@ -1411,14 +1412,17 @@ for OO, if the two are meant for each other.
 Well, they do: as we’ll see in @seclink{classes}, class-based OO
 is prototype-based OO at the type-level for type descriptors;
 and the type-level meta-programming language with which to define and use
-those prototypes, thus where OO actually takes place,
-is invariably pure functional.
-That type-level language is often quite limited;
-but some languages have a powerful such type-level language,
+those prototypes at compile-time, thus where OO actually takes place,
+is invariably pure functional:
+languages with static classes have have no provision
+for modifying a class after it is defined at compile-time, and
+disclaim all guarantees if reflection facilities are used to modify them at runtime.
+The compile-time languages in which classes are defined is often quite limited;
+but a few languages have a powerful such compile-time language,
 famously including C++ and its “templates”.
-Templates since C++11 support lazy evaluation with @c{using … = …}
-and even when eagerly evaluated, multiple occurrences of
-a same type-level template expression
+Templates support lazy evaluation with @c{typedef}, or, since C++11,
+with @c{using … = …}. Even when eagerly evaluated,
+multiple occurrences of a same type-level template expression
 share their computed values, similar to lazy evaluation.
 
 As for prototype OO, while early languages with prototypes, like T or Self,
@@ -1440,10 +1444,11 @@ technique to define algorithms that often use mutation (but don’t need to).
 Of course, it is also possible to embrace imperative style and stateful side-effects
 when either using or implementing OO as such.
 For instance, many Lisp and Scheme object systems have allowed dynamic redefinition
-of prototypes or classes and their inheritance hierarchy, while
+of classes or prototypes and their inheritance hierarchy, while
 the language Self had mutable @emph{parent slots} to specify prototype inheritance,
 and JavaScript objects have a mutable @c{__proto__} slot.
-Often, mutation makes for much more complex semantics, with uglier edge cases,
+Often, mutation makes for much more complex semantics, with uglier edge cases, or
+expensive invalidation when the inheritance hierarchy changes,
 but faster execution in the common case thanks to various optimizations.
 See @seclink{mutation}.
 
@@ -1464,7 +1469,7 @@ the second handles parity, and the third the shape of the function on interval @
                 (λ self super x ↦ if x > 1 then self (x - 2) else super x)
                 (λ self super x ↦ if x < 0 then self (- x) else super x)
                 (λ self super x ↦ x)}
-@TODO{Insert figure!}
+@TODO{Insert figure! -- with the graph in black, and explanations of the prototypes in red?}
 @;           |
 @; \  /\  /\ | /\  /\  /
 @;  \/  \/  \|/  \/  \/
@@ -1502,23 +1507,26 @@ but that would be very awkward:
 For instance, one could use the image of floating-point @c{NaN}s
 or the indefinite digits of the image of a special magic number as stores of data.
 But it’s much simpler to incrementally define a record,
-then extract from the record a field that is numeric function.
+then extract from the record a slot bound to a numeric function—in,
+in what can be seen as a use of the “builder pattern”. @TODO{cite}
 
 Records are thus a better suited target
 for general-purpose incremental modular specification, since
 they allow the indefinite further specification of new aspects,
-each involving fields and methods of arbitrary types,
+each involving slots and methods of arbitrary types,
 that can be independently specialized, modified or overridden.
 Still, the kernel of OO is agnostic with respect to instance types
 and can be used with arbitrarily refined types
 that may or may not be records, may or may not be functions, and
 may or may not generalize or specialize them in interesting ways.
 
-@subsubsection{Callable Records}
+@subsubsection{Conflating Records and Functions}
+Many languages solve the above issue by allowing an instance to be simultaneously
+both a record and a function. Thus, prototype definitions can use extra record slots
+to store ancillary data (such as MIDI sequence and sound font in the example above),
+yet simultaneously specify a the behavior of a function.
 
-Many languages allow an instance to be simultaneously a record and a function.
-
-Back in 1981, Yale T Scheme@~cite{Rees82t:a} was a general-purpose programming environment
+Thus, back in 1981, Yale T Scheme@~cite{Rees82t:a} was a general-purpose programming environment
 with a graphical interface written using a prototype object system@~cite{adams88oopscheme}.
 It lived by the dual slogans that “closures are a poor man’s objects”
 and “objects are a poor man’s closures”;
@@ -1529,27 +1537,131 @@ Many later OO languages offer similar functionality,
 though they build it on top of OO rather than build OO on top of it:
 CLOS has @c{funcallable-instance},
 C++ lets you override @c{operator ()},
-Java has Functional Interfaces, @; since Java 8 (2014)
+Java has @emph{Functional Interfaces}, @; since Java 8 (2014)
 Scala has @c{apply} methods,
-and JavaScript has proxies that can have not just behave like functions with @c{apply} methods,
-but also like arrays, and more.
+JavaScript has the @c{Function} prototype,
+etc.
+Interestingly, in Smalltalk,
+a “function” is just an object that can reply to the message @c{value:},
+and an object can similarly be not just a function, but an array, a dictionary,
+or a stand-in for any of the “builtin” primitive data types,
+“just” by defining the methods that comprise the interface for each data type.
 
-
-Such functionality does not change the expressivity of a language,
+Such functionality does not change the expressiveness of a language,
 since it is equivalent to having records everywhere,
 with a specially named method instead of direct function calls.
 Yet, it does improve the ergonomics of the language, by reducing the number
 of extra-linguistic concepts, distinctions and syntactic changes required
 for all kinds of refactorings.
+It also opens new ways for programmers to shoot themselves in the foot,
+but programmers already have plenty of them, and
+these record-function instances don’t make that particularly easier.
 
-@subsubsection{Representation}
-The freedom of representation for objects that follows the above duality,
-the extra features it enables such as default values or type constraints,
-and the generalization of OO techniques to arbitrary objects, not just records.
+Now, to a mathematician,
+this may mean that those instances aren’t functions strictly speaking,
+but an implicit product of a record and a function, and maybe more things.
+The mathematical notion of “function” isn’t
+directly represented in the programming language,
+only somehow implemented or expressed in it.
+Programmers may retort that such is the reality in any programming language anyway,
+and some languages are more honest about it than others,
+and won’t a lie stop them from building more useful languages.
+Mathematicians might insist that sometimes they really want to represent
+just a function, with no other hidden capabilities, and more generally,
+to maximally restrict what a program can do, so as more feasibly to reason about it.
+Programmers may retort that they still can in such a language, if they insist.
 
-@subsubsection{Objects}
-Introducing Objects as such, and how they crucially enables modular extensibility.
-The key concept of Conflation of Prototype and Instance.
+The debate endures about what makes callable objects a good or bad idea;
+our purpose is not to repeat the debate, @TODO{cite}
+even less to take sides in it—but instead
+to notice and make explicit this important and useful notion
+of implicit product of several things,
+whether record, function, or more:
+we will call this implicit product a @emph{conflation}.
+
+@subsubsection{Freedom of Representation}
+We already saw in @seclink{encoding_records} that were many ways to represent records,
+that affect performance, memory usage, the ability to introspect values, etc.
+There are even more ways to represent them in conflation with functions, arrays, and more.
+And a language implementer may find themselves with an embarrassment of choices
+for what exact specific underlying data type to use
+to represent the instances of their specifications.
+
+However, having neatly separated the core concepts of prototype, inheritance and instantiation,
+as tools of incremental specification of software,
+from any specific type of instance being specified,
+we now find we are not only free to choose the instance type,
+but also free @emph{not} to choose:
+we can keep the concepts of prototypes, inheritance, etc.,
+as abstract entities, wholly independent from whatever instance types one may apply them to.
+
+@subsubsection{OO without Objects}
+And then, we may realize that we have so far been explaining and implementing
+the key concepts of “Object Orientation”, without having introduced
+any notion of object, much less class.
+
+There are prototypes, and there are instances;
+but neither is an object:
+Prototypes are incomplete specifications;
+you can’t call methods on them, or do anything that you can expect to do on an object.
+Instances are plain values of any type whatsoever, sometimes just simple real functions;
+you can’t combine them with inheritance, or do any OO-related operation on them.
+If they are “objects” then the word “object” is utterly empty of meaning.
+
+And so maybe Object Orientation was always a misnomer, born of a historical confusion
+before science brought necessary distinctions between concepts.
+Maybe the field should be named after inheritance, or prototypes,
+or incremental modularity, and banish the word “Object” forevermore from its name.
+
+Yet objects are possible, and a useful concept in OO.
+
+@subsection{Objects}
+@subsubsection{Conflating Prototype and Instance}
+While neither a prototype nor an instance is an object,
+the @emph{conflation} of the two, is.
+That is indeed what objects are in Jsonnet and Nix:
+every object can be seen as an instance when querying the values of its slots,
+and as a prototype when combining it with other objects using mixin composition.
+
+Indeed in a pure functional language, without side-effects,
+there is a unique instance associated to any prototype, up to observable equality:
+its fixed-point.
+Thus, it always makes sense to consider “the” instance for a prototype,
+and to see it as but another aspect of it.
+Evaluating the fixed-point may or may not converge, but thanks to lazy evaluation,
+you don’t have to care about whether that is the case to refer to the two together.
+
+Even if the language isn’t lazy-by-default, and instead has side-effects,
+that is a good time to introduce a laziness construct.
+Then, there may be multiple distinct instances to a prototype, and yet
+you can use a @c{clone} construct to generate a new object from an existing object,
+and still keep instance and prototype together.
+
+@subsubsection{Keeping Extensibility Modular}
+Thanks to the conflation of instance and prototype as two aspects of a same object,
+configurations can be written that can refer to other parts of the configuration
+without having to track and distinguish which parts are instantiated at which point,
+and it all just works.
+Still, distinguishing the two concepts of instance and prototype is important
+to dispel the confusion that can often reign in even the most experienced OO practitioner
+regarding the fine behavior of objects when trying to assemble or debug programs.
+
+
+@subsubsection{Adding More Features}
+On the other hand, we realize that with conflation, we can also extend prototypes:
+For mixin inheritance, we wanted a prototypes to be just a mixin function.
+For multiple inheritance, we wanted a prototype to @emph{also} have a list of direct supers;
+and for good measure, we wanted to cache rather than expensively recompute every time
+the prototype’s precedence list of transitive supers.
+
+We could add more features to our object system by extending this implicit product with
+“default values” for otherwise-undefined methods or slots,
+Runtime or compile-time type restrictions on slots,
+slot visibility information,
+debugging information,
+introspectable method definitions, etc.,
+
+
 
 @subsubsection{Distinction and Conflation}
 How both Distinction between Prototype and Instance and Conflation of the two

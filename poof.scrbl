@@ -1336,15 +1336,15 @@ Instead we will propose our own reconstruction on how to
 This reconstruction will shed light on the essence of the relationship between classes and prototypes.
 
 @subsubsection{Prototypes for Type Descriptors}
-In our reconstruction, a @emph{class} is “just” a prototype for type descriptors.
-Type descriptors, as detailed below, are a runtime data structure
+In our reconstruction, a @emph{class} is “just” a prototype for a type descriptor.
+Type descriptors, as detailed below, are runtime data structures
 describing what operations are available to recognize and deal with elements of the given type.
 Type descriptors therefore do not have to themselves be objects,
 and no mention of objects is required to describe type descriptors themselves.
 They can be just a type on which to apply the monomorphic prototypes of @(section34).
 Still, it is typical in OOP to conflate into a “class” both the instance of a type descriptor
 and the prototype for the type descriptor. Our distinction of the two concepts can then help avoid
-a lot of the confusion present in classical presentations of OOP.
+a lot of the confusion present in “classical” presentations of OOP (pun not intended but adopted).
 
 Every compiler or language processor for a statically typed language (even without OOP)
 necessarily has type descriptors, since the language's compile-time is the compiler's runtime.
@@ -1365,11 +1365,12 @@ of “type descriptors” or “data schemas”, etc.
 
 These runtime type descriptors often contain more information
 than typically available in a static type, such as:
+additional constraints on values beside principal type membership;
 methods to encode and decode values, to print and parse them,
 to display them or interact with them in a graphical interface;
 default values for use in user interfaces or simple tests;
 pseudo-random value generators and value compressors
-for use in automated testing and other search algorithms;
+to enable property-based testing and other search algorithms;
 algebraic operations whereby this type implements an interface,
 satisfies a constraint, or instantiates a typeclass; etc.
 Types used at compile-time would have additional data to deal with
@@ -1380,7 +1381,7 @@ etc.
 
 Therefore, even statically typed languages often involve runtime type descriptors.
 Better languages will provide “reflection” facilities or “macros”
-to automatically generate those descriptors without humans having to
+to automatically generate descriptors without humans having to
 try keeping two different representations in synch as programs evolve.
 @; TODO cite reflection mechanism for Java? C#? Scala?
 
@@ -1406,7 +1407,7 @@ Numbers would also have various arithmetic operations.
 ]
 
 @subsubsection{Parameterized Types}
-A parameterized type at runtime can be function that return a type descriptor
+A parameterized type at runtime can be function that returns a type descriptor
 given its parameter, itself a type descriptor,
 or any runtime value (yielding a runtime dependent type).
 Thus, monomorphic lists might be:
@@ -1497,9 +1498,9 @@ A prototype for a mutable object can be implemented
 with a single mutable data structure argument @r[self]
 instead of two immutable value arguments @r[self] and @r[super]:
 the @emph{identity} of that data structure
-provides the handle to future complete computation,
+provides the handle to the future complete computation,
 as previously embodied in the @r[self] argument;
-and the current @emph{storage} of the data structure provides state of the computation so far,
+and the current @emph{storage} of the data structure provides the state of the computation so far,
 as previously embodied in the @r[super] argument.
 
 A mutable prototype wrapper would then be of type @r[(deftype μProto (Fun Object ->))],
@@ -1616,11 +1617,11 @@ and to a point that of “delegation” for the variant of inheritance associate
 That year also appeared SELF, a language in the Smalltalk tradition
 but with prototypes instead of classes. @; TODO CITE
 SELF was influential, notably thanks to its complete graphical environment
-that could run on SparcStations, then widespread in universities and research centers.
-However, SELF could only usably run on high-end workstations,
+that could run on workstations available at many universities and research centers.
+However, it was only usable on high-end workstations,
 despite many innovations to make it efficient@~cite{chambers1989efficient}.
 The optimization effort and ubiquitous mutation including of the inheritance hierarchy
-contributed to making its semantic model complex.
+contributed to making its semantic model complex, though still simpler than that of class-based OOP.
 
 JavaScript came out in 1994,
 with a prototype object system @~cite{EcmaScript:15 DBLP:journals/corr/GuhaSK15},
@@ -1664,7 +1665,7 @@ the first publicly available language with prototype objects
 in the context of a pure lazy functional language with dynamic types.
 It was also the first language used beyond its creating institution
 that made prototype composition the primary algebraic operation on objects:
-the model of our @(section1), restricted to records extensions.
+the model of our @(section1), restricted to records.
 Jsonnet objects also combine in a same entity the two aspects, instance and prototype,
 as in our @(section42).
 Note that Jsonnet uses the empty object as the implicit base super object for inheritance;
@@ -1747,7 +1748,7 @@ One logical feature too many and the type system will become undecidable, or wor
 
 Bruce et al.@~cite{BruceCardelliPierce2006} summarize one basic challenge in encoding objects.
 Their first model, OR, fits our @(section1).
-Their other three, OE, OBE, ORE, do not apply to prototype-based OOP,
+Their other three, OE, OBE, ORBE, do not apply to prototype-based OOP,
 but are tailored to class-based OOP.
 OE and ORBE naturally emerge when using our reduction of class-based OOP to prototype-based OOP,
 OE as our “typeclass” representation, ORBE as our “class” representation.
@@ -1779,6 +1780,7 @@ The limited type system of Haskell does not support OOP for first-class entities
 Yet Haskell popularized a form of second-class @emph{ad hoc} polymorphism
 in the form of typeclasses@~cite{ImplementingTypeClasses}.
 @;TODO CITE
+@;TODO CITE OOHaskell and Oleg Kiselyov's works
 Despite these limitations, Oliveira@~cite{MonadsMixins} uses
 essentially our @(section1) construction to amazing effects.
 Remarkably, he doesn't try at all to model records, which wouldn't work,
@@ -1851,7 +1853,7 @@ Below is the C3 Linearization algorithm to topologically sort an inheritance DAG
 into a precedence list such that direct supers are all included before indirect supers.
 Initially introduced in Dylan@~cite{Barrett96amonotonic},
 it has since been adopted by many modern languages, including
-Python, Scala, Raku, Parrot, Solidity, PGF/TikZ.
+Python, Raku, Parrot, Solidity, PGF/TikZ.
 
 The algorithm ensures that the precedence list of an object always contains as ordered sub-lists
 (though not necessarily with consecutive elements) the precedence list of
