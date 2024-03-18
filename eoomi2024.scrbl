@@ -99,7 +99,7 @@ We can then make our previous claims about OO and Modularity more explicit and l
 
 @subsection{Claims}
 
-As original contributions, the present paper does the following:
+The present paper claim the following original contributions:
 
 @TODO{see defsection in poof.scrbl, use that here and everywhere.}
 
@@ -120,20 +120,24 @@ As original contributions, the present paper does the following:
 @item{Show how “structs” with the performance benefits of single-inheritance
   can be expressed in a system with multiple-inheritance
   (@seclink{single_and_multiple_inheritance_together}).}
-@item{Clarify the relationship between Prototype OO and Class OO,
-  and why Prototypes, being first-class, enable more modularity (section 5.1).}
-@item{Expose the conflation between prototypes and instances (or classes and types)
-  at the heart of most OO, and why it contributes to modularity (section 5.2).}
 @item{Discuss how purity and laziness make OO more modular,
-  and solve difficult initialization order issues (section 5.3).}
+  and solve difficult initialization order issues (@seclink{laziness}).}
 @; ^ and are actually used in practice in most OO languages—but only at the metalevel.
+@item{Discuss how purity and laziness make OO more modular,
+  and solve difficult initialization order issues (@seclink{laziness}).}
+@; ^ and are actually used in practice in most OO languages—but only at the metalevel.
+@item{Expose the conflation between prototypes and instances (or classes and types)
+  at the heart of most OO, and why it contributes to modularity (@seclink{objects}).}
+@item{Clarify the relationship between Prototype OO and Class OO,
+  and why Prototypes, being first-class, enable more modularity (@seclink{classes}).}
 @item{Generalize OO methods from fixed slots to functional lenses,
-  very simply enable modular features like method combinations (section 6.1).}
+  very simply enable modular features like method combinations (@seclink{optics}).}
 @item{Show how the “typeclass” approach can be more composable and thus
-  more modular than the “class” approach (section 6.2).}
+  more modular than the “class” approach (@seclink{typeclasses}).}
 @item{Provide a pure functional modular solution to issues with
   multiple dispatch vs single dispatch, friend classes or mutually recursive classes,
-  by making library namespace management an explicit part of the language (section 6.3).}]
+  by making library namespace management an explicit part of the language
+  (@seclink{global}).}]
 
 Many of the concepts and relationships we tackle have long been part of OO practice and lore,
 yet have been largely neglected in scientific literature and formalization attempts.
@@ -145,15 +149,16 @@ Yet, many other slogans or concepts have been claimed to be essential to OO in t
 We can summarily dismiss those claims as follows:
 
 @subsubsection{Classes}
-Many think that classes are essential to OO, as introduced by Simula 67@~cite{Simula1968}
-and only ever care to implement, use, formalize, teach or propagandize
-class-based OO (a.k.a. Class OO).
+Many think that classes, as introduced by Simula 67@~cite{Simula1968}
+(though implementing a concept previously named by Hoare@~cite{hoare1965record}),
+are essential to OO, and only ever care to implement, use, formalize,
+study, teach or propagandize class-based OO (a.k.a. Class OO).
 
 The existence since 1976@~cite{Kahn1976 Borning1977 Kahn1979 Borning1979 Borning1981 Rees82t:a adams88oopscheme}
-of languages using class-less
-prototype-based OO (a.k.a. Prototype OO)@~cite{Lieberman1986 Borning1986 chambers1989efficient Lawall89SelfInScheme},
-and the fact that the most used OO language in the world, JavaScript@~cite{TopPL2022},
-uses prototypes@~cite{EcmaScript:15}, provide clear counter-evidence to this claim.
+of languages using class-less prototype-based OO
+(a.k.a. Prototype OO)@~cite{Lieberman1986 Borning1986 chambers1989efficient Lawall89SelfInScheme},
+and the fact that the single most used OO language in the world, JavaScript@~cite{TopPL2022},
+uses prototypes@~cite{EcmaScript:15}, provide clear counter-evidence to this belief.
 The original inventors of OO also later unified classes, prototypes and procedures
 into a general notion of “patterns”@~cite{kristensen1987beta},
 which also voids any appeal to their authority in declaring classes as such as essential to OO.
@@ -176,8 +181,9 @@ Furthermore, they assume the same eager evaluation model
 for function calls and variable definitions as in every common imperative language.
 @TODO{CITE? C++ Perl5 Python Java JavaScript Scala Ruby Go (see GitHub)}
 Meanwhile, many have of late claimed that purity (the lack of side-effects including mutable state)
-is essential to FP and not just its pure functional core, and is thus incompatible with OO.
-Some purists also argue that call-by-name or call-by-need is also essential for true FP,
+is essential to FP, making it incompatible with OO.
+Some purists even argue that normal-order evaluation (call-by-name or call-by-need)
+is also essential for true FP,
 making it even more incompatible with OO.
 
 Now there are many good historical reasons,
@@ -196,19 +202,20 @@ and in practice in the mid 2000s to mid 2010s, as Haskell grew up to become a pr
 Yet, there are (a) pure models of OO such as those of
 Kamin, Reddy, Cook and Bracha@~cite{Kamin1988 ObjectsAsClosures Cook1989 bracha1990mixin},
 (b) pure lazy dynamic OO languages such as Jsonnet or Nix@~cite{jsonnet dolstra2008nixos},
-and of pure OO systems such as presented in this paper and its predecessors@~cite{poof2021}
+and pure OO systems such as presented in this paper and its predecessors@~cite{poof2021}
 @; TODO maybe mention foreshadowing by Oleg Kiselyov ?
 and (c) languages happily combining OO and FP such as Common Lisp or Scala
 @;TODO cite ScalaZ, etc.
 with plenty of libraries restricting themselves to pure functional objects only.
 These provide ample evidence that OO does not at all require mutation,
-but can be done in a pure setting, and is very compatible with FP, purity and even with laziness.
-We could even argue that Haskell typeclasses embody OO@~cite{typeclasses},
+but can be done in a pure setting, and is very compatible with FP, purity,
+and even with laziness and normal-order evaluation.
+We could even argue that Haskell typeclasses embody OO@~cite{typeclasses LIL2012},
 though its designers might not wholly embrace the OO tradition. @TODO{CITE}
 
 @subsubsection{Inheritance as opposed to Composition}
 @;TODO: the terms have a specific meaning within OO, @~cite{}
-Some argue that the essence of OO is to choose side in a conflict
+Some argue that the essence of OO is to choose a side in a conflict
 between Inheritance and Composition, wherein one has to model every possible domain
 in terms of inheritance, especially so where it can be preferred compared
 to alternatives not involving it,
@@ -283,6 +290,7 @@ an aspect of modularity, @; TODO cite
 we’ll argue that the claim of encapsulation being essential to OO
 partakes in our better formalized argument
 according to which OO is about modularity (and incrementality).
+See @seclink{modularity_and_incrementality}.
 
 @subsubsection{Message Passing}
 Alan Kay, who invented Smalltalk and coined the term “Object-Oriented Programming”
@@ -326,7 +334,7 @@ Whatever clear or murky correspondance between names and concepts others may use
 this paradigm is what we will call OO and discuss in this article,
 systematically reducing it to elementary concepts.
 
-@section{Modularity and Incrementality}
+@section[#:tag "modularity_and_incrementality"]{Modularity and Incrementality}
 
 @subsection[#:tag "modularity"]{Modularity}
 
@@ -351,17 +359,17 @@ to achieve and support modularity outside the language. They will:
 @itemize[
 @item{copy and paste sections of code as poor man’s modules;}
 @item{automate organized concatenation of code snippets with preprocessors;}
-@item{divide code in files they can “link” or “load” together;}
+@item{divide code in files they can “transclude”, “link” or “load” together;}
 @item{transclude “include” files in lieu of interfaces;}
-@item{orchestrate the build with utilities such as “make”;}
-@item{bundle files into “packages” they exchange and distribute online;}
+@item{orchestrate building of software with utilities such as “make”;}
+@item{bundle software into “packages” they exchange and distribute online;}
 @item{create “package managers” to handle those bundles.}]
 
 When for the sake of “simplicity”, “elegance”, or ease of development or maintenance,
 support for modularity is lacking within a language, this language then becomes but
 the kernel of a haphazard collection of tools cobbled together
-to palliate the weakness of this kernel, that ends up being extremely
-complex, ugly, and hard to develop and maintain.
+to palliate the weakness of this kernel. The result inevitably ends up being
+extremely complex, ugly, and hard to develop and maintain.
 
 @subsubsection{Criterion for Modularity}
 @principle{A design is modular if it enables developers to cooperate without having to coordinate},
@@ -539,33 +547,29 @@ The minimal set of prototype-specific primitives follows:
 The very simplest possible design for @emph{prototypes}
 is thus as “mixin” functions with the following minimal type:
 @Code{Mixin self super = self ⊂ super ⇒ self → super → self}
-where @c{self} is the type of the computation being modularly specified,
-@c{super} is the the computation being incrementally specified,
+where @c{self} is the type of the computation as completely specified,
+@c{super} the type of the computation as partially specified so far,
 @c{self ⊂ super ⇒} is the constraint that @c{self} should be a subtype of @c{super},
 and @c{Mixin} is the name introduced by Cannon@~cite{Cannon82}
-and reprised by Cook & Bracha@~cite{bracha1990mixin}.
+and reprised and popularized by Cook and Bracha@~cite{bracha1990mixin}.
 
 The mixin instantiation and inheritance primitives are as follows:
+@Code{
 
-@Code{instantiate : Mixin self top → top → self
+instantiate : Mixin instance base → base → instance
 instantiate = λ mixin base ↦ Y (λ instance ↦ mixin instance base)
 
-inherit : Mixin self super → Mixin super duper → Mixin self duper
+inherit : Mixin instance intermediate → Mixin intermediate inherited
+          → Mixin instance inherited
 inherit = λ child parent ↦ λ instance inherited ↦
-              child instance (parent instance inherited)}
+              child instance (parent instance inherited)
+
+}
 
 or equivalently:
+@Code{
 
-@Code{fix : Mixin instance base → base → instance
-fix = λ mixin top ↦ Y (λ self ↦ mixin self top)
-
-mix : Mixin instance middle → Mixin middle inherited →
-            Mixin instance inherited
-mix = λ child parent self duper ↦ child self (parent self duper)}
-
-or yet equivalently:
-
-@Code{fix : Mixin self top → top → self
+fix : Mixin self top → top → self
 fix = λ mixin top ↦ Y (λ self ↦ mixin self top)
 
 mix : Mixin self super → Mixin super duper → Mixin self duper
@@ -576,9 +580,10 @@ The @c{instantiate} function above computes a fixed-point @c{instance}
 for a @c{mixin} given as extra argument a type-appropriate @c{base} value
 that serves as seed of the computation being instantiated:
 an empty record @c|{{}}|, a function that always fails @c{⊤ = λ _ ↦ ⊥}, etc.
-The type @c{top} of @c{base} is thus a base type for the specified computation:
-a supertype of the type @c{self} of the @c{instance} being computed.
-In a monomorphic setting, @c{top} is just @c{self} itself;
+The type of @c{base}, a.k.a. @c{top}, is thus
+a base type for the specified computation:
+a supertype of the type @c{instance} being computed, a.k.a. @c{self}.
+In a monomorphic setting, @c{base} is just @c{instance} itself;
 with a rich-enough type system, it can be a “top” type
 for many distinct types of computations, carrying no information.
 
@@ -632,7 +637,8 @@ A more refined type that can be used for mixins is then:
            eself → esuper → eself}
 where @c{self} and @c{super} are the minimal types intrinsic to the mixin,
 and @c{eself} and @c{esuper} are the @emph{effective} types,
-respective subtypes of the above that will be used in the context of instantiation.
+respective subtypes of the above, as will actually be used,
+depending on the context of instantiation.
 
 This type is an intersection of all variants of the previous type
 for subtypes @c{eself} and @c{esuper} of @c{self} and @c{super} respectively.
@@ -662,7 +668,7 @@ a popular choice to generate distributed software deployment configurations
 for Kubernetes or AWS, and was started as a conceptual cleanup of}
 @item{the Google Control Language GCL@~cite{gclviewer2008} (née BCL, Borg Control Language),
 which has been used to specify all of Google’s distributed software deployments
-since about 2004 (but uses dynamic rather than lexical scoping,
+since about 2004 (but uses dynamic rather than static scoping,
 causing dread among Google developers).}
 @item{It furthermore reproduces not just the semantics but the actual implementation
 of “extensions”@~cite{nix2015} as a user-level library
@@ -703,9 +709,9 @@ are at times called @emph{“methods”}, “slots”, “fields”, “attribut
 “variables”, or otherwise, depending on the specific sub-tradition.
 
 The records themselves will be suitably wrapped into a proper computation result @emph{instance}:
-a class (in class-based OO, a.k.a. Class OO),
-an object (in prototype-based OO, a.k.a. Prototype OO),
-a typeclass (in functional languages with typeclasses, though they may deny the OO tradition),
+a class (in Class OO),
+an object (in Prototype OO),
+a typeclass (in FP with typeclasses, though its users may deny the OO tradition),
 wherein the record will embody the “method dispatch table”,
 “attribute set”, “dictionary” or whatchamacallit of the aforementioned entity.
 
@@ -724,15 +730,16 @@ or some variant of Church encoding, our Functional Language
 is suitably extended with the usual essential data structures:
 numbers, booleans, strings, tuples, lists.
 Record keys can be of a language-appropriate type with a decidable equality predicate:
-integers (sometimes as named constants),
+integers (sometimes as named constants at the meta-level),
 strings, or optionally symbols (interned strings) or
 identifiers (source code tracking entities).
 
-The empty record @c{rtop} and a constructor @c{rcons k v r}
-that given a key @c{k}, a value @c{v} and a previous record @c{r} returns a new
-record that extends @c{r} with a new or overriding binding of @c{k} to @c{v}.
+Records can be defined from the empty record @c{rtop} and
+a constructor @c{rcons k v r} that given a key @c{k}, a value @c{v} and
+a previous record @c{r} returns a new record that extends @c{r}
+with a new or overriding binding of @c{k} to @c{v}.
 The three simplest encodings of a record would then be
-as a function, an @emph{alist}, or a mapping table.
+as a function, an @emph{alist}, or a mapping table, as follow.
 
 Records as functions is the simplest encoding, and
 accessing the value for a key is done by just calling the function with the key.
@@ -805,7 +812,7 @@ assuming bracketed and comma-delimited lists, with @c{[head, ...tails]} patterns
 @Code{mix* [] = idm
       mix* [h, ...t] = mix h (mix* t)
       fix* base l = fix base (mix* l)
-      fixR* = fix* rtop)}
+      fixR* = fix* rtop}
 
 Giving polymorphic types to these list helpers may require not only subtyping
 but also some form of type indexing for those lists.
@@ -877,7 +884,7 @@ It also maps directly to the concepts of Modularity and Incrementality we are di
 And for these reasons we introduced it first.
 
 However, historically it was discovered last, because FP wasn’t mature
-until much after when the need for Modularity and Incrementality was felt.
+until much after the time the need for Modularity and Incrementality was felt.
 It is also relatively more obscure, probably because, in addition to the above,
 it is less modular than the more complex but previously discovered
 multiple inheritance (discussed below in @seclink{multiple_inheritance}).
@@ -1026,7 +1033,7 @@ than mixin and multiple inheritance.
 A third kind of inheritance is @emph{multiple inheritance},
 that historically appeared before mixin inheritance was formalized@~cite{Cannon82},
 and that is more sophisticated than the two above.
-It was popularized by Lisp object systems
+It was popularized by the Lisp object systems
 Flavors, Common Loops, New Flavors and CLOS@~cite{bobrow88clos},
 then by Self and C++. @;TODO cite
 @; cite New Flavors and CommonLoops 1986 ?
@@ -1119,7 +1126,7 @@ using the prototype names to ensure the unique appearance
 of each super in the resulting list.
 The precedence list can be viewed as a total order that extends and completes
 the partial order of the inheritance DAG.
-Modern algorithms like C3@~cite{Barrett96amonotonic WikiC3})
+Modern algorithms like C3@~cite{Barrett96amonotonic WikiC3}
 further ensure “monotonic” consistency between the precedence list of a prototype
 and those of its supers, such that the former extends the latter
 as well as the list of supers itself.
@@ -1296,7 +1303,7 @@ yet that can yield essential insights about it.
 Some of these insights may already be known,
 but often only implicitly so, and only by a few experts or implementers.
 
-@subsection{Pure Laziness}
+@subsection[#:tag "laziness"]{Pure Laziness}
 @subsubsection{Lazy makes OO Easy}
 In a lazy functional language such as Nix,
 you can use the above definitions
@@ -1565,14 +1572,14 @@ directly represented in the programming language,
 only somehow implemented or expressed in it.
 Programmers may retort that such is the reality in any programming language anyway,
 and some languages are more honest about it than others,
-and won’t a lie stop them from building more useful languages.
+and won’t let a lie stop them from building more ergonomic features.
 Mathematicians might insist that sometimes they really want to represent
 just a function, with no other hidden capabilities, and more generally,
 to maximally restrict what a program can do, so as more feasibly to reason about it.
 Programmers may retort that they still can in such a language, if they insist.
 
-The debate endures about what makes callable objects a good or bad idea;
-our purpose is not to repeat the debate, @TODO{cite}
+Our purpose is not to repeat the debate whether or not
+making objects callable is a good or bad idea, @TODO{cite}
 even less to take sides in it—but instead
 to notice and make explicit this important and useful notion
 of implicit product of several things,
@@ -1608,6 +1615,11 @@ Instances are plain values of any type whatsoever, sometimes just simple real fu
 you can’t combine them with inheritance, or do any OO-related operation on them.
 If they are “objects” then the word “object” is utterly empty of meaning.
 
+Indeed, we wrote code exactly in this style to generate
+presentation slides for this work@~cite{poof2021};
+it allowed to express everything that is usually done with objects,
+but for one caveat discussed below in @seclink{keeping_extensibility_modular}.
+
 And so maybe Object Orientation was always a misnomer, born of a historical confusion
 before science brought necessary distinctions between concepts.
 Maybe the field should be named after inheritance, or prototypes,
@@ -1615,13 +1627,14 @@ or incremental modularity, and banish the word “Object” forevermore from its
 
 Yet objects are possible, and a useful concept in OO.
 
-@subsection{Objects}
-@subsubsection{Conflating Prototype and Instance}
+@subsection[#:tag "objects"]{Objects}
+@subsubsection[#:tag "conflating_prototype_and_instance"]{Conflating Prototype and Instance}
 While neither a prototype nor an instance is an object,
 the @emph{conflation} of the two, is.
-That is indeed what objects are in Jsonnet and Nix:
-every object can be seen as an instance when querying the values of its slots,
-and as a prototype when combining it with other objects using mixin composition.
+That is exactly what objects are in pure prototype OO languages like Jsonnet and Nix, and
+a slight simplification of what they are in stateful prototype OO languages:
+every object can be seen as either an instance, when querying the values of its slots,
+or as a prototype, when combining it with other objects using inheritance.
 
 Indeed in a pure functional language, without side-effects,
 there is a unique instance associated to any prototype, up to observable equality:
@@ -1631,21 +1644,35 @@ and to see it as but another aspect of it.
 Evaluating the fixed-point may or may not converge, but thanks to lazy evaluation,
 you don’t have to care about whether that is the case to refer to the two together.
 
-Even if the language isn’t lazy-by-default, and instead has side-effects,
-that is a good time to introduce a laziness construct.
-Then, there may be multiple distinct instances to a prototype, and yet
-you can use a @c{clone} construct to generate a new object from an existing object,
+If the language has side-effects, there may be multiple distinct instances to a prototype,
+and a @c{clone} construct will generate a new object from an existing object,
 and still keep instance and prototype together.
+Even in such a language, a laziness construct can help build a simpler and nicer object system.
 
-@subsubsection{Keeping Extensibility Modular}
-Thanks to the conflation of instance and prototype as two aspects of a same object,
-configurations can be written that can refer to other parts of the configuration
-without having to track and distinguish which parts are instantiated at which point,
-and it all just works.
-Still, distinguishing the two concepts of instance and prototype is important
-to dispel the confusion that can often reign in even the most experienced OO practitioner
-regarding the fine behavior of objects when trying to assemble or debug programs.
+Note that these prototype objects correspond to @emph{classes at compile-time}
+in class OO languages, that use the word “object” differently.
+See @seclink{classes}.
 
+@subsubsection[#:tag "keeping_extensibility_modular"]{Keeping Extensibility Modular}
+Specifying software with prototypes yet without objects works great,
+as long as it’s always clear at all times which entities are prototypes and which are instances.
+This is simple enough when the specification all happens in a single phase,
+and everything is a big prototype with a big fixed point operation around it,
+and plenty of explicit fixed point operations within, one for every sub-prototype.
+But what if the specification involves multiple phases, where the “same” entity
+is used as an instance before it is used again as a prototype?
+What if a program, once complete, is later extended by another programmer,
+overriding parts that the original programmer didn’t anticipate would be overridden?
+
+The conflation of prototype and instance, that is, objects, enable future phasing and extensions
+without the original programmers having to anticipate how and factor their code accordingly.
+Programs can be written that can refer to previous or other programs
+without having to track and distinguish which parts are instantiated at which point.
+No need to decide at every potential extension point whether and when to either
+compute a fixed-point or defer its computation, in what leads to a combinatorial explosion
+of potential interfaces. No need to defer everything until the last minute,
+and make it expensive to use any intermediary value to make a decision before that last minute,
+while contaminating the entire computation to turn everything into explicit prototypes.
 
 @subsubsection{Adding More Features}
 On the other hand, we realize that with conflation, we can also extend prototypes:
@@ -1661,13 +1688,15 @@ slot visibility information,
 debugging information,
 introspectable method definitions, etc.,
 
-
-
 @subsubsection{Distinction and Conflation}
 How both Distinction between Prototype and Instance and Conflation of the two
 are essential to understanding OO, yet have been missed by the theoretical literature so far
 (but not by practical implementations).
 Explicit “Functors” vs their fixed points.
+
+Distinguishing the two concepts of instance and prototype is important
+to dispel the confusion that can often reign in even the most experienced OO practitioner
+regarding the fine behavior of objects when trying to assemble or debug programs.
 
 @subsubsection{Method Combination, Instance Combination}
 Specializing inheritance with respect to how increments are combined.
@@ -1746,19 +1775,19 @@ in the extents during which the inheritance hierarchy was left undisturbed.
 Why Subclassing is rarely Subtyping, and other questions of monotonicity,
     (co-, contra- and in-) variance in Functor Mixins and Fixed-Point Operators.
 
-@subsubsection{Typeclasses}
+@subsubsection[#:tag "typeclasses"]{Typeclasses}
 The relationship between Classes and Typeclasses.
     How typeclasses make object creation less ad hoc and more modular.
 
 @subsubsection{Autowrapping}
 The relationship between Mutable or Immutable objects, linear typing and subtyping.
 
-@subsubsection{Optics}
+@subsubsection[#:tag "optics"]{Optics}
 The generalization of OO from overriding methods in records
     to overriding arbitrary aspects of arbitrary computations using functional lenses or zippers,
     and how this generalization can accommodate advanced OO practices like method combinations.
 
-@subsubsection{Global Open Recursion}
+@subsubsection[#:tag "global"]{Global Open Recursion}
 A pure functional solution, already widely used in practice, yet neglected
     in the literature, to the problem of “multimethods”, “friend classes” or “orphan typeclasses”,
     and the according implications on designing and growing a language.
