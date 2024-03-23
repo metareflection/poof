@@ -1588,7 +1588,7 @@ whether resolved syntactically at compile-time (when possible)
 or dynamically at runtime (otherwise).
 We will call this implicit product a @emph{conflation}.
 
-@subsubsection{Freedom of Representation}
+@subsubsection{Freedom of and from Representation}
 We already saw in @seclink{encoding_records} that were many ways to represent records,
 that affect performance, memory usage, the ability to introspect values, etc.
 There are even more ways to represent them in conflation with functions, arrays, and more.
@@ -1602,7 +1602,8 @@ from any specific type of instance being specified,
 we now find we are not only free to choose the instance type,
 but also free @emph{not} to choose:
 we can keep the concepts of prototypes, inheritance, etc.,
-as abstract entities, wholly independent from whatever instance types one may apply them to.
+as abstract entities that can work on any instance type a programmer may want to apply them to,
+instead of only supporting a single privileged instance type.
 This makes prototypes a more general and more modular notion
 that can be used in multiple ways in a same language ecosystem.
 
@@ -1733,25 +1734,58 @@ By insisting on both conflation and distinguish of the two concepts of instance 
 we aim at dispeling the confusion often reigns in even the most experienced OO practitioners
 when trying to reason about the fine behavior of OO programs.
 
-@subsubsection{Method Combination, Instance Combination}
-Specializing inheritance with respect to how increments are combined.
-generalizing precedence lists with DAG attribute grammars.
-Metaobject-compatibility.
+@section[#:tag "classes"]{Classes}
 
-@; TODO: subsubsection about using the notion of defaults hiding complexity behind a simple interface,
-@; and enabling, e.g. method combination with a main method and other methods,
-@; with the effective method being more than the plainly named main method.
+@subsection{Class OO as Type-Level Prototype OO}
 
-@section[#:tag "classes"]{Classes as Type Prototypes}
-The relationship between Prototype OO and Class OO, and how the latter is a special
-    case of the former—classes being meta-level prototypes for types.
+@subsubsection{Type Prototypes}
 
-@section{BLAH START (RE)WRITING FROM HERE}
+Now that we have fully elucidated Prototype OO including its notion of Object,
+we can in turn fully elucidate Class OO including its notion of Class:
+@principle{A Class is a Prototype for a Type}.
 
-@subsection{FOOOOOOOOOOOO}
+Class OO is thus a special case of Prototype OO,
+but one where usually prototype computations only happen at the type-level.
+The instances incrementally specified by these prototypes are types,
+or more precisely compile-time type descriptors.
+The language in which these prototypes are defined and composed is
+not the usual “base language” that the programmer thinks in (e.g. C++, Java, C#),
+but instead a distinct type-level language in which the types and the
+base-level functions operating on them are being incrementally specified,
+in a restricted form of staged metaprogramming. @TODO{cite}
 
+@subsubsection{Class OO makes classes Second-Class}
+Usually, the type-level language used in a language with Class OO
+is restricted in expressiveness,
+in an often deliberate attempt to keep it from being “Turing-equivalent”.
+This attempt sometimes succeeds (as in OCaml), but more often than not
+utterly fails, as computational power emerges from unforeseen interactions
+between language features added over time (as in C++, Java, Haskell).
+@TODO{cite Nada on Java type system constraints}
+The attempts do often succeed, however, at making these type-level languages
+require a completely different mindset and very round-about design patterns
+to do anything useful, a task usually reserved for experts.
 
-@subsubsection{Typing Records}
+Computationally powerful or not, the type-level language of a class OO language
+is usually very different from the base language:
+type-level languages tend to be pure functional or logic programming languages
+with pattern-matching and laziness but without any I/O support,
+even though the base languages themselves tend to be
+eager stateful procedural languages with lots of I/O support
+and often without pattern-matching or laziness
+(or limited ones as afterthoughts).
+
+In the end, classes are thus not @emph{first-class} entities in Class OO
+(subject to arbitrary programming at runtime),
+but @emph{second-class} entities (restricted to limited compile-time programming),
+though many languages offer limited reflection capabilities at runtime.
+By contrast, classes are first-class entities in Prototype OO;
+and indeed, one of the first applications of Prototype OO in any language
+is often to build rich runtime type descriptors, that include features
+not usually expressible with compile-time type descriptors, such as
+extra constraints, context-dependent I/O, property-based testing support, etc.
+
+@subsection{Typing Records}
 Now, a type system with suitable indexed types and subtyping
 is required to use rich records. With a less-expressive type system,
 each use of mixins will be monomorphic;
@@ -1776,6 +1810,10 @@ Users can still use them to store arbitrary data,
 by awkwardly emulating dynamic types on top of static types to achieve desired results.
 
 This also makes them hard to type without subtypes.
+
+@section{BLAH START (RE)WRITING FROM HERE}
+
+@subsection{FOOOOOOOOOOOO}
 
 @subsubsection[#:tag "mutation"]{Mutation}
 The performance optimizations and semantic issues related to mutability in OO.
@@ -1821,6 +1859,15 @@ The relationship between Mutable or Immutable objects, linear typing and subtypi
 The generalization of OO from overriding methods in records
     to overriding arbitrary aspects of arbitrary computations using functional lenses or zippers,
     and how this generalization can accommodate advanced OO practices like method combinations.
+
+@subsubsection{Method Combination, Instance Combination}
+Specializing inheritance with respect to how increments are combined.
+generalizing precedence lists with DAG attribute grammars.
+Metaobject-compatibility.
+
+@; TODO: subsubsection about using the notion of defaults hiding complexity behind a simple interface,
+@; and enabling, e.g. method combination with a primary method and other methods,
+@; with the effective method being more than the plainly named main method.
 
 @subsubsection[#:tag "global"]{Global Open Recursion}
 A pure functional solution, already widely used in practice, yet neglected
