@@ -269,8 +269,8 @@ but a @c{car} @emph{has} a @c{chassis} and @emph{is not} a @c{chassis}.}
 
 @subsubsection{Encapsulation}
 Many OO pundits claim that an essential concept in OO
-is “encapsulation” also sometimes called “information hiding”,
-though there is no consensus as to what this concept means,
+is “encapsulation” or “information hiding”@~cite{DeRemerKron1975},
+though there is no consensus as to what this or these concepts mean,
 and no clear definition. @TODO{CITE}
 
 Inasmuch as some people identify encapsulation as the presence
@@ -286,7 +286,7 @@ or simply lexical scoping as present in FP@~cite{rees1995}.
 @TODO{cite Simula? JS?}
 
 On the other hand, inasmuch as this “encapsulation” informally denotes
-an aspect of modularity, @; TODO cite
+an aspect of modularity,
 we’ll argue that the claim of encapsulation being essential to OO
 partakes in our better formalized argument
 according to which OO is about modularity (and incrementality).
@@ -1583,8 +1583,10 @@ making objects callable is a good or bad idea, @TODO{cite}
 even less to take sides in it—but instead
 to notice and make explicit this important and useful notion
 of implicit product of several things,
-whether record, function, or more:
-we will call this implicit product a @emph{conflation}.
+whether record, function, or more,
+whether resolved syntactically at compile-time (when possible)
+or dynamically at runtime (otherwise).
+We will call this implicit product a @emph{conflation}.
 
 @subsubsection{Freedom of Representation}
 We already saw in @seclink{encoding_records} that were many ways to represent records,
@@ -1601,37 +1603,38 @@ we now find we are not only free to choose the instance type,
 but also free @emph{not} to choose:
 we can keep the concepts of prototypes, inheritance, etc.,
 as abstract entities, wholly independent from whatever instance types one may apply them to.
+This makes prototypes a more general and more modular notion
+that can be used in multiple ways in a same language ecosystem.
 
 @subsubsection{OO without Objects}
-And then, we may realize that we have so far been explaining and implementing
-the key concepts of “Object Orientation”, without having introduced
-any notion of object, much less class.
+At this point, we may realize we have been explaining and implementing
+all key concepts of “Object Orientation” without ever introducing
+any notion of object, much less of class.
 
-There are prototypes, and there are instances;
-but neither is an object:
-Prototypes are incomplete specifications;
+There are prototypes, and there are instances; but neither is an object.
+Prototypes are uninstantiated specifications, often incomplete therefore uninstantiable;
 you can’t call methods on them, or do anything that you can expect to do on an object.
 Instances are plain values of any type whatsoever, sometimes just simple real functions;
 you can’t combine them with inheritance, or do any OO-related operation on them.
-If they are “objects” then the word “object” is utterly empty of meaning.
+If either is an “object”, then the word “object” is utterly empty of meaning.
 
-Indeed, we wrote code exactly in this style to generate
-presentation slides for this work@~cite{poof2021};
-it allowed to express everything that is usually done with objects,
+Indeed, we wrote code exactly in this object-less “OO” style to generate
+presentation slides for this work@~cite{poof2021}.
+We could express without objects everything that is usually done with objects,
 but for one caveat discussed below in @seclink{keeping_extensibility_modular}.
 
-And so maybe Object Orientation was always a misnomer, born of a historical confusion
-before science brought necessary distinctions between concepts.
-Maybe the field should be named after inheritance, or prototypes,
-or incremental modularity, and banish the word “Object” forevermore from its name.
+Thus maybe “Object Orientation” was always a misnomer, born from the original confusion
+of a time before science identified and clarified the relevant concepts.
+Maybe the field should be named after Inheritance, or Prototypes,
+or Incremental Modularity, and banish the word “Object” forevermore from its name.
 
-Yet objects are possible, and a useful concept in OO.
+Yet misnamed as OO may be, objects are possible and a useful concept in it.
 
-@subsection[#:tag "objects"]{Objects}
+@subsection[#:tag "objects"]{Objects: The Power of Conflation}
 @subsubsection[#:tag "conflating_prototype_and_instance"]{Conflating Prototype and Instance}
 While neither a prototype nor an instance is an object,
 the @emph{conflation} of the two, is.
-That is exactly what objects are in pure prototype OO languages like Jsonnet and Nix, and
+This is exactly what objects are in pure prototype OO languages like Jsonnet and Nix, and
 a slight simplification of what they are in stateful prototype OO languages:
 every object can be seen as either an instance, when querying the values of its slots,
 or as a prototype, when combining it with other objects using inheritance.
@@ -1642,7 +1645,8 @@ its fixed-point.
 Thus, it always makes sense to consider “the” instance for a prototype,
 and to see it as but another aspect of it.
 Evaluating the fixed-point may or may not converge, but thanks to lazy evaluation,
-you don’t have to care about whether that is the case to refer to the two together.
+you don’t have to care about whether that is the case to refer to the two together,
+and once computed once the result can be cached for performance.
 
 If the language has side-effects, there may be multiple distinct instances to a prototype,
 and a @c{clone} construct will generate a new object from an existing object,
@@ -1655,17 +1659,20 @@ See @seclink{classes}.
 
 @subsubsection[#:tag "keeping_extensibility_modular"]{Keeping Extensibility Modular}
 Specifying software with prototypes yet without objects works great,
-as long as it’s always clear at all times which entities are prototypes and which are instances.
+as long as it’s clear at all times which entities are prototypes and which are instances.
 This is simple enough when the specification all happens in a single phase,
 and everything is a big prototype with a big fixed point operation around it,
 and plenty of explicit fixed point operations within, one for every sub-prototype.
 But what if the specification involves multiple phases, where the “same” entity
-is used as an instance before it is used again as a prototype?
-What if a program, once complete, is later extended by another programmer,
+is sometimes used as an instance, sometimes as a prototype, what more
+without it always being used as a prototype before it is used as an instance?
+What if some entity, complete and useful in itself, is later extended by another programmer,
 overriding parts that the original programmer didn’t anticipate would be overridden?
+What if unextended and extended variants of it are used in a same program?
 
-The conflation of prototype and instance, that is, objects, enable future phasing and extensions
-without the original programmers having to anticipate how and factor their code accordingly.
+The conflation of prototype and instance into an object
+enables future phasing and extensions without the original programmers
+having to anticipate how their code will be used and to factor it accordingly.
 Programs can be written that can refer to previous or other programs
 without having to track and distinguish which parts are instantiated at which point.
 No need to decide at every potential extension point whether and when to either
@@ -1673,26 +1680,48 @@ compute a fixed-point or defer its computation, in what leads to a combinatorial
 of potential interfaces. No need to defer everything until the last minute,
 and make it expensive to use any intermediary value to make a decision before that last minute,
 while contaminating the entire computation to turn everything into explicit prototypes.
+No need to construct and remember access paths or lenses that you’ll have to use
+in two different contexts to access both aspects of the “same” object.
+
+In the end, conflation of prototype and instance allows programmers
+to write and refer to objects with less mutual coordination with respect
+to when an object is being used or extended.
+By the criteria in @seclink{modularity_and_incrementality},
+this conflation indeed makes OOP more modular.
 
 @subsubsection{Adding More Features}
-On the other hand, we realize that with conflation, we can also extend prototypes:
+Conflation also means we can also extend prototypes to support more features.
 For mixin inheritance, we wanted a prototypes to be just a mixin function.
 For multiple inheritance, we wanted a prototype to @emph{also} have a list of direct supers;
 and for good measure, we wanted to cache rather than expensively recompute every time
 the prototype’s precedence list of transitive supers.
+Further features can be added by conflating further aspects to prototypes.
 
-We could add more features to our object system by extending this implicit product with
-“default values” for otherwise-undefined methods or slots,
+For instance, we can add a “default values” feature
+by conflating an additional map from slot to value
+that is only consulted when no override is provided.
 Runtime or compile-time type restrictions on slots,
 slot visibility information,
 debugging information,
+online documentation,
+examples and test cases,
+generators and minimizers for property-based testing,
 introspectable method definitions, etc.,
+can be added as in the same way:
+as additional conflated aspects of a prototype,
+factors in the prototype as (implicit) product,
+or equivalently slots in the prototype seen itself as a record instance.
 
 @subsubsection{Distinction and Conflation}
-How both Distinction between Prototype and Instance and Conflation of the two
-are essential to understanding OO, yet have been missed by the theoretical literature so far
-(but not by practical implementations).
-Explicit “Functors” vs their fixed points.
+Note that while conflation of many aspects of prototypes, instances and together objects
+in an implicit product brings better ergonomics and extensibility,
+the notional distinction between each and every of these aspects as separate entities
+is essential in enabling man and machine to understand OOP and its precise semantics.
+Yet, both this Conflation and this Distinction have been largely missed by
+most of the theoretical literature, programming language documentation, and teaching materials
+so far—even though by necessity compilers and interpreters do abide by them
+to properly implement these languages.
+Yet, @principle{Conflation without Distinction is Confusion}.
 
 Distinguishing the two concepts of instance and prototype is important
 to dispel the confusion that can often reign in even the most experienced OO practitioner

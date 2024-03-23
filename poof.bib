@@ -219,6 +219,8 @@
   url = {https://www.researchgate.net/publication/221252249_T_a_dialect_of_Lisp_or_LAMBDA_The_ultimate_software_tool}
 }
 
+% Borning1982 cites a 1980 version of the Flavors report, from MIT
+% Also a 1982 version of LOOPS
 @Misc{Cannon82,
   title={Flavors: A non-hierarchical approach to object-oriented programming},
   author={Howard Cannon},
@@ -1085,3 +1087,71 @@
 
 % CECIL also had prototype inheritance / classless objects
 % A cursory look at the manual does not mention mutable parents, however
+
+@InProceedings{10.1145/28697.28702,
+  author = {Snyder, Alan},
+  title = {Encapsulation and inheritance in object-oriented programming languages},
+  year = {1986},
+  isbn = {0897912047},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/28697.28702},
+  doi = {10.1145/28697.28702},
+  abstract = {Object-oriented programming is a practical and useful programming methodology that encourages modular design and software reuse. Most object-oriented programming languages support data abstraction by preventing an object from being manipulated except via its defined external operations. In most languages, however, the introduction of inheritance severely compromises the benefits of this encapsulation. Furthermore, the use of inheritance itself is globally visible in most languages, so that changes to the inheritance hierarchy cannot be made safely. This paper examines the relationship between inheritance and encapsulation and develops requirements for full support of encapsulation with inheritance.},
+  booktitle = {Conference Proceedings on Object-Oriented Programming Systems, Languages and Applications},
+  pages = {38–45},
+  numpages = {8},
+  location = {Portland, Oregon, USA},
+  series = {OOPSLA '86}
+}
+
+@article{10.1145/960112.28702,
+  author = {Snyder, Alan},
+  title = {Encapsulation and inheritance in object-oriented programming languages},
+  year = {1986},
+  issue_date = {Nov. 1986},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume = {21},
+  number = {11},
+  issn = {0362-1340},
+  url = {https://doi.org/10.1145/960112.28702},
+  doi = {10.1145/960112.28702},
+  abstract = {Object-oriented programming is a practical and useful programming methodology that encourages modular design and software reuse. Most object-oriented programming languages support data abstraction by preventing an object from being manipulated except via its defined external operations. In most languages, however, the introduction of inheritance severely compromises the benefits of this encapsulation. Furthermore, the use of inheritance itself is globally visible in most languages, so that changes to the inheritance hierarchy cannot be made safely. This paper examines the relationship between inheritance and encapsulation and develops requirements for full support of encapsulation with inheritance.},
+  journal = {SIGPLAN Not.},
+  month = {jun},
+  pages = {38–45},
+  numpages = {8}
+}
+
+% ThingLab 1981 has multiple inheritance, and PIE (Goldstein&Bobrow 1980), Flavors 1980, LOOPS 1982.
+% Traits from Mesa [Curry 1982]
+@inproceedings{borning1982multiple,
+  title={Multiple inheritance in Smalltalk-80},
+  author={Borning, Alan H and Ingalls, Daniel HH},
+  booktitle={Proceedings at the National Conference on AI},
+  volume={82},
+  pages={234--237},
+  year={1982},
+  url={http://www.laputan.org/pub/papers/MI-Borning-Ingalls.PDF}
+}
+
+% Introduces "traits", for multiple inheritance in in Mesa
+@article{10.1145/966873.806468,
+  author = {Curry, Gael and Baer, Larry and Lipkie, Daniel and Lee, Bruce},
+  title = {Traits: An approach to multiple-inheritance subclassing},
+  year = {1982},
+  issue_date = {June 21-23, 1982},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume = {3},
+  number = {1–2},
+  issn = {0737-819X},
+  url = {https://doi.org/10.1145/966873.806468},
+  doi = {10.1145/966873.806468},
+  abstract = {This paper describes a new technique for organizing software which has been used successfully by the Xerox Star 8010 workstation. The workstation (WS) software is written in an “object-oriented” style: it can be viewed as a system of inter-communicating objects of different object types. Most of the WS software considers object types to be constructed by assembling more primitive abstractions called traits. A trait is a characteristic of an object, and is expressed as a set of operations which may be applied to objects carrying that trait. The traits model of subclassing generalizes the SIMULA-67 model by permitting multiple inheritance paths. This paper describes the relationship of WS software to the traits model and then describes the model itself.},
+  journal = {ACM SIGOA Newsletter},
+  month = {jun},
+  pages = {1–9},
+  numpages = {9}
+}
