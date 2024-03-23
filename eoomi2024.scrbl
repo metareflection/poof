@@ -1689,18 +1689,17 @@ to when an object is being used or extended.
 By the criteria in @seclink{modularity_and_incrementality},
 this conflation indeed makes OOP more modular.
 
-@subsubsection{Adding More Features}
-Conflation also means we can also extend prototypes to support more features.
+@subsubsection{Conflating More Features}
 For mixin inheritance, we wanted a prototypes to be just a mixin function.
 For multiple inheritance, we wanted a prototype to @emph{also} have a list of direct supers;
 and for good measure, we wanted to cache rather than expensively recompute every time
 the prototype’s precedence list of transitive supers.
-Further features can be added by conflating further aspects to prototypes.
+Further features can be added by conflating further aspects into the notion of prototypes.
 
-For instance, we can add a “default values” feature
+For instance, we can add a “default values” feature,
 by conflating an additional map from slot to value
 that is only consulted when no override is provided.
-Runtime or compile-time type restrictions on slots,
+Compile-time type restrictions or runtime assertions on slots,
 slot visibility information,
 debugging information,
 online documentation,
@@ -1713,19 +1712,26 @@ factors in the prototype as (implicit) product,
 or equivalently slots in the prototype seen itself as a record instance.
 
 @subsubsection{Distinction and Conflation}
-Note that while conflation of many aspects of prototypes, instances and together objects
-in an implicit product brings better ergonomics and extensibility,
-the notional distinction between each and every of these aspects as separate entities
-is essential in enabling man and machine to understand OOP and its precise semantics.
-Yet, both this Conflation and this Distinction have been largely missed by
-most of the theoretical literature, programming language documentation, and teaching materials
-so far—even though by necessity compilers and interpreters do abide by them
-to properly implement these languages.
-Yet, @principle{Conflation without Distinction is Confusion}.
+Conflating many aspects of prototypes, instances and together objects
+in an implicit product brings better ergonomics and extensibility.
+But doing it without having explicit notions of these aspects as distinct and separate entities
+leads to a hell of ununderstandably complex semantics
+as all the aspects are inextricably weaved together:
+@principle{Conflation without Distinction is Confusion}.
 
-Distinguishing the two concepts of instance and prototype is important
-to dispel the confusion that can often reign in even the most experienced OO practitioner
-regarding the fine behavior of objects when trying to assemble or debug programs.
+Previous presentations of OO,
+whether in programming language documentation, teaching materials or academic literature,
+have largely or wholly omitted both
+the implicit conflation of prototypes and instances
+in objects (for Prototype OO) or classes (for Class OO),
+and the explicit distinction between the two notions,
+with indeed much confusion as both cause and consequence.
+And yet by necessity those who implement compilers and interpreters
+by necessity abide by this conflation.
+
+By insisting on both conflation and distinguish of the two concepts of instance and prototype,
+we aim at dispeling the confusion often reigns in even the most experienced OO practitioners
+when trying to reason about the fine behavior of OO programs.
 
 @subsubsection{Method Combination, Instance Combination}
 Specializing inheritance with respect to how increments are combined.
