@@ -154,7 +154,7 @@ Many think that classes, as introduced by Simula 67@~cite{Simula1968}
 are essential to OO, and only ever care to implement, use, formalize,
 study, teach or propagandize class-based OO (a.k.a. Class OO).
 
-The existence since 1976@~cite{Kahn1976 Borning1977 Kahn1979 Borning1979 Borning1981 Rees82t:a adams88oopscheme}
+Yet the existence since 1976@~cite{Kahn1976 Borning1977 Kahn1979 Borning1979 Borning1981 Rees82t:a adams88oopscheme}
 of languages using class-less prototype-based OO
 (a.k.a. Prototype OO)@~cite{Lieberman1986 Borning1986 chambers1989efficient Lawall89SelfInScheme},
 and the fact that the single most used OO language in the world, JavaScript@~cite{TopPL2022},
@@ -164,7 +164,7 @@ into a general notion of “patterns”@~cite{kristensen1987beta},
 which also voids any appeal to their authority in declaring classes as such as essential to OO.
 
 Of course, classes are an @emph{important} concept in OO.
-The situation is similar that of types in FP,
+The situation is similar to that of types in FP,
 in which they are an important though not essential concept,
 as evidenced by the historical preexistence and continued use of the untyped λ-calculus
 and the wide adoption of dynamically typed functional languages like Scheme or Nix.
@@ -347,13 +347,31 @@ understood and worked on mostly independently from other modules.
 @subsubsection{A Meta-linguistic Feature}
 
 Most modern programming languages offer
-@emph{some} builtin notion of modules as “second-class” (meta-level) entities.
-A few languages even offer a notion of modules as “first-class” values in the language.
-We’ll argue that if nothing else, “classes” or “objects”
-are such second-class or first-class notions, in languages that support them.
+@emph{some} builtin notion of modules as “second-class” entities,
+entities that exist at compile-time but are not available as regular runtime values
+A few languages even offer a notion of modules as “first-class” entities,
+that can be manipulated as values at runtime.@note{
+In between the two, some languages offer a “reflection” API that gives some often limited
+runtime access to representations of the module entities.
+This API is often limited to introspection only or mostly;
+for instance, it won't normally let you call the compiler
+to define new modules or the linker to load them.
+YEt some languages support APIs to dynamically evaluate code,
+that can be used to define new modules;
+and some clever hackers find ways to call a compiler and dynamic linker,
+even in languages that don’t otherwise provide support APIs for it.
+}
+But many (most?) languages offer no such notion;
+indeed modules are a complex and costly feature to design and implement,
+and few language designers and implementers will expend the necessary efforts toward it
+at the start of language’s development.@note{
+Unless they develop their language within an existing modular framework
+for language-oriented programming, such as Racket,@TODO{cite. Also Stratego?}
+from which they inherit the module system.
+}
 
 Yet modularity is foremost a @emph{meta-linguistic} concept:
-even in a language that by itself provides no support whatsoever for modules
+even in a language that provides no support whatsoever for modules within the language itself
 (such as C), programmers will find manual and automated means
 to achieve and support modularity outside the language. They will:
 @itemize[
@@ -649,6 +667,11 @@ In exchange for this modularity, the mixin is restricted
 to only act in a uniform manner, that monotonically preserves
 arbitrary additional information passed as arguments to it.
 
+@; For instance, the mixin is not allowed to query which set of fields
+@; will be effectively used in the super in practice to decide
+@; which fields it will itself define.
+@; It is not allowed to rename fields from the super, etc.
+
 @; Try with higher kinds for self and super, so it’s structurally required
 @; that the mixin should use the eself parameter for reference,
 @; and return an extended super for its structure?
@@ -677,7 +700,7 @@ these extensions are heavily used by NixOS@~cite{dolstra2008nixos},
 a Nix-based software distribution for Linux and macOS, one with thousands of contributors.@note{
 These extensions were reinvented semi-independently by Peter Simons,
 who did not know anything about their relationship to Prototypes, Mixins or OO,
-but was inspired by examples and discussions with Andres Löh and Conor McBride,
+but was inspired by examples by and discussions with Andres Löh and Conor McBride,
 who were more versed in this literature.
 }}]
 @; TODO see if NixOps, DisNix, flakes, use extensions or a variant thereof, if so mention it.
@@ -1738,10 +1761,23 @@ when trying to reason about the fine behavior of OO programs.
 
 @subsection{Class OO as Type-Level Prototype OO}
 
-@subsubsection{Type Prototypes}
+@subsubsection{More Popular yet Less Fundamental}
+Class OO was historically discovered nine years before Prototype OO,
+and remains overall more popular in the literature.
+The most popular OO language, JavaScript, started with Prototype OO only (1995),
+but people were constantly reimplementing classes on top, and twenty years later (2015)
+classes were added to the language itself@~cite{EcmaScript:15}.
 
-Now that we have fully elucidated Prototype OO including its notion of Object,
-we can in turn fully elucidate Class OO including its notion of Class:
+And yet we will argue that Class OO is less fundamental than Prototype OO:
+it can indeed be very easily expressed in terms of Prototype OO and implemented on top of it,
+resulting in a conceptually simple presentation, whereas the opposite
+is much more complex when possible at all, and does not bring much
+compared to implementing directly on top of FP with fixed-size structures without inheritance.
+
+@subsubsection{Type Prototypes}
+In the previous sections, we have fully elucidated Prototype OO
+including its notion of Object as conflationg of Prototype and Instance.
+We can now fully elucidate Class OO including its notion of Class:
 @principle{A Class is a Prototype for a Type}.
 
 Class OO is thus a special case of Prototype OO,
