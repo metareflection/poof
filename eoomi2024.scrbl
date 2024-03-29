@@ -148,7 +148,7 @@ We make the bold claim that the essence of OO is Incremental Modularity.
 Yet, many other slogans or concepts have been claimed to be essential to OO in the past.
 We can summarily dismiss those claims as follows:
 
-@subsubsection{Classes}
+@subsubsection[#:tag "not_about_classes"]{Classes}
 Many think that classes, as introduced by Simula 67@~cite{Simula1968}
 (though implementing a concept previously named by Hoare@~cite{hoare1965record}),
 are essential to OO, and only ever care to implement, use, formalize,
@@ -1761,50 +1761,44 @@ when trying to reason about the fine behavior of OO programs.
 
 @subsection{Class OO as Type-Level Prototype OO}
 
-@subsubsection{More Popular yet Less Fundamental}
-Class OO was historically discovered nine years before Prototype OO,
-and remains overall more popular in the literature.
-The most popular OO language, JavaScript, started with Prototype OO only (1995),
-but people were constantly reimplementing classes on top, and twenty years later (2015)
-classes were added to the language itself@~cite{EcmaScript:15}.
-
-And yet we will argue that Class OO is less fundamental than Prototype OO:
-it can indeed be very easily expressed in terms of Prototype OO and implemented on top of it,
-resulting in a conceptually simple presentation, whereas the opposite
-is much more complex when possible at all, and does not bring much
-compared to implementing directly on top of FP with fixed-size structures without inheritance.
-
 @subsubsection{Type Prototypes}
-In the previous sections, we have fully elucidated Prototype OO
-including its notion of Object as conflationg of Prototype and Instance.
-We can now fully elucidate Class OO including its notion of Class:
+Having fully elucidated Prototype OO in the previous sections,
+including its notion of Object as conflationg of Prototype and Instance,
+we can now fully elucidate Class OO including its notion of Class:
 @principle{A Class is a Prototype for a Type}.
 
-Class OO is thus a special case of Prototype OO,
-but one where usually prototype computations only happen at the type-level.
-The instances incrementally specified by these prototypes are types,
-or more precisely compile-time type descriptors.
-The language in which these prototypes are defined and composed is
-not the usual “base language” that the programmer thinks in (e.g. C++, Java, C#),
-but instead a distinct type-level language in which the types and the
-base-level functions operating on them are being incrementally specified,
-in a restricted form of staged metaprogramming. @TODO{cite}
+Class OO is therefore a special case of Prototype OO,
+though one where prototype computations only happen at the type-level.
+The instances incrementally specified by these prototypes are @emph{types}—or
+more precisely @emph{type descriptors},
+usually available at compile-time only in Class OO languages,
+in a form of staged metaprogramming. @TODO{cite}
+
+Thus when we claimed in @seclink{not_about_classes} that
+the situation of classes in OO was similar to that of types in FP,
+we meant it quite literally.
 
 @subsubsection{Class OO makes classes Second-Class}
-Usually, the type-level language used in a language with Class OO
-is restricted in expressiveness,
+Now, the language in which these type prototypes are defined and composed is
+not the usual “base language” that the programmer
+is usually programming in (e.g. C++, Java, C#),
+but instead a distinct @emph{type-level language} in which the types and the
+base-level functions operating on them are being incrementally specified.
+
+The type-level language used in a language with Class OO
+is usually is restricted in expressiveness,
 in an often deliberate attempt to keep it from being “Turing-equivalent”.
 This attempt sometimes succeeds (as in OCaml), but more often than not
 utterly fails, as computational power emerges from unforeseen interactions
 between language features added over time (as in C++, Java, Haskell).
 @TODO{cite Nada on Java type system constraints}
-The attempts do often succeed, however, at making these type-level languages
-require a completely different mindset and very round-about design patterns
-to do anything useful, a task usually reserved for experts.
+The attempts do usually succeed, however, at making these type-level languages
+require a completely different mindset and very roundabout design patterns
+to do anything useful, a task then reserved for experts.
 
-Computationally powerful or not, the type-level language of a class OO language
-is usually very different from the base language:
-type-level languages tend to be pure functional or logic programming languages
+Computationally powerful or not, the type-level language of a Class OO language
+is almost always very different from the base language:
+the type-level languages tend to be pure functional or logic programming languages
 with pattern-matching and laziness but without any I/O support,
 even though the base languages themselves tend to be
 eager stateful procedural languages with lots of I/O support
@@ -1820,6 +1814,26 @@ and indeed, one of the first applications of Prototype OO in any language
 is often to build rich runtime type descriptors, that include features
 not usually expressible with compile-time type descriptors, such as
 extra constraints, context-dependent I/O, property-based testing support, etc.
+
+@subsubsection{More Popular yet Less Fundamental}
+Class OO was historically discovered (1967)
+nine years before Prototype OO (1976),
+and remains overall more popular in the literature.
+The most popular OO language, JavaScript, started with Prototype OO only (1995),
+but people were constantly reimplementing classes on top, and twenty years later
+classes were added to the language itself@~cite{EcmaScript:15}.
+
+And yet we will argue that Class OO is less fundamental than Prototype OO:
+it can indeed be very easily expressed in terms of Prototype OO and implemented on top of it
+(as exemplified many times over in JavaScript),
+such that inheritance among classes is indeed a special case of
+inheritance among the underlying prototypes,
+whereas the opposite is not possible:
+Class OO offers little to no advantage in implementing Prototype OO
+over directly implementing it on top of FP,
+and it is not universally possible to build Prototype OO such that
+a prototype’s inheritance structure is verily the inheritance of an underlying class
+(since the former is always first-class but the latter usually second-class).
 
 @subsection{Typing Records}
 Now, a type system with suitable indexed types and subtyping
@@ -1846,6 +1860,9 @@ Users can still use them to store arbitrary data,
 by awkwardly emulating dynamic types on top of static types to achieve desired results.
 
 This also makes them hard to type without subtypes.
+
+Type descriptors are themselves often a monomorphic type that does not require subtyping,
+at least not unless the type system accommodates dependent types, or at least staging.
 
 @section{BLAH START (RE)WRITING FROM HERE}
 
