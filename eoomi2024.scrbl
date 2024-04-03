@@ -371,9 +371,10 @@ from which they inherit the module system.
 }
 
 Yet modularity is foremost a @emph{meta-linguistic} concept:
-even in a language that provides no support whatsoever for modules within the language itself
-(such as C), programmers will find manual and automated means
-to achieve and support modularity outside the language. They will:
+even in a language that provides no support whatsoever for modules
+@emph{within} the language itself (such as C),
+programmers will find manual and automated means
+to achieve and support modularity @emph{outside} the language. They will:
 @itemize[
 @item{copy and paste sections of code as poor man’s modules;}
 @item{automate organized concatenation of code snippets with preprocessors;}
@@ -1812,8 +1813,9 @@ though many languages offer limited reflection capabilities at runtime.
 By contrast, classes are first-class entities in Prototype OO;
 and indeed, one of the first applications of Prototype OO in any language
 is often to build rich runtime type descriptors, that include features
-not usually expressible with compile-time type descriptors, such as
-extra constraints, context-dependent I/O, property-based testing support, etc.
+not usually expressible with compile-time type descriptors
+or their runtime representation as sometimes accessible through “reflection”,
+such as extra constraints, context-dependent I/O, property-based testing support, etc.
 
 @subsubsection{More Popular yet Less Fundamental}
 Class OO was historically discovered (1967)

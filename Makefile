@@ -68,7 +68,7 @@ build/slides-2023-njpls.html: slides-2023-njpls.rkt util/reveal.rkt util/util.rk
 
 # Slides for LambdaConf 2024
 slides-2024-lambdaconf: build/slides-2024-lambdaconf.html
-slides-2024-lambdaconf.html: slides-2024-lambdaconf.rkt util/reveal.rkt util/util.rkt util/coop.rkt util/protodoc.rkt util/coop.scm
+build/slides-2024-lambdaconf.html: slides-2024-lambdaconf.rkt util/reveal.rkt util/util.rkt util/coop.rkt util/protodoc.rkt util/coop.scm
 	racket $< > $@.tmp && mv $@.tmp $@ || { rm -f $@.tmp ; exit 42;}
 
 # New paper for 2024 (?)

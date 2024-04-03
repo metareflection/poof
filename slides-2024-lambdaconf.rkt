@@ -18,6 +18,7 @@ This document is available under the bugroff license.
 (require scribble/html
          "util/util.rkt"
          "util/coop.rkt"
+         (rename-in "util/coop.rkt" (|@| $))
          "util/protodoc.rkt"
          "util/reveal.rkt")
 
@@ -27,6 +28,9 @@ This document is available under the bugroff license.
           (tr style: "border-bottom-width:0;"
               (map (lambda (x) (td style: "border-bottom-width:0;" x)) l)))
         lists)))
+
+(def ⟶ (list (~ 3) "⟶" (~ 2)))
+(def (bri) (list (br) (~ 6)))
 
 (def doc
   (docfix
@@ -49,15 +53,15 @@ This document is available under the bugroff license.
        @; TODO: hide the menu behind a button at the top when on mobile (?)
        @div[class: 'title
             style: "color: #55f; vertical-align: middle; text-align: center; font-size: 150%"
-            @b{Prototypes: @(br) Object-Orientation, @(br) Functionally}]
+            @b{Prototypes: @br Object-Orientation, @br Functionally}]
        @(br clear: 'all)
        @p{@small{@(~)}}
-       @L{@code{@(~ 18) fix = (λ (p t) (Y (λ (s) (p s t))))} @(br)
-          @code{@(~ 18) mix = (λ (p q) (λ (s u) (p s (q s u))))}}
+       @L{@code{@(~ 18) build = λ m t → Y (λ s → m s t)} @br
+          @code{@(~ 18) inherit = λ c p s u → c s (p s u)}}
        @p{@small{@(~)}}
        @C[style: "font-size: 66%"]{
-           François-René Rideau @(email "<fare@mukn.com>") @(br)
-           Alex Knauth @(email "<alexander@knauth.org>") @(br)
+           François-René Rideau @(email "<fare@mukn.com>") @br
+           Alex Knauth @(email "<alexander@knauth.org>") @br
            Nada Amin @(email "<namin@seas.harvard.edu>")}
        @C{@small{@Url{http://github.com/metareflection/poof}}}
        @div[style: "font-size: 50%;" (~)]
@@ -88,159 +92,234 @@ This document is available under the bugroff license.
      ($slide "What OO isn’t about"
         @Li{Classes}
         @Li{“Encapsulation”, “Information Hiding”}
-        @Li{Inheritance vs Composition vs ...}
-        @Li{Mutation everywhere})
+        @Li{Inheritance vs Composition}
+        @Li{Mutation everywhere}
+        @Li{Message Passing everywhere})
      ($slide @list{What OO @em{is} about}
-        (make-table
-         `(("Incrementality" ,nbsp "Modularity")
-           (,nbsp            ,nbsp ,nbsp)
-           ("Open Recursion" ,nbsp "Ad Hoc Polymorphism")))))
+        @Li{Modularity}
+        @Li{Incrementality}
+        @Li{... Intralinguistically}
+        @Li{To support @em{Division of Labor}})
+     ($slide @list{How OO @em{does} it}
+        @Li{Ad Hoc Polymorphism}
+        @Li{Open Recursion}
+        @Li{... as First-Class (or Second-Class) Entities}
+        @Li{Enabling @em{Teamwork} among Developers})
+     ($xslide @list{Incremental Specification}
+        @L{@code{Tree ⊂ Type}}
+        @L{@code{Binary_Tree ⊂ Type}}
+        @L{@code{Balanced_Binary_Tree ⊂ Binary_Tree}}
+        @L{@code{Red_Black_Tree ⊂ Balanced_Binary_Tree}}
+        @L{@code{AVL_Tree ⊂ Balanced_Binary_Tree}}
+        @L{@code{Integer_Keyed_Tree ⊂ Binary_Tree}}
+        @L{@code{MyTree ⊂ Integer_Keyed_Tree ∩ AVL_Tree}}))
+
     ($section "Minimal OO: Mixin Functions"
      $plan-slide
      ($slide "Simplest OO Concept"
-        @L{@code{Instance}: value to specify incrementally}
-        @L{@code{Prototype}: modular increment of specification}
-        @L{@code{Instantiate: Prototype → Instance}}
-        @L{@code{Inherit: Prototype → Prototype → Prototype}})
-     ($slide "Prototypes as Mixin Functions"
-        @L{Inputs: whole spec (other aspects), previous spec @(br)
-           Output: more complete spec}
-        @L{@code{Mixin = Instance → Instance → Instance}}
-        @L{@code{Mixin Self Super = Self → Super → Self @(br)
-                 @(~ 3) | Self ⊂ Super}} ;|}}
-        @L{@code{fix: Mixin Instance Top → Top → Instance} @(br)
-           @code{mix: Mixin S T → Mixin T U → Mixin S U}})
-     ($slide "The Simplest Solution"
-        @L{@code{Mixin Self Super = Self → Super → Self @(br)
-                 @(~ 3) | Self ⊂ Super}} ;|}}
-        @L{@code{fix : Mixin Self Top → Top → Self} @(br)
-           @code{fix = (λ (p t) (Y (λ (s) (p s t))))}}
-        @L{@code{mix : Mixin S T → Mixin T U → Mixin S U} @(br)
-           @code{mix = (λ (p q) (λ (s u) (p s (q s u))))}})
-     ($slide "Mixins as “Prototypical” OO"
-        @Li{Theory: Bracha & Cook, "Mixins" 1990 (w/ records)}
-        @Li{Practice: Nix 2015 (Jsonnet 2014)}
-        @Li{Mutable: Director ’76, ThingLab ’77, T ’82, Self ’86, JS ’95}
-        @Li{Classes: Simula ’67, Smalltalk ’71, @em{Flavors} ’82}
-        @Li{Typeful: Cool hack in Haskell Oliveira 2009 (w/o records)}))
-    ($section "Is it OO? Mixins for Records"
+        @L{@code{Target} = structures and algorithms to specify}
+        @L{@code{Spec} = modular increment of specification}
+        ;; build assumes the specification is *complete*
+        ;; inherit assumes the specifications are compatible.
+        ;; note: spec composition is not commutative in general
+        @L{@code{build :: Spec → Target}}
+        @L{@code{inherit :: Spec → Spec → Spec}})
+     ($slide "Simplest Spec: some kind of Function…"
+        @L{Output: partial(?) target, more elaborate than before @br
+           Input 2: partial target so far (incrementality) @br
+           Input 1: whole target (modularity)}
+        @L{@code{type Spec = PreTarget → PreTarget → PreTarget}}
+        @L{OK, but monomorphic, or even dynamically typed}
+        @L{@code{type PreTarget = Any}})
+     ($slide "Mixin Function: Simplest Spec (w/ subtyping)"
+        @L{@code{type Mixin self super = self ⊂ super ⇒ @br @(~ 3)
+                   self → super → self}}
+        @L{@code{build :: Mixin self top → top → self} @br
+           @code{build = λ m t → Y (λ s → m s t)}}
+        @L{@code{inherit :: Mixin s t → Mixin t u → Mixin s u} @br
+           @code{inherit = λ c p s u → c s (p s u)}})
+     ($slide "Is it OO at all? Aren’t objects records?"
+        @Li{OO is @em{usually} about key-value records}
+        @Li{Record = Product of indexed (or dependent) types}
+        @Li{method, attribute, field, var, slot, property, member…}
+        @Li{You can (and often do) have records without OO!})
+     ($slide "Record (whether Target or not) (untyped)"
+        @L{@code{rtop = λ _ → error "No such method"}}
+        @L{@code{rcons = λ k v r m → if k == m then v else r m}}
+        @L{@code{point = rcons 'a 3 (rcons 'b 4 rtop)}}
+        @L{@code{point 'a} @⟶ @code{3}})
+     ($slide "Specifications for Records"
+        @L{@code{kv = λ k v s t → rcons k v t}}
+        @L{@code{point = build (inherit (kv 'a 3) (kv 'b 4)) rtop}}
+        @L{@code{point 'a} @⟶ @code{3}})
+     ($slide "Non-Constant Specifications"
+        @L{@code{method = λ k f s t → rcons k (f s (t k)) t}}
+        @L{@code{fudgeX = method 'x @br
+                 @(~ 5) λ self next → (self 'fudge) * next}}
+        @L{@code{multXY = method 'p @br
+                 @(~ 5) λ self _ → (self 'x) * (self 'y)}})
+     ($slide "Mixins as simplest functional model for OO"
+        @Li{Theory: Bracha & Cook, “Mixins” 1990 (w/ records)}
+        @Li{Practice: Jsonnet 2014, Nix 2015 (w/ records, untyped)}
+        @Li{Types: Oliveira 2009 (w/o records)}
+        @Li{Plenty of less simple, less pure precedents}))
+    ($section "Inheritance"
      $plan-slide
-     ($slide "Instances as Records"
-        @L{@code{top = (λ (msg) (error "No such method" msg))}}
-        @L{@code{rcons = (λ (k v r) (λ (m) @(br)
-                 @(~ 30) (if (eq? k m) v (r m))))}}
-        @L{@code{point = (rcons 'a 3 (rcons 'b 4 top))}}
-        @L{@code{(point 'a)} ⟶ @code{3}})
-     ($slide "Prototypes for Records"
-        @L{@code{KV = (λ (k v) (λ (s t) (rcons k v t)))}}
-        @L{@code{point = (fix (mix (KV 'a 3) (KV 'b 4)) top)}}
-        @L{@code{(point 'a)} ⟶ @code{3}})
-     ($slide "Non-Constant Prototypes"
-        @L{@code{method = (λ (k f) (λ (s t) @(br)
-                 @(~ 5) (rcons k (f s (λ _ (t k))) t)))}}
-        @L{@code{(method 'x @(br)
-                 @(~ 5) (λ (self next) (* (self 'fudge) (next))))}}
-        @L{@code{(method 'p @(br)
-                 @(~ 5) (λ (self _) (* (self 'x) (self 'y))))}}))
-    ($section "Prototypes: OO without Objects"
-     $plan-slide
-     ($slide "Single Inheritance: Generators"
-        @L{@code{Gen Self = Self → Self} @(~ 28)(@code{Top} is given)}
-        @L{@code{fixGen : Gen Self → Self} @(~ 19)(= @code{Y} itself!)}
-        @L{@code{mixGen = Mixin S T → Gen T → Gen S}}
-        @L{You can @code{cons} (@code{apply}) but can’t @code{append} (@code{compose}) a mixin})
-     ($slide "Multiple Inheritance: Dependency Graph"
+     ($slide "Mixin Inheritance: The First shall be Last"
+        @Li{Simplest form of inheritance… @em{given FP}}
+        @Li{Relies on higher-order functions, fixed-points, laziness}
+        @Li{Requires more elaborate types than usual for FP @bri
+           … or dynamic types, unpopular within FP}
+        @Li{Historically discovered last ’90, deployed recently 2006})
+     ($slide "Single Inheritance: Historical First"
+        @L{“prefix class” in Simula ’67, Smalltalk ’71}
+        @L{@code{type Gen self = self → self} @(~ 19)(@code{top} is given)}
+        @L{@code{buildGen :: Gen self → self} @(~ 19)(= @code{Y} itself!)}
+        @L{@code{inheritGen :: Mixin s t → Gen t → Gen s}}
+        @L{You can apply / cons mixins but not compose / append them})
+     ($slide "Mixin Inheritance beats Single"
+        @Li{Mixin Inheritance: write once, use many}
+        @Li{More for less: More expressive, more incremental}
+        @Li{For use in many contexts, you need stricter types:}
+        @L{@code{@(~ 3) type Mixin self super = ∀ eself, esuper ⇒ @bri
+                   eself ⊂ self ⇒ esuper ⊂ super ⇒ @br @(~ 9)
+                     eself ⊂ esuper ⇒ eself → esuper → eself}})
+     ($slide "Problem: Mixin Dependencies"
         @img[alt: "c3 linearization example"
              src: "resources/pic/C3_linearization_example.svg.png"]
-        @nbsp
-        @L{Must @em{linearize} the DAG into a @em{precedence list}}
-        @L{e.g. @code{(Z K1 K3 K2 C A B D E O)}})
+        @Li{Pre-composing mixins leads to @bri
+            @code{[Z K1 C O A O B O K3 A O B O D O K2 D O E O]}}
+        @Li{Post-composing mixins decreases modularity})
+     ($slide "Keep Mixin Dependencies Modular?"
+        @Li{What if you change @code{K3} ?}
+        @Li{Manual curation: @br
+           @(~ 12) - users must update when dependencies change @br
+           @(~ 12) - users must track @em{transitive} dependencies}
+        @Li{Modularity: implementation computes @em{precedence list} @br
+           @(~ 12) - users needn’t update when dependencies change @br
+           @(~ 12) - users need only track @em{direct} dependencies})
+     ($slide "Not a Problem for Single Inheritance"
+        @Li{Single Inheritance too inexpressive to have the issue}
+        @Li{Only one direct super, no duplicate transitive super}
+        @Li{“prefix” property: precedence list for super-spec is a suffix}
+        @Li{Flavors precedence list reverse of Simula “prefix” class list})
+     ($slide "Multiple Inheritance beats Mixin"
+        @img[alt: "c3 linearization example"
+             src: "resources/pic/C3_linearization_example.svg.png"]
+        @Li{Automatically @em{linearize} the DAG into a @em{precedence list}}
+        @Li{e.g. @code{[Z K1 K3 K2 C A B D E O]}})
      ($slide "Multiple Inheritance: Precedence Lists"
-        @L{easy precedence lists: @code{(O) (A O) (B O) (C O)}}
-        @L{bad precedence lists: @(br)
-           @(~ 20) @code{(K1 C O A O B O)} @(br)
-           @(~ 20) @code{(Z K1 K2 K3 A B C D E O)}}
-        @L{C3: preserve coherence properties @(br)
-           @(~ 20) @code{(K1 C A B O)} @(br)
-           @(~ 20) @code{(Z K1 C K3 A K2 B D E O)}})
-     ($slide "Multiple Inheritance: Modular Dependencies"
-        @L{What if you change @code{K2} ?}
-        @L{Manual curation: @br
-           @(~ 20) - users must update when dependencies change @br
-           @(~ 20) - users must track @em{transitive} dependencies}
-        @L{Modularity: implementation computes precedence lists @br
-           @(~ 20) - users needn’t update when dependencies change @br
-           @(~ 20) - users only must track @em{direct} dependencies})
-     ($slide "Prototypes beyond Mixin Functions"
-        @L{@code{Proto = Mixin × (List Proto)}}
-        @L{@code{Proto S T = Mixin ? ? × (List (Proto ? ?))}}
-        @L{@code{Proto = Mixin × (List Proto) × Defaults}}
-        @L{More: “No Such Message” handler, Constraints, Types, etc.})
-     ($slide "How is it Object-Orientation?"
-        @Li{So far, no classes}
-        @Li{So far, no objects}
-        @Li{Only prototypes and instances}
-        @Li{Yet, we recognize (almost?) all of OO!}))
-    ($section "Conflation: Object = Proto × Instance"
+        @Li{easy precedence lists: @code{[O] [A O] [B O] [C O]}}
+        @Li{bad precedence lists: @br
+           @(~ 20) @code{[K1 C O A O B O]} @br
+           @(~ 20) @code{[Z K1 K2 K3 A B C D E O]}}
+        @Li{C3: preserve coherence properties @br
+           @(~ 20) @code{[K1 C A B O]} @br
+           @(~ 20) @code{[Z K1 C K3 A K2 B D E O]}})
+     ($slide "Combining Multiple and Single Inheritance"
+        @Li{Specs with “prefix” property enable optimizations}
+        @Li{CLOS: “class” vs “struct”. Scala: “trait” vs “class”}
+        @Li{C4: additional coherence property for “prefix” specs}
+        @Li{Optimal combination — implemented in Gerbil Scheme}))
+    ($section "OO with(out) Objects"
      $plan-slide
+     ($slide "Specifications: OO without Objects"
+        @Li{So far, no Class, no Object!}
+        @Li{Only Spec (no record) and Target (no inheritance)}
+        @Li{Sufficient to produce… these slides}
+        @Li{Yet, we recognize (almost?) all of OO}
+        @Li{Entire Field a Misnomer… “Inheritance” > “OO”})
+     ($slide "Targets beyond Records"
+        @Li{Specs for arbitrary “Records”,
+            @bri … with very different representations}
+        @Li{Specs for numerical functions, for integers, etc.}
+        @Li{But Records allow intermediate aspects of any type
+            @bri … without weird low-level encodings})
      ($slide "Modular Extensibility"
-        @Li{Instance: Configuration as DAG of records}
-        @Li{Prototype: Modular Incremental Specification}
+        @Li{Spec for a vast DAG of Records}
         @Li{Which records in the DAG are extension points?}
-        @Li{None | Exponential explosion | All of them})
-     ($slide "Conflation: Prototype & Instance"
-        @L{Ubiquitous Extensibility at every level}
-        @L{Every “object” is both Prototype and Instance}
-        @L{@code{Object = Proto × Instance} @br
-           @(~ 5) (or @(~ 2) @code{Proto = … × Instance})}
-        @L{Purity ⇒ Instance unique up to observation})
-     ($slide "Not just for “records”"
-        @Li{Prototypes for numerical functions, for integers}
-        @Li{“records”, but with very different representations}
-        @Li{Eager Y: only functions. Lazy Y: delay/lazy values.}
-        @Li{Computations vs Values (CBPV 1999)})
+        @Li{None | Exponential explosion | All of them}
+        @Li{Or maybe stage all extensions before computation?})
+     ($slide "Conflation: Proto = Spec × Target"
+        @Li{Ubiquitous Extensibility at every level}
+        @Li{Every “Prototype” is both Spec and Target @br @~[6]
+            @code{Proto = Spec × Target}}
+        @Li{Purity ⇒ Target unique up to observation}
+        @Li{@em{THAT} is what Prototype OO calls an “object”})
+     ($slide "Prototype OO"
+        @Li{An “object” (or “instance”) is a Prototype (for a Record)}
+        @Li{Prototype is @em{first-class} entity conflating Spec and Target}
+        @nbsp
+        @Li{Mutable: Ani ’76, ThingLab ’77, T ’82, Self ’86, JS ’95}
+        @Li{Pure: Jsonnet 2014, Nix 2015})
+     ($slide "Conflation: Specs beyond Mixins"
+        @Li{multiple inheritance: @bri
+            @code{Spec = Mixin ? ? × (List Spec)}}
+        @Li{default values: @bri
+            @code{Spec = Mixin ? ? × (List Spec) × Record ?}}
+        @Li{More: “No Such Message” handler, Assertions, Types…})
+     ($slide "Conflation: Targets beyond Records"
+        @Li{Target can be Conflation of Record, Function, etc.}
+        @Li{Callable objects (Smalltalk, T, CLOS, C++, Scala, Java, etc.)}
+        @Li{Proxies for any “kind” value}
+        @Li{“Pure OO”: No privileged builtins})
      ($slide "Secret to Semantic Simplicity"
-        @Li{Recognizing two distinct entities, Prototype and Instance}
-        @Li{Conflation without Distinction = Confusion !}
-        @Li{Lack of awareness ⇒ formalizations that miss the point}
+        @Li{Recognizing two distinct entities, Spec and Target}
+        @Li{Conflation without Distinction = Confusion @bri
+            Lack of awareness ⇒ formalizations that miss the point}
+        @Li{Conflation with Distinction = Simplicity @bri
+            “reasonable” semantics, superior ergonomics}
         @Li{Jsonnet (2014) [“Components” in T (1982)]}))
     ($section "Class = Proto Type Top"
      $plan-slide
      ($slide "Where are the Classes?"
         @Li{Simula ’67, Smalltalk, C++, CLOS, Java, C#, Python…}
-        @Li{So much in common… yet very different!}
-        @Li{Is it even the same paradigm?}
+        @Li{So much in common with Prototype OO… yet so different!}
+        @Li{Is Class OO even the same paradigm?}
         @Li{What relationship between Prototypes and Classes?})
      ($slide "Type descriptors!"
-        @Li{Instance: Type descriptor (see ML module)}
-        @Li{Prototype: add or override methods for Type}
-        @Li{Abstract Class vs Concrete Class}
-        @Li{“Object”: type descriptor? prototype? type element?})
+        @Li{Target = descriptor for Type and functions (SML module)}
+        @Li{Spec = add or override methods for Type}
+        @Li{Spec vs Target = Abstract Class vs Concrete Class})
+     ($slide "Class OO"
+        @Li{An “object” (or “instance”) is @bri
+            an @em{element} of a Class (seen as its Target Type)}
+        @Li{A class is a @em{second-class} Prototype for a Type}
+        @nbsp
+        @Li{Mutable: Simula ’67, Smalltalk ’71, Flavors ’82, C++ ’85}
+        @Li{Pure: OCaml(?) ’96, OOHaskell 2005})
      ($slide "From Type Descriptor to Type"
-        @Li{Dependent types, Staging, Existential types?}
+        @Li{Staging, Existential types, Dependent types…}
         @Li{Most PLs have limited type-level computations}
         @Li{Mixin vs single- vs multiple- inheritance matter}
-        @Li{Singleton Class, but lack or dynamism})
+        @Li{Singleton Class a bit like Prototype, but lacking dynamism})
      ($slide "Class vs Typeclass"
         @Li{Class vs Typeclass, vtable vs “dictionary”}
         @Li{Pre-vtable constructor vs burden of dictionary}
         @Li{Type-directed synthesis as meta-level computation}
+        @Li{Haskell Typeclasses: good modularity, bad incrementality}
         @Li{Automated translation, see LIL (2012)}))
-    ($section "Pure Challenges"
+    ($section "(Im)Pure Challenges"
      $plan-slide
-     ($slide "Identity for DAG"
+     ($slide "Pure Functional Specs and Targets" ;; TODO: move this slide later, or reframe
+        @Li{Eager Y: only function targets, no sharing, recomputations}
+        @Li{Lazy Y: any (delayed) value, sharing, no recomputations}
+        @Li{Target as Computation vs Value (CBPV 1999)}
+        @Li{Fixed-Point as co-inductive vs inductive})
+     ($slide "Pure? Identity for DAG"
         @Li{Multiple Inheritance in Nix: no @code{===} for DAG}
         @Li{Unique tag: non-determinism? side-effect?}
         @Li{“Solutions”: State? Monads? Opaque tag? Explicit labels?}
         @Li{Labeling convention: moving computation to wetware})
-     ($slide "Side-Effects"
-        @Li{Multiple instances? Evolving DAG? Cloning vs Sharing?}
+     ($slide "Issues with Side-Effects"
+        @Li{Many targets for a same spec? Cloning vs Sharing? @bri
+            Dynamically modify a super? a list of supers?}
         @Li{Class OO: all prototypes are pure… at compile-time}
-        @Li{Linearity: +Optimizations -Enforcement}
-        @Li{Caching: +Sharing -Invalidation})
-     ($slide "Purity vs non-local specification increments"
+        @Li{Linearity: more Optimizations, harder Enforcement}
+        @Li{Caching: more Sharing, harder Invalidation})
+     ($slide "Pure? Non-local specification increments"
         @Li{Multimethods, Mutually recursive classes, Friend classes?}
-        @Li{Haskell problem: orphan typeclass instances}
+        @Li{Haskell problem: orphan typeclass targets}
         @Li{Hack: side-effect global table, hope for no conflict}
         @Li{Nix solution: the Open Loop is Global})
      ($slide "Advanced OOP, purely?"
@@ -256,11 +335,29 @@ This document is available under the bugroff license.
         @Li{Prototypes before Classes, Purity before Mutation}
         @Li{@em{Why} it matters, @em{Why} it’s that way})
      ($slide "Key Concepts"
-        @Li{Incrementality & Modularity}
-        @Li{Mixin Functions, compose beyond apply}
+        @Li{Incrementality & Modularity… intralinguistically}
+        @Li{Mixin Functions, compose (append) beyond apply (cons)}
         @Li{Multiple inheritance: @(~ 3) modular dependencies}
-        @Li{Conflation: @(~ 4) @code{Prototype = Mixin × Instance}}
+        @Li{Conflation: @(~ 4) @code{Proto = Spec × Target}}
         @Li{@code{Class = Proto Type Top}})
+     ($slide "Why did I care about Prototype OO?"
+        @Li{Great Usenet Flamewars of OO vs FP}
+        @Li{Talking Past Each Other… for Decades}
+        @Li{The paper I wished I could have read younger}
+        @Li{Lisp had it all the 1970s})
+     ($slide "Why So Much Blindness?"
+        @Li{Industry doesn’t care enough about Correctness}
+        @Li{Academia doesn’t understand Programming In The Large}
+        @Li{Both like to ignore the Human Factor}
+        @Li{All get stuck in their paradigms})
+     ($xslide "Inhabiting Constraints — But Which?"
+        @C{Every task involves constraint,}
+        @C{Solve the thing without complaint@";"}
+        @C{There are magic links and chains}
+        @C{Forged to loose our rigid brains.}
+        @C{Structures, strictures, though they bind,}
+        @C{Strangely liberate the mind.}
+        @R{— James Falen, as quoted by dughof})
      ($slide "Meta-Thesis"
         @Li{Humility, not fanaticism}
         @Li{Incommensurable paradigms? Go wider!}
