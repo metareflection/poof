@@ -180,6 +180,13 @@
   year = 1979
 }
 
+% This paper is about the higher-level system Ani, that generates plans for Director.
+% Director is the actor-based system with turtle graphics
+% (see Director Guide, AIM-482b, 1978 revised 1979),
+% while Ani is a constraint solver based on a knowledge representation of the film being directed:
+% very crude 2d film with polygons as "performers" that move toward, away from,
+% around or between each other, at various speeds appropriate for the action,
+% as would humans on a stage.
 @PhDThesis{Kahn1979,
   title = {Creation of computer animation from story descriptions},
   author = {Kahn, Kenneth Michael},
@@ -991,8 +998,16 @@
 
 % 2000 Oleg Kiselyov USENET post on okmij.org on the possibility of a pure variant of YASOS ?
 
+% William R. Cook: On Understanding Data Abstraction, Revisited
 % [1] On understanding data abstraction, revisited. Onward! Essay in Proceedings of the 24th ACM SIGPLAN conference on Object oriented programming systems languages and applications (OOPSLA). pp. 557-572 (2009).
 % https://cs.utexas.edu/~wcook/Drafts/2009/essay.pdf
+% Good presentation of ADTs
+% 3.1 notes the "OO" (re)presentation eschews the existential type, hiding it under HOF i/f,
+% but that's false in general---the existential type is there for compatibility between values you can build and modify.
+% 3.2 claims with ref to his thesis that inheritance is orthogonal to OO (!)
+% misses that what makes method invocation "dynamic binding" isn't the HOF records, but the open recursion on self and the sharing of methods between multiple selves thanks to inheritance.
+% Also identifies classes as their constructor
+
 
 % "A Proposal for Simplified, Modern Definitions of "Object" and "Object Oriented"
 % https://wcook.blogspot.com/2012/07/proposal-for-simplified-modern.html
@@ -1069,8 +1084,6 @@
 
 % StrongTalk.org still runs on Windows 10.
 
-% William R. Cook: On Understanding Data Abstraction, Revisited
-
 % CUE rejects inheritance, instead has value/pattern unification along a lattice: https://cuelang.org/docs/concepts/logic/
 
 % https://www.piumarta.com/software/id-objmodel/objmodel2.pdf
@@ -1136,7 +1149,9 @@
   url={http://www.laputan.org/pub/papers/MI-Borning-Ingalls.PDF}
 }
 
-% Introduces "traits", for multiple inheritance in in Mesa
+% Introduces "traits", for multiple inheritance in the Mesa programming language
+% used to implement WS, the workstation software of the Xerox Star 8010,
+% since late 1979 (Mesa started early 1978).
 @article{10.1145/966873.806468,
   author = {Curry, Gael and Baer, Larry and Lipkie, Daniel and Lee, Bruce},
   title = {Traits: An approach to multiple-inheritance subclassing},
@@ -1163,3 +1178,14 @@
   year={2016},
   url={https://api.semanticscholar.org/CorpusID:265751928}
 }
+
+@misc{kiselyov2005haskells,
+      title={Haskell's overlooked object system},
+      author={Oleg Kiselyov and Ralf Lämmel},
+      year={2005},
+      eprint={cs/0509027},
+      archivePrefix={arXiv},
+      primaryClass={cs.PL}
+}
+
+% Guy Steele "Objects have not failed" 2002 https://www.dreamsongs.com/ObjectsHaveNotFailedNarr.html

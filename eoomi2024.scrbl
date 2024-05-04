@@ -4,21 +4,20 @@
 @title{The Essence of Object-Orientation: @linebreak[]
            Modularity and Incrementality, @linebreak[]
        or: @linebreak[]
-           Lambda, the Ultimate Prototype}
+           Lambda, the Ultimate Object}
 
 @abstract{
-We herein argue that the essence of Object-Orientation (OO)
-is a mechanism for Incremental Modularity,
-and discuss how some features of OO languages
+We argue that the essence of Object-Orientation (OO)
+is a mechanism for reified (in-language) Incremental Modularity:
+we do it by first making a semi-formal problem statement,
+then identifying the simplest solution from first principles,
+thereby reconstructing the basic concepts of OO on top of the pure λ-calculus.
+We discuss how various features of OO languages
 can facilitate or hinder this Incremental Modularity,
-from inheritance to mutation to classes themselves.
-We do so by building upon our previous Functional Pearl
-that reduced Object-Orientation (OO) to a few lines of Functional Programming (FP),
-and re-constructed the fundamental notions of OO from first principles.
+from forms of inheritance, to classes themselves, to mutation.
 Our exploration yields answers that sometimes coincide with
 prevalent academic discourse or industrial practice,
 but sometimes goes against one or both.
-Along the way, we offer a semi-formal theory of modularity and incrementality.
 }
 
 @authors[
@@ -36,7 +35,6 @@ Along the way, we offer a semi-formal theory of modularity and incrementality.
           (only-in scriblib/footnote note)
           (only-in scribble-abbrevs appendix)
           (only-in scribble-math/dollar $)
-@;          scribble/minted
           syntax/parse/define
           "util/examples-module.rkt"
           "util/enumitem.rkt"
@@ -74,8 +72,8 @@ to a few lines of Functional Programming (FP).
 Its kernel consists of just two one-line functions—reprised and detailed
 in @seclink{simplest_prototypes}.
 @; involving the @c{Y} combinator:
-@; @Code{fix = λ m t ↦ Y (λ s ↦ m s t)
-@; mix = λ c p ↦ λ s d ↦ c s (p s d)}
+@; @Code{build = λ m t ↦ Y (λ s ↦ m s t)
+@; inherit = λ c p ↦ λ s d ↦ c s (p s d)}
 @; These two definitions, for mixin instantiation and mixin composition respectively,
 These functions slightly generalize formulas known in theory for many decades @~cite{bracha1990mixin},
 and actually used as the basis of practical implementations for many years @~cite{nix2015}.
@@ -500,6 +498,14 @@ And to narrow the discussion down to a formal context,
 let’s consider programming languages with a functional programming core,
 i.e. that contain some variant of the lambda-calculus as a fragment,
 either untyped or with suitably expressive types (to be determined later).
+
+@subsubsection{Embodying Specification}
+To embody some concept in the functional programming core of a language that has one,
+you will necessarily use a function.
+Since the concept is the specification of a computation,
+the function must eventually return that specific computation as an output value,
+given some inputs to be determined.
+The type of its output is the type of the target value.
 
 @subsubsection{Embodying Modularity}
 Each prototype should be able to
@@ -1866,6 +1872,13 @@ This also makes them hard to type without subtypes.
 Type descriptors are themselves often a monomorphic type that does not require subtyping,
 at least not unless the type system accommodates dependent types, or at least staging.
 
+@TODO{
+cite DOT
+cite fortress
+cite Cook 2009
+}
+
+
 @section{BLAH START (RE)WRITING FROM HERE}
 
 @subsection{FOOOOOOOOOOOO}
@@ -2006,3 +2019,8 @@ and should be a natural part of the OO ecosystem.
 
 
 @(generate-bibliography)
+
+
+@TODO{
+Okasaki Pure Functional Data Structures... in the context of how functional style without OO requires you to rewrite everything for every variant of a data structure, rather than only the difference from known templates you inherit from.
+}

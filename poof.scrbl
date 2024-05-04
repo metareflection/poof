@@ -1562,7 +1562,7 @@ reactive or incremental programming. @;TODO: @~cite{}
 @subsection{Prototype Object Systems}
 
 @subsubsection{Director and ThingLab}
-The first prototype object system might have been Director a.k.a. Ani @~cite{Kahn1976 Kahn1979},
+The first prototype object system might have been Director @~cite{Kahn1976},
 an actor system to create animations from story constraints, written in MacLisp at MIT.
 @; interoperating with LOGO, with inspiration from Smalltalk and AI research.
 The system is informally described as a modifiable hierarchy of message-passing objects
@@ -1592,7 +1592,7 @@ mutation was naturally ubiquitous, with explicit state management, and
 no attempt at implicitly caching effective method values.
 
 There are minor differences between our model and T's.
-Importantly, T lives by the slogan that “closures are a poor man's objects”
+Importantly, T lives by the slogans that “closures are a poor man's objects”
 and “objects are a poor man's closures”:
 T objects are callable functions that have extra named entry points;
 in our model we can add a special method for the default entry point,
@@ -1612,6 +1612,7 @@ by nullary methods returning a constant value.
 In 1986, several publications@~cite{Lieberman1986 Borning1986}
 popularized the term and concept of prototypes,
 and to a point that of “delegation” for the variant of inheritance associated with them.
+@;delegation is already in Hewitt_Attardi_Lieberman 1979, maybe in earlier Kahn and Borning papers?
 @;TODO: cite!
 
 That year also appeared SELF, a language in the Smalltalk tradition
