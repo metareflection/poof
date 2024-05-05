@@ -1928,6 +1928,13 @@ The generalization of OO from overriding methods in records
     to overriding arbitrary aspects of arbitrary computations using functional lenses or zippers,
     and how this generalization can accommodate advanced OO practices like method combinations.
 
+@; build :: (partial → target) → top → (top → target → partial) → target
+@; build wrap base mixin = Y (wrap . base mixin)
+@; inherit is the same!
+@; inherit child parent super self = child (parent super self) self
+
+
+
 @subsubsection{Method Combination, Instance Combination}
 Specializing inheritance with respect to how increments are combined.
 generalizing precedence lists with DAG attribute grammars.
