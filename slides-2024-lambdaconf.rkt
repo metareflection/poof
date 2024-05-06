@@ -86,7 +86,7 @@ This document is available under the bugroff license.
      ($slide @list{OO @em{for} FP}
         @L{FP is my tribe — probably yours}
         @L{Vast evidence that OO matters}
-        @L{FP can make its semantics simpler}
+        @L{To elucidate its semantics — use FP}
         @L{Expand our Paradigm})
      ($slide @list{Scheme Workshop 2021 Paper}
         @L{Why OO matters — Incremental Modularity}
@@ -161,8 +161,7 @@ This document is available under the bugroff license.
      ($slide "Actual Solution: Subtyping"
         @L{@code{type Mixin inherited referenced defined = @bri
                       inherited → referenced → inherited⋂defined}}
-        @; Now to have suitable intersection types
-        @L{The typesystem needs subtypes and/or type intersections}
+        @;@L{The typesystem needs subtypes and/or type intersections}
         @L{More modular variant for reuse in many contexts:}
         @L{@code{type Mixin inherited referenced defined = @bri
                         ∀ super ⊂ inherited ⇒ @brii
@@ -177,7 +176,8 @@ This document is available under the bugroff license.
                          child (parent super self) self}})
      ($slide "Where are my methods?" ;; Is it OO at all? Aren’t objects records?
         @L{OO is @em{usually} about key-value records}
-        @L{Record = Product of indexed (or dependent) types}
+        @L{Record = Product of indexed types}
+        @L{Dictionary mapping @code{String} to dependent type}
         @L{method, attribute, field, var, slot, property, member…}
         @L{You can (and often do) have records without OO!})
      ;; write a slide with {}, {k: v, ...r}, {a: 3, b:4}.a
@@ -383,26 +383,27 @@ This document is available under the bugroff license.
         @L{Any advanced topic in OOP?}))
     ($section "Conclusion: OO is FP"
      $plan-slide
-     ($slide @list{Paper: OO System@em{@u{s}} in λ-calculus} ;; Thesis
-        @L{@em{Simple} Constructive Semantics of OO in pure FP}
+     ($slide @list{Scheme Workshop 2021 Paper}
+        @L{Why OO matters — Incremental Modularity}
+        @L{What OO is — Constructive Semantics in FP} ;; for systems of increasing sophistication
         @L{Demystify fundamental concepts of OO}
-        @L{Prototypes before Classes, Purity before Mutation}
-        @L{@em{Why} it matters, @em{Why} it’s that way})
+        @L{Prototypes before Classes, Purity before Mutation})
      ($slide "Key Concepts"
         @L{Incrementality & Modularity… intralinguistically}
-        @L{Mixin Functions, compose (append) beyond apply (cons)}
+        @L{Mixin Functions, composed not just applied}
         @L{Multiple inheritance: @(~ 3) modular dependencies}
         @L{Conflation: @(~ 4) @code{Proto target = Spec target × target}}
         @L{@code{Class = Proto Type}})
      ($slide "Why did I care about Prototype OO?"
         @L{Great Usenet Flamewars of OO vs FP}
         @L{Talking Past Each Other… for Decades}
-        @L{The paper I wished I could have read younger}
-        @L{Lisp had it all the 1970s})
+        @L{Lisp had it all the 1970s}
+        @L{The paper I wished I could have read younger})
      ($slide "Why So Much Blindness?"
         @L{Industry doesn’t care enough about Correctness}
         @L{Academia doesn’t understand Programming In The Large}
-        @L{Both like to ignore the Human Factor}
+        @L{Both ignore the Human Factor}
+        @; Industry wants interchangeable cogs, Academia fancies no brain limits
         @L{All get stuck in their paradigms})
      ($xslide "Inhabiting Constraints — But Which?"
         @C{Every task involves constraint,}
@@ -421,6 +422,6 @@ This document is available under the bugroff license.
         @L{Theory: @(~ 8) @Url{https://github.com/metareflection/poof}}
         @L{Practice: @(~ 5) @Url{https://github.com/fare/gerbil-poo}}
         @L{OO in 30 loc — 80 loc with multiple inheritance}
-        @L{Hire me! @(~ 5) @code{<fare@"@"mukn.com>}}))))
+        @C{Hire me! @(~ 5) @code{<fare@"@"mukn.com>}}))))
 
 (reveal-doc doc)
