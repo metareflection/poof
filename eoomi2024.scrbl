@@ -580,28 +580,18 @@ and reprised and popularized by Cook and Bracha@~cite{bracha1990mixin}.
 
 The mixin instantiation and inheritance primitives are as follows:
 @Code{
+type Mixin inherited referenced defined =
+  inherited → referenced → inherited⋂defined
 
-instantiate : Mixin instance base → base → instance
-instantiate = λ mixin base ↦ Y (λ instance ↦ mixin instance base)
+build :: top → Mixin top target target → target
+build = λ base mixin ↦ Y (mixin base)
 
-inherit : Mixin instance intermediate → Mixin intermediate inherited
-          → Mixin instance inherited
-inherit = λ child parent ↦ λ instance inherited ↦
-              child instance (parent instance inherited)
-
+inherit :: Mixin i1 r1 d1 → Mixin i2⋂d1 r2 d2 → Mixin i1⋂i2 r1⋂r2 d1⋂d2
+inherit = λ parent child super self ↦ child (parent super self) self
 }
 
-or equivalently:
-@Code{
-
-fix : Mixin self top → top → self
-fix = λ mixin top ↦ Y (λ self ↦ mixin self top)
-
-mix : Mixin self super → Mixin super duper → Mixin self duper
-mix = λ child parent self duper ↦ child self (parent self duper)}
-
 @subsubsection{Elucidating Mixin Instantiation}
-The @c{instantiate} function above computes a fixed-point @c{instance}
+The @c{build} function above computes a fixed-point @c{target}
 for a @c{mixin} given as extra argument a type-appropriate @c{base} value
 that serves as seed of the computation being instantiated:
 an empty record @c|{{}}|, a function that always fails @c{⊤ = λ _ ↦ ⊥}, etc.
@@ -657,13 +647,13 @@ but it is a problem in the more general case of mixin inheritance
 (and in multiple inheritance, see @seclink{multiple_inheritance}).
 
 A more refined type that can be used for mixins is then:
-@Code{Mixin self super = self ⊂ super ⇒
-        ∀ eself ⊂ self, ∀ esuper ⊂ super, eself ⊂ esuper ⇒
-           eself → esuper → eself}
-where @c{self} and @c{super} are the minimal types intrinsic to the mixin,
-and @c{eself} and @c{esuper} are the @emph{effective} types,
-respective subtypes of the above, as will actually be used,
-depending on the context of instantiation.
+@Code{Mixin inherited referenced defined =
+        ∀ super ⊂ inherited ⇒
+           super → referenced → super⋂defined}
+where @c{inherited} is the type intrinsic to the mixin
+indicating which inherited methods from the super argument are actually being used,
+whereas @c{super} will be the set of methods effectively defined
+in the super argument, depending depending on the context of instantiation.
 
 This type is an intersection of all variants of the previous type
 for subtypes @c{eself} and @c{esuper} of @c{self} and @c{super} respectively.

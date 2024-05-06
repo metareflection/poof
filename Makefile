@@ -73,6 +73,6 @@ build/slides-2024-lambdaconf.html: slides-2024-lambdaconf.rkt util/reveal.rkt ut
 
 # New paper for 2024 (?)
 build/eoomi2024.pdf: eoomi2024.scrbl poof.bib header.tex util/eval-check.rkt util/examples-module.rkt util/util.rkt build/resources
-	scribble --dest build --pdf $<
+	scribble --dest build --style header.tex --pdf $<
 eoomi: build/eoomi2024.pdf
 	$(PDFVIEWER) $<

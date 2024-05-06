@@ -195,7 +195,7 @@
      @body[style: (string-append "background-repeat: no-repeat; "
                                  "background-size: 3%; "
                                  "background-origin: padding-box; "
-                                 "background-position: bottom 1% right 1%; "
+                                 "background-position: bottom 0.46% left 0%; "
                                  "background-image: url('resources/pic/mukn-icon-whitebg.png'); ")]{
        @div[class: 'reveal]{@div[class: 'slides Sections]}
        @script[src: @reveal-url{lib/js/head.min.js}]
@@ -209,4 +209,6 @@
               controls: true,
               controlsLayout: 'bottom-right',
               callback: () => hljs.initHighlightingOnLoad()}],
-           controls: false})}}}))
+           controls: false,
+           slideNumber: "c/t",
+           showSlideNumber: true})}}}))

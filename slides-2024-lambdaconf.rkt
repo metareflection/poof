@@ -31,7 +31,8 @@ This document is available under the bugroff license.
 
 (def ⟶ (list (~ 3) "⟶" (~ 2)))
 (def (bri) (list (br) (~ 6)))
-(def (brii) (list (br) (~ 9)))
+(def (brii) (list (br) (~ 12)))
+(def (briii) (list (br) (~ 18)))
 
 (def doc
   (docfix
@@ -161,9 +162,13 @@ This document is available under the bugroff license.
         @L{@code{type Mixin inherited referenced defined = @bri
                       inherited → referenced → inherited⋂defined}}
         @; Now to have suitable intersection types
-        @L{The typesystem needs subtypes and/or type intersections})
+        @L{The typesystem needs subtypes and/or type intersections}
+        @L{More modular variant for reuse in many contexts:}
+        @L{@code{type Mixin inherited referenced defined = @bri
+                        ∀ super ⊂ inherited ⇒ @brii
+                           super → referenced → super⋂defined}})
      ($slide "Minimal Kernel for Mixin Functions"
-        @L{@code{type Mixin inh ref def = inh → ref → inh⋂def}}
+        @L{@code{type Mixin i r d = ∀ s ⊂ i ⇒ s → r → s⋂d}}
         @L{@code{build :: top → Mixin top target target → target @br
                  build = λ base mixin ↦ Y (mixin base)}}
         @L{@code{inherit :: Mixin i1 r1 d1 → Mixin i2⋂d1 r2 d2 → @bri
