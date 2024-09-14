@@ -149,3 +149,71 @@ lensedMixin lens mixin self super = over lens (mixin (get lens self)) super
 
 
 https://docs.racket-lang.org/scribble/extra-style.html
+
+https://www.quora.com/What-is-the-Chronology-of-Early-OOP-see-self-answer-for-details/answer/Alan-Kay-11?__filter__=all&__nsrc__=notif_page&__sncid__=52254481076&__snid3__=70031974587
+
+- single vs multiple vs mixin inheritance
+- prototypes vs classes
+- calling super methods / call-next-method / etc.
+- method conflict, method resolution
+- class precedence lists
+- method combinations
+- user-defined method combinations
+- no-such-message handlers
+- multimethods
+- predicate classes
+- default values
+- instance initialization protocols
+- callable instances, instances as array, etc.
+- whether to tracking all your instances
+- inheritance not being the same as subtyping due to e.g. binary methods or recursive class definitions.
+- pure vs stateful objects
+- “static” methods, “virtual” methods, etc.
+- various visibility and scoping mechanisms.
+- Class OO as typelevel metaprogramming
+- runtime reflection
+- meta-object protocols
+- runtime meta-objects
+- OO and FP being friends not enemies
+- The relationship between classes and typeclasses
+- friend classes, mutually recursive classes, orphan typeclasses, etc.
+- access paths / accessors / lenses for safe access to internal state
+- instance update upon class redefinition
+- instance update upon class change—and the even much more powerful smalltalk become
+- interactive systems vs programming languages
+
+See the bibliography of the Allen 2011 paper for more on multimethods, multiple inheritance.
+
+
+Okasaki Pure Functional Data Structures... in the context of how functional style without OO requires you to rewrite everything for every variant of a data structure, rather than only the difference from known templates you inherit from.
+
+There is no OO whatsoever at runtime in C++, only plain procedural imperative stateful programming.
+
+There is no mutable state whatsoever at compile-time in C++, just a pure functional lazy language with Prototype OO—the C++ template language.
+
+Class OO is a lie. There is no such thing.
+
+All OO is Prototype OO. Some of it is used to metaprogram types and procedures on those types.
+Usually in an extremely restricted metalanguage, but not always.
+
+
+Cook's thesis only has a short section on multiple inheritance. His formalism allows him to see issues that most people fail to conceive, yet his two proposed solutions are shallow and bad, despite many actual working systems having existed for a decade already at that time.
+
+His first model has wrappers process a tuple of the direct parent's results. This can account the effects of unknown indirect parents exponentially many times, so wrappers must be CRDTs (which he fails to notice). Hence no one uses it.
+
+His second "strict" model just punts on "conflicts", i.e. cases where multiple parents define distinct methods. That's the least useful non-useless CRDT, and initial solution used by ThingLab, Smalltalk (and MESA?). But by 1989, Flavors and LOOPS did much better.
+
+The solution used by (almost?) everyone since before his thesis is to linearize the inheritance DAG; wrappers are the same as for single- and mixin- inheritance; works with any CRDT without users having to do it the hard way; hence method combinations, standard or not.
+
+I don't want to dunk too much on Cook in particular: Most academic treatment of multiple inheritance is disappointing, especially by prestigious PL professors, who seem never to have used it nor studied how and why OO programmers actually use it.
+
+Makes sense since the point of OO (a.k.a. intralingual incremental modularity) is to build larger systems than fit in anyone's head, what more that evolve with time, whereas academics specialize in short writings about ideas they can fully explain, with no space for evolution.
+
+There are happy exceptions of course, usually works initiated in industrial research labs rather than universities (SELF (and after it CECIL), Fortress (whose team includes Guy Steele who worked on Common Lisp). Because industrial labs build long-term systems, not just papers.
+
+Note that it's not a matter of bad people, but of bad incentives: universities do not reward system building, and those systems that are built nonetheless (e.g. Racket) are mostly made of many small experimental contributions with few resources to turn them into a coherent whole.
+
+Of course, the industry has its own host of bad incentives. They notably explain a consistent neglect of FP and formal methods, except in a few companies that recruit at the high end. And then don't get me started about Applications and "IP". But that's for another thread.
+
+CRDT: I'm using the modern name—just a fancy way of saying that whichever way you encode your "wrapper" results must intrinsically avoid duplicating effects… which comes for free if you linearize your ancestors and apply a plain old wrapper (or one from your method combination).
+

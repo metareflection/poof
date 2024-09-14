@@ -160,6 +160,7 @@
   url = {https://dspace.mit.edu/handle/1721.1/41950}
 }
 
+% Uses the word "prototypes", and has no classes. And multiple inheritance.
 @InProceedings{Borning1977,
   author = {Alan Hamilton Borning},
   title = {{ThingLab} --- an Object-Oriented System for Building Simulations using Constraints},
@@ -322,6 +323,19 @@
   booktitle = {LFP},
   pages = {277--288},
   Year = {1988}
+}
+
+% POPL, short reprise of what's in his thesis
+% Also single-inheritance, records only
+@article{cook1989denotational,
+  title={A denotational semantics of inheritance and its correctness},
+  author={Cook, William and Palsberg, Jens},
+  journal={ACM Sigplan Notices},
+  volume={24},
+  number={10},
+  pages={433--443},
+  year={1989},
+  publisher={ACM New York, NY, USA}
 }
 
 @InProceedings{cook1989inheritance,
@@ -649,6 +663,7 @@
 
 % See notably chapter 32.
 % downloaded from https://www.cs.sjtu.edu.cn/~kzhu/cs383/Pierce_Types_Programming_Languages.pdf
+% This post claims that TAPL introduces the term "Open Recursion" https://journal.stuffwithstuff.com/2013/08/26/what-is-open-recursion/
 @Book{tapl,
   Author = {Pierce, Benjamin C.},
   Title = {Types and Programming Languages},
@@ -993,10 +1008,9 @@
 
 % [2] Object-Oriented Programming Versus Abstract Data Types In Proceedings of the REX School/Workshop on Foundations of Object-Oriented Languages, Springer-Verlag, pp. 151-178 (1990).
 % http://www.cs.utexas.edu/~wcook/papers/OOPvsADT/CookOOPvsADT90.pdf
-
-% Bracha and Lindstrom 1992 Modularity meets inheritance
-
-% 2000 Oleg Kiselyov USENET post on okmij.org on the possibility of a pure variant of YASOS ?
+% PDA (Procedural Data Abstraction) organized around constructors (for classes, etc.) vs
+% ADT (Abstract Data Types) organized around observations (pattern-matching for data types).
+% Cook is baffled by CLOS and its multimethods wrt his PDA (like Smalltalk) vs ADT (like CLU)
 
 % William R. Cook: On Understanding Data Abstraction, Revisited
 % [1] On understanding data abstraction, revisited. Onward! Essay in Proceedings of the 24th ACM SIGPLAN conference on Object oriented programming systems languages and applications (OOPSLA). pp. 557-572 (2009).
@@ -1005,12 +1019,25 @@
 % 3.1 notes the "OO" (re)presentation eschews the existential type, hiding it under HOF i/f,
 % but that's false in general---the existential type is there for compatibility between values you can build and modify.
 % 3.2 claims with ref to his thesis that inheritance is orthogonal to OO (!)
-% misses that what makes method invocation "dynamic binding" isn't the HOF records, but the open recursion on self and the sharing of methods between multiple selves thanks to inheritance.
-% Also identifies classes as their constructor
+% misses that what makes method invocation "dynamic binding" isn't the HOF records,
+% but the open recursion on self and the sharing of methods between multiple selves
+% thanks to inheritance.
+% Also identifies classes as their constructor...
+% 3.3 "Autognosis" is the criterion what Bracha calls "Pure OO", i.e. all accesses through interface
+% Wholly skips CLOS, unlike his 1990 paper.
+% Wholly skips Prototypes.
+% In the end, does not bring much lights to the topic, beyond the obvious.
+
+
+% Bracha and Lindstrom 1992 Modularity meets inheritance
+
+% 2000 Oleg Kiselyov USENET post on okmij.org on the possibility of a pure variant of YASOS ?
+
 
 
 % "A Proposal for Simplified, Modern Definitions of "Object" and "Object Oriented"
 % https://wcook.blogspot.com/2012/07/proposal-for-simplified-modern.html
+% My replies: https://twitter.com/Ngnghm/status/1791988260266234028
 
 % Featherweight Jigsaw - Replacing inheritance by composition in Java-like languages
 % https://dl.acm.org/doi/10.1016/j.ic.2012.02.004
@@ -1137,8 +1164,9 @@
   numpages = {8}
 }
 
-% ThingLab 1981 has multiple inheritance, and PIE (Goldstein&Bobrow 1980), Flavors 1980, LOOPS 1982.
-% Traits from Mesa [Curry 1982]
+% ThingLab 1981 has multiple inheritance (already in 1977),
+% and so have PIE (Goldstein&Bobrow 1980), Flavors 1980, LOOPS 1982.
+% Traits from Mesa since 1979 [Curry 1982]
 @inproceedings{borning1982multiple,
   title={Multiple inheritance in Smalltalk-80},
   author={Borning, Alan H and Ingalls, Daniel HH},
@@ -1151,7 +1179,7 @@
 
 % Introduces "traits", for multiple inheritance in the Mesa programming language
 % used to implement WS, the workstation software of the Xerox Star 8010,
-% since late 1979 (Mesa started early 1978).
+% since late 1979 (Mesa started early 1978 with Single-Inheritance).
 @article{10.1145/966873.806468,
   author = {Curry, Gael and Baer, Larry and Lipkie, Daniel and Lee, Bruce},
   title = {Traits: An approach to multiple-inheritance subclassing},
@@ -1189,3 +1217,31 @@
 }
 
 % Guy Steele "Objects have not failed" 2002 https://www.dreamsongs.com/ObjectsHaveNotFailedNarr.html
+
+% https://lmcs.episciences.org/4319
+% This paper seems to be on the right track, but with much extra formalism and much missing insight.
+% Classes add a layer of complexity, and I think there may be bugs. Sigh.
+@article{DBLP:journals/corr/abs-1712-06906,
+  author       = {Jan Bessai and
+                  Tzu{-}Chun Chen and
+                  Andrej Dudenhefner and
+                  Boris D{\"{u}}dder and
+                  Ugo de'Liguoro and
+                  Jakob Rehof},
+  title        = {Mixin Composition Synthesis based on Intersection Types},
+  journal      = {CoRR},
+  volume       = {abs/1712.06906},
+  year         = {2017},
+  url          = {http://arxiv.org/abs/1712.06906},
+  eprinttype    = {arXiv},
+  eprint       = {1712.06906},
+  timestamp    = {Sat, 30 Sep 2023 10:08:07 +0200},
+  biburl       = {https://dblp.org/rec/journals/corr/abs-1712-06906.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+% Open Data Types and Open Functions https://www.andres-loeh.de/OpenDatatypes.pdf
+% Andres Löh and Ralf Hinze, PPDP 2006 -- not really OO, just use of typeclasses.
+% cites O'Haskell (Norlander 2001) vs OOHaskell (Kiselyov & Lämmel 2005)
+
+% TODO: Henry Lieberman papers about Actors, etc. -- when did he do inheritance / delegation?

@@ -115,6 +115,32 @@ This document is available under the bugroff license.
         @L{... in impressionist strokes})
      ($xslide @list{Incremental Specification}
         ;; TODO: split in many steps, finally make it a graph?
+       #|
+https://www.mermaidchart.com/app/projects/0d7dd2c2-0762-428e-a4be-2063fd491789/diagrams/33200a76-6fa0-4509-9e45-b6fdfbc19962/version/v0.1/edit
+flowchart TD
+%% Node
+    A("Top")
+    B("Tree")
+    C("Binary Tree")
+    D("Balanced Binary Tree")
+    E("Red-Black Tree")
+    F("AVL Tree")
+    G("Integer-Keyed Tree")
+    H("Integer-Keyed AVL Tree")
+
+    I(FiniteMap) ; A --> I
+
+%% Edge connections between nodes
+    A --> B --> C --> D --> E
+    D --> F --> H
+    B --> G --> H
+
+%% Individual node styling. Try the visual editor toolbar for easier styling!
+    style A color:#FFFFFF, fill:#AA00FF, stroke:#AA00FF
+    style H color:#FFFFFF, stroke:#00C853, fill:#00C853
+
+%% You can add notes with two "%" signs in a row
+       |#
        @img[src: "resources/pic/inheritance-diagram.svg"
             alt: "Inheritance diagram for Integer-Keyed AVL Tree"
             height: "50%"
@@ -158,17 +184,22 @@ This document is available under the bugroff license.
         @L{Problem: input 1 and output are @em{partial} targets}
         @L{Easy Solution / Workaround: use dynamic types}
         @L{@code{type Target = String → Any}})
-     ($slide "Actual Solution: Subtyping"
+     ($slide "Subtyping"
         @L{@code{type Mixin inherited referenced defined = @bri
                       inherited → referenced → inherited⋂defined}}
-        @;@L{The typesystem needs subtypes and/or type intersections}
-        @L{More modular variant for reuse in many contexts:}
+        @L{Such type correctly cover what methods are available…}
+        @L{But fail to account for fixed-point on self parameter…}
+        @L{So methods that involve self-reference must be dynamically typed})
+     ($slide "Subtyping plus higher types"
         @L{@code{type Mixin inherited referenced defined = @bri
-                        ∀ super ⊂ inherited ⇒ @brii
-                           super → referenced → super⋂defined}})
+                        ∀ self ⊂ (referenced self), @brii
+                           ∀ super ⊂ (inherited self) ⇒ @briii
+                              super → self → super⋂(defined self)}}
+        @L{No more confusion of inheritance and subtyping})
      ($slide "Minimal Kernel for Mixin Functions"
-        @L{@code{type Mixin i r d = ∀ s ⊂ i ⇒ s → r → s⋂d}}
-        @L{@code{build :: top → Mixin top target target → target @br
+        @L{@code{type Mixin i r d = ∀ s ⊂ (r s), ∀ t ⊂ (i s) ⇒ @bri
+                      t → s → t⋂(d s)}}
+        @L{@code{build :: top → Mixin (K top) gen gen → Y gen @br
                  build = λ base mixin ↦ Y (mixin base)}}
         @L{@code{inherit :: Mixin i1 r1 d1 → Mixin i2⋂d1 r2 d2 → @bri
                          Mixin i1⋂i2 r1⋂r2 d1⋂d2 @br
@@ -221,8 +252,15 @@ This document is available under the bugroff license.
         @L{Relies on higher-order functions, fixed-points, laziness}
         @L{Requires more elaborate subtypes than usual for FP @bri
            … or dynamic types, unpopular within FP}
-        @L{Historically discovered last ’90, deployed recently 2006})
+        @L{Historically discovered last ’90}
+        @L{Used in StrongTalk 1993, PLT Scheme GUI 2006})
      ($slide "Single Inheritance: Historical First"
+        #;@L{@code{type Gen self = self → self @br
+                 buildGen :: Gen self → self @br
+                 buildGen = Y @br
+                 inheritGen :: Gen s → Mixin s t t → Gen s⋂t @br
+                 inheritGen = λ parent mixin self ↦ @bri
+                   mixin (parent self) self}}
         @L{@code{type Gen self = self → self @br
                  buildGen :: Gen self → self @br
                  buildGen = Y @br

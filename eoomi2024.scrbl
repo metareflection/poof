@@ -67,26 +67,27 @@ but sometimes goes against one or both.
 @subsection{OO in 2 lines of FP}
 
 Our previous paper@~cite{poof2021} @; “Prototypes: Object-Orientation, Functionally”
-shows how to reduce Object-Orientation (OO)
-to a few lines of Functional Programming (FP).
-Its kernel consists of just two one-line functions—reprised and detailed
-in @seclink{simplest_prototypes}.
-@; involving the @c{Y} combinator:
-@; @Code{build = λ m t ↦ Y (λ s ↦ m s t)
-@; inherit = λ c p ↦ λ s d ↦ c s (p s d)}
-@; These two definitions, for mixin instantiation and mixin composition respectively,
-These functions slightly generalize formulas known in theory for many decades @~cite{bracha1990mixin},
-and actually used as the basis of practical implementations for many years @~cite{nix2015}.
-That paper then uses and extends this technique to implement
-several complete Object Systems, in a few tens of lines of code each,
-in any language that can express higher-order functions.
+reconstructs Object-Orientation (OO) on top of a kernel of two simple functions
+(see @seclink{simplest_prototypes}).
+These functions slightly generalize a decades-old theoretical-only model @;@~cite{bracha1990mixin},
+except one that had twenty-five years later been made the actual practical implementation
+of systems managing software at a very large scale (see @seclink{minimal_design_maximal_outreach}).
 
 @subsection{OO as Incremental Modularity}
 
-In the above paper, we briefly mention how
-@principle{OO is a mechanism to specify computations in modular increments},
+We herein develop an idea that was only briefly mentioned in the previous paper:
+@principle{OO is a mechanism to specify computations in modular increments}.
+We thus reconstruct from first principles a functional design of basic OO concepts,
+each of them justified by how it is a necessary affordance toward this purpose.
+Our design mostly reprises well known ideas,
+though with a few original enhancements or clarifications
+(such as the notion of conflation).
+We explain how our modern presentation choice of design elements,
+
+compare early designs
+
 and how modularity justifies using multiple inheritance over mixin inheritance,
-or conflating of prototypes and instances (or classes and types) over keeping them separate.
+or conflating prototypes and instances (or classes and types) rather than keep them separate.
 
 In this present paper, we will elaborate on this relationship
 between OO and Incremental Modularity.
@@ -928,13 +929,17 @@ mix = λ child parent self duper ↦ child self (parent self duper)}
 @subsubsection{Simple and Efficient}
 Historically, the first inheritance mechanism discovered was @emph{single inheritance},
 though it was not known by that name until later.
-In @~cite{Simula1968}, a “class” of records@~cite{hoare1965record} @;TODO more
-uses a previous class as a “prefix”, reusing all its field definitions and method functions;
+In an influential 1965 paper@~cite{hoare1965record},
+Hoare introduced the notions of “class” and “subclass” of records
+(as well as, infamously, @emph{null}).
+Subclasses though were first implemented in @~cite{Simula1968},
+using a previous class as a “prefix”, reusing all its field definitions and method functions;
 the text of the resulting class is then the “concatenation”
-of the direct text of all its transitive prefix classes.
-In modern terms, we call the prefix a superclass, the extended class a subclass. @; TODO CITE
-Single inheritance was made popular circa 1971 by Smalltalk @;@~cite{Smalltalk} @;TODO FIX ME
-and later circa 1995 by Java@~cite{EcmaScript:15}. @TODO{or C#}
+of the direct text of all its transitive @emph{prefix classes}.
+In modern terms, we call the prefix a superclass. @; TODO CITE
+Single inheritance was later adopted by Smalltalk-76 @;@~cite{Smalltalk} @;TODO FIX ME
+and many other contemporaneous systems,
+and later made especially popular circa 1995 by Java. @;@~cite{}. @TODO{or C#}
 
 Single inheritance is easy to implement without higher-order functions;
 method lookup can be compiled into a simple and efficient array lookup at a fixed index
@@ -2017,7 +2022,5 @@ and should be a natural part of the OO ecosystem.
 
 @(generate-bibliography)
 
-
 @TODO{
-Okasaki Pure Functional Data Structures... in the context of how functional style without OO requires you to rewrite everything for every variant of a data structure, rather than only the difference from known templates you inherit from.
 }

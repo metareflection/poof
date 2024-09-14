@@ -277,7 +277,7 @@
 ;; type FMap s t a b = (a -> b) -> (f a -> f b)
 
 ;; Haskell: type Lens s t a b = forall f. Functor f => (a -> f b) -> (s -> f t)
-;; type Lens s t a b = forall f. ((a -> b) -> (f a -> f b)) -> (a -> f b) -> (s -> f t)
+;; type Lens s t a b = forall f . ((a -> b) -> (f a -> f b)) -> (a -> f b) -> (s -> f t)
 ;; type SimpleLens s a = Lens s s a a
 
 ;; : (s -> a) -> (s -> b -> t) -> Lens s t a b
