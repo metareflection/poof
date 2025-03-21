@@ -94,8 +94,8 @@ This document is available under the bugroff license.
         @L{A way to organize software development}
         @L{... to support @em{Division of Labor}})
      ($slide "Prototype OO"
-        @Li{KRL'75 Ani'76 ThingLab'77 T'83 Self'85 JS'95} ;; after Simula 67, before Smalltalk 76
-        @Li{vs Simula'67 Smalltalk'76 Flavors'79 C_with_Classes'79} ;; Mesa'79 LOOPS'82 CLOS'84 C++'85 Eiffel'86
+        @Li{Proto: KRL'75 Ani'76 ThingLab'77 T'83 Self'85 JS'95} ;; after Simula 67, before Smalltalk 76
+        @Li{Class: Simula'67 Smalltalk'76 Flavors'79 C++'79 Java'96} ;; Mesa'79 C_with_Classes'79 LOOPS'82 CLOS'84 C++'85 Eiffel'86
         @Li{OO w/o Classes… sometimes w/o Objects!}
         @Li{Not as well known, yet more fundamental}
         @Li{@code{(λ (self super) body ...)}})) ;; this inner in SIMULA
@@ -111,7 +111,7 @@ This document is available under the bugroff license.
         @Li{GCL (2004), Jsonnet (2014), Nix (2015)…}
         @Li{From single computers to distributed systems}
         @Li{Mixins offer or use methods, incremental specification}
-        @Li{Large DAG where every node is an extension point}
+        @Li{Large graph where every node is an extension point}
         @Li{Global open recursion, not just local})
      ($slide "Great for Runtime Type Descriptors"
         @Li{GUI, QuickCheck, Codecs}
@@ -121,34 +121,36 @@ This document is available under the bugroff license.
         @Li{Lightweight, my first code atop any dynamic language})
      ($slide "Class OO is but Prototype OO at type-level"
         @Li{@code{Class = Proto Type}}
-        @Li{Squint and all OO is Prototypes}
-        @Li{Use Prototypes & you can do all OO @em{and more}}
         @Li{… JS has Prototypes!}
-        @li{… C++ templates @em{are} Pure Functional Prototype OO})
+        @Li{Squint and all OO is Prototypes}
+        @Li{… C++ templates @em{are} Pure Functional Prototype OO}
+        @Li{Use Prototypes & you can do all OO @em{and more}})
      ($slide "This very Presentation!"
         @Li{Pure functional, declarative}
-        @Li{How can the toc include yet-unwritten section titles?}
         @Li{Prototype for slides w/ toc in ~125 loc}
         @Li{FP + OO system in 350 loc including autocurry macros}
-        @Li{… demo time!}))
+        @Li{How can the toc include yet-unwritten section titles?}
+        @Li{… demo time?}))
     ($section "Prototype OO in a Nutshell"
      $plan-slide
      ($slide "OO from Scratch"
         @Li{Prototypes: Incremental Modular Specification}
-        @Li{@code{self}: Complete Instance being specified (modularity)}
-        @Li{@code{super}: Partial Instance so far (incrementality)}
-        @Li{Input @code{self}, @code{super}@";" output a more elaborate partial instance}
+        @Li{Input @code{self}: Instance being specified (modularity)}
+        @Li{Input @code{super}: Partial Instance so far (incrementality)}
+        @Li{Output: a more elaborate partial instance}
         @Li{Mixin Inheritance: compose prototypes!})
      ($slide "OO in Two lines"
         @L{@code{fix = (λ (p t) (Y (λ (s) (p s t))))} @br
            @code{mix = (λ (p q) (λ (s u) (p s (q s u))))}}
-        @L{@code{instantiate = λ mixin base ↦ Y (mixin base)} @br
+        @L{@code{instantiate = λ mixin base ↦ @br
+                 @(~ 18) Y (λ (self) (mixin self base))} @br
            @code{inherit = λ child parent self super ↦ @br
                  @(~ 18) child (parent self super) self}}
         @L{@code{child}, @code{parent}: mixins @br
-            @code{self}: complete instance @(~ 10) @code{super}: partial instance})
+            @code{self}: complete instance @(~ 10)
+                 @code{super}: partial instance})
      ($slide "Objects"
-        @Li{Just did OO without Objects! (See this presentation)}
+        @Li{Just did OO without Objects! (This presentation)}
         @Li{Conflation: @(~ 4) @code{Object = Prototype × Instance}}
         @Li{Why? Modular extension points}
         @Li{Confusion: conflation w/o distinction, vocabulary conflict}
@@ -163,10 +165,11 @@ This document is available under the bugroff license.
      $plan-slide
      ($slide "Why did I care about Prototype OO?"
         @Li{Great Usenet Flamewars of OO vs FP}
-        @Li{Dysfunctional Programming vs Objectionable Disorientation}
+        @Li{Dysfunctional Programming vs @br
+            @(~ 18) Objectionable Disorientation}
         @Li{Talking Past Each Other… for Decades}
-        @Li{The paper I wished I could have read younger}
-        @Li{Lisp had it all the 1970s})
+        @Li{1970s Lisp had both (2000s Scala: with types)}
+        @Li{The paper I wished I could have read younger})
      ($slide "Why So Much Blindness?"
         @Li{Industry doesn’t care enough about Correctness}
         @Li{Academia doesn’t understand Programming In The Large}
@@ -191,13 +194,13 @@ This document is available under the bugroff license.
         @Li{Humility, not fanaticism}
         @Li{Incommensurable paradigms? Go wider!}
         @Li{Simplicity matters — so does Complexity}
-        @Li{Pre-1990s Lisp: “Systems” vs “Programming Language” Paradigm}
+        @Li{Paradigm: “Systems” vs “Programming Language”}
         @Li{Scheme: λ’s for Semantics, macros for Syntax})
      ($slide "Thank You!"
         @Li{Theory: @(~ 8) @Url{https://github.com/metareflection/poof}}
         @Li{Practice: @(~ 5) Gerbil Scheme @Url{https://cons.io}}
         @Li{X: @Url{https://x.com/ngnghm}  Blog: @Url{https://ngnghm.github.io}}
-        @Li{Hire me or be hired by me! @(~ 5) @code{<fare@"@"mukn.com>}}
+        @Li{Hire me — or be hired by me! @(~ 5) @code{<fare@"@"mukn.com>}}
         @Li{Plenty more research ideas, code and papers to write…}))))
 
 (reveal-doc doc)
