@@ -145,7 +145,7 @@ This document is available under the bugroff license.
         @L{@code{instantiate = λ mixin base ↦ @br
                  @(~ 18) Y (λ (self) (mixin self base))} @br
            @code{inherit = λ child parent self super ↦ @br
-                 @(~ 18) child (parent self super) self}}
+                 @(~ 18) child self (parent self super)}}
         @L{@code{child}, @code{parent}: mixins @br
             @code{self}: complete instance @(~ 10)
                  @code{super}: partial instance})
