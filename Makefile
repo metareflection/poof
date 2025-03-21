@@ -1,10 +1,10 @@
 ## NB: If racket complains about some modules missing, try: make prerequisites
 
 # Default target: the latest slides
-all: eoomi
+all: slides # eoomi
 
 # Default slides: the next talk
-slides: slides-2023-njpls # slides-2024-lambdaconf
+slides: slides-2025-shu # slides-2023-njpls slides-2024-lambdaconf
 
 .DUMMY: all pdf view test repl prerequisites fare links \
   preslides slides \
@@ -69,6 +69,11 @@ build/slides-2023-njpls.html: slides-2023-njpls.rkt util/reveal.rkt util/util.rk
 # Slides for LambdaConf 2024
 slides-2024-lambdaconf: build/slides-2024-lambdaconf.html
 build/slides-2024-lambdaconf.html: slides-2024-lambdaconf.rkt util/reveal.rkt util/util.rkt util/coop.rkt util/protodoc.rkt util/coop.scm
+	racket $< > $@.tmp && mv $@.tmp $@ || { rm -f $@.tmp ; exit 42;}
+
+# Slides for visit to SHU in 2025
+slides-2025-shu: build/slides-2025-shu.html
+build/slides-2025-shu.html: slides-2025-shu.rkt util/reveal.rkt util/util.rkt util/coop.rkt util/protodoc.rkt util/coop.scm
 	racket $< > $@.tmp && mv $@.tmp $@ || { rm -f $@.tmp ; exit 42;}
 
 # New paper for 2024 (?)

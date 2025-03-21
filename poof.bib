@@ -35,6 +35,10 @@
   numpages = {8}
 }
 
+% Ole-Johan Dahl and Kristen Nygaard. Class and subclass declarations 1967 (pdf)
+% https://www.ub.uio.no/english/subjects/naturalscience-technology/informatics/themes/dns/index.html
+% https://www.ub.uio.no/fag/naturvitenskap-teknologi/informatikk/faglig/dns/dokumenter/classandsubclass1967.pdf
+
 % Introduces the notion of "Ad hoc polymorphism"
 @Misc{Strachey67,
   Author = {Christopher Strachey},
@@ -43,7 +47,7 @@
   url = {http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.332.3161},
 }
 
-% This is the one that introduces objects and prefix classes
+% This is the one that introduces objects, prefix classes and subclasses.
 @Misc{Simula1968,
   Author = {Ole-Johan Dahl and Bjørn Myhrhaug and Kristen Nygaard},
   Title = {SIMULA 67 Common Base Language},
@@ -80,6 +84,25 @@
   pages = {1053--1058},
   numpages = {6},
   keywords = {modules, software, KWIC index, modularity, software engineering, software design}
+}
+
+% So far as I can tell, the earliest use of "inheritance", in "inheritance of properties", p. 197.
+% As the title implies, this is not quite for *data* yet not quite for *code* but somewhere in between.
+% https://api.pageplace.de/preview/DT0400.9781483299150_A23889670/preview-9781483299150_A23889670.pdf
+@InCollection{Winograd1975,
+  title = {Frame Representations and the Declarative/Procedural Controversy},
+  editor = {Daniel G. Bobrow and Allan Collins},
+  booktitle = {Representation and Understanding},
+  publisher = {Morgan Kaufmann},
+  address = {San Diego},
+  pages = {185-210},
+  year = {1975},
+  isbn = {978-0-12-108550-6},
+  doi = {https://doi.org/10.1016/B978-0-12-108550-6.50012-4},
+  url = {https://www.sciencedirect.com/science/article/pii/B9780121085506500124},
+  author = {Terry Winograd},
+  abstract = {Publisher Summary
+This chapter presents some criteria for evaluating ideas for representation. It also presents a rough sketch of a particular version of a frame representation, and discusses the ways in which it can deal with the issues raised. The proceduralists assert that human knowledge is primarily a knowing how. The human information processor is a stored program device, with its knowledge of the world embedded in the programs. The declarativists do not believe that knowledge of a subject is intimately bound with the procedures for its use. They see intelligence as resting on two bases: a quite general set of procedures for manipulating facts of all sorts, and a set of specific facts describing particular knowledge domains. In thinking, the general procedures are applied to the domain-specific data to make deductions. Often this process has been based on the model of axiomatic mathematics. The facts are axioms and the thought process involves proof procedures for drawing conclusions from them.}
 }
 
 % https://link.springer.com/chapter/10.1007/3-540-07168-7_77
@@ -143,6 +166,7 @@
   location = {Los Angeles, California}
 }
 
+% Prototype-based, inheritance (single? multiple?)
 @InProceedings{Kahn1976,
   author = {Kahn, Kenneth Michael},
   title = {An Actor-Based Computer Animation Language},
@@ -467,6 +491,14 @@
   url={https://www.cs.rice.edu/CS/PLT/Publications/Scheme/}
 }
 
+@Book{AMOP,
+  Title={The {A}rt of the {M}eta-{O}bject {P}rotocol},
+  Author={Bobrow, Daniel and Kiczales, Gregor and des Rivi\`eres, Jim},
+  Publisher={MIT Press},
+  Year={1991}
+}
+
+% Like Traits 1982, errors out in case of conflicting methods along the hierarchy
 @InProceedings{CecilMultimethods,
   author="Chambers, Craig",
   editor="Madsen, Ole Lehrmann",
@@ -637,6 +669,26 @@
   doi = {10.5555/645894.671755},
 }
 
+% Defines a dialect of Java with mixins, MixedJava, to illustrate the approach taken in MzScheme
+% and better described in their 2006 paper.
+% https://www.semanticscholar.org/paper/Classes-and-mixins-Flatt-Krishnamurthi/c20e5f2a424b96209e6b400b23d319558932afa3
+@Misc{Mixins1998,
+  author = {Flatt, Matthew and Krishnamurthi, Shriram and Felleisen, Matthias},
+  title = {Classes and mixins},
+  year = {1998},
+  isbn = {0897919793},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/268946.268961},
+  doi = {10.1145/268946.268961},
+  abstract = {While class-based object-oriented programming languages provide a flexible mechanism for re-using and managing related pieces of code, they typically lack linguistic facilities for specifying a uniform extension of many classes with one set of fields and methods. As a result, programmers are unable to express certain abstractions over classes.In this paper we develop a model of class-to-class functions that we refer to as mixins. A mixin function maps a class to an extended class by adding or overriding fields and methods. Programming with mixins is similar to programming with single inheritance classes, but mixins more directly encourage programming to interfaces.The paper develops these ideas within the context of Java. The results are 1. an intuitive model of an essential Java subset; 2. an extension that explains and models mixins; and 3. type soundness theorems for these languages.},
+  booktitle = {Proceedings of the 25th ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
+  pages = {171–183},
+  numpages = {13},
+  location = {San Diego, California, USA},
+  series = {POPL '98}
+}
+
 @Misc{ecmascript,
   title={ECMAScript Language Specification},
   author={ECMA, Final Draft},
@@ -720,8 +772,6 @@
   series = {OOPSLA '05}
 }
 
-
-% https://www.semanticscholar.org/paper/Classes-and-mixins-Flatt-Krishnamurthi/c20e5f2a424b96209e6b400b23d319558932afa3
 @InProceedings{Flatt06schemewith,
   author = {Matthew Flatt and Robert Bruce Findler and Matthias Felleisen},
   title = {Scheme with classes, mixins, and traits},
@@ -780,6 +830,7 @@
   urldate = {2021-03-14}
 }
 
+% From the Fortress team
 @InProceedings{allen2011type,
   title={Type checking modular multiple dispatch with parametric polymorphism and multiple inheritance},
   author={Allen, Eric and Hilburn, Justin and Kilpatrick, Scott and Luchangco, Victor and Ryu, Sukyoung and Chase, David and Steele, Guy},
@@ -1049,6 +1100,12 @@
 % TODO: trace prototypes back to earlier Actor systems???
 %
 % Bobrow, Daniel G., and Winograd. Terry, "An Overview of KRL, A Knowledge Representation Language". Cognitive Science, V. 1, No. 1, 1977.
+% Early versions in 1976.
+% Has multiple inheritance (without using the word) as multiple "descriptors"
+% each providing a "perspective" on a given "object" or "prototype",
+% and "inheritance of properties".
+% Meant as a declarative system of data on which operations are then performed,
+% rather than as code as such (though coding is possible).
 %
 % Hewitt, Carl, Viewing Control Structures as Patterns of Passing Messages, MIT AI Lab Memo 410, Dec 1976.
 
@@ -1167,6 +1224,7 @@
 % ThingLab 1981 has multiple inheritance (already in 1977),
 % and so have PIE (Goldstein&Bobrow 1980), Flavors 1980, LOOPS 1982.
 % Traits from Mesa since 1979 [Curry 1982]
+% Conflict resolution is by erroring if inheriting more than one method without an explicit override
 @inproceedings{borning1982multiple,
   title={Multiple inheritance in Smalltalk-80},
   author={Borning, Alan H and Ingalls, Daniel HH},
@@ -1245,3 +1303,89 @@
 % cites O'Haskell (Norlander 2001) vs OOHaskell (Kiselyov & Lämmel 2005)
 
 % TODO: Henry Lieberman papers about Actors, etc. -- when did he do inheritance / delegation?
+
+% 2003  Tom Hirschowitz  Call-by-value mixin modules
+% https://hirschowitz.pages.math.cnrs.fr/phd/these-tom.pdf
+% https://hirschowitz.pages.math.cnrs.fr/
+
+% https://www.quora.com/Why-is-functional-programming-seen-as-the-opposite-of-OOP-rather-than-an-addition-to-it/answer/Henry-Story
+%
+
+% https://people.mpi-sws.org/~rossberg/mixml/
+% Andreas Rossberg, Derek Dreyer. Mixin' Up the ML Module System. TOPLAS 35(1), 2013. Revised and significantly extended version of the ICFP paper, including material from the appendices and a lot more.
+% Derek Dreyer, Andreas Rossberg. Mixin' Up the ML Module System. ICFP, 2008.
+% Derek Dreyer, Andreas Rossberg. Mixin' Up the ML Module System (Extended Mix). Expanded version including technical appendices, 2008.
+
+% More digging on the origins of OO:
+% https://x.com/Ngnghm/status/1898493837040849348
+
+% Alan Kay
+% The Early History of Smalltalk
+% 1996
+% https://dl.acm.org/doi/pdf/10.1145/234286.1057828
+
+@inproceedings{10.1145/191080.191110,
+author = {Ducournau, R. and Habib, M. and Huchard, M. and Mugnier, M. L.},
+title = {Proposal for a monotonic multiple inheritance linearization},
+year = {1994},
+isbn = {0897916883},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/191080.191110},
+doi = {10.1145/191080.191110},
+abstract = {Previous studies concerning multiple inheritance convinced us that a better analysis of conflict resolution mechanisms was necessary. In [DHHM92], we stated properties that a sound mechanism has to respect. Among them, a monotonicity principle plays a critical role, ensuring that the inheritance mechanism behaves “naturally” relative to the incremental design of the inheritance hierarchy. We focus here on linearizations and present an intrinsically monotonic linearization, whereas currently used linearizations are not. This paper describes the algorithm in detail, explains the design choices, and compares it to other linearizations, with LOOPS and CLOS taken as references. In particular, this new linearization extends CLOS and LOOPS linearizations, producing the same  results when these linearizations are sound.},
+booktitle = {Proceedings of the Ninth Annual Conference on Object-Oriented Programming Systems, Language, and Applications},
+pages = {164–175},
+numpages = {12},
+location = {Portland, Oregon, USA},
+series = {OOPSLA '94}
+}
+
+% Defines the constraints used by C3, but uses a global rather than local tie break rule,
+% and goes on rather than errors out if rules are incompatible
+@article{10.1145/191081.191110,
+author = {Ducournau, R. and Habib, M. and Huchard, M. and Mugnier, M. L.},
+title = {Proposal for a monotonic multiple inheritance linearization},
+year = {1994},
+issue_date = {Oct. 1994},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {29},
+number = {10},
+issn = {0362-1340},
+url = {https://doi.org/10.1145/191081.191110},
+doi = {10.1145/191081.191110},
+abstract = {Previous studies concerning multiple inheritance convinced us that a better analysis of conflict resolution mechanisms was necessary. In [DHHM92], we stated properties that a sound mechanism has to respect. Among them, a monotonicity principle plays a critical role, ensuring that the inheritance mechanism behaves “naturally” relative to the incremental design of the inheritance hierarchy. We focus here on linearizations and present an intrinsically monotonic linearization, whereas currently used linearizations are not. This paper describes the algorithm in detail, explains the design choices, and compares it to other linearizations, with LOOPS and CLOS taken as references. In particular, this new linearization extends CLOS and LOOPS linearizations, producing the same  results when these linearizations are sound.},
+journal = {SIGPLAN Not.},
+month = oct,
+pages = {164–175},
+numpages = {12}
+}
+
+@article{ducournau1992monotonic,
+  title={Monotonic conflict resolution mechanisms for inheritance},
+  author={Ducournau, Roland and Habib, Michel and Huchard, Marianne and Mugnier, Marie-Laure},
+  journal={ACM SIGPLAN Notices},
+  volume={27},
+  number={10},
+  pages={16--24},
+  year={1992},
+  publisher={ACM New York, NY, USA}
+}
+
+
+% class A { def l=List("A") };
+% trait T extends A { override def l=List("T")++super.l; }
+% trait U extends A { override def l=List("U")++super.l; }
+% class B extends A with T { override def l=List("B")++super.l; }
+% trait V extends B with U { override def l=List("V")++super.l; }
+% trait W extends T with V { override def l=List("W")++super.l; } // not for 2.13
+% class C extends W { override def l=List("C")++super.l; }
+% class D extends B with T with U with V { override def l=List("D")++super.l; }
+
+class A { def l=List("A") };
+class B extends A { override def l=List("B")++super.l; }
+trait T extends A { override def l=List("T")++super.l; }
+trait U extends B { override def l=List("U")++super.l; }
+class C extends T with U { override def l=List("C")++super.l; }
+(new C).l
