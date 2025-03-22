@@ -135,16 +135,16 @@ This document is available under the bugroff license.
      $plan-slide
      ($slide "OO from Scratch"
         @Li{Prototypes: Incremental Modular Specification}
-        @Li{Input @code{self}: Instance being specified (modularity)}
-        @Li{Input @code{super}: Partial Instance so far (incrementality)}
-        @Li{Output: a more elaborate partial instance}
+        @L{@code{(λ (self} @";" Instance being specified (modularity) @br
+           @(~ 15) @code{super)} @";" Partial Instance so far (incrementality) @br
+           @(~ 15) @code{…)} @";" compute a more elaborate partial instance}
         @Li{Mixin Inheritance: compose prototypes!})
      ($slide "OO in Two lines"
-        @L{@code{fix = (λ (p t) (Y (λ (s) (p s t))))} @br
+        @L{@code{fix = p t) (Y (λ (s) (p s t))))} @br
            @code{mix = (λ (p q) (λ (s u) (p s (q s u))))}}
         @L{@code{instantiate = λ mixin base ↦ @br
                  @(~ 18) Y (λ (self) (mixin self base))} @br
-           @code{inherit = λ child parent self super ↦ @br
+           @code{inherit = λ child parent ↦ λ self super ↦ @br
                  @(~ 18) child self (parent self super)}}
         @L{@code{child}, @code{parent}: mixins @br
             @code{self}: complete instance @(~ 10)
