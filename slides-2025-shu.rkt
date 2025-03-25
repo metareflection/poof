@@ -138,7 +138,8 @@ This document is available under the bugroff license.
         @L{@code{(λ (self} @";" Instance being specified (modularity) @br
            @(~ 15) @code{super)} @";" Partial Instance so far (incrementality) @br
            @(~ 15) @code{…)} @";" compute a more elaborate partial instance}
-        @Li{Mixin Inheritance: compose prototypes!})
+        @Li{Mixin Inheritance: compose prototypes! @br
+            More expressive than single-inheritance, and simpler (with HOFs)})
      ($slide "OO in Two lines"
         @L{@code{fix = p t) (Y (λ (s) (p s t))))} @br
            @code{mix = (λ (p q) (λ (s u) (p s (q s u))))}}

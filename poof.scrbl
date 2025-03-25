@@ -667,7 +667,7 @@ Composition of first-class prototypes is obviously more expressive than single-i
 You can @r[mix] prototypes or @r[append] prototype lists, and
 programmatically compose code from many increments of code.
 Prototypes are thus more akin to the “mixins” or “traits” of more advanced
-objects systems@~cite{Cannon82 bracha1990mixin Flatt06schemewith}.
+objects systems@~cite{Cannon1980 bracha1990mixin Flatt06schemewith}.
 Prototype composition however, does not by itself subsume multiple inheritance,
 that we will study in @(section4).
 
@@ -1765,7 +1765,7 @@ Handling full prototype OOP would require dependent types or some notion of stag
 @subsubsection{The Lisp tradition}
 The Lisp tradition includes many object systems that were class-based
 but innovated in other ways:
-Flavors@~cite{Cannon82} brought multiple inheritance, mixins, extensible method combinations,
+Flavors@~cite{Cannon1980} brought multiple inheritance, mixins, extensible method combinations,
 default initialization values, etc.
 CommonLoops@~cite{bobrow86commonloops} brought generic functions and multiple dispatch,
 meta-object protocols, etc.
@@ -2060,7 +2060,7 @@ instead of an empty object when (re)computing instance fixed-points.
 @subsection{Method Combinations}
 
 @subsubsection{Combining Method Fragments}
-With method combination, as pioneered in Flavors@~cite{Cannon82},
+With method combination, as pioneered in Flavors@~cite{Cannon1980},
 then standardized by CLOS@~cite{bobrow88clos} via @~cite{bobrow86commonloops}
 and made slightly popular outside the Lisp tradition by Aspect-Oriented Programming@~cite{aop97},
 object methods to be specified in multiple fragments

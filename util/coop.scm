@@ -97,10 +97,16 @@
 ;; : (μ x . x -> y -> r) -> y -> r
 (def (D x y) (x x y))
 
+;; Purely functional definition of the Y combinator
 ;; Y combinator: return fixed-point x such that x = (f x).
+;; Each recursive use of f will involve duplication of the term.
 ;; : (s -> x -> r) -> (μ s . s -> x -> r) ???
-#;(def (Y f) (D (comp f D)))
-;; More efficient implementation of the same
+(def (pure-Y f) (D (comp f D)))
+
+;; More efficient implementation of the same,
+;; with *more* sharing and therefore fewer recomputations
+;; by using the builtin self-reference in define (which is equivalent to a letrec)
+;; such that the fixed-point itself is not duplicated.
 (def (Y f)
   (define (fixed-point x) (f fixed-point x))
   fixed-point)

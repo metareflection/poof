@@ -1,6 +1,12 @@
 %%% Bibliography, roughly sorted by year of publication
 % (See TODO at the end for more)
 
+@book{dumas1844,
+  title={Les Trois Mousquetaires},
+  author={Alexandre Dumas},
+  year={1844}
+}
+
 % Calls objects and attributes the things being modeled, classes their types
 % Records and fields the things doing the modeling, record classes their types.
 % Introduces null for partial relationships (is that the first null???)
@@ -14,6 +20,9 @@
   year={1965},
   url={http://archive.computerhistory.org/resources/text/Knuth_Don_X4100/PDF_index/k-9-pdf/k-9-u2293-Record-Handling-Hoare.pdf}
 }
+
+% Warren Teitelman MIT PhD dissertation "Pilot: A Step Toward Man-Computer Symbiosis" 1966
+% Gabriel2012 claims it introduces mixins as "advice".
 
 % Simula I back in 1966 has processes and more, but DOES NOT have OO
 @article{Simula1966,
@@ -37,7 +46,19 @@
 
 % Ole-Johan Dahl and Kristen Nygaard. Class and subclass declarations 1967 (pdf)
 % https://www.ub.uio.no/english/subjects/naturalscience-technology/informatics/themes/dns/index.html
-% https://www.ub.uio.no/fag/naturvitenskap-teknologi/informatikk/faglig/dns/dokumenter/classandsubclass1967.pdf
+% First implements classes, and introduces inheritance (though not the word);
+% introduces the words "prefix class", "subclasses", "prefix sequence", "this", "inner".
+% The "prefix" class also offers a suffix, and uses the "inner" separator to "split" its "body"
+% and specify where the subclass body will go. BETA will also follow this approach
+% of the superclass specifying how to compose with the subclass semantics,
+% when most other OO languages take the approach of the subclass specifying
+% how to reuse information specified by superclasses.
+@Misc{Simula1967,
+  author = {Dahl, Ole-Johan and Nygaard, Kristen},
+  title = {Class and subclass declarations},
+  year = {1967},
+  url = {https://www.ub.uio.no/fag/naturvitenskap-teknologi/informatikk/faglig/dns/dokumenter/classandsubclass1967.pdf}
+}
 
 % Introduces the notion of "Ad hoc polymorphism"
 @Misc{Strachey67,
@@ -86,10 +107,14 @@
   keywords = {modules, software, KWIC index, modularity, software engineering, software design}
 }
 
-% So far as I can tell, the earliest use of "inheritance", in "inheritance of properties", p. 197.
+% So far as I can tell, the earliest use of "inheritance", in "inheritance of properties", p. 197.,
+% along the hierarchy of frames. The variant it designates is multiple-inheritance,
+% though that word isn't coined. The exact resolution algorithm is not explained,
 % As the title implies, this is not quite for *data* yet not quite for *code* but somewhere in between.
 % https://api.pageplace.de/preview/DT0400.9781483299150_A23889670/preview-9781483299150_A23889670.pdf
-@InCollection{Winograd1975,
+% InCollection
+@Misc{Winograd1975,
+  author = {Terry Winograd},
   title = {Frame Representations and the Declarative/Procedural Controversy},
   editor = {Daniel G. Bobrow and Allan Collins},
   booktitle = {Representation and Understanding},
@@ -100,7 +125,6 @@
   isbn = {978-0-12-108550-6},
   doi = {https://doi.org/10.1016/B978-0-12-108550-6.50012-4},
   url = {https://www.sciencedirect.com/science/article/pii/B9780121085506500124},
-  author = {Terry Winograd},
   abstract = {Publisher Summary
 This chapter presents some criteria for evaluating ideas for representation. It also presents a rough sketch of a particular version of a frame representation, and discusses the ways in which it can deal with the issues raised. The proceduralists assert that human knowledge is primarily a knowing how. The human information processor is a stored program device, with its knowledge of the world embedded in the programs. The declarativists do not believe that knowledge of a subject is intimately bound with the procedures for its use. They see intelligence as resting on two bases: a quite general set of procedures for manipulating facts of all sorts, and a set of specific facts describing particular knowledge domains. In thinking, the general procedures are applied to the domain-specific data to make deductions. Often this process has been based on the model of axiomatic mathematics. The facts are axioms and the thought process involves proof procedures for drawing conclusions from them.}
 }
@@ -184,6 +208,20 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url = {https://dspace.mit.edu/handle/1721.1/41950}
 }
 
+% Also published in Cognitive Science, V. 1, No. 1, 1977.
+% Has multiple inheritance (without using the word) as multiple "descriptors"
+% each providing a "perspective" on a given "object" or "prototype",
+% and "inheritance of properties".
+% Meant as a declarative system of data on which operations are then performed,
+% rather than as code as such (though coding is possible).
+@Misc{Bobrow1976,
+  author={Daniel G. Bobrow and Terry Winograd},
+  title={An Overview of KRL, A Knowledge Representation Language},
+  year={1976},
+  note={Stanford Artificial Intelligence Laboratory Memo AIM-293}
+}
+
+
 % Uses the word "prototypes", and has no classes. And multiple inheritance.
 @InProceedings{Borning1977,
   author = {Alan Hamilton Borning},
@@ -240,6 +278,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   numpages = {35}
 }
 
+% Yale T Scheme. Introduces functional syntax for object method invocation.
 % Norman I. Adams, IV -- but the IV doesn't get processed correctly
 % Can't find it on http://mumble.net/~jar/tproject/
 @InProceedings{Rees82t:a,
@@ -251,14 +290,24 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url = {https://www.researchgate.net/publication/221252249_T_a_dialect_of_Lisp_or_LAMBDA_The_ultimate_software_tool}
 }
 
-% Borning1982 cites a 1980 version of the Flavors report, from MIT
+% Borning1982 cites a 1980 version of the Flavors report, from MIT. Originally from 1979.
 % Also a 1982 version of LOOPS
-@Misc{Cannon82,
+@Misc{Cannon1980,
   title={Flavors: A non-hierarchical approach to object-oriented programming},
   author={Howard Cannon},
   publisher={Symbolics Inc.},
-  year=1982,
+  year=1980,
   url={https://www.softwarepreservation.org/projects/LISP/MIT/nnnfla1-20040122.pdf}
+}
+
+% Has metaclasses, multiple inheritance.
+% Still ugly syntax, with INTERLISP-style very short uppercase identifiers.
+@book{bobrow1983loops,
+  title={The LOOPS manual},
+  author={Bobrow, Daniel Gureasko and Stefik, Mark},
+  volume={10},
+  year={1983},
+  publisher={Xerox Corporation Palo Alto, CA}
 }
 
 % After discussing multiple inheritance informally, omits it completely from the formal treatment,
@@ -289,7 +338,10 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   doi={10.5555/324493.324538},
 }
 
-% Also a 1985 report
+% Also a 1985 report.
+% Has generic functions, method caching, multimethods,
+% As in 1983, metaclasses-mediated definitions&slots, etc.
+% Almost modern syntax, lower case long(ish) identifiers.
 @InProceedings{bobrow86commonloops,
   title={CommonLoops: Merging Lisp and Object-Oriented Programming},
   author={Daniel G. Bobrow and Kenneth Kahn and Gregor Kiczales and Larry Masinter and Mark Stefyk and Frank Zdybel},
@@ -297,6 +349,29 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   year={1986},
   doi={10.1145/28697.28700}
 }
+
+% David Moon "Object-Oriented Programming with Flavors" 1986
+% Gabriel2012 says it's the first academic publication on mixins after Cannon's MIT report on Flavors.
+% It describes the New Flavors from Symbolics. GF syntax. Insists on modularity.
+@article{Moon1986Flavors,
+author = {Moon, David A.},
+title = {Object-oriented programming with flavors},
+year = {1986},
+issue_date = {Nov. 1986},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {21},
+number = {11},
+issn = {0362-1340},
+url = {https://doi.org/10.1145/960112.28698},
+doi = {10.1145/960112.28698},
+abstract = {This paper describes Symbolics' newly redesigned object-oriented programming system, Flavors. Flavors encourages program modularity, eases the development of large, complex programs, and provides high efficiency at run time. Flavors is integrated into Lisp and the Symbolics program development environment. This paper describes the philosophy and some of the major characteristics of Symbolics' Flavors and shows how the above goals are addressed. Full details of Flavors are left to the programmers' manual, Reference Guide to Symbolics Common Lisp. (5)},
+journal = {SIGPLAN Not.},
+month = jun,
+pages = {1--8},
+numpages = {8}
+}
+
 
 % https://beta.cs.au.dk/ ?
 @article{kristensen1987beta,
@@ -347,6 +422,20 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   booktitle = {LFP},
   pages = {277--288},
   Year = {1988}
+}
+
+% Unless a base class is "virtual", multiple copies are inherited.
+% Conflict resolution is manual; you can explicitly call a superclass method,
+% but there is no linearization mechanism to avoid exponential calls
+% to supermethods in case of "diamonds" (TODO: find paper about the diamond problem?)
+@article{stroustrup1989multiple,
+  title={Multiple inheritance for C++},
+  author={Stroustrup, Bjarne},
+  journal={Computing Systems},
+  volume={2},
+  number={4},
+  pages={367--395},
+  year={1989}
 }
 
 % POPL, short reprise of what's in his thesis
@@ -418,6 +507,17 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   %booktitle = "POPL '89 Proceedings of the 16th ACM SIGPLAN-SIGACT symposium on Principles of programming languages",
   booktitle = "POPL",
   publisher = "ACM"
+}
+
+@book{cltl2,
+  author = {Steele, Guy},
+  title = {Common Lisp: The Language, 2nd edition},
+  year = {1990},
+  isbn = {0131515071},
+  publisher = {Digital Press},
+  address = {USA},
+  doi = {10.5555/1098646},
+  url = {http://www.cs.cmu.edu/afs/cs.cmu.edu/project/ai-repository/ai/html/cltl/cltl2.html}
 }
 
 % https://www.semanticscholar.org/paper/Mixin-based-inheritance-Bracha-Cook/cbc4f2d93bb62d1c287f4fe458de6ac416379282
@@ -546,6 +646,19 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url = "http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.121.134"
 }
 
+% Defines the constraints used by C3, but uses a global rather than local tie break rule,
+% and goes on rather than errors out if rules are incompatible
+@article{ducournau1992monotonic,
+  title={Monotonic conflict resolution mechanisms for inheritance},
+  author={Ducournau, Roland and Habib, Michel and Huchard, Marianne and Mugnier, Marie-Laure},
+  journal={ACM SIGPLAN Notices},
+  volume={27},
+  number={10},
+  pages={16--24},
+  year={1992},
+  publisher={ACM New York, NY, USA}
+}
+
 % http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.53.3952
 @InProceedings{ImplementingTypeClasses,
   title = "Implementing Type Classes",
@@ -572,6 +685,23 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   pages="27--42",
   abstract="Object-oriented techniques are a powerful tool for making a system end-programmer specializable. But, in cases where the system not only accepts objects as input, but also creates objects internally, specialization has been more difficult. This has been referred to as the ``make isn't generic problem.'' We present a new object-oriented language concept, called traces, that we have used successfully to support specialization in cases that were previously cumbersome.",
   isbn="978-3-540-48075-4"
+}
+
+@inproceedings{ProposalMonotonicMultipleInheritance1994,
+author = {Ducournau, R. and Habib, M. and Huchard, M. and Mugnier, M. L.},
+title = {Proposal for a monotonic multiple inheritance linearization},
+year = {1994},
+isbn = {0897916883},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/191080.191110},
+doi = {10.1145/191080.191110},
+abstract = {Previous studies concerning multiple inheritance convinced us that a better analysis of conflict resolution mechanisms was necessary. In [DHHM92], we stated properties that a sound mechanism has to respect. Among them, a monotonicity principle plays a critical role, ensuring that the inheritance mechanism behaves “naturally” relative to the incremental design of the inheritance hierarchy. We focus here on linearizations and present an intrinsically monotonic linearization, whereas currently used linearizations are not. This paper describes the algorithm in detail, explains the design choices, and compares it to other linearizations, with LOOPS and CLOS taken as references. In particular, this new linearization extends CLOS and LOOPS linearizations, producing the same  results when these linearizations are sound.},
+booktitle = {Proceedings of the Ninth Annual Conference on Object-Oriented Programming Systems, Language, and Applications},
+pages = {164–175},
+numpages = {12},
+location = {Portland, Oregon, USA},
+series = {OOPSLA '94}
 }
 
 % https://api.semanticscholar.org/CorpusID:16832709
@@ -642,6 +772,16 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   pages = {438--479},
   numpages = {42},
   keywords = {object-oriented programming, language constructs, delegation, inheritance, incremental modification, programming languages}
+}
+
+% InCollection ?
+@Misc{kay1996early,
+  title={The Early History of Smalltalk},
+  author={Alan C. Kay},
+  booktitle={History of programming languages---II},
+  pages={511--598},
+  year={1996},
+  doi={10.1145/234286.1057828}
 }
 
 @Book{Abadi97atheory,
@@ -745,7 +885,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   year = {2005}
 }
 
-@article{scalableComponentAbstractions,
+@article{scalableComponentAbstractions2005,
   author = {Odersky, Martin and Zenger, Matthias},
   title = {Scalable component abstractions},
   year = {2005},
@@ -802,7 +942,14 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={https://www.cis.upenn.edu/~bcpierce/papers/lenses-full.pdf}
 }
 
-% Master Thesis
+@article{bracha2008newspeak,
+  title={The Newspeak Programming Platform},
+  author={Bracha, Gilad and Ahe, Peter and Bykov, Vassili and Kashai, Yaron and Miranda, Eliot},
+  journal={Cadence Design Systems},
+  year={2008}
+}
+
+% Master Thesis. BCL
 @TechReport{gclviewer2008,
   Author = "Ibrahim Bokharouss",
   Title = "GCL Viewer: a study in improving the understanding of GCL programs",
@@ -901,6 +1048,16 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   author={Ralph Johnson and Joe Armstrong},
   year={2010},
   url={https://www.infoq.com/interviews/johnson-armstrong-oop/}
+}
+
+% Incommensurability -- uses bracha1990mixin as its pivot!
+@inproceedings{gabriel2012,
+  title={The Structure of a Programming Language Revolution},
+  author={Richard P. Gabriel},
+  booktitle={Proceedings of the ACM international symposium on New ideas, new paradigms, and reflections on programming and software},
+  pages={195--214},
+  year={2012},
+  url={https://www.dreamsongs.com/Files/Incommensurability.pdf}
 }
 
 @InProceedings{LIL2012,
@@ -1099,14 +1256,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 % TODO: trace prototypes back to earlier Actor systems???
 %
-% Bobrow, Daniel G., and Winograd. Terry, "An Overview of KRL, A Knowledge Representation Language". Cognitive Science, V. 1, No. 1, 1977.
-% Early versions in 1976.
-% Has multiple inheritance (without using the word) as multiple "descriptors"
-% each providing a "perspective" on a given "object" or "prototype",
-% and "inheritance of properties".
-% Meant as a declarative system of data on which operations are then performed,
-% rather than as code as such (though coding is possible).
-%
 % Hewitt, Carl, Viewing Control Structures as Patterns of Passing Messages, MIT AI Lab Memo 410, Dec 1976.
 
 % Adding POP to Nixpkgs:
@@ -1238,7 +1387,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % Introduces "traits", for multiple inheritance in the Mesa programming language
 % used to implement WS, the workstation software of the Xerox Star 8010,
 % since late 1979 (Mesa started early 1978 with Single-Inheritance).
-@article{10.1145/966873.806468,
+% p.6 conflict resolution is manual.
+@article{Traits,
   author = {Curry, Gael and Baer, Larry and Lipkie, Daniel and Lee, Bruce},
   title = {Traits: An approach to multiple-inheritance subclassing},
   year = {1982},
@@ -1253,7 +1403,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   abstract = {This paper describes a new technique for organizing software which has been used successfully by the Xerox Star 8010 workstation. The workstation (WS) software is written in an “object-oriented” style: it can be viewed as a system of inter-communicating objects of different object types. Most of the WS software considers object types to be constructed by assembling more primitive abstractions called traits. A trait is a characteristic of an object, and is expressed as a set of operations which may be applied to objects carrying that trait. The traits model of subclassing generalizes the SIMULA-67 model by permitting multiple inheritance paths. This paper describes the relationship of WS software to the traits model and then describes the model itself.},
   journal = {ACM SIGOA Newsletter},
   month = {jun},
-  pages = {1–9},
+  pages = {1--9},
   numpages = {9}
 }
 
@@ -1318,74 +1468,3 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 % More digging on the origins of OO:
 % https://x.com/Ngnghm/status/1898493837040849348
-
-% Alan Kay
-% The Early History of Smalltalk
-% 1996
-% https://dl.acm.org/doi/pdf/10.1145/234286.1057828
-
-@inproceedings{10.1145/191080.191110,
-author = {Ducournau, R. and Habib, M. and Huchard, M. and Mugnier, M. L.},
-title = {Proposal for a monotonic multiple inheritance linearization},
-year = {1994},
-isbn = {0897916883},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-url = {https://doi.org/10.1145/191080.191110},
-doi = {10.1145/191080.191110},
-abstract = {Previous studies concerning multiple inheritance convinced us that a better analysis of conflict resolution mechanisms was necessary. In [DHHM92], we stated properties that a sound mechanism has to respect. Among them, a monotonicity principle plays a critical role, ensuring that the inheritance mechanism behaves “naturally” relative to the incremental design of the inheritance hierarchy. We focus here on linearizations and present an intrinsically monotonic linearization, whereas currently used linearizations are not. This paper describes the algorithm in detail, explains the design choices, and compares it to other linearizations, with LOOPS and CLOS taken as references. In particular, this new linearization extends CLOS and LOOPS linearizations, producing the same  results when these linearizations are sound.},
-booktitle = {Proceedings of the Ninth Annual Conference on Object-Oriented Programming Systems, Language, and Applications},
-pages = {164–175},
-numpages = {12},
-location = {Portland, Oregon, USA},
-series = {OOPSLA '94}
-}
-
-% Defines the constraints used by C3, but uses a global rather than local tie break rule,
-% and goes on rather than errors out if rules are incompatible
-@article{10.1145/191081.191110,
-author = {Ducournau, R. and Habib, M. and Huchard, M. and Mugnier, M. L.},
-title = {Proposal for a monotonic multiple inheritance linearization},
-year = {1994},
-issue_date = {Oct. 1994},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-volume = {29},
-number = {10},
-issn = {0362-1340},
-url = {https://doi.org/10.1145/191081.191110},
-doi = {10.1145/191081.191110},
-abstract = {Previous studies concerning multiple inheritance convinced us that a better analysis of conflict resolution mechanisms was necessary. In [DHHM92], we stated properties that a sound mechanism has to respect. Among them, a monotonicity principle plays a critical role, ensuring that the inheritance mechanism behaves “naturally” relative to the incremental design of the inheritance hierarchy. We focus here on linearizations and present an intrinsically monotonic linearization, whereas currently used linearizations are not. This paper describes the algorithm in detail, explains the design choices, and compares it to other linearizations, with LOOPS and CLOS taken as references. In particular, this new linearization extends CLOS and LOOPS linearizations, producing the same  results when these linearizations are sound.},
-journal = {SIGPLAN Not.},
-month = oct,
-pages = {164–175},
-numpages = {12}
-}
-
-@article{ducournau1992monotonic,
-  title={Monotonic conflict resolution mechanisms for inheritance},
-  author={Ducournau, Roland and Habib, Michel and Huchard, Marianne and Mugnier, Marie-Laure},
-  journal={ACM SIGPLAN Notices},
-  volume={27},
-  number={10},
-  pages={16--24},
-  year={1992},
-  publisher={ACM New York, NY, USA}
-}
-
-
-% class A { def l=List("A") };
-% trait T extends A { override def l=List("T")++super.l; }
-% trait U extends A { override def l=List("U")++super.l; }
-% class B extends A with T { override def l=List("B")++super.l; }
-% trait V extends B with U { override def l=List("V")++super.l; }
-% trait W extends T with V { override def l=List("W")++super.l; } // not for 2.13
-% class C extends W { override def l=List("C")++super.l; }
-% class D extends B with T with U with V { override def l=List("D")++super.l; }
-
-class A { def l=List("A") };
-class B extends A { override def l=List("B")++super.l; }
-trait T extends A { override def l=List("T")++super.l; }
-trait U extends B { override def l=List("U")++super.l; }
-class C extends T with U { override def l=List("C")++super.l; }
-(new C).l
