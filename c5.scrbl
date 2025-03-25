@@ -708,8 +708,13 @@ Though our C5 algorithm is based on C3, we invert the Head-Bias Heuristic
 that C3 inherited from Flavors and LOOPS,
 and instead adopt the opposite Tail-Bias Heuristic, like Scala.
 
-We can then enjoy all the consistency properties enforced by C3,
-yet well support single inheritance structs in the precedence list.
+@subsubsection{Why Tail-Bias?}
+
+The Tail-Bias Heuristic maximizes sharing of suffixes
+between the precedence lists of classes and their subclasses or superclasses,
+thereby maximizing the reuse of method and slot indexes,
+even in the absence of explicit declaration of struct classes.
+Tail-Bias therefore offers better performance than Head-Bias and other heuristics.
 
 @subsection{Advantages of C5}
 
@@ -873,11 +878,13 @@ just like the @code{EngineLess} shields @code{DayBoat}.
 @subsubsection{Restating the Obvious}
 Our presentation of Object-Orientation and Inheritance
 only included what should have been obvious and well-known lore by now.
-Yet a lot of it seems to be obscure, to be unstated in academic literature
-(so far as our bibliographical research could tell),
-sometimes implicitly assumed, often blatantly ignored,
-once mentioned in an otherwise uncited paper,
-and largely ignored in practice by most language designers, implementers and users.
+Yet so far as our bibliographical search could identify,
+a lot of it seems to be
+unstated in academic literature,
+or implicitly assumed by ones and blatantly ignored by others,
+or once mentioned in an otherwise obscure uncited paper
+— and overall largely acted against in practice
+by most language designers, implementers and users.
 
 Without claiming originality in that part of this article, we would like to insist on:
 @itemize[
@@ -885,25 +892,22 @@ Without claiming originality in that part of this article, we would like to insi
 @item{The relationship between prototypes, classes, objects and conflation.}
 @item{The comparative advantages and downsides of single, multiple and mixin inheritance.}
 @item{Why linearization beats manual conflict resolution.}
-@item{The importance of well-known yet oft-ignored consistency constraints on linearization.}]
-
-@subsubsection{Why Consistency}
-We have articulated why the well-known consistency constraints of a linearization matter.
-There again, it should be well-known, yet may not have been made explicit in a publication before,
-and is still not widely accepted.
+@item{The importance of well-documented yet oft-ignored consistency constraints on linearization.}]
 
 @subsubsection{Struct Suffix}
 We identified the @emph{struct suffix} constraint as
 the one semantic constraint necessary and sufficient
 to achieve in the optimizations associated with single inheritance,
 even in the context of multiple inheritance.
-It was implicitly enforced by Scala, yet we failed to find any explanation for it before.
+The constraint was implicitly enforced by Scala,
+but does not seem to have been identified and made explicit in any publication yet.
 
 @subsubsection{Tail-Bias Heuristic}
 We identified why the age-old Head-Bias Heuristic (our name) dating back to Flavors
-is actually suboptimal, and why its opposite the Tail-Bias Heuristic used by Scala
+is actually suboptimal, and why its opposite the Tail-Bias Heuristic,
+once again used by Scala without much explanation,
 helps with optimizations based on the tail of the precedence list.
-This reverses a 45 year old tradition.
+This reverses a 46 year old tradition.
 
 @subsubsection{C5 Algorithm}
 We implemented a new C5 Algorithm that combines all the above features.
@@ -942,5 +946,22 @@ We invite all language implementers to likewise adopt C5
 in the next version of their object system,
 whether class-based or prototype-based, static or dynamic, etc.
 Then your users too can enjoy the Best Inheritance in the World.
+
+@section{Data-Availability Statement} @appendix
+
+Our code is available in our github repository as part of our Scheme implementation.
+We will reveal the address after deanonymization.
+
+For the sake of artifact review, we will build an anonymized implementation
+of the C5 algorithm isolated from the rest of our object system.
+We will include a few execution test cases.
+We will not attempt to anonymize a complete variant of our object system,
+which would be overly costly and would easily fail to be anonymous.
+
+The algorithm description we give above
+should already be sufficient for any person skilled in the art
+to reimplement and adapt the C5 algorithm to their own object system.
+Furthermore, the artifact we provide will only allow a language implementer
+to compare their implementation to ours and check for any bugs in their reimplementation.
 
 @(generate-bibliography)
