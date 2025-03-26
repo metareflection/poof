@@ -180,7 +180,11 @@ Meanwhile in Class OO, an “object” is an element of the type specified by a 
 Meanwhile the class is a conflation of the partial specification
 of a type (and accompanying algorithms), and the type it specifies as least fixed point.
 Class OO can thus be viewed as Prototype OO for type descriptors,
-which typically happens at compile-time in static languages,
+which typically happens at compile-time in static languages@note{
+Indeed, C++ templates at compile-time offer a pure functional programming language,
+dynamically typed and lazy with pattern-matching, with builtin Prototype OO.
+It is the same programming paradigm as Jsonnet or Nix, though for a very different domain target.
+}
 but may also happen runtime in dynamic languages, or in static languages using reflection.
 
 Finally, it is also possible to use inheritance, and thus have “object orientation”,
@@ -223,25 +227,26 @@ with scope going in text order, with the subclass’s more specific code added
 at the end within the scope of the prefix class’s more generic code.
 
 @subsubsection{Suffix}
-Already in 1967, though, the “prefix” class could also add a suffix
+Already in 1967 though, the “prefix” class could also add a suffix
 to the body of the subclass, the code of which would be evaluated
 where an @code{inner} placeholder was “splitting” prefix and suffix.
 Moreover, SIMULA 67 called “prefix sequence” the list of
-a class and its transitive superclasses, which it kept in most-specific-first order,
+a class and its transitive superclasses, but kept it in most-specific-first order,
 which is contravariant with the notion of prefix coming before the suffix.
 
 @subsubsection{Method Resolution}
 When multiple superclasses define a same method, the most specific definition is used.
 Most languages allow the body of this definition to in turn invoke
 the method defined by the next most specific definition,
-via a keyword @code{super} (Smalltalk, Java) or some other similar mechanism.
-
+via a keyword @code{super} (Smalltalk, Java) or some other similar mechanism.@note{
 SIMULA and its successor BETA @~cite{kristensen1987beta}
 were special in instead having a superclass’s body specify
 where subclass bodies will be inserted, via the @code{inner} keyword.
 BETA generalized classes to “patterns” that also covered method definitions the same way.
 No other known language seems to use this technique,
-although it is expressible using user-defined method combinations in e.g. CLOS @~cite{bobrow88clos}.
+although it is easily expressible using user-defined method combinations
+in e.g. CLOS @~cite{bobrow88clos}.
+}
 
 @subsubsection{Simplicity}
 Single inheritance is the simplest form of inheritance,
@@ -285,6 +290,9 @@ to reimplement part or all of the functionality from superclasses.}
 but that could lead to their transitively calling the method of a common indirect superclass multiple times,
 and exponentially so as the inheritance DAG contains more such “diamond” configurations.}]
 @; TODO cite Diamond Problem in C++ and learn about "virtual inheritance" and other C++ solutions.
+@; C++ embraces exponential explosion unless you use virtual base classes.
+@; your methods might also quickly check for multiple invocation and immediately return after the first time.
+@; in the end you can try to layer as conventions the features the language doesn't directly offer.
 
 Instead, we may realize that any solution that ensures each potentially applicable method
 will be considered once and only once (or at most once)
@@ -296,16 +304,16 @@ With @emph{class linearization}, a total ordering, or linearization, is chosen
 that extends the partial ordering defined by each class’s inheritance DAG,
 and also preserves the @emph{local ordering} of each class’s declaration
 of its direct superclasses.
-This approach was introduced by Flavors @~cite{Cannon1980},
-and named by New Flavors @~cite{Moon1986Flavors}.
 The resulting @emph{class precedence list} @~cite{bobrow86commonloops},
 traditionally kept in most-specific-first order
 (starting with the class, ending with the base class),
 is then used to resolve methods as if the class had been defined through
 single inheritance with that list of classes as its “prefix sequence”.
+This approach was introduced by Flavors @~cite{Cannon1980},
+and named by New Flavors @~cite{Moon1986Flavors}.
 
 @subsubsection{Method Combinations}
-Another innovation of Flavors @~cite{Cannon1980}
+Another innovation of Flavors
 was the notion of method combinations:
 users can specify for each method name,
 how the methods with that name defined in all of a class’s class precedence list
@@ -325,9 +333,9 @@ merely with before and after methods.
 Furthermore, in New Flavors @~cite{Moon1986Flavors},
 CommonLOOPS @~cite{bobrow86commonloops} and
 CLOS @~cite{gabriel1991clos},
+as inspired by T’s unification of functions and objects @~cite{Rees82t:a adams88oopscheme},
 a “generic function” would embody the “calling a method of a given name”
-and become the locus for this specification of a method combination,
-as inspired by T’s unification of functions and objects @~cite{Rees82t:a adams88oopscheme}.
+and become the locus for this specification of a method combination.
 
 Importantly for our discussion, the use of class-wide class precedence lists
 ensures consistency of semantics across all classes, methods, method combinations,
@@ -339,7 +347,7 @@ for users defining their own method combinations.
 
 @subsubsection{Modularity}
 Multiple inheritance is more modular than single inheritance,
-it is more modular, allowing to divide program specifications
+allowing to divide program specifications
 into more, smaller, more reusable classes, also commonly called “mixins” or “traits”
 (the name “flavors” didn’t stick), such that each partial program specification
 can be written with a smaller amount of information in the head of the programmer.
@@ -362,7 +370,7 @@ A lot of work has been done to improve the performance of multiple inheritance,
 through static method resolution when possible, @; TODO cite C++ ? sealing ?
 and otherwise through caching @~cite{bobrow86commonloops}.
 But these improvements introduce complexity, and caching
-increases memory pressure and still incur a small runtime overhead,
+increases memory pressure and still incurs a small runtime overhead,
 even when successful at avoiding the full cost of the general case.
 For this reason, many performance-conscious programmers
 will prefer to use or implement single inheritance when offered the choice.
@@ -371,7 +379,8 @@ will prefer to use or implement single inheritance when offered the choice.
 
 @subsubsection{Last but not least}
 Mixin inheritance was discovered last, in 1990 @~cite{bracha1990mixin},
-while attempting to elucidate the semantics of inheritance.
+while attempting to elucidate inheritance in the paradigm of programming language semantics
+as opposed to the previously prevalent paradigm of computing systems @~cite{gabriel2012}.
 It is actually the simplest form of inheritance
 in the context of higher-order functions:
 a @emph{practical} implementation literally takes but two short function definitions
@@ -379,7 +388,8 @@ a @emph{practical} implementation literally takes but two short function definit
 
 @subsubsection{Composing Mixins}
 With mixin inheritance, classes (or “mixins”) are defined as
-the monoidal composition of two or more superclasses.
+the composition of two or more superclasses
+whose method definitions each override those of the superclasses it inherits from.
 Since composition is monoidal, the semantics of the resulting class
 is the same as if defined using single inheritance
 from the precedence list obtained by flattening all composed superclasses in order.
@@ -388,9 +398,10 @@ from the precedence list obtained by flattening all composed superclasses in ord
 Mixin inheritance is more expressive than single inheritance, and
 just as expressive as multiple inheritance, in that it enables
 classes (mixins or traits) to be defined once without being tethered
-to a single superclass, and combined and recombined in many compositions.
+to a single superclass (or chain of superclasses), and
+combined and recombined in many compositions.
 Conceptually, composition of mixins allows to @emph{append} lists of classes,
-when single inheritance only allows to @emph{cons} a class to a list.
+when single inheritance only allows to @emph{cons} a class to a fixed list.
 
 @subsubsection{Comparative Modularity}
 Mixin inheritance is less modular than multiple inheritance,
@@ -398,14 +409,14 @@ because it makes the programmer responsible for ensuring
 there are no missing, repeated or misordered superclasses,
 manually doing what multiple inheritance does for you
 when computing its class precedence lists.
-A notable bad situation is that when the list of superclasses of a class is modified,
-all its transitive subclasses must be updated accordingly,
+A notable bad situation is when the list of superclasses of a class is modified,
+at which point all its transitive subclasses must be updated accordingly,
 even if defined in completely different modules
 that the author has no idea exists and no access to.
 This makes changes brittle, breaks modularity, and
-effectively forces the precedence list of a class to become part of its interface.
+effectively forces the entire inheritance DAG of a class to become part of its interface.
 By contrast, multiple inheritance can automate all these troubles away,
-and let programmers only have to worry about a class’s direct superclasses.
+and let programmers only have to worry about their own classes’s direct superclasses.
 
 @subsubsection{Popularity}
 Both due to having been discovered later and being less modular,
@@ -436,14 +447,17 @@ from a class linearization algorithm.
 These properties ensure that an object system shall compute a class’s class precedence list
 in a way that provides a consistent ordering of all methods
 across all generic functions and all classes — and all tuples of classes,
-when using multimethods @~cite{bobrow86commonloops}.
+when using multimethods @~cite{bobrow86commonloops bobrow88clos gabriel1991clos CecilMultimethods allen2011type}.
 
 @subsubsection{Matching Methods}
 This consistency notably matters when resources or locks
-are acquired by some methods,
-that must be released in matching reverse order by other methods.
-Inconsistency could lead to resource leaks, use-before-initialization, use-after-free, deadlocks,
-and other catastrophic failures.
+are acquired by some methods of some objects,
+that must be updated in matching order,
+or released in matching reverse order,
+by the same methods or other methods,
+in the same objects or other related objects.
+Inconsistency can lead to resource leak, use-before-initialization, use-after-free, deadlock,
+data corruption, and other catastrophic failures.
 
 @subsection{Ordering Consistency}
 
@@ -452,7 +466,8 @@ The most important constraint, @emph{linearization} @~cite{Cannon1980},
 states that the precedence list of a class
 is a linearization (total ordering extension)
 of its inheritance DAG (viewed as a partial ordering).
-All languages that use linearization for method resolution follow this constraint.
+All languages that use linearization for method resolution follow this constraint;
+those that don’t fall short on the OO purposes of incrementality and modularity.
 
 @subsubsection{Local Ordering}
 The second constraint, the
@@ -467,7 +482,7 @@ Many languages fail to follow this constraint.
 @subsubsection{Monotonicity}
 The third constraint, @emph{monotonicity} @~cite{ducournau1992monotonic},
 states that a class’s precedence list is included as a sublist
-(seen as an ordering, as above) in the precedence list of each of its subclasses.
+(seen as an ordering, as above) in the class precedence list of each of its subclasses.
 
 @subsection{Shape Determinism}
 
@@ -484,6 +499,9 @@ This constraint was called @emph{acceptability} by Ducournau et al.
 who introduced it @~cite{ducournau1992monotonic}.
 However, this name is too generic and fails to convey
 either the intent or content of the constraint.
+We considered the name “stability”, but Ducournau et al. use that name
+for another property of multiple inheritance
+that is subsumed by linearization.
 
 @subsubsection{Rationale}
 Shape Determinism matters for code maintainability:
@@ -518,7 +536,8 @@ building upon previous partial solutions.
 
 @subsubsection{C3}
 A latter solution, the C3 algorithm @~cite{Barrett96amonotonic},
-“simply” follows the constraints, with a tie breaking heuristic used
+“simply” follows the constraints,
+computing the precedence list head-first with a tie breaking heuristic used
 when multiple linearizations are compatible with the constraints.
 
 @subsubsection{Head-Bias Heuristic}
@@ -570,7 +589,7 @@ where it contrasts with “trait” for multiple inheritance.
 To confuse things further, in C++ tradition,
 a @code{struct} is just a way to define a class
 wherein all members (methods and variables) are public by default,
-which has nothing to do with single or multiple inheritance.
+which has nothing to do with either single or multiple inheritance.
 C++ always has multiple inheritance, although
 superclasses reached along many paths are duplicated unless declared “virtual”.
 
@@ -597,8 +616,8 @@ wherein users can define their own class hierarchies,
 that could conceivably combine single and multiple inheritance.
 We are not aware of anyone using this mechanism to do so;
 if someone did, it is unclear whether the mechanisms provided
-would allow leveraging single inheritance to implement the usual
-performance optimizations when possible.
+would allow them implement the usual performance optimizations
+allowed on its single inheritance fragment.
 
 @subsection{Scala}
 
@@ -623,9 +642,9 @@ than any of its indirect (single inheritance) superclasses.
 
 Scala 3.3 relaxes this restriction by automatically computing
 this most specific superclass from all the superclasses in its inheritance hierarchy,
-so you can declare directly extending a superclass or it or only traits.
+so you can declare directly extending a superclass of it, or only traits.
 
-We have been unable to find a documentation of this change,
+We have been unable to find a documentation of this feature in Scala 3,
 its precise behavior, design rationale, and implementation timeline,
 even after contacting members of the Scala team.
 However, this is clearly the Right Thing to do in this case,
@@ -637,7 +656,7 @@ The LOOPS algorithm simply concatenates all the class precedence lists
 of a class’s direct superclasses, then removes all duplicates,
 keeping the @emph{first} one (in most specific order) and removing latter copies,
 to follow the Head-Bias Heuristic of Flavors.
-The Scala algorithm does as much but keeps the @emph{last} copy instead,
+The Scala algorithm does as much but keeps the @emph{last} duplicate instead,
 following an opposite heuristic.
 
 Note that neither the LOOPS algorithm nor its Scala variant preserves
