@@ -82,11 +82,11 @@ build/eoomi2024.pdf: eoomi2024.scrbl poof.bib header.tex util/eval-check.rkt uti
 eoomi: build/eoomi2024.pdf
 	$(PDFVIEWER) $<
 
-# Side paper: C5
-build/c5.pdf: c5.scrbl poof.bib header.tex util/eval-check.rkt util/examples-module.rkt util/util.rkt build/resources
-#scribble --dest build --pdf --style header.tex c5.scrbl
-#	cd build ; scribble --pdf ../c5.scrbl
-	scribble --dest build --pdf c5.scrbl
-c5: build/c5.pdf
+# Side paper: C4
+build/c4.pdf: c4.scrbl poof.bib header.tex util/eval-check.rkt util/examples-module.rkt util/util.rkt build/resources
+#scribble --dest build --pdf --style header.tex c4.scrbl
+#	cd build ; scribble --pdf ../c4.scrbl
+	scribble --dest build --pdf c4.scrbl
+c4: build/c4.pdf
 	$(PDFVIEWER) $<
-c5pdf: build/c5.pdf
+c4pdf: build/c4.pdf

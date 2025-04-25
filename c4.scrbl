@@ -3,7 +3,7 @@
 @; @anonymous @authordraft @authorversion @timestamp
 @; Submitted to OOPSLA 2025 https://2025.splashcon.org/track/OOPSLA
 
-@title{C5: The best of single and multiple inheritance}
+@title{C4: The best of single and multiple inheritance}
 
 @author[
   #:email (email "fare@mukn.com")
@@ -20,10 +20,10 @@ Importantly, we discuss why our solution preserves what matters of single inheri
 even though there are other aspects of single inheritance it doesn’t preserve.
 We particularly study the notion of linearization of inheritance hierarchies,
 and offer an algorithm to compute this linearization while combining both kinds of inheritance.
-We call our algorithm C5, because it is a successor to
+We call our algorithm C4, because it is a successor to
 Barrett et al.’s C3 algorithm @~cite{Barrett96amonotonic}
-that preserves additional constraints.
-We compare our solution to that of other languages, most notably Common Lisp and Scala.
+that preserves one additional constraint.
+We compare our solution to those of other languages, most notably Common Lisp and Scala.
 }
 
 @(require scriblib/bibtex
@@ -94,26 +94,26 @@ Is that linearization necessary?
 Is there an optimal algorithm for this linearization
 when combining single and multiple inheritance?
 
-@subsubsection{Claim: C5 is Optimal}
+@subsubsection{Claim: C4 is Optimal}
 We claim that (a) indeed there is a best way to combine single and multiple inheritance,
 that (b) indeed it involves linearization of the inheritance graph,
 that (c) there are enough constraints on linearization for the optimal algorithm
 to be well-defined up to some heuristic, and
 that (d) even then there are good reasons to prefer a specific heuristic.
-We call C5 the resulting algorithm, that we implemented, and that
-will be included in next release of @anonymize["our"]{Gerbil} Scheme
+We call C4 the resulting algorithm, that we implemented, and that
+is included in the next release of @anonymize["our Scheme implementation"]{Gerbil Scheme}
 as part of its builtin object system.
 
 @subsection{Plan of the Article}
 
-In section 2, we will provide a quick summary of the issues at stake
+In section 2, we provide a quick summary of the issues at stake
 with Object Orientation, and the three variants of Inheritance in common use:
 what are the important concepts, and why they matter.
 
-Along the way, we will define the terms we will use in the rest of the article,
+Along the way, we define the terms we use in the rest of the article,
 especially since various authors from the communities around various OO languages
 each use slightly different terminologies.
-When multiple nomenclatures conflict, we will give precedence
+When multiple nomenclatures conflict, we give precedence
 to the terminology of the Lisp tradition, because it is
 the oldest tradition that has been tackling those problems.@note{
 Although it came first and directly or indirectly inspired
@@ -133,11 +133,10 @@ multiple and single inheritance,
 with the solutions respectively adopted by Common Lisp @~cite{cltl2}
 and Scala @~cite{scalableComponentAbstractions2005}.
 
-In section 5, we propose a linearization algorithm we call C5,
+In section 5, we propose a linearization algorithm we call C4,
 that satisfies all the constraints we discussed for a good linearization algorithm,
 and for combining single and multiple inheritance.
-We explain why the residual heuristic we chose is arguably the best one,
-though it goes contrary to the Lisp tradition.
+We explain why the residual heuristic we also adopt from C3 is arguably the best one.
 
 @;{In section 6, we examine how our algorithm behaves on a few examples
 lifted from relevant literature.}
@@ -167,7 +166,7 @@ The first OO language used classes @~cite{Simula1967},
 but the second one used prototypes @~cite{Winograd1975},
 and some provide both @~cite{kristensen1987beta}. @; BEWARE: I don’t grok BETA.
 Class OO being the more popular form of OO,
-we will use the terminology of Class OO in the rest of this article.
+we use the terminology of Class OO in the rest of this article.
 But all our discussion of inheritance applies just as well
 to the more general Prototype OO.
 
@@ -179,13 +178,13 @@ of a prototype and the instance value it specifies (via least fixed point).
 Meanwhile in Class OO, an “object” is an element of the type specified by a class.
 Meanwhile the class is a conflation of the partial specification
 of a type (and accompanying algorithms), and the type it specifies as least fixed point.
-Class OO can thus be viewed as Prototype OO for type descriptors,
+Class OO can thus be viewed as Prototype OO for types (or type descriptors),
 which typically happens at compile-time in static languages@note{
 Indeed, C++ templates at compile-time offer a pure functional programming language,
 dynamically typed and lazy with pattern-matching, with builtin Prototype OO.
 It is the same programming paradigm as Jsonnet or Nix, though for a very different domain target.
 }
-but may also happen runtime in dynamic languages, or in static languages using reflection.
+but may also happen at runtime in dynamic languages, or in static languages using reflection.
 
 Finally, it is also possible to use inheritance, and thus have “object orientation”,
 without objects: by not conflating either prototype and instance or class and type,
@@ -198,9 +197,8 @@ ignorance of the relationship between prototypes and classes,
 or of the distinct meanings of “object” in Prototype OO vs Class OO.
 
 @subsubsection{Inheritance}
-The way that those increments of specification, whether prototypes or classes,
-are combined with other such increments of specification, is called
-@emph{inheritance} @~cite{Winograd1975 inheritance1996}.
+The way OO, whether prototypes or classes, combines increments of specification
+with other such increments, is called @emph{inheritance} @~cite{Winograd1975 inheritance1996}.
 There are three kinds of inheritance in widespread use:
 single-inheritance, multiple-inheritance, and mixin inheritance.
 
@@ -241,7 +239,7 @@ the method defined by the next most specific definition,
 via a keyword @code{super} (Smalltalk, Java) or some other similar mechanism.@note{
 SIMULA and its successor BETA @~cite{kristensen1987beta}
 were special in instead having a superclass’s body specify
-where subclass bodies will be inserted, via the @code{inner} keyword.
+where subclass bodies are inserted, via the @code{inner} keyword.
 BETA generalized classes to “patterns” that also covered method definitions the same way.
 No other known language seems to use this technique,
 although it is easily expressible using user-defined method combinations
@@ -260,8 +258,8 @@ Discovered a few years later, and initially just called @emph{inheritance},
 in what in retrospect was prototype OO, in KRL @~cite{Winograd1975 Bobrow1976},
 multiple inheritance allows a class to have multiple direct superclasses.
 The notion of multiple inheritance thus predates Smalltalk 1976
-implementing single inheritance as a compromise throwback to SIMULA 1967 @~cite{kay1996early},
-thus making the name and notion popular.
+implementing single inheritance and making the name and notion popular,
+in what was a compromise throwback to SIMULA 1967 @~cite{kay1996early}.
 Although some more early systems @~cite{Kahn1976 Borning1977 Traits}
 used multiple inheritance, it is only with Flavors in 1979 @~cite{Cannon1980}
 that it became really usable and somewhat popular.
@@ -271,7 +269,7 @@ The structure of a class and its transitive superclasses is
 a Directed Acyclic Graph (“DAG”).
 The set of all classes is also a DAG.
 Most OO systems include a common system-wide base class
-at the end of their DAG; but it is conceivable to do without one.
+at the end of their DAG; but it is possible to do without one.
 
 @subsubsection{Method Resolution in Multiple Inheritance}
 When each of multiple superclasses define a same method,
@@ -286,18 +284,19 @@ This is a consistent strategy, but the least useful among all consistent strateg
 @itemize[
 @item{Overrides fail the incrementality purpose of OO whenever they require users
 to reimplement part or all of the functionality from superclasses.}
-@item{Overrides might want recursively call the methods of the class’s direct superclasses,
+@item{Overrides might want to recursively call the methods of the class’s direct superclasses,
 but that could lead to their transitively calling the method of a common indirect superclass multiple times,
 and exponentially so as the inheritance DAG contains more such “diamond” configurations.}]
 @; TODO cite Diamond Problem in C++ and learn about "virtual inheritance" and other C++ solutions.
 @; C++ embraces exponential explosion unless you use virtual base classes.
 @; your methods might also quickly check for multiple invocation and immediately return after the first time.
-@; in the end you can try to layer as conventions the features the language doesn't directly offer.
+@; in the end you can try to layer as conventions the features the language doesn’t directly offer.
+@; See also Malayeri & Aldrich’s 2009 "CZ: Multiple Inheritance without Diamonds" and its citations 43, 46.
 
 Instead, we may realize that any solution that ensures each potentially applicable method
-will be considered once and only once (or at most once)
+is considered once and only once (or at most once)
 in computing the @emph{effective method} (semantics of calling the named method)
-will necessarily be establishing a total “linear” ordering between these methods.
+necessarily establishes a total “linear” ordering between these methods.
 
 @subsubsection{Class linearization}
 With @emph{class linearization}, a total ordering, or linearization, is chosen
@@ -336,6 +335,7 @@ CLOS @~cite{gabriel1991clos},
 as inspired by T’s unification of functions and objects @~cite{Rees82t:a adams88oopscheme},
 a “generic function” would embody the “calling a method of a given name”
 and become the locus for this specification of a method combination.
+@; TODO quickly mention multi-methods, cite LOOPS, Cecil, Fortress and more.
 
 Importantly for our discussion, the use of class-wide class precedence lists
 ensures consistency of semantics across all classes, methods, method combinations,
@@ -373,7 +373,7 @@ But these improvements introduce complexity, and caching
 increases memory pressure and still incurs a small runtime overhead,
 even when successful at avoiding the full cost of the general case.
 For this reason, many performance-conscious programmers
-will prefer to use or implement single inheritance when offered the choice.
+prefer to use or implement single inheritance when offered the choice.
 
 @subsection{Mixin Inheritance}
 
@@ -399,8 +399,17 @@ Mixin inheritance is more expressive than single inheritance, and
 just as expressive as multiple inheritance, in that it enables
 classes (mixins or traits) to be defined once without being tethered
 to a single superclass (or chain of superclasses), and
-combined and recombined in many compositions.
-Conceptually, composition of mixins allows to @emph{append} lists of classes,
+combined and recombined in many compositions.@note{
+Actually, mixin inheritance can be argued to be more expressive than multiple inheritance
+unless multiple inheritance is also accompanied by some means of renaming
+classes, slots, and methods.
+However, in a language where classes are meta-level constants,
+renaming is a trivial extra-lingual operation;
+and in a language where classes (or prototypes) are first-class runtime values,
+renaming is a relatively simple operation though it may depend on reflection.
+Thus, in practice, we can usually dismiss the thin advantage in expressiveness of mixin inheritance.
+}
+Conceptually, composition of mixins allows to @emph{append} two lists of classes,
 when single inheritance only allows to @emph{cons} a class to a fixed list.
 
 @subsubsection{Comparative Modularity}
@@ -411,8 +420,8 @@ manually doing what multiple inheritance does for you
 when computing its class precedence lists.
 A notable bad situation is when the list of superclasses of a class is modified,
 at which point all its transitive subclasses must be updated accordingly,
-even if defined in completely different modules
-that the author has no idea exists and no access to.
+even if defined in completely different modules that the author cannot modify,
+that he may have no idea exists, whose authors he cannot even notify.
 This makes changes brittle, breaks modularity, and
 effectively forces the entire inheritance DAG of a class to become part of its interface.
 By contrast, multiple inheritance can automate all these troubles away,
@@ -426,11 +435,14 @@ Newspeak @~cite{bracha2008newspeak}, GCL @~cite{gclviewer2008}, Jsonnet @~cite{j
 and Nix @~cite{nix2015}.
 Just the use of GCL at Google means a large part of the world computing infrastructure
 is built upon configurations written using mixin inheritance.
+Furthermore, one may view the way C++ duplicates non-“virtual” superclasses
+as a form of mixin inheritance
+(whereas the way it de-duplicates “virtual” classes is a form of multiple inheritance).
 
 @subsubsection{No Further Comment}
 Mixin inheritance definitely has its uses, if only as
 a lower-level building block used in implementing more elaborate object systems.
-Nevertheless, in the rest of this document, we will dismiss mixin inheritance
+Nevertheless, in the rest of this document, we dismiss mixin inheritance
 for being a less modular and less performant alternative
 to the combination of multiple inheritance and single inheritance we are seeking.
 
@@ -487,7 +499,7 @@ states that a class’s precedence list is included as a sublist
 @subsection{Shape Determinism}
 
 @subsubsection{Only Shape Matters}
-A fourth constraint, that we will call @emph{Shape Determinism},
+A fourth constraint, that we call @emph{Shape Determinism},
 states that the result of the linearization algorithm
 must only depend on the @emph{shape} of the inheritance graph,
 and may not depend on the names of the classes or any global information.
@@ -540,20 +552,26 @@ A latter solution, the C3 algorithm @~cite{Barrett96amonotonic},
 computing the precedence list head-first with a tie breaking heuristic used
 when multiple linearizations are compatible with the constraints.
 
-@subsubsection{Head-Bias Heuristic}
-The heuristic followed by C3 is to build the precedence list
-from the front (most specific superclass),
-each time choosing the next element among the possible candidates
-by picking the one that appears earliest in the list of precedence lists
-followed by the direct superclass list.
+@subsubsection{Depth-First Traversal}
+Given the arbitrary but practical choice to build the precedence list
+from its head, a heuristic for determining which of multiple valid candidates to pick
+as the next in the list (when more than one is possible) is equivalent to establishing
+an otherwise arbitrary priority order or traversal among the candidates.@note{
+Building from the tail would be equivalent, mutatis mutandis;
+building from the middle out would require a more complex algorithm,
+yet ultimately the same argument would apply.}
+Furthermore, given the Shape Determinism constraint, this traversal must only depend on
+the shape of the inheritance DAG, not on unique identifier attached to e.g.
+the name or source location of the classes.
 
-This Head-Bias Heuristic seems consistent with that of Flavors,
-that similarly places a class
-“as close to the beginning of the ordering as possible,
-while still obeying the other rules” @~cite{Moon1986Flavors}.
-The other rules of Flavors are to enforce Linearization and Local Precedence Order,
-though also, implicitly, Shape Determinism.
-The heuristic is also present in the LOOPS algorithm @~cite{ducournau1992monotonic}.
+C3 uses a Depth-First Traversal, prioritizing classes appearing earlier
+among direct superclasses and their precedence list, so they appear earlier;
+classes appearing later in this traversal also appear later in the precedence list.
+In particular, a class’s precedence list will share as much of a tail as possible
+with the precedence list of its last direct superclass, which in turn favors
+sharing of slot indexes and partially combined method code.
+By contrast, the opposite traversal would minimize this sharing, and
+a breadth-first traversal would enable less of it.
 
 @subsubsection{Naming}
 C3 was named after the fact that it respects three ordering constraints it purports to enforce,
@@ -564,7 +582,7 @@ There are thus are four constraints enforced by C3,
 just like there are four musketeers in The Three Musketeers @~cite{Dumas1844}.
 
 @subsubsection{Adoption}
-C3 has since been adopted by Dylan, Python, Raku, Parrot, Solidity, PGF/TikZ, and more.
+C3 has since been adopted by OpenDylan, Python, Raku, Parrot, Solidity, PGF/TikZ, and more.
 
 @section{State of the Art in Combining Single and Multiple Inheritance}
 
@@ -582,19 +600,21 @@ and Scala (extending Java’s class system).
 Beware that the word “class” weakly implies multiple inheritance in the Lisp tradition,
 where it contrasts with “struct” that strongly implies single inheritance.
 
-By contrast, “class” strong implies single inheritance
+By contrast, “class” weakly implies single inheritance
 in the Smalltalk, Java and Scala tradition,
-where it contrasts with “trait” for multiple inheritance.
+where it contrasts with “trait” that strongly implies multiple inheritance.
 
 To confuse things further, in C++ tradition,
 a @code{struct} is just a way to define a class
 wherein all members (methods and variables) are public by default,
 which has nothing to do with either single or multiple inheritance.
 C++ always has multiple inheritance, although
-superclasses reached along many paths are duplicated unless declared “virtual”.
+superclasses reached along many paths are duplicated unless declared “virtual”,
+which is a form of mixin inheritance.
 
 This document follows the Lisp tradition in its terminology,
-except in the section on Scala below where we will use Scala terminology.
+except in the section on Scala below where we will use Scala terminology,
+but in double-quotes.
 
 @subsection{Common Lisp}
 
@@ -622,17 +642,18 @@ allowed on its single inheritance fragment.
 @subsection{Scala}
 
 @subsubsection{Traits}
-Scala extends Java’s classes that only support single inheritance
-with traits @~cite{scalableComponentAbstractions2005}
+Scala extends Java’s “classes” that only support single inheritance
+with “traits” @~cite{scalableComponentAbstractions2005}
 that support multiple inheritance.
 
 Scala “classes” and “traits” definitions may specify
-at most one direct superclass and potentially many direct supertraits
+at most one direct “superclass” and potentially many direct “supertraits”
 that it “extends”.
-Syntactically, they are specified in most-generic-first order,
+Syntactically, developers specify direct superclasses and traits in least-specific-first order,
 which is the reverse of the local precedence order.
 But semantically, the Scala specification still discusses
-class precedence lists in the traditional most-specific-first order.
+class precedence lists (that it calls “class linearizations”)
+in the traditional most-specific-first order.
 
 @subsubsection{Scala superclasses}
 Scala 2.13 requires that if a trait or class has a (single inheritance) superclass
@@ -655,28 +676,29 @@ Scala uses a variant of the original LOOPS linearization algorithm @~cite{ducour
 The LOOPS algorithm simply concatenates all the class precedence lists
 of a class’s direct superclasses, then removes all duplicates,
 keeping the @emph{first} one (in most specific order) and removing latter copies,
-to follow the Head-Bias Heuristic of Flavors.
+following the same heuristic as Flavors @~cite{Moon1986Flavors},
 The Scala algorithm does as much but keeps the @emph{last} duplicate instead,
 following an opposite heuristic.
 
-Note that neither the LOOPS algorithm nor its Scala variant preserves
-local precedence order, unlike more elaborate algorithms
-adopted by New Flavors @~cite{Moon1986Flavors},
-CommonLOOPS @~cite{bobrow86commonloops} and their successors;
-and neither preserves monotonicity.
+Although this change in heuristic is not explained by Scala authors,
+we believe it was chosen because, unlike the LOOPS heuristic,
+it always preserves the precedence list of the least-specific direct supertrait
+(syntactically first, semantically last) as the tail of the defined class’s precedence list,
+which is necessary when that last supertrait is a single-inheritance “class”,
+or has a “superclass” more specific than “Object”.
 
-Interestingly, the Scala variant unlike the LOOPS original @emph{does} preserve
-the single-inheritance suffix of the precedence list, within the assumption that
-the most specific superclass appears last in the direct superclass and supertrait list.
-This assumption is enforced syntactically by Scala 2.13, and semantically by Scala 3.3.
-This importantly allows the combination of traits and classes to work in Scala,
-while keeping the algorithm simple.
+Scala 2.13 in particular requires developers to specify in first syntactic position
+a “trait” whose most specific “superclass” is no less specific than that of
+any of the other direct supertraits; otherwise the compiler throws an error.
 
-We suspect the switch in heuristic was specifically designed
-to make traits work with classes while keeping a simple algorithm.
-But we failed to get confirmation after contacting the authors.
+Although this behavior doesn’t seem to be documented,
+Scala 3.3 takes a more “semantic” than “syntactic” approach:
+it specially treats the “class” fragment of inheritance and behaves as if
+the most specific of any of the supertraits’ most-specific “class” superclass had been specified first.
+It is of course an error if the supertraits’ “superclasses” are not a total order,
+with a single most-specific “class” among them.
 
-@section{Our C5 Algorithm}
+@section{Our C4 Algorithm}
 
 @subsection{Best Combining Single and Multiple Inheritance}
 
@@ -690,7 +712,7 @@ In doing so, we identified a maximally expressive way to combine them.
 
 @subsubsection{Adding a Fifth Constraint}
 We had recently adopted the C3 algorithm for class linearization,
-and its four constraints.
+its four constraints and its heuristic.
 We decided to minimally complement it with an additional fifth constraint,
 necessary and sufficient to support integration of single inheritance @emph{structs}
 into multiple inheritance precedence lists.
@@ -720,48 +742,31 @@ Of the remaining classes not in this precedence list, none is a struct;
 apply the regular class linearization algorithm on those, based on C3.
 Prepend the result to the struct suffix.
 
-@subsection{Best Heuristic: Tail-Bias}
+Our special treatment of the Struct Suffix is essentially equivalent to
+Scala 3.3’s behavior regarding a class’s most-specific super “class”,
+as described above.
 
-@subsubsection{Inverting the Head-Bias Heuristic}
-Though our C5 algorithm is based on C3, we invert the Head-Bias Heuristic
-that C3 inherited from Flavors and LOOPS,
-and instead adopt the opposite Tail-Bias Heuristic, like Scala.
-
-@subsubsection{Why Tail-Bias?}
-
-The Tail-Bias Heuristic maximizes sharing of suffixes
-between the precedence lists of classes and their subclasses or superclasses,
-thereby maximizing the reuse of method and slot indexes,
-even in the absence of explicit declaration of struct classes.
-Tail-Bias therefore offers better performance than Head-Bias and other heuristics.
-
-@subsection{Advantages of C5}
+@subsection{Advantages of C4}
 
 @subsubsection{Struct declarations optional}
-One advantage of the Tail-Bias Heuristic is that
-it will preserve the tail of a struct’s precedence list
-just by virtue of following as a convention the Scala 2 discipline
-of putting your most-specific struct at the end of your local precedence order
-(which in most Lisp object systems is a specified syntactically at the end,
-unlike in Scala).
-This discipline works even if when are no system-supported struct declarations.
+One advantage of the Depth-First, Most-Specific-First Traversal
+that C3 and C4 use as heuristic to choose a next class for the precedence list is that
+they will preserve the tail of a struct’s precedence list if the discipline is followed
+to always place the most-specific struct last in the local ordering,
+even without special support for struct.
 
-@subsubsection{Common Tail Discovery}
-More than that, the Tail-Bias Heuristic maximizes
-sharing of class precedence list tails among classes within a hierarchy.
-This sharing in turn increases the effectiveness of caches
-for partial computations of effective methods
-if any such caches exist for performance purposes.
-This tail-sharing also increases the chances that method and slot indexes
-are shared between classes, maximizing code sharing and increasing performance
-for slot access almost as fast as in single inheritance,
-even without explicit struct declaration.
+Scala 2.13 enforces this discipline syntactically based on struct declarations,
+while Scala 3 or the C4 algorithm automate it away.
+But given C3 or the Scala 2.13 algorithm (but not e.g. the LOOPS algorithm),
+it could be achieved without language-supported struct declaration
+by developers who always follow the discipline without any mistake.
 
 @subsubsection{Coherent Naming}
-Our C5 algorithm correctly counts the number of constraints it enforces
-(five, plus a heuristic),
-in addition to acknowledging its being a direct successor to C3
-(that enforces four constraints plus a heuristic).
+Our C4 algorithm, being a successor to C3, is named after the
+four correctness constraints it respects, and omits Shape Determinism in the count,
+though it also respects it.
+It also doesn’t count among its naming constraints
+the heuristic based on a depth-first, most-specific-first traversal.
 
 @subsection{Single-Inheritance Yet Not Quite}
 
@@ -796,7 +801,6 @@ single inheritance kind of mattered, but it was not exactly single inheritance t
 The debate was not framed properly, and a suitable reframing solves the problem
 hopefully to everyone’s satisfaction.
 
-@;{
 @section{Inheritance Examples}
 @subsection{Example 1}
 
@@ -808,19 +812,19 @@ classes @code{A B C D E} that each inherit only from @code{O},
 classes @code{K1} with direct superclasses @code{A B C},
 @code{K2} with @code{D B E},
 @code{K3} with @code{D A}, and @code{Z} with @code{K1 K2 K3}.
-Using the C3 algorithm, we get the precedence list @code{Z K1 K2 K3 D A B C E O},
+Using the C3 or C4 algorithm, we get the precedence list @code{Z K1 K2 K3 D A B C E O},
 with each subclass having its subset of superclasses in the same order
 in its own precedence list.
-@; C5, with its Tail-Bias Heuristic, yields @code{Z K1 K2 K3 D A B E C O},
 
-Now, if @code{C} were declared a struct, then the suffix @code{C O} must be preserved,
+If, using the C4 algorithm, @code{C} were declared a struct, then
+the suffix @code{C O} must be preserved,
 and the precedence list would be changed to @code{Z K1 K2 K3 D A B E C O}.
-
 If both @code{C} and @code{E} were declared structs, then there would be a conflict
 between the suffixes @code{C O} and @code{E O}, and
 the definition of @code{Z} would fail with an error.
 
-Only @code{O}, one of @code{C E}, and @code{Z}, may be declared struct without causing an error
+In this class hierarchy, only @code{O}, one of @code{C E}, and @code{Z}
+may be declared struct without causing an error
 due to violation of the local precedence order.
 Indeed, a class may not be declared a struct if it appears in a direct superclass list
 before a class that is not one of its superclasses.
@@ -864,7 +868,7 @@ we have the class and direct superclass lists:
 @code{SmallCatamaran SmallMultihull},
 @code{Pedalo PedalWheelBoat SmallCatamaran}.
 
-The C3 and C5 algorithms both compute the following precedence list for this class hierarchy:
+The C3 and C4 algorithms both compute the following precedence list for this class hierarchy:
 
 @code{Pedalo PedalWheelBoat EngineLess SmallCatamaran SmallMultihull DayBoat WheelBoat Boat}.
 
@@ -890,7 +894,6 @@ otherwise, the subclass can suitably override methods to compensate for the chan
 And the other general solution in last resort is to introduce a do-nothing wrapper class
 to shield a superclass from a local local precedence order constraint,
 just like the @code{EngineLess} shields @code{DayBoat}.
-}
 
 @section{Conclusion: Best of Both Worlds}
 @subsection{Findings}
@@ -899,52 +902,46 @@ Our presentation of Object-Orientation and Inheritance
 only included what should have been obvious and well-known lore by now.
 Yet so far as our bibliographical search could identify,
 a lot of it seems to be
-unstated in academic literature,
+unstated in academic literature, @; cite more papers and books that miss the point?
 or implicitly assumed by ones and blatantly ignored by others,
 or once mentioned in an otherwise obscure uncited paper
 — and overall largely acted against in practice
 by most language designers, implementers and users.
 
-Without claiming originality in that part of this article, we would like to insist on:
+Without claiming originality in that part of this article,
+we would like to insist on our simple explanation and rationale for each of:
 @itemize[
 @item{The relationship between OO, modularity and incrementality.}
 @item{The relationship between prototypes, classes, objects and conflation.}
-@item{The comparative advantages and downsides of single, multiple and mixin inheritance.}
+@item{The advantages of multiple inheritance over single and mixin inheritance.}
 @item{Why linearization beats manual conflict resolution.}
 @item{The importance of well-documented yet oft-ignored consistency constraints on linearization.}]
 
 @subsubsection{Struct Suffix}
 We identified the @emph{struct suffix} constraint as
 the one semantic constraint necessary and sufficient
-to achieve in the optimizations associated with single inheritance,
+to achieve the optimizations associated with single inheritance,
 even in the context of multiple inheritance.
 The constraint was implicitly enforced by Scala,
 but does not seem to have been identified and made explicit in any publication yet.
 
-@subsubsection{Tail-Bias Heuristic}
-We identified why the age-old Head-Bias Heuristic (our name) dating back to Flavors
-is actually suboptimal, and why its opposite the Tail-Bias Heuristic,
-once again used by Scala without much explanation,
-helps with optimizations based on the tail of the precedence list.
-This reverses a 46 year old tradition.
-
-@subsubsection{C5 Algorithm}
-We implemented a new C5 Algorithm that combines all the above features.
+@subsubsection{C4 Algorithm}
+We implemented a new C4 Algorithm that combines all the above features.
 While each of these features may have been implemented separately in the past,
 ours seems to be the first implementation to combine them.
 
 @subsection{Implementation}
 @subsubsection{Our Scheme}
-We have implemented the C5 algorithm
+We have implemented the C4 algorithm
 in our open-source dialect of the Scheme programming language, @anonymize[""]{Gerbil Scheme,}
-and it will be available in the next release@anonymize[""]{ 0.18.3}.
+and it will be available in the next release@anonymize[""]{ 0.18.2}.
 
 Our users can enjoy the benefits, as our language can legitimately claim
 to have the single Best Inheritance mechanism of them all.
 At least until other language implementers copy our language.
 
 @subsubsection{Code Size}
-The C5 algorithm itself is about 200 lines of code with lots of explanatory comments.
+The C4 algorithm itself is under 200 lines of code with lots of explanatory comments.
 
 The entire object system is about 1400 lines of commented code for its runtime,
 including all runtime optimizations enabled by single inheritance where appropriate.
@@ -961,25 +958,24 @@ it shouldn’t be too much effort for a dedicated language implementer
 to port our technology to their language.
 
 @subsubsection{Open Source}
-We invite all language implementers to likewise adopt C5
+We invite all language implementers to likewise adopt C4
 in the next version of their object system,
 whether class-based or prototype-based, static or dynamic, etc.
 Then your users too can enjoy the Best Inheritance in the World.
 
 @section{Data-Availability Statement} @appendix
-
 Our code is available in our github repository as part of our Scheme implementation.
 We will reveal the address after deanonymization.
 
 For the sake of artifact review, we will build an anonymized implementation
-of the C5 algorithm isolated from the rest of our object system.
+of the C4 algorithm isolated from the rest of our object system.
 We will include a few execution test cases.
 We will not attempt to anonymize a complete variant of our object system,
 which would be overly costly and would easily fail to be anonymous.
 
 The algorithm description we give above
 should already be sufficient for any person skilled in the art
-to reimplement and adapt the C5 algorithm to their own object system.
+to reimplement and adapt the C4 algorithm to their own object system.
 Furthermore, the artifact we provide will only allow a language implementer
 to compare their implementation to ours and check for any bugs in their reimplementation.
 
