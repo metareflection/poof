@@ -1,9 +1,11 @@
-#lang scribble/acmart @manuscript @anonymous
-@; Default already: @10pt @natbib @screen @nonacm @acmsmall
-@; @anonymous @authordraft @authorversion @timestamp
-@; Submitted to OOPSLA 2025 https://2025.splashcon.org/track/OOPSLA
+#lang scribble/acmart @manuscript @anonymous @review @nonacm
+@; -*- Scheme -*-
+@; Default already: @10pt @natbib @screen @acmsmall
+@; @anonymous @authordraft @authorversion @timestamp @review @nonacm
 
-@title{C4: The best of single and multiple inheritance}
+@; @title{C4: The best of single and multiple inheritance}
+@title{Lambda, the Ultimate Object}
+@subtitle{A theory of OO, and a modest contribution on optimal inheritance}
 
 @author[
   #:email (email "fare@mukn.com")
@@ -14,16 +16,24 @@
 @abstract{
 We discuss how best to combine single inheritance and multiple inheritance
 in an Object-Oriented (OO) language.
-For that, we review the essential concepts of OO, what makes each kind of inheritance
-desirable or not, and the relevant challenges with using, implementing or combining them.
-Importantly, we discuss why our solution preserves what matters of single inheritance,
+For that, we first recapitulate the essential concepts of OO
+that enable us to identify what “best” might mean to begin with:
+what is inheritance, what is its purpose, what are known variants of it,
+what makes each variant desirable or not, what are the relevant challenges with
+using, implementing or combining them.
+In particular, we discuss dependencies between prototypes (or classes),
+(prototype or class) linearization, why linearization is desirable
+and what are known desired properties of linearization.
+Our solution extends the well-known C3 algorithm for linearization
+with a way of combining multiple and single inheritance
+that was previously adopted by Scala 3.
+We call the resulting algorithm C4.
+Importantly, we discuss why our solution preserves what matters about single inheritance
+in the wider context of multiple inheritance,
 even though there are other aspects of single inheritance it doesn’t preserve.
-We particularly study the notion of linearization of inheritance hierarchies,
-and offer an algorithm to compute this linearization while combining both kinds of inheritance.
-We call our algorithm C4, because it is a successor to
-Barrett et al.’s C3 algorithm @~cite{Barrett96amonotonic}
-that preserves one additional constraint.
 We compare our solution to those of other languages, most notably Common Lisp and Scala.
+Overall, our contribution is as much in presenting the concepts of OO properly as in
+setting that one last concept just right.
 }
 
 @(require scriblib/bibtex
@@ -39,11 +49,10 @@ We compare our solution to those of other languages, most notably Common Lisp an
           "util/util.rkt"
           (for-label racket))
 
+@(define-simple-macro (r a ...) (racket a ...))
 @(define (anonymize x . y) x)
-
-@;@(define (nix . foo) (apply minted "nix" foo))
-@(define (nix . foo) (apply verbatim foo))
-@(define (~nocite . x) (let ((_ (apply @~cite x))) (void)))
+@(define (omega) "ω")
+@(define (GerbilScheme) @anonymize["our Scheme implementation"]{Gerbil Scheme})
 
 @;; Suppress the page count for the Camera-ready version by uncommenting the below.
 @;@tex{\thispagestyle{empty}\pagestyle{empty}}
@@ -51,6 +60,7 @@ We compare our solution to those of other languages, most notably Common Lisp an
 @;@pageStart{42}
 
 @(define-bibtex-cite "poof.bib" ~cite citet generate-bibliography)
+@(define (~nocite . x) (let ((_ (apply @~cite x))) (void)))
 
 @(define-simple-macro (defsection name tag text) (define (name (x text)) (seclink tag x)))
 @(defsection section1 "Prototypes_bottom_up" "section 1")
@@ -59,7 +69,7 @@ We compare our solution to those of other languages, most notably Common Lisp an
 @tex{
 \acmYear{2025}
 \copyrightyear{2025}
-\acmConference[OOPLSA]{OOPSLA}{2025}{online}
+\acmConference[Scheme]{Scheme Workshop}{2025}{online}
 \acmISBN{978-1-xxxx-xxxx-x/21/10}
 \acmPrice{00.00}
 \acmDOI{https://dx.doi.org/xx.xxxx/xxxxxxx.xxxxxxx}
@@ -68,31 +78,88 @@ We compare our solution to those of other languages, most notably Common Lisp an
 
 @section[#:tag "Intro"]{Introduction}
 
-@subsection{Our contribution: An Optimal Inheritance Mechanism}
+@subsection{Our Contribution: An Optimal Inheritance Mechanism — and a Theory Why}
 
 @subsubsection{Context: Inheritance}
 Object-Oriented (“OO”) language are characterized by their use of
 @emph{inheritance} @~cite{inheritance1996},
-a mechanism to modularly combine partial specifications of programs.
+a mechanism to modularly and incrementally combine partial specifications of programs.@note{
+A notable dissident to this characterization is William Cook,
+a respected academic who made key contributions to understanding the semantics of inheritance
+@~cite{Cook1989 cook1989inheritance bracha1990mixin Cook1994}
+yet later argued that inheritance was orthogonal to OO @; Also Cook1989?
+and that OO is about “classes” of “objects” that can only be accessed through “interfaces”
+@~cite{Cook2009 Cook2012}.
+
+However, coding against an SML “module” would count as OO by Cook's criteria,
+and indeed Cook explicitly calls the untyped λ-calculus “the first object-oriented language”,
+while dismissing Smalltalk as not OO enough because its integers are not pure objects@~cite{Cook2009}.
+Cook's definition, that embodies the modular aspect of OO while rejecting
+its incremental or dynamic aspect, runs contrary to all practice,
+and brings no insight whatsoever on what people commonly call OO,
+the many languages that provide it,
+the common idioms, libraries and patterns on top of those languages.
+It brings no light on any of the OO languages cursed by Cook as not actually being OO,
+no light on any of the Functional Programming (FP) languages blessed by Cook as actually being OO
+to the surprise of their users, and no light on the difference between the two.
+
+Cook's many works on OO over the years also systematically paper over important concepts
+in OO, such as prototypes, multiple inheritance, method combination or multiple dispatch.
+In the end, while Cook's PhD and subsequent academic career grew out of
+brilliantly modeling the key mechanism of OO (inheritance)
+from the foreign point of view of FP,
+his wilful ignorance and deep misunderstanding of the OO tradition, indeed missing the point,
+were such that they have become proverbial: immortalized in Gabriel's essay
+“The Structure of a Programming Language Revolution” @~cite{gabriel2012}
+as a prototypical failure to understand a phenomenon when viewed
+through a scientific paradigm incommensurable with the one that produced it.
+
+In the end, Cook is well worth mentioning precisely to illustrate the lack of
+common vocabulary, common concepts, and common paradigms among those
+who practice and study OO, even or especially
+among notable academics with deep expertise in the field.
+And yet, there are undeniably common practices, common phenomena, common concepts,
+worth understanding, conceptualizing, defining and naming
+in the rich (and often mutually conflicting) traditions
+that grew around OO.
+Elucidating the key concepts hehind the hype and confusion is the main purpose of this paper.
+}
 Now language designers have faced a dilemma since almost the very beginning,
 between several variants of inheritance:
 some languages choose single inheritance for its simplicity and performance
 @~cite{Simula1967 kay1996early},
 whereas others prefer multiple inheritance
-for its greater expressiveness and modularity @~cite{Bobrow1976}.
-A few outliers use mixin inheritance,
-that can be seen as a variant between the two @~cite{bracha1990mixin}.
+for its greater expressiveness and modularity @~cite{Bobrow1976 Cannon1979}.
+A few outliers use mixin inheritance, a variant between the two
+that can also be seen as more fundamental and composable @~cite{bracha1990mixin}.
+@; XXX Reverse Inheritance as trivially expressible in terms of mixin or multiple inheritance.
 
 @subsubsection{Problem: Optimal Inheritance?}
-Some languages combine both single inheritance and multiple inheritance,
-though with some constraints @~cite{cltl2 scalableComponentAbstractions2005}.
-The question then is whether some ways of combining the two are better than others,
-what makes these ways better, and is there a best way of combining them?
+Is there a form of inheritance that is objectively better than the others,
+with respect to expressiveness, modularity, incrementality, and runtime performance?
+Is one of the usual variants superior to the others in every way?
+If not, is there a combination of them, or a superset of them, that is?
+Some languages notably combine both single inheritance and multiple inheritance,
+though with some constraints @~cite{cltl2 scalableComponentAbstractions2005};
+would the best way to do inheritance subsume these combinations?
 Importantly, multiple inheritance usually involves a computation called
 the @emph{linearization} of the inheritance graph.
 Is that linearization necessary?
-Is there an optimal algorithm for this linearization
-when combining single and multiple inheritance?
+What becomes of it in this optimal inheritance?
+
+@subsubsection{Claim: A Theory of OO}
+So that we may offer a solution to the problem of optimal inheritance,
+we will first quickly recapitulate a theory of OO sufficient to state the problem
+and the criteria that may make a solution better than others.
+In a way, we will only be stating lore that has been known for decades.
+Yet no element of that lore is uniformly known to all;
+some may never have been told explicitly in academic literature;
+and they have never been formulated together.
+What more, our theory does not merely restate the obvious,
+but shapes it into a coherent whole that is @emph{productive}:
+capable of generating and justifying new knowledge,
+and not merely explaining existing one.
+
 
 @subsubsection{Claim: C4 is Optimal}
 We claim that (a) indeed there is a best way to combine single and multiple inheritance,
@@ -101,39 +168,48 @@ that (c) there are enough constraints on linearization for the optimal algorithm
 to be well-defined up to some heuristic, and
 that (d) even then there are good reasons to prefer a specific heuristic.
 We call C4 the resulting algorithm, that we implemented, and that
-is included in the next release of @anonymize["our Scheme implementation"]{Gerbil Scheme}
-as part of its builtin object system.
+is included in the next release of @(GerbilScheme)
+as part of its builtin object system.@note{
+Scheme @; XXX CITE lambda-the-ultimate r4rs r7rs-small
+is a language with a rather minimalist definition.
+There are dozens of implementations of the language
+(with various degrees of compliance to the various standards),
+and each implementation provides its own extensions on top of this common core,
+to offer a usable programming environment.
+The extensions are usually mutually incompatible,
+though there are trends, similarities, variants of shared code between the many implementation,
+and even standards for some of these extensions.
+In particular though, there is no standard object system,
+instead plenty of different systems that span the entire design space for OO—except for
+generally lacking static types.
+}
+
+Once our theory of OO is (re)stated, the C4 algorithm and the justification of its benefits
+should seem rather obvious, though still novel.
+Yet without that (re)statement, neither the algorithm nor its benefits would be obvious.
+C4 is thus a comparatively modest yet meaningful innovation on top of our theory,
+that crowns the theory as productive.
 
 @subsection{Plan of the Article}
 
-In section 2, we provide a quick summary of the issues at stake
+In section 2, we dispel common misconceptions about OO,
+to ensure that our theory isn’t met with misunderstanding due to misconceptions
+or disagreements about what is being theorized.
+
+In section 3, we provide a quick summary of the issues at stake
 with Object Orientation, and the three variants of Inheritance in common use:
 what are the important concepts, and why they matter.
 
-Along the way, we define the terms we use in the rest of the article,
-especially since various authors from the communities around various OO languages
-each use slightly different terminologies.
-When multiple nomenclatures conflict, we give precedence
-to the terminology of the Lisp tradition, because it is
-the oldest tradition that has been tackling those problems.@note{
-Although it came first and directly or indirectly inspired
-all OO languages and systems that followed,
-SIMULA has many idiosyncrasies that set it and its successor BETA
-apart from the wider OO tradition.
-Also, neither tackled multiple inheritance,
-making them less relevant to the issue at stake.
-}
-
-In section 3, we examine the known consistency constraints that matter
+In section 4, we examine the known consistency constraints that matter
 for linearization algorithms in the context of multiple inheritance,
 and state of the art in satisfying them, the C3 algorithm.
 
-In section 4, we describe the state of the art in combining
+In section 5, we describe the state of the art in combining
 multiple and single inheritance,
 with the solutions respectively adopted by Common Lisp @~cite{cltl2}
 and Scala @~cite{scalableComponentAbstractions2005}.
 
-In section 5, we propose a linearization algorithm we call C4,
+In section 6, we propose a linearization algorithm we call C4,
 that satisfies all the constraints we discussed for a good linearization algorithm,
 and for combining single and multiple inheritance.
 We explain why the residual heuristic we also adopt from C3 is arguably the best one.
@@ -141,842 +217,433 @@ We explain why the residual heuristic we also adopt from C3 is arguably the best
 @;{In section 6, we examine how our algorithm behaves on a few examples
 lifted from relevant literature.}
 
-Finally, in section 6 we conclude by recapitulating our findings.
-
-@section{Object-Orientation and Inheritance}
-
-@subsection{Object-Orientation}
-
-@subsubsection{Intralinguistic Incremental Modular Specification}
-Object-Orientation (“OO”) is a technique that enables the specification of programs
-through incremental and modular @emph{partial} specifications,
-embodied as entities @emph{within} a programming language, as opposed to outside it
-(e.g. by editing, generating, or otherwise combining files with
-preprocessors and metaprograms before to invoke the regular language implementation).
-
-@subsubsection{Prototypes and Classes}
-These in-language entities are called @emph{prototypes} if first-class
-(manipulated at runtime, and specifying values, most usually records),
-and @emph{classes} if second-class
-(manipulated at compile-time only, and specifying types, most usually record types).
-A language offers prototype-based object orientation (“Prototype OO”)
-if it has prototypes, and class-based object orientation (“Class OO”) if it has classes.
-
-The first OO language used classes @~cite{Simula1967},
-but the second one used prototypes @~cite{Winograd1975},
-and some provide both @~cite{kristensen1987beta}. @; BEWARE: I don’t grok BETA.
-Class OO being the more popular form of OO,
-we use the terminology of Class OO in the rest of this article.
-But all our discussion of inheritance applies just as well
-to the more general Prototype OO.
-
-@subsubsection{Objects and Conflation}
-Also note that in Prototype OO, an “object” is the conflation
-(cartesian product with implicit cast)
-of a prototype and the instance value it specifies (via least fixed point).
-
-Meanwhile in Class OO, an “object” is an element of the type specified by a class.
-Meanwhile the class is a conflation of the partial specification
-of a type (and accompanying algorithms), and the type it specifies as least fixed point.
-Class OO can thus be viewed as Prototype OO for types (or type descriptors),
-which typically happens at compile-time in static languages@note{
-Indeed, C++ templates at compile-time offer a pure functional programming language,
-dynamically typed and lazy with pattern-matching, with builtin Prototype OO.
-It is the same programming paradigm as Jsonnet or Nix, though for a very different domain target.
-}
-but may also happen at runtime in dynamic languages, or in static languages using reflection.
-
-Finally, it is also possible to use inheritance, and thus have “object orientation”,
-without objects: by not conflating either prototype and instance or class and type,
-and instead keeping them cleanly separate. @~cite{poof2021}
-
-Lack of awareness of this conflation
-can cause much confusion among students of OO.
-So can, to a lesser extent,
-ignorance of the relationship between prototypes and classes,
-or of the distinct meanings of “object” in Prototype OO vs Class OO.
-
-@subsubsection{Inheritance}
-The way OO, whether prototypes or classes, combines increments of specification
-with other such increments, is called @emph{inheritance} @~cite{Winograd1975 inheritance1996}.
-There are three kinds of inheritance in widespread use:
-single-inheritance, multiple-inheritance, and mixin inheritance.
-
-@subsection{Single Inheritance}
-
-@subsubsection{Direct superclasses and subclasses}
-In single inheritance, each class has a single direct @emph{superclass}
-that it inherits from, of which it is a (direct) subclass,
-to which it contributes its increment of specification.
-We say that the superclass is more generic, and the subclass more specific.
-
-@subsubsection{Global structure of single inheritance}
-The transitive (direct and indirect) superclasses of a given class form a list.
-The set of all classes has the structure of a tree with some base class at its root
-(or forest, i.e. set of disjoint trees, if there is no common base class).
-
-@subsubsection{Prefix}
-In SIMULA 67 @~cite{Simula1967}, in which inheritance was first implemented though not thus called,
-the superclass was called a @emph{prefix class},
-as its specification was notionally a prefix to the complete specification
-for the subclass,
-taken literally as concatenating definitions of functions and variables
-with scope going in text order, with the subclass’s more specific code added
-at the end within the scope of the prefix class’s more generic code.
-
-@subsubsection{Suffix}
-Already in 1967 though, the “prefix” class could also add a suffix
-to the body of the subclass, the code of which would be evaluated
-where an @code{inner} placeholder was “splitting” prefix and suffix.
-Moreover, SIMULA 67 called “prefix sequence” the list of
-a class and its transitive superclasses, but kept it in most-specific-first order,
-which is contravariant with the notion of prefix coming before the suffix.
-
-@subsubsection{Method Resolution}
-When multiple superclasses define a same method, the most specific definition is used.
-Most languages allow the body of this definition to in turn invoke
-the method defined by the next most specific definition,
-via a keyword @code{super} (Smalltalk, Java) or some other similar mechanism.@note{
-SIMULA and its successor BETA @~cite{kristensen1987beta}
-were special in instead having a superclass’s body specify
-where subclass bodies are inserted, via the @code{inner} keyword.
-BETA generalized classes to “patterns” that also covered method definitions the same way.
-No other known language seems to use this technique,
-although it is easily expressible using user-defined method combinations
-in e.g. CLOS @~cite{bobrow88clos}.
-}
-
-@subsubsection{Simplicity}
-Single inheritance is the simplest form of inheritance,
-at least in the context of first-order code and logic,
-which explains why it was discovered first.
-
-@subsection{Multiple Inheritance}
-
-@subsubsection{Early History}
-Discovered a few years later, and initially just called @emph{inheritance},
-in what in retrospect was prototype OO, in KRL @~cite{Winograd1975 Bobrow1976},
-multiple inheritance allows a class to have multiple direct superclasses.
-The notion of multiple inheritance thus predates Smalltalk 1976
-implementing single inheritance and making the name and notion popular,
-in what was a compromise throwback to SIMULA 1967 @~cite{kay1996early}.
-Although some more early systems @~cite{Kahn1976 Borning1977 Traits}
-used multiple inheritance, it is only with Flavors in 1979 @~cite{Cannon1980}
-that it became really usable and somewhat popular.
-
-@subsubsection{Global Structure of Multiple Inheritance}
-The structure of a class and its transitive superclasses is
-a Directed Acyclic Graph (“DAG”).
-The set of all classes is also a DAG.
-Most OO systems include a common system-wide base class
-at the end of their DAG; but it is possible to do without one.
-
-@subsubsection{Method Resolution in Multiple Inheritance}
-When each of multiple superclasses define a same method,
-the simple resolution strategy used by single inheritance doesn’t directly apply
-because the inheritance DAG defines a partial order, not a total order,
-so there may be several potentially “conflicting” method definitions to choose from.
-
-Some languages @~cite{Borning1979 Traits stroustrup1989multiple CecilMultimethods}
-issue an error in case of such method definition conflict;
-programmers must resolve conflict by having relevant subclasses explicitly define a method override.
-This is a consistent strategy, but the least useful among all consistent strategies:
-@itemize[
-@item{Overrides fail the incrementality purpose of OO whenever they require users
-to reimplement part or all of the functionality from superclasses.}
-@item{Overrides might want to recursively call the methods of the class’s direct superclasses,
-but that could lead to their transitively calling the method of a common indirect superclass multiple times,
-and exponentially so as the inheritance DAG contains more such “diamond” configurations.}]
-@; TODO cite Diamond Problem in C++ and learn about "virtual inheritance" and other C++ solutions.
-@; C++ embraces exponential explosion unless you use virtual base classes.
-@; your methods might also quickly check for multiple invocation and immediately return after the first time.
-@; in the end you can try to layer as conventions the features the language doesn’t directly offer.
-@; See also Malayeri & Aldrich’s 2009 "CZ: Multiple Inheritance without Diamonds" and its citations 43, 46.
-
-Instead, we may realize that any solution that ensures each potentially applicable method
-is considered once and only once (or at most once)
-in computing the @emph{effective method} (semantics of calling the named method)
-necessarily establishes a total “linear” ordering between these methods.
-
-@subsubsection{Class linearization}
-With @emph{class linearization}, a total ordering, or linearization, is chosen
-that extends the partial ordering defined by each class’s inheritance DAG,
-and also preserves the @emph{local ordering} of each class’s declaration
-of its direct superclasses.
-The resulting @emph{class precedence list} @~cite{bobrow86commonloops},
-traditionally kept in most-specific-first order
-(starting with the class, ending with the base class),
-is then used to resolve methods as if the class had been defined through
-single inheritance with that list of classes as its “prefix sequence”.
-This approach was introduced by Flavors @~cite{Cannon1980},
-and named by New Flavors @~cite{Moon1986Flavors}.
-
-@subsubsection{Method Combinations}
-Another innovation of Flavors
-was the notion of method combinations:
-users can specify for each method name,
-how the methods with that name defined in all of a class’s class precedence list
-would be combined into an @emph{effective method} for that class.
-
-The method combination can be the standard combination after linearization above
-(enriched with @code{before after} methods,
-that can notably be used to emulate the behavior of SIMULA);
-or it can apply a simple monoidal operation on their result
-(@code{+ max min or and list append nconc progn});
-or it can be whatever the user specifies,
-including an error-on-conflict strategy if desired.
-
-Later, the introduction of builtin @code{around} methods
-would also enable code wrappings not expressible
-merely with before and after methods.
-Furthermore, in New Flavors @~cite{Moon1986Flavors},
-CommonLOOPS @~cite{bobrow86commonloops} and
-CLOS @~cite{gabriel1991clos},
-as inspired by T’s unification of functions and objects @~cite{Rees82t:a adams88oopscheme},
-a “generic function” would embody the “calling a method of a given name”
-and become the locus for this specification of a method combination.
-@; TODO quickly mention multi-methods, cite LOOPS, Cecil, Fortress and more.
-
-Importantly for our discussion, the use of class-wide class precedence lists
-ensures consistency of semantics across all classes, methods, method combinations,
-effective methods, and generic functions.
-Class precedence lists also offer a simple interface
-for users defining their own method combinations.
-
-@subsection{Comparison between single and multiple inheritance}
-
-@subsubsection{Modularity}
-Multiple inheritance is more modular than single inheritance,
-allowing to divide program specifications
-into more, smaller, more reusable classes, also commonly called “mixins” or “traits”
-(the name “flavors” didn’t stick), such that each partial program specification
-can be written with a smaller amount of information in the head of the programmer.
-
-@subsubsection{Expressiveness}
-Multiple inheritance is more expressive than single inheritance,
-allowing partial specifications to be conceptualized
-that would have previously required code duplication or roundabout protocols
-that break modularity or incrementality.
-
-@subsubsection{Performance}
-Multiple inheritance is more expensive to implement than single-inheritance.
-Notably, access to methods and slots with single inheritance can use
-a same statically computed index for all subclasses of the class defining them.
-By comparison, multiple inheritance in the most general case requires method and slot access
-to lookup some kind of hash-table,
-which, while still practically constant-time, is significantly more expensive.
-
-A lot of work has been done to improve the performance of multiple inheritance,
-through static method resolution when possible, @; TODO cite C++ ? sealing ?
-and otherwise through caching @~cite{bobrow86commonloops}.
-But these improvements introduce complexity, and caching
-increases memory pressure and still incurs a small runtime overhead,
-even when successful at avoiding the full cost of the general case.
-For this reason, many performance-conscious programmers
-prefer to use or implement single inheritance when offered the choice.
-
-@subsection{Mixin Inheritance}
-
-@subsubsection{Last but not least}
-Mixin inheritance was discovered last, in 1990 @~cite{bracha1990mixin},
-while attempting to elucidate inheritance in the paradigm of programming language semantics
-as opposed to the previously prevalent paradigm of computing systems @~cite{gabriel2012}.
-It is actually the simplest form of inheritance
-in the context of higher-order functions:
-a @emph{practical} implementation literally takes but two short function definitions
-@~cite{nix2015 poof2021}.
-
-@subsubsection{Composing Mixins}
-With mixin inheritance, classes (or “mixins”) are defined as
-the composition of two or more superclasses
-whose method definitions each override those of the superclasses it inherits from.
-Since composition is monoidal, the semantics of the resulting class
-is the same as if defined using single inheritance
-from the precedence list obtained by flattening all composed superclasses in order.
-
-@subsubsection{Comparative Expressiveness}
-Mixin inheritance is more expressive than single inheritance, and
-just as expressive as multiple inheritance, in that it enables
-classes (mixins or traits) to be defined once without being tethered
-to a single superclass (or chain of superclasses), and
-combined and recombined in many compositions.@note{
-Actually, mixin inheritance can be argued to be more expressive than multiple inheritance
-unless multiple inheritance is also accompanied by some means of renaming
-classes, slots, and methods.
-However, in a language where classes are meta-level constants,
-renaming is a trivial extra-lingual operation;
-and in a language where classes (or prototypes) are first-class runtime values,
-renaming is a relatively simple operation though it may depend on reflection.
-Thus, in practice, we can usually dismiss the thin advantage in expressiveness of mixin inheritance.
-}
-Conceptually, composition of mixins allows to @emph{append} two lists of classes,
-when single inheritance only allows to @emph{cons} a class to a fixed list.
-
-@subsubsection{Comparative Modularity}
-Mixin inheritance is less modular than multiple inheritance,
-because it makes the programmer responsible for ensuring
-there are no missing, repeated or misordered superclasses,
-manually doing what multiple inheritance does for you
-when computing its class precedence lists.
-A notable bad situation is when the list of superclasses of a class is modified,
-at which point all its transitive subclasses must be updated accordingly,
-even if defined in completely different modules that the author cannot modify,
-that he may have no idea exists, whose authors he cannot even notify.
-This makes changes brittle, breaks modularity, and
-effectively forces the entire inheritance DAG of a class to become part of its interface.
-By contrast, multiple inheritance can automate all these troubles away,
-and let programmers only have to worry about their own classes’s direct superclasses.
-
-@subsubsection{Popularity}
-Both due to having been discovered later and being less modular,
-mixin inheritance is less popular than the older alternatives.
-Nevertheless it lives on notably in Racket @~cite{Mixins1998 Flatt06schemewith},
-Newspeak @~cite{bracha2008newspeak}, GCL @~cite{gclviewer2008}, Jsonnet @~cite{jsonnet},
-and Nix @~cite{nix2015}.
-Just the use of GCL at Google means a large part of the world computing infrastructure
-is built upon configurations written using mixin inheritance.
-Furthermore, one may view the way C++ duplicates non-“virtual” superclasses
-as a form of mixin inheritance
-(whereas the way it de-duplicates “virtual” classes is a form of multiple inheritance).
-
-@subsubsection{No Further Comment}
-Mixin inheritance definitely has its uses, if only as
-a lower-level building block used in implementing more elaborate object systems.
-Nevertheless, in the rest of this document, we dismiss mixin inheritance
-for being a less modular and less performant alternative
-to the combination of multiple inheritance and single inheritance we are seeking.
-
-@section{Constraints on Linearization}
-
-@subsection{Consistency Matters}
-
-@subsubsection{Consistency Constraints}
-Cannon @~cite{Cannon1980}, Moon @~cite{Moon1986Flavors} then
-Ducournau et al. @~cite{ducournau1992monotonic ProposalMonotonicMultipleInheritance1994}
-have discussed the good consistency properties that one may (or may not) expect
-from a class linearization algorithm.
-
-These properties ensure that an object system shall compute a class’s class precedence list
-in a way that provides a consistent ordering of all methods
-across all generic functions and all classes — and all tuples of classes,
-when using multimethods @~cite{bobrow86commonloops bobrow88clos gabriel1991clos CecilMultimethods allen2011type}.
-
-@subsubsection{Matching Methods}
-This consistency notably matters when resources or locks
-are acquired by some methods of some objects,
-that must be updated in matching order,
-or released in matching reverse order,
-by the same methods or other methods,
-in the same objects or other related objects.
-Inconsistency can lead to resource leak, use-before-initialization, use-after-free, deadlock,
-data corruption, and other catastrophic failures.
-
-@subsection{Ordering Consistency}
-
-@subsubsection{Linearization}
-The most important constraint, @emph{linearization} @~cite{Cannon1980},
-states that the precedence list of a class
-is a linearization (total ordering extension)
-of its inheritance DAG (viewed as a partial ordering).
-All languages that use linearization for method resolution follow this constraint;
-those that don’t fall short on the OO purposes of incrementality and modularity.
-
-@subsubsection{Local Ordering}
-The second constraint, the
-(preservation of the) @emph{local precedence order} @~cite{Moon1986Flavors},
-states that the list of a class’s direct super classes
-(as specified by the programmer)
-is a sublist of its precedence list
-(seen as an ordering, e.g. all elements are present in the same order,
-but not necessarily consecutively).
-Many languages fail to follow this constraint.
-
-@subsubsection{Monotonicity}
-The third constraint, @emph{monotonicity} @~cite{ducournau1992monotonic},
-states that a class’s precedence list is included as a sublist
-(seen as an ordering, as above) in the class precedence list of each of its subclasses.
-
-@subsection{Shape Determinism}
-
-@subsubsection{Only Shape Matters}
-A fourth constraint, that we call @emph{Shape Determinism},
-states that the result of the linearization algorithm
-must only depend on the @emph{shape} of the inheritance graph,
-and may not depend on the names of the classes or any global information.
-Thus, class inheritance graphs that are isomorphic up to some renaming of classes
-must have identical linearizations up to the same renaming of classes.
-
-@subsubsection{Original Name}
-This constraint was called @emph{acceptability} by Ducournau et al.
-who introduced it @~cite{ducournau1992monotonic}.
-However, this name is too generic and fails to convey
-either the intent or content of the constraint.
-We considered the name “stability”, but Ducournau et al. use that name
-for another property of multiple inheritance
-that is subsumed by linearization.
-
-@subsubsection{Rationale}
-Shape Determinism matters for code maintainability:
-thanks to it, renaming a class, moving it in the file hierarchy,
-or otherwise modifying it without changing the shape of the inheritance hierarchy
-shall not introduce unstable semantic change in the program,
-especially if such a change is itself somehow necessary as part of debugging.
-
-@subsubsection{Alternatives to Shape Determinism}
-Instead of Shape Determinism, a global ordering could be established between
-all defined classes across a program,
-e.g. lexicographically by their name or full path,
-or by assigning a number in some traversal order,
-or from a hash of their names or definitions, etc.
-This ordering could then be used by a linearization algorithm
-as a tie-breaking heuristic to choose which superclass to pick next
-while computing a precedence list,
-whenever the constraints otherwise allow multiple solutions.
-But the instability of such a heuristic when the code changes
-would lead to many @emph{heisenbugs}.
-
-@subsection{Constraint-Respecting Algorithms}
-
-@subsubsection{Inconsistent Algorithms}
-While all OO languages with linearization respect the first constraint;
-most fail some or all of the latter constraints.
-
-@subsubsection{First Solution}
-The first proposed solution that satisfies all the above constraints
-@~cite{ProposalMonotonicMultipleInheritance1994} was a bit complex,
-building upon previous partial solutions.
-
-@subsubsection{C3}
-A latter solution, the C3 algorithm @~cite{Barrett96amonotonic},
-“simply” follows the constraints,
-computing the precedence list head-first with a tie breaking heuristic used
-when multiple linearizations are compatible with the constraints.
-
-@subsubsection{Depth-First Traversal}
-Given the arbitrary but practical choice to build the precedence list
-from its head, a heuristic for determining which of multiple valid candidates to pick
-as the next in the list (when more than one is possible) is equivalent to establishing
-an otherwise arbitrary priority order or traversal among the candidates.@note{
-Building from the tail would be equivalent, mutatis mutandis;
-building from the middle out would require a more complex algorithm,
-yet ultimately the same argument would apply.}
-Furthermore, given the Shape Determinism constraint, this traversal must only depend on
-the shape of the inheritance DAG, not on unique identifier attached to e.g.
-the name or source location of the classes.
-
-C3 uses a Depth-First Traversal, prioritizing classes appearing earlier
-among direct superclasses and their precedence list, so they appear earlier;
-classes appearing later in this traversal also appear later in the precedence list.
-In particular, a class’s precedence list will share as much of a tail as possible
-with the precedence list of its last direct superclass, which in turn favors
-sharing of slot indexes and partially combined method code.
-By contrast, the opposite traversal would minimize this sharing, and
-a breadth-first traversal would enable less of it.
-
-@subsubsection{Naming}
-C3 was named after the fact that it respects three ordering constraints it purports to enforce,
-citing Ducournau et al. @~cite{ducournau1992monotonic ProposalMonotonicMultipleInheritance1994}.
-The authors did not count Shape Determinism among these constraints,
-though, implicitly, C3 enforces it.
-There are thus are four constraints enforced by C3,
-just like there are four musketeers in The Three Musketeers @~cite{Dumas1844}.
-
-@subsubsection{Adoption}
-C3 has since been adopted by OpenDylan, Python, Raku, Parrot, Solidity, PGF/TikZ, and more.
-
-@section{State of the Art in Combining Single and Multiple Inheritance}
-
-@subsection{Prolegomena}
-
-@subsubsection{Previous Art}
-Many languages adopted single inheritance for its performance advantages,
-yet were later extended with multiple inheritance for its expressiveness,
-while trying to preserve the advantages of single inheritance where appropriate.
-
-We will examine the cases of Common Lisp (extending earlier Lisp systems)
-and Scala (extending Java’s class system).
-
-@subsubsection{Terminology}
-Beware that the word “class” weakly implies multiple inheritance in the Lisp tradition,
-where it contrasts with “struct” that strongly implies single inheritance.
-
-By contrast, “class” weakly implies single inheritance
-in the Smalltalk, Java and Scala tradition,
-where it contrasts with “trait” that strongly implies multiple inheritance.
-
-To confuse things further, in C++ tradition,
-a @code{struct} is just a way to define a class
-wherein all members (methods and variables) are public by default,
-which has nothing to do with either single or multiple inheritance.
-C++ always has multiple inheritance, although
-superclasses reached along many paths are duplicated unless declared “virtual”,
-which is a form of mixin inheritance.
-
-This document follows the Lisp tradition in its terminology,
-except in the section on Scala below where we will use Scala terminology,
-but in double-quotes.
-
-@subsection{Common Lisp}
-
-@subsubsection{Separate Class and Struct Hierarchies}
-Common Lisp @~cite{cltl2} has @emph{structs},
-that sport single inheritance and are quite efficient,
-as well as @emph{classes} @~cite{gabriel1991clos},
-that sport multiple inheritance and are more expressive but slower.
-
-However, to avoid inconsistencies, Common Lisp wholly prevents
-a class from inheriting from a struct, or vice versa,
-keeping the two hierarchies separate,
-though offering a uniform interface to both.
-
-@subsubsection{User-defined Hierarchies}
-Through its MOP @~cite{AMOP},
-Common Lisp also enables users to define metaclasses
-wherein users can define their own class hierarchies,
-that could conceivably combine single and multiple inheritance.
-We are not aware of anyone using this mechanism to do so;
-if someone did, it is unclear whether the mechanisms provided
-would allow them implement the usual performance optimizations
-allowed on its single inheritance fragment.
-
-@subsection{Scala}
-
-@subsubsection{Traits}
-Scala extends Java’s “classes” that only support single inheritance
-with “traits” @~cite{scalableComponentAbstractions2005}
-that support multiple inheritance.
-
-Scala “classes” and “traits” definitions may specify
-at most one direct “superclass” and potentially many direct “supertraits”
-that it “extends”.
-Syntactically, developers specify direct superclasses and traits in least-specific-first order,
-which is the reverse of the local precedence order.
-But semantically, the Scala specification still discusses
-class precedence lists (that it calls “class linearizations”)
-in the traditional most-specific-first order.
-
-@subsubsection{Scala superclasses}
-Scala 2.13 requires that if a trait or class has a (single inheritance) superclass
-in its inheritance hierarchy, then it shall declare as the first entity it extends
-a (single inheritance) class that is more specific
-than any of its indirect (single inheritance) superclasses.
-
-Scala 3.3 relaxes this restriction by automatically computing
-this most specific superclass from all the superclasses in its inheritance hierarchy,
-so you can declare directly extending a superclass of it, or only traits.
-
-We have been unable to find a documentation of this feature in Scala 3,
-its precise behavior, design rationale, and implementation timeline,
-even after contacting members of the Scala team.
-However, this is clearly the Right Thing to do in this case,
-as we’ll explain when discussing our solution.
-
-@subsubsection{Scala linearization}
-Scala uses a variant of the original LOOPS linearization algorithm @~cite{ducournau1992monotonic}:
-The LOOPS algorithm simply concatenates all the class precedence lists
-of a class’s direct superclasses, then removes all duplicates,
-keeping the @emph{first} one (in most specific order) and removing latter copies,
-following the same heuristic as Flavors @~cite{Moon1986Flavors},
-The Scala algorithm does as much but keeps the @emph{last} duplicate instead,
-following an opposite heuristic.
-
-Although this change in heuristic is not explained by Scala authors,
-we believe it was chosen because, unlike the LOOPS heuristic,
-it always preserves the precedence list of the least-specific direct supertrait
-(syntactically first, semantically last) as the tail of the defined class’s precedence list,
-which is necessary when that last supertrait is a single-inheritance “class”,
-or has a “superclass” more specific than “Object”.
-
-Scala 2.13 in particular requires developers to specify in first syntactic position
-a “trait” whose most specific “superclass” is no less specific than that of
-any of the other direct supertraits; otherwise the compiler throws an error.
-
-Although this behavior doesn’t seem to be documented,
-Scala 3.3 takes a more “semantic” than “syntactic” approach:
-it specially treats the “class” fragment of inheritance and behaves as if
-the most specific of any of the supertraits’ most-specific “class” superclass had been specified first.
-It is of course an error if the supertraits’ “superclasses” are not a total order,
-with a single most-specific “class” among them.
-
-@section{Our C4 Algorithm}
-
-@subsection{Best Combining Single and Multiple Inheritance}
-
-@subsubsection{Unifying Classes and Structs}
-In modernizing the builtin object system of
-@anonymize["our Scheme implementation"]{Gerbil Scheme},
-we decided to unify hierarchies
-of single inheritance structs and multiple inheritance classes,
-that were theretofore separate, as in Common Lisp.
-In doing so, we identified a maximally expressive way to combine them.
-
-@subsubsection{Adding a Fifth Constraint}
-We had recently adopted the C3 algorithm for class linearization,
-its four constraints and its heuristic.
-We decided to minimally complement it with an additional fifth constraint,
-necessary and sufficient to support integration of single inheritance @emph{structs}
-into multiple inheritance precedence lists.
-
-@subsection{The Struct Suffix Constraint}
-
-@subsubsection{Constraint}
-@bold{The precedence list of a struct is a suffix of
-the precedence list of all its subclasses.}
-
-@subsubsection{Why the Suffix Constraint}
-The above suffix constraint is precisely
-the semantic prerequisite for the efficiency optimizations
-enabled by single-inheritance:
-access to methods can use a same statically computed index
-for all subclasses of a class.
-
-@subsubsection{Special Treatment of Struct Suffix}
-Our algorithm enforces the Struct Suffix Constraint
-by treating each class’s most specific struct superclass specially:
-First, determine this most specific struct superclass,
-and include its class precedence list as the tail of the one being computed.
-
-Issue an error if multiple incompatible structs are used
-where neither is a superclass of the other.
-Of the remaining classes not in this precedence list, none is a struct;
-apply the regular class linearization algorithm on those, based on C3.
-Prepend the result to the struct suffix.
-
-Our special treatment of the Struct Suffix is essentially equivalent to
-Scala 3.3’s behavior regarding a class’s most-specific super “class”,
-as described above.
-
-@subsection{Advantages of C4}
-
-@subsubsection{Struct declarations optional}
-One advantage of the Depth-First, Most-Specific-First Traversal
-that C3 and C4 use as heuristic to choose a next class for the precedence list is that
-they will preserve the tail of a struct’s precedence list if the discipline is followed
-to always place the most-specific struct last in the local ordering,
-even without special support for struct.
-
-Scala 2.13 enforces this discipline syntactically based on struct declarations,
-while Scala 3 or the C4 algorithm automate it away.
-But given C3 or the Scala 2.13 algorithm (but not e.g. the LOOPS algorithm),
-it could be achieved without language-supported struct declaration
-by developers who always follow the discipline without any mistake.
-
-@subsubsection{Coherent Naming}
-Our C4 algorithm, being a successor to C3, is named after the
-four correctness constraints it respects, and omits Shape Determinism in the count,
-though it also respects it.
-It also doesn’t count among its naming constraints
-the heuristic based on a depth-first, most-specific-first traversal.
-
-@subsection{Single-Inheritance Yet Not Quite}
-
-@subsubsection{Single-Inheritance among Structs}
-When following the @emph{struct suffix} constraint,
-the superstructs of a struct, i.e. the subset of its superclasses that are structs,
-are totally ordered by @emph{transitive} inheritance:
-the partial order induced by the inheritance DAG on the struct subset is total,
-i.e. it is a list, and the inheritance graph of all structs is a tree
-if there is a common base struct, or a forest otherwise.
-
-@subsubsection{No Single-Inheritance among Structs plus Classes}
-Yet the larger set of superclasses of a struct,
-including its direct and indirect non-struct classes,
-is a DAG that is not usually totally ordered.
-In @emph{that} sense, the inheritance hierarchy of structs is @emph{not} single-inheritance;
-a struct’s superclasses are not a list, the hierarchy of all structs is neither tree nor forest.
-
-And that is actually a good feature: it means that structs can inherit from classes,
-and benefit from the expressiveness and modularity of those classes in their definition.
-
-@subsubsection{Preserving the Property that Matters}
-Thus when “combining single and multiple inheritance”, it is not exactly “single inheritance”
-that we preserve, but the more important struct suffix property.
-Not the syntactic constraint on building a class,
-but the semantic constraint on the invariants its subclasses will respect,
-that themselves enable various optimizations.
-
-It may be a surprising conclusion to the debate between proponents of multiple inheritance
-and of single inheritance that in the end,
-single inheritance kind of mattered, but it was not exactly single inheritance that mattered.
-The debate was not framed properly, and a suitable reframing solves the problem
-hopefully to everyone’s satisfaction.
-
-@section{Inheritance Examples}
-@subsection{Example 1}
-
-@(noindent) @image[#:scale 0.67]{C3_linearization_example.eps}
-
-In this example lifted from Wikipedia @~cite{WikiC3},
-we define a base class @code{O},
-classes @code{A B C D E} that each inherit only from @code{O},
-classes @code{K1} with direct superclasses @code{A B C},
-@code{K2} with @code{D B E},
-@code{K3} with @code{D A}, and @code{Z} with @code{K1 K2 K3}.
-Using the C3 or C4 algorithm, we get the precedence list @code{Z K1 K2 K3 D A B C E O},
-with each subclass having its subset of superclasses in the same order
-in its own precedence list.
-
-If, using the C4 algorithm, @code{C} were declared a struct, then
-the suffix @code{C O} must be preserved,
-and the precedence list would be changed to @code{Z K1 K2 K3 D A B E C O}.
-If both @code{C} and @code{E} were declared structs, then there would be a conflict
-between the suffixes @code{C O} and @code{E O}, and
-the definition of @code{Z} would fail with an error.
-
-In this class hierarchy, only @code{O}, one of @code{C E}, and @code{Z}
-may be declared struct without causing an error
-due to violation of the local precedence order.
-Indeed, a class may not be declared a struct if it appears in a direct superclass list
-before a class that is not one of its superclasses.
-However, this criterion is not necessary to prohibit struct-ability,
-and @code{K3} cannot be a struct either,
-because its superclass @code{D} appears before @code{B E} among the direct superclasses of @code{K2},
-which would break the struct suffix of @code{K3} when @code{Z} inherits from both @code{K2} and @code{K3}.
-
-@subsection{Example 2}
-
-@(noindent) @image[#:scale 0.066]{C3_linearization_example_2.png}
-@;{
-https://www.mermaidchart.com/app/projects/0d7dd2c2-0762-428e-a4be-2063fd491789/diagrams/26327f0d-1e07-4b9a-ba0e-94557d2ceac1/version/v0.1/edit
----
-config:
-  theme: mc
-  look: classic
----
-flowchart BT
-    B("Boat")
-    C("DayBoat")
-    D("WheelBoat")
-    E("EngineLess")
-    F("SmallMultiHull")
-    G("PedalWheelBoat")
-    H("SmallCatamaran")
-    I("Pedalo")
-    I --> G --> E --> C --> B
-    I --> H --> F --> C
-    G --> D --> B
+Finally, in section 7 we conclude by recapitulating our findings.
+
+@subsection{A note on nomenclature}
+
+As we restate well-known and lesser-known lore of Object Orientation,
+we will endeavour to precisely define the terms we use in the rest of the article.
+Defining terms is especially important since various authors
+from the communities around each of many OO language
+each use slightly different intersecting terminologies
+that often use different words for the same concepts,
+or, much worse, the same words for different concepts.
+This tower of Babel can cause much confusion
+when trying to communicate ideas across communities,
+as people ascribe opposite presuppositions and connotations to the words
+used by other people, and talk past each other
+while incorrectly believing they understood what the other said.
+
+Thus, when multiple nomenclatures conflict, we will give precedence to
+the @emph{least ambiguous} word for a concept,
+even if neither the most popular word for the concept, nor the oldest,
+even if we sometimes make it up just for this article.
+The words we choose will hopefully cause readers to pause and reflect,
+rather than unwittingly misunderstand the sometimes subtle points we make
+due to a treacherously familiar word.
+
+In particular, we will conspicuously avoid using the unqualified word “class”,
+because it connotes for each reader, depending on the traditions he has adopted,
+a different set of assumptions, that are parasitic to the theory we are laying out.
+We will also reject the word “class” to mean the most general kind
+of entity subject to inheritance, since that entity is actually a @emph{prototype},
+of which a class is but a quite limited special case.
+
+@; TODO for submission, move to appendix?
+@section{What Object-Orientation is @emph{not}}
+
+Before we explain in detail what OO @emph{is},
+let us cast aside a lot of things it @emph{isn’t}
+that too many people (both proponents and opponents)
+too often false identified with OO.
+This is important, because attempts to explain a theory of OO often fail
+due to the reader having wrong expectations about what OO is supposed to be.
+
+@subsection{Whatever C++ is}
+
+At one point the most popular OO language,
+C++ indeed enables programming in OO style to a large degree;
+yet it is not at all representative of how other OO languages work,
+and colloquial C++ often goes against the principles of OO@note{
+Alan Kay famously declared at OOPSLA '97, near peak C++ popularity:
+“I made up the term ‘object-oriented’, and I can tell you I didn’t have C++ in mind.”}.
+Therefore, if what you know of “Object Orientation” comes from C++,
+please put it aside, at least while reading this article, and come with a fresh mind.
+
+This is especially true with regard to multiple inheritance,
+that will be an important topic of this paper.
+C++ boasts support for multiple inheritance, and many people,
+when thinking of multiple inheritance, think of what C++ offers.
+Yet what C++ calls “multiple inheritance” is not at all the same as
+what everyone else calls “multiple inheritance”:
+while C++ supports single inheritance well, what it calls “multiple inheritance”
+is actually a modified kind of mixin inheritance with automatic renaming (for non-@r[virtual] classes),
+and a subset of multiple inheritance (for @r[virtual] classes and members).
+Moreover, C++ crucially lacks the proper method resolution
+that enables a lot of the modularity of multiple inheritance in other languages.
+
+Now, you can use C++'s powerful template language to reconstitute actual multiple inheritance
+on top of C++'s weird variant of inheritance@~cite{smaragdakis2000mixin};
+but this technique is quite uncolloquial, syntactically heavy, slower than the colloquial ersatz,
+and you have to manually compute and chain your class precedence list,
+which cancels some of the modularity benefits of multiple inheritance
+versus single and mixin inheritance.
+
+Finally, and at the very least, consider that
+unless you explicitly tag your classes and their members @r[virtual],
+C++ will deliberately eschew the “dynamic dispatch” of OO
+and use “static dispatch” instead for the sake of “going fast”.
+In the end, C++ is many great and not-so-great things, but only few of those things are OO,
+and even those that look a lot like OO are often different enough that
+they do not reliably inform about OO in general.
+
+@subsection{Classes Only}
+
+Many claim that classes, as introduced by Simula 67@~cite{Simula1967}
+(though implementing a concept previously named by Hoare@~cite{hoare1965record}),
+are essential to OO, and only ever care to implement, use, formalize,
+study, teach, propagandize, or criticize class-based OO (a.k.a. Class OO).
+Books and book chapters about OO from summities about Programming Languages
+seldom even mention any other kind of OO, much less study it.
+
+Yet KRL@~cite{Winograd1975},
+the second recognizably OO language and the first language
+whose authors applied the words “inheritance” and “prototypes” to describe it,
+has prototype-based OO (a.k.a. Prototype OO).
+On the other hand, the modern concept of OO
+can be traced back to Smalltalk adopting inheritance in 1976
+and popularizing the word and concept of it among programming language designers;
+and Smalltalk was class-based.
+Yet contemporary with Smalltalk and immediately after it
+were prototype-based languages Director @~cite{Kahn1976 Kahn1979} and
+ThingLab @~cite{Borning1977 Borning1979 Borning1981}@note{
+ThingLab was built on top of Smalltalk, and oscillated between
+having or not having classes in addition to prototypes.}.
+Plenty more Prototype OO or “class-less” OO languages followed
+@~cite{Rees82t:a adams88oopscheme chambers1989efficient Lawall89SelfInScheme Salzman05prototypeswith jsonnet nix2015 poof2021}.
+There are lot more Prototype OO languages than we could have time to review @~cite{WikiProto},
+but prominent among them is JavaScript @~cite{eich1995javascript},
+one of the most used programming language in the world @~cite{TopPL2022},
+maybe the top one by users
+(though it recently also adopted classes on top of prototypes @~cite{EcmaScript:15}).
+
+What more, we will argue below that Prototype OO @~cite{Lieberman1986 Borning1986}
+is more general than Class OO, that is but a special case of it.
+And we will even argue that you can recognizably have OO with neither prototypes nor classes.
+
+It is therefore just wrong to dismiss Prototype OO as not being part and parcel
+of the OO tradition, historically, conceptually, and popularly.
+
+Now of course, classes, while not @emph{essential} to OO,
+are still @emph{important} in its tradition.
+The situation is similar to that of types in Functional Programming (“FP”):
+the historical preexistence and continued use of the untyped λ-calculus
+and the wide adoption of dynamically typed functional languages like Scheme or Nix
+are ample evidence that types are not essential to FP;
+yet types are undoubtly an important topic that occupies much of the theory and practice of FP.
+Actually, the analogy goes further since, as we’ll see,
+classes are precisely an application of OO to types.
+
+@subsection{Imperative Programming}
+
+Many people assume that OO requires mutation,
+wherein all attributes of all objects should be mutable, or at least be so by default,
+and object initialization must happen by mutation.
+Furthermore, they assume that OO requires the same applicative (eager) evaluation model
+for procedure calls and variable references as in every common imperative language.
+@; TODO{CITE? C++ Perl5 Python Java JavaScript Scala Ruby Go (see GitHub)}
+Meanwhile, many have of late claimed that purity (the lack of side-effects including mutable state)
+is essential to FP, making it incompatible with OO.
+Some purists even argue that normal-order evaluation (call-by-name or call-by-need)
+is also essential for “true” FP, making it (they say) even more incompatible with OO.
+
+However, there are many good historical reasons,
+having to do with speed and memory limitations at both runtime and compile-time,
+why early OO and FP languages alike, from the 1960s to the 1980s,
+as well as most languages until relatively recently,
+were using state and side-effects everywhere, and an eager evaluation model, at least by default.
+And with early 1980s slogans like “objects are a poor man’s closures” and
+“closures are a poor man’s objects”@~cite{adams88oopscheme},
+the problem back then was clearly not whether OO could be done purely with functions,
+but whether it made practical sense to program purely without side-effects in general.
+That question that would only be slowly answered positively, in theory in the early 1990s
+and in practice in the mid 2000s to mid 2010s, as Haskell grew up to become a practical language.
+@; darcs 2003, cabal 2005, bytestring 2005, “cabal hell” 2006, ghc6 2006, pandoc 2006, xmonad 2007,
+@; “Real World Haskell” 2008. Stack 2015 “made non-trivial haskell programs & scripts repeatable”
+@; There’s obviously a lot of subjectivity there—but I expect an S curve such that
+@; whichever arbitrary threshhold criteria you choose the answer would be at about the same time.
+
+Yet, there are (a) pure models of OO such as those of
+Kamin, Reddy, Cook and Bracha@~cite{Kamin1988 ObjectsAsClosures Cook1989 bracha1990mixin},
+(b) pure lazy dynamic OO languages such as Jsonnet or Nix@~cite{jsonnet dolstra2008nixos},
+and pure lazy OO systems for Scheme@~cite{poof2021}
+@; TODO maybe mention foreshadowing by Oleg Kiselyov ?
+and (c) languages happily combining OO and FP such as Common Lisp or Scala
+@;TODO cite ScalaZ, etc.
+with plenty of libraries restricting themselves to pure functional objects only.
+These provide ample evidence that OO does not at all require mutation,
+but can be done in a pure setting, and is very compatible with FP, purity,
+and even with laziness and normal-order evaluation.
+@; Haskell typeclasses embody half of OO@~cite{typeclasses LIL2012},
+@; and could be tweaked to embody all of it.
+@; though its designers might not wholly embrace the OO tradition. @; TODO{CITE}
+@; TODO: add inheritance to Haskell typeclasses or Rust traits, or just cite CL gf, Clojure protocols.
+Actually, we will argue based on studying of the semantics of OO that
+pure lazy functional programming is the natural setting for OO.
+
+@subsection{Encapsulation}
+
+Many OO pundits claim that an essential concept in OO
+is “encapsulation” or “information hiding”@~cite{DeRemerKron1975},
+though there is no consensus as to what this or these concepts mean,
+and no clear definition. @; TODO{CITE}
+
+Inasmuch as “encapsulation” informally denotes but part or all of modularity,
+the ability to code against an interface,
+with code on either side not caring which way the other side implements its part of the interface
+(or not even being able to distinguish between multiple such implementations),
+then yes, of course, this is an essential part of OO, as per our definition.
+Some may also call this concept “data abstraction” or some other kind of “abstraction”.
+@; XXX cite Liskov???
+
+However, inasmuch as some people identify encapsulation as the presence
+of specific visibility mechanisms such as found in C++ or Java
+(with some attributes or methods being @r[public], @r[private] or something in–between),
+we’ll easily dismiss such mechanisms as not actually essential to OO,
+since many quintessential OO languages like Smalltalk or Common Lisp
+lack any such specific mechanism,
+whereas many non-OO languages possess mechanisms to achieve the same effect,
+in the form of modules defining but not exporting identifiers
+(e.g. not declaring them @r[extern] in C),
+or simply lexical scoping@~cite{rees1995}.
+@; TODO{cite Simula? JS?}
+
+Now, these mechanisms themselves can be very useful,
+worthy features to add to an OO language, to use and study, etc.
+They are just not essential to OO and not specific to it,
+though of course their adaptation to OO languages will follow
+the specific shape of OO constructs not found in non-OO languages.
+And misidentifying OO as being about these mechanisms rather
+than about the modularity they do or do not support can only lead to
+sacrificing the ends to the means.
+
+@subsection{Inheritance as opposed to Composition}
+Some argue that there is an essential conflict between OO and FP,
+between Inheritance and Composition,
+wherein OO is about model every possible domain in terms of inheritance,
+especially so where it can be preferred compared to FP and composition.
+
+But OO and FP are just distinct concepts neither of which subsumes the other,
+that thus fit distinct sets of situations.
+@;Each distinct concept has its set of situations that it fits,
+@;distinct from that of any other concept (or else they are actually the same concept);
+@;a concept that fits all situations has no content and is useless;
+@;and two concepts like OO and FP neither of which subsumes the other,
+@;cover sets of situations neither of which is a subset of the other.
+It makes no sense to oppose them, especially not when we see that
+OO can be expressed in a few lines of FP, whereas
+most modern OO languages contain FP as a subset,
+and Lisp has harmonously combined OO and FP together since both their emergences in the 1970s,
+decades before anyone had the idea to invent a conflict between the two.
+
+The argument is actually a distortion of a legitimate question of OO design, @; TODO cite
+wherein one has to decide whether some aspect of a class (respectively prototype or pattern)
+embodied as attributes or methods, should be included directly in the class
+(a) by inheriting from another class defining the aspect
+(the class @emph{is-a} subclass of it — inheritance of classes), or
+(b) indirectly by the class having as an attribute an object of that other class
+(the class @emph{has-a}n attribute that is it —
+composition of classes seen as constructor functions).
+
+The answer of course depends on expectations about how the class will be further specialized
+within a static or dynamically evolving schema of data structures and algorithms.
+If the schema is small, static, well-understood and won’t need to evolve,
+it doesn’t really matter which technique is used to model it.
+But as it grows, evolves and boggles the mind,
+a more modular and incremental approach is more likely to enable adapting the software
+to changing situations, at which point thoughtful uses of inheritance can help a lot.@note{
+@emph{Is} a car a chassis (inheritance),
+or does it @emph{have} a chassis while not @emph{being} it (composition)?
+If you’re writing a program that is only interested in the length of objects,
+you may model a @r{car} as a @r{lengthy} object with a @r{length} slot,
+and a @r{chassis} too. Now if your program will only ever be interested
+but in the length of objects, you may altogether skip any object modelling:
+and only use numeric length values directly everywhere for all program variables.
+Is a car a chassis? Yes, they are both their length, which is the same number,
+and you may unify the three, or let your compiler’s optimizer unify the two variables
+as they get initialized them from the same computation.
+Now if you know your program will evolve to get interested in
+the width of objects as well as their length,
+you might have records with length and width rather than mere numbers,
+and still unify a car and its chassis.
+But if your program eventually becomes interested in the height, weight or price of objects,
+you’ll soon enough see that the two entities may somehow share some attributes
+yet be actually distinct: ultimately, both @r{car} and @r{chassis} @emph{are} @r{lengthy},
+but a @r{car} @emph{has} a @r{chassis} and @emph{is not} a @r{chassis}.
+
+There is also an old slogan of OO design, notably found in GoF @~cite{GoF1994},
+that you should “favor object composition over class inheritance”.
+GoF argues not to create an exponential number of subclasses
+that specialize based on static information about what is or could be a runtime value,
+because classes are compile-time and human-developer-time objects
+that are less flexible and costlier in human effort than runtime entities.
+These arguments of course do not apply for regular Prototype OO,
+wherein umpteen combinations of prototypes (and classes as a particular case)
+can be generated at runtime at no additional cost in human effort.
+Still, the point can be made that if a programmer is confused about which of is-a or has-a
+to use in a particular case, it’s a good heuristic to start with has-a,
+which will quickly lead to an obvious showstopper issue if it doesn't work,
+whereas picking is-a where has-a was the better choice can lead to a lot of complications
+before it is realized that it won't work right. Yet it's better to understand the difference
+between “is” and “has”, to understand the domain being modeled, and to use the correct one.
+In any case, this slogan has nothing to do with OO vs FP,
+it's about using OO effectively or not.
 }
 
-In this example from Ducournau et al. @~cite{ProposalMonotonicMultipleInheritance1994},
-we have the class and direct superclass lists:
-@code{Boat},
-@code{DayBoat Boat},
-@code{DayBoat WheelBoat},
-@code{EngineLess DayBoat},
-@code{PedalWheelBoat EngineLess WheelBoat},
-@code{SmallMultihull DayBoat},
-@code{SmallCatamaran SmallMultihull},
-@code{Pedalo PedalWheelBoat SmallCatamaran}.
+@subsection{Message Passing}
+Alan Kay, who invented Smalltalk and coined the term “Object-Oriented Programming”
+notably explained@~cite{Kay2020} that by that he originally meant
+a metaphor of computation through independent (concurrent, isolated) processes
+communicating by passing asynchronous messages.
+This metaphor also guided the modifications originally
+brought by Simula to Algol@~cite{Simula1966}.
+It is also present in notable early object systems such as
+Director @~cite{Kahn1976 Kahn1979} and
+ThingLab @~cite{Borning1977 Borning1979 Borning1981}.
 
-The C3 and C4 algorithms both compute the following precedence list for this class hierarchy:
+However, neither Simula, nor Smalltalk nor any claimed “OO” language
+actually fits that metaphor, though Simula comes closer than its successors.
+Instead, the only commonly used language ever to fit this metaphor
+is Erlang@~cite{OOP2010};
+yet Erlang is not part of the OO tradition, and its authors have instead
+described its paradigm as “Concurrency-Oriented Programming”.
+Meanwhile the theory of computation through message-passing processes
+was studied with various “process calculi”, @; TODO cite pi calculus, join calculus, rho calculus, etc.
+that are also foreign to the OO tradition,
+and largely unembraced by the OO community.
+Indeed Erlang lacks a form of dynamic dispatch to embody the “late binding”
+that Alan Kay also once mentioned was essential for OO@note{
+In Erlang, each process is a dynamic pure applicative functional language
+enriched with the ability to send and receive messages to and from other processes.
+Now, as we’ll see, you need fixed-points to express the semantics of OO;
+but in a pure applicative context, you cannot directly express sharing the results of a computation,
+so the pure fixed-point combinators lead to exponential recomputations as the fixed-point
+involves deeper self-references. OO therefore cannot be supported directly within Erlang.
+It could be achieved indirectly, by restricting it to compile-time (as in most static class OO),
+or by using a global cache (an in-process table, or one spawning one process per lazy computation)
+which would also require some reimplementation of garbage collection for lazy computation caches.
+Neither solution would qualify as supporting OO any the more than
+assembly language “supports” OO or any Turing-universal language “supports” any paradigm, though.
+In the end, OO, which is Prototype OO, is essentially a pure lazy functional paradigm,
+and in any other paradigm but indirectly support it.
+}
 
-@code{Pedalo PedalWheelBoat EngineLess SmallCatamaran SmallMultihull DayBoat WheelBoat Boat}.
+Moreover, many OO languages generalize and extend their method dispatch mechanism
+from “single dispatch” to “multiple dispatch”@~cite{
+  bobrow86commonloops bobrow88clos CecilMultimethods allen2011type}.
+Their “multimethods” are attached to tuples of prototypes or classes,
+and there is no single prototype, class, or single independent entity of any kind
+capable of either “receiving” or “sending” a message.
+Instead, they are attached to a “generic function”
+that handles the dispatch based on the types of its arguments@note{
+  The “generic function” functionality from in the Common Lisp Object System (CLOS) @; TODO cite
+  can be viewed as isomorphic to the “protocols” functionality of Clojure.
+  They would in turn be isomorphic to the “typeclasses” of Haskell or the “traits” of Rust, @; TODO cite
+  if only these latter two suppored inheritance.}.
+While multimethods are obviously not essential to OO, they are a well-liked, age-old extension
+in many OO languages (CLOS, CECIL, Dylan, Fortress, Clojure, Julia)
+and extensions exist for C++, Java, JavaScript, TypeScript, C#, Python, Ruby, etc.
+@; TODO cite stroustrup2007multimethods https://en.wikipedia.org/wiki/Multiple_dispatch
+The “message passing” paradigm, having no place for multimethods,
+thus falls short compared to other explanations of OO that accommodate them.
+Now, the message passing paradigm can be extended with a notion of “group messaging”
+where one object sends a “message” to a “group” of objects (rather than each member of the target group)
+@; TODO cite ABCL group mesaging
+or to a “chemical” paradigm where a “chemical reaction” may involve
+multiple entities in and multiple entities out, with “message” entities
+conveying the changes in intermediary steps. @; TODO cite CHAM
+But even with these extensions to the paradigm,
+you would still have to somehow shoe-horn incrementality in
+for methods to fit, whether with single dispatch or multiple dispatch.
 
-Due to precedence constraints, any of @code{Pedalo Boat}, and
-at most one of @code{WheelBoat DayBoat} could be declared a struct,
-with @code{DayBoat} being the only one to change the precedence list, to:
+In conclusion, whatever historical role the paradigm of message-passing processes
+may have had in inspiring the discovery of OO,
+it remains a distinct enough paradigm,
+with its own mostly disjoint tradition and very different concerns,
+that describes a different set of languages and usage patterns.
 
-@code{Pedalo PedalWheelBoat EngineLess SmallCatamaran SmallMultihull WheelBoat DayBoat Boat}.
+@subsection{Modeling the World}
 
-Interestingly, either @code{WheelBoat} or @code{DayBoat} can be made a struct,
-because they don’t appear directly in a same class’s direct-superclass list,
-so there is no local precedence order constraint between the two.
+Some have claimed that OO is meant to be @emph{the} way to model the world,
+often in association with the concurrent message passing model
+we already established above was not quite OO,
+or with some class-based OO framework they sell. @; cite UML
 
-If there were no @code{EngineLess} between @code{PedalWheelBoat} and @code{DayBoat},
-then @code{DayBoat} appearing before @code{WheelBoat} would prevent the former
-from being made a struct, with the definition of @code{PedalWheelBoat} triggering an error.
+However, while OO can indeed be of great use in modeling a lot of problems,
+especially where the modeling language needs modularity and incrementality,
+it by no means is supposed to be a Theory of Everything that subsumes
+Quantum Mechanics, Category Theory, Darwinism, Aristotelian Poetics, etc.
+Even if we stick to software, there are plenty of paradigms other than OO
+that can explain or generate software and that OO does not subsume:
+functional programming, logic programming, machine learning,
+relational databases, reactive programming, temporal logic,
+concurrent programming, dataflow programming, homomorphic encryption, etc.
+Inasmuch as OO languages can be used to implement any of these paradigms,
+so can any Turing Tar-Pit. And inasmuch as any of these paradigms
+can be usefully extended with OO, that does not make them a subset of it.
+People seriously studying OO should not take at face value the claims of
+Snake Oil and Silver Bullet salesmen, either about what their products can do,
+or about whether these products indeed embody OO. Mostly, they do not.
 
-A general solution that can be used to ensure @code{DayBoat} is a struct
-would be to swap the order of superclasses in the conflicting definition;
-when the methods defined or overridden by the swapped superclasses are disjoint,
-the swap will not otherwise change the semantics;
-otherwise, the subclass can suitably override methods to compensate for the change.
-And the other general solution in last resort is to introduce a do-nothing wrapper class
-to shield a superclass from a local local precedence order constraint,
-just like the @code{EngineLess} shields @code{DayBoat}.
+Consider UML and similar modeling methodologies involving
+drawing diagrams of relations between classes and claiming to be OO.
+Beside the fact that classes are not essential to OO as seen previously,
+UML and similar languages do not even meaningfully have classes:
+there is no semantics to inheritance,
+especially in presence of fields that recursively refer back to a class;
+should the child class have a link to the parent class or to the child class?
+In absence of recursion, UML is more akin to relational data modeling than to OO.
+In presence of recursion, UML fails to distinguish between subclassing and subtyping,
+a gross logical inconsistency, that might have been forgivable in the 1980s,
+but by 1990 it was clear that subclassing and subtyping were fundamentally different things, @; CITE
+long before the authors of UML proceeded to ignore basic logic.
+More broadly, the precise semantics of OO, of inheritance,
+of method resolution in computing properties of objects along their class hierarchies, etc.,
+are generally absent from these methodologies.
+The deeper problem with them lies precisely because,
+unlike Functional Programming or Category Theory,
+they are unable to deal with abstractions, functions, type parameters,
+side-effects, higher-order reasoning, and more broadly with logical rigor or
+anything that has the precision required to specify code that can actually run.
+In fact, these handwaving methodologies seem specifically designed to make
+those incapable or unwilling to wrestle with logic
+believe their understand all there is to know about software.
+Yet the nature and correctness of software lies precisely
+in this gap they are unable or unwilling to explore.
 
-@section{Conclusion: Best of Both Worlds}
-@subsection{Findings}
-@subsubsection{Restating the Obvious}
-Our presentation of Object-Orientation and Inheritance
-only included what should have been obvious and well-known lore by now.
-Yet so far as our bibliographical search could identify,
-a lot of it seems to be
-unstated in academic literature, @; cite more papers and books that miss the point?
-or implicitly assumed by ones and blatantly ignored by others,
-or once mentioned in an otherwise obscure uncited paper
-— and overall largely acted against in practice
-by most language designers, implementers and users.
+For an actual theory of types for data and code,
+and the relationships between those types and the elements in those types,
+one should rather look into Type Theory, Category Theory, Linear Logic,
+Computability Logic, Abstract Algebra, and all kind of theories
+that take logic seriously.
+OO can be used to incrementally describe the structures in those theories,
+and the more advanced of these theories can be used to describe OO.
+Then you'll see that using OO to describe types
+necessarily involves operators with type parameters and fixed-points thereof,
+both crucial notions that are glaringly absent from UML and its ilk
+(or indeed from the simpler variants of Type Theory and such,
+but they don’t claim to be theories of all software).
 
-Without claiming originality in that part of this article,
-we would like to insist on our simple explanation and rationale for each of:
-@itemize[
-@item{The relationship between OO, modularity and incrementality.}
-@item{The relationship between prototypes, classes, objects and conflation.}
-@item{The advantages of multiple inheritance over single and mixin inheritance.}
-@item{Why linearization beats manual conflict resolution.}
-@item{The importance of well-documented yet oft-ignored consistency constraints on linearization.}]
+In the end, if you care about modeling the types in your software (and you often should),
+write your software in a language with a strong static type system that is logically consistent,
+or at least, one whose inconsistencies have been well mapped and can be avoided.
+Where you must use a language that does not have such a type system,
+you can still annotate your functions with types in comments,
+or in metadata actually used for debugging or optimization.
+Whether with Scala, Rust, Haskell or ML, or even just Java or C++,
+this will do all that the modeling of any methodology can, and much more,
+except in a precise and meaningful way that you can actually reason about.
+And in the case of Scala or C++ at least, it can actually be OO, too.
 
-@subsubsection{Struct Suffix}
-We identified the @emph{struct suffix} constraint as
-the one semantic constraint necessary and sufficient
-to achieve the optimizations associated with single inheritance,
-even in the context of multiple inheritance.
-The constraint was implicitly enforced by Scala,
-but does not seem to have been identified and made explicit in any publication yet.
-
-@subsubsection{C4 Algorithm}
-We implemented a new C4 Algorithm that combines all the above features.
-While each of these features may have been implemented separately in the past,
-ours seems to be the first implementation to combine them.
-
-@subsection{Implementation}
-@subsubsection{Our Scheme}
-We have implemented the C4 algorithm
-in our open-source dialect of the Scheme programming language, @anonymize[""]{Gerbil Scheme,}
-and it will be available in the next release@anonymize[""]{ 0.18.2}.
-
-Our users can enjoy the benefits, as our language can legitimately claim
-to have the single Best Inheritance mechanism of them all.
-At least until other language implementers copy our language.
-
-@subsubsection{Code Size}
-The C4 algorithm itself is under 200 lines of code with lots of explanatory comments.
-
-The entire object system is about 1400 lines of commented code for its runtime,
-including all runtime optimizations enabled by single inheritance where appropriate.
-
-The compile-time and macro-expansion-time support for the object system are harder to account for,
-not being isolated in their own files but spliced all over.
-We estimate they total between one and two thousand lines of code,
-wherein the entire compiler and the language prelude each total a bit over 8000 lines of code.
-However, they are also the parts of our system that implementers of other languages
-will least care to reuse.
-
-Overall, the complexity of our implementation is quite low, and
-it shouldn’t be too much effort for a dedicated language implementer
-to port our technology to their language.
-
-@subsubsection{Open Source}
-We invite all language implementers to likewise adopt C4
-in the next version of their object system,
-whether class-based or prototype-based, static or dynamic, etc.
-Then your users too can enjoy the Best Inheritance in the World.
-
-@section{Data-Availability Statement} @appendix
-Our code is available in our github repository as part of our Scheme implementation.
-We will reveal the address after deanonymization.
-
-For the sake of artifact review, we will build an anonymized implementation
-of the C4 algorithm isolated from the rest of our object system.
-We will include a few execution test cases.
-We will not attempt to anonymize a complete variant of our object system,
-which would be overly costly and would easily fail to be anonymous.
-
-The algorithm description we give above
-should already be sufficient for any person skilled in the art
-to reimplement and adapt the C4 algorithm to their own object system.
-Furthermore, the artifact we provide will only allow a language implementer
-to compare their implementation to ours and check for any bugs in their reimplementation.
 
 @(generate-bibliography)

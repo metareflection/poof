@@ -115,7 +115,10 @@
 
 ;; : Xexpr Xexpr ... -> Proto Doc Doc
 (define ($slide title . exprs)
-  (apply $xslide title (spacing* exprs)))
+  (apply $xslide title
+         (if (<= (length exprs) 5)
+             (spacing* exprs)
+             exprs)))
 
 ;; : (Proto Doc Doc) ... -> Doc
 (define (docfix . l)

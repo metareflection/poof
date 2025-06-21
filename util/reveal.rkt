@@ -7,7 +7,8 @@
  *white* *gray* *blue* *light-blue* *red* *light-red* *green* *light-green*
  spacing* spacing
  comment email
- reveal reveal-url)
+ reveal reveal-url
+ make-table ⟶ bri brii briii)
 
 (require
  scribble/html
@@ -212,3 +213,16 @@
            controls: false,
            slideNumber: "c/t",
            showSlideNumber: true})}}}))
+
+;;; Misc
+(define (make-table lists)
+  (table style: "border-bottom-width:0;"
+   (map (lambda (l)
+          (tr style: "border-bottom-width:0;"
+              (map (lambda (x) (td style: "border-bottom-width:0;" x)) l)))
+        lists)))
+(define ⟶ (list (~ 3) "⟶" (~ 2)))
+(define (bri) (list (br) (~ 6)))
+(define (brii) (list (br) (~ 12)))
+(define (briii) (list (br) (~ 18)))
+(define (T . x) x)

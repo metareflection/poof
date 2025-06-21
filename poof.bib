@@ -53,6 +53,7 @@
 % of the superclass specifying how to compose with the subclass semantics,
 % when most other OO languages take the approach of the subclass specifying
 % how to reuse information specified by superclasses.
+% "objects" have "attributes"
 @Misc{Simula1967,
   author = {Dahl, Ole-Johan and Nygaard, Kristen},
   title = {Class and subclass declarations},
@@ -68,7 +69,7 @@
   url = {http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.332.3161},
 }
 
-% This is the one that introduces objects, prefix classes and subclasses.
+% More condensed than the above, with more language context
 @Misc{Simula1968,
   Author = {Ole-Johan Dahl and Bjørn Myhrhaug and Kristen Nygaard},
   Title = {SIMULA 67 Common Base Language},
@@ -79,7 +80,8 @@
 % Identifies class with procedure that computes an algorithm and constructs a record
 % and yields current values multiple times to other activities with "detach" (call again for next)
 % section 6 has "concatenation" for single inheritance
-@InCollection{dahl1972chapter,
+% InCollection
+@Misc{dahl1972chapter,
   title={Chapter III: Hierarchical program structures},
   author={Dahl, Ole-Johan and Hoare, Charles Antony Richard},
   booktitle={Structured programming},
@@ -107,11 +109,38 @@
   keywords = {modules, software, KWIC index, modularity, software engineering, software design}
 }
 
+% XXX TODO
+% Hewitt, Bishop, Greif, Smith, Matson, Steiger
+% Actor Induction and Meta-evaluation
+% POPL
+% 1973
+
+% Minsky's 1974 paper on Frames uses the words "prototype" and "inherit", but incidentally,
+% not to name concepts in their formal object, rather as part of its informal (meta) context.
+% Yet no doubt they primed Winograd for when he did use them to name concepts of KRL in 1975.
+
 % So far as I can tell, the earliest use of "inheritance", in "inheritance of properties", p. 197.,
 % along the hierarchy of frames. The variant it designates is multiple-inheritance,
 % though that word isn't coined. The exact resolution algorithm is not explained,
 % As the title implies, this is not quite for *data* yet not quite for *code* but somewhere in between.
 % https://api.pageplace.de/preview/DT0400.9781483299150_A23889670/preview-9781483299150_A23889670.pdf
+%
+% The use of the name "inheritance" is not fully formal, though.
+% It is probably through Dan Ingalls' implementation of (single) inheritance in Smalltalk 1976
+% that "inheritance" became formally known as such.
+% Winograd also inspired Kahn and Borning for their Prototype OO systems, etc.
+%
+% Not sure how to name namings, but here are at least four kinds:
+% - evocation: neither name nor concept owns the other, yet an allusion is made.
+% - distinction: the name distinguishes the concept from others, but isn't owned by it.
+% - identification: name and concept own each other, though the limits of the concept may not be clear.
+% - definition: the essence of the concept being named is finally well understood.
+% For "inheritance", evocation happened in Minsky 1975, distinction in Winograd 1975,
+% and identification around 1976 quite possibly by Kay,
+% practical definition in the early 1980s with Flavors and T,
+% theoretical definition around 1990 by Cook & Bracha, and works on multipe inheritance culminating with C3.
+% Final definition around 2025 by this very series of papers?
+%
 % InCollection
 @Misc{Winograd1975,
   author = {Terry Winograd},
@@ -190,7 +219,12 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   location = {Los Angeles, California}
 }
 
-% Prototype-based, inheritance (single? multiple?)
+% Unnamed language inspired by Hewitt's actors (PLASMA) and Smalltalk-72.
+% Prototype-based ("objects" reply to "messages", "prototype" not used),
+% that have "parents" or "children" (single inheritance is described; "inheritance of properties" is used)
+% There are "classes" that handle otherwise unhandled messages, but the relationship between
+% classes and parents is not explained -- are they the same hierarchy? a separate one?
+% Are the child/parent and class/instance relationships the same or different?
 @InProceedings{Kahn1976,
   author = {Kahn, Kenneth Michael},
   title = {An Actor-Based Computer Animation Language},
@@ -292,11 +326,11 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 % Borning1982 cites a 1980 version of the Flavors report, from MIT. Originally from 1979.
 % Also a 1982 version of LOOPS
-@Misc{Cannon1980,
+@Misc{Cannon1979,
   title={Flavors: A non-hierarchical approach to object-oriented programming},
   author={Howard Cannon},
   publisher={Symbolics Inc.},
-  year=1980,
+  year=1979,
   url={https://www.softwarepreservation.org/projects/LISP/MIT/nnnfla1-20040122.pdf}
 }
 
@@ -438,9 +472,18 @@ numpages = {8}
   year={1989}
 }
 
+% Cook2012 cites his own thesis in arguing that Inheritance is neither necessary nor specific to OO.
+@PhDThesis{Cook1989,
+    author = {William R. Cook},
+    title = {A Denotational Semantics of Inheritance},
+    school = {Brown University},
+    year = {1989},
+    url = {https://www.cs.utexas.edu/~wcook/papers/thesis/cook89.pdf}
+}
+
 % POPL, short reprise of what's in his thesis
 % Also single-inheritance, records only
-@article{cook1989denotational,
+@Article{cook1989denotational,
   title={A denotational semantics of inheritance and its correctness},
   author={Cook, William and Palsberg, Jens},
   journal={ACM Sigplan Notices},
@@ -474,14 +517,6 @@ numpages = {8}
   pages = {49–70},
   numpages = {22},
   location = {New Orleans, Louisiana, USA}
-}
-
-@PhDThesis{Cook1989,
-    author = {William R. Cook},
-    title = {A Denotational Semantics of Inheritance},
-    school = {Brown University},
-    year = {1989},
-    url = {https://www.cs.utexas.edu/~wcook/papers/thesis/cook89.pdf}
 }
 
 % Not obviously worth citing in this context?
@@ -523,7 +558,7 @@ numpages = {8}
 % https://www.semanticscholar.org/paper/Mixin-based-inheritance-Bracha-Cook/cbc4f2d93bb62d1c287f4fe458de6ac416379282
 % url = {https://doi.org/10.1145/97945.97982},
 @InProceedings{bracha1990mixin,
-  author = {Bracha, Gilad and Cook, William},
+  author = {Gilad Bracha and William Cook},
   title = {Mixin-Based Inheritance},
   year = {1990},
   issue_date = {Oct. 1990},
@@ -593,7 +628,7 @@ numpages = {8}
 
 @Book{AMOP,
   Title={The {A}rt of the {M}eta-{O}bject {P}rotocol},
-  Author={Bobrow, Daniel and Kiczales, Gregor and des Rivi\`eres, Jim},
+  Author={Bobrow, Daniel and Kiczales, Gregor and des Rivières, Jim},
   Publisher={MIT Press},
   Year={1991}
 }
@@ -724,6 +759,13 @@ series = {OOPSLA '94}
   url = {https://www.cs.utexas.edu/~wcook/papers/ic94/ic94.pdf}
 }
 
+@book{GoF1994,
+  title={Design patterns: elements of reusable object-oriented software},
+  author={Erich Gamma and Richard Helm and Ralph Johnson and John Vlissides},
+  year={1994},
+  publisher={Addison-Wesley}
+}
+
 % W7
 % and Sussman, Gerald Jay ???
 @PhDThesis{rees1995,
@@ -736,6 +778,13 @@ series = {OOPSLA '94}
   url = {http://mumble.net/~jar/pubs/secureos/},
   abstract = {Cooperation between independent agents depends upon establishing a degree of security. Each of the cooperating agents needs assurance that the cooperation will not endanger resources of value to that agent. In a computer system, a computational mechanism can assure safe cooperation among the system's users by mediating resource access according to desired security policy. Such a mechanism, which is called a security kernel, lies at the heart of many operating systems and programming environments. The dissertation describes Scheme 48, a programming environment whose design is guided by established principles of operating system security. Scheme 48's security kernel is small, consisting of the call-by-value $lambda$-calculus with a few simple extensions to support abstract data types, object mutation, and access to hardware resources. Each agent (user or subsystem) has a separate evaluation environment that holds objects representing privileges granted to that agent. Because environments ultimately determine availability of object references, protection and sharing can be controlled largely by the way in which environments are constructed.I will describe experience with Scheme 48 that shows how it serves as a robust and flexible experimental platform. Two successful applications of Scheme 48 are the programming environment for the Cornell mobile robots, where Scheme 48 runs with no (other) operating system support; and a secure multi-user environment that runs on workstations. (Copies available exclusively from MIT Libraries, Rm. 14-0551, Cambridge, MA 02139-4307. Ph. 617-253-5668; Fax 617-253-1690.)},
   note = {AAI0576129}
+}
+
+@Misc{eich1995javascript,
+  title={JavaScript},
+  author={Brendan Eich},
+  journal={Mozilla Foundation},
+  year={1995}
 }
 
 % The C3 superclass linearization algorithm
@@ -774,6 +823,10 @@ series = {OOPSLA '94}
   keywords = {object-oriented programming, language constructs, delegation, inheritance, incremental modification, programming languages}
 }
 
+% Inheritance is discussed in section 11.5.1.
+% SIMULA-style inheritance was deliberately left out of his work on FLEX and early Smalltalk.
+% Kay credits Larry Tesler (slot inheritance), Henry Lieberman (delegation),
+% and Bobrow and Winograd's KRL (Frames).
 % InCollection ?
 @Misc{kay1996early,
   title={The Early History of Smalltalk},
@@ -835,6 +888,18 @@ series = {OOPSLA '94}
   year={1999}
 }
 
+% Implements proper multiple inheritance on top of C++, but
+% you have to manually linearize and pass the Super in a template.
+% InProceedings
+@Misc{smaragdakis2000mixin,
+  title={Mixin-based programming in C++},
+  author={Yannis Smaragdakis and Don Batory},
+  booktitle={International Symposium on Generative and Component-Based Software Engineering},
+  pages={164--178},
+  year={2000},
+  organization={Springer}
+}
+
 @InProceedings{SullivanGriswoldCaiHallen2001,
   author = {Sullivan, Kevin J. and Griswold, William G. and Cai, Yuanfang and Hallen, Ben},
   title = {The Structure and Value of Modularity in Software Design},
@@ -864,6 +929,16 @@ series = {OOPSLA '94}
   Publisher = {MIT Press},
   Edition = {1st},
   url = {https://www.cis.upenn.edu/~bcpierce/tapl/}
+}
+
+
+@Misc{Kay2003,
+  Author={Alan Kay},
+  Title={Clarification of "object-oriented" (email)},
+  URL={https://www.purl.org/stefan_ram/pub/doc_kay_oop_en},
+  Year={2007},
+  Month={07},
+  Day={23}
 }
 
 % https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=693f61d2515ac9b032801dd7a603c34f1b725071
@@ -1018,6 +1093,15 @@ series = {OOPSLA '94}
   year = {2009},
 }
 
+% TODO
+% Claims that objects are about modularity of "classes" used only through "interfaces", not inheritance
+@Misc{Cook2009,
+  author = {William Cook},
+  title = {On Understanding Data Abstraction, Revisited},
+  year = 2009
+}
+
+
 % Unpublished
 @Misc{MonadsMixins,
   title = "The Different Aspects of Monads and Mixins",
@@ -1065,6 +1149,15 @@ series = {OOPSLA '94}
   title = {{LIL}: {CLOS} ~ Reaches Higher-Order, Sheds Identity and has a Transformative Experience},
   url = "http://github.com/fare/lil-ilc2012/",
   booktitle = {International Lisp Conference},
+  year = 2012
+}
+
+% My replies: https://twitter.com/Ngnghm/status/1791988260266234028
+% XXXX UPDATE ENTRY
+@Misc{Cook2012,
+  author = {William Cook},
+  title = {A Proposal for Simplified, Modern Definitions of "Object" and "Object Oriented"},
+  url = {https://wcook.blogspot.com/2012/07/proposal-for-simplified-modern.html},
   year = 2012
 }
 
@@ -1182,6 +1275,13 @@ series = {OOPSLA '94}
   url = {https://en.wikipedia.org/wiki/C3_linearization},
 }
 
+@Misc{WikiProto,
+  title = "Prototype-based programming",
+  author = "Wikipedia",
+  year = 2025,
+  url = {https://en.wikipedia.org/wiki/Prototype-based_programming},
+}
+
 @InProceedings{poof2021,
   title = {Prototypes: Object-Orientation, Functionally},
   author = {François-René Rideau and Alex Knauth and Nada Amin},
@@ -1241,11 +1341,6 @@ series = {OOPSLA '94}
 
 % 2000 Oleg Kiselyov USENET post on okmij.org on the possibility of a pure variant of YASOS ?
 
-
-
-% "A Proposal for Simplified, Modern Definitions of "Object" and "Object Oriented"
-% https://wcook.blogspot.com/2012/07/proposal-for-simplified-modern.html
-% My replies: https://twitter.com/Ngnghm/status/1791988260266234028
 
 % Featherweight Jigsaw - Replacing inheritance by composition in Java-like languages
 % https://dl.acm.org/doi/10.1016/j.ic.2012.02.004
@@ -1468,3 +1563,5 @@ series = {OOPSLA '94}
 
 % More digging on the origins of OO:
 % https://x.com/Ngnghm/status/1898493837040849348
+
+% B. Jacobs, "Objects and classes, co-algebraically" 1996 in "Object orientation with parallelism and persistence" pp. 83-103, cited by Cook2012
