@@ -38,7 +38,6 @@
       (define (self x) (f self x))
       self)
 ]
-@(define (principle . x) (bold (emph x)))
 
 @(define-bibtex-cite "poof.bib" ~cite citet generate-bibliography)
 
@@ -63,9 +62,6 @@ Our design mostly reprises well known ideas,
 though with a few original enhancements or clarifications
 (such as the notion of conflation).
 We explain how our modern presentation choice of design elements,
-
-compare early designs
-
 and how modularity justifies using multiple inheritance over mixin inheritance,
 or conflating prototypes and instances (or classes and types) rather than keep them separate.
 
@@ -77,98 +73,12 @@ We can then make our previous claims about OO and Modularity more explicit and l
 @TODO{cite inheritance1996 for incrementality, something else for modularity}
 
 @section[#:tag "modularity_and_incrementality"]{Modularity and Incrementality}
-
 @subsection[#:tag "modularity"]{Modularity}
 
-@subsubsection{Division of Labor}
+@; XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-Modularity@~cite{Parnas1972 Dennis1975} is the organization of software source code
-in order to support division of labor, dividing it into “modules” that can each be
-understood and worked on mostly independently from other modules.
 
-@subsubsection{A Meta-linguistic Feature}
 
-Most modern programming languages offer
-@emph{some} builtin notion of modules as “second-class” entities,
-entities that exist at compile-time but are not available as regular runtime values
-A few languages even offer a notion of modules as “first-class” entities,
-that can be manipulated as values at runtime.@note{
-In between the two, some languages offer a “reflection” API that gives some often limited
-runtime access to representations of the module entities.
-This API is often limited to introspection only or mostly;
-for instance, it won't normally let you call the compiler
-to define new modules or the linker to load them.
-Yet some languages support APIs to dynamically evaluate code,
-that can be used to define new modules;
-and some clever hackers find ways to call a compiler and dynamic linker,
-even in languages that don’t otherwise provide support APIs for it.
-}
-But many (most?) languages offer no such notion;
-indeed modules are a complex and costly feature to design and implement,
-and few language designers and implementers will expend the necessary efforts toward it
-at the start of language’s development.@note{
-Unless they develop their language within an existing modular framework
-for language-oriented programming, such as Racket,@TODO{cite. Also Stratego?}
-from which they inherit the module system.
-}
-
-Yet modularity is foremost a @emph{meta-linguistic} concept:
-even in a language that provides no support whatsoever for modules
-@emph{within} the language itself (such as C),
-programmers will find manual and automated means
-to achieve and support modularity @emph{outside} the language. They will:
-@itemize[
-@item{copy and paste sections of code as poor man’s modules;}
-@item{automate organized concatenation of code snippets with preprocessors;}
-@item{divide code in files they can “transclude”, “link” or “load” together;}
-@item{transclude “include” files in lieu of interfaces;}
-@item{orchestrate building of software with utilities such as “make”;}
-@item{bundle software into “packages” they exchange and distribute online;}
-@item{create “package managers” to handle those bundles.}]
-
-When for the sake of “simplicity”, “elegance”, or ease of development or maintenance,
-support for modularity is lacking within a language, this language then becomes but
-the kernel of a haphazard collection of tools cobbled together
-to palliate the weakness of this kernel. The result inevitably ends up being
-extremely complex, ugly, and hard to develop and maintain.
-
-@subsubsection{Criterion for Modularity}
-@principle{A design is modular if it enables developers to cooperate without having to coordinate},
-compared to alternative designs that enable less cooperation or require more coordination,
-given some goals for developers, a space of changes they may be expected to enact in the future, etc.
-
-For instance, the object-oriented design of ASDF@~cite{ASDF2}
-made it simple to configure, to extend, and
-to refactor to use algorithms in @emph{O(n)} rather than @emph{O(n³)} or worse,
-all of it without any of the clients having to change their code.
-This makes it arguably more modular than its predecessor MK-DEFSYSTEM@~cite{kantrowitz1991}
-that shunned use of objects (possibly for portability reasons at the time),
-was notably hard to configure, and resisted several attempts to extend or refactor it.
-
-@subsubsection[#:tag "incrementality_and_complexity"]{Modularity and Complexity}
-@subsection[#:tag "incrementality"]{ and Complexity}
-
-Complexity increases due to overhead:
-boiler plate, name management, indirect access,
-duplication of entities on both sides of an interface,
-etc.
-
-Simplifications that cannot happen anymore, extra steps introduced.
-If module lines badly drawn.
-Some systems allow expressing simplifications / optimizations for entities within a module.
-
-But complexity can decrease substantially if modules are reusable.
-
-First big win: ALGOL Procedures. Structure programming.
-
-@subsection[#:tag "incrementality"]{Incrementality}
-@subsubsection{Small Changes}
-Developers quickly lose direction, motivation, support from management
-and buy-in from investors and customers when they do not have tangible results
-to show for their work.
-Incrementality is the ability for a system to
-deliver more rewards for fewer efforts, compared to alternatives.
-In other words, incrementality supports a short feedback loop in software development.
 
 @subsubsection{A Developer-Interface Feature}
 Incrementality should be understood within a framework of what changes
@@ -1781,6 +1691,9 @@ FP provides a robust foundation for OO,
 and should be a natural part of the OO ecosystem.
 
 
+
+
+
 @section{What Object-Orientation @emph{is}
 
 @subsection{Incremental Specification}
@@ -1789,18 +1702,11 @@ and should be a natural part of the OO ecosystem.
 
 Colored Point
 
-@subsubsection{xxx}
-
-@subsubsection{yyy}
+Linked
 
 @subsection{Conflation}
 
 @subsubsection{Prototypes as Conflation}
-In Prototype OO, a @emph{prototype}
-(also called “object” in the context of Prototype OO)
-is actually the conflation of two related but distinct concepts
-@~cite{Cook1989 bracha1990mixin jsonnet nix2015 poof2021}:
-@itemlist[#:style'ordered
 @item{The (extensible, composable) partial @emph{specification} of an open computation}
 @item{The @emph{value} computed by declaring this specification complete and “closing” the computation}]
 
@@ -1993,17 +1899,6 @@ and actually behaved as in this pure functional model of inheritance.
 Finally, many recent Prototype OO languages use this model as is;
 indeed that is how the “extension” system of Nix is defined.
 
-@section{What OO isn’t}
-
-@subsection{Information Hiding}
-
-Yes to modularity, but no to various visibility mechanisms.
-
-They can complement the modularity of OO.
-OO can also do very well without them.
-Lisp has lots of visibility mechanisms, that can all be defeated easily via reflection.
-Smalltalk 
-
 @subsection{OO without Conflation}
 
 @subsubsection{OO without Records}
@@ -2032,8 +1927,7 @@ confusion between subclassing (relationship of a specification) and subtyping, a
 have wasted years in an absurd quest to ignore, deny or paper over the difference between the two,
 and search for typesystems that would
 
-
-This conflation makes it very hard for many 
+This conflation makes it very hard for many XXX
 
 Meanwhile in Class OO, an “object” is an element of the type specified by a class.
 Meanwhile the class is a conflation of the partial specification
@@ -2346,16 +2240,6 @@ This makes changes brittle, breaks modularity, and
 effectively forces the entire inheritance DAG of a class to become part of its interface.
 By contrast, multiple inheritance can automate all these troubles away,
 and let programmers only have to worry about their own classes’s direct superclasses.
-
-@subsubsection{Popularity}
-Both due to having been discovered later and being less modular,
-mixin inheritance is less popular than the older alternatives.
-Nevertheless it lives on notably in Racket @~cite{Mixins1998 Flatt06schemewith},
-Newspeak @~cite{bracha2008newspeak}, GCL @~cite{gclviewer2008}, Jsonnet @~cite{jsonnet},
-and Nix @~cite{nix2015}.
-Furthermore, one may view the way C++ duplicates non-“virtual” superclasses
-as a form of mixin inheritance
-(whereas the way it de-duplicates “virtual” classes is a form of multiple inheritance).
 
 @subsubsection{No Further Comment}
 Mixin inheritance definitely has its uses, if only as
