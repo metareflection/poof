@@ -111,7 +111,7 @@ modularly and extensibly combine partial specifications of programs@xnote["."]{
   However, coding against an SML “module” would count as OO by Cook's criteria,
   and indeed Cook explicitly calls the untyped λ-calculus “the first object-oriented language”,
   while dismissing Smalltalk as not OO enough because its integers are not pure objects@~cite{Cook2009}.
-  Cook's definition, that embodies the modular aspect of OO while rejecting
+  Cook's definition, that embraces the modular aspect of OO while rejecting
   its extensible or dynamic aspect, runs contrary to all practice,
   and brings no insight whatsoever on what people commonly call OO,
   the many languages that provide it,
@@ -298,14 +298,15 @@ while incorrectly believing they understood what the other said.
 Thus, when multiple nomenclatures conflict, we will give precedence to
 the @emph{least ambiguous} word for a concept,
 even if neither the most popular word for the concept, nor the oldest,
-even if we sometimes make it up just for this article.
+even if we sometimes make one up just for this article.
 The words we choose will hopefully cause readers to pause and reflect,
 rather than unwittingly misunderstand the sometimes subtle points we make
 due to a treacherously familiar word.
 
-In particular, we will conspicuously avoid using the unqualified word “class”,
-because it connotes for each reader, depending on the traditions he has adopted,
-a different set of assumptions, that are parasitic to the theory we are laying out.
+In particular, we will conspicuously avoid using the unqualified words
+“object” and “class” because they connote for each reader,
+depending on the traditions he has adopted, a different set of assumptions,
+that are parasitic to the theory we are laying out.
 We will also reject the word “class” to mean the most general kind
 of entity subject to inheritance, since that entity is actually a @emph{prototype},
 of which a class is but a quite limited special case.
@@ -332,7 +333,7 @@ Therefore, if what you know of “Object Orientation” comes from C++,
 please put it aside, at least while reading this article, and come with a fresh mind.
 
 This is especially true with regard to multiple inheritance,
-that will be an important topic of this paper.
+that will be an important topic later in this paper.
 C++ boasts support for multiple inheritance, and many people,
 when thinking of multiple inheritance, think of what C++ offers.
 Yet what C++ calls “multiple inheritance” is not at all the same as
@@ -689,10 +690,12 @@ despite both their claims, but at least his theory is internally consistent if n
 
 UML, co-algebras and other similar methodologies
 are actually relational data modeling disguised as OO. @; TODO cite
+As we’ll see later, their “classes” are extensible indeed,
+but in a trivial way that fails to support modularity.
 They do describe the “easy case” of OO, where objects are just a convenient way
-of merging records of elementary data types
-— an easy case without recursion where subclassing indeed coincides with subtyping.
-But they say nothing of more general uses of OO,
+of merging records of elementary data types (or “constant” data types, for co-algebras)
+— an easy case without recursion, where subclassing indeed coincides with subtyping.
+But these methodologies say nothing of more general uses of OO,
 where records can recursively refer to other records,
 where the operations of interest are higher-level than getting or setting fields,
 where there are “binary methods” that involve two objects at once (and beyond),
@@ -890,9 +893,13 @@ but without the shared computation cache afforded by conflation
 would lead to an exponential explosion of runtime re-evaluations;
 and choosing target over specification everywhere would of course defeat extensibility.
 
-But conflation can cause utter confusion and categorical errors
-in those using it without realizing they are.
-The confusion between classes and types, or between subclassing and subtyping,
+But conflation without distinction causes utter confusion.
+Those who fail to distinguish between the two very different concepts being conflated
+will make categorical errors of using one concept or its properties
+when the other concept needs to be used, leading to inconsistent language design,
+subtle and persistent application bugs, bad tooling, and doomed research,
+and nonsensical publications. @; TODO cite
+Indeed, the confusion between classes and types, or between subclassing and subtyping,
 are common failures among OO practitioners, even the most advanced ones.
 @;{TODO cite Meyer OOSC, see other section}
 
@@ -1270,7 +1277,7 @@ and some clever hackers find ways to call a compiler and dynamic linker,
 even in languages that don’t otherwise provide support APIs for it. @; TODO cite Goo
 }
 
-But many (most?) languages offer no such notion,
+But many languages offer no such notion,
 at least not as @emph{internal} entities inside the language.
 Indeed modules are a complex and costly feature to design and implement,
 and few language designers and implementers will expend the necessary efforts toward it
@@ -1291,8 +1298,8 @@ to achieve and support modularity @emph{outside} the language,
 with some notion of @emph{external} modules. They will:
 @itemize[
 @item{copy and paste sections of code as poor man’s modules;}
-@item{preprocess files to concatenate and transform code fragments;}
-@item{transclude “include” files to serve as libraries or interfaces to libraries;}
+@item{preprocess files to concatenate, transform and generate code fragments;}
+@item{transclude “include” files to serve as libraries or interfaces to later-linked libraries;}
 @item{divide code in files they independently compile then “link” or “load” together;}
 @item{orchestrate incremental (re)building of software with utilities such as “make”;}
 @item{bundle software into “packages” they exchange and distribute online;}
@@ -1303,7 +1310,8 @@ When for the sake of “simplicity”, “elegance”, or ease of development or
 support for modularity is lacking within a language,
 or within the ecosystem around one or multiple languages,
 this language or ecosystem becomes but
-the weak kernel of a haphazard collection of tools cobbled together to palliate its weakness.
+the weak kernel of a haphazard collection of tools cobbled together
+to palliate its lack of modularity.
 The result inevitably ends up growing increasingly
 complex, ugly, and hard to use, develop and maintain.
 
@@ -1368,14 +1376,14 @@ at a fine grain, that can each be solved by a different programmer,
 while other programmers only have to know its calling convention.
 
 No less important than subroutines as such yet also taken for granted
-was the concept of a call stack of return address,
+was the concept of a call stack of return addresses,
 which while anticipated by Turing in 1945 @; TODO cite
 only became common in the 1960s, after LISP and ALGOL. @; TODO cite
 Call stacks enable reentrancy of subroutines, such that a subroutine
 can be recursively called by a subroutine it itself called.
-Thus, programmers do not have to care that their subroutines should not be reentered
-as called by another subroutine while being executed;
-indeed, subroutines can now be reentered not just accidentally, but intentionally,
+Thus, programmers do not have to care that their subroutines should not be reentered while being executed
+due to a direct or indirect subroutine call.
+Indeed, subroutines can now be reentered, not just accidentally, but intentionally,
 to express simpler recursive solutions to problems.
 The ability to do more with less coordination with programmers from other parts of the software:
 that’s the very definition of modularity.
@@ -1414,12 +1422,147 @@ the representation used by the common solution
 and that used by the actual problems, etc.
 
 Modularity used incorrectly, with too many module boundaries,
-and module boundaries drawn badly,
+module boundaries drawn badly,
+resolved at the wrong evaluation stage,
 can increase complexity rather than reduce it.
 @;{ TODO cite something about HURD? Footnote? }
 @;{ Some languages like APL take radical approach in reducing the need for modules or even subroutines
     by being extremely terse and having common idioms being sequences of combinators
-    instead of routine names. @; TODO cite }
+    instead of routine names. @;{TODO cite} }
+
+@subsubsection{Modeling Modularity}
+
+To achieve modularity, parts of some software entity
+need to be able to reference and use other parts of the entity
+potentially written by other people, possibly in the future.
+This typically happens through some data structure
+that embodies all the parts of the entity, that each part uses
+to resolve references to the other parts.
+This data structure is suitably scoped with the modularly-defined entity,
+and its dynamic extent must cover all reference resolutions.
+
+Hence, with external modularity, the modules are resolved
+in whatever preprocessor or generator external to the language generate the program,
+and any supporting data structure is resolved before the language processor even starts.
+
+With a whole-program optimizer, modules are resolved in the compiler
+and may leave no trace at runtime, or behave as in the case below.
+
+For global modules, compilers usually generate references
+that will be resolved statically by the linker when producing a file,
+or dynamically by the dynamic loader,
+before any of the programmer’s regular code is run,
+by accessing some global linkage table.
+
+For local modules, compilers usually generate some kind of “dispatch table”
+for each modularly defined entity, that, if it cannot be resolved statically,
+will exist as such at runtime.
+Haskell typeclasses become by “dictionaries” that may or may not be fully inlined.
+The case of OO, prototypes are indeed typically represented
+by such “virtual dispatch table” at runtime—which in Class OO
+would be the type descriptor for each object, carried at runtime for dynamic dispatch.
+
+At runtime, the entity descriptor for the modularly defined entity,
+if not global, will be passed as argument to functions
+that represent each part of the modular definition.
+Now, there will be issues to ensure that each modular sub-entity
+is only used after it was properly initialized,
+especially since in general those sub-entities are provided by many different programmers
+working on different parts of the code.@note{
+  Ensuring initialization before use is hard;
+  in an expressive enough language, it is not generally possible to predict in advance
+  whether that will be the case.
+
+  In unsafe languages, your program will happily load nonsensical values from
+  uninitialized bindings, then silently corrupt the entire memory image,
+  dancing a fandango on core, causing a segmentation fault and other low-level failures,
+  or even worse, veering off into arbitrary undefined behavior and yielding very wrong results
+  to unsuspecting users.
+  The symptoms if any are seen long after the invalid use-before-init,
+  making the issue hard to pin-point and debugging extremely difficult
+  unless you have access to time-travel debugging at the right level of abstraction.
+
+  In not-so-safe languages, a magic NULL value is used, or for the same semantics
+  just with additional syntactic hurdles, you may be forced to use some option type;
+  or you may have to use (and sometimes provide out of thin air) some default value
+  that will eventually prove wrong.
+  In the end, your program will fail with some exception,
+  which will also long after the invalid use-before-init,
+  but at least the symptoms will be visible and you'll have a vague idea
+  what is going on, just not where or when.
+
+  Actually safe languages, when they can’t prove init-before-use,
+  will maintain and check a special marker in the binding cell or next to it,
+  possibly even in a concurrency-protected way if appropriate,
+  to identify which bindings were or weren’t initialized already, and
+  eagerly raise an exception immediately at the point of use-before-init,
+  ensuring the programmer can then easily identify where and when the issue is happening,
+  with complete contextual information.
+
+  In a safer language, lazy evaluation automatically ensures that you always have init-before-use,
+  and if the compiler is well done may even detect finite dependency cycles are found;
+  you may still experience resource exhaustion if you generate infinite new dynamic dependencies,
+  but so would you in the less safe alternatives if you could reach that point.
+
+  Safest languages may require you to statically prove init-before-use,
+  which may be very hard with full dependent types,
+  or very constraining with a more limited proof system,
+  possibly forcing you to fall back to only the “not-so-safe” alternative.
+  But this technology is onerous and not usable by programmers at large.
+
+  Some languages may let you choose between several of these operation modes depending
+  on compilation settings or program annotations.
+
+  Interestingly, whichever safety mode is used, programmers have to manually follow
+  some protocol to ensure init-before-use.
+  However the lazy evaluation approach minimizes artificial constraints on such protocol,
+  that when not sensible might force him to fall back to the not-so-safe variant.
+
+  Now, this well-known issue exists outside of OO: it may happen
+  whenever there is mutual recursion between variables or initial elements of data structures.
+  However, we’ll see that open recursion is ubiquitous in OO,
+  wherein partial specifications define methods that use other methods that are yet to be defined
+  in other partial specifications, that may or may not follow any particular protocol
+  for initialization order.
+  Thus we see that the simplest, most natural and safest usable setting for OO is:
+  lazy evaluation. This may come at a surprise to many.
+  In the rest of the article we argue the case from modularity and semantics rather than safety.
+}
+The more programmers must agree on a protocol to follow, the less modular the approach.
+Now, in a stateful applicative language, where the various modular definitions
+are initialized by side-effects, programmers need to follow some rigid protocol
+that may not be expressive enough to follow the modular dependencies between internal definitions,
+often leading to indirect solutions like “builder” classes in Java,
+that stage all the complex computations before initialization of objects of the actual desired class.
+In a pure functional language without side-effects,
+the modular entity descriptor is instead defined with mutually recursive bindings for each sub-entity,
+through some fixed-point operator, at which point lazy evaluation can help share the computations
+of those sub-entities rather than having to recompute them at every use (as would be the case in
+an applicative functional language that lacks primitives like Scheme’s @r[delay] and @r[force]).
+
+This model is literally used, in NixOS’s package repository nixpkgs,
+configured with a pure lazy dynamic functional language Nix,
+every module definition is a function that conventionally takes an argument @c{pkgs}
+that encompasses the entire ecosystem, including all other packages being defined,
+as well as the standard library of functions @c{pkgs.lib}
+(though some like to redundantly pass it as an additional argument @c{lib}).
+
+Now, with static types, there is an issue that the type of the common modular entity descriptor,
+as passed to each partial specification’s sub-entity-defining function,
+must include all the information from all the yet-undefined other partial specification
+that can or will ever be combined with the current one.
+Yet to keep things modular, you can’t depend on one module knowing
+the detailed type of all things defined by all other modules past, present, and future.
+To preserve modularity in this setting without reverting to some kind of dynamic typing as in Nix,
+some kind of extensible types are therefore required.@note{
+  In a language like Haskell, that does not have any mechanism of subtyping or extensible types,
+  module programmers can be creative by having modular typeclass constraints on a type parameter,
+  then depend on each application programmer making some gigantic non-modular definition
+  of the common type that will be fed as parameter to all the modular definitions of his entire application.
+  The non-modularity hasn’t been completely eliminated,
+  but moved and concentrated onto application developers,
+  while library developers can enjoy more modularity.
+}
 
 @subsection[#:tag "extensibility"]{Extensibility}
 @subsubsection{Extending a Program or Module}
