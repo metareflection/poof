@@ -116,8 +116,24 @@
 % 1973
 
 % Minsky's 1974 paper on Frames uses the words "prototype" and "inherit", but incidentally,
-% not to name concepts in their formal object, rather as part of its informal (meta) context.
-% Yet no doubt they primed Winograd for when he did use them to name concepts of KRL in 1975.
+% not at all to refer to the concepts at stake. MIT AIM-306
+@article{minsky1974framework,
+  title={A Framework for Representing Knowledge},
+  author={Minsky, Marvin},
+  year={1974},
+  url={https://dspace.mit.edu/handle/1721.1/6089}
+}
+
+% 1975 Hewitt Stereotypes
+% p.101 “The "frame" problem of McCarthy for assertional frames corresponds closely to
+% the problems of "inheritance of attributes" and "default values" for object frames.
+% For example the fable quoted by Minsky about the wolf and the lamb is very close to
+% the frame problems of McCarthy.”
+% Bibliography includes by McCarthy "Programs with Common Sense" (1958),
+% and "Some philosophical problems from the standpoint of Artificial Intelligence" (1969),
+% neither of which has it, and by Minksy "A Framework for Representing Knowledge",
+% that discusses “"default" assignments” and discusses how the wolf is lying in accusing the lamb
+% and the issues with representing knowledge for that.
 
 % So far as I can tell, the earliest use of "inheritance", in "inheritance of properties", p. 197.,
 % along the hierarchy of frames. The variant it designates is multiple-inheritance,
@@ -140,6 +156,9 @@
 % practical definition in the early 1980s with Flavors and T,
 % theoretical definition around 1990 by Cook & Bracha, and works on multipe inheritance culminating with C3.
 % Final definition around 2025 by this very series of papers?
+%
+% not to name concepts in their formal object, rather as part of its informal (meta) context.
+% Yet no doubt they primed Winograd for when he did use them to name concepts of KRL in 1975.
 %
 % InCollection
 @Misc{Winograd1975,
@@ -354,13 +373,14 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={https://api.semanticscholar.org/CorpusID:13032155}
 }
 
+% url={https://homepages.cwi.nl/~storm/teaching/reader/Lieberman86.pdf}
 @InProceedings{Lieberman1986,
   title={Using Prototypical Objects to Implement Shared Behavior in Object-Oriented Systems},
   author={Henry Lieberman},
   booktitle={OOPLSA},
   pages={214--223},
   year={1986},
-  url={https://homepages.cwi.nl/~storm/teaching/reader/Lieberman86.pdf}
+  url={https://web.media.mit.edu/~lieber/Lieberary/OOP/Delegation/Delegation.html}
 }
 
 @InProceedings{Borning1986,
@@ -1593,3 +1613,61 @@ series = {OOPSLA '94}
 % Peter Wegner. Concepts and Paradigms of O..O..P.. 1990
 
 % Goguen...
+
+@book{cardelli1986understanding,
+  title={On understanding types, data abstraction, and polymorphism},
+  author={Cardelli, Luca and Wegner, Peter},
+  year={1986},
+  publisher={Brown University. Department of Computer Science},
+  url={http://lucacardelli.name/Papers/OnUnderstanding.A4.pdf}
+}
+
+% Successor to a 1980 experiment by Borning. No method combination. Unclear linearization. Low on details.
+% Uses the Link class from SIMULA, and ReadWriteStream as motivations for multiple inheritance.
+@inproceedings{borning1982multiple,
+  title={Multiple inheritance in Smalltalk-80},
+  author={Borning, Alan H and Ingalls, Daniel HH},
+  booktitle={Proceedings at the National Conference on AI},
+  volume={82},
+  pages={234--237},
+  year={1982}
+}
+
+% Parents are Shared Parts: Inheritance and Encapsulation in Self
+% Craig Chambers, David Ungar, Bay-Wei Chang, and Urs Hölzle
+
+@InProceedings{parentsSharedParts1991,
+  title={Parents are Shared Parts of Objects: Inheritance and Encapsulation in SELF},
+  author={Craig Chambers, David Ungar, Bay-Wei Chang, Urs Hölzle},
+  booktitle={Lisp and Symbolic Computation},
+  year={1991},
+  url={https://bibliography.selflanguage.org/parents-shared-parts.html}
+}
+% What a mess. https://x.com/xadh/status/1945251704011665663
+% https://github.com/shriram/plai-public/issues/62
+%
+% "prioritized inheritance": superclasses are assigned priorities,
+% and between "ordered" superclasses at different priorities, it's like linearization,
+% but between "unordered" superclasses at same priority, it's ambiguousMessage error.
+% Also, when invoking a method, remember not just the self but the invoking super,
+% according to a "sender path tiebreaking rule" unique to SELF.
+% so that further slot accesses follow the path (what about nested access, though?
+% Reset at SELF? stack of previous super?)
+% Also, dynamic inheritance: can dynamically add/remove slots and superclasses (at various priorities)
+% call-next-method is called "resend" and can change method (unlike CLOS, to follow same path)
+% and arguments but not self, and also specify the sending parent (one level of parent,
+% must be superclass of current sending parent).
+% No method combinations: cites CLOS, but wants "simplicity" for SELF.
+% Mention rename in Eiffel as an alternative, static way to deal with unordered inheritance
+% Notes that C++ linearizes superclasses for constructors and destructors, just not for regular methods
+%
+% Issues: SELF mixins must be parentless to avoid their general parents
+% overriding the mixed class's specific slots. "Backtracking", i.e. lack of a stack of senders as above.
+% "considering altering SELF's lookup rule to always search children before their ancestors"
+% and be more like CLOS in this way.
+% NB: In their "complexities" they note how their lack a clear story for resend with dynamic inheritance
+% --- but then I'm not sure if CLOS specifies it, especially in presence of concurrency, so there.
+% They also support cycles but say it's too complex to explain how in the paper.
+%
+
+% change-class: https://github.com/shriram/plai-public/issues/60

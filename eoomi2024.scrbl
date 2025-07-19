@@ -54,20 +54,6 @@ of systems managing software at a very large scale (see @seclink{minimal_design_
 
 @subsection{OO as Incremental Modularity}
 
-We herein develop an idea that was only briefly mentioned in the previous paper:
-@principle{OO is a mechanism to specify computations in modular increments}.
-We thus reconstruct from first principles a functional design of basic OO concepts,
-each of them justified by how it is a necessary affordance toward this purpose.
-Our design mostly reprises well known ideas,
-though with a few original enhancements or clarifications
-(such as the notion of conflation).
-We explain how our modern presentation choice of design elements,
-and how modularity justifies using multiple inheritance over mixin inheritance,
-or conflating prototypes and instances (or classes and types) rather than keep them separate.
-
-In this present paper, we will elaborate on this relationship
-between OO and Incremental Modularity.
-Without presenting a complete theory of Modularity (sketched in @citet{ngnghm9})
 we introduce some semi-formal criteria for what Modularity and Incrementality mean.
 We can then make our previous claims about OO and Modularity more explicit and less informal.
 @TODO{cite inheritance1996 for incrementality, something else for modularity}
@@ -76,8 +62,6 @@ We can then make our previous claims about OO and Modularity more explicit and l
 @subsection[#:tag "modularity"]{Modularity}
 
 @; XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-
 
 
 @subsubsection{A Developer-Interface Feature}
@@ -102,16 +86,6 @@ semantic operations within the language itself. And yet, using reflection
 and/or considering the entire “live” interactive development environment
 as “the system” rather than a “dead” program in a programming language,
 these pre-syntactic operations can be internalized.
-
-@subsubsection{A Criterion for Incrementality}
-@principle{A design is incremental if it enables developers
-to enact change through small local modifications}
-compared to alternative designs that require larger (costlier) rewrites
-or more global modifications (or prohibit change, same as making its cost infinite).
-
-@subsubsection[#:tag "incrementality_and_complexity"]{Incrementality and Complexity}
-Higher level language vs lower-level.
-FORTRAN vs Assembly.
 
 @subsection[#:tag "incremental_modularity"]{Incremental Modularity}
 
