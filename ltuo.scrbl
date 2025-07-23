@@ -83,7 +83,7 @@
 @;; Instead, we could set the start page for the document with:
 @;@pageStart{42}
 
-@(define-bibtex-cite "poof.bib" ~cite citet generate-bibliography)
+@(define-bibtex-cite "ltuo.bib" ~cite citet generate-bibliography)
 @(define (~nocite . x) (let ((_ (apply @~cite x))) (void)))
 
 @(define-simple-macro (defsection name tag text) (define (name (x text)) (seclink tag x)))
@@ -410,7 +410,8 @@ maybe the top one by users
 
 What more, we will argue below that Prototype OO @~cite{Borning1986}
 is more general than Class OO, that is but a special case of it @~cite{Lieberman1986}.
-And we will even argue that you can recognizably have OO with neither prototypes nor classes.
+And we will even argue that you can recognizably have OO
+with neither prototypes nor classes as in T @~cite{adams88oopscheme}.
 
 It is therefore just wrong to dismiss Prototype OO as not being part and parcel
 of the OO tradition, historically, conceptually, and popularly.
@@ -716,10 +717,13 @@ but in a trivial way that fails to support modularity@xnote["."]{
   despite being deliberately limited in abstraction (and, therefore, modularity)—and
   sometimes @emph{thanks to it}.
   Restrictions to expressiveness can be very useful,
-  in the necessarily restricted cases that they apply.
-  What is very wrong on the other hand, and intellectually dishonest,
-  was to sell it as OO back when OO was trendy, based on
-  a superficial and at times deliberate misunderstanding of OO by both sellers and buyers.
+  in the necessarily restricted or imprecise cases that they apply.
+  Indeed, in some cases, relational data modeling, not OO,
+  is what you need to organize your data and your code.
+  However, what is very wrong, and intellectually dishonest,
+  was to sell relational data modeling as OO back when OO was trendy, based on
+  a superficial and at times deliberate misunderstanding of OO
+  by either or both sellers and buyers, resulting in more confusion.
 }.
 UML and co-algebras describe the “easy case” of OO, where objects are just a convenient way
 of merging records of elementary data types
@@ -1000,20 +1004,27 @@ actual or imagined, or then again sometimes they may.
 
 The word “object” is therefore quite ambiguous, and practically useless absent the context
 or a specific language, system, article, etc.
-Furthermore, we will later in this article argue how the fundamental patterns of OO
-can exist and be usefully leveraged in a language that lacks any notion of object,
-merely with the notions of specification and target.
+Furthermore, the fundamental patterns of OO can exist and be usefully leveraged in a language
+that lacks any notion of object, merely with the notions of specification and target:
+Indeed, Yale T Scheme has a class-less “object system” @~cite{adams88oopscheme},
+wherein the authors call “objects” any language value,
+“instance” those records of multiple function entry points used as the non-extensible targets
+of their extensible specifications, themselves called “components”,
+that use mixin inheritance.
 
 To avoid confusion, we will be careful in this article to only speak of
 “specification”, “target”, “prototype”, and (type) “element”
 and to avoid the word “object”—both a uselessly ambiguous word and a non-necessary notion.
 As already mentioned above, we will also be avoiding “class” for a different reason,
-that it is a special case of the more general prototypes we are studying.
+because it is a special case of the more general prototypes we are studying.
 
 This is all particularly ironic when the field we are studying is called “object orientation”,
 in which the most popular variant involves classes.
-But fields are usually named as soon as the need is felt to distinguish them from other fields,
-long before they are well-understood, so this is par for the course.
+But fields are usually named as soon as the need is felt
+to distinguish them from other fields,
+long before they are well-understood,
+thus based on misunderstandings,
+so this is par for the course.
 
 @subsection{Inheritance Overview}
 @subsubsection{Inheritance as Specification Extension}
@@ -1772,7 +1783,6 @@ and re(write) both the old and new functionality as extensions of that library
 as much as possible at compile-time for efficiency (which is second-class extensibility),
 yet what you need to runtime (which is first-class extensibility).
 
-
 @subsubsection{A Criterion for Extensibility}
 
 @principle{A design is more extensible if it enables developers
@@ -1780,27 +1790,66 @@ to enact more kinds of change through smaller more local modifications}
 compared to alternative designs that require larger (costlier) rewrites
 or more global modifications (or prohibit change, same as making its cost infinite).
 
-Thus, while any software is externally extensible,
-one provided as binary only is much less so than one provided as source code
-(even in a language not particularly friendly to extensibility).
+@subsubsection{Historical Extensibility Breakthroughs}
+
+While any software is externally extensible by patching the executable binary,
+the invention of assembly code made it much easier to extend programs,
+especially so with automatic offset calculations from labels.
+Compilers and interpreters that process source code meant for human consumption and production,
+preprocessors, interactive editors, and all kinds of software tooling,
+also much facilitated external extensibility.
 And software that requires configuration through many files that must be carefully kept in synch manually
 is less extensible than one that can be configured through a single file
 from which all required changes are automatically propagated in a coherent manner
 (whether that configuration is external, internal second-class or internal first-class).
-As for internal extensibility, if changing one small aspect of a data structure
-requires rewriting the entire data structure and all the accompanying functions,
-the language is less internally extensible than if the same data structure can be amended
-by declaring a subclass of it that only specifies the few changes.
-@; TODO cite Okasaki book?
 
+Higher-level languages facilitate external extensibility compared to lower-level ones,
+by enabling programmers to make smaller more local changes for larger effects;
+thus FORTRAN enables more extensible code than assembly, and Haskell more than FORTRAN.
+Languages with higher-order functions or object-orientation enable more internal extensibility
+by enabling the creation of new in-language entities built from existing entities
+in more powerful ways.
+One particular way that OO can be showed to enable more extensibility than lack thereof,
+is when some course on data structures explains variants of a data structure require
+complete rewrite of each variant and all associated functions from scratch
+when using a functional language with simple Hindley-Milner typechecking, @; TODO cite Okasaki book?
+but can be simply written as a series of classes refining previous classes
+with a couple of changes at each step when using OO.
 
-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+@subsubsection{Extensibility without Modularity}
 
-@subsubsection[#:tag "incrementality_and_complexity"]{Incrementality and Complexity}
-Higher level language vs lower-level.
-FORTRAN vs Assembly.
+Before we go deep into how OO the brings together extensibility and modularity,
+we may want to explain what extensibility without modularity means.
 
+Operating Systems, applications or games sometimes deliver updates using some kind of binary patch
+format that minimizes the size that has to be transmitted
+while maximizing the changes made to the software.
+Such patches embody extensibility yet total lack of modularity:
+they are meaningful only in the context of the exact previous version of the software.
+Text-based diff files can similarly be used as patches for source code,
+and are somewhat more modular, being meaningful even in presence
+of independent changes to the source code, but overall remain not very modular,
+due to being fragile and making changes without respecting any semantic code interface;
+actually their power to extend software lies precisely in their not having to respect such interfaces.
 
+The ultimate in extensibility without modularity would be to specify modifications to the software
+as bytes concatenated at the end of a compressed stream (e.g. using @c{gzip} or some AI model)
+of the previous software:
+a few bits could specify maximally large changes, ones that can reuse large amounts of information
+from the compressor’s model of the software so far;
+yet those compressed bits would mean nothing outside the exact context
+of the compressor—maximum extensibility, minimum modularity.
+
+Interestingly, these forms of extensibility without modularity,
+while good for distributing software, are totally infeasible for humans to directly create.
+Instead, humans use modular forms of extensibility, such as editing source code
+as part of a edit-evaluate-debug development loop, until they reach a new version
+of the software they want to release, after which point they use automated tools
+to extract from the modularly-achieved new version some non-modular compressed patches.
+
+@subsubsection[#:tag "extensibility_and_complexity"]{Extensibility and Complexity}
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx
 
 @subsubsection{Why Extensibility}
 

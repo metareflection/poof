@@ -71,6 +71,7 @@ for a fast and mindless algorithm. Otherwise, the most “incremental” design
 would involve expanding code changes with @c{gunzip} or some similar decompressor,
 so that a few bits of incremental change can turn into a large amount of code.
 
+
 Thus, for instance, changing some arithmetic calculations to use
 bignums (large variable-size integers) instead of fixnums (builtin fixed-size integers)
 in C demands a whole-program rewrite with a different program structure;

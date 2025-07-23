@@ -426,6 +426,8 @@ pages = {1--8},
 numpages = {8}
 }
 
+% Stein 1987 "Delegation is Inheritance", cited by cook1989inheritance
+
 
 % https://beta.cs.au.dk/ ?
 @article{kristensen1987beta,
@@ -514,14 +516,26 @@ numpages = {8}
   publisher={ACM New York, NY, USA}
 }
 
+% The right fixe-point semantics, actually for prototypes as well as classes!
+% 2.2 claims to avoid the "subsumption" rule for record subtyping in Cardelli (allows more rows)
+% but in later sections seem to implicitly rely on it (or else on some dynamic or deferred typing?)
+% 3 uses specs and targets without saying it
+% 4.1 Has class as object constructor, reflexively accessible from object as "self class" method,
+% and then uses double Y to resolve both class and self prototypes,
+% instead of having an explicit Lieberman-like construction of class as prototype.
+% 4.2 seems to implicitly have a type dependency (what are F and G ib (5)?)
+% url={https://dl.acm.org/doi/abs/10.1145/96709.96721}
+% Cites Mitch Wand 1987, 1989, 1989... gotta go deeper
 @InProceedings{cook1989inheritance,
   title={Inheritance is not subtyping},
   author={Cook, William R and Hill, Walter and Canning, Peter S},
   %booktitle={Proceedings of the 17th ACM SIGPLAN-SIGACT symposium on Principles of programming languages},
   booktitle={POPL},
   pages={125--135},
-  year={1989}
+  year={1989},
+  doi={10.1145/96709.96721}
 }
+
 
 @InProceedings{chambers1989efficient,
   author = {Chambers, C. and Ungar, D. and Lee, E.},
