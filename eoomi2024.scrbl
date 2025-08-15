@@ -28,7 +28,7 @@
 @(define (anonymize x . y) x)
 @(define (omega) "ω")
 @(define (GerbilScheme) @anonymize["our Scheme implementation"]{Gerbil Scheme})
-
+@(define (principle . x) (bold (emph x)))
 
 @(declare-examples/module poof racket
    (provide (all-defined-out))
@@ -41,72 +41,20 @@
 
 @(define-bibtex-cite "poof.bib" ~cite citet generate-bibliography)
 
-@section{The Essence of OO}
-
-@subsection{OO in 2 lines of FP}
-
-Our previous paper@~cite{poof2021} @; “Prototypes: Object-Orientation, Functionally”
-reconstructs Object-Orientation (OO) on top of a kernel of two simple functions
-(see @seclink{simplest_prototypes}).
-These functions slightly generalize a decades-old theoretical-only model @;@~cite{bracha1990mixin},
-except one that had twenty-five years later been made the actual practical implementation
-of systems managing software at a very large scale (see @seclink{minimal_design_maximal_outreach}).
-
-@subsection{OO as Incremental Modularity}
-
-we introduce some semi-formal criteria for what Modularity and Incrementality mean.
-We can then make our previous claims about OO and Modularity more explicit and less informal.
-@TODO{cite inheritance1996 for incrementality, something else for modularity}
-
 @section[#:tag "modularity_and_incrementality"]{Modularity and Incrementality}
-@subsection[#:tag "modularity"]{Modularity}
 
-@; XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-
-@subsubsection{A Developer-Interface Feature}
-Incrementality should be understood within a framework of what changes
-are or aren’t “small” for a human (or AI?) developer, rather than
-for a fast and mindless algorithm. Otherwise, the most “incremental” design
-would involve expanding code changes with @c{gunzip} or some similar decompressor,
-so that a few bits of incremental change can turn into a large amount of code.
-
-
-Thus, for instance, changing some arithmetic calculations to use
-bignums (large variable-size integers) instead of fixnums (builtin fixed-size integers)
-in C demands a whole-program rewrite with a different program structure;
-in Java involves some changes all over though straightforward and preserving the program structure;
-in Lisp requires minimal local changes, and Haskell requires none.
-Thus with respect to this and similar kinds of change, if expected,
-Haskell is more incremental than Lisp that is more incremental than Java that is more incremental than C.
-@; TODO examples for C, Java, Lisp, Haskell
-
-There again, incrementality is usually a meta-linguistic notion, wherein
-changes happen as pre-syntactic operations on the source code, rather than
-semantic operations within the language itself. And yet, using reflection
-and/or considering the entire “live” interactive development environment
-as “the system” rather than a “dead” program in a programming language,
-these pre-syntactic operations can be internalized.
+In the notable case of data records that may be later extended,
+which is most relevant to OO,
+access to named fields must go through some “associative array” (e.g. hash-table)
+mapping identifiers to field index in the record.
+These indexes may be cached between modifications, or wholly resolved at compile-time
+if the extension is external or second-class.
 
 @subsection[#:tag "incremental_modularity"]{Incremental Modularity}
-
-@subsubsection{A Dynamic Duo}
-Modularity and Incrementality work hand in hand:
-@principle{Modularity means you only need to know
-a small amount of old information to make software progress.
-Incrementality means you only need to contribute
-a small amount of new information to make software progress.}
-Together they mean that a finite-brained developer
-can make more software progress with a modular and incremental design
-than with a less-modular and less-incremental design.
 
 @subsubsection{Reduction to Smaller Problems}
 
 TODO
-
-Can work a problem with less mental power. Or work larger problems with the same mental power.
-
-Divide in more independent entities.
 
 Beware: header files / interface files are not independent entities.
 Must be modified together. C. OCaml.
@@ -115,34 +63,14 @@ BUT more modular? Only if some tool makes it easy to skip the implementation det
 and keep only the interface bits:
 type declarations, instance declarations without their strategy or body.
 
-
+@; XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 @subsubsection{Not Just Moving Costs Around}
 
-Making things more modular often increases overall complexity. More parts.
-If it increases it too much, bad.
-If it adds smaller problems without actually removing the former small problems
-now made intermediary problems, very bad.
-Rewriting in assembly: plenty of new smaller problems, but the bigger division into procedures not helped one bit.
-
-Beware that many designs have been wrongfully argued as
-more modular and/or incremental based on moving code around:
-these myopic designs achieve modest development savings in a few modules under focus
-by vastly increasing the development costs left out of focus,
-in extra boilerplate and friction, in other modules having to adapt,
-inter-module glue being made harder, or module namespace curation getting more contentious.
 @; Not "more files for the same functionality", but
 @; "more independent entities". If more files that depend on each other the same entities,
 @; not more modular, less modular instead because more manually-enforced dependencies.
 
-For instance microkernels or microservices may make each “service” look smaller,
-but only inasmuch as the overall code has been butchered into parts
-between which artificial runtime barriers were added;
-yet each barrier added involves extra code, actually increasing the incidental
-complexity of the code in direct proportion to the alleged benefits,
-without doing anything whatsoever to address its intrinsic complexity.
-These misguided designs stem from the inability to think about meta-levels
-and distinguish between compile-time and runtime organization of code.
 
 @subsubsection{Incremental Modularity, Interactively}
 Incrementality does not necessarily mean that a complex addition or refactoring
@@ -1665,11 +1593,7 @@ and not just vague informal principles and arbitrary language-specific rules.
 FP provides a robust foundation for OO,
 and should be a natural part of the OO ecosystem.
 
-
-
-
-
-@section{What Object-Orientation @emph{is}
+@section{What Object-Orientation @emph{is}}
 
 @subsection{Incremental Specification}
 
@@ -1682,6 +1606,7 @@ Linked
 @subsection{Conflation}
 
 @subsubsection{Prototypes as Conflation}
+@itemize[
 @item{The (extensible, composable) partial @emph{specification} of an open computation}
 @item{The @emph{value} computed by declaring this specification complete and “closing” the computation}]
 

@@ -74,6 +74,8 @@
 @(define-simple-macro (Checks a ...) (examples #:eval poof #:label #f a ...))
 @(define-simple-macro (λ formals body ...) (lambda formals body ...))
 @(define-simple-macro (TODO body ...) '())
+@(define-simple-macro (Xitemize body ...) (list body ...))
+@(define-simple-macro (Xitem body ...) (list " " body ... " "))
 
 @(define super 'super)
 @(define self 'self)
@@ -320,8 +322,9 @@ In particular, we will conspicuously avoid using the unqualified words
 depending on the traditions he has adopted, a different set of assumptions,
 that are parasitic to the theory we are laying out.
 We will also reject the word “class” to mean the most general kind
-of entity subject to inheritance, since that entity is actually a @emph{prototype},
-of which a class is but a quite limited special case.
+of entity subject to inheritance,
+since a class is but a quite limited special case of a @emph{prototype},
+that itself can be seen as a special case of what we’ll call a @emph{specification}.
 
 @; TODO for submission, move to appendix?
 @section{What Object-Orientation is @emph{not}}
@@ -662,7 +665,7 @@ it remains a wholly distinct paradigm,
 with its own mostly disjoint tradition and very different concerns,
 that describes a different set of languages and usage patterns.
 
-@subsection{Modeling the World}
+@subsection[#:tag "modeling_the_world"]{Modeling the World}
 
 Some have claimed that OO is meant to be @emph{the} way to model the world,
 often in association with the concurrent message passing model
@@ -1027,9 +1030,9 @@ thus based on misunderstandings,
 so this is par for the course.
 
 @subsection{Inheritance Overview}
-@subsubsection{Inheritance as Specification Extension}
-Inheritance is the mechanism by which partial specifications are
-incrementally extended into larger specifications,
+@subsubsection{Inheritance as Modular Extension of Specifications}
+Inheritance is the mechanism by which partial modular specifications are
+incrementally extended into larger modular specifications,
 until the point where a complete specification is obtained
 from which the specified target computation can be extracted.
 
@@ -1102,7 +1105,7 @@ to seeing it as a matter of cooperation between methods you combine.
 Multiple inheritance is harder to understand, to implement and to use correctly.
 For this reason, despite it being more expressive and more modular than single inheritance,
 it still isn’t widely adopted@xnote["."]{
-  Out of the 50 languages in the TIOBE index 2025, @;{TODO cite}
+  Out of the top 50 most popular languages in the TIOBE index 2025, @;{TODO cite}
   6 fully support multiple inheritance (Python, Perl, Ruby, Lisp, Scala, Solidity),
   5 have partial or non-colloquial support for it (C++, JavaScript, ADA, PHP, Lua),
   17 support single inheritance only (Java, C#, VB, Delphi, R, MATLAB, Rust, COBOL, Kotlin, Swift, SAS, Dart, Julia, TypeScript, ObjC, ABAP, D)
@@ -1137,9 +1140,11 @@ transitive dependencies but forces developers to handle them manually,
 effectively making those transitive dependencies part of a class’s interface.
 
 For all these reasons adoption of Mixin Inheritance remains relatively limited,
-in languages like
+to languages like
 Racket @~cite{Mixins1998 Flatt06schemewith},
-Newspeak @~cite{bracha2008newspeak}, GCL @~cite{gclviewer2008}, Jsonnet @~cite{jsonnet},
+Newspeak @~cite{bracha2008newspeak},
+GCL @~cite{gclviewer2008},
+Jsonnet @~cite{jsonnet},
 and Nix @~cite{nix2015}.
 Yet it still has outsized outreach, for just the use of GCL at Google means
 a large part of the world computing infrastructure
@@ -1356,26 +1361,30 @@ Modularity@~cite{Parnas1972 Dennis1975} is the organization of software source c
 in order to support division of labor, dividing it into “modules” that can each be
 understood and worked on mostly independently from other modules.
 
-@subsubsection{First-class, Second-class, or External}
+
+
+
+@subsubsection{First- to Fourth-class, Internal or External}
 
 A few languages offer a builtin notion of modules as @emph{first-class} entities,
 that can be manipulated as values at runtime.
 But popular modern programming languages usually only offer
 @emph{some} builtin notion of modules as @emph{second-class} entities,
 entities that exist at compile-time but are not available as regular runtime values.@note{
-In between the two, some languages offer a “reflection” API that gives some often limited
-runtime access to representations of the module entities.
-This API is often limited to introspection only or mostly;
-for instance, it won't normally let you call the compiler
-to define new modules or the linker to load them.
-Yet some languages support APIs to dynamically evaluate code,
-that can be used to define new modules;
-and some clever hackers find ways to call a compiler and dynamic linker,
-even in languages that don’t otherwise provide support APIs for it. @; TODO cite Goo
+  In between the two, some languages offer a “reflection” API that gives some often limited
+  runtime access to representations of the module entities.
+  This API is often limited to introspection only or mostly;
+  for instance, it won't normally let you call the compiler
+  to define new modules or the linker to load them.
+  Yet some languages support APIs to dynamically evaluate code,
+  that can be used to define new modules;
+  and some clever hackers find ways to call a compiler and dynamic linker,
+  even in languages that don’t otherwise provide support APIs for it. @; TODO cite Goo
 }
+Either first-class or second-class entities are considered @emph{internal} to the language,
+part of its semantics, handled by its processors (compiler, interpreter, type system, etc.).
 
-But many languages offer no such notion,
-at least not as @emph{internal} entities inside the language.
+But many languages offer no internal notion of modules.
 Indeed modules are a complex and costly feature to design and implement,
 and few language designers and implementers will expend the necessary efforts toward it
 at the start of language’s development;
@@ -1388,11 +1397,34 @@ in size and complexity generally bother.@note{
 }
 
 Yet modularity is foremost a @emph{meta-linguistic} concept:
-even in a language that provides no support whatsoever for modules
+Even in a language that provides no support wh
+atsoever for modules
 @emph{within} the language itself (such as C),
-programmers will find manual and automated means
-to achieve and support modularity @emph{outside} the language,
-with some notion of @emph{external} modules. They will:
+programmers will find means to express modules as @emph{third-class} entities,
+automated by tools @emph{outside} the language:
+a preprocessor, editor macros, or “wizards”.
+And even if they somehow don’t because they can’t or can’t afford to use such automation,
+developers may achieve modules as @emph{fourth-class} entities,
+ones that they handle manually, with design patterns, editors, copy-paste, and lots of debugging.
+Either third-class or fourth-class entities are considered @emph{external} to the language,
+not part of its semantics, not handled by its processors,
+yet conceptually present in the minds of the programmers.@note{
+  Whereas the terms “first-class” and “second-class” are well-established in the literature,
+  @;{TODO cite}
+  we are hereby introducing the terms “third-class” and “fourth-class”,
+  as well as the distinction between “internal” and “external” entities.
+  Of course, depending on where you draw the line for “the language”,
+  the very same entity processed by the very same tools may shift between these classes:
+  thus, in C++ classes are second-class entities in;
+  but if the language being considered is C, and C++ is seen as an external metalanguage
+  (as was the case in the original implementation @c{cfront} of C++,
+  a preprocessor that generated C code),
+  then the very same classes are third-class entities for C;
+  and if @c{cfront} were updated to support templates, classes would be first-class entities
+  for the compile-time C++ template language;
+  and if done by hand as a set of conventions on top of C, they would be fourth-class entities.
+}
+Thus, programmers will:
 @itemize[
 @item{copy and paste sections of code as poor man’s modules;}
 @item{preprocess files to concatenate, transform and generate code fragments;}
@@ -1408,7 +1440,7 @@ support for modularity is lacking within a language,
 or within the ecosystem around one or multiple languages,
 this language or ecosystem becomes but
 the weak kernel of a haphazard collection of tools cobbled together
-to palliate its lack of modularity.
+to palliate its lack of internal modularity with external modularity.
 The result inevitably ends up growing increasingly
 complex, ugly, and hard to use, develop and maintain.
 
@@ -1523,37 +1555,157 @@ and that used by the actual problems, etc.
 Modularity used incorrectly, with too many module boundaries,
 module boundaries drawn badly,
 resolved at the wrong evaluation stage,
-can increase complexity rather than reduce it.
-@;{ TODO cite something about HURD? Footnote? }
-@;{ Some languages like APL take radical approach in reducing the need for modules or even subroutines
-    by being extremely terse and having common idioms being sequences of combinators
-    instead of routine names. @;{TODO cite} }
+can increase complexity rather than reduce it:
+more parts and more crossings between parts cause more overhead,
+whereas the factoring fails to bring simplification,
+and instead require programmers to manage large interfaces,
+subtle underdocumented interactions between features,
+little code reuse of modules between different situations,
+more implicit state with many cases needed to mentally juggle with
+while reasoning about calls to exposed APIs.@note{
+  A notable trend in wrongheaded “modularity” is @emph{myopic} designs,
+  that achieve modest savings in a few modules under focus
+  by vastly increasing the development costs left out of focus,
+  in extra boilerplate and friction, in other modules having to adapt,
+  inter-module glue being made harder, or module namespace curation getting more contentious.
+
+  For instance, the once vastly overrated and overfunded notions “microkernels” or “microservices”
+  consist in dividing a system in a lot of modules, “servers” or “services”
+  each doing a relatively small task within a larger system,
+  separated by extremely expensive barriers wherein data is marshalled and unmarshalled
+  across processes or across machines.
+  Each service in isolation, that you may focus on,
+  looks and is indeed simpler than the overall software combining those services;
+  but this overall software kept out of focus
+  was made significantly more complex by dividing it into those services.
+  Another myopic design that is much rarer these days is to rewrite a program
+  from a big monolithic heap of code in a higher level language
+  into a lot of subroutines in assembly language,
+  boasting how vastly simpler each of these subroutines is to the previous program;
+  yet obviously the sum total of those routines is much more complex to write and maintain
+  than a similarly factored program written in an appropriate higher level language
+  (that indeed the original language might not be).
+
+  While myopic designs might offer some small performance improvement in terms of
+  pipelining, locality and load-balancing for very large worksets,
+  they can offer no improvement whatsoever in terms of modularity, quite the contrary:
+  @Xitemize[@;#:style enumparenalph
+  @Xitem{(1)
+    The modules must already exist or be made to exist at the language level,
+    before the division into services may be enacted.
+    Far from providing a solution to any problem for the programmer,
+    these techniques require programmers to already have solved the important problem of module factoring
+    before you can apply them, at which point they hinder rather than help.
+  }
+  @Xitem{(2)
+    Given the factoring of a program into modules,
+    these techniques add runtime-time barriers
+    that do not improve safety compared to compile-time barriers
+    (e.g. using strong types, whether static or dynamic).
+  }
+  @Xitem{(3)
+    Yet those runtime barriers vastly decrease performance, and even more so
+    by the compile-time optimizations they prevent (whether builtin or user-defined with e.g. macros).
+  }
+  @Xitem{(4)
+    The interface of each module is made larger for having to include a specific marshalling,
+    and the constraints related to being marshalled.
+    This problem can be alleviated by the use of “interface description languages”,
+    but these languages tend to be both poorer and more complex
+    than a good programming language’s typesystem,
+    and introduce an impedance mismatch of their own.
+  }
+  @Xitem{(5)
+    Any alleged benefits from dividing in multiple distributed processes,
+    whether in terms of failure-resistance, modularity, safety or performance
+    are wholly lost if and when (as is often the case) persistent data
+    all ends up being centralized in database services,
+    that become a bottleneck for the dataflow.
+  }
+  @Xitem{(6)
+    The overall system is not made one bit smaller for being divided in smaller parts;
+    actually, all the artificial process crossings, marshallings and unmarshallings,
+    actually make the overall system noticeably larger in proportion to how small those parts are.
+    Lots of small problems are added a both runtime and compile-time,
+    while no actual problem whatsoever is solved.
+  }
+  @Xitem{(7)
+    These designs are thus actually detrimental in very proportion to how much they are followed,
+    and in proportion to how beneficial they claim to be. They are, technically, a lie.
+  }
+  @Xitem{(9)
+    In practice, “successful” microkernels import all services into a monolithic “single server”,
+    and successful microservices are eventually successfully rebuilt
+    as vertically integrated single services.
+  }]
+
+  In the end, the technical justification for these misguided designs stem from the inability
+  to think about meta-levels and distinguish between compile-time and runtime organization of code:
+  Modularity is a matter of semantics, as manipulated by programmers at programming-time,
+  and by compilers at compile-time, and runtime barrier crossings
+  can do nothing to help about that, only hinder.
+  @;{ TODO cite something about HURD? Footnote? }
+
+  Now, there are sometimes quite valid socio-economical (and not technical) justifications
+  to dividing a program into multiple services:
+  when there are many teams having distinct incentives, feedback loops, responsibilities,
+  service level agreement their are financially accountable for, etc.,
+  it makes sense for them to deploy distinct services.
+  The fact that the technical architecture follows the business or management architecture
+  is then known as Conway’s Law.
+
+  Finally, it is of note that some systems take a radically opposite approach
+  to modularity, or lack thereof:
+  instead of gratuitous division into ever more counter-productive modules,
+  some prefer wanton avoidance of having to divide code into modules at all.
+  For instance, APL reduces the @emph{need} for modules or even subroutines by being extremely terse,
+  to the point of replacing many routine names by common idioms, known sequences of combinators.
+  @;{TODO cite}
+  Admittedly, there is only so much room in this direction to simplify and monomorphize code
+  until it is both so simple and task-specific that there is no need for shared modules:
+  at some point, you reach the intrinsic complexity of the task at hand,
+  the point at which it is too big to fit wholly in any programmer’s mind;
+  then it must be chipped away by moving parts into other modules,
+  notably by reusing common algorithms and data structures from libraries
+  rather than inline specialized versions.
+  But in practice, a lot of problems can be tackled this way by bright enough developers,
+  especially after having been divided into subproblems for socio-economic reasons.
+}
 
 @subsubsection{Implementing Modularity}
 
-To achieve modularity, parts of some software entity
-need to be able to reference and use other parts of the entity
-potentially written by other people, possibly in the future.
-This typically happens through some data structure
-that embodies all the parts of the entity, that each part uses
-to resolve references to the other parts.
-This data structure is suitably scoped with the modularly-defined entity,
-and its dynamic extent must cover all reference resolutions.
+To achieve modularity, the specification for a software computation
+is divided into independently specified modules.
+Modules may reference other modules and the subcomputations they define,
+potentially specified by many different people at different times,
+including in the future.
+These references happen through a module context, a data structure
+with many fields or subfields that refer to each module, submodule,
+or subcomputation specified therein.
+When comes time to integrate all the module specifications into a complete computation,
+then comes the problem of implementing the circularity between the definition of the module context
+and the definitions of those modules.
 
-Hence, with external modularity, the modules are resolved
-in whatever preprocessor or generator external to the language generate the program,
-and any supporting data structure is resolved before the language processor even starts.
+With third-class modularity, the modules context and module context are resolved
+before the language processor starts,
+by whatever preprocessor external to the language generates the program.
+With second-class internal modularity, they are resolved by some passes of the
+language-internal processor, before the program starts.
+In either of the above cases, a whole-program optimizer might fully resolve
+those modules such that no trace of them is left at runtime.
+Without a whole-program optimizer, compilers usually generate global linkage tables
+for the module context, that will be resolved
+statically by a static linker when producing an executable file,
+or dynamically by a dynamic loader when loading shared object files,
+in either case, before any of the programmer’s regular code is run
+(though some hooks may be provided for low-level programmer-specified initialization).
 
-With a whole-program optimizer, modules are resolved in the compiler
-and may leave no trace at runtime, or behave as in the case below.
-
-For global modules, compilers usually generate references
-that will be resolved statically by the linker when producing a file,
-or dynamically by the dynamic loader,
-before any of the programmer’s regular code is run,
-by accessing some global linkage table.
-
-For local modules, compilers usually generate some kind of “dispatch table”
+At the other extreme, all third-class or second-class module evaluation
+may be deferred until runtime, the runtime result being no different
+than if first-class internal modularity was used,
+though there might be benefits to keeping modularity compile-time only
+in terms of program analysis, synthesis or transformation.
+For local or first-class modules, compilers usually generate some kind of “dispatch table”
 for each modularly defined entity, that, if it cannot resolve statically,
 will exist as such at runtime.
 Haskell typeclasses become by “dictionaries” that may or may not be fully inlined.
@@ -1561,21 +1713,26 @@ The case of OO, prototypes are indeed typically represented
 by such “virtual dispatch table” at runtime—which in Class OO
 would be the type descriptor for each object, carried at runtime for dynamic dispatch.
 
-At runtime, the entity descriptor for the modularly defined entity,
-if not global, will be passed as argument to functions
-that represent each part of the modular definition.
-Now, there will be issues to ensure that each modular sub-entity
-is only used after it was properly initialized,
-especially since in general those sub-entities are provided by many different programmers
-working on different parts of the code.@note{
+In a low-level computation with pointers into mutable memory,
+the module context is often being accessed through a global variable,
+or if not global, passed to functions implementing each module as a special context argument,
+and each field or subfield is initialized through side-effects,
+often with some static protocol to ensure that they are (hopefully, often all) initialized
+before they are used.
+In a high-level computation without mutation,
+each module is implemented as a function taking the module context as argument,
+the fields are implemented functional lenses@;{TODO cite},
+and the mutual recursion is achieved using a fixed-point operator@;{TODO cite},
+whereas lazy evaluation can be used as a dynamic protocol to ensure that
+each field is initialized before it is used.@note{
   It is hard to ensure initialization before use;
   a powerful enough language makes it impossible to predict whether that will be the case.
 
   In unsafe languages, your program will happily load nonsensical values from
   uninitialized bindings, then silently corrupt the entire memory image,
   dancing a fandango on core, causing a segmentation fault and other low-level failures,
-  or even worse, veering off into arbitrary undefined behavior and yielding very wrong results
-  to unsuspecting users.
+  or even worse, veering off into arbitrary undefined behavior and yielding
+  life-shatteringly wrong results to unsuspecting users.
   The symptoms if any are seen long after the invalid use-before-init,
   making the issue hard to pin-point and debugging extremely difficult
   unless you have access to time-travel debugging at many levels of abstraction.
@@ -1585,20 +1742,20 @@ working on different parts of the code.@note{
   or you may have to use (and sometimes provide out of thin air) some default value
   that will eventually prove wrong.
   In the end, your program will fail with some exception,
-  which will also long after the invalid use-before-init,
+  which may happen long after the invalid use-before-init,
   but at least the symptoms will be visible and you'll have a vague idea
   what happened, just no idea where or when.
 
   Actually safe languages, when they can’t prove init-before-use,
-  will maintain and check a special marker in the binding cell or next to it,
+  will maintain and check a special “unbound” marker in the binding cell or next to it,
   possibly even in a concurrency-protected way if appropriate,
   to identify which bindings were or weren’t initialized already, and
   eagerly raise an exception immediately at the point of use-before-init,
   ensuring the programmer can then easily identify where and when the issue is happening,
   with complete contextual information.
 
-  In a safer language, lazy evaluation automatically ensures that you always have init-before-use,
-  and if the compiler is well done may even detect finite dependency cycles are found;
+  In even safer languages, lazy evaluation automatically ensures that you always have init-before-use,
+  and if the compiler is well done may even detect and properly report finite dependency cycles;
   you may still experience resource exhaustion if you generate infinite new dynamic dependencies,
   but so would you in the less safe alternatives if you could reach that point.
 
@@ -1616,22 +1773,34 @@ working on different parts of the code.@note{
   However the lazy evaluation approach minimizes artificial constraints on such protocol,
   that when not sensible might force him to fall back to the not-so-safe variant.
 
-  Now, this well-known issue exists outside of OO: it may happen
+  The init-before-issue issue is well-known and exists outside of OO: it may happen
   whenever there is mutual recursion between variables or initial elements of data structures.
   However, we’ll see that open recursion is ubiquitous in OO,
   wherein partial specifications define methods that use other methods that are yet to be defined
   in other partial specifications, that may or may not follow any particular protocol
   for initialization order.
   Thus we see that the simplest, most natural and safest usable setting for OO is:
-  lazy evaluation. This may come at a surprise to many.
-  In the rest of the article we argue the case from modularity and semantics rather than safety.
+  lazy evaluation.
+
+  This may come at a surprise to many who mistakenly believe the essence of OO
+  is in the domain it is commonly applied to
+  (defining data structures and accompanying functions as “classes”),
+  rather than in the semantic mechanism that is being applied to these domains
+  (extensible modular definitions of arbitrary code using inheritance).
+  But this is no surprise to those who are deeply familiar with C++ templates, Jsonnet or Nix,
+  and other systems that programmers to directly use unrestricted OO
+  in a more fundamental purely functional setting wherein OO can be leveraged
+  into arbitrary programming and metaprogramming, not just for “classes” stricto sensu.
+  In the next subsubsection, we argue the case from the point of view of modularity
+  rather than initialization safety;
+  however, both can be seen as two aspects of the same argument about semantics.
 }
 The more programmers must agree on a protocol to follow, the less modular the approach.
 In a stateful applicative language, where the various modular definitions
 are initialized by side-effects, programmers need to follow some rigid protocol
 that may not be expressive enough to follow the modular dependencies between internal definitions,
 often leading to indirect solutions like “builder” classes in Java,
-that stage all the complex computations before initialization of objects of the actual desired class.
+that stage all the complex computations before the actual initialization of objects of the desired class.
 
 A pure functional language without side-effects is the setting for the simplest and
 probably clearest model of modularity:
@@ -1710,7 +1879,8 @@ including modules yet to be used, yet to be written,
 as part of an assemblage of modules not yet anticipated.
 To preserve modularity in this setting without reverting to some kind of dynamic typing as in Nix,
 some kind of subtyping with extensible types is therefore required,
-such that each module can specify the bindings it requires and those it provides.@note{
+such that each module can specify the bindings it requires and those it provides
+without the need for global coordination.@note{
   In a language like Haskell, that does not have any mechanism of subtyping or extensible types,
   module programmers can be creative by having modular typeclass constraints on a type parameter,
   then depend on each application programmer making some gigantic non-modular definition
@@ -1753,17 +1923,24 @@ and adds new functionality, refines existing functionality,
 or otherwise modifies the previous entity.
 Extensibility that can be realized inside or outside of a programming language.
 
-@subsubsection{First-class, Second-class or External Extensibility}
+@subsubsection{First-class to Fourth-class Extensibility}
 
-External or extra-linguistic extensibility is the ability to extend some software entity
-by taking its source code then read it, copy it, edit it, process it, (re)build it, etc.
-Lacking source code, extra-linguistic extensibility can also work by patching binary code,
-though that can be harder, less robust and and less flexible.
-The code doing the extension is tooling outside the language itself,
-though it might incidentally happen to be written in the same language.
+External Extensibility is the ability to extend some software entity
+by taking its code then reading it, copying it, editing it,
+processing it, modifying it, (re)building it, etc.
+Extensibility is much easier given source code meant to be thus read and written,
+but is still possible to reverse-engineer and patch binary code,
+though the process can be harder, less robust, less flexible and less reusable.
+Thus, external extensibility is always possible for any software written in any language,
+though it can be very costly, in the worst case
+as costly as rewriting the entire extended program from scratch.
+When done automatically, it's third-class extensibility.
+When done manually, it's fourth-class extensibility.
+The automation need not be written in the same language as the software being extended,
+or as its usual language processor, though either may often be the case.
 
-Internal or Intra-linguistic extensibility by contrast is the ability to
-extend, refine or modify a software entity
+Internal or Intra-linguistic extensibility, either first-class or second-class, by contrast,
+is the ability to extend, refine or modify a software entity
 without having to read, rewrite, or modify any of the previous functionality,
 indeed without having to know how it works or have access to its source code,
 only having to write the additions, refinements and modifications.
@@ -1783,12 +1960,34 @@ and re(write) both the old and new functionality as extensions of that library
 as much as possible at compile-time for efficiency (which is second-class extensibility),
 yet what you need to runtime (which is first-class extensibility).
 
+Finally, and as for modularity, the use of reflection, “live” interactive environments,
+or even for a “regular” computing system considered from a wider point of view
+that includes not just “dead” programs from “end-user” programmers,
+but also all human interaction loops from operating system and compiler writers
+as well as those end-users, can blur the lines between “external” and “internal”,
+between “second-class” and “first-class”, or reclassify them as demarcations
+in the division of labor that may be opportune to some of the participating humans
+but not to others.
+
 @subsubsection{A Criterion for Extensibility}
 
 @principle{A design is more extensible if it enables developers
 to enact more kinds of change through smaller more local modifications}
 compared to alternative designs that require larger (costlier) rewrites
 or more global modifications (or prohibit change, same as making its cost infinite).
+
+Extensibility should be understood within a framework of what changes
+are or aren’t “small” for a human (or AI?) developer, rather than
+for a fast and mindless algorithm.
+
+Thus, for instance, changing some arithmetic calculations to use
+bignums (large variable-size integers) instead of fixnums (builtin fixed-size integers)
+in C demands a whole-program rewrite with non-local modifications to the program structure.
+in Java it involves some changes all over though straightforward and preserving the local program structure;
+in Lisp requires minimal local changes, and Haskell requires one local change only.
+Thus with respect to this and similar kinds of change, if expected,
+Haskell is more extensible than Lisp that is more extensible than Java that is more extensible than C.
+@;{TODO examples for C, Java, Lisp, Haskell}
 
 @subsubsection{Historical Extensibility Breakthroughs}
 
@@ -1801,7 +2000,11 @@ also much facilitated external extensibility.
 And software that requires configuration through many files that must be carefully kept in synch manually
 is less extensible than one that can be configured through a single file
 from which all required changes are automatically propagated in a coherent manner
-(whether that configuration is external, internal second-class or internal first-class).
+(whether that configuration is internal or external, first-class to fourth-class);
+if multiple files must be modified together (such as interface and implementation files in many languages),
+then the units of modularity are not each single file, but
+each group of files that need be modified together;
+or sometimes, groups that include parts of multiple files, which is even more cumbersome.
 
 Higher-level languages facilitate external extensibility compared to lower-level ones,
 by enabling programmers to make smaller more local changes for larger effects;
@@ -1840,38 +2043,90 @@ from the compressor’s model of the software so far;
 yet those compressed bits would mean nothing outside the exact context
 of the compressor—maximum extensibility, minimum modularity.
 
-Interestingly, these forms of extensibility without modularity,
+Interestingly, these forms of external extensibility without modularity,
 while good for distributing software, are totally infeasible for humans to directly create.
 Instead, humans use modular forms of extensibility, such as editing source code
 as part of a edit-evaluate-debug development loop, until they reach a new version
 of the software they want to release, after which point they use automated tools
 to extract from the modularly-achieved new version some non-modular compressed patches.
 
+As for internal extensibility without modularity,
+UML, co-Algebras or relational modeling, as previously discussed in @secref{modeling_the_world},
+fail to model OO precisely because the “classes” they specify are mere types:
+they lack the modularity context that enables self-reference in actual OO classes.
+As in-language entities, they can be extended by adding new attributes,
+but those types have to be constants.
+
 @subsubsection[#:tag "extensibility_and_complexity"]{Extensibility and Complexity}
 
-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx
+Extensibility of software entities means that variants of these software entities
+may be reused many times in as many different contexts,
+so more software can be achieved for fewer efforts.
 
-@subsubsection{Why Extensibility}
+Now, external extensibility through editing (as opposed to e.g. preprocessing)
+means that these entities are “forked”,
+which in turn reintroduces complexity in the maintenance process,
+as propagating bug fixes and other changes to all the forks
+becomes all the harder as the number of copies increases.
+External extensibility through preprocessing,
+and internal extensibility, do not have this issue,
+and, if offered along a dimension that matters to users,
+enable the development of rich reusable libraries
+that overall decrease the complexity of the software development process@xnote["."]{
+  Interestingly, detractors of OO will often count “code reuse” as a bad aspect of OO:
+  they will claim that they appreciate inheritance of interfaces, but not of implementation.
+  Many OO language designers, as of Java or C#, will say the same of multiple inheritance
+  though not of single inheritance.
+  Yet, many practitioners of OO have no trouble reusing and extending libraries of OO classes and prototypes,
+  including libraries that rely heavily on multiple inheritance for implementation.
 
-Developers quickly lose direction, motivation, support from management
-and buy-in from investors and customers when they do not have tangible results
-to show for their work.
-Extensibility is the ability for a system to
-deliver more rewards for fewer efforts, compared to alternatives.
-In other words, incrementality supports a short feedback loop in software development.
+  It is quite likely that users bitten by the complexities yet limitations
+  of multiple inheritance in C++ or ADA may see it does not bring benefits commensurable with its costs;
+  and it is also quite likely that users fooled by the absurd “inheritance is subtyping” slogan
+  found that code written under this premise does not quite work as advertised.
+  These disgruntled users may then blame OO in general
+  for the failings of these languages to implement OO,
+  or for their believing false slogans and false lessons propagated by bad teachers of OO.
+}
 
-Other, the right thing to do is not to reuse an existing object through (intra-linguistic extensions),
-but to refactor the code (extra-linguistic code extension) so that both the old and new code
-are extensions of common libraries (intra-linguistic extensions).
+Note that often, the right way to reuse an existing software entity
+is not to reuse it as is (internal extensions),
+but first to refactor the code (external extensions) so that both the old and new code
+are extensions of some common library (internal extensions).
 Then the resulting code can be kept simple and easy to reason with.
-Intra-linguistic and extra-linguistic code extension are thus mutual friends, not mutual enemies.
+Internal and external extensibility are thus mutual friends, not mutual enemies.
 
-@subsubsection{Types for Extensibility}
+By decreasing not only overall complexity, but the complexity of @emph{incremental} changes,
+extensibility also supports shorter software development feedback loops,
+therefore more agile development.
+By contrast, without extensibility, developers may require more efforts
+before any tangible incremental progress is achieved,
+leading to loss of direction, of motivation, of support from management
+and of buy-in from investors and customers.
+Extensibility can thus be essential to successful software development.
 
-In a pure functional model extensibility,
-if entities of type @r[E] are being specified extensibly,
+@subsubsection{Implementing Extensibility}
+
+To enable extensibility, a software entity must be represented in a way
+that allows semantic manipulation in dimensions meaningful to programmers.
+By the very nature of programming, any such representation is enough to
+enable arbitrary extensions, given a universal programming language,
+though some representations may be simpler to work with than others:
+those that are at the level of abstraction, from the correct point of view,
+so that programmers can express precisely the changes they want
+with the least effort, and the least semantic discrepancy.
+However, in the case of second-class internal extensibility,
+or of first-class internal extensibility in a less-than-universal language,
+representations are no longer equivalent,
+as only a subset of computable extensions are possible.
+Thus viewed, extensibility is not uncommon in computing systems,
+and is a matter of perceiving the benefits enough to justify the costs of automation,
+when undaring programmers would get used to manual external extension at best.
+
+In a pure functional model of extensibility,
+where entities of type @r[E] are being specified extensibly,
 then new extended entity specified from a previous one of type @r[E] is also of type @r[E],
-and the “extension” if first class would be of type @r[E ⟶ E]
+and the “extension” if first class would be a function of type @r[E ⟶ E]
 (though we will later propose more refined types for that).
 In terms of λ-calculus, a programmer can take an opaque value of type @r[E],
 without having to see inside the term for that value, or being able to access it,
@@ -1880,46 +2135,57 @@ and operate on it to return a new term.
 When implementing OO, the variable for this previous term is conventionally called @r[super],
 after Simula. @; cite @~cite{Simula1967}
 
-@subsubsection{Extending Modular Definitions}
-
-Let us consider implementing modular extensibility in a pure functional setting.
-If we define extensions to modular definitions, our terms will take
-an argument @r[super], the previous “inherited” (record of) definitions,
-then an argument @r[self], the modularity context,
-and returns some extended (record of) definitions.
-Or if we modularly define extensions, our terms will take an argument @r[self], the modularity context,
-then an argument @r[super], the previous “inherited” (record of) definitions,
-and returns some extended (record of) definitions.
-The two views are functionally equivalent: take two arguments @r[self] and @r[super], in either order,
-and return an extended variant of @r[super]
-that could modularly extract information from @r[self] as it builds the extension.
-
-A simple type for a modular extension seen as a term @c{(λ (self super) ...extended_super)}
-is then @r[M ⟶ E ⟶ E]
-where @r[M] is the type of the module context @r[self], and
-@r[E] is the type of the modularly defined entity @r[super] and of its extended result.
-In the most general case, @r[E] will be one of the @emph{methods} of a prototype,
-whereas @r[M] will be some ecosystem of all the prototypes and library functions, as with @c{nixpkgs}.
-In the simplest case, @r[E] and @r[M] will both be the same type,
-that of a single prototype’s target record being defined.
+In cases that an entity is extended “in place” and the old version no longer used,
+as in editing a file, or redefining a class in Smalltalk or Lisp,
+an extension is a function that side-effects a mutable reference of type @r[E],
+or something equivalent.
 
 @;{TODO examples}
 
-@; XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-
-@subsubsection{A Developer-Interface Feature}
 @subsection[#:tag "extensible_modularity"]{Extensible Modularity}
 @subsubsection{A Dynamic Duo}
-@subsubsection{Reduction to Smaller Problems}
-@subsubsection{Not Just Moving Costs Around}
+
+Modularity and Extensibility work hand in hand:
+@principle{Modularity means you only need to know
+a small amount of old information to make software progress.
+Extensibility means you only need to contribute
+a small amount of new information to make software progress.}
+Together they mean that finite-brained developers can better divide work between each other
+and make more software progress with a modular and extensible design,
+tackling larger problems while using less mental power each,
+compared with using less-modular and less-extensible programming language designs.
+
+@subsubsection{Modular Extensions}
+
+Let us consider implementing modular extensibility in a pure functional setting.
+If we modularly define extensions, our terms will take an argument @r[self], the modularity context,
+and return an extension, which takes an argument @r[super],
+the previous “inherited” (record of) definitions,
+and returns some extended (record of) definitions.
+A simple type for a modular extension seen as a term @r{(λ (self super) ...extended_super)}
+is then @r[M ⟶ E ⟶ E]
+
+If we instead define extensions to modular definitions, our terms will take
+an argument @r[super], the previous “inherited” modular definition,
+of type @r[M ⟶ E], and return an extended modular definition also of type @r[M ⟶ E],
+and therefore is of type @r[(M ⟶ E) ⟶ M ⟶ E].
+But since the point of modularity is to plug the same element of @r[M] at the end through a fixed-point,
+the construct contains the same useful information as @r[E ⟶ M ⟶ E], or as
+@r[M ⟶ E ⟶ E] above, just with extra complexity in the composition.
+We will therefore prefer the simpler “modular extension” point of view.
+
+In the general case, the type @r[E] or @r[super] and the return value
+will be that of a @emph{method} of a prototype, or sub-entity being incrementally defined,
+whereas @r[M] will be some language-wide namespace, registering all
+known (and yet unknown) computations, prototypes and library functions in the language ecosystem.
+This is notably the case with @c{nixpkgs}, wherein @r[M]
+In the simplest case, @r[E] and @r[M] will both be the same type,
+that of a single target being modularly and extensibly specified, typically a record.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
 @subsubsection{Extensible Modularity, Interactively}
 @subsection{Internal vs External}
-@subsubsection{External}
-Editor
-Preprocessor => can propagate changes, be more modular
-file as unit of modularity? #include actually, more or less pairs of files
-@subsubsection{Internal}
 @subsubsection{Internal Modularity and Complexity}
 Recombine modules at runtime depending on user input.
 Or just at compile-time depending on program configuration.
