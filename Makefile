@@ -13,7 +13,8 @@ slides: slides-2025-shu # slides-2023-njpls slides-2024-lambdaconf
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
-PDFVIEWER=evince --presentation
+PDFVIEWER=xpdf -z width -fullscreen
+#PDFVIEWER=evince --presentation
 endif
 ifeq ($(UNAME_S),Darwin)
 PDFVIEWER=open

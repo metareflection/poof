@@ -339,12 +339,15 @@ due to the reader having wrong expectations about what OO is supposed to be.
 @subsection{Whatever C++ is}
 
 At one point the most popular OO language,
-C++ indeed enables programming in OO style to a large degree;
-yet it is not at all representative of how other OO languages work,
+C++ indeed enables programming in OO style to a large degree.
+But C++ is a rich language with many dimensions completely independent of OO
+(consider e.g. bit-banging, RAII, template metaprogramming or pointer aliasing and the memory model),
+whereas the OO dimension that it undoubtly is very different from how OO works in other languages,
 and colloquial C++ often goes against the principles of OO@xnote["."]{
   Alan Kay famously declared at OOPSLA ’97, near peak C++ popularity:
   “I made up the term ‘object-oriented’, and I can tell you I didn’t have C++ in mind.”}
-Therefore, if what you know of “Object Orientation” comes from C++,
+Therefore, C++ is in no way representative of OO, and
+if what you know of “Object Orientation” comes from C++,
 please put it aside, at least while reading this article, and come with a fresh mind.
 
 This is especially true with regard to multiple inheritance,
@@ -359,10 +362,11 @@ and a subset of multiple inheritance (for @r[virtual] classes and members).
 Moreover, C++ crucially lacks the proper method resolution
 that enables a lot of the modularity of multiple inheritance in other languages.
 
-Now, you can use C++'s powerful template language to reconstitute actual multiple inheritance
-on top of C++'s weird variant of inheritance@~cite{smaragdakis2000mixin};
-but this technique is quite uncolloquial, syntactically heavy, slower than the colloquial ersatz,
-and you have to manually compute and chain your class precedence list,
+Now, you can use C++'s powerful template language to reconstitute actual mixin inheritance
+on top of C++'s weird variant of inheritance@~cite{smaragdakis2000mixin},
+then implement proper multiple inheritance on top.
+But this technique is quite uncolloquial, syntactically heavy, slower than the colloquial ersatz,
+and you have to manually compute and chain each class's class precedence list,
 which cancels some of the modularity benefits of multiple inheritance
 versus single and mixin inheritance.
 
@@ -378,7 +382,8 @@ they do not reliably inform about OO in general@xnote["."]{
   Even when C++ got multiple inheritance wrong@~cite{stroustrup1989multiple},
   ignorance was no valid excuse,
   since Lisp got it right ten years earlier@~cite{Cannon1979}.
-  Ignorance is even less forgivable in the case of ADA yet 14 years later.
+  Ignorance is even less forgivable in the case of ADA
+  copying C++ “multiple inheritance” yet 14 years later.
 }
 
 @subsection{Classes Only}
@@ -487,13 +492,15 @@ Inasmuch as “encapsulation” informally denotes but part or all of modularity
 the ability to code against an interface,
 with code on either side not caring which way the other side implements its part of the interface
 (or not even being able to distinguish between multiple such implementations),
-then yes, of course, this is an essential part of OO, as per our definition.
+then yes, this is half of the essence of OO, as per our definition
+(the other half being extensibility).
 Some may also call this concept “data abstraction” or some other kind of “abstraction”.
 @; XXX cite Liskov???
 
 However, inasmuch as some people identify encapsulation as the presence
 of specific visibility mechanisms such as found in C++ or Java
-(with some attributes or methods being @r[public], @r[private] or something in–between),
+(with some attributes or methods being @r[public], @r[private] or something in–between,
+on the precise semantics of which designers of different languages cannot agree),
 we’ll easily dismiss such mechanisms as not actually essential to OO,
 since many quintessential OO languages like Smalltalk or Common Lisp
 lack any such specific mechanism,
@@ -623,8 +630,9 @@ that Alan Kay also once mentioned was essential for OO@xnote["."]{
   which would also require some reimplementation of garbage collection for lazy computation caches.
   Neither solution would qualify as supporting OO any the more than
   assembly language “supports” OO or any Turing-universal language “supports” any paradigm, though.
-  In the end, OO, which is Prototype OO, is essentially a pure lazy functional paradigm,
-  and in any other paradigm but indirectly supports it.
+  In the end, the essence of OO, which is Prototype OO,
+  directly fits in the pure lazy functional paradigm,
+  but only fits indirectly in other paradigms.
 }
 
 Moreover, many OO languages generalize and extend their method dispatch mechanism
@@ -1384,7 +1392,7 @@ entities that exist at compile-time but are not available as regular runtime val
 Either first-class or second-class entities are considered @emph{internal} to the language,
 part of its semantics, handled by its processors (compiler, interpreter, type system, etc.).
 
-But many languages offer no internal notion of modules.
+However many languages offer no such internal notion of modules.
 Indeed modules are a complex and costly feature to design and implement,
 and few language designers and implementers will expend the necessary efforts toward it
 at the start of language’s development;
@@ -1396,13 +1404,12 @@ in size and complexity generally bother.@note{
   from which they inherit the module system.
 }
 
-Yet modularity is foremost a @emph{meta-linguistic} concept:
-Even in a language that provides no support wh
-atsoever for modules
+Now modularity is foremost a @emph{meta-linguistic} concept:
+Even in a language that provides no support whatsoever for modules
 @emph{within} the language itself (such as C),
 programmers will find means to express modules as @emph{third-class} entities,
 automated by tools @emph{outside} the language:
-a preprocessor, editor macros, or “wizards”.
+a preprocessor, an object linker, editor macros, or “wizards”.
 And even if they somehow don’t because they can’t or can’t afford to use such automation,
 developers may achieve modules as @emph{fourth-class} entities,
 ones that they handle manually, with design patterns, editors, copy-paste, and lots of debugging.
@@ -1474,7 +1481,25 @@ runtime and/or compile-time representation for those files,
 and often some correspondence between file names and names of internal module entities
 that result from compiling those files.
 In other words, for most languages that matter,
-files embody modularity internal to programming languages.
+files embody modularity internal to programming languages.@note{
+  Note that while a file may be a unit of modularity, this is not always the case:
+  often, actual modules span multiple files;
+  other times, there may be multiple modules in a single file.
+  For instance, compiling a C program typically requires each file to be registered
+  into some “build” file (e.g. a @c{Makefile}) to be considered as part of the software;
+  a C library also comes with an accompanying “header” file, though there need not be
+  a 1-to-1 correspondence between C source files and header files.
+  A C “module” therefore typically spans multiple files,
+  and some files (headers and build files) can have bits from multiple modules.
+  Then again, the C language also recently adopted some notion of namespace,
+  which, though it doesn’t seem used that much in practice,
+  can constitute yet another notion of modules, several of which can be present in a file.
+  At a bigger scale, groups of files in one or multiple directories may constitute a library,
+  and a “package” may include one or several libraries, etc.
+  Even in a language, there can be many notions of modularity at several different scales,
+  enabling division of labor across time for a single person, for a small team, for a large team,
+  between several teams, etc., each time with different non 1-to-1 correspondences to files.
+}
 
 Now, while files go back to the 1950s and hierarchical filesystems to the 1960s,
 @; First filesystem??? IBM disk???
@@ -1593,9 +1618,10 @@ while reasoning about calls to exposed APIs.@note{
   @Xitem{(1)
     The modules must already exist or be made to exist at the language level,
     before the division into services may be enacted.
-    Far from providing a solution to any problem for the programmer,
-    these techniques require programmers to already have solved the important problem of module factoring
-    before you can apply them, at which point they hinder rather than help.
+    Far from @emph{providing} a solution to any problem for the programmer,
+    these techniques @emph{require} programmers to already have solved
+    the important problem of module factoring before you can apply them,
+    at which point they hinder rather than help.
   }
   @Xitem{(2)
     Given the factoring of a program into modules,
@@ -1651,8 +1677,8 @@ while reasoning about calls to exposed APIs.@note{
   when there are many teams having distinct incentives, feedback loops, responsibilities,
   service level agreement their are financially accountable for, etc.,
   it makes sense for them to deploy distinct services.
-  The fact that the technical architecture follows the business or management architecture
-  is then known as Conway’s Law.
+  Indeed, Conway’s Law @;TODO CITE ?
+  states that the technical architecture of software follows its business or management architecture.
 
   Finally, it is of note that some systems take a radically opposite approach
   to modularity, or lack thereof:
@@ -1661,7 +1687,9 @@ while reasoning about calls to exposed APIs.@note{
   For instance, APL reduces the @emph{need} for modules or even subroutines by being extremely terse,
   to the point of replacing many routine names by common idioms, known sequences of combinators.
   @;{TODO cite}
-  Admittedly, there is only so much room in this direction to simplify and monomorphize code
+  Admittedly, there is only so much room in this direction:
+  as the software grows in intent and the features
+  to simplify and monomorphize code
   until it is both so simple and task-specific that there is no need for shared modules:
   at some point, you reach the intrinsic complexity of the task at hand,
   the point at which it is too big to fit wholly in any programmer’s mind;
@@ -2162,14 +2190,15 @@ If we modularly define extensions, our terms will take an argument @r[self], the
 and return an extension, which takes an argument @r[super],
 the previous “inherited” (record of) definitions,
 and returns some extended (record of) definitions.
-A simple type for a modular extension seen as a term @r{(λ (self super) ...extended_super)}
-is then @r[M ⟶ E ⟶ E]
+A simple type for a modular extension is then @r[M ⟶ E ⟶ E],
+wherein terms are typically of the form @linebreak[] @r{(λ (self super) ...extended_super)}.
 
 If we instead define extensions to modular definitions, our terms will take
 an argument @r[super], the previous “inherited” modular definition,
 of type @r[M ⟶ E], and return an extended modular definition also of type @r[M ⟶ E],
 and therefore is of type @r[(M ⟶ E) ⟶ M ⟶ E].
-But since the point of modularity is to plug the same element of @r[M] at the end through a fixed-point,
+But since the point of modularity is to plug
+the same element of @r[M] at the end through a fixed-point,
 the construct contains the same useful information as @r[E ⟶ M ⟶ E], or as
 @r[M ⟶ E ⟶ E] above, just with extra complexity in the composition.
 We will therefore prefer the simpler “modular extension” point of view.
@@ -2178,7 +2207,9 @@ In the general case, the type @r[E] or @r[super] and the return value
 will be that of a @emph{method} of a prototype, or sub-entity being incrementally defined,
 whereas @r[M] will be some language-wide namespace, registering all
 known (and yet unknown) computations, prototypes and library functions in the language ecosystem.
-This is notably the case with @c{nixpkgs}, wherein @r[M]
+(This is notably the case with @c{nixpkgs}, wherein the role @r[M] is taken
+by the argument @r[pkgs], top of the global namespace of packages
+and other entities within the ecosystem (including library functions, etc.)).
 In the simplest case, @r[E] and @r[M] will both be the same type,
 that of a single target being modularly and extensibly specified, typically a record.
 
