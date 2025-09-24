@@ -192,8 +192,8 @@
 ;; With longer names, in Lispier style with implicit recursion rather than using Y.
 ;; : Proto self top -> top -> self
 (def (instantiate proto top)
-  (def self (proto (λ (msg) (self msg)) top))
-  self)
+  (Y (lambda (self) (proto (λ (msg) (self msg)) top))))
+
 ;; : Proto self super -> Proto super s2 -> Proto self s2
 (def (inherit child parent)
   (λ (self super)

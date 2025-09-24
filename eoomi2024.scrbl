@@ -41,7 +41,7 @@
 
 @(define-bibtex-cite "poof.bib" ~cite citet generate-bibliography)
 
-@section[#:tag "modularity_and_incrementality"]{Modularity and Incrementality}
+@section[#:tag "foo"]{FOO}
 
 In the notable case of data records that may be later extended,
 which is most relevant to OO,
@@ -54,40 +54,7 @@ if the extension is external or second-class.
 
 @subsubsection{Reduction to Smaller Problems}
 
-TODO
-
-Beware: header files / interface files are not independent entities.
-Must be modified together. C. OCaml.
-Compare Haskell: a single file, more incremental.
-BUT more modular? Only if some tool makes it easy to skip the implementation details
-and keep only the interface bits:
-type declarations, instance declarations without their strategy or body.
-
 @; XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-@subsubsection{Not Just Moving Costs Around}
-
-@; Not "more files for the same functionality", but
-@; "more independent entities". If more files that depend on each other the same entities,
-@; not more modular, less modular instead because more manually-enforced dependencies.
-
-
-@subsubsection{Incremental Modularity, Interactively}
-Incrementality does not necessarily mean that a complex addition or refactoring
-can be done in a single small change;
-rather, code evolution can be achieved in many small changes, wherein
-the system can assist the developer into only having to care
-about a small change at a time, while the system tracks down what are all
-the small remaining changes necessary.
-
-For instance, a rich static type system can often be used as a tool
-to guide large refactorings by dividing them in manageably small changes,
-making the typechecker happy one redefinition at a time after a type modification.
-This example also illustrates how
-@principle{Incrementality and Modularity usually happen through
-meta-linguistic mechanisms rather than linguistic mechanisms},
-i.e. through tooling outside the language rather than
-expressions inside the language.
 
 @section{Prototypes}
 @subsection[#:tag "internal_incremental_modularity"]{Internal Incremental Modularity}

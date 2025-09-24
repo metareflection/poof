@@ -16,6 +16,9 @@
 .text {
     clear: both;
 }
+.code {
+    font-family: "Computer Modern Typewriter", "Gill Sans", Courier, mono
+}
 .subtitle {
     font-size: 1.1em;
     font-weight: bold;

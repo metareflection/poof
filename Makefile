@@ -4,7 +4,7 @@
 all: ltuo # slides eoomi
 
 # Default slides: the next talk
-slides: slides-2025-shu # slides-2023-njpls slides-2024-lambdaconf
+slides: slides-2025-racketcon # slides-2023-njpls slides-2024-lambdaconf slides-2025-shu
 
 .DUMMY: all pdf view test repl prerequisites fare links \
   preslides slides \
@@ -77,6 +77,10 @@ slides-2025-shu: build/slides-2025-shu.html
 build/slides-2025-shu.html: slides-2025-shu.rkt util/reveal.rkt util/util.rkt util/coop.rkt util/protodoc.rkt util/coop.scm
 	racket $< > $@.tmp && mv $@.tmp $@ || { rm -f $@.tmp ; exit 42;}
 
+slides-2025-racketcon: build/slides-2025-racketcon.html
+build/slides-2025-racketcon.html: slides-2025-racketcon.rkt util/reveal.rkt util/util.rkt util/coop.rkt util/protodoc.rkt util/coop.scm
+	racket $< > $@.tmp && mv $@.tmp $@ || { rm -f $@.tmp ; exit 42;}
+
 # New paper for 2024 (?)
 build/eoomi2024.pdf: eoomi2024.scrbl poof.bib header.tex util/eval-check.rkt util/examples-module.rkt util/util.rkt build/resources
 	scribble --dest build --style header.tex --pdf $<
@@ -84,7 +88,7 @@ eoomi: build/eoomi2024.pdf
 	$(PDFVIEWER) $<
 
 # Side paper: LTUO
-build/ltuo.pdf: ltuo.scrbl poof.bib header.tex util/eval-check.rkt util/examples-module.rkt util/util.rkt build/resources
+build/ltuo.pdf: ltuo.scrbl ltuo.bib header.tex util/eval-check.rkt util/examples-module.rkt util/util.rkt build/resources
 #scribble --dest build --pdf --style header.tex ltuo.scrbl
 #	cd build ; scribble --pdf ../ltuo.scrbl
 	scribble --dest build --pdf ltuo.scrbl

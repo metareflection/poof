@@ -131,7 +131,7 @@ modularly and extensibly combine partial specifications of programs@xnote["."]{
   no light on any of the Functional Programming (FP) languages blessed by Cook as actually being OO
   to the surprise of their users, and no light on the difference between the two.
 
-  Cook's many works on OO over the years also systematically paper over important concepts
+  Cook's many works on OO over the years also systematically neglect important concepts
   in OO, such as prototypes, multiple inheritance, method combination or multiple dispatch.
   In the end, while Cook's PhD and subsequent academic career grew out of
   brilliantly modeling the key mechanism of OO (inheritance)
@@ -153,14 +153,14 @@ modularly and extensibly combine partial specifications of programs@xnote["."]{
   There is thus a need to elucidate the key concepts of OO behind the hype and confusion;
   such is the main purpose of this paper.
 }
-Now language designers have faced a dilemma since almost the very beginning,
-between several variants of inheritance:
-some languages choose single inheritance for its simplicity and performance
+Now programmers (respectively language designers) have faced a dilemma since almost the very beginning,
+of which of several variants of inheritance to use (respectively implement), if any at all:
+some prefer single inheritance for its simplicity and performance
 @~cite{Simula1967 kay1996early},
 whereas others prefer multiple inheritance
 for its greater expressiveness and modularity @~cite{Bobrow1976 Cannon1979}.
-A few outliers use mixin inheritance, a variant between the two
-that can also be seen as more fundamental and composable @~cite{bracha1990mixin}.
+A few outliers prefer mixin inheritance, a variant that can be seen as intermediary between the two,
+but also as more fundamental and more composable @~cite{bracha1990mixin}.
 @; XXX Reverse Inheritance as trivially expressible in terms of mixin or multiple inheritance.
 
 @subsubsection{Problem: Optimal Inheritance?}
@@ -171,14 +171,16 @@ If not, is there a combination of them, or a superset of them, that is?
 Some languages notably combine both single inheritance and multiple inheritance,
 though with some constraints @~cite{cltl2 scalableComponentAbstractions2005};
 would the best way to do inheritance subsume these combinations?
-Importantly, multiple inheritance usually involves a computation called
+Importantly, multiple inheritance usually (but not always!) involves a computation called
 the @emph{linearization} of the inheritance graph.
 Is that linearization necessary?
 What becomes of it in this optimal inheritance?
+And of course, OO has many detractors who claim that the best inheritance is no inheritance.
+What are the reasons to use or not use inheritance to begin with?
 
 @subsubsection{Claim: A Theory of OO}
 So that we may offer a solution to the problem of optimal inheritance,
-we will first quickly recapitulate a theory of OO sufficient to state the problem
+we will first recapitulate a theory of OO sufficient to state the problem
 and the criteria that may make a solution better than others.
 In a way, we will only be stating lore that has been known for decades.
 Yet no element of that lore is uniformly known to all;
@@ -189,7 +191,7 @@ and they have never been formulated together.
 What more, our theory does not merely restate the obvious,
 but shapes it into a coherent whole that is @emph{productive}:
 capable of generating and justifying new knowledge,
-and not merely explaining existing one.
+and not merely of explaining old knowledge.
 
 @subsubsection{Claim: Constructive OO}
 Our Theory of OO is constructive:
@@ -204,7 +206,8 @@ One aspect for which we do not provide a construction, however, is static typing
 others have provided good theories of typing for Class OO@~cite{allen2011type},
 but we don’t know of a good typesystem capable of dealing with Prototypes,
 especially so if it must also support the colloquial use of classes as prototypes for type descriptors:
-in addition to subtyping, the typesystem would need to support staged programming if not dependent types.
+in addition to subtyping, the typesystem would need to support staged programming
+if not dependent types.
 @; TODO evaluate Scala DOT in this context. Ask nada.
 
 @subsubsection{Claim: C4 is Optimal}
@@ -225,9 +228,9 @@ as part of its builtin object system@xnote["."]{
   The extensions are usually mutually incompatible,
   though there are trends, similarities, variants of shared code between the many implementation,
   and even standards for some of these extensions.
-  In particular though, there is no standard object system,
+  However, there is no standard object system,
   instead plenty of different object systems that span the entire design space for OO—except for
-  generally lacking static types.
+  their generally lacking static types.
 }
 
 Once our theory of OO is (re)stated, the C4 algorithm and the justification of its benefits
@@ -296,12 +299,12 @@ Finally, in section 9 we conclude by recapitulating our findings.
 
 @subsection{Note on Nomenclature}
 
-As we restate well-known and lesser-known lore of Object Orientation,
+As we restate well-known and less-known lore of Object Orientation,
 we will endeavour to precisely define the terms we use in the rest of the article.
 Defining terms is especially important since various authors
 from the communities around each of many OO language
-each use slightly different intersecting terminologies
-that often use different words for the same concepts,
+each use slightly different and conflicting terminologies,
+with different words for the same concepts,
 or, much worse, the same words for different concepts.
 This tower of Babel can cause much confusion
 when trying to communicate ideas across communities,
@@ -311,7 +314,7 @@ while incorrectly believing they understood what the other said.
 
 Thus, when multiple nomenclatures conflict, we will give precedence to
 the @emph{least ambiguous} word for a concept,
-even if neither the most popular word for the concept, nor the oldest,
+even if it is neither the most popular word for the concept, nor the oldest,
 even if we sometimes make one up just for this article.
 The words we choose will hopefully cause readers to pause and reflect,
 rather than unwittingly misunderstand the sometimes subtle points we make
@@ -333,16 +336,17 @@ Before we explain in detail what OO @emph{is},
 let us cast aside a lot of things it @emph{isn’t}
 that too many people (both proponents and opponents)
 too often falsely identified with OO.
-This is important, because attempts to explain a theory of OO often fail
-due to the reader having wrong expectations about what OO is supposed to be.
+This is important, because attempts at building or explaining a theory of OO often fail
+due to the author or reader having wrong expectations about what OO is supposed to be.
 
 @subsection{Whatever C++ is}
 
-At one point the most popular OO language,
+The most popular OO language in the decades that OO was a popular trend (roughly 1980 to 2010),
 C++ indeed enables programming in OO style to a large degree.
-But C++ is a rich language with many dimensions completely independent of OO
+But C++ is a rich language with many aspects completely independent of OO
 (consider e.g. bit-banging, RAII, template metaprogramming or pointer aliasing and the memory model),
-whereas the OO dimension that it undoubtly is very different from how OO works in other languages,
+whereas the OO aspect that it undoubtly offers
+is very different from how OO works in other languages,
 and colloquial C++ often goes against the principles of OO@xnote["."]{
   Alan Kay famously declared at OOPSLA ’97, near peak C++ popularity:
   “I made up the term ‘object-oriented’, and I can tell you I didn’t have C++ in mind.”}
@@ -354,19 +358,19 @@ This is especially true with regard to multiple inheritance,
 that will be an important topic later in this paper.
 C++ boasts support for multiple inheritance, and many people,
 when thinking of multiple inheritance, think of what C++ offers.
-Yet what C++ calls “multiple inheritance” is not at all the same as
-what everyone else calls “multiple inheritance”:
-while C++ supports single inheritance well, what it calls “multiple inheritance”
+Yet, while C++ supports single inheritance well, what it calls “multiple inheritance”
+is not at all the same as what everyone else calls “multiple inheritance”:
 is actually a modified kind of mixin inheritance with automatic renaming (for non-@r[virtual] classes),
 and a subset of multiple inheritance (for @r[virtual] classes and members).
 Moreover, C++ crucially lacks the proper method resolution
 that enables a lot of the modularity of multiple inheritance in other languages.
 
 Now, you can use C++'s powerful template language to reconstitute actual mixin inheritance
-on top of C++'s weird variant of inheritance@~cite{smaragdakis2000mixin},
-then implement proper multiple inheritance on top.
+and its method resolution on top of C++'s weird variant of inheritance@~cite{smaragdakis2000mixin},
+then implement proper multiple inheritance on top of mixin inheritance.
 But this technique is quite uncolloquial, syntactically heavy, slower than the colloquial ersatz,
-and you have to manually compute and chain each class's class precedence list,
+and programmers have to rigorously follow, enforce and maintain some complex design patterns,
+including a manual computation of each class's class precedence list,
 which cancels some of the modularity benefits of multiple inheritance
 versus single and mixin inheritance.
 
@@ -383,7 +387,7 @@ they do not reliably inform about OO in general@xnote["."]{
   ignorance was no valid excuse,
   since Lisp got it right ten years earlier@~cite{Cannon1979}.
   Ignorance is even less forgivable in the case of ADA
-  copying C++ “multiple inheritance” yet 14 years later.
+  copying C++' “multiple inheritance” yet 14 years later.
 }
 
 @subsection{Classes Only}
@@ -735,7 +739,7 @@ but in a trivial way that fails to support modularity@xnote["."]{
   was to sell relational data modeling as OO back when OO was trendy, based on
   a superficial and at times deliberate misunderstanding of OO
   by either or both sellers and buyers, resulting in more confusion.
-}.
+}
 UML and co-algebras describe the “easy case” of OO, where objects are just a convenient way
 of merging records of elementary data types
 (or “constant” data types, for co-algebras)
@@ -793,6 +797,7 @@ enabling specialization of tasks. Modularity is achieved by having modules
 interact with each other through well-defined “interfaces” only,
 as opposed to having to understand in detail the much larger contents
 of the other modules so as to interact with them.
+
 @subsubsection{Extensibility}
 A programmer can start from the existing specification and only need contribute
 as little incremental information as possible when specifying a part
@@ -810,7 +815,6 @@ These in-language entities are called @emph{prototypes} if first-class
 (manipulated at runtime, and specifying values, most usually records),
 and @emph{classes} if second-class
 (manipulated at compile-time only, and specifying types, most usually record types).
-
 A language offers prototype-based object orientation (“Prototype OO”) if it has prototypes,
 and class-based object orientation (“Class OO”) if it only has classes.
 
@@ -837,11 +841,14 @@ or prototypes for type descriptors for some other language you are processing as
 In this article, we will thus use the terminology of the more general case, Prototype OO,
 and will avoid talking about “class”, since it’s a particular case of “prototype”
 with very little worth discussing about it with respect to the principles of OO,
-apart from too many programming language designers’ incapacity to see beyond them@xnote["."]{
-  There would be plenty to discuss about types from the point of view of library design
-  and ecosystem growth, the patterns that OO enables and antipatterns to avoid.
-  But that’s a topic for another essay. There are plenty of existing books on OO
-  and OO software libraries to get inspiration from, both positive and negative.
+apart from the incapacity of too many programming language users and designers
+to see these more general principles@xnote["."]{
+  There would be plenty to discuss about classes and types from the point of view of
+  library design and ecosystem growth, patterns that OO enables and antipatterns to avoid,
+  tradeoffs between expressiveness and ease of static analysis, etc.
+  But that’s a topic for another essay. There are plenty of existing books and papers on OO,
+  OO software libraries, techniques to type and compile OO, to get inspiration from,
+  both positive and negative.
   Their many practical lessons apply even if they don’t get the theory of OO just right.
 }
 Still our discussion of OO, and our exploration of inheritance in particular,
@@ -870,16 +877,17 @@ just an unintentional way that defeats guarantees of analysis termination
 As we reconstruct the semantics of OO from first principles,
 we will see that the fundamental notion of OO,
 more fundamental than prototype, class or object,
-is that of (extensible and modular partial)
+is that of (extensible and modular, partial)
 @emph{specification} for some @emph{target} computation.
 
-In the case of Prototype OO, the target is usually a record
-but it could be of any type, though records can keep things modular.
-In the case of Class OO, the target is usually a record type,
-or rather a record of a record type and associated methods,
-or of their compile-time representation.
+In the case of Prototype OO, the target is usually a record;
+it could actually be of any type, but a record offers more opportunities for modularity.
+In the case of Class OO, the target is usually a record @emph{type},
+or rather a (dependent) record of a record type and associated methods,
+or of their compile-time or runtime representation.
 
-It is a function from referenced target (self) and inherited partial target (super)
+A specification, in the simplest form of OO, is a function
+from referenced target (self) and inherited partial target (super)
 to defined and/or extended partial target
 (if specifying a type, it’s a function from type to type to type;
 or type descriptors instead of types if you want to be more precise),
@@ -899,7 +907,7 @@ while sharing the same @r[self] argument. @; See section XXX. Cite bracha
 
 The usage pattern of a @r[self] argument intended for fixed-point
 has been dubbed “open recursion”. @; cite Pierce
-It is what allows the “late binding” touted by OO proponents,
+It is what allows the “late binding” touted by Alan Kay,
 and makes the design modular: authors of one partial specification can reference
 and use aspects of the total computation handled by other partial specifications.
 The usage pattern of the @r[super] argument is how inheritance brings about
@@ -910,15 +918,18 @@ A specification is not a prototype, not a class, not a type, not an object:
 it is not even a value of the target domain.
 It is not a record and does not have fields, attributes or any such thing.
 
-The target value is not an object either, it’s just an arbitrary value of that arbitrary domain,
-that may be neither a record nor a record type, and that need not have been computed
-as the fixed-point of a specification.
+The target value in general is not an object either,
+it’s just an arbitrary value of that arbitrary domain.
+It needs not be any kind of record nor record type;
+it needs not have been computed as the fixed-point of a specification;
+indeed it is not tied to any specific way to compute it.
 It cannot be incrementally extended or composed
 according to any of the design patterns that define OO.
 
 Rather, a prototype (a.k.a. “object” in Prototype OO, and “class” but not “object” in Class OO)
 is a @emph{conflation} of a specification and its target, i.e. an entity that depending on
-context at various times refers to either the specification or its target.
+context at various times refers to either the specification (when you extend it)
+or its target (when you use its methods).
 
 Formally speaking, a conflation can be seen as a cartesian product
 with implicit casts to either component factor depending on context.
@@ -990,14 +1001,16 @@ more modularity, more extensibility, inside the language—and at runtime.
 @subsection{Objects}
 @subsubsection{An Ambiguous Word}
 In Prototype OO, a prototype, conflation of a specification and its target,
-is also called an “object”, especially if the target is a record.
-Note that laziness in computing the target record is essential, since most specifications,
-being partial, do not specify a complete computation that terminates without error in finite time.
+is also called an “object” or at times “instance”, especially if the target is a record.
+Note that laziness is essential in computing the target record, since most specifications,
+being partial, do not specify a complete computation that terminates without error in finite time,
+yet the conflation should be usable (to extract and extend its specification)
+without triggering such error or non-termination.
 
 In Class OO, a prototype, conflation of a specification and its target,
 is instead called a “class”,
 and the target is specifically a type descriptor rather than an arbitrary record or non-record value.
-What in Class OO is called an “object” is an element of a target type as described.
+What in Class OO is called an “object” or “instance” is an element of a target type as described.
 Regular prototype fields and methods are called “class fields” or “class methods”
 (or “static” fields and methods, after the keyword used in C++ and Java)—but
 remember they only involve the target type, not the specification.
@@ -1019,7 +1032,7 @@ Furthermore, the fundamental patterns of OO can exist and be usefully leveraged 
 that lacks any notion of object, merely with the notions of specification and target:
 Indeed, Yale T Scheme has a class-less “object system” @~cite{adams88oopscheme},
 wherein the authors call “objects” any language value,
-“instance” those records of multiple function entry points used as the non-extensible targets
+and “instance” those records of multiple function entry points used as the non-extensible targets
 of their extensible specifications, themselves called “components”,
 that use mixin inheritance.
 
@@ -1031,11 +1044,11 @@ because it is a special case of the more general prototypes we are studying.
 
 This is all particularly ironic when the field we are studying is called “object orientation”,
 in which the most popular variant involves classes.
-But fields are usually named as soon as the need is felt
+But fields of knowledge are usually named as soon as the need is felt
 to distinguish them from other fields,
 long before they are well-understood,
-thus based on misunderstandings,
-so this is par for the course.
+thus based on misunderstandings;
+this is therefore par for the course.
 
 @subsection{Inheritance Overview}
 @subsubsection{Inheritance as Modular Extension of Specifications}
@@ -1167,19 +1180,18 @@ Many authors have called “delegation” the mechanism used by Prototype OO,
 as distinct from the “inheritance” mechanism of Class OO.
 However, Lieberman, in one of the papers that popularized this dichotomy@~cite{Lieberman1986},
 discusses the two joined concepts of prototype-delegation vs class-inheritance@xnote[","]{
-Lieberman explores at length the philosophical underpinnings of these two idea-complexes,
+Lieberman also explores at length the philosophical underpinnings of these two idea-complexes,
 which is quite interesting from a historical and psychological point of view,
-but is irrelevant to a technical discussion on the semantics of OO,
+but has little relevance to a technical discussion on the semantics of OO,
 its proper use or implementation decades later.
 }
-also explains in detail how classes and their “inheritance” can be expressed
+and explains in detail how classes and their “inheritance” can be expressed
 as a special case of prototypes and their “delegation”,
-while classes cannot express prototypes, with multiple examples of behaviors
-expressible with prototypes but not with classes,
-that can be reduced to prototypes enabling dynamic extension
-of individual “objects” (prototypes) at runtime,
-while classes only allow extension at compile-time,
-only for an entire type (“class”) of “objects” (elements of the type).
+while classes cannot express prototypes.
+He gives multiple examples of behaviors expressible with prototypes but not with classes,
+wherein prototypes enable dynamic extension of individual “objects” (prototypes) at runtime,
+while classes only allow extension at compile-time, and only
+for an entire type (“class”) of “objects” (elements of the type).
 But while it is extremely important indeed to understand the distinction and the relationship
 between the general notion of prototypes from the special case of classes,
 it only begets confusion to treat inheritance and delegation
@@ -1187,16 +1199,18 @@ as separate concepts when they have identical concerns of semantics, implementat
 whether used for prototypes versus classes.
 
 One confounding factor is that of mutable state.
-Early prototype systems were usually part of systems with ubiquitous mutable state,
-and their delegation algorithms include specific strategies for interaction with such state,
-including mutation and sharing or non-sharing of per-object variables,
-and especially tricky, mutation of the inheritance (or “delegation”) structure.
-By contrast, class systems usually had all their inheritance semantics resolved at compile-time,
+Early OO, just like early FP, was usually part of systems with ubiquitous mutable state;
+prototype inheritance (or “delegation”) algorithms thus often explicitly allow or cope with
+interaction with such state, including
+mutation and sharing or non-sharing of per-object or per-class variables,
+and especially tricky, mutation and sharing of a prototype’s inheritance structure.
+However, class systems often had all their inheritance semantics resolved at compile-time,
 during which there is no interaction with user-visible side-effects, and
 it doesn’t matter whether the compiler does or doesn’t itself use mutable state:
 from the user point of view it is as if it were pure functional and there is no mutation
-in the inheritance structure or state-sharing structure of objects.
-One may have been tempted then to see prototype delegation as intrinsically stateful,
+in the inheritance structure or state-sharing structure of classes,
+at least not without using “magic” reflection primitives.
+One may then have been tempted then to see prototype delegation as intrinsically stateful,
 and class inheritance as intrinsically pure (though at compile-time).
 
 Yet, recent pure functional Prototype OO systems @~cite{jsonnet nix2015 poof2021}
@@ -1226,8 +1240,9 @@ will only discuss the confounding matter of side-effects much later.@note{
   and not just the same concept in a different context.
   They necessarily have to sell their ideas as historical package deals,
   before the underlying concepts are clearly identified and separated from each other.
-  They are too close to the matter to tell which features they built would be immortalized
-  through the ages as fundamental concepts vs just contingent implementation details to be soon forgotten.
+  They are too close to the matter to tell which of the features they built would be immortalized
+  through the ages as fundamental concepts
+  vs just contingent implementation details soon to be forgotten.
   In the brief time that publishing about Prototypes was trendy,
   scientists studying pioneering works may have focused too much
   on the specifics of Actors, SELF, or other successful Prototype language du jour,
@@ -1247,7 +1262,8 @@ will only discuss the confounding matter of side-effects much later.@note{
   They may have looked at low-level mutable state
   (omnipresent in any practical language until the mid-2000s)
   as essential when happening at runtime,
-  when they could clearly conceptualize it away as an implementation details when happening at compile-time.
+  when they could clearly conceptualize it away as an implementation detail
+  when happening at compile-time.
   Systems paradigm people (including the old Lisp, Smalltalk and SELF communities)
   who freely mix or interleave runtime and compile-time in the very same language,
   might have had no trouble unifying the two across evaluation times,
@@ -1256,7 +1272,7 @@ will only discuss the confounding matter of side-effects much later.@note{
 
   Revisiting these topics several decades after they were in vogue,
   and finding their then-treatment lacking, with errors from the time still uncorrected to this day,
-  makes me wonder about what other false ideas I like most people assume are true
+  makes me wonder about what other false ideas I, like most people, assume are true
   in all the other topics I haven’t revisited, whether in Computer Science or not,
   where I just blindly assume the “experts” to be correct due to Gell-Mann amnesia.
 }
@@ -1274,27 +1290,35 @@ rather than delegation (as it isn’t particularly “message passing”, just c
 
 @subsection{Epistemological Digression}
 Many people will inevitably quibble about our definition or characterization of OO.
-(1) Is it correct?
-(2) What does it even mean for a definition to be correct?
-Aren’t definitions “just” arbitrary conventions?
-(3) Is there an authority on those words?
-(4) Should we dig into the words of Alan Kay,
-who invented the expression “Object Oriented Programming”,
-to find a correct definition?
-
 @itemlist[#:style'ordered
-@item{Yes our definition is correct:
+@item{Is our definition correct?}
+@item{What does it even mean for a definition to be correct?
+Aren’t definitions “just” arbitrary conventions?}
+@item{Is there an authority on those words?}
+@item{Shouldn’t we use the same definition as Alan Kay,
+who invented the expression “Object Oriented Programming”?}]
+
+Though a treatise of epistemology is beyond the scope of this article, @;{TODO cite}
+we can briefly answer these questions as follow:
+@itemlist[#:style'ordered
+@item{Yes, our definition is correct:
 it accurately identifies what people mean usually by those words,
 as distinguished from situations to which the words do not apply.}
-@item{No, the phenomena people care to name, discuss, think about and act on
-are not arbitrary, and so the important part of definitions isn’t convention at all:
-the structure and understanding of these phenomena, rather than the labels used for them.}
-@item{No there is authority on software vocabulary, person or committee,
+@item{No, the phenomena that effectively affect people,
+that they care to name, discuss, think about and act on, are not arbitrary.
+Thus the important part of definitions isn’t convention at all:
+it is the structure and understanding of these phenomena, rather than the labels used for them.
+A correct definition precisely identifies the concepts that are relevant to people’s concerns,
+that help them make better decisions that improve their lives,
+whereas an incorrect definition misleads them into counterproductive choices.}
+@item{No, there is no authority on software vocabulary, person or committee,
 that can decree different words for others to use,
 even less so different phenomena for others to care about.
 And people care about OO even if you try to change the name for it,
-or denature the name “OO” not to identify the same phenomenon anymore.}
-@item{Yes we should listen to Alan Kay@note{
+or denature the name “OO” not to identify the same phenomenon anymore;
+they will keep caring about the same phenomenon under a different name,
+rather than care about whatever those who corrupt the name may want them to.}
+@item{Not quite. We should definitely listen to Alan Kay,@note{
   Alan Kay, who coined the term “object-oriented programming” in 1967, explains in 2003 @~cite{Kay2003}
   that “OOP to me means only messaging, local retention and protection and hiding of state-process,
   and extreme late-binding of all things”.
@@ -1306,10 +1330,12 @@ or denature the name “OO” not to identify the same phenomenon anymore.}
   The second part “extreme late-binding of all things” indirectly references
   the in-language and extensible aspect of modules:
   extreme late-binding means that the value of those units of modularity may change at runtime,
-  which means not only dynamic dispatch of method invocation depending on the runtime class of an object,
-  but also the ability to dynamically define, incrementally extend, refine or combine in the language,
-  and those units are first-class prototypes,
-  or if they are second-class classes, there is a reflection mechanism to define and modify them.
+  which means not only dynamic dispatch of method invocation
+  depending on the runtime class of an object,
+  but also the ability to dynamically
+  define, incrementally extend, refine or combine those units in the language.
+  Those units may be first-class prototypes, and even when they are only second-class classes,
+  there is a first-class reflection mechanism to define and modify them.
   When this extensibility is only available at compile-time,
   as in the object system of many static languages, then
   the OOP only happens in the meta-language (as in e.g. C++ templates),
@@ -1318,8 +1344,9 @@ or denature the name “OO” not to identify the same phenomenon anymore.}
   Note that Kay didn't immediately adopt SIMULA's inheritance mechanism in Smalltalk
   (it wasn't called that yet, either);
   but he did adopt it eventually, and this adoption is what launched OO as a phenomenon.
-  Kay stated adopting single inheritance over multiple inheritance was a compromise @~cite{kay1996early},
-  but didn't adopt multiple inheritance later.
+  Kay stated adopting single inheritance over multiple inheritance
+  was a compromise @~cite{kay1996early},
+  yet still didn't adopt multiple inheritance later, though his team experimented with it.
   More broadly, Kay didn’t endorse any specific inheritance mechanism,
   and never focused on that part of the design. To Kay it was only a means to an end,
   which is what Kay called “extreme late binding”: the fact that behavior definition
@@ -1331,13 +1358,18 @@ or denature the name “OO” not to identify the same phenomenon anymore.}
   and refine the intuitions of a pioneer into codified knowledge after decades of practice.
   And if other means are found to satisfy Kay’s “extreme late binding”,
   then we’ll have to give them a name that distinguishes them from what is now called OO.
-} and other experts and pioneers,
-but then look at what they do and not (just) what they say,
+}
+and other pioneers and experts;
+but none is an ultimate authority, and
+we should look at what the pioneers and experts do and not (just) what they say,
 especially since you could recursively apply
 the same skepticism to the words they use in their definitions.
 Also, be wary that pioneers provide inspiration, insight and discoveries,
-but seldom well rounded theories, that only come after lots of
-experience, filtering, and reformulation.}]
+but seldom well-rounded theories: these theories only arise after lots of
+experience, filtering, and reformulation@xnote["."]{
+As the jest goes, “Every technique is first developed,
+then used, important, obsolete, normalized, and finally understood.”
+}}]
 
 So what phenomena count as OO?
 The design patterns used by programmers when they write code in an OO language.
@@ -1345,7 +1377,8 @@ The interactions they have with computers and with each other.
 The decision trees that are enabled or disabled when evolving a program into another.
 In the case of OO, these phenomena are what is captured by
 the intralinguistic extensible modularity as defined above:
-(a) the ability to “code against an interface” and pass any object of any type that satisfies the interface
+(a) the ability to “code against an interface” and
+pass any object of any type that satisfies the interface
 (modularity, be it following structural or nominative rules),
 (b) the ability to extend and specialize existing code by creating a new entity
 that “inherits” the properties of existing entities and only needs specify
@@ -1357,8 +1390,8 @@ We contend that the above is what usually meant by OO,
 that matches the variety of OO languages and systems
 without including systems that are decidedly not OO like Erlang, SML or UML.
 Whatever clear or murky correspondance between names and concepts others may use,
-this paradigm is what we will call OO and discuss in this article,
-systematically reducing it to elementary concepts.
+this paradigm is what we will call OO—it is what we will discuss in this article,
+and systematically reduce to elementary concepts.
 
 @section{OO as Internal Extensible Modularity}
 @subsection[#:tag "modularity"]{Modularity}
@@ -1465,6 +1498,12 @@ This makes it arguably more modular than its predecessor MK-DEFSYSTEM@~cite{kant
 that shunned use of objects (possibly for portability reasons at the time),
 was notably hard to configure, and resisted several attempts to extend or refactor it.
 
+Note that while external modularity enables cooperation during development,
+internal modularity also enables cooperation during deployment,
+with conditional selection and reconfiguration of modules,
+gradual deployment of features, user-defined composition of modules,
+automated A/B testing, and more.
+
 For a more complete theory of Modularity, see @citet{ngnghm9}.
 
 @subsubsection{Historical Modularity Breakthroughs}
@@ -1484,21 +1523,28 @@ In other words, for most languages that matter,
 files embody modularity internal to programming languages.@note{
   Note that while a file may be a unit of modularity, this is not always the case:
   often, actual modules span multiple files;
-  other times, there may be multiple modules in a single file.
+  at other times, there may be multiple modules in a single file.
   For instance, compiling a C program typically requires each file to be registered
   into some “build” file (e.g. a @c{Makefile}) to be considered as part of the software;
   a C library also comes with an accompanying “header” file, though there need not be
-  a 1-to-1 correspondence between C source files and header files.
+  a 1-to-1 correspondence between C source files and C header files
+  (as contrasted with source and interface files in OCaml).
   A C “module” therefore typically spans multiple files,
   and some files (headers and build files) can have bits from multiple modules.
+  Of course, having to manually ensure consistency of information between multiple files
+  makes the setup less modular than a language that doesn’t require as much maintenance.
   Then again, the C language also recently adopted some notion of namespace,
   which, though it doesn’t seem used that much in practice,
   can constitute yet another notion of modules, several of which can be present in a file.
   At a bigger scale, groups of files in one or multiple directories may constitute a library,
-  and a “package” may include one or several libraries, etc.
-  Even in a language, there can be many notions of modularity at several different scales,
+  and a “package” in a software “distribution” may include one or several libraries, etc.
+  Thus, Even within a single language, there can be many notions of modularity
+  at several different scales of software construction,
   enabling division of labor across time for a single person, for a small team, for a large team,
-  between several teams, etc., each time with different non 1-to-1 correspondences to files.
+  between several teams, etc., each time with different correspondences
+  between modules and files, that are never quite 1-to-1:
+  even “just a file” is not merely a blob of data, but also the meta-data of
+  a filename registered in a broader namespace, and some intended usage.
 }
 
 Now, while files go back to the 1950s and hierarchical filesystems to the 1960s,
@@ -1508,7 +1554,8 @@ Now, while files go back to the 1950s and hierarchical filesystems to the 1960s,
 there was an even earlier breakthrough in modularity,
 so pervasive that programmers use it without even thinking about using it:
 subroutines,
-already conceptualized by Ada Lovelace as “operations”, @; that could be “subsidiary”,
+already conceptualized by Ada Lovelace as “operations”@~cite{Lovelace:1843:NTL}, @;
+@; that could be “subsidiary”,
 @;{Scientific Memoirs, Selected from the Transactions of Foreign Academies of Science and Learned Societies, and from Foreign Journals, R. and J. E. Taylor , Vol III, 1843, L. F. Menabrea on Babbage's Analytical Engine. Notes of the translator (= Augusta Ada (King, Countess of) Lovelace, A.A.L. not A.L.L.)
   Note A p693 "operation"… general notion of pure computation from between
   "First the symbols of *operation* are frequently *also* the symbols of the *results* of operations.
@@ -1522,8 +1569,7 @@ already conceptualized by Ada Lovelace as “operations”, @; that could be “
   [[[She understands that infinite programmability (no word for it) is what the Analytical engine vastly
      superior to the finite-configuration Difference Engine,
      making it "the executive right hand of abstract algebra"]]]
-}
-formalized early on by Wilkes et al. in the 1940s @; TODO cite
+} formalized early on by Wilkes et al. in the 1940s @; TODO cite
 used by the earliest programmers in manually assembled code,
 part of the first programming language Plankalkül, @; TODO cite
 and of FORTRAN II. @; TODO cite
@@ -1581,31 +1627,31 @@ Modularity used incorrectly, with too many module boundaries,
 module boundaries drawn badly,
 resolved at the wrong evaluation stage,
 can increase complexity rather than reduce it:
-more parts and more crossings between parts cause more overhead,
-whereas the factoring fails to bring simplification,
-and instead require programmers to manage large interfaces,
+more parts and more crossings between parts cause more overhead;
+the factoring may fail to bring simplification in how programmers may reason about the system;
 subtle underdocumented interactions between features,
-little code reuse of modules between different situations,
-more implicit state with many cases needed to mentally juggle with
-while reasoning about calls to exposed APIs.@note{
+especially involving implicit or mutable state,
+can increase the cognitive load of using the system;
+modules may fail to offer code reuse between different situations;
+programmers may have to manage large interfaces to achieve small results.@note{
   A notable trend in wrongheaded “modularity” is @emph{myopic} designs,
   that achieve modest savings in a few modules under focus
   by vastly increasing the development costs left out of focus,
-  in extra boilerplate and friction, in other modules having to adapt,
-  inter-module glue being made harder, or module namespace curation getting more contentious.
+  in extra boilerplate and friction, in other modules having to adapt to the design,
+  in inter-module glue being made harder, or in module namespace curation getting more contentious.
 
   For instance, the once vastly overrated and overfunded notions “microkernels” or “microservices”
   consist in dividing a system in a lot of modules, “servers” or “services”
   each doing a relatively small task within a larger system,
-  separated by extremely expensive barriers wherein data is marshalled and unmarshalled
-  across processes or across machines.
+  separated by extremely expensive hardware barriers
+  wherein data is marshalled and unmarshalled across processes or across machines.
   Each service in isolation, that you may focus on,
   looks and is indeed simpler than the overall software combining those services;
   but this overall software kept out of focus
   was made significantly more complex by dividing it into those services.
   Another myopic design that is much rarer these days is to rewrite a program
   from a big monolithic heap of code in a higher level language
-  into a lot of subroutines in assembly language,
+  into a lot of subroutines in a lower-level language (sometimes assembly language),
   boasting how vastly simpler each of these subroutines is to the previous program;
   yet obviously the sum total of those routines is much more complex to write and maintain
   than a similarly factored program written in an appropriate higher level language
@@ -1613,7 +1659,7 @@ while reasoning about calls to exposed APIs.@note{
 
   While myopic designs might offer some small performance improvement in terms of
   pipelining, locality and load-balancing for very large worksets,
-  they can offer no improvement whatsoever in terms of modularity, quite the contrary:
+  they offer no improvement whatsoever in terms of modularity, quite the contrary:
   @Xitemize[@;#:style enumparenalph
   @Xitem{(1)
     The modules must already exist or be made to exist at the language level,
@@ -1668,8 +1714,9 @@ while reasoning about calls to exposed APIs.@note{
   In the end, the technical justification for these misguided designs stem from the inability
   to think about meta-levels and distinguish between compile-time and runtime organization of code:
   Modularity is a matter of semantics, as manipulated by programmers at programming-time,
-  and by compilers at compile-time, and runtime barrier crossings
-  can do nothing to help about that, only hinder.
+  and by compilers at compile-time;
+  the runtime barrier crossings of these myopic designs
+  cannot conceivably do nothing to help about that, only hinder.
   @;{ TODO cite something about HURD? Footnote? }
 
   Now, there are sometimes quite valid socio-economical (and not technical) justifications
@@ -1685,8 +1732,11 @@ while reasoning about calls to exposed APIs.@note{
   instead of gratuitous division into ever more counter-productive modules,
   some prefer wanton avoidance of having to divide code into modules at all.
   For instance, APL reduces the @emph{need} for modules or even subroutines by being extremely terse,
+  and by shunning abstraction in favor of concrete low-level data representations
+  (on top of its high-level virtual machine rather than of the lower-level model
+  of more popular languages),
   to the point of replacing many routine names by common idioms, known sequences of combinators.
-  @;{TODO cite}
+  @;{TODO cite - ask arcfide / sacrideo}
   Admittedly, there is only so much room in this direction:
   as the software grows in intent and the features
   to simplify and monomorphize code
@@ -2011,11 +2061,33 @@ for a fast and mindless algorithm.
 Thus, for instance, changing some arithmetic calculations to use
 bignums (large variable-size integers) instead of fixnums (builtin fixed-size integers)
 in C demands a whole-program rewrite with non-local modifications to the program structure.
-in Java it involves some changes all over though straightforward and preserving the local program structure;
+in Java it involves some changes all over though straightforward
+and preserving the local program structure;
 in Lisp requires minimal local changes, and Haskell requires one local change only.
 Thus with respect to this and similar kinds of change, if expected,
 Haskell is more extensible than Lisp that is more extensible than Java that is more extensible than C.
 @;{TODO examples for C, Java, Lisp, Haskell}
+
+Extensibility does not necessarily mean that a complex addition or refactoring
+can be done in a single small change;
+rather, code evolution can be achieved in many small changes, wherein
+the system can assist the developer into only having to care
+about a small change at a time, while the system tracks down what are all
+the small remaining changes necessary.
+
+For instance, a rich static type system can often be used as a tool
+to guide large refactorings by dividing them in manageably small changes
+(as extralinguistic code modifications),
+making the typechecker happy one redefinition at a time after a type modification.
+This example also illustrates how
+@principle{Extensibility and Modularity usually happen through
+meta-linguistic mechanisms rather than linguistic mechanisms},
+i.e. through tooling outside the language rather than
+expressions inside the language.
+Even then, having the locus of such extensible modularity be internalized within the language
+enables dynamic extension, runtime code sharing, user-guided specialization
+as intralinguistic deployment processes that leverage the result of
+the extralinguistic development process.
 
 @subsubsection{Historical Extensibility Breakthroughs}
 
@@ -2025,11 +2097,13 @@ especially so with automatic offset calculations from labels.
 Compilers and interpreters that process source code meant for human consumption and production,
 preprocessors, interactive editors, and all kinds of software tooling,
 also much facilitated external extensibility.
-And software that requires configuration through many files that must be carefully kept in synch manually
+And software that requires configuration through many files
+that must be carefully kept in synch manually
 is less extensible than one that can be configured through a single file
 from which all required changes are automatically propagated in a coherent manner
 (whether that configuration is internal or external, first-class to fourth-class);
-if multiple files must be modified together (such as interface and implementation files in many languages),
+if multiple files must be modified together
+(such as interface and implementation files in many languages),
 then the units of modularity are not each single file, but
 each group of files that need be modified together;
 or sometimes, groups that include parts of multiple files, which is even more cumbersome.
@@ -2072,7 +2146,8 @@ yet those compressed bits would mean nothing outside the exact context
 of the compressor—maximum extensibility, minimum modularity.
 
 Interestingly, these forms of external extensibility without modularity,
-while good for distributing software, are totally infeasible for humans to directly create.
+while good for distributing software, are totally infeasible for humans to directly create:
+they vastly increase rather than decrease the cognitive load required to write software.
 Instead, humans use modular forms of extensibility, such as editing source code
 as part of a edit-evaluate-debug development loop, until they reach a new version
 of the software they want to release, after which point they use automated tools
@@ -2083,7 +2158,7 @@ UML, co-Algebras or relational modeling, as previously discussed in @secref{mode
 fail to model OO precisely because the “classes” they specify are mere types:
 they lack the modularity context that enables self-reference in actual OO classes.
 As in-language entities, they can be extended by adding new attributes,
-but those types have to be constants.
+but these attributes have to be constants; they cannot vary with a modular “self”.
 
 @subsubsection[#:tag "extensibility_and_complexity"]{Extensibility and Complexity}
 
@@ -2182,6 +2257,8 @@ Together they mean that finite-brained developers can better divide work between
 and make more software progress with a modular and extensible design,
 tackling larger problems while using less mental power each,
 compared with using less-modular and less-extensible programming language designs.
+Together they enable the organic development of cooperative systems
+that grow with each programmer’s needs without getting bogged down in coordination issues.
 
 @subsubsection{Modular Extensions}
 
@@ -2213,18 +2290,20 @@ and other entities within the ecosystem (including library functions, etc.)).
 In the simplest case, @r[E] and @r[M] will both be the same type,
 that of a single target being modularly and extensibly specified, typically a record.
 
+@section{Minimal OO}
+
+Now that we’ve given an informal explanation of OO and
+what it is for (Internal Extensible Modularity),
+we can introduce formal semantics for it, starting with a truly minimal model:
+(1) No classes, no objects, just specifications and targets.
+(2) The simplest and most fundamental form of inheritance, mixin inheritance.
+Mixin inheritance is indeed simplest from the point of view of post-1970s formal logic,
+though not from the point of view of implementation using mid-1960s computer technology,
+at which point we’d be using single-inheritance indeed.
+
+
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-@subsubsection{Extensible Modularity, Interactively}
-@subsection{Internal vs External}
-@subsubsection{Internal Modularity and Complexity}
-Recombine modules at runtime depending on user input.
-Or just at compile-time depending on program configuration.
-Reduce complexity.
-Compare with FP, which is pure modularity without extensibility:
-Well-understood complete problem vs growing ecosystem.
-
-@section{Minimal OO}
 @subsection[#:tag "internal_extensible_modularity"]{Internal Extensible Modularity}
 @subsubsection{Internalized Feature}
 @subsubsection{Embodying Specification}
@@ -2298,6 +2377,11 @@ Well-understood complete problem vs growing ecosystem.
 @subsubsection{Ruby Modules}
 @subsubsection{Ruby superclasses}
 @subsubsection{Ruby linearization}
+@;{TODO: Examine Ruby linearization algorithm, compare it to LOOPS, Scala, etc.
+Find concrete examples of where it does the Wrong Thing(tm).
+https://norswap.com/ruby-module-linearization/
+}
+
 @subsection{Scala}
 @subsubsection{Scala Traits}
 @subsubsection{Scala superclasses}
