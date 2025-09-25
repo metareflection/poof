@@ -53,8 +53,8 @@ This document is available under the bugroff license.
             @b{Compositional Object-Oriented Prototypes}]
        @(br clear: 'all)
        @p{@small{@(~)}}
-       @L[style: "font-size: 80%;"]{@code{(define (instantiate s) (Y (λ (m n) (s n m ⊤))))}}
-       @L[style: "font-size: 80%;"]{@code{(define (inherit c p n m) (compose (c n m) (p n m)))}}
+       @L[style: "font-size: 80%;"]{@code{(define (instantiate s) (Y (λ (m i) (s m i ⊥))))}}
+       @L[style: "font-size: 80%;"]{@code{(define (inherit c p m i) (compose (c m i) (p m i)))}}
        @p{@small{@(~)}}
        @C[style: "font-size: 66%"]{
            François-René Rideau @(email "<fare@mukn.com>")}
@@ -130,57 +130,61 @@ This document is available under the bugroff license.
         @L{Good: @em{Apply} extensions: @code{(extension entity)}}
         @L{Better: @em{Compose} extensions: @code{(compose e1 e2)}}
         @L{(Matters a lot for second-class extensions)})
-     ($slide "Minimal (First-Class) Modularity"
-        @L{Values of type @code{V}. Names of type @code{N}, @(br)
-           Modularity contexts of type @code{M = N → V}, a.k.a. record}
-        @L{For each name @code{n : N}, @(br)
-           elementary modular specification of type @code{M → V} @(br)}
-        ;; Exercise: use name-indexed or dependent product for type of M
-        @L{From complete specification @code{s : N → M → V}, resolve: @(br)
-            @; Open recursion on the modularity context M, fixed-point
-            @code{(define (resolve-modspec s) @(br)
-                    @(~ 2) (Y (λ (m) (λ (n) ((s n) m)))))}})
+     ($slide "Minimal (First-Class) Modularity: How"
+        @L{Values: @code{V}, @code{W}, @code{X}... Identifiers: @code{I}. @(br)
+           Set of bindings, a.k.a. record: @code{∏R = i:I → Rᵢ}}
+        @L{Module context: @code{∏M = i:I → Mᵢ} @(br)
+           Modular spec for @code{X}: @code{∏M → X} @(br)
+           For each identifier, a modular spec: @(br)
+           @code{∏(∏M→X) = i:I → ∏M → Xᵢ} @(br)
+           Equivalent to @code{∏M → i:I → Xᵢ = ∏M → ∏X} @(br)
+           … open modular spec for a set of bindings @code{∏X}})
+     ($slide "Minimal (First-Class) Modularity: Y"
+        @L{Open modular spec: @code{∏M → ∏X} @(br)
+           @code{∏M} module context, record of identifiers being referenced @(br)
+           @code{∏X} module interface, record of identifiers being defined.}
+        @L{Close modular spec: @code{∏M → ∏M} @(br)
+           every identifier referenced is defined}
+        @L{Extract record @code{∏M} from spec @code{∏M → ∏M} ? @(br)
+           Close open loops, tie knots… @em{fixed-point operator}, @code{Y}})
      ($slide "Digression: Scheme vs FP"
         @L{Issue 1: pure applicative Y sucks @(br)
             Solution: stateful Y, lazy Y, or second class Y}
         @L{Issue 2: unary functions are syntax-heavy @(br)
             Solution: cope, autocurry, or multiple arities with care}
-        @L{@code{coop.rkt} @em{choices}: letrec + lazy fields, autocurry @(br) @; Obviously, YMMV
-            @code{(define (resolve-mod-spec s) @(br)
-                    @(~ 2) (Y (λ (m n) (s n m))))}})
+        @L{@code{coop.rkt} @em{choices}: letrec + lazy fields, autocurry}) @; Obviously, YMMV
      ($slide "Minimal (First-Class) Modular Extensibility"
-        @L{Values are extensions of type @code{V = E → E} @(br)
-           Modularity context of type @code{M = N → E → E} @(br)
-           Complete specification of type @code{N → M → E → E}}
-        @L{(define (instantiate spec n) @(br)
-             @(~ 2) (resolve-mod-spec spec n ⊤)) @(br)
-           (define (inherit child parent n m) @(br)
-             @(~ 2) (compose (child n m) (parent n m)))})
+        @L{Extensions: @code{X → X} @(br)
+           Modularity context: @code{∏M} @(br)
+           Open modular extensible spec: @code{∏M → ∏(X → X)}}
+        @L{Close modular extensible spec: @code{∏M → ∏(M → M)} @(br)
+           To resolve each binding, apply to base object, or use @code{Y} @(br)
+           Reduced to known modular spec @code{∏M → ∏M}})
      ($slide "Minimal “Object-Orientation”"
         @L{That's mixin inheritance, all the OO you need!}
         @L{@code{(define (instantiate spec) @(br)
-                   @(~ 1) (Y (λ (m n) (spec n m ⊤)))) @(br)
-                 (define (inherit child parent n m) @(br)
-                   @(~ 1) (compose (child n m) (parent n m)))}}
-        @L{@code{(deftype spec (Fun N → M → E → E)) @(br)
-                 (define (my-spec method-name self super) @(br)
-                   @(~ 1)...value)}})
+                 @(~ 2) (Y (λ (self m) (spec self m ⊥)))) @(br)
+                 (define (inherit child parent s m) @(br)
+                 @(~ 2) (compose (child s m) (parent s m)))}}
+        @L{@code{(deftype spec (Fun M → I → X → X)) @(br)
+                 (define (my-spec self method super) @(br)
+                   @(~ 2)...value)}})
      ($slide "Minimal Example"
-        @L{@code{(define (coord-spec n self super) @(br)
-                    @(~ 1) (case n ((x) 2) ((y) 4) (else super))) @(br)
-                 (define (color-spec n self super) @(br)
-                    @(~ 1) (case n ((color) 'blue) (else super)))}}
+        @L{@code{(define (coord-spec self i super) @(br)
+                    @(~ 1) (case i ((x) 2) ((y) 4) (else super))) @(br)
+                 (define (color-spec self i super) @(br)
+                    @(~ 1) (case i ((color) 'blue) (else super)))}}
         @L{@code{(define point-p (instantiate @(br)
                     @(~ 2) (inherit coord-spec color-spec))) @(br)
                  (point-p 'y) ⇒ 4 @(br)
                  (point-p 'color) ⇒ blue}})
      ($slide "Minimal Example, non-trivial inheritance"
-        @L{@code{(define (add-x-spec dx n self super) @(br)
-                   @(~ 1) (case n ((x) (+ dx super)) @(br)
+        @L{@code{(define (add-x-spec dx self i super) @(br)
+                   @(~ 1) (case i ((x) (+ dx super)) @(br)
                    @(~ 9) (else super))) @(br)
                  @(br)
-                 (define (rho-spec dx n self super) @(br)
-                   @(~ 1) (case n ((rho) (sqrt (+ (sqr (self 'x) @(br)
+                 (define (rho-spec dx self i super) @(br)
+                   @(~ 1) (case i ((rho) (sqrt (+ (sqr (self 'x) @(br)
                    @(~ 20)                        (sqr (self 'y)))))) @(br)
                    @(~ 9) (else super)))}})
      ($slide "Minimal Example, non-trivial inheritance (test)"
@@ -198,7 +202,7 @@ This document is available under the bugroff license.
         @L{The first principles: @em{first-class, modularity, extensibility}}
         @L{OO literally in two short definitions, in any FP language}
         @L{No classes, no mutable objects, no objects!}
-        @L{}
+        @L{@(~)}
         @L{How is it even possible???})
      ($slide "Precedents" ;; (modulo trivial refactorings)
         @L{Yale T Scheme 1982, YASOS 1992 (applicative, stateful)}
@@ -209,19 +213,19 @@ This document is available under the bugroff license.
      ($slide "OO without objects (as in Yale T Scheme)"
         @L{“object” is any value, “instance” is just a regular record @(br)
            @em{No inheriting from an “instance”}} ;; yes extending it, but non-modularly
-        @L{“component” is a mixin function @(br)
+        @L{“component” is a specification @(br)
            @em{No computing methods from a “component”}} ;; not quite a record
         @L{No equivalent to object (or class) in other OO languages! @(br)
            ... contrast with GCL, Jsonnet, Nix, that have objects(!?)})
      ($slide "Conflation: hidden product, implicit cast"
         @L{Prototype = Spec × Target @(br)
-           Target = lazily resolved value from specification}
+           Target = lazily resolved value from spec}
         @L{Want to compute a method? Use the target @(br)
-           Want to inherit? Use the specification}
+           Want to inherit? Use the spec}
         ;; Small, partial, incremental specifications are the whole point
         @L{Lazy is essential: most specifications are partial} ;; would fail resolution
-        @L{Prototype OO: Ani 1976, ThingLab 1977, SELF 1986, JS 1995,
-           GCL 2004, Jsonnet 2014, Nix 2015}))
+        @L{Prototype OO: Ani 1976, ThingLab 1977, SELF 1986, @(br)
+           JS 1995, GCL 2004, Jsonnet 2014, Nix 2015}))
     ($section "What about my favorite OO feature?"
      $plan-slide
      ($slide "What about Classes?"
@@ -229,11 +233,11 @@ This document is available under the bugroff license.
            Object, Instance = element of the target type}
         @L{static methods = methods of the target type @(br)
            object methods = static methods applied to the element}
-        @L{abstract class = used only for its specification @(br)
+        @L{abstract class = used only for its spec @(br)
            concrete class = used only for its target}
-        @L{C++ templates: first-class lazy functional Prototype OO at compile-time!})
+        @L{C++ templates: lazy functional Prototype OO at compile-time!})
      ($slide "What about Objects?"
-        @L{T: "object" is any value, "instance" is specification target @(br)
+        @L{T: "object" is any value, "instance" is target from spec @(br)
         @; i.e. Prototype is conflated Specification × Target
            Prototype OO: "object / instance" is Spec × Target @(br)
            Class OO: "object / instance" is Target type element}
@@ -241,7 +245,7 @@ This document is available under the bugroff license.
            "object" as a concept is not necessary for OO}
         @L{Fields are named first, understood much later.})
      ($slide "What about Types?"
-        @L{Specification Inheritance: @em{before fix-point} @(br)
+        @L{Spec Inheritance: @em{before fix-point} @(br)
            Target Subtyping: @em{after fix-point} @(br)
            @(~ 15) @strong{DOES NOT COMMUTE!}}
         @L{Fortress 2011 Type checking modular multiple dispatch @(br)
@@ -287,10 +291,10 @@ This document is available under the bugroff license.
            Least expressive, least modular})
 #|
 (define (base-single self n) #f)
-(define (inherit-single mixin parent self n) (mixin self (parent self) n))
+(define (inherit-single spec parent self n) (spec self (parent self) n))
 (define (instantiate-single spec) (letrec ((self (λ (n) (spec self n)))) self))
 (define (field k f self super n) (if (eq? n k) (f self (super n)) (super n)))
-(define (mixin self super n) ...new-value)
+(define (my-spec self super n) ...new-value)
 |#
      ($slide "Multiple Inheritance"
         @L{KRL 1975 “inheritance of properties” Ani 76, ThingLab 77 @(br)
@@ -311,19 +315,19 @@ This document is available under the bugroff license.
            As inefficient as Multiple Inheritance, less modular})
      ($slide "Mixin more Expressive than Single"
         @L{Second-class OOP: expressiveness issue. @(br)
-           Single only @code{cons} a mixin, not @code{append} mixins @(br)
+           Single only @code{cons} a spec, not @code{append} spec @(br)
            Less sharing, more duplication, extra hoops @(br)
            … maintenance nightmare.}
         @L{First-class OOP: your own mixins on top (PLT 1998) @(br)
            Still extra hoops, extra concepts, extra complexity})
      ($slide "Multiple More Modular than Mixin"
-        @L{Mixin depends on others to avoid source duplication @(br)
+        @L{Spec depends on others to avoid source duplication @(br)
            Can’t “just” pre-append: runtime duplication, bad, @(br)
            @(~ 2) exponential, non-commutative, non-idempotent}
         @L{Mixin inheritance: @em{manually} manage linearization @(br)
-           A mixin’s inheritance DAG becomes part of its interface @(br)
+           A spec’s inheritance DAG becomes part of its interface @(br)
            Nightmare on transitive dependency change}
-        @L{Multiple inheritance: just declare direct superclasses @(br)
+        @L{Multiple inheritance: just declare direct superspecs @(br)
            No maintenance nightmare, just bliss.})
      ($slide "Single and Multiple Together"
         @L{Two separate hierarchies (lame): CLOS (struct/class) @(br)

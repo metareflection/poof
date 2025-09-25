@@ -1939,12 +1939,45 @@ being actually dynamically typed prototypes at compile-time.
 
 @subsubsection{Types for Modularity}
 
-A simple type for a modular definition is @r[M ⟶ E] where
-@r[M] is the type of the common module context shared between
-all modular definitions in a given program fragment,
-and @r[E] is the type of the entity defined by the modular definition at hand.
+The type for an open modular specification of an entity is @r[M ⟶ E] where
+@r[M] is the type of the module context shared between all modular specifications
+in a given program fragment,
+and @r[E] is the type of the entity defined by the modular specification at hand.
+@r[M] typically involves some kind of dereference function of type @r[M ⟶ I ⟶ E]
+where @r[I] is a type of identifiers, usually some second-class variant
+of strings that is known at compile-time.
+In a pure functional setting where the only operation on the module context is dereference,
+the type @r[M] can be simply @r[I ⟶ E].
 
-The big issue with assigning static types to modular definitions is then
+To be seen by other modular specification, a modular definition for a single entity is
+a specification associated to some identifier @r[i : I]
+(or to a path of such identifiers for hierarchical modules).
+An open modular definition for one or multiple identified entities
+is thus a finite map @; (associative table, association list)
+from @r[I] to @r[M ⟶ E].
+Up to some trivial refactoring, we can represent such open modular definition
+with the same type @r[M ⟶ I ⟶ E] as the dereference function.
+
+Now, a closed modular definition is just one where all the identifiers are defined,
+and the final computation feeds the resulting module context itself as argument to
+the computations of each element of the module context—using a fixed-point operator
+to tie the knot of recursive self-reference.
+The type of the module context resulting from this fixed-point is just @r[M = I ⟶ E].
+
+A uniform type for all entities is dynamic typing for entities.
+For more precise types, you may want to narrow type @r[E]
+into some type @r[E_i] indexed by @r[i : I].
+The issue then is that establishing set of indexed types for a closed modular definition
+requires knowledge of all modules, whereas, to preserve the principle of modularity,
+each open modular definition may only define or reference a small subset of the index,
+and its type must accordingly only include the narrow subset of indexed types
+as being either defined or referenced by the open modular definition.
+An open modular definition shall not be required to know about and mention indexes and types
+from other open modular definitions that have not been written or amended yet,n
+still that will be combined with it in the future.
+To support modularity, a static type system thus needs to support
+subtyping between sets of indexed types, as well as computation of fixed-points.
+
 that the type @r[M] of the common module context value
 is shared between all definitions within that program fragment:
 this module context must therefore include all the information from all
@@ -1962,7 +1995,8 @@ without the need for global coordination.@note{
   In a language like Haskell, that does not have any mechanism of subtyping or extensible types,
   module programmers can be creative by having modular typeclass constraints on a type parameter,
   then depend on each application programmer making some gigantic non-modular definition
-  of the common type that will be fed as parameter to all the modular definitions of his entire application,
+  of the common type that will be fed as parameter to
+  all the modular definitions of his entire application,
   with the potentially thousands of typeclass instances this definition satisfies,
   and suitable initial defaults for each field (hopefully, a lazy bottom computation will do).
   The non-modularity hasn’t been completely eliminated,
