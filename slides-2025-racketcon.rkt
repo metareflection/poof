@@ -53,7 +53,7 @@ This document is available under the bugroff license.
             @b{Compositional Object-Oriented Prototypes}]
        @(br clear: 'all)
        @p{@small{@(~)}}
-       @L[style: "font-size: 80%;"]{@code{(define (instantiate s) (Y (λ (m i) (s m i ⊥))))}}
+       @L[style: "font-size: 80%;"]{@code{(define (instantiate s) (Y (λ (m i) (s m i ⊤))))}}
        @L[style: "font-size: 80%;"]{@code{(define (inherit c p m i) (compose (c m i) (p m i)))}}
        @p{@small{@(~)}}
        @C[style: "font-size: 66%"]{
@@ -124,17 +124,18 @@ This document is available under the bugroff license.
     ($section "Minimal OO, Formally"
      $plan-slide
      ($slide "Minimal (First-Class) Extensibility"
-        @L{Entities of type @code{E}}
-        @L{Extensions of type @code{E → E}}
-        @L{Start with top @s{object} entity, e.g. @code{⊤ = #f}} ;; or (λ (_) ⊥), (delay ⊥)
-        @L{Good: @em{Apply} extensions: @code{(extension entity)}}
-        @L{Better: @em{Compose} extensions: @code{(compose e1 e2)}}
-        @L{(Matters a lot for second-class extensions)})
+        @L{Values: @code{V} @(br)
+           Extensions: @code{V → V}}
+        @L{Good: @em{Apply} extensions @code{(extension value)} @(br)
+           Better: @em{Compose} extensions @code{(compose e1 e2)} @(br)
+           (Matters a lot for second-class extensions)}
+        @L{Eventually apply to top value, e.g. @code{⊤ = (lazy ⊥)} @(br) @; #f (void) (λ (_) ⊥) (delay ⊥)
+           Or, use fixed-point combinator @code{Y : (V → V) → V}})
      ($slide "Minimal (First-Class) Modularity: How"
         @L{Values: @code{V}, @code{W}, @code{X}... Identifiers: @code{I}. @(br)
            Set of bindings, a.k.a. record: @code{∏R = i:I → Rᵢ}}
         @L{Module context: @code{∏M = i:I → Mᵢ} @(br)
-           Modular spec for @code{X}: @code{∏M → X} @(br)
+           Modular spec for @code{Xᵢ}: @code{∏M → Xᵢ} @(br)
            For each identifier, a modular spec: @(br)
            @code{∏(∏M→X) = i:I → ∏M → Xᵢ} @(br)
            Equivalent to @code{∏M → i:I → Xᵢ = ∏M → ∏X} @(br)
@@ -146,7 +147,7 @@ This document is available under the bugroff license.
         @L{Close modular spec: @code{∏M → ∏M} @(br)
            every identifier referenced is defined}
         @L{Extract record @code{∏M} from spec @code{∏M → ∏M} ? @(br)
-           Close open loops, tie knots… @em{fixed-point operator}, @code{Y}})
+           Close open loops, tie knots… @em{fixed-point operator} @code{Y}})
      ($slide "Digression: Scheme vs FP"
         @L{Issue 1: pure applicative Y sucks @(br)
             Solution: stateful Y, lazy Y, or second class Y}
@@ -158,12 +159,12 @@ This document is available under the bugroff license.
            Modularity context: @code{∏M} @(br)
            Open modular extensible spec: @code{∏M → ∏(X → X)}}
         @L{Close modular extensible spec: @code{∏M → ∏(M → M)} @(br)
-           To resolve each binding, apply to base object, or use @code{Y} @(br)
+           To resolve each binding, apply to top value, or use @code{Y} @(br)
            Reduced to known modular spec @code{∏M → ∏M}})
      ($slide "Minimal “Object-Orientation”"
         @L{That's mixin inheritance, all the OO you need!}
         @L{@code{(define (instantiate spec) @(br)
-                 @(~ 2) (Y (λ (self m) (spec self m ⊥)))) @(br)
+                 @(~ 2) (Y (λ (self m) (spec self m ⊤)))) @(br)
                  (define (inherit child parent s m) @(br)
                  @(~ 2) (compose (child s m) (parent s m)))}}
         @L{@code{(deftype spec (Fun M → I → X → X)) @(br)

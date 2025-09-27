@@ -1942,12 +1942,14 @@ being actually dynamically typed prototypes at compile-time.
 The type for an open modular specification of an entity is @r[M ⟶ E] where
 @r[M] is the type of the module context shared between all modular specifications
 in a given program fragment,
-and @r[E] is the type of the entity defined by the modular specification at hand.
-@r[M] typically involves some kind of dereference function of type @r[M ⟶ I ⟶ E]
+pand @r[E] is the type of the entity defined by the modular specification at hand.
+@r[M] typically involves some kind of dereference function @r[deref] of type @r[M ⟶ I ⟶ E],
 where @r[I] is a type of identifiers, usually some second-class variant
 of strings that is known at compile-time.
 In a pure functional setting where the only operation on the module context is dereference,
 the type @r[M] can be simply @r[I ⟶ E].
+For more precision, this type could be refined into some indexed product
+@r[∏i:I⟶ E_i] where each type @r[E_i] depends on the identifier @r[i].
 
 To be seen by other modular specification, a modular definition for a single entity is
 a specification associated to some identifier @r[i : I]
