@@ -10,6 +10,8 @@ To compile it, use:
 To test interactively, try:
   racket -i -l scribble/reader -e "(use-at-readtable)" -l racket
 
+Precompiled version:
+http://fare.tunes.org/files/cs/poof/slides-2025-racketcon.html
 
 This document is available under the bugroff license.
   http://www.oocities.org/soho/cafe/5947/bugroff.html
@@ -31,7 +33,7 @@ This document is available under the bugroff license.
 
 (def doc
   (docfix
-    ($title "Compositional Object Prototypes")
+    ($title "Compositional Object-Oriented Prototypes")
     ($ $kv 'slide
       (list
        @div[class: 'logo]{
@@ -50,7 +52,7 @@ This document is available under the bugroff license.
        @; TODO: hide the menu behind a button at the top when on mobile (?)
        @div[class: 'title
             style: "color: #55f; vertical-align: middle; text-align: center; font-size: 150%"
-            @b{Compositional Object-Oriented Prototypes}]
+            @b{Compositional @(br) Object-Oriented @(br) Prototypes}]
        @(br clear: 'all)
        @p{@small{@(~)}}
        @L[style: "font-size: 80%;"]{@code{(define (instantiate s) (Y (λ (m i) (s m i ⊤))))}}
@@ -70,7 +72,7 @@ This document is available under the bugroff license.
      ($slide "The Talk I Won’t be Giving Today"
         @L{Redo of talk at SW'21, LC'24, NJPLS'24 or LC'25}
         @L{Complete Theory of OO}
-        @L{Presentation of coop.rkt} ;; the proof-of-concept library I wrote in Racket
+        @L{Walkthrough of coop.rkt} ;; the proof-of-concept library I wrote in Racket
         @L{Exploration of OO features})
      ($slide "The Talk I’ll Be Giving Instead"
         @L{The Essence of OO}
@@ -80,10 +82,10 @@ This document is available under the bugroff license.
      ($slide "Original Claims"
         @L{OO is about Internal Extensible Modularity @(br)
             OO is characterized by use of @em{Inheritance}}
-        @L{Mixin Inheritance is simplest, but not most modular @(br)
-            Best: combine Single and Multiple Inheritance}
         @L{You can have OO without classes, even without objects @(br)
-            Key ignored notion: Conflation}))
+            Key ignored notion: Conflation}
+        @L{Mixin Inheritance is simplest, but not most modular @(br)
+            Best: combine Single and Multiple Inheritance}))
     ($section "OO, Informally"
      $plan-slide
      ($slide @list{What OO @em{is not} about}
@@ -184,7 +186,7 @@ This document is available under the bugroff license.
                    @(~ 1) (case i ((x) (+ dx super)) @(br)
                    @(~ 9) (else super))) @(br)
                  @(br)
-                 (define (rho-spec dx self i super) @(br)
+                 (define (rho-spec self i super) @(br)
                    @(~ 1) (case i ((rho) (sqrt (+ (sqr (self 'x) @(br)
                    @(~ 20)                        (sqr (self 'y)))))) @(br)
                    @(~ 9) (else super)))}})
@@ -236,7 +238,7 @@ This document is available under the bugroff license.
            object methods = static methods applied to the element}
         @L{abstract class = used only for its spec @(br)
            concrete class = used only for its target}
-        @L{C++ templates: lazy functional Prototype OO at compile-time!})
+        @L{C++ templates: lazy functional Prototype OO at compile-time})
      ($slide "What about Objects?"
         @L{T: "object" is any value, "instance" is target from spec @(br)
         @; i.e. Prototype is conflated Specification × Target
@@ -343,10 +345,10 @@ This document is available under the bugroff license.
      ($slide "Original Claims (Redux)"
         @L{OO is about Internal Extensible Modularity @(br)
             OO is characterized by use of @em{Inheritance}}
-        @L{Mixin Inheritance is simplest, but not most modular @(br)
-            Best: combine Single and Multiple Inheritance}
         @L{You can have OO without classes, even without objects @(br)
-            Key ignored notion: Conflation})
+            Key ignored notion: Conflation}
+        @L{Mixin Inheritance is simplest, but not most modular @(br)
+            Best: combine Single and Multiple Inheritance})
      ($slide "This very Presentation!"
         @L{@code{scribble} + @code{coop.rkt} spit HTML for @code{reveal.js}}
         @L{No objects, just specs and targets, mixin inheritance @(br)
