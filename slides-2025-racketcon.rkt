@@ -31,6 +31,8 @@ This document is available under the bugroff license.
               (map (lambda (x) (td style: "border-bottom-width:0;" x)) l)))
         lists)))
 
+(define c code)
+
 (def doc
   (docfix
     ($title "Compositional Object-Oriented Prototypes")
@@ -55,30 +57,28 @@ This document is available under the bugroff license.
             @b{Compositional @(br) Object-Oriented @(br) Prototypes}]
        @(br clear: 'all)
        @p{@small{@(~)}}
-       @L[style: "font-size: 80%;"]{@code{(define (instantiate s) (Y (λ (m i) (s m i ⊤))))}}
-       @L[style: "font-size: 80%;"]{@code{(define (inherit c p m i) (compose (c m i) (p m i)))}}
+       @L[style: "font-size: 80%;"]{@c{(define (instantiate s) (Y (λ (m i) (s m i ⊤))))}}
+       @L[style: "font-size: 80%;"]{@c{(define (inherit c p m i) (compose (c m i) (p m i)))}}
        @p{@small{@(~)}}
        @C[style: "font-size: 66%"]{
            François-René Rideau @(email "<fare@mukn.com>")}
-       @C{@small{@Url{http://github.com/metareflection/poof}}}
+       @c{@small{@Url{http://github.com/metareflection/poof}}}
        @div[style: "font-size: 50%;" (~)]
-       @C{@small{(fifteenth RacketCon) 2025-10-04}}
+       @c{@small{(fifteenth RacketCon) 2025-10-04}}
        @div[style: "font-size: 50%;" (~)]
        @table[style: "text-align: left; padding-left: 0; margin-left: 0; width: 100%; font-size: 50%;"
-         (tr @td{@code{PgDn}: next} @td{@code{PgUp}: previous} @td{@code{↑ ↓ ← → ESC ⏎}
+         (tr @td{@c{PgDn}: next} @td{@c{PgUp}: previous} @td{@c{↑ ↓ ← → ESC ⏎}
              @td{Touchscreen: swipe down until you must swipe right}})]))
-    ($section "Introduction"
+    ($section "Introduction: OO, Informally"
      $plan-slide
-     ($slide "Original Claims"
+     ($slide "Claims"
         @L{OO is about Internal Extensible Modularity @(br)
             We can rebuild OO from these first principles}
-        @L{Classes, objects or mutation are not fundamental notions, @(br)
-            can be done without or added on top. @(br)
+        @L{Classes, objects or mutation are not fundamental, @(br)
+            @; can be done without or added on top. @(br)
             Key ignored notion: Conflation}
         @L{Mixin Inheritance is simplest, but not most modular @(br)
-            Best: combine Single and Multiple Inheritance}))
-    ($section "OO, Informally"
-     $plan-slide
+            Best: combine Single and Multiple Inheritance})
      ($slide @list{What OO @em{is not} about}
         ;; Concepts that intersect OO that people mistakenly confuse with OO.
         ;; No time to debunk in detail, but can easily find where they
@@ -86,14 +86,14 @@ This document is available under the bugroff license.
         @Li{Classes}
         @Li{“Encapsulation”, “Information Hiding”}
         @Li{Opposite of FP, Inheritance vs Composition}
-        @Li{Mutation everywhere}
+        @Li{Mutable records everywhere}
         @Li{Asynchronous Message Passing everywhere}
         @Li{UML / Co-Algebras / Relational Modeling})
      ($slide @list{What OO @em{is} about}
         @L{Modularity: dev needs little knowledge in} ;; ⟶ Ad Hoc Polymorphism,
         @L{Extensibility: dev needs little knowledge out} ;; ⟶ Open Recursion
         @L{Language-internal: first-class or second-class} ;; First-class
-        @L{(~)}
+        @L{@(~)}
         @L{Essential Mechanism: Inheritance}
         @L{Support for @em{Division of Labor}}) ;; across developers, across time
      ($slide @list{Internal vs External}
@@ -105,73 +105,73 @@ This document is available under the bugroff license.
     ($section "Minimal OO, Formally"
      $plan-slide
      ($slide "Minimal (First-Class) Extensibility"
-        @L{Values: @code{V} @(br)
-           Extensions: @code{V → V}}
-        @L{Good: @em{Apply} extensions @code{(extension value)} @(br)
-           Better: @em{Compose} extensions @code{(compose e1 e2)} @(br)
+        @L{Values: @c{V} @(br)
+           Extensions: @c{V → V}}
+        @L{Good: @em{Apply} extensions @c{(extension value)} @(br)
+           Better: @em{Compose} extensions @c{(compose e1 e2)} @(br)
            (Matters a lot for second-class extensions)}
-        @L{Eventually apply to top value, e.g. @code{⊤ = (lazy ⊥)} @(br) @; #f (void) (λ (_) ⊥) (delay ⊥)
-           Or, use fixed-point combinator @code{Y : (V → V) → V}})
+        @L{Eventually apply to top value, e.g. @c{⊤ = (lazy ⊥)} @(br) @; #f (void) (λ (_) ⊥) (delay ⊥)
+           Or, use fixed-point combinator @c{Y : (V → V) → V}})
      ($slide "Minimal (First-Class) Modularity: How"
-        @L{Values: @code{V}, @code{W}, @code{X}... Identifiers: @code{I}. @(br)
-           Set of bindings, a.k.a. record: @code{∏R = i:I → Rᵢ}}
-        @L{Module context: @code{∏M = i:I → Mᵢ} @(br)
-           Modular spec for @code{Xᵢ}: @code{∏M → Xᵢ} @(br)
+        @L{Values: @c{V}, @c{W}, @c{X}... Identifiers: @c{I}, @c{J}. @(br)
+           Set of bindings, a.k.a. record: @c{∏R = i:I → Rᵢ}}
+        @L{Module context: @c{∏M = i:I → Mᵢ} @(br)
+           Modular spec for @c{Xⱼ}: @c{∏M → Xⱼ} @(br)
            For each identifier, a modular spec: @(br)
-           @code{∏(∏M→X) = i:I → ∏M → Xᵢ} @(br)
-           Equivalent to @code{∏M → i:I → Xᵢ = ∏M → ∏X} @(br)
-           … open modular spec for a set of bindings @code{∏X}})
+           @c{∏(∏M→X) = j:J → ∏M → Xⱼ} @(br)
+           Equivalent to @c{∏M → j:J → Xⱼ = ∏M → ∏X} @(br)
+           … open modular spec for a set of bindings @c{∏X}})
      ($slide "Minimal (First-Class) Modularity: Y"
-        @L{Open modular spec: @code{∏M → ∏X} @(br)
-           @code{∏M} module context, record of identifiers being referenced @(br)
-           @code{∏X} module interface, record of identifiers being defined.}
-        @L{Close modular spec: @code{∏M → ∏M} @(br)
+        @L{Open modular spec: @c{∏M → ∏X} @(br)
+           @c{∏M} module context, record of identifiers being referenced @(br)
+           @c{∏X} module interface, record of identifiers being defined.}
+        @L{Close modular spec: @c{∏M → ∏M} @(br)
            every identifier referenced is defined}
-        @L{Extract record @code{∏M} from spec @code{∏M → ∏M} ? @(br)
-           Close open loops, tie knots… @em{fixed-point operator} @code{Y}})
+        @L{Extract record @c{∏M} from spec @c{∏M → ∏M} ? @(br)
+           Close open loops, tie knots… @em{fixed-point operator} @c{Y}})
      ($slide "Digression: Scheme vs FP"
         @L{Issue 1: pure applicative Y sucks @(br)
             Solution: stateful Y, lazy Y, or second class Y}
         @L{Issue 2: unary functions are syntax-heavy @(br)
             Solution: cope, autocurry, or multiple arities with care}
-        @L{@code{coop.rkt} @em{choices}: letrec + lazy fields, autocurry}) @; Obviously, YMMV
+        @L{@c{coop.rkt} @em{choices}: letrec + lazy fields, autocurry}) @; Obviously, YMMV
      ($slide "Minimal (First-Class) Modular Extensibility"
-        @L{Extensions: @code{X → X} @(br)
-           Modularity context: @code{∏M} @(br)
-           Open modular extensible spec: @code{∏M → ∏(X → X)}}
-        @L{Close modular extensible spec: @code{∏M → ∏(M → M)} @(br)
-           To resolve each binding, apply to top value, or use @code{Y} @(br)
-           Reduced to known modular spec @code{∏M → ∏M}})
+        @L{Extensions: @c{X → X} @(br)
+           Modularity context: @c{∏M} @(br)
+           Open modular extensible spec: @c{∏M → ∏(X → X)}}
+        @L{Close modular extensible spec: @c{∏M → ∏(M → M)} @(br)
+           To resolve each binding, apply to top value, or use @c{Y} @(br)
+           Reduced to known modular spec @c{∏M → ∏M}})
      ($slide "Minimal “Object-Orientation”"
         @L{That's mixin inheritance, all the OO you need!}
-        @L{@code{(define (instantiate spec) @(br)
+        @L{@c{(define (instantiate spec) @(br)
                  @(~ 2) (Y (λ (self m) (spec self m ⊤)))) @(br)
                  (define (inherit child parent s m) @(br)
                  @(~ 2) (compose (child s m) (parent s m)))}}
-        @L{@code{(deftype spec (Fun M → I → X → X)) @(br)
+        @L{@c{(deftype spec (Fun M → I → X → X)) @(br)
                  (define (my-spec self method super) @(br)
                    @(~ 2)...value)}})
      ($slide "Minimal Example"
-        @L{@code{(define (coord-spec self i super) @(br)
+        @L{@c{(define (coord-spec self i super) @(br)
                     @(~ 1) (case i ((x) 2) ((y) 4) (else super))) @(br)
                  (define (color-spec self i super) @(br)
                     @(~ 1) (case i ((color) 'blue) (else super)))}}
-        @L{@code{(define point-p (instantiate @(br)
+        @L{@c{(define point-p (instantiate @(br)
                     @(~ 2) (inherit coord-spec color-spec))) @(br)
                  (point-p 'y) ⇒ 4 @(br)
                  (point-p 'color) ⇒ blue}})
      ($slide "Minimal Example, non-trivial inheritance"
-        @L{@code{(define (add-x-spec dx self i super) @(br)
+        @L{@c{(define (add-x-spec dx self i super) @(br)
                    @(~ 1) (case i ((x) (+ dx super)) @(br)
                    @(~ 9) (else super))) @(br)
                  @(br)
-                 (define (rho-spec self i super) @(br)
-                   @(~ 1) (case i ((rho) (sqrt (+ (sqr (self 'x) @(br)
+                 (define (radius-spec self i super) @(br)
+                   @(~ 1) (case i ((radius) (sqrt (+ (sqr (self 'x) @(br)
                    @(~ 20)                        (sqr (self 'y)))))) @(br)
                    @(~ 9) (else super)))}})
      ($slide "Minimal Example, non-trivial inheritance (test)"
-        @L{@code{(define point-q (instantiate @(br)
-                    @(~ 2) (inherit rho-spec @(br)
+        @L{@c{(define point-q (instantiate @(br)
+                    @(~ 2) (inherit radius-spec @(br)
                     @(~ 4) (inherit (add-x-spec 1) @(br)
                     @(~ 6) coord-spec)))) @(br)
                     @(br)
@@ -247,7 +247,7 @@ This document is available under the bugroff license.
         @L{Target types historically mutable, but don’t have to be}
         @L{Plenty of pure object libraries in Lisp, Java, Scala…}
         @L{Mutable inheritance: semantics is hard, as of all mutation @(br)
-           CLOS: @code{update-instance-for-redefined-class} @(br)
+           CLOS: @c{update-instance-for-redefined-class} @(br)
            invalidate caches (atomically?)})
      ($slide "What about multiple dispatch?"
         @L{LOOPS 1986, CLOS 1991, Cecil 1992, Dylan 1992, Fortress 2006, Julia 2012}
@@ -297,7 +297,7 @@ This document is available under the bugroff license.
            As inefficient as Multiple Inheritance, less modular})
      ($slide "Mixin more Expressive than Single"
         @L{Second-class OOP: expressiveness issue. @(br)
-           Single only @code{cons} a spec, not @code{append} spec @(br)
+           Single only @c{cons} a spec, not @c{append} spec @(br)
            Less sharing, more duplication, extra hoops @(br)
            … maintenance nightmare.}
         @L{First-class OOP: your own mixins on top (PLT 1998) @(br)
@@ -321,15 +321,16 @@ This document is available under the bugroff license.
            @em{a struct’s class linearization is a suffix to its subclasses’s}}))
     ($section "Conclusion: Making sense of OO"
      $plan-slide
-     ($slide "Original Claims (Redux)"
+     ($slide "Claims (Redux)"
         @L{OO is about Internal Extensible Modularity @(br)
-            OO is characterized by use of @em{Inheritance}}
-        @L{You can have OO without classes, even without objects @(br)
+            We can rebuild OO from these first principles}
+        @L{Classes, objects or mutation are not fundamental @(br)
+            @; can be done without or added on top. @(br)
             Key ignored notion: Conflation}
         @L{Mixin Inheritance is simplest, but not most modular @(br)
             Best: combine Single and Multiple Inheritance})
      ($slide "This very Presentation!"
-        @L{@code{scribble} + @code{coop.rkt} spit HTML for @code{reveal.js}}
+        @L{@c{scribble} + @c{coop.rkt} spit HTML for @c{reveal.js}}
         @L{No objects, just specs and targets, mixin inheritance @(br)
            FP+OO system in 350 loc incl. autocurry, comments @(br)
            Prototypes for slides w/ toc in ~125 loc}
@@ -366,7 +367,7 @@ This document is available under the bugroff license.
         @L{Theory: @(~ 8) @Url{https://github.com/metareflection/poof}}
         @L{Practice: @(~ 5) Gerbil Scheme @Url{https://cons.io}}
         @L{X: @Url{https://x.com/ngnghm}  Blog: @Url{https://ngnghm.github.io}}
-        @L{Hire me — or be hired by me! @(~ 5) @code{<fare@"@"mukn.com>}}
+        @L{Hire me — or be hired by me! @(~ 5) @c{<fare@"@"mukn.com>}}
         @L{Plenty more research ideas, code and papers to write…}))))
 
 (reveal-doc doc)
