@@ -69,11 +69,20 @@ This document is available under the bugroff license.
              @td{Touchscreen: swipe down until you must swipe right}})]))
     ($section "Introduction"
      $plan-slide
+     ($slide "The Talk I Won’t be Giving Today"
+        @L{Redo of talk at SW'21, LC'24, NJPLS'24 or LC'25}
+        @L{Complete Theory of OO}
+        @L{Walkthrough of coop.rkt} ;; the proof-of-concept library I wrote in Racket
+        @L{Exploration of OO features})
+     ($slide "The Talk I’ll Be Giving Instead"
+        @L{The Essence of OO}
+        @L{A minimal OO system}
+        @L{Sketch of how other OO features fit on top}
+        @L{Insights learned along the way})
      ($slide "Original Claims"
         @L{OO is about Internal Extensible Modularity @(br)
-            We can rebuild OO from these first principles}
-        @L{Classes, objects or mutation are not fundamental notions, @(br)
-            can be done without or added on top. @(br)
+            OO is characterized by use of @em{Inheritance}}
+        @L{You can have OO without classes, even without objects @(br)
             Key ignored notion: Conflation}
         @L{Mixin Inheritance is simplest, but not most modular @(br)
             Best: combine Single and Multiple Inheritance}))
@@ -87,21 +96,33 @@ This document is available under the bugroff license.
         @Li{“Encapsulation”, “Information Hiding”}
         @Li{Opposite of FP, Inheritance vs Composition}
         @Li{Mutation everywhere}
-        @Li{Asynchronous Message Passing everywhere}
-        @Li{UML / Co-Algebras / Relational Modeling})
+        @Li{UML / Co-Algebras / Relational Modeling}
+        @Li{Asynchronous Message Passing everywhere})
      ($slide @list{What OO @em{is} about}
-        @L{Modularity: dev needs little knowledge in} ;; ⟶ Ad Hoc Polymorphism,
-        @L{Extensibility: dev needs little knowledge out} ;; ⟶ Open Recursion
-        @L{Language-internal: first-class or second-class} ;; First-class
-        @L{(~)}
-        @L{Essential Mechanism: Inheritance}
+        @L{Modularity: dev needs little knowledge in} ;;  ⟶ Ad Hoc Polymorphism
+        @L{Extensibility: dev needs little knowledge out} ;;  ⟶ Open Recursion
+        @L{... Intralinguistically} ;; First-class
+        @L{}
         @L{Support for @em{Division of Labor}}) ;; across developers, across time
      ($slide @list{Internal vs External}
         @L{First class: internal, runtime (values, reflection)}
         @L{Second class: internal, compile-time (types, macros)}
         @L{}
         @L{Third class: external, software (tooling)}
-        @L{Fourth class: external, wetware (design patterns)}))
+        @L{Fourth class: external, wetware (design patterns)})
+     ($slide @list{Essential Mechanism: Inheritance}
+        @L{Single 1967/1976, Multiple 1975/1979, Mixin 1982/1990}
+        @L{}
+        @L{Uniquely enables modularity and extensibility together:}
+        @L{Incrementally extend software @(br)
+           with minimal knowledge what's inside or outside})
+     ($slide @list{Not Essential: Classes, Objects}
+        @L{Classes: SIMULA 1967 @(br)
+           Smalltalk 1976, Flavors 1979, C++ 1985, Java 1996}
+        @L{Prototypes: KRL 1975 @(br)
+           Ani 1976, ThingLab 1977, SELF 1986, JS 1995}
+        @L{“Specifications” (no classes, not even objects!) @(br)
+           Yale T Scheme 1982 “components”}))
     ($section "Minimal OO, Formally"
      $plan-slide
      ($slide "Minimal (First-Class) Extensibility"
