@@ -1,7 +1,9 @@
 #lang racket
 
-(define (Y f) (letrec ((ff (lambda (i) (f ff i)))) ff))
-(define ⊤ (lazy (error "bottom")))
+;; style: stateful Y, multiple arities with care, unit value for top
+
+(define (Y f) (letrec ((fp (lambda (x) (f fp x)))) fp))
+(define ⊤ (void))
 
 (define (instantiate s) (Y (λ (m i) ((s m i) ⊤))))
 (define ((inherit c p) m i) (compose (c m i) (p m i)))
@@ -15,7 +17,8 @@
 (define point-p (instantiate
   (inherit coord-spec color-spec)))
 
-(define-syntax test (syntax-rules () ((_ x) (begin (display 'x) (display " ⇒ ") (display x) (newline)))))
+(define-syntax test
+  (syntax-rules () ((_ x) (begin (display 'x) (display " ⇒ ") (display x) (newline)))))
 
 (test (point-p 'x)) ;; 2
 (test (point-p 'color)) ;; ⇒ blue
@@ -30,8 +33,8 @@
                     (sqr (self 'y)))))
           (else super)))
 
-(define point-q (instantiate
+(define point-r (instantiate
                    (inherit rho-spec (inherit (add-x-spec 1) coord-spec))))
 
-(test (point-q 'x)) ;; ⇒ 3
-(test (point-q 'rho)) ;; ⇒ 5
+(test (point-r 'x)) ;; ⇒ 3
+(test (point-r 'rho)) ;; ⇒ 5

@@ -13,6 +13,9 @@ To test interactively, try:
 Precompiled version:
 http://fare.tunes.org/files/cs/poof/slides-2025-racketcon.html
 
+Example code:
+http://fare.tunes.org/files/cs/poof/mini-coop.rkt
+
 This document is available under the bugroff license.
   http://www.oocities.org/soho/cafe/5947/bugroff.html
 |#
@@ -100,7 +103,7 @@ This document is available under the bugroff license.
         @L{Mechanism: Inheritance})
      ($slide @list{Internal vs External}
         @L{First class: internal, runtime (values, some via reflection)}
-        @L{Second class: internal, compile-time (static types)}
+        @L{Second class: internal, compile-time (types, macros)}
         @~
         @L{Third class: external, software (tooling)}
         @L{Fourth class: external, wetware (design patterns)}))
@@ -131,7 +134,7 @@ This document is available under the bugroff license.
            @(~ 2) @c{V = Number}, @c{⊤ = 0} @br
            @(~ 2) @c{V = Pointer}, @c{⊤ = null} @br @; NULL value, (void), #f, nil, etc.
            In pure partial lazy FP, @c{⊤ = (lazy ⊥)}} @; universal top value
-        @L{Bad: use fix-point combinator @c{Y : (V → V) → V}})
+        @L{Bad: use fixpoint combinator @c{Y : (V → V) → V}})
      ($slide "Minimal First-Class Modularity: Records"
         @L{Values: @c{V}, @c{W}, @c{X}... @br
            Identifiers: @c{I}, @c{J}. @br
@@ -161,14 +164,14 @@ This document is available under the bugroff license.
            every identifier referenced is defined}
         @L{Extract record @c{∏M} from spec @c{∏M → ∏M} ? @br
            Close open loops, tie knots, link references… @br
-           @R{@em{fix-point operator} @c{Y} @(~ 4)}})
+           @R{@em{fixpoint combinator} @c{Y} @(~ 4)}})
      ($slide "Digression: Scheme vs FP"
         @L{Issue 1: pure applicative Y sucks @br
             Solution: stateful Y, lazy Y, or second class Y}
         @L{Issue 2: unary functions are syntax-heavy @br
             Solution: cope, autocurry, or multiple arities with care}
-        @L{@c{coop.rkt} @em{choices}: letrec + lazy fields, autocurry}) @; Obviously, YMMV
-     ($slide "Minimal (First-Class) Modular Extensibility"
+        @L{@c{coop.rkt} @em{choices}: letrec, autocurry}) ;; Obviously, YMMV
+     ($slide "Minimal First-Class Modular Extensibility"
         @L{Extensions: @c{X → X} @br
            Modularity context: @c{∏M} @br
            Open modular extensible spec: @c{∏M → ∏(X → X)}}
@@ -205,20 +208,22 @@ This document is available under the bugroff license.
                    @(~ 13) (sqr (self 'y))))) @br
                    @(~ 9) (else super)))}})
      ($slide "Minimal Example, non-trivial inheritance (test)"
-        @L{@c{(define point-q (instantiate @br
-                    @(~ 2) (inherit rho-spec @br
-                    @(~ 4) (inherit (add-x-spec 1) @br
-                    @(~ 6) coord-spec)))) @br
+        @L{@c{(define point-r (instantiate @br
+                    @(~ 2) (inherit (add-x-spec 1) @br
+                    @(~ 4) (inherit coord-spec @br
+                    @(~ 6) rho-spec)))) @br
                     @br
-                 (point-q 'x) ⇒ 3 @br
-                 (point-q 'rho) ⇒ 5}}))
+                 (point-r 'x) ⇒ 3 @br
+                 (point-r 'rho) ⇒ 5}}))
     ($section "Wait, what?"
      $plan-slide
      ($slide "What did we just do?"
         @L{Reconstructed recognizable OO from first principles}
         @L{The first principles: @em{first-class, modularity, extensibility}}
+        @~
         @L{OO literally in two short definitions, in any FP language}
-        @L{No classes, no mutable objects, no objects!}
+        @~
+        @L{No classes, no mutation, no objects!}
         @~
         @L{How is it even possible???})
      ($slide "Precedents" ;; (modulo trivial refactorings)
@@ -236,7 +241,7 @@ This document is available under the bugroff license.
            ... contrast with GCL, Jsonnet, Nix, that have objects(!?)})
      ($slide "Conflation: hidden product, implicit cast"
         @L{Prototype = Spec × Target @br
-           Target = lazily resolved value from spec}
+           Target = lazily resolved fixpoint from spec}
         @L{Want to compute a method? Use the target @br
            Want to inherit? Use the spec}
         ;; Small, partial, incremental specifications are the whole point
@@ -252,7 +257,7 @@ This document is available under the bugroff license.
            object methods = static methods applied to the element}
         @L{abstract class = used only for its spec @br
            concrete class = used only for its target}
-        @L{C++ templates: lazy functional Prototype OO at compile-time})
+        @L{C++ templates: pure lazy FP Prototypes at compile-time})
      ($slide "What about Objects?"
         @L{T: "object" is any value, "instance" is target from spec @br
         @; i.e. Prototype is conflated Specification × Target
@@ -262,16 +267,16 @@ This document is available under the bugroff license.
            "object" as a concept is not necessary for OO}
         @L{Fields are named first, understood much later.})
      ($slide "What about Types?"
-        @L{Spec Subtyping: @em{before fix-point} @br
-           Target Subtyping: @em{after fix-point} @br
-           @strong{SUBTYPING and FIX-POINTS DO NOT COMMUTE!}}
+        @L{Spec Subtyping: @em{before fixpoint} @br
+           Target Subtyping: @em{after fixpoint} @br
+           @C{@strong{SUBTYPING and FIXPOINT @em{DO NOT} COMMUTE!}}}
         @L{Fortress 2011 Type checking modular multiple dispatch @br
            @(~ 4) with parametric polymorphism and multiple inheritance @br
            Scala 2012 Dependent Object Types}
         @L{Prototype OO? Dunno, maybe dependent types?})
      ($slide "What about Typeclasses or Modules?"
         @L{Haskell Typeclass, Rust Trait, ML modules... @br
-           @(~ 4) modular but @em{not extensible} @br
+           @(~ 4) @strong{modular but @em{not extensible}} @br
            Contra Cook: extensibility matters!}
         @L{Interface Passing Style 2012: extensible typeclasses @br
            Isomorphism via macros: @br
@@ -281,15 +286,16 @@ This document is available under the bugroff license.
         @L{Classes: pure lazy Prototype OO at compile-time}
         @L{Target types historically mutable, but don’t have to be}
         @L{Plenty of pure object libraries in Lisp, Java, Scala…}
-        @L{Mutable inheritance: semantics is hard, as of all mutation @br
-           CLOS: @c{update-instance-for-redefined-class} @br
+        @L{Mutable inheritance: @strong{semantics is hard}, like all mutation @br
+           CLOS @c{update-instance-for-redefined-class} @br
            invalidate caches (atomically?)})
-     ($slide "What about multiple dispatch?"
-        @L{LOOPS 1986, CLOS 1991, Cecil 1992, Dylan 1992, Fortress 2006, Julia 2012}
+     ($slide "Multiple dispatch? Method combination?"
+        @L{both: LOOPS 1986, CLOS 1991, Dylan 1992}
+        @L{multiple dispatch only: Cecil 1992, Fortress 2006, Julia 2012}
         @L{“generic functions”, see CLOS for docs and experience @br
            see Fortress for proper types}
         @L{Pure FP vs orphan/friend/mutually-def'd (type)classes? @br
-           Global fix-point of entire namespace (nixpkgs…)})
+           Global fixpoint of entire namespace (nixpkgs…)})
      ($slide "What about single or multiple inheritance?"
         @L{Worth a section of its own (see next)}
         @L{Lowdown: @br
@@ -379,13 +385,13 @@ This document is available under the bugroff license.
            Talking Past Each Other… for Decades}
         @L{1970s Lisp had both OO and FP @br
            2000s Fortress, Scala: with types}
-        @L{The paper I wished I could have read younger})
+        @L{Opposition in Representation, not in Reality})
      ($slide "Why So Much Blindness?"
         @L{Industry doesn’t care enough about Correctness @br
-           Academia doesn’t grok Programming In The Large @br
-           Both like to ignore the Human Factor}
-        @L{All get stuck in their paradigms @br
-           Opposition in mindset, not in reality})
+           Academia doesn’t grok Programming In The Large}
+        @L{Both ignore the Human Factor: @br
+           interchangeable cogs, transient students}
+        @L{All get stuck in their paradigms})
      ($slide "Two Mindsets"
         @L{Compositionality for reducible problems @br
            Extensibility for irreducible problems}
