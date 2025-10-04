@@ -171,7 +171,7 @@ This document is available under the bugroff license.
             Solution: stateful Y, lazy Y, or second class Y}
         @L{Issue 2: unary functions are syntax-heavy @br
             Solution: cope, autocurry, or multiple arities with care}
-        @L{@c{coop.rkt} @em{choices}: letrec, autocurry}) ;; Obviously, YMMV
+        @L{@c{coop.rkt} @em{choices}: stateful Y (letrec), autocurry}) ;; Obviously, YMMV
      ($slide "Minimal First-Class Modular Extensibility"
         @L{Extensions: @c{X → X} @br
            Modularity context: @c{∏M} @br
@@ -247,7 +247,7 @@ This document is available under the bugroff license.
         ;; Small, partial, incremental specifications are the whole point
         @L{Lazy is essential: most specifications are partial} ;; would fail resolution
         @L{Prototype OO: Ani 1976, ThingLab 1977, SELF 1986, @br
-           JS 1995, GCL 2004, Jsonnet 2014, Nix 2015}))
+           @strong{JavaScript 1995}, GCL 2004, Jsonnet 2014, Nix 2015}))
     ($section "What about my favorite OO feature?"
      $plan-slide
      ($slide "What about Classes?"
@@ -309,7 +309,8 @@ This document is available under the bugroff license.
         @L{Hoare 1966 (sub)classes (handwaving) @br @; also NULL "billion dollar mistake"
            SIMULA 1967 “Prefix classes” (first implementation) @br @; also suffix, hence BETA "inner"
            Smalltalk 1976 “single inheritance” (compromise) @br
-           C-with-classes 1979, Java 1996, C# 2000, COBOL 2002, JS 2015} ;; wildfire
+           @(~ 2) C-with-classes 1979, Java 1996, C# 2000, @br
+           @(~ 2) COBOL 2002, JavaScript 2015...} ;; wildfire
         @L{Very efficient, simplest for 1960s before cheap lambdas @br
            Least expressive, least modular})
 #|
@@ -321,10 +322,10 @@ This document is available under the bugroff license.
 |#
      ($slide "Multiple Inheritance"
         @L{KRL 1975 “inheritance of properties” Ani 76, ThingLab 77 @br
-           Method “conflict”: methods in parallel superclasses @br
+           Method @em{conflict} if in parallel superclasses: @br
            @; Sad, self-defeating worldview, less expressive, less extensible, less modular
            @(~ 2) Mesa 1979, SELF 1986, C++ 1989, ADA 2003 @br @; Julia 2012
-           Method combinations, after linearizing inheritance DAG: @br @; Improved by Dylan's C3 1996
+           Method @em{combination} after linearizing inheritance DAG: @br @; Improved by Dylan's C3 1996
            @(~ 2) Flavors 1979, LOOPS 1986, CLOS 1991 @br @; Happy, Harmonious worldview
            Simple combination, can only call super method: @br
            @(~ 2) Ruby 1992, Python 1994, Scala 2004} @; Dull, boring worldview
@@ -353,10 +354,10 @@ This document is available under the bugroff license.
         @L{Multiple inheritance: just declare direct superspecs @br
            No maintenance nightmare, just bliss.})
      ($slide "Single and Multiple Together"
-        @L{Two separate hierarchies (lame): CLOS (struct/class) @br
+        @L{Two separate hierarchies (lame): CLOS (@strong{struct/class}) @br
            Same hierarchy (yay): Ruby (class/module), @br
-           @(~ 2) Scala (class/trait), Gerbil Scheme (struct/class)}
-        @L{“struct” can inheritance from “class” and vice-versa @br
+           @(~ 2) Scala (class/trait), Gerbil Scheme (@strong{struct/class})}
+        @L{“struct” can inherit from “class” and vice-versa @br
            struct only in “single inheritance” wrt other structs}
         @L{“tail property”: the property actually needed for efficiency @br
            @em{a struct’s class linearization is a suffix to its subclasses’s}}))
@@ -397,7 +398,7 @@ This document is available under the bugroff license.
            Extensibility for irreducible problems}
         @L{Brighter than ambitious vs more ambitious than bright}
         @L{History: OO invented to model complex SIMULAtions @br
-           History: FP to formalize computations in logic})
+           History: FP to formalize simple computations in logic})
      ($slide "Meta-Thesis"
         @L{Humility, not fanaticism}
         @L{Incommensurable paradigms? Go wider!}
