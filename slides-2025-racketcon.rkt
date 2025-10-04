@@ -80,12 +80,13 @@ This document is available under the bugroff license.
         @L{Classes, mutation, objects(!) are not fundamental @br
             @; — can be done without or added on top @br
             Key ignored semantic notion: Conflation}
-        @L{Mixin Inheritance is simplest, but not most modular @br
-            Best: combine Single and Multiple Inheritance})
+        @L{Mixin Inheritance: most fundamental, not most modular @br
+            Best Inheritance: combine Single and Multiple})
      ($slide @list{What OO @em{is not} about}
-        #| There are many things many people believe are necessary or sufficient for OO,
-        because that matches what little OO they know.
-        Ignorance is not a good argument, but I lack time, so for a good debunking, read the paper. |#
+        #| There are many things many people wrongly believe are necessary or sufficient for OO
+           (because that matches what little OO they know).
+           (Ignorance is not a good argument.)
+           No time for a good debunking now — read the paper. |#
         @Li{C++ (or even Java, etc.)}
         @Li{Classes}
         @Li{“Encapsulation”, “Information Hiding”}
@@ -153,17 +154,17 @@ This document is available under the bugroff license.
            (define (ls-sorted m) @br
            @~ (compose (m 'sort) (m 'ls)))}})
      ($slide "Minimal First-Class Modularity: What"
-        @L{Modular module specification: @br
-           For each identifier @c{j}, a modular spec: @c{∏M → Xⱼ} @br
-           Equivalently: @c{∏(∏M→X) = j:J → ∏M → Xⱼ}}
-        @L{Equivalently: @c{∏M → ∏X = ∏M → j:J → Xⱼ} @br
+        @L{modular module specification: @br
+           Given a common module context @c{∏M}, @br
+           for each identifier @c{j}, a value of type @c{Xⱼ}: @br
+           @c{∏M → ∏X = ∏M → j:J → Xⱼ} @br
            @c{∏M} module context, record of identifiers @em{referenced} @br
-           @c{∏X} module body/interface, record of identifiers @em{defined}.})
+           @c{∏X} module body, record of identifiers @em{defined}.})
      ($slide "Minimal First-Class Modularity: Y"
         @L{Close modular spec: @c{∏M → ∏M} @br
            every identifier referenced is defined}
-        @L{Extract record @c{∏M} from spec @c{∏M → ∏M} ? @br
-           Close open loops, tie knots, link references… @br
+        @L{Extract target record @c{∏M} from spec @c{∏M → ∏M} ? @br
+           link references, close open loops, tie knots, … @br
            @R{@em{fixpoint combinator} @c{Y} @(~ 4)}})
      ($slide "Digression: Scheme vs FP"
         @L{Issue 1: pure applicative Y sucks @br
@@ -175,10 +176,9 @@ This document is available under the bugroff license.
         @L{Extensions: @c{X → X} @br
            Modularity context: @c{∏M} @br
            Open modular extensible spec: @c{∏M → ∏(X → X)}}
-
         @L{Close modular extensible spec: @c{∏M → ∏(M → M)} @br
            Resolve each binding — apply to top value @c{⊤} @br
-           Reduced to known modular spec @c{∏M → ∏M} — use @c{Y}})
+           Target from reduced modular spec @c{∏M → ∏M} — use @c{Y}})
      ($slide "Minimal “Object-Orientation”"
         @L{@c{(define (instantiate spec) @br
                  @(~ 2) (Y (λ (m i) (spec m i ⊤)))) @br
@@ -385,7 +385,7 @@ This document is available under the bugroff license.
            Talking Past Each Other… for Decades}
         @L{1970s Lisp had both OO and FP @br
            2000s Fortress, Scala: with types}
-        @L{Opposition in Representation, not in Reality})
+        @L{Opposition in Mind, not in Reality})
      ($slide "Why So Much Blindness?"
         @L{Industry doesn’t care enough about Correctness @br
            Academia doesn’t grok Programming In The Large}
