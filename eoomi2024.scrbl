@@ -2951,3 +2951,28 @@ also support single inheritance for some classes (or “structures”),
 and sometimes the consistent combination of the two
 (@seclink{single_and_multiple_inheritance_together}).
 }
+
+
+History:
+Not Burroughs B5000, though its builtin support for dispatch tables is cool.
+First integrated OO is not Ivar Sutherland's Sketchpad (1963)
+Not Alan Kay 1966 inventing the word, though it's an essential step
+Arguably but also arguably not Dahl and Nygaard (1967) first implementing classes, though it is a breakthrough and quite close
+Not Smalltalk 1972
+Not Hewitt's Actors (1973, first implementation Irene Greif thesis 1975?, later Gul Agha?)
+Not Frames or KRL (1975, "inheritance")
+Smalltalk 1976
+
+
+https://x.com/Ngnghm/status/1976680711345299533
+
+And believe, I've tried a lot to write code as OCaml modules before I gave up. I had to play a lot of games with module scaffolding, composing things eagerly as much as possible and concentrating the open recursion and its resolution to a few special records.
+
+sam pocino >> What does the failure mode look like there?
+A nice and simple inheritance graph of size N becomes a set of N² modules reimplementing the same things over and over, or you try to chop things up into higher-order bits and reassemble the N² variants manually managing all the dependencies and open recursion.
+Those higher-order bits aren't pretty to see, and grow more horrible as the set of methods under mutual open recursion increases in size.
+So instead of N prototypes, total size N, in the worst case, you get N² modules, of size also increasing like N², yielding complexity N⁴. Or soon enough you punt on factoring things to share common code, and just redundantly implement N² similar but different enough variants.
+Reminds me of that unrelated time I changed ASDF from using bad data structures leading to O(N³) practical evaluation time (and O(N⁴) theoretical worst case) down to simple O(N) time. Build planning time slashed by factor 1M.
+Here we're talking development time, though.
+The Scheme code for my (merkle) tries, using Prototype OO, is 2.5 times smaller, simpler and less head-achy than the OCaml code using modules, with more functionality and better testing, because of all the module scaffolding I did not have to do (also 2.5x fewer entities).
+Single inheritance also gives you N² instead of N, but at least not N³ or N⁴.

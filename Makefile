@@ -92,6 +92,8 @@ build/ltuo.pdf: ltuo.scrbl ltuo.bib header.tex util/eval-check.rkt util/examples
 #scribble --dest build --pdf --style header.tex ltuo.scrbl
 #	cd build ; scribble --pdf ../ltuo.scrbl
 	scribble --dest build --pdf ltuo.scrbl
+build/ltuo.html: ltuo.scrbl ltuo.bib util/eval-check.rkt util/examples-module.rkt util/util.rkt build/resources
+	scribble --dest build --html ltuo.scrbl
 ltuo: build/ltuo.pdf
 	$(PDFVIEWER) $<
 ltuopdf: build/ltuo.pdf

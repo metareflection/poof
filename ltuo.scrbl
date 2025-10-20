@@ -6,8 +6,15 @@
 @; TODO: a ltuo.bib with per-entry summary and commentary tailored to the relevance of the cited piece
 @; to the current one.
 
-@; @title{C4: The best of single and multiple inheritance}
-@title{Lambda, the Ultimate Object
+@;{ TODO: get this header in the HTML???
+@head-extra[
+  (list 'link
+        (list (list 'rel "icon")
+              (list 'type "image/svg+xml")
+              (list 'href "resources/pic/Half-life_lambda_logo.svg")))]}
+
+@title[
+]{Lambda, the Ultimate Object
 @; @linebreak[] @;
 } @subtitle{
        A theory of Object-Orientation, and a modest contribution on optimal inheritance}
@@ -28,7 +35,7 @@
   what makes each variant desirable or not, what are the relevant challenges with
   using, implementing or combining them.
   In particular, we reconstruct from first principles OO
-  as a mechanism for reified (in-language) Extensible Modularity,
+  as a mechanism for reified (in-language) Modular Extensibility,
   with examples in a subset of Scheme that is a minimal extension of the untyped λ-calculus.
   We explain why multiple inheritance is more expressive and modular than single inheritance,
   why (prototype or class) linearization is desirable
@@ -49,10 +56,12 @@
 }
 
 @(require scriblib/bibtex
+@;        (only-in scribble/core make-style)
           (only-in scribble/manual racket racketblock code codeblock litchar itemize item)
           (only-in scribble/example examples make-base-eval)
           (only-in scriblib/footnote note)
           (only-in scribble-abbrevs appendix)
+@;        (only-in scribble/html-properties head-extra html-defaults)
           (only-in scribble-math/dollar $)
 @;          scribble/minted
           syntax/parse/define
@@ -256,14 +265,20 @@ the relationship between Specifications, Prototypes, Classes and Objects.
 
 In section 4, we explain what we mean by Extensible Modularity,
 the why and wherefore of OO.
-As we do, we introduce some simple formal models of Modularity, Extensibility and OO
+This section remains informal, but lays the conceptual groundwork
+for the formal approach we take in the rest of this paper.
+
+In section 5, we introduce a minimal formal models of Modularity and Extensibility
 in terms of pure Functional Programming (FP), and derive from first principles
-a minimal Object-Oriented system, using Mixin Inheritance,
-on top of the λ-calculus, using Scheme syntax, with example for how to use it.a
+a minimal OO system.
+This minimal OO system on top of the λ-calculus, using Scheme syntax.
+
+uses Mixin Inheritance,
+, with example for how to use it.a
 The system, remarkably, has neither objects nor prototypes, even less classes,
 only Specifications and Targets.
 
-In section 5, we dispel a lot of common confusions about OO by
+In section 6, we dispel a lot of common confusions about OO by
 presenting a few insights that almost everyone misses about OO:
 the too easy confusion between subtyping and subclassing;
 the common myth associating OO with imperative programming
@@ -342,7 +357,7 @@ due to the author or reader having wrong expectations about what OO is supposed 
 @subsection{Whatever C++ is}
 
 The most popular OO language in the decades that OO was a popular trend (roughly 1980 to 2010),
-C++ indeed enables programming in OO style to a large degree.
+C++ indeed supports programming in an OO style.
 But C++ is a rich language with many aspects completely independent of OO
 (consider e.g. bit-banging, RAII, template metaprogramming or pointer aliasing and the memory model),
 whereas the OO aspect that it undoubtly offers
@@ -359,7 +374,7 @@ that will be an important topic later in this paper.
 C++ boasts support for multiple inheritance, and many people,
 when thinking of multiple inheritance, think of what C++ offers.
 Yet, while C++ supports single inheritance well, what it calls “multiple inheritance”
-is not at all the same as what everyone else calls “multiple inheritance”:
+is not at all the same as what most everyone else calls “multiple inheritance”:
 is actually a modified kind of mixin inheritance with automatic renaming (for non-@r[virtual] classes),
 and a subset of multiple inheritance (for @r[virtual] classes and members).
 Moreover, C++ crucially lacks the proper method resolution
@@ -401,9 +416,10 @@ seldom even mention any other kind of OO in their chapter about OO, much less st
 
 Yet KRL@~cite{Winograd1975},
 the second recognizably OO language,
-whose authors first applied the words “inheritance” and “prototypes” to describe it,
-has prototype-based OO (a.k.a. Prototype OO).
-Certainly, the modern concept of OO
+whose authors first applied the words “inheritance” and “prototypes” to describe it
+has what we would now recognize as prototype-based OO (a.k.a. Prototype OO),
+though the words were used descriptively without their latter technical definition.
+The modern concept of OO
 can be traced back to Smalltalk adopting inheritance in 1976
 and popularizing the word and concept of it among programming language designers;
 and Smalltalk was class-based.
@@ -730,7 +746,7 @@ but in a trivial way that fails to support modularity@xnote["."]{
   Note that there is nothing wrong at all with with relational data modeling as such:
   it is a fine technique for many purposes,
   despite being deliberately limited in abstraction (and, therefore, modularity)—and
-  sometimes @emph{thanks to it}.
+  sometimes @emph{thanks to this limitation}.
   Restrictions to expressiveness can be very useful,
   in the necessarily restricted or imprecise cases that they apply.
   Indeed, in some cases, relational data modeling, not OO,
@@ -775,8 +791,8 @@ Then you should use that type system to describe not just
 records of elementary data types over the wire or on disk,
 but all the rich entities within your software, their interactions and interrelations.
 This will provide much more help with design and safety than any code-less methodology can.
-And if you picked an OO-capable language like Scala, Java, C# or C++
-(or, with manually enforced dynamic types, Python, Ruby or Lisp),
+And if you picked an OO-capable language like C++, Java, C# or Scala,
+(or, with manually enforced dynamic types, Lisp, Python or Ruby),
 you can actually use OO as you do it.
 
 @section{What Object-Orientation @emph{is} — Informal Overview}
@@ -823,7 +839,7 @@ but the second one used prototypes @~cite{Winograd1975},
 and some provide both @~cite{EcmaScript:15}.
 Class OO is the more popular form of OO,
 but the most popular OO language, JavaScript,
-started with Prototype OO, with Class OO added on top twenty years later.
+started with Prototype OO, with Class OO only added on top twenty years later.
 
 @subsubsection{Classes as Prototypes for Types}
 A class is a compile-time prototype for a type,
@@ -833,23 +849,24 @@ or some reflective representation thereof across stages of evaluation.
 @; TODO see appendix XXX
 
 Class OO is therefore a special case of Prototype OO,
-which is therefore the more general form of OO @~cite{poof2021}.
+which is therefore the more general form of OO @~cite{Lieberman1986 poof2021}.
 And indeed within Prototype OO, you can readily express
 prototypes for runtime type descriptors for your language,
 or prototypes for type descriptors for some other language you are processing as a meta-language.
 
 In this article, we will thus use the terminology of the more general case, Prototype OO,
 and will avoid talking about “class”, since it’s a particular case of “prototype”
-with very little worth discussing about it with respect to the principles of OO,
-apart from the incapacity of too many programming language users and designers
-to see these more general principles@xnote["."]{
+with very little worth discussing about it with respect to the principles of OO@xnote["."]{
   There would be plenty to discuss about classes and types from the point of view of
   library design and ecosystem growth, patterns that OO enables and antipatterns to avoid,
   tradeoffs between expressiveness and ease of static analysis, etc.
-  But that’s a topic for another essay. There are plenty of existing books and papers on OO,
+  There are plenty of existing books and papers on Class OO,
   OO software libraries, techniques to type and compile OO, to get inspiration from,
   both positive and negative.
-  Their many practical lessons apply even if they don’t get the theory of OO just right.
+  While some of the extent OO lore indeed only applies to defining classes,
+  a whole lot of it easily generalizes to any use of inheritance,
+  even without classes, even without prototypes at all,
+  even when the authors fail to suspect any OO exists beyond Class OO.
 }
 Still our discussion of OO, and our exploration of inheritance in particular,
 directly applies just as well to the special case that is Class OO.
@@ -880,50 +897,37 @@ more fundamental than prototype, class or object,
 is that of (extensible and modular, partial)
 @emph{specification} for some @emph{target} computation.
 
-In the case of Prototype OO, the target is usually a record;
-it could actually be of any type, but a record offers more opportunities for modularity.
-In the case of Class OO, the target is usually a record @emph{type},
-or rather a (dependent) record of a record type and associated methods,
+The target can be any kind of computation, returning any type of value.
+But in Prototype OO, the target most usually computes a record,
+which offers simpler opportunities for modularity than other types.
+And in Class OO, the target is instead a record @emph{type},
+or rather a record of a record type and associated methods,
 or of their compile-time or runtime representation.
 
-A specification, in the simplest form of OO, is a function
-from referenced target (self) and inherited partial target (super)
-to defined and/or extended partial target
-(if specifying a type, it’s a function from type to type to type;
-or type descriptors instead of types if you want to be more precise),
-possibly together with additional data (as we’ll find out when we study inheritance).
-
-These specifications can be modeled simply using the λ-calculus
-as functions of two parameters (considered together with other metadata):
-@r[self] for modularity, for each specification to access finished aspects
-as computed from (their and) other specifications, and
-@r[super] for incremental extensibility,
-for each specification to be able to contribute
-its modifications to the computation as partially specified thus far.
-The specified computation is then the fixed point for the @r[self] parameter
-given a trivial @r[base] value for the initial super.
-Composing specifications is just chaining them through the @r[super] argument
-while sharing the same @r[self] argument. @; See section XXX. Cite bracha
-
-The usage pattern of a @r[self] argument intended for fixed-point
-has been dubbed “open recursion”. @; cite Pierce
-It is what allows the “late binding” touted by Alan Kay,
-and makes the design modular: authors of one partial specification can reference
-and use aspects of the total computation handled by other partial specifications.
-The usage pattern of the @r[super] argument is how inheritance brings about
-incrementality, extensibility and compositionality within this modular context.
+A (partial or complete) specification is a piece of information that
+(partially or completely) describes a computation.
+Multiple specifications can be combined together into a larger specification.
+From a complete specification, a target computation is specified that can be extracted.
+A specification is modular inasmuch as it can define certain aspects of the target
+while refering to other aspects to be defined in other specifications.
+A specification is extensible inasmuch as it can refer to some aspects of the target
+as partially defined so far by previous specifications, and amend or extend them.
+In Prototype OO, access to this modular context and to the previous value being extended
+are usually refered to through respective variables often named @c{self} and @c{super}.
+In Class OO, such variables may also exist, but there is an extra layer of indirection
+as they refer to an element of the target type rather than to the target itself.
 
 @subsubsection{Prototypes as Conflation}
 A specification is not a prototype, not a class, not a type, not an object:
 it is not even a value of the target domain.
-It is not a record and does not have fields, attributes or any such thing.
+It is not a record and does not have methods, fields, attributes or any such thing.
 
 The target value in general is not an object either,
 it’s just an arbitrary value of that arbitrary domain.
 It needs not be any kind of record nor record type;
 it needs not have been computed as the fixed-point of a specification;
 indeed it is not tied to any specific way to compute it.
-It cannot be incrementally extended or composed
+It cannot be inherited from (incrementally extended)
 according to any of the design patterns that define OO.
 
 Rather, a prototype (a.k.a. “object” in Prototype OO, and “class” but not “object” in Class OO)
@@ -1014,8 +1018,9 @@ What in Class OO is called an “object” or “instance” is an element of a 
 Regular prototype fields and methods are called “class fields” or “class methods”
 (or “static” fields and methods, after the keyword used in C++ and Java)—but
 remember they only involve the target type, not the specification.
-“Object methods” and fields are semantically regular methods and fields
-that take one implicit argument in front, the object (i.e. element of the target type).
+“Object methods” are semantically regular methods that take one implicit argument in front,
+the object (i.e. element of the target type).
+“Object fields” are regular fields of the object as a record.
 
 Finally, many languages, systems, databases, articles or books call “object” some or all
 of the regular runtime values they manipulate, that may or may not be records,
@@ -1026,8 +1031,9 @@ actual or imagined, or then again sometimes they may.
 
 @subsubsection{OO without Objects}
 
-The word “object” is therefore quite ambiguous, and practically useless absent the context
-or a specific language, system, article, etc.
+The word “object” is therefore quite ambiguous, and
+practically useless when talking of OO in general,
+absent the context of a specific language, system, article, etc.
 Furthermore, the fundamental patterns of OO can exist and be usefully leveraged in a language
 that lacks any notion of object, merely with the notions of specification and target:
 Indeed, Yale T Scheme has a class-less “object system” @~cite{adams88oopscheme},
@@ -1037,18 +1043,21 @@ of their extensible specifications, themselves called “components”,
 that use mixin inheritance.
 
 To avoid confusion, we will be careful in this article to only speak of
-“specification”, “target”, “prototype”, and (type) “element”
+“specification”, “target”, “prototype”, and (target type) “element”
 and to avoid the word “object”—both a uselessly ambiguous word and a non-necessary notion.
-As already mentioned above, we will also be avoiding “class” for a different reason,
-because it is a special case of the more general prototypes we are studying.
+As already mentioned above, we will also avoid the word “class” unless necessary,
+since it is a special case of the more general prototypes we are studying.
 
-This is all particularly ironic when the field we are studying is called “object orientation”,
+This is all particularly ironic when the field we are studying is called “Object Orientation”,
 in which the most popular variant involves classes.
 But fields of knowledge are usually named as soon as the need is felt
 to distinguish them from other fields,
 long before they are well-understood,
 thus based on misunderstandings;
-this is therefore par for the course.
+this is therefore par for the course@xnote["."]{
+  The wider field of study is similarly misnamed, as per the famous E. W. Dijkstra quote:
+  “Computer Science is no more about computers than astronomy is about telescopes.”
+}
 
 @subsection{Inheritance Overview}
 @subsubsection{Inheritance as Modular Extension of Specifications}
@@ -1083,7 +1092,22 @@ In Simula, a class is defined starting from a previous class as a “prefix”.
 The effective text of a class (hence its semantics) is then the “concatenation”
 of the direct text of all its transitive @emph{prefix classes},
 including all the field definitions, method functions and initialization actions,
-in order from least specific superclass to most specific.
+in order from least specific superclass to most specific@xnote["."]{
+  SIMULA later on also allows each class define a “suffix” as well as a “prefix”,
+  wherein the body of each subclass is the “inner” part between this prefix and suffix.
+  This approach by SIMULA and its successor BETA is in sharp contrast with how
+  inheritance is done in about all other languages, that copy Smalltalk.
+  The “prefix” makes sense in allowing procedure definitions to be overridden
+  by latter more specialized definitions;
+  it also 
+  inasmuch as initialization code and side-effects are also included,
+  and that return values are “assigned” to the function’s name in the body in ALGOL style
+  (and that labels and 
+  the 
+  The “inner” trick makes sense in 1960s technology,
+  where surrounding a block of code,
+  (possibly with labels and jumps?)
+}
 In modern terms, we call the prefix a superclass. @; TODO CITE
 The @emph{inheritance hierarchy} of a class, set of its direct and transitive superclasses,
 then constitutes a list, and the (transitive) subclass relation is a total order.
@@ -1227,9 +1251,9 @@ See how in CLOS you can define methods on generic function
 when a class is redefined. @;{TODO XXX @~cite{}}
 Mutable state and mutable inheritance structure in particular are therefore
 clearly an independent issue from prototypes vs classes,
-though it might not have appeared so at the time.
+though it might not have been obvious the time.
 As we introduce formal models of OO, we will start with pure functional models, and
-will only discuss the confounding matter of side-effects much later.@note{
+will only discuss the confounding matter of side-effects much later@xnote["."]{
   It might be interesting to explain @emph{why} previous authors failed so hard to
   identify delegation and inheritance, when the similarities are frankly obvious,
   and the relationship between classes and prototypes is well-known
@@ -1303,7 +1327,7 @@ we can briefly answer these questions as follow:
 @itemlist[#:style'ordered
 @item{Yes, our definition is correct:
 it accurately identifies what people mean usually by those words,
-as distinguished from situations to which the words do not apply.}
+in distinguishing situations where they apply versus situations where they do not.}
 @item{No, the phenomena that effectively affect people,
 that they care to name, discuss, think about and act on, are not arbitrary.
 Thus the important part of definitions isn’t convention at all:
@@ -1318,7 +1342,7 @@ And people care about OO even if you try to change the name for it,
 or denature the name “OO” not to identify the same phenomenon anymore;
 they will keep caring about the same phenomenon under a different name,
 rather than care about whatever those who corrupt the name may want them to.}
-@item{Not quite. We should definitely listen to Alan Kay,@note{
+@item{Not quite. We should definitely listen to Alan Kay@xnote[","]{
   Alan Kay, who coined the term “object-oriented programming” in 1967, explains in 2003 @~cite{Kay2003}
   that “OOP to me means only messaging, local retention and protection and hiding of state-process,
   and extreme late-binding of all things”.
@@ -1359,13 +1383,13 @@ rather than care about whatever those who corrupt the name may want them to.}
   And if other means are found to satisfy Kay’s “extreme late binding”,
   then we’ll have to give them a name that distinguishes them from what is now called OO.
 }
-and other pioneers and experts;
+and to other pioneers and experts;
 but none is an ultimate authority, and
 we should look at what the pioneers and experts do and not (just) what they say,
 especially since you could recursively apply
 the same skepticism to the words they use in their definitions.
 Also, be wary that pioneers provide inspiration, insight and discoveries,
-but seldom well-rounded theories: these theories only arise after lots of
+but seldom well-rounded theories: often these theories arise only after lots of
 experience, filtering, and reformulation@xnote["."]{
 As the jest goes, “Every technique is first developed,
 then used, important, obsolete, normalized, and finally understood.”
@@ -1400,10 +1424,8 @@ and systematically reduce to elementary concepts.
 
 Modularity@~cite{Parnas1972 Dennis1975} is the organization of software source code
 in order to support division of labor, dividing it into “modules” that can each be
-understood and worked on mostly independently from other modules.
-
-
-
+understood and worked on mostly independently from other modules,
+by one or multiple developers over time.
 
 @subsubsection{First- to Fourth-class, Internal or External}
 
@@ -1411,7 +1433,7 @@ A few languages offer a builtin notion of modules as @emph{first-class} entities
 that can be manipulated as values at runtime.
 But popular modern programming languages usually only offer
 @emph{some} builtin notion of modules as @emph{second-class} entities,
-entities that exist at compile-time but are not available as regular runtime values.@note{
+entities that exist at compile-time but are not available as regular runtime values@xnote["."]{
   In between the two, some languages offer a “reflection” API that gives some often limited
   runtime access to representations of the module entities.
   This API is often limited to introspection only or mostly;
@@ -1430,7 +1452,7 @@ Indeed modules are a complex and costly feature to design and implement,
 and few language designers and implementers will expend the necessary efforts toward it
 at the start of language’s development;
 only the few that have success and see their codebase grow
-in size and complexity generally bother.@note{
+in size and complexity generally bother@xnote["."]{
   Unless they develop their language within an existing modular framework
   for language-oriented programming, such as Racket,
   @;TODO{cite. Also Stratego http://strategoxt.org/ ? Pypy https://pypy.org/ ?}
@@ -1448,7 +1470,7 @@ developers may achieve modules as @emph{fourth-class} entities,
 ones that they handle manually, with design patterns, editors, copy-paste, and lots of debugging.
 Either third-class or fourth-class entities are considered @emph{external} to the language,
 not part of its semantics, not handled by its processors,
-yet conceptually present in the minds of the programmers.@note{
+yet conceptually present in the minds of the programmers@xnote["."]{
   Whereas the terms “first-class” and “second-class” are well-established in the literature,
   @;{TODO cite}
   we are hereby introducing the terms “third-class” and “fourth-class”,
@@ -1476,11 +1498,11 @@ Thus, programmers will:
 @item{“containerize” consistent package installations into images.}]
 
 When for the sake of “simplicity”, “elegance”, or ease of development or maintenance,
-support for modularity is lacking within a language,
-or within the ecosystem around one or multiple languages,
+support for modularity is left out of a language,
+or of an ecosystem around one or multiple languages,
 this language or ecosystem becomes but
-the weak kernel of a haphazard collection of tools cobbled together
-to palliate its lack of internal modularity with external modularity.
+the weak kernel of a haphazard collection of tools and design patterns cobbled together
+to palliate this lack of internal modularity with external modularity.
 The result inevitably ends up growing increasingly
 complex, ugly, and hard to use, develop and maintain.
 
@@ -1490,7 +1512,8 @@ compared to alternative designs that enable less cooperation or require more coo
 given some goals for developers, a space of changes they may be expected to enact in the future, etc.
 More ability to code one’s part, while requiring less knowledge about other people’s parts.
 
-For instance, the object-oriented design of ASDF@~cite{ASDF2}
+For instance, the object-oriented design of the Common Lisp build system
+ASDF@~cite{ASDF2 ASDF3}
 made it simple to configure, to extend, and
 to refactor to use algorithms in @emph{O(n)} rather than @emph{O(n³)} or worse,
 all of it without any of the clients having to change their code.
@@ -1520,7 +1543,7 @@ runtime and/or compile-time representation for those files,
 and often some correspondence between file names and names of internal module entities
 that result from compiling those files.
 In other words, for most languages that matter,
-files embody modularity internal to programming languages.@note{
+files embody modularity internal to programming languages@xnote["."]{
   Note that while a file may be a unit of modularity, this is not always the case:
   often, actual modules span multiple files;
   at other times, there may be multiple modules in a single file.
@@ -1578,31 +1601,55 @@ at a fine grain, that can each be solved by a different programmer,
 while other programmers only have to know its calling convention.
 
 No less important than subroutines as such yet also taken for granted
-was the concept of a call stack of return addresses,
-which while anticipated by Turing in 1945 @; TODO cite
-only became common in the 1960s, after LISP and ALGOL. @; TODO cite
-Call stacks enable reentrancy of subroutines, such that a subroutine
-can be recursively called by a subroutine it itself called.
-Thus, programmers do not have to care that their subroutines should not be reentered while being executed
+was the concept of a return address allowing
+calls to a single copy of a subroutine from multiple sites,
+@; TODO CITE Turing 1946 report on ACE; implemented by Wilkes
+and later of a call stack of such return addresses and other caller and callee data.
+The call stack enabled reentrancy of subroutines,
+such that a subroutine can be recursively called by a subroutine it itself called;
+@; that only became common after LISP and ALGOL in the late 1950s.
+@; TODO cite McCarthy LISP 1957, Dijkstra ALGOL 1958
+thus, programmers do not have to care that their subroutines
+should not be reentered while being executed
 due to a direct or indirect subroutine call.
 Indeed, subroutines can now be reentered, not just accidentally, but intentionally,
 to express simpler recursive solutions to problems.
-The ability to do more with less coordination with programmers from other parts of the software:
+The ability to cooperate more with less coordination
+with programmers from other parts of the software:
 that’s the very definition of modularity.
 
-Sadly, the generalization of call stacks to first-class continuations in the 1970s, @; TODO cite
-and to delimited control structures in the 1990s are still not available @; TODO cite
+Sadly, the generalization of call stacks to first-class continuations in the 1970s,
+@; TODO cite Steve Russell 1960, van Wijngaarden 1964, Landin 1964, Strachey 1974, Steele 1978
+and later to delimited control in 1988 and beyond @; TODO cite Felleisen 1988
+are still not available @; TODO cite
 in most programming languages, eschewing another progress in modularity,
 wherein programmers could otherwise abstract over the execution of some fragment of code
 without having to worry about transformations to their control structure,
 e.g. for the sake of non-deterministic search, @; TODO cite
 robust replaying of code in case of failure, @; TODO cite
 security checks of code behavior, @; TODO cite
-dynamic discovery and management of side-effects, etc. @; TODO cite
+dynamic discovery and management of side-effects, etc. @;{TODO cite}
 
-OO prototypes and classes, modules a la ML (both second class and later first-class),
-typeclasses a la Haskell, interfaces a la Java, and much more @; TODO cite
-are also entities providing modularity internal to their respective programming languages.
+On a different dimension,
+separately compiled object files, as implemented by FORTRAN (1956), @; TODO cite
+provides third-class modularity through an external linker.
+Later developments like
+typechecked second-class Modules a la Modula-2 (1978), @; TODO cite Wirth;
+@; TODO also look into Liskov's CLU, Mary Shaws' Alphart, etc.
+Higher-Order Modules a la ML (1985), @; TODO cite McQueen 1985
+typeclasses a la Haskell (or traits in Rust),
+interfaces a la Java, and much more,
+@; TODO cite
+provide second-class modularity as part of a language itself.
+@; TODO cite Burrough 5000 (1961), Ivar Sutherland's Sketchpad (1963),
+@; objects in Smalltalk 72, etc.
+@; First-class modules in ML (199x?), etc.
+@; provide first-class modularity.
+
+These are all examples of modularity that don’t involve extensibility as such.
+but we can also add all kinds of OO classes and prototypes since SIMULA 1967.
+
+@; TODO cite Mary Shaw works on Modularity
 
 @subsubsection[#:tag "modularity_and_complexity"]{Modularity and Complexity}
 
@@ -1632,13 +1679,16 @@ the factoring may fail to bring simplification in how programmers may reason abo
 subtle underdocumented interactions between features,
 especially involving implicit or mutable state,
 can increase the cognitive load of using the system;
+attempts at unifying mismatched concepts only to then re-distinguish them
+with lots of conditional behavior will cause confusion rather than enlightenment;
 modules may fail to offer code reuse between different situations;
-programmers may have to manage large interfaces to achieve small results.@note{
+programmers may have to manage large interfaces to achieve small results@xnote["."]{
   A notable trend in wrongheaded “modularity” is @emph{myopic} designs,
   that achieve modest savings in a few modules under focus
   by vastly increasing the development costs left out of focus,
   in extra boilerplate and friction, in other modules having to adapt to the design,
-  in inter-module glue being made harder, or in module namespace curation getting more contentious.
+  in inter-module glue being made more complex, or
+  in module namespace curation getting more contentious.
 
   For instance, the once vastly overrated and overfunded notions “microkernels” or “microservices”
   consist in dividing a system in a lot of modules, “servers” or “services”
@@ -1786,7 +1836,7 @@ in terms of program analysis, synthesis or transformation.
 For local or first-class modules, compilers usually generate some kind of “dispatch table”
 for each modularly defined entity, that, if it cannot resolve statically,
 will exist as such at runtime.
-Haskell typeclasses become by “dictionaries” that may or may not be fully inlined.
+Thus, Haskell typeclasses become “dictionaries” that may or may not be fully inlined.
 The case of OO, prototypes are indeed typically represented
 by such “virtual dispatch table” at runtime—which in Class OO
 would be the type descriptor for each object, carried at runtime for dynamic dispatch.
@@ -1799,10 +1849,10 @@ often with some static protocol to ensure that they are (hopefully, often all) i
 before they are used.
 In a high-level computation without mutation,
 each module is implemented as a function taking the module context as argument,
-the fields are implemented functional lenses@;{TODO cite},
-and the mutual recursion is achieved using a fixed-point operator@;{TODO cite},
-whereas lazy evaluation can be used as a dynamic protocol to ensure that
-each field is initialized before it is used.@note{
+the fields are implemented as functional lenses@;{TODO cite},
+and the mutual recursion is achieved using a fixpoint combinator@;{TODO cite};
+lazy evaluation may be used as a dynamic protocol to ensure that
+each field is initialized before it is used@xnote["."]{
   It is hard to ensure initialization before use;
   a powerful enough language makes it impossible to predict whether that will be the case.
 
@@ -1878,156 +1928,8 @@ In a stateful applicative language, where the various modular definitions
 are initialized by side-effects, programmers need to follow some rigid protocol
 that may not be expressive enough to follow the modular dependencies between internal definitions,
 often leading to indirect solutions like “builder” classes in Java,
-that stage all the complex computations before the actual initialization of objects of the desired class.
-
-A pure functional language without side-effects is the setting for the simplest and
-probably clearest model of modularity:
-(a) all modular definitions are regular λ-terms that take as first argument
-a module context argument @r[m];
-(b) the same value will be provided to all definitions at instantiation time;
-(c) the context @r[m] makes each defined value accessible through some field or lens
-as identified by a name or path of names from the root;
-(d) the effective value of @r[m] to be passed simultaneously to every definition
-is the fixed-point of the computation wherein the value bound to each field
-is the result from computing the given definition with the effective value.
-
-This model is notably used as is in NixOS’s package repository @c{nixpkgs},
-as configured with the pure lazy dynamic functional language Nix:
-every module definition is a function that conventionally takes an argument @c{pkgs}
-that encompasses the entire ecosystem, a namespace hierarchy that includes
-not only all packages being defined, but also the standard library of functions @c{pkgs.lib}
-(though some like to redundantly pass it as an additional argument @c{lib})
-and all kind of intermediary data structures.
-As we will soon see, when implementing OO, this modular context is typically called @r[self],
-to access (the rest of) the modularly (and extensibly) defined entity.
-
-@subsubsection{The Importance of Laziness}
-
-Note that in Nix, lazy evaluation crucially enables sharing of sub-computations
-along a common structure of values; this is especially important when in defining fixed-points,
-and thus, when using modular definitions.
-By contrast, a pure applicative language without side-effects can only express such fixed-points
-as indefinitely recomputed functions, with no sharing and instead with potentially hyper-exponential
-recomputation as the definitions contains deeply nested recursive self-references or mutual references.
-Therefore it is a practical necessity in an applicative language to use some extension for
-lazy evaluation, such as the Scheme primitives @r[delay] and @r[force],
-even though small programs without deep nesting and branching in recursion can do without.
-
-Some might object that most OO languages are not functional and especially not lazy;
-but that misses the point: most OO languages use Class OO,
-where all the OO actually only happens but at compile-time.
-What more, classes are defined in an extremely restricted compile-time language,
-that has a very simple functional model, that has a somewhat simpler description
-in terms of lazy evaluation, yet that doesn’t matter much because the language is so restricted.
-And of course, it matters none at all what meta-language is used to implement
-whatever compile-time language, or whether it is pure functional or imperative,
-unless maybe that meta-language is exposed to the user via reflection.
-
-For evidence of whether lazy evaluation does or doesn’t offer a better model of OO,
-in addition to the Prototype OO languages we will discuss,
-one has to look at those few Class OO languages that do not have such restrictions in handling prototypes.
-At that point, a notable case is C++, that offers a Turing complete language at compile-time,
-template metaprogramming;
-and at least since C++11, that compile-time language indeed is
-a @emph{pure functional, lazy, dynamically typed} Prototype OO language,
-with the @c{using} keyword introducing lazy let-bindings,
-the @c{constexpr} keyword enabling arithmetics and other primitive computations,
-and the entity known as statically typed classes at runtime
-being actually dynamically typed prototypes at compile-time.
-@; TODO maybe C++14 for some of the semantics??
-@; TODO see appendix for examples
-
-@subsubsection{Types for Modularity}
-
-The type for an open modular specification of an entity is @r[M ⟶ E] where
-@r[M] is the type of the module context shared between all modular specifications
-in a given program fragment,
-pand @r[E] is the type of the entity defined by the modular specification at hand.
-@r[M] typically involves some kind of dereference function @r[deref] of type @r[M ⟶ I ⟶ E],
-where @r[I] is a type of identifiers, usually some second-class variant
-of strings that is known at compile-time.
-In a pure functional setting where the only operation on the module context is dereference,
-the type @r[M] can be simply @r[I ⟶ E].
-For more precision, this type could be refined into some indexed product
-@r[∏i:I⟶ E_i] where each type @r[E_i] depends on the identifier @r[i].
-
-To be seen by other modular specification, a modular definition for a single entity is
-a specification associated to some identifier @r[i : I]
-(or to a path of such identifiers for hierarchical modules).
-An open modular definition for one or multiple identified entities
-is thus a finite map @; (associative table, association list)
-from @r[I] to @r[M ⟶ E].
-Up to some trivial refactoring, we can represent such open modular definition
-with the same type @r[M ⟶ I ⟶ E] as the dereference function.
-
-Now, a closed modular definition is just one where all the identifiers are defined,
-and the final computation feeds the resulting module context itself as argument to
-the computations of each element of the module context—using a fixed-point operator
-to tie the knot of recursive self-reference.
-The type of the module context resulting from this fixed-point is just @r[M = I ⟶ E].
-
-A uniform type for all entities is dynamic typing for entities.
-For more precise types, you may want to narrow type @r[E]
-into some type @r[E_i] indexed by @r[i : I].
-The issue then is that establishing set of indexed types for a closed modular definition
-requires knowledge of all modules, whereas, to preserve the principle of modularity,
-each open modular definition may only define or reference a small subset of the index,
-and its type must accordingly only include the narrow subset of indexed types
-as being either defined or referenced by the open modular definition.
-An open modular definition shall not be required to know about and mention indexes and types
-from other open modular definitions that have not been written or amended yet,n
-still that will be combined with it in the future.
-To support modularity, a static type system thus needs to support
-subtyping between sets of indexed types, as well as computation of fixed-points.
-
-that the type @r[M] of the common module context value
-is shared between all definitions within that program fragment:
-this module context must therefore include all the information from all
-the existing modular definitions currently in use,
-but also from all the yet-undefined other partial specifications
-that can or will ever be combined with the current one.
-Yet to keep things modular, no module author should be required to know, much less specify,
-all the constraints demanded by each and every other module,
-including modules yet to be used, yet to be written,
-as part of an assemblage of modules not yet anticipated.
-To preserve modularity in this setting without reverting to some kind of dynamic typing as in Nix,
-some kind of subtyping with extensible types is therefore required,
-such that each module can specify the bindings it requires and those it provides
-without the need for global coordination.@note{
-  In a language like Haskell, that does not have any mechanism of subtyping or extensible types,
-  module programmers can be creative by having modular typeclass constraints on a type parameter,
-  then depend on each application programmer making some gigantic non-modular definition
-  of the common type that will be fed as parameter to
-  all the modular definitions of his entire application,
-  with the potentially thousands of typeclass instances this definition satisfies,
-  and suitable initial defaults for each field (hopefully, a lazy bottom computation will do).
-  The non-modularity hasn’t been completely eliminated,
-  but moved and concentrated onto application developers,
-  while library developers can enjoy more modularity.
-  Some Haskellers notably do that to modularly define a type for errors,
-  lacking an extensible exception type like in OCaml.
-
-  However, if there is more than one modularly-defined entity, especially local ones
-  (and in OO, each and every prototype definition is modular),
-  then each user of modularity (and not just application programmer) must similarly
-  create his non-modular types to feed to each modular computation fixed-point.
-  One could invent a way to share a single mother-of-all modular context object for all fixed-point,
-  inside of which each individual modular definitions each have an access path;
-  but then one might have to make sure that each modular definition has its own set of typeclasses
-  so as to avoid clashes.
-
-  While possible, these strategies are quite onerous, and still require module developers
-  to follow a lot of extra-linguistic conventions — thereby sharply decreasing modularity
-  compared to language-supported extensibility.
-}
-
-Note that we haven’t started talking about objects yet.
-We find that some form of subtyping for modules
-is a necessity for modularity in general, even without OO.
-Though indeed, without OO and its in-language extensibility,
-you can have a somewhat useful notion of modules with
-a quite limited and inexpressive notion of subtyping
-compared to what is needed to support classes, and even more so to support prototypes.
+that stage all the complex computations before
+the actual initialization of objects of the desired class.
 
 @subsection[#:tag "extensibility"]{Extensibility}
 @subsubsection{Extending an Entity}
@@ -2194,7 +2096,9 @@ UML, co-Algebras or relational modeling, as previously discussed in @secref{mode
 fail to model OO precisely because the “classes” they specify are mere types:
 they lack the modularity context that enables self-reference in actual OO classes.
 As in-language entities, they can be extended by adding new attributes,
-but these attributes have to be constants; they cannot vary with a modular “self”.
+but these attributes have to be constants:
+attributes being defined cannot vary modularly by referring to the class being defined it-“self”
+or its many other attributes being defined.
 
 @subsubsection[#:tag "extensibility_and_complexity"]{Extensibility and Complexity}
 
@@ -2251,33 +2155,26 @@ that allows semantic manipulation in dimensions meaningful to programmers.
 By the very nature of programming, any such representation is enough to
 enable arbitrary extensions, given a universal programming language,
 though some representations may be simpler to work with than others:
-those that are at the level of abstraction, from the correct point of view,
-so that programmers can express precisely the changes they want
-with the least effort, and the least semantic discrepancy.
-However, in the case of second-class internal extensibility,
+they may enable programmers can express concisely and precisely the changes they want,
+at the correct level of abstraction, detailed enough that they expose the concepts at stake,
+yet not so detailed that the programmer in drowned in minutia.
+
+Now, in the case of second-class internal extensibility,
 or of first-class internal extensibility in a less-than-universal language,
 representations are no longer equivalent,
 as only a subset of computable extensions are possible.
-Thus viewed, extensibility is not uncommon in computing systems,
-and is a matter of perceiving the benefits enough to justify the costs of automation,
-when undaring programmers would get used to manual external extension at best.
+This kind of limited extensibility is not uncommon in computing systems;
+the restrictions can help keep the developers safe and simplify the work of language implementers;
+on the other hand, they may push developers with more advanced needs towards
+relying external extensibility instead, or picking an altogether different language.
 
 In a pure functional model of extensibility,
-where entities of type @r[E] are being specified extensibly,
-then new extended entity specified from a previous one of type @r[E] is also of type @r[E],
-and the “extension” if first class would be a function of type @r[E ⟶ E]
-(though we will later propose more refined types for that).
-In terms of λ-calculus, a programmer can take an opaque value of type @r[E],
-without having to see inside the term for that value, or being able to access it,
-and write an “extension” that takes that previous term as an argument,
-and operate on it to return a new term.
-When implementing OO, the variable for this previous term is conventionally called @r[super],
-after Simula. @; cite @~cite{Simula1967}
+an extension is a function that takes the original unextended value
+and returns the modified extended value.
+In a stateful model of extensibility,
+an extension can instead be a procedure that takes a mutable reference, table or structure
+containing a value, and modifies it in-place to extend that value.
 
-In cases that an entity is extended “in place” and the old version no longer used,
-as in editing a file, or redefining a class in Smalltalk or Lisp,
-an extension is a function that side-effects a mutable reference of type @r[E],
-or something equivalent.
 
 @;{TODO examples}
 
@@ -2289,7 +2186,8 @@ Modularity and Extensibility work hand in hand:
 a small amount of old information to make software progress.
 Extensibility means you only need to contribute
 a small amount of new information to make software progress.}
-Together they mean that finite-brained developers can better divide work between each other
+Together they mean that one or many finite-brained developers can better divide work
+across time and between each other,
 and make more software progress with a modular and extensible design,
 tackling larger problems while using less mental power each,
 compared with using less-modular and less-extensible programming language designs.
@@ -2298,35 +2196,170 @@ that grow with each programmer’s needs without getting bogged down in coordina
 
 @subsubsection{Modular Extensions}
 
-Let us consider implementing modular extensibility in a pure functional setting.
-If we modularly define extensions, our terms will take an argument @r[self], the modularity context,
-and return an extension, which takes an argument @r[super],
-the previous “inherited” (record of) definitions,
-and returns some extended (record of) definitions.
-A simple type for a modular extension is then @r[M ⟶ E ⟶ E],
-wherein terms are typically of the form @linebreak[] @r{(λ (self super) ...extended_super)}.
+A modular extension specifies how to extend a previous value,
+but in a modular way, wherein the extension is able to refer
+through some modular context to values defined by other people,
+and those other definitions being referenced can themselves be extended.
 
-If we instead define extensions to modular definitions, our terms will take
-an argument @r[super], the previous “inherited” modular definition,
-of type @r[M ⟶ E], and return an extended modular definition also of type @r[M ⟶ E],
-and therefore is of type @r[(M ⟶ E) ⟶ M ⟶ E].
-But since the point of modularity is to plug
-the same element of @r[M] at the end through a fixed-point,
-the construct contains the same useful information as @r[E ⟶ M ⟶ E], or as
-@r[M ⟶ E ⟶ E] above, just with extra complexity in the composition.
-We will therefore prefer the simpler “modular extension” point of view.
+At this point, we reach the end of what can be clearly explained while remaining informal,
+and have to introduce a formal model of modularity, extensibility, and the two together,
+to further convey the ideas behind OO.
+The last task to carry informally is therefore a justification of our approach to formalization.
 
-In the general case, the type @r[E] or @r[super] and the return value
-will be that of a @emph{method} of a prototype, or sub-entity being incrementally defined,
-whereas @r[M] will be some language-wide namespace, registering all
-known (and yet unknown) computations, prototypes and library functions in the language ecosystem.
-(This is notably the case with @c{nixpkgs}, wherein the role @r[M] is taken
-by the argument @r[pkgs], top of the global namespace of packages
-and other entities within the ecosystem (including library functions, etc.)).
-In the simplest case, @r[E] and @r[M] will both be the same type,
-that of a single target being modularly and extensibly specified, typically a record.
+@subsection{Why a Minimal Model of First-Class OO using FP?}
+
+@subsubsection{Why a Formal Model?}
+
+The current section was largely appealing to well-established concepts in Computing,
+and inasmuch as it can be understood, it is only because we expect our readers
+to be seasoned programmers and scientists familiar with those concepts.
+Our most complex explanations were in terms of functions from a modular context to a value,
+or from some (original) value to another (extended) value (of essentially the same type).
+As we try to combine these kinds of functions, the complexity is larger
+than can be explained away in a few words, and the devil will be in the details.
+
+A formal model will allow us to precisely define and discuss the building blocks of OO,
+in a way that is clear and unambiguous to everyone.
+This is all the more important when prevailing discourse about OO is full of
+handwaving, imprecision, ambiguity, confusions, and
+identical words used with crucially different meanings by different people.
+
+@subsubsection{Why a Minimal Model?}
+
+We seek a @emph{minimal} model because a non-minimal model means there are still concepts
+that haven’t been teased apart from each other, but are confused and confusing.
+
+If we @emph{can} express classes in terms of prototypes, prototypes in terms of specifications,
+or multiple and single inheritance in terms of mixin inheritance,
+then we @emph{must} do so, until we reduce OO to its simplest expression,
+and identify the most fundamental building blocks within it,
+from which all the usual concepts can be reconstituted, explained, justified, evaluated,
+generalized, and maybe even improved upon.
+
+@subsubsection{Why FP?}
+
+Functional Programming (FP) is a computational model
+directly related to formal or mathematical logic
+whereby we can reason about programs, their semantics (what they mean),
+how they behave, etc.
+the famous Curry-Howard Correspondence establishes a direct relationship
+between the terms of the λ-calculus that is the foundation of FP,
+and the rules of logical deduction. The correspondence can also be extended
+to cover the categories of mathematics, and more.
+
+Therefore, in an essential sense, FP is indeed the “simplest” paradigm
+in which to describe the semantics of OO and other programming paradigms:
+it is simultaneously amenable to both computation and reasoning
+with the least amount of scaffolding to bridge between the two.
+
+@subsubsection{Why an Executable Model?}
+
+In the words of Donald Knuth:
+“Actually a person does not @emph{really} understand something
+until teaching it to a @emph{computer}, i.e. expressing it as an algorithm.”.
+
+While we could achieve a slightly simpler algorithmic model
+by using a theoretical variant of the λ-calculus,
+we and other people would not be able to directly run and test our algorithms
+without a costly and error-prone layer of translation or interpretation.
+
+By using an actual programming language that while very close to the λ-calculus
+comes with both additional features and additional restrictions,
+we will introduce some complexity, and
+a barrier to entry to people not familiar with this particular language.
+But the code we offer in this paper will be easy for us and our readers
+to run, to test, to debug, to interact with,
+to develop an intuition on how it runs and what it does,
+and later to extend and to adapt.
+
+Our code will also provide a baseline for implementers who would want to use our ideas,
+and who may just port our code to their programming language of choice,
+and be able to debug their port by comparing its behavior to that of the original we provide.
+They can achieve implement basic OO in two lines of code in any modern programming language,
+add have a full-featured OO system in a few hundreds of lines of code.
+
+@subsubsection{Why First-Class?}
+
+The most popular form of OO is second-class, wherein
+all inheritance happens at compile-time when defining classes.
+But for some programmers to use OO as a second-class programming construct,
+language implementers still have to implement OO as a first-class construct
+within their compilers and other semantic processors.
+@emph{Anyone’s second-class entities are someone else’s first-class entities.}
+And you still don’t fully understand those entities until you have implemented them,
+at which point they are first class.
+Thus, every useful minimal semantic model is always a first-class model,
+even if “only” for the implementation of a meta-level tool such as a typechecker.
+
+@subsubsection{What Precedents?}
+
+We were flabergasted when we first saw
+basic OO actually implemented in two function definitions,
+in the Nix standard library. @; CITE
+These two definitions can be ultimately traced in a long indirect line
+to the pioneering formalization by Bracha and Cook @~cite{bracha1990mixin},
+though the author wasn’t aware of the lineage, or indeed even that he was doing OO.
+@;{TODO note and citations about this lineage, and the realization that it was OO}
+
+We will deconstruct and reconstruct this formalization.
+Then, on top of this foundation, we will be able to add all the usual concepts of OO,
+developed by their respective authors, whom we will cite.
+
+@subsubsection{Why Scheme?}
+
+The Algorithmic Language Scheme @; TODO cite original paper, Steele thesis, R{1-7}RS
+is a minimal language built around a variant of the applicative λ-calculus,
+as a dialect in the wider tradition of LISP. @; CITE
+It has many implementations, dialects and close cousins, @; cite Racket
+a lot of documentation, modern libraries, @; TODO cite SRFIs
+decades of established lore, code base, user base, academic recognition.
+and also macro systems @; TODO cite
+that allow to tailor the syntax of the language to your needs.
+
+Some other languages, like ML or Haskell, @; CITE
+are closer to the theoretical λ-calculus, but come with builtin “typesystems”
+that are way too inexpressive to accept the λ-terms we use.
+We suspect that using dependent types such as in Rocq, Agda or Lean @; CITE
+have sufficiently expressive typesystems, but the types involved might be unweildy
+and would make it harder to explain the basic concepts we present.
+We leave it as an exercise to the reader to port our code to such platforms,
+and look forward to the result.
+
+Nix, that directly provides λ-calculus with dynamic typing,
+is lazy, which actually makes the basic concepts simpler.
+But it would require more care for implementers trying to port such an implementation
+to most programming contexts that are applicative.
+Also, Nix is more recent, less well-known, its syntax and semantics less recognizable;
+the Lindy effect @; TODO cite
+means it will probably disappear sooner that Scheme,
+making this paper harder to read for potential readers across time.
+Finally, Nix as compared to Scheme, is missing a key feature beyond the basic λ-calculus,
+that we will use when building multiple inheritance:
+the ability to test the equality of two specifications.
+
+Therefore, we pick Scheme as the best compromise in which to formalize OO.
 
 @section{Minimal OO}
+
+@subsection{Minimal Extensibility}
+
+Let us start with formalizing First-Class Extensibility in pure FP,
+as it will be easier and a good warmup.
+To make clearer what kind of computational objects we are discussing,
+we will be using semi-formal types as fourth-class entities,
+i.e. purely as design-patterns to be enforced by humans.
+We leave a coherent typesystem as an exercise to the reader,
+or will later direct him to relevant literature.
+
+Let’s model the extension of a value of type @c{V} in pure FP.
+We want some kind of computation that takes as input the original value of type @c{V},
+and as output returns an extended value of type @c{V}.
+In pure FP, the simplest model for an extension would be a function from @c{V} to @c{V},
+i.e. of type @c{V → V}.
+Later on, we may discuss more precise types for extension as being of type @c{V → W}
+where @c{W} is a subtype of @c{V}, but @c{V → V} is good enough for now.
+
+
 
 Now that we’ve given an informal explanation of OO and
 what it is for (Internal Extensible Modularity),
@@ -2339,6 +2372,102 @@ at which point we’d be using single-inheritance indeed.
 
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+@subsection{A Minimal Model of Modularity}
+
+Let us
+
+The type for an open modular specification of an entity is @r[M ⟶ E] where
+@r[M] is the type of the module context shared between all modular specifications
+in a given program fragment,
+pand @r[E] is the type of the entity defined by the modular specification at hand.
+@r[M] typically involves some kind of dereference function @r[deref] of type @r[M ⟶ I ⟶ E],
+where @r[I] is a type of identifiers, usually some second-class variant
+of strings that is known at compile-time.
+In a pure functional setting where the only operation on the module context is dereference,
+the type @r[M] can be simply @r[I ⟶ E].
+For more precision, this type could be refined into some indexed product
+@r[∏i:I⟶ E_i] where each type @r[E_i] depends on the identifier @r[i].
+
+To be seen by other modular specification, a modular definition for a single entity is
+a specification associated to some identifier @r[i : I]
+(or to a path of such identifiers for hierarchical modules).
+An open modular definition for one or multiple identified entities
+is thus a finite map @; (associative table, association list)
+from @r[I] to @r[M ⟶ E].
+Up to some trivial refactoring, we can represent such open modular definition
+with the same type @r[M ⟶ I ⟶ E] as the dereference function.
+
+Now, a closed modular definition is just one where all the identifiers are defined,
+and the final computation feeds the resulting module context itself as argument to
+the computations of each element of the module context—using a fixed-point operator
+to tie the knot of recursive self-reference.
+The type of the module context resulting from this fixed-point is just @r[M = I ⟶ E].
+
+A uniform type for all entities is dynamic typing for entities.
+For more precise types, you may want to narrow type @r[E]
+into some type @r[E_i] indexed by @r[i : I].
+The issue then is that establishing set of indexed types for a closed modular definition
+requires knowledge of all modules, whereas, to preserve the principle of modularity,
+each open modular definition may only define or reference a small subset of the index,
+and its type must accordingly only include the narrow subset of indexed types
+as being either defined or referenced by the open modular definition.
+An open modular definition shall not be required to know about and mention indexes and types
+from other open modular definitions that have not been written or amended yet,n
+still that will be combined with it in the future.
+To support modularity, a static type system thus needs to support
+subtyping between sets of indexed types, as well as computation of fixed-points.
+
+that the type @r[M] of the common module context value
+is shared between all definitions within that program fragment:
+this module context must therefore include all the information from all
+the existing modular definitions currently in use,
+but also from all the yet-undefined other partial specifications
+that can or will ever be combined with the current one.
+Yet to keep things modular, no module author should be required to know, much less specify,
+all the constraints demanded by each and every other module,
+including modules yet to be used, yet to be written,
+as part of an assemblage of modules not yet anticipated.
+To preserve modularity in this setting without reverting to some kind of dynamic typing as in Nix,
+some kind of subtyping with extensible types is therefore required,
+such that each module can specify the bindings it requires and those it provides
+without the need for global coordination@xnote["."]{
+  In a language like Haskell, that does not have any mechanism of subtyping or extensible types,
+  module programmers can be creative by having modular typeclass constraints on a type parameter,
+  then depend on each application programmer making some gigantic non-modular definition
+  of the common type that will be fed as parameter to
+  all the modular definitions of his entire application,
+  with the potentially thousands of typeclass instances this definition satisfies,
+  and suitable initial defaults for each field (hopefully, a lazy bottom computation will do).
+  The non-modularity hasn’t been completely eliminated,
+  but moved and concentrated onto application developers,
+  while library developers can enjoy more modularity.
+  Some Haskellers notably do that to modularly define a type for errors,
+  lacking an extensible exception type like in OCaml.
+
+  However, if there is more than one modularly-defined entity, especially local ones
+  (and in OO, each and every prototype definition is modular),
+  then each user of modularity (and not just application programmer) must similarly
+  create his non-modular types to feed to each modular computation fixed-point.
+  One could invent a way to share a single mother-of-all modular context object for all fixed-point,
+  inside of which each individual modular definitions each have an access path;
+  but then one might have to make sure that each modular definition has its own set of typeclasses
+  so as to avoid clashes.
+
+  While possible, these strategies are quite onerous, and still require module developers
+  to follow a lot of extra-linguistic conventions — thereby sharply decreasing modularity
+  compared to language-supported extensibility.
+}
+
+Note that we haven’t started talking about objects yet.
+We find that some form of subtyping for modules
+is a necessity for modularity in general, even without OO.
+Though indeed, without OO and its in-language extensibility,
+you can have a somewhat useful notion of modules with
+a quite limited and inexpressive notion of subtyping
+compared to what is needed to support classes, and even more so to support prototypes.
+
+
 
 @subsection[#:tag "internal_extensible_modularity"]{Internal Extensible Modularity}
 @subsubsection{Internalized Feature}
@@ -2588,3 +2717,145 @@ Fields vs Optics for method combination wrapping vs Generalized optics.
 @subsection{Example 2}
 
 @(generate-bibliography)
+
+@;{
+These specifications can be modeled simply using the λ-calculus
+as functions of two parameters (considered together with other metadata):
+@r[self] for modularity, for each specification to access finished aspects
+as computed from (their and) other specifications, and
+@r[super] for incremental extensibility,
+for each specification to be able to contribute
+its modifications to the computation as partially specified thus far.
+The specified computation is then the fixed point for the @r[self] parameter
+given a trivial @r[base] value for the initial super.
+Composing specifications is just chaining them through the @r[super] argument
+while sharing the same @r[self] argument. @; See section XXX. Cite bracha
+
+The usage pattern of a @r[self] argument intended for fixed-point
+has been dubbed “open recursion”. @; cite Pierce
+It is what allows the “late binding” touted by Alan Kay,
+and makes the design modular: authors of one partial specification can reference
+and use aspects of the total computation handled by other partial specifications.
+The usage pattern of the @r[super] argument is how inheritance brings about
+incrementality, extensibility and compositionality within this modular context.
+
+@subsubsection{The Importance of Laziness}
+
+Note that in Nix, lazy evaluation crucially enables sharing of sub-computations
+along a common structure of values; this is especially important when in defining fixed-points,
+and thus, when using modular definitions.
+By contrast, a pure applicative language without side-effects can only express such fixed-points
+as indefinitely recomputed functions, with no sharing and instead with potentially hyper-exponential
+recomputation as the definitions contains deeply nested recursive self-references or mutual references.
+Therefore it is a practical necessity in an applicative language to use some extension for
+lazy evaluation, such as the Scheme primitives @r[delay] and @r[force],
+even though small programs without deep nesting and branching in recursion can do without.
+
+Some might object that most OO languages are not functional and especially not lazy;
+but that misses the point: most OO languages use Class OO,
+where all the OO actually only happens but at compile-time.
+What more, classes are defined in an extremely restricted compile-time language,
+that has a very simple functional model, that has a somewhat simpler description
+in terms of lazy evaluation, yet that doesn’t matter much because the language is so restricted.
+And of course, it matters none at all what meta-language is used to implement
+whatever compile-time language, or whether it is pure functional or imperative,
+unless maybe that meta-language is exposed to the user via reflection.
+
+For evidence of whether lazy evaluation does or doesn’t offer a better model of OO,
+in addition to the Prototype OO languages we will discuss,
+one has to look at those few Class OO languages that do not have such restrictions in handling prototypes.
+At that point, a notable case is C++, that offers a Turing complete language at compile-time,
+template metaprogramming;
+and at least since C++11, that compile-time language indeed is
+a @emph{pure functional, lazy, dynamically typed} Prototype OO language,
+with the @c{using} or @c{typedef} keywords introducing lazy let-bindings,
+the @c{constexpr} keyword enabling arithmetics and other primitive computations,
+and the entity known as statically typed classes at runtime
+being actually dynamically typed prototypes at compile-time.
+@; TODO maybe C++14 for some of the semantics??
+@; TODO see appendix for examples
+
+
+where entities of type @r[E] are being specified extensibly,
+then new extended entity specified from a previous one of type @r[E] is also of type @r[E],
+and the “extension” if first class would be a function of type @r[E ⟶ E]
+(though we will later propose more refined types for that).
+In terms of λ-calculus, a programmer can take an opaque value of type @r[E],
+without having to see inside the term for that value, or being able to access it,
+and write an “extension” that takes that previous term as an argument,
+and operate on it to return a new term.
+When implementing OO, the variable for this previous term is conventionally called @r[super],
+after Simula. @; cite @~cite{Simula1967}
+
+In cases that an entity is extended “in place” and the old version no longer used,
+as in editing a file, or redefining a class in Smalltalk or Lisp,
+an extension is a function that side-effects a mutable reference of type @r[E],
+or something equivalent.
+
+
+
+
+
+A pure functional language without side-effects is the setting for the simplest and
+probably clearest model of modularity:
+(a) all modular definitions are regular λ-terms that take as first argument
+a module context argument @r[m];
+(b) the same value will be provided to all definitions at instantiation time;
+(c) the context @r[m] makes each defined value accessible through some field or lens
+as identified by a name or path of names from the root;
+(d) the effective value of @r[m] to be passed simultaneously to every definition
+is the fixed-point of the computation wherein the value bound to each field
+is the result from computing the given definition with the effective value.
+
+This model is notably used as is in NixOS’s package repository @c{nixpkgs},
+as configured with the pure lazy dynamic functional language Nix:
+every module definition is a function that conventionally takes an argument @c{pkgs}
+that encompasses the entire ecosystem, a namespace hierarchy that includes
+not only all packages being defined, but also the standard library of functions @c{pkgs.lib}
+(though some like to redundantly pass it as an additional argument @c{lib})
+and all kind of intermediary data structures.
+As we will soon see, when implementing OO, this modular context is typically called @r[self],
+to access (the rest of) the modularly (and extensibly) defined entity.
+
+
+"Code reuse".
+Hated by detractors to OO.
+Yet entire reason for OO, versus external extensibility.
+Requires good factoring indeed.
+Maintainership burden that is not as thoughtless as duplicating code,
+yet ultimately more efficient since it doesn't require duplicating design and fixes.
+
+@subsubsection{Modular Extensions}
+
+Let us consider implementing modular extensibility in a pure functional setting.
+If we modularly define extensions, our terms will take an argument @r[self], the modularity context,
+and return an extension, which takes an argument @r[super],
+the previous “inherited” (record of) definitions,
+and returns some extended (record of) definitions.
+A simple type for a modular extension is then @r[M ⟶ E ⟶ E],
+wherein terms are typically of the form @linebreak[] @r{(λ (self super) ...extended_super)}.
+
+If we instead define extensions to modular definitions, our terms will take
+an argument @r[super], the previous “inherited” modular definition,
+of type @r[M ⟶ E], and return an extended modular definition also of type @r[M ⟶ E],
+and therefore is of type @r[(M ⟶ E) ⟶ M ⟶ E].
+But since the point of modularity is to plug
+the same element of @r[M] at the end through a fixed-point,
+the construct contains the same useful information as @r[E ⟶ M ⟶ E], or as
+@r[M ⟶ E ⟶ E] above, just with extra complexity in the composition.
+We will therefore prefer the simpler “modular extension” point of view.
+
+In the general case, the type @r[E] or @r[super] and the return value
+will be that of a @emph{method} of a prototype, or sub-entity being incrementally defined,
+whereas @r[M] will be some language-wide namespace, registering all
+known (and yet unknown) computations, prototypes and library functions in the language ecosystem.
+(This is notably the case with @c{nixpkgs}, wherein the role @r[M] is taken
+by the argument @r[pkgs], top of the global namespace of packages
+and other entities within the ecosystem (including library functions, etc.)).
+In the simplest case, @r[E] and @r[M] will both be the same type,
+that of a single target being modularly and extensibly specified, typically a record.
+
+
+}
+
+
