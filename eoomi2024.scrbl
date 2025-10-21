@@ -56,21 +56,6 @@ if the extension is external or second-class.
 
 @; XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-@section{Prototypes}
-@subsection[#:tag "internal_incremental_modularity"]{Internal Incremental Modularity}
-@subsubsection{Internalized Feature}
-Now what if modular increments of computational specifications could be
-embodied as linguistic expressions @emph{within} a programming language,
-that could be manipulated at runtime and studied formally,
-rather than just as semi-formal meta-linguistic interactions?
-
-@principle{We dub @emph{prototype} such an embodiment
-of incremental modularity within a language}.
-And to narrow the discussion down to a formal context,
-let’s consider programming languages with a functional programming core,
-i.e. that contain some variant of the lambda-calculus as a fragment,
-either untyped or with suitably expressive types (to be determined later).
-
 @subsubsection{Embodying Specification}
 To embody some concept in the functional programming core of a language that has one,
 you will necessarily use a function.

@@ -269,13 +269,10 @@ This section remains informal, but lays the conceptual groundwork
 for the formal approach we take in the rest of this paper.
 
 In section 5, we introduce a minimal formal models of Modularity and Extensibility
-in terms of pure Functional Programming (FP), and derive from first principles
-a minimal OO system.
-This minimal OO system on top of the λ-calculus, using Scheme syntax.
-
-uses Mixin Inheritance,
-, with example for how to use it.a
-The system, remarkably, has neither objects nor prototypes, even less classes,
+in terms of pure Functional Programming (FP), using Scheme syntax,
+and derive from first principles a minimal OO system, in two lines of code.
+This minimal OO system uses Mixin Inheritance, and, remarkably,
+has neither Objects nor Prototypes, even less Classes,
 only Specifications and Targets.
 
 In section 6, we dispel a lot of common confusions about OO by
@@ -2341,26 +2338,6 @@ Therefore, we pick Scheme as the best compromise in which to formalize OO.
 
 @section{Minimal OO}
 
-@subsection{Minimal Extensibility}
-
-Let us start with formalizing First-Class Extensibility in pure FP,
-as it will be easier and a good warmup.
-To make clearer what kind of computational objects we are discussing,
-we will be using semi-formal types as fourth-class entities,
-i.e. purely as design-patterns to be enforced by humans.
-We leave a coherent typesystem as an exercise to the reader,
-or will later direct him to relevant literature.
-
-Let’s model the extension of a value of type @c{V} in pure FP.
-We want some kind of computation that takes as input the original value of type @c{V},
-and as output returns an extended value of type @c{V}.
-In pure FP, the simplest model for an extension would be a function from @c{V} to @c{V},
-i.e. of type @c{V → V}.
-Later on, we may discuss more precise types for extension as being of type @c{V → W}
-where @c{W} is a subtype of @c{V}, but @c{V → V} is good enough for now.
-
-
-
 Now that we’ve given an informal explanation of OO and
 what it is for (Internal Extensible Modularity),
 we can introduce formal semantics for it, starting with a truly minimal model:
@@ -2369,9 +2346,118 @@ we can introduce formal semantics for it, starting with a truly minimal model:
 Mixin inheritance is indeed simplest from the point of view of post-1970s formal logic,
 though not from the point of view of implementation using mid-1960s computer technology,
 at which point we’d be using single-inheritance indeed.
+@; XXX remove the above paragraph, check its content is available
+
+@subsection{Minimal Extensibility}
+
+@subsubsection{Extensions as Endofunctions}
+
+Let us start with formalizing First-Class Extensibility in pure FP,
+as it will be easier than modularity, and a good warmup.
+To make clearer what kind of computational objects we are discussing,
+we will be using semi-formal types as fourth-class entities,
+i.e. purely as design-patterns to be enforced by humans.
+We leave a coherent typesystem as an exercise to the reader,
+or will later direct him to relevant literature.
+
+Now, to model the extension of a value of type @c{V},
+we want some kind of computation that takes as input the original value of type @c{V},
+and as output returns an extended value of the same type @c{V}.
+In pure FP, the simplest model for such an extension would be a function from @c{V} to @c{V},
+i.e. of type @c{V → V}.
+
+Later on, we may discuss more precise types for extension as being of type @c{V → W}
+where @c{W} is a subtype of @c{V}, but @c{V → V} is good enough for now.
+
+@subsubsection{Coloring a Point}
+
+The prototypical type @c{V} to extend would be a type @c{Record} for records.
+Assuming for the moment some syntactic sugar, and postponing discussion of precise semantics,
+we could define a record as follows:
+@Code{
+(define point-p (record (x 2) (y 4)))
+}
+i.e. the variable @c{point-p} is now bound to a record that associates
+to symbol @c{x} the number @c{2} and to symbol @c{y} the number @c{4}.
+
+An sample extension would be the function @c{paint-blue} below,
+that extends a given record (lexically bound to @c{p} within the body of the function)
+to have a new binding associating to symbol @c{color} the string @c{"blue"}:
+@Code{
+(define (paint-blue p)
+  (extend-record p 'color "blue"))
+}
+
+Obviously, if you apply this extension to that value with @c{(paint-blue point-p)}
+you obtain the a record equal to what you could have directly defined as:
+@Code{
+(record (x 2) (y 4) (color "blue"))
+}
+
+Readers familiar with the literature will recognize the “colored point” example
+used in many OO papers. Note however, that in the present example,
+as compared to most such papers and to further examples in subsequent sections:
+(a) we are extending a point @emph{value} rather than a point @emph{type}, and
+(b) we haven’t started modeling the modularity aspect of OO yet.
+
+@subsubsection{Extending Arbitrary Values}
+
+The type @c{V} of values being extended could be anything.
+The possibilities are endless, but here are a few simple real-life examples:
+@itemize[
+@item{The values could be numbers, and then
+your extensions could be adding some increment to a previous number,
+which could be useful to count the price, weight or number of parts in a project being specified.}
+@item{The values could be bags of strings, and
+your extensions could append part identifiers to the list of spare parts or ingredients to order
+before to start assembly of a physical project.}
+@item{The values could be lists of dependencies, where each dependency
+is a package to build, action to take or node to compute,
+in a build system, a reactive functional interface or a compiler.}]
+
+A record (indexed product) is just a common case because it can be used to encode anything.
+Mathematicians will tell you that products (indexed or not)
+give a nice “cartesian closed” categorical structure to the set of types
+for values being extended. What it means in the end is that
+you can decompose your specifications into elementary aspects that you can combine
+together in a record of how each aspect is extended.
+
+@subsubsection{Applying or Composing Extensions}
+
+The ultimate purpose of an extension @c{ext} is
+to be applied to some value @c{val},
+which in Scheme syntax is written @c{(ext val)}.
+
+But interestingly, extensions can be composed, such from two extensions
+@c{ext1} and @c{ext2} you can extract an extension @c{(compose ext1 ext2)}
+that applies @c{ext1} to the result of applying @c{ext2} to the argument value.
+And since we are discussing first-class extensions in Scheme,
+we can always define the @c{compose} if not yet defined as follows:
+@Code{
+(define (compose ext1 ext2)
+  (λ (val) (ext1 (ext2 val))))}
+
+Now if we were discussing second-class extensions in a restricted compile-time language,
+composition might not be definable, and not expressible unless available as a primitive.
+That would make extensions a poorer algebra than if they could be composed.
+With composition, extensions for a given type of values are a monoid;
+without composition, they are just disjointed second-class constants without structure.
+We will see later that this explains why in a second-class setting,
+single inheritance is less expressive than mixin inheritance and multiple inheritance.
+
+@subsubsection{Top Value}
+
+Now, sooner or later, composed or by itself, the point of an extension is
+to be applied to some value.
+When specifying software in terms of extensions,
+what should the initial base value be, to which extensions are applied?
+
 
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+
+
 
 @subsection{A Minimal Model of Modularity}
 
@@ -2859,3 +2945,4 @@ that of a single target being modularly and extensibly specified, typically a re
 }
 
 
+@; Flavors combination vs C++ conflict https://x.com/Ngnghm/status/1980509375232885161
