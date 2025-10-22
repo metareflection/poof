@@ -359,9 +359,9 @@ due to the author or reader having wrong expectations about what OO is supposed 
 The most popular OO language in the decades that OO was a popular trend (roughly 1980 to 2010),
 C++ indeed supports programming in an OO style.
 But C++ is a rich language with many aspects completely independent of OO
-(consider e.g. bit-banging, RAII, template metaprogramming or pointer aliasing and the memory model),
+(e.g. bit-banging, RAII, template metaprogramming or pointer aliasing and a memory model),
 whereas the OO aspect that it undoubtly offers
-is very different from how OO works in other languages,
+is very different from how OO works in most other OO languages,
 and colloquial C++ often goes against the principles of OO@xnote["."]{
   Alan Kay famously declared at OOPSLA ’97, near peak C++ popularity:
   “I made up the term ‘object-oriented’, and I can tell you I didn’t have C++ in mind.”}
@@ -375,7 +375,8 @@ C++ boasts support for multiple inheritance, and many people,
 when thinking of multiple inheritance, think of what C++ offers.
 Yet, while C++ supports single inheritance well, what it calls “multiple inheritance”
 is not at all the same as what most everyone else calls “multiple inheritance”:
-is actually a modified kind of mixin inheritance with automatic renaming (for non-@r[virtual] classes),
+it is actually a modified kind of mixin inheritance
+with automatic renaming (for non-@r[virtual] classes),
 and a subset of multiple inheritance (for @r[virtual] classes and members).
 Moreover, C++ crucially lacks the proper method resolution
 that enables a lot of the modularity of multiple inheritance in other languages.
@@ -398,27 +399,28 @@ and even most of those that look like OO are often different enough that
 they do not reliably inform about OO in general@xnote["."]{
   The situation is similar for ADA, that adopted multiple inheritance in 2005
   by seemingly copying the general design of C++.
-  Even when C++ got multiple inheritance wrong@~cite{stroustrup1989multiple},
+  Now even when C++ got multiple inheritance wrong@~cite{stroustrup1989multiple},
   ignorance was no valid excuse,
   since Lisp got it right ten years earlier@~cite{Cannon1979}.
   Ignorance is even less forgivable in the case of ADA
-  copying C++' “multiple inheritance” yet 14 years later.
+  copying C++’s “multiple inheritance” yet 14 years later.
 }
 
 @subsection{Classes Only}
 
-Many claim that classes, as introduced by Simula 67@~cite{Simula1967}
+Many claim that classes, as first implemented by Simula 67@~cite{Simula1967}
 (though implementing a concept previously named by Hoare@~cite{hoare1965record}),
 are essential to OO, and only ever care to implement, use, formalize,
 study, teach, propagandize, or criticize class-based OO (a.k.a. Class OO).
-Books from summities in Programming Languages @~cite{tapl plai eopl3}
-seldom even mention any other kind of OO in their chapter about OO, much less study it.
+Books from summities in Programming Languages @~cite{tapl plai eopl3},
+in their chapter about OO, barely even mention any other kind of OO if at all,
+much less study it.
 
 Yet KRL@~cite{Winograd1975},
-the second recognizably OO language,
-whose authors first applied the words “inheritance” and “prototypes” to describe it
-has what we would now recognize as prototype-based OO (a.k.a. Prototype OO),
-though the words were used descriptively without their latter technical definition.
+the second recognizable OO precursor to OO,
+whose authors first applied the words “inheritance” and “prototypes” to their language
+(though the words were used descriptively without their latter technical definition),
+has what we would now recognize as prototype-based OO (a.k.a. Prototype OO).
 The modern concept of OO
 can be traced back to Smalltalk adopting inheritance in 1976
 and popularizing the word and concept of it among programming language designers;
@@ -447,7 +449,7 @@ of the OO tradition, historically, conceptually, and popularly.
 Now of course, classes, while not @emph{essential} to OO,
 are still @emph{important} in its tradition.
 The situation is similar to that of types in Functional Programming (“FP”):
-the historical preexistence and continued use of the untyped λ-calculus
+the historical preexistence and continued relevance of the untyped λ-calculus
 and the wide adoption of dynamically typed functional languages like Scheme or Nix
 are ample evidence that types are not essential to FP;
 yet types are undoubtly an important topic that occupies much of the theory and practice of FP.
@@ -476,12 +478,28 @@ And with early 1980s slogans like “objects are a poor man’s closures” and
 “closures are a poor man’s objects”@~cite{adams88oopscheme},
 the problem back then was clearly not whether OO could be done purely with functions,
 but whether it made practical sense to program purely without side-effects in general.
-That question that would only be slowly answered positively, in theory in the early 1990s
-and in practice in the mid 2000s to mid 2010s, as Haskell grew up to become a practical language.
-@; darcs 2003, cabal 2005, bytestring 2005, “cabal hell” 2006, ghc6 2006, pandoc 2006, xmonad 2007,
-@; “Real World Haskell” 2008. Stack 2015 “made non-trivial haskell programs & scripts repeatable”
-@; There’s obviously a lot of subjectivity there—but I expect an S curve such that
-@; whichever arbitrary threshhold criteria you choose the answer would be at about the same time.
+That question that would only be slowly answered positively,
+in theory in the early 1990s @; TODO CITE Moggi
+and in practice in the mid 2000s to mid 2010s,
+as Haskell grew up to become a practical language@xnote["."]{
+  Some may identify darcs (2003) as the first widely used real-world application of Haskell.
+  After it came innovations such as bytestring (2005), cabal (2005)
+  (and the “cabal hell” it started causing around 2006 until later solved by stack),
+  ghc6 (2006), that made Haskell much more practical to use, and
+  new notable applications appeared like pandoc (2006), or xmonad (2007).
+  A turning point maybe was the publication of “Real World Haskell” (2008). @; TODO CITE
+  Eventually, Stack (2015) made non-trivial haskell programs and scripts repeatable.
+  Now there’s obviously a lot of subjectivity in deciding
+  when exactly Haskell became “practical”—but one should expect
+  the transition to practicality to be an S curve, such that
+  whichever reasonable yet somewhat arbitrary threshhold criteria you choose,
+  the answer would be at about the same time.
+  In any case, making a practical language pure functional was just not an option before 2010 or so,
+  and it is absurd to claim that any programming language concept is intrinsically stateful
+  just because its practical implementations before 2010 were all stateful.
+  You could similarly claim that logic programming is intrinsically stateful,
+  or that functional programming itself is intrinsically stateful.
+}
 
 Yet, there are (a) pure models of OO such as those of
 Kamin, Reddy, Cook and Bracha@~cite{Kamin1988 ObjectsAsClosures Cook1989 bracha1990mixin},
@@ -515,18 +533,18 @@ with code on either side not caring which way the other side implements its part
 then yes, this is half of the essence of OO, as per our definition
 (the other half being extensibility).
 Some may also call this concept “data abstraction” or some other kind of “abstraction”.
-@; XXX cite Liskov???
+@; XXX cite Liskov??? Mary Shaws???
 
 However, inasmuch as some people identify encapsulation as the presence
 of specific visibility mechanisms such as found in C++ or Java
-(with some attributes or methods being @r[public], @r[private] or something in–between,
+(with some attributes or methods being @c{public}, @c{private} or something in–between,
 on the precise semantics of which designers of different languages cannot agree),
 we’ll easily dismiss such mechanisms as not actually essential to OO,
 since many quintessential OO languages like Smalltalk or Common Lisp
 lack any such specific mechanism,
 whereas many non-OO languages possess mechanisms to achieve the same effect,
 in the form of modules defining but not exporting identifiers
-(e.g. not declaring them @r[extern] in C),
+(e.g. not declaring them @c{extern} in C),
 or simply lexical scoping@~cite{rees1995}.
 @; TODO{cite Simula? JS?}
 
@@ -535,7 +553,7 @@ worthy features to add to an OO language, to use and study, etc.
 They are just not essential to OO and not specific to it,
 though of course their adaptation to OO languages will follow
 the specific shape of OO constructs not found in non-OO languages.
-And misidentifying OO as being about these mechanisms rather
+Misidentifying OO as being about these mechanisms rather
 than about the modularity they do or do not support can only lead to
 sacrificing the ends to the means.
 
@@ -633,10 +651,11 @@ is Erlang@~cite{OOP2010};
 yet Erlang is not part of the OO tradition,
 and its authors have instead described its paradigm as “Concurrency-Oriented Programming”.
 Meanwhile the theory of computation through message-passing processes
-was studied with various “process calculi”, @; TODO cite pi calculus, join calculus, rho calculus, etc.
+was studied with various “process calculi”,
+@; TODO cite pi calculus, join calculus, rho calculus, CHAM, etc.
 that are also foreign to the OO tradition,
 and largely unembraced by the OO community.
-Indeed Erlang crucially lacks inheritance, or support for the “late binding”
+Indeed Erlang crucially lacks inheritance, or support for the “extreme late binding of all things”
 that Alan Kay also once mentioned was essential for OO@xnote["."]{
   In Erlang, each process is a dynamic pure applicative functional language
   enriched with the ability to send and receive messages to and from other processes.
@@ -646,8 +665,8 @@ that Alan Kay also once mentioned was essential for OO@xnote["."]{
   involves deeper self-references. OO therefore cannot be supported directly within Erlang.
   It could be achieved indirectly, by restricting it to compile-time (as in most static class OO),
   or by using a global cache (as a table of multiple shared lazy computations in each process, or
-  with one or multiple processes being spawned for each shared lazy computation),
-  which would also require some reimplementation of garbage collection for lazy computation caches.
+  with one or multiple processes being spawned for each shared lazy or stateful computation),
+  which would also require some reimplementation of garbage collection for those computation caches.
   Neither solution would qualify as supporting OO any the more than
   assembly language “supports” OO or any Turing-universal language “supports” any paradigm, though.
   In the end, the essence of OO, which is Prototype OO,
@@ -691,7 +710,24 @@ In conclusion, whatever historical role the paradigm of message-passing processe
 may have had in inspiring the discovery of OO,
 it remains a wholly distinct paradigm,
 with its own mostly disjoint tradition and very different concerns,
-that describes a different set of languages and usage patterns.
+that describes a different set of languages and usage patterns@xnote["."]{
+  Now, there is no doubt, from their later testimonies as well as then published papers,
+  that Erlang's Concurrency Oriented Programming is clearly
+  what the authors of Simula, Smalltalk, Actors, etc., were all @emph{aiming at}.
+  But, due to hardware as well as software limitations of the 1960s and 1970s,
+  they all failed to actually reach that goal until the mid 1980s,
+  and instead on their way stumbled on something altogether different,
+  that they identified and developed,
+  Object Oriented Programming.
+
+  That's how invention always works:
+  if you knew in advance the thing you'd find later, it would already have been invented.
+  An invention is always surprising, original, and never, ever,
+  exactly what you knew in advance it would be—or else
+  the invention happened earlier and @emph{then} was surprising and original.
+  Also, an invention is shaped by the technical constraints of the time—some of which it may lift,
+  but not always those anticipated.
+}
 
 @subsection[#:tag "modeling_the_world"]{Modeling the World}
 
@@ -743,7 +779,7 @@ are actually relational data modeling @; TODO cite
 disguised as OO.
 As we’ll see later, their “classes” are extensible indeed,
 but in a trivial way that fails to support modularity@xnote["."]{
-  Note that there is nothing wrong at all with with relational data modeling as such:
+  Note that there is nothing wrong at all with relational data modeling as such:
   it is a fine technique for many purposes,
   despite being deliberately limited in abstraction (and, therefore, modularity)—and
   sometimes @emph{thanks to this limitation}.
@@ -2645,11 +2681,11 @@ some entities may be @emph{required} that are not @emph{provided} yet
 (or, which is usually less crucial, maybe be @emph{provided} but not @emph{required},
 at which point a “tree shaker” or global dead code optimizer may eliminate them).
 
-We will call a modular module specification “close” when it specifies
+We will call a modular module specification “closed” when it specifies
 the global module context of an entire program,
 wherein every entity required is also provided.
-A close modular module specification is thus of type @c{∏M → ∏M}.
-Then comes the question: how can we, from a close modular module specification,
+A closed modular module specification is thus of type @c{∏M → ∏M}.
+Then comes the question: how can we, from a closed modular module specification,
 extract the actual value of the module context, of type @c{∏M},
 and thereby realize the program that was modularly specified?
 
@@ -2818,34 +2854,18 @@ though they incur a performance penalty; an efficient variant of these macros
 that statically optimize function calls could be much larger,
 and might require some level of symbiosis with the compiler.
 
-
+We have implemented variants of our minimal OO system in many combinations
+of these style options, in Scheme and other languages.
+For the rest of this paper, we will adopt a more “native”
+Scheme approach assuming @c{stateful-Y} and multiple function arities
+that are carefully matched by function callers, though
+we will avoid variable arity to keep things simple.
+As a result, the reader may be able to both easily copy and test
+all the code in this paper at a their favorite Scheme REPL,
+and also easily translate it to any other language
+that has first-class higher-order functions.
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-
-Issue 2: unary functions are syntax-heavy
-Solution: cope, autocurry, or multiple arities with care
-
-In the rest of this paper, we will use the Scheme way,
-with a stateful Y combinator, and
-multiple function arities that we will carefully match
-(though we will avoid variable arity to keep things simple),
-so you the reader can easily reproduce everything in this paper,
-even though you may have to be careful counting parentheses.
-In other libraries, other variants of this paper, other talks,
-in Scheme or in different languages (we notably used Nix),
-we made different choices,
-for instance implementing ML-like autocurrying,
-or relying on lazy evaluation.
-There is no one-size-fits-all.
-Pick whatever makes sense for your system.
-
-
-Now, a closed modular definition is just one where all the identifiers are defined,
-and the final computation feeds the resulting module context itself as argument to
-the computations of each element of the module context—using a fixed-point operator
-to tie the knot of recursive self-reference.
-The type of the module context resulting from this fixed-point is just @r[M = I ⟶ E].
 
 A uniform type for all entities is dynamic typing for entities.
 For more precise types, you may want to narrow type @r[E]
