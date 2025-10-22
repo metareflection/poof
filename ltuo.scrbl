@@ -85,6 +85,9 @@
 @(define-simple-macro (TODO body ...) '())
 @(define-simple-macro (Xitemize body ...) (list body ...))
 @(define-simple-macro (Xitem body ...) (list " " body ... " "))
+@(define (ᵢ) (list @(html-only @c{ᵢ}) @tex{${}_i$}))
+@(define (Ri) (list @c{R}(ᵢ)))
+@(define (Mi) (list @c{M}(ᵢ)))
 
 @(define super 'super)
 @(define self 'self)
@@ -2451,38 +2454,392 @@ Now, sooner or later, composed or by itself, the point of an extension is
 to be applied to some value.
 When specifying software in terms of extensions,
 what should the initial base value be, to which extensions are applied?
+One solution is for users to be required to somehow specify an arbitrary base value,
+in addition to the extension they use.
+
+A better solution is to identify some base value containing
+the minimum amount of information for the given type @c{V},
+that is then extended into being exactly the desired value
+with each extension contributing its lot.
+Such a base value is called a “top value” @c{⊤},
+and somewhat depends on what monoidal operation is used to extend it
+as well as the domain type of values.
+
+@itemize[
+@item{For the type @c{Record} of records, @c{⊤ = (record)} the empty record}
+@item{For the type @c{Number} of numbers, @c{⊤ = 0}, seen additively, or @c{1} if multiplicatively,
+or @c{-∞} (floating-point number) seen with @c{max} as an operator, or @c{-∞} with @c{min}}
+@item{For the type @c{Pointer} of pointers into a graph of records, @c{⊤ = null},
+the universal null pointer@xnote["."]{
+  Hoare called his 1965 invention of null his “billion dollar mistake”. @; CITE both
+  In C, you would use the @c{NULL} pointer; in modern C++, the @c{nullptr}. In Java, @c{null}.
+  In Lisp, @c{NIL}. In Scheme, @c{#f} or @c{'()} or (in many dialects), @c{(void)}.
+  In JavaScript, @c{undefined}, @c{null} or some empty record @c{{}}. In Python, @c{None}.
+  Various languages may each offer some value that is easier to work with as a default,
+  or some library may offer an arbitrary value to use as such.
+  Some strongly typed applicative languages will offer no universal such value, though,
+  and some ad hoc arbitrary value must be provided for each type used.
+}}
+@item{For the type @c{Type} of types (in a compiler, at the meta-level),
+@c{⊤ = ⊤}, the top type that you specialize and refine, or bottom type @c{⊥} that you extend}
+@item{For any function type in a language with partial functions, @c{⊤ = abort},
+a function that never returns regularly,
+and instead always abort regular evaluation and/or throws an error.}]
+
+Last but not least, for any (lazy) type in a language with lazy evaluation,
+even and especially a pure functional language with partial functions,
+@c{⊤ = (lazy ⊥)} is a universal top value, where @c{⊥ = (abort)} is a computation
+that never terminates normally. Indeed, @c{(lazy ⊥)} carries no useful information
+but can be passed around, and has “negative infinite” information
+if you try to force, open or dereference it, which is much less than
+the 0 information as provided by a regular null value.
+In Scheme, one may explicitly use the @c{delay} primitive to express such laziness,
+though you must then explicitly @c{force} the resulting value rather than
+having the language implicitly force computation whenever needed.
+
+@subsubsection{Here there is no Y}
+
+Looking at the type signature @c{(V → V) → V}
+for the process of obtaining a value from an extension,
+one may be tempted to say “I know, this is the type of the fixpoint combinator Y”
+and propose the use of said combinator.
+
+The idea would indeed work in many cases, as far as extracting a value goes:
+for any lazy type @c{V} (and similarly for function types),
+any extension that would return a useful result applied to @c{(lazy ⊥)}
+passing it as argument to the lazy @c{Y} combinator would also yield a result.
+And indeed the results will be the same if the extension wholly ignores its argument,
+as is the often intent in those situations:
+typically, you’d compose extensions, with one “to the right”
+ignoring its argument and overriding the top value, returning something more useful in context,
+and further extensions “to the left” building upon that useful value.
+
+However, if there is no such overriding extension, then
+the results would not necessarily the same between applying the extension or passing it to @c{Y}.
+For instance, given the extension @c{(λ (x) (lazy-cons 1 x))}
+for some @c{lazy-cons} function creating a co-inductive stream of computations
+(as opposed to an inductive list of values as with the regular Scheme @c{cons}),
+applying the extension to @c{(lazy ⊥)} yields a stream you can destructure once,
+yielding @c{1} as first value, and “exploding” if you try to destructure the rest;
+meanwhile, applying the @c{Y} combinator yields an infinite stream of 1's.
+
+Then comes the question of which answer is more appropriate.
+Using the @c{Y} combinator only applies to functions and lazy values,
+the latter being isomorphic to nullary functions
+that always return the same cached result;
+it doesn’t apply and therefore isn’t appropriate in the general case of eager values.
+On the other hand, applying extensions to a top value is always appropriate.
+It also corresponds better to the idea of specifying a value by starting from
+no specific information then refining bit by bit until a final value is reached.
+It does require identifying a type-dependent top value to start from,
+but there is an obvious such value for the types where the fixpoint combinator applies.
+Finally, it is easier to understand than a fixpoint combinator and arguably more intuitive.
+
+All in all, the approach of applying extensions to a top value
+is far superior to the approach of using a fixpoint combinator
+for the purpose of extracting a value from an extensible specification.
+Thus, as far as we care about extensibility:
+here, there is no Y@xnote["."]{
+  with apologies to Primo Levi.
+}
+
+@subsection{A Minimal Model of Modularity}
+
+@subsubsection{Records}
+
+Before we model Modularity as such, let us delve deeper into the modeling of Records,
+that are the usual substrate for much of Modularity.
+
+Given types @c{V}, @c{W}, @c{X}... for values,
+@c{I}, @c{J}... for identifiers or other indexes,
+let us consider records or sets of bindings as values of an index product
+@c{∏R = i:I → R@(ᵢ)} wherein to each value @c{i} in the index set @c{I},
+the record will associate a value of type @(Ri),
+where @c{R} is a schema of types, a function from @c{I} to @c{Type}.
+
+To simplify our model, a pure functional record of type @c{∏R}
+can be seen as an indexed function from the codomain @c{I} of indexes
+to @(Ri) for each @c{i}.
+When invoked on a value not in @c{I}, the function may return any value, or diverge.
+To further simplify, and for the sake of modeling records as first-class functions,
+when using Scheme, for indexes we will use symbols (interned strings)
+instead of identifiers (that in Scheme are symbols enriched with
+scoping and provenance information, used for second-class macro-expansion).
+
+For example, where @c{Num} is the type of numbers and @c{Str} the type of strings,
+we could have a record type
+@Code{
+R = {x: Num, y: Num, color: Str}
+}
+and a point @c{point-q} of type @c{∏R} defined as follows:
+@Code{
+(define point-q
+  (record (x 3) (y 4) (color "blue")))
+}
+
+@subsubsection{Modular specifications}
+
+Now we can introduce and model the notion of modular specification:
+a modular specification is a way for a programmer to specify
+how to define an entity of some type @c{E} given some modular context,
+or just @emph{module context}, of type @c{C}.
+The module context contains all the available software entities,
+that were defined in other modules by other programmers
+(or even by the same programmer, at different times,
+who doesn’t presently have to hold the details of them in his limited brain).
+And the simplest way to model a modular specification as a first-class value,
+is as a function of type @c{C → E}, from module context to specified entity.
+
+Typically, the module context is a set of bindings mapping identifiers
+to useful values, often functions and constants,
+whether builtin the language runtime or available in its standard library.
+Now, we already have types for such sets of bindings: record types.
+And as a language grows in use and scope, the module context will include
+further libraries from the language’s wider ecosystem,
+themselves seen as sets of bindings of their respective record types,
+accessed hierarchically from a global module context,
+that now contains “modules” (records) as well as other values
+(or segregated from regular values at different levels of the module hierarchy).
+In any case, the global module context is typically a record of records, etc.,
+and though many languages have special restrictions on modules as second-class entities,
+for our purpose of modeling the first-class semantics of modularity,
+we may as well consider that at runtime at least, a module is just a regular record,
+and so is the global module context, of type @c{C = ∏M}.
+
+For instance, we could modularly specify a function @c{ls-sorted} that returns
+the sorted list of filenames (as strings) in a directory (as a string),
+from a module context of type @c{∏M} that provides
+a function @c{ls} of type @c{Str → List(Str)} and
+a function @c{sort} that sorts a list of strings:
+@Code{
+M = { ls: Str → List(Str), sort: List(Str) → List(Str) }
+}
+@Code{
+(define (ls-sorted ctx) ((ctx 'sort) ((ctx 'ls) dir)))
+}
+
+Note how in the above code snippet, we model records is functions from symbol to value,
+and to extract a binding from a record, we thus call it with a symbol as single argument.
+The functions extracted are then chained together, as in the @c{compose} function
+we defined earlier (that we could have used if we extracted it from the module context,
+or could otherwise assume it was a language builtin).
+
+@subsubsection{Closing Modular Module Specifications: Y}
+
+Now, programmers usually do not just specify just a single entity of type @c{E},
+but many entities, that they distinguish by identifying them with identifiers.
+i.e. they modularly specify a @emph{module} of type @c{E = ∏X}.
+A modular module specification is thus “just” a function from record to record:
+the input record is the modular context of type @c{∏M}, and
+the output record is the specified module of type @c{∏X}.
+We will say that the identifiers bound in @c{∏M} are @emph{required} by the specification,
+whereas the identifiers bound in @c{∏X} are @emph{provided} by the specification.
+
+In general, we call a modular module specification “open”,
+inasmuch as it may depend on bindings from the module context
+that are not defined yet, and that other modular module specifications
+may depend on the entities it specifies, once these entities are made available
+by binding them to some path within the name hierarchy of the global module context.
+In other words, in an open (modular) module specification,
+some entities may be @emph{required} that are not @emph{provided} yet
+(or, which is usually less crucial, maybe be @emph{provided} but not @emph{required},
+at which point a “tree shaker” or global dead code optimizer may eliminate them).
+
+We will call a modular module specification “close” when it specifies
+the global module context of an entire program,
+wherein every entity required is also provided.
+A close modular module specification is thus of type @c{∏M → ∏M}.
+Then comes the question: how can we, from a close modular module specification,
+extract the actual value of the module context, of type @c{∏M},
+and thereby realize the program that was modularly specified?
+
+This module realization function we are looking for is
+of type @c{(C → C) → C} where @c{C = ∏M}.
+Interestingly, we already mentioned a solution:
+the fixpoint combinator @c{Y}.
+And whereas it was the wrong solution to resolve extensible specifications,
+it is exactly what the doctor ordered to resolve modular specifications:
+the @c{Y} combinator “ties the knots”,
+links each reference requiring an entity to the definition providing it,
+and closes all the open loops.
+
+@subsubsection{Digression: Scheme and FP}
+
+Here are two issues where there is a discrepancy between Scheme
+and the theoretical model of Functional Programming,
+that other languages may or may not stick closer to,
+that may or may not be otherwise suitable for modeling Object Orientation.
+
+@subsubsub*section{Many Y combinators}
+
+First, there are many variants to the fixpoint (or fixed-point) combinator Y,
+and the pure applicative Y combinator you could write in Scheme’s
+pure subset of the λ-calculus is actually quite bad in practice.
+Here is the applicative Y combinator,
+expressed in terms of the composition combinator B and the duplication combinator D@xnote[":"]{
+  A simple way to test the @c{applicative-Y} combinator,
+  or the subsequent variants @c{applicative-Y-expanded} and @c{stateful-Y}
+  is to use it to define the factorial function:
+  @c{(define fact (applicative-Y (λ (f) (λ (n) (if (<= n 1) n (* n (f (1- n))))))))}
+  and you can then test that e.g. @c{(fact 6)} returns @c{720}.
+}
+@Code{
+(define B (λ (x) (λ (y) (λ (z) (x (y z))))))
+(define applicative-D (λ (x) (λ (y) ((x x) y))))
+(define applicative-Y (λ (f) (applicative-D ((B f) applicative-D))))
+(define applicative-Y-expanded
+  (λ (f) ((λ (x) (λ (y) ((x x) y)))
+          (λ (x) (f (λ (y) ((x x) y)))))))
+}
+@; Test: ((applicative-Y (λ (f) (λ (n) (if (<= n 1) n (* n (f (1- n))))))) 6) ;==> 720
+@; Test: ((applicative-Y-expanded (λ (f) (λ (n) (if (<= n 1) n (* n (f (1- n))))))) 6) ;==> 720
+The Y combinator works by composing the argument function @c{f}
+with indefinite copies (duplications) of itself (and accompanying plumbing).
+In this applicative variant, the first, minor, issue with this combinator is
+that it only works to compute functions,
+because the only way to prevent a overly eager evaluation of a computation
+that would otherwise diverge is to protect this evaluation under a λ.
+The second, major, issue with the applicative Y is that the pure λ-calculus
+by itself has no provision for sharing non-fully-reduced computations,
+only for sharing (fully-reduced) values;
+therefore the fixed-point computations are duplicated,
+and any information used along the way will have to be recomputed
+as many times as computations are duplicated, which can grow exponentially fast
+as the computation involves deeper sub-computations.
+In some cases, the eager evaluation may never terminate at all when lazy evaluation would,
+or not before the end of the universe.
+And of course, if there are any side effects, they will be duplicated a large number of times.
+
+There are several potential solutions to the practical inapplicability
+of the applicative Y combinator:
+(1) a stateful Y combinator,
+(2) a lazy Y combinator, or
+(3) a second-class Y combinator.
+
+A stateful Y combinator is what the @c{letrec} construct of Scheme provides
+(and also its @c{letrec*} variant, that the internal @c{define} expands to):
+it uses state mutation underneath to create and initialize a mutable cell
+that will hold the shared fixpoint value.
+If the rest of the program is pure and doesn’t capture intermediate continuations
+with Scheme’s famous @c{call/cc}, the mutation cannot be exposed as a side-effect,
+and the computation remains overall pure (deterministic, referentially transparent),
+though not definable in terms of the pure applicative λ-calculus.
+Note however how the fixed-point @c{p} below need still be a function,
+as we must η-convert it into the equivalent but protected @c{(λ (y) (p y))}
+before to pass it to @c{f}:
+@Code{
+(define (stateful-Y f) (letrec ((p (f (λ (y) (p y))))) p))
+}
+@; Test: ((stateful-Y (λ (f) (λ (n) (if (<= n 1) n (* n (f (1- n))))))) 6) ;==> 720
+
+Another solution is to use a lazy Y. In a language like Nix
+(where @c{λ (f)} is written @c{f:}), you can simply define
+@c{Y = f: let p = f p; in p}. In Scheme, using the convention that
+every argument variable or function result must be protected by @c{delay},
+and every function result must be forced, we would write@xnote[":"]{
+  Again, a simple way to test the lazy Y combinator is to use it
+  to define the factorial function:
+  @c{(define fact (lazy-Y (λ (f) (λ (n) (if (<= n 1) n (* n ((force f) (1- n))))))))}
+  and you can then test that e.g. @c{(fact 6)} returns @c{720}.
+  Note that we do without wrapping of @c{n} in a @c{delay},
+  but @c{f} itself is a delayed function value to fit the calling convention of @c{lazy-Y},
+  and we therefore must @c{force} it before we call it.
+  The subsequent variants of @c{lazy-Y} can be tested in the same way.
+}
+@Code{
+(define (lazy-Y f) (letrec ((p (f (delay p)))) p))
+}
+Or, if you want a variant based on combinators:
+@Code{
+(define lazy-B (λ (x) (λ (y) (λ (z) ((force x) (delay ((force y) z)))))))
+(define lazy-D (λ (x) ((force x) x)))
+(define lazy-Y-with-combinators
+  (λ (f) (lazy-D (delay ((lazy-B f) (delay lazy-D))))))
+(define lazy-Y-expanded
+  (λ (f) ((λ (x) ((force x) x))
+          (delay (λ (x) ((force f) (delay ((force x) x))))))))
+}
+@; Test: ((lazy-Y-with-combinators (λ (f) (λ (n) (if (<= n 1) n (* n ((force f) (1- n))))))) 6) ;==> 720
+@; Test: ((lazy-Y-expanded (λ (f) (λ (n) (if (<= n 1) n (* n ((force f) (1- n))))))) 6) ;==> 720
+One advantage of a lazy Y is that evaluation is already protected by the @c{delay}
+primitive and thus can apply to any kind of computation, not just to functions;
+though if you consider that @c{delay} is no cheaper than a @c{λ} and indeed uses
+a @c{λ} underneath, that’s not actually a gain, just a semantic shift.
+What the @c{delay} does buy you, on the other hand, is sharing of computations
+before they are evaluated, without duplication of computation costs or side-effects.
+(Note that @c{delay} can be easily implemented on top of any stateful applicative language,
+though a thread-safe variant is harder to achieve.)
+
+A third solution, often used in programming languages with second-class OO only
+(or languages in which first-class functions must terminate), is
+for the @c{Y} combinator to only be called at compile-time, and
+only on specifications that abide by some kind of structural restriction
+that guarantees the existence and well-formedness of a fixpoint,
+as well as e.g. induction principles to reason about said fixpoint.
+Since we are interested in first-class semantics for OO, we will ignore this solution
+in the rest of this paper, and leave it as an exercise for the reader.
+@;{TODO CITE Aaron Stump from U Iowa, etc.}
+
+@subsubsub*section{Function Arity}
+
+Functional Programming usually is written with unary functions (that take exactly one argument),
+and to express more than one arguments, you “curry” it:
+you define a function of one argument that returns a function that processes the next argument, etc.,
+and when all the arguments are received you evaluate the desired function body.
+Then to apply a function to multiple arguments, you apply to the first argument,
+and apply the function returned to the second argument, etc.
+The syntax for defining and using such curried functions is somewhat heavy in Scheme,
+involving lots of parentheses, when the usual convention for Functional Programming languages
+is to do away with these extra parentheses:
+function application is left-associative, so that @c{f x y} is syntactic sugar for @c{((f x) y)};
+and function definition is curried, so that @c{λ x y . E} is syntactic sugar for @c{λ x . λ y . E}.
+
+Thus, there is a syntactic discrepancy that makes the usual Functional code not as nice in Scheme.
+Meanwhile, colloquial or “native” Scheme code may use any number of argument as function arity,
+and even variable numbers of argument, or, in some dialects, optional or keyword arguments,
+which does not map directly to mathematical variants of Functional Programming.
+
+One approach to resolving this discrepancy is to just cope with the syntactic heaviness
+of unary functions in Scheme, and just use them nonetheless,
+despite Lots of Insipid and Stupid Parentheses.
+
+A second approach is to adopt a more native Scheme style over FP style,
+with a variety of different function arities, making sure that a function is always called
+with the correct number of arguments. This approach melds best with the rest of the Scheme
+ecosystem, but may hurt the eyes of regular FP practitioners, and
+require extra discipline (or extra debugging) to use.
+
+A third approach is to use Scheme macros to automatically curry function definitions
+and function applications, such that a function called with insufficient arguments
+becomes the same function partially applied, whereas a function called with too many arguments
+becomes a call of the result of calling the function with the correct number of arguments,
+with the rest of the arguments. Such macros can be written in a few tens of lines of code,
+though they incur a performance penalty; an efficient variant of these macros
+that statically optimize function calls could be much larger,
+and might require some level of symbiosis with the compiler.
 
 
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 
+Issue 2: unary functions are syntax-heavy
+Solution: cope, autocurry, or multiple arities with care
 
+In the rest of this paper, we will use the Scheme way,
+with a stateful Y combinator, and
+multiple function arities that we will carefully match
+(though we will avoid variable arity to keep things simple),
+so you the reader can easily reproduce everything in this paper,
+even though you may have to be careful counting parentheses.
+In other libraries, other variants of this paper, other talks,
+in Scheme or in different languages (we notably used Nix),
+we made different choices,
+for instance implementing ML-like autocurrying,
+or relying on lazy evaluation.
+There is no one-size-fits-all.
+Pick whatever makes sense for your system.
 
-@subsection{A Minimal Model of Modularity}
-
-Let us
-
-The type for an open modular specification of an entity is @r[M ⟶ E] where
-@r[M] is the type of the module context shared between all modular specifications
-in a given program fragment,
-pand @r[E] is the type of the entity defined by the modular specification at hand.
-@r[M] typically involves some kind of dereference function @r[deref] of type @r[M ⟶ I ⟶ E],
-where @r[I] is a type of identifiers, usually some second-class variant
-of strings that is known at compile-time.
-In a pure functional setting where the only operation on the module context is dereference,
-the type @r[M] can be simply @r[I ⟶ E].
-For more precision, this type could be refined into some indexed product
-@r[∏i:I⟶ E_i] where each type @r[E_i] depends on the identifier @r[i].
-
-To be seen by other modular specification, a modular definition for a single entity is
-a specification associated to some identifier @r[i : I]
-(or to a path of such identifiers for hierarchical modules).
-An open modular definition for one or multiple identified entities
-is thus a finite map @; (associative table, association list)
-from @r[I] to @r[M ⟶ E].
-Up to some trivial refactoring, we can represent such open modular definition
-with the same type @r[M ⟶ I ⟶ E] as the dereference function.
 
 Now, a closed modular definition is just one where all the identifiers are defined,
 and the final computation feeds the resulting module context itself as argument to
@@ -2553,7 +2910,9 @@ you can have a somewhat useful notion of modules with
 a quite limited and inexpressive notion of subtyping
 compared to what is needed to support classes, and even more so to support prototypes.
 
-
+There is no perfect solution for either issue, there are only tradeoffs,
+and each developer must make his choice. Your Mileage May Vary.
+Just make sure you agree with anyone else that you will be directly sharing code with.
 
 @subsection[#:tag "internal_extensible_modularity"]{Internal Extensible Modularity}
 @subsubsection{Internalized Feature}
@@ -2738,7 +3097,7 @@ Fields vs Optics for method combination wrapping vs Generalized optics.
 @subsection{FOOOOOOOOOOOO}
 
 @subsection{Extensible Specification}
-@subsubsection{Records}
+@subsubsection{XXX Records}
 @subsubsection{xxx}
 @subsubsection{yyy}
 @subsection{Conflation}
@@ -2941,6 +3300,8 @@ and other entities within the ecosystem (including library functions, etc.)).
 In the simplest case, @r[E] and @r[M] will both be the same type,
 that of a single target being modularly and extensibly specified, typically a record.
 
+
+And no, the visitor pattern, even after you go through all the pain of it, doesn't fully capture the expressiveness of multiple dispatch with method combination, because it finds only one method.
 
 }
 
