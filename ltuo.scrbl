@@ -87,7 +87,7 @@
 @(define-simple-macro (Xitem body ...) (list " " body ... " "))
 @(define (ᵢ) (list @(html-only @c{ᵢ}) @tex{${}_i$}))
 @(define (Ri) (list @c{R}(ᵢ)))
-@(define (Mi) (list @c{M}(ᵢ)))
+@(define (Pi) (list @c{P}(ᵢ)))
 
 @(define super 'super)
 @(define self 'self)
@@ -842,7 +842,8 @@ A program is made of many parts that can be written independently,
 @; and need not be complete or well-founded by themselves,
 enabling division of labor,
 as opposed to all logic being expressed in a single big monolithic loop.
-@subsubsection{Modularity}
+
+@subsubsection{Modularity (Overview)}
 A programmer can write or modify one part (or “module”)
 while knowing very little information about the contents of other parts,
 enabling specialization of tasks. Modularity is achieved by having modules
@@ -850,7 +851,7 @@ interact with each other through well-defined “interfaces” only,
 as opposed to having to understand in detail the much larger contents
 of the other modules so as to interact with them.
 
-@subsubsection{Extensibility}
+@subsubsection{Extensibility (Overview)}
 A programmer can start from the existing specification and only need contribute
 as little incremental information as possible when specifying a part
 that modifies, extends or specializes other parts,
@@ -1438,7 +1439,7 @@ The decision trees that are enabled or disabled when evolving a program into ano
 In the case of OO, these phenomena are what is captured by
 the intralinguistic extensible modularity as defined above:
 (a) the ability to “code against an interface” and
-pass any object of any type that satisfies the interface
+pass any value of any type that satisfies the interface
 (modularity, be it following structural or nominative rules),
 (b) the ability to extend and specialize existing code by creating a new entity
 that “inherits” the properties of existing entities and only needs specify
@@ -1500,7 +1501,7 @@ Even in a language that provides no support whatsoever for modules
 @emph{within} the language itself (such as C),
 programmers will find means to express modules as @emph{third-class} entities,
 automated by tools @emph{outside} the language:
-a preprocessor, an object linker, editor macros, or “wizards”.
+a preprocessor, an object file linker, editor macros, “wizards” or LLMs.
 And even if they somehow don’t because they can’t or can’t afford to use such automation,
 developers may achieve modules as @emph{fourth-class} entities,
 ones that they handle manually, with design patterns, editors, copy-paste, and lots of debugging.
@@ -2272,16 +2273,16 @@ and identify the most fundamental building blocks within it,
 from which all the usual concepts can be reconstituted, explained, justified, evaluated,
 generalized, and maybe even improved upon.
 
-@subsubsection{Why FP?}
+@subsubsection{Why Functional Programming?}
 
 Functional Programming (FP) is a computational model
 directly related to formal or mathematical logic
-whereby we can reason about programs, their semantics (what they mean),
+whereby we can precisely reason about programs, their semantics (what they mean),
 how they behave, etc.
-the famous Curry-Howard Correspondence establishes a direct relationship
+The famous Curry-Howard Correspondence establishes a direct relationship
 between the terms of the λ-calculus that is the foundation of FP,
-and the rules of logical deduction. The correspondence can also be extended
-to cover the categories of mathematics, and more.
+and the rules of logical deduction. That correspondence can also be extended
+to cover the Categories of mathematics, and more.
 
 Therefore, in an essential sense, FP is indeed the “simplest” paradigm
 in which to describe the semantics of OO and other programming paradigms:
@@ -2405,39 +2406,35 @@ and as output returns an extended value of the same type @c{V}.
 In pure FP, the simplest model for such an extension would be a function from @c{V} to @c{V},
 i.e. of type @c{V → V}.
 
-Later on, we may discuss more precise types for extension as being of type @c{V → W}
-where @c{W} is a subtype of @c{V}, but @c{V → V} is good enough for now.
+We could give an extension the more precise type @c{V → W | W < V},
+i.e. a function from @c{V} to @c{W} such that @c{W} is a subtype of @c{V},
+assuming some theory of subtyping.
+But @c{V → V} is good enough for now.
 
 @subsubsection{Coloring a Point}
 
 The prototypical type @c{V} to extend would be a type @c{Record} for records.
 Assuming for the moment some syntactic sugar, and postponing discussion of precise semantics,
 we could define a record as follows:
-@Code{
-(define point-p (record (x 2) (y 4)))
-}
-i.e. the variable @c{point-p} is now bound to a record that associates
+@Code{(define point-p (record (x 2) (y 4)))}
+i.e. the variable @c{point-p} is bound to a record that associates
 to symbol @c{x} the number @c{2} and to symbol @c{y} the number @c{4}.
 
 An sample extension would be the function @c{paint-blue} below,
 that extends a given record (lexically bound to @c{p} within the body of the function)
 to have a new binding associating to symbol @c{color} the string @c{"blue"}:
-@Code{
-(define (paint-blue p)
-  (extend-record p 'color "blue"))
-}
+@Code{(define (paint-blue p) (extend-record p 'color "blue"))}
 
 Obviously, if you apply this extension to that value with @c{(paint-blue point-p)}
 you obtain the a record equal to what you could have directly defined as:
-@Code{
-(record (x 2) (y 4) (color "blue"))
-}
+@Code{(record (x 2) (y 4) (color "blue"))}
 
 Readers familiar with the literature will recognize the “colored point” example
 used in many OO papers. Note however, that in the present example,
 as compared to most such papers and to further examples in subsequent sections:
-(a) we are extending a point @emph{value} rather than a point @emph{type}, and
-(b) we haven’t started modeling the modularity aspect of OO yet.
+(a) we are extending a point @emph{value} rather than a point @emph{type},
+(b) the value is a regular record, and not an “object” by any means, and
+(c) indeed we haven’t started modeling the modularity aspect of OO yet.
 
 @subsubsection{Extending Arbitrary Values}
 
@@ -2472,9 +2469,7 @@ But interestingly, extensions can be composed, such from two extensions
 that applies @c{ext1} to the result of applying @c{ext2} to the argument value.
 And since we are discussing first-class extensions in Scheme,
 we can always define the @c{compose} if not yet defined as follows:
-@Code{
-(define (compose ext1 ext2)
-  (λ (val) (ext1 (ext2 val))))}
+@Code{(define compose (λ (ext1 ext2) (λ (val) (ext1 (ext2 val)))))}
 
 Now if we were discussing second-class extensions in a restricted compile-time language,
 composition might not be definable, and not expressible unless available as a primitive.
@@ -2502,9 +2497,9 @@ and somewhat depends on what monoidal operation is used to extend it
 as well as the domain type of values.
 
 @itemize[
-@item{For the type @c{Record} of records, @c{⊤ = (record)} the empty record}
+@item{For the type @c{Record} of records, @c{⊤ = (record)} the empty record.}
 @item{For the type @c{Number} of numbers, @c{⊤ = 0}, seen additively, or @c{1} if multiplicatively,
-or @c{-∞} (floating-point number) seen with @c{max} as an operator, or @c{-∞} with @c{min}}
+or @c{-∞} (floating-point number) seen with @c{max} as an operator, or @c{-∞} with @c{min}.}
 @item{For the type @c{Pointer} of pointers into a graph of records, @c{⊤ = null},
 the universal null pointer@xnote["."]{
   Hoare called his 1965 invention of null his “billion dollar mistake”. @; CITE both
@@ -2517,7 +2512,8 @@ the universal null pointer@xnote["."]{
   and some ad hoc arbitrary value must be provided for each type used.
 }}
 @item{For the type @c{Type} of types (in a compiler, at the meta-level),
-@c{⊤ = ⊤}, the top type that you specialize and refine, or bottom type @c{⊥} that you extend}
+@c{⊤ = ⊤}, the top type (“everything”) that you refine,
+or bottom type @c{⊥} (“nothing”) that you extend.}
 @item{For any function type in a language with partial functions, @c{⊤ = abort},
 a function that never returns regularly,
 and instead always abort regular evaluation and/or throws an error.}]
@@ -2531,7 +2527,7 @@ if you try to force, open or dereference it, which is much less than
 the 0 information as provided by a regular null value.
 In Scheme, one may explicitly use the @c{delay} primitive to express such laziness,
 though you must then explicitly @c{force} the resulting value rather than
-having the language implicitly force computation whenever needed.
+having the language implicitly force computations whenever needed.
 
 @subsubsection{Here there is no Y}
 
@@ -2576,7 +2572,7 @@ is far superior to the approach of using a fixpoint combinator
 for the purpose of extracting a value from an extensible specification.
 Thus, as far as we care about extensibility:
 here, there is no Y@xnote["."]{
-  with apologies to Primo Levi.
+  (With apologies to Primo Levi.)
 }
 
 @subsection{A Minimal Model of Modularity}
@@ -2613,6 +2609,29 @@ and a point @c{point-q} of type @c{∏R} defined as follows:
   (record (x 3) (y 4) (color "blue")))
 }
 
+@subsubsub*section{Merging Records}
+
+Given a list of bindings as pairs of an identifier and a value,
+you can define a record that maps each identifier to the value in the first
+binding with that identifier in the list, if any
+(or else, errors out, diverges, returns null, or does whatever a record does by default).
+Conversely, given a list of identifiers and a record, you can get a list of bindings
+as pairs of an identifier and the value that the record maps it to.
+Most practical implementations of records support
+extracting from a record the list of identifiers it binds,
+and such a list of all bindings in the record;
+but this “reflection” feature is not necessary for most uses of records.
+Indeed, the trivial implementation we will use,
+wherein records are functions from identifier to value, doesn’t;
+and even more elaborate implementations often deliberately not only support runtime reflection,
+only second-class knowledge of what are the identifiers bound by a record.
+
+Finally, given a list of records and for each record a set of identifiers
+(that may or may not be the set of all identifiers bound by it,
+possibly extracted via reflection), you can merge the records along those sets of identifiers,
+by converting in order each record to a list of bindings for its given set of identifiers,
+appending those lists, and converting the appended result to a record.
+
 @subsubsection{Modular specifications}
 
 Now we can introduce and model the notion of modular specification:
@@ -2626,7 +2645,7 @@ who doesn’t presently have to hold the details of them in his limited brain).
 And the simplest way to model a modular specification as a first-class value,
 is as a function of type @c{C → E}, from module context to specified entity.
 
-Typically, the module context is a set of bindings mapping identifiers
+Typically, the module context @c{C} is a set of bindings mapping identifiers
 to useful values, often functions and constants,
 whether builtin the language runtime or available in its standard library.
 Now, we already have types for such sets of bindings: record types.
@@ -2640,11 +2659,11 @@ In any case, the global module context is typically a record of records, etc.,
 and though many languages have special restrictions on modules as second-class entities,
 for our purpose of modeling the first-class semantics of modularity,
 we may as well consider that at runtime at least, a module is just a regular record,
-and so is the global module context, of type @c{C = ∏M}.
+and so is the global module context, of type @c{C = ∏R}.
 
 For instance, we could modularly specify a function @c{ls-sorted} that returns
 the sorted list of filenames (as strings) in a directory (as a string),
-from a module context of type @c{∏M} that provides
+from a module context of type @c{∏R} that provides
 a function @c{ls} of type @c{Str → List(Str)} and
 a function @c{sort} that sorts a list of strings:
 @Code{
@@ -2664,12 +2683,14 @@ or could otherwise assume it was a language builtin).
 
 Now, programmers usually do not just specify just a single entity of type @c{E},
 but many entities, that they distinguish by identifying them with identifiers.
-i.e. they modularly specify a @emph{module} of type @c{E = ∏X}.
+i.e. they modularly specify a @emph{module} of type @c{∏R}.
 A modular module specification is thus “just” a function from record to record:
-the input record is the modular context of type @c{∏M}, and
-the output record is the specified module of type @c{∏X}.
-We will say that the identifiers bound in @c{∏M} are @emph{required} by the specification,
-whereas the identifiers bound in @c{∏X} are @emph{provided} by the specification.
+the input record is the modular context of type @c{∏R}, and
+the output record is the specified module of type @c{∏P}.
+We will say that the identifiers bound in @c{∏R}
+are @emph{required} by the specification, or @emph{referenced} by the specification,
+whereas the identifiers bound in @c{∏P} are @emph{provided} by the specification,
+or @emph{defined} by the specification.
 
 In general, we call a modular module specification “open”,
 inasmuch as it may depend on bindings from the module context
@@ -2681,16 +2702,24 @@ some entities may be @emph{required} that are not @emph{provided} yet
 (or, which is usually less crucial, maybe be @emph{provided} but not @emph{required},
 at which point a “tree shaker” or global dead code optimizer may eliminate them).
 
+An open modular specification (whether of a module or not) can be grafted onto
+an open modular specification by specifying an identifier to which to associate the specified value,
+which will override the previous binding if any.
+Open modular module specifications can be merged
+by merging the records (along respective sets of identifiers) under the context,
+i.e. calling each specification function with the same module context
+then merging the resulting records.
+
 We will call a modular module specification “closed” when it specifies
 the global module context of an entire program,
 wherein every entity required is also provided.
-A closed modular module specification is thus of type @c{∏M → ∏M}.
+A closed modular module specification is thus of type @c{∏R → ∏R}.
 Then comes the question: how can we, from a closed modular module specification,
-extract the actual value of the module context, of type @c{∏M},
+extract the actual value of the module context, of type @c{∏R},
 and thereby realize the program that was modularly specified?
 
 This module realization function we are looking for is
-of type @c{(C → C) → C} where @c{C = ∏M}.
+of type @c{(C → C) → C} where @c{C = ∏R}.
 Interestingly, we already mentioned a solution:
 the fixpoint combinator @c{Y}.
 And whereas it was the wrong solution to resolve extensible specifications,
@@ -2698,6 +2727,9 @@ it is exactly what the doctor ordered to resolve modular specifications:
 the @c{Y} combinator “ties the knots”,
 links each reference requiring an entity to the definition providing it,
 and closes all the open loops.
+It indeed does the same in a FP context that an object linker does
+in the lower-level imperative context of executable binaries:
+link references in open specifications to defined values in the closed result.
 
 @subsubsection{Digression: Scheme and FP}
 
@@ -2802,7 +2834,17 @@ primitive and thus can apply to any kind of computation, not just to functions;
 though if you consider that @c{delay} is no cheaper than a @c{λ} and indeed uses
 a @c{λ} underneath, that’s not actually a gain, just a semantic shift.
 What the @c{delay} does buy you, on the other hand, is sharing of computations
-before they are evaluated, without duplication of computation costs or side-effects.
+before they are evaluated, without duplication of computation costs or side-effects@xnote["."]{
+  Whether wrapped in a thunk, an explicit delay, an implicitly lazy variable,
+  or some other construct, what is interesting is that
+  ultimately the fixpoint combinator indefinitely iterates a @emph{computation},
+  and this wrapping is a case of mapping computations into values in an otherwise
+  call-by-value model that requires you to talk about values.
+  In a calculus such as call-by-push-value@~cite{conf/tlca/Levy99},
+  where values and computations live in distinct type universes,
+  the fixpoint combinator would clearly be mapping
+  computations to computations without having to go through the universe of values.
+}
 (Note that @c{delay} can be easily implemented on top of any stateful applicative language,
 though a thread-safe variant is harder to achieve.)
 
@@ -2825,18 +2867,21 @@ and when all the arguments are received you evaluate the desired function body.
 Then to apply a function to multiple arguments, you apply to the first argument,
 and apply the function returned to the second argument, etc.
 The syntax for defining and using such curried functions is somewhat heavy in Scheme,
-involving lots of parentheses, when the usual convention for Functional Programming languages
+involving a lot of parentheses, when the usual convention for Functional Programming languages
 is to do away with these extra parentheses:
-function application is left-associative, so that @c{f x y} is syntactic sugar for @c{((f x) y)};
+in FP languages, two consecutive terms is function application, which is left-associative,
+so that @c{f x y} is syntactic sugar for @c{((f x) y)};
 and function definition is curried, so that @c{λ x y . E} is syntactic sugar for @c{λ x . λ y . E}.
 
-Thus, there is a syntactic discrepancy that makes the usual Functional code not as nice in Scheme.
+Thus, there is some syntactic discrepancy that makes code written in
+the “native” Functional style look ugly and somewhat hard to follow in Scheme.
 Meanwhile, colloquial or “native” Scheme code may use any number of argument as function arity,
 and even variable numbers of argument, or, in some dialects, optional or keyword arguments,
-which does not map directly to mathematical variants of Functional Programming.
+which does not map directly to mathematical variants of Functional Programming;
+but it is an error to call a function with the wrong number of arguments.
 
-One approach to resolving this discrepancy is to just cope with the syntactic heaviness
-of unary functions in Scheme, and just use them nonetheless,
+One approach to resolving this discrepancy is to just cope with
+the syntactic ugliness of unary functions in Scheme, and just use them nonetheless,
 despite Lots of Insipid and Stupid Parentheses.
 
 A second approach is to adopt a more native Scheme style over FP style,
@@ -2855,15 +2900,91 @@ that statically optimize function calls could be much larger,
 and might require some level of symbiosis with the compiler.
 
 We have implemented variants of our minimal OO system in many combinations
-of these style options, in Scheme and other languages.
-For the rest of this paper, we will adopt a more “native”
-Scheme approach assuming @c{stateful-Y} and multiple function arities
-that are carefully matched by function callers, though
-we will avoid variable arity to keep things simple.
-As a result, the reader may be able to both easily copy and test
+of the above solutions to these two issues, in Scheme and other languages.
+For the rest of this paper, we will adopt a more “native” Scheme style,
+assuming @c{stateful-Y} and using multiple function arities
+that we will ensure are carefully matched by function callers;
+yet we will avoid variable arity
+with optional arguments, rest arguments or keyword arguments,
+or to keep things simple and portable.
+As a result, the reader should be able both to easily copy and test
 all the code in this paper at a their favorite Scheme REPL,
 and also easily translate it to any other language
-that has first-class higher-order functions.
+that sports first-class higher-order functions.
+
+@subsection{Minimal First-Class Modular Extensibility}
+
+@subsubsection{Modular Extensible Specifications}
+
+Let us combine the above extensibility and modularity in a minimal meaningful way,
+as modular extensibility.
+Once again, we will have a module context @c{C = ∏R},
+but for any value of type @c{V} we want to ultimately specify,
+we will modularly specify an extension to the value, rather than directly the value.
+Thus, an open modular specification for a value of type @c{V} will be
+a function of type @c{∏R → V → V}.
+
+Now, if we want to modularly and extensibly specify
+a set of entities of type $(Pi) for each $c{i},
+each associated to an identifier, we will be modularly defining
+a $c{(Pi) → $(Pi)} for each $c{i},
+which we can write as a record $c{∏(P → P)}.
+In other words, an (open) modular extensible module specification is
+a function @c{∏R → ∏(P → P)},
+where @c{∏R} is your modular context of identifiers required,
+and @c{∏P} is your specified module of identifiers provider.
+
+@subsubsection{Composing Modular Extensible Specifications}
+
+While you could conceivably merge such modular extensible specifications,
+the more interesting operation is to compose them, or more precisely,
+to compose each extension under the module context and bound identifier,
+an operation that for reasons that will soon become obvious,
+we will call mixin inheritance for modular extensible specifications:
+@Code{
+(define mix
+  (λ (c p) (λ (r) (λ (i) (λ (v) (compose ((c r) i) ((p r) i)))))))
+}
+The variables @c{c} and @c{p} stand for “child” and “parent” specifications,
+wherein the bindings in the child specification extend those “inherited”
+through applying parent specification from the argument @c{v} provided,
+all while using the module context @c{r}, at the identifier @c{i}.
+
+@subsubsection{Closing Modular Extensible Specifications}
+
+A closed modular extensible module specification is
+a function @c{∏R → ∏(R → R)}, wherein every identifier required
+is also provided as an extension.
+
+As before, the question is: how do you get
+from such a closed modular extensible module specification
+to an actual module computation where all the loops are closed,
+and every identifier is mapped to a value of the expected type?
+And the way we constructed our model, the answer is simple:
+first, under the scope of the module context and of each identifier,
+you resolve each extensible specification @c{@(Ri) → @(Ri)}
+by applying the extension to the appropriate top value;
+then you have reduced your problem to a regular modular module specification
+@c{∏R → ∏R}, at which point you only have to compute the fixpoint.
+We will call this operation instantiation for modular extensible specifications:
+@Code{(define fix (λ (m t) (Y (λ (r) (λ (i) (((m r) i) t))))))}
+In this expression, @c{m} is the modular extensible specification;
+@c{t} is your universal top value (or, if it depends on the type used,
+have it be a record of appropriate top values and replace @c{t} by @c{(t i)} in the body;
+@c{r} is the fixpoint variable for the module context we are computing;
+and @c{i} is a variable for each identifier defined in the module context.
+
+@subsubsection{Minimal OO Indeed}
+
+The above functions @c{mix} and @c{fix} are indeed isomorphic
+to the theoretical model of OO from Bracha and Cook @~cite{bracha1990mixin}
+and to the actual implementation of “extensions” in nixpkgs @~cite{nix2015}.
+This style of inheritance is called “mixin inheritance”,
+and the two functions can easily be ported to any language:
+Instead of records-as-functions, one could use an encoding of records-as-structures,
+and use a dereference function with the record as first argument
+instead of calling the record as a function with an identifier.
+
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
@@ -2876,7 +2997,7 @@ each open modular definition may only define or reference a small subset of the 
 and its type must accordingly only include the narrow subset of indexed types
 as being either defined or referenced by the open modular definition.
 An open modular definition shall not be required to know about and mention indexes and types
-from other open modular definitions that have not been written or amended yet,n
+from other open modular definitions that have not been written or amended yet,
 still that will be combined with it in the future.
 To support modularity, a static type system thus needs to support
 subtyping between sets of indexed types, as well as computation of fixed-points.

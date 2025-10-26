@@ -32,7 +32,7 @@ build/poof.pdf: poof.scrbl poof.bib header.tex util/eval-check.rkt util/examples
 #	cd build ; scribble --pdf ../poof.scrbl
 	scribble --dest build --pdf poof.scrbl
 view: build/poof.pdf
-	$(PDFVIEWER) $<
+	$(PDFVIEWER) $< $P
 pdf: build/poof.pdf
 
 # Testing the code in the paper itself
@@ -85,7 +85,7 @@ build/slides-2025-racketcon.html: slides-2025-racketcon.rkt util/reveal.rkt util
 build/eoomi2024.pdf: eoomi2024.scrbl poof.bib header.tex util/eval-check.rkt util/examples-module.rkt util/util.rkt build/resources
 	scribble --dest build --style header.tex --pdf $<
 eoomi: build/eoomi2024.pdf
-	$(PDFVIEWER) $<
+	$(PDFVIEWER) $< $P
 
 # Side paper: LTUO
 build/ltuo.pdf: ltuo.scrbl ltuo.bib header.tex util/eval-check.rkt util/examples-module.rkt util/util.rkt build/resources
@@ -95,5 +95,5 @@ build/ltuo.pdf: ltuo.scrbl ltuo.bib header.tex util/eval-check.rkt util/examples
 build/ltuo.html: ltuo.scrbl ltuo.bib util/eval-check.rkt util/examples-module.rkt util/util.rkt build/resources
 	scribble --dest build --html ltuo.scrbl
 ltuo: build/ltuo.pdf
-	$(PDFVIEWER) $<
+	$(PDFVIEWER) $< $P
 ltuopdf: build/ltuo.pdf
