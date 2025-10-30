@@ -42,48 +42,14 @@
 @(define-bibtex-cite "poof.bib" ~cite citet generate-bibliography)
 
 @section[#:tag "foo"]{FOO}
-
-In the notable case of data records that may be later extended,
-which is most relevant to OO,
-access to named fields must go through some “associative array” (e.g. hash-table)
-mapping identifiers to field index in the record.
-These indexes may be cached between modifications, or wholly resolved at compile-time
-if the extension is external or second-class.
+@subsection[#:tag "bar"]{BAR}
+@subsubsection[#:tag "quux"]{QUUX}
 
 @subsection[#:tag "incremental_modularity"]{Incremental Modularity}
 
 @subsubsection{Reduction to Smaller Problems}
 
 @; XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-@subsubsection{Embodying Specification}
-To embody some concept in the functional programming core of a language that has one,
-you will necessarily use a function.
-Since the concept is the specification of a computation,
-the function must eventually return that specific computation as an output value,
-given some inputs to be determined.
-The type of its output is the type of the target value.
-
-@subsubsection{Embodying Modularity}
-Each prototype should be able to
-contribute information that other modules can use while
-using information from other modules it depends on.
-In functional terms, it will be or contain a function with
-the former among its outputs and the latter among its input.
-
-Now to maximize the expressiveness of this Modularity in a functional setting,
-a prototype specifying one aspect of a computation should be able to make
-(forward) references to the complete computation being specified itself,
-so as to pass it as argument to higher-order functions extracting information
-about arbitrary aspects of it.
-This means the prototype should be or contain a function
-with the computation @c{self} as input for self-reference,
-and returns as output a computation with the specified structure
-that uses @c{self} in an @emph{open recursion} for all “self-reference”
-to aspects the final computation (possibly further refined, extended or overridden).
-That function then specifies (part of)
-a larger specification function of which the complete computation will be
-a @emph{fixed-point}.
 
 @subsubsection{Embodying Incrementality}
 Each prototype should be able to refer not only to
@@ -1286,83 +1252,6 @@ we aim at dispeling the confusion often reigns in even the most experienced OO p
 when trying to reason about the fine behavior of OO programs.
 
 @section[#:tag "classes"]{Classes}
-
-@subsection{Class OO as Type-Level Prototype OO}
-
-@subsubsection{Type Prototypes}
-Having fully elucidated Prototype OO in the previous sections,
-including its notion of Object as conflationg of Prototype and Instance,
-we can now fully elucidate Class OO including its notion of Class:
-@principle{A Class is a Prototype for a Type}.
-
-Class OO is therefore a special case of Prototype OO,
-though one where prototype computations only happen at the type-level.
-The instances incrementally specified by these prototypes are @emph{types}—or
-more precisely @emph{type descriptors},
-usually available at compile-time only in Class OO languages,
-in a form of staged metaprogramming. @TODO{cite}
-
-Thus when we claimed in @seclink{not_about_classes} that
-the situation of classes in OO was similar to that of types in FP,
-we meant it quite literally.
-
-@subsubsection{Class OO makes classes Second-Class}
-Now, the language in which these type prototypes are defined and composed is
-not the usual “base language” that the programmer
-is usually programming in (e.g. C++, Java, C#),
-but instead a distinct @emph{type-level language} in which the types and the
-base-level functions operating on them are being incrementally specified.
-
-The type-level language used in a language with Class OO
-is usually is restricted in expressiveness,
-in an often deliberate attempt to keep it from being “Turing-equivalent”.
-This attempt sometimes succeeds (as in OCaml), but more often than not
-utterly fails, as computational power emerges from unforeseen interactions
-between language features added over time (as in C++, Java, Haskell).
-@TODO{cite Nada on Java type system constraints}
-The attempts do usually succeed, however, at making these type-level languages
-require a completely different mindset and very roundabout design patterns
-to do anything useful, a task then reserved for experts.
-
-Computationally powerful or not, the type-level language of a Class OO language
-is almost always very different from the base language:
-the type-level languages tend to be pure functional or logic programming languages
-with pattern-matching and laziness but without any I/O support,
-even though the base languages themselves tend to be
-eager stateful procedural languages with lots of I/O support
-and often without pattern-matching or laziness
-(or limited ones as afterthoughts).
-
-In the end, classes are thus not @emph{first-class} entities in Class OO
-(subject to arbitrary programming at runtime),
-but @emph{second-class} entities (restricted to limited compile-time programming),
-though many languages offer limited reflection capabilities at runtime.
-By contrast, classes are first-class entities in Prototype OO;
-and indeed, one of the first applications of Prototype OO in any language
-is often to build rich runtime type descriptors, that include features
-not usually expressible with compile-time type descriptors
-or their runtime representation as sometimes accessible through “reflection”,
-such as extra constraints, context-dependent I/O, property-based testing support, etc.
-
-@subsubsection{More Popular yet Less Fundamental}
-Class OO was historically discovered (1967)
-nine years before Prototype OO (1976),
-and remains overall more popular in the literature.
-The most popular OO language, JavaScript, started with Prototype OO only (1995),
-but people were constantly reimplementing classes on top, and twenty years later
-classes were added to the language itself@~cite{EcmaScript:15}.
-
-And yet we will argue that Class OO is less fundamental than Prototype OO:
-it can indeed be very easily expressed in terms of Prototype OO and implemented on top of it
-(as exemplified many times over in JavaScript),
-such that inheritance among classes is indeed a special case of
-inheritance among the underlying prototypes,
-whereas the opposite is not possible:
-Class OO offers little to no advantage in implementing Prototype OO
-over directly implementing it on top of FP,
-and it is not universally possible to build Prototype OO such that
-a prototype’s inheritance structure is verily the inheritance of an underlying class
-(since the former is always first-class but the latter usually second-class).
 
 @subsection{Typing Records}
 Now, a type system with suitable indexed types and subtyping
@@ -2961,3 +2850,14 @@ Reminds me of that unrelated time I changed ASDF from using bad data structures 
 Here we're talking development time, though.
 The Scheme code for my (merkle) tries, using Prototype OO, is 2.5 times smaller, simpler and less head-achy than the OCaml code using modules, with more functionality and better testing, because of all the module scaffolding I did not have to do (also 2.5x fewer entities).
 Single inheritance also gives you N² instead of N, but at least not N³ or N⁴.
+
+
+
+
+In the notable case of data records that may be later extended,
+which is most relevant to OO,
+access to named fields must go through some “associative array” (e.g. hash-table)
+mapping identifiers to field index in the record.
+These indexes may be cached between modifications, or wholly resolved at compile-time
+if the extension is external or second-class.
+

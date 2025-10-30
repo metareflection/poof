@@ -119,10 +119,9 @@
 @subsection{Our Contribution: An Optimal Inheritance Mechanism — and a Theory Why}
 
 @subsubsection{Context: Inheritance}
-Object-Oriented (“OO”) language are characterized by their use of
-@emph{inheritance} @~cite{inheritance1996},
-a mechanism within a programming language to
-modularly and extensibly combine partial specifications of programs@xnote["."]{
+Object-Oriented Programming (OOP), or Object-Orientation (OO),
+is a programming style characterized by the modular specification and extension of
+partial specifications via a mechanism known as @emph{inheritance} @~cite{inheritance1996}@xnote[","]{
   A notable dissident to this characterization is William Cook,
   a respected academic who made key contributions to understanding the semantics of inheritance
   @~cite{Cook1989 cook1989inheritance bracha1990mixin Cook1994}
@@ -165,7 +164,10 @@ modularly and extensibly combine partial specifications of programs@xnote["."]{
   There is thus a need to elucidate the key concepts of OO behind the hype and confusion;
   such is the main purpose of this paper.
 }
-Now programmers (respectively language designers) have faced a dilemma since almost the very beginning,
+usually depending on explicit support from the programming language being used,
+then called an Object-Oriented language.
+Now programmers (respectively programming language designers)
+have faced a dilemma since almost the very beginning,
 of which of several variants of inheritance to use (respectively implement), if any at all:
 some prefer single inheritance for its simplicity and performance
 @~cite{Simula1967 kay1996early},
@@ -289,16 +291,16 @@ when surprisingly it is actually naturally pure functional lazy;
 the generally ignored fact that inheritance works on any type, not just records,
 yet the reason why it is more useful with records of some sort.
 
-In section 7, we discuss inheritance in detail:
-single inheritance, multiple inheritance and mixin inheritance,
-and issues surrounding method conflict and resolution, or harmonious combination.
-We examine the known consistency constraints that matter
+In section 7, we discuss in detail the main forms of inheritance:
+single inheritance, multiple inheritance and mixin inheritance.
+We examine issues surrounding method conflict and resolution, or harmonious combination.
+We explain the known consistency constraints that matter
 for linearization algorithms in the context of multiple inheritance,
 and state of the art in satisfying them, the C3 algorithm.
 We touch on the topics of
 method combinations and multimethods (multiple dispatch).
 
-In section 7, we discuss how to combine multiple and single inheritance.
+In section 8, we discuss how to combine multiple and single inheritance.
 We discuss existing solutions solutions respectively adopted by
 Common Lisp @~cite{cltl2}, Ruby @; TODO cite
 and Scala @~cite{scalableComponentAbstractions2005}.
@@ -307,10 +309,10 @@ that satisfies all the constraints we discussed for a good linearization algorit
 and for combining single and multiple inheritance.
 We explain why the residual heuristic we also adopt from C3 is arguably the best one.
 
-In section 8, we discuss more advanced topics such as
+In section 9, we discuss more advanced topics such as
 Mutation, Multiple Dispatch, Monotonicity, Typeclasses, Global
 
-Finally, in section 9 we conclude by recapitulating our findings.
+Finally, in section 10 we conclude by recapitulating our findings.
 
 @; TODO: Describe Appendices
 
@@ -318,7 +320,7 @@ Finally, in section 9 we conclude by recapitulating our findings.
 @subsection{Note on Nomenclature}
 
 As we restate well-known and less-known lore of Object Orientation,
-we will endeavour to precisely define the terms we use in the rest of the article.
+we will endeavour to precisely define the terms we use.
 Defining terms is especially important since various authors
 from the communities around each of many OO language
 each use slightly different and conflicting terminologies,
@@ -335,8 +337,8 @@ the @emph{least ambiguous} word for a concept,
 even if it is neither the most popular word for the concept, nor the oldest,
 even if we sometimes make one up just for this article.
 The words we choose will hopefully cause readers to pause and reflect,
-rather than unwittingly misunderstand the sometimes subtle points we make
-due to a treacherously familiar word.
+rather than unwittingly misunderstand the sometimes subtle points we make,
+as they might if we had used a treacherously familiar word.
 
 In particular, we will conspicuously avoid using the unqualified words
 “object” and “class” because they connote for each reader,
@@ -345,7 +347,8 @@ that are parasitic to the theory we are laying out.
 We will also reject the word “class” to mean the most general kind
 of entity subject to inheritance,
 since a class is but a quite limited special case of a @emph{prototype},
-that itself can be seen as a special case of what we’ll call a @emph{specification}.
+that itself can be seen as derivative of what we’ll call a
+(modular extensible) @emph{specification}.
 
 @; TODO for submission, move to appendix?
 @section{What Object-Orientation is @emph{not}}
@@ -353,9 +356,9 @@ that itself can be seen as a special case of what we’ll call a @emph{specifica
 Before we explain in detail what OO @emph{is},
 let us cast aside a lot of things it @emph{isn’t}
 that too many people (both proponents and opponents)
-too often falsely identified with OO.
+falsely identify with OO.
 This is important, because attempts at building or explaining a theory of OO often fail
-due to the author or reader having wrong expectations about what OO is supposed to be.
+due authors and readers having wrong expectations about what OO is supposed to be.
 
 @subsection{Whatever C++ is}
 
@@ -409,7 +412,7 @@ they do not reliably inform about OO in general@xnote["."]{
   copying C++’s “multiple inheritance” yet 14 years later.
 }
 
-@subsection{Classes Only}
+@subsection[#:tag "classes_only"]{Classes Only}
 
 Many claim that classes, as first implemented by Simula 67@~cite{Simula1967}
 (though implementing a concept previously named by Hoare@~cite{hoare1965record}),
@@ -420,7 +423,7 @@ in their chapter about OO, barely even mention any other kind of OO if at all,
 much less study it.
 
 Yet KRL@~cite{Winograd1975},
-the second recognizable OO precursor to OO,
+the second recognizable precursor to OO,
 whose authors first applied the words “inheritance” and “prototypes” to their language
 (though the words were used descriptively without their latter technical definition),
 has what we would now recognize as prototype-based OO (a.k.a. Prototype OO).
@@ -446,12 +449,12 @@ is more general than Class OO, that is but a special case of it @~cite{Lieberman
 And we will even argue that you can recognizably have OO
 with neither prototypes nor classes as in T @~cite{adams88oopscheme}.
 
-It is therefore just wrong to dismiss Prototype OO as not being part and parcel
+It is therefore just wrong to dismiss classless OO as not being part and parcel
 of the OO tradition, historically, conceptually, and popularly.
 
 Now of course, classes, while not @emph{essential} to OO,
 are still @emph{important} in its tradition.
-The situation is similar to that of types in Functional Programming (“FP”):
+The situation is similar to that of types in Functional Programming (a.k.a. FP):
 the historical preexistence and continued relevance of the untyped λ-calculus
 and the wide adoption of dynamically typed functional languages like Scheme or Nix
 are ample evidence that types are not essential to FP;
@@ -509,7 +512,7 @@ Kamin, Reddy, Cook and Bracha@~cite{Kamin1988 ObjectsAsClosures Cook1989 bracha1
 (b) pure lazy dynamic OO languages such as Jsonnet or Nix@~cite{jsonnet dolstra2008nixos},
 and pure lazy OO systems for Scheme@~cite{poof2021}
 @; TODO maybe mention foreshadowing by Oleg Kiselyov ?
-and (c) languages happily combining OO and FP such as Common Lisp or Scala
+and (c) languages happily combining OO and FP such as Common Lisp or Scala,
 @;TODO cite ScalaZ, etc.
 with plenty of libraries restricting themselves to pure functional objects only.
 These provide ample evidence that OO does not at all require mutation,
@@ -529,11 +532,11 @@ is “encapsulation” or “information hiding”@~cite{DeRemerKron1975},
 though there is no consensus as to what this or these concepts mean,
 and no clear definition. @; TODO{CITE}
 
-Inasmuch as “encapsulation” informally denotes but part or all of modularity,
-the ability to code against an interface,
+Inasmuch as “encapsulation” informally denotes but part or all of
+modularity—the ability to code against an interface,
 with code on either side not caring which way the other side implements its part of the interface
-(or not even being able to distinguish between multiple such implementations),
-then yes, this is half of the essence of OO, as per our definition
+(or not even being able to distinguish between multiple such implementations)—then
+yes, this is half of the essence of OO, as per our definition
 (the other half being extensibility).
 Some may also call this concept “data abstraction” or some other kind of “abstraction”.
 @; XXX cite Liskov??? Mary Shaws???
@@ -637,7 +640,7 @@ to changing situations, at which point thoughtful uses of inheritance can help a
 }
 
 @subsection{Message Passing}
-Alan Kay, who invented Smalltalk and coined the term “Object-Oriented Programming” in 1967
+Alan Kay, who invented Smalltalk and coined the term “Object-Oriented Programming” circa 1967
 notably explained@~cite{Kay2020} that by that he originally meant
 a metaphor of computation through independent (concurrent, isolated) processes
 communicating by passing asynchronous messages.
@@ -647,8 +650,9 @@ It is also present in notable early object systems such as
 Director @~cite{Kahn1976 Kahn1979} and
 ThingLab @~cite{Borning1977 Borning1979 Borning1981}.
 
-However, neither Simula, nor Smalltalk nor any claimed OO language
-actually fits that metaphor, though Simula comes closer than its successors.
+However, neither Simula, nor Smalltalk nor any popular claimed OO language
+actually fits that metaphor, though some obscure and later Actor languages might.
+@; cite ABCL/1 ?
 Instead, the only popular language ever to fit this metaphor
 is Erlang@~cite{OOP2010};
 yet Erlang is not part of the OO tradition,
@@ -665,12 +669,19 @@ that Alan Kay also once mentioned was essential for OO@xnote["."]{
   Now, as we’ll see, you need fixed-points to express the semantics of OO;
   but in a pure applicative context, you cannot directly express sharing the results of a computation,
   so the pure fixed-point combinators lead to exponential recomputations as the fixed-point
-  involves deeper self-references. OO therefore cannot be supported directly within Erlang.
-  It could be achieved indirectly, by restricting it to compile-time (as in most static class OO),
-  or by using a global cache (as a table of multiple shared lazy computations in each process, or
-  with one or multiple processes being spawned for each shared lazy or stateful computation),
-  which would also require some reimplementation of garbage collection for those computation caches.
-  Neither solution would qualify as supporting OO any the more than
+  involves deeper self-references.
+  OO therefore cannot in practice be supported directly in Erlang,
+  and especially not within an Erlang process.
+  OO could be achieved indirectly, by using a preprocessor that expands it away,
+  or a compile-time only extension to the compiler, as in most static Class OO languages;
+  or OO could be achieved as a design pattern of maintaining some global table
+  to store the state of the many shared lazy computations in each process;
+  or, more in line with the Actor model that Erlang embodies,
+  OO could be achieved by spawning one or multiple processes
+  for each shared lazy or stateful computation (including each super-object of each object),
+  which might require some strict object lifetime discipline (not colloquial in Erlang),
+  or garbage collection of processes (not part of the Erlang language).
+  None of these solutions would qualify as supporting OO much more than
   assembly language “supports” OO or any Turing-universal language “supports” any paradigm, though.
   In the end, the essence of OO, which is Prototype OO,
   directly fits in the pure lazy functional paradigm,
@@ -699,7 +710,8 @@ The “message passing” paradigm, having no place for multimethods,
 thus falls short compared to other explanations of OO that accommodate them.
 Now, the message passing paradigm @; TODO cite PLANNER, Actors
 can be extended with a notion of “group messaging”
-where one object sends a “message” to a “group” of objects (rather than each member of the target group)
+where one object sends a “message” to a “group” of objects
+(rather than each member of the target group)
 @; TODO cite ABCL group messaging
 or to a “chemical” paradigm where a “chemical reaction” may involve
 multiple entities in and multiple entities out, with “message” entities
@@ -713,7 +725,7 @@ In conclusion, whatever historical role the paradigm of message-passing processe
 may have had in inspiring the discovery of OO,
 it remains a wholly distinct paradigm,
 with its own mostly disjoint tradition and very different concerns,
-that describes a different set of languages and usage patterns@xnote["."]{
+that describes a different set of programming languages and patterns@xnote["."]{
   Now, there is no doubt, from their later testimonies as well as then published papers,
   that Erlang's Concurrency Oriented Programming is clearly
   what the authors of Simula, Smalltalk, Actors, etc., were all @emph{aiming at}.
@@ -836,6 +848,11 @@ you can actually use OO as you do it.
 
 @section{What Object-Orientation @emph{is} — Informal Overview}
 
+In this section we map out the important concepts of OO.
+The little explanations we offer are what is strictly necessary
+to relate concepts to one another, and avoid misinterpreting them.
+More details explanations, and justifications, will follow in subsequent sections.
+
 @subsection{Extensible Modular Specifications}
 Object-Orientation (“OO”) is a technique that enables the specification of programs
 through extensible and modular @emph{partial} specifications,
@@ -951,7 +968,7 @@ From a complete specification, a target computation is specified that can be ext
 A specification is modular inasmuch as it can define certain aspects of the target
 while refering to other aspects to be defined in other specifications.
 A specification is extensible inasmuch as it can refer to some aspects of the target
-as partially defined so far by previous specifications, and amend or extend them.
+as partially defined so far by previous specifications, then amend or extend them.
 In Prototype OO, access to this modular context and to the previous value being extended
 are usually refered to through respective variables often named @c{self} and @c{super}.
 In Class OO, such variables may also exist, but there is an extra layer of indirection
@@ -968,7 +985,7 @@ It needs not be any kind of record nor record type;
 it needs not have been computed as the fixed-point of a specification;
 indeed it is not tied to any specific way to compute it.
 It cannot be inherited from (incrementally extended)
-according to any of the design patterns that define OO.
+according to any of the design patterns that characterize OO.
 
 Rather, a prototype (a.k.a. “object” in Prototype OO, and “class” but not “object” in Class OO)
 is a @emph{conflation} of a specification and its target, i.e. an entity that depending on
@@ -1133,20 +1150,31 @@ The effective text of a class (hence its semantics) is then the “concatenation
 of the direct text of all its transitive @emph{prefix classes},
 including all the field definitions, method functions and initialization actions,
 in order from least specific superclass to most specific@xnote["."]{
-  SIMULA later on also allows each class define a “suffix” as well as a “prefix”,
-  wherein the body of each subclass is the “inner” part between this prefix and suffix.
+  SIMULA later on also allows each class or procedure
+  to define a “suffix” as well as a “prefix”,
+  wherein the body of each subclass or subprocedure
+  is the “inner” part between this prefix and suffix.
   This approach by SIMULA and its successor BETA is in sharp contrast with how
   inheritance is done in about all other languages, that copy Smalltalk.
-  The “prefix” makes sense in allowing procedure definitions to be overridden
-  by latter more specialized definitions;
-  it also 
-  inasmuch as initialization code and side-effects are also included,
-  and that return values are “assigned” to the function’s name in the body in ALGOL style
-  (and that labels and 
-  the 
-  The “inner” trick makes sense in 1960s technology,
-  where surrounding a block of code,
-  (possibly with labels and jumps?)
+  The “prefix” makes sense to initialize variables, and to allow procedure definitions
+  to be overridden by latter more specialized definitions;
+  the “suffix” is sufficient to do cleanups and post-processing,
+  especially when procedures store their working return value
+  in a variable with the same name as the procedure being defined, in ALGOL style;
+  the entire “inner” setup also makes sense in the context of spaghetti code with GOTOs,
+  before Dijkstra made everyone consider them harmful in 1968.
+  But frankly, it is both limited and horribly complex to use in the post-1968 context
+  of structured code blocks, not to mention post-1970s higher-order functions, etc.,
+  even though in BETA you can still express what you want in a round-about way
+  by explicitly building a list or nesting of higher-order functions
+  that re-invert control back the way everyone else does it,
+  that you call at the end.
+  And so, while Simula was definitely a breakthrough, its particular form of inheritance
+  was also a dead-end, and we can rightfully say that inheritance, and OO,
+  were only invented and named but with Alan Kay’s Smalltalk 76.
+  In the end, Simula should count as a precursor to OO and not the real thing;
+  Dahl and Nygaard did not invent OO anymore than Columbus discovered America,
+  but they made the crucial invention that enabled it.
 }
 In modern terms, we call the prefix a superclass. @; TODO CITE
 The @emph{inheritance hierarchy} of a class, set of its direct and transitive superclasses,
@@ -1361,7 +1389,7 @@ Aren’t definitions “just” arbitrary conventions?}
 @item{Is there an authority on those words?}
 @item{Shouldn’t we use the same definition as Alan Kay,
 who invented the expression “Object Oriented Programming”?}
-@item{Shouldn’t we just let others define “OOP” however they want,
+@item{Shouldn’t we just let others define “OO” however they want,
 and stick to “inheritance” when discussing the field characterized by the use of inheritance?}]
 
 Though a treatise of epistemology is beyond the scope of this article, @;{TODO cite}
@@ -1369,7 +1397,7 @@ we can briefly answer these questions as follow:
 @itemlist[#:style'ordered
 @item{Yes, our definition is correct:
 it accurately identifies what people mean usually by those words,
-in distinguishing situations where they apply versus situations where they do not.}
+and distinguishes situations where they apply versus situations where they do not.}
 @item{No, the phenomena that effectively affect people,
 that they care to name, discuss, think about and act on, are not arbitrary.
 Thus the important part of definitions isn’t convention at all:
@@ -1437,16 +1465,17 @@ As the jest goes, “Every technique is first developed,
 then used, important, obsolete, normalized, and finally understood.”
 }}
 @item{No, it is no good to let an ignorant majority “define” the term “Object-Orientation”
-to mean what little they know of it: Class OO only, always mutable records,
-only single-inheritance or C++ style “multiple inheritance”, single dispatch,
-no method combination, etc.
+to mean what little they know of it—for instance, to pick the most popular elements:
+Class OO only, always mutable records,
+only single-inheritance or C++ style “multiple inheritance”,
+single dispatch, no method combination, etc.
 Letting those who don’t know and don’t care define technical words
 would be knowledge bowing to ignorance;
 it would be for those who know and care to abdicate their responsibility
-and follow the masses instead of leading them;
+and follow the masses when they should instead lead them;
 it would be ceding terrain to the Enemy—snake oil salesmen, chaosmongers,
-corrupters of language, proud spreaders of ignorance, etc.—who if let loose
-would endlessly destroy information and make clear meaning incommunicable.
+corrupters of language, manipulators, proud spreaders of ignorance, etc.—who if let loose
+would endlessly destroy the value of language and make clear meaning incommunicable.
 Beside, if you retreat to “inheritance” in the hope that at least that for that term
 you can get people to agree on a clear unambiguous meaning, you’ll find that if you
 have any success defining a useful term that way, the soldiers of entropy will rush
@@ -1711,7 +1740,8 @@ provide second-class modularity as part of a language itself.
   a big inspiration for Kay.}
 
 These are all examples of modularity that don’t involve extensibility as such.
-but we can also add all kinds of OO classes and prototypes since SIMULA 1967.
+By combining modularity with extensibility, we can also add all kinds of
+OO classes and prototypes since SIMULA 1967.
 
 @; TODO cite Mary Shaw works on Modularity
 
@@ -2237,8 +2267,8 @@ an extension is a function that takes the original unextended value
 and returns the modified extended value.
 In a stateful model of extensibility,
 an extension can instead be a procedure that takes a mutable reference, table or structure
-containing a value, and modifies it in-place to extend that value.
-
+containing a value, and modifies it in-place to extend that value—sometimes
+using “hot-patches” that were not foreseen by the original programmer.
 
 @;{TODO examples}
 
@@ -2430,8 +2460,9 @@ or will later direct him to relevant literature.
 Now, to model the extension of a value of type @c{V},
 we want some kind of computation that takes as input the original value of type @c{V},
 and as output returns an extended value of the same type @c{V}.
-In pure FP, the simplest model for such an extension would be a function from @c{V} to @c{V},
-i.e. of type @c{V → V}.
+In pure FP, everything will be modeled in terms of functions, and
+the simplest function to model for such an extension would be
+a function from @c{V} to @c{V}, i.e. of type @c{V → V}.
 
 We could give an extension the more precise type @c{V → W | W < V},
 i.e. a function from @c{V} to @c{W} such that @c{W} is a subtype of @c{V},
@@ -2604,6 +2635,28 @@ here, there is no Y@xnote["."]{
 
 @subsection{Minimal First-Class Modularity}
 
+@subsubsection{Modeling Modularity (Overview)}
+
+To model Modularity in terms of FP,
+we need to address several issues, each time with functions:
+@itemize[
+@item{First, we need to be able to define several independent entities.
+For that, we introduce records, as functions from identifiers to values.}
+@item{Second, programmers need to be able to use existing modularly-defined entities.
+For that, we introduce the notions of module context as a record,
+and modular specification as function from module context to entity.}
+@item{Third, programmers need to be able to publish the entities they define
+as part of the modular context that can be used by other programmers.
+For that, we introduce to notion of module as record,
+and (open) modular module specification, as function from module context to module.}
+@item{Last, programmers need to be able to link together
+those independent modular specifications into complete programs that end-users can run.
+For that, we introduce closed modular module specifications,
+and show how to resolve the open references.}]
+
+The end-user is provided with a “linked” program as a resolved module context
+from which he can invoke a programmer-defined “main” entry-point with his choice of arguments.
+
 @subsubsection{Records}
 
 Before we model Modularity as such, let us delve deeper into the modeling of Records,
@@ -2628,10 +2681,10 @@ when using Scheme, for indexes we will use symbols (interned strings)
 instead of identifiers (that in Scheme are symbols enriched with
 scoping and provenance information, used for second-class macro-expansion).
 
-For example, where @c{Num} is the type of numbers and @c{Str} the type of strings,
+For example, where @c{Number} is the type of numbers and @c{String} the type of strings,
 we could have a record type
 @Code{
-R = {x: Num, y: Num, color: Str}
+∏R = {x: Number, y: Number, color: String}
 }
 and a point @c{point-q} of type @c{∏R} defined as follows:
 @Code{
@@ -2694,10 +2747,10 @@ and so is the global module context, of type @c{C = ∏R}.
 For instance, we could modularly specify a function @c{ls-sorted} that returns
 the sorted list of filenames (as strings) in a directory (as a string),
 from a module context of type @c{∏R} that provides
-a function @c{ls} of type @c{Str → List(Str)} and
+a function @c{ls} of type @c{String → List(String)} and
 a function @c{sort} that sorts a list of strings:
 @;{@Code{
-R = { ls: Str → List(Str), sort: List(Str) → List(Str) }
+R = { ls: String → List(String), sort: List(String) → List(String) }
 }}
 @Code{
 (define ls-sorted (λ (ctx) (compose (ctx 'sort) (ctx 'ls))))
@@ -2709,11 +2762,11 @@ The functions extracted are then chained together, as in the @c{compose} functio
 we defined earlier (that we could have used if we extracted it from the module context,
 or could otherwise assume it was a language builtin).
 
-@subsubsection{Closing Modular Module Specifications: Y}
+@subsubsection{Open Modular Specifications}
 
 Now, programmers usually do not just specify just a single entity of type @c{E},
-but many entities, that they distinguish by identifying them with identifiers.
-i.e. they modularly specify a @emph{module} of type @c{∏R}.
+but many entities, that they distinguish by associating them to identifiers.
+i.e. they modularly specify a @emph{module} of type @c{∏P}.
 A modular module specification is thus “just” a function from record to record:
 the input record is the modular context of type @c{∏R}, and
 the output record is the specified module of type @c{∏P}.
@@ -2722,28 +2775,39 @@ are @emph{required} by the specification, or @emph{referenced} by the specificat
 whereas the identifiers bound in @c{∏P} are @emph{provided} by the specification,
 or @emph{defined} by the specification.
 
-In general, we call a modular module specification “open”,
-inasmuch as it may depend on bindings from the module context
-that are not defined yet, and that other modular module specifications
-may depend on the entities it specifies, once these entities are made available
-by binding them to some path within the name hierarchy of the global module context.
-In other words, in an open (modular) module specification,
-some entities may be @emph{required} that are not @emph{provided} yet
-(or, which is usually less crucial, maybe be @emph{provided} but not @emph{required},
-at which point a “tree shaker” or global dead code optimizer may eliminate them).
+In general, we call a modular specification “open”,
+inasmuch as some entities may be @emph{required} that are not @emph{provided}
+by the specification, and must be provided by other modular specifications.
+Now, the notion that the modular specification “provides” entities supposes
+that these entities will be available, bound to well-known identifiers in the module context.
+There are many strategies to realize this provision:
+@itemize[
+@item{The modular specification can be a paired with a single identifier,
+under which the entity is intended to be bound in a complete module context.}
+@item{The modular specification can specify multiple bindings,
+wherein the entity specified is a module, to be merged as a record into
+the complete module context.}
+@item{The first strategy above can be adapted to a hierarchical namespace of nested records,
+by pairing the specification with a path in the namespace, i.e. a list of identifiers.}
+@item{For multiple bindings, the second strategy can also be paired with a path;
+or the merging of records can be recursive, at which point a strategy must be devised
+to determine how deep to recurse, for instance by somehow distinguishing “modules”
+from regular “records”.}]
 
-An open modular specification (whether of a module or not) can be grafted onto
-an open modular specification by specifying an identifier to which to associate the specified value,
-which will override the previous binding if any.
-Open modular module specifications can be merged
-by merging the records (along respective sets of identifiers) under the context,
-i.e. calling each specification function with the same module context
-then merging the resulting records.
+In the end, we could let the programmer specify how his specification will extend
+the module context, with whatever merges he wants, however deeply nested—which
+will lead us to modular extensibility.
+But for now, let us abstract over which strategy is used to
+assemble many modular specifications together.
 
-We will call a modular module specification “closed” when it specifies
-the global module context of an entire program,
+@subsubsection{Linking Modular Module Specifications: Y}
+
+We will call a modular module specification “closed” when,
+after whatever assembly of individual modular specifications happened,
+it specifies the global module context of an entire program,
 wherein every entity required is also provided.
 A closed modular module specification is thus of type @c{∏R → ∏R}.
+
 Then comes the question: how can we, from a closed modular module specification,
 extract the actual value of the module context, of type @c{∏R},
 and thereby realize the program that was modularly specified?
@@ -2760,6 +2824,14 @@ and closes all the open loops.
 It indeed does the same in a FP context that an object linker does
 in the lower-level imperative context of executable binaries:
 link references in open specifications to defined values in the closed result.
+
+If there remain identifiers that are required but not provided,
+there will be an error—or non-termination, or some default value that will not make sense,
+at runtime, or at compile-time, depending on how sophisticated the exact implementation is
+(a typechecker might catch the missing requirement, for instance).
+If there remain identifiers that are provided but not required,
+and they are not otherwise (meant to) be used via reflection,
+then a “tree shaker” or global dead code optimizer may eliminate them.
 
 @subsubsection{Digression: Scheme and FP}
 
@@ -2957,7 +3029,7 @@ a function of type @c{∏R → V → V}.
 Now, if we want to modularly and extensibly specify
 a set of entities of type @(Pi) for each @c{i},
 each associated to an identifier, we will be modularly defining
-a @c{(Pi) → @(Pi)} for each @c{i},
+a @c{@(Pi) → @(Pi)} for each @c{i},
 which we can write as a record @c{∏(P → P)}.
 In other words, an (open) modular extensible module specification is
 a function @c{∏R → ∏(P → P)},
@@ -2973,8 +3045,8 @@ an operation that for reasons that will soon become obvious,
 we will call mixin inheritance for modular extensible specifications:
 @Code{
 (define mix
-  (λ (c p) (λ (r) (λ (i) (λ (v) (compose ((c r) i) ((p r) i)))))))
-}
+  (λ (c p) (λ (r) (λ (i)
+    (compose ((c r) i) ((p r) i))))))}
 The variables @c{c} and @c{p} stand for “child” and “parent” specifications,
 wherein the bindings in the child specification extend those “inherited”
 through applying parent specification from the argument @c{v} provided,
@@ -3063,8 +3135,10 @@ for many simple applications@xnote["."]{
 We can compose these kinds of specifications into larger specifications
 using the @c{mix} function, and eventually instantiate a target record
 from a specification using the @c{fix} function.
-To simplify, and for “portability” to any Scheme dialect,
-let’s use @c{#f} as the “top value”, and for instantiation use the function:
+To simplify, for portability to any Scheme dialect, and
+for good adaptation to an eager dynamic language,
+let’s use @c{#f} (the Scheme boolean false value) as the “top value”,
+and for instantiation use the function:
 @Code{(define instantiate (λ (spec) (fix spec #f)))}
 Note that since our targets are records, our minimal object system is
 closer to Prototype OO rather than to Class OO,
@@ -3201,12 +3275,12 @@ information that obviously cannot be provided locally by the specification
 since it involves further extensions that are not knowable in advance,
 many different variants of which can be instantiated in the future.
 
-Thus, in the specification below, a list of parts method is defined,
+Thus, consider the specification below, a list of parts method is defined,
 with the empty list being the initial default, and a count of parts method is defined
 that will count the parts in the future instantiated record,
 rather than in the specification so far:
 @Code{
-(define bill-of-parts
+(define base-bill-of-parts
   (λ (self) (λ (method-id) (λ (super)
     (case method-id
       ((parts) '())
@@ -3214,14 +3288,30 @@ rather than in the specification so far:
       (else super))))))}
 You cannot inline the empty list in the call to @c{(self 'parts)}
 because the method @c{parts} can be extended, and indeed
-such is the very intent and entire point of this @c{bill-of-parts} specification.
+such is the very intent and entire point of this @c{base-bill-of-parts} specification.
 Even future extensions cannot inline the value they reach,
-unless they are guaranteed that no further extension will extend the list of parts.
+unless they are guaranteed that no further extension will extend the list of parts
+(a declaration known as “sealing”, after Dylan). @;{CITE Dylan}
 
 The interaction between modularity and extensibility therefore
 extends the scope of useful uses for modularity
 compared to modularity without extensibility.
 Programming with modularity and extensibility is more modular than modularity alone!
+
+There is another important shift between modularity alone and modularity with extensibility,
+that we quietly smuggled in so far,
+because it happened naturally when modeling first-class entities using FP,
+but that actually deserves to be explicitly noted,
+especially since it is not quite natural in other settings
+such as existed historically during the discovery of OO
+or still exist today for most programmers:
+Modularity alone was content with a single global module context that everyone linked into,
+but the whole point of extensibility is that you will have many entities
+that will be extended in multiple different ways;
+therefore when you combine the two, it becomes essential that module contexts
+be not a single global entity, but many local entities.
+This shift from singular and global to plural and local is essential for Class OO,
+and even more so for Prototype OO.
 
 @section{Rebuilding OO from its Minimal Core}
 
@@ -3231,7 +3321,7 @@ Programming with modularity and extensibility is more modular than modularity al
 and we will see shortly extend it to support more features
 (at the cost of more lines of code).
 Yet our “object system” has no classes, and indeed no objects at all:
-instead, like the object system of Yale T Scheme,
+instead, like the object system of Yale T Scheme @~cite{adams88oopscheme},
 on top of which its windowing system was built,
 it is made of records and their specifications,
 that enable about everything that a Prototype object system do,
@@ -3240,7 +3330,7 @@ but without either records or specifications being objects nor prototypes.
 We defined our system in two lines of code, that can be similarly defined
 in any language that has higher-order functions,
 even a pure functional language without mutation;
-and indeed Nix defines its “extension” system similarly.
+and indeed Nix defines its “extension” system similarly@~cite{nix2015}.
 But there is indeed one extra thing Nix does that our system doesn’t,
 wherein Nix has prototype objects and our system (as is) has not: conflation.
 
@@ -3272,31 +3362,59 @@ then the resulting composed specification is wrapped into a pair of
 the specification and its target.
 
 Our implementation below makes this product explicit,
-using the @c{cons} function of Scheme to create a pair,
-its functions @c{car} and @c{cdr} to extract its respective first and second components.
-The function @c{proto←spec} is used to define a prototype from a specification,
+where we use the prefix @c{pproto} to denote a prototype implemented as a pair.
+We use the @c{cons} function of Scheme to create a pair, and
+the functions @c{car} and @c{cdr} to extract its respective first and second components.
+The function @c{pproto←spec} is used to define a prototype from a specification,
 and is used implicitly when composing prototypes using inheritance
-with the @c{proto-inherit} function.
-The function @c{proto-call} calls a method on a prototype by delegating it to its target.
+with the @c{pproto-mix} function.
+The function @c{spec←pproto} extracts the specification from a prototype,
+so you may inherit from it.
+The function @c{target←pproto} extracts the target from a prototype,
+so you may call methods on it.
 @Code{
-(define proto←spec
-  (λ (spec) (cons spec (instantiate spec))))
-(define proto-call
-  (λ (proto) (λ (method-id) ((cdr proto) method-id))))
-(define proto-inherit
-  (λ (child parent) (proto←spec (mix (car child) (car parent)))))}
+(define pproto←spec (λ (spec) (cons spec (instantiate spec))))
+(define spec←pproto (λ (pproto) (car pproto)))
+(define target←pproto (λ (pproto) (cdr pproto)))
+(define pproto-mix
+  (λ (child parent) (pproto←spec (mix (spec←pproto child) (spec←pproto parent)))))}
 
 In the Nix extension system, a target is a record (called an attrset in Nix),
 mapping string keys to arbitrary values,
 and the specification is stored under a “magic” string @c{"__unfix__"}
 by the extension instantiation function @c{fix};
 the advantage is that casting a prototype (called “extension” in Nix)
-to its target is a trivial identity no-op;
+to its target is a trivial zero-cost identity no-op;
 the slight disadvantage is that the target record cannot use arbitrary keys,
-and must avoid the magic string as key.
+and must avoid the magic string as key;
+also, casting to a specification becomes slightly more expensive,
+but it’s a more rarely used operation, anyway.
 The semantic is otherwise essentially the same as for our implementation.
 
-@subsubsection{Advantages of Conflation: Performance, State Sharing and Modularity}
+Here is a Scheme implementation of the same idea,
+where the prefix @c{rproto} denotes a prototype implemented as a record,
+and our magic key is @c{#f}, the boolean false value,
+so it doesn’t impede on the free use of arbitrary symbols as keys.
+The function @c{rproto←spec} is used to define a prototype from a specification,
+by prepending a special specification in front that deals with remembering the provided specification.
+and is used implicitly when composing prototypes using inheritance
+with the @c{rproto-mix} function.
+The function @c{spec←rproto} extracts the specification from a prototype,
+so you may inherit from it.
+The function @c{target←rproto} extracts the target from a prototype,
+so you may call methods on it—it is the identity function, and
+you can often simplify it away.
+@Code{
+(define rproto-wrapper
+  (λ (spec) (λ (parent) (λ (method-id) (λ (super)
+    (if method-id super spec))))))
+(define rproto←spec (λ (spec) (instantiate (fix (rproto-wrapper spec) spec))))
+(define spec←rproto (λ (rproto) (rproto #f)))
+(define target←rproto (λ (rproto) rproto))
+(define rproto-mix
+  (λ (child parent) (rproto←spec (mix (spec←rproto child) (spec←rproto parent)))))}
+
+@subsubsection{Small-Scale Advantages of Conflation: Performance, State Sharing}
 
 First, note how, if a specification is pure functional,
 i.e. without side-effect, whether state, non-determinism, I/O or otherwise,
@@ -3315,36 +3433,9 @@ they can always clone the prototype,
 i.e. create a new prototype that uses the same specification,
 or inherits from it using the neutral element @c{(proto←spec id-spec)}.
 
-Also note that if your choice of representation for specifications and targets
-is such that instantiating a specification may itself issue side-effects such
-as errors or non-termination or irreversible I/O, then it becomes essential
-to wrap your target behind lazy evaluation, or, in Scheme, a @c{delay} form,
-so that you may still define prototypes from incomplete erroneous specifications,
-and use them through inheritance to build larger prototypes, that, when complete,
-will not cause undesired side-effects.
-Once again, laziness proves essential to OO,
-even and especially in presence of side-effects.
-
-Remarkably, conflation makes prototypes more modular than the lack thereof,
-because thanks to it, programmers do not have to decide in advance
-when each part of their configuration is to be extended or instantiated.
-Indeed, if only using unconflated specifications and targets,
-one would have to choose for each definition of each identifier in each (sub)module
-which of a specification or its target to use.
-Yet, a user cannot know which of his definition he himself or another user
-might later want to extend.
-A simple service will often be made part of a larger service set,
-in multiple copies each slightly tweaked;
-its configuration, complete and directly instantiable as it may be for its original author,
-will actually be extended, copied, overridden, many times, in a larger configuration,
-by the maintainers of the larger service set.
-The modularity of conflation is already exploited at scale
-for large software distributions on one or many machines,
-using GCL, Jsonnet or Nix as (pure functional) Prototype OO languages.
-
-But there are plenty of earlier or contemporary Prototype OO languages,
+Now, plenty of earlier or contemporary Prototype OO languages,
 from Ani and ThingLab to SELF and JavaScript and beyond,
-that support mutation yet also offer objects as conflation of two aspects,
+support mutation yet also offer objects as conflation of two aspects,
 one for inheritable and instantiatable specification,
 another one for the instantiated target that holds mutable state
 and that methods are called against.
@@ -3356,21 +3447,221 @@ This mutation is not usually colloquial in production code,
 but may be heavily relied upon during interactive development,
 or as part of implementing advanced infrastructure.
 
+Also note that if your choice of representation for specifications and targets
+is such that instantiating a specification may itself issue side-effects such
+as errors or non-termination or irreversible I/O, then it becomes essential
+to wrap your target behind lazy evaluation, or, in Scheme, a @c{delay} form,
+so that you may still define prototypes from incomplete erroneous specifications,
+and use them through inheritance to build larger prototypes, that, when complete,
+will not cause undesired side-effects.
+Once again, laziness proves essential to OO,
+even and especially in presence of side-effects.
+
+@subsubsection{Large-Scale Advantage of Conflation: Modularity}
+
+Remarkably, conflation makes prototypes more modular than the lack thereof,
+because thanks to it, programmers do not have to decide in advance
+when each part of their configuration is to be extended or instantiated.
+Indeed, if only using unconflated specifications and targets,
+one would have to choose for each definition of each identifier in each (sub)module
+which of a specification or its target to use;
+and when choosing to maintain a specification for the purpose of extensibility,
+the programmer may still want to also explicitly bind an identifier to the target,
+and another to the specification,
+for the sake of state sharing and sanity and not having to remember the hard way
+the “shape” of the nested extensions to replace by the values when instantiating the target.
+Thus, users would end up doing by hand in an ad hoc way what conflation
+gives them systematically for free.
+
+Furthermore, a user cannot know which of his definition he himself or another user
+might later want to extend.
+A simple service will often be made part of a larger service set,
+in multiple copies each slightly tweaked;
+its configuration, complete and directly instantiable as it may be for its original author,
+will actually be extended, copied, overridden, many times, in a larger configuration,
+by the maintainers of the larger service set.
+The modularity of conflation is already exploited at scale
+for large software distributions on one or many machines,
+using GCL, Jsonnet or Nix as (pure functional) Prototype OO languages.
+
 @subsection{Rebuilding Classes}
+
+@subsubsection{A Class is a Prototype for a Type}
+
+Having elucidated Prototype OO in the previous sections,
+including its notion of Object as conflationg of Prototype and Instance,
+we can now fully elucidate Class OO including its notion of Class:
+@principle{A Class is a Prototype for a Type}.
+Or, to be pedantic, a class is a prototype, the target of which is @emph{type descriptor},
+i.e. a record describing a type together with methods associated to the type.
+
+The target type of a class is usually, but not always,
+a record type (indexed product, structure, struct, named tuple),
+at which point the descriptor will also describe for its fields;
+it may also be an enumeration type (indexed sum, enum, variant, discriminated union, tagged union),
+at which point the descriptor will also describe its alternatives;
+and while this is less common in Class OO, a class’s target could really describe
+any kind of type: function, number, array, associative array, etc.
+
+The target of a class may be a runtime type descriptor,
+that describes how to create, recognize, and process elements of the type
+in the same evaluation environment that the type exists in;
+or, as often the case in second-class Class OO,
+the target may be a compile-time type descriptor,
+that describes how to generate code for entities of that type
+to be executed in a further stage of evaluation;
+or it may be both.
+
+Whichever kind of type descriptors are used,
+Class OO is but a special case of Prototype OO,
+wherein a class is a prototype for a type.
+Thus when we claimed in @seclink{classes_only} that
+the situation of classes in OO was similar to that of types in FP,
+we meant it quite literally.
+
+@subsubsection{Simple First-Class Type Descriptors}
+
+Not desiring to introduce a theory of compilation in this paper
+in addition to a theory of OO, we will only illustrate how to build
+first-class Class OO at runtime on top of Prototype OO,
+using a technique described by Lieberman @~cite{Lieberman1986},
+and no doubt broadly similar to how many Class OO systems were implemented on top of Javascript
+before web browsers ubiquitously adopted ES6 classes@~cite{EcmaScript:15}. @;{CITE ???}
+
+A type descriptor will typically have methods as follows:
+@itemize[
+@item{A method @c{instance-methods} returning a record of object methods}
+@item{For record types, a method @c{instance-fields}, list of field descriptors,
+      each of them a record with fields @c{name} and @c{type} (and possibly more).
+      Also, self-describing records (the default)
+      will have a special field @c{#t} to hold their type descriptor
+      (be it could have been the string @c{"__type__"} if keys had to be strings).}
+@item{In dynamic languages, or static languages with types as subsets of canonical static types,
+      a method @c{element?} as predicate that is true if its argument is an element of the type.
+      If the language supports error reporting, a method @c{validate} that returns
+      its argument unchanged if it is an element, and otherwise raises a suitable error.
+      Either method can be derived from the other using sensible defaults.
+      First-class class instances are definitely subsets of whichever underlying data type
+      is used for their representation, and so their type descriptors
+      will usefully have such a method.}
+@item{Usually some kind of method @c{make-instance} to create a new object instance
+      with some extensible protocol from user-specified arguments.
+      To support indexed sum types, either the @c{make-instance} method
+      will take a discriminant as first argument,
+      or a method @c{instance-constructors} could hold a record
+      of several “constructor” functions for each case.}
+@item{For languages that manage dynamic object lifetime,
+      a @c{destroy-instance} method could be part of the class, or among the @c{instance-methods};
+      or if there can be several kinds of destructors,
+      they could be held by a method @c{instance-destructors}.}]
+
+A “class instance” (corresponding to an “object” in Class OO) is a self-describing record,
+the type descriptor of can be extracted with the function @c{type-of} below;
+to call an “instance method” on it, you use the function “instance-call” with it as first argument,
+and it calls the method from the instance’s type’s @c{instance-methods} record,
+with the instance as first argument.
+@Code{
+(define type-of (λ (instance) (instance #t)))
+(define instance-call (λ (instance) (λ (method-id)
+  ((((type-of instance) 'instance-methods) method-id) instance))))}
+
+Note that, if we use the Nix approach of zero-cost casting to target when the target is a record,
+then we can use the very same representation for type descriptors, whether they were generated
+as the fixpoint target of a specification, or directly created as records without such a fixpoint.
+
+@subsubsection{A Class is Second-Class in Most Class OO}
+
+In most Class OO languages,
+the semantics of Class OO is fully evaluated at compile-time,
+in a “type-level” evaluation stage.
+The class specifications, and the type descriptors they specify,
+are second-class entities:
+they are not available as first-class values subject to arbitrary programming at runtime.
+
+Class OO then is a special case of Prototype OO,
+but only in a restricted second-class language—a reality
+that is quite obvious when doing template metaprogramming in C++.
+@;{TODO SECREF appendix demonstrating lazy prototype OO in C++}
+
+Some dynamic languages, such as Lisp, Smalltalk, Ruby or Python,
+you can programmatically use, create, inspect or modify classes at runtime,
+using reflection mechanisms.
+Even though regular definition and usage of classes are second-class,
+these reflection mechanism make their semantic first-class.
+Indeed, the second-class semantics are often implemented in terms of
+those first-class mechanisms, that are thus just as powerful, or more so.
+
+Static languages lack such full-powered runtime reflection mechanisms
+(or would arguably be dynamic languages indeed).
+Some lack any runtime reflection at all;
+but many offer read-only runtime reflection,
+that can inspect classes created at compile-time, but not create new ones:
+such capabilities can notably simplify I/O, property-based testing, debugging, etc.
+A few static language implementations may even offer limited ability
+to modify existing classes at runtime,
+but often void the compiler’s warranty of those who use them.
+
+@subsubsection{Type-Level Language Restrictions}
+
+The language in which second-class classes are defined and composed
+in static languages is almost never the same as the “base” language
+in which the programmer is specifies first-class computations (e.g. C++, Java, C#),
+but instead a distinct @emph{type-level language},
+deliberately restricted in expressiveness so as to enable static analysis and optimizations,
+in which the types and the base-level functions operating on them
+are being modularly and extensibly specified.
+
+Restrictions on the type-level language
+often deliberately attempt to keep it from being “Turing-equivalent”.
+This attempt sometimes succeeds (as in OCaml), but more often than not
+utterly fails, as computational power emerges from unforeseen interactions
+between language features added over time (as in C++, Java, Haskell).
+@TODO{cite Nada on Java type system constraints}
+The attempts do usually succeed, however, at making these type-level languages
+require a completely different mindset and very roundabout design patterns
+to do anything useful, a task then reserved for experts.
+
+Computationally powerful or not, the type-level language of a Class OO language
+is almost always very different from the base language:
+the type-level languages tend to be pure functional or logic programming languages
+with pattern-matching and laziness but without any I/O support,
+even though the base languages themselves tend to be
+eager stateful procedural languages with lots of I/O support
+and often without pattern-matching or laziness
+(or limited ones as afterthoughts).
+
+@subsubsection{More Popular yet Less Fundamental}
+Class OO was historically discovered (1967)
+nine years before Prototype OO (1976),
+and remains overall more popular in the literature and in practice:
+most popular OO languages only offer Class OO; @;CITE
+and even though the arguably most popular OO language, JavaScript,
+may have started with Prototype OO only (1995),
+but people were constantly reimplementing classes on top, and twenty years later
+classes were added to the language itself@~cite{EcmaScript:15}.
+
+And yet we will argue that Prototype OO is more fundamental than Class OO:
+as we demonstrated above, Class OO can be very easily expressed in terms of Prototype OO
+and implemented on top of it,
+such that inheritance among classes is indeed a special case of
+inheritance among the underlying prototypes;
+but the opposite is not possible,
+since you cannot express Prototype OO’s first-class entities and their inheritance
+in terms of Class OO’s second-class entities and their inheritance.
+
+At best, Prototype OO can be implemented on top of those dynamic languages
+that offer full-powereed reflection so that prototypes can be classes;
+but even then it is unclear how much these mechanisms help,
+compared to directly implementing prototypes.
+There could be code sharing between the two, yet trying to fit prototypes
+on top of classes rather than the other way around is what Henry Baker dubbed
+an @emph{abstraction inversion}, @;CITE
+i.e. putting the cart before the horse.
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 @section[#:tag "BLOH"]{BLOH}
 @subsection[#:tag "BLAH"]{BLAH}
-@subsubsection{Internalized Feature}
-@subsubsection{Embodying Specification}
-@subsubsection{Embodying Modularity}
-@subsubsection{Embodying Extensibility}
-@subsubsection{Prototype Primitives}
-@subsection[#:tag "simplest_prototypes"]{Simplest prototypes}
-@subsubsection[#:tag "mixin_functions"]{Mixin Functions}
-@subsubsection{Elucidating Mixin Instantiation}
-@subsubsection{Elucidating Mixin Inheritance}
 @subsubsection[#:tag "stricter_types"]{Stricter, More Modular Types}
 @subsubsection[#:tag "minimal_design_maximal_outreach"]{Minimal Design, Maximal Outreach}
 @subsection{Working with Records}
@@ -3379,7 +3670,6 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 @subsubsection{Mixins and Helpers for Records}
 @subsubsection{Example Records built from Mixins}
 @subsubsection{Mixin Caveats}
-
 @section{Missing Insights into OO}
 @subsection[#:tag "laziness"]{Pure Laziness}
 @subsubsection{Lazy makes OO Easy}
@@ -3396,11 +3686,6 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 @subsubsection[#:tag "keeping_extensibility_modular"]{Keeping Extensibility Modular}
 @subsubsection{Conflating More Features}
 @subsubsection{Distinction and Conflation}
-@section[#:tag "classes"]{Classes}
-@subsection{Class OO as Type-Level Prototype OO}
-@subsubsection{Type Prototypes}
-@subsubsection{Class OO makes classes Second-Class}
-@subsubsection{More Popular yet Less Fundamental}
 @subsection{Typing Records}
 
 @section[#:tag "inheritance"]{Mixin, Single, and Multiple Inheritance}
