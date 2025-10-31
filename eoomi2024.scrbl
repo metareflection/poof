@@ -51,45 +51,6 @@
 
 @; XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-@subsubsection{Embodying Incrementality}
-Each prototype should be able to refer not only to
-the complete computation with all available information, but also to
-the partial computation with only the information specified @emph{so far}.
-Thus, it may examine so-far specified aspects and use them to
-contribute small modifications to these existing aspects as well as
-new aspects based on this information.
-
-In functional terms, the prototype function will take
-an additional input @c{super} based on which to specify a computation.
-Thus, to embody incremental modularity, a prototype will be or contain
-a prototype function of @c{self} and @c{super} returning an enriched @c{self}.
-
-@TODO{
-  Mixins: The simplest of OO models, pure functional prototypes using mixin inheritance,
-    and how its (λ (super self) ...) pattern directly maps to Incrementality and Modularity,
-    or to Ad Hoc polymorphism and Open Recursion.}
-
-@subsubsection{Prototype Primitives}
-
-Prototypes of course depend on whichever primitive operations support
-the type of computation being specified;
-but those are not specific to prototypes as such.
-The minimal set of prototype-specific primitives follows:
-@itemize[
-@item{A function that given a prototype specifying a computation
-  (and possibly some context) returns a complete computation
-  exactly as specified, closing the open recursion;
-  this function we call @c{instantiate}, or @c{fix}
-  (for reasons that will soon be obvious).
-}
-@item{A function to compose, chain, juxtapose and/or cross-reference
-  multiple smaller prototypes (at least two, maybe more)
-  each specifying some aspects of a computation,
-  return a larger prototype that contains all these combined aspects,
-  yet ready to be further composed, keeping the recursion open;
-  this function we call @c{mix}, or @c{inherit}
-  (for reasons that will also soon be obvious)}]
-
 @subsection[#:tag "simplest_prototypes"]{Simplest prototypes}
 @subsubsection[#:tag "mixin_functions"]{Mixin Functions}
 The very simplest possible design for @emph{prototypes}
@@ -101,40 +62,7 @@ where @c{self} is the type of the computation as completely specified,
 and @c{Mixin} is the name introduced by Cannon@~cite{Cannon1979}
 and reprised and popularized by Cook and Bracha@~cite{bracha1990mixin}.
 
-The mixin instantiation and inheritance primitives are as follows:
-@Code{
-type Mixin inherited referenced defined =
-  inherited → referenced → inherited⋂defined
-
-build :: top → Mixin top target target → target
-build = λ base mixin ↦ Y (mixin base)
-
-inherit :: Mixin i1 r1 d1 → Mixin i2⋂d1 r2 d2 → Mixin i1⋂i2 r1⋂r2 d1⋂d2
-inherit = λ parent child super self ↦ child (parent super self) self
-}
-
-@subsubsection{Elucidating Mixin Instantiation}
-The @c{build} function above computes a fixed-point @c{target}
-for a @c{mixin} given as extra argument a type-appropriate @c{base} value
-that serves as seed of the computation being instantiated:
-an empty record @c|{{}}|, a function that always fails @c{⊤ = λ _ ↦ ⊥}, etc.
-The type of @c{base}, a.k.a. @c{top}, is thus
-a base type for the specified computation:
-a supertype of the type @c{instance} being computed, a.k.a. @c{self}.
-In a monomorphic setting, @c{base} is just @c{instance} itself;
-with a rich-enough type system, it can be a “top” type
-for many distinct types of computations, carrying no information.
-
-The @c{Y} combinator is the usual fixed-point combinator, chosen to match
-the variant of λ-calculus being used (e.g. using eager or lazy evaluation).
-@;TODO explaining footnote or citation.
-@;The definition matches the @c{fix} function from the introduction
-@;modulo α-renaming, well-named since its essence is to extract a fixed-point.
-
 @subsubsection{Elucidating Mixin Inheritance}
-Mixin inheritance combines two @emph{mixins} @c{child} and @c{parent}
-into one that given two @emph{instances} @c{instance} and @c{inherited}
-passes @c{(parent instance inherited)} as the @c{super} argument to @c{child}.
 
 By the time the complete @c{instance} and @c{inherited} value so far
 are provided (if ever), the combined mixin itself may be but part of

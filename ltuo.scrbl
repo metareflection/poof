@@ -2684,7 +2684,7 @@ scoping and provenance information, used for second-class macro-expansion).
 For example, where @c{Number} is the type of numbers and @c{String} the type of strings,
 we could have a record type
 @Code{
-∏R = {x: Number, y: Number, color: String}
+type ∏R = {x: Number, y: Number, color: String}
 }
 and a point @c{point-q} of type @c{∏R} defined as follows:
 @Code{
@@ -2750,7 +2750,7 @@ from a module context of type @c{∏R} that provides
 a function @c{ls} of type @c{String → List(String)} and
 a function @c{sort} that sorts a list of strings:
 @;{@Code{
-R = { ls: String → List(String), sort: List(String) → List(String) }
+type R = { ls: String → List(String), sort: List(String) → List(String) }
 }}
 @Code{
 (define ls-sorted (λ (ctx) (compose (ctx 'sort) (ctx 'ls))))
@@ -3089,7 +3089,19 @@ and @c{i} is a variable for each identifier defined in the module context.
 The above functions @c{mix} and @c{fix} are indeed isomorphic
 to the theoretical model of OO from Bracha and Cook @~cite{bracha1990mixin}
 and to the actual implementation of “extensions” in nixpkgs @~cite{nix2015}.
-This style of inheritance is called “mixin inheritance”,
+This style of inheritance was dubbed “mixin inheritance” by Bracha and Cook@xnote[";"]{
+  The name “mixin” originally comes from Flavors @~cite{Cannon1979},
+  inspired by the ice cream offerings at Emack & Bolios.
+  However, Flavors offers full multiple inheritance (and was the first system to do it right),
+  whereas the “mixins” of Bracha and Cook are a more rudimentary and more fundamental concept,
+  that does not include automatic linearization of transitive dependencies.
+  Also, “mixins” are not distinguished by the language syntax or by the compiler;
+  they are just classes that are intended to be typically used with multiple inheritance,
+  as part of many disjoint hierarchies, and might indeed not otherwise make sense as base classes.
+  Since the word implies no special processing by the compiler or by the human operator,
+  it can be dispensed with in the original context, and gladly assigned
+  a new, useful, technical meaning.
+}
 and the two functions, that can easily be ported to any language with first-class functions,
 are enough to implement a complete object system.
 
@@ -3233,7 +3245,8 @@ whereas @c{rho} is @c{5}, as computed by @c{rho-spec} from the @c{x} and @c{y} c
 (point-r 'x) ⇒ 3
 (point-r 'rho) ⇒ 5}
 
-@subsubsection{Interaction of Modularity and Extensibility}
+@subsubsection[#:tag "Interaction_of_Modularity_and_Extensibility"
+  ]{Interaction of Modularity and Extensibility}
 
 Without extensibility, a modular module specification need never access
 the identifiers it specifies via the global module context,
@@ -3569,6 +3582,25 @@ Note that, if we use the Nix approach of zero-cost casting to target when the ta
 then we can use the very same representation for type descriptors, whether they were generated
 as the fixpoint target of a specification, or directly created as records without such a fixpoint.
 
+As for “class methods”, they can be regular methods of the type descriptor,
+or there can be a method @c{class-methods} in the type descriptor containing a record of them.
+
+@subsubsection{Implicit Recognition of Conflation by Class OO Practitioners}
+
+Even though the notion of Conflation, that we presented,
+is largely unknown by practitioners of OO, and
+seems to only have been made explicit as late as 2021 @~cite{poof2021},
+it is implicitly present in the distinction that many practitioners of Class OO make
+between abstract and concrete classes:
+an abstract class is one that is only used for its specification,
+to inherit from it;
+a concrete class is one that is only used for its target type,
+to use its methods to create and process class instances.
+
+Thus, through all the confusing formal semantics or lack thereof for class OO languages so far,
+practitioners have felt the need to distinguish specification and target,
+even though no one seems to have been able to fully tease apart the concepts up until recently.
+
 @subsubsection{A Class is Second-Class in Most Class OO}
 
 In most Class OO languages,
@@ -3631,6 +3663,7 @@ and often without pattern-matching or laziness
 (or limited ones as afterthoughts).
 
 @subsubsection{More Popular yet Less Fundamental}
+
 Class OO was historically discovered (1967)
 nine years before Prototype OO (1976),
 and remains overall more popular in the literature and in practice:
@@ -3658,11 +3691,96 @@ on top of classes rather than the other way around is what Henry Baker dubbed
 an @emph{abstraction inversion}, @;CITE
 i.e. putting the cart before the horse.
 
+@subsection{Types for OO}
+
+@subsubsection{Naive Subtyping}
+
+In a language with static type declarations, for the sake of modularity,
+the programmer writing a modular specification should be able to specify
+“positive constraints” on the types of entities he provides, and
+“negative constraints” on the types of entities he requires, without
+having to know anything (indeed being able to know anything)
+about the types of the many other entities he neither provides nor requires
+and may not have been written yet.
+Thus, type declarations for records in general, and modules and module contexts in particular,
+should be able to deal with records containing extra bindings not covered by a type they match.
+Therefore, modularity necessitates a notion of subtyping on records, that can accommodate
+this partial information.
+
+We can extend some typed λ-calculus (say the STLC, Simply Typed Lambda Calculus)
+with indexed products for records, subtyping and type intersections,
+and get a good first approximation to typing OO.
+As we’ll soon see, this approximation is a bit naive, and
+only works in simple non-recursive cases.
+Yet this “Naive OO Type Theory” is important to understand,
+both for the simple cases it is good enough to cover,
+and for its failure modes that tripped so many good programmers
+into wrongfully trying to equate inheritance and subtyping.
+
+Here are the “naive types” for the two basic OO primitives:
+@Code{
+type Mixin provided required inherited =
+  inherited → required → inherited⋂provided
+
+(define mix
+  (λ (c p) (λ (r) (λ (i)
+    (compose ((c r) i) ((p r) i))))))}
+
+(define fix (λ (m t) (Y (λ (r) (λ (i) (((m r) i) t))))))
+
+fix : Mixin target target top → top → target
+mix : Mixin p1 r1 i1⋂p2 → Mixin p2 r2 i2 → Mixin p1⋂p2 r1⋂r2 i1⋂i2
+}
+A @c{Mixin} is a type with three parameters,
+the type @c{provided} for the extended value provided by the specification,
+the type @c{required} for the module context of the specification
+the type @c{inherited} for the original value inherited by the specification.
+The @c{fix} operator, first takes a specification for a target with the target itself as module context
+and a top value as a seed, then second takes the top value, and returns the target fixed-point.
+The @c{mix} operator chains two mixins, with the asymmetry that
+information provided by the parent (parameter @c{p2} for the second argument)
+can be used by the child (first argument), but not the other way around.
+
+@;{ CITE }
+
+
+
+
+
+
+@;{
+You can support modularity and eschew support for fixpoints through the module context,
+by requiring recursive and mutually recursive types to be resolved before linking.
+But as in @seclink{Interaction_of_Modularity_and_Extensibility},
+extensibility together with modularity makes it essential to support open recursion
+through module contexts.
+}
+
+@;{
+Wegner and Cardelli 1985
+
+Cardelli 1988
+
+OCaml 199x
+
+Scala DOT 200x
+
+Fortress 2011
+
+Typescript
+https://www.typescriptlang.org/docs/handbook/utility-types.html
+
+Type-Safe Prototype-Based Component Evolution" (2002)
+https://www.cs.cornell.edu/andru/cs711/2002fa/reading/zenger02typesafe.pdf
+
+Ego
+https://www.cs.cmu.edu/~aldrich/ego/
+}
+
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 @section[#:tag "BLOH"]{BLOH}
 @subsection[#:tag "BLAH"]{BLAH}
-@subsubsection[#:tag "stricter_types"]{Stricter, More Modular Types}
 @subsubsection[#:tag "minimal_design_maximal_outreach"]{Minimal Design, Maximal Outreach}
 @subsection{Working with Records}
 @subsubsection{Records, Methods, Instances}
