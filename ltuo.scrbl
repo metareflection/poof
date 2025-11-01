@@ -2557,7 +2557,7 @@ and somewhat depends on what monoidal operation is used to extend it
 as well as the domain type of values.
 
 @itemize[
-@item{For the type @c{Record} of records, @c{⊤ = (record)} the empty record.}
+@item{For the type @c{Record} of records, @c{⊤ = (record-empty)} the empty record.}
 @item{For the type @c{Number} of numbers, @c{⊤ = 0}, seen additively, or @c{1} if multiplicatively,
 or @c{-∞} (floating-point number) seen with @c{max} as an operator, or @c{-∞} with @c{min}.}
 @item{For the type @c{Pointer} of pointers into a graph of records, @c{⊤ = null},
@@ -2692,6 +2692,49 @@ and a point @c{point-q} of type @c{∏R} defined as follows:
 @Code{
 (define point-q
   (record (x 3) (y 4) (color "blue")))
+}
+
+@subsubsub*section{Implementing Records}
+
+Let’s assume that there is a type for identifiers
+and primitives for deciding equality between them,
+and evaluating conditionally based on equality or not.
+In Scheme, we will use symbols for identifiers (or, as we’ll see, sometimes, booleans),
+the @c{equal?} primitive for testing equality, and
+the @c{(if @emph{condition then-clause else-clause})} special form for conditionals.
+Programming languages have the equivalent
+(though they might use uninterned strings, or number constants, instead of symbols),
+and you if you care about the pure λ-calculus there are many embeddings
+of unary or binary numbers, and lists or trees thereof, that will do.
+
+Programming languages usually already provide some data structure for records
+with second-class identifiers, or “dictionaries” with first-class identifiers,
+or have some library that does.
+Nevertheless to make the semantics of records clear, we will provide
+a trivial implementation in terms of functions.
+
+The basic reference operator is just function application:
+@Code{
+(define record-ref (λ (rec) (λ (key) (rec key))))}
+
+The empty record can be represented as a function that always fails. In Scheme:
+@Code{
+(define record-empty (λ (_) (error "empty record")))}
+
+To extend a record with one key-value binding, you can use
+@Code{
+(define record-cons (λ (key) (λ (val) (λ (rec) (λ (i)
+  (if (eqv? key i)
+     val
+     (rec i)))))))}
+
+This trivial implementation does not support getting a list of bindings, or removing a binding.
+We won’t need these features to implement OO@xnote["."]{
+  We generate HTML for our presentations using exactly this implementation strategy.
+  The Scheme implementation we use has builtin record support, and
+  there are libraries now somewhat portable libraries for records in Scheme,
+  but we made it a point to use a minimal portable object system
+  to show the feasability and practicality of the approach.
 }
 
 @subsubsub*section{Merging Records}
@@ -3119,9 +3162,6 @@ a typical record specification will look like:
 (define my-spec (λ (self) (λ (super) (λ (method-id) body ...))))}
 where @c{method-id} is the identifier for the method to be looked up,
 and the body uses @c{(super method-id)} as a default when no overriding behavior is specified.
-As for the empty record, it can be represented as a function that always issues an error:
-@Code{
-(define empty-record (λ (_) (error "empty record")))}
 
 Of course, where performance or space matters,
 you would use an encoding of records-as-structures instead of records-as-functions:
