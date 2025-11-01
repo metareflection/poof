@@ -874,9 +874,10 @@ of the other modules so as to interact with them.
 @subsubsection{Extensibility (Overview)}
 A programmer can start from the existing specification and only need contribute
 as little incremental information as possible when specifying a part
-that modifies, extends or specializes other parts,
+that modifies, extends, specializes or refines other parts,
 as opposed to having to know, understand and repeat existing code almost in extenso
 to make modifications to it.
+
 @subsubsection{Internality}
 Those partial programs and their incremental extensions
 are entities @emph{inside} the language,
@@ -1114,6 +1115,7 @@ thus based on misunderstandings;
 this is therefore par for the course@xnote["."]{
   The wider field of study is similarly misnamed, as per the famous E. W. Dijkstra quote:
   “Computer Science is no more about computers than astronomy is about telescopes.”
+  Some argue that it is not a science, either. @; CITE quote Hal Abelson ???
 }
 
 @subsection{Inheritance Overview}
@@ -3027,12 +3029,10 @@ Thus, an open modular specification for a value of type @c{V} will be
 a function of type @c{∏R → V → V}.
 
 Now, if we want to modularly and extensibly specify
-a set of entities of type @(Pi) for each @c{i},
-each associated to an identifier, we will be modularly defining
-a @c{@(Pi) → @(Pi)} for each @c{i},
-which we can write as a record @c{∏(P → P)}.
+a set of entities of respective type @(Pi) for each @c{i},
+we can use @c{V = ∏P}.
 In other words, an (open) modular extensible module specification is
-a function @c{∏R → ∏(P → P)},
+a function @c{∏R → ∏P → ∏P},
 where @c{∏R} is your modular context of identifiers required,
 and @c{∏P} is your specified module of identifiers provider.
 
@@ -3044,25 +3044,22 @@ to compose each extension under the module context and bound identifier,
 an operation that for reasons that will soon become obvious,
 we will call mixin inheritance for modular extensible specifications:
 @Code{
-(define mix
-  (λ (c p) (λ (r) (λ (i)
-    (compose ((c r) i) ((p r) i))))))}
+(define mix (λ (c p) (λ (r) (compose (c r) (p r)))))}
 The variables @c{c} and @c{p} stand for “child” and “parent” specifications,
-wherein the bindings in the child specification extend those “inherited”
-through applying parent specification from the argument @c{v} provided,
-all while using the module context @c{r}, at the identifier @c{i}.
+wherein the value “inherited” by the composed function
+will be extended (right to left) first by @c{(p r)} then by @c{(c r)}.
 
 Modular extensible specifications form a monoid,
 wherein the operation is composition with the @c{mix} function,
 and the neutral element is the specification that “extends”
 any and every value by returning it unchanged, as follows:
 @Code{
-(define id-spec (λ (r) (λ (i) (λ (v) v))))}
+(define id-spec (λ (r) (λ (v) v)))}
 
 @subsubsection{Closing Modular Extensible Specifications}
 
 A closed modular extensible module specification is
-a function of type @c{∏R → ∏(R → R)},
+a function of type @c{∏R → ∏R → ∏R},
 i.e. a modular extensible module specification where @c{P = R},
 wherein every identifier required is also provided as an extension.
 
@@ -3071,18 +3068,17 @@ how do you get from such a closed modular extensible module specification
 to an actual module computation where all the loops are closed,
 and every identifier is mapped to a value of the expected type?
 And the way we constructed our model, the answer is simple:
-first, under the scope of the module context and of each identifier,
-you resolve each extensible specification @c{@(Ri) → @(Ri)}
-by applying the extension to the appropriate top value;
+first, under the scope of the module context,
+you apply your extension to the top value for a module context
+(usually, that’s the empty record);
 then you have reduced your problem to a regular modular module specification
 @c{∏R → ∏R}, at which point you only have to compute the fixpoint.
 We will call this operation instantiation for modular extensible specifications:
-@Code{(define fix (λ (m t) (Y (λ (r) (λ (i) (((m r) i) t))))))}
-In this expression, @c{m} is the modular extensible specification;
-@c{t} is your universal top value (or, if it depends on the type used,
-have it be a record of appropriate top values and replace @c{t} by @c{(t i)} in the body;
-@c{r} is the fixpoint variable for the module context we are computing;
-and @c{i} is a variable for each identifier defined in the module context.
+@Code{(define fix (λ (t) (λ (s) (Y (λ (r) ((s r) t))))))}
+In this expression,
+@c{t} is the top value for the type being specified (typically the empty record, for records),
+@c{s} is the modular extensible specification, and
+@c{r} is the fixpoint variable for the module context we are computing.
 
 @subsubsection{Minimal OO Indeed}
 
@@ -3106,18 +3102,26 @@ and the two functions, that can easily be ported to any language with first-clas
 are enough to implement a complete object system.
 
 How do we use these inheritance and instantiation functions?
-By defining specifications of type @c{∏R → ∏(P → P)} where
-@c{C = ∏R} is the type of the module context,
-and @c{P} that of the a value being extended.
-In our trivial representation of @c{∏X} as @c{I → X}
-where @c{I} is the type of identifiers,
-a typical specification will look like:
+By defining specifications of type @c{C → V → V)} where
+@c{C} is the type of the module context,
+and @c{V} that of the value being extended:
 @Code{
-(define my-spec (λ (self) (λ (method-id) (λ (super) body ...))))}
+(define my-spec (λ (self) (λ (super) body ...)))}
 where @c{self} is the module context,
-@c{method-id} is the identifier for the method,
 @c{super} is the inherited value to be extended,
 and @c{body ...} is the body of the function, returning the extended value.
+
+In the common case that @c{V = ∏P},
+and with our trivial representation of @c{∏P = I → P}
+where @c{I} is the type of identifiers,
+a typical record specification will look like:
+@Code{
+(define my-spec (λ (self) (λ (super) (λ (method-id) body ...))))}
+where @c{method-id} is the identifier for the method to be looked up,
+and the body uses @c{(super method-id)} as a default when no overriding behavior is specified.
+As for the empty record, it can be represented as a function that always issues an error:
+@Code{
+(define empty-record (λ (_) (error "empty record")))}
 
 Of course, where performance or space matters,
 you would use an encoding of records-as-structures instead of records-as-functions:
@@ -3147,14 +3151,13 @@ for many simple applications@xnote["."]{
 We can compose these kinds of specifications into larger specifications
 using the @c{mix} function, and eventually instantiate a target record
 from a specification using the @c{fix} function.
-To simplify, for portability to any Scheme dialect, and
-for good adaptation to an eager dynamic language,
-let’s use @c{#f} (the Scheme boolean false value) as the “top value”,
-and for instantiation use the function:
-@Code{(define instantiate (λ (spec) (fix spec #f)))}
+Since we will be using records a lot, we can specialize the @c{fix} function for records,
+by passing the @c{empty-record} as its first top value argument:
+@Code{(define fix-record (fix empty-record))}
 Note that since our targets are records, our minimal object system is
-closer to Prototype OO rather than to Class OO,
-though, as we will see, it offers neither “objects” nor “prototypes” per se.
+closer to Prototype OO than to Class OO,
+though, as we will see, it doesn’t offer “prototypes” per se,
+or “objects” of any kind.
 
 @subsubsection{Minimal Colored Point}
 
@@ -3162,8 +3165,8 @@ Let us demonstrate the classic “colored point” example in our Minimal Object
 We can define a specification for a point’s coordinates as follows:
 @Code{
 (define coord-spec
-  (λ (self) (λ (method-id) (λ (super)
-    (case method-id ((x) 2) ((y) 4) (else super))))))}
+  (λ (self) (λ (super) (λ (method-id)
+    (case method-id ((x) 2) ((y) 4) (else (super method-id)))))))}
 The specification takes the usual arguments @c{self}, @c{method-id} and @c{super}.
 With the @c{case} builtin form,
 if the @c{method-id} argument is the constant @c{x},
@@ -3178,8 +3181,8 @@ and other values are left untouched.
 We can similarly define a specification for some record’s @c{color} field as follows:
 @Code{
 (define color-spec
-  (λ (self) (λ (method-id) (λ (super)
-    (case method-id ((color) "blue") (else super))))))}
+  (λ (self) (λ (super) (λ (method-id)
+    (case method-id ((color) "blue") (else (super method-id)))))))}
 
 And we can check that indeed we can instantiate a point specified by combining
 the color and coordinate specifications above, and verify that indeed the values
@@ -3210,8 +3213,9 @@ accepts an argument @c{dx}, and returns a specification that
 overrides method @c{x} with a new value to adds @c{dx} to its inherited value:
 @Code{
 (define add-x-spec
-  (λ (dx) (λ (self) (λ (method-id) (λ (super)
-    (case method-id ((x) (+ dx super)) (else super)))))))}
+  (λ (dx) (λ (self) (λ (super) (λ (method-id)
+    (case method-id ((x) (+ dx (super method-id)))
+                    (else (super method-id))))))))}
 
 And we illustrate modularity with another example wherein @c{rho-spec}
 specifies a new field @c{rho} bound to the euclidian distance
@@ -3224,11 +3228,11 @@ into which they have to be specified by other specifications
 to be composed with @c{rho-spec} using @c{mix}:
 @Code{
 (define rho-spec
-  (λ (self) (λ (method-id) (λ (super)
+  (λ (self) (λ (super) (λ (method-id)
     (case method-id
       ((rho) (sqrt (+ (sqr (self 'x))
                       (sqr (self 'y)))))
-      (else super))))))}
+      (else (super method-id)))))))}
 
 We can check that the above definitions work by instantiating
 the composed specifications @c{(add-x-spec 1)}, @c{coord-spec} and @c{rho-spec},
@@ -3294,11 +3298,11 @@ that will count the parts in the future instantiated record,
 rather than in the specification so far:
 @Code{
 (define base-bill-of-parts
-  (λ (self) (λ (method-id) (λ (super)
+  (λ (self) (λ (super) (λ (method-id)
     (case method-id
       ((parts) '())
       ((part-count) (length (self 'parts)))
-      (else super))))))}
+      (else (super method-id)))))))}
 You cannot inline the empty list in the call to @c{(self 'parts)}
 because the method @c{parts} can be extended, and indeed
 such is the very intent and entire point of this @c{base-bill-of-parts} specification.
@@ -3421,7 +3425,7 @@ you can often simplify it away.
 (define rproto-wrapper
   (λ (spec) (λ (parent) (λ (method-id) (λ (super)
     (if method-id super spec))))))
-(define rproto←spec (λ (spec) (instantiate (fix (rproto-wrapper spec) spec))))
+(define rproto←spec (λ (spec) (instantiate (mix (rproto-wrapper spec) spec))))
 (define spec←rproto (λ (rproto) (rproto #f)))
 (define target←rproto (λ (rproto) rproto))
 (define rproto-mix
@@ -3693,23 +3697,83 @@ i.e. putting the cart before the horse.
 
 @subsection{Types for OO}
 
-@subsubsection{Naive Subtyping}
+@subsubsection{Dynamic Typing}
+
+One could just say that objects are of a monomorphic type @c{Record},
+and that all accesses to methods are to be dynamically typed and checked at runtime,
+with no static safety.
+Many OO languages, like Smalltalk, Lisp, Ruby, Python, Javascript, Jsonnet, Nix, etc.,
+adopt this strategy.
+
+Advantages of dynamic typing include the ability to express programs that even the best
+static typesystems cannot support, especially when state of the art typesystems are too
+rigid, or not advanced enough in their OO idioms.
+Programs that involve dependent types, staged computation,
+metaprogramming, long-lived interactive systems,
+dynamic code and data schema evolution at runtime, etc.,
+can be and have been written in dynamically typed systems
+that could not have been written in existing statically typed languages,
+or would have required reverting to unitypes with extra verbosity.
+
+On the other hand, system-supported static types can bring extra performance and safety,
+help in refactoring, debugging programs,
+some forms of type-directed metaprogramming, and more.
+And even without system enforcement, thinking in terms of types can help understand
+what programs do or don’t and how to write and use them.
+
+We have already started to go deeper by describing records as indexed products.
+Let’s see how we can model OO with more precise types.
+
+@subsubsection{Simple Subtyping}
 
 In a language with static type declarations, for the sake of modularity,
 the programmer writing a modular specification should be able to specify
-“positive constraints” on the types of entities he provides, and
-“negative constraints” on the types of entities he requires, without
-having to know anything (indeed being able to know anything)
+“positive” constraints on the types of entities he provides, and
+“negative” constraints on the types of entities he requires, without
+having to know anything (indeed without being able to know anything)
 about the types of the many other entities he neither provides nor requires
-and may not have been written yet.
+and may not have been written yet, yet will be linked with his modules into a complete program.
 Thus, type declarations for records in general, and modules and module contexts in particular,
-should be able to deal with records containing extra bindings not covered by a type they match.
-Therefore, modularity necessitates a notion of subtyping on records, that can accommodate
-this partial information.
+must be able to deal with records containing extra bindings not covered by a type they match,
+especially so if separate compilation and typechecking are to be possible.
+Therefore, modularity necessitates a notion of subtyping on records,
+that can accommodate this partial information.
 
-We can extend some typed λ-calculus (say the STLC, Simply Typed Lambda Calculus)
-with indexed products for records, subtyping and type intersections,
-and get a good first approximation to typing OO.
+A first model consists in starting from the Simply Typed Lambda-Calculus (STLC)
+or some more elaborate but still well-understood variant of the λ-calculus,
+with whatever primitives added for the language’s builtin constructs and standard libraries,
+and adding to it (if not already available) a minimal set of features for OO:
+indexed products for records, subtyping and type intersections.
+
+The resulting type theory we can call the
+@emph{Naive Non-recursive Object-Oriented Type Theory} (NNOOTT).
+The NNOOTT is more precise than dynamic typing;
+it rich enough to accurately describe simple usage cases of OO;
+but we will see though that it fails to capture some very important aspects of OO.
+
+In the NNOOTT, a modular extensible specification would have a type of the form
+@Code{
+type Mixin required inherited provided =
+  required → inherited → inherited⋂provided}
+A @c{Mixin} is a type with three parameters,
+the type @c{required} of the information required by the specification from the module context,
+the type @c{inherited} of the information inherited and to be extended,
+and the type @c{provided} of the information provided to extend what is inherited.
+In Prototype OO, that information consists in new methods and specialization of existing methods.
+In Class OO, that information consists of the same plus
+new fields and specialization of existing fields.
+The @c{fix} operator, first takes a top value as a seed,
+then second takes a specification for a target with the target itself as module context
+and starting with the top value as a seed, and returns the target fixed-point.
+The @c{mix} operator chains two mixins, with the asymmetry that
+information provided by the parent (parameter @c{p2} for the second argument)
+can be used by the child (first argument), but not the other way around.
+@Code{
+fix : top → Mixin target top target → target
+mix : Mixin r1 i1⋂p2 p1 → Mixin r2 i2 p2 → Mixin r1⋂r2 i1⋂i2 p1⋂p2
+}
+
+
 As we’ll soon see, this approximation is a bit naive, and
 only works in simple non-recursive cases.
 Yet this “Naive OO Type Theory” is important to understand,
@@ -3717,35 +3781,7 @@ both for the simple cases it is good enough to cover,
 and for its failure modes that tripped so many good programmers
 into wrongfully trying to equate inheritance and subtyping.
 
-Here are the “naive types” for the two basic OO primitives:
-@Code{
-type Mixin provided required inherited =
-  inherited → required → inherited⋂provided
-
-(define mix
-  (λ (c p) (λ (r) (λ (i)
-    (compose ((c r) i) ((p r) i))))))}
-
-(define fix (λ (m t) (Y (λ (r) (λ (i) (((m r) i) t))))))
-
-fix : Mixin target target top → top → target
-mix : Mixin p1 r1 i1⋂p2 → Mixin p2 r2 i2 → Mixin p1⋂p2 r1⋂r2 i1⋂i2
-}
-A @c{Mixin} is a type with three parameters,
-the type @c{provided} for the extended value provided by the specification,
-the type @c{required} for the module context of the specification
-the type @c{inherited} for the original value inherited by the specification.
-The @c{fix} operator, first takes a specification for a target with the target itself as module context
-and a top value as a seed, then second takes the top value, and returns the target fixed-point.
-The @c{mix} operator chains two mixins, with the asymmetry that
-information provided by the parent (parameter @c{p2} for the second argument)
-can be used by the child (first argument), but not the other way around.
-
 @;{ CITE }
-
-
-
-
 
 
 @;{
@@ -3763,6 +3799,9 @@ Cardelli 1988
 
 OCaml 199x
 
+Subtyping is not a good “match” for object-oriented languages
+LOOM ECOOP 1997 Kim Bruce
+
 Scala DOT 200x
 
 Fortress 2011
@@ -3775,6 +3814,13 @@ https://www.cs.cornell.edu/andru/cs711/2002fa/reading/zenger02typesafe.pdf
 
 Ego
 https://www.cs.cmu.edu/~aldrich/ego/
+
+https://kbb04747.sites.pomona.edu/README.html#Match
+
+Bad: NOOP Robert Cartwright & Moez Abdelgawad
+https://www.semanticscholar.org/reader/3855d0beac44b1623731bf581f80ec4d348eb4ba
+
+https://counterexamples.org/subtyping-vs-inheritance.html
 }
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
