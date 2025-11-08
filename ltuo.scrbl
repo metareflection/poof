@@ -783,7 +783,9 @@ does that mean that humans automatically eat humans, or only some other animals?
 In presence of recursion, UML falls apart,
 by failing to distinguish between subclassing and subtyping,
 between self-reference and reference to a constant.
-Interestingly, Bart Jacobs's categorical theory of classes as co-algebras is equivalent to UML.
+Interestingly, Bart Jacobs's categorical theory of classes as co-algebras
+@~cite{Jacobs1995ObjectsAC Jacobs1996InheritanceAC}
+is equivalent to UML.
 But at least he explicitly embraces early on the limitation whereby
 self-reference or recursion is prohibited from field definitions. @; TODO cite
 Just like UML, his co-algebra utterly fails to model OO;
@@ -814,8 +816,9 @@ of merging records of elementary data types
 But these methodologies avoid crucial features of OO programming,
 where records can recursively refer to other records,
 where the operations of interest are higher-level than getting or setting fields,
-where there are “binary methods” that involve two objects at once (and more),
-where you incrementally extend not just data types but also algorithms, etc.
+where you incrementally extend not just data types but also algorithms,
+where there are “binary methods” that involve two objects at once,
+or even more elaborate higher-order functions, etc.
 More broadly, these methodologies lack any effective semantics of inheritance,
 of method resolution in computing properties of objects along their class hierarchies,
 or of anything that has the precision required to specify code
@@ -2570,6 +2573,13 @@ the universal null pointer@xnote["."]{
   or some library may offer an arbitrary value to use as such.
   Some strongly typed applicative languages will offer no universal such value, though,
   and some ad hoc arbitrary value must be provided for each type used.
+
+  Now, to Hoare’s credit, his invention of classes in the same article,
+  for which he vaguely suggests the semantics of single inheritance
+  as Dahl and Nygaard would implement after his article,
+  yet that he (and they) wrongfully assimilate to subtyping,
+  was a trillion dollar happy mistake.
+  Overall, the effect of his article @~cite{hoare1965record} was probably net vastly positive.
 }}
 @item{For the type @c{Type} of types (in a compiler, at the meta-level),
 @c{⊤ = ⊤}, the top type (“everything”) that you refine,
@@ -3764,44 +3774,80 @@ what programs do or don’t and how to write and use them.
 We have already started to go deeper by describing records as indexed products.
 Let’s see how we can model OO with more precise types.
 
-@subsubsection{Simple Subtyping}
+@subsubsection{Partial Record Knowledge as Subtyping}
 
-In a language with static type declarations, for the sake of modularity,
-the programmer writing a modular specification should be able to specify
-“positive” constraints on the types of entities he provides, and
-“negative” constraints on the types of entities he requires, without
-having to know anything (indeed without being able to know anything)
-about the types of the many other entities he neither provides nor requires
-and may not have been written yet, yet will be linked with his modules into a complete program.
-Thus, type declarations for records in general, and modules and module contexts in particular,
-must be able to deal with records containing extra bindings not covered by a type they match,
-especially so if separate compilation and typechecking are to be possible.
-Therefore, modularity necessitates a notion of subtyping on records,
-that can accommodate this partial information.
+In a language with static types,
+programmers writing extensible modular specifications should be able to specify types
+for the entities they provide (an extension to) and require (a complete version of),
+without having to know anything about the types of the many other entities
+they neither provide nor require:
+indeed, these other entities may not have been written yet, and by other people,
+yet will be linked together with his modules into a complete program.
 
-A first model consists in starting from the Simply Typed Lambda-Calculus (STLC)
+Now, with only modularity, or only extensibility, what more second-class only,
+you could contrive a way for the typechecker to always exactly know all the types required,
+by prohibiting open recursion through the module context,
+and generating magic projections behind the scenes (and a magic merge during linking).
+But as we saw previously in @seclink{Interaction_of_Modularity_and_Extensibility},
+once you combine modularity and extensibility, what more first-class,
+then open recursion through the module context becomes the entire point,
+and your typesystem must confront it.
+
+Partial knowledge about the module context, once translated in the world of types,
+is subtyping: a record type contains not just records
+that exactly bind given identifiers to given types,
+but also records with additional bound identifiers, and existing identifiers bound to subtypes.
+Record types form a subtyping hierarchy; subtyping is a partial order among types;
+and function types monotonically increase with their result types,
+and decrease with their argument types.
+Then, when modularly specifying a module extension, the modular type for the module context,
+that only contains “negative” constraints about types for the identifiers being required,
+will match the future actual module constraint, that may satisfy many more constraints;
+meanwhile, the “positive” constraints about types for the identifiers being provided
+may satisfy more many constraints than those actually required from other modules using it.
+
+@subsubsection{The NNOOTT, Naive Non-recursive Object-Oriented Type Theory}
+
+The simplest and most obvious theory for typing OO,
+that we will dub the Naive Non-recursive Object-Oriented Type Theory (NNOOTT),
+consists in considering subclassing as subtyping,
+i.e. a subclass, that extends a class with new fields,
+is a subtype of the “super” class being extended.
+This theory is implicitly present in Hoare’s seminal 1965 paper @~cite{hoare1965record},
+has dominated the type theory of OO
+until fully debunked in the late 1980s @~cite{cook1989inheritance},
+and is continually being reinvented even when not explicitly transmitted.
+Indeed it actually works well in the simple “non-recursive” case that we will characterize,
+even though we will see that it is inconsistent in more complex cases.
+
+As a simple variant of the NNOOTT, consider first the Simply Typed Lambda-Calculus (STLC)
 or some more elaborate but still well-understood variant of the λ-calculus,
-with whatever primitives added for the language’s builtin constructs and standard libraries,
-and adding to it (if not already available) a minimal set of features for OO:
+extended with primitives for the language’s builtin constructs and standard libraries,
+and (if not already available) a minimal set of features for OO:
 indexed products for records, subtyping and type intersections.
-
-The resulting type theory we can call the
-@emph{Naive Non-recursive Object-Oriented Type Theory} (NNOOTT).
-The NNOOTT is more precise than dynamic typing;
-it rich enough to accurately describe simple usage cases of OO;
-but we will see though that it fails to capture some very important aspects of OO.
-
-In the NNOOTT, a modular extensible specification would have a type of the form
+In this NNOOTT variant, a modular extensible specification would have a type of the form
 @Code{
-type Mixin required inherited provided =
+type MESpec required inherited provided =
   required → inherited → inherited⋂provided}
-A @c{Mixin} is a type with three parameters,
+A @c{MESpec} is a type with three parameters,
 the type @c{required} of the information required by the specification from the module context,
 the type @c{inherited} of the information inherited and to be extended,
 and the type @c{provided} of the information provided to extend what is inherited.
-In Prototype OO, that information consists in new methods and specialization of existing methods.
-In Class OO, that information consists of the same plus
-new fields and specialization of existing fields.
+Note that this type refines the @c{C → V → V} from @seclink{Minimal OO Indeed},
+and that @c{inherited} and @c{provided} represent the same “kind” of information,
+both refining @c{V} above, whereas @c{required} in general refines @c{C},
+and usually need not of the same kind as the other two at all,
+unless and until you’re ready to close the recursion, tie the loops and compute a fixpoint.
+
+In Prototype OO, that value inherited and provided consists
+in new methods and specialization of existing methods;
+the top value is an empty record.
+In Class OO, that value inherited and provided consists of the same plus
+new fields and specialization of existing fields;
+the top value is a type descriptor for an empty record type.
+In both cases, the context required may narrowly define a prototype or class,
+but may also more broadly define an entire namespace.
+
 The @c{fix} operator, first takes a top value as a seed,
 then second takes a specification for a target with the target itself as module context
 and starting with the top value as a seed, and returns the target fixed-point.
@@ -3809,9 +3855,104 @@ The @c{mix} operator chains two mixins, with the asymmetry that
 information provided by the parent (parameter @c{p2} for the second argument)
 can be used by the child (first argument), but not the other way around.
 @Code{
-fix : top → Mixin target top target → target
-mix : Mixin r1 i1⋂p2 p1 → Mixin r2 i2 p2 → Mixin r1⋂r2 i1⋂i2 p1⋂p2
+fix : top → MESpec target top target → target
+mix : MESpec r1 i1⋂p2 p1 → MESpec r2 i2 p2 → MESpec r1⋂r2 i1⋂i2 p1⋂p2
 }
+
+This model is simple and intuitive, and explains how inheritance works:
+given two “mixin” specifications, you can chain them as child and parent;
+the combined specification requires a context with all the information
+required from either child or parent;
+the inherited information must contain all information expected by the parent,
+and all information expected the child that isn’t provided by the parent;
+the provided information contains all information provided by either child or parent.
+
+@subsubsection{Limits of the NNOOTT}
+
+The NNOOTT works well in the non-recursive case, i.e.
+when the type of fields does not depend on the type of the module context;
+or, more precisely, when there are circular “open” references between
+types being provided by a modular extension,
+and types it requires from the module context.
+In his paper on objects as co-algebras,
+Bart Jacobs characterizes the types for the arguments and results of his methods
+as being “(constant) sets” @~cite{Jacobs1995ObjectsAC}@xnote[","]{
+  Jacobs is particularly egregious in smuggling this all-important restriction
+  to how his paper fails to address the general and interesting case of OO
+  in a single word, what more, in parentheses, at the end of section 2,
+  without any discussion whatsoever as to the momentous significance of that word.
+  A discussion of that significance could in itself have justified the paper as being stellar.
+  Instead, the smuggling of an all-important hypothesis makes the paper bad, and, yes, dishonest.
+  His subsequent paper has the slightly more precise sentence we also quote,
+  and its section 2.1 tries to paper over what it calls “anomalies of inheritance”
+  (actually, the general case), by separating methods into a “core” part
+  where fields are declared that matter for inheritance,
+  where his hypothesis applies, and “definitions” that must be reduced to the core part.
+  The conference reviewing committees really dropped the ball on accepting those papers,
+  though that section 2.1 was probably the result of at least one reviewer doing his job.
+  Did reviewers overall let themselves impressed by formalism beyond their ability to judge,
+  or were they complicit in the sleight of hand to grant their domain of research
+  a fake mantle of formal mathematical legitimacy?
+  Either way, field is ripe is intellectual dishonesty, even in academia,
+  not to mention the outright snake oil salesmen of the OO industry in its heyday:
+  The 1990s were a time when IBM would hire comedians to become “evangelists”
+  for their Visual Age Smalltalk technology, soon recycled into Java evangelists.
+  Jacobs is not the only one, and he may even have extenuating circumstances.
+  He may have been pressured to make his work “relevant” by publishing in OO conferences,
+  under pains of losing funding, and
+  he may have been happy to find his work welcome even though he didn’t try hard,
+  trusting reviewers to send stronger feedback if his work hadn’t been fit.
+  The reviewers, unfamiliar with the formalism,
+  may have missed or underestimated the critical consequences of a single word.
+  In other times, researchers have been hard pressed to join the bandwagon of
+  Java, Web2, Big Data, Mobile, Blockchain or AI, or whatever trendy topic of the year;
+  and reviewers for the respective relevant conferences may have welcome
+  newcomers with unfamiliar points of view.
+  Even Barbara Liskov, future Turing Award recipient, was invited to contribute to OO conferences,
+  and quickly dismissed inheritance to focus on her own expertise,
+  which involves modularity without extensibility. @; CITE
+  Was she being personally dishonest? I wouldn’t dare to call her that,
+  especially when others invited her to speak and write.
+  And those who invited her may have just been acknowledging her large though indirect
+  contributions to the field of OO as such.
+  Yet the system as a whole was dishonest to reach this result;
+  at the very least, it is untrustworthy when it comes to identifying and labeling
+  domains of knowledge and the concepts that matter, and enforcing clarity about them.
+  The larger point here being that we should be skeptical of papers,
+  even by some of the greatest scientists
+  (neither Jacobs’ nor Liskov’s expertises are in doubt),
+  even published at some of the most reputable conferences in the field (e.g. OOPSLA, ECOOP),
+  because science is casually corrupted by politics and money:
+  even if internally consistent, they may be actually irrelevant to the topic,
+  grossly misleading to the casual reader, with apparent conclusions that are absurd
+  unless you know how to translate them from the domain of the conference
+  and its abused vocabulary back to the actual domain of expertise of the author.
+  This particular case from thirty years ago is easily denounced in retrospect;
+  its underlying lie was of little consequence then and is of no consequence today;
+  but the system that produced dishonesty hasn’t been reformed,
+  and we can but imagine what kind of lies it produces to this day in topics
+  that compared to the semantics of OO are both less objectively arguable,
+  and higher-stake economically and politically.
+}
+which he elaborates in another paper @~cite{Jacobs1996InheritanceAC}
+as meaning «not depending on the “unknown” type X (of self).»
+This makes his paper inapplicable to most OO, but interestingly,
+precisely identifies the subset of OO for which inheritance coincides with subtyping,
+or, to speak more precisely, subtyping of OO specifications matches is equivalent to
+subtyping of their target types.
+
+Indeed, in general, OO may include so called “binary methods”:
+methods with two arguments of the “self” type,
+that express a comparison function, algebraic operator, constructor, etc.
+Fields of a class may contain pointers to other objects of the “same class”
+(e.g. for a doubly linked list, famous example as far back as Simula @~cite{Simula1967})
+
+And more generally, methods can be arbitrary higher-order functions
+involving the “self” type in zero, one or many positions,
+both “negative” (as an overall argument) or “positive” (as an overall result).
+There is no constraining 
+
+
 
 
 As we’ll soon see, this approximation is a bit naive, and
