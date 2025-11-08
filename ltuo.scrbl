@@ -88,6 +88,8 @@
 @(define (ᵢ) (list @(html-only @c{ᵢ}) @tex{${}_i$}))
 @(define (Ri) (list @c{R}(ᵢ)))
 @(define (Pi) (list @c{P}(ᵢ)))
+@(define (⋂) (list @tex{$\bigcap$}@html-only{⋂}))
+
 
 @(define super 'super)
 @(define self 'self)
@@ -3133,7 +3135,7 @@ In this expression,
 @c{s} is the modular extensible specification, and
 @c{r} is the fixpoint variable for the module context we are computing.
 
-@subsubsection{Minimal OO Indeed}
+@subsubsection[#:tag "Minimal_OO_Indeed"]{Minimal OO Indeed}
 
 The above functions @c{mix} and @c{fix} are indeed isomorphic
 to the theoretical model of OO from Bracha and Cook @~cite{bracha1990mixin}
@@ -3617,7 +3619,7 @@ A type descriptor will typically have methods as follows:
       will take a discriminant as first argument,
       or a method @c{instance-constructors} could hold a record
       of several “constructor” functions for each case.}
-@item{For languages that manage dynamic object lifetime,
+@item{For languages that support users managing dynamic object lifetime,
       a @c{destroy-instance} method could be part of the class, or among the @c{instance-methods};
       or if there can be several kinds of destructors,
       they could be held by a method @c{instance-destructors}.}]
@@ -3828,12 +3830,12 @@ indexed products for records, subtyping and type intersections.
 In this NNOOTT variant, a modular extensible specification would have a type of the form
 @Code{
 type MESpec required inherited provided =
-  required → inherited → inherited⋂provided}
+  required → inherited → inherited@(⋂)provided}
 A @c{MESpec} is a type with three parameters,
 the type @c{required} of the information required by the specification from the module context,
 the type @c{inherited} of the information inherited and to be extended,
 and the type @c{provided} of the information provided to extend what is inherited.
-Note that this type refines the @c{C → V → V} from @seclink{Minimal OO Indeed},
+Note that this type refines the @c{C → V → V} from @seclink{Minimal_OO_Indeed},
 and that @c{inherited} and @c{provided} represent the same “kind” of information,
 both refining @c{V} above, whereas @c{required} in general refines @c{C},
 and usually need not of the same kind as the other two at all,
@@ -3856,7 +3858,7 @@ information provided by the parent (parameter @c{p2} for the second argument)
 can be used by the child (first argument), but not the other way around.
 @Code{
 fix : top → MESpec target top target → target
-mix : MESpec r1 i1⋂p2 p1 → MESpec r2 i2 p2 → MESpec r1⋂r2 i1⋂i2 p1⋂p2
+mix : MESpec r1 i1@(⋂)p2 p1 → MESpec r2 i2 p2 → MESpec r1@(⋂)r2 i1@(⋂)i2 p1@(⋂)p2
 }
 
 This model is simple and intuitive, and explains how inheritance works:
@@ -3881,7 +3883,7 @@ as being “(constant) sets” @~cite{Jacobs1995ObjectsAC}@xnote[","]{
   to how his paper fails to address the general and interesting case of OO
   in a single word, what more, in parentheses, at the end of section 2,
   without any discussion whatsoever as to the momentous significance of that word.
-  A discussion of that significance could in itself have justified the paper as being stellar.
+  A discussion of that significance could in itself have turned the paper into a stellar one.
   Instead, the smuggling of an all-important hypothesis makes the paper bad, and, yes, dishonest.
   His subsequent paper has the slightly more precise sentence we also quote,
   and its section 2.1 tries to paper over what it calls “anomalies of inheritance”
@@ -3910,7 +3912,7 @@ as being “(constant) sets” @~cite{Jacobs1995ObjectsAC}@xnote[","]{
   newcomers with unfamiliar points of view.
   Even Barbara Liskov, future Turing Award recipient, was invited to contribute to OO conferences,
   and quickly dismissed inheritance to focus on her own expertise,
-  which involves modularity without extensibility. @; CITE
+  which involves modularity but without extensibility. @; CITE
   Was she being personally dishonest? I wouldn’t dare to call her that,
   especially when others invited her to speak and write.
   And those who invited her may have just been acknowledging her large though indirect
@@ -3944,13 +3946,12 @@ subtyping of their target types.
 Indeed, in general, OO may include so called “binary methods”:
 methods with two arguments of the “self” type,
 that express a comparison function, algebraic operator, constructor, etc.
-Fields of a class may contain pointers to other objects of the “same class”
-(e.g. for a doubly linked list, famous example as far back as Simula @~cite{Simula1967})
-
-And more generally, methods can be arbitrary higher-order functions
+More general methods can be arbitrary higher-order functions
 involving the “self” type in zero, one or many positions,
 both “negative” (as an overall argument) or “positive” (as an overall result).
-There is no constraining 
+Fields of a class may contain pointers to other objects of the “same class”
+(e.g. for a doubly linked list, famous example as far back as Simula @~cite{Simula1967})
+The constraints that Jacobs declares XXXXX
 
 
 
