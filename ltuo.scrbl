@@ -4028,14 +4028,10 @@ We could similarly define @c{self = Y (inherited ∩ defined)}
 and check the two subtyping constraints about @c{top} and @c{referenced}.
 
 Note that for the type of @c{mix} as well as for the fixpoint definition just above,
-there also is the subtle difference that we implicitly expanded the meaning of @c{∩}
-from types (respectively sets) to functions that return types (respectively sets),
-such that @c{(f∩g)(x) = f(x)∩g(x)}. We could instead have introduced
-a different typographical symbol for that expanded meaning on a different kind of objects,
-instead of making the symbol polymorphic.
-But mathematicians prefer the polymorphic approach,
-and there is no standard symbol for this expanded meaning.
-
+there also is the subtle difference that given intersection @c{∩} for types,
+the intersection for functions of kind @c{Type → Type} is defined by
+@c{(f∩g)(x) = f(x)∩g(x)}. Actually, the intersection operation is itself defined
+polymorphically, and in a mutually recursive way for types, functions over types, etc.
 
 @;{
 You can support modularity and eschew support for fixpoints through the module context,
