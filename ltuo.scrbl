@@ -89,7 +89,7 @@
 @(define (Ri) (list @c{R}(ᵢ)))
 @(define (Pi) (list @c{P}(ᵢ)))
 @(define (⋂) (list @tex{$\bigcap$}@html-only{⋂}))
-
+@(⋂)∩
 
 @(define super 'super)
 @(define self 'self)
@@ -3829,9 +3829,9 @@ and (if not already available) a minimal set of features for OO:
 indexed products for records, subtyping and type intersections.
 In this NNOOTT variant, a modular extensible specification would have a type of the form
 @Code{
-type MESpec required inherited provided =
-  required → inherited → inherited@(⋂)provided}
-A @c{MESpec} is a type with three parameters,
+type MESpecN required inherited provided =
+  required → inherited → inherited∩provided}
+A @c{MESpecN} is a type with three parameters,
 the type @c{required} of the information required by the specification from the module context,
 the type @c{inherited} of the information inherited and to be extended,
 and the type @c{provided} of the information provided to extend what is inherited.
@@ -3857,8 +3857,8 @@ The @c{mix} operator chains two mixins, with the asymmetry that
 information provided by the parent (parameter @c{p2} for the second argument)
 can be used by the child (first argument), but not the other way around.
 @Code{
-fix : top → MESpec target top target → target
-mix : MESpec r1 i1@(⋂)p2 p1 → MESpec r2 i2 p2 → MESpec r1@(⋂)r2 i1@(⋂)i2 p1@(⋂)p2
+fix : top → MESpecN target top target → target
+mix : MESpecN r1 i1∩p2 p1 → MESpecN r2 i2 p2 → MESpecN r1∩r2 i1∩i2 p1∩p2
 }
 
 This model is simple and intuitive, and explains how inheritance works:
@@ -3883,8 +3883,8 @@ as being “(constant) sets” @~cite{Jacobs1995ObjectsAC}@xnote[","]{
   to how his paper fails to address the general and interesting case of OO
   in a single word, what more, in parentheses, at the end of section 2,
   without any discussion whatsoever as to the momentous significance of that word.
-  A discussion of that significance could in itself have turned the paper into a stellar one.
-  Instead, the smuggling of an all-important hypothesis makes the paper bad, and, yes, dishonest.
+  A discussion of that significance could in itself have turned this bad paper into a stellar one.
+  Instead, the smuggling of an all-important hypothesis makes the paper bad, and misleading at best.
   His subsequent paper has the slightly more precise sentence we also quote,
   and its section 2.1 tries to paper over what it calls “anomalies of inheritance”
   (actually, the general case), by separating methods into a “core” part
@@ -3895,8 +3895,8 @@ as being “(constant) sets” @~cite{Jacobs1995ObjectsAC}@xnote[","]{
   Did reviewers overall let themselves impressed by formalism beyond their ability to judge,
   or were they complicit in the sleight of hand to grant their domain of research
   a fake mantle of formal mathematical legitimacy?
-  Either way, field is ripe is intellectual dishonesty, even in academia,
-  not to mention the outright snake oil salesmen of the OO industry in its heyday:
+  Either way, the field is ripe with bad science,
+  not to mention the outright snake oil of the OO industry in its heyday:
   The 1990s were a time when IBM would hire comedians to become “evangelists”
   for their Visual Age Smalltalk technology, soon recycled into Java evangelists.
   Jacobs is not the only one, and he may even have extenuating circumstances.
@@ -3913,25 +3913,23 @@ as being “(constant) sets” @~cite{Jacobs1995ObjectsAC}@xnote[","]{
   Even Barbara Liskov, future Turing Award recipient, was invited to contribute to OO conferences,
   and quickly dismissed inheritance to focus on her own expertise,
   which involves modularity but without extensibility. @; CITE
-  Was she being personally dishonest? I wouldn’t dare to call her that,
-  especially when others invited her to speak and write.
-  And those who invited her may have just been acknowledging her large though indirect
-  contributions to the field of OO as such.
-  Yet the system as a whole was dishonest to reach this result;
-  at the very least, it is untrustworthy when it comes to identifying and labeling
-  domains of knowledge and the concepts that matter, and enforcing clarity about them.
+  Are either those who talk and publish what turns out not to be OO at all at OO conferences,
+  or those who invite them to talk and publish, being deliberately misleading?
+  Probably not, yet, the public can be fooled just the same as if dishonesty were meant:
+  though the expert of the day can probably make the difference,
+  the next generation attending or looking through the archives
+  may well get confused as to what OO is or isn’t about as they learn from example.
+  At the very least, papers like that make for untrustworthy identification and labeling
+  of domains of knowledge and the concepts that matter.
   The larger point here being that we should be skeptical of papers,
   even by some of the greatest scientists
   (neither Jacobs’ nor Liskov’s expertises are in doubt),
   even published at some of the most reputable conferences in the field (e.g. OOPSLA, ECOOP),
-  because science is casually corrupted by politics and money:
-  even if internally consistent, they may be actually irrelevant to the topic,
-  grossly misleading to the casual reader, with apparent conclusions that are absurd
-  unless you know how to translate them from the domain of the conference
-  and its abused vocabulary back to the actual domain of expertise of the author.
-  This particular case from thirty years ago is easily denounced in retrospect;
+  because science is casually corrupted by politics and money,
+  and only more cheaply so for the stakes being low.
+  This particular case from thirty years ago is easily corrected in retrospect;
   its underlying lie was of little consequence then and is of no consequence today;
-  but the system that produced dishonesty hasn’t been reformed,
+  but the system that produced dishonest science hasn’t been reformed,
   and we can but imagine what kind of lies it produces to this day in topics
   that compared to the semantics of OO are both less objectively arguable,
   and higher-stake economically and politically.
@@ -3943,27 +3941,100 @@ precisely identifies the subset of OO for which inheritance coincides with subty
 or, to speak more precisely, subtyping of OO specifications matches is equivalent to
 subtyping of their target types.
 
-Indeed, in general, OO may include so called “binary methods”:
-methods with two arguments of the “self” type,
-that express a comparison function, algebraic operator, constructor, etc.
-More general methods can be arbitrary higher-order functions
-involving the “self” type in zero, one or many positions,
-both “negative” (as an overall argument) or “positive” (as an overall result).
-Fields of a class may contain pointers to other objects of the “same class”
-(e.g. for a doubly linked list, famous example as far back as Simula @~cite{Simula1967})
-The constraints that Jacobs declares XXXXX
+Indeed, in general, specifications may contain so called “binary methods”
+that take another value of the same target type as argument,
+such as in very common comparison functions (e.g. equality or order)
+or algebraic operations (e.g. addition, multiplication, composition), etc.;
+and beyond these, they can actually contain arbitrary higher-order functions
+involving the target type in zero, one or many positions,
+both “negative” (as an overall argument)
+or “positive” (as an overall result),
+or as parameters to type-level functions, “templates”, etc.
+These methods will break the precondition for subclassing being subtyping.
+And such methods are not an “advanced” or “anomalous” case, but quintessential, since
+even the original SIMULA 67 paper @~cite{Simula1967} includes the example of
+a class @c{linkage} that defines references @c{suc} and @c{pred},
+that classes can inherit from so that their element shall be part of a doubly linked list.
 
+The NNOOTT can be “saved” by reserving static typing to non-self-referential methods,
+whereas any self-reference must dynamically typed, by going through a type @c{Any},
+or some other “base” type or class, at least as far the the typechecker is involved.
+Dereference of an element of the target type will then have to go through some “type cast”,
+either safe (dynamically checked at runtime) or unsafe (program may misbehave at runtime)
+to compensate for the imprecision of the type system.
 
+The crucial distinction between subtyping and subclassing
+was first elucidated in @~cite{cook1989inheritance}.
 
+@subsubsection{Beyond the NNOOTT}
 
-As we’ll soon see, this approximation is a bit naive, and
-only works in simple non-recursive cases.
-Yet this “Naive OO Type Theory” is important to understand,
-both for the simple cases it is good enough to cover,
-and for its failure modes that tripped so many good programmers
-into wrongfully trying to equate inheritance and subtyping.
+The key to dispelling the
+“conflation of subtyping and inheritance” @; TODO @~cite{Fisher1996}
+or the “conflation of class and types” @; TODO @~cite{Bruce1997}
+is indeed first to have dispelled, as we just did previously,
+the conflation of specification and target.
+We can then treat specification and target separately, which simplifies everything,
+and then just notice that the two are often referenced together in an implicit product,
+yet remain distinct and to be reasoned about separately.
 
-@;{ CITE }
+Then, we not that what most people who say “subtyping” in literature actually mean
+@emph{subtyping for the target type of a class},
+that is distinct from
+@emph{subtyping for the specification type of a class},
+that Kim Bruce calls “matching”. @; TODO cite
+But most people, being confused about the conflation of specification and target,
+don’t conceptualize the distinction, and either
+try to treat them as if it were the same thing,
+leading to logical inconsistency hence unsafety and failure;
+or they build extremely complex calculi to do the right thing despite the confusion.
+By having a clear concept of the distinction,
+we can simplify away all the complexity without introducing inconsistency.
+
+We can use the usual rules of subtyping @; TODO cite Wegner, Cardelli
+and apply them separately to the types of specifications and their targets,
+knowing that “subtyping and fixpointing do not commute”,
+or to be more mathematically precise,
+@bold{fixpointing does not distribute over subtyping}:
+if @c{F} and @c{G} are parametric types,
+i.e. type-level functions from @c{Type} to @c{Type},
+and @c{F t ⊂ G t} for all type @c{t}
+(where @c{⊂}, sometimes written @c{<:}, is the standard notation for “is a subtype of”),
+it does not follow that @c{Y F ⊂ Y G} where @c{Y} is the fixpoint operator for types.
+
+A mixin is now an entity parameterized by the type @c{self} of the module context
+(Bruce calls it @c{MyType}):
+@Code{
+type MESpec referenced inherited defined =
+  ∀ self ⊂ (referenced self),
+    ∀ super ⊂ (inherited self) ⇒
+        self → super → super∩(defined self)}
+
+Our two OO primitives have the follow type:
+
+@Code{
+fix : top → MESpec referenced inherited defined → self |
+  top ⊂ inherited self,
+  referenced self ⊂ self,
+  self ⊂ inherited self ∩ defined self
+
+mix : Mixin r1 i1∩d2 d1 → Mixin r2 i2 d2 → Mixin r1∩r2 i1∩i2 d1∩d2}
+
+The subtle difference between @c{MESpec} and the previous @c{MESpecN} is that
+each parameter of @c{MESpec} is a parametric type, i.e. a function @c{Type → Type},
+whereas each parameter of @c{MESpecN} was simple a @c{Type}.
+In the @c{fix} function, we implicitly define a fixpoint @c{self}
+via suitable recursive subtyping constraints.
+We could similarly define @c{self = Y (inherited ∩ defined)}
+and check the two subtyping constraints about @c{top} and @c{referenced}.
+
+Note that for the type of @c{mix} as well as for the fixpoint definition just above,
+there also is the subtle difference that we implicitly expanded the meaning of @c{∩}
+from types (respectively sets) to functions that return types (respectively sets),
+such that @c{(f∩g)(x) = f(x)∩g(x)}. We could instead have introduced
+a different typographical symbol for that expanded meaning on a different kind of objects,
+instead of making the symbol polymorphic.
+But mathematicians prefer the polymorphic approach,
+and there is no standard symbol for this expanded meaning.
 
 
 @;{
@@ -3999,11 +4070,37 @@ https://www.cs.cmu.edu/~aldrich/ego/
 
 https://kbb04747.sites.pomona.edu/README.html#Match
 
-Bad: NOOP Robert Cartwright & Moez Abdelgawad
+Bad(?): NOOP Robert Cartwright & Moez Abdelgawad
 https://www.semanticscholar.org/reader/3855d0beac44b1623731bf581f80ec4d348eb4ba
 
 https://counterexamples.org/subtyping-vs-inheritance.html
+
+Kathleen Fisher thesis "Type systems for object-oriented programming languages" 1996
+abstract says "Conflation of subtyping and inheritance"
+
+Andrew K. Wright & Robert Cartwright
+"A practical soft type system for Scheme"
+1997
+
 }
+
+Kim Bruce, @;CITE 1993 1994 1995
+thereafter gave sounder types to OO,
+saving subtyping where it could be saved because the NNOOTT applies, @; CITE PolyTOIL
+but otherwise abandoning subtyping as a goal. @; CITE LOOM 1997
+@; Kathleen Fisher @;CITE ...
+
+As we’ll soon see, this approximation is a bit naive, and
+only works in simple non-recursive cases.
+Yet this “Naive OO Type Theory” is important to understand,
+both for the simple cases it is good enough to cover,
+and for its failure modes that tripped so many good programmers
+into wrongfully trying to equate inheritance and subtyping.
+
+@;{ CITE }
+
+
+
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
