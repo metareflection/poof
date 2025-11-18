@@ -89,7 +89,7 @@
 @(define (Ri) (list @c{R}(ᵢ)))
 @(define (Pi) (list @c{P}(ᵢ)))
 @(define (⋂) (list @tex{$\bigcap$}@html-only{⋂}))
-@(⋂)∩
+@(define (⇝) (list @tex{$\rightsquigarrow$}@html-only{⇝}))
 
 @(define super 'super)
 @(define self 'self)
@@ -164,7 +164,7 @@ partial specifications via a mechanism known as @emph{inheritance} @~cite{inheri
   in the rich (and sometimes mutually conflicting) traditions
   that grew around OO.
   There is thus a need to elucidate the key concepts of OO behind the hype and confusion;
-  such is the main purpose of this paper.
+  such is the main purpose of this essay.
 }
 usually depending on explicit support from the programming language being used,
 then called an Object-Oriented language.
@@ -273,7 +273,7 @@ the relationship between Specifications, Prototypes, Classes and Objects.
 In section 4, we explain what we mean by Extensible Modularity,
 the why and wherefore of OO.
 This section remains informal, but lays the conceptual groundwork
-for the formal approach we take in the rest of this paper.
+for the formal approach we take in the rest of this essay.
 
 In section 5, we introduce a minimal formal models of Modularity and Extensibility
 in terms of pure Functional Programming (FP), using Scheme syntax,
@@ -365,9 +365,9 @@ due authors and readers having wrong expectations about what OO is supposed to b
 @subsection{Whatever C++ is}
 
 The most popular OO language in the decades that OO was a popular trend (roughly 1980 to 2010),
-C++ indeed supports programming in an OO style.
+C++ indeed supports some form of OOP.
 But C++ is a rich language with many aspects completely independent of OO
-(e.g. bit-banging, RAII, template metaprogramming or pointer aliasing and a memory model),
+(e.g. efficient bit-banging, RAII, template metaprogramming or pointer aliasing and a memory model),
 whereas the OO aspect that it undoubtly offers
 is very different from how OO works in most other OO languages,
 and colloquial C++ often goes against the principles of OO@xnote["."]{
@@ -378,7 +378,7 @@ if what you know of “Object Orientation” comes from C++,
 please put it aside, at least while reading this article, and come with a fresh mind.
 
 This is especially true with regard to multiple inheritance,
-that will be an important topic later in this paper.
+that will be an important topic later in this essay.
 C++ boasts support for multiple inheritance, and many people,
 when thinking of multiple inheritance, think of what C++ offers.
 Yet, while C++ supports single inheritance well, what it calls “multiple inheritance”
@@ -390,13 +390,29 @@ Moreover, C++ crucially lacks the proper method resolution
 that enables a lot of the modularity of multiple inheritance in other languages.
 
 Now, you can use C++'s powerful template language to reconstitute actual mixin inheritance
-and its method resolution on top of C++'s weird variant of inheritance@~cite{smaragdakis2000mixin},
-then implement proper multiple inheritance on top of mixin inheritance.
+and its method resolution on top of C++'s weird variant of inheritance@~cite{smaragdakis2000mixin};
+and you could no doubt further implement proper multiple inheritance on top of that@xnote["."]{
+  One could achieve multiple inheritance as a design pattern on top of mixin inheritance,
+  as we will describe later in this article,
+  wherein developers would manually compute and specify
+  each class's superclass precedence list;
+  but this cancels some of the modularity benefits of multiple inheritance
+  versus single and mixin inheritance.
+  Alternatively, someone could extend the above technique to also reimplement
+  the entire superclass linearization apparatus
+  within the C++ template metaprogramming language.
+  Template metaprogramming is most definitely powerful enough for the task,
+  though it will take a very motivated developer to do the hard work,
+  and the result will still a burden for any developer who wants to use it.
+  Moreover, for all that cost, classes defined that way would only interoperate
+  with other classes following the exact same pattern.
+  Maybe the library implementing the pattern could eventually be included
+  in some semi-standard library, until, if it gets any traction,
+  the language itself is eventually amended to do the Right Thing™.
+}
 But this technique is quite uncolloquial, syntactically heavy, slower than the colloquial ersatz,
-and programmers have to rigorously follow, enforce and maintain some complex design patterns,
-including a manual computation of each class's class precedence list,
-which cancels some of the modularity benefits of multiple inheritance
-versus single and mixin inheritance.
+and programmers have to rigorously
+follow, enforce and maintain some complex design patterns.
 
 Finally, and at the very least, consider that
 unless you explicitly tag your classes and their members @r[virtual],
@@ -405,7 +421,7 @@ and use “static dispatch” instead for the sake of “going fast”.
 In the end, C++ is many great and not-so-great things, but only few of those things are OO,
 and even most of those that look like OO are often different enough that
 they do not reliably inform about OO in general@xnote["."]{
-  The situation is similar for ADA, that adopted multiple inheritance in 2005
+  The situation is similar for ADA, that adopted multiple inheritance in 2003
   by seemingly copying the general design of C++.
   Now even when C++ got multiple inheritance wrong@~cite{stroustrup1989multiple},
   ignorance was no valid excuse,
@@ -785,10 +801,16 @@ does that mean that humans automatically eat humans, or only some other animals?
 In presence of recursion, UML falls apart,
 by failing to distinguish between subclassing and subtyping,
 between self-reference and reference to a constant.
-Interestingly, Bart Jacobs's categorical theory of classes as co-algebras
-@~cite{Jacobs1995ObjectsAC Jacobs1996InheritanceAC}
-is equivalent to UML.
-But at least he explicitly embraces early on the limitation whereby
+
+Interestingly, Joseph Goguen, Amílcar Sernadas or Bart Jacobs’s categorical theories
+of “objects” and “inheritance”
+@~cite{Jacobs1995ObjectsAC Jacobs1996InheritanceAC},@; TODO cite Goguen OBJ
+actually model UML and refinement,
+and not at all actual Objects and Inheritance as used in Programming Languages;
+a hijacking of the same words for completely different meanings,
+with the only similarity being that both sets of meanings
+involve arrows between specifications.
+At least Jacobs explicitly embraces early on the limitation whereby
 self-reference or recursion is prohibited from field definitions. @; TODO cite
 Just like UML, his co-algebra utterly fails to model OO;
 but at least his theory is internally consistent if not externally.
@@ -824,7 +846,21 @@ or even more elaborate higher-order functions, etc.
 More broadly, these methodologies lack any effective semantics of inheritance,
 of method resolution in computing properties of objects along their class hierarchies,
 or of anything that has the precision required to specify code
-that can actually run and be reasoned about.
+that can actually run and be reasoned about@xnote["."]{
+  Goguen’s work with OBJ, unlike some of his later categorical imitators,
+  does involve precise formal specification of code, and refinement of such specifications,
+  that have led to actual implementation of executable code.
+  But his work never modeled OO at all, and instead,
+  led to the completely different and orthogonal paradigm of term rewriting.
+  Term rewriting is a wonderfuly interesting paradigm to study,
+  but has never seen any adoption for practical programming,
+  though it has found uses in reasoning about programs.
+  What he calls “inheritance” is actually code refinement;
+  it is not a general theory of code implementation,
+  that can explain how actual compilers and interpreters preserve the meaning of programs
+  (or sometimes fail to);
+  but it is a technique that can be used to to generate special-purpose such implementations.
+}
 But specifying code is exactly where the conceptual difficulties and gains of OO
 are both to be found with respect to software construction.
 In fact, these handwaving methodologies are specifically designed to make
@@ -853,7 +889,8 @@ you can actually use OO as you do it.
 
 @section{What Object-Orientation @emph{is} — Informal Overview}
 
-In this section we map out the important concepts of OO.
+In this section we map out the important concepts of OO,
+as developed in the rest of this essay.
 The little explanations we offer are what is strictly necessary
 to relate concepts to one another, and avoid misinterpreting them.
 More details explanations, and justifications, will follow in subsequent sections.
@@ -1404,7 +1441,8 @@ we can briefly answer these questions as follow:
 @itemlist[#:style'ordered
 @item{Yes, our definition is correct:
 it accurately identifies what people mean usually by those words,
-and distinguishes situations where they apply versus situations where they do not.}
+and distinguishes situations where they apply from situations where they do not,
+in the contexts that people care about.}
 @item{No, the phenomena that effectively affect people,
 that they care to name, discuss, think about and act on, are not arbitrary.
 Thus the important part of definitions isn’t convention at all:
@@ -1466,7 +1504,8 @@ we should look at what the pioneers and experts do and not (just) what they say,
 especially since you could recursively apply
 the same skepticism to the words they use in their definitions.
 Also, be wary that pioneers provide inspiration, insight and discoveries,
-but seldom well-rounded theories: often these theories arise only after lots of
+but seldom well-rounded neatly-conceptualized theories:
+often these theories arise only after lots of
 experience, filtering, and reformulation@xnote["."]{
 As the jest goes, “Every technique is first developed,
 then used, important, obsolete, normalized, and finally understood.”
@@ -1484,16 +1523,27 @@ it would be ceding terrain to the Enemy—snake oil salesmen, chaosmongers,
 corrupters of language, manipulators, proud spreaders of ignorance, etc.—who if let loose
 would endlessly destroy the value of language and make clear meaning incommunicable.
 Beside, if you retreat to “inheritance” in the hope that at least that for that term
-you can get people to agree on a clear unambiguous meaning, you’ll find that if you
+you can get people to agree on a clear unambiguous meaning@xnote[","]{
+  The term “inheritance” is already corrupted, since Goguen uses it to mean refinement,
+  and others use it to mean the (non-modular) extension of database tables or equivalent.
+  And there are plenty of legitimate non-OO uses of the word “inherit”, to
+  mean that some entity derives some property from a historical origin, an enclosing context, etc.
+}
+you’ll find that if you
 have any success defining a useful term that way, the soldiers of entropy will rush
 to try to defile it in very proportion to your success;
 you will have given up precious lexical real estate for no gain whatsoever,
-only terrible loss.}]
+only terrible loss@xnote["."]{
+  Indeed, if you don’t know to stand your ground, you will constantly retreat,
+  and be made to use ever increasingly flowery “politically correct” vocabulary
+  as a humiliation ritual before those who will wantonly take your words away
+  to abuse you and assert their dominance.
+}.}]
 
 So what phenomena count as OO?
-The design patterns used by programmers when they write code in an OO language.
-The interactions they have with computers and with each other.
-The decision trees that are enabled or disabled when evolving a program into another.
+The design patterns used by programmers when they write code in an OO language;
+the interactions they have with computers and with each other.
+the decision trees that are enabled or disabled when evolving a program into another.
 In the case of OO, these phenomena are what is captured by
 the intralinguistic extensible modularity as defined above:
 (a) the ability to “code against an interface” and
@@ -1501,7 +1551,9 @@ pass any value of any type that satisfies the interface
 (modularity, be it following structural or nominative rules),
 (b) the ability to extend and specialize existing code by creating a new entity
 that “inherits” the properties of existing entities and only needs specify
-additions and overrides in their behavior rather than repeat their specifications, and
+additions and overrides in their behavior rather than repeat their specifications,
+wherein each extension can modularly refer to functionality defined
+in other yet-unapplied extensions; and
 (c) the fact that these entities and the primitives to define, use and specialize them
 exist @emph{within} the programming language rather than as an external preprocessing layer.
 
@@ -2368,7 +2420,7 @@ By using an actual programming language that while very close to the λ-calculus
 comes with both additional features and additional restrictions,
 we will introduce some complexity, and
 a barrier to entry to people not familiar with this particular language.
-But the code we offer in this paper will be easy for us and our readers
+But the code we offer in this essay will be easy for us and our readers
 to run, to test, to debug, to interact with,
 to develop an intuition on how it runs and what it does,
 and later to extend and to adapt.
@@ -2433,7 +2485,7 @@ to most programming contexts that are applicative.
 Also, Nix is more recent, less well-known, its syntax and semantics less recognizable;
 the Lindy effect @; TODO cite
 means it will probably disappear sooner that Scheme,
-making this paper harder to read for potential readers across time.
+making this essay harder to read for potential readers across time.
 Finally, Nix as compared to Scheme, is missing a key feature beyond the basic λ-calculus,
 that we will use when building multiple inheritance:
 the ability to test the equality of two specifications.
@@ -2926,7 +2978,7 @@ In this applicative variant, the first, minor, issue with this combinator is
 that it only works to compute functions,
 because the only way to prevent a overly eager evaluation of a computation
 that would otherwise diverge is to protect this evaluation under a λ.
-The second, major, issue with the applicative Y is that the pure λ-calculus
+The second, major, issue with the applicative Y is that the pure applicative λ-calculus
 by itself has no provision for sharing non-fully-reduced computations,
 only for sharing (fully-reduced) values;
 therefore the fixed-point computations are duplicated,
@@ -2935,10 +2987,11 @@ as many times as computations are duplicated, which can grow exponentially fast
 as the computation involves deeper sub-computations.
 In some cases, the eager evaluation may never terminate at all when lazy evaluation would,
 or not before the end of the universe.
-And of course, if there are any side effects, they will be duplicated a large number of times.
+And of course, if there are any non-idempotent side effects,
+they too will be duplicated a large number of times.
 
-There are several potential solutions to the practical inapplicability
-of the applicative Y combinator:
+There are several potential alternatives to
+the practically inapplicable applicative Y combinator:
 (1) a stateful Y combinator,
 (2) a lazy Y combinator, or
 (3) a second-class Y combinator.
@@ -2946,24 +2999,43 @@ of the applicative Y combinator:
 A stateful Y combinator is what the @c{letrec} construct of Scheme provides
 (and also its @c{letrec*} variant, that the internal @c{define} expands to):
 it uses state mutation underneath to create and initialize a mutable cell
-that will hold the shared fixpoint value.
-If the rest of the program is pure and doesn’t capture intermediate continuations
+that will hold the shared fixpoint value, with the caveat that you should be careful
+not to access the variable before it was initialized@xnote["."]{
+  A variable won’t be accessed before it is used if you’re immediately binding it variable
+  to a λ expression, but may happen if you bind the variable to a function application expression,
+  wherein the variable is passed as argument without wrapping it in a λ,
+  or the λ it is wrapped in is called before the evaluation of this expression completes.
+  The Scheme language does not protect you in this case,
+  and, in general, could not without either severely limiting the language expressiveness,
+  or solving the halting problem.
+  Various languages and their implementations,
+  depending on various safety settings they might have or not,
+  may raise a “variable not bound” exception,
+  use a special value such as @c{#!void} or @c{null} or @c{undefined}
+  that is not usually part of the expected type,
+  or access uninitialized memory potentially returning nonsensical results
+  or causing a latter fandango on core, etc.
+}
+If the variable is only accessed after it is initialized,
+and the rest of the program is pure and doesn’t capture intermediate continuations
 with Scheme’s famous @c{call/cc}, the mutation cannot be exposed as a side-effect,
 and the computation remains overall pure (deterministic, referentially transparent),
 though not definable in terms of the pure applicative λ-calculus.
-Note however how the fixed-point @c{p} below need still be a function,
-as we must η-convert it into the equivalent but protected @c{(λ (y) (p y))}
-before to pass it to @c{f}:
+Note however how in the definition below, @c{p} below still needs be a function,
+and we must η-convert it into the equivalent but protected @c{(λ (y) (p y))}
+before to pass it to @c{f} to prevent access to the variable @c{p} before its initialization:
 @Code{
 (define (stateful-Y f) (letrec ((p (f (λ (y) (p y))))) p))
 }
 @; Test: ((stateful-Y (λ (f) (λ (n) (if (<= n 1) n (* n (f (1- n))))))) 6) ;==> 720
 
-Another solution is to use a lazy Y. In a language like Nix
-(where @c{λ (f)} is written @c{f:}), you can simply define
+A second solution is to use a lazy Y. In a language like Nix
+(where @c{λ (f)} is written @c{f:}, and @c{let} like Scheme @c{letrec}
+recursively binds the variable in the definition body), you can simply define
 @c{Y = f: let p = f p; in p}. In Scheme, using the convention that
 every argument variable or function result must be protected by @c{delay},
-and every function result must be forced, we would write@xnote[":"]{
+and you must @c{force} the delayed referenc to extract the result value,
+we would write@xnote[":"]{
   Again, a simple way to test the lazy Y combinator is to use it
   to define the factorial function:
   @c{(define fact (lazy-Y (λ (f) (λ (n) (if (<= n 1) n (* n ((force f) (1- n))))))))}
@@ -3005,16 +3077,19 @@ before they are evaluated, without duplication of computation costs or side-effe
   computations to computations without having to go through the universe of values.
 }
 (Note that @c{delay} can be easily implemented on top of any stateful applicative language,
-though a thread-safe variant is harder to achieve.)
+though a thread-safe variant, if needed, is somewhat harder to achieve.)
 
 A third solution, often used in programming languages with second-class OO only
 (or languages in which first-class functions must terminate), is
-for the @c{Y} combinator to only be called at compile-time, and
-only on specifications that abide by some kind of structural restriction
+for the @c{Y} combinator (or its notional equivalent) to only be called at compile-time,
+and only on specifications that abide by some kind of structural restriction
 that guarantees the existence and well-formedness of a fixpoint,
 as well as e.g. induction principles to reason about said fixpoint.
+Also, the compile-time language processor usually doesn’t expose any side-effect to the user,
+such that there is no semantic difference whether its implementation is itself pure or impure,
+and uses a fixpoint combinator or any other representation for recursion.
 Since we are interested in first-class semantics for OO, we will ignore this solution
-in the rest of this paper, and leave it as an exercise for the reader.
+in the rest of this essay, and leave it as an exercise for the reader.
 @;{TODO CITE Aaron Stump from U Iowa, etc.}
 
 @subsubsub*section{Function Arity}
@@ -3060,14 +3135,13 @@ and might require some level of symbiosis with the compiler.
 
 We have implemented variants of our minimal OO system in many combinations
 of the above solutions to these two issues, in Scheme and other languages.
-For the rest of this paper, we will adopt a more “native” Scheme style,
+For the rest of this essay, we will adopt a more “native” Scheme style,
 assuming @c{stateful-Y} and using multiple function arities
 that we will ensure are carefully matched by function callers;
-yet we will avoid variable arity
-with optional arguments, rest arguments or keyword arguments,
-or to keep things simple and portable.
+yet or to keep things simple and portable, we will avoid variable arity
+with optional arguments, rest arguments or keyword arguments.
 As a result, the reader should be able both to easily copy and test
-all the code in this paper at a their favorite Scheme REPL,
+all the code in this essay at their favorite Scheme REPL,
 and also easily translate it to any other language
 that sports first-class higher-order functions.
 
@@ -3159,7 +3233,7 @@ are enough to implement a complete object system.
 How do we use these inheritance and instantiation functions?
 By defining specifications of type @c{C → V → V)} where
 @c{C} is the type of the module context,
-and @c{V} that of the value being extended:
+and @c{V} that of the value under focus being extended:
 @Code{
 (define my-spec (λ (self) (λ (super) body ...)))}
 where @c{self} is the module context,
@@ -3242,8 +3316,8 @@ for @c{x} and @c{color} are as expected:
 @Code{
 (define point-p (instantiate (inherit color-spec coord-spec)))}
 @Code{
-(point-p 'x) ⇒ 2
-(point-p 'color) ⇒ "blue"}
+(point-p 'x) ;⇒ 2
+(point-p 'color) ;⇒ "blue"}
 When querying the composed specifications for the value for method @c{x},
 in a call-by-value right-to-left propagation of information,
 the first specification, @c{coord-spec}, ignores the top value @c{#f} passed to it
@@ -3298,8 +3372,8 @@ whereas @c{rho} is @c{5}, as computed by @c{rho-spec} from the @c{x} and @c{y} c
      (inherit coord-spec
               rho-spec))))
 
-(point-r 'x) ⇒ 3
-(point-r 'rho) ⇒ 5}
+(point-r 'x) ;⇒ 3
+(point-r 'rho) ;⇒ 5}
 
 @subsubsection[#:tag "Interaction_of_Modularity_and_Extensibility"
   ]{Interaction of Modularity and Extensibility}
@@ -3366,6 +3440,11 @@ The interaction between modularity and extensibility therefore
 extends the scope of useful uses for modularity
 compared to modularity without extensibility.
 Programming with modularity and extensibility is more modular than modularity alone!
+This makes sense when you realize that when the software is divided into
+small modular extensions many of which conspire to define each bigger target,
+there are more modular entities than when there is only
+one modular entity for each of these bigger targets.
+Modular extensibility enables modularity at a finer grain.
 
 There is another important shift between modularity alone and modularity with extensibility,
 that we quietly smuggled in so far,
@@ -3387,7 +3466,10 @@ and even more so for Prototype OO.
 @subsection{Rebuilding Prototype OO}
 
 @subsubsection{What did we just do?}
-and we will see shortly extend it to support more features
+In the previous section, we reconstructed, in two short lines of code,
+a minimal yet recognizable model OO from first principles,
+the principles being modularity, extensibility, and first-class entities.
+We will see shortly extend this model to support more features
 (at the cost of more lines of code).
 Yet our “object system” has no classes, and indeed no objects at all:
 instead, like the object system of Yale T Scheme @~cite{adams88oopscheme},
@@ -3553,7 +3635,40 @@ The modularity of conflation is already exploited at scale
 for large software distributions on one or many machines,
 using GCL, Jsonnet or Nix as (pure functional) Prototype OO languages.
 
-@subsection{Rebuilding Classes}
+@subsection[#:tag "Rebuilding_Classes"]{Rebuilding Classes}
+
+@subsubsection{Implicit Recognition of Conflation by Class OO Practitioners}
+
+The notion of Conflation of specification as target, that we presented,
+is largely unknown by practitioners of OO, and
+seems to only have been made explicit as late as 2021 @~cite{poof2021}.
+
+The knowledge of it is implicit in studies of typed object systems in the 1990s,
+where by necessity authors must somehow account for the discrepancy between
+inheritance and subtyping (of target types):
+for instance, Fisher @~cite{Fisher1996thesis} distinguishes @c{pro} types
+for objects-as-extensible-prototypes and @c{obj} types for objects-as-records;
+and Bruce complains that “the notions of type and class are often confounded
+in object-oriented programming languages” and there again distinguishes subtyping for types
+and inheritance for classes.
+Yet both fail to distinguish specification and target
+as syntactically or semantically separate entities in their base languages.
+
+Yet, even common practitionners of OO
+implicitly recognize the conflated concepts of specification and target
+when make the distinction between abstract classes and concrete classes:
+@;{TODO
+  @~cite{stroustrup1996hopl} for abstract class? What of concrete class?
+  Grok says both are first found in publication in Stroustrup's "C++ The Language" (1st Ed) 1986
+}
+an abstract class is one that is only used for its specification,
+to inherit from it;
+a concrete class is one that is only used for its target type,
+to use its methods to create and process class instances.
+
+Thus, through all the confusing formal semantics or lack thereof for class OO languages so far,
+practitioners have felt the need to distinguish specification and target,
+even though no one seems to have been able to fully tease apart the concepts up until recently.
 
 @subsubsection{A Class is a Prototype for a Type}
 
@@ -3590,7 +3705,7 @@ we meant it quite literally.
 
 @subsubsection{Simple First-Class Type Descriptors}
 
-Not desiring to introduce a theory of compilation in this paper
+Not desiring to introduce a theory of compilation in this essay
 in addition to a theory of OO, we will only illustrate how to build
 first-class Class OO at runtime on top of Prototype OO,
 using a technique described by Lieberman @~cite{Lieberman1986},
@@ -3599,7 +3714,7 @@ before web browsers ubiquitously adopted ES6 classes@~cite{EcmaScript:15}. @;{CI
 
 A type descriptor will typically have methods as follows:
 @itemize[
-@item{A method @c{instance-methods} returning a record of object methods}
+@item{A method @c{instance-methods} returning a record of instance methods.}
 @item{For record types, a method @c{instance-fields}, list of field descriptors,
       each of them a record with fields @c{name} and @c{type} (and possibly more).
       Also, self-describing records (the default)
@@ -3637,25 +3752,24 @@ with the instance as first argument.
 Note that, if we use the Nix approach of zero-cost casting to target when the target is a record,
 then we can use the very same representation for type descriptors, whether they were generated
 as the fixpoint target of a specification, or directly created as records without such a fixpoint.
+This kind of representation is notably useful
+for bootstrapping a Meta-Object Protocol@~cite{amop}.
 
 As for “class methods”, they can be regular methods of the type descriptor,
 or there can be a method @c{class-methods} in the type descriptor containing a record of them.
 
-@subsubsection{Implicit Recognition of Conflation by Class OO Practitioners}
+@;{
+  TODO Discuss encodings and types?
 
-Even though the notion of Conflation, that we presented,
-is largely unknown by practitioners of OO, and
-seems to only have been made explicit as late as 2021 @~cite{poof2021},
-it is implicitly present in the distinction that many practitioners of Class OO make
-between abstract and concrete classes:
-an abstract class is one that is only used for its specification,
-to inherit from it;
-a concrete class is one that is only used for its target type,
-to use its methods to create and process class instances.
+Encoding as record of pre-methods
+[AC96c] M. Abadi and L. Cardelli. A theory of primitive objects: Untyped and first-order
+        systems. Information and Computation, 125(2):78-102, 1996. Earlier version appeared
+        in TACS '94 proceedings, LNCS 789.
 
-Thus, through all the confusing formal semantics or lack thereof for class OO languages so far,
-practitioners have felt the need to distinguish specification and target,
-even though no one seems to have been able to fully tease apart the concepts up until recently.
+Reppy, Rieke "Classes in ObjectML via Modules 1996 FOOL3
+
+BruceCardelliPierce2006
+}
 
 @subsubsection{A Class is Second-Class in Most Class OO}
 
@@ -3795,8 +3909,11 @@ once you combine modularity and extensibility, what more first-class,
 then open recursion through the module context becomes the entire point,
 and your typesystem must confront it.
 
-Partial knowledge about the module context, once translated in the world of types,
-is subtyping: a record type contains not just records
+Extensibility, which consists in contributing partial knowledge
+about the computation being built,
+once translated in the world of types, is subtyping.
+In the common case of records,
+a record type contains not just records
 that exactly bind given identifiers to given types,
 but also records with additional bound identifiers, and existing identifiers bound to subtypes.
 Record types form a subtyping hierarchy; subtyping is a partial order among types;
@@ -3818,20 +3935,24 @@ is a subtype of the “super” class being extended.
 This theory is implicitly present in Hoare’s seminal 1965 paper @~cite{hoare1965record},
 has dominated the type theory of OO
 until fully debunked in the late 1980s @~cite{cook1989inheritance},
-and is continually being reinvented even when not explicitly transmitted.
-Indeed it actually works well in the simple “non-recursive” case that we will characterize,
-even though we will see that it is inconsistent in more complex cases.
+and is still very active even after the debunking,
+continually reinvented even when not explicitly transmitted.
+Indeed the theory actually works well in the simple “non-recursive” case that we will characterize;
+and though we will see that it is inconsistent in more complex cases,
+it will emotionally satisfy those who care more about feeling like they understand
+rather than actually understanding, especially if they have trouble with recursion.
 
 As a simple variant of the NNOOTT, consider first the Simply Typed Lambda-Calculus (STLC)
 or some more elaborate but still well-understood variant of the λ-calculus,
 extended with primitives for the language’s builtin constructs and standard libraries,
 and (if not already available) a minimal set of features for OO:
-indexed products for records, subtyping and type intersections.
-In this NNOOTT variant, a modular extensible specification would have a type of the form
+indexed products for records, subtyping (c{⊂} or @c{<:}) and type intersections (@c{∩}).
+In this NNOOTT variant, a NNOOTT modular extensible specification
+would have a type of the form
 @Code{
-type MESpecN required inherited provided =
+type NMESpec required inherited provided =
   required → inherited → inherited∩provided}
-A @c{MESpecN} is a type with three parameters,
+A @c{NMESpec} is a type with three parameters,
 the type @c{required} of the information required by the specification from the module context,
 the type @c{inherited} of the information inherited and to be extended,
 and the type @c{provided} of the information provided to extend what is inherited.
@@ -3857,8 +3978,8 @@ The @c{mix} operator chains two mixins, with the asymmetry that
 information provided by the parent (parameter @c{p2} for the second argument)
 can be used by the child (first argument), but not the other way around.
 @Code{
-fix : top → MESpecN target top target → target
-mix : MESpecN r1 i1∩p2 p1 → MESpecN r2 i2 p2 → MESpecN r1∩r2 i1∩i2 p1∩p2
+fix : top → NMESpec target top target → target
+mix : NMESpec r1 i1∩p2 p1 → NMESpec r2 i2 p2 → NMESpec r1∩r2 i1∩i2 p1∩p2
 }
 
 This model is simple and intuitive, and explains how inheritance works:
@@ -3884,12 +4005,12 @@ as being “(constant) sets” @~cite{Jacobs1995ObjectsAC}@xnote[","]{
   in a single word, what more, in parentheses, at the end of section 2,
   without any discussion whatsoever as to the momentous significance of that word.
   A discussion of that significance could in itself have turned this bad paper into a stellar one.
-  Instead, the smuggling of an all-important hypothesis makes the paper bad, and misleading at best.
+  Instead, the smuggling of an all-important hypothesis makes the paper misleading at best.
   His subsequent paper has the slightly more precise sentence we also quote,
   and its section 2.1 tries to paper over what it calls “anomalies of inheritance”
   (actually, the general case), by separating methods into a “core” part
-  where fields are declared that matter for inheritance,
-  where his hypothesis applies, and “definitions” that must be reduced to the core part.
+  where fields are declared, that matter for typing inheritance,
+  and for which his hypothesis applies, and “definitions” that must be reduced to the core part.
   The conference reviewing committees really dropped the ball on accepting those papers,
   though that section 2.1 was probably the result of at least one reviewer doing his job.
   Did reviewers overall let themselves impressed by formalism beyond their ability to judge,
@@ -3938,7 +4059,7 @@ which he elaborates in another paper @~cite{Jacobs1996InheritanceAC}
 as meaning «not depending on the “unknown” type X (of self).»
 This makes his paper inapplicable to most OO, but interestingly,
 precisely identifies the subset of OO for which inheritance coincides with subtyping,
-or, to speak more precisely, subtyping of OO specifications matches is equivalent to
+or, to speak more precisely, subtyping of OO specifications matches equivalent to
 subtyping of their target types.
 
 Indeed, in general, specifications may contain so called “binary methods”
@@ -3948,40 +4069,50 @@ or algebraic operations (e.g. addition, multiplication, composition), etc.;
 and beyond these, they can actually contain arbitrary higher-order functions
 involving the target type in zero, one or many positions,
 both “negative” (as an overall argument)
-or “positive” (as an overall result),
+or “positive” (as an overall result), @; TODO cite Felleisen???
 or as parameters to type-level functions, “templates”, etc.
 These methods will break the precondition for subclassing being subtyping.
 And such methods are not an “advanced” or “anomalous” case, but quintessential, since
 even the original SIMULA 67 paper @~cite{Simula1967} includes the example of
 a class @c{linkage} that defines references @c{suc} and @c{pred},
 that classes can inherit from so that their element shall be part of a doubly linked list.
+See also how in @seclink{Interaction_of_Modularity_and_Extensibility}
+we argued that while you can eschew support for fixpoints through the module context
+when considering modularity or extensibility separately,
+open recursion through module contexts becomes essential when considering them together.
+In the general and common case in which a class or prototype specification
+includes self-reference, subtyping and subclassing are very different,
+a crucial distinction that was first elucidated in @~cite{cook1989inheritance}.
 
 The NNOOTT can be “saved” by reserving static typing to non-self-referential methods,
 whereas any self-reference must dynamically typed, by going through a type @c{Any},
 or some other “base” type or class, at least as far the the typechecker is involved.
-Dereference of an element of the target type will then have to go through some “type cast”,
-either safe (dynamically checked at runtime) or unsafe (program may misbehave at runtime)
+In many languages, this self-reference already has to go through an explicit pointer (e.g. in C++)
+or a boxing constructor (e.g. in Haskell, with a newtype @c{Fix} for a generic fixpoint
+while the open modular specification goes into a “recursion scheme”);
+thus the NNOOTT does not so much introduce this extra indirection step needed for recursion
+as it makes it obvious—and makes it dynamically rather than statically typed.
+To save the NNOOTT, dereference of an element of the target type will then
+have to go through some “type cast”, either safe (dynamically checked at runtime) or
+unsafe (program may silently misbehave at runtime if called with the wrong argument),
 to compensate for the imprecision of the type system.
-
-The crucial distinction between subtyping and subclassing
-was first elucidated in @~cite{cook1989inheritance}.
 
 @subsubsection{Beyond the NNOOTT}
 
 The key to dispelling the
-“conflation of subtyping and inheritance” @; TODO @~cite{Fisher1996}
-or the “conflation of class and types” @; TODO @~cite{Bruce1997}
+“conflation of subtyping and inheritance” @~cite{Fisher1996thesis}
+or the “conflation of class and types” @~cite{SubtypingMatch1997}
 is indeed first to have dispelled, as we just did previously,
 the conflation of specification and target.
-We can then treat specification and target separately, which simplifies everything,
-and then just notice that the two are often referenced together in an implicit product,
-yet remain distinct and to be reasoned about separately.
+Thereafter, OO semantics becomes simple,
+and we notice that though the two are often referenced together in an implicit product,
+they remain distinct, and we must be careful to always treat them distinctly.
 
-Then, we not that what most people who say “subtyping” in literature actually mean
-@emph{subtyping for the target type of a class},
+We then realize what most people actually mean by “subtyping” in extent literature is
+@emph{subtyping for the target type of a class} (or target prototype),
 that is distinct from
-@emph{subtyping for the specification type of a class},
-that Kim Bruce calls “matching”. @; TODO cite
+@emph{subtyping for the specification type of a class} (or prototype),
+that Kim Bruce calls “matching” @~cite{SubtypingMatch1997}. @; TODO cite further
 But most people, being confused about the conflation of specification and target,
 don’t conceptualize the distinction, and either
 try to treat them as if it were the same thing,
@@ -3997,19 +4128,40 @@ or to be more mathematically precise,
 @bold{fixpointing does not distribute over subtyping}:
 if @c{F} and @c{G} are parametric types,
 i.e. type-level functions from @c{Type} to @c{Type},
-and @c{F t ⊂ G t} for all type @c{t}
-(where @c{⊂}, sometimes written @c{<:}, is the standard notation for “is a subtype of”),
+and @c{F ⊂ G} (where @c{⊂}, sometimes written @c{<:}, is the standard notation for “is a subtype of”,
+and for elements of @c{Type → Type} means @c{∀ t, F t ⊂ G t}),
 it does not follow that @c{Y F ⊂ Y G} where @c{Y} is the fixpoint operator for types.
 
-A mixin is now an entity parameterized by the type @c{self} of the module context
-(Bruce calls it @c{MyType}):
+A more precise view of a modular extensible specification is thus as
+an entity parameterized by the varying type @c{self} of the module context
+(that Bruce calls @c{MyType} @~cite{bruce1996typing SubtypingMatch1997}). @; TODO cite further
+As compared to the previous parametric type @c{NMESpec} that is parametrized by types @c{r i d},
+this parametric type @c{MESpec} is itself parametrized by parametric types @c{r i d}
+that each take the module context type @c{self} as parameter:
+
 @Code{
 type MESpec referenced inherited defined =
-  ∀ self ⊂ (referenced self),
-    ∀ super ⊂ (inherited self) ⇒
-        self → super → super∩(defined self)}
+  ∀ self ⊂ referenced self,
+    ∀ super ⊂ inherited self ⇒
+        self → super → super ∩ (defined self)}
 
-Our two OO primitives have the follow type:
+Notice how the type @c{self} of the module context
+is @emph{recursively} constrained by @c{self ⊂ referenced self}),
+whereas the type @c{super} of the value in focus being extended
+is constrained by @c{super ⊂ inherited self},
+and the returning a value is of type @c{super∩defined self},
+and there is no direct recursion there
+(but there can be indirectly if the focus is itself referenced via self somehow).
+Also notice how the quantification of @c{self} and @c{super} pretty much
+forces those functions to be well-behaved with respect to gracefully passing through
+any call to a method they do not define, override or otherwise handle.
+Finally, notice how, as with the simpler NNOOTT variant above,
+the types @c{self} and @c{referenced self} refer to the module context,
+whereas the types @c{super} and @c{defined self} refer to some value in focus,
+that isn’t at all the same as the module context
+for open modular extensible specifications in general.
+
+Our two OO primitives then have the follow type:
 
 @Code{
 fix : top → MESpec referenced inherited defined → self |
@@ -4017,31 +4169,103 @@ fix : top → MESpec referenced inherited defined → self |
   referenced self ⊂ self,
   self ⊂ inherited self ∩ defined self
 
-mix : Mixin r1 i1∩d2 d1 → Mixin r2 i2 d2 → Mixin r1∩r2 i1∩i2 d1∩d2}
+mix : MESpec r1 i1∩d2 d1 → MESpec r2 i2 d2 → MESpec r1∩r2 i1∩i2 d1∩d2}
 
-The subtle difference between @c{MESpec} and the previous @c{MESpecN} is that
-each parameter of @c{MESpec} is a parametric type, i.e. a function @c{Type → Type},
-whereas each parameter of @c{MESpecN} was simple a @c{Type}.
 In the @c{fix} function, we implicitly define a fixpoint @c{self}
 via suitable recursive subtyping constraints.
-We could similarly define @c{self = Y (inherited ∩ defined)}
+We could instead make the last constraint a definition
+@c{self = Y (inherited ∩ defined)}
 and check the two subtyping constraints about @c{top} and @c{referenced}.
+As for the type of @c{mix}, though it looks identical with @c{MESpec}
+as the NNOOTT type previously defined with @c{NMESpec},
+there is an important but subtle difference:
+with @c{MESpec}, the arguments being intersected
+are not of kind @c{Type} as with @c{NMESpec},
+but @c{Type → Type}, where
+given two parametric types @c{f} and @c{g},
+the intersection @c{f∩g} is defined by @c{(f∩g)(x) = f(x)∩g(x)}.
+Indeed, the intersection operation is defined polymorphically, and
+in a mutually recursive way for types, functions over types, etc.
 
-Note that for the type of @c{mix} as well as for the fixpoint definition just above,
-there also is the subtle difference that given intersection @c{∩} for types,
-the intersection for functions of kind @c{Type → Type} is defined by
-@c{(f∩g)(x) = f(x)∩g(x)}. Actually, the intersection operation is itself defined
-polymorphically, and in a mutually recursive way for types, functions over types, etc.
+@subsubsection{Advantages of OO as Modular Extensible Specifications for Types}
 
-@;{
-You can support modularity and eschew support for fixpoints through the module context,
-by requiring recursive and mutually recursive types to be resolved before linking.
-But as in @seclink{Interaction_of_Modularity_and_Extensibility},
-extensibility together with modularity makes it essential to support open recursion
-through module contexts.
+By defining OO in terms of the λ-calculus, indeed in two definitions @c{mix} and @c{fix},
+we can do away with the vast complexity of “object calculi” of the 1990s,
+@; TODO cite Cardelli, Fisher, Bruce, Pierce, etc.
+and use regular, familiar and well-understood concepts of functional programming such as
+subtyping, bounded parametric types, fixpoints, existential types, etc.
+No more @c{self} or @c{MyType} “pseudo-variables” with complex “matching” rules,
+just regular variables @c{self} or @c{MyType} or however the user wants to name them,
+that follow regular semantics, as part of regular λ-terms@xnote["."]{
+  Syntactic sugar may of course be provided for optional use,
+  that can automatically be macro-expanded away through local expansion only;
+  but the ability to think directly in terms of the expanded term,
+  with simple familiar universal logic constructs that are not ad hoc but from first principles,
+  is most invaluable.
 }
+OO can be defined and studied without the need for ad hoc OO-specific magic,
+making explanations readily accessible to the public.
+Indeed, defining OO types in term of LaTeX deduction rules for ad hoc OO primitives
+is just programming in an informal, bug-ridden metalanguage that nobody is familiar with,
+with no tooling, no documentation, no tests,
+no actual implementation,
+and indeed no agreed upon syntax much less semantics@xnote["…"]{
+  See Guy Steele’s keynote “It's Time for a New Old Language”
+  at the Principles and Practice of Parallel Programming 2017 conference
+  about the “Computer Science Metanotation” found in scientific publications.
+}
+the very opposite of the formality the authors affect.
+
+Not having OO-specific magic also means that when we add features to OO,
+as we will demonstrate in the rest of this essay, such as single or multiple inheritance,
+method combinations, multiple dispatch, etc.,
+we don’t have to update the language
+to use increasingly more complex primitives for declaration and use of prototypes or classes.
+By contrast, the “ad hoc logic” approach grows in complexity so fast
+that authors soon may have to stop adding features
+or find themselves incapable of reasoning about the result
+because the rules for those “primitives” boggle the mind@xnote["."]{
+  Authors of ad hoc OO logic primitives also soon find themselves
+  incapable of fitting a complete specification within the limits of a conference paper,
+  what more with intelligible explanations, what more in a way that anyone will read.
+  The approach is too limited to deal even with the features 1979 OO @~cite{Cannon1979},
+  much less those of more modern systems.
+  Meanwhile, readers and users (if any) of systems described with ad hoc primitives
+  have to completely retool their in-brain model at every small change of feature,
+  or introduce misunderstandings and bugs,
+  instead of being able to follow a solidly known logic that doesn’t vary with features.
+}
+Instead, we can let logic and typing rules be as simple as possible,
+yet construct our object features to be as sophisticated as we want,
+without a gap in reasoning ability, or inconsistency in the primitives.
+
+Our encoding of OO in terms of “modular extensible specification”, functions of the form
+@c{mySpec (self : Context, super : Focus) : Focus}, where in the general “open” case,
+the value under @c{Focus} is different from the @c{Context}, is also very versatile
+by comparison to other encodings, that are typically quite rigid, specialized for classes,
+and unable to deal with OO features and extensions.
+Beyond closed specifications for classes, or for more general prototypes,
+our @c{MESpec} type can scale down to open specifications for individual methods or sub-methods,
+that partake in method combination;
+it can scale up to open specifications for groups of mutually defined or nested classes or prototypes,
+all the way to open or closed specifications for entire ecosystems.
+More importantly, our general notion of “modular extensible specification”
+opens an entire universe of algebraically well-behaved composability
+in the spectrum from method to ecosystem;
+the way that submethods are grouped into methods, methods into prototypes,
+prototypes into classes, classes into libraries, libraries into ecosystems, etc.,
+can follow arbitrary organizational patterns largely orthogonal to OO,
+that will be shaped the evolving needs of the programmers,
+yet will at all times benefit from the modularity and extensibility of OO.
+OO can be one simple feature orthogonal to plenty of other features
+(products and sums, scoping, etc.) to achieve in a @emph{reasonable} manner @; TODO cite
+what too many languages achieve my making “classes” a be-all, end-all ball of mud of
+more features than can fit in anyone’s head, interacting in sometimes unpredictable ways,
+as is the case in languages like C++, Java, C#, etc.
 
 @;{
+XXX
+
 Wegner and Cardelli 1985
 
 Cardelli 1988
@@ -4078,7 +4302,24 @@ Andrew K. Wright & Robert Cartwright
 "A practical soft type system for Scheme"
 1997
 
-}
+
+Why do "unary methods" work in class OO, but not e.g. binary methods?
+Because you moved construction / destruction out of the way,
+so all you're doing is consuming data,
+in a way that (as far as types are concerned) is extensible.
+(if considered not trivially returning unit, but effectful with linear resources to forcibly manage).
+Also, when an object of same type is linearly returned,
+there is one obvious place from which to copy the extended rest of the object;
+when multiple objects are returned... that is still a possible interpretation
+(and though that's seldom the useful one, that's enough for the type theorist).
+
+
+When "typeclass" prototypes are made, and the creation methods are no longer "special",
+but fully part of the interface, much more uniform approach,
+all that fake "co-algebraic" bullshit disappears.
+
+A prototype can have 0, 1, 2, n, a fixed or variable number of types,
+with interesting mutual relations and functions.
 
 Kim Bruce, @;CITE 1993 1994 1995
 thereafter gave sounder types to OO,
@@ -4094,6 +4335,151 @@ and for its failure modes that tripped so many good programmers
 into wrongfully trying to equate inheritance and subtyping.
 
 @;{ CITE }
+
+Meanwhile, the relationship between a module context and a focused value being
+modularly and extensibly specified within it is characterized by
+a @emph{lens} @~cite{Foster2007CombinatorsFB},
+generalizing a path of identifiers to some arbitrary way of accessing a subcomputation.
+
+}
+
+@subsubsection{Typing First-Class OO}
+
+We are aiming at understanding OO as @emph{first-class} modular extensibility,
+so we need to identify what kind of types are suitable for that.
+The hard part is to type @emph{classes}, and more generally specifications
+wherein the type of the target recursively refers to itself
+through the open recursion on the module context.
+Note that types for second-class classes can be easily deduced
+from types for first-class classes
+(by holding specifications and their fixpoints as compile-time constants),
+but not at all the other way around
+(you can’t easily unmake such strong simplifying assumptions).
+Happily, our construction neatly factors the problem of OO
+into two related but mostly independent parts:
+first, understanding the target, and second, understanding their instantiation via fixpoint.
+
+We already discussed in @secref{Rebuilding_Classes}
+how a class is a prototype for a type descriptor:
+the target is a record that describes one type and a set of associated functions.
+The type is described as a table of field descriptors
+(assuming it’s a record type;
+or a list of variants for a tagged union, if such things are supported; etc.),
+a table of static methods, a table of object methods,
+possibly a table of constructors separate from static methods, etc.
+A type descriptor enables client software to be coded against its interface,
+i.e. being able to use the underlying data structures and algorithms
+without having to know the details and internals.
+
+A first-class type descriptor is a record whose type is existentially quantified:
+@; TODO cite Cardelli Wegner, Pierce Dω, Harper ML modules, Leroy Caml modules, etc. ???
+as per the Curry–Howard correspondence, it is a witness of the proposition according to which
+“there is a type @c{T} that has this interface”, where the interface may include field getters
+(functions of type @c{T → F} for some field value @c{F}),
+some field setters (functions of type @c{T → F → T} for a pure linear representation,
+or @c{T → F @(⇝) 1} if we denote by @c{@(⇝)} a “function” with side-effects),
+binary tests (functions of type @c{T → T → 2}),
+binary operations (functions of type @c{T → T → T}),
+constructors for @c{T} (functions that create a new value of type @c{T},
+at least some of which without access to a previous value of type @c{T}),
+but more generally any number of functions, including higher-order functions,
+that may include the type @c{T} zero, one or arbitrarily many times
+in any position “positive” or “negative”, etc.
+So far, this is the kind of things you could write with first-class ML modules, @; TODO cite
+which embodies first-class modularity, but not modular extensibility.
+
+Now, if the type system includes subtypes, and fixpoints involving
+open recursion with recursive subtypes, then
+those first-class module values can be the targets of modular extensible specifications.
+
+@;{ Discuss constructor being included in the signature, or outside it.
+  In a "typeclass" approach, we can locally open the existential type and reuse it a lot of times.
+  rather than go through the whole class wrapper all the times... and then,
+  still have to make sure that you're using the same wrapper or else.
+
+  "encapsulation" meh. We don't need every value in the computation to be encapsulated
+  in an extra layer of records; that is emphatically not the point of OO.
+  The existentially quantified record that describes the computation is already
+  all the encapsulation we need and want!
+  The computation that was modularly extensibly specified can directly handle
+  numbers and pointers, APL tables, etc., and can deal with any paradigm,
+  not just object graph of encapsulated data.
+  Now, if the underlying language, like Smalltalk,
+  exposes its primitive types with a uniform interface compatible with its “object” records,
+  that’s great, nothing extra to do there;
+  then you have “pure OO”.
+  @xnote["."]{
+    Even then, primitive types are not usually be extensible,
+    though tricks a la CLOS MOP could be used to make them so. @~cite{AMOP}
+  }
+
+  cite TAPL ? See papers cited by TAPL ?
+}
+
+@subsubsection{First-Class OO Beyond Classes}
+
+In general, a record may be existentially quantified zero, one, or arbitrarily many times:
+a simple data record needs no such quantification;
+but a record encoding the “dictionary” of an arbitrarily complex Haskell “typeclass” @; TODO cite
+may be quantified over several type variables, even variables themselves of higher kinds
+(such as @c{Type → Type → Type}), etc.
+A record may thus represent algorithms involving arbitrarily large families of related types:
+tree algorithms parameterized by objects with a total order,
+accelerated “zipper-based” algorithms parameterized by
+a data type and a “derivative” of the data type,
+database algorithms parameterized by parameterized tree algorithms, etc.
+Being first-class, these records can be computed at runtime to select
+a specific, optimized and correct algorithm
+tailored to user-specified configuration or dynamic runtime data.
+
+To build such records, one may in turn make them the targets of modular extensible specifications,
+such that first-class OO can express much more than mere “classes”,
+especially so than second-class classes of traditional Class OO.
+First-class OO can directly express sets of cooperating values, types and algorithms
+parameterized by other values, types and algorithms.
+
+or to systems that allow for existentially quantified records but without modular extensibility.
+@;{TODO CITE Rideau}
+
+Note how there is a stylistic difference between class and typeclass presentation of OO.
+
+Whether 
+functions involving type constructors (say, for arrays, lists, tables, trees, etc.)@xnote[","]{
+
+
+Classes as object-generator see Cook87, A self-ish model of inheritance
+or Cook89a A Denotational Semantics of Inheritance, thesis
+
+
+
+Visibility
+"Private": just use scoping to declare a lexical variable that is consumed before you return anything;
+not even export anywhere.
+"Semi-Private": make the labels identifiers rather than symbols, and don't import or export some,
+or be selective what is exported to whom (e.g. have protected "internals" modules?)
+
+}
+
+
+
+
+Later, a second-class class is just a class
+that is statically known as a constant at compile-time,
+which enables many simplifications and optimizations,
+such as lambda-lifting (making all classes global objects modulo class parameters),
+and monomorphization (statically inlining each among the finite number of cases
+of compile-time constant parameters to the class),
+and inlining globally constant classes away.
+But if we can solve the more general case of first-class classes in a prototype OO system,
+then the special case of second-class classes falls as trivial.
+
+The target for a class is a type-descriptor:
+
+In general, a record may carry not just one type, but also zero, two or more.
+From the point of view of types, you “just”
+
+Situation very similar to ML first-class modules vs second-class modules,
+just with added fixpoints and subtyping for modular extensibility.
 
 
 
@@ -4379,14 +4765,15 @@ unless maybe that meta-language is exposed to the user via reflection.
 
 For evidence of whether lazy evaluation does or doesn’t offer a better model of OO,
 in addition to the Prototype OO languages we will discuss,
-one has to look at those few Class OO languages that do not have such restrictions in handling prototypes.
+one has to look at those few Class OO languages
+that do not have such restrictions in handling prototypes.
 At that point, a notable case is C++, that offers a Turing complete language at compile-time,
 template metaprogramming;
 and at least since C++11, that compile-time language indeed is
 a @emph{pure functional, lazy, dynamically typed} Prototype OO language,
 with the @c{using} or @c{typedef} keywords introducing lazy let-bindings,
 the @c{constexpr} keyword enabling arithmetics and other primitive computations,
-and the entity known as statically typed classes at runtime
+and the entities known as statically typed classes at runtime
 being actually dynamically typed prototypes at compile-time.
 @; TODO maybe C++14 for some of the semantics??
 @; TODO see appendix for examples
@@ -4543,3 +4930,7 @@ Just make sure you agree with anyone else that you will be directly sharing code
 
 
 @; Flavors combination vs C++ conflict https://x.com/Ngnghm/status/1980509375232885161
+@; https://cs.pomona.edu/~kim/FOOPL/prelim.pdf
+
+@; Discussion with James Noble and David Barbour: https://x.com/Ngnghm/status/1988891187340615763
+@; multiple inheritance

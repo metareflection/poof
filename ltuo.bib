@@ -323,7 +323,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   note={Stanford Artificial Intelligence Laboratory Memo AIM-293}
 }
 
-
 % Uses the word "prototypes", and has no classes. And multiple inheritance.
 @InProceedings{Borning1977,
   author = {Alan Hamilton Borning},
@@ -869,6 +868,22 @@ series = {OOPSLA '94}
   pages={3-37}
 }
 
+% https://www.researchgate.net/publication/225917432_Object_inheritance_beyond_subtyping
+% Yet another bullshit Category Theory application to the NNOOTT.
+% No warning about cluelessness
+% Tries to redefine "inheritance" as refinement, except that when it's "non-monotonic",
+% you only have a partial map, and anything goes (you said nothing). Shameful.
+@article{article,
+  author = {Costa, J. and Sernadas, Amilcar and Sernadas, Cristina},
+  year = {1994},
+  month = {06},
+  pages = {5-26},
+  title = {Object inheritance beyond subtyping},
+  volume = {31},
+  journal = {Acta Informatica},
+  doi = {10.1007/BF01178920}
+}
+
 % W7
 % and Sussman, Gerald Jay ???
 @PhDThesis{rees1995,
@@ -969,6 +984,55 @@ series = {OOPSLA '94}
   doi={10.1145/234286.1057828}
 }
 
+% PhDThesis
+@book{Fisher1996thesis,
+  title={Type Systems for object-oriented programming languages},
+  author={Fisher, Kathleen Shanahan},
+  year={1996},
+  publisher={Stanford University}
+}
+
+% Good explanation of the problems with the NNOOTT
+% "The notions of type and class are often confounded in object-oriented programming languages" p.5
+@article{bruce1996typing,
+  title={Typing in object-oriented languages: Achieving expressiveness and safety},
+  author={Bruce, Kim B},
+  journal={Unpublished, June},
+  year={1996}
+}
+
+% https://www.stroustrup.com/hopl2.pdf
+@inbook{stroustrup1996hopl,
+  author = {Stroustrup, Bjarne},
+  title = {A history of C++: 1979--1991},
+  year = {1996},
+  isbn = {0201895021},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/234286.1057836},
+  abstract = {This paper outlines the history of the C++ programming language. The emphasis is on the ideas, constraints, and people that shaped the language, rather than the minutiae of language features. Key design decisions relating to language features are discussed, but the focus is one the overall design goals and practical constraints. The evolution of C++ is traced from C with Classes to the current ANSI and ISO standards work and the explosion of use, interest, commercial activity, compilers, tools, environments, and libraries.},
+  booktitle = {History of Programming Languages---II},
+  pages = {699–769},
+  numpages = {71}
+}
+
+% InProceedings
+@Misc{SubtypingMatch1997,
+  doi={10.1007/BFb0053376},
+  author="Bruce, Kim B.
+and Petersen, Leaf
+and Fiech, Adrian",
+  editor="Ak{\c{s}}it, Mehmet
+and Matsuoka, Satoshi",
+  title="Subtyping is not a good ``match'' for object-oriented languages",
+  booktitle="ECOOP'97 --- Object-Oriented Programming",
+  year="1997",
+  publisher="Springer Berlin Heidelberg",
+  address="Berlin, Heidelberg",
+  pages="104--127",
+  abstract="We present the design and rationale of a new statically-typed object-oriented language, LOOM. LOOM, retains most of the features of the earlier language PolyTOIL. However the subtyping relation is dropped from LOOM in favor of the matching relation. ``Hash types'', which are denned in terms of matching, are introduced to provide some of the benefits of subtyping. These types can be used to provide support for heterogeneous data stuctures in LOOM. LOOM. is considerably simpler than PolyTOIL, yet is just as expressive. The type system for the language is decidable and provably type safe. The addition of modules to the language provides better control over information hiding and allows the provision of access like that of C++'s friends.",
+  ISBN="978-3-540-69127-3"
+}
 
 @Book{Abadi97atheory,
   author = {Martín Abadi and Luca Cardelli},
@@ -1051,9 +1115,11 @@ series = {OOPSLA '94}
   series = {ESEC/FSE-9}
 }
 
-% See notably chapter 32.
+% See notably chapter 18, 19, 24, 32.
 % downloaded from https://www.cs.sjtu.edu.cn/~kzhu/cs383/Pierce_Types_Programming_Languages.pdf
 % This post claims that TAPL introduces the term "Open Recursion" https://journal.stuffwithstuff.com/2013/08/26/what-is-open-recursion/
+% 32.10 Notes gives pointers to a lot of papers on types for OO.
+% ... see a system $F_{<:}^\omega$
 @Book{tapl,
   Author = {Pierce, Benjamin C.},
   Title = {Types and Programming Languages},
@@ -1381,6 +1447,23 @@ series = {OOPSLA '94}
   urldate = {2023-11-29}
 }
 
+
+% https://sci-hub.ru/https://link.springer.com/chapter/10.1007/978-3-319-30936-1_4
+% Has two elaborate examples of how inheritance can help better define software.
+% https://x.com/Ngnghm/status/1988891187340615763
+% It saddens me when three authors I love and respect wallow in disenlightening handwaving instead of seeking and bringing clarity.
+% It's not that the paper says anything outright false, but that it accepts complexity, ineffable semantics, and abandons the ambition of clear knowledge—all that in a vain attempt to thereby convince Wadler that inheritance is useful, by example.
+% Also, I find the examples long-winded. Maybe the one that takes on a Wadler paper is relevant to Wadler—but I would think the example was artificial even to him. And the Armstrong example is also way too much investment to the payoff.
+% Finally, the mistreatment of multiple inheritance, what more citing Cook 1990 and Snyder 1986 about "conflicts" when Cannon 1979 showed there needed not be conflicts (solution ignored by C++ but adopted by Lisp, Ruby, Python, Scala)... it feels like OO academia missed the train.
+@incollection{EssenceOfInheritance2016,
+  title={The Essence of Inheritance},
+  author={Black, Andrew P and Bruce, Kim B and Noble, James},
+  booktitle={A List of Successes That Can Change the World: Essays Dedicated to Philip Wadler on the Occasion of His 60th Birthday},
+  pages={73--94},
+  year={2016},
+  publisher={Springer}
+}
+
 @Article{Pickering_2017,
   title={Profunctor Optics: Modular Data Accessors},
   volume={1},
@@ -1503,13 +1586,10 @@ series = {OOPSLA '94}
 
 % 2000 Oleg Kiselyov USENET post on okmij.org on the possibility of a pure variant of YASOS ?
 
-
 % Featherweight Jigsaw - Replacing inheritance by composition in Java-like languages
 % https://dl.acm.org/doi/10.1016/j.ic.2012.02.004
 
 % C++ template lambda calculus https://gist.github.com/glaebhoerl/8970f682958826ed36f9
-
-% Kathleen Fisher’s thesis
 
 % TODO: trace prototypes back to earlier Actor systems???
 %
@@ -1660,11 +1740,37 @@ series = {OOPSLA '94}
 }
 
 % https://github.com/namin/dot
+% https://namin.seas.harvard.edu/pubs/fool-dot.pdf
+% More co-authors
 @InProceedings{Amin2016DependentOT,
   title={Dependent Object Types},
-  author={Nada Amin},
+  author={Nada Amin, Adriaan Moors, Martin Odersky},
   year={2016},
   url={https://api.semanticscholar.org/CorpusID:265751928}
+}
+
+% https://sci-hub.ru/https://link.springer.com/article/10.1007/BF01178920
+% InProceedings
+% Review of object inheritance for prototypes.
+% Discusses multiple inheritance, but fails to cite Ani, ThingLab, T, Slate, Sheeple.
+% Only passingly discusses super linearization or mixin inheritance. Sad.
+@Misc{oiwc2016,
+  author =	{Jones, Timothy and Homer, Michael and Noble, James and Bruce, Kim},
+  title =	{{Object Inheritance Without Classes}},
+  booktitle =	{30th European Conference on Object-Oriented Programming (ECOOP 2016)},
+  pages =	{13:1--13:26},
+  series =	{Leibniz International Proceedings in Informatics (LIPIcs)},
+  ISBN =	{978-3-95977-014-9},
+  ISSN =	{1868-8969},
+  year =	{2016},
+  volume =	{56},
+  editor =	{Krishnamurthi, Shriram and Lerner, Benjamin S.},
+  publisher =	{Schloss Dagstuhl -- Leibniz-Zentrum f{\"u}r Informatik},
+  address =	{Dagstuhl, Germany},
+  URL =		{https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.ECOOP.2016.13},
+  URN =		{urn:nbn:de:0030-drops-61077},
+  doi =		{10.4230/LIPIcs.ECOOP.2016.13},
+  annote =	{Keywords: Inheritance, Objects, Classes, Operational semantics}
 }
 
 % Guy Steele "Objects have not failed" 2002 https://www.dreamsongs.com/ObjectsHaveNotFailedNarr.html
@@ -1745,6 +1851,17 @@ series = {OOPSLA '94}
 
 % Parents are Shared Parts: Inheritance and Encapsulation in Self
 % Craig Chambers, David Ungar, Bay-Wei Chang, and Urs Hölzle
+
+% Studies λ-calculus with polymorphism, meets and joins, expresses naturals and others in it.
+% Discusses the need for type annotations due to undecidable typechecking without.
+% Does not discuss general fixpoints, though implicitly can deal with recursion for numbers.
+% Fun, but not applicable to OO.
+@article{pierce1991programming,
+  title={Programming with intersection types, union types, and polymorphism},
+  author={Pierce, Benjamin C},
+  year={1991},
+  publisher={Carnegie Mellon University}
+}
 
 @InProceedings{parentsSharedParts1991,
   title={Parents are Shared Parts of Objects: Inheritance and Encapsulation in SELF},
@@ -1851,3 +1968,75 @@ numpages = {8}
   }
 }
 
+% Category theory:
+
+% Category Theory in Programming
+% Noah Ma <noahstorym@gmail.com>
+% https://docs.racket-lang.org/ctp/index.html
+%
+
+@book{cct1988,
+  author = {Rydeheard, David E. and Burstall, Rod M.},
+  title = {Computational category theory},
+  year = {1988},
+  ISBN = {0131627368},
+  doi={10.5555/49340},
+  publisher = {Prentice Hall International (UK) Ltd.},
+  url = {https://www.cs.man.ac.uk/~david/categories/book/book.pdf}
+}
+
+@article{mitchell1988abstract,
+  title={Abstract types have existential type},
+  author={Mitchell, John C and Plotkin, Gordon D},
+  journal={ACM Transactions on Programming Languages and Systems (TOPLAS)},
+  volume={10},
+  number={3},
+  pages={470--502},
+  year={1988},
+  publisher={ACM New York, NY, USA}
+}
+
+% https://dl.acm.org/doi/pdf/10.1145/174675.176927
+% Problem is that subtyping is not decidable
+% @InProceedings
+@Misc{harper1994modules,
+  title={A type-theoretic approach to higher-order modules with sharing},
+  author={Harper, Robert and Lillibridge, Mark},
+  booktitle={Proceedings of the 21st ACM SIGPLAN-SIGACT symposium on Principles of programming languages},
+  pages={123--137},
+  year={1994}
+}
+
+% Cardelli Wegner 1985
+
+% Introduces Recursion Schemes. Heavy on math notation.
+% Kind of category theory
+@inproceedings{bananas1991,
+  author = {Meijer, Erik and Fokkinga, Maarten and Paterson, Ross},
+  title = {Functional programming with bananas, lenses, envelopes and barbed wire},
+  year = {1991},
+  isbn = {0387543961},
+  publisher = {Springer-Verlag},
+  address = {Berlin, Heidelberg},
+  booktitle = {Proceedings of the 5th ACM Conference on Functional Programming Languages and Computer Architecture},
+  pages = {124–144},
+  numpages = {21},
+  location = {Cambridge, Massachusetts, USA}
+}
+
+% Recursion Scheme, FP & OOP ???
+@article{gibbons2009essence,
+  title={The essence of the iterator pattern},
+  author={Gibbons, Jeremy and Oliveira, Bruno C d S},
+  journal={Journal of functional programming},
+  volume={19},
+  number={3-4},
+  pages={377--402},
+  year={2009},
+  publisher={Cambridge University Press}
+}
+
+% See this article and its bibliography? https://scholarworks.iu.edu/iuswrrest/api/core/bitstreams/2706b860-ef5e-42b9-98c6-f29e3486220e/content
+
+% cite Ivan Sutherland's Sketchpad 1963
+% cite Douglas Engelbart's 1968 mother of all demos
