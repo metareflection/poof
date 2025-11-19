@@ -3466,15 +3466,15 @@ and even more so for Prototype OO.
 @subsection{Rebuilding Prototype OO}
 
 @subsubsection{What did we just do?}
-In the previous section, we reconstructed, in two short lines of code,
-a minimal yet recognizable model OO from first principles,
+In the previous section, we reconstructed
+a minimal yet recognizable model of OO from first principles,
 the principles being modularity, extensibility, and first-class entities.
 We will see shortly extend this model to support more features
 (at the cost of more lines of code).
 Yet our “object system” has no classes, and indeed no objects at all:
 instead, like the object system of Yale T Scheme @~cite{adams88oopscheme},
 on top of which its windowing system was built,
-it is made of records and their specifications,
+our system is made of records and their specifications,
 that enable about everything that a Prototype object system do,
 but without either records or specifications being objects nor prototypes.
 
@@ -3509,7 +3509,7 @@ and the prototype is implicitly typecast to either of its factors
 depending on context:
 when calling a method on a prototype, the target is used;
 when composing prototypes using inheritance, their respective specifications are used,
-then the resulting composed specification is wrapped into a pair of
+and then the resulting composed specification is wrapped into a pair of
 the specification and its target.
 
 Our implementation below makes this product explicit,
@@ -3635,40 +3635,42 @@ The modularity of conflation is already exploited at scale
 for large software distributions on one or many machines,
 using GCL, Jsonnet or Nix as (pure functional) Prototype OO languages.
 
-@subsection[#:tag "Rebuilding_Classes"]{Rebuilding Classes}
+@subsubsection{Implicit Recognition of Conflation by OO Practitioners}
 
-@subsubsection{Implicit Recognition of Conflation by Class OO Practitioners}
-
-The notion of Conflation of specification as target, that we presented,
-is largely unknown by practitioners of OO, and
+The notion of this @emph{conflation of specification and target},
+that we presented, is largely unknown by OO developers, and
 seems to only have been made explicit as late as 2021 @~cite{poof2021}.
+And yet, the knowledge of it is implicit in the OO community.
 
-The knowledge of it is implicit in studies of typed object systems in the 1990s,
-where by necessity authors must somehow account for the discrepancy between
-inheritance and subtyping (of target types):
-for instance, Fisher @~cite{Fisher1996thesis} distinguishes @c{pro} types
-for objects-as-extensible-prototypes and @c{obj} types for objects-as-records;
-and Bruce complains that “the notions of type and class are often confounded
-in object-oriented programming languages” and there again distinguishes subtyping for types
-and inheritance for classes.
-Yet both fail to distinguish specification and target
-as syntactically or semantically separate entities in their base languages.
-
-Yet, even common practitionners of OO
-implicitly recognize the conflated concepts of specification and target
-when make the distinction between abstract classes and concrete classes:
-@;{TODO
-  @~cite{stroustrup1996hopl} for abstract class? What of concrete class?
-  Grok says both are first found in publication in Stroustrup's "C++ The Language" (1st Ed) 1986
-}
+Common practitionners of OO have long implicitly recognized
+the conflated concepts of specification and target
+by making the distinction between abstract classes and concrete classes@~cite{johnson1988designing}:
 an abstract class is one that is only used for its specification,
 to inherit from it;
 a concrete class is one that is only used for its target type,
 to use its methods to create and process class instances.
+Experienced practitioners recommend keeping the two kinds of classes separate, and
+frown at inheriting from a concrete class,
+or trying to instantiate an abstract class.
 
-Thus, through all the confusing formal semantics or lack thereof for class OO languages so far,
-practitioners have felt the need to distinguish specification and target,
+Theorists have also long implicitly recognized the conflated concepts
+when working to develop sound type systems for OO:
+for instance, Fisher @~cite{Fisher1996thesis} distinguishes
+@c{pro} types for objects-as-prototypes and @c{obj} types for objects-as-records;
+and Bruce @~cite{bruce1996typing} complains that
+“the notions of type and class are often confounded in object-oriented programming languages” and
+there again distinguishes subtyping for a class’s target type (“subtyping”)
+and for its open specification (“matching”).
+Yet though they offer correct models for typing OO,
+both authors fail to distinguish specification and target
+as syntactically and semantically separate entities in their languages,
+leading to much extraneous complexity in their respective type systems.
+
+Thus, through all the confusion of class OO languages so far,
+both practitioners and theorists have felt the need to distinguish specification and target,
 even though no one seems to have been able to fully tease apart the concepts up until recently.
+
+@subsection[#:tag "Rebuilding_Classes"]{Rebuilding Classes}
 
 @subsubsection{A Class is a Prototype for a Type}
 
@@ -3698,7 +3700,9 @@ or it may be both.
 
 Whichever kind of type descriptors are used,
 Class OO is but a special case of Prototype OO,
-wherein a class is a prototype for a type.
+wherein a class is a prototype for a type,
+i.e. the conflation of a modular extensible specification for a type descriptor,
+and the type descriptor that is the fixpoint of that specification.
 Thus when we claimed in @seclink{classes_only} that
 the situation of classes in OO was similar to that of types in FP,
 we meant it quite literally.
@@ -3712,10 +3716,13 @@ using a technique described by Lieberman @~cite{Lieberman1986},
 and no doubt broadly similar to how many Class OO systems were implemented on top of Javascript
 before web browsers ubiquitously adopted ES6 classes@~cite{EcmaScript:15}. @;{CITE ???}
 
-A type descriptor will typically have methods as follows:
+A type descriptor (which in C++ would correspond to a @c{vtable})
+will typically have methods as follows:
 @itemize[
-@item{A method @c{instance-methods} returning a record of instance methods.}
-@item{For record types, a method @c{instance-fields}, list of field descriptors,
+@item{A method @c{instance-methods} returning a record of instance methods
+      (or, as a runtime optimization that requires more compile-time bookkeeping,
+      encode those object methods directly as methods of the type descritor).}
+@item{For record types, a method @c{instance-fields}, a record of field descriptors,
       each of them a record with fields @c{name} and @c{type} (and possibly more).
       Also, self-describing records (the default)
       will have a special field @c{#t} to hold their type descriptor
@@ -3755,8 +3762,28 @@ as the fixpoint target of a specification, or directly created as records withou
 This kind of representation is notably useful
 for bootstrapping a Meta-Object Protocol@~cite{amop}.
 
-As for “class methods”, they can be regular methods of the type descriptor,
+As for “class methods” (also known as “static methods” in C++ or Java),
+they can be regular methods of the type descriptor,
 or there can be a method @c{class-methods} in the type descriptor containing a record of them.
+
+A parametric type can be represented as a function from type descriptor to type descriptor,
+taking the type parameter as input, and
+returning a type descriptor specialized for those parameters as output;
+this first representation allows for uniform calling conventions,
+whether a type descriptor was produced by applying a parameter to a parametric type or not.
+Alternatively, a parametric type may be represented as a “parametric type descriptor”
+whose methods each take an extra type descriptor argument as parameter;
+this second representation allows eliminates the need to generate a lot of intermediate
+type descriptors when repeatedly invoking a single method from a parametric type and its parameter.
+Thus, to invoke a function @c{map} from @c{P A} to @c{P B} on an element @c{pa} of @c{P A},
+where @c{P} is a functor (kind of parametric type with a @c{map} function satisfying some
+common commutative diagram), in the first representation,
+you would call @c{((((P A) map) B) pa)}, generating a complete new type descriptor @c{(P A)},
+whereas in the second representation, you would call @c{((P map) A B pa)}
+efficiently reusing a shared parametric type descriptor @c{P}
+without all those throw-away type descriptors,
+at the cost of having to juggle with multiple different calling conventions
+for conceptually similar operations.
 
 @;{
   TODO Discuss encodings and types?
@@ -3771,6 +3798,120 @@ Reppy, Rieke "Classes in ObjectML via Modules 1996 FOOL3
 BruceCardelliPierce2006
 }
 
+@subsubsection{Class-style vs Typeclass-style}
+
+Now, there is a slight variant on using type descriptors, wherein,
+instead of passing around “class instances” such that functions each time extract
+must extract the type descriptor of their argument objects
+to then invoke methods as extracted from this type descriptor,
+you explicitly pass along the type descriptor together with values of the described type.
+The type descriptor then corresponds to the dictionaries
+into which Haskell desugar uses of its typeclasses @~cite{typeclasses},
+or to the first-class “interfaces” of “Interface-Passing Style” @~cite{LIL2012}
+The advantages are many:
+@itemize[
+  @item{
+    When running an algorithm that involves many objects of the same type,
+    you can pass along one type descriptor for all these objects, and not have
+    to extract the descriptor each and every time, for a slight performance bonus.
+    Algorithms for which performance matter involve a lot of calls to methods
+    on objects of the same type, at which point it is always a good performance
+    enhancement to compute a type descriptor once, extract its methods once, cache it,
+    and repeatedly call the cached method—instead of going through method extraction mechanisms
+    over and over again for each method call.}
+  @item{
+    Because the type descriptor is being passed “out of band”,
+    objects can be light and not have to carry their type descriptor in a field,
+    saving a bit space. Actually, the values being described need not even be records at all:
+    if the language has primitive types and type constructors such as
+    numbers, tuples, vectors, strings, etc.,
+    these types can also be described and have methods associated to them.}
+  @item{
+    There can be many different type descriptors that match any given object,
+    with different methods to work with them from a different point of view,
+    parameterized by administrator-configured or user-specified parameters that vary at runtime.
+    For instance, a same number may be used, in different contexts,
+    with type descriptor that will cause it to be interacted with as a decimal number text,
+    a hexadecimal number text, a position on a slide bar, or a block of varying color intensity;
+    or to be serialized according to some encoding or some other.
+    In a static language like Haskell, @c{newtype} enables compile-time selection between
+    multiple different points of view on what underneath is a “same” low-level data representation;
+    in a language with Prototype OO,
+    “typeclass”-style type descriptors enable the same kind of behavior,
+    sometimes to implement at runtime
+    second-class typeclasses that are known constants at compile-time,
+    but sometimes for first-class typeclasses that change at runtime based on user interaction,
+    even while the object representation may stay the same.}
+  @item{
+    Constructors are quite special in “class-style”,
+    since regular methods are called by extracting them from an object’s type descriptor,
+    but there is not yet an object from which to extract a type descriptor
+    when what you are doing is precisely constructing the first known (to you) object of that type.
+    Constructors are so special, that some encodings of classes identify a class with
+    “the” constructor function that generates an object of that type,
+    complete with an appropriate type descriptor.
+    This creates an asymmetry between constructors and other methods,
+    that requires special treatment when transforming type descriptors.
+    By contrast, in “typeclass-style”, constructors are just regular methods
+    there can be more than one, espousing different calling conventions,
+    or creating element from different subsets or subtypes of the type (disjoint or not).
+    Many typeclass transformations, dualities, etc., become more uniform and simpler
+    when using typeclass-style. Type descriptors in typeclass style, in which constructors
+    are just normal methods, are therefore more natural and easy to use for parametric polymorphism
+    than type descriptors in class style.
+}]
+
+There is an isomorphism between class-style and typeclass-style type descriptors,
+to the point that a simple transformation can wrap objects written in one style and their methods
+so they follow the calling convention of the other style.
+Where a typeclass uses “naked” primitive values that may not always themselves be records,
+class-style will require all these values to be wrapped in a class instance with one field
+that records the value, and a type descriptor for a class whose methods
+invoke the typeclass methods on the unwrapped values, and rewraps results that need be
+(in a pure setting, or update the wrapped value, in a mutable setting),
+based on which positions in each method’s type is of the proper self-type.
+Simple metaprograms that enact this transformation have been written in Lisp @~cite{LIL2012}
+in the simple case of functions in which the self-type only appears directly
+as one of the (potentially multiple) arguments or (potentially multiple) return values of a method.
+Such automation could be generalized to work with any kind of higher-order function types,
+where occurrences of the self-type in arbitrary position
+require suitable wrapping of arguments and returns values,
+in ways similar to how higher-order contracts
+wrap arguments and return values with checks@~cite{findler2002contracts}.
+Note how similarly, metaprograms have been written to transform pure objects into
+mutable objects that store a current pure value, or mutable objects into
+linear pure objects that become invalid if a use is attempted after mutation.
+
+Thus, programming with either classes or typeclasses,
+wherein objects are either pure or mutable, is mainly a matter of style,
+with some tradeoffs with respect to performance or ease of reasoning between those four styles;
+in the end, these four styles yield equivalent semantics such that programs in one style
+can be mechanically transformed into programs in another style, and vice versa.
+
+Finally, note that type descriptors can be used either “class-style” or “typeclass-style”
+without any OO involved in to modularly and extensibly specify these descriptors.
+Indeed, the dictionaries that Haskell typeclasses expand into are generated
+from modular but non-extensible specifications.
+The same holds for the equivalent feature called “traits” in Rust,
+that do not allow for extension of inherited methods.
+Modules in SML or OCaml can also offer “typeclass-style” type descriptors
+without extensibility through inheritance.
+Non-OO class-style type descriptors are also possible, some languages such as Gambit Scheme
+allow users to define new data structures, and to declare the equivalent of methods
+that specialize how values of those new types will be printed, or tested for equality,
+without these methods being part of any actual object system capable of inheritance,
+yet with each object carrying the equivalent of a type descriptor field
+in “class style” so that the system knows which method to use.
+It is possible to build an actual OO class system on top of such non-OO “class-style” mechanism,
+and the Gerbil Scheme object system is indeed built atop the Gambit Scheme non-OO structure facility.
+@;{ TODO Kiselyov and Lämmel’s OOHaskell @~cite{Kiselyov2005HaskellsOO}
+also enable OO on top of non-OO constructs.
+TODO re-read in detail and find whether this is the best place to cite,
+how it interoperate with typeclasses. }
+And it is also possible to program using OO completely in typeclass-style,
+without any class instance, only typeclass-style type descriptors
+that are specified in modular extensible ways. @;{TODO cite LIL library?}
+
 @subsubsection{A Class is Second-Class in Most Class OO}
 
 In most Class OO languages,
@@ -3779,25 +3920,26 @@ in a “type-level” evaluation stage.
 The class specifications, and the type descriptors they specify,
 are second-class entities:
 they are not available as first-class values subject to arbitrary programming at runtime.
-
 Class OO then is a special case of Prototype OO,
 but only in a restricted second-class language—a reality
 that is quite obvious when doing template metaprogramming in C++.
 @;{TODO SECREF appendix demonstrating lazy prototype OO in C++}
 
 Some dynamic languages, such as Lisp, Smalltalk, Ruby or Python,
-you can programmatically use, create, inspect or modify classes at runtime,
-using reflection mechanisms.
-Even though regular definition and usage of classes are second-class,
-these reflection mechanism make their semantic first-class.
-Indeed, the second-class semantics are often implemented in terms of
+let you programmatically use, create, inspect or modify classes at runtime,
+using some reflection mechanisms.
+Even though regular definition and usage of classes uses dedicated syntax,
+such that restricting yourself to the language fragment with that syntax
+and never using reflection would be equivalent to classes being second-class,
+the reflection mechanisms ultimately make classes into first-class entities.
+Indeed, the second-class semantics of classes are often implemented in terms of
 those first-class mechanisms, that are thus just as powerful, or more so.
 
 Static languages lack such full-powered runtime reflection mechanisms
 (or would arguably be dynamic languages indeed).
 Some lack any runtime reflection at all;
 but many offer read-only runtime reflection,
-that can inspect classes created at compile-time, but not create new ones:
+whereby users can inspect classes created at compile-time, yet not create new ones:
 such capabilities can notably simplify I/O, property-based testing, debugging, etc.
 A few static language implementations may even offer limited ability
 to modify existing classes at runtime,
@@ -3840,7 +3982,7 @@ and remains overall more popular in the literature and in practice:
 most popular OO languages only offer Class OO; @;CITE
 and even though the arguably most popular OO language, JavaScript,
 may have started with Prototype OO only (1995),
-but people were constantly reimplementing classes on top, and twenty years later
+people were constantly reimplementing classes on top, and twenty years later
 classes were added to the language itself@~cite{EcmaScript:15}.
 
 And yet we will argue that Prototype OO is more fundamental than Class OO:
@@ -3848,7 +3990,7 @@ as we demonstrated above, Class OO can be very easily expressed in terms of Prot
 and implemented on top of it,
 such that inheritance among classes is indeed a special case of
 inheritance among the underlying prototypes;
-but the opposite is not possible,
+however the opposite is not possible,
 since you cannot express Prototype OO’s first-class entities and their inheritance
 in terms of Class OO’s second-class entities and their inheritance.
 
@@ -3946,20 +4088,22 @@ As a simple variant of the NNOOTT, consider first the Simply Typed Lambda-Calcul
 or some more elaborate but still well-understood variant of the λ-calculus,
 extended with primitives for the language’s builtin constructs and standard libraries,
 and (if not already available) a minimal set of features for OO:
-indexed products for records, subtyping (c{⊂} or @c{<:}) and type intersections (@c{∩}).
+indexed products for records, subtyping (@c{⊂} or @c{<:}) and type intersections (@c{∩}).
 In this NNOOTT variant, a NNOOTT modular extensible specification
 would have a type of the form
 @Code{
 type NMESpec required inherited provided =
-  required → inherited → inherited∩provided}
+  required → inherited → (inherited ∩ provided)}
 A @c{NMESpec} is a type with three parameters,
 the type @c{required} of the information required by the specification from the module context,
 the type @c{inherited} of the information inherited and to be extended,
 and the type @c{provided} of the information provided to extend what is inherited.
-Note that this type refines the @c{C → V → V} from @seclink{Minimal_OO_Indeed},
-and that @c{inherited} and @c{provided} represent the same “kind” of information,
-both refining @c{V} above, whereas @c{required} in general refines @c{C},
-and usually need not of the same kind as the other two at all,
+Note that this type refines the @c{C → V → V} from @seclink{Minimal_OO_Indeed}:
+@c{inherited} and @c{provided} each separately refine the value @c{V} being specified;
+that value can be anything: it need not be a record at all, and if it is,
+it can have any shape or type, and does need not have the same as the module context.
+Meanwhile, @c{required} refines the module context @c{C}, and is (almost) always some kind of record.
+The two need not be the same at all, and usually are not,
 unless and until you’re ready to close the recursion, tie the loops and compute a fixpoint.
 
 In Prototype OO, that value inherited and provided consists
@@ -4085,17 +4229,23 @@ includes self-reference, subtyping and subclassing are very different,
 a crucial distinction that was first elucidated in @~cite{cook1989inheritance}.
 
 The NNOOTT can be “saved” by reserving static typing to non-self-referential methods,
-whereas any self-reference must dynamically typed, by going through a type @c{Any},
-or some other “base” type or class, at least as far the the typechecker is involved.
-In many languages, this self-reference already has to go through an explicit pointer (e.g. in C++)
-or a boxing constructor (e.g. in Haskell, with a newtype @c{Fix} for a generic fixpoint
+whereas any self-reference must dynamically typed:
+wherever a recursive self-reference to the whole would happen, e.g. in the type of a field,
+programmers must instead declare the value as in being of a dynamic typecheck,
+or some other “base” type or class,
+so that there is no self-reference in the type, and the static typechecker is happy.
+Then, to compensate for the imprecision of the type system
+when retrieving an element of the desired self-type, some kind of explicit
+dereference, type cast (downcast), or coercion is required from the programmer;
+that operation may be either safe (with a dynamic runtime check), or
+unsafe (program may silently misbehave at runtime if called with the wrong argument).
+In some languages, self-reference already has to go through
+pointer indirection (e.g. in C++), or
+boxing (e.g. in Haskell, wherein a @c{newtype Fix} generic constructor is used for fixpoints,
 while the open modular specification goes into a “recursion scheme”);
-thus the NNOOTT does not so much introduce this extra indirection step needed for recursion
-as it makes it obvious—and makes it dynamically rather than statically typed.
-To save the NNOOTT, dereference of an element of the target type will then
-have to go through some “type cast”, either safe (dynamically checked at runtime) or
-unsafe (program may silently misbehave at runtime if called with the wrong argument),
-to compensate for the imprecision of the type system.
+thus the NNOOTT does not so much introduce an extra indirection step for recursion
+as it makes an existing indirection step obvious—and
+makes it dynamically rather than statically typed.
 
 @subsubsection{Beyond the NNOOTT}
 
@@ -4105,14 +4255,16 @@ or the “conflation of class and types” @~cite{SubtypingMatch1997}
 is indeed first to have dispelled, as we just did previously,
 the conflation of specification and target.
 Thereafter, OO semantics becomes simple,
-and we notice that though the two are often referenced together in an implicit product,
-they remain distinct, and we must be careful to always treat them distinctly.
+for we notice that though the two are often referenced together in an implicit product,
+they remain distinct, therefore we must be careful to always treat them accordingly,
+as two distinct entities with very distinct types,
+when others may insist to treat them as a single entity with a common type.
 
 We then realize what most people actually mean by “subtyping” in extent literature is
 @emph{subtyping for the target type of a class} (or target prototype),
-that is distinct from
+which is distinct from
 @emph{subtyping for the specification type of a class} (or prototype),
-that Kim Bruce calls “matching” @~cite{SubtypingMatch1997}. @; TODO cite further
+the latter of which Kim Bruce calls “matching” @~cite{SubtypingMatch1997}. @; TODO cite further
 But most people, being confused about the conflation of specification and target,
 don’t conceptualize the distinction, and either
 try to treat them as if it were the same thing,
@@ -4125,12 +4277,50 @@ We can use the usual rules of subtyping @; TODO cite Wegner, Cardelli
 and apply them separately to the types of specifications and their targets,
 knowing that “subtyping and fixpointing do not commute”,
 or to be more mathematically precise,
-@bold{fixpointing does not distribute over subtyping}:
+@principle{fixpointing does not distribute over subtyping}:
 if @c{F} and @c{G} are parametric types,
 i.e. type-level functions from @c{Type} to @c{Type},
 and @c{F ⊂ G} (where @c{⊂}, sometimes written @c{<:}, is the standard notation for “is a subtype of”,
 and for elements of @c{Type → Type} means @c{∀ t, F t ⊂ G t}),
-it does not follow that @c{Y F ⊂ Y G} where @c{Y} is the fixpoint operator for types.
+it does not follow that @c{Y F ⊂ Y G} where @c{Y} is the fixpoint operator for types@xnote["."]{
+  The widening rules for the types of specification
+  and their fixpoint targets are different;
+  in other words, forgetting a field in a target record, or its some of its precise type information,
+  is not at all the same as forgetting that field or its precise type in its specification
+  (which introduces incompatible behavior with respect to inheritance,
+  since extra fields may be involved as intermediary step in the specification,
+  that must be neither forgotten, nor overridden with fields of incompatible types).
+
+  If the two entities are treated as a single one syntactically and semantically,
+  as all OO languages so far have done, @; ALL??
+  then their type system will have to encode in a weird way a pair of subtly different types
+  for each such entity, and the complexity will have to be passed on to the user,
+  with the object, and each of its field having two related but different declared types,
+  and potentially different visibility settings.
+  Doing this right involves a lot of complexity, both for the implementers and for the users,
+  at every place that object types are involved, either specified by the user, or display to him.
+  Then again, some languages may do it wrong by trying to have the specification fit the rules
+  of the target (or vice versa), leading to inconsistent rules and consistently annoying errors.
+
+  A typical way to record specification and target together is to annotate fields with visibility:
+  @c{public} (visible in the target)
+  yet possibly with a more specific type in the target
+  than in the specification (to allow for further extensions that diverge from the current target);
+  fields marked @c{protected} (visible only to extensions of the specification, not in the target);
+  and fields marked @c{private} (not visible to extensions of the specification,
+  even less so to the target; redundant with just defining a variable in a surrounding @c{let} scope).
+  We retrieve these familiar notions from C++ and Java just by reasoning from first principles
+  and thinking about distinct but related types for a specification and its target.
+
+  Now, our opinion is that it is actually be better to fully decouple the types
+  of the target and the specification, even in an “implicit pair” conflating the two:
+  Indeed, not only does that means that types are much simpler, that also mean that
+  intermediate computations, special cases to bootstrap a class hierarchy,
+  transformations done to a record after it was computed as a fixpoint, and
+  records were target and specification are out of sync
+  because of effects somewhere else in the system, etc., can be safely represented and typed,
+  without having to fight the typesystem or the runtime.
+}
 
 A more precise view of a modular extensible specification is thus as
 an entity parameterized by the varying type @c{self} of the module context
@@ -4152,7 +4342,8 @@ is constrained by @c{super ⊂ inherited self},
 and the returning a value is of type @c{super∩defined self},
 and there is no direct recursion there
 (but there can be indirectly if the focus is itself referenced via self somehow).
-Also notice how the quantification of @c{self} and @c{super} pretty much
+Those who understand universal quantifiers may also notice how
+the quantification of @c{self} and @c{super} pretty much
 forces those functions to be well-behaved with respect to gracefully passing through
 any call to a method they do not define, override or otherwise handle.
 Finally, notice how, as with the simpler NNOOTT variant above,
@@ -4264,16 +4455,13 @@ more features than can fit in anyone’s head, interacting in sometimes unpredic
 as is the case in languages like C++, Java, C#, etc.
 
 @;{
-XXX
+XXX TODO integrate citations to the below and more
 
 Wegner and Cardelli 1985
 
 Cardelli 1988
 
 OCaml 199x
-
-Subtyping is not a good “match” for object-oriented languages
-LOOM ECOOP 1997 Kim Bruce
 
 Scala DOT 200x
 
@@ -4295,13 +4483,11 @@ https://www.semanticscholar.org/reader/3855d0beac44b1623731bf581f80ec4d348eb4ba
 
 https://counterexamples.org/subtyping-vs-inheritance.html
 
-Kathleen Fisher thesis "Type systems for object-oriented programming languages" 1996
-abstract says "Conflation of subtyping and inheritance"
-
 Andrew K. Wright & Robert Cartwright
 "A practical soft type system for Scheme"
 1997
 
+TODO
 
 Why do "unary methods" work in class OO, but not e.g. binary methods?
 Because you moved construction / destruction out of the way,
@@ -4313,13 +4499,6 @@ there is one obvious place from which to copy the extended rest of the object;
 when multiple objects are returned... that is still a possible interpretation
 (and though that's seldom the useful one, that's enough for the type theorist).
 
-
-When "typeclass" prototypes are made, and the creation methods are no longer "special",
-but fully part of the interface, much more uniform approach,
-all that fake "co-algebraic" bullshit disappears.
-
-A prototype can have 0, 1, 2, n, a fixed or variable number of types,
-with interesting mutual relations and functions.
 
 Kim Bruce, @;CITE 1993 1994 1995
 thereafter gave sounder types to OO,
@@ -4619,9 +4798,11 @@ Simple methods, Binary methods, Multimethods, Constructors —
 Number object inputs being 1, 2, N, 0.
 Big big problem in the naive view of class OO.
 Not at all a problem with prototypes / typeclasses.
+
 @subsection{Type Monotonicity}
 Makes no sense at all as a general constraint when you realize anytime there's recursion of any kind,
 your methods won't all be simple methods. Deeply idiotic idea.
+
 @subsection[#:tag "typeclasses"]{Typeclasses}
 Essentially equivalent to multiple dispatch.
 Would gain by having a notion of inheritance.
