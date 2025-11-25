@@ -359,6 +359,17 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url = {https://dspace.mit.edu/handle/1721.1/16012}
 }
 
+
+% Borning1982 cites a 1980 version of the Flavors report, from MIT. Originally from 1979.
+% Also a 1982 version of LOOPS
+@Misc{Cannon1979,
+  title={Flavors: A non-hierarchical approach to object-oriented programming},
+  author={Howard Cannon},
+  publisher={Symbolics Inc.},
+  year=1979,
+  url={https://www.softwarepreservation.org/projects/LISP/MIT/nnnfla1-20040122.pdf}
+}
+
 % http://worrydream.com/refs/Borning%20-%20The%20Programming%20Language%20Aspects%20of%20ThingLab.pdf
 % https://dl.acm.org/doi/abs/10.1145/357146.357147
 @Article{Borning1981,
@@ -391,14 +402,20 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url = {https://www.researchgate.net/publication/221252249_T_a_dialect_of_Lisp_or_LAMBDA_The_ultimate_software_tool}
 }
 
-% Borning1982 cites a 1980 version of the Flavors report, from MIT. Originally from 1979.
-% Also a 1982 version of LOOPS
-@Misc{Cannon1979,
-  title={Flavors: A non-hierarchical approach to object-oriented programming},
-  author={Howard Cannon},
-  publisher={Symbolics Inc.},
-  year=1979,
-  url={https://www.softwarepreservation.org/projects/LISP/MIT/nnnfla1-20040122.pdf}
+% Successor to a 1980 experiment by Borning. No method combination. Unclear linearization. Low on details.
+% Uses the Link class from SIMULA, and ReadWriteStream as motivations for multiple inheritance.
+% ThingLab 1981 has multiple inheritance (already in 1977),
+% and so have PIE (Goldstein&Bobrow 1980), Flavors 1980, LOOPS 1982.
+% Traits from Mesa since 1979 [Curry 1982]
+% Conflict resolution is by erroring if inheriting more than one method without an explicit override
+@InProceedings{borning1982multiple,
+  title={Multiple inheritance in Smalltalk-80},
+  author={Borning, Alan H and Ingalls, Daniel HH},
+  booktitle={Proceedings at the National Conference on AI},
+  volume={82},
+  pages={234--237},
+  year={1982},
+  url={http://www.laputan.org/pub/papers/MI-Borning-Ingalls.PDF}
 }
 
 % Has metaclasses, multiple inheritance.
@@ -419,6 +436,20 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   booktitle={Information and Computation},
   year={1984},
   url={https://api.semanticscholar.org/CorpusID:13032155}
+}
+
+% Wegner & Cardelli have plenty of good concepts,
+% including universal and existential quantification...
+% and then in section 6.1 they fall squarely into NNOOTT,
+% explicitly confusing inheritance and subtyping.
+% They also cite Smalltalk and Flavors in 6.3, just to immediately drop the ball.
+% Beyond lame.
+@book{cardelli1986understanding,
+  title={On understanding types, data abstraction, and polymorphism},
+  author={Cardelli, Luca and Wegner, Peter},
+  year={1986},
+  publisher={Brown University. Department of Computer Science},
+  url={http://lucacardelli.name/Papers/OnUnderstanding.A4.pdf}
 }
 
 % url={https://homepages.cwi.nl/~storm/teaching/reader/Lieberman86.pdf}
@@ -669,6 +700,21 @@ numpages = {8}
   month = sep
 }
 
+% Introduces Recursion Schemes. Heavy on math notation.
+% Kind of category theory
+@inproceedings{bananas1991,
+  author = {Meijer, Erik and Fokkinga, Maarten and Paterson, Ross},
+  title = {Functional programming with bananas, lenses, envelopes and barbed wire},
+  year = {1991},
+  isbn = {0387543961},
+  publisher = {Springer-Verlag},
+  address = {Berlin, Heidelberg},
+  booktitle = {Proceedings of the 5th ACM Conference on Functional Programming Languages and Computer Architecture},
+  pages = {124–144},
+  numpages = {21},
+  location = {Cambridge, Massachusetts, USA}
+}
+
 % Original DEFSYSTEM is a 1990 paper, but hard to find independently from the others.
 @TechReport{kantrowitz1991,
   author =       {Mark Kantrowitz},
@@ -723,6 +769,40 @@ numpages = {8}
   Year={1991}
 }
 
+% What a mess. https://x.com/xadh/status/1945251704011665663
+% https://github.com/shriram/plai-public/issues/62
+%
+% "prioritized inheritance": superclasses are assigned priorities,
+% and between "ordered" superclasses at different priorities, it's like linearization,
+% but between "unordered" superclasses at same priority, it's ambiguousMessage error.
+% Also, when invoking a method, remember not just the self but the invoking super,
+% according to a "sender path tiebreaking rule" unique to SELF.
+% so that further slot accesses follow the path (what about nested access, though?
+% Reset at SELF? stack of previous super?)
+% Also, dynamic inheritance: can dynamically add/remove slots and superclasses (at various priorities)
+% call-next-method is called "resend" and can change method (unlike CLOS, to follow same path)
+% and arguments but not self, and also specify the sending parent (one level of parent,
+% must be superclass of current sending parent).
+% No method combinations: cites CLOS, but wants "simplicity" for SELF.
+% Mention rename in Eiffel as an alternative, static way to deal with unordered inheritance
+% Notes that C++ linearizes superclasses for constructors and destructors, just not for regular methods
+%
+% Issues: SELF mixins must be parentless to avoid their general parents
+% overriding the mixed class's specific slots. "Backtracking", i.e. lack of a stack of senders as above.
+% "considering altering SELF's lookup rule to always search children before their ancestors"
+% and be more like CLOS in this way.
+% NB: In their "complexities" they note how their lack a clear story for resend with dynamic inheritance
+% --- but then I'm not sure if CLOS specifies it, especially in presence of concurrency, so there.
+% They also support cycles but say it's too complex to explain how in the paper.
+%
+@InProceedings{parentsSharedParts1991,
+  title={Parents are Shared Parts of Objects: Inheritance and Encapsulation in SELF},
+  author={Craig Chambers, David Ungar, Bay-Wei Chang, Urs Hölzle},
+  booktitle={Lisp and Symbolic Computation},
+  year={1991},
+  url={https://bibliography.selflanguage.org/parents-shared-parts.html}
+}
+
 % Like Traits 1982, errors out in case of conflicting methods along the hierarchy
 @InProceedings{CecilMultimethods,
   author="Chambers, Craig",
@@ -736,6 +816,17 @@ numpages = {8}
   abstract="Multiple dispatching provides increased expressive power over single dispatching by guiding method lookup using the values of all arguments instead of only the receiver. However, existing languages with multiple dispatching do not encourage the data-abstraction-oriented programming style that is encouraged by traditional single-dispatching languages; instead existing multiple-dispatching languages tend to foster a function-oriented programming style organized around generic functions. We propose an alternative view of multiple dispatching that is intended to promote a data-abstraction-oriented programming style. Instead of viewing a multi-method as ``outside'' of all objects, we view a multi-method as ``inside'' the objects for which the multi-method applies (on which it dispatches). Because objects are closely connected to the multi-methods implementing their operations, the internals of an object can be encapsulated by being accessible only to the closely-connected multi-methods. We are exploring this object-oriented view of multi-methods in the context of a new programming language named Cecil.",
   isbn="978-3-540-47268-1",
   url="http://www.laputan.org/pub/papers/cecil-ecoop-92.pdf"
+}
+
+% Introduces the concept of “Abstraction Inversion”
+@article{Baker1992CritiqueDKL,
+  title={Critique of DIN Kernel Lisp definition version 1.2},
+  author={Henry G. Baker},
+  journal={LISP and Symbolic Computation},
+  year={1992},
+  volume={4},
+  pages={371-398},
+  url={https://api.semanticscholar.org/CorpusID:6330838}
 }
 
 @PhDThesis{bracha1992jigsaw,
@@ -812,6 +903,27 @@ numpages = {8}
   isbn="978-3-540-48075-4"
 }
 
+% First version POPL 1993, also U of Edinburgh ECS-LFCS-92-225 "Object-Oriented Programming Without Recursive Types"
+% Based on F^\omega_\leq
+% Instead of hiding state via scoping, hide it via type abstraction.
+% Handles modularity via existential types, pure objects:
+% Object = Fun(M:*->*) Some(Rep) {| state: Rep, methods: M Rep |}
+% also implements single inheritance on top, but really with mixin inheritance underneath.
+% Examples include polymorphic collection
+@misc{PT1993STTFOOP,
+  author={Pierce, Benjamin C. and Turner, David N.},
+  title={Simple Type-Theoretic Foundations for Object-Oriented Programming},
+  year={1993}
+}
+% @article
+%  volume={4},
+%  DOI={10.1017/S0956796800001040},
+%  number={2},
+%  journal={Journal of Functional Programming},
+%  year={1994},
+%  pages={207–247}
+
+
 @inproceedings{ProposalMonotonicMultipleInheritance1994,
 author = {Ducournau, R. and Habib, M. and Huchard, M. and Mugnier, M. L.},
 title = {Proposal for a monotonic multiple inheritance linearization},
@@ -882,6 +994,60 @@ series = {OOPSLA '94}
   volume = {31},
   journal = {Acta Informatica},
   doi = {10.1007/BF01178920}
+}
+
+% Modules & Functors for SML
+% https://dl.acm.org/doi/pdf/10.1145/174675.176927
+% Problem is that subtyping is not decidable
+% @InProceedings
+@Misc{harper1994modules,
+  title={A type-theoretic approach to higher-order modules with sharing},
+  author={Harper, Robert and Lillibridge, Mark},
+  booktitle={Proceedings of the 21st ACM SIGPLAN-SIGACT symposium on Principles of programming languages},
+  pages={123--137},
+  year={1994}
+}
+
+% https://scispace.com/pdf/programming-objects-with-ml-art-an-extension-to-ml-with-3s0xd52vz4.pdf
+% Uses extensible records and a form of existential,
+% plus "projective types" (to palliate lack for *->*),
+% to emulate what Pierce and Turner do with F^\omega_\leq
+% Implements multiple inheritance (or is it really mixin inheritance?), mutation or not.
+% No subtyping.
+@inproceedings{remy1994mlart,
+  title={Programming objects with ML-ART an extension to ML with abstract and record types},
+  author={R{\'e}my, Didier},
+  booktitle={International Symposium on Theoretical Aspects of Computer Software},
+  pages={321--346},
+  year={1994},
+  organization={Springer}
+}
+
+
+% I-SOOP
+% https://pl.cs.jhu.edu/projects/type-constraints/papers/type-inference-for-recursively-constrained-types-and-its-application-to-oop-longer-version.pdf
+@article{isoop1995,
+  title={Type inference for recursively constrained types and its application to OOP},
+  author={Eifrig, Jonathan and Smith, Scott and Trifonov, Valery},
+  journal={Electronic Notes in Theoretical Computer Science},
+  volume={1},
+  pages={132--153},
+  year={1995},
+  publisher={Elsevier},
+  url={https://pl.cs.jhu.edu/projects/type-constraints/papers/type-inference-for-recursively-constrained-types-and-its-application-to-oop.pdf}
+}
+
+% I-LOOP, language with classes, macro-reduced to I-SOOP, with type inference.
+% "Sound polymorphic type inference for objects" 1995
+% Polymorphic recursively constrained types
+% https://dl.acm.org/doi/pdf/10.1145/217838.217858
+@inproceedings{iloop1995,
+  title={Sound polymorphic type inference for objects},
+  author={Eifrig, Jonathan and Smith, Scott and Trifonov, Valery},
+  booktitle={Proceedings of the tenth annual conference on Object-oriented programming systems, languages, and applications},
+  pages={169--184},
+  year={1995},
+  doi={10.1145/217838.217858}
 }
 
 % W7
@@ -1693,39 +1859,6 @@ and Matsuoka, Satoshi",
   series = {OOPSLA '86}
 }
 
-@article{10.1145/960112.28702,
-  author = {Snyder, Alan},
-  title = {Encapsulation and inheritance in object-oriented programming languages},
-  year = {1986},
-  issue_date = {Nov. 1986},
-  publisher = {Association for Computing Machinery},
-  address = {New York, NY, USA},
-  volume = {21},
-  number = {11},
-  issn = {0362-1340},
-  url = {https://doi.org/10.1145/960112.28702},
-  doi = {10.1145/960112.28702},
-  abstract = {Object-oriented programming is a practical and useful programming methodology that encourages modular design and software reuse. Most object-oriented programming languages support data abstraction by preventing an object from being manipulated except via its defined external operations. In most languages, however, the introduction of inheritance severely compromises the benefits of this encapsulation. Furthermore, the use of inheritance itself is globally visible in most languages, so that changes to the inheritance hierarchy cannot be made safely. This paper examines the relationship between inheritance and encapsulation and develops requirements for full support of encapsulation with inheritance.},
-  journal = {SIGPLAN Not.},
-  month = {jun},
-  pages = {38–45},
-  numpages = {8}
-}
-
-% ThingLab 1981 has multiple inheritance (already in 1977),
-% and so have PIE (Goldstein&Bobrow 1980), Flavors 1980, LOOPS 1982.
-% Traits from Mesa since 1979 [Curry 1982]
-% Conflict resolution is by erroring if inheriting more than one method without an explicit override
-@inproceedings{borning1982multiple,
-  title={Multiple inheritance in Smalltalk-80},
-  author={Borning, Alan H and Ingalls, Daniel HH},
-  booktitle={Proceedings at the National Conference on AI},
-  volume={82},
-  pages={234--237},
-  year={1982},
-  url={http://www.laputan.org/pub/papers/MI-Borning-Ingalls.PDF}
-}
-
 % Introduces "traits", for multiple inheritance in the Mesa programming language
 % used to implement WS, the workstation software of the Xerox Star 8010,
 % since late 1979 (Mesa started early 1978 with Single-Inheritance).
@@ -1844,31 +1977,6 @@ and Matsuoka, Satoshi",
 
 % Goguen...
 
-% Wegner & Cardelli have plenty of good concepts,
-% including universal and existential quantification...
-% and then in section 6.1 they fall squarely into NNOOTT,
-% explicitly confusing inheritance and subtyping.
-% They also cite Smalltalk and Flavors in 6.3, just to immediately drop the ball.
-% Beyond lame.
-@book{cardelli1986understanding,
-  title={On understanding types, data abstraction, and polymorphism},
-  author={Cardelli, Luca and Wegner, Peter},
-  year={1986},
-  publisher={Brown University. Department of Computer Science},
-  url={http://lucacardelli.name/Papers/OnUnderstanding.A4.pdf}
-}
-
-% Successor to a 1980 experiment by Borning. No method combination. Unclear linearization. Low on details.
-% Uses the Link class from SIMULA, and ReadWriteStream as motivations for multiple inheritance.
-@inproceedings{borning1982multiple,
-  title={Multiple inheritance in Smalltalk-80},
-  author={Borning, Alan H and Ingalls, Daniel HH},
-  booktitle={Proceedings at the National Conference on AI},
-  volume={82},
-  pages={234--237},
-  year={1982}
-}
-
 % Parents are Shared Parts: Inheritance and Encapsulation in Self
 % Craig Chambers, David Ungar, Bay-Wei Chang, and Urs Hölzle
 
@@ -1883,40 +1991,6 @@ and Matsuoka, Satoshi",
   publisher={Carnegie Mellon University}
 }
 
-@InProceedings{parentsSharedParts1991,
-  title={Parents are Shared Parts of Objects: Inheritance and Encapsulation in SELF},
-  author={Craig Chambers, David Ungar, Bay-Wei Chang, Urs Hölzle},
-  booktitle={Lisp and Symbolic Computation},
-  year={1991},
-  url={https://bibliography.selflanguage.org/parents-shared-parts.html}
-}
-% What a mess. https://x.com/xadh/status/1945251704011665663
-% https://github.com/shriram/plai-public/issues/62
-%
-% "prioritized inheritance": superclasses are assigned priorities,
-% and between "ordered" superclasses at different priorities, it's like linearization,
-% but between "unordered" superclasses at same priority, it's ambiguousMessage error.
-% Also, when invoking a method, remember not just the self but the invoking super,
-% according to a "sender path tiebreaking rule" unique to SELF.
-% so that further slot accesses follow the path (what about nested access, though?
-% Reset at SELF? stack of previous super?)
-% Also, dynamic inheritance: can dynamically add/remove slots and superclasses (at various priorities)
-% call-next-method is called "resend" and can change method (unlike CLOS, to follow same path)
-% and arguments but not self, and also specify the sending parent (one level of parent,
-% must be superclass of current sending parent).
-% No method combinations: cites CLOS, but wants "simplicity" for SELF.
-% Mention rename in Eiffel as an alternative, static way to deal with unordered inheritance
-% Notes that C++ linearizes superclasses for constructors and destructors, just not for regular methods
-%
-% Issues: SELF mixins must be parentless to avoid their general parents
-% overriding the mixed class's specific slots. "Backtracking", i.e. lack of a stack of senders as above.
-% "considering altering SELF's lookup rule to always search children before their ancestors"
-% and be more like CLOS in this way.
-% NB: In their "complexities" they note how their lack a clear story for resend with dynamic inheritance
-% --- but then I'm not sure if CLOS specifies it, especially in presence of concurrency, so there.
-% They also support cycles but say it's too complex to explain how in the paper.
-%
-
 % change-class: https://github.com/shriram/plai-public/issues/60
 
 % Bob Harper PFPL existential types / inversion of scope
@@ -1925,39 +1999,20 @@ and Matsuoka, Satoshi",
 % Ossher and Harrison's "Combination of Inheritance Hierarchies' from OOPSLA 1992.
 
 @inproceedings{10.1145/28697.28702,
-author = {Snyder, Alan},
-title = {Encapsulation and inheritance in object-oriented programming languages},
-year = {1986},
-isbn = {0897912047},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-url = {https://doi.org/10.1145/28697.28702},
-doi = {10.1145/28697.28702},
-abstract = {Object-oriented programming is a practical and useful programming methodology that encourages modular design and software reuse. Most object-oriented programming languages support data abstraction by preventing an object from being manipulated except via its defined external operations. In most languages, however, the introduction of inheritance severely compromises the benefits of this encapsulation. Furthermore, the use of inheritance itself is globally visible in most languages, so that changes to the inheritance hierarchy cannot be made safely. This paper examines the relationship between inheritance and encapsulation and develops requirements for full support of encapsulation with inheritance.},
-booktitle = {Conference Proceedings on Object-Oriented Programming Systems, Languages and Applications},
-pages = {38–45},
-numpages = {8},
-location = {Portland, Oregon, USA},
-series = {OOPSLA '86}
-}
-
-@article{10.1145/960112.28702,
-author = {Snyder, Alan},
-title = {Encapsulation and inheritance in object-oriented programming languages},
-year = {1986},
-issue_date = {Nov. 1986},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-volume = {21},
-number = {11},
-issn = {0362-1340},
-url = {https://doi.org/10.1145/960112.28702},
-doi = {10.1145/960112.28702},
-abstract = {Object-oriented programming is a practical and useful programming methodology that encourages modular design and software reuse. Most object-oriented programming languages support data abstraction by preventing an object from being manipulated except via its defined external operations. In most languages, however, the introduction of inheritance severely compromises the benefits of this encapsulation. Furthermore, the use of inheritance itself is globally visible in most languages, so that changes to the inheritance hierarchy cannot be made safely. This paper examines the relationship between inheritance and encapsulation and develops requirements for full support of encapsulation with inheritance.},
-journal = {SIGPLAN Not.},
-month = jun,
-pages = {38–45},
-numpages = {8}
+  author = {Snyder, Alan},
+  title = {Encapsulation and inheritance in object-oriented programming languages},
+  year = {1986},
+  isbn = {0897912047},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/28697.28702},
+  doi = {10.1145/28697.28702},
+  abstract = {Object-oriented programming is a practical and useful programming methodology that encourages modular design and software reuse. Most object-oriented programming languages support data abstraction by preventing an object from being manipulated except via its defined external operations. In most languages, however, the introduction of inheritance severely compromises the benefits of this encapsulation. Furthermore, the use of inheritance itself is globally visible in most languages, so that changes to the inheritance hierarchy cannot be made safely. This paper examines the relationship between inheritance and encapsulation and develops requirements for full support of encapsulation with inheritance.},
+  booktitle = {Conference Proceedings on Object-Oriented Programming Systems, Languages and Applications},
+  pages = {38–45},
+  numpages = {8},
+  location = {Portland, Oregon, USA},
+  series = {OOPSLA '86}
 }
 
 @article{snyder1993,
@@ -2028,33 +2083,7 @@ numpages = {8}
   year={1988}
 }
 
-% https://dl.acm.org/doi/pdf/10.1145/174675.176927
-% Problem is that subtyping is not decidable
-% @InProceedings
-@Misc{harper1994modules,
-  title={A type-theoretic approach to higher-order modules with sharing},
-  author={Harper, Robert and Lillibridge, Mark},
-  booktitle={Proceedings of the 21st ACM SIGPLAN-SIGACT symposium on Principles of programming languages},
-  pages={123--137},
-  year={1994}
-}
-
 % Cardelli Wegner 1985
-
-% Introduces Recursion Schemes. Heavy on math notation.
-% Kind of category theory
-@inproceedings{bananas1991,
-  author = {Meijer, Erik and Fokkinga, Maarten and Paterson, Ross},
-  title = {Functional programming with bananas, lenses, envelopes and barbed wire},
-  year = {1991},
-  isbn = {0387543961},
-  publisher = {Springer-Verlag},
-  address = {Berlin, Heidelberg},
-  booktitle = {Proceedings of the 5th ACM Conference on Functional Programming Languages and Computer Architecture},
-  pages = {124–144},
-  numpages = {21},
-  location = {Cambridge, Massachusetts, USA}
-}
 
 % Recursion Scheme, FP & OOP ???
 @article{gibbons2009essence,
@@ -2075,8 +2104,4 @@ numpages = {8}
 
 % https://www.jot.fm/contents/issue_2017_02/article2.html
 
-
-% Scott Smith I-LOOP
-% "Sound polymorphic type inference for objects" 1995
-% Polymorphic recursively constrained types
 

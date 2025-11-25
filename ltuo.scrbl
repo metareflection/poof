@@ -131,26 +131,23 @@ partial specifications via a mechanism known as @emph{inheritance} @~cite{inheri
   and that OO is about “classes” of “objects” that can only be accessed through “interfaces”
   @~cite{Cook2009 Cook2012}.
 
-  However, coding against an SML “module” would count as OO by Cook's criteria,
+  However, coding against an SML “module” would count as OO by Cook’s criteria,
   and indeed Cook explicitly calls the untyped λ-calculus “the first object-oriented language”,
   while dismissing Smalltalk as not OO enough because its integers are not pure objects@~cite{Cook2009}.
   Cook’s definition, that embraces the modular aspect of OO while rejecting
-  its extensible or dynamic aspect, runs contrary to all practice,
-  and brings no insight whatsoever on what people commonly call OO,
-  the many languages that provide it,
-  the common idioms, libraries and patterns on top of those languages,
-  as opposed to languages that are not commonly considered OO.
-  It brings no light on any of the OO languages cursed by Cook as not actually being OO,
+  its extensible or dynamic aspect, runs contrary to all practice.
+  It brings no light on any of the languages commonly considered OO
+  yet cursed by Cook as not actually being OO,
   no light on any of the Functional Programming (FP) languages blessed by Cook as actually being OO
   to the surprise of their users, and no light on the difference between the two.
 
   Cook's many works on OO over the years also systematically neglect important concepts
   in OO, such as prototypes, multiple inheritance, method combination or multiple dispatch.
-  In the end, while Cook's PhD and subsequent academic career grew out of
+  In the end, Cook's PhD and subsequent academic career grew out of
   brilliantly modeling the key mechanism of OO (inheritance)
-  from the foreign point of view of FP,
-  his wilful ignorance and deep misunderstanding of the OO tradition, indeed missing the point,
-  were such that they have become proverbial: immortalized in Gabriel's essay
+  from the foreign point of view of FP;
+  but his wilful ignorance and deep misunderstanding of the OO tradition, indeed missing the point,
+  were such that they have become proverbial: immortalized in Gabriel’s essay
   “The Structure of a Programming Language Revolution” @~cite{gabriel2012}
   as a prototypical failure to understand a phenomenon when viewed
   through a scientific paradigm incommensurable with the one that produced it.
@@ -160,8 +157,9 @@ partial specifications via a mechanism known as @emph{inheritance} @~cite{inheri
   who practice and study OO, even or especially
   among notable academics with deep expertise in the field.
   And yet, there are undeniably common practices, common phenomena, common concepts,
+  common language features, common design patterns,
   worth understanding, conceptualizing, defining and naming
-  in the rich (and sometimes mutually conflicting) traditions
+  in the rich (though sometimes mutually conflicting) traditions
   that grew around OO.
   There is thus a need to elucidate the key concepts of OO behind the hype and confusion;
   such is the main purpose of this essay.
@@ -2665,10 +2663,13 @@ for any lazy type @c{V} (and similarly for function types),
 any extension that would return a useful result applied to @c{(lazy ⊥)}
 passing it as argument to the lazy @c{Y} combinator would also yield a result.
 And indeed the results will be the same if the extension wholly ignores its argument,
-as is the often intent in those situations:
+as is often the intent in those situations:
 typically, you’d compose extensions, with one “to the right”
-ignoring its argument and overriding the top value, returning something more useful in context,
-and further extensions “to the left” building upon that useful value.
+ignoring its argument, overriding any previous value
+(or lack thereof, as the default default is a bottom computation),
+and returning some default value that is more useful in context
+(including not being a bottom computation);
+further extensions “to the left” then build something useful from that default value.
 
 However, if there is no such overriding extension, then
 the results would not necessarily the same between applying the extension or passing it to @c{Y}.
@@ -2676,26 +2677,26 @@ For instance, given the extension @c{(λ (x) (lazy-cons 1 x))}
 for some @c{lazy-cons} function creating a co-inductive stream of computations
 (as opposed to an inductive list of values as with the regular Scheme @c{cons}),
 applying the extension to @c{(lazy ⊥)} yields a stream you can destructure once,
-yielding @c{1} as first value, and “exploding” if you try to destructure the rest;
-meanwhile, applying the @c{Y} combinator yields an infinite stream of 1's.
+yielding @c{1} as first value, and “exploding at your face” if you try to destructure the rest;
+meanwhile, applying the @c{Y} combinator yields an infinite stream of 1’s.
 
 Then comes the question of which answer is more appropriate.
 Using the @c{Y} combinator only applies to functions and lazy values,
 the latter being isomorphic to nullary functions
 that always return the same cached result;
 it doesn’t apply and therefore isn’t appropriate in the general case of eager values.
-On the other hand, applying extensions to a top value is always appropriate.
-It also corresponds better to the idea of specifying a value by starting from
-no specific information then refining bit by bit until a final value is reached.
-It does require identifying a type-dependent top value to start from,
-but there is an obvious such value for the types where the fixpoint combinator applies.
-Finally, it is easier to understand than a fixpoint combinator and arguably more intuitive.
+Meanwhile, applying extensions to a top value is always appropriate;
+it also corresponds better to the idea of specifying a value by starting from
+no specific information then refining bit by bit until a final value is reached;
+it does require identifying a type-dependent top value to start from,
+but there is an obvious such value for the types where the fixpoint combinator applies;
+finally, it is easier to understand than a fixpoint combinator and arguably more intuitive.
 
 All in all, the approach of applying extensions to a top value
 is far superior to the approach of using a fixpoint combinator
 for the purpose of extracting a value from an extensible specification.
 Thus, as far as we care about extensibility:
-here, there is no Y@xnote["."]{
+@emph{here, there is no Y}@xnote["."]{
   (With apologies to Primo Levi.)
 }
 
@@ -2793,13 +2794,15 @@ To extend a record with one key-value binding, you can use
      (rec i)))))))}
 
 This trivial implementation does not support getting a list of bindings, or removing a binding.
-We won’t need these features to implement OO@xnote["."]{
+We won’t need these features to implement OO@xnote[";"]{
   We generate HTML for our presentations using exactly this implementation strategy.
   The Scheme implementation we use has builtin record support, and
   there are libraries now somewhat portable libraries for records in Scheme,
   but we made it a point to use a minimal portable object system
   to show the feasability and practicality of the approach.
 }
+indeed they constitute a “reflection” API not usually available to regular statically typed code,
+that may interfere with various compiler optimizations.
 
 @subsubsub*section{Merging Records}
 
@@ -2942,12 +2945,11 @@ If there remain identifiers that are provided but not required,
 and they are not otherwise (meant to) be used via reflection,
 then a “tree shaker” or global dead code optimizer may eliminate them.
 
-@subsubsection{Digression: Scheme and FP}
+@subsubsection[#:tag "Digression_Scheme_and_FP"]{Digression: Scheme and FP}
 
-Here are two issues where there is a discrepancy between Scheme
-and the theoretical model of Functional Programming,
-that other languages may or may not stick closer to,
-that may or may not be otherwise suitable for modeling Object Orientation.
+Here are two ways in which Scheme departs from the theoretical model of Functional Programming,
+that also apply to many (but not all) other programming languages, and that affect
+their suitability to modeling Object Orientation.
 
 @subsubsub*section{Many Y combinators}
 
@@ -2988,7 +2990,7 @@ as the computation involves deeper sub-computations.
 In some cases, the eager evaluation may never terminate at all when lazy evaluation would,
 or not before the end of the universe.
 And of course, if there are any non-idempotent side effects,
-they too will be duplicated a large number of times.
+they too will be potentially duplicated a large number of times.
 
 There are several potential alternatives to
 the practically inapplicable applicative Y combinator:
@@ -3077,7 +3079,7 @@ before they are evaluated, without duplication of computation costs or side-effe
   computations to computations without having to go through the universe of values.
 }
 (Note that @c{delay} can be easily implemented on top of any stateful applicative language,
-though a thread-safe variant, if needed, is somewhat harder to achieve.)
+though a thread-safe variant, if needed, is somewhat trickier to achieve.)
 
 A third solution, often used in programming languages with second-class OO only
 (or languages in which first-class functions must terminate), is
@@ -3538,7 +3540,8 @@ the advantage is that casting a prototype (called “extension” in Nix)
 to its target is a trivial zero-cost identity no-op;
 the slight disadvantage is that the target record cannot use arbitrary keys,
 and must avoid the magic string as key;
-also, casting to a specification becomes slightly more expensive,
+also, casting to a specification becomes slightly more expensive
+(table lookup vs fixed-offset field access),
 but it’s a more rarely used operation, anyway.
 The semantic is otherwise essentially the same as for our implementation.
 
@@ -3547,8 +3550,8 @@ where the prefix @c{rproto} denotes a prototype implemented as a record,
 and our magic key is @c{#f}, the boolean false value,
 so it doesn’t impede on the free use of arbitrary symbols as keys.
 The function @c{rproto←spec} is used to define a prototype from a specification,
-by prepending a special specification in front that deals with remembering the provided specification.
-and is used implicitly when composing prototypes using inheritance
+by prepending a special specification in front that deals with remembering the provided specification;
+this function is used implicitly when composing prototypes using inheritance
 with the @c{rproto-mix} function.
 The function @c{spec←rproto} extracts the specification from a prototype,
 so you may inherit from it.
@@ -3572,8 +3575,13 @@ i.e. without side-effect, whether state, non-determinism, I/O or otherwise,
 then indeed there is only one target, up to behavioral equality;
 recomputing the target multiple times will lead to the same result in all contexts;
 caching the target value next to specification can thus be seen as a performance enhancement.
+However, in case of recursive access to the target, this performance enhancement
+can grow exponentially with the depth of the recursion,
+by using a shared computation instead of repeated recomputations
+(see the related discussion on the applicative Y combinator in
+@secref{Digression_Scheme_and_FP}).
 
-If however, the specification does side-effects
+If however, the specification has side-effects
 (which of course supposes the language also has side-effects),
 then multiple computations of the target value will lead to different results,
 and caching a one canonical target value next to the specification is
@@ -3604,7 +3612,7 @@ as errors or non-termination or irreversible I/O, then it becomes essential
 to wrap your target behind lazy evaluation, or, in Scheme, a @c{delay} form,
 so that you may still define prototypes from incomplete erroneous specifications,
 and use them through inheritance to build larger prototypes, that, when complete,
-will not cause undesired side-effects.
+will not have undesired side-effects.
 Once again, laziness proves essential to OO,
 even and especially in presence of side-effects.
 
@@ -3766,27 +3774,8 @@ As for “class methods” (also known as “static methods” in C++ or Java),
 they can be regular methods of the type descriptor,
 or there can be a method @c{class-methods} in the type descriptor containing a record of them.
 
-A parametric type can be represented as a function from type descriptor to type descriptor,
-taking the type parameter as input, and
-returning a type descriptor specialized for those parameters as output;
-this first representation allows for uniform calling conventions,
-whether a type descriptor was produced by applying a parameter to a parametric type or not.
-Alternatively, a parametric type may be represented as a “parametric type descriptor”
-whose methods each take an extra type descriptor argument as parameter;
-this second representation allows eliminates the need to generate a lot of intermediate
-type descriptors when repeatedly invoking a single method from a parametric type and its parameter.
-Thus, to invoke a function @c{map} from @c{P A} to @c{P B} on an element @c{pa} of @c{P A},
-where @c{P} is a functor (kind of parametric type with a @c{map} function satisfying some
-common commutative diagram), in the first representation,
-you would call @c{((((P A) map) B) pa)}, generating a complete new type descriptor @c{(P A)},
-whereas in the second representation, you would call @c{((P map) A B pa)}
-efficiently reusing a shared parametric type descriptor @c{P}
-without all those throw-away type descriptors,
-at the cost of having to juggle with multiple different calling conventions
-for conceptually similar operations.
-
 @;{
-  TODO Discuss encodings and types?
+TODO Discuss encodings and types?
 
 Encoding as record of pre-methods
 [AC96c] M. Abadi and L. Cardelli. A theory of primitive objects: Untyped and first-order
@@ -3797,6 +3786,63 @@ Reppy, Rieke "Classes in ObjectML via Modules 1996 FOOL3
 
 BruceCardelliPierce2006
 }
+
+@subsubsection{Parametric First-Class Type Descriptors}
+
+There are two main strategies to represent parametric types:
+“function of descriptors” vs “descriptor of functions”.
+
+In the “function of descriptors” strategy, a parametric type is represented as
+a function from type descriptor to type descriptor,
+taking a type parameter as input, and
+returning a type descriptor specialized for those parameters as output.
+As it computes the specialized descriptor, it can apply various specializations and optimizations,
+pre-selecting code paths and throwing away cases that do not apply,
+allowing for slightly better specialized code,
+at the expense of time and space generating the specialized descriptor.
+This representation allows for uniform calling conventions
+for all type descriptors satisfying the resulting monomorphic interface,
+regardless of whether it was obtained by specializing a parametric type or not.
+This strategy is notably used during the “monomorphization” phase
+used within C++ compilers when expanding templates.
+It is useful when trying to statically inline away all traces of type descriptors before runtime,
+but in a dynamic setting requires creation of more descriptors,
+or some memoization mechanism.
+
+In the “descriptor of functions” strategy, a parametric type is represented as
+a type descriptor the methods of which may take extra parameters,
+one the type descriptor of each type parameter.
+Methods that return non-function values may become functions of one (or more) type parameter(s).
+Thus, the type descriptor for a functor @c{F} may have a method @c{map}
+that takes two type parameters @c{A} and @c{B} and transforms an element of @c{P A}
+into an element of @c{P B}.
+This strategy eliminates the need to heap-allocate a lot of specialized type descriptors;
+but it requires more bookkeeping to remember which method of which type descriptor
+takes how many extra type descriptor parameters.
+
+Both strategies are useful, and which to prefer depends on the use case and its tradeoffs.
+A given program or compiler may use both, and may very well have to:
+even using the “descriptor-of-functions” strategy, you may still have to generate
+specialized type descriptors, so that you may pass them to functions
+that expect their parametric type descriptors to only take @c{N} type parameters,
+and are unaware that these were specialized from more general parametric type descriptors
+with @c{N+M} type parameters (where @c{M > 0}).
+This unawareness may stem from any kind dynamic typing, or
+from a choice to avoid generating many copies of the code
+for each value of @c{M} as the depth of parametric constructors varies.
+And even using the “function-of-descriptors” strategy,
+you may want to maintain collections of functions that each take
+one or many descriptors as arguments,
+especially when such collections contain a large number of functions,
+only one or a few of which are to be used at a time per (tuple of) descriptor argument(s),
+and this (tuple of) descriptor argument(s) itself changes often.
+
+Even fixpoints can be done differently in the two strategies, wherein
+the “function-of-descriptors” strategy leads to generating descriptors that embed the fixpoints
+so that clients never need to know they were even fixpoints,
+whereas the “descriptor-of-functions” strategy leads to descriptors the calling convention of which
+requires clients to follow a convention of passing the descriptor itself to the functions
+so as to close the fixpoint loop.
 
 @subsubsection{Class-style vs Typeclass-style}
 
@@ -3811,17 +3857,20 @@ or to the first-class “interfaces” of “Interface-Passing Style” @~cite{L
 The advantages are many:
 @itemize[
   @item{
-    When running an algorithm that involves many objects of the same type,
-    you can pass along one type descriptor for all these objects, and not have
-    to extract the descriptor each and every time, for a slight performance bonus.
+    When running an algorithm that involves many values of the same type,
+    you can pass along one type descriptor for all these values, and not have
+    to extract the descriptor each and every time from values represented as class instances,
+    for a slight performance bonus.
     Algorithms for which performance matter involve a lot of calls to methods
-    on objects of the same type, at which point it is always a good performance
+    on values of the same type, at which point it is always a good performance
     enhancement to compute a type descriptor once, extract its methods once, cache it,
     and repeatedly call the cached method—instead of going through method extraction mechanisms
-    over and over again for each method call.}
+    over and over again for each method call.
+    A good static type system will also save you from having to check the type
+    of each and every value.}
   @item{
     Because the type descriptor is being passed “out of band”,
-    objects can be light and not have to carry their type descriptor in a field,
+    values can be light and not have to carry their type descriptor in a record field,
     saving a bit space. Actually, the values being described need not even be records at all:
     if the language has primitive types and type constructors such as
     numbers, tuples, vectors, strings, etc.,
@@ -3846,19 +3895,32 @@ The advantages are many:
     Constructors are quite special in “class-style”,
     since regular methods are called by extracting them from an object’s type descriptor,
     but there is not yet an object from which to extract a type descriptor
-    when what you are doing is precisely constructing the first known (to you) object of that type.
+    when what you are doing is precisely constructing the first known object of that type
+    (in the given scope at least).
     Constructors are so special, that some encodings of classes identify a class with
     “the” constructor function that generates an object of that type,
     complete with an appropriate type descriptor.
     This creates an asymmetry between constructors and other methods,
     that requires special treatment when transforming type descriptors.
-    By contrast, in “typeclass-style”, constructors are just regular methods
+    By contrast, in “typeclass-style”, constructors are just regular methods;
     there can be more than one, espousing different calling conventions,
     or creating element from different subsets or subtypes of the type (disjoint or not).
     Many typeclass transformations, dualities, etc., become more uniform and simpler
     when using typeclass-style. Type descriptors in typeclass style, in which constructors
     are just normal methods, are therefore more natural and easy to use for parametric polymorphism
-    than type descriptors in class style.
+    than type descriptors in class style.}
+  @item{
+    Finally, typeclass-style can be extended more easily and more uniformly
+    than traditional class-style to support APIs involving
+    multiple related types being simultaneously defined in mutually recursive ways:
+    data structures and their indexes, paths or zippers, containers and containees,
+    bipartite graphs, grammars with multiple non-terminals, expressions and types, etc.
+    Instead of distinguishing a main class under which others are nested,
+    or having a hierarchy of “friend” classes indirectly recursing through a global context,
+    typeclass-style treats all classes uniformly, yet can locally encapsulate
+    an entire family of them.
+    There is however, a way to retrieve most of these advantages of typeclass-style
+    while remaining in class-style, by using multi-methods (see below). @; TODO secref
 }]
 
 There is an isomorphism between class-style and typeclass-style type descriptors,
@@ -3961,9 +4023,11 @@ This attempt sometimes succeeds (as in OCaml), but more often than not
 utterly fails, as computational power emerges from unforeseen interactions
 between language features added over time (as in C++, Java, Haskell).
 @TODO{cite Nada on Java type system constraints}
+@TODO{cite LangSec on unforeseen emergence of Turing-equivalence through “weird machines”?}
 The attempts do usually succeed, however, at making these type-level languages
-require a completely different mindset and very roundabout design patterns
-to do anything useful, a task then reserved for experts.
+require a completely different mindset from the “base language”,
+and very roundabout design patterns, to do anything useful,
+a task then reserved for experts.
 
 Computationally powerful or not, the type-level language of a Class OO language
 is almost always very different from the base language:
@@ -4000,7 +4064,7 @@ but even then it is unclear how much these mechanisms help,
 compared to directly implementing prototypes.
 There could be code sharing between the two, yet trying to fit prototypes
 on top of classes rather than the other way around is what Henry Baker dubbed
-an @emph{abstraction inversion}, @;CITE
+an @emph{abstraction inversion} @~cite{Baker1992CritiqueDKL},
 i.e. putting the cart before the horse.
 
 @subsection{Types for OO}
@@ -4028,7 +4092,6 @@ help in refactoring, debugging programs,
 some forms of type-directed metaprogramming, and more.
 And even without system enforcement, thinking in terms of types can help understand
 what programs do or don’t and how to write and use them.
-
 We have already started to go deeper by describing records as indexed products.
 Let’s see how we can model OO with more precise types.
 
@@ -4071,7 +4134,7 @@ may satisfy more many constraints than those actually required from other module
 
 The simplest and most obvious theory for typing OO,
 that we will dub the Naive Non-recursive Object-Oriented Type Theory (NNOOTT),
-consists in considering subclassing as subtyping,
+consists in considering subclassing as the same as subtyping,
 i.e. a subclass, that extends a class with new fields,
 is a subtype of the “super” class being extended.
 This theory is implicitly present in Hoare’s seminal 1965 paper @~cite{hoare1965record},
@@ -4088,7 +4151,8 @@ As a simple variant of the NNOOTT, consider first the Simply Typed Lambda-Calcul
 or some more elaborate but still well-understood variant of the λ-calculus,
 extended with primitives for the language’s builtin constructs and standard libraries,
 and (if not already available) a minimal set of features for OO:
-indexed products for records, subtyping (@c{⊂} or @c{<:}) and type intersections (@c{∩}).
+indexed products for records, subtyping (@c{⊂} or @c{≤} or in ASCII @c{<:})
+and type intersections (@c{∩}).
 In this NNOOTT variant, a NNOOTT modular extensible specification
 would have a type of the form
 @Code{
@@ -4251,12 +4315,13 @@ makes it dynamically rather than statically typed.
 
 The key to dispelling the
 “conflation of subtyping and inheritance” @~cite{Fisher1996thesis}
-or the “conflation of class and types” @~cite{SubtypingMatch1997}
+or the “notions of type and class [being] often confounded” @~cite{bruce1996typing}
 is indeed first to have dispelled, as we just did previously,
 the conflation of specification and target.
 Thereafter, OO semantics becomes simple,
 for we notice that though the two are often referenced together in an implicit product,
-they remain distinct, therefore we must be careful to always treat them accordingly,
+target and specification remain distinct, therefore we must be careful
+to always treat them accordingly,
 as two distinct entities with very distinct types,
 when others may insist to treat them as a single entity with a common type.
 
@@ -4264,7 +4329,8 @@ We then realize what most people actually mean by “subtyping” in extent lite
 @emph{subtyping for the target type of a class} (or target prototype),
 which is distinct from
 @emph{subtyping for the specification type of a class} (or prototype),
-the latter of which Kim Bruce calls “matching” @~cite{SubtypingMatch1997}. @; TODO cite further
+variants of the latter of which Kim Bruce calls “matching” @~cite{SubtypingMatch1997}.
+@; TODO cite further
 But most people, being confused about the conflation of specification and target,
 don’t conceptualize the distinction, and either
 try to treat them as if it were the same thing,
@@ -4273,7 +4339,7 @@ or they build extremely complex calculi to do the right thing despite the confus
 By having a clear concept of the distinction,
 we can simplify away all the complexity without introducing inconsistency.
 
-We can use the usual rules of subtyping @; TODO cite Wegner, Cardelli
+We can use the usual rules of subtyping @~cite{cardelli1986understanding} @; TODO cite
 and apply them separately to the types of specifications and their targets,
 knowing that “subtyping and fixpointing do not commute”,
 or to be more mathematically precise,
@@ -4342,7 +4408,7 @@ is constrained by @c{super ⊂ inherited self},
 and the returning a value is of type @c{super∩defined self},
 and there is no direct recursion there
 (but there can be indirectly if the focus is itself referenced via self somehow).
-Those who understand universal quantifiers may also notice how
+Those familiar with universal quantifiers may also notice how
 the quantification of @c{self} and @c{super} pretty much
 forces those functions to be well-behaved with respect to gracefully passing through
 any call to a method they do not define, override or otherwise handle.
@@ -4378,7 +4444,7 @@ the intersection @c{f∩g} is defined by @c{(f∩g)(x) = f(x)∩g(x)}.
 Indeed, the intersection operation is defined polymorphically, and
 in a mutually recursive way for types, functions over types, etc.
 
-@subsubsection{Advantages of OO as Modular Extensible Specifications for Types}
+@subsubsection{Typing Advantages of OO as Modular Extensible Specifications}
 
 By defining OO in terms of the λ-calculus, indeed in two definitions @c{mix} and @c{fix},
 we can do away with the vast complexity of “object calculi” of the 1990s,
@@ -4397,7 +4463,7 @@ that follow regular semantics, as part of regular λ-terms@xnote["."]{
 OO can be defined and studied without the need for ad hoc OO-specific magic,
 making explanations readily accessible to the public.
 Indeed, defining OO types in term of LaTeX deduction rules for ad hoc OO primitives
-is just programming in an informal, bug-ridden metalanguage that nobody is familiar with,
+is just programming in an informal, bug-ridden metalanguage that few are familiar with,
 with no tooling, no documentation, no tests,
 no actual implementation,
 and indeed no agreed upon syntax much less semantics@xnote["…"]{
@@ -4457,7 +4523,7 @@ as is the case in languages like C++, Java, C#, etc.
 @;{
 XXX TODO integrate citations to the below and more
 
-Wegner and Cardelli 1985
+Wegner and Cardelli 1985 @~cite{cardelli1986understanding}
 
 Cardelli 1988
 
@@ -4498,7 +4564,6 @@ Also, when an object of same type is linearly returned,
 there is one obvious place from which to copy the extended rest of the object;
 when multiple objects are returned... that is still a possible interpretation
 (and though that's seldom the useful one, that's enough for the type theorist).
-
 
 Kim Bruce, @;CITE 1993 1994 1995
 thereafter gave sounder types to OO,
@@ -4551,7 +4616,8 @@ i.e. being able to use the underlying data structures and algorithms
 without having to know the details and internals.
 
 A first-class type descriptor is a record whose type is existentially quantified:
-@; TODO cite Cardelli Wegner, Pierce Dω, Harper ML modules, Leroy Caml modules, etc. ???
+@~cite{cardelli1986understanding mitchell1988abstract PT1993STTFOOP}
+@; TODO cite harper1994modules remy1994mlart
 as per the Curry–Howard correspondence, it is a witness of the proposition according to which
 “there is a type @c{T} that has this interface”, where the interface may include field getters
 (functions of type @c{T → F} for some field value @c{F}),
@@ -4567,9 +4633,11 @@ in any position “positive” or “negative”, etc.
 So far, this is the kind of things you could write with first-class ML modules, @; TODO cite
 which embodies first-class modularity, but not modular extensibility.
 
-Now, if the type system includes subtypes, and fixpoints involving
-open recursion with recursive subtypes, then
+Now, if the type system includes subtypes, extensible records, and
+fixpoints involving open recursion,
+e.g. based on recursively constrained types @~cite{isoop1995 iloop1995}, then
 those first-class module values can be the targets of modular extensible specifications.
+@;{TODO cite remy1994mlart ?}
 
 @;{ Discuss constructor being included in the signature, or outside it.
   In a "typeclass" approach, we can locally open the existential type and reuse it a lot of times.
