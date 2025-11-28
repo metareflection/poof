@@ -3844,7 +3844,7 @@ whereas the “descriptor-of-functions” strategy leads to descriptors the call
 requires clients to follow a convention of passing the descriptor itself to the functions
 so as to close the fixpoint loop.
 
-@subsubsection{Class-style vs Typeclass-style}
+@subsubsection[#:tag "Class_style_vs_Typeclass_style"]{Class-style vs Typeclass-style}
 
 Now, there is a slight variant on using type descriptors, wherein,
 instead of passing around “class instances” such that functions each time extract
@@ -3859,11 +3859,11 @@ The advantages are many:
   @item{
     When running an algorithm that involves many values of the same type,
     you can pass along one type descriptor for all these values, and not have
-    to extract the descriptor each and every time from values represented as class instances,
+    to extract the same descriptor each and every time from values represented as class instances,
     for a slight performance bonus.
     Algorithms for which performance matter involve a lot of calls to methods
     on values of the same type, at which point it is always a good performance
-    enhancement to compute a type descriptor once, extract its methods once, cache it,
+    enhancement to compute a type descriptor and extract its methods once and only once, cache it,
     and repeatedly call the cached method—instead of going through method extraction mechanisms
     over and over again for each method call.
     A good static type system will also save you from having to check the type
@@ -3874,7 +3874,8 @@ The advantages are many:
     saving a bit space. Actually, the values being described need not even be records at all:
     if the language has primitive types and type constructors such as
     numbers, tuples, vectors, strings, etc.,
-    these types can also be described and have methods associated to them.}
+    these types can also be described and have methods associated to them
+    despite not being records carrying a type descriptor.}
   @item{
     There can be many different type descriptors that match any given object,
     with different methods to work with them from a different point of view,
@@ -3918,9 +3919,10 @@ The advantages are many:
     Instead of distinguishing a main class under which others are nested,
     or having a hierarchy of “friend” classes indirectly recursing through a global context,
     typeclass-style treats all classes uniformly, yet can locally encapsulate
-    an entire family of them.
+    an entire family of them, potentially infinite.
     There is however, a way to retrieve most of these advantages of typeclass-style
-    while remaining in class-style, by using multi-methods (see below). @; TODO secref
+    while remaining in class-style, though only few languages support it:
+    using multi-methods (see below). @; TODO secref
 }]
 
 There is an isomorphism between class-style and typeclass-style type descriptors,
@@ -3951,13 +3953,13 @@ in the end, these four styles yield equivalent semantics such that programs in o
 can be mechanically transformed into programs in another style, and vice versa.
 
 Finally, note that type descriptors can be used either “class-style” or “typeclass-style”
-without any OO involved in to modularly and extensibly specify these descriptors.
+without any OO involved to modularly and extensibly specify these descriptors.
 Indeed, the dictionaries that Haskell typeclasses expand into are generated
 from modular but non-extensible specifications.
 The same holds for the equivalent feature called “traits” in Rust,
 that do not allow for extension of inherited methods.
-Modules in SML or OCaml can also offer “typeclass-style” type descriptors
-without extensibility through inheritance.
+Modules in SML or OCaml can also offer “typeclass-style” type modular descriptors
+without modular extensibility through inheritance.
 Non-OO class-style type descriptors are also possible, some languages such as Gambit Scheme
 allow users to define new data structures, and to declare the equivalent of methods
 that specialize how values of those new types will be printed, or tested for equality,
@@ -4198,6 +4200,13 @@ the inherited information must contain all information expected by the parent,
 and all information expected the child that isn’t provided by the parent;
 the provided information contains all information provided by either child or parent.
 
+However, this “Naive OO Type Theory” is a bit naive, and
+only works in simple non-recursive cases.
+Yet the NNOOTT is important to understand,
+both for the simple cases it is good enough to cover,
+and for its failure modes that tripped so many good programmers
+into wrongfully trying to equate inheritance and subtyping.
+
 @subsubsection{Limits of the NNOOTT}
 
 The NNOOTT works well in the non-recursive case, i.e.
@@ -4220,7 +4229,7 @@ as being “(constant) sets” @~cite{Jacobs1995ObjectsAC}@xnote[","]{
   where fields are declared, that matter for typing inheritance,
   and for which his hypothesis applies, and “definitions” that must be reduced to the core part.
   The conference reviewing committees really dropped the ball on accepting those papers,
-  though that section 2.1 was probably the result of at least one reviewer doing his job.
+  though that section 2.1 was probably the result of at least one reviewer doing his job right.
   Did reviewers overall let themselves impressed by formalism beyond their ability to judge,
   or were they complicit in the sleight of hand to grant their domain of research
   a fake mantle of formal mathematical legitimacy?
@@ -4229,7 +4238,10 @@ as being “(constant) sets” @~cite{Jacobs1995ObjectsAC}@xnote[","]{
   The 1990s were a time when IBM would hire comedians to become “evangelists”
   for their Visual Age Smalltalk technology, soon recycled into Java evangelists.
   Jacobs is not the only one, and he may even have extenuating circumstances.
-  He may have been pressured to make his work “relevant” by publishing in OO conferences,
+  He may have been ill-inspired by Goguen, whom he cites, who also abuses
+  the terminology from OO to make his own valid but loosely-related
+  application of Category Theory to software specification.
+  He may also have been pressured to make his work “relevant” by publishing in OO conferences,
   under pains of losing funding, and
   he may have been happy to find his work welcome even though he didn’t try hard,
   trusting reviewers to send stronger feedback if his work hadn’t been fit.
@@ -4241,7 +4253,7 @@ as being “(constant) sets” @~cite{Jacobs1995ObjectsAC}@xnote[","]{
   newcomers with unfamiliar points of view.
   Even Barbara Liskov, future Turing Award recipient, was invited to contribute to OO conferences,
   and quickly dismissed inheritance to focus on her own expertise,
-  which involves modularity but without extensibility. @; CITE
+  which involves modularity without extensibility. @; CITE
   Are either those who talk and publish what turns out not to be OO at all at OO conferences,
   or those who invite them to talk and publish, being deliberately misleading?
   Probably not, yet, the public can be fooled just the same as if dishonesty were meant:
@@ -4252,9 +4264,9 @@ as being “(constant) sets” @~cite{Jacobs1995ObjectsAC}@xnote[","]{
   of domains of knowledge and the concepts that matter.
   The larger point here being that we should be skeptical of papers,
   even by some of the greatest scientists
-  (neither Jacobs’ nor Liskov’s expertises are in doubt),
+  (none of Jacobs’, Goguen’s nor Liskov’s expertises are in doubt),
   even published at some of the most reputable conferences in the field (e.g. OOPSLA, ECOOP),
-  because science is casually corrupted by politics and money,
+  because science is casually corrupted by power and money,
   and only more cheaply so for the stakes being low.
   This particular case from thirty years ago is easily corrected in retrospect;
   its underlying lie was of little consequence then and is of no consequence today;
@@ -4267,8 +4279,8 @@ which he elaborates in another paper @~cite{Jacobs1996InheritanceAC}
 as meaning «not depending on the “unknown” type X (of self).»
 This makes his paper inapplicable to most OO, but interestingly,
 precisely identifies the subset of OO for which inheritance coincides with subtyping,
-or, to speak more precisely, subtyping of OO specifications matches equivalent to
-subtyping of their target types.
+or, to speak more precisely,
+subtyping of modular extensible specifications coincides with subtyping of their targets.
 
 Indeed, in general, specifications may contain so called “binary methods”
 that take another value of the same target type as argument,
@@ -4378,13 +4390,14 @@ it does not follow that @c{Y F ⊂ Y G} where @c{Y} is the fixpoint operator for
   We retrieve these familiar notions from C++ and Java just by reasoning from first principles
   and thinking about distinct but related types for a specification and its target.
 
-  Now, our opinion is that it is actually be better to fully decouple the types
+  Now, our opinion is that it is actually better to fully decouple the types
   of the target and the specification, even in an “implicit pair” conflating the two:
   Indeed, not only does that means that types are much simpler, that also mean that
   intermediate computations, special cases to bootstrap a class hierarchy,
   transformations done to a record after it was computed as a fixpoint, and
-  records were target and specification are out of sync
-  because of effects somewhere else in the system, etc., can be safely represented and typed,
+  records where target and specification are out of sync
+  because of effects somewhere else in the system, etc.,
+  can be safely represented and typed,
   without having to fight the typesystem or the runtime.
 }
 
@@ -4409,8 +4422,9 @@ and the returning a value is of type @c{super∩defined self},
 and there is no direct recursion there
 (but there can be indirectly if the focus is itself referenced via self somehow).
 Those familiar with universal quantifiers may also notice how
-the quantification of @c{self} and @c{super} pretty much
-forces those functions to be well-behaved with respect to gracefully passing through
+the quantification of @c{self} and @c{super},
+in absence of reflective capabilities, pretty much forces those functions
+to be well-behaved with respect to gracefully passing through
 any call to a method they do not define, override or otherwise handle.
 Finally, notice how, as with the simpler NNOOTT variant above,
 the types @c{self} and @c{referenced self} refer to the module context,
@@ -4542,8 +4556,6 @@ https://www.cs.cornell.edu/andru/cs711/2002fa/reading/zenger02typesafe.pdf
 Ego
 https://www.cs.cmu.edu/~aldrich/ego/
 
-https://kbb04747.sites.pomona.edu/README.html#Match
-
 Bad(?): NOOP Robert Cartwright & Moez Abdelgawad
 https://www.semanticscholar.org/reader/3855d0beac44b1623731bf581f80ec4d348eb4ba
 
@@ -4571,19 +4583,15 @@ saving subtyping where it could be saved because the NNOOTT applies, @; CITE Pol
 but otherwise abandoning subtyping as a goal. @; CITE LOOM 1997
 @; Kathleen Fisher @;CITE ...
 
-As we’ll soon see, this approximation is a bit naive, and
-only works in simple non-recursive cases.
-Yet this “Naive OO Type Theory” is important to understand,
-both for the simple cases it is good enough to cover,
-and for its failure modes that tripped so many good programmers
-into wrongfully trying to equate inheritance and subtyping.
-
 @;{ CITE }
 
 Meanwhile, the relationship between a module context and a focused value being
 modularly and extensibly specified within it is characterized by
 a @emph{lens} @~cite{Foster2007CombinatorsFB},
 generalizing a path of identifiers to some arbitrary way of accessing a subcomputation.
+
+Classes as object-generator see Cook87, A self-ish model of inheritance
+or Cook89a A Denotational Semantics of Inheritance, thesis
 
 }
 
@@ -4665,19 +4673,30 @@ those first-class module values can be the targets of modular extensible specifi
 
 @subsubsection{First-Class OO Beyond Classes}
 
-In general, a record may be existentially quantified zero, one, or arbitrarily many times:
-a simple data record needs no such quantification;
-but a record encoding the “dictionary” of an arbitrarily complex Haskell “typeclass” @; TODO cite
-may be quantified over several type variables, even variables themselves of higher kinds
-(such as @c{Type → Type → Type}), etc.
-A record may thus represent algorithms involving arbitrarily large families of related types:
-tree algorithms parameterized by objects with a total order,
-accelerated “zipper-based” algorithms parameterized by
-a data type and a “derivative” of the data type,
-database algorithms parameterized by parameterized tree algorithms, etc.
-Being first-class, these records can be computed at runtime to select
-a specific, optimized and correct algorithm
-tailored to user-specified configuration or dynamic runtime data.
+Our approach to OO can vastly simplify types for it, because it explicitly decouples
+concepts that previously people implicitly conflated:
+not only specifications and their targets,
+but also modularity and extensibility,
+fixpoints and types.
+
+By decoupling specifications and targets, we can type them separately, subtype them separately,
+not have to deal with the extreme complexity of
+the vain quest of trying to type and subtype them together.
+
+By decoupling modularity and extensibility, we can type not just closed specifications,
+but also open specifications, which makes everything so much simpler,
+more composable and decomposable.
+Individual class, object, method, sub-method specifications, etc.,
+can be typed with some variant of the @c{C → V → V} pattern,
+composed, assembled in products or co-products, etc.,
+with no coupling making the unit of specification the same as the unit of fixpointing.
+
+Finally, with typeclass-style (as in @secref{Class_style_vs_Typeclass_style}),
+we find that the unit of fixpointing need not one type descriptor;
+it could be a value without an existential type, or a descriptor for multiple existential types,
+that could be a finite set, or even an infinite family of types, etc.
+In an extreme case, it can even be the entire ecosystem — a pattern actively used
+in Jsonnet or Nix (though without formal types).
 
 To build such records, one may in turn make them the targets of modular extensible specifications,
 such that first-class OO can express much more than mere “classes”,
@@ -4685,51 +4704,17 @@ especially so than second-class classes of traditional Class OO.
 First-class OO can directly express sets of cooperating values, types and algorithms
 parameterized by other values, types and algorithms.
 
-or to systems that allow for existentially quantified records but without modular extensibility.
-@;{TODO CITE Rideau}
+@subsubsection{Second-Class OO}
 
-Note how there is a stylistic difference between class and typeclass presentation of OO.
-
-Whether 
-functions involving type constructors (say, for arrays, lists, tables, trees, etc.)@xnote[","]{
-
-
-Classes as object-generator see Cook87, A self-ish model of inheritance
-or Cook89a A Denotational Semantics of Inheritance, thesis
-
-
-
-Visibility
-"Private": just use scoping to declare a lexical variable that is consumed before you return anything;
-not even export anywhere.
-"Semi-Private": make the labels identifiers rather than symbols, and don't import or export some,
-or be selective what is exported to whom (e.g. have protected "internals" modules?)
-
-}
-
-
-
-
-Later, a second-class class is just a class
-that is statically known as a constant at compile-time,
-which enables many simplifications and optimizations,
-such as lambda-lifting (making all classes global objects modulo class parameters),
+A second-class class can be seen as just a first-class class that happens
+to be statically known as a constant at compile-time.
+The existential quantifications of first-class OO become unique witnesses of the existence,
+whether global or, for nested classes, scoped.
+This enables many simplifications and optimizations,
+such as lambda-lifting (making all classes global objects, modulo class parameters),
 and monomorphization (statically inlining each among the finite number of cases
 of compile-time constant parameters to the class),
 and inlining globally constant classes away.
-But if we can solve the more general case of first-class classes in a prototype OO system,
-then the special case of second-class classes falls as trivial.
-
-The target for a class is a type-descriptor:
-
-In general, a record may carry not just one type, but also zero, two or more.
-From the point of view of types, you “just”
-
-Situation very similar to ML first-class modules vs second-class modules,
-just with added fixpoints and subtyping for modular extensibility.
-
-
-
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
