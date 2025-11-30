@@ -2054,7 +2054,9 @@ each field is initialized before it is used@xnote["."]{
 
   The init-before-issue issue is well-known and exists outside of OO: it may happen
   whenever there is mutual recursion between variables or initial elements of data structures.
-  However, we’ll see that open recursion is ubiquitous in OO,
+  However, we’ll see that “open recursion”, i.e. the use of operators meant to be
+  the argument of a fixpoint combinator, but also possibly composition before fixpointing,
+  is ubiquitous in OO,
   wherein partial specifications define methods that use other methods that are yet to be defined
   in other partial specifications, that may or may not follow any particular protocol
   for initialization order.
@@ -2063,7 +2065,7 @@ each field is initialized before it is used@xnote["."]{
 
   This may come at a surprise to many who mistakenly believe the essence of OO
   is in the domain it is commonly applied to
-  (defining data structures and accompanying functions as “classes”),
+  (defining mutable data structures and accompanying functions as “classes”),
   rather than in the semantic mechanism that is being applied to these domains
   (extensible modular definitions of arbitrary code using inheritance).
   But this is no surprise to those who are deeply familiar with C++ templates, Jsonnet or Nix,
@@ -2080,7 +2082,7 @@ are initialized by side-effects, programmers need to follow some rigid protocol
 that may not be expressive enough to follow the modular dependencies between internal definitions,
 often leading to indirect solutions like “builder” classes in Java,
 that stage all the complex computations before
-the actual initialization of objects of the desired class.
+the initialization of objects of the actually desired class.
 
 @subsection[#:tag "extensibility"]{Extensibility}
 @subsubsection{Extending an Entity}
@@ -3934,6 +3936,24 @@ that records the value, and a type descriptor for a class whose methods
 invoke the typeclass methods on the unwrapped values, and rewraps results that need be
 (in a pure setting, or update the wrapped value, in a mutable setting),
 based on which positions in each method’s type is of the proper self-type.
+@;{
+  TODO
+  "encapsulation" meh. We don't need every value in the computation to be encapsulated
+  in an extra layer of records; that is emphatically not the point of OO.
+  The existentially quantified record that describes the computation is already
+  all the encapsulation we need and want!
+  The computation that was modularly extensibly specified can directly handle
+  numbers and pointers, APL tables, etc., and can deal with any paradigm,
+  not just object graph of encapsulated data.
+  Now, if the underlying language, like Smalltalk,
+  exposes its primitive types with a uniform interface compatible with its “object” records,
+  that’s great, nothing extra to do there;
+  then you have “pure OO”.
+  @xnote["."]{
+    Even then, primitive types are not usually be extensible,
+    though tricks a la CLOS MOP could be used to make them so. @~cite{AMOP}
+  }
+}
 Simple metaprograms that enact this transformation have been written in Lisp @~cite{LIL2012}
 in the simple case of functions in which the self-type only appears directly
 as one of the (potentially multiple) arguments or (potentially multiple) return values of a method.
@@ -4602,11 +4622,7 @@ so we need to identify what kind of types are suitable for that.
 The hard part is to type @emph{classes}, and more generally specifications
 wherein the type of the target recursively refers to itself
 through the open recursion on the module context.
-Note that types for second-class classes can be easily deduced
-from types for first-class classes
-(by holding specifications and their fixpoints as compile-time constants),
-but not at all the other way around
-(you can’t easily unmake such strong simplifying assumptions).
+
 Happily, our construction neatly factors the problem of OO
 into two related but mostly independent parts:
 first, understanding the target, and second, understanding their instantiation via fixpoint.
@@ -4646,30 +4662,50 @@ fixpoints involving open recursion,
 e.g. based on recursively constrained types @~cite{isoop1995 iloop1995}, then
 those first-class module values can be the targets of modular extensible specifications.
 @;{TODO cite remy1994mlart ?}
+And there we have first-class OO capable of expressing classes.
 
-@;{ Discuss constructor being included in the signature, or outside it.
-  In a "typeclass" approach, we can locally open the existential type and reuse it a lot of times.
-  rather than go through the whole class wrapper all the times... and then,
-  still have to make sure that you're using the same wrapper or else.
+Regarding subtyping, however, note that when modeling a class as a type descriptor,
+not only is it absolutely not required that a subclass’s target should be
+a subtype of its superclass’s target (which would be the NNOOTT above),
+but it is not required either that a subclass’s specification should be
+a subtype of its superclass’s specification.
+Indeed, adding new variants to a sum type, which makes the extended type a supertype of the previous,
+is just as important as adding fields to a product type (or specializing its fields),
+which makes the extended type a subtype of the previous.
+Typical uses include extending a language grammar (as in @~cite{garrigue2000code}),
+defining new error cases, specializing the API of some reified protocol, etc.
+In most statically typed OO languages, that historically mandate the subclass specification type
+to be a subtype of its superclass specification types, programmers work around this limitation
+by defining many subclasses of each class, one for each of the actual cases of an implicit variant;
+but this coping strategy requires defining a lot of subclasses,
+makes it hard to track whether all cases have been processed;
+essentially, the case analysis of the sum type is being dynamically rather than statically typed.
 
-  "encapsulation" meh. We don't need every value in the computation to be encapsulated
-  in an extra layer of records; that is emphatically not the point of OO.
-  The existentially quantified record that describes the computation is already
-  all the encapsulation we need and want!
-  The computation that was modularly extensibly specified can directly handle
-  numbers and pointers, APL tables, etc., and can deal with any paradigm,
-  not just object graph of encapsulated data.
-  Now, if the underlying language, like Smalltalk,
-  exposes its primitive types with a uniform interface compatible with its “object” records,
-  that’s great, nothing extra to do there;
-  then you have “pure OO”.
-  @xnote["."]{
-    Even then, primitive types are not usually be extensible,
-    though tricks a la CLOS MOP could be used to make them so. @~cite{AMOP}
-  }
+@subsubsub*section{Note on Types for Second-Class Class OO}
 
-  cite TAPL ? See papers cited by TAPL ?
-}
+Types for second-class classes can be easily deduced
+from types for first-class classes:
+A second-class class is “just” a first-class class that happens
+to be statically known as a compile-time constant, rather than a runtime variable.
+The existential quantifications of first-class OO and their variable runtime witnesses
+become unique constant compile-time witnesses,
+whether global or, for nested classes, scoped.
+This enables many simplifications and optimizations,
+such as lambda-lifting (making all classes global objects, modulo class parameters),
+and monomorphization (statically inlining each among the finite number of cases
+of compile-time constant parameters to the class),
+and inlining globally constant classes away.
+
+However, you cannot at all deduce types for first-class classes from
+types for second-class classes:
+you cannot uninline constants, cannot unmake simplifying assumptions,
+cannot generalize from a compile-time constant to a runtime variable.
+The variable behavior essentially requires generating code
+that you wouldn’t have to generate for a constant.
+That is why typing first-class prototypes is more general and more useful
+than only typing second-class classes;
+and though it may be harder in a way, involving more elaborate logic,
+it can also be simpler in other ways, involving more uniform concepts.
 
 @subsubsection{First-Class OO Beyond Classes}
 
@@ -4704,17 +4740,29 @@ especially so than second-class classes of traditional Class OO.
 First-class OO can directly express sets of cooperating values, types and algorithms
 parameterized by other values, types and algorithms.
 
-@subsubsection{Second-Class OO}
+@subsection{Stateful OO}
 
-A second-class class can be seen as just a first-class class that happens
-to be statically known as a constant at compile-time.
-The existential quantifications of first-class OO become unique witnesses of the existence,
-whether global or, for nested classes, scoped.
-This enables many simplifications and optimizations,
-such as lambda-lifting (making all classes global objects, modulo class parameters),
-and monomorphization (statically inlining each among the finite number of cases
-of compile-time constant parameters to the class),
-and inlining globally constant classes away.
+@subsubsection{Mutability as Orthogonal to OO}
+
+We saw how OO is best explained in terms of pure lazy functional programming,
+yet historical OO languages, like non-OO languages of the same time, were stateful,
+heavily relying on mutation of variables and record fields.
+How does mutation fit in our function OO paradigm?
+The same as it does on top of functional programming in general, with or without OO:
+by adding an implicit (or then again explicit) “store” argument to all (or select) functions,
+that gets linearly (or “monadically”) modified and passed along the semantics of those functions
+(the linearity, uniqueness or monad ensuring that there is only one shared state
+at a time for all parts of the program).
+Then, a mutable variable or record field is just a constant pointer into a mutable cell in that store.
+
+This approach perfectly models the mutability of object fields found in historical OO languages.
+
+@;{TODO
+  No need to add special purpose syntax and semantics that complects all the aspects of objects:
+  mutable state, indexed product, fixpointing,
+  visibility rules and subtyping constraints (separately before and after fixpointing), and so on.
+  Just simple orthogonal constructs for each and every of these aspects.
+}
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
@@ -4843,9 +4891,6 @@ is specified through methods that depend on the types multiple of its arguments,
 and their type hierarchy: Lisp, Clojure, Julia support it natively,
 as well as less popular languages; many more popular languages support it using libraries.
 
-@subsection{Static Typing}
-
-@subsection[#:tag "mutation"]{Mutation}
 @subsection[#:tag "multiple_dispatch"]{Multiple Dispatch}
 Simple methods, Binary methods, Multimethods, Constructors —
 Number object inputs being 1, 2, N, 0.
@@ -4955,18 +5000,6 @@ Fields vs Optics for method combination wrapping vs Generalized optics.
 @(generate-bibliography)
 
 @;{
-These specifications can be modeled simply using the λ-calculus
-as functions of two parameters (considered together with other metadata):
-@r[self] for modularity, for each specification to access finished aspects
-as computed from (their and) other specifications, and
-@r[super] for incremental extensibility,
-for each specification to be able to contribute
-its modifications to the computation as partially specified thus far.
-The specified computation is then the fixed point for the @r[self] parameter
-given a trivial @r[base] value for the initial super.
-Composing specifications is just chaining them through the @r[super] argument
-while sharing the same @r[self] argument. @; See section XXX. Cite bracha
-
 The usage pattern of a @r[self] argument intended for fixed-point
 has been dubbed “open recursion”. @; cite Pierce
 It is what allows the “late binding” touted by Alan Kay,
@@ -5011,18 +5044,6 @@ and the entities known as statically typed classes at runtime
 being actually dynamically typed prototypes at compile-time.
 @; TODO maybe C++14 for some of the semantics??
 @; TODO see appendix for examples
-
-
-where entities of type @r[E] are being specified extensibly,
-then new extended entity specified from a previous one of type @r[E] is also of type @r[E],
-and the “extension” if first class would be a function of type @r[E ⟶ E]
-(though we will later propose more refined types for that).
-In terms of λ-calculus, a programmer can take an opaque value of type @r[E],
-without having to see inside the term for that value, or being able to access it,
-and write an “extension” that takes that previous term as an argument,
-and operate on it to return a new term.
-When implementing OO, the variable for this previous term is conventionally called @r[super],
-after Simula. @; cite @~cite{Simula1967}
 
 In cases that an entity is extended “in place” and the old version no longer used,
 as in editing a file, or redefining a class in Smalltalk or Lisp,
