@@ -2789,3 +2789,186 @@ mapping identifiers to field index in the record.
 These indexes may be cached between modifications, or wholly resolved at compile-time
 if the extension is external or second-class.
 
+
+@;{
+@subsubsection{The Importance of Laziness}
+
+Note that in Nix, lazy evaluation crucially enables sharing of sub-computations
+along a common structure of values; this is especially important when in defining fixed-points,
+and thus, when using modular definitions.
+By contrast, a pure applicative language without side-effects can only express such fixed-points
+as indefinitely recomputed functions, with no sharing and instead with potentially hyper-exponential
+recomputation as the definitions contains deeply nested recursive self-references or mutual references.
+Therefore it is a practical necessity in an applicative language to use some extension for
+lazy evaluation, such as the Scheme primitives @r[delay] and @r[force],
+even though small programs without deep nesting and branching in recursion can do without.
+
+Some might object that most OO languages are not functional and especially not lazy;
+but that misses the point: most OO languages use Class OO,
+where all the OO actually only happens but at compile-time.
+What more, classes are defined in an extremely restricted compile-time language,
+that has a very simple functional model, that has a somewhat simpler description
+in terms of lazy evaluation, yet that doesn’t matter much because the language is so restricted.
+And of course, it matters none at all what meta-language is used to implement
+whatever compile-time language, or whether it is pure functional or imperative,
+unless maybe that meta-language is exposed to the user via reflection.
+
+For evidence of whether lazy evaluation does or doesn’t offer a better model of OO,
+in addition to the Prototype OO languages we will discuss,
+one has to look at those few Class OO languages
+that do not have such restrictions in handling prototypes.
+At that point, a notable case is C++, that offers a Turing complete language at compile-time,
+template metaprogramming;
+and at least since C++11, that compile-time language indeed is
+a @emph{pure functional, lazy, dynamically typed} Prototype OO language,
+with the @c{using} or @c{typedef} keywords introducing lazy let-bindings,
+the @c{constexpr} keyword enabling arithmetics and other primitive computations,
+and the entities known as statically typed classes at runtime
+being actually dynamically typed prototypes at compile-time.
+@; TODO maybe C++14 for some of the semantics??
+@; TODO see appendix for examples
+
+In cases that an entity is extended “in place” and the old version no longer used,
+as in editing a file, or redefining a class in Smalltalk or Lisp,
+an extension is a function that side-effects a mutable reference of type @r[E],
+or something equivalent.
+
+
+
+
+
+A pure functional language without side-effects is the setting for the simplest and
+probably clearest model of modularity:
+(a) all modular definitions are regular λ-terms that take as first argument
+a module context argument @r[m];
+(b) the same value will be provided to all definitions at instantiation time;
+(c) the context @r[m] makes each defined value accessible through some field or lens
+as identified by a name or path of names from the root;
+(d) the effective value of @r[m] to be passed simultaneously to every definition
+is the fixed-point of the computation wherein the value bound to each field
+is the result from computing the given definition with the effective value.
+
+This model is notably used as is in NixOS’s package repository @c{nixpkgs},
+as configured with the pure lazy dynamic functional language Nix:
+every module definition is a function that conventionally takes an argument @c{pkgs}
+that encompasses the entire ecosystem, a namespace hierarchy that includes
+not only all packages being defined, but also the standard library of functions @c{pkgs.lib}
+(though some like to redundantly pass it as an additional argument @c{lib})
+and all kind of intermediary data structures.
+As we will soon see, when implementing OO, this modular context is typically called @r[self],
+to access (the rest of) the modularly (and extensibly) defined entity.
+
+
+"Code reuse".
+Hated by detractors to OO.
+Yet entire reason for OO, versus external extensibility.
+Requires good factoring indeed.
+Maintainership burden that is not as thoughtless as duplicating code,
+yet ultimately more efficient since it doesn't require duplicating design and fixes.
+
+@subsubsection{Modular Extensions}
+
+Let us consider implementing modular extensibility in a pure functional setting.
+If we modularly define extensions, our terms will take an argument @r[self], the modularity context,
+and return an extension, which takes an argument @r[super],
+the previous “inherited” (record of) definitions,
+and returns some extended (record of) definitions.
+A simple type for a modular extension is then @r[M ⟶ E ⟶ E],
+wherein terms are typically of the form @linebreak[] @r{(λ (self super) ...extended_super)}.
+
+If we instead define extensions to modular definitions, our terms will take
+an argument @r[super], the previous “inherited” modular definition,
+of type @r[M ⟶ E], and return an extended modular definition also of type @r[M ⟶ E],
+and therefore is of type @r[(M ⟶ E) ⟶ M ⟶ E].
+But since the point of modularity is to plug
+the same element of @r[M] at the end through a fixed-point,
+the construct contains the same useful information as @r[E ⟶ M ⟶ E], or as
+@r[M ⟶ E ⟶ E] above, just with extra complexity in the composition.
+We will therefore prefer the simpler “modular extension” point of view.
+
+In the general case, the type @r[E] or @r[super] and the return value
+will be that of a @emph{method} of a prototype, or sub-entity being incrementally defined,
+whereas @r[M] will be some language-wide namespace, registering all
+known (and yet unknown) computations, prototypes and library functions in the language ecosystem.
+(This is notably the case with @c{nixpkgs}, wherein the role @r[M] is taken
+by the argument @r[pkgs], top of the global namespace of packages
+and other entities within the ecosystem (including library functions, etc.)).
+In the simplest case, @r[E] and @r[M] will both be the same type,
+that of a single target being modularly and extensibly specified, typically a record.
+
+
+And no, the visitor pattern, even after you go through all the pain of it, doesn't fully capture the expressiveness of multiple dispatch with method combination, because it finds only one method.
+
+
+The issue then is that establishing set of indexed types for a closed modular definition
+requires knowledge of all modules, whereas, to preserve the principle of modularity,
+each open modular definition may only define or reference a small subset of the index,
+and its type must accordingly only include the narrow subset of indexed types
+as being either defined or referenced by the open modular definition.
+An open modular definition shall not be required to know about and mention indexes and types
+from other open modular definitions that have not been written or amended yet,
+still that will be combined with it in the future.
+To support modularity, a static type system thus needs to support
+subtyping between sets of indexed types, as well as computation of fixed-points.
+
+that the type @r[M] of the common module context value
+is shared between all definitions within that program fragment:
+this module context must therefore include all the information from all
+the existing modular definitions currently in use,
+but also from all the yet-undefined other partial specifications
+that can or will ever be combined with the current one.
+Yet to keep things modular, no module author should be required to know, much less specify,
+all the constraints demanded by each and every other module,
+including modules yet to be used, yet to be written,
+as part of an assemblage of modules not yet anticipated.
+To preserve modularity in this setting without reverting to some kind of dynamic typing as in Nix,
+some kind of subtyping with extensible types is therefore required,
+such that each module can specify the bindings it requires and those it provides
+without the need for global coordination@xnote["."]{
+  In a language like Haskell, that does not have any mechanism of subtyping or extensible types,
+  module programmers can be creative by having modular typeclass constraints on a type parameter,
+  then depend on each application programmer making some gigantic non-modular definition
+  of the common type that will be fed as parameter to
+  all the modular definitions of his entire application,
+  with the potentially thousands of typeclass instances this definition satisfies,
+  and suitable initial defaults for each field (hopefully, a lazy bottom computation will do).
+  The non-modularity hasn’t been completely eliminated,
+  but moved and concentrated onto application developers,
+  while library developers can enjoy more modularity.
+  Some Haskellers notably do that to modularly define a type for errors,
+  lacking an extensible exception type like in OCaml.
+
+  However, if there is more than one modularly-defined entity, especially local ones
+  (and in OO, each and every prototype definition is modular),
+  then each user of modularity (and not just application programmer) must similarly
+  create his non-modular types to feed to each modular computation fixed-point.
+  One could invent a way to share a single mother-of-all modular context object for all fixed-point,
+  inside of which each individual modular definitions each have an access path;
+  but then one might have to make sure that each modular definition has its own set of typeclasses
+  so as to avoid clashes.
+
+  While possible, these strategies are quite onerous, and still require module developers
+  to follow a lot of extra-linguistic conventions — thereby sharply decreasing modularity
+  compared to language-supported extensibility.
+}
+
+Note that we haven’t started talking about objects yet.
+We find that some form of subtyping for modules
+is a necessity for modularity in general, even without OO.
+Though indeed, without OO and its in-language extensibility,
+you can have a somewhat useful notion of modules with
+a quite limited and inexpressive notion of subtyping
+compared to what is needed to support classes, and even more so to support prototypes.
+
+There is no perfect solution for either issue, there are only tradeoffs,
+and each developer must make his choice. Your Mileage May Vary.
+Just make sure you agree with anyone else that you will be directly sharing code with.
+
+}
+
+
+@; Flavors combination vs C++ conflict https://x.com/Ngnghm/status/1980509375232885161
+@; https://cs.pomona.edu/~kim/FOOPL/prelim.pdf
+
+@; Discussion with James Noble and David Barbour: https://x.com/Ngnghm/status/1988891187340615763
+@; multiple inheritance

@@ -802,7 +802,7 @@ between self-reference and reference to a constant.
 
 Interestingly, Joseph Goguen, Amílcar Sernadas or Bart Jacobs’s categorical theories
 of “objects” and “inheritance”
-@~cite{Jacobs1995ObjectsAC Jacobs1996InheritanceAC},@; TODO cite Goguen OBJ
+@~cite{sernadas1994 Jacobs1995ObjectsAC Jacobs1996InheritanceAC} @; TODO cite Goguen OBJ
 actually model UML and refinement,
 and not at all actual Objects and Inheritance as used in Programming Languages;
 a hijacking of the same words for completely different meanings,
@@ -4745,24 +4745,124 @@ parameterized by other values, types and algorithms.
 @subsubsection{Mutability as Orthogonal to OO}
 
 We saw how OO is best explained in terms of pure lazy functional programming,
-yet historical OO languages, like non-OO languages of the same time, were stateful,
+and how mutable state is therefore wholly unnecessary for OO.
+There have been plenty of pure functional object libraries since at least the 1990s,
+even for languages that support mutable objects;
+OO languages that do not support any mutation at all have also existed since at least the 1990s,
+and practical such languages with wide adoption exist since at least the early 2000s.
+@;{TODO cite}
+
+Yet, historical OO languages, like non-OO languages of the same time, were stateful,
 heavily relying on mutation of variables and record fields.
-How does mutation fit in our function OO paradigm?
-The same as it does on top of functional programming in general, with or without OO:
+So are the more popular OO languages of the day, still.
+How then does mutation fit in our function OO paradigm?
+The same way it does on top of functional programming in general, with or without OO:
 by adding an implicit (or then again explicit) “store” argument to all (or select) functions,
 that gets linearly (or “monadically”) modified and passed along the semantics of those functions
 (the linearity, uniqueness or monad ensuring that there is only one shared state
 at a time for all parts of the program).
 Then, a mutable variable or record field is just a constant pointer into a mutable cell in that store.
 
-This approach perfectly models the mutability of object fields found in historical OO languages.
+This approach perfectly models the mutability of object fields, as found in most OO languages.
+It has the advantages of keeping this concern orthogonal to others,
+so that indexed products, fixpoints, mutation, visibility rules and subtyping constraints
+(separately before and after fixpointing), etc.,
+can remain simple independent constructs each with simple reasoning rules,
+when the “solution” found in popular languages like C++ or Java
+is all too often to introduce a one mother-of-all syntactic and semantic construct
+of immense complexity, the “class”, that frankly not a single person in the world fully understands,
+and of which scientific papers only dare study but simplified (yet still very complex) models.
 
-@;{TODO
-  No need to add special purpose syntax and semantics that complects all the aspects of objects:
-  mutable state, indexed product, fixpointing,
-  visibility rules and subtyping constraints (separately before and after fixpointing), and so on.
-  Just simple orthogonal constructs for each and every of these aspects.
+@subsubsection{Mutability of the Inheritance Structure}
+
+Keeping mutability orthogonal to OO as above works great as long as the fields are mutable,
+but the inheritance structure of prototypes and classes is immutable.
+Happily, this covers about every language with second-class classes (which is most OO languages),
+but also all colloquial uses of OO even in languages with first-class prototypes and classes.
+Still, there are use cases in which changes to class or prototype hierarchies
+is actively used by some dynamic OO systems such as Smalltalk or Lisp, to support
+interactive development or schema upgrade in long-lived persistent systems.
+How then to model mutability of the inheritance structure itself,
+when the specification and targets of prototypes and classes are being updated?
+
+First, we must note that such code upgrade is generally considered a rare event,
+and most evaluation of most programs happens in-between two such code upgrades,
+in large spans of time during which the code is constant.
+Therefore, the usual semantics that consider inheritance structures as constant
+still apply for an overwhelming fraction of the time and an overwhelming fraction of objects,
+even in presence of such mutability.
+There are indeed critical times when these usual semantics are insufficient,
+and the actual semantics must be explained;
+but these usual semantics are not rendered irrelevant
+by the possibility of dynamic changes to object inheritance.
+
+Second, updates to the inheritance structure of objects
+can be seen as a special case of code upgrade in a dynamic system.
+Code upgrade, whether it involves changes to inheritance structure or not,
+raises many issues such as the atomicity of groups of upgrades
+with respect to the current thread and concurrent threads,
+or what happens to calls to updated functions from previous function bodies in
+frames of the current thread’s call stack,
+how the code upgrades do or do not interfere with optimizations such as inlining or reordering
+of function calls,
+how processor caches are invalidated, page permissions are updated,
+how coherency is achieved across multiple processors on a shared memory system, etc.
+These issues are not specific to inheritance mutability, and
+while they deserve a study of their own,
+the present paper is not the right place for such a discussion.
+The only popular programming language that fully addresses all these code upgrade issues
+in its defined semantics is Erlang @~cite{DBLP:phd/basesearch/Armstrong03};
+however it does not have any OO support, and its approach
+is not always transposable to other languages@xnote["."]{
+  Erlang will notably kill processes that still use obsolete code
+  from before the current version now being upgraded to the next one.
+  This is possible because Erlang has only very restricted sharing of state between processes,
+  so it can ensure PCLSRing @~cite{PCLSRing} without requiring user cooperation;
+  this is useful because Erlang and its ecosystem have a deep-seated “let it fail” philosophy
+  wherein processes randomly dying is expected as a fact of life,
+  and much infrastructure is provided for restarting failed processes,
+  that developers are expected to use.
 }
+Lacking such deep language support, user support is required to ensure upgrades only happen
+when the system is “quiescent” (i.e. at rest, so there are no concurrency or upstack issues)
+for “Dynamic Software Updating” @~cite{DSU2001};
+at that point, the compiler need only guarantee that calls to the upgradable entry points
+will not have been inlined.
+
+Third, we must note how languages such as Smalltalk and Common Lisp include a lot of support
+for updating class definitions, including well-defined behavior with respect to how objects
+are updated when their classes change:
+see for instance the protocol around @c{update-instance-for-redefined-class}
+in CLOS, the Common Lisp Object System @~cite{bobrow88clos}.
+Even then, these languages do not provide precise and portable semantics
+for how such code upgrade upgrades interfere with code running in other threads,
+or in frames up the stack from the upgrade, so once again,
+users must ensure quiescence or may have to deal with spurious incoherence issues,
+up to possible system corruption.
+
+Lastly, as to providing a semantics for update in inheritance structure,
+language designers and/or programmers will have to face the question of what to do
+with previously computed targets when a specification is updated:
+Should the target be left unchanged, now out-of-synch with the (possibly conflated) specification?
+Should the target be wholly invalidated, losing any local state updates since it was instantiated?
+Should a protocol such as @c{update-instance-for-redefined-class} be invoked to update this state?
+Should this protocol be invoked in an eager or lazy way
+(i.e. for all objects right after code update, or on a need basis for each object)?
+Should a class maintain a collection of all its instances so this protocol can be eagerly updated?
+Should some real-time process such as the garbage collector ensure timely updates across the entire
+heap even in absence of such explicitly maintained collection?
+There is no one-size-fits-all answer to these questions.
+
+If anything, thinking in terms of mutable state and object identity
+both forces software designers to face these inevitable issues
+in interactive or long-lived persistent systems,
+and provides a framework to give coherent answers to these questions,
+when “pure functional” languages that deny these issues leave their users helpless,
+forced to reinvent entire such frameworks and
+live in systems they build on top of these frameworks
+rather than directly in the language that denies the issues.
+
+@subsection{Multiple Dispatch}
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
@@ -4998,194 +5098,3 @@ Fields vs Optics for method combination wrapping vs Generalized optics.
 @subsection{Example 2}
 
 @(generate-bibliography)
-
-@;{
-The usage pattern of a @r[self] argument intended for fixed-point
-has been dubbed “open recursion”. @; cite Pierce
-It is what allows the “late binding” touted by Alan Kay,
-and makes the design modular: authors of one partial specification can reference
-and use aspects of the total computation handled by other partial specifications.
-The usage pattern of the @r[super] argument is how inheritance brings about
-incrementality, extensibility and compositionality within this modular context.
-
-@subsubsection{The Importance of Laziness}
-
-Note that in Nix, lazy evaluation crucially enables sharing of sub-computations
-along a common structure of values; this is especially important when in defining fixed-points,
-and thus, when using modular definitions.
-By contrast, a pure applicative language without side-effects can only express such fixed-points
-as indefinitely recomputed functions, with no sharing and instead with potentially hyper-exponential
-recomputation as the definitions contains deeply nested recursive self-references or mutual references.
-Therefore it is a practical necessity in an applicative language to use some extension for
-lazy evaluation, such as the Scheme primitives @r[delay] and @r[force],
-even though small programs without deep nesting and branching in recursion can do without.
-
-Some might object that most OO languages are not functional and especially not lazy;
-but that misses the point: most OO languages use Class OO,
-where all the OO actually only happens but at compile-time.
-What more, classes are defined in an extremely restricted compile-time language,
-that has a very simple functional model, that has a somewhat simpler description
-in terms of lazy evaluation, yet that doesn’t matter much because the language is so restricted.
-And of course, it matters none at all what meta-language is used to implement
-whatever compile-time language, or whether it is pure functional or imperative,
-unless maybe that meta-language is exposed to the user via reflection.
-
-For evidence of whether lazy evaluation does or doesn’t offer a better model of OO,
-in addition to the Prototype OO languages we will discuss,
-one has to look at those few Class OO languages
-that do not have such restrictions in handling prototypes.
-At that point, a notable case is C++, that offers a Turing complete language at compile-time,
-template metaprogramming;
-and at least since C++11, that compile-time language indeed is
-a @emph{pure functional, lazy, dynamically typed} Prototype OO language,
-with the @c{using} or @c{typedef} keywords introducing lazy let-bindings,
-the @c{constexpr} keyword enabling arithmetics and other primitive computations,
-and the entities known as statically typed classes at runtime
-being actually dynamically typed prototypes at compile-time.
-@; TODO maybe C++14 for some of the semantics??
-@; TODO see appendix for examples
-
-In cases that an entity is extended “in place” and the old version no longer used,
-as in editing a file, or redefining a class in Smalltalk or Lisp,
-an extension is a function that side-effects a mutable reference of type @r[E],
-or something equivalent.
-
-
-
-
-
-A pure functional language without side-effects is the setting for the simplest and
-probably clearest model of modularity:
-(a) all modular definitions are regular λ-terms that take as first argument
-a module context argument @r[m];
-(b) the same value will be provided to all definitions at instantiation time;
-(c) the context @r[m] makes each defined value accessible through some field or lens
-as identified by a name or path of names from the root;
-(d) the effective value of @r[m] to be passed simultaneously to every definition
-is the fixed-point of the computation wherein the value bound to each field
-is the result from computing the given definition with the effective value.
-
-This model is notably used as is in NixOS’s package repository @c{nixpkgs},
-as configured with the pure lazy dynamic functional language Nix:
-every module definition is a function that conventionally takes an argument @c{pkgs}
-that encompasses the entire ecosystem, a namespace hierarchy that includes
-not only all packages being defined, but also the standard library of functions @c{pkgs.lib}
-(though some like to redundantly pass it as an additional argument @c{lib})
-and all kind of intermediary data structures.
-As we will soon see, when implementing OO, this modular context is typically called @r[self],
-to access (the rest of) the modularly (and extensibly) defined entity.
-
-
-"Code reuse".
-Hated by detractors to OO.
-Yet entire reason for OO, versus external extensibility.
-Requires good factoring indeed.
-Maintainership burden that is not as thoughtless as duplicating code,
-yet ultimately more efficient since it doesn't require duplicating design and fixes.
-
-@subsubsection{Modular Extensions}
-
-Let us consider implementing modular extensibility in a pure functional setting.
-If we modularly define extensions, our terms will take an argument @r[self], the modularity context,
-and return an extension, which takes an argument @r[super],
-the previous “inherited” (record of) definitions,
-and returns some extended (record of) definitions.
-A simple type for a modular extension is then @r[M ⟶ E ⟶ E],
-wherein terms are typically of the form @linebreak[] @r{(λ (self super) ...extended_super)}.
-
-If we instead define extensions to modular definitions, our terms will take
-an argument @r[super], the previous “inherited” modular definition,
-of type @r[M ⟶ E], and return an extended modular definition also of type @r[M ⟶ E],
-and therefore is of type @r[(M ⟶ E) ⟶ M ⟶ E].
-But since the point of modularity is to plug
-the same element of @r[M] at the end through a fixed-point,
-the construct contains the same useful information as @r[E ⟶ M ⟶ E], or as
-@r[M ⟶ E ⟶ E] above, just with extra complexity in the composition.
-We will therefore prefer the simpler “modular extension” point of view.
-
-In the general case, the type @r[E] or @r[super] and the return value
-will be that of a @emph{method} of a prototype, or sub-entity being incrementally defined,
-whereas @r[M] will be some language-wide namespace, registering all
-known (and yet unknown) computations, prototypes and library functions in the language ecosystem.
-(This is notably the case with @c{nixpkgs}, wherein the role @r[M] is taken
-by the argument @r[pkgs], top of the global namespace of packages
-and other entities within the ecosystem (including library functions, etc.)).
-In the simplest case, @r[E] and @r[M] will both be the same type,
-that of a single target being modularly and extensibly specified, typically a record.
-
-
-And no, the visitor pattern, even after you go through all the pain of it, doesn't fully capture the expressiveness of multiple dispatch with method combination, because it finds only one method.
-
-
-The issue then is that establishing set of indexed types for a closed modular definition
-requires knowledge of all modules, whereas, to preserve the principle of modularity,
-each open modular definition may only define or reference a small subset of the index,
-and its type must accordingly only include the narrow subset of indexed types
-as being either defined or referenced by the open modular definition.
-An open modular definition shall not be required to know about and mention indexes and types
-from other open modular definitions that have not been written or amended yet,
-still that will be combined with it in the future.
-To support modularity, a static type system thus needs to support
-subtyping between sets of indexed types, as well as computation of fixed-points.
-
-that the type @r[M] of the common module context value
-is shared between all definitions within that program fragment:
-this module context must therefore include all the information from all
-the existing modular definitions currently in use,
-but also from all the yet-undefined other partial specifications
-that can or will ever be combined with the current one.
-Yet to keep things modular, no module author should be required to know, much less specify,
-all the constraints demanded by each and every other module,
-including modules yet to be used, yet to be written,
-as part of an assemblage of modules not yet anticipated.
-To preserve modularity in this setting without reverting to some kind of dynamic typing as in Nix,
-some kind of subtyping with extensible types is therefore required,
-such that each module can specify the bindings it requires and those it provides
-without the need for global coordination@xnote["."]{
-  In a language like Haskell, that does not have any mechanism of subtyping or extensible types,
-  module programmers can be creative by having modular typeclass constraints on a type parameter,
-  then depend on each application programmer making some gigantic non-modular definition
-  of the common type that will be fed as parameter to
-  all the modular definitions of his entire application,
-  with the potentially thousands of typeclass instances this definition satisfies,
-  and suitable initial defaults for each field (hopefully, a lazy bottom computation will do).
-  The non-modularity hasn’t been completely eliminated,
-  but moved and concentrated onto application developers,
-  while library developers can enjoy more modularity.
-  Some Haskellers notably do that to modularly define a type for errors,
-  lacking an extensible exception type like in OCaml.
-
-  However, if there is more than one modularly-defined entity, especially local ones
-  (and in OO, each and every prototype definition is modular),
-  then each user of modularity (and not just application programmer) must similarly
-  create his non-modular types to feed to each modular computation fixed-point.
-  One could invent a way to share a single mother-of-all modular context object for all fixed-point,
-  inside of which each individual modular definitions each have an access path;
-  but then one might have to make sure that each modular definition has its own set of typeclasses
-  so as to avoid clashes.
-
-  While possible, these strategies are quite onerous, and still require module developers
-  to follow a lot of extra-linguistic conventions — thereby sharply decreasing modularity
-  compared to language-supported extensibility.
-}
-
-Note that we haven’t started talking about objects yet.
-We find that some form of subtyping for modules
-is a necessity for modularity in general, even without OO.
-Though indeed, without OO and its in-language extensibility,
-you can have a somewhat useful notion of modules with
-a quite limited and inexpressive notion of subtyping
-compared to what is needed to support classes, and even more so to support prototypes.
-
-There is no perfect solution for either issue, there are only tradeoffs,
-and each developer must make his choice. Your Mileage May Vary.
-Just make sure you agree with anyone else that you will be directly sharing code with.
-
-}
-
-
-@; Flavors combination vs C++ conflict https://x.com/Ngnghm/status/1980509375232885161
-@; https://cs.pomona.edu/~kim/FOOPL/prelim.pdf
-
-@; Discussion with James Noble and David Barbour: https://x.com/Ngnghm/status/1988891187340615763
-@; multiple inheritance

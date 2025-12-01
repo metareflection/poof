@@ -518,6 +518,8 @@ numpages = {8}
   url={https://www.semanticscholar.org/paper/The-BETA-Programming-Language-Kristensen-Madsen/3971897f708518e13809d3c0772105bd86526e50}
 }
 
+% Specification of function behavior, similar to later CLHS
+% https://www.researchgate.net/publication/220178512_Common_Lisp_Object_System_Specification_X2JI3_Document_88-002R
 @Article{bobrow88clos,
   title={Common Lisp Object Specification X3J13},
   author={D. G. Bobrow and L. D. DeMichiel and R. P. Gabriel and S. E. Kleene and G. Kiczales and D. A. Moon},
@@ -665,6 +667,14 @@ numpages = {8}
   publisher = "ACM"
 }
 
+@TechReport{PCLSRing,
+        Author={Alan Bawden},
+	Title={{PCLSR}ing: {K}eeping {P}rocess {S}tate {M}odular},
+	Institution={MIT},
+	Year="1989",
+	Note={\myurl{http://fare.tunes.org/tmp/emergent/pclsr.htm}}
+}
+
 @book{cltl2,
   author = {Steele, Guy},
   title = {Common Lisp: The Language, 2nd edition},
@@ -801,6 +811,16 @@ numpages = {8}
   booktitle={Lisp and Symbolic Computation},
   year={1991},
   url={https://bibliography.selflanguage.org/parents-shared-parts.html}
+}
+
+% According to Scholar.Google.com, this paper introduces "Open Recursion" in the context of CS,
+% p.31,32, to describe how to extract a class and subclass from fixpoint of operator, after Cook89.
+@book{cardelli1992extensible,
+  title={Extensible records in a pure calculus of subtyping},
+  author={Cardelli, Luca},
+  year={1992},
+  publisher={Digital. Systems Research Center},
+  url="https://bitsavers.trailing-edge.com/pdf/dec/tech_reports/SRC-RR-81.pdf"
 }
 
 % Like Traits 1982, errors out in case of conflicting methods along the hierarchy
@@ -985,7 +1005,7 @@ series = {OOPSLA '94}
 % No warning about cluelessness
 % Tries to redefine "inheritance" as refinement, except that when it's "non-monotonic",
 % you only have a partial map, and anything goes (you said nothing). Shameful.
-@article{article,
+@article{sernadas1994,
   author = {Costa, J. and Sernadas, Amilcar and Sernadas, Cristina},
   year = {1994},
   month = {06},
@@ -1216,6 +1236,42 @@ and Matsuoka, Satoshi",
   year = {1997}
 }
 
+@inproceedings{10.1145/301618.301638,
+author = {Fisher, Kathleen and Reppy, John},
+title = {The design of a class mechanism for Moby},
+year = {1999},
+isbn = {1581130945},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/301618.301638},
+doi = {10.1145/301618.301638},
+abstract = {Typical class-based languages, such as C++ and JAVA, provide complex class mechanisms but only weak module systems. In fact, classes in these languages incorporate many of the features found in richer module mechanisms. In this paper, we describe an alternative approach to designing a language that has both classes and modules. In our design, we rely on a rich ML-style module system to provide features such as visibility control and parameterization, while providing a minimal class mechanism that includes only those features needed to support inheritance. Programmers can then use the combination of modules and classes to implement the full range of class-based features and idioms. Our approach has the advantage that it provides a full-featured module system (useful in its own right), while keeping the class mechanism quite simple.We have incorporated this design in MOBY, which is an ML-style language that supports class-based object-oriented programming. In this paper, we describe our design via a series of simple examples, show how various class-based features and idioms are realized in MOBY, compare our design with others, and sketch its formal semantics.},
+booktitle = {Proceedings of the ACM SIGPLAN 1999 Conference on Programming Language Design and Implementation},
+pages = {37–49},
+numpages = {13},
+location = {Atlanta, Georgia, USA},
+series = {PLDI '99}
+}
+
+@article{10.1145/301631.301638,
+  author = {Kathleen Fisher and John Reppy},
+  title = {The Design of a Class Mechanism for Moby},
+  year = {1999},
+  issue_date = {May 1999},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume = {34},
+  number = {5},
+  issn = {0362-1340},
+  url = {https://doi.org/10.1145/301631.301638},
+  doi = {10.1145/301631.301638},
+  abstract = {Typical class-based languages, such as C++ and JAVA, provide complex class mechanisms but only weak module systems. In fact, classes in these languages incorporate many of the features found in richer module mechanisms. In this paper, we describe an alternative approach to designing a language that has both classes and modules. In our design, we rely on a rich ML-style module system to provide features such as visibility control and parameterization, while providing a minimal class mechanism that includes only those features needed to support inheritance. Programmers can then use the combination of modules and classes to implement the full range of class-based features and idioms. Our approach has the advantage that it provides a full-featured module system (useful in its own right), while keeping the class mechanism quite simple.We have incorporated this design in MOBY, which is an ML-style language that supports class-based object-oriented programming. In this paper, we describe our design via a series of simple examples, show how various class-based features and idioms are realized in MOBY, compare our design with others, and sketch its formal semantics.},
+  journal = {SIGPLAN Not.},
+  month = may,
+  pages = {37–49},
+  numpages = {13}
+}
+
 % CBPV
 @InProceedings{conf/tlca/Levy99,
   title = {Call-by-Push-Value: A Subsuming Paradigm},
@@ -1276,6 +1332,23 @@ and Matsuoka, Satoshi",
   year={2000}
 }
 
+@InProceedings{DSU2001,
+  author = {Hicks, Michael and Moore, Jonathan T. and Nettles, Scott},
+  title = {Dynamic software updating},
+  year = {2001},
+  isbn = {1581134142},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/378795.378798},
+  doi = {10.1145/378795.378798},
+  abstract = {Many important applications must run continuously and without interruption, yet must be changed to fix bugs or upgrade functionality. No prior general-purpose methodology for dynamic updating achieves a practical balance between flexibility, robustness, low overhead, and ease of use.We present a new approach for C-like languages that provides type-safe dynamic updating of native code in an extremely flexible manner (code, data, and types may be updated, at programmer-determined times) and permits the use of automated tools to aid the programmer in the updating process. Our system is based on dynamic patches that both contain the updated code and the code needed to transition from the old version to the new. A novel aspect of our patches is that they consist of verifiable native code (e.g. Proof-Carrying Code [17] or Typed Assembly Language [16]), which is native code accompanied by annotations that allow on-line verification of the code's safety. We discuss how patches are generated mostly automatically, how they are applied using dynamic-linking technology, and how code is compiled to make it updateable.To concretely illustrate our system, we have implemented a dynamically-updateable web server, FlashEd. We discuss our experience building and maintaining FlashEd. Performance experiments show that for FlashEd, the overhead due to updating is typically less than 1\%.},
+  booktitle = {Proceedings of the ACM SIGPLAN 2001 Conference on Programming Language Design and Implementation},
+  pages = {13–23},
+  numpages = {11},
+  location = {Snowbird, Utah, USA},
+  series = {PLDI '01}
+}
+
 @InProceedings{SullivanGriswoldCaiHallen2001,
   author = {Sullivan, Kevin J. and Griswold, William G. and Cai, Yuanfang and Hallen, Ben},
   title = {The Structure and Value of Modularity in Software Design},
@@ -1323,7 +1396,7 @@ and Matsuoka, Satoshi",
   Author={Alan Kay},
   Title={Clarification of "object-oriented" (email)},
   URL={https://www.purl.org/stefan_ram/pub/doc_kay_oop_en},
-  Year={2007},
+  Year={2003},
   Month={07},
   Day={23}
 }
@@ -1339,6 +1412,25 @@ and Matsuoka, Satoshi",
   doi={10.5555/997550},
   url={https://web.cs.ucla.edu/~todd/research/dissertation.pdf}
 }
+
+% Section 3.8 Dynamic Code Change describes support for hot code upgrade;
+% Only 2 versions of the code allowed; at the 3rd, processes using the 1st are killed.
+% I *suppose* that means there are again only 2 versions,
+% and only 1 after all processes are fully updated.
+% module-qualified name = dynamic, unqualified = static. Tail-call recommended but not mandated.
+% https://erlang.org/download/armstrong_thesis_2003.pdf
+@phdthesis{DBLP:phd/basesearch/Armstrong03,
+  author       = {Joe Armstrong},
+  title        = {Making reliable distributed systems in the presence of software errors},
+  school       = {Royal Institute of Technology, Stockholm, Sweden},
+  year         = {2003},
+  url          = {https://nbn-resolving.org/urn:nbn:se:kth:diva-3658},
+  urn          = {urn:nbn:se:kth:diva-3658},
+  timestamp    = {Mon, 21 Nov 2022 17:42:05 +0100},
+  biburl       = {https://dblp.org/rec/phd/basesearch/Armstrong03.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
 
 @InProceedings{Salzman05prototypeswith,
   author = {Lee Salzman and Jonathan Aldrich},
@@ -1403,6 +1495,24 @@ and Matsuoka, Satoshi",
     year = {2006},
 }
 % http://citeseerx.ist.psu.edu/viewdoc/similar?doi=10.1.1.211.6777&type=cc
+
+% Section 4.2 describes the failure of their "sender path" attempt at multiple inheritance
+@InProceedings{self2007hopl,
+  author = {Ungar, David and Smith, Randall B.},
+  title = {Self},
+  year = {2007},
+  isbn = {9781595937667},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/1238844.1238853},
+  doi = {10.1145/1238844.1238853},
+  abstract = {The years 1985 through 1995 saw the birth and development of the language Self, starting from its design by the authors at Xerox PARC, through first implementations by Ungar and his graduate students at Stanford University, and then with a larger team formed when the authors joined Sun Microsystems Laboratories in 1991. Self was designed to help programmers become more productive and creative by giving them a simple, pure, and powerful language, an implementation that combined ease of use with high performance, a user interface that off-loaded cognitive burden, and a programming environment that captured the malleability of a physical world of live objects. Accomplishing these goals required innovation in several areas: a simple yet powerful prototype-based object model for mainstream programming, many compilation techniques including customization, splitting, type prediction, polymorphic inline caches, adaptive optimization, and dynamic deoptimization, the application of cartoon animation to enhance the legibility of a dynamic graphical interface, an object-centered programming environment, and a user-interface construction framework that embodied a uniform use-mention distinction. Over the years, the project has published many papers and released four major versions of Self.Although the Self project ended in 1995, its implementation, animation, user interface toolkit architecture, and even its prototype object model impact computer science today (2006). Java virtual machines for desktop and laptop computers have adopted Self's implementation techniques, many user interfaces incorporate cartoon animation, several popular systems have adopted similar interface frameworks, and the prototype object model can be found in some of today's languages, including JavaScript. Nevertheless, the vision we tried to capture in the unified whole has yet to be achieved.},
+  booktitle = {Proceedings of the Third ACM SIGPLAN Conference on History of Programming Languages},
+  pages = {9–1–9–50},
+  keywords = {virtual machine, prototype-based programming language, programming environment, object-oriented language, morphic, history of programming languages, exploratory programming, dynamic optimization, dynamic language, cartoon animation, adaptive optimization, Self},
+  location = {San Diego, California},
+  series = {HOPL III}
+}
 
 % NB: Extended version of the seminal 2005 TOPLAS paper.
 % For a history of lenses, see Jules Hedges' https://julesh.com/2018/08/16/lenses-for-philosophers/
@@ -1498,7 +1608,6 @@ and Matsuoka, Satoshi",
   title = {On Understanding Data Abstraction, Revisited},
   year = 2009
 }
-
 
 % Unpublished
 @Misc{MonadsMixins,
@@ -2117,4 +2226,5 @@ and Matsuoka, Satoshi",
 
 % https://www.jot.fm/contents/issue_2017_02/article2.html
 
-
+% https://www.dreamsongs.com/Files/LASC-Overview.pdf
+% The Common Lisp Object System by Linda G. DeMichiel
