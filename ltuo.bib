@@ -47,6 +47,54 @@
         has four musketeers as protagonists.}
 }
 
+% About the Burroughs B5000
+% Push-down stack, memory location independence,
+% "right-hand Polish notation" later used by FORTH!
+@article{lonergan1961,
+  author = {Lonergan, William M. and King, Paul A.},
+  title = {Design of the {B5000} System},
+  journal = {Datamation},
+  volume = {7},
+  number = {5},
+  pages = {28--32},
+  year = {1961}
+}
+
+% Architect of the Burroughs B5000
+@inproceedings{barton1961,
+  author = {Barton, R. S.},
+  title = {A New Approach to the Functional Design of a Digital Computer},
+  year = {1961},
+  isbn = {9781450378727},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/1460690.1460736},
+  doi = {10.1145/1460690.1460736},
+  abstract = {The present methods of determining the functional design of computers are critically reviewed and a new approach proposed. This is illustrated by explaining, in abstracted form, part of the control organization of a new and different machine based, in part, on the ALGOL 60 language. The concepts of expression and procedure lead directly to use of a Polish string program. A new arrangement of control registers results, which provides for automatic allocation of temporary storage within expressions and procedures, and a generalized subroutine linkage.The simplicity and power of these notions suggests that there is much room for improvement in present machines and that more attention should be given to control functions in new designs.},
+  booktitle = {Papers Presented at the May 9-11, 1961, Western Joint IRE-AIEE-ACM Computer Conference},
+  pages = {393–396},
+  numpages = {4},
+  location = {Los Angeles, California},
+  series = {IRE-AIEE-ACM '61 (Western)}
+}
+
+@inproceedings{sketchpad1963,
+  author = {Ivan E. Sutherland},
+  title = {Sketchpad: A Man-Machine Graphical Communication System},
+  year = {1963},
+  isbn = {9781450378802},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/1461551.1461591},
+  doi = {10.1145/1461551.1461591},
+  abstract = {The Sketchpad system makes it possible for a man and a computer to converse rapidly through the medium of line drawings. Heretofore, most interaction between man and computers has been slowed down by the need to reduce all communication to written statements that can be typed; in the past, we have been writing letters to rather than conferring with our computers. For many types of communication, such as describing the shape of a mechanical part or the connections of an electrical circuit, typed statements can prove cumbersome. The Sketchpad system, by eliminating typed statements (except for legends) in favor of line drawings, opens up a new area of man-machine communication.},
+  booktitle = {Proceedings of the May 21-23, 1963, Spring Joint Computer Conference},
+  pages = {329–346},
+  numpages = {18},
+  location = {Detroit, Michigan},
+  series = {AFIPS '63 (Spring)}
+}
+
 @article{hoare1965record,
   title={Record handling},
   author={Hoare, C.A.R.},
@@ -72,6 +120,13 @@
 
 % Warren Teitelman MIT PhD dissertation "Pilot: A Step Toward Man-Computer Symbiosis" 1966
 % Gabriel2012 claims it introduces mixins as "advice".
+@PhDThesis{teitelman1966,
+  author={Warren Teitelman},
+  title={PILOT: a step toward man-computer symbiosis},
+  year={1966},
+  school={MIT},
+  url={https://dspace.mit.edu/bitstream/handle/1721.1/6905/AITR-221.pdf}
+}
 
 % Simula I back in 1966 has processes and more, but DOES NOT have OO
 @article{Simula1966,
@@ -672,7 +727,7 @@ numpages = {8}
 	Title={{PCLSR}ing: {K}eeping {P}rocess {S}tate {M}odular},
 	Institution={MIT},
 	Year="1989",
-	Note={\myurl{http://fare.tunes.org/tmp/emergent/pclsr.htm}}
+	url={http://fare.tunes.org/tmp/emergent/pclsr.htm}
 }
 
 @book{cltl2,
@@ -1279,7 +1334,8 @@ series = {PLDI '99}
   author = {Blain Levy, Paul},
   publisher = {Springer},
   booktitle = {Typed Lambda Calculi and Applications, 4th International Conference, TLCA'99, L'Aquila, Italy, April 7-9, 1999, Proceedings},
-  doi = {10.5555/645894.671755},
+  pages = {228--243},
+  doi = {10.1007/3-540-48959-2_17}
 }
 
 % Defines a dialect of Java with mixins, MixedJava, to illustrate the approach taken in MzScheme
@@ -1614,7 +1670,7 @@ series = {PLDI '99}
   title = "The Different Aspects of Monads and Mixins",
   author = "Oliveira, Bruno C. d. S.",
   year = {2009},
-  url = {http://ropas.snu.ac.kr/%7Ebruno/papers/MixinAspects.pdf},
+  url = {https://www.cs.ox.ac.uk/publications/publication2965-abstract.html}
 }
 
 @InProceedings{Oliveira10effectiveadvice,
@@ -1651,6 +1707,18 @@ series = {PLDI '99}
   url={https://www.dreamsongs.com/Files/Incommensurability.pdf}
 }
 
+@online{oconnor2012lenses,
+  author    = {Russell O’Connor},
+  title     = {Polymorphic Update with van Laarhoven Lenses},
+  year      = {2012},
+  month     = {June},
+  day       = {23},
+  url       = {http://r6.ca/blog/20120623T104901Z.html},
+  note      = {Accessed: 2025-12-01},
+  urldate   = {2025-12-01},
+  howpublished = {Blog post}
+}
+
 @InProceedings{LIL2012,
   author = {François-René Rideau},
   title = {{LIL}: {CLOS} ~ Reaches Higher-Order, Sheds Identity and has a Transformative Experience},
@@ -1675,6 +1743,19 @@ series = {PLDI '99}
   url = {https://jsonnet.org},
   urldate = {2021-03-11}
 }
+
+@online{MythOfRAM2014,
+  author    = {Emil Ernerfeldt},
+  title     = {The Myth of RAM},
+  year      = {2014},
+  month     = {April},
+  url       = {https://www.ilikebigbits.com/2014_04_21_myth_of_ram_1.html},
+  note      = {Accessed: 2025-12-01},
+  urldate   = {2025-12-01},
+  howpublished = {Blog post}
+}
+
+
 
 % InProceedings
 @Misc{ASDF3,
@@ -2099,9 +2180,6 @@ series = {PLDI '99}
 
 % Goguen...
 
-% Parents are Shared Parts: Inheritance and Encapsulation in Self
-% Craig Chambers, David Ungar, Bay-Wei Chang, and Urs Hölzle
-
 % Studies λ-calculus with polymorphism, meets and joins, expresses naturals and others in it.
 % Discusses the need for type annotations due to undecidable typechecking without.
 % Does not discuss general fixpoints, though implicitly can deal with recursion for numbers.
@@ -2221,10 +2299,12 @@ series = {PLDI '99}
 
 % See this article and its bibliography? https://scholarworks.iu.edu/iuswrrest/api/core/bitstreams/2706b860-ef5e-42b9-98c6-f29e3486220e/content
 
-% cite Ivan Sutherland's Sketchpad 1963
 % cite Douglas Engelbart's 1968 mother of all demos
 
 % https://www.jot.fm/contents/issue_2017_02/article2.html
 
 % https://www.dreamsongs.com/Files/LASC-Overview.pdf
 % The Common Lisp Object System by Linda G. DeMichiel
+
+% Does Yaohan Chu introduce the concept of HLL, or is it earlier?
+% https://dl.acm.org/doi/pdf/10.1145/800181.810257

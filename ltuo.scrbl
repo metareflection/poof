@@ -1,5 +1,6 @@
-#lang scribble/acmart @manuscript @anonymous @review @nonacm
+#lang scribble/acmart @manuscript @review @nonacm
 @; -*- Scheme -*-
+@; For review: @anonymous @review
 @; Default already: @10pt @natbib @screen @acmsmall
 @; @anonymous @authordraft @authorversion @timestamp @review @nonacm
 
@@ -283,13 +284,9 @@ only Specifications and Targets.
 In section 6, we rebuild all the familiar features and appurtenances of OO
 as additions or modifications to the minimal system from section 5:
 prototypes, classes, types, mutation, etc.
-Along the way, we dispel a lot of common confusions about OO by
-presenting a few insights that almost everyone misses about OO:
-the too easy confusion between subtyping and subclassing;
-the common myth associating OO with imperative programming
-when surprisingly it is actually naturally pure functional lazy;
-the generally ignored fact that inheritance works on any type, not just records,
-yet the reason why it is more useful with records of some sort.
+We notably explain away the too easy confusion between subtyping and subclassing,
+and discuss the actual relationship between OO with imperative programming
+when the natural framework for OO is actually pure lazy functional programming.
 
 In section 7, we discuss in detail the main forms of inheritance:
 single inheritance, multiple inheritance and mixin inheritance.
@@ -800,7 +797,7 @@ In presence of recursion, UML falls apart,
 by failing to distinguish between subclassing and subtyping,
 between self-reference and reference to a constant.
 
-Interestingly, Joseph Goguen, Amílcar Sernadas or Bart Jacobs’s categorical theories
+Interestingly, Amílcar Sernadas or Bart Jacobs’s categorical theories
 of “objects” and “inheritance”
 @~cite{sernadas1994 Jacobs1995ObjectsAC Jacobs1996InheritanceAC} @; TODO cite Goguen OBJ
 actually model UML and refinement,
@@ -844,24 +841,31 @@ or even more elaborate higher-order functions, etc.
 More broadly, these methodologies lack any effective semantics of inheritance,
 of method resolution in computing properties of objects along their class hierarchies,
 or of anything that has the precision required to specify code
-that can actually run and be reasoned about@xnote["."]{
-  Goguen’s work with OBJ, unlike some of his later categorical imitators,
-  does involve precise formal specification of code, and refinement of such specifications,
-  that have led to actual implementation of executable code.
-  But his work never modeled OO at all, and instead,
-  led to the completely different and orthogonal paradigm of term rewriting.
+that can actually run and be reasoned about.
+But specifying code is exactly where the conceptual difficulties and gains of OO
+are both to be found with respect to software construction.
+In fact, these handwaving methodologies@xnote[" "]{
+  Not all uses of Category Theory in “OO” are handwaving.
+  Goguen, who invokes Category Theory in his papers,
+  and is cited by these later categorical imitators,
+  develops precise formal specification of code, refinement of such specifications,
+  and actual implementation of executable code.
+  @;{TODO cite}
+  Yet, although Goguen does claim to do OO,
+  and in some later works seems to retrofit some actual OO concepts into his systems,
+  what he develops turns out to be the completely different and orthogonal paradigm
+  of term rewriting.
   Term rewriting is a wonderfuly interesting paradigm to study,
   but has never seen any adoption for practical programming,
   though it has found uses in reasoning about programs.
-  What he calls “inheritance” is actually code refinement;
-  it is not a general theory of code implementation,
+  What he calls “inheritance” most of the time is actually code refinement,
+  which does not provide a general theory of code implementation
   that can explain how actual compilers and interpreters preserve the meaning of programs
-  (or sometimes fail to);
-  but it is a technique that can be used to to generate special-purpose such implementations.
+  (or sometimes fail to),
+  though it is a technique that can be used to to generate special-purpose such implementations.
 }
-But specifying code is exactly where the conceptual difficulties and gains of OO
-are both to be found with respect to software construction.
-In fact, these handwaving methodologies are specifically designed to make
+
+are specifically designed to make
 those incapable or unwilling to wrestle with computation
 believe they understand all there is to know about software modeling.
 Yet the nature and correctness of software lies precisely
@@ -882,7 +886,7 @@ records of elementary data types over the wire or on disk,
 but all the rich entities within your software, their interactions and interrelations.
 This will provide much more help with design and safety than any code-less methodology can.
 And if you picked an OO-capable language like C++, Java, C# or Scala,
-(or, with manually enforced dynamic types, Lisp, Python or Ruby),
+(or, with manually enforced dynamic types, Lisp, Ruby or Python),
 you can actually use OO as you do it.
 
 @section{What Object-Orientation @emph{is} — Informal Overview}
@@ -1278,10 +1282,11 @@ specifications are simple functions, inheritance is just chaining them, and
 extracting the target computation is just computing their fixed-point.
 Mixin inheritance also maps directly to the concepts
 of Modularity and Extensibility we are discussing,
-and for these reasons we will study first when presenting a formal semantics of OO.
-@;{TODO ref section}
+and for these reasons we will study it first when presenting a formal semantics of OO
+(@secref{Minimal_OO}).
 
-Chaining classes is a semi-group (associative with neutral element),
+Mixins equipped with a binary inheritance operator constitute a semi-group
+(associative with neutral element),
 and the inheritance structure of a class is just the list of elementary classes chained into it.
 Mixin inheritance works better at runtime, either with Prototype OO,
 or for Class OO in a dynamic and somewhat reflective system.
@@ -1786,21 +1791,25 @@ typeclasses a la Haskell (or traits in Rust),
 interfaces a la Java, and much more,
 @; TODO cite
 provide second-class modularity as part of a language itself.
-@;{ TODO cite Burrough 5000 (1961), Ivan Sutherland's Sketchpad (1963),
-  objects in Smalltalk 72, etc.
-  First-class modules in ML (199x?), etc.
-  provide first-class modularity.
 
-  The word “instance” can be traced further back
-  to Ivan Sutherland’s Sketchpad (1963), @; TODO CITE
-  an early graphical program for Computer-Aided Design,
-  a big inspiration for Kay.}
+@;{  objects in Smalltalk 72, etc.
+  First-class modules in ML (199x?), etc.
+  provide first-class modularity. }
 
 These are all examples of modularity that don’t involve extensibility as such.
 By combining modularity with extensibility, we can also add all kinds of
-OO classes and prototypes since SIMULA 1967.
-
-@; TODO cite Mary Shaw works on Modularity
+OO classes and prototypes since SIMULA 1967, but also precursor breakthroughs like
+the “locator words” of the Burroughs B5000 @~cite{lonergan1961 barton1961}, and
+Ivan Sutherland's Sketchpad’s “masters and instances” @~cite{sketchpad1963},
+that both inspired Kay, or
+or Warren Teitelman’s Pilot’s ADVISE facility @~cite{teitelman1966},
+that was influential at least in the Lisp community
+(eventually leading to method combination in Flavors and CLOS).
+@;{
+  I wonder how much the Smalltalk and Interlisp teams did or did not interact at PARC.
+  I can't imagine they didn't, and yet, Interlisp seems to have had more influence
+  on the the MIT Lispers than the co-located Smalltalkers.
+}
 
 @subsubsection[#:tag "modularity_and_complexity"]{Modularity and Complexity}
 
@@ -2492,7 +2501,7 @@ the ability to test the equality of two specifications.
 
 Therefore, we pick Scheme as the best compromise in which to formalize OO.
 
-@section{Minimal OO}
+@section[#:tag "Minimal_OO"]{Minimal OO}
 
 Now that we’ve given an informal explanation of OO and
 what it is for (Internal Extensible Modularity),
@@ -2523,7 +2532,7 @@ In pure FP, everything will be modeled in terms of functions, and
 the simplest function to model for such an extension would be
 a function from @c{V} to @c{V}, i.e. of type @c{V → V}.
 
-We could give an extension the more precise type @c{V → W | W < V},
+We could give an extension the more precise type @c{W ⊂ V ⇒ V → W},
 i.e. a function from @c{V} to @c{W} such that @c{W} is a subtype of @c{V},
 assuming some theory of subtyping.
 But @c{V → V} is good enough for now.
@@ -2585,8 +2594,11 @@ But interestingly, extensions can be composed, such from two extensions
 @c{ext1} and @c{ext2} you can extract an extension @c{(compose ext1 ext2)}
 that applies @c{ext1} to the result of applying @c{ext2} to the argument value.
 And since we are discussing first-class extensions in Scheme,
-we can always define the @c{compose} if not yet defined as follows:
-@Code{(define compose (λ (ext1 ext2) (λ (val) (ext1 (ext2 val)))))}
+we can always define the @c{compose} if not yet defined, as follows,
+which is an associative operator with the identity function @c{id} as neutral element:
+@Code{
+(define compose (λ (ext1 ext2) (λ (val) (ext1 (ext2 val)))))
+(define id (λ (val) (val)))}
 
 Now if we were discussing second-class extensions in a restricted compile-time language,
 composition might not be definable, and not expressible unless available as a primitive.
@@ -2616,7 +2628,7 @@ as well as the domain type of values.
 @itemize[
 @item{For the type @c{Record} of records, @c{⊤ = (record-empty)} the empty record.}
 @item{For the type @c{Number} of numbers, @c{⊤ = 0}, seen additively, or @c{1} if multiplicatively,
-or @c{-∞} (floating-point number) seen with @c{max} as an operator, or @c{-∞} with @c{min}.}
+or @c{-∞} (IEEE floating-point number) seen with @c{max} as the operator, or @c{+∞} with @c{min}.}
 @item{For the type @c{Pointer} of pointers into a graph of records, @c{⊤ = null},
 the universal null pointer@xnote["."]{
   Hoare called his 1965 invention of null his “billion dollar mistake”. @; CITE both
@@ -2636,8 +2648,8 @@ the universal null pointer@xnote["."]{
   Overall, the effect of his article @~cite{hoare1965record} was probably net vastly positive.
 }}
 @item{For the type @c{Type} of types (in a compiler, at the meta-level),
-@c{⊤ = ⊤}, the top type (“everything”) that you refine,
-or bottom type @c{⊥} (“nothing”) that you extend.}
+@c{⊤ = ⊤}, the top type (“contains everything, about which you know nothing”) that you refine,
+or bottom type @c{⊥} (“contains nothing, about which you know everything”) that you extend.}
 @item{For any function type in a language with partial functions, @c{⊤ = abort},
 a function that never returns regularly,
 and instead always abort regular evaluation and/or throws an error.}]
@@ -2795,16 +2807,27 @@ To extend a record with one key-value binding, you can use
      val
      (rec i)))))))}
 
-This trivial implementation does not support getting a list of bindings, or removing a binding.
-We won’t need these features to implement OO@xnote[";"]{
+Note how this trivial implementation does not support
+getting a list of bindings, or removing a binding.
+Not only won’t we need these features to implement OO@xnote[","]{
   We generate HTML for our presentations using exactly this implementation strategy.
   The Scheme implementation we use has builtin record support, and
   there are libraries now somewhat portable libraries for records in Scheme,
   but we made it a point to use a minimal portable object system
   to show the feasability and practicality of the approach.
 }
-indeed they constitute a “reflection” API not usually available to regular statically typed code,
-that may interfere with various compiler optimizations.
+they constitute a “reflection” API
+that if exposed would interfere with various compiler optimizations,
+the use of which is actively rejected when statically typing records.
+However, there are other reasons why our implementation is not practical for long-running programs:
+it leaks space when a binding is overridden,
+and the time to retrieve a binding is proportional to the total number of bindings
+(including overridden ones) instead of being logarithmic in the number of visible bindings only,
+for a pure functional implementation based on balanced trees,
+or constant time, for a linear or stateful implementation based on hashing@xnote["."]{
+  The nitpicky would also account for an extra square root factor
+  due to physical limitations@~cite{MythOfRAM2014}.
+}
 
 @subsubsub*section{Merging Records}
 
@@ -3184,8 +3207,21 @@ will be extended (right to left) first by @c{(p r)} then by @c{(c r)}.
 
 Modular extensible specifications form a monoid,
 wherein the operation is composition with the @c{mix} function,
-and the neutral element is the specification that “extends”
-any and every value by returning it unchanged, as follows:
+and the neutral element @c{id-spec} is the specification that “extends”
+any and every value by returning it unchanged, as follows@xnote[":"]{
+  As usual, a change of representation from @c{p} to @c{mp = mix p},
+  with inverse transformation @c{p = mp id-spec},
+  would enable use of the regular @c{compose} function
+  for composition of specifications.
+  Haskellers and developers using similar composition-friendly languages
+  might prefer this kind of representation, the way they like van Laarhoven lenses,
+  though Oliveira @~cite{MonadsMixins},
+  or the @c{Control.Mixin.Mixin} library (part of the @c{monadiccp} package),
+  instead both use a different representation that compared to ours swaps the order of arguments
+  between @c{self} and @c{super}.
+  We will stick with our representation, also shared by the Nix standard library, as it makes
+  our explanations, and, in later sections, the types of specifications, slightly simpler.
+}
 @Code{
 (define id-spec (λ (r) (λ (v) v)))}
 
@@ -3211,13 +3247,25 @@ We will call this operation instantiation for modular extensible specifications:
 In this expression,
 @c{t} is the top value for the type being specified (typically the empty record, for records),
 @c{s} is the modular extensible specification, and
-@c{r} is the fixpoint variable for the module context we are computing.
+@c{r} is the fixpoint variable for the module context we are computing
+(often called @c{self} or @c{this} in the literature).
 
 @subsubsection[#:tag "Minimal_OO_Indeed"]{Minimal OO Indeed}
 
 The above functions @c{mix} and @c{fix} are indeed isomorphic
 to the theoretical model of OO from Bracha and Cook @~cite{bracha1990mixin}
-and to the actual implementation of “extensions” in nixpkgs @~cite{nix2015}.
+and to the actual implementation of “extensions” in nixpkgs @~cite{nix2015}@xnote["."]{
+  Our presentation of mixin inheritance is actually slightly more general than what
+  Bracha, Cook or Simons did define, in that our definition is not specialized for records.
+  Indeed, our closed specifications work on values of any type,
+  even their modularity aspect is indeed more useful for types
+  that somehow directly or indirectly encode.
+  But our theory also importantly considers not just closed specifications,
+  but also the more general open specifications, for which it is essential
+  that they universally apply to target values of any type.
+  We can therefore claim as our innovation a wider, more general understanding of mixin inheritance,
+  of which there is no evidence in earlier publications.
+}.
 This style of inheritance was dubbed “mixin inheritance” by Bracha and Cook@xnote[";"]{
   The name “mixin” originally comes from Flavors @~cite{Cannon1979},
   inspired by the ice cream offerings at Emack & Bolios.
@@ -3467,6 +3515,13 @@ and even more so for Prototype OO.
 
 @section{Rebuilding OO from its Minimal Core}
 
+Now that we have reconstructed a minimal OO system from first principle,
+we can rebuild all the usual features from OO languages on top of that core.
+This section will rebuild the most common features from popular OO languages,
+those so omnipresent that most developers think they are necessary for OO,
+even though they are just affordances easily added on top of the above core.
+More advanced and less popular features will follow in subsequent sections.
+
 @subsection{Rebuilding Prototype OO}
 
 @subsubsection{What did we just do?}
@@ -3634,22 +3689,53 @@ the “shape” of the nested extensions to replace by the values when instantia
 Thus, users would end up doing by hand in an ad hoc way what conflation
 gives them systematically for free.
 
-Furthermore, a user cannot know which of his definition he himself or another user
+Furthermore, a user cannot know which of his definitions he himself or another user
 might later want to extend.
 A simple service will often be made part of a larger service set,
 in multiple copies each slightly tweaked;
 its configuration, complete and directly instantiable as it may be for its original author,
 will actually be extended, copied, overridden, many times, in a larger configuration,
 by the maintainers of the larger service set.
+
 The modularity of conflation is already exploited at scale
 for large software distributions on one or many machines,
-using GCL, Jsonnet or Nix as (pure functional) Prototype OO languages.
+using GCL, Jsonnet or Nix as (pure functional) Prototype OO languages:
+@itemize[
+@item{
+  The Google Control Language GCL@~cite{gclviewer2008} (née BCL, Borg Control Language),
+  has been used to specify all of Google’s distributed software deployments
+  since about 2004 (but uses dynamic rather than static scoping,
+  causing dread among Google developers).}
+@item{
+  Jsonnet@~cite{jsonnet}, inspired by GCL but cleaned up to use static scoping,
+  has been particularly used generate configurations for AWS or Kubernetes.}
+@item{
+  Nix@~cite{dolstra2008nixos} is used not just to configure
+  entire software distributions for Linux and macOS,
+  but also distributed services with NixOps or DisNix@xnote["."]{
+  Interestingly, Peter Simons, who implemented prototypes as a user-level library in Nix
+  as “extensions”@~cite{nix2015}, says in a private communication that
+  he did not not know anything about their relationship to Prototypes, Mixins or OO,
+  but semi-independently reinvented them and their use,
+  inspired by examples and by discussions with Andres Löh and Conor McBride;
+  the latter two are programmers and authors who are themselves well-versed in OO literature,
+  yet are usually known to advocate FP over OO.
+}}]
+All three languages have proven the practicality of pure lazy functional prototype objects,
+with mixin inheritance and conflation of specification and target,
+as a paradigm to specify configuration and deployment of software on a world-wide scale,
+each with hundreds of active developers, tens of thousands of active users,
+and millions of end-users.
+Despite its minimal semantics and confidential existence,
+this mixin prototype object model has vastly outsized outreach.
+It is hard to measure how much of this success is due to the feature of Conflation as such,
+yet this feature is arguably essential to the ergonomics of these languages.
 
 @subsubsection{Implicit Recognition of Conflation by OO Practitioners}
 
 The notion of this @emph{conflation of specification and target},
 that we presented, is largely unknown by OO developers, and
-seems to only have been made explicit as late as 2021 @~cite{poof2021}.
+seems to have been made explicit in publication only as late as 2021 @~cite{poof2021}.
 And yet, the knowledge of it is implicit in the OO community.
 
 Common practitionners of OO have long implicitly recognized
@@ -4452,13 +4538,14 @@ whereas the types @c{super} and @c{defined self} refer to some value in focus,
 that isn’t at all the same as the module context
 for open modular extensible specifications in general.
 
-Our two OO primitives then have the follow type:
+Our two OO primitives then have the following type:
 
 @Code{
-fix : top → MESpec referenced inherited defined → self |
-  top ⊂ inherited self,
-  referenced self ⊂ self,
-  self ⊂ inherited self ∩ defined self
+fix : ∀ referenced, inherited, defined : Type → Type, ∀ self, top : Type,
+      referenced self ⊂ self ⇒
+      top ⊂ inherited self ⇒
+      self ⊂ inherited self ∩ defined self ⇒
+        top → MESpec referenced inherited defined → self
 
 mix : MESpec r1 i1∩d2 d1 → MESpec r2 i2 d2 → MESpec r1∩r2 i1∩i2 d1∩d2}
 
@@ -4843,8 +4930,16 @@ up to possible system corruption.
 Lastly, as to providing a semantics for update in inheritance structure,
 language designers and/or programmers will have to face the question of what to do
 with previously computed targets when a specification is updated:
-Should the target be left unchanged, now out-of-synch with the (possibly conflated) specification?
-Should the target be wholly invalidated, losing any local state updates since it was instantiated?
+Are children responsible for “deep” validity checks,
+do parents make “deep and wide” invalidations,
+or must parents and children somehow deal with incoherence?
+Should a target once computed be left forever unchanged,
+now out-of-synch with the (possibly conflated) specification?
+Should a target be wholly invalidated, losing any local state updates since it was instantiated?
+Should a target have “direct” properties that override any computation involving inheritance,
+while “indirect” properties are recomputed from scratch just in case the inheritance structure changed?
+Should some “indirect” properties be cached, and if so how is this cache invalidated when
+there are changes?
 Should a protocol such as @c{update-instance-for-redefined-class} be invoked to update this state?
 Should this protocol be invoked in an eager or lazy way
 (i.e. for all objects right after code update, or on a need basis for each object)?
@@ -4853,248 +4948,17 @@ Should some real-time process such as the garbage collector ensure timely update
 heap even in absence of such explicitly maintained collection?
 There is no one-size-fits-all answer to these questions.
 
-If anything, thinking in terms of mutable state and object identity
-both forces software designers to face these inevitable issues
-in interactive or long-lived persistent systems,
-and provides a framework to give coherent answers to these questions,
-when “pure functional” languages that deny these issues leave their users helpless,
-forced to reinvent entire such frameworks and
+If anything, thinking in terms of objects with identity and mutable state
+both forces software designers to face these issues,
+inevitable in interactive or long-lived persistent systems,
+and provides them with a framework to give coherent answers to these questions.
+Languages that assume “purity” or lack of code upgrade, thereby deny these issues,
+and leave their users helpless, forced to reinvent entire such frameworks and
 live in systems they build on top of these frameworks
 rather than directly in the language that denies the issues.
 
-@subsection{Multiple Dispatch}
+@section[#:tag "BLOH"]{Inheritance: Mixin, Single or Multiple}
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-@section[#:tag "BLOH"]{BLOH}
-@subsection[#:tag "BLAH"]{BLAH}
-@subsubsection[#:tag "minimal_design_maximal_outreach"]{Minimal Design, Maximal Outreach}
-@subsection{Working with Records}
-@subsubsection{Records, Methods, Instances}
-@subsubsection[#:tag "encoding_records"]{Encoding Records}
-@subsubsection{Mixins and Helpers for Records}
-@subsubsection{Example Records built from Mixins}
-@subsubsection{Mixin Caveats}
-@section{Missing Insights into OO}
-@subsection[#:tag "laziness"]{Pure Laziness}
-@subsubsection{Lazy makes OO Easy}
-@subsubsection{Computations vs Values}
-@subsubsection{Method Initialization Order}
-@subsubsection{If it’s so good…}
-@subsection[#:tag "instances_beyond_records"]{Instances Beyond Records}
-@subsubsection{Prototypes for Numeric Functions}
-@subsubsection{Conflating Records and Functions}
-@subsubsection{Freedom of and from Representation}
-@subsubsection{OO without Objects 2}
-@subsection[#:tag "objects"]{Objects: The Power of Conflation}
-@subsubsection[#:tag "conflating_prototype_and_instance"]{Conflating Prototype and Instance}
-@subsubsection[#:tag "keeping_extensibility_modular"]{Keeping Extensibility Modular}
-@subsubsection{Conflating More Features}
-@subsubsection{Distinction and Conflation}
-@subsection{Typing Records}
-
-@section[#:tag "inheritance"]{Mixin, Single, and Multiple Inheritance}
-@subsection{Mixin Inheritance}
-@subsubsection{The Last Shall Be First}
-@subsubsection{Mixin Semantics}
-@subsection[#:tag "single_inheritance"]{Single inheritance}
-@subsubsection{Simple and Efficient}
-@subsubsection{Semantics of Single Inheritance}
-@subsubsection{Single Inheritance with Second-Class Mixins}
-@subsubsection{Lack of expressiveness and modularity}
-@subsection[#:tag "multiple_inheritance"]{Multiple inheritance}
-@subsubsection{More Sophisticated}
-@subsubsection{Prototypes as a DAG of mixins}
-@subsubsection{Precedence Lists}
-@subsubsection{More Expressive than Mixin Inheritance}
-@subsubsection{More Modular than Mixin Inheritance}
-@subsubsection[#:tag "single_and_multiple_inheritance_together"]{Single and Multiple Inheritance Together}
-@subsubsection{Under-Formalized}
-
-@section{Combining Single and Multiple Inheritance}
-@subsection{State of the Art}
-@subsubsection{Previous Art}
-@subsubsection{Terminology}
-@subsection{Common Lisp}
-@subsubsection{Common Lisp classes}
-@subsubsection{Common Lisp structs}
-@subsubsection{Separate Class and Struct Hierarchies}
-@subsubsection{User-defined Hierarchies}
-@subsection{Ruby}
-@subsubsection{Ruby Modules}
-@subsubsection{Ruby superclasses}
-@subsubsection{Ruby linearization}
-@;{TODO: Examine Ruby linearization algorithm, compare it to LOOPS, Scala, etc.
-Find concrete examples of where it does the Wrong Thing(tm).
-https://norswap.com/ruby-module-linearization/
-}
-
-@subsection{Scala}
-@subsubsection{Scala Traits}
-@subsubsection{Scala superclasses}
-@subsubsection{Scala linearization}
-@subsection{Our C4 Algorithm}
-@subsubsection{Best Combining Single and Multiple Inheritance}
-@subsubsection{Unifying Classes and Structs}
-@subsubsection{Adding a Fifth Constraint}
-@subsection{The Suffix Constraint}
-@subsubsection{Constraint}
-@subsubsection{Why the Suffix Constraint}
-@subsubsection{Special Treatment of Suffix}
-@subsection{Advantages of C4}
-@subsubsection{Struct declarations optional}
-@subsubsection{Coherent Naming}
-@subsection{Single-Inheritance Yet Not Quite}
-@subsubsection{Single-Inheritance among Structs}
-@subsubsection{No Single-Inheritance among Structs plus Classes}
-@subsubsection{Preserving the Property that Matters}
-
-@section{Advanced Topics in OO}
-
-@subsection{Method Combination}
-Idiots have methods conflict. Clever people have methods combine harmonously.
-Optics.
-@subsection{Multiple Dispatch}
-In OO, “late binding” enables modular definition and use of an interface
-with objects of unknown future type that satisfy this interface.
-To achieve this, Class OO systems customarily use “dynamic dispatch” of methods,
-wherein every object (element of a record type defined using a class)
-remembers its class (or rather, the target type of the class) in an implicit field,
-from which object methods can be recalled when the object's type is not known statically.
-Most Class OO languages have special syntax for this dynamic method dispatch on a single object
-based on its recorded type.
-This special syntax then seems to make “single dispatch” of methods with exactly one object
-something special in OO.
-The early “message passing” metaphor also seemed to make this “single dispatch” something special.
-
-But from the more general point of view of Prototype OO,
-this “single dispatch” is not special at all:
-@itemize[
-@item{First the notion of “object” as type element doesn’t even exist in Prototype OO.
-(as a primitive; you can obviously still construct it on top);
-and even when a prototype does describe a single type, elements of that type need not
-have a special type field to dynamically dispatch on (though once again it is allowed).}
-@item{Second a prototype can describe not just one type, but two or more, or none,
-and each of the methods defined by the prototype may take any number of elements
-of those types as arguments (including none at all), and in turn
-use the types of the arguments to do multiple dispatch, or not.}
-@item{Third there are many common cases of functions of two or more arguments
-(e.g. comparisons, algebraic operations, composition, recursive constructions),
-where the correct and/or efficient behavior varies with arguments of multiple,
-and trying to implement this behavior through a series of “single dispatch”
-calls to intermediate leads to non-modular code that is hard to maintain,
-and further does not support method combination.}]
-
-Thus, many languages support “multiple dispatch” or “multimethods”, @; TODO cite. LOOPS?
-a technique wherein the semantics of calling some “generic function”
-is specified through methods that depend on the types multiple of its arguments,
-and their type hierarchy: Lisp, Clojure, Julia support it natively,
-as well as less popular languages; many more popular languages support it using libraries.
-
-@subsection[#:tag "multiple_dispatch"]{Multiple Dispatch}
-Simple methods, Binary methods, Multimethods, Constructors —
-Number object inputs being 1, 2, N, 0.
-Big big problem in the naive view of class OO.
-Not at all a problem with prototypes / typeclasses.
-
-@subsection{Type Monotonicity}
-Makes no sense at all as a general constraint when you realize anytime there's recursion of any kind,
-your methods won't all be simple methods. Deeply idiotic idea.
-
-@subsection[#:tag "typeclasses"]{Typeclasses}
-Essentially equivalent to multiple dispatch.
-Would gain by having a notion of inheritance.
-@subsubsection[#:tag "global"]{Global Open Recursion}
-Orphaned Typeclasses.
-Open Mutual Recursion between multiple classes.
-How to do it in a pure functional way?
-Solution: global namespace hierarchy. You grow not just a language, but its library ecosystem with it.
-@subsection[#:tag "optics"]{Optics}
-Fields vs Optics for method combination wrapping vs Generalized optics.
-@subsubsection{Meta-Object Protocols}
-@subsubsection{Runtime Reflection}
-
-@section{Conclusion}
-@section{Conclusion: Best of Both Worlds}
-@subsection{Findings}
-@subsubsection{Restating the Obvious and Not-So-Obvious}
-@subsection{Suffix Property}
-@subsubsection{C4 Algorithm}
-@subsubsection{Implementation}
-@subsubsection{Our Scheme}
-@subsubsection{Code Size}
-@subsubsection{Open Source}
-@subsection{Related Work}
-@subsection{Parting Words}
-
-@section{Data-Availability Statement} @appendix
-
-@section{BLAH START (RE)WRITING FROM HERE}
-@subsection{FOOOOOOOOOOOO}
-
-@subsection{Extensible Specification}
-@subsubsection{XXX Records}
-@subsubsection{xxx}
-@subsubsection{yyy}
-@subsection{Conflation}
-@subsubsection{Prototypes as Conflation 2}
-@subsubsection{Classes as Conflation 2}
-@subsubsection{Conflation vs Confusion}
-@subsubsection{Specifications}
-@subsubsection{Methods}
-@section{What OO isn’t}
-@subsection{Information Hiding}
-@subsection{OO without Conflation}
-@subsubsection{OO without Records}
-@subsubsection{OO without Messages}
-@subsubsection{Inheritance}
-@subsection{Single Inheritance}
-@subsubsection{Direct superclasses and subclasses}
-@subsubsection{Global structure of single inheritance}
-@subsubsection{Prefix}
-@subsubsection{Suffix}
-@subsubsection{Method Resolution}
-@subsubsection{Simplicity}
-@subsection{Multiple Inheritance}
-@subsubsection{Early History}
-@subsubsection{Global Structure of Multiple Inheritance}
-@subsubsection{Method Resolution in Multiple Inheritance}
-@subsubsection{Class linearization}
-@subsubsection{Method Combinations}
-@subsection{Comparison between single and multiple inheritance}
-@subsubsection{Modularity Comparison}
-@subsubsection{Expressiveness Comparison}
-@subsubsection{Performance Comparison}
-@subsection{Mixin Inheritance 2}
-@subsubsection{Last but not least}
-@subsubsection{Composing Mixins}
-@subsubsection{Comparative Expressiveness}
-@subsubsection{Comparative Modularity}
-@subsubsection{Popularity}
-@subsubsection{No Further Comment}
-@section{Constraints on Linearization}
-@subsection{Consistency Matters}
-@subsubsection{Consistency Constraints}
-@subsubsection{Matching Methods}
-@subsection{Ordering Consistency}
-@subsubsection{Linearization}
-@subsubsection{Local Ordering}
-@subsubsection{Monotonicity}
-@subsection{Shape Determinism}
-@subsubsection{Only Shape Matters}
-@subsubsection{Original Name}
-@subsubsection{Rationale}
-@subsubsection{Alternatives to Shape Determinism}
-@subsection{Constraint-Respecting Algorithms}
-@subsubsection{Inconsistent Algorithms}
-@subsubsection{First Solution}
-@subsubsection{C3}
-@subsubsection{Depth-First Traversal}
-@subsubsection{Naming}
-@subsubsection{Adoption}
-
-@section{Inheritance Examples}
-@subsection{Example 1}
-@subsection{Example 2}
 
 @(generate-bibliography)

@@ -51,124 +51,6 @@
 
 @; XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-@subsection[#:tag "simplest_prototypes"]{Simplest prototypes}
-@subsubsection[#:tag "mixin_functions"]{Mixin Functions}
-The very simplest possible design for @emph{prototypes}
-is thus as “mixin” functions with the following minimal type:
-@Code{Mixin self super = self ⊂ super ⇒ self → super → self}
-where @c{self} is the type of the computation as completely specified,
-@c{super} the type of the computation as partially specified so far,
-@c{self ⊂ super ⇒} is the constraint that @c{self} should be a subtype of @c{super},
-and @c{Mixin} is the name introduced by Cannon@~cite{Cannon1979}
-and reprised and popularized by Cook and Bracha@~cite{bracha1990mixin}.
-
-@subsubsection{Elucidating Mixin Inheritance}
-
-By the time the complete @c{instance} and @c{inherited} value so far
-are provided (if ever), the combined mixin itself may be but part of
-a wider combination, with further mixins both to the right and to the left.
-The provided @c{instance} will then be the fixed-point of
-the entire wider combination (involving further children to the left,
-then @c{child} and @c{parent}, then further parents to the right).
-Meanwhile, the @c{inherited} value will only contain the information from
-applying the further parent mixins to the right to the provided @c{base} object.
-The @c{parent} will be able to extend (enrich or override)
-any method definition from the @c{inherited} computation;
-the @c{child} may further extend it, and further mixins to the left yet more.
-
-The function matches the @c{mix} function from the introduction
-modulo α-renaming, well-named since its essence is to compose or “mix” mixins.
-The function is associative, with identity mixin @c{idm = λ s t ↦ t}.
-As usual, a change of representation from @c{p} to @c{cp = inherit p}
-would enable use regular function composition for @c{mix},
-whereas @c{fix} would retrieve @c{p} as @c{cp idm};
-but that would make the types unnecessarily more complex.
-@; many isomorphic ways: change the order of super and self,
-@; use fix and mix, or cfix and idm as basic combinators, etc.
-
-@subsubsection[#:tag "stricter_types"]{Stricter, More Modular Types}
-
-The types given in @seclink{mixin_functions} work well,
-but then must be carefully chosen so the @c{self} and @c{super}
-used during mixin definition should precisely match those used
-during mixin composition and instantiation.
-This is not a problem if a mixin is used only once
-(as in single inheritance, see @seclink{single_inheritance}),
-but it is a problem in the more general case of mixin inheritance
-(and in multiple inheritance, see @seclink{multiple_inheritance}).
-
-A more refined type that can be used for mixins is then:
-@Code{Mixin inherited referenced defined =
-        ∀ super ⊂ inherited ⇒
-           super → referenced → super⋂defined}
-where @c{inherited} is the type intrinsic to the mixin
-indicating which inherited methods from the super argument are actually being used,
-whereas @c{super} will be the set of methods effectively defined
-in the super argument, depending depending on the context of instantiation.
-
-This type is an intersection of all variants of the previous type
-for subtypes @c{eself} and @c{esuper} of @c{self} and @c{super} respectively.
-It allows a mixin to be defined in its most general form,
-then used multiple times, each in a distinct more specialized context,
-making the mixin definition and its typechecking @emph{more modular}.
-In exchange for this modularity, the mixin is restricted
-to only act in a uniform manner, that monotonically preserves
-arbitrary additional information passed as arguments to it.
-
-@; For instance, the mixin is not allowed to query which set of fields
-@; will be effectively used in the super in practice to decide
-@; which fields it will itself define.
-@; It is not allowed to rename fields from the super, etc.
-
-@; Try with higher kinds for self and super, so it’s structurally required
-@; that the mixin should use the eself parameter for reference,
-@; and return an extended super for its structure?
-
-@subsubsection[#:tag "minimal_design_maximal_outreach"]{Minimal Design, Maximal Outreach}
-We have just derived from first principles a minimal design
-of prototypes-as-mixin-functions
-to embody modular increments of software specification
-inside a functional programming language.
-And this design closely reproduces that of existing models and languages:
-@itemize[
-#:style enumparenalph
-@item{It reproduces the earliest general semantic model of OO@~cite{bracha1990mixin}.}
-@item{It also reproduces the formal semantics (though not the implementation) of objects
-in the pure lazy dynamic functional prototype object language Jsonnet@~cite{jsonnet},
-a popular choice to generate distributed software deployment configurations
-for Kubernetes or AWS, and was started as a conceptual cleanup of}
-@item{the Google Control Language GCL@~cite{gclviewer2008} (née BCL, Borg Control Language),
-which has been used to specify all of Google’s distributed software deployments
-since about 2004 (but uses dynamic rather than static scoping,
-causing dread among Google developers).}
-@item{It furthermore reproduces not just the semantics but the actual implementation
-of “extensions”@~cite{nix2015} as a user-level library
-in the pure lazy dynamic functional language Nix;
-these extensions are heavily used by NixOS@~cite{dolstra2008nixos},
-a Nix-based software distribution for Linux and macOS, one with thousands of contributors.@note{
-These extensions were reinvented semi-independently by Peter Simons,
-who did not know anything about their relationship to Prototypes, Mixins or OO,
-but was inspired by examples by and discussions with Andres Löh and Conor McBride,
-who were more versed in this literature.
-}}]
-@; TODO see if NixOps, DisNix, flakes, use extensions or a variant thereof, if so mention it.
-
-The main difference between our minimal model and the above works is that
-our model generalizes them by not being tied to any specific encoding of records,
-or indeed to records at all (see @seclink{instances_beyond_records})
-
-This simplest of object-oriented designs,
-purely functional prototypes as mixin functions,
-has thus been proven capable to literally support
-specification and deployment of software on a world-wide scale.
-As we’ll see, this design embodies the primitive core of OO,
-to which other forms of OO can be reduced.
-In the end, we can rightfully claim that the essence of OO
-in historical intent as well as practical extent is
-the incremental modularity embodied as language entities,
-and that prototypes are the most direct form of this embodiment.
-@TODO{cite to substantiate}
-
 @subsection{Working with Records}
 
 @subsubsection{Records, Methods, Instances}
@@ -350,12 +232,6 @@ that in general depends on other aspects being defined by other prototypes.
 
 @subsection{Mixin Inheritance}
 @subsubsection{The Last Shall Be First}
-The inheritance@~cite{inheritance1996} mechanism described above
-is called @emph{mixin inheritance}.
-
-It is also relatively more obscure, probably because, in addition to the above,
-it is less modular than the more complex but previously discovered
-multiple inheritance (discussed below in @seclink{multiple_inheritance}).
 
 And yet, we already saw above in @seclink{minimal_design_maximal_outreach} that
 object prototypes with mixin inheritance are used to specify software configurations at scale.
@@ -2972,3 +2848,243 @@ Just make sure you agree with anyone else that you will be directly sharing code
 
 @; Discussion with James Noble and David Barbour: https://x.com/Ngnghm/status/1988891187340615763
 @; multiple inheritance
+
+
+Self's once "sender path" approach to multiple inheritance, like the "visitor pattern" approach to multiple dispatch, fails to capture semantics contributed by concurrent branches of a partial order, by eagerly taking the first available branch without backtracking.
+
+I see a potential for confusion:
+- *specifications* need identity (e.g. pointer equality) as DAG nodes when using multiple inheritance or dispatch.
+- *targets* and elements of target types as such need no identity, but depending on what precisely you're specifying, may have one.
+
+@section{Advanced Topics in OO}
+
+@subsection{Method Combination}
+Idiots have methods conflict. Clever people have methods combine harmonously.
+Optics.
+@subsection{Multiple Dispatch}
+In OO, “late binding” enables modular definition and use of an interface
+with objects of unknown future type that satisfy this interface.
+To achieve this, Class OO systems customarily use “dynamic dispatch” of methods,
+wherein every object (element of a record type defined using a class)
+remembers its class (or rather, the target type of the class) in an implicit field,
+from which object methods can be recalled when the object's type is not known statically.
+Most Class OO languages have special syntax for this dynamic method dispatch on a single object
+based on its recorded type.
+This special syntax then seems to make “single dispatch” of methods with exactly one object
+something special in OO.
+The early “message passing” metaphor also seemed to make this “single dispatch” something special.
+
+But from the more general point of view of Prototype OO,
+this “single dispatch” is not special at all:
+@itemize[
+@item{First the notion of “object” as type element doesn’t even exist in Prototype OO.
+(as a primitive; you can obviously still construct it on top);
+and even when a prototype does describe a single type, elements of that type need not
+have a special type field to dynamically dispatch on (though once again it is allowed).}
+@item{Second a prototype can describe not just one type, but two or more, or none,
+and each of the methods defined by the prototype may take any number of elements
+of those types as arguments (including none at all), and in turn
+use the types of the arguments to do multiple dispatch, or not.}
+@item{Third there are many common cases of functions of two or more arguments
+(e.g. comparisons, algebraic operations, composition, recursive constructions),
+where the correct and/or efficient behavior varies with arguments of multiple,
+and trying to implement this behavior through a series of “single dispatch”
+calls to intermediate leads to non-modular code that is hard to maintain,
+and further does not support method combination.}]
+
+Thus, many languages support “multiple dispatch” or “multimethods”, @; TODO cite. LOOPS?
+a technique wherein the semantics of calling some “generic function”
+is specified through methods that depend on the types multiple of its arguments,
+and their type hierarchy: Lisp, Clojure, Julia support it natively,
+as well as less popular languages; many more popular languages support it using libraries.
+
+@subsection[#:tag "multiple_dispatch"]{Multiple Dispatch}
+Simple methods, Binary methods, Multimethods, Constructors —
+Number object inputs being 1, 2, N, 0.
+Big big problem in the naive view of class OO.
+Not at all a problem with prototypes / typeclasses.
+
+@subsection{Type Monotonicity}
+Makes no sense at all as a general constraint when you realize anytime there's recursion of any kind,
+your methods won't all be simple methods. Deeply idiotic idea.
+
+@subsubsection[#:tag "global"]{Global Open Recursion}
+Orphaned Typeclasses.
+Open Mutual Recursion between multiple classes.
+How to do it in a pure functional way?
+Solution: global namespace hierarchy. You grow not just a language, but its library ecosystem with it.
+@subsection[#:tag "optics"]{Optics}
+Fields vs Optics for method combination wrapping vs Generalized optics.
+@subsubsection{Meta-Object Protocols}
+@subsubsection{Runtime Reflection}
+
+@section[#:tag "BLOH"]{BLOH}
+@subsection[#:tag "BLAH"]{BLAH}
+@subsubsection[#:tag "minimal_design_maximal_outreach"]{Minimal Design, Maximal Outreach}
+@subsection{Working with Records}
+@subsubsection{Records, Methods, Instances}
+@subsubsection[#:tag "encoding_records"]{Encoding Records}
+@subsubsection{Mixins and Helpers for Records}
+@subsubsection{Example Records built from Mixins}
+@subsubsection{Mixin Caveats}
+@section{Missing Insights into OO}
+@subsection[#:tag "laziness"]{Pure Laziness}
+@subsubsection{Lazy makes OO Easy}
+@subsubsection{Computations vs Values}
+@subsubsection{Method Initialization Order}
+@subsubsection{If it’s so good…}
+@subsection[#:tag "instances_beyond_records"]{Instances Beyond Records}
+@subsubsection{Prototypes for Numeric Functions}
+@subsubsection{Conflating Records and Functions}
+@subsubsection{Freedom of and from Representation}
+@subsubsection{OO without Objects 2}
+@subsection[#:tag "objects"]{Objects: The Power of Conflation}
+@subsubsection[#:tag "conflating_prototype_and_instance"]{Conflating Prototype and Instance}
+@subsubsection[#:tag "keeping_extensibility_modular"]{Keeping Extensibility Modular}
+@subsubsection{Conflating More Features}
+@subsubsection{Distinction and Conflation}
+@subsection{Typing Records}
+
+@section[#:tag "inheritance"]{Mixin, Single, and Multiple Inheritance}
+@subsection{Mixin Inheritance}
+@subsubsection{The Last Shall Be First}
+@subsubsection{Mixin Semantics}
+@subsection[#:tag "single_inheritance"]{Single inheritance}
+@subsubsection{Simple and Efficient}
+@subsubsection{Semantics of Single Inheritance}
+@subsubsection{Single Inheritance with Second-Class Mixins}
+@subsubsection{Lack of expressiveness and modularity}
+@subsection[#:tag "multiple_inheritance"]{Multiple inheritance}
+@subsubsection{More Sophisticated}
+@subsubsection{Prototypes as a DAG of mixins}
+@subsubsection{Precedence Lists}
+@subsubsection{More Expressive than Mixin Inheritance}
+@subsubsection{More Modular than Mixin Inheritance}
+@subsubsection[#:tag "single_and_multiple_inheritance_together"]{Single and Multiple Inheritance Together}
+@subsubsection{Under-Formalized}
+
+@section{Combining Single and Multiple Inheritance}
+@subsection{State of the Art}
+@subsubsection{Previous Art}
+@subsubsection{Terminology}
+@subsection{Common Lisp}
+@subsubsection{Common Lisp classes}
+@subsubsection{Common Lisp structs}
+@subsubsection{Separate Class and Struct Hierarchies}
+@subsubsection{User-defined Hierarchies}
+@subsection{Ruby}
+@subsubsection{Ruby Modules}
+@subsubsection{Ruby superclasses}
+@subsubsection{Ruby linearization}
+@;{TODO: Examine Ruby linearization algorithm, compare it to LOOPS, Scala, etc.
+Find concrete examples of where it does the Wrong Thing(tm).
+https://norswap.com/ruby-module-linearization/
+}
+
+@subsection{Scala}
+@subsubsection{Scala Traits}
+@subsubsection{Scala superclasses}
+@subsubsection{Scala linearization}
+@subsection{Our C4 Algorithm}
+@subsubsection{Best Combining Single and Multiple Inheritance}
+@subsubsection{Unifying Classes and Structs}
+@subsubsection{Adding a Fifth Constraint}
+@subsection{The Suffix Constraint}
+@subsubsection{Constraint}
+@subsubsection{Why the Suffix Constraint}
+@subsubsection{Special Treatment of Suffix}
+@subsection{Advantages of C4}
+@subsubsection{Struct declarations optional}
+@subsubsection{Coherent Naming}
+@subsection{Single-Inheritance Yet Not Quite}
+@subsubsection{Single-Inheritance among Structs}
+@subsubsection{No Single-Inheritance among Structs plus Classes}
+@subsubsection{Preserving the Property that Matters}
+
+@section{Conclusion}
+@section{Conclusion: Best of Both Worlds}
+@subsection{Findings}
+@subsubsection{Restating the Obvious and Not-So-Obvious}
+@subsection{Suffix Property}
+@subsubsection{C4 Algorithm}
+@subsubsection{Implementation}
+@subsubsection{Our Scheme}
+@subsubsection{Code Size}
+@subsubsection{Open Source}
+@subsection{Related Work}
+@subsection{Parting Words}
+
+@section{Data-Availability Statement} @appendix
+
+@section{BLAH START (RE)WRITING FROM HERE}
+@subsection{FOOOOOOOOOOOO}
+
+@subsection{Extensible Specification}
+@subsubsection{XXX Records}
+@subsubsection{xxx}
+@subsubsection{yyy}
+@subsection{Conflation}
+@subsubsection{Prototypes as Conflation 2}
+@subsubsection{Classes as Conflation 2}
+@subsubsection{Conflation vs Confusion}
+@subsubsection{Specifications}
+@subsubsection{Methods}
+@section{What OO isn’t}
+@subsection{Information Hiding}
+@subsection{OO without Conflation}
+@subsubsection{OO without Records}
+@subsubsection{OO without Messages}
+@subsubsection{Inheritance}
+@subsection{Single Inheritance}
+@subsubsection{Direct superclasses and subclasses}
+@subsubsection{Global structure of single inheritance}
+@subsubsection{Prefix}
+@subsubsection{Suffix}
+@subsubsection{Method Resolution}
+@subsubsection{Simplicity}
+@subsection{Multiple Inheritance}
+@subsubsection{Early History}
+@subsubsection{Global Structure of Multiple Inheritance}
+@subsubsection{Method Resolution in Multiple Inheritance}
+@subsubsection{Class linearization}
+@subsubsection{Method Combinations}
+@subsection{Comparison between single and multiple inheritance}
+@subsubsection{Modularity Comparison}
+@subsubsection{Expressiveness Comparison}
+@subsubsection{Performance Comparison}
+@subsection{Mixin Inheritance 2}
+@subsubsection{Last but not least}
+@subsubsection{Composing Mixins}
+@subsubsection{Comparative Expressiveness}
+@subsubsection{Comparative Modularity}
+@subsubsection{Popularity}
+@subsubsection{No Further Comment}
+@section{Constraints on Linearization}
+@subsection{Consistency Matters}
+@subsubsection{Consistency Constraints}
+@subsubsection{Matching Methods}
+@subsection{Ordering Consistency}
+@subsubsection{Linearization}
+@subsubsection{Local Ordering}
+@subsubsection{Monotonicity}
+@subsection{Shape Determinism}
+@subsubsection{Only Shape Matters}
+@subsubsection{Original Name}
+@subsubsection{Rationale}
+@subsubsection{Alternatives to Shape Determinism}
+@subsection{Constraint-Respecting Algorithms}
+@subsubsection{Inconsistent Algorithms}
+@subsubsection{First Solution}
+@subsubsection{C3}
+@subsubsection{Depth-First Traversal}
+@subsubsection{Naming}
+@subsubsection{Adoption}
+
+@section{Inheritance Examples}
+@subsection{Example 1}
+@subsection{Example 2}
+
+More extension to the multiple inheritance algorithm:
+imagine each specification having a sort, with a DAG of sorts,
+such that linearization of specs must respect the partial order of sorts,
+or, which is stronger, the linearization of specs must respect the linearization of their sort.
