@@ -1801,8 +1801,7 @@ By combining modularity with extensibility, we can also add all kinds of
 OO classes and prototypes since SIMULA 1967, but also precursor breakthroughs like
 the “locator words” of the Burroughs B5000 @~cite{lonergan1961 barton1961}, and
 Ivan Sutherland's Sketchpad’s “masters and instances” @~cite{sketchpad1963},
-that both inspired Kay, or
-or Warren Teitelman’s Pilot’s ADVISE facility @~cite{teitelman1966},
+that both inspired Kay, or Warren Teitelman’s Pilot’s ADVISE facility @~cite{teitelman1966},
 that was influential at least in the Lisp community
 (eventually leading to method combination in Flavors and CLOS).
 @;{
@@ -1993,12 +1992,14 @@ may be deferred until runtime, the runtime result being no different
 than if first-class internal modularity was used,
 though there might be benefits to keeping modularity compile-time only
 in terms of program analysis, synthesis or transformation.
-For local or first-class modules, compilers usually generate some kind of “dispatch table”
+For local or first-class modules, compilers usually generate some kind of
+“virtual method dispatch table”
+(or simply “virtual table” or “dispatch table” or some such)
 for each modularly defined entity, that, if it cannot resolve statically,
 will exist as such at runtime.
 Thus, Haskell typeclasses become “dictionaries” that may or may not be fully inlined.
 The case of OO, prototypes are indeed typically represented
-by such “virtual dispatch table” at runtime—which in Class OO
+by such “dispatch table” at runtime—which in Class OO
 would be the type descriptor for each object, carried at runtime for dynamic dispatch.
 
 In a low-level computation with pointers into mutable memory,
@@ -2742,6 +2743,33 @@ from which he can invoke a programmer-defined “main” entry-point with his ch
 
 Before we model Modularity as such, let us delve deeper into the modeling of Records,
 that are the usual substrate for much of Modularity.
+
+@subsubsub*section{Record Nomenclature}
+
+We will follow Hoare @~cite{hoare1965record} in calling
+“record” the concrete representation of data that contains zero, one or many “fields”.
+A typical low-level implementation of records is as
+consecutive “words” (or “characters”) of “computer store” or “storage space”,
+all of them typically mutable.
+But for the sake of studying semantics rather than performance,
+this paper will discuss higher-level implementations, immutable,
+and without notion of consecutive words.
+By contrast, Hoare uses “object” to refer to more abstract entities
+from the “problem” being “modeled”, and an “object” has higher-level “attributes”.
+An object and some or all of its attributes might be simply represented
+as a record and its fields, but other representations are possible.
+
+Other authors at times have used other words for records or other representations of the same concept:
+struct, structure, data structure, object, table, hash-table,
+tuple, named tuple, product, indexed product, entity, rows, etc.
+Their fields in various traditions and contexts may have been called such things as:
+methods, slots, attributes, properties, members, variables, functions, bindings, entries, items,
+keys, elements, components, columns, etc.
+Mapping which terms are used in any given paper to those used in this or another paper
+is left as an exercise to the reader.
+
+@subsubsub*section{Typing Records}
+
 We could be content with a simple type @c{Record}, but then
 every access would be require some kind of type casting.
 Instead, we will have slightly more elaborate types.
@@ -2783,14 +2811,22 @@ the @c{equal?} primitive for testing equality, and
 the @c{(if @emph{condition then-clause else-clause})} special form for conditionals.
 Programming languages have the equivalent
 (though they might use uninterned strings, or number constants, instead of symbols),
-and you if you care about the pure λ-calculus there are many embeddings
+and you if you care about the pure λ-calculus there are many embeddings and encodings
 of unary or binary numbers, and lists or trees thereof, that will do.
 
 Programming languages usually already provide some data structure for records
 with second-class identifiers, or “dictionaries” with first-class identifiers,
 or have some library that does.
+For instance, while the core Scheme language has no such data structure,
+each implementation tends to have its own extension for this purpose, and
+there are multiple standard extensions for records or hash tables.
+Many papers and experiments use a linked list of (key, value) pairs,
+known in the Lisp tradition as an alist (association list),
+as a simple implementation for records;
+alists don’t scale, but don’t need to in the context of such experiments.
 Nevertheless to make the semantics of records clear, we will provide
-a trivial implementation in terms of functions.
+a trivial purely functional implementation, that also doesn’t scale,
+but that is even simpler.
 
 The basic reference operator is just function application:
 @Code{
@@ -2824,9 +2860,10 @@ it leaks space when a binding is overridden,
 and the time to retrieve a binding is proportional to the total number of bindings
 (including overridden ones) instead of being logarithmic in the number of visible bindings only,
 for a pure functional implementation based on balanced trees,
-or constant time, for a linear or stateful implementation based on hashing@xnote["."]{
+or constant time, for a linear or stateful implementation
+based on either known field offsets or hashing@xnote["."]{
   The nitpicky would also account for an extra square root factor
-  due to physical limitations@~cite{MythOfRAM2014}.
+  due to the limitations of physics@~cite{MythOfRAM2014}.
 }
 
 @subsubsub*section{Merging Records}
@@ -3005,6 +3042,13 @@ In this applicative variant, the first, minor, issue with this combinator is
 that it only works to compute functions,
 because the only way to prevent a overly eager evaluation of a computation
 that would otherwise diverge is to protect this evaluation under a λ.
+We happen to have chosen a representation of records as functions,
+such that the applicative Y still directly applies;
+if not, we may have had to somehow wrap our records in some sort of function,
+at which point we may as well use the lazy Y below,
+or switch to representing modular contexts as records of functions,
+instead of functions implementing or returning records.
+
 The second, major, issue with the applicative Y is that the pure applicative λ-calculus
 by itself has no provision for sharing non-fully-reduced computations,
 only for sharing (fully-reduced) values;
@@ -3033,7 +3077,8 @@ not to access the variable before it was initialized@xnote["."]{
   wherein the variable is passed as argument without wrapping it in a λ,
   or the λ it is wrapped in is called before the evaluation of this expression completes.
   The Scheme language does not protect you in this case,
-  and, in general, could not without either severely limiting the language expressiveness,
+  and, in general, could not protect you
+  without either severely limiting the language expressiveness,
   or solving the halting problem.
   Various languages and their implementations,
   depending on various safety settings they might have or not,
@@ -3214,7 +3259,8 @@ any and every value by returning it unchanged, as follows@xnote[":"]{
   would enable use of the regular @c{compose} function
   for composition of specifications.
   Haskellers and developers using similar composition-friendly languages
-  might prefer this kind of representation, the way they like van Laarhoven lenses,
+  might prefer this kind of representation,
+  the way they like van Laarhoven lenses @~cite{oconnor2012lenses},
   though Oliveira @~cite{MonadsMixins},
   or the @c{Control.Mixin.Mixin} library (part of the @c{monadiccp} package),
   instead both use a different representation that compared to ours swaps the order of arguments
@@ -3301,6 +3347,19 @@ a typical record specification will look like:
 where @c{method-id} is the identifier for the method to be looked up,
 and the body uses @c{(super method-id)} as a default when no overriding behavior is specified.
 
+Alternatively, this can be abstracted in terms of using a mix of one or multiple
+calls to this method-defining specification, that specifies a single method
+with given @c{key} as name for recognized @c{method-id},
+and given function @c{compute-value} that takes the @c{self} context
+and the @c{inherited} value @c{(super method-id)} as arguments:
+@Code{
+(define method-spec (λ (key) (λ (compute-value)
+    (λ (self) (λ (super) (λ (method-id)
+      (let ((inherited (super method-id)))
+        (if (eqv? key method-id)
+          (compute-value self inherited)
+          inherited))))))))}
+
 Of course, where performance or space matters,
 you would use an encoding of records-as-structures instead of records-as-functions:
 instead of calling the record as a function with an identifier,
@@ -3325,8 +3384,15 @@ for many simple applications@xnote["."]{
   a pure applicative Y also works without too much slowdown,
   because the substructures we recursively examine remain shallow.
 }
+Also, in a more practical implementation,
+the inherited value in the @c{method-spec} would be made lazy,
+or would be wrapped in a thunk, to avoid unneeded computations (that might even bottom);
+or for more power, the @c{compute-value} function
+would directly take @c{super} as its second argument,
+and @c{(super method-id)} would only be computed in the second branch.
 
-We can compose these kinds of specifications into larger specifications
+Whichever way simple specifications are defined,
+they can thereafter be composed into larger specifications
 using the @c{mix} function, and eventually instantiate a target record
 from a specification using the @c{fix} function.
 Since we will be using records a lot, we can specialize the @c{fix} function for records,
@@ -3343,30 +3409,21 @@ Let us demonstrate the classic “colored point” example in our Minimal Object
 We can define a specification for a point’s coordinates as follows:
 @Code{
 (define coord-spec
-  (λ (self) (λ (super) (λ (method-id)
-    (case method-id ((x) 2) ((y) 4) (else (super method-id)))))))}
-The specification takes the usual arguments @c{self}, @c{method-id} and @c{super}.
-With the @c{case} builtin form,
-if the @c{method-id} argument is the constant @c{x},
-the specification returns the constant number @c{2};
-if the @c{method-id} argument is the constant @c{y},
-the specification returns the constant number @c{4};
-otherwise, the inherited @c{super} value is returned unchanged.
-Thus, in practice, the values bound to symbols @c{x} and @c{y} respectively
-are overridden to return @c{2} and @c{4} respectively,
-and other values are left untouched.
+  (mix (method-spec 'x (λ (self) (λ (inherited) 2)))
+       (method-spec 'y (λ (self) (λ (inherited) 4)))))}
+The specification defines two methods @c{x} and @c{y},
+that respectively return the constant numbers @c{2} and @c{4}.
 
 We can similarly define a specification for some record’s @c{color} field as follows:
 @Code{
 (define color-spec
-  (λ (self) (λ (super) (λ (method-id)
-    (case method-id ((color) "blue") (else (super method-id)))))))}
+  (method-spec 'color (λ (self) (λ (inherited) "blue"))))}
 
 And we can check that indeed we can instantiate a point specified by combining
 the color and coordinate specifications above, and verify that indeed the values
 for @c{x} and @c{color} are as expected:
 @Code{
-(define point-p (instantiate (inherit color-spec coord-spec)))}
+(define point-p (fix-record (mix color-spec coord-spec)))}
 @Code{
 (point-p 'x) ;⇒ 2
 (point-p 'color) ;⇒ "blue"}
@@ -3380,9 +3437,10 @@ Similarly, the query for method @c{color} returns the string @c{"blue"}.
 However, this colored point example is actually trivial:
 there is no collision in method identifiers between the two specifications,
 such that the two specifications commute;
-and more importantly, the values defined by the specifications are constant,
-and exercise neither modularity nor extensibility.
-Let us see more interesting examples.
+and more importantly, the values defined by the specifications are constant
+and exercise neither modularity nor extensibility:
+their value-computing functions make no use of their @c{self} and @c{super} arguments.
+Let us then see more interesting examples.
 
 @subsubsection{Minimal Extensibility and Modularity Examples}
 
@@ -3391,9 +3449,7 @@ accepts an argument @c{dx}, and returns a specification that
 overrides method @c{x} with a new value to adds @c{dx} to its inherited value:
 @Code{
 (define add-x-spec
-  (λ (dx) (λ (self) (λ (super) (λ (method-id)
-    (case method-id ((x) (+ dx (super method-id)))
-                    (else (super method-id))))))))}
+  (λ (dx) (method-spec 'x (λ (self) (λ (inherited) (+ dx inherited))))))}
 
 And we illustrate modularity with another example wherein @c{rho-spec}
 specifies a new field @c{rho} bound to the euclidian distance
@@ -3406,11 +3462,8 @@ into which they have to be specified by other specifications
 to be composed with @c{rho-spec} using @c{mix}:
 @Code{
 (define rho-spec
-  (λ (self) (λ (super) (λ (method-id)
-    (case method-id
-      ((rho) (sqrt (+ (sqr (self 'x))
-                      (sqr (self 'y)))))
-      (else (super method-id)))))))}
+  (method-spec 'rho λ (self) (λ (inherited)
+    (sqrt (+ (sqr (self 'x)) (sqr (self 'y)))))))}
 
 We can check that the above definitions work by instantiating
 the composed specifications @c{(add-x-spec 1)}, @c{coord-spec} and @c{rho-spec},
@@ -3419,13 +3472,26 @@ i.e. first (right-to-left) specified to be @c{2} by @c{coord-spec},
 then incremented by @c{1} by @c{(add-x-spec 1)},
 whereas @c{rho} is @c{5}, as computed by @c{rho-spec} from the @c{x} and @c{y} coordinates:
 @Code{
-(define point-r (instantiate
-   (inherit   (add-x-spec 1)
-     (inherit coord-spec
-              rho-spec))))
+(define point-r (fix-record
+   (mix (add-x-spec 1)
+     (mix coord-spec
+          rho-spec))))
 
 (point-r 'x) ;⇒ 3
 (point-r 'rho) ;⇒ 5}
+
+This demonstrates how modular extensible specifications do work,
+and indeed implement the basic design patterns of OO.
+
+Now, note how trying to instantiate @c{(add-x-spec 1)} or @c{rho-spec} alone would fail:
+the former relies on the @c{super} record to provide a useful inherited value to extend,
+whereas the latter relies on the @c{self} context to modularly provide @c{x} and @c{y} values.
+Neither specification is meant to stand alone, but instead to be a mixin in the sense of Flavors.
+That not every specification can be successfully instantiated,
+is actually an essential feature of modular extensibility,
+since the entire point of a specification is to contribute some @emph{partial} information
+about a small aspect of an overall computation,
+that in general depends on other aspects being defined by other specifications.
 
 @subsubsection[#:tag "Interaction_of_Modularity_and_Extensibility"
   ]{Interaction of Modularity and Extensibility}
@@ -3437,14 +3503,15 @@ since it can more directly access or inline their local definition
 if these definitions implicitly involved recursion globally via the module context).
 
 For instance, consider the following modular specification,
-to be merged with other specifications defining disjoint sets of identifiers:
+to be merged with other specifications defining disjoint sets of identifiers,
+where the @c{case} special form of Scheme selects a clause to execute
+based on which constant if any (constant symbol, in these clauses) matches its first argument:
 @Code{
 (define my-modular-spec
-  (λ (self) (λ (method-id)
-    (case method-id
+   (case method-id
       ((start) 42)
       ((size ((self 'length) (- (self 'end) (self 'start)))))
-      ((length) (λ (l) (if (null? l) 0 (+ 1 ((self 'length) l)))))))))}
+      ((length) (λ (l) (if (null? l) 0 (+ 1 ((self 'length) l)))))))}
 Since by our disjointness hypothesis,
 the global specification for @c{start}, @c{len} and @c{length}
 will not be overridden, then @c{(self 'start)} and @c{(self 'length)}
@@ -3583,7 +3650,7 @@ so you may inherit from it.
 The function @c{target←pproto} extracts the target from a prototype,
 so you may call methods on it.
 @Code{
-(define pproto←spec (λ (spec) (cons spec (instantiate spec))))
+(define pproto←spec (λ (spec) (cons spec (fix-record spec))))
 (define spec←pproto (λ (pproto) (car pproto)))
 (define target←pproto (λ (pproto) (cdr pproto)))
 (define pproto-mix
@@ -3619,7 +3686,7 @@ you can often simplify it away.
 (define rproto-wrapper
   (λ (spec) (λ (parent) (λ (method-id) (λ (super)
     (if method-id super spec))))))
-(define rproto←spec (λ (spec) (instantiate (mix (rproto-wrapper spec) spec))))
+(define rproto←spec (λ (spec) (fix-record (mix (rproto-wrapper spec) spec))))
 (define spec←rproto (λ (rproto) (rproto #f)))
 (define target←rproto (λ (rproto) rproto))
 (define rproto-mix
@@ -3733,10 +3800,10 @@ yet this feature is arguably essential to the ergonomics of these languages.
 
 @subsubsection{Implicit Recognition of Conflation by OO Practitioners}
 
-The notion of this @emph{conflation of specification and target},
+The notion of a @emph{conflation of specification and target},
 that we presented, is largely unknown by OO developers, and
 seems to have been made explicit in publication only as late as 2021 @~cite{poof2021}.
-And yet, the knowledge of it is implicit in the OO community.
+And yet, the knowledge of this conflation is implicit in the OO community.
 
 Common practitionners of OO have long implicitly recognized
 the conflated concepts of specification and target
@@ -4546,7 +4613,6 @@ fix : ∀ referenced, inherited, defined : Type → Type, ∀ self, top : Type,
       top ⊂ inherited self ⇒
       self ⊂ inherited self ∩ defined self ⇒
         top → MESpec referenced inherited defined → self
-
 mix : MESpec r1 i1∩d2 d1 → MESpec r2 i2 d2 → MESpec r1∩r2 i1∩i2 d1∩d2}
 
 In the @c{fix} function, we implicitly define a fixpoint @c{self}
@@ -4829,7 +4895,7 @@ parameterized by other values, types and algorithms.
 
 @subsection{Stateful OO}
 
-@subsubsection{Mutability as Orthogonal to OO}
+@subsubsection{Mutability of Fields as Orthogonal to OO}
 
 We saw how OO is best explained in terms of pure lazy functional programming,
 and how mutable state is therefore wholly unnecessary for OO.
@@ -4860,7 +4926,7 @@ is all too often to introduce a one mother-of-all syntactic and semantic constru
 of immense complexity, the “class”, that frankly not a single person in the world fully understands,
 and of which scientific papers only dare study but simplified (yet still very complex) models.
 
-@subsubsection{Mutability of the Inheritance Structure}
+@subsubsection{Mutability of Inheritance as Code Upgrade}
 
 Keeping mutability orthogonal to OO as above works great as long as the fields are mutable,
 but the inheritance structure of prototypes and classes is immutable.
@@ -4957,8 +5023,73 @@ and leave their users helpless, forced to reinvent entire such frameworks and
 live in systems they build on top of these frameworks
 rather than directly in the language that denies the issues.
 
-@section[#:tag "BLOH"]{Inheritance: Mixin, Single or Multiple}
+@section[#:tag "Inheritance_MSM"]{Inheritance: Mixin, Single or Multiple}
 
-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+@subsection{Mixin Inheritance}
+@subsubsection{The Last Shall Be First}
+
+What we implemented in the sections above is mixin inheritance: @; TODO secref beginning
+the last invented and least well-known variant of inheritance.
+And yet, we already saw above that object prototypes with mixin inheritance
+are used to specify software configurations at scale. @;TODO secref
+We further claim that it is the most fundamental variant of inheritance,
+since we will build the other variants on top of it.
+
+@subsubsection{Mixin Semantics}
+We saw above @;TODO (@seclink{simplest_prototypes})
+that mixin inheritance involves just
+one type constructor @c{MESpec} and two functions @c{fix} and @c{mix}:
+@Code{
+(define fix (λ (t) (λ (s) (Y (λ (r) ((s r) t))))))
+(define mix (λ (c p) (λ (r) (compose (c r) (p r)))))}
+
+@subsection[#:tag "single_inheritance"]{Single inheritance}
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+@subsubsection{Semantics of Single Inheritance}
+In single inheritance, the prototypes at stake,
+i.e. the entities that embodied increments of modularity,
+are not the mixin functions of mixin inheritance,
+but simpler @emph{generators} that only take a @c{self} as open recursion parameter
+and return a record using @c{self} for self-reference.
+The semantics can reduced to the following types and functions:
+: @; TODO CITE Cook
+@Code{
+Gen required provided = ∀ self ⊂ required self, self → provided self
+base : Gen (λ (_) top) (λ (_) top)
+extend : MESpec required inherited provided → Gen required inherited →
+  Gen required (inherited ∩ provided)
+
+(define base (λ (_) record-empty))
+(define extend (λ (mixin) (λ (parent) (λ (self)
+  (mixin self (parent self))))))}
+
+Note how @c{Gen self} is the type of generators for instances of type @c{self};
+the instantiation function for a generator is the usual fixed-point combinator @c{Y};
+the @c{base} object to extend is the generator that always returns the empty record
+(for whichever encoding is used for records);
+and the @c{extend} function creates a child generator from a parent generator
+and a mixin (as in mixin inheritance above), where @c{self} is constrained
+to be a subtype of @c{super}.
+
+Mind again that in the single-inheritance paradigm,
+@emph{the prototype is the generator, not the mixin}.
+A prototype-as-generator may thus be the @c{base} generator
+that returns the empty record @c{rtop} or otherwise base instance,
+or a generator created by extending
+a @emph{single} @c{parent} generator with a @c{mixin}.
+Since the same constraint applies recursively to the parent generator,
+a prototype-as-generator can be seen as repeatedly extending that @c{base} generator
+with an ordered list of mixins to compose.
+Just like in mixin inheritance, an @emph{instance} can thus still be seen as
+the fixed point of the composition of a list of elementary mixins
+as applied to a base instance.
+However, since generators, not mixins, are the prototypes,
+the “native” view of single inheritance is more to see the parent specified in @c{extend}
+as a direct super prototype, and the transitive supers-of-supers as indirect super prototypes;
+each prototype is considered as not just the mixin it directly contributes,
+but as the list of all mixins directly and indirectly contributed.
+
 
 @(generate-bibliography)
