@@ -123,7 +123,7 @@
 
 @subsubsection{Context: Inheritance}
 Object-Oriented Programming (OOP), or Object-Orientation (OO),
-is a programming style characterized by the modular specification and extension of
+is a programming style characterized by the modular extension of
 partial specifications via a mechanism known as @emph{inheritance} @~cite{inheritance1996}@xnote[","]{
   A notable dissident to this characterization is William Cook,
   a respected academic who made key contributions to understanding the semantics of inheritance
@@ -285,7 +285,7 @@ In section 6, we rebuild all the familiar features and appurtenances of OO
 as additions or modifications to the minimal system from section 5:
 prototypes, classes, types, mutation, etc.
 We notably explain away the too easy confusion between subtyping and subclassing,
-and discuss the actual relationship between OO with imperative programming
+and discuss the actual relationship between OO and imperative programming,
 when the natural framework for OO is actually pure lazy functional programming.
 
 In section 7, we discuss in detail the main forms of inheritance:
@@ -901,11 +901,16 @@ More details explanations, and justifications, will follow in subsequent section
 Object-Orientation (“OO”) is a technique that enables the specification of programs
 through extensible and modular @emph{partial} specifications,
 embodied as entities @emph{within} a programming language:
+
 @subsubsection{Partial specifications}
 A program is made of many parts that can be written independently,
-@; and need not be complete or well-founded by themselves,
 enabling division of labor,
-as opposed to all logic being expressed in a single big monolithic loop.
+as opposed to all logic being expressed in a single big monolithic loop@xnote["."]{
+  The entire point of partial specifications is that they are not complete,
+  and trying to “instantiate” them before all the information has been assembled should fail.
+  Type systems and semantic frameworks incapable of dealing with such incomplete information
+  are thereby incapable of apprehending OO.
+}
 
 @subsubsection{Modularity (Overview)}
 A programmer can write or modify one part (or “module”)
@@ -1271,7 +1276,7 @@ it still isn’t widely adopted@xnote["."]{
   and the rest don’t support inheritance at all (C, Go, Fortran, SQL, Assembly, Scratch, Prolog, Haskell, FoxPro, GAMC, PL/SQL, V, Bash, PowerShell, ML, Elixir, Awk, X++, LabView, Erlang).
 }
 
-@subsubsection{Mixin Inheritance Overview}
+@subsubsection[#:tag "MIO"]{Mixin Inheritance Overview}
 
 Mixin inheritance was discovered last @~cite{bracha1990mixin},
 probably because it relies on a more abstract pure functional view of OO;
@@ -1568,7 +1573,7 @@ this paradigm is what we will call OO—it is what we will discuss in this artic
 and systematically reduce to elementary concepts.
 
 @section{OO as Internal Extensible Modularity}
-@subsection[#:tag "modularity"]{Modularity}
+@subsection{Modularity}
 
 @subsubsection{Division of Labor}
 
@@ -1615,7 +1620,7 @@ Even in a language that provides no support whatsoever for modules
 programmers will find means to express modules as @emph{third-class} entities,
 automated by tools @emph{outside} the language:
 a preprocessor, an object file linker, editor macros, “wizards” or LLMs.
-And even if they somehow don’t because they can’t or can’t afford to use such automation,
+And even if they somehow don’t because they can’t use or can’t afford to use such automation,
 developers may achieve modules as @emph{fourth-class} entities,
 ones that they handle manually, with design patterns, editors, copy-paste, and lots of debugging.
 Either third-class or fourth-class entities are considered @emph{external} to the language,
@@ -1638,14 +1643,13 @@ yet conceptually present in the minds of the programmers@xnote["."]{
 }
 Thus, programmers will:
 @itemize[
-@item{copy and paste sections of code as poor man’s modules;}
+@item{copy and paste sections of code, or prefix identifiers, as poor man’s modules;}
 @item{preprocess files to concatenate, transform and generate code fragments;}
 @item{transclude “include” files to serve as libraries or interfaces to later-linked libraries;}
 @item{divide code in files they independently compile then “link” or “load” together;}
 @item{orchestrate incremental (re)building of software with utilities such as “make”;}
-@item{bundle software into “packages” they exchange and distribute online;}
-@item{use “package managers” to manage those bundles.}
-@item{“containerize” consistent package installations into images.}]
+@item{bundle software into “packages” they exchange and distribute with “package managers”;}
+@item{“containerize” consistent package installations into “images”.}]
 
 When for the sake of “simplicity”, “elegance”, or ease of development or maintenance,
 support for modularity is left out of a language,
@@ -1810,7 +1814,7 @@ that was influential at least in the Lisp community
   on the the MIT Lispers than the co-located Smalltalkers.
 }
 
-@subsubsection[#:tag "modularity_and_complexity"]{Modularity and Complexity}
+@subsubsection{Modularity and Complexity}
 
 Modularity used correctly can tremendously simplify programs and improve their quality,
 by enabling the solutions to common problems to be solved once by experts at their best,
@@ -2064,8 +2068,9 @@ each field is initialized before it is used@xnote["."]{
 
   The init-before-issue issue is well-known and exists outside of OO: it may happen
   whenever there is mutual recursion between variables or initial elements of data structures.
-  However, we’ll see that “open recursion”, i.e. the use of operators meant to be
-  the argument of a fixpoint combinator, but also possibly composition before fixpointing,
+  However, we’ll see that “open recursion” @~cite{cardelli1992extensible tapl},
+  i.e. the use of operators meant to be the argument of a fixpoint combinator,
+  but also possibly composition before fixpointing,
   is ubiquitous in OO,
   wherein partial specifications define methods that use other methods that are yet to be defined
   in other partial specifications, that may or may not follow any particular protocol
@@ -2263,7 +2268,7 @@ but these attributes have to be constants:
 attributes being defined cannot vary modularly by referring to the class being defined it-“self”
 or its many other attributes being defined.
 
-@subsubsection[#:tag "extensibility_and_complexity"]{Extensibility and Complexity}
+@subsubsection{Extensibility and Complexity}
 
 Extensibility of software entities means that variants of these software entities
 may be reused many times in as many different contexts,
@@ -2357,9 +2362,9 @@ compared with using less-modular and less-extensible programming language design
 Together they enable the organic development of cooperative systems
 that grow with each programmer’s needs without getting bogged down in coordination issues.
 
-@subsubsection{Modular Extensions}
+@subsubsection{Modular Extensible Specifications}
 
-A modular extension specifies how to extend a previous value,
+A modular extensible specification specifies how to extend a previous value,
 but in a modular way, wherein the extension is able to refer
 through some modular context to values defined by other people,
 and those other definitions being referenced can themselves be extended.
@@ -2413,7 +2418,7 @@ to cover the Categories of mathematics, and more.
 Therefore, in an essential sense, FP is indeed the “simplest” paradigm
 in which to describe the semantics of OO and other programming paradigms:
 it is simultaneously amenable to both computation and reasoning
-with the least amount of scaffolding to bridge between the two.
+with the least amount of scaffolding to bridging between the two.
 
 @subsubsection{Why an Executable Model?}
 
@@ -2516,7 +2521,7 @@ at which point we’d be using single-inheritance indeed.
 
 @subsection{Minimal First-Class Extensibility}
 
-@subsubsection{Extensions as Endofunctions}
+@subsubsection{Extensions as Functions}
 
 Let us start with formalizing First-Class Extensibility in pure FP,
 as it will be easier than modularity, and a good warmup.
@@ -2526,30 +2531,45 @@ i.e. purely as design-patterns to be enforced by humans.
 We leave a coherent typesystem as an exercise to the reader,
 or will later direct him to relevant literature.
 
-Now, to model the extension of a value of type @c{V},
-we want some kind of computation that takes as input the original value of type @c{V},
-and as output returns an extended value of the same type @c{V}.
-In pure FP, everything will be modeled in terms of functions, and
-the simplest function to model for such an extension would be
-a function from @c{V} to @c{V}, i.e. of type @c{V → V}.
+Now, to extend to some computation returning some value of type @c{V},
+is simply to do some more computation, starting from that value,
+and returning some extended value of some possibly different type @c{W}.
+Thus, in general an “extension” is actually an arbitrary transformation,
+which in FP, will be modeled as a function of type @c{V → W}.
 
-We could give an extension the more precise type @c{W ⊂ V ⇒ V → W},
-i.e. a function from @c{V} to @c{W} such that @c{W} is a subtype of @c{V},
-assuming some theory of subtyping.
-But @c{V → V} is good enough for now.
+However, under a stricter notion of extension,
+@c{W} must be the same as @c{V} or a subtype thereof,
+such that you can add or refine information about the entity being extended,
+or adjust it in minor ways,
+but not in ways that invalidate the information specified so far,
+at least none of the information encoded in the type.
+when that is the case, we will then speak of a “strict extension”.
+
+Obviously, if types are allowed to be too precise,
+then any value @c{v} is, among other things, element of
+the singleton type that contains only @c{v}, at which point
+the only allowed transformation is a constant non-transformation.
+Still, in a system in which developers can @emph{explicitly} declare
+a type @c{V} if any (i.e. if not @c{Any})
+that encodes information they require to be preserved,
+it makes sense to require only extensions that strictly respect that type,
+i.e. functions of type @c{V → V}, or @c{W ⊂ V ⇒ V → W}
+(meaning @c{V → W} under the constraint that @c{W} is a subtype of @c{V},
+for some type @c{W} to be declared, in which case the function is also of type @c{V → V}).
 
 @subsubsection{Coloring a Point}
 
-The prototypical type @c{V} to extend would be a type @c{Record} for records.
+The prototypical type @c{V} to (strictly) extend would be the type @c{Record} for records.
 Assuming for the moment some syntactic sugar, and postponing discussion of precise semantics,
 we could define a record as follows:
 @Code{(define point-p (record (x 2) (y 4)))}
 i.e. the variable @c{point-p} is bound to a record that associates
 to symbol @c{x} the number @c{2} and to symbol @c{y} the number @c{4}.
 
-An sample extension would be the function @c{paint-blue} below,
+An sample (strict) extension would be the function @c{paint-blue} below,
 that extends a given record (lexically bound to @c{p} within the body of the function)
-to have a new binding associating to symbol @c{color} the string @c{"blue"}:
+into a record that is a copy of the previous
+with a new or overriding binding associating to symbol @c{color} the string @c{"blue"}:
 @Code{(define (paint-blue p) (extend-record p 'color "blue"))}
 
 Obviously, if you apply this extension to that value with @c{(paint-blue point-p)}
@@ -2558,15 +2578,16 @@ you obtain the a record equal to what you could have directly defined as:
 
 Readers familiar with the literature will recognize the “colored point” example
 used in many OO papers. Note however, that in the present example,
-as compared to most such papers and to further examples in subsequent sections:
+as contrasted to most such papers, and to further examples in subsequent sections:
 (a) we are extending a point @emph{value} rather than a point @emph{type},
 (b) the value is a regular record, and not an “object” by any means, and
 (c) indeed we haven’t started modeling the modularity aspect of OO yet.
 
 @subsubsection{Extending Arbitrary Values}
 
-The type @c{V} of values being extended could be anything.
-The possibilities are endless, but here are a few simple real-life examples:
+The type @c{V} of some values being extended could be anything.
+The possibilities are endless, but here are a few simple real-life examples
+of strict extensions for some given type:
 @itemize[
 @item{The values could be numbers, and then
 your extensions could be adding some increment to a previous number,
@@ -2592,7 +2613,8 @@ to be applied to some value @c{val},
 which in Scheme syntax is written @c{(ext val)}.
 
 But interestingly, extensions can be composed, such from two extensions
-@c{ext1} and @c{ext2} you can extract an extension @c{(compose ext1 ext2)}
+@c{ext1} and @c{ext2} you can extract an extension @c{(compose ext1 ext2)},
+also commonly written @c{ext1 ∘ ext2},
 that applies @c{ext1} to the result of applying @c{ext2} to the argument value.
 And since we are discussing first-class extensions in Scheme,
 we can always define the @c{compose} if not yet defined, as follows,
@@ -2604,8 +2626,9 @@ which is an associative operator with the identity function @c{id} as neutral el
 Now if we were discussing second-class extensions in a restricted compile-time language,
 composition might not be definable, and not expressible unless available as a primitive.
 That would make extensions a poorer algebra than if they could be composed.
-With composition, extensions for a given type of values are a monoid;
-without composition, they are just disjointed second-class constants without structure.
+With composition, strict extensions for a given type of values are a monoid
+(and general extensions are a category).
+Without composition, extensions are just disjointed second-class constants without structure.
 We will see later that this explains why in a second-class setting,
 single inheritance is less expressive than mixin inheritance and multiple inheritance.
 
@@ -2618,11 +2641,14 @@ what should the initial base value be, to which extensions are applied?
 One solution is for users to be required to somehow specify an arbitrary base value,
 in addition to the extension they use.
 
-A better solution is to identify some base value containing
-the minimum amount of information for the given type @c{V},
-that is then extended into being exactly the desired value
-with each extension contributing its lot.
-Such a base value is called a “top value” @c{⊤},
+A better solution is to identify some default value containing
+the minimum amount of information for the base type @c{V}
+that is being strictly extended.
+Each extension then transform their “inherited” input value
+into the desired extended output value,
+possibly refining the type @c{V} along the way,
+such that the initial type is the “top” type of this refinement hierarchy.
+The initial base value is also called a “top value” @c{⊤},
 and somewhat depends on what monoidal operation is used to extend it
 as well as the domain type of values.
 
@@ -2633,14 +2659,6 @@ or @c{-∞} (IEEE floating-point number) seen with @c{max} as the operator, or @
 @item{For the type @c{Pointer} of pointers into a graph of records, @c{⊤ = null},
 the universal null pointer@xnote["."]{
   Hoare called his 1965 invention of null his “billion dollar mistake”. @; CITE both
-  In C, you would use the @c{NULL} pointer; in modern C++, the @c{nullptr}. In Java, @c{null}.
-  In Lisp, @c{NIL}. In Scheme, @c{#f} or @c{'()} or (in many dialects), @c{(void)}.
-  In JavaScript, @c{undefined}, @c{null} or some empty record @c{{}}. In Python, @c{None}.
-  Various languages may each offer some value that is easier to work with as a default,
-  or some library may offer an arbitrary value to use as such.
-  Some strongly typed applicative languages will offer no universal such value, though,
-  and some ad hoc arbitrary value must be provided for each type used.
-
   Now, to Hoare’s credit, his invention of classes in the same article,
   for which he vaguely suggests the semantics of single inheritance
   as Dahl and Nygaard would implement after his article,
@@ -2649,14 +2667,15 @@ the universal null pointer@xnote["."]{
   Overall, the effect of his article @~cite{hoare1965record} was probably net vastly positive.
 }}
 @item{For the type @c{Type} of types (in a compiler, at the meta-level),
-@c{⊤ = ⊤}, the top type (“contains everything, about which you know nothing”) that you refine,
-or bottom type @c{⊥} (“contains nothing, about which you know everything”) that you extend.}
+@c{⊤ = Any}, the top type (“contains everything, about which you know nothing”) that you refine,
+or bottom type @c{⊤ = Nothing} (“contains nothing, about which you know everything”) that you extend.}
 @item{For any function type in a language with partial functions, @c{⊤ = abort},
 a function that never returns regularly,
-and instead always abort regular evaluation and/or throws an error.}]
-
-Last but not least, for any (lazy) type in a language with lazy evaluation,
+and instead always abort regular evaluation and/or throws an error.}
+@item{For the type @c{Lazy} of lazy computations, which would be an appropriate default
+in a language with lazy evaluation,
 even and especially a pure functional language with partial functions,
+such as Haskell or Nix,
 @c{⊤ = (lazy ⊥)} is a universal top value, where @c{⊥ = (abort)} is a computation
 that never terminates normally. Indeed, @c{(lazy ⊥)} carries no useful information
 but can be passed around, and has “negative infinite” information
@@ -2664,12 +2683,38 @@ if you try to force, open or dereference it, which is much less than
 the 0 information as provided by a regular null value.
 In Scheme, one may explicitly use the @c{delay} primitive to express such laziness,
 though you must then explicitly @c{force} the resulting value rather than
-having the language implicitly force computations whenever needed.
+having the language implicitly force computations whenever needed.}
+@item{Last but not least for the type @c{Any} of arbitrary values of any type,
+which would be an appropriate default in a language with eager evaluation,
+any value could do as default, but often there is a more colloquial default.
+In C, you would use 0 in integer context and the @c{NULL} pointer in pointer context.
+In modern C++, similarly but with the @c{nullptr} instead of @c{NULL}.
+In Java, @c{null}.
+In Lisp, @c{NIL}.
+In Scheme, the false boolean @c{#f}, or, in some dialects, a special unit value @c{(void)}
+(the null value @c{'()} being traditionally used only for lists).
+In JavaScript, @c{undefined}, @c{null} or an empty record @c{{}}.
+In Python, @c{None}.
+Various languages may each offer some value that is easier to work with as a default,
+or some library may offer an arbitrary value to use as such.
+Some strongly typed applicative languages will offer no universal such value, though,
+and then some ad hoc arbitrary value must be provided for each type used.}]
+
+In the context of extensions for objects,
+OO languages usually @c{Record} as their top type,
+or some more specific @c{Object} subtype thereof that carries
+additional information as instance of Prototype or Class (depending on the language),
+with some null value or empty object as their top value.
+YMMV, but in our examples below, we will choose Scheme as our language,
+the @c{Any} type as our top type, and @c{#f} as our top value:
+@Code{
+(define top #f)}
 
 @subsubsection{Here there is no Y}
 
 Looking at the type signature @c{(V → V) → V}
-for the process of obtaining a value from an extension,
+for the process of obtaining a value from a strict extension
+(and every extension is strict for the top type),
 one may be tempted to say “I know, this is the type of the fixpoint combinator Y”
 and propose the use of said combinator.
 
@@ -2709,13 +2754,13 @@ finally, it is easier to understand than a fixpoint combinator and arguably more
 
 All in all, the approach of applying extensions to a top value
 is far superior to the approach of using a fixpoint combinator
-for the purpose of extracting a value from an extensible specification.
+for the purpose of extracting a value from an extension.
 Thus, as far as we care about extensibility:
 @emph{here, there is no Y}@xnote["."]{
   (With apologies to Primo Levi.)
 }
 
-@subsection{Minimal First-Class Modularity}
+@subsection[#:tag "MFCM"]{Minimal First-Class Modularity}
 
 @subsubsection{Modeling Modularity (Overview)}
 
@@ -2726,14 +2771,14 @@ we need to address several issues, each time with functions:
 For that, we introduce records, as functions from identifiers to values.}
 @item{Second, programmers need to be able to use existing modularly-defined entities.
 For that, we introduce the notions of module context as a record,
-and modular specification as function from module context to entity.}
+and modular definition as function from module context to entity.}
 @item{Third, programmers need to be able to publish the entities they define
 as part of the modular context that can be used by other programmers.
 For that, we introduce to notion of module as record,
-and (open) modular module specification, as function from module context to module.}
+and (open) modular module definition, as function from module context to module.}
 @item{Last, programmers need to be able to link together
-those independent modular specifications into complete programs that end-users can run.
-For that, we introduce closed modular module specifications,
+those independent modular definitions into complete programs that end-users can run.
+For that, we introduce closed modular module definitions,
 and show how to resolve the open references.}]
 
 The end-user is provided with a “linked” program as a resolved module context
@@ -2889,17 +2934,17 @@ possibly extracted via reflection), you can merge the records along those sets o
 by converting in order each record to a list of bindings for its given set of identifiers,
 appending those lists, and converting the appended result to a record.
 
-@subsubsection{Modular specifications}
+@subsubsection{Modular definitions}
 
-Now we can introduce and model the notion of modular specification:
-a modular specification is a way for a programmer to specify
+Now we can introduce and model the notion of modular definition:
+a modular definition is a way for a programmer to specify
 how to define an entity of some type @c{E} given some modular context,
 or just @emph{module context}, of type @c{C}.
 The module context contains all the available software entities,
 that were defined in other modules by other programmers
 (or even by the same programmer, at different times,
 who doesn’t presently have to hold the details of them in his limited brain).
-And the simplest way to model a modular specification as a first-class value,
+And the simplest way to model a modular definition as a first-class value,
 is as a function of type @c{C → E}, from module context to specified entity.
 
 Typically, the module context @c{C} is a set of bindings mapping identifiers
@@ -2936,53 +2981,53 @@ The functions extracted are then chained together, as in the @c{compose} functio
 we defined earlier (that we could have used if we extracted it from the module context,
 or could otherwise assume it was a language builtin).
 
-@subsubsection{Open Modular Specifications}
+@subsubsection[#:tag "OMD"]{Open Modular Definitions}
 
 Now, programmers usually do not just specify just a single entity of type @c{E},
 but many entities, that they distinguish by associating them to identifiers.
-i.e. they modularly specify a @emph{module} of type @c{∏P}.
-A modular module specification is thus “just” a function from record to record:
+i.e. they modularly define a @emph{module} of type @c{∏P}.
+A modular module definition is thus “just” a function from record to record:
 the input record is the modular context of type @c{∏R}, and
 the output record is the specified module of type @c{∏P}.
 We will say that the identifiers bound in @c{∏R}
-are @emph{required} by the specification, or @emph{referenced} by the specification,
-whereas the identifiers bound in @c{∏P} are @emph{provided} by the specification,
-or @emph{defined} by the specification.
+are @emph{required} by the modular definition (or @emph{referenced} by it),
+whereas the identifiers bound in @c{∏P} are @emph{provided} by the modular definition
+(or @emph{defined} by it).
 
-In general, we call a modular specification “open”,
+In general, we call a modular definition “open”,
 inasmuch as some entities may be @emph{required} that are not @emph{provided}
-by the specification, and must be provided by other modular specifications.
-Now, the notion that the modular specification “provides” entities supposes
+by the modular definition, and must be provided by other modular definitions.
+Now, the notion that the modular definition “provides” entities supposes
 that these entities will be available, bound to well-known identifiers in the module context.
 There are many strategies to realize this provision:
 @itemize[
-@item{The modular specification can be a paired with a single identifier,
+@item{The modular definition can be a paired with a single identifier,
 under which the entity is intended to be bound in a complete module context.}
-@item{The modular specification can specify multiple bindings,
-wherein the entity specified is a module, to be merged as a record into
+@item{The modular definition can provide multiple bindings,
+wherein the entity defined is a module, to be merged as a record into
 the complete module context.}
 @item{The first strategy above can be adapted to a hierarchical namespace of nested records,
-by pairing the specification with a path in the namespace, i.e. a list of identifiers.}
+by pairing the modular definition with a path in the namespace, i.e. a list of identifiers.}
 @item{For multiple bindings, the second strategy can also be paired with a path;
 or the merging of records can be recursive, at which point a strategy must be devised
 to determine how deep to recurse, for instance by somehow distinguishing “modules”
 from regular “records”.}]
 
-In the end, we could let the programmer specify how his specification will extend
+In the end, we could let the programmer specify how his modular definition will extend
 the module context, with whatever merges he wants, however deeply nested—which
 will lead us to modular extensibility.
 But for now, let us abstract over which strategy is used to
-assemble many modular specifications together.
+assemble many modular definitions together.
 
-@subsubsection{Linking Modular Module Specifications: Y}
+@subsubsection{Linking Modular Module Definitions: Y}
 
-We will call a modular module specification “closed” when,
-after whatever assembly of individual modular specifications happened,
+We will call a modular module definition “closed” when,
+after whatever assembly of individual modular definitions happened,
 it specifies the global module context of an entire program,
 wherein every entity required is also provided.
-A closed modular module specification is thus of type @c{∏R → ∏R}.
+A closed modular module definition is thus of type @c{∏R → ∏R}.
 
-Then comes the question: how can we, from a closed modular module specification,
+Then comes the question: how can we, from a closed modular module definition,
 extract the actual value of the module context, of type @c{∏R},
 and thereby realize the program that was modularly specified?
 
@@ -2990,14 +3035,14 @@ This module realization function we are looking for is
 of type @c{(C → C) → C} where @c{C = ∏R}.
 Interestingly, we already mentioned a solution:
 the fixpoint combinator @c{Y}.
-And whereas it was the wrong solution to resolve extensible specifications,
-it is exactly what the doctor ordered to resolve modular specifications:
+And whereas it was the wrong solution to resolve extensions,
+it is exactly what the doctor ordered to resolve modular definitions:
 the @c{Y} combinator “ties the knots”,
 links each reference requiring an entity to the definition providing it,
 and closes all the open loops.
 It indeed does the same in a FP context that an object linker does
 in the lower-level imperative context of executable binaries:
-link references in open specifications to defined values in the closed result.
+link references in open modular definitions to defined values in the closed result.
 
 If there remain identifiers that are required but not provided,
 there will be an error—or non-termination, or some default value that will not make sense,
@@ -3007,7 +3052,7 @@ If there remain identifiers that are provided but not required,
 and they are not otherwise (meant to) be used via reflection,
 then a “tree shaker” or global dead code optimizer may eliminate them.
 
-@subsubsection[#:tag "Digression_Scheme_and_FP"]{Digression: Scheme and FP}
+@subsubsection[#:tag "DSF"]{Digression: Scheme and FP}
 
 Here are two ways in which Scheme departs from the theoretical model of Functional Programming,
 that also apply to many (but not all) other programming languages, and that affect
@@ -3154,7 +3199,7 @@ though a thread-safe variant, if needed, is somewhat trickier to achieve.)
 A third solution, often used in programming languages with second-class OO only
 (or languages in which first-class functions must terminate), is
 for the @c{Y} combinator (or its notional equivalent) to only be called at compile-time,
-and only on specifications that abide by some kind of structural restriction
+and only on modular definitions that abide by some kind of structural restriction
 that guarantees the existence and well-formedness of a fixpoint,
 as well as e.g. induction principles to reason about said fixpoint.
 Also, the compile-time language processor usually doesn’t expose any side-effect to the user,
@@ -3217,40 +3262,42 @@ all the code in this essay at their favorite Scheme REPL,
 and also easily translate it to any other language
 that sports first-class higher-order functions.
 
-@subsection{Minimal First-Class Modular Extensibility}
+@subsection[#:tag "MFCME"]{Minimal First-Class Modular Extensibility}
 
-@subsubsection{Modular Extensible Specifications}
+@subsubsection{Modular Extensions}
 
 Let us combine the above extensibility and modularity in a minimal meaningful way,
 as modular extensibility.
-Once again, we will have a module context @c{C = ∏R},
-but for any value of type @c{V} we want to ultimately specify,
-we will modularly specify an extension to the value, rather than directly the value.
-Thus, an open modular specification for a value of type @c{V} will be
-a function of type @c{∏R → V → V}.
+We will call “modular extension” a modular definition for an extension.
+Thus, given a module context of type @c{C} (typically a record with @c{C = ∏R}),
+a type @c{V} for the “inherited” value being extended
+and @c{W} for the extended value being “provided”,
+an (open) modular extension is a function of type @c{C → V → W}.
+When @c{W} is the same as @c{V}, or a subtype thereof, we will call it
+a strict (open) modular extension.
+When @c{W = V = ∏P} for some record type @c{∏P},
+we will call it a modular module extension.
+When @c{C = V = W} we will call it a closed modular extension,
+which as we will see can be used as a specification for a value of that type.
 
-Now, if we want to modularly and extensibly specify
-a set of entities of respective type @(Pi) for each @c{i},
-we can use @c{V = ∏P}.
-In other words, an (open) modular extensible module specification is
-a function @c{∏R → ∏P → ∏P},
-where @c{∏R} is your modular context of identifiers required,
-and @c{∏P} is your specified module of identifiers provider.
+@subsubsection{Composing Modular Extensions}
 
-@subsubsection{Composing Modular Extensible Specifications}
-
-While you could conceivably merge such modular extensible specifications,
+While you could conceivably merge such modular extensions,
 the more interesting operation is to compose them, or more precisely,
 to compose each extension under the module context and bound identifier,
 an operation that for reasons that will soon become obvious,
-we will call mixin inheritance for modular extensible specifications:
+we will call mixin inheritance for modular extensions:
 @Code{
-(define mix (λ (c p) (λ (r) (compose (c r) (p r)))))}
+(define mix (λ (c p) (λ (m) (compose (c m) (p m)))))}
 The variables @c{c} and @c{p} stand for “child” and “parent” specifications,
 wherein the value “inherited” by the composed function
-will be extended (right to left) first by @c{(p r)} then by @c{(c r)}.
+will be extended (right to left, with the usual function-as-prefix syntax)
+first by @c{(p m)} then by @c{(c m)},
+where @c{m} is the module context (also called “self” in some contexts),
+and the argument to the composed function will be the inherited “super” value.
 
-Modular extensible specifications form a monoid,
+General modular extensions for a given context form a category,
+and strict modular extensions for a given context and type form a monoid,
 wherein the operation is composition with the @c{mix} function,
 and the neutral element @c{id-spec} is the specification that “extends”
 any and every value by returning it unchanged, as follows@xnote[":"]{
@@ -3260,76 +3307,119 @@ any and every value by returning it unchanged, as follows@xnote[":"]{
   for composition of specifications.
   Haskellers and developers using similar composition-friendly languages
   might prefer this kind of representation,
-  the way they like van Laarhoven lenses @~cite{oconnor2012lenses},
-  though Oliveira @~cite{MonadsMixins},
-  or the @c{Control.Mixin.Mixin} library (part of the @c{monadiccp} package),
+  the way they like van Laarhoven lenses @~cite{oconnor2012lenses};
+  yet, Oliveira @~cite{MonadsMixins} or
+  the @c{Control.Mixin.Mixin} library (part of the @c{monadiccp} package),
   instead both use a different representation that compared to ours swaps the order of arguments
   between @c{self} and @c{super}.
   We will stick with our representation, also shared by the Nix standard library, as it makes
   our explanations, and, in later sections, the types of specifications, slightly simpler.
 }
 @Code{
-(define id-spec (λ (r) (λ (v) v)))}
+(define id-spec (λ (m) (λ (v) v)))}
 
-@subsubsection{Closing Modular Extensible Specifications}
+@subsubsection{Closing Modular Extensions}
 
-A closed modular extensible module specification is
-a function of type @c{∏R → ∏R → ∏R},
-i.e. a modular extensible module specification where @c{P = R},
-wherein every identifier required is also provided as an extension.
+A closed modular extension is
+a function of type @c{C → C → C},
+i.e. a modular extensible module specification where @c{C = V = W}.
+In the common case that @c{C} is a record, this means that
+wherein every identifier required is also extended.
 
-As before for closed modular module specifications, the question is:
-how do you get from such a closed modular extensible module specification
-to an actual module computation where all the loops are closed,
+As before for closed modular module definitions, the question is:
+how do you get from such a closed modular module extension
+to an actual module definition where all the loops are closed,
 and every identifier is mapped to a value of the expected type?
 And the way we constructed our model, the answer is simple:
 first, under the scope of the module context,
 you apply your extension to the top value for a module context
 (usually, that’s the empty record);
-then you have reduced your problem to a regular modular module specification
+then you have reduced your problem to a regular modular module definition
 @c{∏R → ∏R}, at which point you only have to compute the fixpoint.
-We will call this operation instantiation for modular extensible specifications:
-@Code{(define fix (λ (t) (λ (s) (Y (λ (r) ((s r) t))))))}
+We will call this operation instantiation for modular extensions:
+@Code{(define fix/t (λ (t) (λ (m) (Y (λ (s) ((m s) t))))))}
 In this expression,
 @c{t} is the top value for the type being specified (typically the empty record, for records),
-@c{s} is the modular extensible specification, and
-@c{r} is the fixpoint variable for the module context we are computing
+@c{m} is the modular extension, and
+@c{s} is the fixpoint variable for the module context we are computing
 (often called @c{self} or @c{this} in the literature).
 
-@subsubsection[#:tag "Minimal_OO_Indeed"]{Minimal OO Indeed}
+
+@subsubsection{Default and non-default Top Type}
+
+Assuming some common top type @c{Top} and default value @c{top} in that type
+(we will use @c{Any} and @c{#f} in our example Scheme implementation),
+we will define the common instantiation operation for modular extensions:
+@Code{(define fix (fix/t top))}
+or to inline @c{fix/t}:
+@Code{(define fix (λ (m) (Y (λ (s) ((m s) top)))))}
+
+Note that if the language-wide top type is too wide in some context,
+for instance in our choice of Scheme and @c{Any} because that you want
+to work with the narrower @c{Record} so as to define individual methods,
+and a default value @c{empty-record} instead of @c{#f}, then you can
+compose your modular extension with a modular extension as follows to the right,
+that throws away the previous value or computation (ignores its @c{super} argument)
+and returns the new default value regardless of context (ignores its @c{self} argument;
+unless that default is extracted from the context):
+@Code{(define record-spec (λ (self) (λ (super) empty-record)))}
+We could then equivalently define a variant of fix specialized for records
+in any of the following ways:
+@Code{(define fix-record (fix/t empty-record))}
+@Code{(define fix-record (λ (m) (Y (λ (s) ((m s) empty-record)))))}
+@Code{(define fix-record (λ (m) (fix (mix m record-spec))))}
+Note that because it ignores its @c{super} argument and thus throws away any inherited value,
+the @c{record-spec} modular extension must appear last, or at least
+after any modular extension the result of which isn’t to be ignored.
+
+Why not make @c{empty-record} the language-wide default?
+Because we will the language-wide default will apply not just to the specification of records,
+but also to the specification of individual fields of each record,
+and in this more general context, the default value @c{#f} is
+possibly more efficient at runtime, and definitely more colloquial—therefore more efficient
+in the most expensive resource, human-time.
+
+
+@subsubsection[#:tag "MOI"]{Minimal OO Indeed}
 
 The above functions @c{mix} and @c{fix} are indeed isomorphic
 to the theoretical model of OO from Bracha and Cook @~cite{bracha1990mixin}
 and to the actual implementation of “extensions” in nixpkgs @~cite{nix2015}@xnote["."]{
   Our presentation of mixin inheritance is actually slightly more general than what
   Bracha, Cook or Simons did define, in that our definition is not specialized for records.
-  Indeed, our closed specifications work on values of any type,
+  Indeed, our closed modular extensions work on values of any type,
   even their modularity aspect is indeed more useful for types
   that somehow directly or indirectly encode.
-  But our theory also importantly considers not just closed specifications,
-  but also the more general open specifications, for which it is essential
+  But our theory also importantly considers not just closed modular extensions,
+  but also the more general open modular extensions, for which it is essential
   that they universally apply to target values of any type.
   We can therefore claim as our innovation a wider, more general understanding of mixin inheritance,
   of which there is no evidence in earlier publications.
 }.
 This style of inheritance was dubbed “mixin inheritance” by Bracha and Cook@xnote[";"]{
   The name “mixin” originally comes from Flavors @~cite{Cannon1979},
-  inspired by the ice cream offerings at Emack & Bolios.
+  inspired by the ice cream offerings at Emack & Bolios
+  (as for the concept itself, it was inspired both by
+  previous attempts at multiple inheritance in KRL @~cite{Bobrow1976} or Ani @~cite{Kahn1979},
+  combined with the ADVISE facility @~cite{teitelman1966}).
   However, Flavors offers full multiple inheritance (and was the first system to do it right),
   whereas the “mixins” of Bracha and Cook are a more rudimentary and more fundamental concept,
   that does not include automatic linearization of transitive dependencies.
-  Also, “mixins” are not distinguished by the language syntax or by the compiler;
+  Also, “mixins” in Flavors are not distinguished by the language syntax or by the compiler;
   they are just classes that are intended to be typically used with multiple inheritance,
   as part of many disjoint hierarchies, and might indeed not otherwise make sense as base classes.
   Since the word implies no special processing by the compiler or by the human operator,
   it can be dispensed with in the original context, and gladly assigned
   a new, useful, technical meaning.
+  But that doesn’t mean the context that made the word superfluous should be forgotten,
+  quite the contrary.
+  We will get back to Flavors when we discuss multiple inheritance. @;TODO secref
 }
 and the two functions, that can easily be ported to any language with first-class functions,
 are enough to implement a complete object system.
 
 How do we use these inheritance and instantiation functions?
-By defining specifications of type @c{C → V → V)} where
+By defining, composing and closing modular extensions of type @c{C → V → V)} where
 @c{C} is the type of the module context,
 and @c{V} that of the value under focus being extended:
 @Code{
@@ -3338,10 +3428,10 @@ where @c{self} is the module context,
 @c{super} is the inherited value to be extended,
 and @c{body ...} is the body of the function, returning the extended value.
 
-In the common case that @c{V = ∏P},
-and with our trivial representation of @c{∏P = I → P}
+In the common case that @c{V = ∏P}},
+and with our trivial representation of such records as @c{∏P = I → P}
 where @c{I} is the type of identifiers,
-a typical record specification will look like:
+a typical modular module extension will look like:
 @Code{
 (define my-spec (λ (self) (λ (super) (λ (method-id) body ...))))}
 where @c{method-id} is the identifier for the method to be looked up,
@@ -3349,9 +3439,10 @@ and the body uses @c{(super method-id)} as a default when no overriding behavior
 
 Alternatively, this can be abstracted in terms of using a mix of one or multiple
 calls to this method-defining specification, that specifies a single method
-with given @c{key} as name for recognized @c{method-id},
-and given function @c{compute-value} that takes the @c{self} context
-and the @c{inherited} value @c{(super method-id)} as arguments:
+with given @c{key} as name for a recognized value of @c{method-id},
+and given open modular extension function @c{compute-value}
+that takes the @c{self} context and the @c{inherited} value @c{(super method-id)} as arguments
+and returns an extended value for the method at @c{key}:
 @Code{
 (define method-spec (λ (key) (λ (compute-value)
     (λ (self) (λ (super) (λ (method-id)
@@ -3360,9 +3451,19 @@ and the @c{inherited} value @c{(super method-id)} as arguments:
           (compute-value self inherited)
           inherited))))))))}
 
-Of course, where performance or space matters,
-you would use an encoding of records-as-structures instead of records-as-functions:
-instead of calling the record as a function with an identifier,
+Note how @c{method-spec} turns an open modular extension for a value
+into an open modular extension for a record (that has this value under some key).
+In this case, the module context @c{self} is the same,
+whereas the @c{super} value for the inner function @c{compute-value}
+is the specialized @c{(super method-id)} value extracted from the record.
+That’s an example for how open modular extensions themselves have a rich algebraic structure,
+wherein you can combine, compose, decompose, extract, and otherwise
+operate on open modular extensions to get richer open modular extensions,
+and eventually build a closed modular extension that you can instantiate.
+
+Now, where performance or space matters,
+you would use an encoding of records-as-structures instead of records-as-functions.
+Then, instead of calling the record as a function with an identifier,
 you would invoke a dereference function with the record as first argument
 and the identifier as second argument.
 But with a some small overhead, records-as-functions is perfectly usable
@@ -3390,14 +3491,15 @@ or would be wrapped in a thunk, to avoid unneeded computations (that might even 
 or for more power, the @c{compute-value} function
 would directly take @c{super} as its second argument,
 and @c{(super method-id)} would only be computed in the second branch.
+In a lazy context, @c{lazy-method-spec} could also directly use @c{lazy-record-cons}
+to add a binding to the record without having to eagerly compute the bound value.
 
-Whichever way simple specifications are defined,
-they can thereafter be composed into larger specifications
+Whichever way simple modular extensions are defined,
+they can thereafter be composed into larger modular extensions
 using the @c{mix} function, and eventually instantiate a target record
-from a specification using the @c{fix} function.
-Since we will be using records a lot, we can specialize the @c{fix} function for records,
-by passing the @c{empty-record} as its first top value argument:
-@Code{(define fix-record (fix empty-record))}
+from a modular extension using the @c{fix} function.
+Since we will be using records a lot,
+we will use the @c{fix-record} function above specialized for records.
 Note that since our targets are records, our minimal object system is
 closer to Prototype OO than to Class OO,
 though, as we will see, it doesn’t offer “prototypes” per se,
@@ -3406,47 +3508,47 @@ or “objects” of any kind.
 @subsubsection{Minimal Colored Point}
 
 Let us demonstrate the classic “colored point” example in our Minimal Object System.
-We can define a specification for a point’s coordinates as follows:
+We can define a modular extension for a point’s coordinates as follows:
 @Code{
 (define coord-spec
   (mix (method-spec 'x (λ (self) (λ (inherited) 2)))
        (method-spec 'y (λ (self) (λ (inherited) 4)))))}
-The specification defines two methods @c{x} and @c{y},
+The modular extension defines two methods @c{x} and @c{y},
 that respectively return the constant numbers @c{2} and @c{4}.
 
-We can similarly define a specification for some record’s @c{color} field as follows:
+We can similarly define a modular extension for some record’s @c{color} field as follows:
 @Code{
 (define color-spec
   (method-spec 'color (λ (self) (λ (inherited) "blue"))))}
 
 And we can check that indeed we can instantiate a point specified by combining
-the color and coordinate specifications above, and verify that indeed the values
+the color and coordinate modular extensions above, and verify that indeed the values
 for @c{x} and @c{color} are as expected:
 @Code{
 (define point-p (fix-record (mix color-spec coord-spec)))}
 @Code{
 (point-p 'x) ;⇒ 2
 (point-p 'color) ;⇒ "blue"}
-When querying the composed specifications for the value for method @c{x},
+When querying the composed modular extensions for the value for method @c{x},
 in a call-by-value right-to-left propagation of information,
-the first specification, @c{coord-spec}, ignores the top value @c{#f} passed to it
+the first modular extension, @c{coord-spec}, ignores the top value @c{#f} passed to it
 and returns @c{2} that is then returned unchanged by @c{color-spec} since
 @c{x} is not recognized by the @c{case} in @c{color-spec}.
 Similarly, the query for method @c{color} returns the string @c{"blue"}.
 
 However, this colored point example is actually trivial:
-there is no collision in method identifiers between the two specifications,
-such that the two specifications commute;
-and more importantly, the values defined by the specifications are constant
+there is no collision in method identifiers between the two modular extensions,
+such that the two modular extensions commute;
+and more importantly, the values defined by the modular extensions are constant
 and exercise neither modularity nor extensibility:
-their value-computing functions make no use of their @c{self} and @c{super} arguments.
+their value-computing functions make no use of either their @c{self} and @c{super} arguments.
 Let us then see more interesting examples.
 
 @subsubsection{Minimal Extensibility and Modularity Examples}
 
 We illustrate extensibility with this example wherein function @c{add-x-spec}
-accepts an argument @c{dx}, and returns a specification that
-overrides method @c{x} with a new value to adds @c{dx} to its inherited value:
+accepts an argument @c{dx}, and returns a modular extension that
+overrides method @c{x} with a new value to adds @c{dx} to its @c{inherited} value:
 @Code{
 (define add-x-spec
   (λ (dx) (method-spec 'x (λ (self) (λ (inherited) (+ dx inherited))))))}
@@ -3458,15 +3560,15 @@ We assume two functions @c{sqrt} for the square root (builtin in Scheme)
 and @c{sqr} for the square (that could be defined as @c{(λ (x) (* x x))}).
 Note how the coordinates @c{x} and @c{y} are modularly extracted
 from the module context @c{self}, which is the record being defined,
-into which they have to be specified by other specifications
+into which they have to be specified by other modular extensions
 to be composed with @c{rho-spec} using @c{mix}:
 @Code{
 (define rho-spec
-  (method-spec 'rho λ (self) (λ (inherited)
-    (sqrt (+ (sqr (self 'x)) (sqr (self 'y)))))))}
+  (method-spec 'rho (λ (self) (λ (inherited)
+    (sqrt (+ (sqr (self 'x)) (sqr (self 'y))))))))}
 
 We can check that the above definitions work by instantiating
-the composed specifications @c{(add-x-spec 1)}, @c{coord-spec} and @c{rho-spec},
+the composed modular extensions @c{(add-x-spec 1)}, @c{coord-spec} and @c{rho-spec},
 and verifying that the @c{x} value is indeed @c{3},
 i.e. first (right-to-left) specified to be @c{2} by @c{coord-spec},
 then incremented by @c{1} by @c{(add-x-spec 1)},
@@ -3480,21 +3582,20 @@ whereas @c{rho} is @c{5}, as computed by @c{rho-spec} from the @c{x} and @c{y} c
 (point-r 'x) ;⇒ 3
 (point-r 'rho) ;⇒ 5}
 
-This demonstrates how modular extensible specifications do work,
+This demonstrates how modular extensions do work,
 and indeed implement the basic design patterns of OO.
 
 Now, note how trying to instantiate @c{(add-x-spec 1)} or @c{rho-spec} alone would fail:
 the former relies on the @c{super} record to provide a useful inherited value to extend,
 whereas the latter relies on the @c{self} context to modularly provide @c{x} and @c{y} values.
-Neither specification is meant to stand alone, but instead to be a mixin in the sense of Flavors.
+Neither modular extension is meant to stand alone, but instead to be a mixin in the sense of Flavors.
 That not every specification can be successfully instantiated,
 is actually an essential feature of modular extensibility,
 since the entire point of a specification is to contribute some @emph{partial} information
 about a small aspect of an overall computation,
 that in general depends on other aspects being defined by other specifications.
 
-@subsubsection[#:tag "Interaction_of_Modularity_and_Extensibility"
-  ]{Interaction of Modularity and Extensibility}
+@subsubsection[#:tag "IME"]{Interaction of Modularity and Extensibility}
 
 Without extensibility, a modular module specification need never access
 the identifiers it specifies via the global module context,
@@ -3502,7 +3603,7 @@ since it can more directly access or inline their local definition
 (though it may have to explicitly call a fixpoint locally
 if these definitions implicitly involved recursion globally via the module context).
 
-For instance, consider the following modular specification,
+For instance, consider the following modular definition,
 to be merged with other specifications defining disjoint sets of identifiers,
 where the @c{case} special form of Scheme selects a clause to execute
 based on which constant if any (constant symbol, in these clauses) matches its first argument:
@@ -3641,14 +3742,18 @@ the specification and its target.
 Our implementation below makes this product explicit,
 where we use the prefix @c{pproto} to denote a prototype implemented as a pair.
 We use the @c{cons} function of Scheme to create a pair, and
-the functions @c{car} and @c{cdr} to extract its respective first and second components.
+the functions @c{car} and @c{cdr} to extract its respective first and second components;
+in a more practical implementation, a special kind of tagged pair would be used,
+so the runtime would know to implicitly dereference the target in the common case,
+without developers having to painfully maintain the knowledge and
+explicitly tell the program when to dereference it (most of the time).
 The function @c{pproto←spec} is used to define a prototype from a specification,
 and is used implicitly when composing prototypes using inheritance
 with the @c{pproto-mix} function.
 The function @c{spec←pproto} extracts the specification from a prototype,
 so you may inherit from it.
 The function @c{target←pproto} extracts the target from a prototype,
-so you may call methods on it.
+so you may call methods on it:
 @Code{
 (define pproto←spec (λ (spec) (cons spec (fix-record spec))))
 (define spec←pproto (λ (pproto) (car pproto)))
@@ -3656,29 +3761,150 @@ so you may call methods on it.
 (define pproto-mix
   (λ (child parent) (pproto←spec (mix (spec←pproto child) (spec←pproto parent)))))}
 
+Now, there is a subtle issue with the above implementation:
+when a target recursively refers to “itself” as per its specification,
+it sees the target only, and not the conflation of the target and the specification.
+This is not a problem with second-class OO, or otherwise with a statically staged style
+of programming where all the specifications are closed before any target is instantiated,
+or at least so within each of many “stages” of evaluation.
+But with a more dynamic style of programming where no such clear staging is guaranteed,
+it is insufficient@xnote["."]{
+  @; TODO Have a later section just on metaobjects?
+  Metaobjects are a typical use case where you don't (in general) have a clean program-wide staging
+  of specification and targets: to determine the meta methods,
+  you partially instantiate the meta part of the objects, based on which you can instantiate the rest.
+}
+
+@subsubsection{Recursive Conflation}
+
+In a dynamic first-class OO language, the conflation of specification and target
+into a single entity, the prototype, must be recursively seen by the target
+when instantiating the specification.
+This is achieved by having the instantiation function compose a “magic” wrapper specification
+in front of the user-given specification before it takes a fixpoint;
+said magic wrapper will wrap any recursive reference to the target into
+an implicit conflation pair of the specification and the target.
+Here is an implementation of that idea, wherein we prefix function names with @c{qproto}:
+
+@Code{
+(define qproto-wrapper (λ (spec) (λ (self) (λ (super) (cons spec super)))))
+(define qproto←spec (λ (spec) (fix-record (mix qproto-wrapper spec))))}
+
+Note how the following functions are essentially unchanged compared to @c{pproto}:
+@Code{
+(define spec←qproto (λ (qproto) (car qproto)))
+(define target←qproto (λ (qproto) (cdr qproto)))
+(define qproto-mix
+  (λ (child parent) (qproto←spec (mix (spec←qproto child) (spec←qproto parent)))))}
+
+What changed from the previous @c{pproto} variant was that the
+@c{(λ (x) (cons spec x))} extension was moved from outside the fixpoint to inside:
+If @c{R} is the parametric type of the reference wrapper
+(e.g. @c{R Integer} is the type of a reference to an integer),
+and @c{M} is the parameteric type of modular extension, also known as a @emph{recursion scheme},
+then the type of @c{pproto} is @c{R (Y M)},
+and that of @c{qproto} is @c{Y (R ∘ M)}, so in both cases we have
+a reference to a recursive data structure that follows the recursion scheme,
+but in the second case further recursive accesses also use the reference.
+Note that @c{Y (R ∘ M) = R (Y (M ∘ R))} and @c{Y (M ∘ R)} is the type of
+a raw record that follows the recursion scheme and uses references for recursion,
+instead of the type of reference to such, i.e. we have in turn @c{Y (M ∘ R) = M (Y (R ∘ M))};
+people interested in low-level memory access might want to privilege this latter @c{Y (M ∘ R)}
+representation instead of @c{Y (R ∘ M)}, which indeed is a notable difference
+between the OO models of C++ vs Java: C++ makes you deal with data structures,
+Java with references to data structures.
+
+Now, it is not unusual in computer science for access to records, recursive or not,
+to be wrapped inside some kind of reference type:
+pointer into memory, index into a table,
+key into a database, cryptographic hash into a content-addressed store,
+location into a file, string or identifier used in a hash-table or tree, etc.
+In the case of recursive data structures implemented as data in contiguous regions of memory,
+such level of indirection is inevitable, as there is no way to have a contiguous region of memory
+of some size contain as a strict subset a contiguous region of memory of the same size,
+as would be required for a data structure to directly
+include an recursive element of the same type@xnote["."]{
+  Exception: if the only element of a structure is an element of the same structure.
+  At that which point it’s just an infinite loop to the same element,
+  the type is isomorphic to the unit type, and can be represented as
+  a trivial data structure of width zero.
+  But if there is any other data element that isn’t a unit type,
+  direct recursion would mean infinite copies of it, one for each recursive path,
+  which can’t fit in finite memory.
+}
+
+This use of a reference wrapper can be seen as an instance of the so-called
+“Fundamental theorem of software engineering” @~cite{WikiFTSE}:
+@emph{We can solve any problem by introducing an extra level of indirection}.
+But more meaningfully, it can also be seen as the embodiment of the fact that,
+computationally, @principle{recursion is not free}:
+while at some abstract level of pure logic or mathematics,
+the inner object is of the same type as the outer one,
+and accessing it is free or constant time,
+at a more concrete level, recursion involves fetching data from another memory region.
+In the best case of a simple sequence of data,
+the sequence can be a contiguous array of memory and this fetching is constant time;
+in general, this fetching goes through the memory caching hierarchy,
+the latency of which grows as the square root of the size of the working set@~cite{MythOfRAM2014}.
+
+Importantly, isomorphic as it might be at some abstract level,
+the reference type is not equal to the type being referenced,
+and is not a subtype of it.
+Thus, the necessary reference wrapper extension is crucially not a strict extension
+with respect to the type being wrapped.
+This proves that is a bad idea to require all extensions to always be strict
+(which would beg the question of which type to be strict for,
+or lead to the trivial answer that of being strict for the top type,
+which all extensions are trivially).
+The reference wrapper, pure isomorphism at one level,
+yet effectful non-isomorphism at another
+(requiring access to disk, database, network, credentials, user interface, etc.),
+also illustrates that one man’s purity is another man’s side effect (to channel Alan Perlis).
+For instance, with merkleization, a reference uniquely identifies some pure data structure
+with a cryptographically secure hash that you can compute in a pure functional way;
+but dereferencing the hash is only possible if you already know the data
+based on which to compute and verify the hash, that you indexed into a database
+that you need some side-effect to consult.
+Many OO languages have an implicit builtin reference wrapper,
+as opposed to e.g. explicit pointers as in C++;
+but the reference semantics doesn’t disappear for having been made implicit.
+
+@subsubsection{Conflation for Records}
+
+If the target type can be anything, including an atomic value such as small integers,
+then there’s nowhere in it to store the specification,
+and the conflation of specification and target must necessarily involve
+such a wrapping as we saw earlier.
+But if the target type is guaranteed to be a (subtype of) Record,
+we can do better.
+
 In the Nix extension system, a target is a record (called an attrset in Nix),
 mapping string keys to arbitrary values,
-and the specification is stored under a “magic” string @c{"__unfix__"}
-by the extension instantiation function @c{fix};
-the advantage is that casting a prototype (called “extension” in Nix)
+and the extension instantiation function @c{fix} stores
+the specification under a “magic” string @c{"__unfix__"}.
+The advantage is that casting a prototype (called “extension” in Nix)
 to its target is a trivial zero-cost identity no-op;
-the slight disadvantage is that the target record cannot use arbitrary keys,
-and must avoid the magic string as key;
-also, casting to a specification becomes slightly more expensive
+the slight disadvantage is that the target must be a record,
+but that record cannot use arbitrary keys,
+and must avoid the magic string as key.
+As a minor effect, casting to a specification becomes slightly more expensive
 (table lookup vs fixed-offset field access),
-but it’s a more rarely used operation, anyway.
-The semantic is otherwise essentially the same as for our implementation.
+whereas casting to a target (the more common operation by far) is free.
+The semantic is otherwise essentially the same as for our implementation using pairs.
 
 Here is a Scheme implementation of the same idea,
 where the prefix @c{rproto} denotes a prototype implemented as a record,
 and our magic key is @c{#f}, the boolean false value,
+instead of some reserved symbol,
 so it doesn’t impede on the free use of arbitrary symbols as keys.
 The function @c{rproto←spec} is used to define a prototype from a specification,
-by prepending a special specification in front that deals with remembering the provided specification;
+by prepending a special specification @c{rproto-wrapper} in front
+that deals with remembering the provided specification;
 this function is used implicitly when composing prototypes using inheritance
 with the @c{rproto-mix} function.
 The function @c{spec←rproto} extracts the specification from a prototype,
-so you may inherit from it.
+so you may inherit from it; this specifically doesn’t include the @c{rproto-wrapper},
+which would notably interfere with mixing.
 The function @c{target←rproto} extracts the target from a prototype,
 so you may call methods on it—it is the identity function, and
 you can often simplify it away.
@@ -3692,6 +3918,9 @@ you can often simplify it away.
 (define rproto-mix
   (λ (child parent) (rproto←spec (mix (spec←rproto child) (spec←rproto parent)))))}
 
+Once again, some special extension is used in front, that is not strict,
+and is almost-but-not-quite an isomorphism, and specially memorizes the specification.
+
 @subsubsection{Small-Scale Advantages of Conflation: Performance, State Sharing}
 
 First, note how, if a specification is pure functional,
@@ -3703,7 +3932,7 @@ However, in case of recursive access to the target, this performance enhancement
 can grow exponentially with the depth of the recursion,
 by using a shared computation instead of repeated recomputations
 (see the related discussion on the applicative Y combinator in
-@secref{Digression_Scheme_and_FP}).
+@secref{DSF}).
 
 If however, the specification has side-effects
 (which of course supposes the language also has side-effects),
@@ -3728,7 +3957,7 @@ because the mutation of the internals of the specification, in languages that al
 may interact with the target state and behavior in weird ways.
 This mutation is not usually colloquial in production code,
 but may be heavily relied upon during interactive development,
-or as part of implementing advanced infrastructure.
+or as part of implementing advanced infrastructure. @;{ TODO secref mutation }
 
 Also note that if your choice of representation for specifications and targets
 is such that instantiating a specification may itself issue side-effects such
@@ -3740,7 +3969,7 @@ will not have undesired side-effects.
 Once again, laziness proves essential to OO,
 even and especially in presence of side-effects.
 
-@subsubsection{Large-Scale Advantage of Conflation: Modularity}
+@subsubsection{Large-Scale Advantage of Conflation: More Modularity}
 
 Remarkably, conflation makes prototypes more modular than the lack thereof,
 because thanks to it, programmers do not have to decide in advance
@@ -3864,7 +4093,7 @@ or it may be both.
 Whichever kind of type descriptors are used,
 Class OO is but a special case of Prototype OO,
 wherein a class is a prototype for a type,
-i.e. the conflation of a modular extensible specification for a type descriptor,
+i.e. the conflation of a modular extension for a type descriptor,
 and the type descriptor that is the fixpoint of that specification.
 Thus when we claimed in @seclink{classes_only} that
 the situation of classes in OO was similar to that of types in FP,
@@ -4273,7 +4502,7 @@ Let’s see how we can model OO with more precise types.
 @subsubsection{Partial Record Knowledge as Subtyping}
 
 In a language with static types,
-programmers writing extensible modular specifications should be able to specify types
+programmers writing extensible modular definitions should be able to specify types
 for the entities they provide (an extension to) and require (a complete version of),
 without having to know anything about the types of the many other entities
 they neither provide nor require:
@@ -4284,12 +4513,12 @@ Now, with only modularity, or only extensibility, what more second-class only,
 you could contrive a way for the typechecker to always exactly know all the types required,
 by prohibiting open recursion through the module context,
 and generating magic projections behind the scenes (and a magic merge during linking).
-But as we saw previously in @seclink{Interaction_of_Modularity_and_Extensibility},
+But as we saw previously in @seclink{IME},
 once you combine modularity and extensibility, what more first-class,
 then open recursion through the module context becomes the entire point,
 and your typesystem must confront it.
 
-Extensibility, which consists in contributing partial knowledge
+Strict extensibility, which consists in monotonically contributing partial knowledge
 about the computation being built,
 once translated in the world of types, is subtyping.
 In the common case of records,
@@ -4328,16 +4557,16 @@ extended with primitives for the language’s builtin constructs and standard li
 and (if not already available) a minimal set of features for OO:
 indexed products for records, subtyping (@c{⊂} or @c{≤} or in ASCII @c{<:})
 and type intersections (@c{∩}).
-In this NNOOTT variant, a NNOOTT modular extensible specification
+In this NNOOTT variant, a NNOOTT modular extension
 would have a type of the form
 @Code{
-type NMESpec required inherited provided =
+type NMExt required inherited provided =
   required → inherited → (inherited ∩ provided)}
-A @c{NMESpec} is a type with three parameters,
-the type @c{required} of the information required by the specification from the module context,
+A @c{NMExt} is a type with three parameters,
+the type @c{required} of the information required by the modular extension from the module context,
 the type @c{inherited} of the information inherited and to be extended,
 and the type @c{provided} of the information provided to extend what is inherited.
-Note that this type refines the @c{C → V → V} from @seclink{Minimal_OO_Indeed}:
+Note that this type refines the @c{C → V → V} from @seclink{MOI}:
 @c{inherited} and @c{provided} each separately refine the value @c{V} being specified;
 that value can be anything: it need not be a record at all, and if it is,
 it can have any shape or type, and does need not have the same as the module context.
@@ -4361,8 +4590,8 @@ The @c{mix} operator chains two mixins, with the asymmetry that
 information provided by the parent (parameter @c{p2} for the second argument)
 can be used by the child (first argument), but not the other way around.
 @Code{
-fix : top → NMESpec target top target → target
-mix : NMESpec r1 i1∩p2 p1 → NMESpec r2 i2 p2 → NMESpec r1∩r2 i1∩i2 p1∩p2
+fix : top → NMExt target top target → target
+mix : NMExt r1 i1∩p2 p1 → NMExt r2 i2 p2 → NMExt r1∩r2 i1∩i2 p1∩p2
 }
 
 This model is simple and intuitive, and explains how inheritance works:
@@ -4453,7 +4682,7 @@ as meaning «not depending on the “unknown” type X (of self).»
 This makes his paper inapplicable to most OO, but interestingly,
 precisely identifies the subset of OO for which inheritance coincides with subtyping,
 or, to speak more precisely,
-subtyping of modular extensible specifications coincides with subtyping of their targets.
+subtyping of modular extensions coincides with subtyping of their targets.
 
 Indeed, in general, specifications may contain so called “binary methods”
 that take another value of the same target type as argument,
@@ -4469,7 +4698,7 @@ And such methods are not an “advanced” or “anomalous” case, but quintess
 even the original SIMULA 67 paper @~cite{Simula1967} includes the example of
 a class @c{linkage} that defines references @c{suc} and @c{pred},
 that classes can inherit from so that their element shall be part of a doubly linked list.
-See also how in @seclink{Interaction_of_Modularity_and_Extensibility}
+See also how in @seclink{IME}
 we argued that while you can eschew support for fixpoints through the module context
 when considering modularity or extensibility separately,
 open recursion through module contexts becomes essential when considering them together.
@@ -4491,7 +4720,7 @@ unsafe (program may silently misbehave at runtime if called with the wrong argum
 In some languages, self-reference already has to go through
 pointer indirection (e.g. in C++), or
 boxing (e.g. in Haskell, wherein a @c{newtype Fix} generic constructor is used for fixpoints,
-while the open modular specification goes into a “recursion scheme”);
+while the open modular definition goes into a “recursion scheme”);
 thus the NNOOTT does not so much introduce an extra indirection step for recursion
 as it makes an existing indirection step obvious—and
 makes it dynamically rather than statically typed.
@@ -4574,24 +4803,26 @@ it does not follow that @c{Y F ⊂ Y G} where @c{Y} is the fixpoint operator for
   without having to fight the typesystem or the runtime.
 }
 
-A more precise view of a modular extensible specification is thus as
+A more precise view of a modular extension is thus as
 an entity parameterized by the varying type @c{self} of the module context
 (that Bruce calls @c{MyType} @~cite{bruce1996typing SubtypingMatch1997}). @; TODO cite further
-As compared to the previous parametric type @c{NMESpec} that is parametrized by types @c{r i d},
-this parametric type @c{MESpec} is itself parametrized by parametric types @c{r i d}
-that each take the module context type @c{self} as parameter:
-
+As compared to the previous parametric type @c{NMExt} that is parametrized by types @c{r i p},
+this parametric type @c{MExt} is itself parametrized by parametric types @c{r i p}
+that each take the module context type @c{self} as parameter@xnote[":"]{
+  The letters @c{r i p}, by contrast to the @c{s t a b} commonly used for generalized lenses,
+  suggest the mnemonic slogan: “If generalized lenses can stab, modular extensions can rip!”
+}
 @Code{
-type MESpec referenced inherited defined =
-  ∀ self ⊂ referenced self,
-    ∀ super ⊂ inherited self ⇒
-        self → super → super ∩ (defined self)}
+type MExt required inherited provided =
+  ∀ self, super : Type
+    self ⊂ required self, super ⊂ inherited self ⇒
+        self → super → provided self ∩ super}
 
 Notice how the type @c{self} of the module context
 is @emph{recursively} constrained by @c{self ⊂ referenced self}),
 whereas the type @c{super} of the value in focus being extended
 is constrained by @c{super ⊂ inherited self},
-and the returning a value is of type @c{super∩defined self},
+and the returning a value is of type @c{provided self ∩ super},
 and there is no direct recursion there
 (but there can be indirectly if the focus is itself referenced via self somehow).
 Those familiar with universal quantifiers may also notice how
@@ -4601,37 +4832,36 @@ to be well-behaved with respect to gracefully passing through
 any call to a method they do not define, override or otherwise handle.
 Finally, notice how, as with the simpler NNOOTT variant above,
 the types @c{self} and @c{referenced self} refer to the module context,
-whereas the types @c{super} and @c{defined self} refer to some value in focus,
+whereas the types @c{super} and @c{provided self} refer to some value in focus,
 that isn’t at all the same as the module context
-for open modular extensible specifications in general.
+for open modular extensions in general.
 
 Our two OO primitives then have the following type:
-
 @Code{
-fix : ∀ referenced, inherited, defined : Type → Type, ∀ self, top : Type,
-      referenced self ⊂ self ⇒
+fix : ∀ required, inherited, provided : Type → Type, ∀ self, top : Type,
+      self = inherited self ∩ provided self,
+      self ⊂ required self,
       top ⊂ inherited self ⇒
-      self ⊂ inherited self ∩ defined self ⇒
-        top → MESpec referenced inherited defined → self
-mix : MESpec r1 i1∩d2 d1 → MESpec r2 i2 d2 → MESpec r1∩r2 i1∩i2 d1∩d2}
+        top → MExt referenced inherited provided → self
+mix : MExt r1 i1∩d2 p1 → MExt r2 i2 p2 → MExt r1∩r2 i1∩i2 p1∩p2}
 
 In the @c{fix} function, we implicitly define a fixpoint @c{self}
 via suitable recursive subtyping constraints.
 We could instead make the last constraint a definition
-@c{self = Y (inherited ∩ defined)}
+@c{self = Y (inherited ∩ provided)}
 and check the two subtyping constraints about @c{top} and @c{referenced}.
-As for the type of @c{mix}, though it looks identical with @c{MESpec}
-as the NNOOTT type previously defined with @c{NMESpec},
+As for the type of @c{mix}, though it looks identical with @c{MExt}
+as the NNOOTT type previously defined with @c{NMExt},
 there is an important but subtle difference:
-with @c{MESpec}, the arguments being intersected
-are not of kind @c{Type} as with @c{NMESpec},
+with @c{MExt}, the arguments being intersected
+are not of kind @c{Type} as with @c{NMExt},
 but @c{Type → Type}, where
 given two parametric types @c{f} and @c{g},
 the intersection @c{f∩g} is defined by @c{(f∩g)(x) = f(x)∩g(x)}.
 Indeed, the intersection operation is defined polymorphically, and
 in a mutually recursive way for types, functions over types, etc.
 
-@subsubsection{Typing Advantages of OO as Modular Extensible Specifications}
+@subsubsection{Typing Advantages of OO as Modular Extensions}
 
 By defining OO in terms of the λ-calculus, indeed in two definitions @c{mix} and @c{fix},
 we can do away with the vast complexity of “object calculi” of the 1990s,
@@ -4683,17 +4913,18 @@ Instead, we can let logic and typing rules be as simple as possible,
 yet construct our object features to be as sophisticated as we want,
 without a gap in reasoning ability, or inconsistency in the primitives.
 
-Our encoding of OO in terms of “modular extensible specification”, functions of the form
+Our encoding of OO in terms of “modular extension”, functions of the form
 @c{mySpec (self : Context, super : Focus) : Focus}, where in the general “open” case,
 the value under @c{Focus} is different from the @c{Context}, is also very versatile
 by comparison to other encodings, that are typically quite rigid, specialized for classes,
 and unable to deal with OO features and extensions.
 Beyond closed specifications for classes, or for more general prototypes,
-our @c{MESpec} type can scale down to open specifications for individual methods or sub-methods,
-that partake in method combination;
+our @c{MExt} type can scale down to open specifications for individual methods,
+or for submethods that partake in method combination;
 it can scale up to open specifications for groups of mutually defined or nested classes or prototypes,
 all the way to open or closed specifications for entire ecosystems.
-More importantly, our general notion of “modular extensible specification”
+
+More importantly, our general notion of “modular extension”
 opens an entire universe of algebraically well-behaved composability
 in the spectrum from method to ecosystem;
 the way that submethods are grouped into methods, methods into prototypes,
@@ -4701,6 +4932,7 @@ prototypes into classes, classes into libraries, libraries into ecosystems, etc.
 can follow arbitrary organizational patterns largely orthogonal to OO,
 that will be shaped the evolving needs of the programmers,
 yet will at all times benefit from the modularity and extensibility of OO.
+
 OO can be one simple feature orthogonal to plenty of other features
 (products and sums, scoping, etc.) to achieve in a @emph{reasonable} manner @; TODO cite
 what too many languages achieve my making “classes” a be-all, end-all ball of mud of
@@ -4742,7 +4974,7 @@ TODO
 
 Why do "unary methods" work in class OO, but not e.g. binary methods?
 Because you moved construction / destruction out of the way,
-so all you're doing is consuming data,
+so all you’re doing is consuming data,
 in a way that (as far as types are concerned) is extensible.
 (if considered not trivially returning unit, but effectful with linear resources to forcibly manage).
 Also, when an object of same type is linearly returned,
@@ -4755,8 +4987,6 @@ thereafter gave sounder types to OO,
 saving subtyping where it could be saved because the NNOOTT applies, @; CITE PolyTOIL
 but otherwise abandoning subtyping as a goal. @; CITE LOOM 1997
 @; Kathleen Fisher @;CITE ...
-
-@;{ CITE }
 
 Meanwhile, the relationship between a module context and a focused value being
 modularly and extensibly specified within it is characterized by
@@ -4813,7 +5043,7 @@ which embodies first-class modularity, but not modular extensibility.
 Now, if the type system includes subtypes, extensible records, and
 fixpoints involving open recursion,
 e.g. based on recursively constrained types @~cite{isoop1995 iloop1995}, then
-those first-class module values can be the targets of modular extensible specifications.
+those first-class module values can be the targets of modular extensions.
 @;{TODO cite remy1994mlart ?}
 And there we have first-class OO capable of expressing classes.
 
@@ -4887,7 +5117,7 @@ that could be a finite set, or even an infinite family of types, etc.
 In an extreme case, it can even be the entire ecosystem — a pattern actively used
 in Jsonnet or Nix (though without formal types).
 
-To build such records, one may in turn make them the targets of modular extensible specifications,
+To build such records, one may in turn make them the targets of modular extensions,
 such that first-class OO can express much more than mere “classes”,
 especially so than second-class classes of traditional Class OO.
 First-class OO can directly express sets of cooperating values, types and algorithms
@@ -4926,20 +5156,32 @@ is all too often to introduce a one mother-of-all syntactic and semantic constru
 of immense complexity, the “class”, that frankly not a single person in the world fully understands,
 and of which scientific papers only dare study but simplified (yet still very complex) models.
 
+Actually, when we remember that in most OO languages, OO is only relevant at compile-time,
+of course mutation is orthogonal to OO even in these languages, and especially so:
+since OO fragments are wholly evaluated at a time before there is any mutation whatsoever,
+mutation cannot possibly be part of OO, even though it is otherwise part of these languages.
+Indeed the compile-time programming model of these languages, if any, is pure lazy functional.
+Thus, whether fields are mutable or immutable is of little concern
+to the compiler fragment that processes OO:
+it’s just a flag passed to the type inferencer and code generator after OO is processed away.
+
 @subsubsection{Mutability of Inheritance as Code Upgrade}
 
 Keeping mutability orthogonal to OO as above works great as long as the fields are mutable,
-but the inheritance structure of prototypes and classes is immutable.
-Happily, this covers about every language with second-class classes (which is most OO languages),
-but also all colloquial uses of OO even in languages with first-class prototypes and classes.
+but the inheritance structure of specifications is immutable.
+Happily, this covers every language with second-class classes (which is most OO languages),
+but also all every day uses of OO even in languages with first-class prototypes and classes.
 Still, there are use cases in which changes to class or prototype hierarchies
-is actively used by some dynamic OO systems such as Smalltalk or Lisp, to support
-interactive development or schema upgrade in long-lived persistent systems.
+is actively used by some dynamic OO systems such as Smalltalk or Lisp:
+to support interactive development, or schema upgrade in long-lived persistent systems.
 How then to model mutability of the inheritance structure itself,
 when the specification and targets of prototypes and classes are being updated?
 
-First, we must note that such code upgrade is generally considered a rare event,
-and most evaluation of most programs happens in-between two such code upgrades,
+First, we must note that such events are relatively rare,
+because they involve programmers not only typing, but thinking,
+which happens much slower than computers process data.
+Most evaluation of most programs, especially where performance matters,
+happens in-between two such code upgrades,
 in large spans of time during which the code is constant.
 Therefore, the usual semantics that consider inheritance structures as constant
 still apply for an overwhelming fraction of the time and an overwhelming fraction of objects,
@@ -4949,7 +5191,7 @@ and the actual semantics must be explained;
 but these usual semantics are not rendered irrelevant
 by the possibility of dynamic changes to object inheritance.
 
-Second, updates to the inheritance structure of objects
+Second, updates to the inheritance structure of OO specifications
 can be seen as a special case of code upgrade in a dynamic system.
 Code upgrade, whether it involves changes to inheritance structure or not,
 raises many issues such as the atomicity of groups of upgrades
@@ -4981,12 +5223,19 @@ when the system is “quiescent” (i.e. at rest, so there are no concurrency or
 for “Dynamic Software Updating” @~cite{DSU2001};
 at that point, the compiler need only guarantee that calls to the upgradable entry points
 will not have been inlined.
+Happily, since code upgrade events happen at a much larger timescale than regular evaluation,
+it is also generally quite acceptable for systems to wait until the right moment
+that the system is indeed quiescent, after possibly telling its activities to temporarily shutdown,
+before to apply such code upgrades.
 
 Third, we must note how languages such as Smalltalk and Common Lisp include a lot of support
 for updating class definitions, including well-defined behavior with respect to how objects
 are updated when their classes change:
 see for instance the protocol around @c{update-instance-for-redefined-class}
 in CLOS, the Common Lisp Object System @~cite{bobrow88clos}.
+These facilities allow continuous concurrent processing of data elements
+with some identity preserved as the code evolves, even as
+the data associated to these identities evolves with the code.
 Even then, these languages do not provide precise and portable semantics
 for how such code upgrade upgrades interfere with code running in other threads,
 or in frames up the stack from the upgrade, so once again,
@@ -4996,9 +5245,6 @@ up to possible system corruption.
 Lastly, as to providing a semantics for update in inheritance structure,
 language designers and/or programmers will have to face the question of what to do
 with previously computed targets when a specification is updated:
-Are children responsible for “deep” validity checks,
-do parents make “deep and wide” invalidations,
-or must parents and children somehow deal with incoherence?
 Should a target once computed be left forever unchanged,
 now out-of-synch with the (possibly conflated) specification?
 Should a target be wholly invalidated, losing any local state updates since it was instantiated?
@@ -5012,6 +5258,9 @@ Should this protocol be invoked in an eager or lazy way
 Should a class maintain a collection of all its instances so this protocol can be eagerly updated?
 Should some real-time process such as the garbage collector ensure timely updates across the entire
 heap even in absence of such explicitly maintained collection?
+Are children responsible for “deep” validity checks,
+do parents make “deep and wide” invalidations,
+or must parents and children somehow deal with incoherence?
 There is no one-size-fits-all answer to these questions.
 
 If anything, thinking in terms of objects with identity and mutable state
@@ -5023,12 +5272,13 @@ and leave their users helpless, forced to reinvent entire such frameworks and
 live in systems they build on top of these frameworks
 rather than directly in the language that denies the issues.
 
-@section[#:tag "Inheritance_MSM"]{Inheritance: Mixin, Single or Multiple}
+@section{Inheritance: Mixin, Single or Multiple}
 
 @subsection{Mixin Inheritance}
 @subsubsection{The Last Shall Be First}
 
-What we implemented in the sections above is mixin inheritance: @; TODO secref beginning
+What we implemented in the sections above is mixin inheritance
+(@seclink{MIO}):
 the last invented and least well-known variant of inheritance.
 And yet, we already saw above that object prototypes with mixin inheritance
 are used to specify software configurations at scale. @;TODO secref
@@ -5036,36 +5286,147 @@ We further claim that it is the most fundamental variant of inheritance,
 since we will build the other variants on top of it.
 
 @subsubsection{Mixin Semantics}
-We saw above @;TODO (@seclink{simplest_prototypes})
+We saw above (@seclink{Minimal_First_Class_Modular_Extensibility})
 that mixin inheritance involves just
-one type constructor @c{MESpec} and two functions @c{fix} and @c{mix}:
+one type constructor @c{MExt} and two functions @c{fix} and @c{mix},
+repeated here more concisely from above:
 @Code{
-(define fix (λ (t) (λ (s) (Y (λ (r) ((s r) t))))))
+type MExt r i p = ∀ s, t : Type . s ⊂ r s, t ⊂ i s ⇒ s → t → p s∩t
+fix : ∀ r i p : Type → Type, ∀ s, t : Type .
+       s = i s ∩ p s, s ⊂ r s, t ⊂ i s ⇒
+       t → MExt r i p → s
+mix : MExt r1 i1∩p2 p1 → MExt r2 i2 p2 → MExt r1∩r2 i1∩i2 p1∩p2
+
+(define fix (λ (t) (λ (m) (Y (λ (s) ((m s) t))))))
 (define mix (λ (c p) (λ (r) (compose (c r) (p r)))))}
 
-@subsection[#:tag "single_inheritance"]{Single inheritance}
+@subsection{Single inheritance}
+
+@subsubsection{Semantics of Single Inheritance}
+@emph{In single inheritance, the specifications at stake are open modular definitions},
+as studied in @seclink{MFCM},
+simpler than the modular extensions of mixin inheritance from @seclink{MFCME}.
+Modular definitions only take a @c{self} as open recursion parameter
+(no @c{super} like modular extensions),
+and return a record using @c{self} for self-reference.
+The semantics can reduced to the following types and functions:
+@; TODO CITE Cook
+@Code{
+MDef r p = ∀ s : Type . s ⊂ r s ⇒ s → p s
+fixMDef : MDef p p → Y p
+extendMDef : MExt r1 p2 p1 → MDef r2 p2 → MDef r1∩r2 p1∩p2
+baseMDef : MDef (λ (_) Top) (λ (_) Top)
+
+(define fixMDef Y)
+(define extendMDef (λ (mext) (λ (parent) (λ (self)
+  (mext self (parent self))))))
+(define baseMDef (λ (_) top))}
+
+Note how the type for an open modular definition has two parameters @c{r} (required)
+and @c{p} (provided), but a closed modular definition
+has the same value for those two parameters.
+On the other hand, there is not parameter @c{i} (inherited),
+since modular definition do not inherit from anything: instead they are inherited from only.
+
+We already saw how the instantiation function for a closed modular definition was simply
+the fixpoint combinator @c{Y}.
+The case of extension is more interesting.
+First, let us simply remark that
+since extending works on open modular definitions, not just on closed ones like instantiating,
+the value under focus needs not be the same as the module context.
+But more remarkably, extension in single inheritance requires
+you use a modular @emph{extension} in addition to an existing modular definition.
+
+The need for an initial known existing modular definition as a base case to extend
+is easily filled with the @c{baseMDef}.
+But the need for a modular extension may lead to questioning
+why single inheritance is needed or useful to begin with,
+since it still requires the entities of mixin inheritance.
+Might we not as well directly adopt the simpler and more expressive mixin inheritance?
+
+@subsubsection{Comparative Simplicity of Mixin- and Single- Inheritance}
+
+Assuming knowledge of Functional Programming (FP),
+the definitions of single inheritance above
+are slightly more complex than those of mixin inheritance,
+and noticeably more awkward.
+And indeed, @emph{if} you have already paid the price of living
+in a world of functional programming, with higher-order functions
+and sufficiently expressive types and subtypes and fixpoints,
+and of thinking in terms of programming language semantics,
+you might not need single inheritance at all.
+
+But while Functional Programming and its basic concepts including
+lexical scoping and higher-order functions
+may be boringly obvious to the average reader of 2025,
+they were only fully adopted by mainstream OO programming languages like
+C++, Java in the 2010s, and slightly earlier for C#,
+after JavaScript became popular in application development
+and made FP popular with it, in the 2000s.
+And back when single inheritance was invented in the 1960s,
+these were extremely advanced concepts that very few mastered.
+Unlike Mixin inheritance, single inheritance does not require them,
+and many languages have or had single inheritance and no FP, including
+Simula, many Pascal variants, early versions of Ada or Java or Visual Basic.
+@;{TODO cite}
+
+@subsubsection{Comparative Expressiveness of Mixin- and Single- Inheritance}
+
+Single inheritance can be trivially expressed in terms of Mixin inheritance
+by tagging some modular extensions as only to be used as second argument of the @c{mix} function,
+never the first, and only considering them as specifications.
+Thus, single inheritance is always no more expressive than mixin inheritance.
+
+Conversely, given a language with FP and dynamic types or sufficiently advanced types,
+you can implement first-class mixin inheritance on top of first-class single inheritance by
+writing a function that abstracts over which parent specification
+a specification will inheritance from, as in Racket née PLT Scheme @~cite{Mixins1998}.
+In terms of complexity, this construct puts the cart before the horse,
+but it is possible, and may allow to cheaply leverage and extend existing infrastructure
+when single inheritance was already implemented and widely used.
+
+But what if you only have second-class class OO, and
+your compile-time language lacks sufficiently expressive functions?
+Then, mixin inheritance is more expressive than single inheritance:
+Single inheritance only allows you to build a specification as a list of extensions
+to which you can add one more extension at a time (as in @c{cons}),
+when mixin inheritance allows you to build a specification as a list of extensions
+that you can concatenate with other lists of extensions (as in @c{append}).
+
+Moreover, each extension in second-class class OO with single inheritance
+can only be used once, at the site that it is defined,
+extending one linear history of specifications.
+With mixin inheritance, an extension can be used many times.
+Thus, an extension that adds a color attribute to a class can be declared once
+with mixin inheritance and be freely reused many times on as many base classes as desired,
+whereas its entire definition must be repeated for each and every class that it is applied to
+with single inheritance.
+This limitation can cause a maintenance nightmare when fixing bugs or adding features
+in the code being duplicated.
+
+@subsubsection{Benefits of Single Inheritance}
+
+If single inheritance is more complex and less expressive than mixin inheritance,
+is there any reason to ever use it? Yes:
+the very semantic limitations of single inheritance are what enables
+a series of performance optimizations.
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-@subsubsection{Semantics of Single Inheritance}
-In single inheritance, the prototypes at stake,
-i.e. the entities that embodied increments of modularity,
-are not the mixin functions of mixin inheritance,
-but simpler @emph{generators} that only take a @c{self} as open recursion parameter
-and return a record using @c{self} for self-reference.
-The semantics can reduced to the following types and functions:
-: @; TODO CITE Cook
-@Code{
-Gen required provided = ∀ self ⊂ required self, self → provided self
-base : Gen (λ (_) top) (λ (_) top)
-extend : MESpec required inherited provided → Gen required inherited →
-  Gen required (inherited ∩ provided)
+The type for a single inheritance specification is
+@c{Gen required provided} (referring to generators, as per @~cite{Cook1989}),
+which given a modular context of type @c{self}
+provide definitions for a module of type @c{provided self}
+while requiring definitions for a module of type @c{required self}.
+The instantiation function @c{fix-gen} for single inheritance is just the Y combinator.
+Now, what is interesting is that the extension function @c{extend} does not
+take two generators as arguments, but
+a modular extension (as in mixin inheritance, that Cook calls a @emph{wrapper}),
+and a generator (modular definition).
+The operation is notably dissymmetrical, and in a strong way relies on mixin inheritance
+for its very extension mechanism:
 
-(define base (λ (_) record-empty))
-(define extend (λ (mixin) (λ (parent) (λ (self)
-  (mixin self (parent self))))))}
-
-Note how @c{Gen self} is the type of generators for instances of type @c{self};
+for instances of type @c{self};
 the instantiation function for a generator is the usual fixed-point combinator @c{Y};
 the @c{base} object to extend is the generator that always returns the empty record
 (for whichever encoding is used for records);
