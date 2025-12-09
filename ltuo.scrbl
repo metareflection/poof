@@ -1288,7 +1288,7 @@ extracting the target computation is just computing their fixed-point.
 Mixin inheritance also maps directly to the concepts
 of Modularity and Extensibility we are discussing,
 and for these reasons we will study it first when presenting a formal semantics of OO
-(@secref{Minimal_OO}).
+(@secref{MOO}).
 
 Mixins equipped with a binary inheritance operator constitute a semi-group
 (associative with neutral element),
@@ -1306,7 +1306,7 @@ effectively making those transitive dependencies part of a class’s interface.
 
 For all these reasons adoption of Mixin Inheritance remains relatively limited,
 to languages like
-Racket @~cite{Mixins1998 Flatt06schemewith},
+Racket @~cite{Mixins1998 Flatt2006Mixins},
 Newspeak @~cite{bracha2008newspeak},
 GCL @~cite{gclviewer2008},
 Jsonnet @~cite{jsonnet},
@@ -2507,7 +2507,7 @@ the ability to test the equality of two specifications.
 
 Therefore, we pick Scheme as the best compromise in which to formalize OO.
 
-@section[#:tag "Minimal_OO"]{Minimal OO}
+@section[#:tag "MOO"]{Minimal OO}
 
 Now that we’ve given an informal explanation of OO and
 what it is for (Internal Extensible Modularity),
@@ -3775,7 +3775,7 @@ it is insufficient@xnote["."]{
   you partially instantiate the meta part of the objects, based on which you can instantiate the rest.
 }
 
-@subsubsection{Recursive Conflation}
+@subsubsection[#:tag "RC"]{Recursive Conflation}
 
 In a dynamic first-class OO language, the conflation of specification and target
 into a single entity, the prototype, must be recursively seen by the target
@@ -5286,7 +5286,7 @@ We further claim that it is the most fundamental variant of inheritance,
 since we will build the other variants on top of it.
 
 @subsubsection{Mixin Semantics}
-We saw above (@seclink{Minimal_First_Class_Modular_Extensibility})
+We saw above (@seclink{MFCME})
 that mixin inheritance involves just
 one type constructor @c{MExt} and two functions @c{fix} and @c{mix},
 repeated here more concisely from above:
@@ -5303,13 +5303,31 @@ mix : MExt r1 i1∩p2 p1 → MExt r2 i2 p2 → MExt r1∩r2 i1∩i2 p1∩p2
 @subsection{Single inheritance}
 
 @subsubsection{Semantics of Single Inheritance}
+
 @emph{In single inheritance, the specifications at stake are open modular definitions},
 as studied in @seclink{MFCM},
-simpler than the modular extensions of mixin inheritance from @seclink{MFCME}.
-Modular definitions only take a @c{self} as open recursion parameter
-(no @c{super} like modular extensions),
+simpler than the modular extensions of mixin inheritance from @seclink{MFCME}@xnote["."]{
+  In @~cite{Cook1989 bracha1990mixin}, Cook calls “generator” what we call “modular definition”,
+  and “wrapper” what we call “modular extension”.
+  But those terms are a bit too general, while Cook’s limitation to records
+  makes his term assignment a bit not general enough (specialized for record).
+  Even in the confines of our exploration of OO,
+  we already used the term “wrapper” in a related yet more specific way
+  when discussing wrapping references for recursive conflation in @seclink{RC},
+  and may have more uses for it for method combinations. @; TODO seclink
+  The term “generator” is also too generic, and could describe many concepts in this paper,
+  while being overused in other contexts, too.
+  We will stick with our expressions “modular definition” and “modular extension”
+  that are not currently in widespread use in computer science, that are harder to confuse,
+  and that we semantically justified by reconstructing their meaning from first principle.
+}
+Modular definitions take a @c{self} as open recursion argument
 and return a record using @c{self} for self-reference.
-The semantics can reduced to the following types and functions:
+Unlike modular extensions, they do not take a @c{super} argument,
+since they only are inherited from, but don’t themselves inherit, at least not anymore:
+what superclass they did inherit from is a closed choice made in the past,
+not an open choice to make in the future; it is baked into the modular definition already.
+The semantics can then be reduced to the following types and functions:
 @; TODO CITE Cook
 @Code{
 MDef r p = ∀ s : Type . s ⊂ r s ⇒ s → p s
@@ -5325,23 +5343,25 @@ baseMDef : MDef (λ (_) Top) (λ (_) Top)
 Note how the type for an open modular definition has two parameters @c{r} (required)
 and @c{p} (provided), but a closed modular definition
 has the same value for those two parameters.
-On the other hand, there is not parameter @c{i} (inherited),
-since modular definition do not inherit from anything: instead they are inherited from only.
+There is no parameter @c{i} (inherited), just like there was no argument @c{super}.
 
 We already saw how the instantiation function for a closed modular definition was simply
 the fixpoint combinator @c{Y}.
-The case of extension is more interesting.
+The case of extending a modular definition is more interesting.
 First, let us simply remark that
 since extending works on open modular definitions, not just on closed ones like instantiating,
 the value under focus needs not be the same as the module context.
 But more remarkably, extension in single inheritance requires
 you use a modular @emph{extension} in addition to an existing modular definition.
 
-The need for an initial known existing modular definition as a base case to extend
-is easily filled with the @c{baseMDef}.
-But the need for a modular extension may lead to questioning
-why single inheritance is needed or useful to begin with,
-since it still requires the entities of mixin inheritance.
+When building a modular definition through successive extensions,
+an initial known existing modular definition is needed as a base case to those extensions;
+this role is easily filled by the @c{baseMDef}.
+Now the recursive case involves a different kind of entities, modular extensions.
+But we saw that modular extensions were already sufficient by themselves
+to define mixin inheritance.
+Why then use single inheritance,
+since it still requires the entities of mixin inheritance in addition to its own?
 Might we not as well directly adopt the simpler and more expressive mixin inheritance?
 
 @subsubsection{Comparative Simplicity of Mixin- and Single- Inheritance}
@@ -5358,51 +5378,110 @@ you might not need single inheritance at all.
 
 But while Functional Programming and its basic concepts including
 lexical scoping and higher-order functions
-may be boringly obvious to the average reader of 2025,
+may be boringly obvious to the average programmer of 2025,
 they were only fully adopted by mainstream OO programming languages like
 C++, Java in the 2010s, and slightly earlier for C#,
 after JavaScript became popular in application development
 and made FP popular with it, in the 2000s.
-And back when single inheritance was invented in the 1960s,
-these were extremely advanced concepts that very few mastered.
-Unlike Mixin inheritance, single inheritance does not require them,
+Back when single inheritance was invented in the 1960s,
+these were extremely advanced concepts that very few mastered
+even among language designers.
+Unlike Mixin inheritance, single inheritance does not require any FP,
 and many languages have or had single inheritance and no FP, including
 Simula, many Pascal variants, early versions of Ada or Java or Visual Basic.
 @;{TODO cite}
+
+Neither lexical scoping nor higher-order functions are required for single inheritance
+because the “modular extension” conceptually present in the extension of a modular definition
+need never be explicitly realized as a first-class entity:
+literally using our above recipe to implement a class or prototype definition with single inheritance
+would involve building a modular extension, then immediately applying it with @c{extendMDef},
+only to forget it right afterwards;
+but instead, most OO languages would support some special purpose syntax for the definition,
+and process it by applying the extension to its super specification as it is being parsed,
+without actually building any independent first-class entity embodying this extension.
+The semantics of this special purpose syntax
+extremely complex to explain without introducing FP concepts,
+but neither implementors nor users need actually conceptualize that semantics
+to implement or use it.
+@; As for those clever enough to figure out that semantics,
+@; they tend to be clever enough not to need it to be simplified for them,
+@; and not to care enough to simplify it for others.
 
 @subsubsection{Comparative Expressiveness of Mixin- and Single- Inheritance}
 
 Single inheritance can be trivially expressed in terms of Mixin inheritance
 by tagging some modular extensions as only to be used as second argument of the @c{mix} function,
-never the first, and only considering them as specifications.
-Thus, single inheritance is always no more expressive than mixin inheritance.
+never the first, and only considering them as specifications;
+meanwhile, those extensions used as the first argument of the @c{mix} function
+must be constant, defined on the spot, and not reused afterwards.
+Thus, single inheritance can be seen as just a restrictive style in which to use mixin inheritance,
+and is no more expressive than mixin inheritance.
 
 Conversely, given a language with FP and dynamic types or sufficiently advanced types,
 you can implement first-class mixin inheritance on top of first-class single inheritance by
 writing a function that abstracts over which parent specification
-a specification will inheritance from, as in Racket née PLT Scheme @~cite{Mixins1998}.
+a specification will inheritance from, as in Racket née PLT Scheme @~cite{Mixins1998 Flatt2006Mixins}.
 In terms of complexity, this construct puts the cart before the horse,
 but it is possible, and may allow to cheaply leverage and extend existing infrastructure
-when single inheritance was already implemented and widely used.
+in which single inheritance was already implemented and widely used.
 
-But what if you only have second-class class OO, and
-your compile-time language lacks sufficiently expressive functions?
-Then, mixin inheritance is more expressive than single inheritance:
-Single inheritance only allows you to build a specification as a list of extensions
-to which you can add one more extension at a time (as in @c{cons}),
-when mixin inheritance allows you to build a specification as a list of extensions
-that you can concatenate with other lists of extensions (as in @c{append}).
+Just like in mixin inheritance, a @emph{target} can thus still be seen as
+the fixed point of the composition of a list of elementary modular extensions
+as applied to a top value.
+However, since modular definitions, not modular extensions, are the specifications,
+the “native” view of single inheritance is more to see the parent specified in @c{extend}
+as a direct super specification, and the transitive supers-of-supers as indirect super specifications;
+each specification is considered as not just the modular extension it directly contributes,
+but as the list of all modular extensions directly and indirectly contributed.
 
-Moreover, each extension in second-class class OO with single inheritance
-can only be used once, at the site that it is defined,
-extending one linear history of specifications.
-With mixin inheritance, an extension can be used many times.
-Thus, an extension that adds a color attribute to a class can be declared once
-with mixin inheritance and be freely reused many times on as many base classes as desired,
-whereas its entire definition must be repeated for each and every class that it is applied to
-with single inheritance.
-This limitation can cause a maintenance nightmare when fixing bugs or adding features
-in the code being duplicated.
+Now what if you only have second-class class OO, and
+your compile-time language lacks sufficiently expressive functions
+to build mixin inheritance atop single inheritance?
+Then, mixin inheritance is strictly more expressive@~cite{eppl91}
+than single inheritance:
+Single inheritance only allows you to build a specification as a list of modular extensions
+to which you can add one more modular extension at a time (as in @c{cons}),
+when mixin inheritance allows you to build a specification as a list of modular extensions
+that you can concatenate with other lists of modular extensions (as in @c{append}).
+If you have already defined a list of modular extensions, and want to append it in front of another,
+single inheritance will instead force you to duplicate the definition of each and every
+of those modular extensions in front of the new base list.
+See next section for the issues this creates.
+
+Finally, since the two are equivalent in the context of first-class OO with higher-order functions,
+but different in the more common context of second-class OO
+without higher-order second-class functions,
+it makes sense to only speak of single inheritance in a context where
+the language syntax, static type system, dynamic semantics,
+or socially-enforced coding conventions, or development costs
+somehow disallow or strongly discourage modular extensions as first-class entities.
+
+@subsubsection{Code Duplication with Single Inheritance}
+
+In second-class class OO with single inheritance,
+each modular extension can only be used once, at the site that it is defined,
+extending one modular definition’s implicit list of modular extensions.
+By contrast, with mixin inheritance, a modular extension can be defined once
+and used many times, to extend many different lists of modular extensions.
+
+Thus, should a @c{WeightedColoredPoint} inherit from @c{ColoredPoint} and duplicate the
+functionality from @c{WeightedPoint}, or the other way around?
+Single inheritance forces you not only to duplicate the functionality of a class,
+but also to make a choice each time of only one which will be inherited from to reuse code.
+Multiply this problem by the number of times you combine duplicated functionality.
+This limitation can cause a maintenance nightmare:
+bug fixes and added features must also be duplicated;
+changes must be carefully propagated everywhere;
+subtle discrepancies creep in, that cause their own issues, sometimes critical.
+
+When there are many such independent features that are each duplicated onto many classes,
+the number of duplicated definitions can grow quadratically with the number of desired features,
+while the potential combinations grows exponentially, requiring users to maintain some
+arbitrary order in that combination space.
+Worse, every instance of this duplication is external modularity through copy/paste
+rather than internal modularity through better language semantics,
+which defeats the very purpose of OO.
 
 @subsubsection{Benefits of Single Inheritance}
 
@@ -5411,46 +5490,33 @@ is there any reason to ever use it? Yes:
 the very semantic limitations of single inheritance are what enables
 a series of performance optimizations.
 
+Using single inheritance, the system can walk the method declarations
+from base to most specific extension, assign an index number to each declared method,
+and be confident that every sub-specification of a specification will assign
+the same index to each and every inherited methods.
+Similarly for the fields of a class.
+Method and field lookup with single inheritance can then be as fast as memory access
+at a fixed offset from the object header or its class descriptor (or “vtable”).
+
+By contrast, when using mixin inheritance,
+because the code for a method cannot predict in advance what other modular extensions
+will have been mixed in before or after the current one, and thus cannot assume
+any common indexes between the many instances of the prototype or class being specified;
+in the general case, a hash-table lookup will be necessary to locate
+any method of element field provided by an instance of the current specification,
+which is typically ten to a hundred times slower than fixed offset access.
+Some caching can speed up the common case somewhat, but it will remain noticeably slower
+than fixed offset access, and caching cannot wholly avoid the general case.
+
+The simplicity of implementation and improvement superiority of single inheritance
+makes it an attractive feature to provide even on OO systems that otherwise support
+mixin inheritance or multiple inheritance (that has the same performance issues as mixin inheritance).
+Thus, Racket’s default object system has both single and mixin inheritance,
+and Common Lisp, Ruby and Scala have both single and multiple inheritance.
+Users can selectively single inheritance when they want more performance
+across all the subclasses of a given class.
+
+
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-The type for a single inheritance specification is
-@c{Gen required provided} (referring to generators, as per @~cite{Cook1989}),
-which given a modular context of type @c{self}
-provide definitions for a module of type @c{provided self}
-while requiring definitions for a module of type @c{required self}.
-The instantiation function @c{fix-gen} for single inheritance is just the Y combinator.
-Now, what is interesting is that the extension function @c{extend} does not
-take two generators as arguments, but
-a modular extension (as in mixin inheritance, that Cook calls a @emph{wrapper}),
-and a generator (modular definition).
-The operation is notably dissymmetrical, and in a strong way relies on mixin inheritance
-for its very extension mechanism:
-
-for instances of type @c{self};
-the instantiation function for a generator is the usual fixed-point combinator @c{Y};
-the @c{base} object to extend is the generator that always returns the empty record
-(for whichever encoding is used for records);
-and the @c{extend} function creates a child generator from a parent generator
-and a mixin (as in mixin inheritance above), where @c{self} is constrained
-to be a subtype of @c{super}.
-
-Mind again that in the single-inheritance paradigm,
-@emph{the prototype is the generator, not the mixin}.
-A prototype-as-generator may thus be the @c{base} generator
-that returns the empty record @c{rtop} or otherwise base instance,
-or a generator created by extending
-a @emph{single} @c{parent} generator with a @c{mixin}.
-Since the same constraint applies recursively to the parent generator,
-a prototype-as-generator can be seen as repeatedly extending that @c{base} generator
-with an ordered list of mixins to compose.
-Just like in mixin inheritance, an @emph{instance} can thus still be seen as
-the fixed point of the composition of a list of elementary mixins
-as applied to a base instance.
-However, since generators, not mixins, are the prototypes,
-the “native” view of single inheritance is more to see the parent specified in @c{extend}
-as a direct super prototype, and the transitive supers-of-supers as indirect super prototypes;
-each prototype is considered as not just the mixin it directly contributes,
-but as the list of all mixins directly and indirectly contributed.
-
 
 @(generate-bibliography)

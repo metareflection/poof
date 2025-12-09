@@ -21,65 +21,7 @@
 
 @; XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-@section[#:tag "inheritance"]{Mixin, Single, and Multiple Inheritance}
-
-@subsubsection{Single Inheritance with Second-Class Mixins}
-While single-inheritance requires some form of mixin,
-most single-inheritance object systems don’t allow mixins as
-first-class entities that can be independently composed.
-Rather mixins are only linear second-class syntactic entities
-and can only be used once, immediately, as part of an extension.
-You cannot consider a mixin or list of mixins independently,
-and @emph{append} such lists together;
-you cannot abstract a base or super instance away from a generator to extract its mixin;
-you can only @emph{cons} a single new elementary mixin
-to the list of mixins implicit in a previous generator and already applied to its base.
-
-This will particularly matter when we see that in most Class OO languages, @; TODO REF
-prototype inheritance happens in a restricted language at the type level,
-one with limited abstraction and no way to express appending from consing.
-
-Then again, if language starts with single-inheritance OO, but
-@emph{does} allow mixins as first-class entities that can be composed,
-then it actually supports mixin inheritance, not just single inheritance,
-just like the Racket class system does@~cite{Flatt06schemewith},
-or like typical uses of extensions in Nix go.
-It thus only makes sense to speak of single inheritance in a context where
-the language syntax, static type system, dynamic semantics,
-or socially-enforced coding conventions
-somehow disallow or strongly discourage mixins as first-class entities.
-
 @subsubsection{Lack of expressiveness and modularity}
-The limitations to single inheritance translate into lack of expressiveness
-relative to mixin inheritance.
-Thus, in an OO language with single inheritance,
-you can define a prototype @c{Point} with two coordinates @c{x} and @c{y}
-with two children prototypes @c{ColoredPoint} and @c{WeightedPoint}
-that respectively extend it with an attribute @c{color} and an attribute @c{weight}.
-But if you want a @c{WeightedColoredPoint} that has both @c{color} and @c{weight} attributes,
-you have to choose at most
-one of the two prototypes @c{ColoredPoint} and @c{WeightedPoint} to inherit from,
-and repeat all the definitions of the other’s mixin.
-
-In case you want a prototype to possess all the methods defined
-in each of two or more long mixins or long lists of mixins are involved,
-you will have to repeat all the definitions from all but one existing list of mixins.
-You can always resort to copy/pasting the definitions from one class to the other;
-but that is unreliable and fragile as maintenance operations now need to happen
-simultaneously in multiple copies that the developer must track down,
-and that can easily grow subtly out-of-synch as the developer is fallible.
-Worse, this is an extra-linguistic means, so that
-inasmuch as you then still achieve incremental modularity,
-it is no longer @emph{within} the language, only @emph{outside} it.
-By contrast with mixin inheritance or multiple inheritance,
-you could easily combine together
-all the elementary mixins from each of the many prototypes-as-mixins
-that you want to simultaneously extend.
-
-This concludes our proof that single inheritance is strictly
-less expressive@~cite{eppl91}
-and less modular @;TODO CITE / TODO REF
-than mixin and multiple inheritance.
 
 @subsection[#:tag "multiple_inheritance"]{Multiple inheritance}
 @subsubsection{More Sophisticated}

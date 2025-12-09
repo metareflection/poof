@@ -667,7 +667,7 @@ Composition of first-class prototypes is obviously more expressive than single-i
 You can @r[mix] prototypes or @r[append] prototype lists, and
 programmatically compose code from many increments of code.
 Prototypes are thus more akin to the “mixins” or “traits” of more advanced
-objects systems@~cite{Cannon1979 bracha1990mixin Flatt06schemewith}.
+objects systems@~cite{Cannon1979 bracha1990mixin Flatt2006Mixins}.
 Prototype composition however, does not by itself subsume multiple inheritance,
 that we will study in @(section4).
 
