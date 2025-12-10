@@ -416,12 +416,12 @@ and use “static dispatch” instead for the sake of “going fast”.
 In the end, C++ is many great and not-so-great things, but only few of those things are OO,
 and even most of those that look like OO are often different enough that
 they do not reliably inform about OO in general@xnote["."]{
-  The situation is similar for ADA, that adopted multiple inheritance in 2003
+  The situation is similar for Ada, that adopted multiple inheritance in 2003
   by seemingly copying the general design of C++.
   Now even when C++ got multiple inheritance wrong@~cite{stroustrup1989multiple},
   ignorance was no valid excuse,
   since Lisp got it right ten years earlier@~cite{Cannon1979}.
-  Ignorance is even less forgivable in the case of ADA
+  Ignorance is even less forgivable in the case of Ada
   copying C++’s “multiple inheritance” yet 14 years later.
 }
 
@@ -1242,20 +1242,27 @@ than the more expressive but costlier and less understood alternatives.
 Even today, most languages that support OO only support single inheritance, for its simplicity.
 @;{TODO cite}
 
-@subsubsection{Multiple Inheritance Overview}
+@subsubsection[#:tag "MULIO"]{Multiple Inheritance Overview}
 
 Discovered a few years later, and initially just called @emph{inheritance},
 in what in retrospect was prototype OO, in KRL @~cite{Winograd1975 Bobrow1976},
 multiple inheritance allows a class to have multiple direct superclasses.
-The notion of (multiple) inheritance thus predates Smalltalk 1976
+The notion of (multiple) inheritance thus predates Smalltalk 1976 @~cite{Smalltalk78}
 adopting the term, retroactively applying it to SIMULA,
 and inventing the terms “single” and “multiple” inheritance
 to distinguish the two approaches as well as recognize their commonality.
-Although some more early systems @~cite{Kahn1976 Borning1977 Traits}
+Although some more early systems @~cite{Kahn1976 Borning1977 Smalltalk78 Traits}
 used multiple inheritance, it is only with Flavors in 1979 @~cite{Cannon1979}
-that it became really understood and usable and started gaining popularity.
+and subsequent Lisp object systems Loops@~cite{bobrow1983loops},
+New Flavors@~cite{Moon1986Flavors}, CommonLoops@~cite{bobrow86commonloops}
+and CLOS@~cite{bobrow88clos},
+that it became really understood and usable.
+Since then, many languages including Ruby, Perl, Python and Scala
+correctly adopted the basic design of Flavors (though none of its more advanced features).
+On the other hand, influential or popular languages including Self, C++ and Ada
+failed to learn from Flavors and got multiple inheritance largely wrong.
 
-The structure of a class and its transitive superclasses is
+With multiple inheritance, the structure of a class and its transitive superclasses is
 a Directed Acyclic Graph (“DAG”).
 The set of all classes is also a DAG, the subclass relation is a partial order.
 Most OO systems include a common system-wide base class
@@ -1271,12 +1278,12 @@ For this reason, despite it being more expressive and more modular than single i
 it still isn’t widely adopted@xnote["."]{
   Out of the top 50 most popular languages in the TIOBE index 2025, @;{TODO cite}
   6 fully support multiple inheritance (Python, Perl, Ruby, Lisp, Scala, Solidity),
-  5 have partial or non-colloquial support for it (C++, JavaScript, ADA, PHP, Lua),
+  5 have partial or non-colloquial support for it (C++, JavaScript, Ada, PHP, Lua),
   17 support single inheritance only (Java, C#, VB, Delphi, R, MATLAB, Rust, COBOL, Kotlin, Swift, SAS, Dart, Julia, TypeScript, ObjC, ABAP, D)
   and the rest don’t support inheritance at all (C, Go, Fortran, SQL, Assembly, Scratch, Prolog, Haskell, FoxPro, GAMC, PL/SQL, V, Bash, PowerShell, ML, Elixir, Awk, X++, LabView, Erlang).
 }
 
-@subsubsection[#:tag "MIO"]{Mixin Inheritance Overview}
+@subsubsection[#:tag "MIXIO"]{Mixin Inheritance Overview}
 
 Mixin inheritance was discovered last @~cite{bracha1990mixin},
 probably because it relies on a more abstract pure functional view of OO;
@@ -2292,7 +2299,7 @@ that overall decrease the complexity of the software development process@xnote["
   including libraries that rely heavily on multiple inheritance for implementation.
 
   It is quite likely that users bitten by the complexities yet limitations
-  of multiple inheritance in C++ or ADA may see it does not bring benefits commensurable with its costs;
+  of multiple inheritance in C++ or Ada may see it does not bring benefits commensurable with its costs;
   and it is also quite likely that users fooled by the absurd “inheritance is subtyping” slogan
   found that code written under this premise does not quite work as advertised.
   These disgruntled users may then blame OO in general
@@ -3299,10 +3306,10 @@ and the argument to the composed function will be the inherited “super” valu
 General modular extensions for a given context form a category,
 and strict modular extensions for a given context and type form a monoid,
 wherein the operation is composition with the @c{mix} function,
-and the neutral element @c{id-spec} is the specification that “extends”
+and the neutral element @c{idMExt} is the specification that “extends”
 any and every value by returning it unchanged, as follows@xnote[":"]{
   As usual, a change of representation from @c{p} to @c{mp = mix p},
-  with inverse transformation @c{p = mp id-spec},
+  with inverse transformation @c{p = mp idMExt},
   would enable use of the regular @c{compose} function
   for composition of specifications.
   Haskellers and developers using similar composition-friendly languages
@@ -3316,7 +3323,7 @@ any and every value by returning it unchanged, as follows@xnote[":"]{
   our explanations, and, in later sections, the types of specifications, slightly simpler.
 }
 @Code{
-(define id-spec (λ (m) (λ (v) v)))}
+(define idMExt (λ (m) (λ (v) v)))}
 
 @subsubsection{Closing Modular Extensions}
 
@@ -3337,7 +3344,7 @@ you apply your extension to the top value for a module context
 then you have reduced your problem to a regular modular module definition
 @c{∏R → ∏R}, at which point you only have to compute the fixpoint.
 We will call this operation instantiation for modular extensions:
-@Code{(define fix/t (λ (t) (λ (m) (Y (λ (s) ((m s) t))))))}
+@Code{(define fix (λ (t) (λ (m) (Y (λ (s) ((m s) t))))))}
 In this expression,
 @c{t} is the top value for the type being specified (typically the empty record, for records),
 @c{m} is the modular extension, and
@@ -3350,9 +3357,9 @@ In this expression,
 Assuming some common top type @c{Top} and default value @c{top} in that type
 (we will use @c{Any} and @c{#f} in our example Scheme implementation),
 we will define the common instantiation operation for modular extensions:
-@Code{(define fix (fix/t top))}
-or to inline @c{fix/t}:
-@Code{(define fix (λ (m) (Y (λ (s) ((m s) top)))))}
+@Code{(define fixt (fix top))}
+or to inline @c{fix}:
+@Code{(define fixt (λ (m) (Y (λ (s) ((m s) top)))))}
 
 Note that if the language-wide top type is too wide in some context,
 for instance in our choice of Scheme and @c{Any} because that you want
@@ -3365,9 +3372,9 @@ unless that default is extracted from the context):
 @Code{(define record-spec (λ (self) (λ (super) empty-record)))}
 We could then equivalently define a variant of fix specialized for records
 in any of the following ways:
-@Code{(define fix-record (fix/t empty-record))}
+@Code{(define fix-record (fix empty-record))}
 @Code{(define fix-record (λ (m) (Y (λ (s) ((m s) empty-record)))))}
-@Code{(define fix-record (λ (m) (fix (mix m record-spec))))}
+@Code{(define fix-record (λ (m) (fixt (mix m record-spec))))}
 Note that because it ignores its @c{super} argument and thus throws away any inherited value,
 the @c{record-spec} modular extension must appear last, or at least
 after any modular extension the result of which isn’t to be ignored.
@@ -3943,7 +3950,7 @@ the sharing of the state and side-effects of a prototype between all its users.
 And if some users explicitly want to recompute the target,
 they can always clone the prototype,
 i.e. create a new prototype that uses the same specification,
-or inherits from it using the neutral element @c{(proto←spec id-spec)}.
+or inherits from it using the neutral element @c{(proto←spec idMExt)}.
 
 Now, plenty of earlier or contemporary Prototype OO languages,
 from Ani and ThingLab to SELF and JavaScript and beyond,
@@ -4117,8 +4124,13 @@ will typically have methods as follows:
 @item{For record types, a method @c{instance-fields}, a record of field descriptors,
       each of them a record with fields @c{name} and @c{type} (and possibly more).
       Also, self-describing records (the default)
-      will have a special field @c{#t} to hold their type descriptor
-      (be it could have been the string @c{"__type__"} if keys had to be strings).}
+      will have a special field @c{#t} (the Scheme true boolean) to hold their type descriptor
+      (we could have used the string @c{"__type__"} if keys had to be strings
+      using a common convention of surrounding a system-reserved identifier with underscores;
+      but in Scheme we can use a different kind of entity and leave strings entirely for users;
+      our choice of @c{#t} also rhymes with our previous choice of
+      @c{#f} (the Scheme false boolean) to hold specification;
+      plus @c{#t} also has the same letter as the initial of “type”).}
 @item{In dynamic languages, or static languages with types as subsets of canonical static types,
       a method @c{element?} as predicate that is true if its argument is an element of the type.
       If the language supports error reporting, a method @c{validate} that returns
@@ -4132,7 +4144,10 @@ will typically have methods as follows:
       To support indexed sum types, either the @c{make-instance} method
       will take a discriminant as first argument,
       or a method @c{instance-constructors} could hold a record
-      of several “constructor” functions for each case.}
+      of several “constructor” functions for each case.
+      Instead of constructors, or in addition to them,
+      a basic @c{instance-prototype} (or @c{instance-prototypes})
+      could be offered that implements the skeleton of a class instance.}
 @item{For languages that support users managing dynamic object lifetime,
       a @c{destroy-instance} method could be part of the class, or among the @c{instance-methods};
       or if there can be several kinds of destructors,
@@ -4166,7 +4181,7 @@ Encoding as record of pre-methods
         systems. Information and Computation, 125(2):78-102, 1996. Earlier version appeared
         in TACS '94 proceedings, LNCS 789.
 
-Reppy, Rieke "Classes in ObjectML via Modules 1996 FOOL3
+Reppy, Rieke "Classes in ObjectML via Modules" 1996 FOOL3
 
 BruceCardelliPierce2006
 }
@@ -5278,7 +5293,7 @@ rather than directly in the language that denies the issues.
 @subsubsection{The Last Shall Be First}
 
 What we implemented in the sections above is mixin inheritance
-(@seclink{MIO}):
+(@seclink{MIXIO}):
 the last invented and least well-known variant of inheritance.
 And yet, we already saw above that object prototypes with mixin inheritance
 are used to specify software configurations at scale. @;TODO secref
@@ -5292,12 +5307,12 @@ one type constructor @c{MExt} and two functions @c{fix} and @c{mix},
 repeated here more concisely from above:
 @Code{
 type MExt r i p = ∀ s, t : Type . s ⊂ r s, t ⊂ i s ⇒ s → t → p s∩t
-fix : ∀ r i p : Type → Type, ∀ s, t : Type .
+fixt : ∀ r i p : Type → Type, ∀ s, t : Type .
        s = i s ∩ p s, s ⊂ r s, t ⊂ i s ⇒
        t → MExt r i p → s
 mix : MExt r1 i1∩p2 p1 → MExt r2 i2 p2 → MExt r1∩r2 i1∩i2 p1∩p2
 
-(define fix (λ (t) (λ (m) (Y (λ (s) ((m s) t))))))
+(define fixt (λ (m) (Y (λ (s) ((m s) top)))))
 (define mix (λ (c p) (λ (r) (compose (c r) (p r)))))}
 
 @subsection{Single inheritance}
@@ -5330,7 +5345,7 @@ not an open choice to make in the future; it is baked into the modular definitio
 The semantics can then be reduced to the following types and functions:
 @; TODO CITE Cook
 @Code{
-MDef r p = ∀ s : Type . s ⊂ r s ⇒ s → p s
+type MDef r p = ∀ s : Type . s ⊂ r s ⇒ s → p s
 fixMDef : MDef p p → Y p
 extendMDef : MExt r1 p2 p1 → MDef r2 p2 → MDef r1∩r2 p1∩p2
 baseMDef : MDef (λ (_) Top) (λ (_) Top)
@@ -5516,7 +5531,409 @@ and Common Lisp, Ruby and Scala have both single and multiple inheritance.
 Users can selectively single inheritance when they want more performance
 across all the subclasses of a given class.
 
+@subsection[#:tag "MI"]{Multiple inheritance}
+
+@subsubsection{Correct and Incorrect Semantics for Multiple Inheritance}
+
+With multiple inheritance (see @seclink{MULIO}), a specification can declare
+a list of parent specifications that it inherits from.
+Each specification may then contribute methods to the overall definition of the target.
+The list can be empty in which case the specification is a base specification
+(though the system might add special base specification as an implicit last element of the list),
+or can be a singleton in which case the inheritance is effectively the same as single inheritance,
+or it can have many elements in which case the inheritance is effectively multiple inheritance.
+
+Now, early OO systems with multiple inheritance (and sadly many later ones still)
+didn’t have a good theory for how to resolve methods when a specification
+inherited different methods from multiple parents,
+and didn’t provide its own overriding definition @~cite{Kahn1976 Borning1977 Smalltalk78 Traits}.
+This situation was deemed a “conflict” between inherited methods,
+which would result in an error, at compile-time in the more static systems.
+@; ??? Early Lisp systems would let users resolve things themselves ???
+@; TODO triple check how KRL, Ani did it
+Flavors @~cite{Cannon1979} identified the correct solution,
+widely adopted since, that involves cooperation rather than conflict.
+Failing to learn from Flavors, C++ and after it Ada issue an error like older systems.
+Self initially tried a weird resolution method along a “sender path”
+that dives depth first into the first available branch of the inheritance DAG
+without backtracking @~cite{parentsSharedParts1991},
+but the authors eventually recognized that was wrongheaded
+and reverted to the conflict paradigm @~cite{self2007hopl}.
+
+We will focus on explaining the correct semantics for multiple inheritance,
+as initially identified by Flavors and widely but not universally accepted since,
+then will briefly come back to discussing the incorrect ones. @; TODO come back, seclink
+Still, we will have to introduce several concepts before we offer a formalization.
+
+@subsubsection{Specifications as DAGs of Modular Extensions}
+
+Let us call “inheritance hierarchy”, or when the context is clear, “ancestry”,
+the transitive closure of the parent relation, and “ancestor” is an element of this ancestry.
+With single inheritance, this ancestry was a list.
+With multiple inheritance, where each specification may inherit from multiple parents,
+the ancestry of a specification is not a list as it was with single inheritance.
+It is not a tree, either, because and a given ancestor can be reached through many paths.
+Instead, the ancestry of a specification is a Directed Acyclic Graph (DAG).
+And the union of all ancestries of all specifications is also a DAG,
+or which each specification’s ancestry is a “final” sub-DAG
+(i.e. closed to further transitive parents, not always to further transitive children),
+of which the specification is the initial element.
+
+Note that in this essay, we will reserve the word “parent” for a specification
+another (“child”) specification depends on, and the word “super” to the partial target
+the value which is inherited by the child’s modular extension.
+This is consistent with our naming the second argument to our modular extensions @c{super}
+(sometimes shortened to @c{t}, since @c{s} is taken for the first @c{self} argument)
+and the second argument to our @c{mix} function @c{parent} (or sometimes shortened to @c{p}).
+Extent literature tends to confuse specification and target
+as the same entity “class” or “prototype” without being aware of a conflation,
+and so confusing “parent” and “super” is par for the course in that literature.
+Our nomenclature also yields distinct terms for “parent” and “ancestor”
+where the “standard” nomenclature has the slightly confusing “direct super” and “super”
+(or “direct superclass” and “superclass”, in a literature dominated by Class OO).
+
+The ancestor relation can also be viewed as a partial order on specifications
+(and so can its opposite descendent relation).
+In the single inheritance case, this relation is a total order over a given specification’s ancestry,
+and the union of all ancestries is a tree, which is a partial order but more restricted than a DAG.
+We can also try to contrast these structures with that of mixin inheritance, where
+each mixin’s inheritance hierarchy can be viewed as a composition tree,
+that since it is associative can also be viewed flattened as a list,
+and the overall hierarchy is a multitree… except that an ancestor specification
+(and its own ancestors) can appear multiple times in a specification’s tree.
+
+@subsubsection{Representing Specifications as DAGs Nodes}
+
+To represent specification in multiple inheritance, we will need not just a modular extension,
+but a record of:
+@itemize[#:style enumparenalph
+@item{a modular extension, as in mixin inheritance,
+  that contributes an increment to the specification,}
+@item{an ordered list of parent specifications it inherits from,
+  that specify increments of information on which it depends, and}
+@item{a tag (unique name, fully qualified path, string, symbol, identifier, number, etc.)
+  to uniquely identify each specification as a node in the inheritance DAG.}]
+
+Most languages support generating without side-effect some kind of tag
+for which some builtin a comparison operator will test identity with said entity.
+Many languages also support such identity comparison directly on the specification record,
+making the tag unnecessary as redundant with the specification’s identity.
+To check specification identity, we will thus in Scheme we will @c{eq?}, but
+we could use @c{==} in Java, @c{===} in JavaScript, address equality in C or C++, etc.
+Implementation of multiple inheritance will also be significantly sped up if
+records can be sorted, or at least stably hashed,
+so that looking up a record entry, merging records, etc., can be done tested;
+but we will leave that as an exercise to the reader.
+Side-effects can also be used to generate unique identifying numbers for each specification,
+but note that in the case of second-class OO, those effects would need be available at compile-time.
+If the language lacks any of the above features, then users can still implement multiple inheritance
+by manually providing unique names for specifications; but maintaining those unique names
+is a burden on users that decreases the modularity of the object system, and
+can become particularly troublesome in nested and computed specifications.
+Interestingly, the λ-calculus itself lacks those features.
+
+The type for a multiple inheritance specification would thus look like the following,
+where @c{Nat} is the type of natural numbers,
+@c{Iota} introduces a finite dependent type of given size,
+@c{DependentList} introduces a dependent list,
+@c{Tag} is a type of tags giving the specifications an identity as nodes in a DAG,
+and the @c{{...}} syntax introduces some kind of record type.
+
+@Code{
+type MISpec r i p =
+  ∀ r i p : Type → Type .
+  ∀ l : Nat .
+  ∀ pr pi pp : Iota l → Type → Type .
+  r ⊂ Intersection pr,
+  i ∩ Intersection pp ⊂ Intersection pi ⇒
+  { getMExt : MExt r i p ;
+    parents : DependentList j: (MExt (pr j) (pi j) (pp j)) ;
+    tag : Tag }}
+
+@subsubsection{Difficulty of Method Resolution in Multiple Inheritance}
+
+Then comes the question of how to instantiate a multiple inheritance specification into a target.
+It seems obvious enough that the inheritance DAG of modular extensions
+should be reduced somehow into a single “effective” modular definition:
+only then can specifications of large objects and ecosystems
+be composed from specifications of many smaller objects, methods, etc.,
+such that the effective modular definition for a record of methods
+is the record of effective modular definitions for the individual methods.
+What then should be the “super” argument passed to a each modular extension,
+given the place of its specification in the ancestry DAG?
+
+One simple approach could be to view the inheritance DAG as some kind of attribute grammar,
+and compute the (open modular definition for) the super at each node of the DAG
+as a synthetic attribute@xnote[","]{
+  Beware that what is typically called “child” and “parent” in an attribute grammar
+  is inverted in this case relative to what is “child” and “parent” in the inheritance DAG.
+  For this reason, computing effective modular extensions from ancestor to descendent
+  along the inheritance DAG makes that a synthesized attribute rather than an inherited attribute
+  along the attribute grammar. This can be slightly confusing.
+}
+by somehow combining the modular definitions at each of the supers.
+Unhappily, we saw earlier @seclink{MFCM} that there is no general way to combine
+modular definitions: they precombine information that would need to be teased apart
+from two modular definitions so as to combine them both.
+
+The difficulty of synthesizing a modular definition
+can be illustrated with the well-known “diamond problem” @~cite{bracha1992jigsaw inheritance1996},
+wherein a method specification C has two parents B1 and B2 that both have a common parent A.
+The contribution from A has already been baked into the modular definition of each of B1 and B2;
+therefore trying to keep the modular definitions both of B1 and of B2
+leads to duplication of what A contributed to each,
+which can cause too many side-effects, resource explosion,
+yet possibly still the loss of what the B2 contributed,
+when the copy of A within B1 reinitializes the method
+(assuming B2 is computed before B1).
+Keeping only one of either B1 or B2 but loses information from the other.
+There is no good answer, and things get exponentially worse as diamonds stack,
+with E having parents D1 and D2 sharing parent C, and so on.
+That is why @;{??? Smalltalk,} Mesa, Self, C++, and Ada
+view multiple distinct methods as a “conflict”, and issue an error
+if an attempt is made to rely on a method definition from C’s parents;
+C has to provide a method override,
+to specify one of its parents to effectively inherit the method from,
+or to signal an error if the method is called.
+
+The “conflict detection” behavior is internally consistent;
+it is the only behavior consistent with synthesizing an open modular definition
+directly from the parents’ modular definitions;
+but it is probably the least useful among all possible consistent behaviors:
+it drops all available information in case of conflict, and forces the user at each time
+to otherwise reimplement all but at most one of the methods it could have combined.
+Yet this reimplementation can be practically impossible
+when some of the those methods involve code from proprietary libraries without source,
+code outside the user’s expertise, or just code from a different project
+that changes fast according to a schedule out of the user’s control.
+
+Now, better consistent behaviors are possible, but require a reassessment
+of what better designed attribute should be synthesized from the inheritance DAG if any,
+from which a modular definition can be extracted while gracefully handling “diamonds”,
+and without rejecting the onerous burden of enforcing consistency upon the user,
+which would defeat modularity.
+For that, the first step would be to identify what the actual consistency requirements are.
+
+@subsubsection{Consistency in Method Resolution}
+
+Here are some consistency properties (or “constraints”)
+that are important for method resolution to follow.
+There is sadly no coherent name for those properties across literature,
+so we will propose our own while recalling the names previously used.
+
+@subsubsub*section{Order Preservation: Consistency with Inheritance}
+A specification’s modular extension shall always be composed
+“to the left” of any of its ancestors’,
+where sequential effects and computation results flow right to left.
+Thus children may have as preconditions the postconditions of their parents.
+
+Thus, if @c{method-spec} declares @c{record-spec} as a parent,
+every method defined or overridden with the former can be assured
+that the target is indeed a properly initialized record,
+and that the record initialization will not overwrite the method by being in the wrong order.
+Similarly, if a part specification depends on @c{base-bill-of-parts} as a declared parent,
+it can be confident that when it registers a part, there will already be a initialized
+database of parts to which to register it to (at least if the latter wasn’t ignored due to conflict).
+
+This property is so fundamental it is respected by all OO languages since SIMULA @~cite{Simula1967},
+and may not have been explicitly named before as distinct from OO itself.
+
+@subsubsub*section{Linearity: Information Preservation}
+The information contributed by each ancestor’s modular extension
+shall be taken into account once and only once.
+User-provided extensions may drop or duplicate information,
+but system-provided algorithms must not.
+
+Thanks to this property, the part specification can indeed safely assume that
+the part database is initialized before it is used (no ignoring the initialization),
+and won’t be reinitialized again after registration, cancelling the registration
+(no duplicating the initialization). All parts registered by their respective extensions
+will be counted once and only once, even and especially when contributed by independent
+specifications that are in no mutual ancestry relation.
+
+This property is not respected by the languages that see “conflict”
+in independent method specifications as above;
+indeed this property replaces conflict with @emph{cooperation}.
+Instead of distrust and negative sum games
+where developers fight over which extension will prevail,
+contributions from others extensions are dropped and must be reimplemented,
+there can be trust and positive sum games,
+where developers of each specification contribute their extension to the final result,
+and all these contributions combine harmonously into the whole.
+This property also was not respected by the once “sender path” approach of Self
+@~cite{parentsSharedParts1991 self2007hopl}.
+This property would be expressible but not modular and hard to enforce in
+hypothetical languages that would require users to manually synthesize attributes
+from the inheritance DAG so as to extract semantics of methods.
+We are naming this property after the similar notion from “linear logic”, @; TODO cite
+wherein the preservation of computational resources corresponds to
+some operator being “linear” in the mathematical sense of linear algebra.
+
+This property was the groundbreaking innovation of Flavors @~cite{Cannon1979}.
+Flavors’ flavor of multiple inheritance, that includes many more innovations,
+was a vast improvement in paradigm over all its precedessors,
+and sadly, also over most of its successors.
+
+@subsubsub*section{Linearization: Consistency across Methods}
+Any sequential effects from the ancestor’s modular extension should be run
+in a consistent “Method Resolution Order” (MRO) across
+all methods of a given specification that may have such effects.
+This property, that extends and subsumes the previous two, implies that
+the MRO is a @emph{linearization} of the inheritance DAG,
+i.e. a total (“linear”) order that has the partial order of the DAG as a subset.
+The MRO is also called class precedence list or precedence list in the literature.
+
+Thanks to this property, methods that marshal (“serialize”) and unmarshal (“deserialize”)
+the fields of a class can follow matching orders and actually work together.
+Methods that acquire and release resources can do it correctly,
+and avoid deadlock when these resources include holding a mutual exclusion lock.
+
+This property was also one of the innovations of Flavors @~cite{Cannon1979}.
+As we will see, it implies that the semantics of multiple inheritance
+can be reduced to those of mixin inheritance
+(though mixin inheritance would only be formalized a decade later).
+It is the first of the constraints after which C3 @~cite{Barrett96amonotonic} is named.
+
+Interestingly, all Class OO languages, even the “conflicted” ones,
+necessarily have some variant of this property,
+when they allocate field indexes and initialize instance fields:
+they too must walk the inheritance DAG in some total order preserving
+the linearity of slots, initialized in inheritance order.
+Unhappily, they do not expose this order to the user@xnote["."]{
+  A clever C++ programmer might recover the linearization implicit in object initialization
+  by having all classes in his code base follow the design pattern of constructors
+  computing the effective methods for the class as Flavors would do.
+  Unhappily, “static” member initialization does not rely on linearization,
+  only instance member initialization does, so object constructors would have to do it
+  the first time an object of the class is instantiated;
+  but the test for this first time would slow down every instantiated a little bit,
+  which defeats the need for speed that often motivates the choice of C++.
+  Also, since this design pattern requires active programmer cooperation,
+  it will not work when extending classes from existing libraries.
+}
+
+@subsubsub*section{Local Order: Consistency with User-Provided Order}
+The order in which users list parents in each specification must be respected:
+if a parent appears before another in the list of parents local to some specification,
+then the two will appear in the same relative order (though not necessarily consecutively)
+in the MRO.
+
+This property enables users to control the MRO, and
+to specify ordering dependencies or tie-breaks that the system might not detect or choose,
+including but not limited to compatibility with other systems.
+If users want to relax ordering dependencies,
+they can introduce intermediate shim specifications with pass-thru behavior,
+so that the ordering constraint only concerns the irrelevant shims,
+while the actual parents are not constrained.
+This is burdensome, though, and users may prefer to simply adjust
+the local order of their parents to some global order of specifications
+as mandated by constraints from other parts of the code.
+
+This property was first claimed to be followed by New Flavors @~cite{Moon1986Flavors}.
+However we are not convinced the algorithm Flavors used correctly enforced the property;
+we believe only later algorithms achieved it
+@~cite{ProposalMonotonicMultipleInheritance1994},
+including C3 @~cite{Barrett96amonotonic}
+that counts it as the second of its three eponymous constraints.
+
+@subsubsub*section{Monotonicity: Consistency across Ancestry}
+The “method resolution order” for a child specification should be consistent
+with the orders from each of its parents;
+if the MRO places one extension before another in a parent,
+it will keep doing so in a child.
+
+This property allows extensions to partake in the same protocols as the specifications
+being extended, including but not limited to cases where some extensions acquire locks
+and lack of consistent global order can cause deadlocks.
+
+This property was first described @~cite{ducournau1992monotonic}
+then implemented @~cite{ProposalMonotonicMultipleInheritance1994} by Ducournau & al.,
+and is part of the three constraints after which C3 is named @~cite{Barrett96amonotonic}.
+
+@subsubsub*section{Shape Determinism: Consistency across Equivalent Ancestries}
+Two specifications with equivalent inheritance DAGs
+(with an isomorphism between them, bijection preserving partial order both ways)
+will yield equivalent MROs, up to the same isomorphism.
+Renaming methods or specifications, moving code around, fixing typos,
+updating method bodies, adding or removing methods,
+changing filenames and line numbers, etc., will not change the MRO.
+
+This property enables users to predict the “method resolution order” for a specification,
+based on the “shape” of its inheritance DAG alone.
+Unrelated changes to the code will not cause a change in the MRO,
+thereby potentially triggering bugs or incompatibilities between code versions.
+
+This property was first described @~cite{ducournau1992monotonic}
+under the nondescript name “acceptability”.
+It received little attention, maybe because most (all?) OO systems
+already respect it implicitly. The C3 algorithm respects it,
+but not enough to name it and count it among the constraints
+it purports to implement @~cite{Barrett96amonotonic}.
+
+@subsubsection{Mixin Inheritance plus Precedence List}
+
+Let us then assume that we have a function @c{compute-precedence-list}
+that takes a specification featuring multiple inheritance (and possibly more features)
+and returns a list of specifications that follows at least the linearization property above,
+in Method Resolution Order, from most specific to most generic (left to right).
+This order follows the convention of both Flavors (that calls it the class precedence list)
+and, surprisingly, also of SIMULA (that calls it “prefix sequence”, in a way contravariant
+to the order of the “prefix classes” in the way the class bodies are concatenated into
+the effective class definition). Most (all?) OO systems after Flavors
+seem to have adopted the same convention. @;{ TODO cite CLOS, Scala. Ruby? Python? }
+The precedence list can be computed
+simply by walking the DAG @~cite{Cannon1979 bobrow88clos scalableComponentAbstractions2005},
+or, to ensure more of the consistency properties, as a synthesized attribute.
+The C3 algorithm @~cite{Barrett96amonotonic WikiC3}
+notably enforces not just linearization, but all the consistency properties we cited,
+though it is named after only three of them.
+
+How then can we use this precedence list to extract and instantiate a modular definition
+from the modular extensions of a specification and its ancestors?
+By extracting the list of these modular extensions in that order, and
+composing them as per mixin inheritance:
+
+@Code{
+compute-precedence-list : MISpec ? ? ? → DependentList ? (MISpec ? ? ?)
+effectiveMExt : MISpec r i p → MExt r i p
+fixMISpec : top → MISpec p top p → p
+
+(define effectiveMExt (λ (mispec)
+  (foldr mix idMExt (map getMExt (compute-precedence-list mispec)))))
+(define fixMISpec (λ (top) (λ (mispec)
+  (fix top (effectiveMExt mispec)))))}
+
+The @c{map} function is the standard Scheme function to map a function over a list.
+The @c{foldr} function is the standard Scheme function to fold a list with a function
+(also known as @emph{reduce} in Lisp and many languages after it).
+The type parameters to @c{MISpec} in @c{compute-precedence-list} were left as wildcards above:
+the precise dependent type, involving existentials for @c{l pr pi pp} such that
+every specification in the list can be composed with the reduced composition
+of the specifications to its right, is left as an exercise to the reader.
+Note also how @c{effectiveMExt} works on open specifications, whereas
+@c{fixMISpec} only works on closed specifications.
+
+We have thus reduced the semantics of multiple inheritance
+to mixin inheritance (or, in this case equivalently, single inheritance)
+by way of computing a precedence list.
+
+Complete implementations of prototypes using multiple inheritance
+in a few tens of lines of code are given
+in our previous paper using Scheme@~cite{poof2021},
+or in a proof of concept in Nix@~cite{POP2021}.
+Our production-quality implementation in Gerbil Scheme@~cite{GerbilPOO}
+including many features and optimizations fits in about a thousand lines of code.
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+@subsubsection{Dependencies between Modular Extensions}
+
+With mixin inheritance, there often were implicit dependencies between specifications.
+For instance, we saw that our @c{method-spec} depended on @c{record-spec}
+to ensure there was a record the methods of which to override,
+or that specifications participating in our proposed bill-of-parts protocol
+would have to depend on the @c{base-bill-of-parts} specification.
+
+
 
 @(generate-bibliography)
