@@ -578,6 +578,23 @@ pages = {1--8},
 numpages = {8}
 }
 
+@InProceedings{Snyder1986Encapsulation,
+  author = {Snyder, Alan},
+  title = {Encapsulation and Inheritance in Object-Oriented Programming Languages},
+  year = {1986},
+  isbn = {0897912047},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/28697.28702},
+  doi = {10.1145/28697.28702},
+  abstract = {Object-oriented programming is a practical and useful programming methodology that encourages modular design and software reuse. Most object-oriented programming languages support data abstraction by preventing an object from being manipulated except via its defined external operations. In most languages, however, the introduction of inheritance severely compromises the benefits of this encapsulation. Furthermore, the use of inheritance itself is globally visible in most languages, so that changes to the inheritance hierarchy cannot be made safely. This paper examines the relationship between inheritance and encapsulation and develops requirements for full support of encapsulation with inheritance.},
+  booktitle = {Conference Proceedings on Object-Oriented Programming Systems, Languages and Applications},
+  pages = {38–45},
+  numpages = {8},
+  location = {Portland, Oregon, USA},
+  series = {OOPSLA '86}
+}
+
 % Stein 1987 "Delegation is Inheritance", cited by cook1989inheritance
 
 
@@ -915,6 +932,14 @@ numpages = {8}
   url={https://api.semanticscholar.org/CorpusID:6330838}
 }
 
+% Dissects the mechanisms of modularity in programming languages,
+% offers a zoo of solution, but not in a constructive way.
+% The constructive part, mixin inheritance, is great, though.
+% p. 24 Looks like he invented the term "diamond problem"
+% though he cites Bertrand Meyer for the concept, and
+% says on X he got the term from Snyder87 whom he cites
+% p. 25 Cites CLOS but wrongly claims without argument that it shares the same diamond problem
+% as Flavor-less multiple inheritance system. Not aware of how method combination changes the game.
 @PhDThesis{bracha1992jigsaw,
   author = {Gilad Bracha},
   title = {The Programming Language Jigsaw: Mixins, Modularity and Multiple Inheritance},
@@ -995,7 +1020,12 @@ numpages = {8}
 % Handles modularity via existential types, pure objects:
 % Object = Fun(M:*->*) Some(Rep) {| state: Rep, methods: M Rep |}
 % also implements single inheritance on top, but really with mixin inheritance underneath.
-% Examples include polymorphic collection
+% Examples include polymorphic collection.
+%
+% Pierce pushes difficult fixpoints into a corner, lets users tie simple knots, and
+% his automation takes it from there. It’s brilliant, even insightful.
+% Yet in the end he dodges the hard problem of OO rather than solves it.
+% “Tell me what you need, I'll show you how to do without.”
 @misc{PT1993STTFOOP,
   author={Pierce, Benjamin C. and Turner, David N.},
   title={Simple Type-Theoretic Foundations for Object-Oriented Programming},
@@ -1009,6 +1039,34 @@ numpages = {8}
 %  year={1994},
 %  pages={207–247}
 
+% 
+@article{Snyder1993Essence,
+  author = {Snyder, Alan},
+  title = {The Essence of Objects: Concepts and Terms},
+  year = {1993},
+  issue_date = {January 1993},
+  publisher = {IEEE Computer Society Press},
+  address = {Washington, DC, USA},
+  volume = {10},
+  number = {1},
+  issn = {0740-7459},
+  url = {https://doi.org/10.1109/52.207219},
+  doi = {10.1109/52.207219},
+  abstract = {Core concepts in object-oriented technology are defined. The concepts are the basis for characterizing and contrasting various object-oriented technologies. The core concepts are: all objects embody an abstraction, objects provide services, clients issue requests, objects are encapsulated, requests identify operations, requests can identify objects, new objects can be created, operations can be generic, objects can be classified in terms of their services, objects can have a common implementation, and objects can share partial implementations. To address communication problems, a glossary of terms appropriate for the diverse set of domains in which object-oriented concepts are being applied is developed. The definitions are grouped into three sections in top-down order: terms related to abstraction, terms related to requesting services, and terms related to performing services.},
+  journal = {IEEE Softw.},
+  month = jan,
+  pages = {31–42},
+  numpages = {12},
+  keywords = {abstraction, object-oriented programming, object-oriented technology, requests, services},
+  url = {https://shiftleft.com/mirrors/www.hpl.hp.com/techreports/91/HPL-91-50.pdf},
+  note = {
+    Alan Snyder tries to introduce and name the common concepts in OO,
+    in a way mindful of the variety of OO languages and systems,
+    from C++ to CLOS to the Iris db and more.
+    He insists on abstraction and encapsulation — features of what I would call "modularity",
+    and only quickly goes over inheritance.
+  }
+}
 
 @inproceedings{ProposalMonotonicMultipleInheritance1994,
 author = {Ducournau, R. and Habib, M. and Huchard, M. and Mugnier, M. L.},
@@ -1287,7 +1345,7 @@ and Matsuoka, Satoshi",
   ISBN="978-3-540-69127-3"
 }
 
-@Book{Abadi97atheory,
+@Book{AbadiCardelli1997ToO,
   author = {Martín Abadi and Luca Cardelli},
   title = {A theory of objects},
   year = {1997},
@@ -1349,8 +1407,8 @@ series = {PLDI '99}
   doi = {10.1007/3-540-48959-2_17}
 }
 
-% Defines a dialect of Java with mixins, MixedJava, to illustrate the approach taken in MzScheme
-% and better described in their 2006 paper.
+% Defines a dialect of Java with mixins, MixedJava, to illustrate the approach taken in MzScheme,
+% later better described in their 2006 paper.
 % https://www.semanticscholar.org/paper/Classes-and-mixins-Flatt-Krishnamurthi/c20e5f2a424b96209e6b400b23d319558932afa3
 @Misc{Mixins1998,
   author = {Flatt, Matthew and Krishnamurthi, Shriram and Felleisen, Matthias},
@@ -1434,12 +1492,15 @@ series = {PLDI '99}
   series = {ESEC/FSE-9}
 }
 
-% See notably chapter 18, 19, 24, 32.
+% See notably chapters 18, 19, 24, 32.
 % downloaded from https://www.cs.sjtu.edu.cn/~kzhu/cs383/Pierce_Types_Programming_Languages.pdf
-% This post claims that TAPL introduces the term "Open Recursion" https://journal.stuffwithstuff.com/2013/08/26/what-is-open-recursion/
+% This post claims that TAPL introduces the term "Open Recursion" https://journal.stuffwithstuff.com/2013/08/26/what-is-open-recursion/ - but Cardelli 1992 mentions it already.
 % 32.10 Notes gives pointers to a lot of papers on types for OO.
 % ... see a system $F_{<:}^\omega$
-@Book{tapl,
+% See note on PT1993STTFOOP about the approach of letting the user provide a rep type.
+% Pierce does discuss the actual solution, recursive data types, but
+% leaves it as an exercise after pointing to the bibliography.
+@Book{Pierce2002TAPL,
   Author = {Pierce, Benjamin C.},
   Title = {Types and Programming Languages},
   Year = {2002},
@@ -2070,23 +2131,6 @@ series = {PLDI '99}
 % CECIL also had prototype inheritance / classless objects
 % A cursory look at the manual does not mention mutable parents, however
 
-@InProceedings{10.1145/28697.28702,
-  author = {Snyder, Alan},
-  title = {Encapsulation and inheritance in object-oriented programming languages},
-  year = {1986},
-  isbn = {0897912047},
-  publisher = {Association for Computing Machinery},
-  address = {New York, NY, USA},
-  url = {https://doi.org/10.1145/28697.28702},
-  doi = {10.1145/28697.28702},
-  abstract = {Object-oriented programming is a practical and useful programming methodology that encourages modular design and software reuse. Most object-oriented programming languages support data abstraction by preventing an object from being manipulated except via its defined external operations. In most languages, however, the introduction of inheritance severely compromises the benefits of this encapsulation. Furthermore, the use of inheritance itself is globally visible in most languages, so that changes to the inheritance hierarchy cannot be made safely. This paper examines the relationship between inheritance and encapsulation and develops requirements for full support of encapsulation with inheritance.},
-  booktitle = {Conference Proceedings on Object-Oriented Programming Systems, Languages and Applications},
-  pages = {38–45},
-  numpages = {8},
-  location = {Portland, Oregon, USA},
-  series = {OOPSLA '86}
-}
-
 % Introduces "traits", for multiple inheritance in the Mesa programming language
 % used to implement WS, the workstation software of the Xerox Star 8010,
 % since late 1979 (Mesa started early 1978 with Single-Inheritance).
@@ -2222,51 +2266,6 @@ series = {PLDI '99}
 
 % Gilad recommends about Inheritance Hierarchies:
 % Ossher and Harrison's "Combination of Inheritance Hierarchies' from OOPSLA 1992.
-
-@inproceedings{10.1145/28697.28702,
-  author = {Snyder, Alan},
-  title = {Encapsulation and inheritance in object-oriented programming languages},
-  year = {1986},
-  isbn = {0897912047},
-  publisher = {Association for Computing Machinery},
-  address = {New York, NY, USA},
-  url = {https://doi.org/10.1145/28697.28702},
-  doi = {10.1145/28697.28702},
-  abstract = {Object-oriented programming is a practical and useful programming methodology that encourages modular design and software reuse. Most object-oriented programming languages support data abstraction by preventing an object from being manipulated except via its defined external operations. In most languages, however, the introduction of inheritance severely compromises the benefits of this encapsulation. Furthermore, the use of inheritance itself is globally visible in most languages, so that changes to the inheritance hierarchy cannot be made safely. This paper examines the relationship between inheritance and encapsulation and develops requirements for full support of encapsulation with inheritance.},
-  booktitle = {Conference Proceedings on Object-Oriented Programming Systems, Languages and Applications},
-  pages = {38–45},
-  numpages = {8},
-  location = {Portland, Oregon, USA},
-  series = {OOPSLA '86}
-}
-
-@article{snyder1993,
-  author = {Snyder, Alan},
-  title = {The Essence of Objects: Concepts and Terms},
-  year = {1993},
-  issue_date = {January 1993},
-  publisher = {IEEE Computer Society Press},
-  address = {Washington, DC, USA},
-  volume = {10},
-  number = {1},
-  issn = {0740-7459},
-  url = {https://doi.org/10.1109/52.207219},
-  doi = {10.1109/52.207219},
-  abstract = {Core concepts in object-oriented technology are defined. The concepts are the basis for characterizing and contrasting various object-oriented technologies. The core concepts are: all objects embody an abstraction, objects provide services, clients issue requests, objects are encapsulated, requests identify operations, requests can identify objects, new objects can be created, operations can be generic, objects can be classified in terms of their services, objects can have a common implementation, and objects can share partial implementations. To address communication problems, a glossary of terms appropriate for the diverse set of domains in which object-oriented concepts are being applied is developed. The definitions are grouped into three sections in top-down order: terms related to abstraction, terms related to requesting services, and terms related to performing services.},
-  journal = {IEEE Softw.},
-  month = jan,
-  pages = {31–42},
-  numpages = {12},
-  keywords = {abstraction, object-oriented programming, object-oriented technology, requests, services},
-  url = {https://shiftleft.com/mirrors/www.hpl.hp.com/techreports/91/HPL-91-50.pdf},
-  note = {
-    Alan Snyder tries to introduce and name the common concepts in OO,
-    in a way mindful of the variety of OO languages and systems,
-    from C++ to CLOS to the Iris db and more.
-    He insists on abstraction and encapsulation — features of what I would call "modularity",
-    and only quickly goes over inheritance.
-  }
-}
 
 % Category theory:
 

@@ -1739,7 +1739,7 @@ however you may try to reach a different conclusion, you still end-up with that 
 
 @subsubsection{Types for Objects}
 Object Systems present many challenges
-to authors of static type systems@~cite{Abadi97atheory tapl}.
+to authors of static type systems@~cite{AbadiCardelli1997ToO Pierce2002TAPL}.
 Proper treatment of common usage requires existential types to deal with fixed-points,
 subtypes for ad hoc polymorphism,
 covariance or contravariance to commute subtypes with fixed-points,

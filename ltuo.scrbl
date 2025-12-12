@@ -32,7 +32,7 @@
   To explain what our algorithm does and why it matters,
   we first recapitulate a complete theory of Object-Orientation (OO),
   sufficient to establish what we mean by “best”:
-  what OO is and isn't, what is its purpose, what is inheritance, what are known variants of it,
+  what OO is and isn’t, what is its purpose, what is inheritance, what are known variants of it,
   what makes each variant desirable or not, what are the relevant challenges with
   using, implementing or combining them.
   In particular, we reconstruct from first principles OO
@@ -126,8 +126,8 @@ Object-Oriented Programming (OOP), or Object-Orientation (OO),
 is a programming style characterized by the modular extension of
 partial specifications via a mechanism known as @emph{inheritance} @~cite{inheritance1996}@xnote[","]{
   A notable dissident to this characterization is William Cook,
-  a respected academic who made key contributions to understanding the semantics of inheritance
-  @~cite{Cook1989 cook1989inheritance bracha1990mixin Cook1994}
+  a respected academic who made many key contributions to understanding the semantics of inheritance
+  @~cite{Cook1989 cook1989inheritance cook1989denotational bracha1990mixin Cook1994}
   yet later argued that inheritance was orthogonal to OO @; Also Cook1989?
   and that OO is about “classes” of “objects” that can only be accessed through “interfaces”
   @~cite{Cook2009 Cook2012}.
@@ -138,13 +138,13 @@ partial specifications via a mechanism known as @emph{inheritance} @~cite{inheri
   Cook’s definition, that embraces the modular aspect of OO while rejecting
   its extensible or dynamic aspect, runs contrary to all practice.
   It brings no light on any of the languages commonly considered OO
-  yet cursed by Cook as not actually being OO,
+  yet cursed by Cook as not being OO enough,
   no light on any of the Functional Programming (FP) languages blessed by Cook as actually being OO
   to the surprise of their users, and no light on the difference between the two.
 
-  Cook's many works on OO over the years also systematically neglect important concepts
+  Cook’s many works on OO over the years also systematically neglect important concepts
   in OO, such as prototypes, multiple inheritance, method combination or multiple dispatch.
-  In the end, Cook's PhD and subsequent academic career grew out of
+  In the end, Cook’s PhD and subsequent academic career grew out of
   brilliantly modeling the key mechanism of OO (inheritance)
   from the foreign point of view of FP;
   but his wilful ignorance and deep misunderstanding of the OO tradition, indeed missing the point,
@@ -294,10 +294,7 @@ We examine issues surrounding method conflict and resolution, or harmonious comb
 We explain the known consistency constraints that matter
 for linearization algorithms in the context of multiple inheritance,
 and state of the art in satisfying them, the C3 algorithm.
-We touch on the topics of
-method combinations and multimethods (multiple dispatch).
-
-In section 8, we discuss how to combine multiple and single inheritance.
+Finally, we discuss how to combine multiple and single inheritance.
 We discuss existing solutions solutions respectively adopted by
 Common Lisp @~cite{cltl2}, Ruby @; TODO cite
 and Scala @~cite{scalableComponentAbstractions2005}.
@@ -306,10 +303,11 @@ that satisfies all the constraints we discussed for a good linearization algorit
 and for combining single and multiple inheritance.
 We explain why the residual heuristic we also adopt from C3 is arguably the best one.
 
-In section 9, we discuss more advanced topics such as
-Mutation, Multiple Dispatch, Monotonicity, Typeclasses, Global
+In section 8, we discuss more advanced topics including
+Focused Modular Extensions, Method Combination, Multiple Dispatch (Multimethods),
+Monotonicity, Orphan Typeclasses, and Global Fixpoints.
 
-Finally, in section 10 we conclude by recapitulating our findings.
+Finally, in section 9 we conclude by recapitulating our findings.
 
 @; TODO: Describe Appendices
 
@@ -384,13 +382,13 @@ and a subset of multiple inheritance (for @r[virtual] classes and members).
 Moreover, C++ crucially lacks the proper method resolution
 that enables a lot of the modularity of multiple inheritance in other languages.
 
-Now, you can use C++'s powerful template language to reconstitute actual mixin inheritance
-and its method resolution on top of C++'s weird variant of inheritance@~cite{smaragdakis2000mixin};
+Now, you can use C++’s powerful template language to reconstitute actual mixin inheritance
+and its method resolution on top of C++’s weird variant of inheritance@~cite{smaragdakis2000mixin};
 and you could no doubt further implement proper multiple inheritance on top of that@xnote["."]{
   One could achieve multiple inheritance as a design pattern on top of mixin inheritance,
   as we will describe later in this article,
   wherein developers would manually compute and specify
-  each class's superclass precedence list;
+  each class’s superclass precedence list;
   but this cancels some of the modularity benefits of multiple inheritance
   versus single and mixin inheritance.
   Alternatively, someone could extend the above technique to also reimplement
@@ -431,7 +429,7 @@ Many claim that classes, as first implemented by Simula 67@~cite{Simula1967}
 (though implementing a concept previously named by Hoare@~cite{hoare1965record}),
 are essential to OO, and only ever care to implement, use, formalize,
 study, teach, propagandize, or criticize class-based OO (a.k.a. Class OO).
-Books from summities in Programming Languages @~cite{tapl plai eopl3},
+Books from summities in Programming Languages @~cite{Pierce2002TAPL plai eopl3},
 in their chapter about OO, barely even mention any other kind of OO if at all,
 much less study it.
 
@@ -642,9 +640,9 @@ to changing situations, at which point thoughtful uses of inheritance can help a
   can be generated at runtime at no additional cost in human effort.
   Still, the point can be made that if a programmer is confused about which of is-a or has-a
   to use in a particular case, it’s a good heuristic to start with has-a,
-  which will quickly lead to an obvious showstopper issue if it doesn't work,
+  which will quickly lead to an obvious showstopper issue if it doesn’t work,
   whereas picking is-a where has-a was the better choice can lead to a lot of complications
-  before it is realized that it won't work right.
+  before it is realized that it won’t work right.
   Yet it is always preferable to understand the difference between “is” and “has”,
   and to use the correct one based on understanding of the domain being modeled,
   rather than on vague heuristics that substitute for lack of understanding.
@@ -740,7 +738,7 @@ it remains a wholly distinct paradigm,
 with its own mostly disjoint tradition and very different concerns,
 that describes a different set of programming languages and patterns@xnote["."]{
   Now, there is no doubt, from their later testimonies as well as then published papers,
-  that Erlang's Concurrency Oriented Programming is clearly
+  that Erlang’s Concurrency Oriented Programming is clearly
   what the authors of Simula, Smalltalk, Actors, etc., were all @emph{aiming at}.
   But, due to hardware as well as software limitations of the 1960s and 1970s,
   they all failed to actually reach that goal until the mid 1980s,
@@ -748,8 +746,8 @@ that describes a different set of programming languages and patterns@xnote["."]{
   that they identified and developed,
   Object Oriented Programming.
 
-  That's how invention always works:
-  if you knew in advance the thing you'd find later, it would already have been invented.
+  That’s how invention always works:
+  if you knew in advance the thing you’d find later, it would already have been invented.
   An invention is always surprising, original, and never, ever,
   exactly what you knew in advance it would be—or else
   the invention happened earlier and @emph{then} was surprising and original.
@@ -1495,12 +1493,12 @@ rather than care about whatever those who corrupt the name may want them to.}
   the OOP only happens in the meta-language (as in e.g. C++ templates),
   or the language lacks complete support for OOP.
 
-  Note that Kay didn't immediately adopt SIMULA's inheritance mechanism in Smalltalk
-  (it wasn't called that yet, either);
+  Note that Kay didn’t immediately adopt SIMULA’s inheritance mechanism in Smalltalk
+  (it wasn’t called that yet, either);
   but he did adopt it eventually, and this adoption is what launched OO as a phenomenon.
   Kay stated adopting single inheritance over multiple inheritance
   was a compromise @~cite{kay1996early},
-  yet still didn't adopt multiple inheritance later, though his team experimented with it.
+  yet still didn’t adopt multiple inheritance later, though his team experimented with it.
   More broadly, Kay didn’t endorse any specific inheritance mechanism,
   and never focused on that part of the design. To Kay it was only a means to an end,
   which is what Kay called “extreme late binding”: the fact that behavior definition
@@ -1553,7 +1551,7 @@ only terrible loss@xnote["."]{
   and be made to use ever increasingly flowery “politically correct” vocabulary
   as a humiliation ritual before those who will wantonly take your words away
   to abuse you and assert their dominance.
-}.}]
+}}]
 
 So what phenomena count as OO?
 The design patterns used by programmers when they write code in an OO language;
@@ -1588,6 +1586,11 @@ Modularity@~cite{Parnas1972 Dennis1975} is the organization of software source c
 in order to support division of labor, dividing it into “modules” that can each be
 understood and worked on mostly independently from other modules,
 by one or multiple developers over time.
+The “interface” of each module defines a semi-formal contract between the users and implementers
+of the module, such that users need only know and understand the interface to enjoy the functionality
+of the module, whereas the implementers have freedom to build and modify the module internals
+as long as they satisfy the interface.
+
 
 @subsubsection{First- to Fourth-class, Internal or External}
 
@@ -1599,7 +1602,7 @@ entities that exist at compile-time but are not available as regular runtime val
   In between the two, some languages offer a “reflection” API that gives some often limited
   runtime access to representations of the module entities.
   This API is often limited to introspection only or mostly;
-  for instance, it won't normally let you call the compiler
+  for instance, it won’t normally let you call the compiler
   to define new modules or the linker to load them.
   Yet some languages support APIs to dynamically evaluate code,
   that can be used to define new modules;
@@ -1740,7 +1743,7 @@ so pervasive that programmers use it without even thinking about using it:
 subroutines,
 already conceptualized by Ada Lovelace as “operations”@~cite{Lovelace:1843:NTL}, @;
 @; that could be “subsidiary”,
-@;{Scientific Memoirs, Selected from the Transactions of Foreign Academies of Science and Learned Societies, and from Foreign Journals, R. and J. E. Taylor , Vol III, 1843, L. F. Menabrea on Babbage's Analytical Engine. Notes of the translator (= Augusta Ada (King, Countess of) Lovelace, A.A.L. not A.L.L.)
+@;{Scientific Memoirs, Selected from the Transactions of Foreign Academies of Science and Learned Societies, and from Foreign Journals, R. and J. E. Taylor , Vol III, 1843, L. F. Menabrea on Babbage’s Analytical Engine. Notes of the translator (= Augusta Ada (King, Countess of) Lovelace, A.A.L. not A.L.L.)
   Note A p693 "operation"… general notion of pure computation from between
   "First the symbols of *operation* are frequently *also* the symbols of the *results* of operations.
   We say that symbols are apt to have both a *retrospective* and a *prospective* signification. […]"
@@ -1796,7 +1799,7 @@ separately compiled object files, as implemented by FORTRAN (1956), @; TODO cite
 provides third-class modularity through an external linker.
 Later developments like
 typechecked second-class Modules a la Modula-2 (1978), @; TODO cite Wirth;
-@; TODO also look into Liskov's CLU, Mary Shaws' Alphart, etc.
+@; TODO also look into Liskov’s CLU, Mary Shaws’ Alphart, etc.
 Higher-Order Modules a la ML (1985), @; TODO cite McQueen 1985
 typeclasses a la Haskell (or traits in Rust),
 interfaces a la Java, and much more,
@@ -1811,13 +1814,13 @@ These are all examples of modularity that don’t involve extensibility as such.
 By combining modularity with extensibility, we can also add all kinds of
 OO classes and prototypes since SIMULA 1967, but also precursor breakthroughs like
 the “locator words” of the Burroughs B5000 @~cite{lonergan1961 barton1961}, and
-Ivan Sutherland's Sketchpad’s “masters and instances” @~cite{sketchpad1963},
+Ivan Sutherland’s Sketchpad’s “masters and instances” @~cite{sketchpad1963},
 that both inspired Kay, or Warren Teitelman’s Pilot’s ADVISE facility @~cite{teitelman1966},
 that was influential at least in the Lisp community
 (eventually leading to method combination in Flavors and CLOS).
 @;{
   I wonder how much the Smalltalk and Interlisp teams did or did not interact at PARC.
-  I can't imagine they didn't, and yet, Interlisp seems to have had more influence
+  I can’t imagine they didn’t, and yet, Interlisp seems to have had more influence
   on the the MIT Lispers than the co-located Smalltalkers.
 }
 
@@ -1835,7 +1838,7 @@ boiler plate to define and use modules,
 name management to juggle with all the modules,
 missing simplifications in using overly general solutions
 that are not specialized enough to the problems at hand,
-duplication of entities on both sides of each module's interface,
+duplication of entities on both sides of each module’s interface,
 extra work to cover the “impedance mismatch” between
 the representation used by the common solution
 and that used by the actual problems, etc.
@@ -2043,7 +2046,7 @@ each field is initialized before it is used@xnote["."]{
   that will eventually prove wrong.
   In the end, your program will fail with some exception,
   which may happen long after the invalid use-before-init,
-  but at least the symptoms will be visible and you'll have a vague idea
+  but at least the symptoms will be visible and you’ll have a vague idea
   what happened, just no idea where or when.
 
   Actually safe languages, when they can’t prove init-before-use,
@@ -2075,7 +2078,7 @@ each field is initialized before it is used@xnote["."]{
 
   The init-before-issue issue is well-known and exists outside of OO: it may happen
   whenever there is mutual recursion between variables or initial elements of data structures.
-  However, we’ll see that “open recursion” @~cite{cardelli1992extensible tapl},
+  However, we’ll see that “open recursion” @~cite{cardelli1992extensible Pierce2002TAPL},
   i.e. the use of operators meant to be the argument of a fixpoint combinator,
   but also possibly composition before fixpointing,
   is ubiquitous in OO,
@@ -2125,8 +2128,8 @@ though the process can be harder, less robust, less flexible and less reusable.
 Thus, external extensibility is always possible for any software written in any language,
 though it can be very costly, in the worst case
 as costly as rewriting the entire extended program from scratch.
-When done automatically, it's third-class extensibility.
-When done manually, it's fourth-class extensibility.
+When done automatically, it’s third-class extensibility.
+When done manually, it’s fourth-class extensibility.
 The automation need not be written in the same language as the software being extended,
 or as its usual language processor, though either may often be the case.
 
@@ -2708,12 +2711,13 @@ Some strongly typed applicative languages will offer no universal such value, th
 and then some ad hoc arbitrary value must be provided for each type used.}]
 
 In the context of extensions for objects,
-OO languages usually @c{Record} as their top type,
+OO languages usually use @c{Record} as their top type,
 or some more specific @c{Object} subtype thereof that carries
 additional information as instance of Prototype or Class (depending on the language),
 with some null value or empty object as their top value.
-YMMV, but in our examples below, we will choose Scheme as our language,
-the @c{Any} type as our top type, and @c{#f} as our top value:
+YMMV, but in our examples below, we will be more ambitious as to how widely applicable
+OO techniques can be, and, using Scheme as our language, we will choose
+the @c{Any} type as our top type, and the false boolean @c{#f} as our top value:
 @Code{
 (define top #f)}
 
@@ -3777,7 +3781,7 @@ or at least so within each of many “stages” of evaluation.
 But with a more dynamic style of programming where no such clear staging is guaranteed,
 it is insufficient@xnote["."]{
   @; TODO Have a later section just on metaobjects?
-  Metaobjects are a typical use case where you don't (in general) have a clean program-wide staging
+  Metaobjects are a typical use case where you don’t (in general) have a clean program-wide staging
   of specification and targets: to determine the meta methods,
   you partially instantiate the meta part of the objects, based on which you can instantiate the rest.
 }
@@ -4179,7 +4183,7 @@ TODO Discuss encodings and types?
 Encoding as record of pre-methods
 [AC96c] M. Abadi and L. Cardelli. A theory of primitive objects: Untyped and first-order
         systems. Information and Computation, 125(2):78-102, 1996. Earlier version appeared
-        in TACS '94 proceedings, LNCS 789.
+        in TACS ’94 proceedings, LNCS 789.
 
 Reppy, Rieke "Classes in ObjectML via Modules" 1996 FOOL3
 
@@ -4335,7 +4339,7 @@ invoke the typeclass methods on the unwrapped values, and rewraps results that n
 based on which positions in each method’s type is of the proper self-type.
 @;{
   TODO
-  "encapsulation" meh. We don't need every value in the computation to be encapsulated
+  "encapsulation" meh. We don’t need every value in the computation to be encapsulated
   in an extra layer of records; that is emphatically not the point of OO.
   The existentially quantified record that describes the computation is already
   all the encapsulation we need and want!
@@ -4384,7 +4388,7 @@ without these methods being part of any actual object system capable of inherita
 yet with each object carrying the equivalent of a type descriptor field
 in “class style” so that the system knows which method to use.
 It is possible to build an actual OO class system on top of such non-OO “class-style” mechanism,
-and the Gerbil Scheme object system is indeed built atop the Gambit Scheme non-OO structure facility.
+and the @(GerbilScheme) object system is indeed built atop the Gambit Scheme non-OO structure facility.
 @;{ TODO Kiselyov and Lämmel’s OOHaskell @~cite{Kiselyov2005HaskellsOO}
 also enable OO on top of non-OO constructs.
 TODO re-read in detail and find whether this is the best place to cite,
@@ -4617,8 +4621,8 @@ the inherited information must contain all information expected by the parent,
 and all information expected the child that isn’t provided by the parent;
 the provided information contains all information provided by either child or parent.
 
-However, this “Naive OO Type Theory” is a bit naive, and
-only works in simple non-recursive cases.
+However, this “Naive Non-recursive OO Type Theory”, as the name indicates,
+is a bit naive indeed, and only works in simple non-recursive cases.
 Yet the NNOOTT is important to understand,
 both for the simple cases it is good enough to cover,
 and for its failure modes that tripped so many good programmers
@@ -4899,7 +4903,7 @@ is just programming in an informal, bug-ridden metalanguage that few are familia
 with no tooling, no documentation, no tests,
 no actual implementation,
 and indeed no agreed upon syntax much less semantics@xnote["…"]{
-  See Guy Steele’s keynote “It's Time for a New Old Language”
+  See Guy Steele’s keynote “It’s Time for a New Old Language”
   at the Principles and Practice of Parallel Programming 2017 conference
   about the “Computer Science Metanotation” found in scientific publications.
 }
@@ -4995,7 +4999,7 @@ in a way that (as far as types are concerned) is extensible.
 Also, when an object of same type is linearly returned,
 there is one obvious place from which to copy the extended rest of the object;
 when multiple objects are returned... that is still a possible interpretation
-(and though that's seldom the useful one, that's enough for the type theorist).
+(and though that’s seldom the useful one, that’s enough for the type theorist).
 
 Kim Bruce, @;CITE 1993 1994 1995
 thereafter gave sounder types to OO,
@@ -5298,7 +5302,8 @@ the last invented and least well-known variant of inheritance.
 And yet, we already saw above that object prototypes with mixin inheritance
 are used to specify software configurations at scale. @;TODO secref
 We further claim that it is the most fundamental variant of inheritance,
-since we will build the other variants on top of it.
+since we built it in two lines of code, and
+will proceed to build the other variants on top of it.
 
 @subsubsection{Mixin Semantics}
 We saw above (@seclink{MFCME})
@@ -5423,7 +5428,9 @@ to implement or use it.
 @; they tend to be clever enough not to need it to be simplified for them,
 @; and not to care enough to simplify it for others.
 
-@subsubsection{Comparative Expressiveness of Mixin- and Single- Inheritance}
+@subsubsection[#:tag "CMSI"]{Comparing Mixin- and Single- Inheritance}
+
+@subsubsub*section{Mixin Inheritance is More Expressive}
 
 Single inheritance can be trivially expressed in terms of Mixin inheritance
 by tagging some modular extensions as only to be used as second argument of the @c{mix} function,
@@ -5472,7 +5479,7 @@ the language syntax, static type system, dynamic semantics,
 or socially-enforced coding conventions, or development costs
 somehow disallow or strongly discourage modular extensions as first-class entities.
 
-@subsubsection{Code Duplication with Single Inheritance}
+@subsubsub*section{Mixin Inheritance is More Modular}
 
 In second-class class OO with single inheritance,
 each modular extension can only be used once, at the site that it is defined,
@@ -5480,8 +5487,9 @@ extending one modular definition’s implicit list of modular extensions.
 By contrast, with mixin inheritance, a modular extension can be defined once
 and used many times, to extend many different lists of modular extensions.
 
-Thus, should a @c{WeightedColoredPoint} inherit from @c{ColoredPoint} and duplicate the
-functionality from @c{WeightedPoint}, or the other way around?
+Thus, should a @c{WeightedColoredPoint} inherit from @c{ColoredPoint} and then
+have to duplicate the functionality from @c{WeightedPoint},
+or should it be the other way around?
 Single inheritance forces you not only to duplicate the functionality of a class,
 but also to make a choice each time of only one which will be inherited from to reuse code.
 Multiply this problem by the number of times you combine duplicated functionality.
@@ -5494,20 +5502,23 @@ When there are many such independent features that are each duplicated onto many
 the number of duplicated definitions can grow quadratically with the number of desired features,
 while the potential combinations grows exponentially, requiring users to maintain some
 arbitrary order in that combination space.
-Worse, every instance of this duplication is external modularity through copy/paste
-rather than internal modularity through better language semantics,
-which defeats the very purpose of OO.
+Important symmetries are broken, arbitrary choices must be made all over the codebase,
+and the code is more complex not just to write, but also to think about.
+Every instance of this duplication is external modularity through copy/paste
+rather than internal modularity through better language semantics.
+Overall, single inheritance is much less modular than mixin inheritance,
+and in that respect, it fails to fulfill the very purpose of inheritance.
 
-@subsubsection{Benefits of Single Inheritance}
+@subsubsub*section{Single Inheritance is More Performant}
 
-If single inheritance is more complex and less expressive than mixin inheritance,
+If single inheritance is more complex, less expressive and less modular than mixin inheritance,
 is there any reason to ever use it? Yes:
 the very semantic limitations of single inheritance are what enables
 a series of performance optimizations.
 
 Using single inheritance, the system can walk the method declarations
 from base to most specific extension, assign an index number to each declared method,
-and be confident that every sub-specification of a specification will assign
+and be confident that every extension to a specification will assign
 the same index to each and every inherited methods.
 Similarly for the fields of a class.
 Method and field lookup with single inheritance can then be as fast as memory access
@@ -5539,9 +5550,10 @@ With multiple inheritance (see @seclink{MULIO}), a specification can declare
 a list of parent specifications that it inherits from.
 Each specification may then contribute methods to the overall definition of the target.
 The list can be empty in which case the specification is a base specification
-(though the system might add special base specification as an implicit last element of the list),
+(though many systems add a special system base specification
+as an implicit last element to any user-specified list),
 or can be a singleton in which case the inheritance is effectively the same as single inheritance,
-or it can have many elements in which case the inheritance is effectively multiple inheritance.
+or it can have many elements in which case the inheritance is actually multiple inheritance.
 
 Now, early OO systems with multiple inheritance (and sadly many later ones still)
 didn’t have a good theory for how to resolve methods when a specification
@@ -5552,18 +5564,18 @@ which would result in an error, at compile-time in the more static systems.
 @; ??? Early Lisp systems would let users resolve things themselves ???
 @; TODO triple check how KRL, Ani did it
 Flavors @~cite{Cannon1979} identified the correct solution,
-widely adopted since, that involves cooperation rather than conflict.
+widely adopted since, that involves cooperation and harmony rather than conflict and chaos.
 Failing to learn from Flavors, C++ and after it Ada issue an error like older systems.
 Self initially tried a weird resolution method along a “sender path”
 that dives depth first into the first available branch of the inheritance DAG
 without backtracking @~cite{parentsSharedParts1991},
-but the authors eventually recognized that was wrongheaded
-and reverted to the conflict paradigm @~cite{self2007hopl}.
+but the authors eventually recognized how wrongheaded that was,
+and reverted to, sadly, the conflict paradigm @~cite{self2007hopl}.
 
-We will focus on explaining the correct semantics for multiple inheritance,
+We will mainly focus on explaining the correct semantics for multiple inheritance,
 as initially identified by Flavors and widely but not universally accepted since,
-then will briefly come back to discussing the incorrect ones. @; TODO come back, seclink
-Still, we will have to introduce several concepts before we offer a formalization.
+but we will have to introduce several concepts before we can offer a formalization,
+and along the way, we will explain where the dead end idea of conflict stems from.
 
 @subsubsection{Specifications as DAGs of Modular Extensions}
 
@@ -5575,25 +5587,25 @@ the ancestry of a specification is not a list as it was with single inheritance.
 It is not a tree, either, because and a given ancestor can be reached through many paths.
 Instead, the ancestry of a specification is a Directed Acyclic Graph (DAG).
 And the union of all ancestries of all specifications is also a DAG,
-or which each specification’s ancestry is a “final” sub-DAG
-(i.e. closed to further transitive parents, not always to further transitive children),
+or which each specification’s ancestry is a “suffix” sub-DAG
+(i.e. closed to further transitive parents, but not to further transitive children),
 of which the specification is the initial element.
 
 Note that in this essay, we will reserve the word “parent” for a specification
 another (“child”) specification depends on, and the word “super” to the partial target
-the value which is inherited by the child’s modular extension.
+the value which is inherited as argument passed to the child’s modular extension.
 This is consistent with our naming the second argument to our modular extensions @c{super}
 (sometimes shortened to @c{t}, since @c{s} is taken for the first @c{self} argument)
-and the second argument to our @c{mix} function @c{parent} (or sometimes shortened to @c{p}).
+and the second argument to our @c{mix} function @c{parent} (sometimes shortened to @c{p}).
 Extent literature tends to confuse specification and target
 as the same entity “class” or “prototype” without being aware of a conflation,
 and so confusing “parent” and “super” is par for the course in that literature.
 Our nomenclature also yields distinct terms for “parent” and “ancestor”
-where the “standard” nomenclature has the slightly confusing “direct super” and “super”
+where the prevailing nomenclature has the slightly confusing “direct super” and “super”
 (or “direct superclass” and “superclass”, in a literature dominated by Class OO).
 
 The ancestor relation can also be viewed as a partial order on specifications
-(and so can its opposite descendent relation).
+(and so can the opposite descendent relation).
 In the single inheritance case, this relation is a total order over a given specification’s ancestry,
 and the union of all ancestries is a tree, which is a partial order but more restricted than a DAG.
 We can also try to contrast these structures with that of mixin inheritance, where
@@ -5604,8 +5616,8 @@ and the overall hierarchy is a multitree… except that an ancestor specificatio
 
 @subsubsection{Representing Specifications as DAGs Nodes}
 
-To represent specification in multiple inheritance, we will need not just a modular extension,
-but a record of:
+To represent specification in multiple inheritance,
+we will need not just a modular extension, but a record of:
 @itemize[#:style enumparenalph
 @item{a modular extension, as in mixin inheritance,
   that contributes an increment to the specification,}
@@ -5617,20 +5629,22 @@ but a record of:
 Most languages support generating without side-effect some kind of tag
 for which some builtin a comparison operator will test identity with said entity.
 Many languages also support such identity comparison directly on the specification record,
-making the tag unnecessary as redundant with the specification’s identity.
-To check specification identity, we will thus in Scheme we will @c{eq?}, but
+making the tag redundant with the specification’s identity.
+To check specification identity, we will thus use @c{eq?} in Scheme, but
 we could use @c{==} in Java, @c{===} in JavaScript, address equality in C or C++, etc.
 Implementation of multiple inheritance will also be significantly sped up if
-records can be sorted, or at least stably hashed,
-so that looking up a record entry, merging records, etc., can be done tested;
+records can be sorted by tag, or by stable address or hash,
+so that looking up a record entry, merging records, etc., can be done efficiently;
 but we will leave that as an exercise to the reader.
-Side-effects can also be used to generate unique identifying numbers for each specification,
+Side-effects could also be used to generate unique identifying numbers for each specification;
 but note that in the case of second-class OO, those effects would need be available at compile-time.
 If the language lacks any of the above features, then users can still implement multiple inheritance
 by manually providing unique names for specifications; but maintaining those unique names
 is a burden on users that decreases the modularity of the object system, and
 can become particularly troublesome in nested and computed specifications.
-Interestingly, the λ-calculus itself lacks those features.
+Interestingly, the λ-calculus itself crucially lacks the features needed
+for DAG node identity; a tag must be externally provided,
+or a side-effects (or a monad encoding) are required for a counter.
 
 The type for a multiple inheritance specification would thus look like the following,
 where @c{Nat} is the type of natural numbers,
@@ -5650,7 +5664,7 @@ type MISpec r i p =
     parents : DependentList j: (MExt (pr j) (pi j) (pp j)) ;
     tag : Tag }}
 
-@subsubsection{Difficulty of Method Resolution in Multiple Inheritance}
+@subsubsection[#:tag "DMRMI"]{Difficulty of Method Resolution in Multiple Inheritance}
 
 Then comes the question of how to instantiate a multiple inheritance specification into a target.
 It seems obvious enough that the inheritance DAG of modular extensions
@@ -5736,9 +5750,9 @@ it can be confident that when it registers a part, there will already be a initi
 database of parts to which to register it to (at least if the latter wasn’t ignored due to conflict).
 
 This property is so fundamental it is respected by all OO languages since SIMULA @~cite{Simula1967},
-and may not have been explicitly named before as distinct from OO itself.
+and may not have been explicitly named before as distinct from inheritance itself.
 
-@subsubsub*section{Linearity: Information Preservation}
+@subsubsub*section{Linearity: Information Preservation} @; TODO: rename conservation of information?
 The information contributed by each ancestor’s modular extension
 shall be taken into account once and only once.
 User-provided extensions may drop or duplicate information,
@@ -5780,8 +5794,20 @@ in a consistent “Method Resolution Order” (MRO) across
 all methods of a given specification that may have such effects.
 This property, that extends and subsumes the previous two, implies that
 the MRO is a @emph{linearization} of the inheritance DAG,
-i.e. a total (“linear”) order that has the partial order of the DAG as a subset.
-The MRO is also called class precedence list or precedence list in the literature.
+i.e. a total (“linear”) order that has the partial order of the DAG as a subset@xnote["."]{
+  Note how the word “linear” means something very different in the two constraints
+  “linearity” and “linearization”:
+  In the first case, the word comes from Linear Logic,
+  and means conservation of information or other resources.
+  In the second case, the word comes from Set Theory and Order Theory,
+  and means a total order where any two elements are comparable,
+  as opposed to a partial order where some elements are incomparable.
+  Ultimately, the word “linear” in Linear Logic is inspired by Linear Algebra,
+  that is connected to Order Theory via Boolean Algebras.
+  Still the same word has very different meanings in the two contexts.
+}
+In the literature, the MRO is also called the class
+(or object, for Prototype OO) @emph{precedence list}.
 
 Thanks to this property, methods that marshal (“serialize”) and unmarshal (“deserialize”)
 the fields of a class can follow matching orders and actually work together.
@@ -5862,6 +5888,10 @@ This property enables users to predict the “method resolution order” for a s
 based on the “shape” of its inheritance DAG alone.
 Unrelated changes to the code will not cause a change in the MRO,
 thereby potentially triggering bugs or incompatibilities between code versions.
+This property also generalizes linearization, in that linearization guarantees
+the same MRO for all methods in a given closed specification, whereas
+shape determinism guarantees the same MRO for all open specifications
+with equivalent inheritance DAG, which subsumes the previous case.
 
 This property was first described @~cite{ducournau1992monotonic}
 under the nondescript name “acceptability”.
@@ -5910,8 +5940,6 @@ The type parameters to @c{MISpec} in @c{compute-precedence-list} were left as wi
 the precise dependent type, involving existentials for @c{l pr pi pp} such that
 every specification in the list can be composed with the reduced composition
 of the specifications to its right, is left as an exercise to the reader.
-Note also how @c{effectiveMExt} works on open specifications, whereas
-@c{fixMISpec} only works on closed specifications.
 
 We have thus reduced the semantics of multiple inheritance
 to mixin inheritance (or, in this case equivalently, single inheritance)
@@ -5921,19 +5949,432 @@ Complete implementations of prototypes using multiple inheritance
 in a few tens of lines of code are given
 in our previous paper using Scheme@~cite{poof2021},
 or in a proof of concept in Nix@~cite{POP2021}.
-Our production-quality implementation in Gerbil Scheme@~cite{GerbilPOO}
+Our production-quality implementation in @(GerbilScheme)@~cite{GerbilPOO}
 including many features and optimizations fits in about a thousand lines of code.
+
+@subsubsection{Notes on Types for Multiple Inheritance}
+
+As usual, @c{effectiveMExt} works on open specifications,
+whereas @c{fixMISpec} only works on closed specifications.
+The present formalization’s ability to deal with open specification
+and not just closed ones crucially enables finer granularity for modular code.
+
+Now, note how multiple inheritance relies on subtyping of specifications in a way that
+single inheritance and mixin inheritance don’t:
+In those simpler variants of inheritance, the programmer controls precisely
+what are the next modular extensions to be composed with, and so does not need to rely on subtyping;
+indeed, we saw when introducing wrappers for conflation that sometimes we really want
+to use modular extensions that do not follow the usual subtyping constraints
+(in that case in section @seclink{RC}, @c{qproto-wrapper} that wraps the value into a pair).
+By contrast, with multiple inheritance, a specification only controls the relative order of its
+ancestors in the precedence list that will be composed, but its modular extension must remain
+correct when used as part of a descendent specification, in which case other modular extensions
+may be interleaved with its ancestors as part of a larger precedence list.
+That is why a multiple inheritance specification’s modular extension
+must always be a strict modular extension
+(though there can be non-strict wrapper extensions around the precedence list),
+whereas single inheritance and mixin inheritance can use any kind of modular extension.
+
+@;{TODO: Remove this rant before publication, or substantiate it
+with citations each accompanied by detailed notes on what goes wrong}
+Sadly, multiple inheritance often remains
+unjustly overlooked, summarily dismissed,
+or left as an exercise to the reader in books that discuss the formalization
+of programming languages in general and/or OO in particular
+@~cite{AbadiCardelli1997ToO Pierce2002TAPL eopl3 plai}. @TODO{more?}
+The wider academic literature is also lacking in proper treatment of
+types for multiple inheritance, with some notable exceptions like@~cite{allen2011type}.
+@TODO{cite more: Jonathan Aldrich ? Odersky ?}
+Much of the focus of the literature is on subtyping,
+with a deemphasis or outright avoidance of fixpoints and self-recursion,
+leading many authors to confuse subtyping of specification and target.
+Subtyping is then often studied in the context of single inheritance,
+even though subtyping isn’t quite as important without multiple inheritance.
+Some authors @;{@~cite{PT1993STTFOOP}} at times manage
+to push the difficulty with fixpoints and recursion
+into a small corner wherein they let the user manually tie a simple knot,
+and their automation can take it from there;
+it’s brilliant and even insightful, yet in the end they are dodging
+the hard problem behind OO, rather than solving it—as in the classic joke:
+“Tell me everything you need, and I'll show you how to do without it.”
+
+More generally, computer scientists seem largely uninterested in the nature
+of modularity or extensibility, at best assuming they are purely technical
+aspects of a language with a fixed formal expression;
+they have no consideration for how programming language features do or do not affect
+the social dynamics of interactions between programmers,
+how much coordination they require or eschew across development teams.
+Consequently, they lack any criterion for modularity,
+and how to compare no inheritance, single inheritance, mixin inheritance and multiple inheritance.
+Finally, a lot of academics invent some primitives that embodies
+all the features of a small model of OO;
+they fail to enlighten in any way by introducing their own ad hoc logic,
+and still crumble under the complexity of the features they combined
+despite being way short of what an actual OO system provides.
+Meanwhile, truly groundbreaking work, such as Flavors, is routinely rejected as obscure,
+left uncited, or is only cited to quickly dismiss it with no attempt
+to take its contents seriously.
+to address its solutions to problems that plague other system,
+
+
+
+And yet languages that care more about expressiveness, modularity and incrementality
+than about ease of writing performant implementations with simpler type systems,
+will choose multiple inheritance over the less expressive and less modular alternatives:
+see for instance Common Lisp, C++, Python, Scala, Rust.
+@TODO{cite Scala OO model. What else? Kathleen Fisher’s thesis?}
+
+
+@subsubsection{Comparing Multiple- to Mixin- Inheritance}
+
+Since all variants of OO can be expressed simply as first-class concepts in FP,
+comparing the variants of OO actually requires assuming second-class OO,
+with a compile-time language significantly weaker than the λ-calculus.
+The comparison can still inform us about first-class OO in that it tells us
+how much one can enjoy OO as if it were second-class,
+versus how much one has to painfully escape the illusion,
+when using this or that variants.
+The expressiveness comparison informs us about what some variants automate
+that has to be done manually under other variants.
+The modularity comparison informs us about what requires synchronization
+with other programmers under some variants but not others.
+Together, they also tell us that some features could be automated in theory
+yet cannot be so in practice due to lack of synchronization between programmers,
+due to lack of a better OO variant.
+
+@subsubsub*section{Same Expressiveness}
+
+Mixin inheritance is clearly as expressive as multiple inheritance,
+since every entity that can be written using multiple inheritance
+can just as well be written using mixin inheritance,
+by computing the precedence list manually.
+
+Multiple inheritance is as expressive as mixin inheritance,
+if you restrict yourself to the subset of mixin inheritance
+where you don’t repeat any modular extension in a list you compose:
+define one multiple inheritance specification without parents per modular extension,
+and one specification with the list of the previous as parents to combine them.
+If for some reason you do want to repeat a modular extension, then you may have
+to duplicate the repeated definitions, though you may factor most code
+out of the definition into a helper (part of the specification containing the modular extension),
+and only have duplicate calls to the helper.
+Strictly speaking, this is still slightly less expressive than mixin inheritance,
+but this case never seems to happen in the wild@xnote["."]{
+  If you ever see this repeated usage pattern appear in useful code,
+  or if you have a good argument why it is never actually useful,
+  you should definitely publish a paper about it, and send me a copy.
+}
+Also, this slight decrease in expressiveness, if any, does not impact modularity,
+since the same module that exported a modular extension to use multiple times,
+would instead export a multiple inheritance specification to use once, and
+per-method helpers to use multiple times.
+Therefore we can say that multiple inheritance is as expressive as mixin inheritance in practice.
+
+@subsubsub*section{Superior Modularity}
+
+Let us now compare the two variants of inheritance from the point of view of modularity.
+Multiple inheritance requires somewhat more sophistication than mixin inheritance,
+adding the cognitive burden of a few more concepts,
+which at first glance can be seen as detrimental to modularity.
+Yet, we will argue that inasmuch as modularity matters,
+these concepts are already relevant,
+and that multiple inheritance only internalizes modularity issues
+that would otherwise still be relevant if left as external concepts.
+Moreover, multiple inheritance automates away a crucial cross-module task
+that mixin inheritance requires users to handle manually,
+thereby reducing modularity.
+
+Thus, consider the issue of dependencies between modular extensions.
+We saw that in practice, the common modular extension @c{method-spec} depends on @c{record-spec},
+while part specifications in our notional example depend on @c{base-bill-of-parts}.
+More generally, a specification may depend on a method having been implemented in an ancestor
+so its inherited value may be modified in a wrapper (in this case, the “database” of parts),
+or, in some languages, just declared so it may be used (though with a proper type system
+this might not have to be in a parent).
+Dependency constraints between modular extensions are an ubiquitous phenomenon in mixin inheritance,
+and these constraints exist even when they are not represented within the language
+as internal notions of “parent” and “ancestor”.
+When the system won’t enforce these constraints for the user,
+users will still have to enforce them by hand, or suffer errors as consequences.
+
+You could try pre-composing each modular extension with all its dependencies;
+but then you would have the very same diamond problem as when trying to synthesize
+a modular definition from an attribute grammar view of of multiple inheritance in @seclink{DMRMI}:
+the pre-composed dependencies would be duplicated;
+the copies would badly interfere, in addition to leading to a resource explosion.
+Therefore, pre-composing modular extensions is not a solution:
+for modularity purposes, you must expose the individual modular extensions
+and their list of dependencies to be later composed after all transitive dependencies
+for the complete closed specification have been established.
+
+Another solution to deal with dependencies without multiple inheritance is to use
+a rich enough strong static type system, wherein the second parameter @c{i} (for inherited)
+of our parameterized type @c{MExt r i p} can help ensure that a modular extension
+is always composed with dependencies to the right that provide those aspects it depends on.
+This strategy can indeed greatly help in dealing with dependencies of modular extensions.
+However, it does not fully solve the problem:
+it helps users @emph{check} that their manual solutions are correct,
+and, if they are struggling, may make their search for a solution much faster
+than random attempts unguided by types;
+but the user still has to come up with the solution manually to begin with;
+and the user still has to enforce all the consistency constraints that his application needs;
+and the user still has to synchronize with authors of related other packages
+so they too do all those tasks correctly, and fight those who don’t see the point
+because they don’t personally need the same level of consistency.
+
+The automated management of transitive dependencies by multiple inheritance
+matters a lot for modularity in practice:
+it means that when exporting some specification from a module,
+you can keep its dependencies as implicit implementation details
+that users do not have to care about.
+By contrast,
+@principle{with mixin inheritance, a specification’s dependencies become part of the interface}
+that a module must export together with the specification.
+Users have to know those dependencies, care about them, use them properly.
+And then, when the module implementation changes its dependencies,
+or when these dependencies change because of their own transitive dependencies itself changes,
+as transitively imported from yet some other remote module,
+then all users must update their code.
+Conversely, when you modify your dependencies, even just by importing
+some new version of a package, you are breaking the code
+not just of all your users, but all their transitive users, too;
+if you want to make the change easy on them, you may have write and send patches to hundreds
+of different programs,
+which might not even be possible if there is no centralized registry
+of who uses what program@xnote["."]{
+  Sending patches to tens of users in advance of breaking changes is a task I dealt with
+  when making changes to Common Lisp’s build system ASDF.
+  This was facilitated by there being a database of all free software packages using ASDF, Quicklisp,
+  and a program to automatically test all those packages, @c{cl-test-grid}.
+  Making a breaking change in ASDF was painful enough as it is,
+  having to slightly fix up to tens of packages each time.
+  If every refactoring of the class hierarchy within ASDF
+  had implied sending patches to a large fraction the thousands
+  of software repositories in Quicklisp,
+  making changes might have been two orders of magnitude more expensive.
+  Prohibitively so.
+}
+Sensitivity to change in transitive dependencies also means much tighter coupling
+between the versions of the many software packages, and fragility
+in the entire ecosystem, as incompatibilities ripple and it becomes hard to find
+matching sets of packages that have all the features one needs@xnote["."]{
+  Strong static types without subtyping also tend to have this issue of small changes
+  causing waves of incompatibility across packages, and
+  the Haskell or OCaml ecosystems are rife with package version compatibility problems.
+}
+
+In the end, the automation of the precedence list by an OO system with multiple inheritance,
+especially if it also enforces consistency properties, is a huge boon to modularity,
+compared to mixin inheritance, precisely because the task strides across the boundaries
+of libraries and software packages developed by different sets of authors.
+
+Interestingly, single inheritance doesn’t have this modularity issue, since
+every specification already comes with all its ancestors, and you users of a class
+don’t have to worry about changes in its dependencies.
+However, single inheritance avoids this issue only by eschewing all the benefits
+of mixin and multiple inheritance. The issue is only an obstacle to the modularity
+that single inheritance can never provide to begin with, and not to uses of OO
+wherein programmers export specifications that should only be used as the
+pre-composed rightmost base of further extensions.
+Therefore not having this modularity issue is actually a symptom of single inheritance
+being less modular rather than more modular.
+
+@subsection[#:tag "OISMIT"]{Optimal Inheritance: Single and Multiple Inheritance Together}
+
+@subsubsection{State of the Art in Mixing Single and Multiple Inheritance}
+
+With all these variants of Inheritance and their tradeoffs
+naturally comes a question:
+Is there some Optimal Inheritance, that is
+equally or more expressive, modular and performant than any other variant?
+It would have to be at least as expressive as mixin inheritance and multiple inheritance,
+as modular as multiple inheritance,
+and as performant as single inheritance.
+
+Now, as far back as 1979, Lisp offered both single-inheritance with its @c{struct}s,
+and multiple-inheritance with its @c{class}es (nées Flavors).
+Since 1988 or so, the Common Lisp Object System (a.k.a. CLOS) @~cite{bobrow88clos}
+even offered a way to interface uniformly with either structs or classes,
+using generic functions and metaclasses.
+Programmers could develop software with the flexibility of classes,
+then when their design was stable, declare their classes to be structs underneath,
+for an extra boost of performance.
+However, CLOS has this limitation, that structs and classes constitute disjoint hierarchies:
+a class cannot extend a struct, and a struct cannot extend a class.
+Thus, before you can declare a class to actually be a struct underneath,
+you must make sure to eliminate any trace of multiple inheritance
+in other classes either that it extends or that extend it,
+and declare them as structs, too@xnote["."]{
+  Another limitation of structs and classes in Common Lisp is that for historical reasons,
+  the default syntax to define and use structs is very different (and much simpler)
+  from the CLOS syntax to use and define objects. You can use the explicitly use the CLOS
+  syntax to define structs by specifying an appropriate metaclass @c{structure-class}
+  as opposed to @c{standard-class} for the standard objects of CLOS;
+  however, the resulting syntax is more burdensome than either plain struct or plain CLOS syntax.
+  This syntax discrepancy creates a barrier to the easy refactoring of code
+  between structs and classes.
+}
+
+Since then, Ruby and Scala have done better, wherein classes can extend structs,
+and structs can extend classes—except that
+Ruby respectively calls “classes” and “modules”
+the respective single- and multiple- inheritance entities,
+whereas Scala, following the Smalltalk tradition in that,
+respectively calls them “classes” and “traits” @~cite{scalableComponentAbstractions2005}.
+We will describe how Ruby and Scala combine the two forms of inheritance, about the same way
+(Ruby did about 10 years earlier, but without an academic publication to cite,
+and also without static types).
+However, both use variants of the Flavors algorithm that don’t respect either
+Local Order or Monotonicity.
+
+Since 2024, our own @(GerbilScheme),
+allows “structs” and “classes” (named after the Lisp tradition)
+to extend each other like Ruby and Scala do,
+but, in doing so, respects all the consistency constraints of the C3 algorithm,
+that it further extends to support structs.
+In the rest of this paper, we will keep naming structs and classes
+after the Lisp tradition—although we will also accept
+specifications that are not classes (not being for type descriptors),
+but may be prototypes, or neither.
+
+@subsubsection{The Key to Single Inheritance Performance}
+
+As seen in @secref{CMSI}, what enables the optimizations of single inheritance is
+that the indexes to the fields and methods of a specification’s target
+are also the indexes of the same fields and methods in the targets of its extensions.
+These indexes are computed by walk the specification’s ancestry
+from least specific to most specific ancestor.
+In the terminology of multiple inheritance,
+this is walk along the reverse of the precedence list.
+And for the walks to yield the same results,
+after putting those lists in the usual order,
+can be stated as the following property, that we will call the @emph{suffix property}:
+@principle{the precedence list of a struct must be a suffix of that of its descendents}.
+
+Now this semantic constraint can be very well be expressed and enforced
+in a system that has multiple inheritance.
+Thus it turns out that indeed, a struct can inherit from a class, and a class from a struct;
+as long as this property holds, the optimizations of single inheritance are still valid,
+even though structs partake in multiple inheritance!
+Interestingly, the ancestry of a struct is not a linear (total) order anymore:
+a few classes may be interspersed between structs in the precedence list.
+However, the subset of this ancestry restricted to structs, is a linear order,
+as every struct in a given specification’s ancestry is either ancestor or descendent
+of every other struct in that same ancestry.
+Thus structs are still in single inheritance with respect to each other,
+even though they are part of multiple inheritance in their relationship with classes.
+
+Since the suffix property is the thing that matters,
+we will name “suffix” the generalization of structs
+(in Lisp lingo, or classes in Smalltalk or Scala lingo)
+from classes to prototypes and arbitrary specifications.
+By contrast we will call “infix” the specifications
+that are explicitly not declared as suffix by the programmer,
+and just say specification (or prototype if conflated with target,
+or class if furthermore the target is a type descriptor)
+when it can be either infix or suffix.
+Thus, in Lisp lingo, a “struct” is a suffix specification,
+a “class” is a specification and a “mixin” is an infix specification.
+In Smalltalk or Scala lingo, a “class” is a suffix specification
+(though Scala documentation sometimes use it for any specification),
+and a “trait” is an infix specification@xnote["."]{
+  Interestingly, our “suffix” is the same as the “prefix” of SIMULA.
+  SIMULA calls “prefix” a superclass, precisely because its single inherited behavior
+  comes before that of the class in left to right evaluation order
+  of its code concatenation semantics.
+  But in multiple inheritance, we compose modular extensions right-to-left,
+  and in a tradition that goes back to Flavors (and maybe beyond),
+  we also keep the precedence list in that order.
+  And so our “suffix” actually means the same as SIMULA’s “prefix”.
+  Now, since SIMULA only has single inheritance, all its classes are “prefix”
+  (i.e. “suffix”, for us).
+  by contrast, in a multiple inheritance system, regular classes are infix, and
+  their precedence list, while an ordered sublist of an extension’s precedence list,
+  is not necessarily at the end of it, and necessarily contiguously embedded.
+  It can also be confusing that SIMULA calls “prefix sequence” the list of superclasses
+  that it keeps in the same order as the precedence list of Flavors and its successors,
+  from most specific to least specific, which is opposite to the order of “prefixing”.
+  Finally, a “final” class in Java or C++ could be called “prefix” by symmetry,
+  because its precedence list is the prefix of that of any transitive subclass
+  (of which there is only one, itself); but that would be only introduce more
+  terminological confusion, without bringing any useful insight,
+  for this prefix property, while true, is not actionable.
+  It is better to leave suffix and prefix as twisted synonyms.
+}
+
+@subsubsection{C4, or C3 Extended}
+
+The authors of C3 @~cite{Barrett96amonotonic WikiC3},
+after Ducournau et al. @~cite{ducournau1992monotonic ProposalMonotonicMultipleInheritance1994},
+crucially frame the problem of ancestry linearization in terms of
+constraints between the precedence list of a specification and those of its ancestors:
+notably, the “monotonicity” constraint states that
+the precedence list of an ancestor must be an ordered subset
+of that of the specification, though its elements need not be consecutive.
+We define our own algorithm C4 as an extension of C3 that respects the @emph{suffix property}
+for specifications that are declared as suffixes.
+
+We give a complete implementation of C4 in the appendix,
+but informally, the algorithm is as follows:
+@itemize[#:style'ordered
+  @item{As in C3, we first extract the precedence lists of each parent, in the declared local order.}
+  @item{Before proceeding to the regular C3 algorithm, we split each precedence list
+        into a head containing only infix specifications,
+        and a tail that starts with the first suffix ancestor.}
+  @item{We merge those tails into a common suffix;
+        The suffix property requires that these tails must be in total order, such that
+        given any two tails, one must be a suffix of the other,
+        or else there is an error due to incompatible ancestries.}
+  @item{Then, in each precedence list head, remove from its end the infix specifications
+        that are already in the suffix in the same order;
+        stop if you reach one that is in the suffix but in the wrong order,
+        in which case it’s an error due to incompatible ancestries;
+        stop if you reach one that isn’t in the suffix,
+        at which point you check that no specification remains in the head is in the suffix
+        (another incompatibility).
+        If you didn’t find any incompatibility, you have cleaned your head.}
+  @item{Proceed with C3 on the cleaned up heads:
+        first, add the list of parents to the list of precedence lists, to enforce local order;
+        then, and until all the lists are empty,
+        pick out as next element of the merged precedence list,
+        from the front elements of what remains of the lists,
+        the first (in local order) that isn’t in any of the lists
+        excluding each of their front element;
+        if none fits, that’s an incompatibility error.
+        If you eventually exhaust the lists, you’ve got your merged head.}
+  @item{Append the merged head from C3 and the common suffix.}]
+
+@;{TODO examples of the working algorithm, of incompatibility cases,
+        of discrepancies with C3.
+   this example bug: direct supers (A) (S A) (B A S)).
+}
+
+As a slight optimization, you could keep those precedence lists pre-split
+between infix head and suffix tail.
+
+This is the algorithm used in @(GerbilScheme).
+Interestingly, Ruby and Scala 3 essentially behave the same way,
+except that they fail to use C3 on the infix heads and instead use some simpler variant
+of the Flavors algorithm. Note that Scala 2 further requires the user to explicitly include
+the most specific suffix as the last parent of a specification@xnote["."]{
+  We say last semantically, as Scala, per its documentation,
+  also keeps precedence lists in the usual most-specific-first order;
+  but syntactically, Scala requires users to specify parents in the opposite
+  most-specific-last order, so your suffix parent (a “class” in Scala)
+  must be specified first in Scala 2.
+  It doesn’t help that Scala documentation sometimes says “class” for suffix specifications only,
+  and sometimes for all specifications including infix (called “traits” in Scala).
+  @;TODO cite
+}
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-@subsubsection{Dependencies between Modular Extensions}
-
-With mixin inheritance, there often were implicit dependencies between specifications.
-For instance, we saw that our @c{method-spec} depended on @c{record-spec}
-to ensure there was a record the methods of which to override,
-or that specifications participating in our proposed bill-of-parts protocol
-would have to depend on the @c{base-bill-of-parts} specification.
-
+We can then define an Optimal Inheritance Specification, or @c{OISpec}
+by extending the @c{MISpec} with a new field @c{suffix?} of type @c{Boolean}
+that tells if the specification follows the @emph{suffix property} or not.
+(In a practical implementation, we could add more flags, for instance
+to determine if the specification is sealed, i.e. allows no further extensions.)
+@;{TODO also cite Dylan for that, and Scala}
 
 
 @(generate-bibliography)

@@ -13,172 +13,12 @@
 @(define-simple-macro (Code a ...) (verbatim a ...))
 @(define-simple-macro (r a ...) (racket a ...))
 @(define-simple-macro (TODO body ...) '())
-@(define (anonymize x . y) x)
+@(define (principle . x) (bold (emph x))) @(define (anonymize x . y) x)
 @(define (GerbilScheme) @anonymize["our Scheme implementation"]{Gerbil Scheme})
-@(define (principle . x) (bold (emph x)))
 @(define-bibtex-cite "ltuo.bib" ~cite citet generate-bibliography)
 @section[#:tag "foo"]{FOO} @subsection[#:tag "bar"]{BAR} @subsubsection[#:tag "quux"]{QUUX}
 
 @; XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-@subsubsection{Lack of expressiveness and modularity}
-
-@subsubsection{More Expressive than Mixin Inheritance}
-Multiple inheritance requires measurably more sophistication than mixin inheritance,
-and hence an additional cognitive burden.
-Why would anyone use that instead of just using mixins?
-Because it is more expressive, and more modular,
-and its cognitive burden pays for itself by alleviating
-the other cognitive burdens from developers.
-
-The multiple inheritance is no less expressive than mixin inheritance
-is simple enough to prove: you can macro-express@~cite{eppl91}
-mixin inheritance within multiple inheritance.
-Replace each mixin function by a prototype using that mixin function,
-a empty direct super list.
-Keep around lists of such prototypes rather than mix them,
-then before you instantiate, create a single prototype with an identity mixin
-that depends on the list of mixins as direct super prototypes,
-where each mixin was given a fresh name,
-to ensure that multiple copies are all used indeed.
-
-This trick with fresh names at the last minute is necessary to defeat
-multiple inheritance otherwise ensuring that a given prototype
-(as identified by its name) will be used once and only once in the precedence list.
-But this unicity is actually a feature that the users usually want
-(and if they somehow do want multiple uses of a mixin,
-they can explicitly use multiple copies of it with distinct names).
-
-@subsubsection{More Modular than Mixin Inheritance}
-In practice there is always a dependency order between prototypes,
-whether it is reified as an automatically managed in-language entity
-as with multiple inheritance,
-or left as an extra-language entity that developers must manually keep track of
-as with mixin inheritance.
-Thus, a prototype may depend on a method having been declared or implemented
-by a (transitive) parent, so it may use or override it.
-That parent that must appear before it in the precedence list of prototypes
-(in the right-to-left order of application to the base instance
-with the convention we use above).
-Moreover, each prototype should appear only once in the precedence list,
-because its effects may not be idempotent,
-or may cancel the effects of other prototypes found in between two copies.
-
-For instance, consider a dependency DAG such as follows,
-where among other things,
-@c{Z} depends on @c{K2} that depends on @c{D} that depends on @c{O}:
-
-@(noindent) @image[#:scale 0.587]{C3_linearization_example.eps}
-
-The only way to compute precedence lists for @c{O}, @c{A}, @c{B}, @c{C}, @c{D}, @c{E}
-yields the respective precedence lists @c{[O]}, @c{[A O]}, @c{[B O]}, @c{[C O]}, @c{[D O]}, @c{[E O]}.
-No problem.
-
-However, consider the precedence list for @c{K1}.
-If computed naively by concatenating the precedence lists
-of the prototypes it directly depends on without eliminating duplicates,
-you get @c{[K1 C O A O B O]}.
-This can be a big problem if re-applying @c{O}
-will undo some of the effects of @c{A} or of @c{B}.
-The problem is the same for @c{K2} and @c{K3} and only worse for @c{Z}.
-Even when all prototypes at stake are idempotent and commute,
-this naive strategy will cause an exponential explosion of prototypes to mix
-as the graph becomes deeper.
-Meanwhile, a proper linearization as given by the C3 algorithm would be
-@c{[K1 C A B O]} for @c{K1} and @c{[Z K1 C K3 A K2 B D E O]} for @c{Z}.
-It avoids issues with duplicated prototypes, and grows linearly
-with the total number of prototypes however deep the graph.
-
-With mixin inheritance, developers would have to manually curate
-the order in which they mix prototypes, extra-linguistically.
-When using prototypes defined in other modules,
-they would have to know not just the prototypes they want to use,
-but all the detail about the transitive prototypes they depend on.
-Their dependency DAG will not be a hidden implementation detail,
-but part of the interface.
-And when some upstream module modifies the dependency DAG of a prototype,
-all the prototypes in all the modules that transitively depend on it
-will have to be updated by their respective maintainers to account for the change.
-
-This requires much more information to understood and provided by developers
-than if these developers were instead using multiple inheritance,
-that automates the production of that precedence list, and
-its update when upstream modules are modified.
-The transitive parts of DAG can largely remain a hidden implementation detail
-from those developers who only care about some direct dependencies.
-Thus, mixin inheritance is indeed less modular than multiple inheritance.
-
-@subsubsection[#:tag "single_and_multiple_inheritance_together"
-   ]{Single and Multiple Inheritance Together}
-
-Some languages such as CLOS@~cite{bobrow88clos}
-allow for both single-inheritance @c{struct}s and multiple-inheritance
-@c{class}es with uniform ways of defining object and methods.
-Thus, programmers can benefit from the performance advantage in slot access
-or method dispatch possible where there is no multiple-inheritance,
-while still enjoying the expressiveness and modularity of multiple-inheritance
-in the general case. They can explore without constraint, and
-simply change a flag when later optimizing for performance.
-
-However, in CLOS, structs and classes constitute disjoint hierarchies.
-Some languages further allow structs and classes to inherit from each other,
-within appropriate constraints.
-Thus Scala@~cite{scalableComponentAbstractions2005}
-allows a single struct to inherit from classes
-(except, to fit the Java and Smalltalk traditions rather than Lisp tradition,
-it calls the single-inheritance structs “classes”, and the multiple-inheritance classes “traits”).
-Gerbil Scheme supports the least set of constraints that preserve the coherence
-of both structs and classes, by suitably extending the C3 algorithm.
-
-C3 crucially frames the problem of superclass linearization in terms of
-constraints between the precedence lists of a class and of its superclasses:
-notably, the precedence list of a superclass must be an ordered subset
-of that of the class, though its elements need not be consecutive.
-To support structs and their optimizations, we only need add a constraint that
-the precedence list of a struct must be a suffix of that of its substructs
-(when considered in the order from most specific to least specific, as is
-customary in languages with multiple inheritance, after the Lisp original).
-
-At that point, we realize that what characterizes structs is not exactly
-“single inheritance” since a struct can now have multiple superclasses,
-and a class can now inherit from a struct indirectly via multiple superclasses.
-There is still single inheritance of sorts between structures, in the sense
-that the superstructures of a structure constitute a finite total order,
-when you ignore the other classes in the inheritance.
-But by this observation, by ignoring these other classes, fails to characterize structs.
-Instead, what characterizes structs is this “suffix” constraint on precedence lists,
-which include all classes, not just structs.
-This characterization in turn harkens back to the original Simula name
-of “prefix” for a superclass:
-Simula was then considering its single-inheritance precedence list
-in the opposite order, from least specific to most specific superclass
-(though the vocabulary to say so didn’t exist at the time).
-And this semantic constraint can be expressed
-in a system that has multiple inheritance.
-
-@subsubsection{Under-Formalized}
-Many notable papers offer proper treatment of
-multiple inheritance as such@~cite{allen2011type}.
-@TODO{cite more: Jonathan Aldrich ? Odersky ?}
-However, multiple inheritance often remains
-unjustly overlooked, summarily dismissed,
-or left as an exercise to the reader in academic literature
-that discusses the overall formalization of
-programming languages and OO@~cite{Abadi97atheory tapl eopl3 plai}. @TODO{more?}
-
-Many computer scientists interested in the semantics of programming languages
-seem to either fail to understand or fail to value
-the modularity enhancement from multiple inheritance
-over single inheritance or mixin inheritance;
-or they are not ready to deal with the extra complexity
-needed to formalize multiple inheritance, for instance due to
-requiring richer type systems.@~cite{Cardelli1984ASO}
-
-And yet languages that care more about expressiveness, modularity and incrementality
-than about ease of writing performant implementations with simpler type systems,
-will choose multiple inheritance over the less expressive and less modular alternatives:
-see for instance Common Lisp, C++, Python, Scala, Rust.
-@TODO{cite Scala OO model. What else? Kathleen Fisher’s thesis?}
 
 @section{Missing Insights into OO}
 Here are some topics that are largely neglected by
@@ -2491,3 +2331,52 @@ More extension to the multiple inheritance algorithm:
 imagine each specification having a sort, with a DAG of sorts,
 such that linearization of specs must respect the partial order of sorts,
 or, which is stronger, the linearization of specs must respect the linearization of their sort.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLAH XXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+@subsubsection{More Modular than Mixin Inheritance}
+
+For instance, consider a dependency DAG such as follows,
+where among other things,
+@c{Z} depends on @c{K2} that depends on @c{D} that depends on @c{O}:
+
+@(noindent) @image[#:scale 0.587]{C3_linearization_example.eps}
+
+The only way to compute precedence lists for @c{O}, @c{A}, @c{B}, @c{C}, @c{D}, @c{E}
+yields the respective precedence lists @c{[O]}, @c{[A O]}, @c{[B O]}, @c{[C O]}, @c{[D O]}, @c{[E O]}.
+No problem.
+
+However, consider the precedence list for @c{K1}.
+If computed naively by concatenating the precedence lists
+of the prototypes it directly depends on without eliminating duplicates,
+you get @c{[K1 C O A O B O]}.
+This can be a big problem if re-applying @c{O}
+will undo some of the effects of @c{A} or of @c{B}.
+The problem is the same for @c{K2} and @c{K3} and only worse for @c{Z}.
+Even when all prototypes at stake are idempotent and commute,
+this naive strategy will cause an exponential explosion of prototypes to mix
+as the graph becomes deeper.
+Meanwhile, a proper linearization as given by the C3 algorithm would be
+@c{[K1 C A B O]} for @c{K1} and @c{[Z K1 C K3 A K2 B D E O]} for @c{Z}.
+It avoids issues with duplicated prototypes, and grows linearly
+with the total number of prototypes however deep the graph.
+
+With mixin inheritance, developers would have to manually curate
+the order in which they mix prototypes, extra-linguistically.
+When using prototypes defined in other modules,
+they would have to know not just the prototypes they want to use,
+but all the detail about the transitive prototypes they depend on.
+Their dependency DAG will not be a hidden implementation detail,
+but part of the interface.
+And when some upstream module modifies the dependency DAG of a prototype,
+all the prototypes in all the modules that transitively depend on it
+will have to be updated by their respective maintainers to account for the change.
+
+This requires much more information to understood and provided by developers
+than if these developers were instead using multiple inheritance,
+that automates the production of that precedence list, and
+its update when upstream modules are modified.
+The transitive parts of DAG can largely remain a hidden implementation detail
+from those developers who only care about some direct dependencies.
+Thus, mixin inheritance is indeed less modular than multiple inheritance.
+
