@@ -501,42 +501,9 @@ cite Cook 2009
 
 @subsection{FOOOOOOOOOOOO}
 
-@subsubsection[#:tag "mutation"]{Mutation}
-The performance optimizations and semantic issues related to mutability in OO.
-
-Also, what the relationship between object systems
-that allow mutation of the inheritance DAG (Smalltalk, Self, CLOS)
-and their pure sematic models?
-
-Inasmuch as mutation is seen as meaning
-“anything can become anything else at the drop of a hat”,
-then the static semantics of everything is essential trivial;
-there is total chaos and uncertainty in the mind of the software analyst.
-But inasmuch as mutation is seen as meaning
-“inheritance hierarchies are being set up before they are used,
-but don’t change while being used
-though they might change before, after and between uses”,
-with mutation happening at some notional meta-level or staging area
-with respect to the inheritance hierarchy,
-then the pure semantic model does help describe how the system behaves
-while the inheritance hierarchy is being used in a given locally unchanging state.
-
-Now, if a system uses mutation to crucially modify “itself” in general
-and its inheritance hierarchy in particular while executing,
-then indeed the pure semantic model will prove insufficient
-to describe the behavior of the system.
-A more refined, lower-level model of how mutation of the inheritance hierarchy
-interferes with flow control in ongoing operations will become necessary.
-Yet the pure system remains a benchmark for how the system does or should behave
-in the extents during which the inheritance hierarchy was left undisturbed.
-
 @subsubsection{Monotonicity}
 Why Subclassing is rarely Subtyping, and other questions of monotonicity,
     (co-, contra- and in-) variance in Functor Mixins and Fixed-Point Operators.
-
-@subsubsection[#:tag "typeclasses"]{Typeclasses}
-The relationship between Classes and Typeclasses.
-    How typeclasses make object creation less ad hoc and more modular.
 
 @subsubsection{Autowrapping}
 The relationship between Mutable or Immutable objects, linear typing and subtyping.
@@ -642,86 +609,11 @@ and not just vague informal principles and arbitrary language-specific rules.
 FP provides a robust foundation for OO,
 and should be a natural part of the OO ecosystem.
 
-@section{What Object-Orientation @emph{is}}
 
-@subsection{Incremental Specification}
-
-@subsubsection{Records}
-
-Colored Point
-
-Linked
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLOH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 @subsection{Conflation}
 
-@subsubsection{Prototypes as Conflation}
-@itemize[
-@item{The (extensible, composable) partial @emph{specification} of an open computation}
-@item{The @emph{value} computed by declaring this specification complete and “closing” the computation}]
-
-Herein by “conflation” we mean that depending on the context, one or the other is meant:
-when composing a prototype with other prototypes or otherwise extending it,
-the partial specification is meant;
-when calling a method on the prototype, the computed value is meant.
-Formally, the prototype is a cartesian product, with implicit cast
-via projection to either factor depending on what the context requires @~cite{poof2021}.
-
-@subsubsection{Classes as Conflation}
-In Class OO, the entities of interest are @emph{prototypes for types},
-considered together with associated functions.
-The conflation a type specification and its specified type is then called a @emph{class},
-and not an “object” as in Prototype OO;
-instead the word “object” in Class OO denotes
-an element of such a specified type—a very different notion.
-This is a big source of confusion for people trying to compare Prototype OO and Class OO,
-especially since in both cases the value of a Prototype and the element of a Class type
-are usually @emph{records}.
-When only the type specification is intended to be used, by inheriting from it,
-OO practitioners speak of an @emph{abstract class}.
-When only the type is intended to be used, by creating and manipulating elements of it,
-OO practitioners speak of a @emph{concrete class}.
-OO practitioners have thus established practical vocabulary to deal with this distinction,
-that theorists had neglected.
-
-@subsubsection{Conflation vs Confusion}
-
-Now, conflation without proper distinction is @emph{confusion}.
-Most OO practitioners and theorists, unable to properly conceptualize
-specification and value as distinct entities, become mightily confused.
-Theorists’ attempts at giving a semantics to OO then fail by being overly complicated
-for trying to keep dealing with both entities conflated at all time,
-@; XXX cardelli abadi, pierce
-or overly simplistic because they fail to even notice that there are conflated notions to explain,
-and only model the simplest fixed-point behavior
-while neglecting any of the more advanced aspects of OO,
-often being ignorant of the practice and purpose of OO to begin with. @; XXX cook, sk
-Yet once you tease these two notions apart, the semantics of OO becomes quite simple@~cite{poof2021}.
-
-The worst symptom of this confusion between specification and value is
-the vain quest whereby too many language designers have tried to identify
-subclassing (a useful syntactic relationship between specifications)
-and subtyping (a useful semantic relationship between values). @; XXX Eiffel, Java, C#, Smalltalk
-This identification might have seemed sensible in the 1960s and 1970s when OO was new and misunderstood,
-and might actually make sense enough in dynamic languages where “types” don’t recurse past one data cell,
-as in Lisp and Smalltalk where OO was pioneered.
-But it never made sense in static languages, and has been formally known to be false
-since the 1980s. @; XXX cardelli
-What more, this identification is absurd on its face
-to who understands the distinction and relationship between specification and value,
-and the fact that the fixed-point operator is not monotonic.
-
-@subsubsection{Specifications}
-
-The semantics of prototype specifications can be described in terms
-of @emph{wrapper} functions of two arguments @r[self] and @r[super] @~cite{Cook1989 bracha1990mixin}@note{
-Note that Flavors @~cite{Cannon1979} introduced the term “wrapper” to mean
-something altogether different, which in the more modern CLOS @~cite{gabriel1991clos}
-you would express using an @r[:around] method, or,
-in the more general case, a declarative method combination.
-Since there are now better words for more fleshed out variants of that concept,
-we will dismiss this earlier use of the word “wrapper” in the context of OO,
-and instead stick to meaning used by Cook @~cite{Cook1989} to model inheritance.
-}:
 @itemlist[
 @item{
 The @r[self] argument refers to the value computed by the complete specification.
@@ -848,7 +740,6 @@ and actually behaved as in this pure functional model of inheritance.
 Finally, many recent Prototype OO languages use this model as is;
 indeed that is how the “extension” system of Nix is defined.
 
-@subsection{OO without Conflation}
 
 @subsubsection{OO without Records}
 
@@ -858,8 +749,6 @@ More conflation to be at the same time a function, a table, a number, etc.
 Or “just” follow the interface of all of them.
 
 @subsubsection{OO without Messages}
-
-Multimethods
 
 
 Experiments have shown it is possible to have a “Prototype OO” without conflation,
@@ -953,11 +842,6 @@ Those of us who, bright as we may be, aspire to greater software than fits in ou
 can appreciate both, and how they nicely complement each other.
 }
 
-@subsubsection{Inheritance}
-The way OO, whether prototypes or classes, combines increments of specification
-with other such increments, is called @emph{inheritance} @~cite{Winograd1975 inheritance1996}.
-There are three kinds of inheritance in widespread use:
-single-inheritance, multiple-inheritance, and mixin inheritance.
 
 @subsection{Single Inheritance}
 
@@ -1003,16 +887,7 @@ although it is easily expressible using user-defined method combinations
 in e.g. CLOS @~cite{bobrow88clos}.
 }
 
-@subsubsection{Simplicity}
-Single inheritance is the simplest form of inheritance,
-at least in the context of first-order code and logic,
-which explains why it was discovered first.
-
 @subsection{Multiple Inheritance}
-
-@subsubsection{Early History}
-
-@subsubsection{Global Structure of Multiple Inheritance}
 
 @subsubsection{Method Resolution in Multiple Inheritance}
 When each of multiple superclasses define a same method,
@@ -1138,39 +1013,28 @@ even when successful at avoiding the full cost of the general case.
 For this reason, many performance-conscious programmers
 prefer to use or implement single inheritance when offered the choice.
 
+
+
+
+
+
+
 @subsection{Mixin Inheritance}
-
-@subsubsection{Last but not least}
-Mixin inheritance was discovered last, in 1990 @~cite{bracha1990mixin},
-while attempting to elucidate inheritance in the paradigm of programming language semantics
-as opposed to the previously prevalent paradigm of computing systems @~cite{gabriel2012}.
-It is actually the simplest form of inheritance
-in the context of higher-order functions:
-a @emph{practical} implementation literally takes but two short function definitions
-@~cite{nix2015 poof2021}.
-
-@subsubsection{Composing Mixins}
-With mixin inheritance, classes (or “mixins”) are defined as
-the composition of two or more superclasses
-whose method definitions each override those of the superclasses it inherits from.
-Since composition is monoidal, the semantics of the resulting class
-is the same as if defined using single inheritance
-from the precedence list obtained by flattening all composed superclasses in order.
 
 @subsubsection{Comparative Expressiveness}
 Mixin inheritance is more expressive than single inheritance, and
 just as expressive as multiple inheritance, in that it enables
 classes (mixins or traits) to be defined once without being tethered
 to a single superclass (or chain of superclasses), and
-combined and recombined in many compositions.@note{
-Actually, mixin inheritance can be argued to be more expressive than multiple inheritance
-unless multiple inheritance is also accompanied by some means of renaming
-classes, slots, and methods.
-However, in a language where classes are meta-level constants,
-renaming is a trivial extra-lingual operation;
-and in a language where classes (or prototypes) are first-class runtime values,
-renaming is a relatively simple operation though it may depend on reflection.
-Thus, in practice, we can usually dismiss the thin advantage in expressiveness of mixin inheritance.
+combined and recombined in many compositions@xnote["."]{
+  Actually, mixin inheritance can be argued to be more expressive than multiple inheritance
+  unless multiple inheritance is also accompanied by some means of renaming
+  classes, slots, and methods.
+  However, in a language where classes are meta-level constants,
+  renaming is a trivial extra-lingual operation;
+  and in a language where classes (or prototypes) are first-class runtime values,
+  renaming is a relatively simple operation though it may depend on reflection.
+  Thus, in practice, we can usually dismiss the thin advantage in expressiveness of mixin inheritance.
 }
 Conceptually, composition of mixins allows to @emph{append} two lists of classes,
 when single inheritance only allows to @emph{cons} a class to a fixed list.
@@ -1197,149 +1061,7 @@ Nevertheless, in the rest of this document, we dismiss mixin inheritance
 for being a less modular and less performant alternative
 to the combination of multiple inheritance and single inheritance we are seeking.
 
-@section{Constraints on Linearization}
 
-@subsection{Consistency Matters}
-
-@subsubsection{Consistency Constraints}
-Cannon @~cite{Cannon1979}, Moon @~cite{Moon1986Flavors} then
-Ducournau et al. @~cite{ducournau1992monotonic ProposalMonotonicMultipleInheritance1994}
-have discussed the good consistency properties that one may (or may not) expect
-from a class linearization algorithm.
-
-These properties ensure that an object system shall compute a class’s class precedence list
-in a way that provides a consistent ordering of all methods
-across all generic functions and all classes — and all tuples of classes,
-when using multimethods @~cite{bobrow86commonloops bobrow88clos gabriel1991clos CecilMultimethods allen2011type}.
-
-@subsubsection{Matching Methods}
-This consistency notably matters when resources or locks
-are acquired by some methods of some objects,
-that must be updated in matching order,
-or released in matching reverse order,
-by the same methods or other methods,
-in the same objects or other related objects.
-Inconsistency can lead to resource leak, use-before-initialization, use-after-free, deadlock,
-data corruption, and other catastrophic failures.
-
-@subsection{Ordering Consistency}
-
-@subsubsection{Linearization}
-The most important constraint, @emph{linearization} @~cite{Cannon1979},
-states that the precedence list of a class
-is a linearization (total ordering extension)
-of its inheritance DAG (viewed as a partial ordering).
-All languages that use linearization for method resolution follow this constraint;
-those that don’t fall short on the OO purposes of incrementality and modularity.
-
-@subsubsection{Local Ordering}
-The second constraint, the
-(preservation of the) @emph{local precedence order} @~cite{Moon1986Flavors},
-states that the list of a class’s direct super classes
-(as specified by the programmer)
-is a sublist of its precedence list
-(seen as an ordering, e.g. all elements are present in the same order,
-but not necessarily consecutively).
-Many languages fail to follow this constraint.
-
-@subsubsection{Monotonicity}
-The third constraint, @emph{monotonicity} @~cite{ducournau1992monotonic},
-states that a class’s precedence list is included as a sublist
-(seen as an ordering, as above) in the class precedence list of each of its subclasses.
-
-@subsection{Shape Determinism}
-
-@subsubsection{Only Shape Matters}
-A fourth constraint, that we call @emph{Shape Determinism},
-states that the result of the linearization algorithm
-must only depend on the @emph{shape} of the inheritance graph,
-and may not depend on the names of the classes or any global information.
-Thus, class inheritance graphs that are isomorphic up to some renaming of classes
-must have identical linearizations up to the same renaming of classes.
-
-@subsubsection{Original Name}
-This constraint was called @emph{acceptability} by Ducournau et al.
-who introduced it @~cite{ducournau1992monotonic}.
-However, this name is too generic and fails to convey
-either the intent or content of the constraint.
-We considered the name “stability”, but Ducournau et al. use that name
-for another property of multiple inheritance
-that is subsumed by linearization.
-
-@subsubsection{Rationale}
-Shape Determinism matters for code maintainability:
-thanks to it, renaming a class, moving it in the file hierarchy,
-or otherwise modifying it without changing the shape of the inheritance hierarchy
-shall not introduce unstable semantic change in the program,
-especially if such a change is itself somehow necessary as part of debugging.
-
-@subsubsection{Alternatives to Shape Determinism}
-Instead of Shape Determinism, a global ordering could be established between
-all defined classes across a program,
-e.g. lexicographically by their name or full path,
-or by assigning a number in some traversal order,
-or from a hash of their names or definitions, etc.
-This ordering could then be used by a linearization algorithm
-as a tie-breaking heuristic to choose which superclass to pick next
-while computing a precedence list,
-whenever the constraints otherwise allow multiple solutions.
-But the instability of such a heuristic when the code changes
-would lead to many @emph{heisenbugs}.
-
-@subsection{Constraint-Respecting Algorithms}
-
-@subsubsection{Inconsistent Algorithms}
-While all OO languages with linearization respect the first constraint;
-most fail some or all of the latter constraints.
-
-@subsubsection{First Solution}
-The first proposed solution that satisfies all the above constraints
-@~cite{ProposalMonotonicMultipleInheritance1994} was a bit complex,
-building upon previous partial solutions.
-
-@subsubsection{C3}
-A latter solution, the C3 algorithm @~cite{Barrett96amonotonic},
-“simply” follows the constraints,
-computing the precedence list head-first with a tie breaking heuristic used
-when multiple linearizations are compatible with the constraints.
-
-@subsubsection{Depth-First Traversal}
-Given the arbitrary but practical choice to build the precedence list
-from its head, a heuristic for determining which of multiple valid candidates to pick
-as the next in the list (when more than one is possible) is equivalent to establishing
-an otherwise arbitrary priority order or traversal among the candidates.@note{
-Building from the tail would be equivalent, mutatis mutandis;
-building from the middle out would require a more complex algorithm,
-yet ultimately the same argument would apply.}
-Furthermore, given the Shape Determinism constraint, this traversal must only depend on
-the shape of the inheritance DAG, not on unique identifier attached to e.g.
-the name or source location of the classes.
-
-C3 uses a Depth-First Traversal, prioritizing classes appearing earlier
-among direct superclasses and their precedence list, so they appear earlier;
-classes appearing later in this traversal also appear later in the precedence list.
-In particular, a class’s precedence list will share as much of a tail as possible
-with the precedence list of its last direct superclass, which in turn favors
-sharing of slot indexes and partially combined method code.
-By contrast, the opposite traversal would minimize this sharing, and
-a breadth-first traversal would enable less of it.
-
-@subsubsection{Naming}
-C3 was named after the fact that it respects three ordering constraints it purports to enforce,
-citing Ducournau et al. @~cite{ducournau1992monotonic ProposalMonotonicMultipleInheritance1994}.
-The authors did not count Shape Determinism among these constraints,
-though, implicitly, C3 enforces it.@note{
-There are thus effectively four constraints enforced by C3,
-just like there are effectively four musketeers as main protagonists in
-The Three Musketeers @~cite{Dumas1844}.
-}
-
-@subsubsection{Adoption}
-C3 has since been adopted by OpenDylan, Python, Raku, Parrot, Solidity, PGF/TikZ, and more.
-
-@section{State of the Art in Combining Single and Multiple Inheritance}
-
-@subsection{Prolegomena} @; XXX rename
 
 @subsubsection{Previous Art}
 Many languages adopted single inheritance for its performance advantages,
@@ -1745,7 +1467,7 @@ to reimplement and adapt the C4 algorithm to their own object system.
 Furthermore, the artifact we provide will only allow a language implementer
 to compare their implementation to ours and check for any bugs in their reimplementation.
 
-@;------>8------>8------>8------>8------>8------>8------>8------>8------>8------
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLAH XXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 In Smalltalk and Java tradition, the word “class” describes
 entities with a single inheritance hierarchy;
@@ -2332,7 +2054,7 @@ imagine each specification having a sort, with a DAG of sorts,
 such that linearization of specs must respect the partial order of sorts,
 or, which is stronger, the linearization of specs must respect the linearization of their sort.
 
-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLAH XXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLEH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 @subsubsection{More Modular than Mixin Inheritance}
 
@@ -2380,3 +2102,7 @@ The transitive parts of DAG can largely remain a hidden implementation detail
 from those developers who only care about some direct dependencies.
 Thus, mixin inheritance is indeed less modular than multiple inheritance.
 
+
+Double inheritance in NewtonScript: very similar to our prototypes + meta^n classes,
+with single inheritance each.
+https://www.newted.org/download/manuals/NewtonScriptProgramLanguage.pdf

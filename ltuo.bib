@@ -33,7 +33,7 @@
                  newly-unified Italy.",
   xxnote =       "Check publication information: need to locate original
                  source!",
-  url = {https://www.google.fr/books/edition/Scientific_Memoirs_Selected_from_the_Tra/qsY-AAAAYAAJ?hl=en&gbpv=1&dq=Scientific+Memoirs+Selected+from+the+Transactions+of+Foreign+Academies+of+Science+and+Learned+Societies&printsec=frontcover}
+  url = {https://www.google.com/books/edition/Scientific_Memoirs_Selected_from_the_Tra/qsY-AAAAYAAJ?gbpv=1&pg=PA666}
 }
 
 @book{dumas1844,
@@ -492,7 +492,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 % Has metaclasses, multiple inheritance.
 % Still ugly syntax, with INTERLISP-style very short uppercase identifiers.
-@book{bobrow1983loops,
+@book{Bobrow1983Loops,
   title={The LOOPS manual},
   author={Bobrow, Daniel Gureasko and Stefik, Mark},
   volume={10},
@@ -547,7 +547,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % Has generic functions, method caching, multimethods,
 % As in 1983, metaclasses-mediated definitions&slots, etc.
 % Almost modern syntax, lower case long(ish) identifiers.
-@InProceedings{bobrow86commonloops,
+@InProceedings{Bobrow86CommonLoops,
   title={CommonLoops: Merging Lisp and Object-Oriented Programming},
   author={Daniel G. Bobrow and Kenneth Kahn and Gregor Kiczales and Larry Masinter and Mark Stefyk and Frank Zdybel},
   booktitle={OOPSLA},
@@ -578,6 +578,16 @@ pages = {1--8},
 numpages = {8}
 }
 
+% Calls "graph oriented" the conflict view of multiple inheritance
+% Discusses the consequence for his clients of the designer of a class making a change.
+% Explains the advantages of the Flavors "Linear Solution",
+% but claims sometimes a subclass wants to directly call some method of its superclass
+% without intermediate classes meddling from somewhere else in the hierarchy. Why?
+% Why not then call a static helper, or a helper with a different name?
+% Seems very dubious-solution in search of a problem.
+% His solution in CommonObjects is systematic conflict, and "duplicating nodes",
+% i.e. like C++ non-virtual classes later. Shame.
+% NB: Much updated 1987 version at https://archive.org/details/researchdirectio00shri/page/164/mode/2up
 @InProceedings{Snyder1986Encapsulation,
   author = {Snyder, Alan},
   title = {Encapsulation and Inheritance in Object-Oriented Programming Languages},
@@ -610,7 +620,7 @@ numpages = {8}
 
 % Specification of function behavior, similar to later CLHS
 % https://www.researchgate.net/publication/220178512_Common_Lisp_Object_System_Specification_X2JI3_Document_88-002R
-@Article{bobrow88clos,
+@Article{Bobrow88CLOS,
   title={Common Lisp Object Specification X3J13},
   author={D. G. Bobrow and L. D. DeMichiel and R. P. Gabriel and S. E. Kleene and G. Kiczales and D. A. Moon},
   journal={SIGPLAN Notices 23 (Special Issue)},
@@ -661,8 +671,8 @@ numpages = {8}
 
 % Unless a base class is "virtual", multiple copies are inherited.
 % Conflict resolution is manual; you can explicitly call a superclass method,
-% but there is no linearization mechanism to avoid exponential calls
-% to supermethods in case of "diamonds" (TODO: find paper about the diamond problem?)
+% but there is no linearization mechanism to preserve method linearity
+% in case of "ambiguities" (paper does not say "diamonds")
 @article{stroustrup1989multiple,
   title={Multiple inheritance for C++},
   author={Stroustrup, Bjarne},
@@ -896,6 +906,27 @@ numpages = {8}
   url={https://bibliography.selflanguage.org/parents-shared-parts.html}
 }
 
+% HPL-91-50
+% A possibly shortened version also published in *IEEE Software*, January 1993
+% as "The Essence of Objects: Concepts and Terms"
+@Misc{Snyder1991Essence,
+  author = {Alan Snyder},
+  title = {The Essence of Objects: Common Concepts and Terminology},
+  year = {1991},
+  abstract = {Core concepts in object-oriented technology are defined. The concepts are the basis for characterizing and contrasting various object-oriented technologies. The core concepts are: all objects embody an abstraction, objects provide services, clients issue requests, objects are encapsulated, requests identify operations, requests can identify objects, new objects can be created, operations can be generic, objects can be classified in terms of their services, objects can have a common implementation, and objects can share partial implementations. To address communication problems, a glossary of terms appropriate for the diverse set of domains in which object-oriented concepts are being applied is developed. The definitions are grouped into three sections in top-down order: terms related to abstraction, terms related to requesting services, and terms related to performing services.},
+  month = june,
+  numpages = {24},
+  keywords = {abstraction, object-oriented programming, object-oriented technology, requests, services},
+  url = {https://shiftleft.com/mirrors/www.hpl.hp.com/techreports/91/HPL-91-50.pdf},
+  note = {
+    Alan Snyder tries to introduce and name the common concepts in OO,
+    in a way mindful of the variety of OO languages and systems,
+    from C++ to CLOS to the Iris db and more.
+    He insists on abstraction and encapsulation — features of what I would call "modularity",
+    and only very quickly goes over inheritance, without details.
+  }
+}
+
 % According to Scholar.Google.com, this paper introduces "Open Recursion" in the context of CS,
 % p.31,32, to describe how to extract a class and subclass from fixpoint of operator, after Cook89.
 @book{cardelli1992extensible,
@@ -935,9 +966,9 @@ numpages = {8}
 % Dissects the mechanisms of modularity in programming languages,
 % offers a zoo of solution, but not in a constructive way.
 % The constructive part, mixin inheritance, is great, though.
-% p. 24 Looks like he invented the term "diamond problem"
-% though he cites Bertrand Meyer for the concept, and
-% says on X he got the term from Snyder87 whom he cites
+% p. 24 Says "diamond problem", quoted Bertrand Meyer who says "repeated inheritance",
+% Gilad says he didn't invent "diamond" but probably got it from C++ community newsgroups.
+% His [65] is a 1987 updated reprint as a book chapter the [64] OOPSLA 1986
 % p. 25 Cites CLOS but wrongly claims without argument that it shares the same diamond problem
 % as Flavor-less multiple inheritance system. Not aware of how method combination changes the game.
 @PhDThesis{bracha1992jigsaw,
@@ -975,7 +1006,7 @@ numpages = {8}
 
 % Defines the constraints used by C3, but uses a global rather than local tie break rule,
 % and goes on rather than errors out if rules are incompatible
-@article{ducournau1992monotonic,
+@article{Ducournau1992Monotonic,
   title={Monotonic conflict resolution mechanisms for inheritance},
   author={Ducournau, Roland and Habib, Michel and Huchard, Marianne and Mugnier, Marie-Laure},
   journal={ACM SIGPLAN Notices},
@@ -1039,36 +1070,7 @@ numpages = {8}
 %  year={1994},
 %  pages={207–247}
 
-% 
-@article{Snyder1993Essence,
-  author = {Snyder, Alan},
-  title = {The Essence of Objects: Concepts and Terms},
-  year = {1993},
-  issue_date = {January 1993},
-  publisher = {IEEE Computer Society Press},
-  address = {Washington, DC, USA},
-  volume = {10},
-  number = {1},
-  issn = {0740-7459},
-  url = {https://doi.org/10.1109/52.207219},
-  doi = {10.1109/52.207219},
-  abstract = {Core concepts in object-oriented technology are defined. The concepts are the basis for characterizing and contrasting various object-oriented technologies. The core concepts are: all objects embody an abstraction, objects provide services, clients issue requests, objects are encapsulated, requests identify operations, requests can identify objects, new objects can be created, operations can be generic, objects can be classified in terms of their services, objects can have a common implementation, and objects can share partial implementations. To address communication problems, a glossary of terms appropriate for the diverse set of domains in which object-oriented concepts are being applied is developed. The definitions are grouped into three sections in top-down order: terms related to abstraction, terms related to requesting services, and terms related to performing services.},
-  journal = {IEEE Softw.},
-  month = jan,
-  pages = {31–42},
-  numpages = {12},
-  keywords = {abstraction, object-oriented programming, object-oriented technology, requests, services},
-  url = {https://shiftleft.com/mirrors/www.hpl.hp.com/techreports/91/HPL-91-50.pdf},
-  note = {
-    Alan Snyder tries to introduce and name the common concepts in OO,
-    in a way mindful of the variety of OO languages and systems,
-    from C++ to CLOS to the Iris db and more.
-    He insists on abstraction and encapsulation — features of what I would call "modularity",
-    and only quickly goes over inheritance.
-  }
-}
-
-@inproceedings{ProposalMonotonicMultipleInheritance1994,
+@inproceedings{Ducournau1994Monotonic,
 author = {Ducournau, R. and Habib, M. and Huchard, M. and Mugnier, M. L.},
 title = {Proposal for a monotonic multiple inheritance linearization},
 year = {1994},
@@ -1459,7 +1461,7 @@ series = {PLDI '99}
 
 @InProceedings{DSU2001,
   author = {Hicks, Michael and Moore, Jonathan T. and Nettles, Scott},
-  title = {Dynamic software updating},
+  title = {Dynamic Software Updating},
   year = {2001},
   isbn = {1581134142},
   publisher = {Association for Computing Machinery},
@@ -1595,7 +1597,7 @@ series = {PLDI '99}
   series = {OOPSLA '05}
 }
 
-@misc{kiselyov2005haskells,
+@misc{Kiselyov2005HaskellOOS,
       title={Haskell's overlooked object system},
       author={Oleg Kiselyov and Ralf Lämmel},
       year={2005},
@@ -2332,3 +2334,15 @@ series = {PLDI '99}
 
 % Does Yaohan Chu introduce the concept of HLL, or is it earlier?
 % https://dl.acm.org/doi/pdf/10.1145/800181.810257
+
+% 2024 Stephen H. Kaisler
+% Medley LOOPS: The Basic System
+% a.k.a. "Lisp Object-Oriented Programming System (LOOPS) Volume I: The Basic System"
+
+% Authors of EuLisp don't like multiple inheritance, want mixin inheritance
+@book{bretthauer1989multiple,
+  title={Multiple Vs. Single Inheritance in Object-oriented Programming Languages: What Do We Really Want?},
+  author={Bretthauer, Harry and Christaller, Thomas and Kopp, J{\"u}rgen},
+  year={1989},
+  publisher={Gesellschaft f{\"u}r Mathematik und Datenverarbeitung mbH}
+}
