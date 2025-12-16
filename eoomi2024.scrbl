@@ -614,60 +614,10 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLOH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 @subsection{Conflation}
 
-@itemlist[
-@item{
-The @r[self] argument refers to the value computed by the complete specification.
-It enables “late binding”, so that the specification can create circular references,
-use aspects of the computation specified by other prototype wrappers that it will be composed with,
-and otherwise access the global computation of which it specifies one aspect,
-thus embodying the @emph{modular} side of OO.
-The wrapper function is said to be in an “open recursion”, @; XXX cite Pierce ?
-meaning that after composing this wrapper with other wrappers into a complete specification,
-this variable will be computed as a fixed point of the specified computation.@note{
-@r[self] is the variable or keyword conventionally used to describe the object itself
-(fixed point of the computation) within the specification of a prototype,
-in Smalltalk, Lisp, Scheme, SELF, Python, Jsonnet, Nix, many more languages,
-and in the literature expressing OO semantics in terms of functional programming.
-In SIMULA, and after it in C++, Java, JavaScript or Scala, the @r[this] keyword is used instead.
-Though SIMULA came first, we’ll follow the Smalltalk, Lisp and semantics-elucidating traditions,
-that were the first to introduce and model “inheritance” as such, and especially multiple inheritance.
-Mind, though, that we are currently discussing Prototype OO,
-where the @r[self] has a related but notably different meaning
-from what @r[self] or @r[this] would mean in a Class OO language.
-See below the discussion of the meaning of “object” in Prototype OO vs Class OO.}}
-@item{
-The @r[super] argument refers to the partial value computed so far
-from @emph{parent} specifications (composed to the right, with the usual composition order);
-the rightmost seed value of @r[super] when computing the fixed point is a base value,
-typically an empty record, possibly enriched with metadata or ancillary fields for runtime support.
-@r[super] embodies the @emph{incremental} side of OO,
-enabling a specification to build on values @emph{inherited} from parent specifications,
-add aspects to them, override aspects of them, modify aspects of them, etc.,
-in an increment of computation.@note{
-@r[super] is the keyword or variable used in Smalltalk and in many languages and object systems after it,
-such as Java or Python, to access inherited methods. In CLOS you’d use @r[call-next-method].
-In C++ you can’t quite express that concept in general, because you have to name
-the superclass whose method (or “(virtual) member function”) you want to call,
-so you can’t directly write traits that inherit “super” behavior along the class precedence list.
-Naming the super works for the single inheritance subset, and
-by painfully having traits (or “mixins”) take a @r[Super] parameter
-@; @~cite{smaragdakis2000mixin}
-and manually reimplementing class ordering and passing each trait its super
-when defining a concrete class, one could express virtual inheritance,
-at the cost of much syntactic overhead, and loss of modularity,
-because you have to manually compute the class precedence list of your concrete classes
-and pass the correct super argument to each trait.
-C++ therefore does not fully support Class OO with multiple inheritance,
-but allows programmers to achieve a similar effect at great expense, sacrificing some modularity.
-Still, even though this feature isn’t directly available to programmers,
-the internal semantics of C++ inheritance can be expressed in terms of such @r[super] variable
-in a wrapper function.
-}}]
-
 For instance, the wrapper function for a prototype that extends the
-@r[super] record value with a field @r[rho] computed as the hypothenuse
+@c{super} record value with a field @r[rho] computed as the hypothenuse
 of a right triangle of sides @r[x] and @r[y]
-(being fields of the final value @r[self] to be defined by other composed prototypes)
+(being fields of the final value @c{self} to be defined by other composed prototypes)
 might look like:
 @codeblock{
   (define radius-from-rectangular
@@ -689,45 +639,8 @@ See the appendix for a detailed discussion, but in a pure functional language,
 instantiation could be defined as follows assuming a fixed-point combinator
 (see appendix for details).
 
-XXX
 
 @subsubsection{Methods}
-
-Hoare@~cite{hoare1965record}, who inspired SIMULA @~cite{Simula1967 dahl1972chapter}
-calls “class” a family of @emph{record} types@note{
-Hoare probably intended subtyping initially indeed for his families of types;
-but subclassing is what he and the SIMULA authors discovered instead.
-Such is scientific discovery:
-if you knew in advance what lied ahead, it would not be a discovery at all.
-Instead, you set out to discover something, but usually discover something else,
-that, if actually new, will be surprising.
-The greater the discovery, the greater the surprise.
-And you may not realize what you have discovered until analysis is complete much later.
-The very best discoveries will then seem obvious in retrospect,
-given the new understanding of the subject matter,
-and familiarity with it due to its immense success.
-}.
-Hoare after ALGOL calls @emph{record} the lower-level computer representation
-of a tuple of data elements distinguished by their name, called @emph{fields};
-and he calls @emph{object} a higher-level entity that will be represented as a record.
-He calls “attribute” a data element of an object that will be represented by a @emph{field},
-though other authors or systems call it “property”, “slot”, “member”, etc.
-There are then procedures that access those attributes.
-Smalltalk, and many Lisp object systems, and after them Java and many other languages,
-call @emph{method} a procedure associated with accessing or modifying such an attribute,
-handling a message, or otherwise running computations associated with a prototype or a class.
-It can be viewed as a more general notion than that of “attribute”,
-or the notion of “attribute” can be generalized to include it.
-Either way, we will focus on methods.
-
-Now, a method in Prototype OO corresponds to what in Class OO is called a “static method”,
-since it is associated directly to the prototype (which in Class OO, is a class).
-A (non-static) method in Class OO corresponds in Prototype OO to
-a method with an extra argument, being the element of the class’s specified type
-to which the method is applied. From the more general point of view of Prototype OO,
-that we are using in this paper, a method call in Class OO is thus just syntax sugar
-for calling the class's method with the element on which the method is called.
-
 
 
 
@@ -1857,7 +1770,7 @@ that encompasses the entire ecosystem, a namespace hierarchy that includes
 not only all packages being defined, but also the standard library of functions @c{pkgs.lib}
 (though some like to redundantly pass it as an additional argument @c{lib})
 and all kind of intermediary data structures.
-As we will soon see, when implementing OO, this modular context is typically called @r[self],
+As we will soon see, when implementing OO, this modular context is typically called @c{self},
 to access (the rest of) the modularly (and extensibly) defined entity.
 
 
@@ -1871,15 +1784,15 @@ yet ultimately more efficient since it doesn't require duplicating design and fi
 @subsubsection{Modular Extensions}
 
 Let us consider implementing modular extensibility in a pure functional setting.
-If we modularly define extensions, our terms will take an argument @r[self], the modularity context,
-and return an extension, which takes an argument @r[super],
+If we modularly define extensions, our terms will take an argument @c{self}, the modularity context,
+and return an extension, which takes an argument @c{super},
 the previous “inherited” (record of) definitions,
 and returns some extended (record of) definitions.
 A simple type for a modular extension is then @r[M ⟶ E ⟶ E],
 wherein terms are typically of the form @linebreak[] @r{(λ (self super) ...extended_super)}.
 
 If we instead define extensions to modular definitions, our terms will take
-an argument @r[super], the previous “inherited” modular definition,
+an argument @c{super}, the previous “inherited” modular definition,
 of type @r[M ⟶ E], and return an extended modular definition also of type @r[M ⟶ E],
 and therefore is of type @r[(M ⟶ E) ⟶ M ⟶ E].
 But since the point of modularity is to plug
@@ -1888,7 +1801,7 @@ the construct contains the same useful information as @r[E ⟶ M ⟶ E], or as
 @r[M ⟶ E ⟶ E] above, just with extra complexity in the composition.
 We will therefore prefer the simpler “modular extension” point of view.
 
-In the general case, the type @r[E] or @r[super] and the return value
+In the general case, the type @r[E] or @c{super} and the return value
 will be that of a @emph{method} of a prototype, or sub-entity being incrementally defined,
 whereas @r[M] will be some language-wide namespace, registering all
 known (and yet unknown) computations, prototypes and library functions in the language ecosystem.

@@ -378,11 +378,15 @@ Yet, while C++ supports single inheritance well, what it calls “multiple inher
 is not at all the same as what most everyone else calls “multiple inheritance”:
 it is actually a modified kind of mixin inheritance
 with some kind of “duplication” of superclasses (for non-@r[virtual] classes)@xnote[","]{
-  C++ actually copies the bad example of Snyder’s Common Objects @~cite{Snyder1986Encapsulation}
-  in “duplicating” superclasses to force inheritance into a tree rather than a DAG.
+  C++ actually copies bad ideas from Snyder’s CommonObjects @~cite{Snyder1986Encapsulation}
+  in “duplicating” superclasses to force inheritance into a tree rather when it is a DAG.
   Semantically, this is equivalent to maintaining copies of the superclasses
   with a renaming of their fields and methods, according to the path
   being followed in the inheritance tree.
+  But really, this is wishful thinking, trying to fit a square peg into a round hole,
+  and the very opposite of either science or engineering,
+  which is to identify what concepts are or ought to be,
+  instead of what you would fancy them to be for whatever convenience.
 }
 and a subset of multiple inheritance (for @r[virtual] classes and members).
 Moreover, C++ crucially lacks the proper method resolution
@@ -2505,13 +2509,21 @@ even if “only” for the implementation of a meta-level tool such as a typeche
 
 @subsubsection{What Precedents?}
 
-We were flabergasted when we first saw
+We were flabbergasted when we first saw
 basic OO actually implemented in two function definitions,
-in the Nix standard library. @; CITE
+in the Nix standard library @~cite{nix2015}.
 These two definitions can be ultimately traced in a long indirect line
 to the pioneering formalization by Bracha and Cook @~cite{bracha1990mixin},
-though the author wasn’t aware of the lineage, or indeed even that he was doing OO.
-@;{TODO note and citations about this lineage, and the realization that it was OO}
+though the author wasn’t aware of the lineage, or indeed even that he was doing OO@xnote[";"]{
+  Peter Simons, who implemented prototypes as a user-level library in Nix
+  as “extensions”, wrote in a private communication that
+  he did not not know anything about their relationship to Prototypes, Mixins or OO,
+  but semi-independently reinvented them and their use,
+  inspired by examples and by discussions with Andres Löh and Conor McBride;
+  the latter two unlike Simons were well-versed in OO literature,
+  though they are usually known to advocate FP over OO.
+}
+however, Nix also implements conflation, a crucial element missing from Bracha and Cook.
 
 We will deconstruct and reconstruct this formalization.
 Then, on top of this foundation, we will be able to add all the usual concepts of OO,
@@ -3343,13 +3355,54 @@ to compose each extension under the module context and bound identifier,
 an operation that for reasons that will soon become obvious,
 we will call mixin inheritance for modular extensions:
 @Code{
-(define mix (λ (c p) (λ (m) (compose (c m) (p m)))))}
+(define mix (λ (c p) (λ (s) (λ (t) (c s (p s t))))))}
 The variables @c{c} and @c{p} stand for “child” and “parent” specifications,
 wherein the value “inherited” by the composed function
 will be extended (right to left, with the usual function-as-prefix syntax)
-first by @c{(p m)} then by @c{(c m)},
-where @c{m} is the module context (also called “self” in some contexts),
-and the argument to the composed function will be the inherited “super” value.
+first by @c{(p s)} then by @c{(c s)},
+where @c{s} is the module context
+(also called @c{self} in many contexts, for reasons that will become obvious@xnote[")"]{
+  The @c{self} argument is the one involved in open recursion or “late binding”;
+  it embodies the @emph{modular} side of OO.
+  It is called @c{self} because it is destined to be bound as the fixpoint variable
+  of a fixpoint operator, wherein it refers to the entity being defined itself.
+  The name @c{self} is used in Smalltalk, Scheme, SELF, Python, Jsonnet, Nix,
+  many more languages, and in a lot of the literature about OO semantics.
+  In SIMULA, and after it, in C++, Java, JavaScript or Scala, the @c{this} keyword is used instead.
+  Note however, that we are currently discussing a variant of Prototype OO,
+  as in SELF, Jsonnet, Nix, JavaScript, where the @c{self} or @c{this}
+  is indeed the open recursion variable.
+  In Class OO language, the definition being one of a type descriptor, not of a record,
+  the open recursion variable would instead be something like @c{Self}, @c{MyType} or @c{this.type},
+  though there is even less standardization in this area.
+  See below the discussion of the meaning of “object” in Prototype OO vs Class OO.
+  @; TODO secref Classes
+}
+and @c{t} is the inherited value
+(also called @c{super} in the same contexts, for the same reasons@xnote[")."]{
+  The @c{super} argument refers to the partial value computed so far
+  from @emph{parent} specifications (composed to the right, with the usual composition order);
+  the rightmost seed value of @c{super} when computing the fixed point is a “base” or “top” value,
+  typically an empty record, possibly enriched with metadata or ancillary fields for runtime support.
+  @c{super} embodies the @emph{extensible} side of OO,
+  enabling a specification to build on values @emph{inherited} from parent specifications,
+  add aspects to them, override aspects of them, modify aspects of them, etc.,
+  in an extension to the computation so far.
+  @c{super} is the variable or keyword used in Smalltalk
+  and in many languages and object systems after it,
+  such as Java or Python, to access inherited methods.
+  In CLOS you’d use @c{call-next-method}.
+  In C++ you can’t quite directly express that concept in general, because you have to name
+  the superclass whose method (or “(virtual) member function”) you want to call,
+  so you can’t directly write traits that inherit “super” behavior along the class precedence list;
+  but it works if you restrict yourself to inheritance, or if you use template metaprogramming
+  to arrange to pass a superclass, or list or DAG of superclasses, as argument to your template,
+  and manually reimplement mixin inheritance @~cite{smaragdakis2000mixin},
+  or if you’re adventurous, multiple inheritance, on top of C++.
+}
+The function can also be written with @c{compose}, eliding the “super” variable:
+@Code{
+(define mix (λ (c p) (λ (s) (compose (c s) (p s)))))}
 
 General modular extensions for a given context form a category,
 and strict modular extensions for a given context and type form a monoid,
@@ -3365,13 +3418,13 @@ any and every value by returning it unchanged, as follows@xnote[":"]{
   the way they like van Laarhoven lenses @~cite{oconnor2012lenses};
   yet, Oliveira @~cite{MonadsMixins} or
   the @c{Control.Mixin.Mixin} library (part of the @c{monadiccp} package),
-  instead both use a different representation that compared to ours swaps the order of arguments
-  between @c{self} and @c{super}.
+  instead both use a slightly different representation that compared to ours
+  swaps the order of arguments of the @c{self} and @c{super} arguments.
   We will stick with our representation, also shared by the Nix standard library, as it makes
   our explanations, and, in later sections, the types of specifications, slightly simpler.
 }
 @Code{
-(define idMExt (λ (m) (λ (v) v)))}
+(define idMExt (λ (s) (λ (t) t)))}
 
 @subsubsection{Closing Modular Extensions}
 
@@ -3396,9 +3449,7 @@ We will call this operation instantiation for modular extensions:
 In this expression,
 @c{t} is the top value for the type being specified (typically the empty record, for records),
 @c{m} is the modular extension, and
-@c{s} is the fixpoint variable for the module context we are computing
-(often called @c{self} or @c{this} in the literature).
-
+@c{s} is the fixpoint variable for the module context we are computing.
 
 @subsubsection{Default and non-default Top Type}
 
@@ -4063,15 +4114,7 @@ using GCL, Jsonnet or Nix as (pure functional) Prototype OO languages:
 @item{
   Nix@~cite{dolstra2008nixos} is used not just to configure
   entire software distributions for Linux and macOS,
-  but also distributed services with NixOps or DisNix@xnote["."]{
-  Interestingly, Peter Simons, who implemented prototypes as a user-level library in Nix
-  as “extensions”@~cite{nix2015}, says in a private communication that
-  he did not not know anything about their relationship to Prototypes, Mixins or OO,
-  but semi-independently reinvented them and their use,
-  inspired by examples and by discussions with Andres Löh and Conor McBride;
-  the latter two are programmers and authors who are themselves well-versed in OO literature,
-  yet are usually known to advocate FP over OO.
-}}]
+  but also distributed services with NixOps or DisNix.}]
 All three languages have proven the practicality of pure lazy functional prototype objects,
 with mixin inheritance and conflation of specification and target,
 as a paradigm to specify configuration and deployment of software on a world-wide scale,
@@ -4801,7 +4844,19 @@ In other words, it makes us realize once again that @emph{recursion is not free}
 @subsubsection{Why NNOOTT?}
 
 The NNOOTT was implicit in the original OO paper @~cite{Simula1967}
-as well as in Hoare’s seminal paper that inspired it @~cite{hoare1965record}.
+as well as in Hoare’s seminal paper that inspired it @~cite{hoare1965record}@xnote["."]{
+  Hoare probably intended subtyping initially indeed for his families of record types;
+  yet subclassing is what he and the SIMULA authors discovered instead.
+  Such is scientific discovery:
+  if you knew in advance what lied ahead, it would not be a discovery at all.
+  Instead, you set out to discover something, but usually discover something else,
+  that, if actually new, will be surprising.
+  The greater the discovery, the greater the surprise.
+  And you may not realize what you have discovered until analysis is complete much later.
+  The very best discoveries will then seem obvious in retrospect,
+  given the new understanding of the subject matter,
+  and familiarity with it due to its immense success.
+}
 It then proceeded to dominate the type theory of OO
 until debunked in the late 1980s @~cite{cook1989inheritance}.
 Even after that debunking, it has remained prevalent in popular opinion,
@@ -5739,7 +5794,7 @@ which would result in an error, at compile-time in the more static systems.
 Flavors @~cite{Cannon1979} identified the correct solution,
 that involves cooperation and harmony rather than conflict and chaos.
 Failing to learn from Flavors, C++ and after it Ada issue an error like older systems,
-and try to force the ancestry DAG into a tree like Common Objects @~cite{Snyder1986Encapsulation}.
+and try to force the ancestry DAG into a tree like CommonObjects @~cite{Snyder1986Encapsulation}.
 Self initially tried a weird resolution method along a “sender path”
 that dives depth first into the first available branch of the inheritance DAG
 without backtracking @~cite{parentsSharedParts1991},
@@ -6605,18 +6660,21 @@ We define our own algorithm C4 as an extension of C3 that respects the @emph{suf
 for specifications that are declared as suffixes.
 
 We give a complete Scheme implementation of C4 in the appendix,
-but informally, the algorithm is as follows:
+but informally, the algorithm is as follows,
+where the steps tagged with C4 are those added to the C3 algorithm
+(remove them for plain C3):
 @itemize[#:style'ordered
   @item{As in C3, we first extract the precedence lists of each parent,
         in the declared Local Order.}
-  @item{Before proceeding to the regular C3 algorithm, we split each precedence list
+  @item{[C4] Before proceeding to the regular C3 algorithm, we split each precedence list
         into a prefix containing only infix specifications,
-        and a suffix that starts with the first suffix ancestor.}
-  @item{We merge those suffixes into a merged suffix;
+        and a suffix that starts with the first suffix ancestor.
+        (Plain C3: put everything in the prefixes; suffixes are empty.)}
+  @item{[C4] We merge those suffixes into a merged suffix;
         The suffix property requires that these tails must be in total order, such that
         given any two tails, one must be a suffix of the other,
         or else there is an error due to incompatible ancestries.}
-  @item{Then, in each precedence list prefix, remove from its end the infix specifications
+  @item{[C4] Then, in each precedence list prefix, remove from its end the infix specifications
         that are already in the suffix in the same order;
         stop if you reach one that is in the suffix but in the wrong order,
         in which case it’s an error due to incompatible ancestries;
@@ -6634,7 +6692,8 @@ but informally, the algorithm is as follows:
         excluding each of their front element;
         if none fits, that’s an incompatibility error.
         If you eventually exhaust the lists, you’ve got your merged prefix.}
-  @item{Append the merged prefix from C3 and the merged suffix.}]
+  @item{[C4] Append the merged suffix to the end of the merged prefix.}
+  @item{Return the merged prefix.}]
 
 @;{TODO examples of the working algorithm, of incompatibility cases,
         of discrepancies with C3.
