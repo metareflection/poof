@@ -18,7 +18,7 @@
 @(define-bibtex-cite "ltuo.bib" ~cite citet generate-bibliography)
 @section[#:tag "foo"]{FOO} @subsection[#:tag "bar"]{BAR} @subsubsection[#:tag "quux"]{QUUX}
 
-@; XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 @section{Missing Insights into OO}
 Here are some topics that are largely neglected by
@@ -332,6 +332,8 @@ instead of only supporting a single privileged instance type.
 This makes prototypes a more general and more modular notion
 that can be used in multiple ways in a same language ecosystem.
 
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLAH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
 @subsubsection{OO without Objects}
 At this point, we may realize we have been explaining and implementing
 all key concepts of “Object Orientation” without ever introducing
@@ -610,75 +612,7 @@ FP provides a robust foundation for OO,
 and should be a natural part of the OO ecosystem.
 
 
-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLOH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-@subsection{Conflation}
-
-For instance, the wrapper function for a prototype that extends the
-@c{super} record value with a field @r[rho] computed as the hypothenuse
-of a right triangle of sides @r[x] and @r[y]
-(being fields of the final value @c{self} to be defined by other composed prototypes)
-might look like:
-@codeblock{
-  (define radius-from-rectangular
-     (lambda (self super)
-        (extend-record super
-          'rho (sqrt (+ (sqr (get-field self x))
-                        (sqr (get-field self y)))))))}
-
-XXX
-
-To compute a value from a specification,
-the wrapper from a specification is combined with those of “parent” specifications it transitively extends
-according to the rules of @emph{inheritance}
-into a single wrapper,
-and a “knot is tied” to resolve the self-references,
-either in a pure functional way by using some variant of a fixed-point combinator,
-or with side-effects by allocating a mutable record that the wrappers will update in place.
-See the appendix for a detailed discussion, but in a pure functional language,
-instantiation could be defined as follows assuming a fixed-point combinator
-(see appendix for details).
-
-
-@subsubsection{Methods}
-
-
-
-Early object systems relied heavily on side-effects to construct and evaluate
-their prototypes (and classes, when applicable), and so for them this model is but
-an approximation of the semantics when the system is stable and no runtime side-effects
-modify the inheritance structure.
-On the other hand, static languages with Class OO have always always avoided side-effects at compile-time,
-and actually behaved as in this pure functional model of inheritance.
-Finally, many recent Prototype OO languages use this model as is;
-indeed that is how the “extension” system of Nix is defined.
-
-
-@subsubsection{OO without Records}
-
-No need for objects and methods. Inheritance.
-And yet, methods very useful for modularity.
-More conflation to be at the same time a function, a table, a number, etc.
-Or “just” follow the interface of all of them.
-
-@subsubsection{OO without Messages}
-
-
-Experiments have shown it is possible to have a “Prototype OO” without conflation,
-and therefore without either “prototypes” or “objects”, just specifications and values @~cite{poof2021}.
-Furthermore, almost all of the same patterns of software as with regular OO apply in this setting.
-Still, using conflation is more @emph{modular} than not,
-because it enables programmers to defer the question of which parts of a program are up for extension
-and what the extensions will be until after runtime evaluation has started.
-This modularity advantage however, is lost to Class OO in static languages,
-where all class extensions happen at compile-time, and the conflation brings minor syntactic shortcuts
-and major semantic confusion among programmers who have trouble conceptualizing
-types and their incomplete specifications as separate, to the point that there is a long-standing
-confusion between subclassing (relationship of a specification) and subtyping, and many researchers and language designers
-have wasted years in an absurd quest to ignore, deny or paper over the difference between the two,
-and search for typesystems that would
-
-This conflation makes it very hard for many XXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLEH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 Meanwhile in Class OO, an “object” is an element of the type specified by a class.
 Meanwhile the class is a conflation of the partial specification
@@ -755,93 +689,6 @@ Those of us who, bright as we may be, aspire to greater software than fits in ou
 can appreciate both, and how they nicely complement each other.
 }
 
-
-@subsection{Single Inheritance}
-
-@subsubsection{Direct superclasses and subclasses}
-In single inheritance, each class has a single direct @emph{superclass}
-that it inherits from, of which it is a (direct) subclass,
-to which it contributes its increment of specification.
-We say that the superclass is more generic, and the subclass more specific.
-
-@subsubsection{Global structure of single inheritance}
-The transitive (direct and indirect) superclasses of a given class form a list.
-The set of all classes has the structure of a tree with some base class at its root
-(or forest, i.e. set of disjoint trees, if there is no common base class).
-
-@subsubsection{Prefix}
-In SIMULA 67 @~cite{Simula1967}, in which inheritance was first implemented though not thus called,
-the superclass was called a @emph{prefix class},
-as its specification was notionally a prefix to the complete specification
-for the subclass,
-taken literally as concatenating definitions of functions and variables
-with scope going in text order, with the subclass’s more specific code added
-at the end within the scope of the prefix class’s more generic code.
-
-@subsubsection{Suffix}
-Already in 1967 though, the “prefix” class could also add a suffix
-to the body of the subclass, the code of which would be evaluated
-where an @code{inner} placeholder was “splitting” prefix and suffix.
-Moreover, SIMULA 67 called “prefix sequence” the list of
-a class and its transitive superclasses, but kept it in most-specific-first order,
-which is contravariant with the notion of prefix coming before the suffix.
-
-@subsubsection{Method Resolution}
-When multiple superclasses define a same method, the most specific definition is used.
-Most languages allow the body of this definition to in turn invoke
-the method defined by the next most specific definition,
-via a keyword @code{super} (Smalltalk, Java) or some other similar mechanism.@note{
-SIMULA and its successor BETA @~cite{kristensen1987beta}
-were special in instead having a superclass’s body specify
-where subclass bodies are inserted, via the @code{inner} keyword.
-BETA generalized classes to “patterns” that also covered method definitions the same way.
-No other known language seems to use this technique,
-although it is easily expressible using user-defined method combinations
-in e.g. CLOS @~cite{bobrow88clos}.
-}
-
-@subsection{Multiple Inheritance}
-
-@subsubsection{Method Resolution in Multiple Inheritance}
-When each of multiple superclasses define a same method,
-the simple resolution strategy used by single inheritance doesn’t directly apply
-because the inheritance DAG defines a partial order, not a total order,
-so there may be several potentially “conflicting” method definitions to choose from.
-
-Some languages @~cite{Borning1979 Traits stroustrup1989multiple CecilMultimethods}
-issue an error in case of such method definition conflict;
-programmers must resolve conflict by having relevant subclasses explicitly define a method override.
-This is a consistent strategy, but the least useful among all consistent strategies:
-@itemize[
-@item{Overrides fail the incrementality purpose of OO whenever they require users
-to reimplement part or all of the functionality from superclasses.}
-@item{Overrides might want to recursively call the methods of the class’s direct superclasses,
-but that could lead to their transitively calling the method of a common indirect superclass multiple times,
-and exponentially so as the inheritance DAG contains more such “diamond” configurations.}]
-@; TODO cite Diamond Problem in C++ and learn about "virtual inheritance" and other C++ solutions.
-@; C++ embraces exponential explosion unless you use virtual base classes.
-@; your methods might also quickly check for multiple invocation and immediately return after the first time.
-@; in the end you can try to layer as conventions the features the language doesn’t directly offer.
-@; See also Malayeri & Aldrich’s 2009 "CZ: Multiple Inheritance without Diamonds" and its citations 43, 46.
-
-Instead, we may realize that any solution that ensures each potentially applicable method
-is considered once and only once (or at most once)
-in computing the @emph{effective method} (semantics of calling the named method)
-necessarily establishes a total “linear” ordering between these methods.
-
-@subsubsection{Class linearization}
-With @emph{class linearization}, a total ordering, or linearization, is chosen
-that extends the partial ordering defined by each class’s inheritance DAG,
-and also preserves the @emph{local ordering} of each class’s declaration
-of its direct superclasses.
-The resulting @emph{class precedence list} @~cite{bobrow86commonloops},
-traditionally kept in most-specific-first order
-(starting with the class, ending with the base class),
-is then used to resolve methods as if the class had been defined through
-single inheritance with that list of classes as its “prefix sequence”.
-This approach was introduced by Flavors @~cite{Cannon1979},
-and named by New Flavors @~cite{Moon1986Flavors}.
-
 @subsubsection{Method Combinations}
 Another innovation of Flavors
 was the notion of method combinations:
@@ -874,41 +721,12 @@ effective methods, and generic functions.
 Class precedence lists also offer a simple interface
 for users defining their own method combinations.
 
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLIH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
 @subsection{Comparison between single and multiple inheritance}
 
 @subsubsection{Modularity Comparison}
-Multiple inheritance is more modular than single inheritance,
-allowing to divide program specifications
-into more, smaller, more reusable classes,
-also commonly called “mixins” (in the Lisp tradition)
-or “traits” (in the Smalltalk, Mesa, SELF, Slate, Scala tradition)@note{
-Unhappily, Rust has recently popularized the word “trait” to mean something completely different,
-which is close to what Haskell previously called “typeclasses”,
-the informal notion of “protocol” in CLOS,
-or slightly more formal notion of protocol in Clojure:
-(a) first the ability to define a set of related function names and type signatures,
-and then the way that you can implement suitable functions for each of these names
-for inputs (and, in Haskell and to a point CLOS, also outputs) of each for specified types
-(or, in Haskell and CLOS, also tuple of types), with
-(b) second the crucial property
-that these traits, typeclasses or protocols can be defined @emph{after the fact},
-so that new typeclasses can be defined for existing types,
-and new types can be added to existing typeclasses.
-This second property is in sharp contrast with “interfaces” in Java or C#,
-wherein the author of the class must know in advance all the interfaces that the class will implement,
-which must yet cannot anticipate any of the future extensions that users will need.
-Users with needs for new protocols will then have to keep reinventing
-variants of existing classes, or wrappers around existing classes, etc.
-— and again when yet another protocol is needed.
-},
-such that each partial program specification
-can be written with a smaller amount of information in the head of the programmer.
 
-@subsubsection{Expressiveness Comparison}
-Multiple inheritance is more expressive than single inheritance,
-allowing partial specifications to be conceptualized
-that would have previously required code duplication or roundabout protocols
-that break modularity or incrementality.
 
 @subsubsection{Performance Comparison}
 Multiple inheritance is generally more expensive at runtime than single inheritance:
@@ -927,10 +745,7 @@ For this reason, many performance-conscious programmers
 prefer to use or implement single inheritance when offered the choice.
 
 
-
-
-
-
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLOH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 @subsection{Mixin Inheritance}
 
@@ -1380,7 +1195,7 @@ to reimplement and adapt the C4 algorithm to their own object system.
 Furthermore, the artifact we provide will only allow a language implementer
 to compare their implementation to ours and check for any bugs in their reimplementation.
 
-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLAH XXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLUH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 In Smalltalk and Java tradition, the word “class” describes
 entities with a single inheritance hierarchy;
@@ -1967,34 +1782,9 @@ imagine each specification having a sort, with a DAG of sorts,
 such that linearization of specs must respect the partial order of sorts,
 or, which is stronger, the linearization of specs must respect the linearization of their sort.
 
-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLEH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLYH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 @subsubsection{More Modular than Mixin Inheritance}
-
-For instance, consider a dependency DAG such as follows,
-where among other things,
-@c{Z} depends on @c{K2} that depends on @c{D} that depends on @c{O}:
-
-@(noindent) @image[#:scale 0.587]{C3_linearization_example.eps}
-
-The only way to compute precedence lists for @c{O}, @c{A}, @c{B}, @c{C}, @c{D}, @c{E}
-yields the respective precedence lists @c{[O]}, @c{[A O]}, @c{[B O]}, @c{[C O]}, @c{[D O]}, @c{[E O]}.
-No problem.
-
-However, consider the precedence list for @c{K1}.
-If computed naively by concatenating the precedence lists
-of the prototypes it directly depends on without eliminating duplicates,
-you get @c{[K1 C O A O B O]}.
-This can be a big problem if re-applying @c{O}
-will undo some of the effects of @c{A} or of @c{B}.
-The problem is the same for @c{K2} and @c{K3} and only worse for @c{Z}.
-Even when all prototypes at stake are idempotent and commute,
-this naive strategy will cause an exponential explosion of prototypes to mix
-as the graph becomes deeper.
-Meanwhile, a proper linearization as given by the C3 algorithm would be
-@c{[K1 C A B O]} for @c{K1} and @c{[Z K1 C K3 A K2 B D E O]} for @c{Z}.
-It avoids issues with duplicated prototypes, and grows linearly
-with the total number of prototypes however deep the graph.
 
 With mixin inheritance, developers would have to manually curate
 the order in which they mix prototypes, extra-linguistically.
@@ -2019,3 +1809,4 @@ Thus, mixin inheritance is indeed less modular than multiple inheritance.
 Double inheritance in NewtonScript: very similar to our prototypes + meta^n classes,
 with single inheritance each.
 https://www.newted.org/download/manuals/NewtonScriptProgramLanguage.pdf
+
