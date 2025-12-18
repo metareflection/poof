@@ -1,6 +1,8 @@
 %%% Bibliography, roughly sorted by year of publication
 % (See TODO at the end for more)
 
+%% 1843
+
 % Full text p.666 of https://www.google.fr/books/edition/Scientific_Memoirs_Selected_from_the_Tra/qsY-AAAAYAAJ?hl=en&gbpv=1&dq=Scientific+Memoirs+Selected+from+the+Transactions+of+Foreign+Academies+of+Science+and+Learned+Societies&printsec=frontcover
 % https://x.com/Ngnghm/status/1940199868037046726
 % From https://www.netlib.org/bibnet/authors/l/lovelace-ada-augusta.html
@@ -36,6 +38,8 @@
   url = {https://www.google.com/books/edition/Scientific_Memoirs_Selected_from_the_Tra/qsY-AAAAYAAJ?gbpv=1&pg=PA666}
 }
 
+%% 1844
+
 @book{dumas1844,
   author={Alexandre Dumas},
   title={Les Trois Mousquetaires},
@@ -43,6 +47,8 @@
   note={This novel, despite being named "The Three Musketeers",
         has four musketeers as protagonists.}
 }
+
+%% 1961
 
 % About the Burroughs B5000
 % Push-down stack, memory location independence,
@@ -75,6 +81,8 @@
   series = {IRE-AIEE-ACM '61 (Western)}
 }
 
+%% 1963
+
 @inproceedings{sketchpad1963,
   author = {Ivan E. Sutherland},
   title = {Sketchpad: A Man-Machine Graphical Communication System},
@@ -91,6 +99,8 @@
   location = {Detroit, Michigan},
   series = {AFIPS '63 (Spring)}
 }
+
+%% 1965
 
 @article{hoare1965record,
   title={Record handling},
@@ -480,7 +490,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % and so have PIE (Goldstein&Bobrow 1980), Flavors 1980, LOOPS 1982.
 % Traits from Mesa since 1979 [Curry 1982]
 % Conflict resolution is by erroring if inheriting more than one method without an explicit override
-@InProceedings{borning1982multiple,
+@InProceedings{Borning1982Multiple,
   title={Multiple inheritance in Smalltalk-80},
   author={Borning, Alan H and Ingalls, Daniel HH},
   booktitle={Proceedings at the National Conference on AI},
@@ -605,8 +615,9 @@ numpages = {8}
   series = {OOPSLA '86}
 }
 
-% Stein 1987 "Delegation is Inheritance", cited by cook1989inheritance
+%% 1987
 
+% Stein 1987 "Delegation is Inheritance", cited by cook1989inheritance
 
 % https://beta.cs.au.dk/ ?
 @article{kristensen1987beta,
@@ -617,6 +628,8 @@ numpages = {8}
   year={1987},
   url={https://www.semanticscholar.org/paper/The-BETA-Programming-Language-Kristensen-Madsen/3971897f708518e13809d3c0772105bd86526e50}
 }
+
+%% 1988
 
 % Specification of function behavior, similar to later CLHS
 % https://www.researchgate.net/publication/220178512_Common_Lisp_Object_System_Specification_X2JI3_Document_88-002R
@@ -669,6 +682,8 @@ numpages = {8}
           "components" provide mixin inheritance.}
 }
 
+%% 1989
+
 % Unless a base class is "virtual", multiple copies are inherited.
 % Conflict resolution is manual; you can explicitly call a superclass method,
 % but there is no linearization mechanism to preserve method linearity
@@ -681,6 +696,14 @@ numpages = {8}
   number={4},
   pages={367--395},
   year={1989}
+}
+
+% Authors of EuLisp don't like multiple inheritance, want mixin inheritance
+@book{bretthauer1989multiple,
+  title={Multiple Vs. Single Inheritance in Object-oriented Programming Languages: What Do We Really Want?},
+  author={Bretthauer, Harry and Christaller, Thomas and Kopp, J{\"u}rgen},
+  year={1989},
+  publisher={Gesellschaft f{\"u}r Mathematik und Datenverarbeitung mbH}
 }
 
 % Cook2012 cites his own thesis in arguing that Inheritance is neither necessary nor specific to OO.
@@ -775,6 +798,8 @@ numpages = {8}
 	url={http://fare.tunes.org/tmp/emergent/pclsr.htm}
 }
 
+%% 1990
+
 @book{cltl2,
   author = {Steele, Guy},
   title = {Common Lisp: The Language, 2nd edition},
@@ -809,6 +834,8 @@ numpages = {8}
   journal = {SIGPLAN Not.},
   month = sep
 }
+
+%% 1991
 
 % Introduces Recursion Schemes. Heavy on math notation.
 % Kind of category theory
@@ -926,6 +953,8 @@ numpages = {8}
     and only very quickly goes over inheritance, without details.
   }
 }
+
+%% 1992
 
 % According to Scholar.Google.com, this paper introduces "Open Recursion" in the context of CS,
 % p.31,32, to describe how to extract a class and subclass from fixpoint of operator, after Cook89.
@@ -2358,10 +2387,15 @@ series = {PLDI '99}
 % Medley LOOPS: The Basic System
 % a.k.a. "Lisp Object-Oriented Programming System (LOOPS) Volume I: The Basic System"
 
-% Authors of EuLisp don't like multiple inheritance, want mixin inheritance
-@book{bretthauer1989multiple,
-  title={Multiple Vs. Single Inheritance in Object-oriented Programming Languages: What Do We Really Want?},
-  author={Bretthauer, Harry and Christaller, Thomas and Kopp, J{\"u}rgen},
-  year={1989},
-  publisher={Gesellschaft f{\"u}r Mathematik und Datenverarbeitung mbH}
+% https://www.jot.fm/issues/issue_2005_01/column2/
+
+@article{stein1987delegation,
+  title={Delegation is inheritance},
+  author={Stein, Lynn Andrea},
+  journal={ACM SIGPLAN Notices},
+  volume={22},
+  number={12},
+  pages={138--146},
+  year={1987},
+  publisher={ACM New York, NY, USA}
 }

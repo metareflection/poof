@@ -19,7 +19,7 @@
 ]{Lambda, the Ultimate Object
 @; @linebreak[] @;
 } @subtitle{ @; <- for scribble/acmart
-       A theory of Object-Orientation, and a modest contribution on optimal inheritance}
+       A theory of Object-Orientation, with a modest contribution on Optimal Inheritance}
 
 @author[
     #:email (email "fare@mukn.com")
@@ -208,7 +208,7 @@ some may never have been told explicitly in academic literature;
 a few elements actually go radically against prevalent opinions in academic literature
 without being necessarily wholly original;
 and they have never been formulated together.
-What more, @principle{Our Theory of OO is @emph{Productive}}:
+What more, @principle{We offer a Theory of OO that is @emph{Productive}}:
 it does not merely restate and explain old knowledge,
 but shapes it into a coherent whole capable of generating and justifying new knowledge.
 
@@ -1335,7 +1335,7 @@ adopting the term, retroactively applying it to SIMULA,
 and subsequently inventing the terms “single” and “multiple” inheritance
 to distinguish the two approaches as well as recognize their commonality.
 
-Although some more early systems @~cite{Kahn1976 Borning1977 Traits}
+Although some more early systems @~cite{Kahn1976 Borning1977 Traits Borning1982Multiple}
 used multiple inheritance,
 @principle{multiple inheritance only became usable with the epochal system Flavors}
 @~cite{Cannon1979}
@@ -1345,7 +1345,7 @@ and CLOS@~cite{bobrow88clos cltl2}.
 Since then, many languages including Ruby, Perl, Python and Scala
 correctly adopted the basic design of Flavors (though none of its more advanced features)—we
 will call them @emph{flavorful} (our word).
-On the other hand, influential or popular languages including Self, C++ and Ada
+On the other hand, influential or popular languages including Smalltalk, Self, C++ and Ada
 failed to learn from Flavors and got multiple inheritance largely wrong—we
 will call them @emph{flavorless} (idem).
 
@@ -1590,9 +1590,10 @@ rather than care about whatever those who corrupt the name may want them to.}
   the OOP only happens in the meta-language (as in e.g. C++ templates),
   or the language lacks complete support for OOP.
 
-  Note that Kay didn’t immediately adopt SIMULA’s inheritance mechanism in Smalltalk
-  (it wasn’t called that yet, either);
-  but he did adopt it eventually, and this adoption is what launched OO as a phenomenon.
+  Note that Kay didn’t immediately adopt SIMULA’s inheritance mechanism in Smalltalk-72
+  (it wasn’t called that yet in SIMULA, either);
+  but he did adopt it eventually in Smalltalk-76, and
+  this adoption is what launched OO as a phenomenon.
   Kay stated adopting single inheritance over multiple inheritance
   was a compromise @~cite{kay1996early},
   yet still didn’t adopt multiple inheritance later, though his team experimented with it.
@@ -1605,7 +1606,7 @@ rather than care about whatever those who corrupt the name may want them to.}
   what matters to Kay is the role it plays in enabling dynamic code specialization.
   But inheritance becomes a primary concern to us as we formalize the concepts behind OO,
   and refine the intuitions of a pioneer into codified knowledge after decades of practice.
-  And if other means are found to satisfy Kay’s “extreme late binding”,
+  And if other means are found to arguably satisfy Kay’s “extreme late binding”,
   then we’ll have to give them a name that distinguishes them from what is now called OO.
 }
 and to other pioneers and experts;
@@ -5595,7 +5596,7 @@ that mixin inheritance involves just
 one type constructor @c{MExt} and two functions @c{fix} and @c{mix},
 repeated here more concisely from above:
 @Code{
-type MExt r i p = ∀ s, t : Type . s ⊂ r s, t ⊂ i s ⇒ s → t → p s∩t
+type MExt r i p = ∀ s, t : Type . s ⊂ r s, t ⊂ i s ⇒ s → t → (p s)∩t
 fixt : ∀ r i p : Type → Type, ∀ s, t : Type .
        s = i s ∩ p s, s ⊂ r s, t ⊂ i s ⇒
        t → MExt r i p → s
@@ -5673,7 +5674,7 @@ Might we not as well directly adopt the simpler and more expressive mixin inheri
 
 @subsubsection[#:tag "CMSI"]{Comparing Mixin- and Single- Inheritance}
 
-@subsubsub*section{Mixin Inheritance is Simpler — with FP}
+@subsubsub*section{Mixin Inheritance is Simpler, @emph{assuming FP}}
 
 Assuming knowledge of Functional Programming (FP),
 the definitions of single inheritance above
@@ -5861,7 +5862,15 @@ Self initially tried a weird resolution method along a “sender path”
 that dives depth first into the first available branch of the inheritance DAG
 without backtracking @~cite{parentsSharedParts1991},
 but the authors eventually recognized how wrongheaded that was,
-and reverted to, sadly, the conflict paradigm @~cite{self2007hopl}.
+and reverted to, sadly, the conflict paradigm @~cite{self2007hopl}@xnote["."]{
+  Like the “visitor pattern” approach to multiple dispatch, the
+  Self's once “sender path” approach to multiple inheritance
+  fails to capture semantics contributed by concurrent branches of a partial order,
+  by eagerly taking the first available branch without backtracking.
+  In the end, like the “conflict” approach to method resolution though in a different way,
+  it violates of the “linearity” property we describe section @seclink{CiMR},
+  which explains why it cannot be satisfying.
+}
 
 We will mainly focus on explaining the correct,
 @emph{flavorful} semantics for multiple inheritance, discovered by Flavors,
@@ -6067,7 +6076,7 @@ and how can we maximize modularity as we determine that list?
 And, if we step back further—what are all the consistency constraints
 that this ordered list should satisfy, and how do we know?
 
-@subsubsection{Consistency in Method Resolution}
+@subsubsection[#:tag "CiMR"]{Consistency in Method Resolution}
 
 Here are important consistency properties for method resolution to follow,
 also known as constraints on the method resolution algorithm.
@@ -6459,7 +6468,6 @@ will choose multiple inheritance over the less expressive and less modular alter
 see for instance Common Lisp, C++, Python, Scala, Rust.
 @TODO{cite Scala OO model. What else? Kathleen Fisher’s thesis?}
 
-
 @subsubsection{Comparing Multiple- to Mixin- Inheritance}
 
 Since all variants of OO can be expressed simply as first-class concepts in FP,
@@ -6529,87 +6537,101 @@ this might not have to be in a parent).
 Dependency constraints between modular extensions are an ubiquitous phenomenon in mixin inheritance,
 and these constraints exist even when they are not represented within the language
 as internal notions of “parent” and “ancestor”.
-When the system won’t enforce these constraints for the user,
-users will still have to enforce them by hand, or suffer errors as consequences.
 
-You could try pre-composing each modular extension with all its dependencies,
-such that when a modular extension @c{B1} and @c{B2} depends on @c{A},
-you export @c{(mix B1 A)} and @c{(mix B2 A)} to your users instead of @c{B1} and @c{B2}.
-But then you would have the very same diamond problem as when trying to synthesize
+Some clever chaps might suggest to pre-compose each modular extension with all its dependencies,
+such that when modular extension @c{B1} depends on @c{A},
+you’d export @c{B1precomposed = (mix B1 A)} instead of @c{B1},
+and that’s what your users would use.
+Unhappily, that means that if another module @c{B2} also depends on @c{A}
+and exports @c{B2precomposed = (mix B2 A)},
+then users who want to define a class @c{C} that uses both @c{B1} and @c{B2},
+will experience the very same diamond problem as when trying to synthesize
 a modular definition from an attribute grammar view of of multiple inheritance in @seclink{DMRMI}:
-the pre-composed dependencies (@c{A} in this case) would be duplicated in the mix of @c{B1 A B2 A};
+the pre-composed dependencies (@c{A} in this case) would be duplicated in the mix of
+@c{(mix B1precomposed B2precomposed) = (mix (mix B1 A) (mix B2 A))};
 these copies would badly interfere, in addition to leading to an exponential resource explosion
 as you keep pre-composing deeper graphs.
-Therefore, pre-composing modular extensions is not a solution,
-because they are the same thing as trying to combine modular definitions which doesn’t work.
-For modularity purposes, you must expose the individual modular extensions
-and their list of dependencies to be later composed after all transitive dependencies
-for the complete closed specification have been established.
+Therefore, pre-composing modular extensions is the same non-solution
+that led to the “conflict” view of multiple inheritance,
+based on the naive conceptualization of how to generalize single-inheritance.
+Indeed, precomposed modular extensions are essentially the same as modular definitions.
 
-Another solution to deal with dependencies without multiple inheritance is to use
-a rich enough strong static type system, wherein the second parameter @c{i} (for inherited)
-of our parameterized type @c{MExt r i p} can help ensure that a modular extension
-is always composed with dependencies to the right that provide those aspects it depends on.
+In the end, composing modular extensions is subject to dependency constraints.
+And these dependency constraints only get more complex and subtle
+if you want your linearization to respect not just the inheritance order,
+but also the local precedence order, monotonicity of precedence lists.
+Yet, automatically or manually, the constraints @emph{will} be enforced in the end,
+or programs @emph{will} fail to run correctly.
+Multiple inheritance enforces these constraints intra-linguistically,
+and requires no further communication between programmers.
+Mixin inheritance requires the programmer to enforce them extra-linguistically,
+and thus care about, and communicate about, which modular extension depends on which,
+in which order, including subtler details of local order and monotonicity
+if their specifications ever drive order-dependent resource management such as with locking.
+In other words,
+with multiple inheritance, a specification’s dependencies are part of its implementation, but
+@principle{with mixin inheritance, a specification’s dependencies become part of its interface}.
+
+In practice, that means that with mixin inheritance, programmers must not just
+document the current direct dependencies of their specifications;
+they must keep it up to date with every indirect dependencies
+from libraries they transitively depend on.
+And when a library makes a change to the dependencies of one of its specification,
+then every single library or program that directly or indirectly depends on that specification,
+must be suitably updated.
+Sensitivity to change in transitive dependencies more generally means
+much @emph{tighter coupling} between the versions of the many software libraries, and
+fragility of the entire ecosystem, as incompatibilities ripple out,
+and it becomes hard to find matching sets of libraries that have all the features one needs.
+Tight coupling is the antithesis of modularity@xnote["."]{
+  If you want to make the change easy on your transitive users,
+  you may have write and send patches to lots of different libraries and programs
+  that depend on your software.
+  This is actually the kind of activity we engaged in for years,
+  as maintainer of Common Lisp’s build system ASDF.
+  This was greatly facilitated by the existence of Quicklisp,
+  a database of all free software repositories using ASDF (thousands of them),
+  and of @c{cl-test-grid}, a program to automatically test all those repositories,
+  as well as by the fact that most (but by no means all) of these software repositories
+  were on github or similar git hosting webserver.
+  Making a breaking change in ASDF was painful enough as it is,
+  having to slightly fix up to tens of libraries each time,
+  but was overall affordable.
+  If every refactoring of the class hierarchy within ASDF, of which there were several,
+  had broken every repository that uses ASDF, due to
+  every user having to update their precedence list,
+  then these changes might have been one or two orders of magnitude more expensive.
+  This would have been prohibitive, whether the cost is born solely by the maintainer,
+  or distributed over the entire community.
+  By contrast, our experience with the OCaml and Haskell ecosystems is that
+  their strong static types without lenient subtyping creates
+  very tight coupling between specific versions of libraries,
+  with costly rippling of changes.
+  What results is then “DLL hell”, as it becomes hard to find coherent sets
+  of inter-compatible libraries that cover all the needs of your program,
+  and to keep them up-to-date when one library requires a bug fix,
+  even though there might be a library to cover each of your needs.
+}
+
+One thing that @emph{could} actually help deal with dependencies without multiple inheritance
+would be a rich enough strong static type system such that
+the @c{r}, @c{i} and @c{p} parameters (for required, inherited and provided)
+of our parameterized type @c{MExt r i p} can identify whether modular extensions
+are composed in ways that make sense.
 This strategy can indeed greatly help in dealing with dependencies of modular extensions.
 However, it does not fully solve the problem:
-it helps users @emph{check} that their manual solutions are a valid ordering
+yes it helps users @emph{check} that their manual solutions are a valid ordering
 that will eliminate certain classes of runtime errors;
-and if will help struggling users search for such a valid solution much faster
-than random attempts unguided by types;
-but the user still has to come up with the solution manually to begin with;
+and yes it helps struggling users search for such a valid solution faster
+than random attempts unguided by types, especially if error messages
+can pinpoint what elements fail to be provided, or are provided in ways incompatible
+with what other extensions expect.
+But the user still has to come up with the solution manually to begin with;
 and the user still has to enforce all the consistency constraints that his application needs
 between the solutions he comes up with for each and every specification;
 and the user still has to synchronize with authors of related other packages
 so they too do all those tasks correctly, and fight those who don’t see the point
 because they don’t personally need the same level of consistency.
-
-The automated management of transitive dependencies by Multiple inheritance
-matters a lot for modularity in practice:
-it means that when exporting some specification from a code library,
-you can keep its dependencies as implicit implementation details
-that users do not have to care about.
-By contrast,
-@principle{with mixin inheritance, a specification’s dependencies become part of the interface}
-that a library must export together with the specification.
-Users have to know those dependencies, care about them, use them properly.
-And then, when the library implementation changes its dependencies,
-or when these dependencies change because of their own transitive dependencies itself changes,
-as transitively imported from yet some other remote module,
-then all users must update their code.
-Conversely, when you modify your dependencies, even just by updating
-some library to a new version that sports a feature or bug fix you need,
-you are breaking not just the code of your library,
-not just the code of all libraries that use yours,
-but that of all libraries and programs that transitively use your code, too.
-If you want to make the change easy on them, you may have write and send patches
-to hundreds of different libraries and programs,
-which might not even be possible if there is no centralized registry
-of who uses what library@xnote["."]{
-  Sending patches to tens of users in advance of breaking changes is a task I dealt with
-  when making changes to Common Lisp’s build system ASDF.
-  This was facilitated by there being a database of all free software packages using ASDF, Quicklisp,
-  and a program to automatically test all those packages, @c{cl-test-grid}.
-  Making a breaking change in ASDF was painful enough as it is,
-  having to slightly fix up to tens of libraries each time.
-  If every refactoring of the class hierarchy within ASDF
-  had implied sending patches to a large fraction the thousands
-  of software libraries in Quicklisp,
-  making changes might have been two orders of magnitude more expensive.
-  Prohibitively so.
-}
-Sensitivity to change in transitive dependencies more generally means
-much tighter coupling between the versions of the many software libraries, and
-fragility in the entire ecosystem, as incompatibilities ripple and it becomes hard to find
-matching sets of libraries that have all the features one needs@xnote["."]{
-  Strong static types without lenient subtyping also tend to have this issue of small changes
-  causing waves of incompatibility across libraries, and
-  the Haskell or OCaml ecosystems are rife with library version incompatibility problems.
-}
-
-In the end, the automation of the precedence list by an OO system with multiple inheritance,
-especially if it also enforces consistency properties, is a huge boon to modularity
-compared to mixin inheritance, precisely because the task strides across the boundaries
-of libraries and programs developed by different sets of authors.
 
 Interestingly, single inheritance doesn’t have the above modularity issue of mixin inheritance,
 since every specification already comes with all its ancestors,
@@ -6764,8 +6786,16 @@ constraints between the precedence list of a specification and those of its ance
 notably, the “monotonicity” constraint states that
 the precedence list of an ancestor must be an ordered subset
 of that of the specification, though its elements need not be consecutive.
-We define our own algorithm C4 as an extension of C3 that respects the @emph{suffix property}
+We define our own algorithm C4 as an extension of C3,
+that in addition to the constraints of C3, also respects the @emph{suffix property}
 for specifications that are declared as suffixes.
+This means that an Optimal Inheritance Specification, or @c{OISpec}
+by extending the @c{MISpec} of Multiple Inheritance
+with a new field @c{suffix?} of type @c{Boolean},
+that tells whether the specification follows the @emph{suffix property} or not.
+(In a practical implementation, we could add more flags, for instance
+to determine if the specification is sealed, i.e. allows no further extensions.)
+@;{TODO also cite Dylan for that, and Scala}
 
 We give a complete Scheme implementation of C4 in the appendix,
 but informally, the algorithm is as follows,
@@ -6846,14 +6876,10 @@ as the semantically last parent of a specification@xnote["."]{
   @;TODO cite
 }
 
+@section{Advanced Topics in OO}
+
+@subsection{Focused modular extension}
+
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-We can then define an Optimal Inheritance Specification, or @c{OISpec}
-by extending the @c{MISpec} with a new field @c{suffix?} of type @c{Boolean}
-that tells if the specification follows the @emph{suffix property} or not.
-(In a practical implementation, we could add more flags, for instance
-to determine if the specification is sealed, i.e. allows no further extensions.)
-@;{TODO also cite Dylan for that, and Scala}
-
 
 @(generate-bibliography)

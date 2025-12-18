@@ -1596,39 +1596,11 @@ Requires good factoring indeed.
 Maintainership burden that is not as thoughtless as duplicating code,
 yet ultimately more efficient since it doesn't require duplicating design and fixes.
 
-@subsubsection{Modular Extensions}
-
-Let us consider implementing modular extensibility in a pure functional setting.
-If we modularly define extensions, our terms will take an argument @c{self}, the modularity context,
-and return an extension, which takes an argument @c{super},
-the previous “inherited” (record of) definitions,
-and returns some extended (record of) definitions.
-A simple type for a modular extension is then @r[M ⟶ E ⟶ E],
-wherein terms are typically of the form @linebreak[] @r{(λ (self super) ...extended_super)}.
-
-If we instead define extensions to modular definitions, our terms will take
-an argument @c{super}, the previous “inherited” modular definition,
-of type @r[M ⟶ E], and return an extended modular definition also of type @r[M ⟶ E],
-and therefore is of type @r[(M ⟶ E) ⟶ M ⟶ E].
-But since the point of modularity is to plug
-the same element of @r[M] at the end through a fixed-point,
-the construct contains the same useful information as @r[E ⟶ M ⟶ E], or as
-@r[M ⟶ E ⟶ E] above, just with extra complexity in the composition.
-We will therefore prefer the simpler “modular extension” point of view.
-
-In the general case, the type @r[E] or @c{super} and the return value
-will be that of a @emph{method} of a prototype, or sub-entity being incrementally defined,
-whereas @r[M] will be some language-wide namespace, registering all
-known (and yet unknown) computations, prototypes and library functions in the language ecosystem.
-(This is notably the case with @c{nixpkgs}, wherein the role @r[M] is taken
-by the argument @r[pkgs], top of the global namespace of packages
-and other entities within the ecosystem (including library functions, etc.)).
-In the simplest case, @r[E] and @r[M] will both be the same type,
-that of a single target being modularly and extensibly specified, typically a record.
-
+@@@@
 
 And no, the visitor pattern, even after you go through all the pain of it, doesn't fully capture the expressiveness of multiple dispatch with method combination, because it finds only one method.
 
+@@@
 
 The issue then is that establishing set of indexed types for a closed modular definition
 requires knowledge of all modules, whereas, to preserve the principle of modularity,
@@ -1696,7 +1668,6 @@ Just make sure you agree with anyone else that you will be directly sharing code
 
 }
 
-
 @; Flavors combination vs C++ conflict https://x.com/Ngnghm/status/1980509375232885161
 @; https://cs.pomona.edu/~kim/FOOPL/prelim.pdf
 
@@ -1704,13 +1675,10 @@ Just make sure you agree with anyone else that you will be directly sharing code
 @; multiple inheritance
 
 
-Self's once "sender path" approach to multiple inheritance, like the "visitor pattern" approach to multiple dispatch, fails to capture semantics contributed by concurrent branches of a partial order, by eagerly taking the first available branch without backtracking.
-
 I see a potential for confusion:
 - *specifications* need identity (e.g. pointer equality) as DAG nodes when using multiple inheritance or dispatch.
 - *targets* and elements of target types as such need no identity, but depending on what precisely you're specifying, may have one.
 
-@section{Advanced Topics in OO}
 
 @subsection{Method Combination}
 Idiots have methods conflict. Clever people have methods combine harmonously.
@@ -1784,29 +1752,8 @@ or, which is stronger, the linearization of specs must respect the linearization
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLYH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-@subsubsection{More Modular than Mixin Inheritance}
-
-With mixin inheritance, developers would have to manually curate
-the order in which they mix prototypes, extra-linguistically.
-When using prototypes defined in other modules,
-they would have to know not just the prototypes they want to use,
-but all the detail about the transitive prototypes they depend on.
-Their dependency DAG will not be a hidden implementation detail,
-but part of the interface.
-And when some upstream module modifies the dependency DAG of a prototype,
-all the prototypes in all the modules that transitively depend on it
-will have to be updated by their respective maintainers to account for the change.
-
-This requires much more information to understood and provided by developers
-than if these developers were instead using multiple inheritance,
-that automates the production of that precedence list, and
-its update when upstream modules are modified.
-The transitive parts of DAG can largely remain a hidden implementation detail
-from those developers who only care about some direct dependencies.
-Thus, mixin inheritance is indeed less modular than multiple inheritance.
-
-
 Double inheritance in NewtonScript: very similar to our prototypes + meta^n classes,
 with single inheritance each.
 https://www.newted.org/download/manuals/NewtonScriptProgramLanguage.pdf
 
+@@@
