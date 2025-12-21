@@ -5585,7 +5585,7 @@ and leave their users helpless, forced to reinvent entire frameworks of mutation
 so they may then live in systems they build on top of these frameworks,
 rather than directly in the language that denies the issues.
 
-@section{Inheritance: Mixin, Single or Multiple}
+@section{Inheritance: Mixin, Single, Multiple, or Optimal}
 
 @subsection{Mixin Inheritance}
 @subsubsection{The Last Shall Be First}
@@ -5817,7 +5817,7 @@ rather than internal modularity through better language semantics.
 Overall, single inheritance is much less modular than mixin inheritance,
 and in that respect, it fails to fulfill the very purpose of inheritance.
 
-@subsubsub*section{Single Inheritance is More Performant than Mixin Inheritance}
+@subsubsub*section{Mixin Inheritance is Less Performant than Single Inheritance}
 
 If single inheritance is more complex, less expressive and less modular than mixin inheritance,
 is there any reason to ever use it? Yes:
@@ -5831,6 +5831,8 @@ the same index to each and every inherited methods.
 Similarly for the fields of a class.
 Method and field lookup with single inheritance can then be as fast as memory access
 at a fixed offset from the object header or its class descriptor (or “vtable”).
+And code using this fast strategy for access to methods and fields of a specification
+is still valid for all descendents of that specification, and can be shared across them.
 
 By contrast, when using mixin inheritance,
 because the code for a method cannot predict in advance what other modular extensions
@@ -6299,7 +6301,6 @@ Among popular “flavorful” languages, Python, Perl and Solidity respect this 
 but Ruby, Scala and Lisp fail to.
 (Though at least in Common Lisp you can use metaclasses to fix the issue in your code.)
 
-
 @subsubsub*section{Shape Determinism: Consistency across Equivalent Ancestries}
 Two specifications with equivalent inheritance DAGs
 (with an isomorphism between them, bijection preserving partial order both ways)
@@ -6703,7 +6704,19 @@ because most OO hierarchies are shallow@xnote["."]{
 }
 
 Multiple inheritance otherwise involves the same runtime performance issues as mixin inheritance
-compared to single inheritance (see @seclink{CMSI}).
+compared to single inheritance (see @seclink{CMSI}):
+in general, method or field access requires a hash-table lookup
+instead of a fixed-offset array lookup, which is typically 10-100 times slower.
+
+Now, a lot of work has been done to improve the performance of multiple inheritance,
+through static method resolution when possible, @; TODO cite C++ ? type analysis ? sealing ?
+and otherwise through caching @~cite{bobrow86commonloops}. @; TODO cite SBCL?
+But these improvements introduce complexity, and caching
+increases memory pressure and still incurs a small runtime overhead
+even when successful at avoiding the full cost of the general case,
+while not eliminating the much slower behavior in case of cache miss.
+For all these reasons, many performance-conscious programmers
+prefer to use or implement single inheritance when offered the choice.
 
 @subsection[#:tag "OISMIT"]{Optimal Inheritance: Single and Multiple Inheritance Together}
 
@@ -6803,22 +6816,39 @@ making them less modular than they could, and sub-optimal@xnote["."]{
   which matters for the same reasons.
 }
 
-In 2024, @(GerbilScheme) similarly modernized its object system by
-unifying its single inheritance and multiple inheritance hierarchies
-so its “struct”s and “class”es (named in the Lisp tradition) may extend each other.
-The result ended up largely equivalent to the classes and modules or traits of Ruby or Scala,
-except that @(GerbilScheme) respects all the consistency constraints of the C3 algorithm,
-that it further extends to support structs.
-We will argue this is a case of @emph{Optimal Inheritance}.
+Note that Scala 2 further requires the user to explicitly merge the “suffixes” by hand,
+and include the most specific suffix ancestor
+as the semantically last parent of a specification@xnote[";"]{
+  We say semantically last, as Scala, per its documentation,
+  keeps precedence lists in the usual most-specific-first order.
+  However, syntactically, Scala requires users to specify parents in the opposite
+  most-specific-last order, so your suffix parent (a “class” in Scala)
+  must be syntactically specified @emph{first} in Scala 2.
+  As an exception, the most specific suffix ancestor need not be explicitly specified
+  if it is the top class @c{Object}.
+}
+Scala 3 by contrast relaxes this restriction, and, like Ruby, will automatically merge
+the “suffixes” and identify the most specific suffix ancestor
+(or issue an error if there is an incompatibility in suffixes)@xnote["."]{
+  We were unable to find any trace anywhere in the Scala 3.3 documentation
+  of this slight change in syntax and semantics,
+  its precise behavior, design rationale, and implementation timeline;
+  and the Scala team declined to answer our inquiries to this regard.
+  Nevertheless, this is clearly an improvement,
+  that makes Scala 3 as easy to use as Ruby or @(GerbilScheme) in this regard:
+  by comparison, Scala 2 was being less modular, in requiring users to do extra work
+  and make the “most specific class ancestor” a part of a trait’s interface,
+  rather than only of its implementation.
+}
 
 @subsubsection{The Key to Single Inheritance Performance}
 
 In this section, we will use the respective words “struct” or “class” as per the Lisp tradition,
 to denote specifications that respectively do or do not abide by
 the constraints of single inheritance (with according performance benefits).
-Our discussion will be trivial to generalize beyond specifications for type descriptors
+Our discussion trivially generalizes beyond specifications for type descriptors
 conflated with their targets to any specification;
-only the inheritance structure of our specifications will matter to this discussion.
+only the inheritance structure of our specifications matters to this discussion.
 
 As seen in @secref{CMSI}, what enables the optimizations of single inheritance is
 that the indexes to the fields and methods of a specification’s target
@@ -6840,7 +6870,7 @@ as long as this property holds: the optimizations of single inheritance are stil
 even though structs partake in multiple inheritance!
 Interestingly, the ancestry of a struct then is not a linear (total) order anymore:
 a few classes may be interspersed between two structs in the precedence list.
-However, the subset of this ancestry restricted to structs, is a linear order,
+However, the subset of this ancestry restricted to structs, is a linear (total) order,
 as every struct in a given specification’s ancestry is either ancestor or descendent
 of every other struct in that same ancestry.
 Thus structs are still in single inheritance with respect to each other,
@@ -6884,6 +6914,53 @@ and a “trait” is an infix specification@xnote["."]{
   It is better to leave suffix and prefix as twisted synonyms.
 }
 
+@subsubsection{Best of Both Worlds}
+
+An inheritance system that integrates multiple inheritance and single inheritance in the same hierarchy
+using the suffix property, yet also respects the consistency constraints of multiple inheritance,
+can best existing inheritance systems.
+Suffix specifications (such as Lisp structs) can inherit from
+infix specifications (such as Lisp classes), and vice versa,
+in an expressive and modular multiple inheritance hierarchy DAG.
+Yet suffix specifications being guaranteed that their precedence list is the suffix of any
+descendent’s precedence list, methods and fields from these specifications will enjoy
+the performance of single inheritance;
+fast code using fixed-offset access to these can be shared across all descendent specifications.
+We call that @emph{Optimal Inheritance}@xnote["."]{
+  Optionally, the specification DAG is made slightly simpler with
+  the empty specification, declared suffix, as the implicit ancestor of all specifications, and
+  the empty record specification, declared suffix,
+  as the implicit ancestor of all record specifications.
+  But this only actually helps if the system allows for the after-the-fact definition of
+  multimethods, “protocols” or “typeclasses” on arbitrary such specification.
+  @; TODO seclink
+}
+
+Note that while suffix specifications with respect to each other are in
+a “single inheritance” hierarchy as guaranteed by the suffix property,
+being in such a hierarchy is not enough to guarantee the suffix property;
+and suffix specifications are still in a “multiple inheritance” hierarchy with other specifications.
+Thus when “combining single and multiple inheritance”, it is not exactly “single inheritance”
+that we preserve and combine, but the more important struct suffix property.
+The crucial conceptual shift was to move away from the syntactic constraint on building a class,
+and instead focus on the semantic constraint on the invariants for descendents to respect,
+that themselves enable various optimizations.
+It may be a surprising conclusion to the debate between proponents of multiple inheritance
+and of single inheritance that in the end,
+single inheritance did matter in a way,
+but it was not exactly single inheritance as such that mattered,
+rather it was the suffix property implicit in single inheritance.
+The debate was not framed properly, and a suitable reframing solves the problem
+hopefully to everyone’s satisfaction.
+
+In 2024, @(GerbilScheme) similarly modernized its object system by
+unifying its single inheritance and multiple inheritance hierarchies
+so its “struct”s and “class”es (named in the Lisp tradition) may extend each other.
+The result ended up largely equivalent to the classes and modules or traits of Ruby or Scala,
+except that @(GerbilScheme) respects all the consistency constraints of the C3 algorithm,
+that it further extends to support suffixes, in what we call the C4 algorithm.
+It is the first and so far only implementation of @emph{Optimal Inheritance}.
+
 @subsubsection[#:tag "C4"]{C4, or C3 Extended}
 
 The authors of C3 @~cite{Barrett96amonotonic WikiC3},
@@ -6912,15 +6989,17 @@ where the steps tagged with (C4) are those added to the C3 algorithm
 @itemize[#:style'ordered
   @item{As in C3, we first extract the precedence lists of each parent,
         in the declared Local Order.}
-  @item{(C4) Before proceeding with the regular C3 algorithm, we split each precedence list
+  @item{(C4 split step) Before proceeding with the regular C3 algorithm, we split each precedence list
         into a prefix containing only infix specifications,
         and a suffix that starts with the first suffix ancestor.
         (Plain C3: put everything in the prefixes; suffixes are empty.)}
-  @item{(C4) We merge those suffixes into a merged suffix;
+  @item{(C4 suffix merge step)
+        We merge those suffixes into a merged suffix;
         The suffix property requires that these tails must be in total order, such that
-        given any two tails, one must be a suffix of the other,
+        given any two tails, either must be a suffix of the other,
         or else there is an error due to incompatible ancestries.}
-  @item{(C4) Then, in each precedence list prefix, remove from its end the infix specifications
+  @item{(C4 cleanup step)
+        Then, in each precedence list prefix, remove from its end the infix specifications
         that are already in the suffix in the same order;
         stop if you reach one that is in the suffix but in the wrong order,
         in which case it’s an error due to incompatible ancestries;
@@ -6938,7 +7017,7 @@ where the steps tagged with (C4) are those added to the C3 algorithm
         excluding each of their front element;
         if none fits, that’s an incompatibility error.
         If you eventually exhaust the lists, you’ve got your merged prefix.}
-  @item{(C4) Append the merged suffix to the end of the merged prefix.}
+  @item{(C4 join step) Append the merged suffix to the end of the merged prefix.}
   @item{Return the merged prefix.}]
 
 @;{TODO examples of the working algorithm, of incompatibility cases,
@@ -6950,48 +7029,47 @@ As a slight optimization, you could keep those precedence lists pre-split
 between a prefix of infix-only ancestors, and
 a suffix of the most specific suffix ancestor (followed by its infix and suffix ancestors).
 
-Importantly, note that the constraints of C3
-do not in general suffice to uniquely determine how to merge precedence lists.
+@subsubsection{C3 Tie-Breaking Heuristic}
+
+The constraints of C3 or C4 do not in general suffice
+to uniquely determine how to merge precedence lists.
 There are cases with multiple solutions satisfying all the constraints,
 at which point the linearization algorithm must use some heuristic
 to pick which candidate linearization to use.
-The C3 algorithm (and after it C4) adopts the heuristics that when faced with a choice,
-pick for next leftmost element the candidate that appears leftmost
-in the concatenation of precedence lists;
-we @emph{believe} (but haven’t proved) that this is also equivalent to
-picking for next rightmost element the candidate that appears rightmost in that concatenation.
+
+The C3 algorithm (and after it C4) adopts the heuristics that,
+when faced with a choice,
+it will pick for next leftmost element the candidate that appears leftmost
+in the concatenation of precedence lists.
+We @emph{believe} (but haven’t proved) that this is also equivalent to
+picking for next rightmost element the candidate
+that appears rightmost in that concatenation@xnote["."]{
+  Exercise: prove or disprove this equivalence.
+}
 Importantly, we also believe (but again, haven’t proved) this heuristic maximizes
 the opportunity for a specification’s precedence list to share a longer suffix with its parents,
 thereby maximally enabling in practice the optimizations of single inheritance
 even when specifications are not explicitly declared “suffix”.
 
-This is the algorithm used in @(GerbilScheme).
-Interestingly, Ruby and Scala essentially behave the same way with respect to merging suffixes,
-but they both fail to use C3 or otherwise respect either local order or monotonicity
-when handling the prefixes.
-Note that Scala 2 further requires the user
-to explicitly merge the “suffixes” by hand, and include the most specific suffix ancestor
-as the semantically last parent of a specification@xnote[";"]{
-  We say semantically last, as Scala, per its documentation,
-  keeps precedence lists in the usual most-specific-first order.
-  However, syntactically, Scala requires users to specify parents in the opposite
-  most-specific-last order, so your suffix parent (a “class” in Scala)
-  must be syntactically specified @emph{first} in Scala 2.
-  As an exception, the most specific suffix ancestor need not be explicitly specified
-  if it is the top class @c{Object}.
-}
-Scala 3 by contrast relaxes this restriction, and, like Ruby, will automatically merge
-the “suffixes” and identify the most specific suffix ancestor
-(or issue an error if there is an incompatibility in suffixes)@xnote["."]{
-  We were unable to find any trace anywhere in the Scala 3.3 documentation
-  of this slight change in syntax and semantics,
-  its precise behavior, design rationale, and implementation timeline;
-  and the Scala team declined to answer our inquiries to this regard.
-  Nevertheless, this is clearly an improvement,
-  that makes Scala 3 as easy to use as Ruby or @(GerbilScheme) in this regard:
-  by comparison, Scala 2 was being less modular, in requiring users to do extra work
-  and make the “most specific class ancestor” a part of a trait’s interface,
-  rather than only of its implementation.
+One interesting property of the C3 heuristic is that,
+even if the language does not explicitly support suffix specifications,
+by following the same discipline that Scala 2 forces upon you,
+of always placing the most-specific suffix specification last in each specification’s
+local precedence order (removing any of its now redundant ancestors for that order, if necessary),
+you will obtain the same result if the language explicitly supported suffix specifications
+using the C4 algorithm.
+Thus, even without explicit language support for suffix specifications,
+you could enjoy most of the optimizations of de facto single inheritance
+if the implementation were clever enough to opportunistically take advantage of them.
+This is interestingly a property shared by the Ruby and Scala algorithm,
+but not by the original LOOPS algorithm that Scala tweaked.
+This seems to be an important property for a tie-break heuristic,
+that should probably be formalized and added to the constraints of C4.
+@xnote["."]{
+  We haven’t thought hard enough to say what other interesting properties, if any,
+  are sufficient to fully determine the tie-break heuristic of C3,
+  or of a better variant that would also respect the hard constraints of C3.
+  We also leave that problem as an exercise to the reader.
 }
 
 @section{Advanced Topics in OO}
