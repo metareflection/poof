@@ -723,11 +723,6 @@ for users defining their own method combinations.
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLIH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-@subsection{Comparison between single and multiple inheritance}
-
-@subsubsection{Modularity Comparison}
-
-
 @subsubsection{Performance Comparison}
 Multiple inheritance is generally more expensive at runtime than single inheritance:
 Notably, access to a method or attribute with single inheritance
@@ -746,203 +741,6 @@ prefer to use or implement single inheritance when offered the choice.
 
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLOH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-@subsection{Mixin Inheritance}
-
-@subsubsection{Comparative Expressiveness}
-Mixin inheritance is more expressive than single inheritance, and
-just as expressive as multiple inheritance, in that it enables
-classes (mixins or traits) to be defined once without being tethered
-to a single superclass (or chain of superclasses), and
-combined and recombined in many compositions@xnote["."]{
-  Actually, mixin inheritance can be argued to be more expressive than multiple inheritance
-  unless multiple inheritance is also accompanied by some means of renaming
-  classes, slots, and methods.
-  However, in a language where classes are meta-level constants,
-  renaming is a trivial extra-lingual operation;
-  and in a language where classes (or prototypes) are first-class runtime values,
-  renaming is a relatively simple operation though it may depend on reflection.
-  Thus, in practice, we can usually dismiss the thin advantage in expressiveness of mixin inheritance.
-}
-Conceptually, composition of mixins allows to @emph{append} two lists of classes,
-when single inheritance only allows to @emph{cons} a class to a fixed list.
-
-@subsubsection{Comparative Modularity}
-Mixin inheritance is less modular than multiple inheritance,
-because it makes the programmer responsible for ensuring
-there are no missing, repeated or misordered superclasses,
-manually doing what multiple inheritance does for you
-when computing its class precedence lists.
-A notable bad situation is when the list of superclasses of a class is modified,
-at which point all its transitive subclasses must be updated accordingly,
-even if defined in completely different modules that the author cannot modify,
-that he may have no idea exists, whose authors he cannot even notify.
-This makes changes brittle, breaks modularity, and
-effectively forces the entire inheritance DAG of a class to become part of its interface.
-By contrast, multiple inheritance can automate all these troubles away,
-and let programmers only have to worry about their own classes’s direct superclasses.
-
-@subsubsection{No Further Comment}
-Mixin inheritance definitely has its uses, if only as
-a lower-level building block used in implementing more elaborate object systems.
-Nevertheless, in the rest of this document, we dismiss mixin inheritance
-for being a less modular and less performant alternative
-to the combination of multiple inheritance and single inheritance we are seeking.
-
-
-
-@subsubsection{Previous Art}
-Many languages adopted single inheritance for its performance advantages,
-yet were later extended with multiple inheritance for its expressiveness,
-while trying to preserve the advantages of single inheritance where appropriate.
-
-We will examine the cases of Common Lisp, Scala and Ruby:
-Lisp in the early 1970s had “structs” that implemented records (0-classes)
-and that by the mid 1970s could be extended with single inheritance (s-classes),
-then by the late 1970s also adopted “classes” that could be extended with multiple inheritance (m-classes).
-@; TODO cite
-Meanwhile, Java in the mid 1990s defined its evaluation model around “classes”
-that only support single inheritance (s-classes), but Scala in the mid 2000s
-enriched the Java evaluation model with “traits” that support multiple inheritance (m-classes).
-@; TODO cite
-@; Scala 2004, Scala 3 2021
-As for Ruby, though its “classes” only support single inheritance (s-classes),
-by version 1.9 in 2007 they could be extended with multiple inheritance using “modules” (s-classes).
-@; TODO cite
-@; Ruby 1993, 1.9 2007
-
-@subsubsection{Terminology}
-Beware that the word “class” weakly implies multiple inheritance in the Lisp tradition,
-where it contrasts with “struct” that strongly implies single inheritance.
-
-By contrast, “class” weakly implies single inheritance
-in the Smalltalk, Java and Scala tradition,
-where it contrasts with “trait” that strongly implies multiple inheritance.
-
-To confuse things further, in C++ tradition,
-a @code{struct} is just a way to define a class
-wherein all members (methods and variables) are public by default,
-which has nothing to do with either single or multiple inheritance.
-C++ always has multiple inheritance, although
-superclasses reached along many paths are duplicated unless declared “virtual”,
-which is a form of mixin inheritance.
-
-This document follows the Lisp tradition in its terminology,
-except in the section on Scala below where we will use Scala terminology,
-but in double-quotes.
-
-@subsection{Common Lisp}
-
-@subsubsection{Separate Class and Struct Hierarchies}
-Common Lisp @~cite{cltl2} has @emph{structs},
-that sport single inheritance and are quite efficient,
-as well as @emph{classes} @~cite{gabriel1991clos},
-that sport multiple inheritance and are more expressive but slower.
-
-However, to avoid inconsistencies, Common Lisp wholly prevents
-a class from inheriting from a struct, or vice versa,
-keeping the two hierarchies separate,
-though offering a uniform interface to both.
-
-@subsubsection{User-defined Hierarchies}
-Through its MOP @~cite{AMOP},
-Common Lisp also enables users to define metaclasses
-wherein users can define their own class hierarchies,
-that could conceivably combine single and multiple inheritance.
-We are not aware of anyone using this mechanism to do so;
-if someone did, it is unclear whether the mechanisms provided
-would allow them implement the usual performance optimizations
-allowed on its single inheritance fragment.
-
-@subsection{Scala}
-
-@subsubsection{Traits}
-Scala extends Java’s “classes” that only support single inheritance
-with “traits” @~cite{scalableComponentAbstractions2005}
-that support multiple inheritance.
-
-Scala “classes” and “traits” definitions may specify
-at most one direct “superclass” and potentially many direct “supertraits”
-that it “extends”.
-Syntactically, developers specify direct superclasses and traits in least-specific-first order,
-which is the reverse of the local precedence order.
-But semantically, the Scala specification still discusses
-class precedence lists (that it calls “class linearizations”)
-in the traditional most-specific-first order.
-
-@subsubsection{Scala superclasses}
-Scala 2.13 requires that if a trait or class has a (single inheritance) superclass
-in its inheritance hierarchy, then it shall declare as the first entity it extends
-a (single inheritance) class that is more specific
-than any of its indirect (single inheritance) superclasses.
-
-Scala 3.3 relaxes this restriction by automatically computing
-this most specific superclass from all the superclasses in its inheritance hierarchy,
-so you can declare directly extending a superclass of it, or only traits.
-
-We have been unable to find a documentation of this feature in Scala 3,
-its precise behavior, design rationale, and implementation timeline,
-even after contacting members of the Scala team.
-However, this is clearly the Right Thing to do in this case,
-as we’ll explain when discussing our solution.
-
-@subsubsection{Scala linearization}
-Scala uses a variant of the original LOOPS linearization algorithm @~cite{ducournau1992monotonic}:
-The LOOPS algorithm simply concatenates all the class precedence lists
-of a class’s direct superclasses, then removes all duplicates,
-keeping the @emph{first} one (in most specific order) and removing latter copies,
-following the same heuristic as Flavors @~cite{Moon1986Flavors},
-The Scala algorithm does as much but keeps the @emph{last} duplicate instead,
-following an opposite heuristic.
-
-Although this change in heuristic is not explained by Scala authors,
-we believe it was chosen because, unlike the LOOPS heuristic,
-it always preserves the precedence list of the least-specific direct supertrait
-(syntactically first, semantically last) as the tail of the defined class’s precedence list,
-which is necessary when that last supertrait is a single-inheritance “class”,
-or has a “superclass” more specific than “Object”.
-
-Scala 2.13 in particular requires developers to specify in first syntactic position
-a “trait” whose most specific “superclass” is no less specific than that of
-any of the other direct supertraits; otherwise the compiler throws an error.
-
-Although this behavior doesn’t seem to be documented,
-Scala 3.3 takes a more “semantic” than “syntactic” approach:
-it specially treats the “class” fragment of inheritance and behaves as if
-the most specific of any of the supertraits’ most-specific “class” superclass had been specified first.
-It is of course an error if the supertraits’ “superclasses” are not a total order,
-with a single most-specific “class” among them.
-
-@section{Our C4 Algorithm}
-
-@subsection{Best Combining Single and Multiple Inheritance}
-
-@subsubsection{Unifying Classes and Structs}
-In modernizing the builtin object system of @(GerbilScheme),
-we decided to unify hierarchies
-of single inheritance structs and multiple inheritance classes,
-that were theretofore separate, as in Common Lisp.
-In doing so, we identified a maximally expressive way to combine them.
-
-@subsubsection{Adding a Fifth Constraint}
-We had recently adopted the C3 algorithm for class linearization,
-its four constraints and its heuristic.
-We decided to minimally complement it with an additional fifth constraint,
-necessary and sufficient to support integration of single inheritance @emph{structs}
-into multiple inheritance precedence lists.
-
-@subsection{The Struct Suffix Constraint}
-
-@subsubsection{Constraint}
-@bold{The precedence list of a struct is a suffix of
-the precedence list of all its subclasses.}
-
-@subsubsection{Why the Suffix Constraint}
-The above suffix constraint is precisely
-the semantic prerequisite for the efficiency optimizations
-enabled by single-inheritance:
-access to methods can use a same statically computed index
-for all subclasses of a class.
 
 @subsubsection{Special Treatment of Struct Suffix}
 Our algorithm enforces the Struct Suffix Constraint
@@ -1197,205 +995,12 @@ to compare their implementation to ours and check for any bugs in their reimplem
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLUH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-In Smalltalk and Java tradition, the word “class” describes
-entities with a single inheritance hierarchy;
-some languages in this tradition (such as Mesa, SELF, Scala)
-have entities that support multiple inheritance, that they call “trait”.
-In Lisp, C++ or Python tradition, the word “class” describes entities
-with a multiple inheritance hierarchy;
-Lisp also supports entities with a single inheritance hierarchy, that they call “struct”;
-To insist that a “class” is to be used in the context of multiple inheritance,
-Lisp may call it a “mixin” rather than a “trait”,
-but “mixin” in Programming Language literature has latter come to mean
-something slightly different and more specific,
-partaking of “mixin inheritance”.
-Meanwhile, Python and C++ have no such single inheritance hierarchy;
-but C++ calls “struct” a “class” whose “members” are public rather than private by default;
-this concept extends the concept of “struct” in C wherein they are records with no inheritance at all.
-
-Instead of “classes”, we will speak of @emph{prototypes} for the entities being specified in general,
-since Prototype OO is more general than Class OO @~cite{poof2021},
-the latter being “just” the special case of compile-time prototypes
-for (compile-time descriptors for) types and associated method dispatch tables.
-We will call those prototypes @emph{traits} when part of a multiple inheritance hierarchy,
-in the Smalltalk tradition.
-We will call those prototypes @emph{lines} when part of a single inheritance hierarchy,
-a word we just made up, that may avoid confusion and bring the right connotation.
-We will call those prototypes @emph{mixins} when part of a mixin inheritance hierarchy,
-after Bracha, and as in Jsonnet.
-
-A line is a bit like a family name, wherein if you inherit from it,
-you also inherit from its own line, and so on, transitively to the beginning of remembered ancestry;
-whereas a trait is more like a first name (a mixin even more so),
-in that you have a thus-named ancestor, it doesn't constrain the name of the next ancestor.@note{
-One proposed naming solution was to call an entity with single-inheritance
-a “uniprototype”, “1-prototype”, “uniproto” or “1-proto”,
-or maybe “uniclass” or “1-class” if it is a class;
-similarly, an entity with multiple-inheritance would be
-a “multiprototype”, “n-prototype”, “n-proto”, “ω-prototype” or “ω-proto”;
-or maybe “multiclass”, “n-class” or “ω-class” if it is a class.
-The above are all new words, a bit heavy to use, but quite suggestive and unambiguous.
-
-m-prototype, m- (multi, many, mixin, modular, etc.)
-s-prototype,   (single, struct, suffix).
-Surprising conclusion: It's not a constraint on how it was built, but on how it was used(!)
-(see also linear types vs uniqueness types).
-Any valid definition for an s-class could just as well define an m-class and vice versa;
-whether a class definition is for an s-class or m-class could as well be a boolean flag
-(and indeed is in @(GerbilScheme)).
-
-We previously used “struct” for a single-inheritance entity,
-which has the advantage that it matches the Lisp tradition,
-the oldest one that simultaneously tackled both multiple and single inheritance;
-but it might have caused confusion in the majority of readers who are familiar with C or C++ but not Lisp,
-and it did confuse at least one reader into believing we were discussing a Lisp-only problem.
-We could also have tried to use the earliest name for each concept;
-since (multiple) inheritance can be traced back to KRL, its entities could be called “frames”,
-and for single inheritance tracing back to SIMULA (in concept) and later Smalltalk (in name),
-its entities would be called “classes”;
-but few remember KRL, and frames, and those who do might ascribe much more meaning to it
-beside denoting something with multiple inheritance;
-and the word “class” was invented even before single-inheritance by Tony Hoare to mean more of
-an interface or type that many kinds of records could satisfy in an extensible way
-(with what we would nowadays call subtyping), which fits multiple inheritance
-as well if not better than single inheritance;
-meanwhile the word “class” was also used in the context of multiple inheritance
-in the same year (1976) as Smalltalk adopted single inheritance.
-So this originalist naming might still be confusing.
-
-Originalism would be even more confusing with respect to “mixin”:
-the word was introduced by Flavors (in Lisp) to signify
-any flavor (i.e. class) specifically intended for multiple inheritance, i.e. a trait
-(even though any flavor (a.k.a. class) can be used with multiple inheritance already).
-However, the term was later hijacked by Bracha and Cook to refer to mixin inheritance,
-a more primitive model (less elaborate, but also more fundamental and more directly composable)
-discussed below.
-This latter technically more useful meaning has gained more adoption and recognition
-in the programming language community,
-whereas “mixin” in the original sense has but a minor use within the small Lisp community.
-
-For reasons that will become apparent later, “suffix” could also have been chosen;
-though, in some languages with reversed syntax, “prefix” might work, and
-would refer back to “prefix classes” in SIMULA;
-just the need to discuss which order to use though is enough to make us reject the name as confusing.
-
-We eventually settled on calling a multiple-inheritance entity “trait”,
-which is a well-accepted term, unambiguous enough,
-while a completely new word, “line”, was chosen for single-inheritance entity,
-which is in the lexical vicinity of both “trait” and “inheritance”,
-and suggests a linear order.
-}
-
-
-
-If your language of choice is Common Lisp, then your “classes” are traits (including “mixin” classes),
-and your “structs” are structs, all of them compile-time prototypes, though first-class through reflection.
-If your language of choice is Smalltalk, then your “classes” are structs,
-and there are no traits, and structs are compile-time prototypes, but first-class through reflection.
-If your language of choice is Java, then your “classes” are structs,
-though your “interfaces” are traits.
-If your language of choice is Scala, then your “classes” are structs as in Java,
-but your “traits” are traits indeed.
-If your language of choice is C++, then your “virtual classes” are traits,
-and non-virtual “classes” are mixins,
-while your “structs” are just traits or mixins with public members
-but are emphatically @emph{not} structs in the sense of this article.
-
-
-
-by each language: mandating, connoting, prohibiting, either a single or multiple inheritance
-hierarchy depending on the programming language, sometimes with inconsistent
-variations in meaning across documents describing a same language,
-or within a same document. Yet it should be fairly obvious to readers
-from each OO tradition how to map the concepts we present and the words we use
-to the concepts and words used for their programming language of choice,
-and vice versa.
-However, we will leave such mappings as an exercise to the reader,
-and refrain from building a grand taxonomy of mappings or words and concepts
-across all programming languages known and unknown, since,
-as Whitehead famously quipped, Taxonomy is the death of science.
-
-
-If  
-to the terminology of the Lisp tradition, because it is
-the oldest tradition that has been tackling those problems.@note{
-Although it came first and directly or indirectly inspired
-all OO languages and systems that followed,
-SIMULA has many idiosyncrasies that set it and its successor BETA
-apart from the wider OO tradition.
-Also, neither tackled multiple (or mixin) inheritance,
-making them irrelevant to most of the issues at stake.
-
-Smalltalk, although it adopted inheritance only oh-so-slightly later than Lisp,
-had a larger direct and indirect influence in spreading the ideas of OO.
-Smalltalk itself never adopted multiple inheritance, but many systems
-built on Smalltalk, directly inspired by Smalltalk, or otherwise
-in a tradition that stems from Smalltalk, have:
-ThingLab, Mesa, SELF, and arguably Scala, support @emph{traits}
-with multiple inheritance.
-}
-
-See append
-In a lazy language with implicit recursion, @r[Y] could be defined as follows:
-@codeblock{
-  (define (Y f) (f (Y f)))}
-but that version would needlessly duplicate computations.
-To share computations, a better version would be:
-@codeblock{
-  (define (Y f) (letrec ((x (f x))) x))}
-And indeed, that’s exactly how the Nix extension system defines its basic fixed-point operator
-(wherein the @r[a : b] syntax is λ-abstraction and the @r[let] is implicitly recursive)@~cite{nix2015}:
-@codeblock{
-  fix = f: let x = f x; in x}
-}
-
-In an eager language, without implicit recursion, but without sharing of computation results,
-thus with much computation explosions, you can define @r[Y]
-using the simpler composition combinator @r[B] and the duplication combinator @r[D]
-(here in an applicative variant that protects the duplication under a @r[(λ (y) …)]):
-@codeblock{
-  (define B (λ (x y) (λ (z) (x (y z))))) ; composition
-  (define D (λ (x) (λ (y) ((x x) y)))) ; duplication
-  (define Y (λ (f) (D (B f D)))) ; fixed-point}
-But XXX
 To avoid exponential recomputations, though, it is preferrable to emulate laziness
 by having wrappers be functions of two delayed computations,
 with the delayed fixed-point combinator @r[Y^] as follows:
   (define (instantiate-wrapper^ w b) (Y^ (λ (s) (w s b))))
   (define (Y^ f) (letrec ((x (delay (f x)))) x)) ; fixed-point}
 }:
-
-The @r[Y] combinator could be defined as follows in 
-    (let ((self (wrapper self base)))
-       self))}
-(Using Scheme syntax, but
-
-
-This definition uses Scheme syntax, but assumes a lazy dialect of Scheme.
-However, the Nix language is a pure functional defines
-
-
-}:
-@codeblock{
-  (define (instantiate-wrapper wrapper base)
-    (Y (λ (self) (wrapper self base))))}
-
-in both cases, the “super” refers to the state of the record so far,
-to be used eagerly to refer to partial values inherited so far,
-while the “self” refers to the state of the record at the end of the evaluation,
-for delayed use after the record is fully initialized.
-Attempts to use some attribute before it was initialized may result in
-
-In Prototype OO, this computation is typically called @emph{instantiation},
-which can be expressed as follows a functional language,
-using the usual Y fixed-point combinator.
-
-
-
-You can implement arithmetics with side-effects into arrays.
-That doesn't make arithmetics itself effectful in any shape or form.
-Same goes with OO. Using side-effects to implement xxxx
-
 
 @subsection{Claims}
 
@@ -1442,7 +1047,8 @@ The present paper claim the following original contributions:
 Many of the concepts and relationships we tackle have long been part of OO practice and lore,
 yet have been largely neglected in scientific literature and formalization attempts.
 
-@(generate-bibliography)
+
+@@@
 
 Lens s t a b = { get: (s -> a) ; set: (s -> b -> t) }
 LensVL s t a b = forall f. Functor f => (a -> f b) -> s -> f t
@@ -1462,8 +1068,7 @@ subbase l b = l.get b
 instantiate : methodLens self self effective body -> mixin_function self base effective -> base -> self
 instantiate l m b = fix (λ (s) (l.set s (m s (l.get b))))
 
-
-
+@@@
 
 Aznavour: le temps
  les deux guitares
@@ -1471,9 +1076,6 @@ Aznavour: le temps
  emmenez-moi
 
 
-A vast array of ignoramus, including ADA and C++ designers and users, think multiple inheritance requires a way to resolve method conflicts, when Lisp's Flavors (1979) showed that methods could and should harmonously combine instead. Losers have conflicts, winners play win-win.
-
-@appendix
 @section{Classes as Prototypes}
 Examples.
 

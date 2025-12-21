@@ -515,10 +515,11 @@ as well as most languages until relatively recently,
 were using mutable state everywhere, and an eager evaluation model, at least by default.
 And with early 1980s slogans like “objects are a poor man’s closures” and
 “closures are a poor man’s objects”@~cite{adams88oopscheme},
-the problem back then was clearly not whether OO could be done purely with functions,
-but whether it made practical sense to program purely without side-effects in general.
+the problem back then was clearly not
+whether OO could be done purely with functions (obviously it could), but
+whether it made practical sense to program purely without side-effects in general.
 That question that would only be slowly answered positively,
-in theory in the early 1990s @; TODO CITE Moggi
+in theory in the early 1990s @~cite{Moggi1991Monads}
 and in practice in the mid 2000s to mid 2010s,
 as Haskell grew up to become a practical language@xnote["."]{
   Some may identify darcs (2003) as the first widely used real-world application of Haskell.
@@ -536,8 +537,8 @@ as Haskell grew up to become a practical language@xnote["."]{
   In any case, making a practical language pure functional was just not an option before 2010 or so,
   and it is absurd to claim that any programming language concept is intrinsically stateful
   just because its practical implementations before 2010 were all stateful.
-  You could similarly claim that logic programming is intrinsically stateful,
-  or that functional programming itself is intrinsically stateful.
+  You could similarly make the absurd claim that logic programming, functional programming,
+  or linear algebra are intrinsically stateful.
 }
 
 Yet, there are (a) pure models of OO such as those of
@@ -740,13 +741,14 @@ that handles the dispatch based on the types of its arguments@xnote["."]{
   They would in turn be isomorphic to the “typeclasses” of Haskell
   or the “traits” of Rust... @; TODO cite
   if only these latter two suppored inheritance, which they don’t.
-  These idioms denote a set of related function names and type signatures,
-  that get implemented differently for different types of arguments
+  These idioms all denote a set of related function names and type signatures,
+  that get implemented differently for different configurations,
+  where each configuration is associated to @emph{one or multiple} types of arguments
   (and, in Haskell, also different types of expected results).
-  Other the crucial property, these traits, typeclasses or protocols
+  Other crucial property of these idioms: these traits, typeclasses or protocols
   can be defined @emph{after the fact},
-  so that new traits, typeclasses or protocols can be defined for existing types,
-  and new types can be added to existing typeclasses.
+  so that new traits, typeclasses or protocols can be defined for configurations of existing types,
+  and new types can be added to existing typeclasses, etc.
   This second property is in sharp contrast with “interfaces” in Java or C#,
   wherein the author of the class must know in advance
   all the interfaces that the class will implement,
@@ -759,9 +761,10 @@ that handles the dispatch based on the types of its arguments@xnote["."]{
   making them modular at a finer grain (protocol extensions rather than protocol definitions),
   which in turn makes them more modular.
   Note also how what Rust recently popularized as “trait” is
-  something completely different from what Smalltalk, Mesa or Scala call “trait”,
-  that do support inheritance, but only describe operations on a single type,
-  and cannot be defined after the fact, but have to be made explicit parts of a class definition.
+  something completely different from what Smalltalk, and after it Mesa or Scala, call “trait”.
+  In these languages, with an anterior claim to the word,
+  a “trait” is just a class that partakes in multiple inheritance,
+  defining a single type and associated methods, and not after the fact.
   Once again, be careful that there is no common vocabulary
   across programming language communities.
 }
@@ -1301,9 +1304,15 @@ in order from least specific superclass to most specific@xnote["."]{
   were only invented and named but with Alan Kay’s Smalltalk 76.
   In the end, Simula should count as a precursor to OO, or at best an early draft of it,
   but either way, not the real, fully-formed concept.
-  Dahl and Nygaard did not invent OO as we know it
-  anymore than Columbus discovered the continent of America;
-  still they made the key discovery that later made OO possible.
+  Dahl and Nygaard never invented OO as most of us know it,
+  not then with SIMULA, not later with BETA, and never later in their life either;
+  just like Columbus never set foot on the continent of America.
+  Yet still they made the key contribution that made the later greater discovery of OO
+  not just possible, but necessary.
+  They rightfully deserve to be gently mocked for getting so close of a vast continent they sought
+  yet failing to ever set foot on it.
+  But this should only make us admire them more so for having crossed an uncharted ocean
+  the vast extent of which no one suspected, beyond horizons past which no one dared venture.
 }
 In modern terms, we call the prefix a superclass,
 or more generally, a parent, or, when considering transitive parents, an ancestor. @; TODO CITE
@@ -5664,7 +5673,8 @@ you use a modular @emph{extension} in addition to an existing modular definition
 
 When building a modular definition through successive extensions,
 an initial known existing modular definition is needed as a base case to those extensions;
-this role is easily filled by the @c{baseMDef}.
+this role is easily filled by the base modular definition @c{baseMDef},
+that given some modular context, just returns the @c{top} value.
 Now the recursive case involves a different kind of entities, modular extensions.
 But we saw that modular extensions were already sufficient by themselves
 to define mixin inheritance.
@@ -5674,7 +5684,7 @@ Might we not as well directly adopt the simpler and more expressive mixin inheri
 
 @subsubsection[#:tag "CMSI"]{Comparing Mixin- and Single- Inheritance}
 
-@subsubsub*section{Mixin Inheritance is Simpler, @emph{assuming FP}}
+@subsubsub*section{Mixin Inheritance is Simpler than Single Inheritance, @emph{assuming FP}}
 
 Assuming knowledge of Functional Programming (FP),
 the definitions of single inheritance above
@@ -5718,22 +5728,28 @@ to implement or use it.
 @; they tend to be clever enough not to need it to be simplified for them,
 @; and not to care enough to simplify it for others.
 
-@subsubsub*section{Mixin Inheritance is More Expressive}
+@subsubsub*section{Mixin Inheritance is More Expressive than Single Inheritance}
 
-Single inheritance can be trivially expressed in terms of Mixin inheritance
-by tagging some modular extensions as only to be used as second argument of the @c{mix} function,
-never the first, and only considering them as specifications;
-meanwhile, those extensions used as the first argument of the @c{mix} function
-must be constant, defined on the spot, and not reused afterwards.
-Thus, single inheritance can be seen as just a restrictive style in which to use mixin inheritance,
-and is no more expressive than mixin inheritance.
+Single inheritance can be trivially expressed in terms of Mixin inheritance:
+a single inheritance specification is just a list of modular extensions composed
+with a base generator at one end;
+you can achieve the same effect by composing your list of modular extensions,
+and instantiate it as usual with the top value as the seed for inheritance.
+Single inheritance can be seen as a restrictive style in which to use mixin inheritance,
+wherein the modular extensions considered as specification will be tagged
+so they are only ever used but as the second argument (to the right) of the @c{mix} function,
+never the first.
+Meanwhile, those extensions used as the first argument (to the left) of the @c{mix} function
+must be constant, defined on the spot, and never reused afterwards.
+Thus, single inheritance is no more expressive than mixin inheritance.
 
 Conversely, given a language with FP and dynamic types or sufficiently advanced types,
 you can implement first-class mixin inheritance on top of first-class single inheritance by
 writing a function that abstracts over which parent specification
 a specification will inheritance from, as in Racket née PLT Scheme @~cite{Mixins1998 Flatt2006Mixins}.
 In terms of complexity, this construct puts the cart before the horse,
-but it is possible, and may allow to cheaply leverage and extend existing infrastructure
+since it would be much easier to build mixin inheritance first, then single inheritance on top.
+Still, this style is possible, and may allow to cheaply leverage and extend existing infrastructure
 in which single inheritance was already implemented and widely used.
 
 Just like in mixin inheritance, a @emph{target} can thus still be seen as
@@ -5750,14 +5766,18 @@ your compile-time language lacks sufficiently expressive functions
 to build mixin inheritance atop single inheritance?
 Then, mixin inheritance is strictly more expressive@~cite{eppl91}
 than single inheritance:
+You can still express single inheritance as a stunted way of using mixin inheritance.
+But you can’t express mixin inheritance on top of single inheritance anymore.
 Single inheritance only allows you to build a specification as a list of modular extensions
 to which you can add one more modular extension at a time (as in @c{cons}),
-when mixin inheritance allows you to build a specification as a list of modular extensions
-that you can concatenate with other lists of modular extensions (as in @c{append}).
+“tethered” to the right.
+Meanwhile, mixin inheritance allows you to build a specification as a list of modular extensions
+that you can concatenate with other lists of modular extensions (as in @c{append}),
+mixable both left and right.
 If you have already defined a list of modular extensions, and want to append it in front of another,
 single inheritance will instead force you to duplicate the definition of each and every
 of those modular extensions in front of the new base list.
-See next section for the issues this creates.
+See next section for how that makes single inheritance less modular.
 
 Finally, since the two are equivalent in the context of first-class OO with higher-order functions,
 but different in the more common context of second-class OO
@@ -5767,7 +5787,7 @@ the language syntax, static type system, dynamic semantics,
 or socially-enforced coding conventions, or development costs
 somehow disallow or strongly discourage modular extensions as first-class entities.
 
-@subsubsub*section{Mixin Inheritance is More Modular}
+@subsubsub*section{Mixin Inheritance is More Modular than Single Inheritance}
 
 In second-class class OO with single inheritance,
 each modular extension can only be used once, at the site that it is defined,
@@ -5797,7 +5817,7 @@ rather than internal modularity through better language semantics.
 Overall, single inheritance is much less modular than mixin inheritance,
 and in that respect, it fails to fulfill the very purpose of inheritance.
 
-@subsubsub*section{Single Inheritance is More Performant}
+@subsubsub*section{Single Inheritance is More Performant than Mixin Inheritance}
 
 If single inheritance is more complex, less expressive and less modular than mixin inheritance,
 is there any reason to ever use it? Yes:
@@ -6485,9 +6505,22 @@ Together, they also tell us that some features could be automated in theory
 yet cannot be so in practice due to lack of synchronization between programmers,
 due to lack of a better OO variant.
 
-@subsubsub*section{Same Expressiveness}
+@subsubsub*section{Multiple Inheritance is less Simple than Mixin Inheritance}
 
-Mixin inheritance is clearly as expressive as multiple inheritance,
+Obviously, multiple inheritance requires the system to implement some extra logic
+either to handle proper ancestor linearization, or to implement
+some really bad method resolution algorithm instead.
+This makes multiple inheritance more complex to implement,
+and more complex to explain especially if you don’t do it properly.
+
+But is that complexity intrinsic to the problem it is solving, or is it extrinsic?
+In other words, does multiple inheritance solve a problem you would have to face anyway
+with mixin inheritance, or does it introduce concepts you do not need?
+And assuming it is a problem you face anyway, does it solve it in the simplest manner?
+
+@subsubsub*section{Multiple Inheritance is as Expressive as Mixin Inheritance}
+
+Mixin inheritance is clearly not less expressive as multiple inheritance,
 since every entity that can be written using multiple inheritance
 can just as well be written using mixin inheritance,
 by computing the precedence list manually.
@@ -6509,11 +6542,11 @@ but this case never seems to happen in the wild@xnote["."]{
 }
 Also, this slight decrease in expressiveness, if any, does not impact modularity,
 since the same module that exported a modular extension to use multiple times,
-would instead export a multiple inheritance specification to use once, and
-per-method helpers to use multiple times.
+would instead export a multiple inheritance specification to use once,
+that defines a helper that it possibly calls once, but can be thereafter called many times.
 Therefore we can say that multiple inheritance is as expressive as mixin inheritance in practice.
 
-@subsubsub*section{Superior Modularity}
+@subsubsub*section{Multiple Inheritance is more Modular than Mixin Inheritance}
 
 Let us now compare the two variants of inheritance from the point of view of modularity.
 Multiple inheritance requires somewhat more sophistication than mixin inheritance,
@@ -6650,6 +6683,28 @@ the modularity issues one experiences with one kind of inheritance are still sup
 to the lack of modularity issues one experiences with the kinds of inheritance
 lacking the modularity about which to have issues to begin with.
 
+@subsubsub*section{Multiple Inheritance is slightly less Performant than Mixin Inheritance}
+
+Compared to Mixin Inheritance, Multiple Inheritance involves this extra step of
+computing a specification’s precedence list.
+The linearization algorithm has a worst case complexity of
+O(kn) for the LOOPS or Flavors algorithms, and O(k²n²) for C3,
+where k is the number of parents and n the total number of ancestors.
+Yet, in practice the extra step is run at compile-time for second-class OO,
+and does not affect runtime;
+moreover, it is often quite fast in practice
+because most OO hierarchies are shallow@xnote["."]{
+  A study of Java projects on GitHub @~cite{Prykhodko2021DIT}
+  found that the vast majority of class ancestries include fewer than 5 specifications,
+  including the base class @c{Object}. But that is a language with single inheritance.
+  A survey run on all Common Lisp classes defined by all projects in Quicklisp
+  shows that the vast majority of ancestries have 9 specifications of fewers,
+  though the largest one had 27.
+}
+
+Multiple inheritance otherwise involves the same runtime performance issues as mixin inheritance
+compared to single inheritance (see @seclink{CMSI}).
+
 @subsection[#:tag "OISMIT"]{Optimal Inheritance: Single and Multiple Inheritance Together}
 
 @subsubsection{State of the Art in Mixing Single and Multiple Inheritance}
@@ -6662,9 +6717,11 @@ It would have to be at least as expressive as mixin inheritance and multiple inh
 as modular as multiple inheritance,
 and as performant as single inheritance.
 
-Now, as far back as 1979, Lisp offered both single-inheritance with its @c{struct}s,
+Now, as far back as at least 1979, Lisp offered both single-inheritance with its @c{struct}s,
 and multiple-inheritance with its @c{class}es (nées Flavors).
-Since 1988 or so, the Common Lisp Object System (a.k.a. CLOS) @~cite{bobrow88clos}
+@; David Moon's MacLisp Reference Manual (April 1974) does not mention DEFSTRUCT.
+@; Ani/Director is from 1976, but never widely used.
+Since 1988 or so, the Common Lisp Object System (a.k.a. CLOS) @~cite{bobrow88clos cltl2}
 even offered a way to interface uniformly with either structs or classes,
 using generic functions and metaclasses.
 Programmers could develop software with the flexibility of classes,
@@ -6680,39 +6737,88 @@ anywhere in that hierarchy, and losing any modularity benefit you might have enj
   Another limitation of structs and classes in Common Lisp is that for historical reasons,
   the default syntax to define and use structs is very different (and much simpler)
   from the CLOS syntax to use and define objects. You can use the explicitly use the CLOS
-  syntax to define structs by specifying an appropriate metaclass @c{structure-class}
+  syntax to define structs by specifying an appropriate metaclass @c{structure-class}9
   as opposed to @c{standard-class} for the standard objects of CLOS;
   however, the resulting syntax is more burdensome than either plain struct or plain CLOS syntax.
   This syntax discrepancy creates another barrier to refactoring of code
   between structs and classes. Yet this syntactic barrier remains minor compared to
   the semantic barrier of having to forfeit multiple inheritance in an entire class hierarchy.
+
+  Now, one could also conceivably use Common Lisp metaclasses @~cite{AMOP}
+  to re-create arbitrary user-defined inheritance mechanisms,
+  including our Optimal Inheritance below.
+  The semantics of it would be relatively easy to re-create.
+  However, it might still be hard to do it in a way that
+  the underlying implementation actually benefits from the optimization opportunities
+  of single-inheritance, at least not in a portable way.
 }
 
-Since then, Ruby and Scala have done better, wherein classes can extend structs,
-and structs can extend classes—except that
-Ruby respectively calls “classes” and “modules”
-the respective single- and multiple- inheritance entities,
-whereas Scala, following the Smalltalk tradition in that,
-respectively calls them “classes” and “traits” @~cite{scalableComponentAbstractions2005}.
+Since then, Ruby (1995) and Scala 2 (2004) have done better,
+wherein “single inheritance” structs and “multiple inheritance” classes
+can extend each other—except that
+Ruby calls these entities respectively “classes” and “modules”
+whereas Scala, following the Smalltalk tradition,
+calls them respectively “classes” and “traits” @~cite{scalableComponentAbstractions2005}@xnote["."]{
+  It is bad enough that “class” denotes entities with multiple inheritance in Lisp or Python,
+  but specifically entities with single inheritance in Smalltalk, Ruby or Scala.
+  It doesn’t help that the Scala documentation is not consistent about that naming,
+  and uses the word “class” ambiguously, sometimes to mean suffix specifications only,
+  sometimes to mean “class-or-trait”, specifications both infix and suffix.
+  To further confuse terminology, a C++ @c{struct} is just a regular class,
+  that always supports multiple inheritance (there are no “single inheritance entities” in C++),
+  except that classes defined with the @c{struct} keyword
+  have all their members public by default rather than private as with the @c{class} keyword,
+  which makes the @c{struct} statement backward compatible with the equivalent statement in C.
+  Thus there is a “struct/class” distinction in C++, but as a minor syntactic feature
+  that has nothing to do with either single or multiple inheritance.
+  And to make things even more confusing, “multiple inheritance” in C++ is not
+  what it is in Ruby, Scala, Lisp, Python and other flavorful languages;
+  instead it’s a mix of flavorlesss “conflict” inheritance (for “virtual” classes),
+  and weird path-renamed duplicated inheritance a la CommonObjects (for the non “virtual”)
+  that tries hard to fit the DAG square of multiple inheritance into a round tree hole.
+  Anyway, the conclusion here once again is that the word “class” is utterly useless
+  at conveying precise connotations about inheritance
+  outside the context of a specific language.
+}
 Ruby and Scala combine the two forms of inheritance in ways broadly similar to each other
 and to the Optimal Inheritance we propose below
-(Ruby did about 10 years earlier that Scala,
-but without an academic publication to cite, and also without static types).
-However, Ruby uses a variant of the Flavors algorithm, and Scala a variant of the LOOPS algorithm,
-and neither respects either Local Order or Monotonicity, making them less modular than they could,
-which is sub-optimal.
+(Ruby did so about 10 years earlier than Scala 2,
+but without an academic publication to cite, though also without static types).
+However, Ruby uses a variant of the Flavors algorithm
+(depth first traversal),
+and Scala a variant of the LOOPS algorithm
+(concatenation of precedence lists then removal of duplicates),
+and neither respects Local Order nor Monotonicity,
+making them less modular than they could, and sub-optimal@xnote["."]{
+  Interestingly, and although this change and its rationale are not explained
+  in Scala documentation or papers,
+  Scala removes duplicates from the beginning of the concatenate list
+  when LOOPS removes them from the end.
+  This change makes the algorithm preserve the longest suffix possible,
+  which crucially matters for the Scala “single inheritance” fragment;
+  LOOPS instead preserves the longest prefix possible, which serves no purpose,
+  and sacrifices the suffix, when preserving the suffix could have helped
+  with opportunistic optimizations even in the absence of suffix guarantees.
+  Note that Ruby and our C4 algorithm also preserve the longest suffix possible,
+  which matters for the same reasons.
+}
 
-Since 2024, our own @(GerbilScheme),
-allows “structs” and “classes” (named after the Lisp tradition)
-to extend each other like Ruby and Scala do,
-but, in doing so, respects all the consistency constraints of the C3 algorithm,
+In 2024, @(GerbilScheme) similarly modernized its object system by
+unifying its single inheritance and multiple inheritance hierarchies
+so its “struct”s and “class”es (named in the Lisp tradition) may extend each other.
+The result ended up largely equivalent to the classes and modules or traits of Ruby or Scala,
+except that @(GerbilScheme) respects all the consistency constraints of the C3 algorithm,
 that it further extends to support structs.
-In the rest of this paper, we will keep naming structs and classes
-after the Lisp tradition—although we will also accept
-specifications that are not classes (not being for type descriptors),
-but may be prototypes, or neither.
+We will argue this is a case of @emph{Optimal Inheritance}.
 
 @subsubsection{The Key to Single Inheritance Performance}
+
+In this section, we will use the respective words “struct” or “class” as per the Lisp tradition,
+to denote specifications that respectively do or do not abide by
+the constraints of single inheritance (with according performance benefits).
+Our discussion will be trivial to generalize beyond specifications for type descriptors
+conflated with their targets to any specification;
+only the inheritance structure of our specifications will matter to this discussion.
 
 As seen in @secref{CMSI}, what enables the optimizations of single inheritance is
 that the indexes to the fields and methods of a specification’s target
@@ -6724,15 +6830,16 @@ this is walk along the reverse of the precedence list.
 And for the walks to yield the same results,
 after putting those lists in the usual order,
 can be stated as the following property, that we will call the @emph{suffix property}:
-@principle{the precedence list of a struct must be a suffix of that of its descendents}.
+@principle{the precedence list of a struct is a suffix of that of every descendent of it}.
 
-Now this semantic constraint can be very well be expressed and enforced
+Now this is semantic constraint, not a syntactic one,
+and it can be very well be expressed and enforced
 in a system that has multiple inheritance.
-Thus it turns out that indeed, a struct can inherit from a class, and a class from a struct;
-as long as this property holds, the optimizations of single inheritance are still valid,
+Thus it turns out that indeed, a struct can inherit from a class, and a class from a struct,
+as long as this property holds: the optimizations of single inheritance are still valid,
 even though structs partake in multiple inheritance!
-Interestingly, the ancestry of a struct is not a linear (total) order anymore:
-a few classes may be interspersed between structs in the precedence list.
+Interestingly, the ancestry of a struct then is not a linear (total) order anymore:
+a few classes may be interspersed between two structs in the precedence list.
 However, the subset of this ancestry restricted to structs, is a linear order,
 as every struct in a given specification’s ancestry is either ancestor or descendent
 of every other struct in that same ancestry.
@@ -6741,8 +6848,9 @@ even though they are part of multiple inheritance in their relationship with cla
 
 Since the suffix property is the thing that matters,
 we will name “suffix” the generalization of structs
-(in Lisp lingo, or classes in Smalltalk or Scala lingo)
-from classes to prototypes and arbitrary specifications.
+(in Lisp lingo, or classes in Smalltalk lingo)
+from classes (here meaning prototypes for type descriptor)
+to prototypes (for any target) and arbitrary specifications (without conflation).
 By contrast we will call “infix” the specifications
 that are explicitly not declared as suffix by the programmer,
 and just say specification (or prototype if conflated with target,
@@ -6750,8 +6858,7 @@ or class if furthermore the target is a type descriptor)
 when it can be either infix or suffix.
 Thus, in Lisp lingo, a “struct” is a suffix specification,
 a “class” is a specification and a “mixin” is an infix specification.
-In Smalltalk or Scala lingo, a “class” is a suffix specification
-(though Scala documentation sometimes use it for any specification),
+In Smalltalk lingo, a “class” is a suffix specification,
 and a “trait” is an infix specification@xnote["."]{
   Interestingly, our “suffix” is the same as the “prefix” of SIMULA.
   SIMULA calls “prefix” a superclass, precisely because its single inherited behavior
@@ -6792,7 +6899,8 @@ for specifications that are declared as suffixes.
 This means that an Optimal Inheritance Specification, or @c{OISpec}
 by extending the @c{MISpec} of Multiple Inheritance
 with a new field @c{suffix?} of type @c{Boolean},
-that tells whether the specification follows the @emph{suffix property} or not.
+that tells whether or not the specification requires all its descendents
+to have its precedence list as a suffix of theirs.
 (In a practical implementation, we could add more flags, for instance
 to determine if the specification is sealed, i.e. allows no further extensions.)
 @;{TODO also cite Dylan for that, and Scala}
@@ -6804,7 +6912,7 @@ where the steps tagged with (C4) are those added to the C3 algorithm
 @itemize[#:style'ordered
   @item{As in C3, we first extract the precedence lists of each parent,
         in the declared Local Order.}
-  @item{(C4) Before proceeding to the regular C3 algorithm, we split each precedence list
+  @item{(C4) Before proceeding with the regular C3 algorithm, we split each precedence list
         into a prefix containing only infix specifications,
         and a suffix that starts with the first suffix ancestor.
         (Plain C3: put everything in the prefixes; suffixes are empty.)}
@@ -6858,22 +6966,32 @@ thereby maximally enabling in practice the optimizations of single inheritance
 even when specifications are not explicitly declared “suffix”.
 
 This is the algorithm used in @(GerbilScheme).
-Interestingly, Ruby and Scala 3 essentially behave the same way with respect to merging suffixes,
+Interestingly, Ruby and Scala essentially behave the same way with respect to merging suffixes,
 but they both fail to use C3 or otherwise respect either local order or monotonicity
 when handling the prefixes.
-Note that Scala 2 behaves largely like Scala 3, but a further requires the user
-to explicitly include the most specific suffix ancestor
-as the semantically last parent of a specification@xnote["."]{
+Note that Scala 2 further requires the user
+to explicitly merge the “suffixes” by hand, and include the most specific suffix ancestor
+as the semantically last parent of a specification@xnote[";"]{
   We say semantically last, as Scala, per its documentation,
-  also keeps precedence lists in the usual most-specific-first order.
+  keeps precedence lists in the usual most-specific-first order.
   However, syntactically, Scala requires users to specify parents in the opposite
   most-specific-last order, so your suffix parent (a “class” in Scala)
   must be syntactically specified @emph{first} in Scala 2.
-  It also doesn’t help that Scala documentation ambiguously uses “class”
-  at times to mean suffix specifications only,
-  but at other times to mean all specifications including infix ones
-  (usually called “traits” in Scala).
-  @;TODO cite
+  As an exception, the most specific suffix ancestor need not be explicitly specified
+  if it is the top class @c{Object}.
+}
+Scala 3 by contrast relaxes this restriction, and, like Ruby, will automatically merge
+the “suffixes” and identify the most specific suffix ancestor
+(or issue an error if there is an incompatibility in suffixes)@xnote["."]{
+  We were unable to find any trace anywhere in the Scala 3.3 documentation
+  of this slight change in syntax and semantics,
+  its precise behavior, design rationale, and implementation timeline;
+  and the Scala team declined to answer our inquiries to this regard.
+  Nevertheless, this is clearly an improvement,
+  that makes Scala 3 as easy to use as Ruby or @(GerbilScheme) in this regard:
+  by comparison, Scala 2 was being less modular, in requiring users to do extra work
+  and make the “most specific class ancestor” a part of a trait’s interface,
+  rather than only of its implementation.
 }
 
 @section{Advanced Topics in OO}
@@ -6883,3 +7001,8 @@ as the semantically last parent of a specification@xnote["."]{
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 @(generate-bibliography)
+
+@appendix
+
+@section{The C4 algorithm}
+
