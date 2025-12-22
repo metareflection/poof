@@ -125,6 +125,8 @@
 % How original are the boxes-and-arrows drawings for pointers? The heap allocation?
 % compacting garbage collection - Aha, he cites LISP. And SIMULA.
 
+%% 1966
+
 % Warren Teitelman MIT PhD dissertation "Pilot: A Step Toward Man-Computer Symbiosis" 1966
 % Gabriel2012 claims it introduces mixins as "advice".
 @PhDThesis{teitelman1966,
@@ -155,6 +157,8 @@
   numpages = {8}
 }
 
+%% 1967
+
 % Ole-Johan Dahl and Kristen Nygaard. Class and subclass declarations 1967 (pdf)
 % https://www.ub.uio.no/english/subjects/naturalscience-technology/informatics/themes/dns/index.html
 % First implements classes, and introduces inheritance (though not the word);
@@ -180,6 +184,8 @@
   url = {http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.332.3161},
 }
 
+%% 1968
+
 % More condensed than the above, with more language context
 @Misc{Simula1968,
   Author = {Ole-Johan Dahl and Bjørn Myhrhaug and Kristen Nygaard},
@@ -187,6 +193,8 @@
   Year = {1968},
   url = {https://web.archive.org/web/20131225084408/http://www.edelweb.fr/Simula/scb-1.pdf}
 }
+
+%% 1972
 
 % Identifies class with procedure that computes an algorithm and constructs a record
 % and yields current values multiple times to other activities with "detach" (call again for next)
@@ -220,11 +228,15 @@
   keywords = {modules, software, KWIC index, modularity, software engineering, software design}
 }
 
+%% 1973
+
 % XXX TODO
 % Hewitt, Bishop, Greif, Smith, Matson, Steiger
 % Actor Induction and Meta-evaluation
 % POPL
 % 1973
+
+%% 1974
 
 % Minsky's 1974 paper on Frames uses the words "prototype" and "inherit", but incidentally,
 % not at all to refer to the concepts at stake. MIT AIM-306
@@ -234,6 +246,8 @@
   year={1974},
   url={https://dspace.mit.edu/handle/1721.1/6089}
 }
+
+%% 1975
 
 % 1975 Hewitt Stereotypes
 % p.101 “The "frame" problem of McCarthy for assertional frames corresponds closely to
@@ -318,7 +332,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url="https://doi.org/10.1007/3-540-07168-7_77"
 }
 
-
 % AITR-346.ps
 % Uses the word prototypes and objects in a suggestive but informal way.
 % The knowledge representation is a decision tree in a 3kloc LISP program
@@ -348,6 +361,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   keywords = {Module interconnection language, Accessibility, Visibility, Protection, Linking, Scope of definition, Virtual machine, Project management tool., Information hiding, External name, System hierarchy},
   location = {Los Angeles, California}
 }
+
+%% 1976
 
 % Unnamed language inspired by Hewitt's actors (PLASMA) and Smalltalk-72.
 % Prototype-based ("objects" reply to "messages", "prototype" not used),
@@ -386,6 +401,21 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={https://exhibits.stanford.edu/stanford-pubs/catalog/pf235fy3176}
 }
 
+%% 1977
+
+% Uses the word "prototypes", and has no classes. And multiple inheritance.
+@InProceedings{Borning1977,
+  author = {Alan Hamilton Borning},
+  title = {{ThingLab} --- an Object-Oriented System for Building Simulations using Constraints},
+  booktitle={5th International Conference on Artificial Intelligence},
+  pages={497--498},
+  month = {August},
+  year = {1977},
+  url = {https://www.ijcai.org/Proceedings/77-1/Papers/085.pdf}
+}
+
+%% 1978
+
 % Starts with modularity principle
 % Mentions multiple inheritance of traits, but does not explain too much
 @inproceedings{Smalltalk78,
@@ -405,16 +435,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   series = {POPL '78}
 }
 
-% Uses the word "prototypes", and has no classes. And multiple inheritance.
-@InProceedings{Borning1977,
-  author = {Alan Hamilton Borning},
-  title = {{ThingLab} --- an Object-Oriented System for Building Simulations using Constraints},
-  booktitle={5th International Conference on Artificial Intelligence},
-  pages={497--498},
-  month = {August},
-  year = {1977},
-  url = {https://www.ijcai.org/Proceedings/77-1/Papers/085.pdf}
-}
+%% 1979
 
 @PhDThesis{Borning1979,
   author = {Borning, Alan Hamilton},
@@ -452,6 +473,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={https://www.softwarepreservation.org/projects/LISP/MIT/nnnfla1-20040122.pdf}
 }
 
+%% 1981
+
 % http://worrydream.com/refs/Borning%20-%20The%20Programming%20Language%20Aspects%20of%20ThingLab.pdf
 % https://dl.acm.org/doi/abs/10.1145/357146.357147
 @Article{Borning1981,
@@ -472,6 +495,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   numpages = {35}
 }
 
+%% 1982
+
 % Yale T Scheme. Introduces functional syntax for object method invocation.
 % Norman I. Adams, IV -- but the IV doesn't get processed correctly
 % Can't find it on http://mumble.net/~jar/tproject/
@@ -482,6 +507,29 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   pages = {114--122},
   year = {1982},
   url = {https://www.researchgate.net/publication/221252249_T_a_dialect_of_Lisp_or_LAMBDA_The_ultimate_software_tool}
+}
+
+% Introduces "traits", for multiple inheritance in the Mesa programming language
+% used to implement WS, the workstation software of the Xerox Star 8010,
+% since late 1979 (Mesa started early 1978 with Single-Inheritance).
+% p.6 conflict resolution is manual.
+@article{Traits,
+  author = {Curry, Gael and Baer, Larry and Lipkie, Daniel and Lee, Bruce},
+  title = {Traits: An approach to multiple-inheritance subclassing},
+  year = {1982},
+  issue_date = {June 21-23, 1982},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume = {3},
+  number = {1–2},
+  issn = {0737-819X},
+  url = {https://doi.org/10.1145/966873.806468},
+  doi = {10.1145/966873.806468},
+  abstract = {This paper describes a new technique for organizing software which has been used successfully by the Xerox Star 8010 workstation. The workstation (WS) software is written in an “object-oriented” style: it can be viewed as a system of inter-communicating objects of different object types. Most of the WS software considers object types to be constructed by assembling more primitive abstractions called traits. A trait is a characteristic of an object, and is expressed as a set of operations which may be applied to objects carrying that trait. The traits model of subclassing generalizes the SIMULA-67 model by permitting multiple inheritance paths. This paper describes the relationship of WS software to the traits model and then describes the model itself.},
+  journal = {ACM SIGOA Newsletter},
+  month = {jun},
+  pages = {1--9},
+  numpages = {9}
 }
 
 % Successor to a 1980 experiment by Borning. No method combination. Unclear linearization. Low on details.
@@ -500,6 +548,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={http://www.laputan.org/pub/papers/MI-Borning-Ingalls.PDF}
 }
 
+%% 1983
+
 % Has metaclasses, multiple inheritance.
 % Still ugly syntax, with INTERLISP-style very short uppercase identifiers.
 @book{Bobrow1983Loops,
@@ -510,6 +560,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   publisher={Xerox Corporation Palo Alto, CA}
 }
 
+%% 1984
+
 % After discussing multiple inheritance informally, omits it completely from the formal treatment,
 % but does introduce a framework for subtyping of a lambda-calculus with records and fixed-points.
 @InProceedings{Cardelli1984ASO,
@@ -519,6 +571,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   year={1984},
   url={https://api.semanticscholar.org/CorpusID:13032155}
 }
+
+%% 1986
 
 % Wegner & Cardelli have plenty of good concepts,
 % including universal and existential quantification...
@@ -617,7 +671,21 @@ numpages = {8}
 
 %% 1987
 
-% Stein 1987 "Delegation is Inheritance", cited by cook1989inheritance
+% TODO: re-read it. Some overly formal bits.
+% Starts by citing Lieberman 1986. Only single inheritance.
+% focuses on storage for variables and methods
+% 2.1 "Inheritance schemes involve two kinds of objects: classes and instances" - Yikes
+
+@article{stein1987delegation,
+  title={Delegation is Inheritance},
+  author={Stein, Lynn Andrea},
+  journal={ACM SIGPLAN Notices},
+  volume={22},
+  number={12},
+  pages={138--146},
+  year={1987},
+  publisher={ACM New York, NY, USA}
+}
 
 % https://beta.cs.au.dk/ ?
 @article{kristensen1987beta,
@@ -628,6 +696,7 @@ numpages = {8}
   year={1987},
   url={https://www.semanticscholar.org/paper/The-BETA-Programming-Language-Kristensen-Madsen/3971897f708518e13809d3c0772105bd86526e50}
 }
+
 
 %% 1988
 
@@ -680,6 +749,39 @@ numpages = {8}
           A function stricto sensu is an object with a single method.
           T objects as such have single-inheritance, but
           "components" provide mixin inheritance.}
+}
+
+@book{cct1988,
+  author = {Rydeheard, David E. and Burstall, Rod M.},
+  title = {Computational category theory},
+  year = {1988},
+  ISBN = {0131627368},
+  doi={10.5555/49340},
+  publisher = {Prentice Hall International (UK) Ltd.},
+  url = {https://www.cs.man.ac.uk/~david/categories/book/book.pdf}
+}
+
+@article{mitchell1988abstract,
+  title={Abstract types have existential type},
+  author={Mitchell, John C and Plotkin, Gordon D},
+  journal={ACM Transactions on Programming Languages and Systems (TOPLAS)},
+  volume={10},
+  number={3},
+  pages={470--502},
+  year={1988},
+  publisher={ACM New York, NY, USA}
+}
+
+% Introduces abstract classes and concrete classes, according to Grok
+% https://www.cse.msu.edu/~cse870/Input/SS2002/MiniProject/Sources/DRC.pdf
+@article{johnson1988designing,
+  title={Designing reusable classes},
+  author={Johnson, Ralph E and Foote, Brian},
+  journal={Journal of object-oriented programming},
+  volume={1},
+  number={2},
+  pages={22--35},
+  year={1988}
 }
 
 %% 1989
@@ -747,7 +849,6 @@ numpages = {8}
   year={1989},
   doi={10.1145/96709.96721}
 }
-
 
 @InProceedings{chambers1989efficient,
   author = {Chambers, C. and Ungar, D. and Lee, E.},
@@ -846,6 +947,17 @@ numpages = {8}
   pages={55--92},
   year={1991},
   publisher={Elsevier}
+}
+
+% Studies λ-calculus with polymorphism, meets and joins, expresses naturals and others in it.
+% Discusses the need for type annotations due to undecidable typechecking without.
+% Does not discuss general fixpoints, though implicitly can deal with recursion for numbers.
+% Fun, but not applicable to OO.
+@article{pierce1991programming,
+  title={Programming with intersection types, union types, and polymorphism},
+  author={Pierce, Benjamin C},
+  year={1991},
+  publisher={Carnegie Mellon University}
 }
 
 % Introduces Recursion Schemes. Heavy on math notation.
@@ -1057,6 +1169,8 @@ numpages = {8}
   publisher={ACM New York, NY, USA}
 }
 
+%% 1993
+
 % http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.53.3952
 @InProceedings{ImplementingTypeClasses,
   title = "Implementing Type Classes",
@@ -1085,6 +1199,19 @@ numpages = {8}
   isbn="978-3-540-48075-4"
 }
 
+% No mention of recursive types, or fixpoints, etc.: Looks like the NNOOTT to me.
+% StrongTalk.org still runs on Windows 10.
+@article{Bracha1993Strongtalk,
+  title={Strongtalk: Typechecking Smalltalk in a production environment},
+  author={Bracha, Gilad and Griswold, David},
+  journal={ACM SIGPLAN Notices},
+  volume={28},
+  number={10},
+  pages={215--230},
+  year={1993},
+  publisher={ACM New York, NY, USA}
+}
+
 % First version POPL 1993, also U of Edinburgh ECS-LFCS-92-225 "Object-Oriented Programming Without Recursive Types"
 % Based on F^\omega_\leq
 % Instead of hiding state via scoping, hide it via type abstraction.
@@ -1110,18 +1237,7 @@ numpages = {8}
 %  year={1994},
 %  pages={207–247}
 
-% No mention of recursive types, or fixpoints, etc.: Looks like the NNOOTT to me.
-% StrongTalk.org still runs on Windows 10.
-@article{Bracha1993Strongtalk,
-  title={Strongtalk: Typechecking Smalltalk in a production environment},
-  author={Bracha, Gilad and Griswold, David},
-  journal={ACM SIGPLAN Notices},
-  volume={28},
-  number={10},
-  pages={215--230},
-  year={1993},
-  publisher={ACM New York, NY, USA}
-}
+%% 1994
 
 @inproceedings{Ducournau1994Monotonic,
 author = {Ducournau, R. and Habib, M. and Huchard, M. and Mugnier, M. L.},
@@ -1222,6 +1338,11 @@ series = {OOPSLA '94}
   organization={Springer}
 }
 
+% introduces the "Liskov substitution principle"
+% Liskov & Wing
+% A behavioral notion of subtyping
+
+%% 1995
 
 % I-SOOP
 % https://pl.cs.jhu.edu/projects/type-constraints/papers/type-inference-for-recursively-constrained-types-and-its-application-to-oop-longer-version.pdf
@@ -1285,6 +1406,8 @@ series = {OOPSLA '94}
   year={1995},
   url={https://api.semanticscholar.org/CorpusID:15457129}
 }
+
+%% 1996
 
 % Same bullshit as in 1995. At least constant
 % https://sci-hub.ru/https://link.springer.com/chapter/10.1007/BFb0053063
@@ -1382,6 +1505,20 @@ series = {OOPSLA '94}
   numpages = {71}
 }
 
+%% 1997
+
+% ECMAScript language specification, 1st edition. Says "inheritance" and not "delegation". Yay.
+% Before that, there was Netscape documentation that says "prototype" but neither "inheritance" nor "delegation", e.g. at
+% https://web.archive.org/web/20060318153542/http://wp.netscape.com/eng/mozilla/3.0/handbook/javascript/index.html
+% Note that the book "Programming JavaScript for Netscape 2.0" (1996) by Tim Ritchey also talks of inherit / inheritance, not delegate / delegation https://archive.org/details/programmingjavas00ritc/mode/2up?q=inherit
+@Misc{ecmascript1997,
+  title={ECMAScript: A general purpose cross-platform programming language},
+  author={ECMA-262},
+  year={1997},
+  month=June,
+  url={https://ecma-international.org/publications-and-standards/standards/ecma-262/}
+}
+
 % InProceedings
 @Misc{SubtypingMatch1997,
   doi={10.1007/BFb0053376},
@@ -1414,6 +1551,30 @@ and Matsuoka, Satoshi",
   pages = {220--242},
   year = {1997}
 }
+
+%% 1998
+
+% Defines a dialect of Java with mixins, MixedJava, to illustrate the approach taken in MzScheme,
+% later better described in their 2006 paper.
+% https://www.semanticscholar.org/paper/Classes-and-mixins-Flatt-Krishnamurthi/c20e5f2a424b96209e6b400b23d319558932afa3
+@Misc{Mixins1998,
+  author = {Flatt, Matthew and Krishnamurthi, Shriram and Felleisen, Matthias},
+  title = {Classes and mixins},
+  year = {1998},
+  isbn = {0897919793},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/268946.268961},
+  doi = {10.1145/268946.268961},
+  abstract = {While class-based object-oriented programming languages provide a flexible mechanism for re-using and managing related pieces of code, they typically lack linguistic facilities for specifying a uniform extension of many classes with one set of fields and methods. As a result, programmers are unable to express certain abstractions over classes.In this paper we develop a model of class-to-class functions that we refer to as mixins. A mixin function maps a class to an extended class by adding or overriding fields and methods. Programming with mixins is similar to programming with single inheritance classes, but mixins more directly encourage programming to interfaces.The paper develops these ideas within the context of Java. The results are 1. an intuitive model of an essential Java subset; 2. an extension that explains and models mixins; and 3. type soundness theorems for these languages.},
+  booktitle = {Proceedings of the 25th ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
+  pages = {171–183},
+  numpages = {13},
+  location = {San Diego, California, USA},
+  series = {POPL '98}
+}
+
+%% 1999
 
 @inproceedings{10.1145/301618.301638,
 author = {Fisher, Kathleen and Reppy, John},
@@ -1462,31 +1623,7 @@ series = {PLDI '99}
   doi = {10.1007/3-540-48959-2_17}
 }
 
-% Defines a dialect of Java with mixins, MixedJava, to illustrate the approach taken in MzScheme,
-% later better described in their 2006 paper.
-% https://www.semanticscholar.org/paper/Classes-and-mixins-Flatt-Krishnamurthi/c20e5f2a424b96209e6b400b23d319558932afa3
-@Misc{Mixins1998,
-  author = {Flatt, Matthew and Krishnamurthi, Shriram and Felleisen, Matthias},
-  title = {Classes and mixins},
-  year = {1998},
-  isbn = {0897919793},
-  publisher = {Association for Computing Machinery},
-  address = {New York, NY, USA},
-  url = {https://doi.org/10.1145/268946.268961},
-  doi = {10.1145/268946.268961},
-  abstract = {While class-based object-oriented programming languages provide a flexible mechanism for re-using and managing related pieces of code, they typically lack linguistic facilities for specifying a uniform extension of many classes with one set of fields and methods. As a result, programmers are unable to express certain abstractions over classes.In this paper we develop a model of class-to-class functions that we refer to as mixins. A mixin function maps a class to an extended class by adding or overriding fields and methods. Programming with mixins is similar to programming with single inheritance classes, but mixins more directly encourage programming to interfaces.The paper develops these ideas within the context of Java. The results are 1. an intuitive model of an essential Java subset; 2. an extension that explains and models mixins; and 3. type soundness theorems for these languages.},
-  booktitle = {Proceedings of the 25th ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
-  pages = {171–183},
-  numpages = {13},
-  location = {San Diego, California, USA},
-  series = {POPL '98}
-}
-
-@Misc{ecmascript,
-  title={ECMAScript Language Specification},
-  author={ECMA, Final Draft},
-  year={1999}
-}
+%% 2000
 
 % Implements proper multiple inheritance on top of C++, but
 % you have to manually linearize and pass the Super in a template.
@@ -1511,6 +1648,8 @@ series = {PLDI '99}
   volume={13},
   year={2000}
 }
+
+%% 2001
 
 @InProceedings{DSU2001,
   author = {Hicks, Michael and Moore, Jonathan T. and Nettles, Scott},
@@ -1547,6 +1686,8 @@ series = {PLDI '99}
   series = {ESEC/FSE-9}
 }
 
+%% 2002
+
 % No mention of recursive types, or fixpoints, etc.: Looks like the NNOOTT to me.
 @inproceedings{Bak2002Mixins,
   title={Mixins in Strongtalk},
@@ -1582,6 +1723,8 @@ series = {PLDI '99}
   year={2002},
   url={https://users.cs.northwestern.edu/~robby/publications/papers/ho-contracts-icfp2002.pdf}
 }
+
+%% 2003
 
 @Misc{Kay2003,
   Author={Alan Kay},
@@ -1622,6 +1765,7 @@ series = {PLDI '99}
   bibsource    = {dblp computer science bibliography, https://dblp.org}
 }
 
+%% 2005
 
 @InProceedings{Salzman05prototypeswith,
   author = {Lee Salzman and Jonathan Aldrich},
@@ -1658,6 +1802,12 @@ series = {PLDI '99}
   series = {OOPSLA '05}
 }
 
+% Open Data Types and Open Functions https://www.andres-loeh.de/OpenDatatypes.pdf
+% Andres Löh and Ralf Hinze, PPDP 2006 -- not really OO, just use of typeclasses.
+% cites O'Haskell (Norlander 2001) vs OOHaskell (Kiselyov & Lämmel 2005)
+% https://github.com/nkaretnikov/OOHaskell
+% https://arxiv.org/pdf/cs/0509027
+% https://api.semanticscholar.org/CorpusID:13547784
 @misc{Kiselyov2005HaskellOOS,
       title={Haskell's overlooked object system},
       author={Oleg Kiselyov and Ralf Lämmel},
@@ -1667,6 +1817,8 @@ series = {PLDI '99}
       primaryClass={cs.PL},
       url={https://arxiv.org/abs/cs/0509027},
 }
+
+%% 2006
 
 @InProceedings{Flatt2006Mixins,
   author = {Matthew Flatt and Robert Bruce Findler and Matthias Felleisen},
@@ -1686,6 +1838,8 @@ series = {PLDI '99}
     year = {2006},
 }
 % http://citeseerx.ist.psu.edu/viewdoc/similar?doi=10.1.1.211.6777&type=cc
+
+%% 2007
 
 % Section 4.2 describes the failure of their "sender path" attempt at multiple inheritance
 @InProceedings{self2007hopl,
@@ -1715,6 +1869,8 @@ series = {PLDI '99}
   volume={29},
   url={https://www.cis.upenn.edu/~bcpierce/papers/lenses-full.pdf}
 }
+
+%% 2008
 
 @article{bracha2008newspeak,
   title={The Newspeak Programming Platform},
@@ -1751,16 +1907,6 @@ series = {PLDI '99}
   urldate = {2021-03-14}
 }
 
-% From the Fortress team
-@InProceedings{allen2011type,
-  title={Type checking modular multiple dispatch with parametric polymorphism and multiple inheritance},
-  author={Allen, Eric and Hilburn, Justin and Kilpatrick, Scott and Luchangco, Victor and Ryu, Sukyoung and Chase, David and Steele, Guy},
-  booktitle={OOPSLA},
-  pages={973--992},
-  year={2011},
-  url={https://people.mpi-sws.org/~skilpat/papers/multipoly.pdf}
-}
-
 % EOPL only has classes with single inheritance.
 % barely touches multiple inheritance, "powerful, but … problematic", in exercise 9.26,
 % and prototypes in exercise 9.27-9.29
@@ -1785,6 +1931,8 @@ series = {PLDI '99}
   url = {https://plai.org/},
 }
 
+%% 2009
+
 @InProceedings{Brown_functioninheritance:,
   author = {Daniel Brown and William R. Cook},
   title = {Function Inheritance: Monadic Memoization Mixins},
@@ -1807,6 +1955,21 @@ series = {PLDI '99}
   year = {2009},
   url = {https://www.cs.ox.ac.uk/publications/publication2965-abstract.html}
 }
+
+
+% Recursion Scheme, FP & OOP ???
+@article{gibbons2009essence,
+  title={The essence of the iterator pattern},
+  author={Gibbons, Jeremy and Oliveira, Bruno C d S},
+  journal={Journal of functional programming},
+  volume={19},
+  number={3-4},
+  pages={377--402},
+  year={2009},
+  publisher={Cambridge University Press}
+}
+
+%% 2010
 
 @InProceedings{Oliveira10effectiveadvice,
   author = {Oliveira, Bruno C. d. S. and Schrijvers, Tom and Cook, William R.},
@@ -1831,6 +1994,20 @@ series = {PLDI '99}
   year={2010},
   url={https://www.infoq.com/interviews/johnson-armstrong-oop/}
 }
+
+%% 2011
+
+% From the Fortress team
+@InProceedings{allen2011type,
+  title={Type checking modular multiple dispatch with parametric polymorphism and multiple inheritance},
+  author={Allen, Eric and Hilburn, Justin and Kilpatrick, Scott and Luchangco, Victor and Ryu, Sukyoung and Chase, David and Steele, Guy},
+  booktitle={OOPSLA},
+  pages={973--992},
+  year={2011},
+  url={https://people.mpi-sws.org/~skilpat/papers/multipoly.pdf}
+}
+
+%% 2012
 
 % Incommensurability -- uses bracha1990mixin as its pivot!
 @inproceedings{gabriel2012,
@@ -1870,6 +2047,31 @@ series = {PLDI '99}
   year = 2012
 }
 
+%% 2013
+
+% extended abstract with idiotic proof-by-citation of abdelgawad2014domain
+@InProceedings{Cartwright2013Inheritance,
+  title={Inheritance \emph{is} Subtyping},
+  author={Cartwright, Robert and Moez, A AbdelGawad},
+  booktitle={The 25th Nordic Workshop on Programming Theory (NWPT)},
+  year={2013}
+}
+
+%% 2014
+
+% Unsurprisingly, his NOOP is plain NNOOTT.
+% No generics, no open recursion, no higher-order functions, all nominal.
+% He thanks bpierce for feedback.
+@article{abdelgawad2014domain,
+  title={A domain-theoretic model of nominally-typed object-oriented programming},
+  author={AbdelGawad, Moez A},
+  journal={Electronic Notes in Theoretical Computer Science},
+  volume={301},
+  pages={3--19},
+  year={2014},
+  publisher={Elsevier}
+}
+
 % @online leads to scribble complaining about undefined tag(?)
 @Misc{jsonnet,
   author = {Dave Cunningham},
@@ -1894,8 +2096,6 @@ series = {PLDI '99}
   howpublished = {Blog post}
 }
 
-
-
 % InProceedings
 @Misc{ASDF3,
   author = {François-René Rideau},
@@ -1904,6 +2104,8 @@ series = {PLDI '99}
   booktitle = {European Lisp Symposium},
   year = 2014
 }
+
+%% 2015
 
 @Book{EcmaScript:15,
   added-at = {2015-08-28T15:36:26.000+0200},
@@ -1948,6 +2150,8 @@ series = {PLDI '99}
   bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
+%% 2016
+
 @Misc{grigore2016javagenericsturingcomplete,
       title={Java Generics are Turing Complete},
       author={Radu Grigore},
@@ -1983,7 +2187,43 @@ series = {PLDI '99}
   publisher={Springer}
 }
 
-@Article{Pickering_2017,
+% https://github.com/namin/dot
+% https://namin.seas.harvard.edu/pubs/fool-dot.pdf
+% More co-authors
+@InProceedings{Amin2016DependentOT,
+  title={Dependent Object Types},
+  author={Nada Amin, Adriaan Moors, Martin Odersky},
+  year={2016},
+  url={https://api.semanticscholar.org/CorpusID:265751928}
+}
+
+% https://sci-hub.ru/https://link.springer.com/article/10.1007/BF01178920
+% InProceedings
+% Review of object inheritance for prototypes.
+% Discusses multiple inheritance, but fails to cite Ani, ThingLab, T, Slate, Sheeple.
+% Only passingly discusses super linearization or mixin inheritance. Sad.
+@Misc{oiwc2016,
+  author =	{Jones, Timothy and Homer, Michael and Noble, James and Bruce, Kim},
+  title =	{{Object Inheritance Without Classes}},
+  booktitle =	{30th European Conference on Object-Oriented Programming (ECOOP 2016)},
+  pages =	{13:1--13:26},
+  series =	{Leibniz International Proceedings in Informatics (LIPIcs)},
+  ISBN =	{978-3-95977-014-9},
+  ISSN =	{1868-8969},
+  year =	{2016},
+  volume =	{56},
+  editor =	{Krishnamurthi, Shriram and Lerner, Benjamin S.},
+  publisher =	{Schloss Dagstuhl -- Leibniz-Zentrum f{\"u}r Informatik},
+  address =	{Dagstuhl, Germany},
+  URL =		{https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.ECOOP.2016.13},
+  URN =		{urn:nbn:de:0030-drops-61077},
+  doi =		{10.4230/LIPIcs.ECOOP.2016.13},
+  annote =	{Keywords: Inheritance, Objects, Classes, Operational semantics}
+}
+
+%% 2017
+
+@Article{Pickering2017Optics,
   title={Profunctor Optics: Modular Data Accessors},
   volume={1},
   ISSN={2473-7321},
@@ -1996,6 +2236,30 @@ series = {PLDI '99}
   year={2017},
   month={Apr}
 }
+
+% https://lmcs.episciences.org/4319
+% This paper seems to be on the right track, but with much extra formalism and much missing insight.
+% Classes add a layer of complexity, and I think there may be bugs. Sigh.
+@article{DBLP:journals/corr/abs-1712-06906,
+  author       = {Jan Bessai and
+                  Tzu{-}Chun Chen and
+                  Andrej Dudenhefner and
+                  Boris D{\"{u}}dder and
+                  Ugo de'Liguoro and
+                  Jakob Rehof},
+  title        = {Mixin Composition Synthesis based on Intersection Types},
+  journal      = {CoRR},
+  volume       = {abs/1712.06906},
+  year         = {2017},
+  url          = {http://arxiv.org/abs/1712.06906},
+  eprinttype    = {arXiv},
+  eprint       = {1712.06906},
+  timestamp    = {Sat, 30 Sep 2023 10:08:07 +0200},
+  biburl       = {https://dblp.org/rec/journals/corr/abs-1712-06906.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+%% 2020
 
 % Withhold citation until after deanomization
 @Misc{GerbilPOOwithheld,
@@ -2020,6 +2284,8 @@ series = {PLDI '99}
   url={https://www.quora.com/What-thought-process-would-lead-one-to-invent-object-oriented-programming/answer/Alan-Kay-11}
 }
 
+%% 2021
+
 % Maybe cite the last episode of this story instead, that explains the concept?
 % https://en.wikipedia.org/wiki/Earthshock
 % On citing TV series:
@@ -2038,23 +2304,6 @@ series = {PLDI '99}
   year = 2021,
   url = {https://en.wikipedia.org/wiki/C3_linearization},
 }
-
-@Misc{WikiProto,
-  title = "Prototype-based programming",
-  author = "Wikipedia",
-  year = 2025,
-  url = {https://en.wikipedia.org/wiki/Prototype-based_programming},
-}
-
-% References Butler Lampson https://bwlampson.site/Slides/TuringLecture.htm
-% "We can solve any problem by introducing an extra level of indirection"
-@Misc{WikiFTSE,
-  title = "Fundamental theorem of software engineering",
-  author = "Wikipedia",
-  year = 2025,
-  url = {https://en.wikipedia.org/wiki/Fundamental_theorem_of_software_engineering},
-}
-
 @InProceedings{poof2021,
   title = {Prototypes: Object-Orientation, Functionally},
   author = {François-René Rideau and Alex Knauth and Nada Amin},
@@ -2063,6 +2312,10 @@ series = {PLDI '99}
   url = {https://github.com/metareflection/poof},
 }
 
+% Adding POP to Nixpkgs:
+% https://github.com/NixOS/rfcs/pull/91/
+% https://github.com/NixOS/nixpkgs/pull/116275
+% https://github.com/divnix/POP
 @Misc{POP2021,
   author =       {François-René Rideau},
   title =        {Pure Object Prototypes},
@@ -2081,6 +2334,7 @@ series = {PLDI '99}
   doi = {10.2478/fcds-2021-0011}
 }
 
+%% 2022
 
 @Misc{TopPL2022,
   author =       {GitHub},
@@ -2089,6 +2343,26 @@ series = {PLDI '99}
   year =         2022,
   urldate =      {2024-01-04}
 }
+
+%% 2025
+
+@Misc{WikiProto,
+  title = "Prototype-based programming",
+  author = "Wikipedia",
+  year = 2025,
+  url = {https://en.wikipedia.org/wiki/Prototype-based_programming},
+}
+
+% References Butler Lampson https://bwlampson.site/Slides/TuringLecture.htm
+% "We can solve any problem by introducing an extra level of indirection"
+@Misc{WikiFTSE,
+  title = "Fundamental theorem of software engineering",
+  author = "Wikipedia",
+  year = 2025,
+  url = {https://en.wikipedia.org/wiki/Fundamental_theorem_of_software_engineering},
+}
+
+%% UNCLASSIFIED
 
 %%% TODO: Add the following...
 
@@ -2121,7 +2395,6 @@ series = {PLDI '99}
 % Wholly skips Prototypes.
 % In the end, does not bring much lights to the topic, beyond the obvious.
 
-
 % Bracha and Lindstrom 1992 Modularity meets inheritance
 
 % 2000 Oleg Kiselyov USENET post on okmij.org on the possibility of a pure variant of YASOS ?
@@ -2135,10 +2408,6 @@ series = {PLDI '99}
 %
 % Hewitt, Carl, Viewing Control Structures as Patterns of Passing Messages, MIT AI Lab Memo 410, Dec 1976.
 
-% Adding POP to Nixpkgs:
-% https://github.com/NixOS/rfcs/pull/91/
-% https://github.com/NixOS/nixpkgs/pull/116275
-% https://github.com/divnix/POP
 
 % Gilad Bracha's Newspeak? It's class-based only, though.
 
@@ -2204,100 +2473,7 @@ series = {PLDI '99}
 % CECIL also had prototype inheritance / classless objects
 % A cursory look at the manual does not mention mutable parents, however
 
-% Introduces "traits", for multiple inheritance in the Mesa programming language
-% used to implement WS, the workstation software of the Xerox Star 8010,
-% since late 1979 (Mesa started early 1978 with Single-Inheritance).
-% p.6 conflict resolution is manual.
-@article{Traits,
-  author = {Curry, Gael and Baer, Larry and Lipkie, Daniel and Lee, Bruce},
-  title = {Traits: An approach to multiple-inheritance subclassing},
-  year = {1982},
-  issue_date = {June 21-23, 1982},
-  publisher = {Association for Computing Machinery},
-  address = {New York, NY, USA},
-  volume = {3},
-  number = {1–2},
-  issn = {0737-819X},
-  url = {https://doi.org/10.1145/966873.806468},
-  doi = {10.1145/966873.806468},
-  abstract = {This paper describes a new technique for organizing software which has been used successfully by the Xerox Star 8010 workstation. The workstation (WS) software is written in an “object-oriented” style: it can be viewed as a system of inter-communicating objects of different object types. Most of the WS software considers object types to be constructed by assembling more primitive abstractions called traits. A trait is a characteristic of an object, and is expressed as a set of operations which may be applied to objects carrying that trait. The traits model of subclassing generalizes the SIMULA-67 model by permitting multiple inheritance paths. This paper describes the relationship of WS software to the traits model and then describes the model itself.},
-  journal = {ACM SIGOA Newsletter},
-  month = {jun},
-  pages = {1--9},
-  numpages = {9}
-}
-
-% https://github.com/namin/dot
-% https://namin.seas.harvard.edu/pubs/fool-dot.pdf
-% More co-authors
-@InProceedings{Amin2016DependentOT,
-  title={Dependent Object Types},
-  author={Nada Amin, Adriaan Moors, Martin Odersky},
-  year={2016},
-  url={https://api.semanticscholar.org/CorpusID:265751928}
-}
-
-% https://sci-hub.ru/https://link.springer.com/article/10.1007/BF01178920
-% InProceedings
-% Review of object inheritance for prototypes.
-% Discusses multiple inheritance, but fails to cite Ani, ThingLab, T, Slate, Sheeple.
-% Only passingly discusses super linearization or mixin inheritance. Sad.
-@Misc{oiwc2016,
-  author =	{Jones, Timothy and Homer, Michael and Noble, James and Bruce, Kim},
-  title =	{{Object Inheritance Without Classes}},
-  booktitle =	{30th European Conference on Object-Oriented Programming (ECOOP 2016)},
-  pages =	{13:1--13:26},
-  series =	{Leibniz International Proceedings in Informatics (LIPIcs)},
-  ISBN =	{978-3-95977-014-9},
-  ISSN =	{1868-8969},
-  year =	{2016},
-  volume =	{56},
-  editor =	{Krishnamurthi, Shriram and Lerner, Benjamin S.},
-  publisher =	{Schloss Dagstuhl -- Leibniz-Zentrum f{\"u}r Informatik},
-  address =	{Dagstuhl, Germany},
-  URL =		{https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.ECOOP.2016.13},
-  URN =		{urn:nbn:de:0030-drops-61077},
-  doi =		{10.4230/LIPIcs.ECOOP.2016.13},
-  annote =	{Keywords: Inheritance, Objects, Classes, Operational semantics}
-}
-
 % Guy Steele "Objects have not failed" 2002 https://www.dreamsongs.com/ObjectsHaveNotFailedNarr.html
-
-% https://lmcs.episciences.org/4319
-% This paper seems to be on the right track, but with much extra formalism and much missing insight.
-% Classes add a layer of complexity, and I think there may be bugs. Sigh.
-@article{DBLP:journals/corr/abs-1712-06906,
-  author       = {Jan Bessai and
-                  Tzu{-}Chun Chen and
-                  Andrej Dudenhefner and
-                  Boris D{\"{u}}dder and
-                  Ugo de'Liguoro and
-                  Jakob Rehof},
-  title        = {Mixin Composition Synthesis based on Intersection Types},
-  journal      = {CoRR},
-  volume       = {abs/1712.06906},
-  year         = {2017},
-  url          = {http://arxiv.org/abs/1712.06906},
-  eprinttype    = {arXiv},
-  eprint       = {1712.06906},
-  timestamp    = {Sat, 30 Sep 2023 10:08:07 +0200},
-  biburl       = {https://dblp.org/rec/journals/corr/abs-1712-06906.bib},
-  bibsource    = {dblp computer science bibliography, https://dblp.org}
-}
-
-% Open Data Types and Open Functions https://www.andres-loeh.de/OpenDatatypes.pdf
-% Andres Löh and Ralf Hinze, PPDP 2006 -- not really OO, just use of typeclasses.
-% cites O'Haskell (Norlander 2001) vs OOHaskell (Kiselyov & Lämmel 2005)
-% https://github.com/nkaretnikov/OOHaskell
-% https://arxiv.org/pdf/cs/0509027
-@article{Kiselyov2005HaskellsOO,
-  title={Haskell's overlooked object system},
-  author={Oleg Kiselyov and Ralf L{\"a}mmel},
-  journal={ArXiv},
-  year={2005},
-  volume={abs/cs/0509027},
-  url={https://api.semanticscholar.org/CorpusID:13547784}
-}
 
 % TODO: Henry Lieberman papers about Actors, etc. -- when did he do inheritance / delegation?
 
@@ -2322,16 +2498,6 @@ series = {PLDI '99}
 
 % Goguen...
 
-% Studies λ-calculus with polymorphism, meets and joins, expresses naturals and others in it.
-% Discusses the need for type annotations due to undecidable typechecking without.
-% Does not discuss general fixpoints, though implicitly can deal with recursion for numbers.
-% Fun, but not applicable to OO.
-@article{pierce1991programming,
-  title={Programming with intersection types, union types, and polymorphism},
-  author={Pierce, Benjamin C},
-  year={1991},
-  publisher={Carnegie Mellon University}
-}
 
 % change-class: https://github.com/shriram/plai-public/issues/60
 
@@ -2347,52 +2513,7 @@ series = {PLDI '99}
 % https://docs.racket-lang.org/ctp/index.html
 %
 
-@book{cct1988,
-  author = {Rydeheard, David E. and Burstall, Rod M.},
-  title = {Computational category theory},
-  year = {1988},
-  ISBN = {0131627368},
-  doi={10.5555/49340},
-  publisher = {Prentice Hall International (UK) Ltd.},
-  url = {https://www.cs.man.ac.uk/~david/categories/book/book.pdf}
-}
-
-@article{mitchell1988abstract,
-  title={Abstract types have existential type},
-  author={Mitchell, John C and Plotkin, Gordon D},
-  journal={ACM Transactions on Programming Languages and Systems (TOPLAS)},
-  volume={10},
-  number={3},
-  pages={470--502},
-  year={1988},
-  publisher={ACM New York, NY, USA}
-}
-
-% Introduces abstract classes and concrete classes, according to Grok
-% https://www.cse.msu.edu/~cse870/Input/SS2002/MiniProject/Sources/DRC.pdf
-@article{johnson1988designing,
-  title={Designing reusable classes},
-  author={Johnson, Ralph E and Foote, Brian},
-  journal={Journal of object-oriented programming},
-  volume={1},
-  number={2},
-  pages={22--35},
-  year={1988}
-}
-
 % Cardelli Wegner 1985
-
-% Recursion Scheme, FP & OOP ???
-@article{gibbons2009essence,
-  title={The essence of the iterator pattern},
-  author={Gibbons, Jeremy and Oliveira, Bruno C d S},
-  journal={Journal of functional programming},
-  volume={19},
-  number={3-4},
-  pages={377--402},
-  year={2009},
-  publisher={Cambridge University Press}
-}
 
 % See this article and its bibliography? https://scholarworks.iu.edu/iuswrrest/api/core/bitstreams/2706b860-ef5e-42b9-98c6-f29e3486220e/content
 
@@ -2411,14 +2532,3 @@ series = {PLDI '99}
 % a.k.a. "Lisp Object-Oriented Programming System (LOOPS) Volume I: The Basic System"
 
 % https://www.jot.fm/issues/issue_2005_01/column2/
-
-@article{stein1987delegation,
-  title={Delegation is inheritance},
-  author={Stein, Lynn Andrea},
-  journal={ACM SIGPLAN Notices},
-  volume={22},
-  number={12},
-  pages={138--146},
-  year={1987},
-  publisher={ACM New York, NY, USA}
-}

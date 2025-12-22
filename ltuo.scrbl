@@ -1301,18 +1301,23 @@ in order from least specific superclass to most specific@xnote["."]{
   although it is easily expressible using user-defined method combinations
   in e.g. CLOS @~cite{bobrow88clos}.
   Thus we can rightfully say that inheritance, and OO,
-  were only invented and named but with Alan Kay’s Smalltalk 76.
+  were only invented and named but with the interaction of
+  Bobrow’s Interlisp team and Kay’s Smalltalk team at PARC circa 76,
+  both informed by ideas from Simula, but able to integrate them in their wider
+  respective AI and teachable computing experiments thanks to their dynamic environments,
+  orders of magnitude more flexible than the static Algol context of Simula.
   In the end, Simula should count as a precursor to OO, or at best an early draft of it,
   but either way, not the real, fully-formed concept.
-  Dahl and Nygaard never invented OO as most of us know it,
-  not then with SIMULA, not later with BETA, and never later in their life either;
-  just like Columbus never set foot on the continent of America.
-  Yet still they made the key contribution that made the later greater discovery of OO
-  not just possible, but necessary.
+  Dahl and Nygaard never invented, implemented, used or studied OO as most of us know it:
+  not then with SIMULA, not later with BETA, and never later in their life either.
+  Just like Columbus never set foot on the continent of America.
+  Yet they made the single key contribution thanks to which
+  the later greater discovery of OO became not just possible, but necessary.
   They rightfully deserve to be gently mocked for getting so close of a vast continent they sought
   yet failing to ever set foot on it.
-  But this should only make us admire them more so for having crossed an uncharted ocean
-  the vast extent of which no one suspected, beyond horizons past which no one dared venture.
+  But this should only make us admire them more for having crossed an uncharted ocean
+  the vast extent of which no one suspected, beyond horizons past which no one dared venture,
+  to find a domain no one else dreamed existed.
 }
 In modern terms, we call the prefix a superclass,
 or more generally, a parent, or, when considering transitive parents, an ancestor. @; TODO CITE
@@ -1435,10 +1440,10 @@ Many authors have called “delegation” the mechanism used by Prototype OO,
 as distinct from the “inheritance” mechanism of Class OO.
 However, Lieberman, in one of the papers that popularized this dichotomy@~cite{Lieberman1986},
 discusses the two joined concepts of prototype-delegation vs class-inheritance@xnote[","]{
-Lieberman also explores at length the philosophical underpinnings of these two idea-complexes,
-which is quite interesting from a historical and psychological point of view,
-but has little relevance to a technical discussion on the semantics of OO,
-its proper use or implementation decades later.
+  Lieberman also explores at length the philosophical underpinnings of these two idea-complexes,
+  which is quite interesting from a historical and psychological point of view,
+  but has little relevance to a technical discussion on the semantics of OO,
+  its proper use or implementation decades later.
 }
 and explains in detail how classes and their “inheritance” can be expressed
 as a special case of prototypes and their “delegation”,
@@ -1452,6 +1457,37 @@ between the general notion of prototypes from the special case of classes,
 it only begets confusion to treat inheritance and delegation
 as separate concepts when they have identical concerns of semantics, implementation or performance,
 whether used for prototypes versus classes.
+The sudden renaming is all the more counterproductive since for more than a decade already,
+“inheritance” had been used by “frames” and other “classless” objects,
+that would later be dubbed “prototypes” in the early 1980s@xnote["."]{
+  If irrelevant changes in the context are a valid excuse to give an existing concept a new name
+  and get a publication with hundreds of citations based on such a great original discovery,
+  we here dub “ainheritance” the concept of “inheritance”
+  when the name of the name of the entity inheriting from others starts with “a”,
+  “binheritance” the concept of “inheritance” when the programmer’s console is blue,
+  “cinheritance” the concept of “inheritance” when the programmer is in China,
+  and “sinheritance” the concept of “inheritance”
+  when the specification is not conflated with its target therefore not a class nor a prototype.
+  Also “ninheritance” when there is no actual inheritance, and
+  “tinheritance” when it looks like inheritance, but is not real inheritance,
+  just target extension without open recursion through a module context.
+  We are also reserving the namespace for variants of the name starting
+  with a heretofore unused letter or unicode character,
+  and launching the Interplanetary Xinheritance Foundation to auction the namespace away,
+  as well as the related Intergalactic Zelegation Alliance.
+  We are impatiently awaiting our Turing Award, or at least Dahl Nygaard prize,
+  for all these never discussed before original inventions related to OO.
+
+  The Lieberman paper deserves its thousands of citations because it is a great paper.
+  However, a lot of citers seem to only fixate on the unfortunate choice
+  of concept delineation and naming by Lieberman,
+  who probably did not anticipate that he would set a bad trend with it.
+  And those citers thereafter focused on studying or tweaking
+  low-level “message passing” mechanisms instead of looking at the big picture
+  of the semantics of inheritance.
+  Concept delineation and naming is tremendously important;
+  it can bring clarity, or it can mislead hundreds of researchers into a dead end.
+}
 
 One confounding factor is that of mutable state.
 Early OO, just like early FP, was usually part of systems with ubiquitous mutable state;
@@ -1541,7 +1577,7 @@ and is strongly connoted to specific implementations using the message-passing p
 It also fell out of fashion some time in the 1990s,
 after JavaScript became a worldwide phenomenon, and (correctly) used the term “inheritance”
 rather than delegation (as it isn’t particularly “message passing”, just calling functions).
-@;{TODO cite ECMA-262 ECMAScript, 1st edition 1997 https://ecma-international.org/publications-and-standards/standards/ecma-262/}
+@~cite{ecmascript1997}
 
 @subsection{Epistemological Digression}
 Many people will inevitably quibble about our definition or characterization of OO.
@@ -6959,7 +6995,13 @@ so its “struct”s and “class”es (named in the Lisp tradition) may extend 
 The result ended up largely equivalent to the classes and modules or traits of Ruby or Scala,
 except that @(GerbilScheme) respects all the consistency constraints of the C3 algorithm,
 that it further extends to support suffixes, in what we call the C4 algorithm.
-It is the first and so far only implementation of @emph{Optimal Inheritance}.
+It is the first and so far only implementation of @emph{Optimal Inheritance}@xnote["."]{
+  Interestingly, Ruby, Scala and @(GerbilScheme) seem to each have independently
+  reinvented variants of the same general design based on the suffix property.
+  This is a good symptom that this is a universally important design.
+  However, only with @(GerbilScheme) was the suffix property formalized
+  and was the C3 algorithm used.
+}
 
 @subsubsection[#:tag "C4"]{C4, or C3 Extended}
 
@@ -7064,8 +7106,7 @@ if the implementation were clever enough to opportunistically take advantage of 
 This is interestingly a property shared by the Ruby and Scala algorithm,
 but not by the original LOOPS algorithm that Scala tweaked.
 This seems to be an important property for a tie-break heuristic,
-that should probably be formalized and added to the constraints of C4.
-@xnote["."]{
+that should probably be formalized and added to the constraints of C4@xnote["."]{
   We haven’t thought hard enough to say what other interesting properties, if any,
   are sufficient to fully determine the tie-break heuristic of C3,
   or of a better variant that would also respect the hard constraints of C3.
@@ -7075,6 +7116,63 @@ that should probably be formalized and added to the constraints of C4.
 @section{Advanced Topics in OO}
 
 @subsection{Focused modular extension}
+
+Before we may revisit familiar features of advanced OO systems such as
+accessors, method combinations or multimethods, we must once again
+introduce some new elementary concept that will much simplify their formalization:
+@emph{focused} modular extensions (resp. definitions),
+product of an (open) modular extension (resp. definition)
+and a functional @emph{lens} @~cite{bananas1991 Foster2007CombinatorsFB oconnor2012lenses Pickering2017Optics}
+formalizing the relationship of the modular extension (resp. definition) to the module context.
+As we will see, focused modular extensions can also simplify the notion of regular methods,
+and elucidate the relationship betwee open and closed modular extensions.
+But lenses would have been overkill and a distraction in the formalism of previous sections,
+when handwaving the relationship between open and closed modular extensions was good enough.
+They are a necessary concept for these more advanced OO features.
+
+A lens is the Functional Programming generalization of a C pointer, ML reference,
+Lisp Machine locative, Common Lisp place, etc.:
+it explains how to look at a part of a whole and make changes to it.
+A monomorphic lens (or simple lens) of type @c{Lens' s a} is
+a pair of a getter function and a setter function,
+that allow you to get or set a current value under focus of type @c{a}
+from a whole or source of type @c{s}@xnote["."]{
+  A polymorphic lens (or stabby lens) of type @c{Lens s t a b} generalizes the above to cases
+  where updating the value under focus of type @c{a} into a new value of type @c{b}
+  yields a target value of type @c{t} from the source value of type @c{s}.
+  We will try to stick to monomorphic lenses in our discussions below,
+  but generalization to polymorphic lenses should be straightforward,
+  and we leave them as exercise to the reader.
+  Then come more general kind of “optic” functions,
+  that e.g. take into account that a value may be undefined, etc.
+}
+A typical lens would specify how to get or set a field at a given identifier within a record;
+thus the getter for field @c{foo} would given a record @c{x} return the field value @c{x.foo}
+whereas the setter would take a new value @c{v} and an old record @c{x}
+and return a new record @c{y} that copies @c{x} except for the field @c{foo} wherein
+@c{y.foo} is set to @c{v}.
+You could similarly define lenses for the nth element of a tuple or a list.
+You can also compose lenses, so that composing lenses for a series a field
+allow you to follow a path within an module context.
+
+A focused modular extension is thus the data of an open modular extension,
+and a lens relating the value being extended to the module context,
+where @c{r i p} are the required, inherited, provided type parameters for a modular extension,
+and @c{d} is a type parameter for the entity being defined.
+@code{
+type FMExt d r i p = Lens' r d × MExt r i p
+}
+
+In a closed focused module extension, the value inherited is of the top type,
+and the value provided is the one for the entity being defined:
+@code{
+type CFMExt r p = Lens' r p × MExt r top p
+}
+
+As usual, you can extract the value of the module context from the lens and the modular extension
+by using a fixpoint operator.
+
+@subsection{Methods with Focus}
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
