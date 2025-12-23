@@ -437,6 +437,22 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 1979
 
+% ACT1.
+% Discusses Delegation (for "actors", prototypes) and Inheritance
+% (for "sharing of descriptions common to many actors", classes).
+% "increasing the modularity of the system"
+% a Buck_pass [message: m] [inside: inside_client] [outside: client]
+% where inside_client has internal access rights
+% cites Simula, Smalltalk and Director (Kahn) "developed jointly with Kahn"
+% AI_WP_180
+@Misc{Hewitt1979Security,
+  title={Security and modularity in message passing},
+  author={Hewitt, Carl and Attardi, Giuseppe and Lieberman, Henry},
+  year={1979},
+  month=February,
+  publisher={MIT Artificial Intelligence Laboratory}
+}
+
 @PhDThesis{Borning1979,
   author = {Borning, Alan Hamilton},
   title = {{ThingLab} --- A Constraint-Oriented Simulation Laboratory},
@@ -454,13 +470,25 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % very crude 2d film with polygons as "performers" that move toward, away from,
 % around or between each other, at various speeds appropriate for the action,
 % as would humans on a stage.
-@PhDThesis{Kahn1979,
+% Does cite Bobrow & Winograd, as well as Kay, Hewitt, Lieberman and many more (Licklider, Catmull!)
+@PhDThesis{Kahn1979Ani,
   title = {Creation of computer animation from story descriptions},
   author = {Kahn, Kenneth Michael},
   school = {MIT},
   year = {1979},
   url = {https://dspace.mit.edu/handle/1721.1/16012}
 }
+
+% AIM-482b
+% Does not cite Bobrow & Winograd, cites Kay, Hewitt, Lieberman
+@PhDThesis{Kahn1979Director,
+  title = {Director Guide},
+  author = {Kahn, Kenneth Michael},
+  school = {MIT},
+  year = {1979},
+  url = {https://dspace.mit.edu/handle/1721.1/6302}
+}
+
 
 
 % Borning1982 cites a 1980 version of the Flavors report, from MIT. Originally from 1979.
@@ -2475,6 +2503,8 @@ series = {PLDI '99}
 
 % Guy Steele "Objects have not failed" 2002 https://www.dreamsongs.com/ObjectsHaveNotFailedNarr.html
 
+% Luc Steels "An Applicative View of OOP" 1982
+
 % TODO: Henry Lieberman papers about Actors, etc. -- when did he do inheritance / delegation?
 
 % 2003  Tom Hirschowitz  Call-by-value mixin modules
@@ -2532,3 +2562,6 @@ series = {PLDI '99}
 % a.k.a. "Lisp Object-Oriented Programming System (LOOPS) Volume I: The Basic System"
 
 % https://www.jot.fm/issues/issue_2005_01/column2/
+
+% Jonathan Aldrich workshop paper on capability-safe reflection and an ECOOP on modular reasoning in aspect-oriented programming (the latter a bit dated now).
+

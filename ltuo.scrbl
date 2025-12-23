@@ -465,7 +465,7 @@ can be traced back to Smalltalk adopting inheritance in 1976
 and popularizing the word and concept of it among programming language designers;
 and Smalltalk was class-based.
 Yet contemporary with Smalltalk or immediately after it
-were prototype-based languages Director @~cite{Kahn1976 Kahn1979} and
+were prototype-based languages Director @~cite{Kahn1976 Kahn1979Ani Kahn1979Director} and
 ThingLab @~cite{Borning1977 Borning1979 Borning1981}@xnote["."]{
   ThingLab was built on top of Smalltalk by members of the same team at PARC,
   and oscillated between having or not having classes in addition to prototypes.}
@@ -681,7 +681,7 @@ communicating by passing asynchronous messages.
 This metaphor also guided the modifications originally
 brought by Simula to Algol@~cite{Simula1966}.
 It is also present in notable early object systems such as
-Director @~cite{Kahn1976 Kahn1979} and
+Director @~cite{Kahn1976 Kahn1979Ani Kahn1979Director} and
 ThingLab @~cite{Borning1977 Borning1979 Borning1981}.
 
 However, neither Simula, nor Smalltalk nor any popular claimed OO language
@@ -902,8 +902,7 @@ In fact, these handwaving methodologies@xnote[""]{
   Goguen, who invokes Category Theory in his papers,
   and is cited by these later categorical imitators,
   develops precise formal specification of code, refinement of such specifications,
-  and actual implementation of executable code.
-  @;{TODO cite}
+  and actual implementation of executable code. @;{TODO cite}
   On the other hand, Goguen’s claim to do “OO” is dubious,
   despite some attempts in later works to retrofit some actual OO concepts into his systems;
   instead, what he developed turns out to be
@@ -1151,7 +1150,7 @@ when the other should to be used.
 Inconsistent theories will lead to bad choices.
 Developers will pursue doomed designs they think are sound,
 and reject rejecting actual solutions their theories reject.
-@;{ TODO examples, citations }
+@; { TODO examples, citations }
 At times, clever papers will offer overly simple solutions that deal with only one entity,
 not noticing an actual solution needed to address two.
 Seldom, heroic efforts will lead to overly complicated solutions
@@ -1435,7 +1434,7 @@ as a form of mixin inheritance with automatic renaming,
 at which point Mixin Inheritance is actually very popular, just not well-understood.
 
 @subsubsection{False dichotomy between inheritance and delegation}
-Many authors have called “delegation” the mechanism used by Prototype OO,
+Many authors have called “delegation” the mechanism used by Prototype OO@~cite{Hewitt1979Security},
 @; TODO CITE SELF, Castagna Cardelli 1996, …
 as distinct from the “inheritance” mechanism of Class OO.
 However, Lieberman, in one of the papers that popularized this dichotomy@~cite{Lieberman1986},
@@ -1456,10 +1455,11 @@ But while it is extremely important indeed to understand the distinction and the
 between the general notion of prototypes from the special case of classes,
 it only begets confusion to treat inheritance and delegation
 as separate concepts when they have identical concerns of semantics, implementation or performance,
-whether used for prototypes versus classes.
-The sudden renaming is all the more counterproductive since for more than a decade already,
-“inheritance” had been used by “frames” and other “classless” objects,
-that would later be dubbed “prototypes” in the early 1980s@xnote["."]{
+whether used for prototypes versus classes,
+when the word “inheritance” had already been used by “frames” and other “classless” objects,
+that would later be dubbed “prototypes” in the early 1980s,
+and it is much more useful to see classes as a special case of prototypes
+that partake in the very same mechanism of inheritance@xnote["."]{
   If irrelevant changes in the context are a valid excuse to give an existing concept a new name
   and get a publication with hundreds of citations based on such a great original discovery,
   we here dub “ainheritance” the concept of “inheritance”
@@ -1482,6 +1482,8 @@ that would later be dubbed “prototypes” in the early 1980s@xnote["."]{
   However, a lot of citers seem to only fixate on the unfortunate choice
   of concept delineation and naming by Lieberman,
   who probably did not anticipate that he would set a bad trend with it.
+  The delineation was itself based on historically distinct encodings used by early actor systems
+  that Lieberman worked on more so that by an essential distinction how the mechanisms work.
   And those citers thereafter focused on studying or tweaking
   low-level “message passing” mechanisms instead of looking at the big picture
   of the semantics of inheritance.
@@ -1682,7 +1684,11 @@ Beside, if you retreat to “inheritance” in the hope that at least that for t
 you can get people to agree on a clear unambiguous meaning@xnote[","]{
   The term “inheritance” is already corrupted, since Goguen uses it at times to mean refinement,
   and others use it to mean the (non-modular) extension of database tables or equivalent.
-  And there are plenty of legitimate non-OO uses of the word “inherit”, to
+  Moreover, the term “inheritance”, that originated in KRL,
+  in parallel to the adoption and evolution it saw in the field of OO,
+  also had its evolution in the field of
+  Knowledge Representation, Description Logics, Semantic Web, etc.
+  And there are plenty of further legitimate non-OO uses of the word “inherit”, to
   mean that some entity derives some property from a historical origin, an enclosing context, etc.
 }
 you’ll find that if you
@@ -2101,8 +2107,8 @@ programmers may have to manage large interfaces to achieve small results@xnote["
   and by shunning abstraction in favor of concrete low-level data representations
   (on top of its high-level virtual machine rather than of the lower-level model
   of more popular languages),
-  to the point of replacing many routine names by common idioms, known sequences of combinators.
-  @;{TODO cite - ask arcfide / sacrideo}
+  to the point of replacing many routine names
+  by common idioms, known sequences of combinators. @;{TODO cite - ask arcfide / sacrideo}
   Admittedly, there is only so much room in this direction:
   as the software grows in intent and the features
   to simplify and monomorphize code
@@ -3612,7 +3618,7 @@ This style of inheritance was dubbed “mixin inheritance” by Bracha and Cook@
   The name “mixin” originally comes from Flavors @~cite{Cannon1979},
   inspired by the ice cream offerings at Emack & Bolios
   (as for the concept itself, it was inspired both by
-  previous attempts at multiple inheritance in KRL @~cite{Bobrow1976} or Ani @~cite{Kahn1979},
+  previous attempts at multiple inheritance in KRL @~cite{Bobrow1976} or Ani @~cite{Kahn1979Ani},
   combined with the ADVISE facility @~cite{teitelman1966}).
   However, Flavors offers full multiple inheritance (and was the first system to do it right),
   whereas the “mixins” of Bracha and Cook are a more rudimentary and more fundamental concept,
@@ -7115,66 +7121,118 @@ that should probably be formalized and added to the constraints of C4@xnote["."]
 
 @section{Advanced Topics in OO}
 
-@subsection{Focused modular extension}
+@subsection{Optics for OO}
+
+@subsubsection{Focused Specifications}
 
 Before we may revisit familiar features of advanced OO systems such as
 accessors, method combinations or multimethods, we must once again
 introduce some new elementary concept that will much simplify their formalization:
-@emph{focused} modular extensions (resp. definitions),
-product of an (open) modular extension (resp. definition)
-and a functional @emph{lens} @~cite{bananas1991 Foster2007CombinatorsFB oconnor2012lenses Pickering2017Optics}
-formalizing the relationship of the modular extension (resp. definition) to the module context.
-As we will see, focused modular extensions can also simplify the notion of regular methods,
-and elucidate the relationship betwee open and closed modular extensions.
-But lenses would have been overkill and a distraction in the formalism of previous sections,
-when handwaving the relationship between open and closed modular extensions was good enough.
-They are a necessary concept for these more advanced OO features.
+@emph{focused} specifications.
 
-A lens is the Functional Programming generalization of a C pointer, ML reference,
-Lisp Machine locative, Common Lisp place, etc.:
-it explains how to look at a part of a whole and make changes to it.
-A monomorphic lens (or simple lens) of type @c{Lens' s a} is
-a pair of a getter function and a setter function,
+A specification, whether modular definitions, modular extensions,
+multiple inheritance specifications, optimal inheritance specifications, etc.,
+can be @emph{focused} by enriching it (via conflation or explicit product)
+with two access paths:
+a path from the top of the program state to the module context being referenced, and
+a path from the top of the program state to the method being extended.
+Thus, instead of being “free floating”, your specification will be “located”
+within the context of the greater program state.
+Furthermore, to keep formalizing OO features in terms of pure functional semantics,
+these access paths we will formalize as functional @emph{lenses} (see below).
+
+And before we discuss new features, we will start with showing how focused specifications
+can simplify the formalization of individual classes or prototypes within an ecosystem,
+or of regular methods within a prototype.
+Having to introduce lenses means the notion of focused specification
+was overkill and a distraction in the formalism of previous sections,
+when handwaving the relationship between open and closed modular extensions was good enough.
+But since we are going to pay the price anyway to introduce advanced features,
+we may as well enjoy the benefits for basic features as well.
+
+@subsubsection{Short Recap on Lenses}
+
+A lens @~cite{bananas1991 Foster2007CombinatorsFB oconnor2012lenses Pickering2017Optics}
+is the pure Functional Programming take on what in stateful languages would be
+a C pointer, ML reference, Lisp Machine locative, Common Lisp place, etc.:
+a way to pin-point some location to inspect and modify within the wider program’s state.
+A lens is determined by a “getter”, function from a “source” to a “focus”,
+and an “updater”, function from a change to the focused data to a change
+of the wider state from “source” to an updated “target”.
+As a function from source to focus and back, it can thus also be seen as generalizing
+paths of fields and accessors, i.e. field @c{bar} of the 3rd element of field @c{foo}
+of the entry with key @c{(42, "baz")} within a table.
+
+A monomorphic lens (or simple lens) of type @c{MLens s a} is
+a pair of a getter function @c{s → a}, and a setter function @c{a → s → s},
 that allow you to get or set a current value under focus of type @c{a}
-from a whole or source of type @c{s}@xnote["."]{
-  A polymorphic lens (or stabby lens) of type @c{Lens s t a b} generalizes the above to cases
-  where updating the value under focus of type @c{a} into a new value of type @c{b}
-  yields a target value of type @c{t} from the source value of type @c{s}.
-  We will try to stick to monomorphic lenses in our discussions below,
-  but generalization to polymorphic lenses should be straightforward,
-  and we leave them as exercise to the reader.
-  Then come more general kind of “optic” functions,
-  that e.g. take into account that a value may be undefined, etc.
+from a whole or source of type @c{s};
+but instead of a setter function, a more composable
+update function @c{(a → a) → s → s} is often used:
+it transforms a local change under focus into a global change to the current source.
+A polymorphic lens (or stabby lens) of type @c{Lens s t a b} generalizes the above:
+you still have a getter function @c{s → a} to view what is under focus from the source
+(called @c{view} in Haskell, we’ll call it @c{get} below),
+but your update function now has type
+@c{(a → b) → s → t}, transforming an update under focus from @c{a} to @c{b}
+into a change from source @c{s} to target @c{t}
+(called @c{over} in Haskell, we’ll call it @c{update} below)@xnote["."]{
+  As usual, you can represent your lenses such that you can compose them with the
+  regular @c{compose} function, by pre-applying the @c{composeLens} function to them.
+  Haskellers use a further condensed representation as a single composable function
+  that some claim is more efficient, “van Laarhoven” lenses,
+  but we will avoid it for the sake of clarity.
 }
-A typical lens would specify how to get or set a field at a given identifier within a record;
-thus the getter for field @c{foo} would given a record @c{x} return the field value @c{x.foo}
-whereas the setter would take a new value @c{v} and an old record @c{x}
-and return a new record @c{y} that copies @c{x} except for the field @c{foo} wherein
-@c{y.foo} is set to @c{v}.
+Monomorphic lenses are a special case or polymorphic lenses with @c{t = s} and @c{b = a},
+and lenses form a category with a compose function and identity lenses;
+and in our previous representation of records as functions from identifiers to value,
+we can easily define a field lens:
+@Code{
+type Lens s t a b = { get : s → a ; update : (a → b) → s → t }
+type MLens s a = Lens s s a a
+
+composeLens : Lens x y s t → Lens s t a b → Lens x y a b
+idLens : Lens a a a a
+
+(define composeLens (λ (k) (λ (l) { get = l.get ∘ k.get ; update = k.update ∘ l.update })))
+(define idLens { get = (λ (x) x) ; update = (λ (f) f) })
+
+(define fieldLens (λ (key)
+  { get = (λ (s) (s key)) ; update = (λ (f) (λ (s) (extend-record s key (f (s key))))) }))
+}
+
+Monomorphic lenses suffice in simple cases
+where updates merely reflect a local change in a broader structure;
+but we will see how polymorphic lenses are useful in more advanced cases
+where local updates partake in a broader ongoing change.
+Then come more general kind of “optic” functions,
+that e.g. take into account that a value may be undefined, etc.,
+but we will leave their application as exercise to the reader.
+
+A typical monomorphic lens @c{MLens s a} would specify how to get or set a field
+at a given identifier within a record;
+thus the getter for field @c{foo} would given a record @c{x : s}
+return the field value @c{x.foo : a};
+whereas the setter would take a new value @c{v : a} and an old record @c{x : s}
+and return a new record @c{y : s} that copies @c{x} except for the field @c{foo} wherein
+@c{y.foo} is set to @c{v : a}.
 You could similarly define lenses for the nth element of a tuple or a list.
-You can also compose lenses, so that composing lenses for a series a field
+You can also compose lenses, so that composing lenses for a series of fields
 allow you to follow a path within an module context.
 
-A focused modular extension is thus the data of an open modular extension,
-and a lens relating the value being extended to the module context,
-where @c{r i p} are the required, inherited, provided type parameters for a modular extension,
-and @c{d} is a type parameter for the entity being defined.
-@code{
-type FMExt d r i p = Lens' r d × MExt r i p
-}
-
-In a closed focused module extension, the value inherited is of the top type,
-and the value provided is the one for the entity being defined:
-@code{
-type CFMExt r p = Lens' r p × MExt r top p
-}
-
-As usual, you can extract the value of the module context from the lens and the modular extension
-by using a fixpoint operator.
-
-@subsection{Methods with Focus}
+@subsubsection{Variants of Focused Specification}
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+@subsubsection{Composing Focused Modular Extensions}
+
+@subsubsection{Methods with Focus}
+
+@subsection{Method Combinations}
+
+@subsection{Multiple Dispatch}
+
+@section{Conclusion}
 
 @(generate-bibliography)
 

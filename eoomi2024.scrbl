@@ -492,16 +492,6 @@ This also makes them hard to type without subtypes.
 Type descriptors are themselves often a monomorphic type that does not require subtyping,
 at least not unless the type system accommodates dependent types, or at least staging.
 
-@TODO{
-cite DOT
-cite fortress
-cite Cook 2009
-}
-
-
-@section{BLAH START (RE)WRITING FROM HERE}
-
-@subsection{FOOOOOOOOOOOO}
 
 @subsubsection{Monotonicity}
 Why Subclassing is rarely Subtyping, and other questions of monotonicity,
@@ -519,7 +509,6 @@ The generalization of OO from overriding methods in records
 @; build wrap base mixin = Y (wrap . base mixin)
 @; inherit is the same!
 @; inherit child parent super self = child (parent super self) self
-
 
 
 @subsubsection{Method Combination, Instance Combination}
@@ -1267,3 +1256,45 @@ with single inheritance each.
 https://www.newted.org/download/manuals/NewtonScriptProgramLanguage.pdf
 
 @@@
+
+A focused modular extension is thus the data of an open modular extension,
+and a lens relating the value being extended to the module context.
+
+As usual, you can extract the value of the module context from the lens and the modular extension
+by using a fixpoint operator.
+In a closed focused module extension, the value inherited is of the top type,
+and the value provided is the one for the entity being defined:
+@Code{
+type CFMExt r p = Lens' r p × MExt r top p
+}
+
+sub-definition: a is the user-visible object or method, b is what the extension contributes
+sub-context: s is the narrow context for the object definition, t is wider context for the ecosystem.
+Encapsulation: 
+
+A monomorphic open focused modular extension
+where @c{r i p} are the required, inherited, provided type parameters for a modular extension,
+and @c{d} is a type parameter for the entity being defined.
+@Code{
+type FMExt d r i p = Lens' r d × MExt r i p
+}
+
+First, simple case:
+
+@Code{
+type FMExt s t a b r i p = Lens s t a b × (r → i → p)
+type CFMExt s a = Lens s s a a × (s → a → a)
+
+fixl : s → CFMExt s a → s
+fixl s0 (l, m)
+  = fix s0 (λ (s) (l.set (m s (l.get s)) s))
+  = fix s0 (λ (s) (l.over (m s) s (l.get s)))
+
+focusExtFocus : Lens s t v w → (c → v → w) → c → s → t
+focusExtFocus l m self super = l.over (m self) super (l.get super)
+
+focusExtCtx : Lens s t a b → (a → v → w) → s → v → w
+focusExtCtx l m self super = m (l.get self) super
+}
+
+DO THE THING INFORMALLY, WITHOUT TYPES, WITH STATE FIRST, THEN FORMALIZE WITH LENSES
