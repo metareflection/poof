@@ -1257,9 +1257,6 @@ https://www.newted.org/download/manuals/NewtonScriptProgramLanguage.pdf
 
 @@@
 
-A focused modular extension is thus the data of an open modular extension,
-and a lens relating the value being extended to the module context.
-
 As usual, you can extract the value of the module context from the lens and the modular extension
 by using a fixpoint operator.
 In a closed focused module extension, the value inherited is of the top type,

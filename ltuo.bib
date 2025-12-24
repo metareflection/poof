@@ -44,6 +44,7 @@
   author={Alexandre Dumas},
   title={Les Trois Mousquetaires},
   year={1844},
+  url={https://fr.wikisource.org/wiki/Les_Trois_Mousquetaires},
   note={This novel, despite being named "The Three Musketeers",
         has four musketeers as protagonists.}
 }
@@ -60,7 +61,8 @@
   volume = {7},
   number = {5},
   pages = {28--32},
-  year = {1961}
+  year = {1961},
+  url={https://people.eecs.berkeley.edu/~kubitron/courses/cs252-S12/handouts/papers/b5000.pdf}
 }
 
 % Architect of the Burroughs B5000
@@ -446,11 +448,12 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % cites Simula, Smalltalk and Director (Kahn) "developed jointly with Kahn"
 % AI_WP_180
 @Misc{Hewitt1979Security,
-  title={Security and modularity in message passing},
+  title={Security and Modularity in Message Passing},
   author={Hewitt, Carl and Attardi, Giuseppe and Lieberman, Henry},
   year={1979},
   month=February,
-  publisher={MIT Artificial Intelligence Laboratory}
+  publisher={MIT Artificial Intelligence Laboratory},
+  url={https://dspace.mit.edu/handle/1721.1/41147}
 }
 
 @PhDThesis{Borning1979,
@@ -528,7 +531,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % Yale T Scheme. Introduces functional syntax for object method invocation.
 % Norman I. Adams, IV -- but the IV doesn't get processed correctly
 % Can't find it on http://mumble.net/~jar/tproject/
-@InProceedings{Rees82t:a,
+@InProceedings{Rees1982T,
   author = {Jonathan A. Rees and Norman I. Adams},
   title = {T: a dialect of LISP or, Lambda: the ultimate software tool},
   booktitle = {Symposium on Lisp and Functional Programming, ACM},
@@ -789,15 +792,17 @@ numpages = {8}
   url = {https://www.cs.man.ac.uk/~david/categories/book/book.pdf}
 }
 
+% Extended version of previous paper at POPL'85 https://dl.acm.org/doi/10.1145/318593.318606
 @article{mitchell1988abstract,
-  title={Abstract types have existential type},
+  title={Abstract Types have Existential Type},
   author={Mitchell, John C and Plotkin, Gordon D},
   journal={ACM Transactions on Programming Languages and Systems (TOPLAS)},
   volume={10},
   number={3},
   pages={470--502},
   year={1988},
-  publisher={ACM New York, NY, USA}
+  publisher={ACM New York, NY, USA},
+  doi={10.1145/44501.45065}
 }
 
 % Introduces abstract classes and concrete classes, according to Grok
@@ -809,7 +814,8 @@ numpages = {8}
   volume={1},
   number={2},
   pages={22--35},
-  year={1988}
+  year={1988},
+  url={http://laputan.org/drc/drc.html}
 }
 
 %% 1989
@@ -818,14 +824,15 @@ numpages = {8}
 % Conflict resolution is manual; you can explicitly call a superclass method,
 % but there is no linearization mechanism to preserve method linearity
 % in case of "ambiguities" (paper does not say "diamonds")
-@article{stroustrup1989multiple,
+@article{Stroustrup1989Multiple,
   title={Multiple inheritance for C++},
   author={Stroustrup, Bjarne},
   journal={Computing Systems},
   volume={2},
   number={4},
   pages={367--395},
-  year={1989}
+  year={1989},
+  url={https://www.usenix.org/legacy/publications/compsystems/1989/fall_stroustrup.pdf}
 }
 
 % Authors of EuLisp don't like multiple inheritance, want mixin inheritance
@@ -847,15 +854,17 @@ numpages = {8}
 
 % POPL, short reprise of what's in his thesis
 % Also single-inheritance, records only
-@Article{cook1989denotational,
-  title={A denotational semantics of inheritance and its correctness},
+@Article{Cook1989Denotational,
+  title={A Denotational Semantics of Inheritance and its Correctness},
   author={Cook, William and Palsberg, Jens},
   journal={ACM Sigplan Notices},
   volume={24},
   number={10},
   pages={433--443},
   year={1989},
-  publisher={ACM New York, NY, USA}
+  publisher={ACM New York, NY, USA},
+  doi={10.1145/74877.74922},
+  url={https://web.cs.ucla.edu/~palsberg/paper/ic94.pdf}
 }
 
 % The right fixed-point semantics, actually for prototypes as well as classes!
@@ -974,7 +983,8 @@ numpages = {8}
   number={1},
   pages={55--92},
   year={1991},
-  publisher={Elsevier}
+  publisher={Elsevier},
+  doi={10.1016/0890-5401(91)90052-4}
 }
 
 % Studies λ-calculus with polymorphism, meets and joins, expresses naturals and others in it.
@@ -992,7 +1002,7 @@ numpages = {8}
 % Kind of category theory
 @inproceedings{bananas1991,
   author = {Meijer, Erik and Fokkinga, Maarten and Paterson, Ross},
-  title = {Functional programming with bananas, lenses, envelopes and barbed wire},
+  title = {Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire},
   year = {1991},
   isbn = {0387543961},
   publisher = {Springer-Verlag},
@@ -1000,7 +1010,9 @@ numpages = {8}
   booktitle = {Proceedings of the 5th ACM Conference on Functional Programming Languages and Computer Architecture},
   pages = {124–144},
   numpages = {21},
-  location = {Cambridge, Massachusetts, USA}
+  location = {Cambridge, Massachusetts, USA},
+  doi = {10.1007/3540543961_7},
+  url = {https://research.utwente.nl/en/publications/functional-programming-with-bananas-lenses-envelopes-and-barbed-w/}
 }
 
 % Original DEFSYSTEM is a 1990 paper, but hard to find independently from the others.
@@ -1015,14 +1027,15 @@ numpages = {8}
 }
 
 @Article{gabriel1991clos,
-  title={CLOS: Integrating object-oriented and functional programming},
+  title={CLOS: Integrating Object-Oriented and Functional Programming},
   author={Gabriel, Richard P and White, Jon L and Bobrow, Daniel G},
   journal={Communications of the ACM},
   volume={34},
   number={9},
   pages={29--38},
   year={1991},
-  publisher={ACM New York, NY, USA}
+  publisher={ACM New York, NY, USA},
+  url={https://www.researchgate.net/publication/220422719_CLOS_Integrating_Object-Oriented_and_Functional_Programming}
 }
 
 @Book{amop,
@@ -1184,6 +1197,17 @@ numpages = {8}
   url = "http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.121.134"
 }
 
+@article{Goguen1992Sheaf,
+  title={Sheaf Semantics for Concurrent Interacting Objects},
+  author={Goguen, Joseph A},
+  journal={Mathematical Structures in Computer Science},
+  volume={2},
+  number={2},
+  year={1992},
+  doi={10.1017/S0960129500001420},
+  url={https://cseweb.ucsd.edu/~goguen/ps/sheaf.ps.gz}
+}
+
 % Defines the constraints used by C3, but uses a global rather than local tie break rule,
 % and goes on rather than errors out if rules are incompatible
 @article{Ducournau1992Monotonic,
@@ -1194,7 +1218,8 @@ numpages = {8}
   number={10},
   pages={16--24},
   year={1992},
-  publisher={ACM New York, NY, USA}
+  publisher={ACM New York, NY, USA},
+  url={https://www.researchgate.net/publication/234827636_Monotonic_conflict_resolution_mechanisms_for_inheritance}
 }
 
 %% 1993
@@ -1237,7 +1262,8 @@ numpages = {8}
   number={10},
   pages={215--230},
   year={1993},
-  publisher={ACM New York, NY, USA}
+  publisher={ACM New York, NY, USA},
+  url={https://bracha.org/oopsla93.pdf}
 }
 
 % First version POPL 1993, also U of Edinburgh ECS-LFCS-92-225 "Object-Oriented Programming Without Recursive Types"
@@ -1255,7 +1281,8 @@ numpages = {8}
 @misc{PT1993STTFOOP,
   author={Pierce, Benjamin C. and Turner, David N.},
   title={Simple Type-Theoretic Foundations for Object-Oriented Programming},
-  year={1993}
+  year={1993},
+  url={https://www.cambridge.org/core/journals/journal-of-functional-programming/article/simple-typetheoretic-foundations-for-objectoriented-programming/5C18E2E055B028F7214FBB183701830E}
 }
 % @article
 %  volume={4},
@@ -1308,7 +1335,8 @@ series = {OOPSLA '94}
   title={Design patterns: elements of reusable object-oriented software},
   author={Erich Gamma and Richard Helm and Ralph Johnson and John Vlissides},
   year={1994},
-  publisher={Addison-Wesley}
+  publisher={Addison-Wesley},
+  url={https://github.com/ansbilalgit/Books/blob/master/Erich%20Gamma,%20Richard%20Helm,%20Ralph%20Johnson,%20John%20M.%20Vlissides-Design%20Patterns_%20Elements%20of%20Reusable%20Object-Oriented%20Software%20%20-Addison-Wesley%20Professional%20(1994).pdf}
 }
 
 % Extend a simply typed LC (terminating) with simple objects and a typesystem
@@ -1412,13 +1440,6 @@ series = {OOPSLA '94}
   note = {AAI0576129}
 }
 
-@Misc{eich1995javascript,
-  title={JavaScript},
-  author={Brendan Eich},
-  journal={Mozilla Foundation},
-  year={1995}
-}
-
 % Cited by Cook2012, mentioned positively by him in private email
 % https://static.aminer.org/pdf/PDF/000/137/588/objects_and_classes_co_algebraically.pdf
 % In the last paragraph of section 2, Jacobs says that Ai, Bi, Ci are (constant) sets.
@@ -1436,6 +1457,19 @@ series = {OOPSLA '94}
 }
 
 %% 1996
+
+% ECMA/TC39/96/2
+% No official document published in 1995, only webpages on archive.org
+% "JavaScript Language Specification" "Preliminary Draft" "JavaScript 1.1"
+% Says neither "inheritance" nor "delegation" about its objects, though the introduction says
+% "JavaScript borrows most of its syntax from Java, but also inherits from Awk and Perl, with some
+% indirect influence from Self in its object system."
+@Misc{Eich1996JavaScript,
+  title={JavaScript},
+  author={Brendan Eich},
+  year={1996},
+  url={https://archives.ecma-international.org/1996/TC39/96-002.pdf}
+}
 
 % Same bullshit as in 1995. At least constant
 % https://sci-hub.ru/https://link.springer.com/chapter/10.1007/BFb0053063
@@ -1505,17 +1539,19 @@ series = {OOPSLA '94}
   title={Type Systems for object-oriented programming languages},
   author={Fisher, Kathleen Shanahan},
   year={1996},
-  publisher={Stanford University}
+  publisher={Stanford University},
+  url={https://www.researchgate.net/publication/2828333_Type_Systems_For_Object-Oriented_Programming_Languages}
 }
 
 % https://kbb04747.sites.pomona.edu/README.html#Match
 % Good explanation of the problems with the NNOOTT
 % "The notions of type and class are often confounded in object-oriented programming languages" p.5
-@article{bruce1996typing,
-  title={Typing in object-oriented languages: Achieving expressiveness and safety},
+@article{Bruce1996Typing,
+  title={Typing in Object-Oriented Languages: Achieving Expressiveness and Safety},
   author={Bruce, Kim B},
   journal={Unpublished, June},
-  year={1996}
+  year={1996},
+  url={https://www.academia.edu/2617908/Typing_in_object_oriented_languages_Achieving_expressibility_and_safety}
 }
 
 % https://www.stroustrup.com/hopl2.pdf
@@ -1653,16 +1689,30 @@ series = {PLDI '99}
 
 %% 2000
 
+% Introduces explicit implemented-by relationship to avoid confusion between metalevels
+% when extending (e.g. adding shadow slots for history, implementing persistence, etc.)
+% https://www.researchgate.net/publication/2436142_Avoiding_Confusion_in_Metacircularity_The_Meta-Helix
+@article{Chiba2000MetaHelix,
+  author = {Chiba, Shigeru and Kiczales, Gregor and Lamping, John},
+  year = {2000},
+  month = {11},
+  title = {Avoiding Confusion in Metacircularity: The Meta-Helix},
+  isbn = {978-3-540-60954-4},
+  journal = {Lecture Notes in Computer Science},
+  doi = {10.1007/3-540-60954-7_49}
+}
+
 % Implements proper multiple inheritance on top of C++, but
 % you have to manually linearize and pass the Super in a template.
 % InProceedings
-@Misc{smaragdakis2000mixin,
+@Misc{Smaragdakis2000Mixin,
   title={Mixin-based programming in C++},
   author={Yannis Smaragdakis and Don Batory},
   booktitle={International Symposium on Generative and Component-Based Software Engineering},
   pages={164--178},
   year={2000},
-  organization={Springer}
+  organization={Springer},
+  url={https://www.researchgate.net/publication/2617570_Mixin-Based_Programming_in_C}
 }
 
 % https://www.math.nagoya-u.ac.jp/~garrigue/papers/variant-reuse.pdf
@@ -1674,7 +1724,8 @@ series = {PLDI '99}
   author={Garrigue, Jacques},
   booktitle={Workshop on Foundations of Software Engineering},
   volume={13},
-  year={2000}
+  year={2000},
+  url={https://www.math.nagoya-u.ac.jp/~garrigue/papers/fose2000.html}
 }
 
 %% 2001
@@ -1719,9 +1770,10 @@ series = {PLDI '99}
 % No mention of recursive types, or fixpoints, etc.: Looks like the NNOOTT to me.
 @inproceedings{Bak2002Mixins,
   title={Mixins in Strongtalk},
-  author={Bak, Lars and Bracha, Gilad and Grarup, Steffen and Griesemer, Robert and Griswold, David and H{\"o}lzle, Urs},
+  author={Bak, Lars and Bracha, Gilad and Grarup, Steffen and Griesemer, Robert and Griswold, David and Hölzle, Urs},
   booktitle={ECOOP 2002 Workshop on Inheritance},
-  year={2002}
+  year={2002},
+  url={https://bracha.org/mixins-paper.pdf}
 }
 
 % See notably chapters 18, 19, 24, 32.
@@ -1795,12 +1847,13 @@ series = {PLDI '99}
 
 %% 2005
 
-@InProceedings{Salzman05prototypeswith,
+@InProceedings{Salzman2005PrototypesMultipleDispatch,
   author = {Lee Salzman and Jonathan Aldrich},
-  title = {Prototypes with multiple dispatch: An expressive and dynamic object model},
+  title = {Prototypes with Multiple Dispatch: An Expressive and Dynamic Object Model},
   booktitle = {ECOOP},
   year = {2005},
-  abstract="Two object-oriented programming language paradigms---dynamic, prototype-based languages and multi-method languages---provide orthogonal benefits to software engineers. These two paradigms appear to be in conflict, however, preventing engineers from realizing the benefits of both technologies in one system. This paper introduces a novel object model, prototypes with multiple dispatch (PMD), which seamlessly unifies these two approaches. We give formal semantics for PMD, and discuss implementation and experience with PMD in the dynamically typed programming language Slate."
+  abstract="Two object-oriented programming language paradigms---dynamic, prototype-based languages and multi-method languages---provide orthogonal benefits to software engineers. These two paradigms appear to be in conflict, however, preventing engineers from realizing the benefits of both technologies in one system. This paper introduces a novel object model, prototypes with multiple dispatch (PMD), which seamlessly unifies these two approaches. We give formal semantics for PMD, and discuss implementation and experience with PMD in the dynamically typed programming language Slate.",
+  url={https://www.cs.cmu.edu/~aldrich/papers/ecoop05pmd.pdf}
 }
 
 @article{scalableComponentAbstractions2005,
@@ -1904,7 +1957,8 @@ series = {PLDI '99}
   title={The Newspeak Programming Platform},
   author={Bracha, Gilad and Ahe, Peter and Bykov, Vassili and Kashai, Yaron and Miranda, Eliot},
   journal={Cadence Design Systems},
-  year={2008}
+  year={2008},
+  url={https://bracha.org/newspeak.pdf}
 }
 
 % Master Thesis. BCL
@@ -1970,10 +2024,13 @@ series = {PLDI '99}
 
 % TODO
 % Claims that objects are about modularity of "classes" used only through "interfaces", not inheritance
+% https://dl.acm.org/doi/10.1145/1640089.1640133
 @Misc{Cook2009,
-  author = {William Cook},
-  title = {On Understanding Data Abstraction, Revisited},
-  year = 2009
+  author={William Cook},
+  title={On Understanding Data Abstraction, Revisited},
+  year=2009,
+  doi={10.1145/1640089.1640133},
+  url={https://www.cs.utexas.edu/~wcook/Drafts/2009/essay.pdf}
 }
 
 % Unpublished

@@ -404,7 +404,7 @@ Moreover, C++ crucially lacks the proper method resolution
 that enables a lot of the modularity of multiple inheritance in other languages.
 
 Now, you can use C++’s powerful template language to reconstitute actual mixin inheritance
-and its method resolution on top of C++’s weird variant of inheritance@~cite{smaragdakis2000mixin};
+and its method resolution on top of C++’s weird variant of inheritance@~cite{Smaragdakis2000Mixin};
 and you could no doubt further implement proper multiple inheritance on top of that@xnote["."]{
   One could achieve multiple inheritance as a design pattern on top of mixin inheritance,
   as we will describe later in this article,
@@ -437,7 +437,7 @@ and even most of those that look like OO are often different enough that
 @principle{C++ does not reliably inform about OO in general}@xnote["."]{
   The situation is similar for Ada, that adopted multiple inheritance in 2003
   by seemingly copying the general design of C++.
-  Now even when C++ got multiple inheritance wrong@~cite{stroustrup1989multiple},
+  Now even when C++ got multiple inheritance wrong@~cite{Stroustrup1989Multiple},
   ignorance was no valid excuse,
   since Lisp got it right ten years earlier@~cite{Cannon1979}.
   Ignorance is even less forgivable in the case of Ada
@@ -470,9 +470,9 @@ ThingLab @~cite{Borning1977 Borning1979 Borning1981}@xnote["."]{
   ThingLab was built on top of Smalltalk by members of the same team at PARC,
   and oscillated between having or not having classes in addition to prototypes.}
 Plenty more Prototype OO or “class-less” OO languages followed
-@~cite{Rees82t:a adams88oopscheme chambers1989efficient Lawall89SelfInScheme Salzman05prototypeswith jsonnet nix2015 poof2021}.
+@~cite{Rees1982T adams88oopscheme chambers1989efficient Lawall89SelfInScheme Salzman2005PrototypesMultipleDispatch jsonnet nix2015 poof2021}.
 There are lot more Prototype OO languages than we could have time to review @~cite{WikiProto},
-but prominent among them is JavaScript @~cite{eich1995javascript},
+but prominent among them is JavaScript @~cite{Eich1996JavaScript},
 one of the most used programming language in the world @~cite{TopPL2022},
 maybe the top one by users
 (though it relatively recently also adopted classes on top of prototypes @~cite{EcmaScript:15}).
@@ -1682,7 +1682,8 @@ corrupters of language, manipulators, proud spreaders of ignorance, etc.—who i
 would endlessly destroy the value of language and make clear meaning incommunicable.
 Beside, if you retreat to “inheritance” in the hope that at least that for that term
 you can get people to agree on a clear unambiguous meaning@xnote[","]{
-  The term “inheritance” is already corrupted, since Goguen uses it at times to mean refinement,
+  The term “inheritance” is already corrupted,
+  since Goguen uses it at times to mean refinement @~cite{Goguen1992Sheaf},
   and others use it to mean the (non-modular) extension of database tables or equivalent.
   Moreover, the term “inheritance”, that originated in KRL,
   in parallel to the adoption and evolution it saw in the field of OO,
@@ -3509,7 +3510,7 @@ and @c{t} is the inherited value
   so you can’t directly write traits that inherit “super” behavior along the class precedence list;
   but it works if you restrict yourself to inheritance, or if you use template metaprogramming
   to arrange to pass a superclass, or list or DAG of superclasses, as argument to your template,
-  and manually reimplement mixin inheritance @~cite{smaragdakis2000mixin},
+  and manually reimplement mixin inheritance @~cite{Smaragdakis2000Mixin},
   or if you’re adventurous, multiple inheritance, on top of C++.
 }
 The function can also be written with @c{compose}, eliding the “super” variable:
@@ -4267,6 +4268,10 @@ Yet though they offer correct models for typing OO,
 both authors fail to distinguish specification and target
 as syntactically and semantically separate entities in their languages,
 leading to much extraneous complexity in their respective type systems.
+
+Finally, the confusion between target and specification can also be seen as a special case of
+the confusion between object and implementation discussed in @~cite{Chiba2000MetaHelix},
+wherein you can see the specification as @emph{implementing} the target.
 
 Thus, through all the confusion of class OO languages so far,
 both practitioners and theorists have felt the need to distinguish specification and target,
@@ -5918,7 +5923,7 @@ which would result in an error, at compile-time in the more static systems.
 @; TODO triple check how KRL, Ani did it
 Flavors @~cite{Cannon1979} identified the correct solution,
 that involves cooperation and harmony rather than conflict and chaos.
-Failing to learn from Flavors, C++ @~cite{stroustrup1989multiple}
+Failing to learn from Flavors, C++ @~cite{Stroustrup1989Multiple}
 and after it Ada not only issue an error like older systems,
 they also and try to force the ancestry DAG into a tree
 like CommonObjects @~cite{Snyder1986Encapsulation}.
@@ -7163,17 +7168,17 @@ As a function from source to focus and back, it can thus also be seen as general
 paths of fields and accessors, i.e. field @c{bar} of the 3rd element of field @c{foo}
 of the entry with key @c{(42, "baz")} within a table.
 
-A monomorphic lens (or simple lens) of type @c{MLens s a} is
+A monomorphic lens (or simple lens) of type @c{MLens s a} can be seen as
 a pair of a getter function @c{s → a}, and a setter function @c{a → s → s},
 that allow you to get or set a current value under focus of type @c{a}
 from a whole or source of type @c{s};
-but instead of a setter function, a more composable
-update function @c{(a → a) → s → s} is often used:
+however, instead of a setter function, we will use a representation based on
+a more composable updater function @c{(a → a) → s → s}:
 it transforms a local change under focus into a global change to the current source.
 A polymorphic lens (or stabby lens) of type @c{Lens s t a b} generalizes the above:
 you still have a getter function @c{s → a} to view what is under focus from the source
 (called @c{view} in Haskell, we’ll call it @c{get} below),
-but your update function now has type
+but your updater function now has type
 @c{(a → b) → s → t}, transforming an update under focus from @c{a} to @c{b}
 into a change from source @c{s} to target @c{t}
 (called @c{over} in Haskell, we’ll call it @c{update} below)@xnote["."]{
@@ -7188,7 +7193,9 @@ and lenses form a category with a compose function and identity lenses;
 and in our previous representation of records as functions from identifiers to value,
 we can easily define a field lens:
 @Code{
-type Lens s t a b = { get : s → a ; update : (a → b) → s → t }
+type Getter s a = { get : s → a }
+type Updater s t a b = { update : (a → b) → s → t }
+type Lens s t a b = Getter s a ∩ Updater s t a b
 type MLens s a = Lens s s a a
 
 composeLens : Lens x y s t → Lens s t a b → Lens x y a b
@@ -7197,8 +7204,12 @@ idLens : Lens a a a a
 (define composeLens (λ (k) (λ (l) { get = l.get ∘ k.get ; update = k.update ∘ l.update })))
 (define idLens { get = (λ (x) x) ; update = (λ (f) f) })
 
+(define fieldGetter (λ (key)
+  { get = (λ (s) (s key)) }))
+(define fieldUpdater (λ (key)
+  { update = (λ (f) (λ (s) (extend-record s key (f (s key))))) }))
 (define fieldLens (λ (key)
-  { get = (λ (s) (s key)) ; update = (λ (f) (λ (s) (extend-record s key (f (s key))))) }))
+  (merge-records (fieldGetter key) (fieldUpdater key))))
 }
 
 Monomorphic lenses suffice in simple cases
@@ -7220,7 +7231,17 @@ You could similarly define lenses for the nth element of a tuple or a list.
 You can also compose lenses, so that composing lenses for a series of fields
 allow you to follow a path within an module context.
 
-@subsubsection{Variants of Focused Specification}
+@subsubsection{Functional Focused Specification}
+
+A focused specification is the data of a specification, and
+a getter for the module context (so it can be narrowed from the entire program), and
+an updater for the value being extended (so it can be differently narrowed from the entire program).
+Note that this pair of getter and updater are not usually a lens,
+because the location and type of the getter need not correspond to that of the updater;
+indeed, for an open specification,
+the getter corresponds to an entire object,
+while the updater usually corresponds to a single method,
+which is usually narrower.
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
