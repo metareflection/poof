@@ -685,8 +685,8 @@ Director @~cite{Kahn1976 Kahn1979Ani Kahn1979Director} and
 ThingLab @~cite{Borning1977 Borning1979 Borning1981}.
 
 However, neither Simula, nor Smalltalk nor any popular claimed OO language
-actually fits that metaphor, though some obscure and later Actor languages might.
-@; cite ABCL/1 ?
+actually fits that metaphor, though some obscure Actor languages might @~cite{Hewitt1979Security}.
+@; TODO cite Yonezawa ?
 Instead, the only popular language ever to fit this metaphor
 is Erlang@~cite{OOP2010};
 yet Erlang is not part of the OO tradition,
@@ -703,7 +703,7 @@ that Alan Kay also once mentioned was essential for OO@xnote["."]{
   Now, as we’ll see, you need fixed-points to express the semantics of OO;
   but in a pure applicative context, you cannot directly express sharing the results of a computation,
   so the pure fixed-point combinators lead to exponential recomputations as the fixed-point
-  involves deeper self-references.
+  involves deeper self-references (see @seclink{DSF}).
   OO is therefore possible using the applicative pure functional fragment of the language
   within an Erlang process, but the result will not scale very well;
   see for instance the example “object-via-closure” that Duncan McGreggor wrote as part of LFE.
@@ -797,9 +797,12 @@ that describes a different set of programming languages and patterns@xnote["."]{
   that Erlang’s Concurrency Oriented Programming is clearly
   what the authors of Simula, Smalltalk, Actors, etc., were all @emph{aiming at}.
   But, due to hardware as well as software limitations of the 1960s and 1970s,
-  they all failed to actually reach that goal until the mid 1980s,
-  and instead on their way stumbled on something altogether different,
-  that they identified and developed—Object Oriented Programming.
+  they all failed to actually reach that goal until the mid 1980s;
+  on their way to an intended destination, they instead serendipitously
+  stumbled on something altogether different, inheritance,
+  that would soon become (pun intended) a vastly successful programming language feature,
+  as often misunderstood, abused and hated as understood, well-used and loved,
+  that came to define a new style of programming, called “Object-Oriented Programming”.
 
   That’s how invention always works:
   if you knew in advance the thing you’d find later, it would already have been invented.
@@ -1047,7 +1050,7 @@ only an unintentional way that defeats guarantees of termination
 @~cite{grigore2016javagenericsturingcomplete}.
 
 @subsection{More Fundamental than Prototypes and Classes}
-@subsubsection{Specifications and Targets}
+@subsubsection[#:tag "SaT"]{Specifications and Targets}
 As we reconstruct the semantics of OO from first principles,
 we will see that more so than prototype, class, object, or method,
 @principle{the fundamental notions of OO are @emph{specification} and @emph{target}}:
@@ -1064,7 +1067,8 @@ or of their compile-time or runtime representation.
 A (partial or complete) specification is a piece of information that
 (partially or completely) describes a computation.
 Multiple specifications can be combined together into a larger specification.
-From a complete specification, a target computation is specified that can be extracted.
+From a complete specification, a target computation is specified that can be extracted;
+but most specification are incomplete and you can’t extract any meaningful target from them.
 A specification is modular inasmuch as it can define certain aspects of the target
 while refering to other aspects to be defined in other specifications.
 A specification is extensible inasmuch as it can refer to some aspects of the target
@@ -1079,12 +1083,12 @@ A specification is not a prototype, not a class, not a type, not an object:
 it is not even a value of the target domain.
 It is not a record and does not have methods, fields, attributes or any such thing.
 
-The target value in general is not an object either,
-it’s just an arbitrary value of that arbitrary domain.
+A target value in general is not an object, prototype or class either;
+it’s just an arbitrary value of that arbitrary domain that is targetted.
 It needs not be any kind of record nor record type;
 it needs not have been computed as the fixed-point of a specification;
 indeed it is not tied to any specific way to compute it.
-It cannot be inherited from (incrementally extended)
+It cannot be inherited from or otherwise extended
 according to any of the design patterns that characterize OO.
 
 Rather, @principle{a prototype
@@ -1120,7 +1124,7 @@ without the need of communication between the two (that would require time-trave
 Thus, in first-class OO, @principle{Conflation Increases Modularity}.
 
 This modularity advantage, however, is largely lost in
-static languages with second-class Class OO["."]{
+static languages with second-class Class OO@xnote["."]{
   Note that this does not include dynamic Class OO languages
   like Lisp, Smalltalk, Ruby or Python.
   In these languages, compilation can keep happening at runtime,
@@ -1207,7 +1211,7 @@ at least none available to the user, whether Prototype OO or Class OO.
 The authors will not usually claim that these objects are part of an OO framework
 actual or imagined, but then again sometimes they may.
 
-@subsubsection{OO without Objects}
+@subsubsection[#:tag "OOwoO"]{OO without Objects}
 
 Therefore, @principle{the word “object” is practically useless when talking of OO in general},
 being too ambiguous absent the context of a specific language, system, document, etc.
@@ -1348,7 +1352,7 @@ adopting the term, retroactively applying it to SIMULA,
 and subsequently inventing the terms “single” and “multiple” inheritance
 to distinguish the two approaches as well as recognize their commonality.
 
-Although some more early systems @~cite{Kahn1976 Borning1977 Traits Borning1982Multiple}
+Although some more early systems @~cite{Borning1977 Traits Borning1982Multiple}
 used multiple inheritance,
 @principle{multiple inheritance only became usable with the epochal system Flavors}
 @~cite{Cannon1979}
@@ -3619,7 +3623,7 @@ This style of inheritance was dubbed “mixin inheritance” by Bracha and Cook@
   The name “mixin” originally comes from Flavors @~cite{Cannon1979},
   inspired by the ice cream offerings at Emack & Bolios
   (as for the concept itself, it was inspired both by
-  previous attempts at multiple inheritance in KRL @~cite{Bobrow1976} or Ani @~cite{Kahn1979Ani},
+  previous attempts at multiple inheritance in KRL @~cite{Bobrow1976} or ThingLab @~cite{Borning1977},
   combined with the ADVISE facility @~cite{teitelman1966}).
   However, Flavors offers full multiple inheritance (and was the first system to do it right),
   whereas the “mixins” of Bracha and Cook are a more rudimentary and more fundamental concept,
@@ -3920,16 +3924,17 @@ We will see shortly extend this model to support more features
 Yet our “object system” has no classes, and indeed no objects at all:
 instead, like the object system of Yale T Scheme @~cite{adams88oopscheme},
 on top of which its windowing system was built,
-our system is made of records and their specifications,
-that enable about everything that a Prototype object system do,
-but without either records or specifications being objects nor prototypes.
+our system is made of target records and their specifications,
+that can do about everything that a Prototype object system does,
+but without either records or specifications being objects nor prototypes
+(see @seclink{PaC}).
 
 We defined our system in two lines of code, that can be similarly defined
 in any language that has higher-order functions,
 even a pure functional language without mutation;
 and indeed Nix defines its “extension” system similarly@~cite{nix2015}.
 But there is indeed one extra thing Nix does that our system doesn’t,
-wherein Nix has prototype objects and our system (as is) has not: conflation.
+wherein Nix has prototype objects and our system so far, like T, has not: conflation.
 
 @subsubsection{Conflation: Crouching Typecast, Hidden Product}
 
@@ -4144,25 +4149,29 @@ and is almost-but-not-quite an isomorphism, and specially memorizes the specific
 
 First, note how, if a specification is pure functional,
 i.e. without side-effect, whether state, non-determinism, I/O or otherwise,
-then indeed there is only one target, up to behavioral equality;
-recomputing the target multiple times will lead to the same result in all contexts;
-caching the target value next to specification can thus be seen as a performance enhancement.
-However, in case of recursive access to the target, this performance enhancement
+then indeed there is only one target, uniquely specified up to behavioral equality:
+recomputing the target multiple times will lead to the same result in all contexts.
+It thus makes sense to consider “the” target for a specification,
+and to see it as but another aspect of it.
+Caching the target value next to specification can then be seen simply as a performance enhancement.
+Indeed, in case of recursive access to the target, this performance enhancement
 can grow exponentially with the depth of the recursion,
 by using a shared computation instead of repeated recomputations
 (see the related discussion on the applicative Y combinator in
 @secref{DSF}).
 
-If however, the specification has side-effects
-(which of course supposes the language also has side-effects),
+If on the other hand, the specification has side-effects
+(which of course supposes the language has side-effects to begin with),
 then multiple computations of the target value will lead to different results,
 and caching a one canonical target value next to the specification is
 not just a performance enhancement, but a critical semantic feature enabling
 the sharing of the state and side-effects of a prototype between all its users.
-And if some users explicitly want to recompute the target,
+Meanwhile, if some users explicitly want to recompute the target,
+so as to get a fresh state to be modified by its own set of side-effects,
 they can always clone the prototype,
-i.e. create a new prototype that uses the same specification,
-or inherits from it using the neutral element @c{(proto←spec idMExt)}.
+i.e. create a new prototype that uses the same specification;
+equivalently, they can create a prototype that inherits from it
+using as extension the neutral element @c{(rproto←spec idMExt)}.
 
 Now, plenty of earlier or contemporary Prototype OO languages,
 from Ani and ThingLab to SELF and JavaScript and beyond,
@@ -4178,7 +4187,7 @@ This mutation is not usually colloquial in production code,
 but may be heavily relied upon during interactive development,
 or as part of implementing advanced infrastructure. @;{ TODO secref mutation }
 
-Also note that if your choice of representation for specifications and targets
+Last but not least, if your choice of representation for specifications and targets
 is such that instantiating a specification may itself issue side-effects such
 as errors or non-termination or irreversible I/O, then it becomes essential
 to wrap your target behind lazy evaluation, or, in Scheme, a @c{delay} form,
@@ -5916,7 +5925,7 @@ or it can have many elements in which case the inheritance is actually multiple 
 Now, early OO systems with multiple inheritance (and sadly many later ones still)
 didn’t have a good theory for how to resolve methods when a specification
 inherited different methods from multiple parents,
-and didn’t provide its own overriding definition @~cite{Kahn1976 Borning1977 Smalltalk78 Traits}.
+and didn’t provide its own overriding definition @~cite{Borning1977 Smalltalk78 Traits}.
 This situation was deemed a “conflict” between inherited methods,
 which would result in an error, at compile-time in the more static systems.
 @; ??? Early Lisp systems would let users resolve things themselves ???
@@ -7193,23 +7202,25 @@ and lenses form a category with a compose function and identity lenses;
 and in our previous representation of records as functions from identifiers to value,
 we can easily define a field lens:
 @Code{
-type Getter s a = { get : s → a }
-type Updater s t a b = { update : (a → b) → s → t }
-type Lens s t a b = Getter s a ∩ Updater s t a b
+type Getter s a = s → a
+type Updater s t a b = (a → b) → s → t
+type Lens s t a b = { get : Getter s a ; update : Updater s t a b }
 type MLens s a = Lens s s a a
 
 composeLens : Lens x y s t → Lens s t a b → Lens x y a b
 idLens : Lens a a a a
 
-(define composeLens (λ (k) (λ (l) { get = l.get ∘ k.get ; update = k.update ∘ l.update })))
-(define idLens { get = (λ (x) x) ; update = (λ (f) f) })
+(define composeLens (λ (k) (λ (l)
+  { get = l.get ∘ k.get ; update = k.update ∘ l.update })))
+(define idLens
+  { get = (λ (x) x) ; update = (λ (f) f) })
 
-(define fieldGetter (λ (key)
-  { get = (λ (s) (s key)) }))
-(define fieldUpdater (λ (key)
-  { update = (λ (f) (λ (s) (extend-record s key (f (s key))))) }))
+(define fieldGetter (λ (key) (λ (s)
+  (s key))))
+(define fieldUpdater (λ (key) (λ (f) (λ (s)
+  (extend-record s key (f (s key)))))))
 (define fieldLens (λ (key)
-  (merge-records (fieldGetter key) (fieldUpdater key))))
+  { get = (fieldGetter key) ; update = (fieldUpdater key) }))
 }
 
 Monomorphic lenses suffice in simple cases
@@ -7246,6 +7257,9 @@ which is usually narrower.
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 @subsubsection{Composing Focused Modular Extensions}
+
+The generalization of OO from overriding methods in records
+to overriding arbitrary aspects of arbitrary computations using functional lenses or zippers.
 
 @subsubsection{Methods with Focus}
 

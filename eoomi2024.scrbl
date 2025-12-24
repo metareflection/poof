@@ -334,57 +334,6 @@ that can be used in multiple ways in a same language ecosystem.
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLAH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-@subsubsection{OO without Objects}
-At this point, we may realize we have been explaining and implementing
-all key concepts of “Object Orientation” without ever introducing
-any notion of object, much less of class.
-
-There are prototypes, and there are instances; but neither is an object.
-Prototypes are uninstantiated specifications, often incomplete therefore uninstantiable;
-you can’t call methods on them, or do anything that you can expect to do on an object.
-Instances are plain values of any type whatsoever, sometimes just simple real functions;
-you can’t combine them with inheritance, or do any OO-related operation on them.
-If either is an “object”, then the word “object” is utterly empty of meaning.
-
-Indeed, we wrote code exactly in this object-less “OO” style to generate
-presentation slides for this work@~cite{poof2021}.
-We could express without objects everything that is usually done with objects,
-but for one caveat discussed below in @seclink{keeping_extensibility_modular}.
-
-Thus maybe “Object Orientation” was always a misnomer, born from the original confusion
-of a time before science identified and clarified the relevant concepts.
-Maybe the field should be named after Inheritance, or Prototypes,
-or Incremental Modularity, and banish the word “Object” forevermore from its name.
-
-Yet misnamed as OO may be, objects are possible and a useful concept in it.
-
-@subsection[#:tag "objects"]{Objects: The Power of Conflation}
-@subsubsection[#:tag "conflating_prototype_and_instance"]{Conflating Prototype and Instance}
-While neither a prototype nor an instance is an object,
-the @emph{conflation} of the two, is.
-This is exactly what objects are in pure prototype OO languages like Jsonnet and Nix, and
-a slight simplification of what they are in stateful prototype OO languages:
-every object can be seen as either an instance, when querying the values of its slots,
-or as a prototype, when combining it with other objects using inheritance.
-
-Indeed in a pure functional language, without side-effects,
-there is a unique instance associated to any prototype, up to observable equality:
-its fixed-point.
-Thus, it always makes sense to consider “the” instance for a prototype,
-and to see it as but another aspect of it.
-Evaluating the fixed-point may or may not converge, but thanks to lazy evaluation,
-you don’t have to care about whether that is the case to refer to the two together,
-and once computed once the result can be cached for performance.
-
-If the language has side-effects, there may be multiple distinct instances to a prototype,
-and a @c{clone} construct will generate a new object from an existing object,
-and still keep instance and prototype together.
-Even in such a language, a laziness construct can help build a simpler and nicer object system.
-
-Note that these prototype objects correspond to @emph{classes at compile-time}
-in class OO languages, that use the word “object” differently.
-See @seclink{classes}.
-
 @subsubsection[#:tag "keeping_extensibility_modular"]{Keeping Extensibility Modular}
 Specifying software with prototypes yet without objects works great,
 as long as it’s clear at all times which entities are prototypes and which are instances.
@@ -492,23 +441,12 @@ This also makes them hard to type without subtypes.
 Type descriptors are themselves often a monomorphic type that does not require subtyping,
 at least not unless the type system accommodates dependent types, or at least staging.
 
-
 @subsubsection{Monotonicity}
 Why Subclassing is rarely Subtyping, and other questions of monotonicity,
     (co-, contra- and in-) variance in Functor Mixins and Fixed-Point Operators.
 
 @subsubsection{Autowrapping}
 The relationship between Mutable or Immutable objects, linear typing and subtyping.
-
-@subsubsection[#:tag "optics"]{Optics}
-The generalization of OO from overriding methods in records
-    to overriding arbitrary aspects of arbitrary computations using functional lenses or zippers,
-    and how this generalization can accommodate advanced OO practices like method combinations.
-
-@; build :: (partial → target) → top → (top → target → partial) → target
-@; build wrap base mixin = Y (wrap . base mixin)
-@; inherit is the same!
-@; inherit child parent super self = child (parent super self) self
 
 
 @subsubsection{Method Combination, Instance Combination}
@@ -520,7 +458,7 @@ Metaobject-compatibility.
 @; and enabling, e.g. method combination with a primary method and other methods,
 @; with the effective method being more than the plainly named main method.
 
-@subsubsection[#:tag "global"]{Global Open Recursion}
+@subsubsection[#:tag "GOR"]{Global Open Recursion}
 A pure functional solution, already widely used in practice, yet neglected
     in the literature, to the problem of “multimethods”, “friend classes” or “orphan typeclasses”,
     and the according implications on designing and growing a language.
@@ -603,42 +541,6 @@ and should be a natural part of the OO ecosystem.
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLEH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-Meanwhile in Class OO, an “object” is an element of the type specified by a class.
-Meanwhile the class is a conflation of the partial specification
-of a type (and accompanying algorithms), and the type it specifies as least fixed point.
-Class OO can thus be viewed as Prototype OO for types (or type descriptors),
-which typically happens at compile-time in static languages@note{
-Indeed, the meta-language of C++ templates offers a pure, dynamically typed, lazy, functional
-programming language with pattern-matching, and with builtin Prototype OO.
-It is the same programming paradigm as Jsonnet or Nix,
-though for a very different domain target and with many quirks.
-It is quite the opposite to the stateful, statically typed, eager, imperative language
-with no pattern matching and with Class OO, that is C++ as a “base” language.
-}
-but may also happen at runtime in dynamic languages, or in static languages using reflection.
-
-Finally, it is also possible to use inheritance, and thus have “object orientation”,
-without objects: by not conflating either prototype and instance or class and type,
-and instead keeping them cleanly separate @~cite{poof2021}.@note{
-It thus appears that the expression “Object Orientation” (OO) is a misnomer,
-since what unifies OO languages and systems is inheritance, that even does without objects at all,
-while languages that provide everything but inheritance are distinctly not OO.
-
-Kay who coined the term OO,
-and later invented Smalltalk and eventually supported inheritance,
-Dahl and Nygaard who first implemented objects in SIMULA 67,
-or Kahn and Borning who built the second and first multiple inheritance systems
-in their respective Lisp and Smalltalk graphical simulation environments,
-were all aiming at a programming model of concurrent entities, “objects”,
-behaving only on local knowledge and exchanging asynchronous messages,
-thereby simulating real world interactions.
-Their explicit goals do not at all include inheritance or OO, but rather
-the style much later implemented and popularized by Erlang
-and dubbed “Concurrency Oriented Programming” (COP) by its authors.
-
-Instead, inheritance was a serendipitous discovery made along the way,
-that was so useful that it would become (pun intended) the main feature
-adopted by all the languages that would then start to be call “Object-Oriented”.
 Smalltalk and most OO languages never fully embraced concurrency,
 that remains an afterthought (if a thought at all) in most OO languages,
 despite being an essential element of the original target programming model;

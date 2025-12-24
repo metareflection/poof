@@ -482,16 +482,17 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url = {https://dspace.mit.edu/handle/1721.1/16012}
 }
 
-% AIM-482b
+% AIM-482b (revised from 1978 AIM-482)
 % Does not cite Bobrow & Winograd, cites Kay, Hewitt, Lieberman
-@PhDThesis{Kahn1979Director,
+% p.10 only one parent(!) single inheritance
+% p.40 call-next-method is called "continue-asking"
+@Misc{Kahn1979Director,
   title = {Director Guide},
   author = {Kahn, Kenneth Michael},
   school = {MIT},
   year = {1979},
   url = {https://dspace.mit.edu/handle/1721.1/6302}
 }
-
 
 
 % Borning1982 cites a 1980 version of the Flavors report, from MIT. Originally from 1979.
@@ -531,6 +532,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % Yale T Scheme. Introduces functional syntax for object method invocation.
 % Norman I. Adams, IV -- but the IV doesn't get processed correctly
 % Can't find it on http://mumble.net/~jar/tproject/
+% See also Olin Shivers' "A History of T" https://paulgraham.com/thist.html
 @InProceedings{Rees1982T,
   author = {Jonathan A. Rees and Norman I. Adams},
   title = {T: a dialect of LISP or, Lambda: the ultimate software tool},
@@ -1235,13 +1237,10 @@ numpages = {8}
 }
 
 % Traces (A cut at the “make isn't generic” problem)
-% Gregor Kiczales
-% 1993
 % https://link.springer.com/chapter/10.1007/3-540-57342-9_64
-@InProceedings{10.1007/3-540-57342-9_64,
+@InProceedings{Kiczales1993Traces,
   author="Kiczales, Gregor",
-  editor="Nishio, Shojiro
-  and Yonezawa, Akinori",
+  editor="Nishio, Shojiro and Yonezawa, Akinori",
   title="Traces (A cut at the ``make isn't generic'' problem)",
   booktitle="Object Technologies for Advanced Software",
   year="1993",
@@ -1249,7 +1248,8 @@ numpages = {8}
   address="Berlin, Heidelberg",
   pages="27--42",
   abstract="Object-oriented techniques are a powerful tool for making a system end-programmer specializable. But, in cases where the system not only accepts objects as input, but also creates objects internally, specialization has been more difficult. This has been referred to as the ``make isn't generic problem.'' We present a new object-oriented language concept, called traces, that we have used successfully to support specialization in cases that were previously cumbersome.",
-  isbn="978-3-540-48075-4"
+  isbn="978-3-540-48075-4",
+  doi={10.1007/3-540-57342-9_64}
 }
 
 % No mention of recursive types, or fixpoints, etc.: Looks like the NNOOTT to me.
