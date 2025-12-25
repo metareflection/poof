@@ -20,62 +20,7 @@
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-@section{Missing Insights into OO}
-Here are some topics that are largely neglected by
-both academic literature and public discourse about OO,
-even more so than multiple inheritance,
-yet that can yield essential insights about it.
-Some of these insights may already be known,
-but often only implicitly so, and only by a few experts or implementers.
-
-@subsection[#:tag "laziness"]{Pure Laziness}
-@subsubsection{Lazy makes OO Easy}
-In a lazy functional language such as Nix,
-you can use the above definitions
-for @c{fix}, @c{mix}, @c{methodG} and @c{methodR} as is and obtain
-a reasonably efficient object system;
-indeed this is about how “extensions” are defined
-in the Nix standard library@~cite{nix2015}.
-
-Now, in an eager functional language such as Scheme,
-using these definitions as-is will also yield correct answers,
-modulo a slightly different @c{Y} combinator.
-However applicative order evaluation may cause an explosion
-in redundant recomputations of methods, and sometimes infinite loops.
-Moreover, the applicative @c{Y} combinator itself requires
-one extra layer of eta-expansion, such that only functions (including thunks)
-can be directly used as the type for fixed-points.
-Unneeded computations and infinite loops can be averted
-by putting computations in thunks, protected by a λ;
-but computations needed multiple times will lead to
-an exponential duplication of efforts as computations are nested deeper,
-because eager evaluation provides no way to share the results
-between multiple calls to a same thunk,
-especially those from the @c{Y} combinator.
-The entire experience is syntactically heavy and semantically awkward.
-
-Happily, Scheme has @c{delay} and @c{force} special forms that allow for
-both lazy computation of thunks and sharing of thusly computed values.
-Other applicative functional languages usually have similar primitives.
-When they don’t, they usually support stateful side-effects
-based on which the lazy computation primitives can be implemented.
-Indeed, an applicative functional language isn’t very useful
-without such extensions, precisely because it is condemned to endlessly
-recompute expressions without possibility of sharing results
-across branches of evaluation — except by writing everything
-in continuation-passing style with some kind of state monad
-to store such data, which would involve quite a non-modular
-cumbersome global code transformation.
-
 @subsubsection{Computations vs Values}
-To reprise the Call-By-Push-Value paradigm@~cite{conf/tlca/Levy99},
-prototypes incrementally specify @emph{computations} rather than @emph{values}:
-instructions for recursive computing processes that may or may not terminate
-(which may involve a suitable monad)
-rather than well-founded data that always terminates in time proportional to its size
-(that only involve evaluating pure total functions).
-Others may say that the fixed-point operation that instantiates prototypes
-is coinductive rather than inductive. @TODO{cite Cook?}
 
 And indeed, laziness (call-by-need)
 is the best good way to reify a computation as a value,
@@ -849,52 +794,18 @@ yet have been largely neglected in scientific literature and formalization attem
 
 @@@
 
-Lens s t a b = { get: (s -> a) ; set: (s -> b -> t) }
-LensVL s t a b = forall f. Functor f => (a -> f b) -> s -> f t
-Lens' s a = Lens s s a a
-
-methodLens : lens body self
-
-mixin_function self super enriched = self -> super -> enriched | effective < enriched < super
-
-instantiate : methodLens effective self -> mixin_function self base effective -> self
-
-subproto : methodLens field self -> mixin_function field fieldsuper fieldbody -> mixin_function self super body
-subproto l m = (λ (self : self  super : fieldsuper) (l.set self (m self super)))
-subproto : methodLens field self -> mixin_function field fieldsuper fieldbody -> mixin_function self super body
-subbase l b = l.get b
-
-instantiate : methodLens self self effective body -> mixin_function self base effective -> base -> self
-instantiate l m b = fix (λ (s) (l.set s (m s (l.get b))))
-
-@@@
-
-Aznavour: le temps
- les deux guitares
- desormais
- emmenez-moi
-
-
-@section{Classes as Prototypes}
-Examples.
-
-
-@;{Even some more recent languages that support multiple inheritance (@seclink{multiple_inheritance})
-also support single inheritance for some classes (or “structures”),
-and sometimes the consistent combination of the two
-(@seclink{single_and_multiple_inheritance_together}).
-}
-
-
 History:
-Not Burroughs B5000, though its builtin support for dispatch tables is cool.
-First integrated OO is not Ivar Sutherland's Sketchpad (1963)
+Not Burroughs B5000, though its builtin support for dispatch tables is cool..
+First integrated OO is not Ivan Sutherland's Sketchpad (1963)
 Not Alan Kay 1966 inventing the word, though it's an essential step
-Arguably but also arguably not Dahl and Nygaard (1967) first implementing classes, though it is a breakthrough and quite close
+Arguably but also arguably not Dahl and Nygaard (1967) first implementing classes, though it is a breakthrough and quite close to it.
 Not Smalltalk 1972
-Not Hewitt's Actors (1973, first implementation Irene Greif thesis 1975?, later Gul Agha?)
-Not Frames or KRL (1975, "inheritance")
-Smalltalk 1976
+Not Hewitt's Actors (PLANNER 1969, Actors 1973; got delegation and inheritance in 1979 with help from Kahn)
+Not Frames or KRL (1975, "inheritance", almost)
+Smalltalk 1976 - YES
+Directory 1976 - YES
+ThingLab 1977 - YES
+
 
 
 https://x.com/Ngnghm/status/1976680711345299533
@@ -910,8 +821,7 @@ Here we're talking development time, though.
 The Scheme code for my (merkle) tries, using Prototype OO, is 2.5 times smaller, simpler and less head-achy than the OCaml code using modules, with more functionality and better testing, because of all the module scaffolding I did not have to do (also 2.5x fewer entities).
 Single inheritance also gives you N² instead of N, but at least not N³ or N⁴.
 
-
-
+@@@@
 
 In the notable case of data records that may be later extended,
 which is most relevant to OO,
@@ -920,8 +830,8 @@ mapping identifiers to field index in the record.
 These indexes may be cached between modifications, or wholly resolved at compile-time
 if the extension is external or second-class.
 
+@@@@
 
-@;{
 @subsubsection{The Importance of Laziness}
 
 Note that in Nix, lazy evaluation crucially enables sharing of sub-computations
@@ -964,9 +874,7 @@ as in editing a file, or redefining a class in Smalltalk or Lisp,
 an extension is a function that side-effects a mutable reference of type @r[E],
 or something equivalent.
 
-
-
-
+@@@@
 
 A pure functional language without side-effects is the setting for the simplest and
 probably clearest model of modularity:
@@ -989,6 +897,7 @@ and all kind of intermediary data structures.
 As we will soon see, when implementing OO, this modular context is typically called @c{self},
 to access (the rest of) the modularly (and extensibly) defined entity.
 
+@@@@
 
 "Code reuse".
 Hated by detractors to OO.
@@ -998,10 +907,6 @@ Maintainership burden that is not as thoughtless as duplicating code,
 yet ultimately more efficient since it doesn't require duplicating design and fixes.
 
 @@@@
-
-And no, the visitor pattern, even after you go through all the pain of it, doesn't fully capture the expressiveness of multiple dispatch with method combination, because it finds only one method.
-
-@@@
 
 The issue then is that establishing set of indexed types for a closed modular definition
 requires knowledge of all modules, whereas, to preserve the principle of modularity,
@@ -1067,7 +972,6 @@ There is no perfect solution for either issue, there are only tradeoffs,
 and each developer must make his choice. Your Mileage May Vary.
 Just make sure you agree with anyone else that you will be directly sharing code with.
 
-}
 
 @; Flavors combination vs C++ conflict https://x.com/Ngnghm/status/1980509375232885161
 @; https://cs.pomona.edu/~kim/FOOPL/prelim.pdf
@@ -1153,9 +1057,11 @@ or, which is stronger, the linearization of specs must respect the linearization
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLYH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-Double inheritance in NewtonScript: very similar to our prototypes + meta^n classes,
+Double or "Comb" inheritance in NewtonScript: very similar to our prototypes + meta^n classes,
 with single inheritance each.
 https://www.newted.org/download/manuals/NewtonScriptProgramLanguage.pdf
+https://thenewobjective.com/types-and-programming-languages/comb-inheritance/
+
 
 @@@
 
@@ -1169,7 +1075,7 @@ type CFMExt r p = Lens' r p × MExt r top p
 
 sub-definition: a is the user-visible object or method, b is what the extension contributes
 sub-context: s is the narrow context for the object definition, t is wider context for the ecosystem.
-Encapsulation: 
+
 
 A monomorphic open focused modular extension
 where @c{r i p} are the required, inherited, provided type parameters for a modular extension,
@@ -1178,22 +1084,5 @@ and @c{d} is a type parameter for the entity being defined.
 type FMExt d r i p = Lens' r d × MExt r i p
 }
 
-First, simple case:
-
-@Code{
-type FMExt s t a b r i p = Lens s t a b × (r → i → p)
-type CFMExt s a = Lens s s a a × (s → a → a)
-
-fixl : s → CFMExt s a → s
-fixl s0 (l, m)
-  = fix s0 (λ (s) (l.set (m s (l.get s)) s))
-  = fix s0 (λ (s) (l.over (m s) s (l.get s)))
-
-focusExtFocus : Lens s t v w → (c → v → w) → c → s → t
-focusExtFocus l m self super = l.over (m self) super (l.get super)
-
-focusExtCtx : Lens s t a b → (a → v → w) → s → v → w
-focusExtCtx l m self super = m (l.get self) super
-}
-
 DO THE THING INFORMALLY, WITHOUT TYPES, WITH STATE FIRST, THEN FORMALIZE WITH LENSES
+

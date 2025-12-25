@@ -1,5 +1,6 @@
-#lang scribble/acmart @manuscript @review @nonacm
+#lang scribble/report
 @; -*- Scheme -*-
+@;@manuscript @review @nonacm
 @;{ For review: @anonymous @review
     Default already: @10pt @natbib @screen @acmsmall
     @anonymous @authordraft @authorversion @timestamp @review @nonacm }
@@ -17,17 +18,19 @@
 
 @title[
 ]{Lambda, the Ultimate Object
-@; @linebreak[] @;
-} @subtitle{ @; <- for scribble/acmart
-       A theory of Object-Orientation, with a modest contribution on Optimal Inheritance}
+@linebreak[] @linebreak[] @;
+@; } @subtitle{ @; <- for scribble/acmart
+       A Theory of Object-Orientation, with @linebreak[]
+       a modest contribution on Optimal Inheritance}
 
 @author[
+@;{ For acmart:
     #:email (email "fare@mukn.com")
     #:affiliation (affiliation #:institution @institution{@emph{MUKN, Inc.}}
-                               #:country "USA")
+                               #:country "USA") }
 ]{François-René Rideau}
 
-@abstract{
+@; For acmart: @abstract{
   We present our new C4 algorithm to best combine
   single and multiple inheritance in Object-Oriented languages.
   To explain what our algorithm does and why it matters,
@@ -55,13 +58,14 @@
   but sometimes goes against either or both.
   Our unified theory of OO might therefore be the bigger contribution,
   compared to getting the one last concept of inheritance just right.
-}
+@;}
 
 @(require scriblib/bibtex
 @;        (only-in scribble/core make-style)
           (only-in scribble/manual racket racketblock code codeblock litchar itemize item)
           (only-in scribble/example examples make-base-eval)
           (only-in scriblib/footnote note)
+          (only-in scriblib/autobib make-bib authors define-cite)
           (only-in scribble-abbrevs appendix)
 @;        (only-in scribble/html-properties head-extra html-defaults)
           (only-in scribble-math/dollar $)
@@ -107,6 +111,7 @@
 @(define-simple-macro (defsection name tag text) (define (name (x text)) (seclink tag x)))
 @(defsection section1 "Prototypes_bottom_up" "section 1")
 
+@;{ acmart:
 @pretitle{
 @tex{
 \acmYear{2025}
@@ -116,7 +121,7 @@
 \acmPrice{00.00}
 \acmDOI{https://dx.doi.org/xx.xxxx/xxxxxxx.xxxxxxx}
 \setcopyright{none}
-}}
+}}}
 
 @section[#:tag "Intro"]{Introduction}
 
@@ -585,7 +590,7 @@ lack any such specific mechanism,
 whereas many non-OO languages possess mechanisms to achieve the same effect,
 in the form of modules defining but not exporting identifiers
 (e.g. not declaring them @c{extern} in C),
-or simply lexical scoping@~cite{rees1995}.
+or simply lexical scoping@~cite{Rees1995W7}.
 @; TODO{cite Simula? JS?}
 
 Now, these mechanisms themselves can be very useful,
@@ -1439,7 +1444,7 @@ at which point Mixin Inheritance is actually very popular, just not well-underst
 
 @subsubsection{False dichotomy between inheritance and delegation}
 Many authors have called “delegation” the mechanism used by Prototype OO@~cite{Hewitt1979Security},
-@; TODO CITE SELF, Castagna Cardelli 1996, …
+@; TODO CITE Self, Castagna Cardelli 1996, …
 as distinct from the “inheritance” mechanism of Class OO.
 However, Lieberman, in one of the papers that popularized this dichotomy@~cite{Lieberman1986},
 discusses the two joined concepts of prototype-delegation vs class-inheritance@xnote[","]{
@@ -1486,11 +1491,16 @@ that partake in the very same mechanism of inheritance@xnote["."]{
   However, a lot of citers seem to only fixate on the unfortunate choice
   of concept delineation and naming by Lieberman,
   who probably did not anticipate that he would set a bad trend with it.
-  The delineation was itself based on historically distinct encodings used by early actor systems
-  that Lieberman worked on more so that by an essential distinction how the mechanisms work.
-  And those citers thereafter focused on studying or tweaking
-  low-level “message passing” mechanisms instead of looking at the big picture
-  of the semantics of inheritance.
+  The delineation made sense in the historical context of the Actor team
+  separately implementing prototypes and classes with related yet distinct mechanisms
+  in their ACT1 language, way before they or anyone understood
+  how they classes were a special case of prototypes.
+  But too many readers took this historical artefact as an essential distinction,
+  and thereafter focused on studying or tweaking low-level “message passing” mechanisms
+  on a wild goose chase for tricks and features,
+  instead of looking at the big picture of the semantics of inheritance,
+  what it actually is or should be and why,
+  what is or isn’t relevant to its semantics.
   Concept delineation and naming is tremendously important;
   it can bring clarity, or it can mislead hundreds of researchers into a dead end.
 }
@@ -1542,7 +1552,7 @@ will only discuss the confounding matter of side-effects much later@xnote["."]{
   vs just contingent implementation details soon to be forgotten.
   In the brief time that publishing about Prototypes was trendy,
   scientists studying pioneering works may have focused too much
-  on the specifics of Actors, SELF, or other successful Prototype language du jour,
+  on the specifics of Actors, Self, or other successful Prototype language du jour,
   and failed to properly conceptualize a general notion of Prototype.
   Unlike the pioneers themselves, they deserve blame for their myopia,
   and so do the followers who cite and repeat their “findings” without criticism.
@@ -1561,7 +1571,7 @@ will only discuss the confounding matter of side-effects much later@xnote["."]{
   as essential when happening at runtime,
   when they could clearly conceptualize it away as an implementation detail
   when happening at compile-time.
-  Systems paradigm people (including the old Lisp, Smalltalk and SELF communities)
+  Systems paradigm people (including the old Lisp, Smalltalk and Self communities)
   who freely mix or interleave runtime and compile-time in the very same language,
   might have had no trouble unifying the two across evaluation times,
   but they tend not to publish articles about PL semantics,
@@ -2452,7 +2462,8 @@ that overall decrease the complexity of the software development process@xnote["
   they will claim that they appreciate inheritance of interfaces, but not of implementation.
   Many OO language designers, as of Java or C#, will say the same of multiple inheritance
   though not of single inheritance.
-  Yet, many practitioners of OO have no trouble reusing and extending libraries of OO classes and prototypes,
+  Yet, many practitioners of OO have no trouble reusing and extending
+  libraries of OO classes and prototypes,
   including libraries that rely heavily on multiple inheritance for implementation.
 
   It is quite likely that users bitten by the complexities yet limitations
@@ -3280,7 +3291,14 @@ instead of functions implementing or returning records.
 
 The second, major, issue with the applicative Y is that the pure applicative λ-calculus
 by itself has no provision for sharing non-fully-reduced computations,
-only for sharing (fully-reduced) values;
+only for sharing (fully-reduced) values@xnote[";"]{
+  You could of course emulate sharing by implementing state monadically,
+  or through a virtual machine interpreter, inside the applicative λ-calculus,
+  and then reimplementing your entire program on top of that richer calculus.
+  But that would be a global transformation, not a local one,
+  and in the end, it’s the new paradigm you would be using,
+  not the pure applicative λ-calculus anymore.
+}
 therefore the fixed-point computations are duplicated,
 and any information used along the way will have to be recomputed
 as many times as computations are duplicated, which can grow exponentially fast
@@ -3368,14 +3386,17 @@ a @c{λ} underneath, that’s not actually a gain, just a semantic shift.
 What the @c{delay} does buy you, on the other hand, is sharing of computations
 before they are evaluated, without duplication of computation costs or side-effects@xnote["."]{
   Whether wrapped in a thunk, an explicit delay, an implicitly lazy variable,
-  or some other construct, what is interesting is that
+  a call-by-name argument, or some other construct, what is interesting is that
   ultimately the fixpoint combinator indefinitely iterates a @emph{computation},
   and this wrapping is a case of mapping computations into values in an otherwise
   call-by-value model that requires you to talk about values.
-  In a calculus such as call-by-push-value@~cite{conf/tlca/Levy99},
+  In a calculus such as call-by-push-value@~cite{Levy1999CBPV},
   where values and computations live in distinct type universes,
   the fixpoint combinator would clearly be mapping
   computations to computations without having to go through the universe of values.
+  Others may say that the fixed-point operation that instantiates prototypes
+  is coinductive, rather than inductive like the definitions of data types.
+  @; TODO cite who???
 }
 (Note that @c{delay} can be easily implemented on top of any stateful applicative language,
 though a thread-safe variant, if needed, is somewhat trickier to achieve.)
@@ -3483,11 +3504,11 @@ where @c{s} is the module context
   it embodies the @emph{modular} side of OO.
   It is called @c{self} because it is destined to be bound as the fixpoint variable
   of a fixpoint operator, wherein it refers to the entity being defined itself.
-  The name @c{self} is used in Smalltalk, Scheme, SELF, Python, Jsonnet, Nix,
+  The name @c{self} is used in Smalltalk, Scheme, Self, Python, Jsonnet, Nix,
   many more languages, and in a lot of the literature about OO semantics.
   In SIMULA, and after it, in C++, Java, JavaScript or Scala, the @c{this} keyword is used instead.
   Note however, that we are currently discussing a variant of Prototype OO,
-  as in SELF, Jsonnet, Nix, JavaScript, where the @c{self} or @c{this}
+  as in Self, Jsonnet, Nix, JavaScript, where the @c{self} or @c{this}
   is indeed the open recursion variable.
   In Class OO language, the definition being one of a type descriptor, not of a record,
   the open recursion variable would instead be something like @c{Self}, @c{MyType} or @c{this.type},
@@ -4174,7 +4195,7 @@ equivalently, they can create a prototype that inherits from it
 using as extension the neutral element @c{(rproto←spec idMExt)}.
 
 Now, plenty of earlier or contemporary Prototype OO languages,
-from Ani and ThingLab to SELF and JavaScript and beyond,
+from Ani and ThingLab to Self and JavaScript and beyond,
 support mutation yet also offer objects as conflation of two aspects,
 one for inheritable and instantiatable specification,
 another one for the instantiated target that holds mutable state
@@ -4235,7 +4256,7 @@ using GCL, Jsonnet or Nix as (pure functional) Prototype OO languages:
   has been particularly used generate configurations for AWS or Kubernetes.}
 @item{
   Nix@~cite{dolstra2008nixos} is used not just to configure
-  entire software distributions for Linux and macOS,
+  entire software distributions for Linux or macOS,
   but also distributed services with NixOps or DisNix.}]
 All three languages have proven the practicality of pure lazy functional prototype objects,
 with mixin inheritance and conflation of specification and target,
@@ -4278,13 +4299,16 @@ both authors fail to distinguish specification and target
 as syntactically and semantically separate entities in their languages,
 leading to much extraneous complexity in their respective type systems.
 
-Finally, the confusion between target and specification can also be seen as a special case of
+Finally, the confusion between target and specification can be seen as a special case of
 the confusion between object and implementation discussed in @~cite{Chiba2000MetaHelix},
 wherein you can see the specification as @emph{implementing} the target.
+But though these authors saw a more general case in a wider theory with far reaching potential,
+they seem not to have noticed this common case application.
 
 Thus, through all the confusion of class OO languages so far,
-both practitioners and theorists have felt the need to distinguish specification and target,
-even though no one seems to have been able to fully tease apart the concepts up until recently.
+both practitioners and theorists have felt the need
+to effectively distinguish specification and target,
+yet no one seems to have been able to fully tease apart the concepts up until recently.
 
 @subsection[#:tag "Rebuilding_Classes"]{Rebuilding Classes}
 
@@ -4658,7 +4682,7 @@ often deliberately attempt to keep it from being “Turing-equivalent”.
 This attempt sometimes succeeds (as in OCaml), but more often than not
 utterly fails, as computational power emerges from unforeseen interactions
 between language features added over time (as in C++, Java, Haskell).
-@TODO{cite Nada on Java type system constraints}
+@TODO{cite 2016__Amin_Tate__Java_and_Scala_s_Type_Systems_are_Unsound Grigore}
 @TODO{cite LangSec on unforeseen emergence of Turing-equivalence through “weird machines”?}
 The attempts do usually succeed, however, at making these type-level languages
 require a completely different mindset from the “base language”,
@@ -5094,7 +5118,8 @@ or to be more mathematically precise,
 or said otherwise, @principle{the fixpoint operator is not monotonic}:
 If @c{F} and @c{G} are parametric types,
 i.e. type-level functions from @c{Type} to @c{Type},
-and @c{F ⊂ G} (where @c{⊂}, sometimes written @c{<:}, is the standard notation for “is a subtype of”,
+and @c{F ⊂ G} (where @c{⊂}, sometimes written @c{≤} or @c{<:},
+is the standard notation for “is a subtype of”,
 and for elements of @c{Type → Type} means @c{∀ t, F t ⊂ G t}),
 it does not follow that @c{Y F ⊂ Y G} where @c{Y} is the fixpoint operator for types@xnote["."]{
   The widening rules for the types of specification
@@ -5519,7 +5544,41 @@ logically separable from the each other yet harmonously combinable together.
 By contrast, the “solution” found in popular languages like C++ or Java
 is all too often to introduce a single mother-of-all syntactic and semantic construct
 of immense complexity, the “class”, that frankly not a single person in the world fully understands,
-and of which scientific papers only dare study but simplified (yet still very complex) models.
+and of which scientific papers only dare study
+but simplified (yet still very complex) models@xnote["."]{
+  The class is the “Katamari” of semantics: just like in the 2004 game “Katamari Damacy”,
+  it is an initially small ball that indiscriminately clumps together with everything on its path
+  into a chaotic mish mash, until it grows so large that it collapses
+  under its own weight to become a star—then, eventually,
+  a black hole into which all reasonable meaning disappears never to reappear again.
+  Languages like C++, Java, C#, Scala, have a notion of class so complex that it boggles the mind,
+  and it keeps getting more complex with each release.
+  “C++, like Perl, is a swiss army chainsaw of a programming language.
+  But all the blades are permanently stuck half-open while they run at full-speed.”
+  @; Emacs: Kitchen Sink
+  We much prefer the opposite approach: have a small basis of orthogonal primitives,
+  that follow a few simple rules that can simultaneously fit in a brain,
+  out of which to make large assemblies (but no larger than needed),
+  from which the emerging meaning is always explainable.
+  Certainly, there is a time when the emerging meaning of a large enough assembly
+  has a complexity of its own that cannot be reduced,
+  but this is @emph{intrinsic} complexity.
+  Classes made into humongously complex language primitives
+  introduce @emph{extrinsic} complexity, omnipresent unnecessary parasitic interactions—which
+  utterly defeats the very purpose for which classes were invented:
+  modularity, the ability to clearly think in terms
+  of entities that minimally interact with each other.
+  If a large utility function or macro must exist to define classes, each use of it
+  should clearly reduces to an entity that could have been directly written without the utility,
+  perhaps in a more awkward way, but still can be described in terms of simple primitives,
+  with no more protruding affordances than needed.
+  Now, at a certain scale, the smaller entities disappear behind the abstraction, and
+  those that were large become the building blocks;
+  but if they were built with bad primitives, the protruding affordances will generate
+  lots of unwanted interactions that break the abstraction,
+  causing the semantic plumbing to leak everywhere,
+  and offering attack vectors to parasites who enter between the cracks.
+}
 
 Actually, when we remember that in most OO languages, OO is only ever relevant but at compile-time,
 of course mutation is orthogonal to OO,
@@ -6078,9 +6137,9 @@ but modular definitions can only be on the right and on the left must be a modul
 
 The difficulty of synthesizing a modular definition is known as
 the “diamond problem” @~cite{bracha1992jigsaw inheritance1996}@xnote[":"]{
-  Bracha quotes Bertrand Meyer who talks of “repeated inheritance”.
-  He says he didn’t invent the term “diamond problem”,
-  that must have already circulated in the C++ community.
+  Bracha says he didn’t invent the term “diamond problem”,
+  that must have already circulated in the C++ community;
+  his thesis quotes Bertrand Meyer who talks of “repeated inheritance”.
 }
 Consider a specification C with two parents B1 and B2 that both have a common parent A.
 The contribution from A has already been baked into the modular definitions of each of B1 and B2;
@@ -6745,18 +6804,29 @@ lacking the modularity about which to have issues to begin with.
 Compared to Mixin Inheritance, Multiple Inheritance involves this extra step of
 computing a specification’s precedence list.
 The linearization algorithm has a worst case complexity of
-O(kn) for the LOOPS or Flavors algorithms, and O(k²n²) for C3,
-where k is the number of parents and n the total number of ancestors.
+O(dn) for the LOOPS or Flavors algorithms, and O(d²n²) for C3,
+where d is the number of parents and n the total number of ancestors.
 Yet, in practice the extra step is run at compile-time for second-class OO,
 and does not affect runtime;
 moreover, it is often quite fast in practice
 because most OO hierarchies are shallow@xnote["."]{
   A study of Java projects on GitHub @~cite{Prykhodko2021DIT}
-  found that the vast majority of class ancestries include fewer than 5 specifications,
+  found that the vast majority of classes had fewer than 5 ancestors,
   including the base class @c{Object}. But that is a language with single inheritance.
-  A survey run on all Common Lisp classes defined by all projects in Quicklisp
-  shows that the vast majority of ancestries have 9 specifications of fewers,
-  though the largest one had 27.
+  A survey we ran on all Common Lisp classes defined by all projects in Quicklisp 2025-06-22
+  (minus a few that couldn’t be loaded with the rest) using @c{ql-test/did}
+  shows that the 82% of the 18939 classes have only 1 parent, 99% have 3 or fewer,
+  the most has 61, @c{MNAS-GRAPH::<GRAPH-ATTRIBUTES>};
+  90% have 5 or fewer non-trivial ancestors,
+  99% have 16 or fewer, the most has 63, @c{DREI:DREI-GADGET-PANE}.
+  (By non-trivial, I mean that I count neither the class itself, nor
+  the 3 system classes shared by all user-defined classes.)
+  As for the 2841 structs that use single inheritance
+  (and not usually to define many methods, just for data fields),
+  63% had no non-trivial ancestor, 86% has 0 or 1, 96% had 2 or fewer, 99% had 3 or fewer,
+  99.9% had 4 or fewer, 1 had 5, 1 had 6, @c{ORG.SHIRAKUMO.BMP::BITMAPV5INFOHEADER}.
+  As can be seen, multiple inheritance leads to a very different style of programming,
+  with more done in “traits” or “mixins”, than when only single inheritance is available.
 }
 
 Multiple inheritance otherwise involves the same runtime performance issues as mixin inheritance
@@ -7177,7 +7247,7 @@ As a function from source to focus and back, it can thus also be seen as general
 paths of fields and accessors, i.e. field @c{bar} of the 3rd element of field @c{foo}
 of the entry with key @c{(42, "baz")} within a table.
 
-A monomorphic lens (or simple lens) of type @c{MLens s a} can be seen as
+A monomorphic lens (or simple lens) of type @c{Lens' s a} can be seen as
 a pair of a getter function @c{s → a}, and a setter function @c{a → s → s},
 that allow you to get or set a current value under focus of type @c{a}
 from a whole or source of type @c{s};
@@ -7205,7 +7275,7 @@ we can easily define a field lens:
 type Getter s a = s → a
 type Updater s t a b = (a → b) → s → t
 type Lens s t a b = { get : Getter s a ; update : Updater s t a b }
-type MLens s a = Lens s s a a
+type Lens' s a = Lens s s a a
 
 composeLens : Lens x y s t → Lens s t a b → Lens x y a b
 idLens : Lens a a a a
@@ -7231,7 +7301,7 @@ Then come more general kind of “optic” functions,
 that e.g. take into account that a value may be undefined, etc.,
 but we will leave their application as exercise to the reader.
 
-A typical monomorphic lens @c{MLens s a} would specify how to get or set a field
+A typical monomorphic lens @c{Lens' s a} would specify how to get or set a field
 at a given identifier within a record;
 thus the getter for field @c{foo} would given a record @c{x : s}
 return the field value @c{x.foo : a};
@@ -7244,15 +7314,24 @@ allow you to follow a path within an module context.
 
 @subsubsection{Functional Focused Specification}
 
-A focused specification is the data of a specification, and
-a getter for the module context (so it can be narrowed from the entire program), and
-an updater for the value being extended (so it can be differently narrowed from the entire program).
-Note that this pair of getter and updater are not usually a lens,
-because the location and type of the getter need not correspond to that of the updater;
-indeed, for an open specification,
-the getter corresponds to an entire object,
-while the updater usually corresponds to a single method,
-which is usually narrower.
+A focused specification is the data of a specification,
+and of “locations” that point within a broader context
+what that specification is modularly extending.
+A modular extension @c{C → V → W} will thus have to point within the whole program @c{P}
+a getter to locate the extension’s input module context @c{C} from @c{P},
+and an updater to locate from @c{P} the value @c{V} being extended into a value @c{W}.
+
+The getter can narrow the context of the extension:
+so that if you extend a class @c{blog.database} within your program,
+you can apply a database extension, say one that specifies PostgreSQL with your favorite options,
+that is itself agnostic to the “location” of your database within your program,
+and indeed could be independently applied to several databases within your program.
+You can also use the getter to narrow the context in terms of access permissions,
+rather than breadth of scope as such, to control the visibility of your definitions
+and ensure the security of your system.
+
+The updater will often, but not always, further narrow a method within the prototype being extended,
+such as say @c{blog.database.postgres.port} to specify what port to use for that database server.
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
@@ -7265,13 +7344,108 @@ to overriding arbitrary aspects of arbitrary computations using functional lense
 
 @subsection{Method Combinations}
 
+Flavors, New Flavors, LOOPS, CommonLOOPS, CLOS.
+Teitelman ADVISE.
+
+Generic functions for declarations. (CommonLOOPS?)
+
 @subsection{Multiple Dispatch}
 
+LOOPS(?), CommonLOOPS, CLOS. Cecil. Dylan. Fortress. Julia.
+
+Generic functions for declarations. (CommonLOOPS?) CLOS.
+
+The visitor pattern, even after you go through all the pain of it,
+doesn't fully capture the expressiveness of multiple dispatch with method combination,
+because it finds only one method, and like Self’s ill-fated sender path inheritance,
+can’t back out of narrowing decision. Breaks “linearity” (conservation of information).
+
+Purity vs Orphan Typeclasses in Haskell.
+
+@emph{Global} fixpoint.
+
 @section{Conclusion}
+
+@subsection{Claims}
+
+Here are original contributions from this paper:
+
+@itemlist[
+#:style 'ordered
+@item{
+  We rebuilt Object-Orientation (OO) from First Principles:
+  @principle{OO is Extensible Modularity, Internal to a Programming Language}.
+  We elucidated the basics of these principles of Modularity and Extensibility,
+  and showed how the basic mechanisms of OO directly stem from them.
+}
+@item{
+  Our Theory explains not just what OO is, but also what it is not.
+  We could debunk the major common misbeliefs about OO is, explain why they’re wrong:
+  OO is not C++, OO is not based on Classes, OO is not imperative,
+  OO is not about “encapsulation”, OO is not opposed to Functional Programming (FP),
+  OO is not about message passing, OO is not a data model.
+}
+@item{
+  Remarkably, and contrary to popular belief, we found that:
+  @principle{The natural paradigm for OO is Pure Lazy Functional Programming},
+  with either recursive subtypes or dynamic types.
+  In currently popular static Class OO languages,
+  OO only exists at compile-time, indeed in a pure lazy dynamic functional programming language,
+  often a severely stunted one.
+}
+@item{
+  We found that: @principle{The fundamental building blocks of OO are Modular Extensions},
+  functions from an module context (open recursion variable) to an extension,
+  function that transforms an “inherited” value into an “extended” one.
+  Unlike decades of prior formalizations,
+  we find the interesting @emph{open} modular extensions as first-class entities,
+  and not just @emph{closed} modular extensions,
+  where the value being extended is (a precursor to) the module context itself.
+  We show that open modular extensions have interesting types of their own,
+  and can be combined algebraically,
+  which @emph{vastly} simplifies typing OO compared to having to build large entities
+  before you can even start assigning types to them or otherwise reason about them.
+}
+@item{
+  We explained how
+  @principle{The Conflation of Specification and Target is an All-Important Concept in OO},
+  despite never having been once documented before.
+  Before making it explicit, the semantics of objects was extremely complex and ad hoc.
+  After making it explicit, the semantics of objects is extremely simple,
+  it just involves a regular use of the simplest of recursion operators, the fixpoint.
+}
+@item{
+  Our Theory explained why
+  @principle{Multiple Inheritance is More Expressive and More Modular
+     than Single Inheritance and Mixin Inheritance},
+  why @principle{Linearization, with Local Order and Monotonicity}
+     is more expressive and more modular than the alternatives.
+  We could explain why so many great computer scientists
+  got stuck into the “conflict” view of multiple inheritance
+  and how and why the “harmonious combination” view is so much better.
+}
+@item{
+  @principle{Our Optimal Inheritance combines the Expressiveness and Modularity
+     of Multiple Inheritance with the Performance of Single Inheritance};
+  with our implementation the C4 algorithm, we did not just combine
+  two known yet never previously combined ideas
+  (first mixing suffix and infix specifications, and second the C3 algorithm)—we
+  provided the theory why the combination is not just good but necessary.
+}
+@item{
+  @principle{Our Theory is Constructive}.
+  We built minimal OO in two lines of code,
+  both simpler and more general than the formulas from the 1990s,
+  and not just used as a “semantic model”,
+  but as a practical implementation usable in actual applications.
+  A few more lines gave us recursive conflation;
+  yet a few more tens of lines give you multiple inheritance.
+  None of it is magic, none of it is ad hoc, it’s all justified.
+  And it’s portable to any language with higher-order functions.
+}]
 
 @(generate-bibliography)
 
 @appendix
 
 @section{The C4 algorithm}
-
