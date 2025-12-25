@@ -6324,7 +6324,7 @@ This property was also one of the major innovations of Flavors @~cite{Cannon1979
 As we will see, it implies that the semantics of multiple inheritance
 can be reduced to those of mixin inheritance
 (though mixin inheritance would only be formalized a decade later).
-It is the first of the constraints after which C3 @~cite{Barrett96amonotonic} is named.
+It is the first of the constraints after which C3 @~cite{Barrett1996C3} is named.
 Inheritance order and linearity together imply linearization,
 especially since some methods involve sequential computations,
 and a uniform behavior is mandated over all methods.
@@ -6389,7 +6389,7 @@ CLOS @~cite{Bobrow88CLOS cltl2} adopts it as “local precedence order”.
 Ducournau et al. speak of “local ordering” or “local precedence order”
 @~cite{Ducournau1992Monotonic Ducournau1994Monotonic}.
 C3 says “local precedence order”.
-It is the second of the three eponymous constraints of C3 @~cite{Barrett96amonotonic}.
+It is the second of the three eponymous constraints of C3 @~cite{Barrett1996C3}.
 Among popular “flavorful” languages,
 Python, Perl, Lisp and Solidity notably respect this constraint,
 but Ruby and Scala fail to.
@@ -6411,7 +6411,7 @@ what kind of resources their parents may be allocating, if any, much less in wha
 
 This property was first described @~cite{Ducournau1992Monotonic}
 then implemented @~cite{Ducournau1994Monotonic} by Ducournau & al.,
-and is the third of the three constraints after which C3 is named @~cite{Barrett96amonotonic}.
+and is the third of the three constraints after which C3 is named @~cite{Barrett1996C3}.
 Among popular “flavorful” languages, Python, Perl and Solidity respect this constraint,
 but Ruby, Scala and Lisp fail to.
 (Though at least in Common Lisp you can use metaclasses to fix the issue in your code.)
@@ -6442,7 +6442,7 @@ under the nondescript name “acceptability”.
 It received little attention, maybe because most (all?) popular OO systems
 already respect it implicitly. The C3 algorithm respects it,
 but not enough to name it and count it among the constraints
-it purports to implement @~cite{Barrett96amonotonic}@xnote["."]{
+it purports to implement @~cite{Barrett1996C3}@xnote["."]{
   There are thus effectively four constraints enforced by C3,
   just like there are effectively four musketeers as main protagonists in
   The Three Musketeers @~cite{Dumas1844}.
@@ -6498,7 +6498,7 @@ The slightly more careful algorithm used by CommonLoops @~cite{Bobrow86CommonLoo
 and after it by CLOS (with minor changes) @; TODO check what those changes are
 preserves Local Order, but not monotonicity.
 The slightly complex algorithm by Ducournau et al. @~cite{Ducournau1994Monotonic},
-and the latter somewhat simpler C3 algorithm @~cite{Barrett96amonotonic WikiC3},
+and the latter somewhat simpler C3 algorithm @~cite{Barrett1996C3 WikiC3},
 synthesize the precedence list while preserving all desired properties.
 C3 was notably adopted by OpenDylan, Python, Raku (Perl), Parrot, Solidity, PGF/TikZ.
 
@@ -6803,8 +6803,7 @@ lacking the modularity about which to have issues to begin with.
 
 Compared to Mixin Inheritance, Multiple Inheritance involves this extra step of
 computing a specification’s precedence list.
-The linearization algorithm has a worst case complexity of
-O(dn) for the LOOPS or Flavors algorithms, and O(d²n²) for C3,
+The linearization algorithm has a worst case complexity O(dn),
 where d is the number of parents and n the total number of ancestors.
 Yet, in practice the extra step is run at compile-time for second-class OO,
 and does not affect runtime;
@@ -7095,7 +7094,7 @@ It is the first and so far only implementation of @emph{Optimal Inheritance}@xno
 
 @subsubsection[#:tag "C4"]{C4, or C3 Extended}
 
-The authors of C3 @~cite{Barrett96amonotonic WikiC3},
+The authors of C3 @~cite{Barrett1996C3 WikiC3},
 after Ducournau et al. @~cite{Ducournau1992Monotonic Ducournau1994Monotonic},
 crucially frame the problem of ancestry linearization in terms of
 constraints between the precedence list of a specification and those of its ancestors:
@@ -7157,9 +7156,20 @@ where the steps tagged with (C4) are those added to the C3 algorithm
    this example bug: direct supers (A) (S A) (B A S)).
 }
 
-As a slight optimization, you could keep those precedence lists pre-split
-between a prefix of infix-only ancestors, and
-a suffix of the most specific suffix ancestor (followed by its infix and suffix ancestors).
+Note that the C3 algorithm as published by @~cite{Barrett1996C3},
+has complexity O(d²n²) where d is the number of parents, n of ancestors,
+because of the naive way it does a linear membership scan
+in the tails of the lists for each parent.
+But by maintaining a single hash-table of counts on all tails,
+we can keep the complexity O(dn)
+just like for simpler but less consistent algorithms.
+
+There is also a space vs time tradeoff to check subtyping of suffixes,
+by using a vector (O(1) time, O(n²) space)
+instead of a linked lists (O(n) time, O(n) space).
+However, if we skip the infix specifications in between,
+suffix hierarchies usually remain shallow (n≤4 usually, n=8 very rare),
+so it’s unclear what to optimize for.
 
 @subsubsection{C3 Tie-Breaking Heuristic}
 
