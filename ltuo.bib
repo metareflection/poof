@@ -3,36 +3,48 @@
 
 %% 1843
 
-% Full text p.666 of https://www.google.fr/books/edition/Scientific_Memoirs_Selected_from_the_Tra/qsY-AAAAYAAJ?hl=en&gbpv=1&dq=Scientific+Memoirs+Selected+from+the+Transactions+of+Foreign+Academies+of+Science+and+Learned+Societies&printsec=frontcover
+% Scientific Memoirs, Selected from the Transactions of Foreign Academies of Science and Learned Societies, and from Foreign Journals, R. and J. E. Taylor , Vol III, 1843
 % https://x.com/Ngnghm/status/1940199868037046726
 % From https://www.netlib.org/bibnet/authors/l/lovelace-ada-augusta.html
 % InCollection
-@Misc{Lovelace:1843:NTL,
-  author =       "Augusta Ada Lovelace",
-  booktitle =    "Richard Taylor's Scientific Memoirs",
-  title =        "Notes [on translation of {Luigi Federico Menebrae}'s
-                 paper on {Babbage's Analytical Engine}]",
-  pages =        "666--731",
-  month =        August,
-  year =         "1843",
-  bibsource =    "https://www.math.utah.edu/pub/bibnet/authors/l/lovelace-ada-augusta.bib;
-                 https://www.math.utah.edu/pub/tex/bib/adabooks.bib",
-  xxnote =       "Translation to English, with notes about three times
-                 the length of the original French article, of
-                 \cite{Menabrea:1842:NMA}. See \cite[pages
-                 260--282]{Woolley:1999:BSR} and \cite[pages
-                 162--164]{Swade:2001:DEC} for accounts of how those
-                 notes were written, and despite vigorous opposition
-                 from Charles Babbage \cite{Babbage:1843:AMM}, finally
-                 published in this book. The author was listed only as
-                 the initials `A. A. L.', because it was then considered
-                 inappropriate for a woman, particularly one of high
-                 rank, to author a scientific paper.",
-  author-dates = "Ada Augusta King, Countess of Lovelace (10 December
-                 1815--27 November 1852)",
-  remark =       "Luigi Menebrae went on to become Prime Minister of the
-                 newly-unified Italy.",
-  url = {https://www.google.com/books/edition/Scientific_Memoirs_Selected_from_the_Tra/qsY-AAAAYAAJ?gbpv=1&pg=PA666}
+@Misc{Lovelace1843,
+  author={{Augusta Ada Lovelace}},
+  booktitle={Richard Taylor's Scientific Memoirs},
+  title={Notes [on translation of {Luigi Federico Menebrae}'s paper on {Babbage's Analytical Engine}]},
+  pages={666--731},
+  month=August,
+  year=1843,
+  url={https://www.google.com/books/edition/Scientific_Memoirs_Selected_from_the_Tra/qsY-AAAAYAAJ?gbpv=1&pg=PA666},
+  note={.
+    This paper is the verily the foundation of all Computer Science,
+    which should rightfully be called by the name Lovelace baptized it:
+    “the science of operations”.
+    Ada Augusta King, Countess of Lovelace, translates to English
+    an article (in French) about the Babbage Analytical Engine,
+    by Luigi Menebrae, who would later become Prime Minister of newly-unified Italy;
+    and her translator’s notes are fantastic.
+    Only her initials appear (A.A.L, at one point mistyped, A.L.L.),
+    because a woman, especially a noble one, shall not write such lowly things.
+    But my, her understanding of “operations”, the general notion of pure computation,
+    is better than most computer scientists of today.
+    “First the symbols of *operation* are frequently *also* the symbols of the *results* of operations.
+    We say that symbols are apt to have both a *retrospective* and a *prospective* signification. […]”
+    She groks both that there is a conflation of multiple meanings, and that it is good,
+    yet can lead to confusion if not made explicit:
+    past vs present or future, passive vs active, values vs continuations.
+    She also anticipates symbolic computing:
+    “symbolical” vs “numerical” “results” or “data” (outputs or inputs);
+    and the equivalence of code and data:
+    “the symbols of *numerical magnitude*, are frequently *also* the symbols of *operations*”.
+    She understands that programmability (though she uses other words)
+    is what the Analytical engine vastly superior to the finite-configuration Difference Engine,
+    making it “the executive right hand of abstract algebra”.
+    She also confronts the problem that a variable may be bound to multiple values during an execution,
+    and proposes an elegant solution, using a superscript to the left of a variable to number
+    each successive binding, turning them into actual variables again.
+    Way more advanced than most computer scientists even today.
+    Prescient.
+  }
 }
 
 %% 1844
@@ -45,7 +57,8 @@
   note={.
         This novel, despite being named “The Three Musketeers”,
         famously has four musketeers as protagonists.
-        Admittedly, the main protagonist doesn’t start as one.}
+        Admittedly, the main protagonist isn’t one yet
+        when he meets (and duels!) the other three.}
 }
 
 %% 1961
@@ -689,27 +702,32 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   doi={10.1145/28697.28700}
 }
 
-% David Moon "Object-Oriented Programming with Flavors" 1986
-% Gabriel2012 says it's the first academic publication on mixins after Cannon's MIT report on Flavors.
-% It describes the New Flavors from Symbolics. GF syntax. Insists on modularity.
-% Claims that local order is enforced, but I doubt it.
 @article{Moon1986Flavors,
-author = {Moon, David A.},
-title = {Object-oriented programming with flavors},
-year = {1986},
-issue_date = {Nov. 1986},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-volume = {21},
-number = {11},
-issn = {0362-1340},
-url = {https://doi.org/10.1145/960112.28698},
-doi = {10.1145/960112.28698},
-abstract = {This paper describes Symbolics' newly redesigned object-oriented programming system, Flavors. Flavors encourages program modularity, eases the development of large, complex programs, and provides high efficiency at run time. Flavors is integrated into Lisp and the Symbolics program development environment. This paper describes the philosophy and some of the major characteristics of Symbolics' Flavors and shows how the above goals are addressed. Full details of Flavors are left to the programmers' manual, Reference Guide to Symbolics Common Lisp. (5)},
-journal = {SIGPLAN Not.},
-month = jun,
-pages = {1--8},
-numpages = {8}
+  author = {Moon, David A.},
+  title = {Object-Oriented Programming with Flavors},
+  year = {1986},
+  issue_date = {Nov. 1986},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume = {21},
+  number = {11},
+  issn = {0362-1340},
+  doi = {10.1145/960112.28698},
+  abstract = {This paper describes Symbolics' newly redesigned object-oriented programming system, Flavors. Flavors encourages program modularity, eases the development of large, complex programs, and provides high efficiency at run time. Flavors is integrated into Lisp and the Symbolics program development environment. This paper describes the philosophy and some of the major characteristics of Symbolics' Flavors and shows how the above goals are addressed. Full details of Flavors are left to the programmers' manual, Reference Guide to Symbolics Common Lisp. (5)},
+  journal = {SIGPLAN Not.},
+  month = jun,
+  pages = {1--8},
+  numpages = {8},
+  notes={.
+    According to Gabriel 2012, this was the first academic publication about Flavors,
+    outside of Cannon’s 1979 report that was not seen outside MIT (the 1982 revision is cited).
+    It describes the New Flavors system from Symbolics,
+    after it acquired the new “generic function” syntax,
+    respect for local precedence order, and other niceties.
+    Moon rightfully insists on the modularity advantage of Flavors.
+    This is a fantastic explanation on how to do multiple inheritance right,
+    only way too short.
+  }
 }
 
 % Calls "graph oriented" the conflict view of multiple inheritance
@@ -1179,13 +1197,7 @@ numpages = {8}
   }
 }
 
-% Good historical overview. Understands modularity, not at all extensibility or inheritance.
-% PDA (Procedural Data Abstraction) organized around constructors (for classes, etc.) like Smalltalk vs
-% ADT (Abstract Data Types) organized around observations (pattern-matching for data types) like CLU.
-% 5.1 SIMULA precursor to both styles.
-% "a class definition is both a constructor of objects and a type" -- Cook almost notices conflation.
-% 5.4 Cook is baffled by CLOS and its multimethods that break his model of PDA vs ADT.
-@InProceedings{Cook1990PDAvsADT,
+@InProceedings{Cook1991PDAvsADT,
   author="Cook, William R.",
   editor="de Bakker, J. W.
   and de Roever, W. P.
@@ -1199,7 +1211,20 @@ numpages = {8}
   abstract="This tutorial collects and elaborates arguments for distinguishing between object-oriented programming and abstract data types. The basic distinction is that object-oriented programming achieves data abstraction by the use of procedural abstraction, while abstract data types depend upon type abstraction. Object-oriented programming and abstract data types can also be viewed as complimentary implementation techniques: objects are centered around the constructors of a data abstraction, while abstract data types are organized around the operations. These differences have consequences relating to extensibility, efficiency, typing, and verification; in many cases the strengths of one paradigm are the weaknesses of the other. Most object-oriented programming languages support aspects of both techniques, not a unification of them, so an understanding of their relative merits is useful in designing programs.",
   isbn="978-3-540-46450-1",
   doi="10.1007/BFb0019443",
-  url={http://www.cs.utexas.edu/~wcook/papers/OOPvsADT/CookOOPvsADT90.pdf}
+  url={http://www.cs.utexas.edu/~wcook/papers/OOPvsADT/CookOOPvsADT90.pdf},
+  note={.
+    This article has a good historical overview of OO.
+    Cook really understands modularity as a goal of OO but not extensibility;
+    hence his not appreciating inheritance.
+    He distinguishes Procedural Data Abstractions (PDA)
+    organized around constructors (for classes, etc.) as in Smalltalk vs
+    Abstract Data Types (ADT)
+    organized around observations (pattern-matching for data types) as in CLU.
+    In 5.1 he says Simula was precursor to both styles.
+    Cook almost notices conflation:
+    “a class definition is both a constructor of objects and a type”.
+    And in 5.4 Cook is baffled by CLOS and its multimethods that break his model of PDA vs ADT.
+  }
 }
 
 %% 1992
@@ -2119,7 +2144,17 @@ series = {PLDI '99}
 
 %% 2007
 
-% Section 4.2 describes the failure of their "sender path" attempt at multiple inheritance
+@Book{Manin2007,
+  author={Yuri I. Manin},
+  title={Mathematics as Metaphor},
+  year=2007,
+  isbn={978-0-8218-4331-4},
+  publisher={American Mathematical Society},
+  note={.
+    This edition includes a nice Foreword by Freeman Dyson.
+  }
+}
+
 % Pages 9-1 to 9-50, scriblib/bibtex can’t parse that :-/
 @InProceedings{self2007hopl,
   author = {Ungar, David and Smith, Randall B.},
@@ -2135,7 +2170,11 @@ series = {PLDI '99}
   xxpages = {9–1--9–50},
   keywords = {virtual machine, prototype-based programming language, programming environment, object-oriented language, morphic, history of programming languages, exploratory programming, dynamic optimization, dynamic language, cartoon animation, adaptive optimization, Self},
   location = {San Diego, California},
-  series = {HOPL III}
+  series = {HOPL III},
+  note={.
+    Section 4.2 notably describes the failure of their “sender path” attempt at multiple inheritance,
+    after which they revert to the “conflict” paradigm.
+  }
 }
 
 % NB: Extended version of the seminal 2005 TOPLAS paper.
@@ -2583,6 +2622,28 @@ series = {PLDI '99}
   timestamp    = {Sat, 30 Sep 2023 10:08:07 +0200},
   biburl       = {https://dblp.org/rec/journals/corr/abs-1712-06906.bib},
   bibsource    = {dblp computer science bibliography, https://dblp.org}
+}
+
+%% 2018
+
+@InProceedings{Rideau2018Climbing,
+  author={François-René Rideau},
+  title={{C}limbing {U}p the {S}emantic {T}ower --- at {R}untime},
+  booktitle={Off the Beaten Track Workshop at POPL},
+  month={January},
+  year={2018},
+  url={https://github.com/fare/climbing}
+}
+
+@phdthesis{FarePhD,
+  Author={François-René Rideau},
+  Title={Reconciling Semantics and Reflection},
+  School={Telecom Paristech},
+  Year={2018},
+  url={https://bit.ly/FarePhD},
+  Note={Unpublished because undefended.
+    First draft completed in 2018, yet still not in a publishable state as of 2025.
+  }
 }
 
 %% 2020

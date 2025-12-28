@@ -17,7 +17,7 @@
               (list 'href "resources/pic/Half-life_lambda_logo.svg")))]}
 
 @title[
-]{Lambda, the Ultimate Object@;
+]{@|~|Lambda: the Ultimate Object@;
 @linebreak[] @linebreak[] @;
 @; } @subtitle{ @; <- for scribble/acmart
 @smaller{Object-Orientation Elucidated}
@@ -167,9 +167,9 @@
 
 @section[#:tag "Intro"]{Introduction}
 
-@subsection{Object-Orientation}
+@subsection{Wherefore this Book}
 
-@subsubsection{OO what?}
+@subsubsection{Curiosity about OO}
 Object-Oriented Programming (OOP), or Object-Orientation (OO),
 is a paradigm for programming in terms of “objects”.
 
@@ -198,16 +198,18 @@ about OO and programming in general.
 
 @subsubsection{Decades too late, better than never}
 
-Conceived around 1967 with Dahl and Nygaard’s Simula and Kay’s musings,
+Conceived around 1967 with Dahl and Nygaard’s Simula and Alan Kay’s musings,
 OO was actually born in 1976 when the two finally collided,
-and together with other influences, led to Smalltalk 76.
-OO took off from there, at first reserved to the happy few who could use the most high-end systems.
-It became popular among researchers in the 1980s, and was the next big thing.
-In the 1990s, OO became available to every programmer, accompanied by endless industry hype.
+together with other influences, and resulted in Smalltalk-76.
+OO took off from there, at first reserved to the happy few
+who could use the most high-end systems from Xerox or from MIT.
+OO became popular among researchers in the 1980s, and at some point was the Next Big Thing™.
+In the 1990s, OO finally became available to every programmer,
+accompanied by endless industry hype to promote it.
 By the mid 2000s it had become the normal paradigm to program in.
 Then, at some point in the mid 2010s it started to become as boring as ubiquitous.
-Now in the mid 2020s it is on its way to become forgotten, at least among the cool kids.
-Yet one thing OO never was, was understood.
+Now in the mid 2020s it is on its way to become forgotten, at least among the Cool Kids.
+Yet, one thing OO never was, was understood.
 Until now.
 
 As the jest goes, “Every technique is first developed,
@@ -216,11 +218,12 @@ This book then is here to bring the final nail on the coffin of OO: understandin
 Too bad no one reads books anymore, except AIs.
 If that book, and most importantly its understanding, had come a few decades earlier,
 it could have saved a lot of people a lot of trouble.
-I for sure was baffled for a long time, and many around me.
-Now that I am not baffled anymore, I can bring you my explanations, but long after the battle.
+OO sure baffled me for a long time, and many around me.
+Now that I am not baffled anymore, I can bring you all my explanations;
+but long after the battle.
 Still, maybe a few old timers, and some curious minds, natural or artificial,
 who are still interested in programming, will read that book and exclaim:
-“so @emph{that} is what OO was always all about!”
+“so @emph{that} is what OO was about all along!”
 And if they are grateful enough to send a few dollars my way for it,
 I will be satisfied.
 
@@ -229,53 +232,212 @@ I will be satisfied.
 When I mention OO becoming boring then forgotten, or nailing its coffin,
 I may sound pessimistic as to the value of OO and to its future.
 But actually, I am not, quite the opposite.
+
 I don’t mean that OO deserves to die. To the contrary.
 I think OO is a fantastic programming paradigm to build software,
 one that I tremendously enjoy when I use it in Lisp, and miss when I can’t.
 But what passes for OO in mainstream programming languages leaves me unimpressed at best.
 Meanwhile, there is little interest or funding in either industry or academia
 to further research into OO, a topic (wrongly) considered to be understood already.
-
-Bright programmers these days seem more interested in Functional Programming (FP),
+Instead, bright programmers these days seem more interested in FP,
 a topic that was unjustly neglected by the industry in the heyday of OO,
-but raised interest when distributed systems became mainstream,
-and functional style proved it was more practical than the bad old imperative style,
+but raised interest when distributed systems became mainstream:
+functional style proved it was more practical than the bad old imperative style,
 in that it avoids the unwanted interactions that make programs slow and buggy.
-Unhappily, OO had so been sold in a package deal with said imperative style
-that it fell out of fashion.
+OO had so been sold in a package deal with said imperative style
+that it fell out of fashion with it.
 Meanwhile, grumpy old Lispers like me yell at the clouds that
-there was never an opposition between OO and FP, that we Lispers have been enjoying
-both together since the 1970s, and OO can be so much more than you “blub” programmers can even imagine.
+there was never an opposition between OO and FP,
+that we Lispers have been enjoying both together since the 1970s,
+and OO can be so much more than you “blub” programmers can even imagine.
 
-My hope—my faith, contrary to evidence—is that OO can and will be resurrected.
-A better OO than was once popular:
-Simpler. Unbundled from imperative programming.
-More powerful. With the advanced features of Lisp OO at long last adopted by the mainstream.
+And I don’t mean that OO has no future.
+Indeed, my hope—my faith, contrary to available evidence—is that
+a better OO can and will rise from the dead.
+Simpler than was once popular.
+Unbundled from imperative programming.
+More powerful.
+With the advanced features of Lisp OO at long last adopted by the mainstream.
 
 But I have to admit my defeat so far: I failed to build a system to my liking
-that would attract a critical mass of adopters to become self-sustaining@xnote["."]{
-  Good OO is only a small part of what I would like in a Computing System,
-  but that is the part this book is about.
-}
+that would attract a critical mass of adopters to become self-sustaining.
 And so, like all researchers who title their papers “Towards a …”
 when they fail to achieve their goals, I am switching to plan B:
 trying to convince others that there’s gold in them thar hills,
-so they will go dig it for me.
+so they will go dig it—because I can’t dig it all by myself.
 
-@subsection{An Optimal Inheritance Mechanism — and a Theory Why}
+@subsection{Why this Book}
 
-@subsubsection{Context: Inheritance}
-Object-Oriented Programming (OOP), or
-@principle{Object-Orientation (OO), is a programming style
-  characterized by the use of @emph{inheritance}},
+This section is about me, not you, so most of you should skip away to the next section.
+Come back when you care about me, if you ever do.
+
+@subsubsection{Proximate Cause}
+
+After I used the Prototype OO programming language Jsonnet @~cite{jsonnet} in production,
+then discovered that Nix @~cite{nix2015} implemented the very same object model in two lines of code,
+OO finally clicked for me.
+After all those years of experiencing how great or terrible OO in various forms could be,
+yet never quite being able to even explain to myself or others what OO was,
+certainly not in clear and simple terms—at last, I understood it.
+And then I realized I was the only one who understood OO from both
+the theoretical side of programming language semantics, and
+the practical side of actually building large systems—with the advanced features of untyped Lisp OO
+as well as with the advanced types of feature-poor languages like Scala.
+
+So I tried to get the Good News out, by getting a paper published.
+And I did get a paper published @~cite{poof2021},
+but only at the Scheme Workshop, a small venue of sympathetic Lispers,
+who already understood half of it and did not need much to understand the rest,
+though most would not care enough about it.
+Meanwhile, my repeated attempts at publishing in more mainstream
+Computer Science conferences or journals were met with incomprehension.
+Also with great technical feedback, of course, that helped me learn and improve a lot,
+and for which I am most grateful;
+but fundamentally, with deep misunderstanding about what I was even talking about.
+As @citet{Gabriel2012} would say, my reviewers were trying to judge my work
+while trying to make sense of it from an Incommensurable Paradigm.
+
+Certainly, I could try to explain myself, to translate between one’s language and the other;
+spend time explaining the denotations and connotations of my words as I was using them,
+and defusing those that may mistakenly be heard by various readers from different communities;
+tell my readers to put aside the concepts they think they know,
+and somehow teach them the concepts I am putting behind the words, so they understand.
+But that takes a lot of time and space. For me. And for my readers.
+Resources that we both lack. Especially in the limited format of scientific publications:
+Only 12 to 25 pages, depending on the venue.
+That was barely enough for me to debunk the false interpretations and other misunderstandings
+that might be coming my way—see how much that takes in @secref{WOOin}—there
+would be no space left to substantiated my claims.
+Or I could spend space substantiating those claims,
+but then I would have no space left to address the inevitable misunderstanding
+of the claim and its justification by reviewers.
+
+Or, I could take the time and space to explain things right.
+But then, I’d have to abandon the hope of fitting in existing venues.
+I would have to write a book. This book.
+
+@subsubsection{Ultimate Cause}
+
+I am not new to ideas that are hard to publish.
+My thesis on Reconciling Reflection and Semantics
+not only remains unpublished@~cite{FarePhD},
+but none of the many ideas within it could be published in an academic venue,
+except for a very short workshop paper@~cite{Rideau2018Climbing} —
+partly because these ideas are articulated in four parts,
+and the earlier parts can seem trivial, and mostly pointless
+(except for a few useful definitions and some cool insight),
+unless you understand the applications in the latter parts;
+but the applications in the latter parts seem impossible or don’t even make sense
+unless I introduce the concepts from the first parts.
+Yet I can’t fit enough of those parts together
+in a paper short enough to be publishable.
+No doubt the main culprits in the matter are me, myself and I,
+and only I can fix this failure, when I take the time to do things right.
+
+A related reason why my ideas are hard to publish is that
+I like to think about big pictures, or what others call big pictures,
+because I am an aphantasiac—one with no man’s eye except when dreaming.
+Great ideas that explain large scale human behaviors,
+or tie together seemingly disparate phenomena that actually follow common causal patterns.
+Ideas that are hard to communicate to most people
+who do think at an level of abstraction high enough to see the patterns;
+or who do think at a high enough level, sometimes higher, but, not being aphantasiac,
+are overwhelmed by what they @emph{see}, rather than what other senses could tell them.
+
+@nested[#:style "quote"]{
+  “Some mathematicians are birds, others are frogs.
+  Birds fly high in the air and survey broad vistas of mathematics out to the far horizon.
+  They delight in concepts that unify our thinking and bring together
+  diverse problems from different parts of the landscape.
+  Frogs live in the mud below and see only the flowers that grow nearby.
+  They delight in the details of particular objects, and
+  they solve problems one at a time.
+  Manin is a bird.
+  I happen to be a frog, but I am happy to introduce this book
+  which shows us his bird’s-eye view of mathematics.”
+  — Freeman Dyson, in his foreword to @citet{Manin2007}
+}
+
+But in the case of this book on Object-Orientation, there is the difference that
+I actually have been using OO for almost three decades a programmer.
+I studied the semantics of programming languages in college.
+I professionally wrote or maintained OO programs
+in Lisp, Python, Java, JavaScript, Jsonnet, Scala, C++.
+And I kept writing papers about OO while working in the industry@~cite{LIL2012 poof2021}.
+It is a topic both easier and more concrete, where I have direct experience,
+and where I can stand on the shoulders of giants who already did most of the work,
+wrote papers that solved most of the many hard problems.
+On this topic, I am ready and capable to explain a complete Theory of OO
+that is also fully implemented and immediately usable.
+
+@subsection{How this Book}
+
+Some advice on how to read this book.
+
+@subsubsection{Stop and Go}
+
+This book is written a narrative
+from the most informal, most generic and most basic information about OO,
+to the most formal, most specific and most advanced.
+
+If you are enthusiastic OO about going all the way into using and implementing
+the most advanced OO techniques, then you will read the book cover to cover,
+and may end up writing your OO system, and writing a sequel to this book.
+(But then again, why not join me to write those systems and books together?)
+But not everyone has to take this book that way.
+
+As less than completely enthusiastic about OO,
+you may want to only keep reading until you have had enough,
+and the topic becomes too formal.
+You can stay longer, and learn more,
+if you reproduce the included code, play with it, and otherwise engage with the material.
+But eventually, everyone has their own limits and their own interests,
+and no grudges will be held against you if you drop out before the end.
+
+The book is organized so it will hopefully still make sense and bring you value,
+wherever you stop. And if your interest in OO is rekindled, you can resume from where you left.
+You can also skip or shim over the footnotes, the digressions,
+the sections like this one that digress from the topic of OO itself.
+Especially if you’re in a hurry.
+And you can come back read them later if and when you have more time and interest.
+There is no word index, but these days you can use text search on an electronic copy
+to zoom directly to the section that interests you.
+Or, these days, you may ask an AI to help you navigate the document.
+
+@subsubsection{Self-Description}
+
+This book hopefully includes enough descriptions of what it is going to be,
+that you may make reasonable desicions of which parts to read,
+which parts to skip, which parts to skim, which parts to read attentively,
+which parts to keep, and which parts to throw away—or then again, rewrite.
+
+At times, I will highlight some short sentence in bold italic,
+to make it clear I believe it is an important principle, as follows:
+@principle{“If you have exceptions to your stated principle,
+ask yourself by what standard you make the exceptions.
+That standard is the principle you really hold.”}
+The above principle describes principles;
+in this case, it was written not by me, but by my friend Jesse Forgione.
+
+@subsection{What this Book}
+
+@subsubsection{A Theory of OO}
+
+@principle{Object-Orientation (OO),
+is a programming style characterized by the use of @emph{inheritance}},
 a mechanism for programming by modularly extending
-partial specifications of code @~cite{inheritance1996}@xnote["."]{
+partial specifications of code.
+OO usually depends on explicit support from the Programming Language (PL) at hand,
+then called an Object-Oriented (Programming) Language (OOPL).
+
+The first statement above should be obvious to all familiar with OO;
+yet remarkably, even such as definition isn’t universally accepted@xnote["."]{
   A notable dissident to this characterization is William Cook,
   a respected academic who made many key contributions to understanding the semantics of inheritance
   @~cite{Cook1989 cook1989inheritance cook1989denotational bracha1990mixin Cook1994}
   yet also argued that inheritance was orthogonal to OO @; Also Cook1989?
   and that OO is about “classes” of “objects” that can only be accessed through “interfaces”
-  @~cite{Cook1990PDAvsADT Cook2009 Cook2012}.
+  @~cite{Cook1991PDAvsADT Cook2009 Cook2012}.
 
   However, coding against an SML “module” would count as OO by Cook’s criteria,
   and indeed Cook explicitly calls the untyped λ-calculus “the first object-oriented language”,
@@ -308,25 +470,94 @@ partial specifications of code @~cite{inheritance1996}@xnote["."]{
   worth understanding, conceptualizing, defining and naming
   in the rich (though sometimes mutually conflicting) traditions
   that grew around OO.
-  There is thus a need to elucidate the key concepts of OO behind the hype and confusion;
-  such is the main purpose of this essay.
 }
-OO usually depends on explicit support from the programming language at hand,
-then called an Object-Oriented language.
-Now programmers (resp. programming language designers)
-have faced a dilemma since almost the very beginning,
-of which of several variants of inheritance to use (resp. implement), if any at all:
+There is thus a need to elucidate the words and concepts of OO,
+behind the hype and confusion, and justify the choices made by OO
+(or then again, their amendment).
+Such is the main purpose of this book.
+
+@sub3section{Meaningful Theory}
+The main contribution of this book will thus be a @emph{Theory of OO}:
+a body of explanations necessary and sufficient to explain
+what we do when we do OO, and we don’t when we don’t.
+A @emph{meaningful} theory, it will be sufficient to clearly state
+the problems to be solved by or for OO, and
+the criteria by which we can judge some solutions as better than others,
+good or bad, acceptable or unacceptable.
+In these explanatory abilities, the negative is as important as the positive:
+it allows to demarcate the concept of OO from other concepts;
+to distinguish that which partakes in it, that explains it,
+from that which doesn’t, and would only corrupt it if accepted as part of OO.
+
+@sub3section{Relevant Theory}
+Our theory will be @emph{relevant} as a theory of OO, and not of something else,
+because it will match the lore of OO:
+it will restate most if not all the things we know for sure about OO,
+especially what has been well-known for decades.
+Now, to remain consistent, our theory must filter out some things we falsely believed we knew:
+that is absolutely necessary whenever there is controversy between contradictory opinions,
+and not two such opinions can be consistently held.
+Thus, our theory will not merely restate, but organize the existing information,
+and offer ways to distinguish the good from the bad information.
+That is enough to make our theory original—even when it only states known facts,
+it will select elements of the lore that are not uniformly known to all:
+elements not told explicitly in academic literature;
+elements that may actually go radically against prevalent opinions;
+elements that that were told before, but never formulated together.
+
+@sub3section{Productive Theory}
+Our theory will be valid, because it will issue correct statements about OO,
+and avoid incorrect statements.
+But validity as such is easy: just avoid saying much,
+stick to tautologies and things already known for sure.
+We need more to be interesting:
+@principle{Our Theory of OO is Productive}—it will not
+merely restate and explain old knowledge,
+it will shape it into a coherent whole
+capable of generating and justifying new knowledge.
+
+@sub3section{Constructive Theory}
+@principle{Our Theory of OO is Constructive}:
+we include code in Scheme, using as few features of Scheme as possible,
+so that it may be easily adapted to any programming language or dialect.
+We explain which features we need beyond the mere applicative λ-calculus, why,
+and how to typically implement them in existing programming languages.
+Remarkably, the main feature we need is lazy evaluation, or ways to emulate it,
+as OO is most naturally defined in a pure lazy functional setting,
+and eager evaluation of OO without side-effects leads to exponential recomputations.
+
+One aspect for which we do not provide a construction, however, is static typing;
+however, others have provided good foundational theories
+for typing OO@~cite{iloop1995 allen2011type},
+and we will provide semi-formal designs for what better static types for OO should look like
+on top of such foundations.
+Good OO types should work for not just for Second-Class Classes,
+but also for First-Class Prototypes;
+they do not require dependent types, but do require recursive types and subtyping.
+@;{ TODO evaluate Scala DOT in this context. Ask nada.}
+
+@subsubsection{Inheritances?}
+There are actually many different variants of inheritance @~cite{inheritance1996}:
 many prefer single inheritance for its simplicity and performance
 @~cite{Simula1967 Kay1993EHoS};
-others prefer multiple inheritance
+others prefer multiple inheritance, that itself comes in multiple flavors (ahem),
 for its greater expressiveness and modularity @~cite{Bobrow1976 Cannon1979}.
-A few outliers prefer mixin inheritance, a variant in some sense intermediary between the two above,
+A few outliers prefer mixin inheritance,
+a variant in some sense intermediary between the two above,
 but also more fundamental, more composable @~cite{bracha1990mixin}.
-Some prefer no inheritance at all.
+Some prefer no inheritance at all, which though it doesn’t count as OO
+is an important base line to which to compare things.
+
 @; Cite https://freedium.cfd/https://medium.com/better-programming/object-oriented-programming-the-trillion-dollar-disaster-92a4b666c7c7
+And then there are dubious variants published in papers that are deservedly obscure,
+and that we will gladly help stay thus by not citing them.
 @; XXX Reverse Inheritance as trivially expressible in terms of mixin or multiple inheritance.
 
-@subsubsection{Problem: Optimal Inheritance?}
+Thus programmers (resp. PL designers) have faced a dilemma since almost the very beginning,
+of which of several variants of inheritance to use (resp. implement), if any at all.
+
+@(XXXX)
+
 Is there a form of inheritance that is objectively better than the others,
 with respect to expressiveness, modularity, extensibility, and runtime performance?
 Is one of the usual variants superior to the others in every way?
@@ -341,38 +572,6 @@ What becomes of it in this optimal inheritance?
 And of course, OO has many detractors who claim that the best inheritance is no inheritance.
 What are the reasons to use or not use inheritance to begin with?
 
-@subsubsection{Claim: A Theory of OO}
-So that we may offer a solution to the problem of optimal inheritance,
-we will first recapitulate a theory of OO sufficient to state the problem
-and the criteria that may make a solution better than others.
-In a way, we will only be stating lore that has been known for decades.
-Yet no element of that lore is uniformly known to all;
-some may never have been told explicitly in academic literature;
-a few elements actually go radically against prevalent opinions in academic literature
-without being necessarily wholly original;
-and they have never been formulated together.
-What more, @principle{We offer a Theory of OO that is @emph{Productive}}:
-it does not merely restate and explain old knowledge,
-but shapes it into a coherent whole capable of generating and justifying new knowledge.
-
-@subsubsection{Claim: Constructive OO}
-Furthermore, @principle{Our Theory of OO is also Constructive}:
-we include code in Scheme, using as few features of Scheme as possible,
-so that it may be easily adapted to any programming language or dialect.
-We explain which features we need beyond the mere applicative λ-calculus, why,
-and how to typically implement them in existing programming languages.
-Remarkably, the main feature we need is lazy evaluation, or ways to emulate it,
-as OO is most naturally defined in a pure lazy functional setting,
-and eager evaluation of OO without side-effects leads to exponential recomputations.
-One aspect for which we do not provide a construction, however, is static typing;
-however, others have provided good foundational theories
-for typing OO@~cite{iloop1995 allen2011type},
-and we will provide semi-formal designs for what better static types for OO should look like
-on top of such foundations.
-Good OO types should work for not just for Second-Class Classes,
-but also for First-Class Prototypes;
-they do not require dependent types, but do require recursive types and subtyping.
-@;{ TODO evaluate Scala DOT in this context. Ask nada.}
 
 @subsubsection{Claim: C4 is Optimal}
 We claim that (a) indeed there is a best way to combine single and multiple inheritance,
@@ -403,7 +602,7 @@ Yet without that (re)statement, neither the algorithm nor its benefits would be 
 C4 is thus a comparatively modest yet meaningful innovation on top of our theory,
 that crowns the theory as productive.
 
-@subsection{Plan of the Article}
+@subsection{Plan of the Book}
 
 In section 2, we dispel common misconceptions about OO,
 to ensure that our theory isn’t met with misunderstanding due to misconceptions
@@ -496,7 +695,7 @@ that is itself derivative of what we’ll call a
 (modular extensible) @emph{specification}.
 
 @; TODO for submission, move to appendix?
-@section{What Object-Orientation is @emph{not}}
+@section[#:tag "WOOin"]{What Object-Orientation is @emph{not}}
 
 Before we explain in detail what OO @emph{is},
 let us cast aside a lot of things it @emph{isn’t}
@@ -2069,22 +2268,8 @@ Now, while files go back to the 1950s and hierarchical filesystems to the 1960s,
 there was an even earlier breakthrough in modularity,
 so pervasive that programmers use it without even thinking about using it:
 subroutines,
-already conceptualized by Ada Lovelace as “operations”@~cite{Lovelace:1843:NTL}, @;
-@; that could be “subsidiary”,
-@;{Scientific Memoirs, Selected from the Transactions of Foreign Academies of Science and Learned Societies, and from Foreign Journals, R. and J. E. Taylor , Vol III, 1843, L. F. Menabrea on Babbage’s Analytical Engine. Notes of the translator (= Augusta Ada (King, Countess of) Lovelace, A.A.L. not A.L.L.)
-  Note A p693 "operation"… general notion of pure computation from between
-  "First the symbols of *operation* are frequently *also* the symbols of the *results* of operations.
-  We say that symbols are apt to have both a *retrospective* and a *prospective* signification. […]"
-  [[[past vs present/future; passive vs active; values vs continuations]]]
-  Secondly […] the symbols of *numerical magnitude*, are frequently *also* the symbols of *operations*,
-  as when they are the indices of powers."
-  [[[She already has to deal with confusion between ambiguous terms!]]]
-  [[[She anticipates symbolic computations… "symbolical results|data" (outputs|inputs) vs "numerical"]]]
-  [[[She calls computer science "the science of operations"]]]
-  [[[She understands that infinite programmability (no word for it) is what the Analytical engine vastly
-     superior to the finite-configuration Difference Engine,
-     making it "the executive right hand of abstract algebra"]]]
-} formalized early on by Wilkes et al. in the 1940s @; TODO cite
+already conceptualized by Ada Lovelace as “operations”@~cite{Lovelace1843}, @;
+formalized early on by Wilkes et al. in the 1940s @; TODO cite
 used by the earliest programmers in manually assembled code,
 part of the first programming language Plankalkül, @; TODO cite
 and of FORTRAN II. @; TODO cite
