@@ -17,7 +17,7 @@
   year =         "1843",
   bibsource =    "https://www.math.utah.edu/pub/bibnet/authors/l/lovelace-ada-augusta.bib;
                  https://www.math.utah.edu/pub/tex/bib/adabooks.bib",
-  note =         "Translation to English, with notes about three times
+  xxnote =       "Translation to English, with notes about three times
                  the length of the original French article, of
                  \cite{Menabrea:1842:NMA}. See \cite[pages
                  260--282]{Woolley:1999:BSR} and \cite[pages
@@ -28,13 +28,10 @@
                  the initials `A. A. L.', because it was then considered
                  inappropriate for a woman, particularly one of high
                  rank, to author a scientific paper.",
-  acknowledgement = ack-nhfb,
   author-dates = "Ada Augusta King, Countess of Lovelace (10 December
                  1815--27 November 1852)",
   remark =       "Luigi Menebrae went on to become Prime Minister of the
                  newly-unified Italy.",
-  xxnote =       "Check publication information: need to locate original
-                 source!",
   url = {https://www.google.com/books/edition/Scientific_Memoirs_Selected_from_the_Tra/qsY-AAAAYAAJ?gbpv=1&pg=PA666}
 }
 
@@ -45,15 +42,14 @@
   title={Les Trois Mousquetaires},
   year={1844},
   url={https://fr.wikisource.org/wiki/Les_Trois_Mousquetaires},
-  note={This novel, despite being named "The Three Musketeers",
-        has four musketeers as protagonists.}
+  note={.
+        This novel, despite being named “The Three Musketeers”,
+        famously has four musketeers as protagonists.
+        Admittedly, the main protagonist doesn’t start as one.}
 }
 
 %% 1961
 
-% About the Burroughs B5000
-% Push-down stack, memory location independence,
-% "right-hand Polish notation" later used by FORTH!
 @article{lonergan1961,
   author = {Lonergan, William M. and King, Paul A.},
   title = {Design of the B5000 System},
@@ -62,10 +58,16 @@
   number = {5},
   pages = {28--32},
   year = {1961},
-  url={https://people.eecs.berkeley.edu/~kubitron/courses/cs252-S12/handouts/papers/b5000.pdf}
+  url={https://people.eecs.berkeley.edu/~kubitron/courses/cs252-S12/handouts/papers/b5000.pdf},
+  note={.
+    The paper presents the Burroughs B5000 computer architecture,
+    one of the sources of inspiration cited by Alan Kay.
+    It features: a push-down stack (with “right-hand” Polish notation that prefigures FORTH!);
+    “independence of addressing” (memory position-independence for both code and data)
+    through a “program reference table” (relocatable table for indirect addressing,
+    prefigures not just global linker tables, but also an object’s virtual dispatch table).}
 }
 
-% Architect of the Burroughs B5000
 @inproceedings{barton1961,
   author = {Barton, R. S.},
   title = {A New Approach to the Functional Design of a Digital Computer},
@@ -75,12 +77,19 @@
   address = {New York, NY, USA},
   url = {https://doi.org/10.1145/1460690.1460736},
   doi = {10.1145/1460690.1460736},
-  abstract = {The present methods of determining the functional design of computers are critically reviewed and a new approach proposed. This is illustrated by explaining, in abstracted form, part of the control organization of a new and different machine based, in part, on the ALGOL 60 language. The concepts of expression and procedure lead directly to use of a Polish string program. A new arrangement of control registers results, which provides for automatic allocation of temporary storage within expressions and procedures, and a generalized subroutine linkage.The simplicity and power of these notions suggests that there is much room for improvement in present machines and that more attention should be given to control functions in new designs.},
+  abstract = {The present methods of determining the functional design of computers are critically reviewed and a new approach proposed. This is illustrated by explaining, in abstracted form, part of the control organization of a new and different machine based, in part, on the ALGOL 60 language. The concepts of expression and procedure lead directly to use of a Polish string program. A new arrangement of control registers results, which provides for automatic allocation of temporary storage within expressions and procedures, and a generalized subroutine linkage. The simplicity and power of these notions suggests that there is much room for improvement in present machines and that more attention should be given to control functions in new designs.},
   booktitle = {Papers Presented at the May 9-11, 1961, Western Joint IRE-AIEE-ACM Computer Conference},
   pages = {393–396},
   numpages = {4},
   location = {Los Angeles, California},
-  series = {IRE-AIEE-ACM '61 (Western)}
+  series = {IRE-AIEE-ACM '61 (Western)},
+  note={.
+    This paper shows how the author architected the Burroughs B5000
+    to support the execution of high-level languages (notably ALGOL 60).
+    It is hard to read because it is dated; what was obvious then isn’t now,
+    while many ideas that were new then seem obvious now.
+    Still, Alan Kay cites the B5000 as a breakthrough, and I believe him.
+  }
 }
 
 %% 1963
@@ -99,7 +108,7 @@
   pages = {329–346},
   numpages = {18},
   location = {Detroit, Michigan},
-  series = {AFIPS '63 (Spring)}
+  series = {AFIPS '63 (Spring)},
 }
 
 %% 1965
@@ -112,7 +121,8 @@
   pages={39--69},
   year={1965},
   url={http://archive.computerhistory.org/resources/text/Knuth_Don_X4100/PDF_index/k-9-pdf/k-9-u2293-Record-Handling-Hoare.pdf},
-  note={This seminal paper introduces classes and subclasses,
+  note={.
+        This seminal paper introduces classes and subclasses,
         and many other notions now familiar and ubiquitous,
         including his infamous "million dollar mistake", null.
         Hoare calls "objects" and "attributes" high-level entities being modeled, "classes" their types,
@@ -240,18 +250,22 @@
 
 %% 1974
 
-% Minsky's 1974 paper on Frames uses the words "prototype" and "inherit", but incidentally,
-% not at all to refer to the concepts at stake. MIT AIM-306
-@article{minsky1974framework,
+@TechReport{minsky1974framework,
   title={A Framework for Representing Knowledge},
   author={Minsky, Marvin},
   year={1974},
-  url={https://dspace.mit.edu/handle/1721.1/6089}
+  institution={MIT},
+  number={AIM-306},
+  url={https://dspace.mit.edu/handle/1721.1/6089},
+  note={.
+    Minsky uses the words “prototype” and “inherit”, but incidentally,
+    NOT AT ALL to refer to the concepts at stake.
+  }
 }
 
 %% 1975
 
-% 1975 Hewitt Stereotypes
+% TODO 1975 Hewitt Stereotypes -- uses the word "inherit" a lot, especially with frames.
 % p.101 “The "frame" problem of McCarthy for assertional frames corresponds closely to
 % the problems of "inheritance of attributes" and "default values" for object frames.
 % For example the fable quoted by Minsky about the wolf and the lamb is very close to
@@ -262,31 +276,9 @@
 % that discusses “"default" assignments” and discusses how the wolf is lying in accusing the lamb
 % and the issues with representing knowledge for that.
 
-% So far as I can tell, the earliest use of "inheritance", in "inheritance of properties", p. 197.,
-% along the hierarchy of frames. The variant it designates is multiple-inheritance,
-% though that word isn't coined. The exact resolution algorithm is not explained,
-% As the title implies, this is not quite for *data* yet not quite for *code* but somewhere in between.
+
+% This only has to p. 8, but we need 185:
 % https://api.pageplace.de/preview/DT0400.9781483299150_A23889670/preview-9781483299150_A23889670.pdf
-%
-% The use of the name "inheritance" is not fully formal, though.
-% It is probably through Dan Ingalls' implementation of (single) inheritance in Smalltalk 1976
-% that "inheritance" became formally known as such.
-% Winograd also inspired Kahn and Borning for their Prototype OO systems, etc.
-%
-% Not sure how to name namings, but here are at least four kinds:
-% - evocation: neither name nor concept owns the other, yet an allusion is made.
-% - distinction: the name distinguishes the concept from others, but isn't owned by it.
-% - identification: name and concept own each other, though the limits of the concept may not be clear.
-% - definition: the essence of the concept being named is finally well understood.
-% For "inheritance", evocation happened in Minsky 1975, distinction in Winograd 1975,
-% and identification around 1976 quite possibly by Kay,
-% practical definition in the early 1980s with Flavors and T,
-% theoretical definition around 1990 by Cook & Bracha, and works on multipe inheritance culminating with C3.
-% Final definition around 2025 by this very series of papers?
-%
-% not to name concepts in their formal object, rather as part of its informal (meta) context.
-% Yet no doubt they primed Winograd for when he did use them to name concepts of KRL in 1975.
-%
 % InCollection
 @Misc{Winograd1975,
   author = {Terry Winograd},
@@ -301,8 +293,36 @@
   doi = {10.1016/B978-0-12-108550-6.50012-4},
   url = {https://www.sciencedirect.com/science/article/pii/B9780121085506500124},
   abstract = {Publisher Summary
-This chapter presents some criteria for evaluating ideas for representation. It also presents a rough sketch of a particular version of a frame representation, and discusses the ways in which it can deal with the issues raised. The proceduralists assert that human knowledge is primarily a knowing how. The human information processor is a stored program device, with its knowledge of the world embedded in the programs. The declarativists do not believe that knowledge of a subject is intimately bound with the procedures for its use. They see intelligence as resting on two bases: a quite general set of procedures for manipulating facts of all sorts, and a set of specific facts describing particular knowledge domains. In thinking, the general procedures are applied to the domain-specific data to make deductions. Often this process has been based on the model of axiomatic mathematics. The facts are axioms and the thought process involves proof procedures for drawing conclusions from them.}
-}
+This chapter presents some criteria for evaluating ideas for representation. It also presents a rough sketch of a particular version of a frame representation, and discusses the ways in which it can deal with the issues raised. The proceduralists assert that human knowledge is primarily a knowing how. The human information processor is a stored program device, with its knowledge of the world embedded in the programs. The declarativists do not believe that knowledge of a subject is intimately bound with the procedures for its use. They see intelligence as resting on two bases: a quite general set of procedures for manipulating facts of all sorts, and a set of specific facts describing particular knowledge domains. In thinking, the general procedures are applied to the domain-specific data to make deductions. Often this process has been based on the model of axiomatic mathematics. The facts are axioms and the thought process involves proof procedures for drawing conclusions from them.},
+  note={.
+    This paper has so far as I can tell,
+    the earliest use of “inheritance” in a context that directly inspired OO,
+    Winograd also inspired Kahn and Borning for their Prototype OO systems,
+    and worked with Bobrow whose team was next to Kay’s, etc.
+    The word “inherit” appears in other papers from MIT AI researchers at the time (e.g. Hewitt),
+    but it is unclear who talks about it first and gets it from where.
+    Winograd talks about “inheritance of properties”, p. 197.,
+    to compute properties of a frame based on its hierarchy.
+    Frame hierarchies are a form of multiple inheritance, though that word isn't coined.
+    The exact resolution algorithm is not explained.
+    Frames are not quite data, not quite code, but something in between;
+    Lisp is system more than a programming language, and the lines are blurred.
+    The use of the name “inheritance” is not fully formal, though.
+    Indeed, I can see at least four kinds of ways of naming things
+    (beware though I’m making up this nomenclature on the spot):
+    (1) evocation: neither name nor concept owns the other, yet an allusion is made;
+    (2) distinction: the name distinguishes the concept from others, but isn't owned by it;
+    (3) identification: name and concept own each other, though the limits of the concept
+    may not be clear;
+    (4) definition: the essence of the concept being named is finally well understood.
+    For “inheritance”, evocation happened in Minsky 1975, distinction in Winograd 1975,
+    and identification around 1976 quite possibly by Bobrow or Kay
+    (and Kay later says Larry Tesler insisted on implementing “slot inheritance”
+    the way he had done in previous desktop publishing projects).
+    Practical definition would happen in the early 1980s, and
+    more formal theoretical definitions around 1990 with e.g. Cook & Bracha,
+    refining their immediate predecessors like Kamin, Reddy, Cook.
+}}
 
 % https://link.springer.com/chapter/10.1007/3-540-07168-7_77
 % We take the following statements to be the objectives of modular programming:
@@ -390,21 +410,25 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 % Also published in Cognitive Science, V. 1, No. 1, 1977.
-% Has multiple inheritance (without using the word) as multiple "descriptors"
-% each providing a "perspective" on a given "object" or "prototype",
-% and "inheritance of properties".
-% Meant as a declarative system of data on which operations are then performed,
-% rather than as code as such (though coding is possible).
-@Misc{Bobrow1976,
+@TechReport{Bobrow1976,
   author={Daniel G. Bobrow and Terry Winograd},
   title={An Overview of KRL, A Knowledge Representation Language},
   year={1976},
-  note={Stanford Artificial Intelligence Laboratory Memo AIM-293},
-  url={https://exhibits.stanford.edu/stanford-pubs/catalog/pf235fy3176}
+  institution={Stanford Artificial Intelligence Laboratory},
+  number={AIM-293},
+  url={https://exhibits.stanford.edu/stanford-pubs/catalog/pf235fy3176},
+  note={.
+    This paper has multiple inheritance (without using the word) as multiple “descriptors”
+    each providing a “perspective” on a given “object” or “prototype”,
+    and “inheritance of properties”,
+    meant as a declarative system of data on which operations are then performed,
+    rather than as code as such (though coding is possible).
+  }
 }
 
 %% 1977
 
+% ThingLab https://github.com/cdglabs/thinglab
 % Uses the word "prototypes", and has no classes. And multiple inheritance.
 @InProceedings{Borning1977,
   author = {Alan Hamilton Borning},
@@ -497,8 +521,15 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 % Borning1982 cites a 1980 version of the Flavors report, from MIT. Originally from 1979.
 % Also a 1982 version of LOOPS
+% Flavors calls Smalltalk "hierarchical" and itself "non-hierarchical"
+% p.7 Section "Multiple Superclasses", "instead of a hierarchy, more of a lattice structure is formed"
+% Doesn't mention DAG, tree or acyclic, lattice is not quite correct:
+% there are common descendents (above the class) and ancestors (below the top system class),
+% but no unique *most generic common descendent* nor unique *most specific common ancestor*
+% conflict semantics.
+% p.9 Section "Flavors" - as distinguished from the previous class thing! - linearizes
 @Misc{Cannon1979,
-  title={Flavors: A non-hierarchical approach to object-oriented programming},
+  title={Flavors: A Non-Hierarchical Approach to Object-Oriented Programming},
   author={Howard Cannon},
   publisher={Symbolics Inc.},
   year=1979,
@@ -602,7 +633,13 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   author={Luca Cardelli},
   booktitle={Information and Computation},
   year={1984},
-  url={https://api.semanticscholar.org/CorpusID:13032155}
+  volume={76},
+  number={2},
+  pages={138-164},
+  year={1988},
+  issn={0890-5401},
+  doi={10.1016/0890-5401(88)90007-7},
+  url={http://lucacardelli.name/papers/inheritance.pdf}
 }
 
 %% 1986
@@ -696,7 +733,7 @@ numpages = {8}
   doi = {10.1145/28697.28702},
   abstract = {Object-oriented programming is a practical and useful programming methodology that encourages modular design and software reuse. Most object-oriented programming languages support data abstraction by preventing an object from being manipulated except via its defined external operations. In most languages, however, the introduction of inheritance severely compromises the benefits of this encapsulation. Furthermore, the use of inheritance itself is globally visible in most languages, so that changes to the inheritance hierarchy cannot be made safely. This paper examines the relationship between inheritance and encapsulation and develops requirements for full support of encapsulation with inheritance.},
   booktitle = {Conference Proceedings on Object-Oriented Programming Systems, Languages and Applications},
-  pages = {38–45},
+  pages = {38--45},
   numpages = {8},
   location = {Portland, Oregon, USA},
   series = {OOPSLA '86}
@@ -771,17 +808,31 @@ numpages = {8}
   Author = {Norman Adams and Jonathan Rees},
   Title = {Object-Oriented Programming in Scheme},
   url = "http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.46.954",
-  %booktitle = {ACM Conference on Lisp and Functional Programming},
-  booktitle = {LFP},
+  booktitle = {Proceedings of the 1988 ACM Conference on LISP and Functional Programming},
   pages = {277--288},
   Year = {1988},
-  note = {Expounds the object system of Yale T Scheme, actually implemented circa 1982.
-          T has class-less objects (it's what we'd call prototypes, but they don't use the word).
-          The low-level machine merges objects and functions:
-          an object is a function with multiple entry points (one per method) including a default one.
-          A function stricto sensu is an object with a single method.
-          T objects as such have single-inheritance, but
-          "components" provide mixin inheritance.}
+  note={.
+    This paper expounds the object system of Yale T Scheme, actually implemented circa 1982,
+    and notably used for its GUI:
+    class-less, object-less (what they call “object” is any value),
+    it is a sort of Prototype OO, but without conflation of targets (that they call instances)
+    and specifications (that they call components).
+    Their virtual machine merges instances and functions:
+    an instance is a function with multiple entry points (one per method)
+    including a default one, used when just calling it as a function.
+    A function stricto sensu is an object with a single method.
+    T instances as such implement single-inheritance, through
+    a rudimentary protocol of delegation;
+    however “components” provide mixin inheritance (before the name was invented).
+    Impressive, but sadly largely unknown outside Lisp circles.},
+  isbn = {089791273X},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  doi = {10.1145/62678.62720},
+  abstract = {We describe a small set of additions to Scheme to support object-oriented programming, including a form of multiple inheritance. The extensions proposed are in keeping with the spirit of the Scheme language and consequently differ from Lisp-based object systems such as Flavors and the Common Lisp Object System. Our extensions mesh neatly with the underlying Scheme system. We motivate our design with examples, and then describe implementation techniques that yields efficiency comparable to dynamic object-oriented language implementations considered to be high performance. The complete design has an almost-portable implementation, and the core of this design comprises the object system used in T, a dialect of Scheme. The applicative bias of our approach is unusual in object-oriented programming systems.},
+  numpages = {12},
+  location = {Snowbird, Utah, USA},
+  series = {LFP '88}
 }
 
 @book{cct1988,
@@ -846,6 +897,13 @@ numpages = {8}
 }
 
 % Cook2012 cites his own thesis in arguing that Inheritance is neither necessary nor specific to OO.
+% Has wrappers already, but not mixin inheritance.
+% 2.5 "Multiple inheritance" - the synthesized attribute view
+% 2.5.1 "Strict M I" - "conflicting symbols are removed"
+% 10. Flavors. Doesn't get it. at. all. (cites New Flavors Moon1986)
+% - "linearization is potentially detrimental to the encapsulation of programs"
+% 10.2 "tree" 10.3 "ancestor tree" - fails to see DAG
+% 10.4 "very difficult to understand" - yup he fails
 @PhDThesis{Cook1989,
     author = {William R. Cook},
     title = {A Denotational Semantics of Inheritance},
@@ -906,11 +964,11 @@ numpages = {8}
 }
 
 % Not obviously worth citing in this context?
-% @TechReport ?
-@Misc{Lawall89SelfInScheme,
+@TechReport{Lawall89SelfInScheme,
   Author = {Julia L. Lawall and Daniel P. Friedman},
   Title = {Embedding the Self Language in Scheme},
   url = "https://legacy.cs.indiana.edu/ftp/techreports/TR276.pdf",
+  Institution = {Computer Science Department, Indiana University},
   Year = {1989}
 }
 
@@ -968,7 +1026,7 @@ numpages = {8}
   doi = {10.1145/97945.97982},
   abstract = {The diverse inheritance mechanisms provided by Smalltalk, Beta, and CLOS are interpreted as different uses of a single underlying construct. Smalltalk and Beta differ primarily in the direction of class hierarchy growth. These inheritance mechanisms are subsumed in a new inheritance model based on composition of mixins, or abstract subclasses. This form of inheritance can also encode a CLOS multiple-inheritance hierarchy, although changes to the encoded hierarchy that would violate encapsulation are difficult. Practical application of mixin-based inheritance is illustrated in a sketch of an extension to Modula-3.},
   booktitle = {OOPLSA/ECOOP},
-  pages = {303–311},
+  pages = {303--311},
   numpages = {9},
   location = {Ottawa, Canada},
   journal = {SIGPLAN Not.},
@@ -1111,13 +1169,37 @@ numpages = {8}
   numpages = {24},
   keywords = {abstraction, object-oriented programming, object-oriented technology, requests, services},
   url = {https://shiftleft.com/mirrors/www.hpl.hp.com/techreports/91/HPL-91-50.pdf},
-  note = {
+  note={.
     Alan Snyder tries to introduce and name the common concepts in OO,
     in a way mindful of the variety of OO languages and systems,
     from C++ to CLOS to the Iris db and more.
     He insists on abstraction and encapsulation — features of what I would call "modularity",
     and only very quickly goes over inheritance, without details.
+    Disappointing, but telling of how even pioneers only had a dim understanding of OO.
   }
+}
+
+% Good historical overview. Understands modularity, not at all extensibility or inheritance.
+% PDA (Procedural Data Abstraction) organized around constructors (for classes, etc.) like Smalltalk vs
+% ADT (Abstract Data Types) organized around observations (pattern-matching for data types) like CLU.
+% 5.1 SIMULA precursor to both styles.
+% "a class definition is both a constructor of objects and a type" -- Cook almost notices conflation.
+% 5.4 Cook is baffled by CLOS and its multimethods that break his model of PDA vs ADT.
+@InProceedings{Cook1990PDAvsADT,
+  author="Cook, William R.",
+  editor="de Bakker, J. W.
+  and de Roever, W. P.
+  and Rozenberg, G.",
+  title="Object-Oriented Programming versus Abstract Data Types",
+  booktitle="Foundations of Object-Oriented Languages",
+  year="1991",
+  publisher="Springer Berlin Heidelberg",
+  address="Berlin, Heidelberg",
+  pages="151--178",
+  abstract="This tutorial collects and elaborates arguments for distinguishing between object-oriented programming and abstract data types. The basic distinction is that object-oriented programming achieves data abstraction by the use of procedural abstraction, while abstract data types depend upon type abstraction. Object-oriented programming and abstract data types can also be viewed as complimentary implementation techniques: objects are centered around the constructors of a data abstraction, while abstract data types are organized around the operations. These differences have consequences relating to extensibility, efficiency, typing, and verification; in many cases the strengths of one paradigm are the weaknesses of the other. Most object-oriented programming languages support aspects of both techniques, not a unification of them, so an understanding of their relative merits is useful in designing programs.",
+  isbn="978-3-540-46450-1",
+  doi="10.1007/BFb0019443",
+  url={http://www.cs.utexas.edu/~wcook/papers/OOPvsADT/CookOOPvsADT90.pdf}
 }
 
 %% 1992
@@ -1155,7 +1237,8 @@ numpages = {8}
   year={1992},
   volume={4},
   pages={371-398},
-  url={https://api.semanticscholar.org/CorpusID:6330838}
+  doi={10.1007/BF01807180},
+  url={https://junk.8325.org/hbaker/CritLisp.html}
 }
 
 % Dissects the mechanisms of modularity in programming languages,
@@ -1254,19 +1337,39 @@ numpages = {8}
 
 % No mention of recursive types, or fixpoints, etc.: Looks like the NNOOTT to me.
 % StrongTalk.org still runs on Windows 10.
-@article{Bracha1993Strongtalk,
+@InProceedings{Bracha1993Strongtalk,
   title={Strongtalk: Typechecking Smalltalk in a production environment},
   author={Bracha, Gilad and Griswold, David},
   journal={ACM SIGPLAN Notices},
   volume={28},
   number={10},
   pages={215--230},
+  numpages={16},
   year={1993},
-  publisher={ACM New York, NY, USA},
-  url={https://bracha.org/oopsla93.pdf}
+  url={https://bracha.org/oopsla93.pdf},
+  isbn={0897915879},
+  publisher={Association for Computing Machinery},
+  address={New York, NY, USA},
+  doi={10.1145/165854.165893},
+  booktitle = {the Eighth Annual Conference on Object-Oriented Programming Systems, Languages, and Applications},
+  location = {Washington, D.C., USA},
+  series = {OOPSLA '93},
+  note={.
+    A good paper on a very influential system, about practical techniques
+    that were widely adopted thereafter by the JVM.
+    Yet, from a theoretical point of view... it looks like they are falling for the NNOOTT. Meh.
+  },
 }
 
-% First version POPL 1993, also U of Edinburgh ECS-LFCS-92-225 "Object-Oriented Programming Without Recursive Types"
+% First version at POPL 1993,
+% also U of Edinburgh ECS-LFCS-92-225 "Object-Oriented Programming Without Recursive Types"
+% also published in JFP the following year
+%  volume={4},
+%  DOI={10.1017/S0956796800001040},
+%  number={2},
+%  journal={Journal of Functional Programming},
+%  pages={207–247}
+%
 % Based on F^\omega_\leq
 % Instead of hiding state via scoping, hide it via type abstraction.
 % Handles modularity via existential types, pure objects:
@@ -1274,23 +1377,60 @@ numpages = {8}
 % also implements single inheritance on top, but really with mixin inheritance underneath.
 % Examples include polymorphic collection.
 %
-% Pierce pushes difficult fixpoints into a corner, lets users tie simple knots, and
-% his automation takes it from there. It’s brilliant, even insightful.
-% Yet in the end he dodges the hard problem of OO rather than solves it.
-% “Tell me what you need, I'll show you how to do without.”
 @misc{PT1993STTFOOP,
   author={Pierce, Benjamin C. and Turner, David N.},
   title={Simple Type-Theoretic Foundations for Object-Oriented Programming},
   year={1993},
-  url={https://www.cambridge.org/core/journals/journal-of-functional-programming/article/simple-typetheoretic-foundations-for-objectoriented-programming/5C18E2E055B028F7214FBB183701830E}
+  url={https://www.cambridge.org/core/journals/journal-of-functional-programming/article/simple-typetheoretic-foundations-for-objectoriented-programming/5C18E2E055B028F7214FBB183701830E},
+  notes={.
+    This is a solid paper worth reading, though
+    I will disagree with both “Simple” and “Foundations” in the title.
+    Pierce and Turner do not provide solid foundations
+    that pin-point the essence of all OO, based on which to build any OO system.
+    Instead, they show how you can side-step
+    some of the really hard problems in OO (recursive types!),
+    yet achieve most of the value in practice,
+    using existential types for modularity—by
+    pushing the problematic fixpoint into a corner,
+    and asking the user to tie the knot manually in a case
+    where it’s relatively easy for the user to do,
+    then the system can handle the rest and do the heavy lifting from there.
+    Users can then achieve most of the benefits of OO
+    despite the system being unable to tie the knot and solve the problem automatically.
+    It is a “tell me what you need, I’ll show you how to do without!” kind of paper.
+    And you shouldn’t take this description disparagingly:
+    this is a great kind of paper, one that shows you how to do more with less.
+    Brilliant and insightful.
+    Yet, ultimately, a failure, as it dodges rather than solves the problem announced in its title.
+  }
 }
-% @article
-%  volume={4},
-%  DOI={10.1017/S0956796800001040},
-%  number={2},
-%  journal={Journal of Functional Programming},
-%  year={1994},
-%  pages={207–247}
+
+% Inheritance is discussed in section 11.5.1.
+% SIMULA-style inheritance was deliberately left out of his work on FLEX and early Smalltalk.
+% Kay credits Larry Tesler (slot inheritance), Henry Lieberman (delegation),
+% and Bobrow and Winograd's KRL (Frames).
+% InCollection ?
+% 1996 variant has better PDF: doi={10.1145/234286.1057828},
+% Read by Eric Normand https://ericnormand.me/podcast/the-early-history-of-smalltalk
+@Misc{Kay1993EHoS,
+  title={The Early History of Smalltalk},
+  author={Alan C. Kay},
+  booktitle={History of programming languages---II},
+  url={https://worrydream.com/EarlyHistoryOfSmalltalk/},
+  pages={511--598},
+  year={1993},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume = {28},
+  number = {3},
+  issn = {0362-1340},
+  doi = {10.1145/155360.155364},
+  abstract = {Most ideas come from previous ideas. The sixties, particularly in the ARPA community, gave rise to a host of notions about “human-computer symbiosis” through interactive time-shared computers, graphics screens and pointing devices. Advanced computer languages were invented to simulate complex systems such as oil refineries and semi-intelligent behavior. The soon to follow paradigm shift of modern personal computing, overlapping window interfaces, and object-oriented design came from seeing the work of the sixties as something more than a “better old thing”. That is, more than a better way: to do mainframe computing; for end-users to invoke functionality; to make data structures more abstract. Instead the promise of exponential growth in computing/$/volume demanded that the sixties be regarded as “almost a new thing” and to find out what the actual “new things” might be. For example, one would compute with a handheld “Dynabook” in a way that would not be possible on a shared mainframe; millions of potential users meant that the user interface would have to become a learning environment along the lines of Montessori and Bruner; and needs for large scope, reduction in complexity, and end-user literacy would require that data and control structures be done away with in favor of a more biological scheme of protected universal cells interacting only through messages that could mimic any desired behavior.Early Smalltalk was the first complete realization of these new points of view as parented by its many predecessors in hardware, language and user interface design. It became the exemplar of the new computing, in part, because we were actually trying for a qualitative shift in belief structures—a new Kuhnian paradigm in the same spirit as the invention of the printing press—and thus took highly extreme positions which almost forced these new styles to be invented.},
+  journal = {SIGPLAN Not.},
+  month = mar,
+  pages = {69–95},
+  numpages = {27}
+}
 
 %% 1994
 
@@ -1426,8 +1566,7 @@ series = {OOPSLA '94}
   doi={10.1145/217838.217858}
 }
 
-% W7
-% and Sussman, Gerald Jay ???
+% AAI0576129 ???
 @PhDThesis{Rees1995W7,
   author = {Rees, Jonathan Allen},
   title = {A Security Kernel Based on the Lambda Calculus},
@@ -1437,7 +1576,11 @@ series = {OOPSLA '94}
   address = {USA},
   url = {http://mumble.net/~jar/pubs/secureos/},
   abstract = {Cooperation between independent agents depends upon establishing a degree of security. Each of the cooperating agents needs assurance that the cooperation will not endanger resources of value to that agent. In a computer system, a computational mechanism can assure safe cooperation among the system's users by mediating resource access according to desired security policy. Such a mechanism, which is called a security kernel, lies at the heart of many operating systems and programming environments. The dissertation describes Scheme 48, a programming environment whose design is guided by established principles of operating system security. Scheme 48's security kernel is small, consisting of the call-by-value $lambda$-calculus with a few simple extensions to support abstract data types, object mutation, and access to hardware resources. Each agent (user or subsystem) has a separate evaluation environment that holds objects representing privileges granted to that agent. Because environments ultimately determine availability of object references, protection and sharing can be controlled largely by the way in which environments are constructed.I will describe experience with Scheme 48 that shows how it serves as a robust and flexible experimental platform. Two successful applications of Scheme 48 are the programming environment for the Cornell mobile robots, where Scheme 48 runs with no (other) operating system support; and a secure multi-user environment that runs on workstations. (Copies available exclusively from MIT Libraries, Rm. 14-0551, Cambridge, MA 02139-4307. Ph. 617-253-5668; Fax 617-253-1690.)},
-  note = {AAI0576129}
+  doi={10.5555/921818},
+  note={.
+    Fantastic classic paper, Rees’s thesis introduces his “W7” security kernel,
+    leveraging scoping as a natural mechanism for object capabilities based security.
+  }
 }
 
 % Cited by Cook2012, mentioned positively by him in private email
@@ -1520,20 +1663,6 @@ series = {OOPSLA '94}
   keywords = {object-oriented programming, language constructs, delegation, inheritance, incremental modification, programming languages}
 }
 
-% Inheritance is discussed in section 11.5.1.
-% SIMULA-style inheritance was deliberately left out of his work on FLEX and early Smalltalk.
-% Kay credits Larry Tesler (slot inheritance), Henry Lieberman (delegation),
-% and Bobrow and Winograd's KRL (Frames).
-% InCollection ?
-@Misc{kay1996early,
-  title={The Early History of Smalltalk},
-  author={Alan C. Kay},
-  booktitle={History of programming languages---II},
-  pages={511--598},
-  year={1996},
-  doi={10.1145/234286.1057828}
-}
-
 % PhDThesis
 @book{Fisher1996thesis,
   title={Type Systems for object-oriented programming languages},
@@ -1569,7 +1698,82 @@ series = {OOPSLA '94}
   numpages = {71}
 }
 
+@Book{AbadiCardelli1996ToO,
+  author = {Martín Abadi and Luca Cardelli},
+  title = {A Theory of Objects},
+  year = {1996},
+  doi = {10.1007/978-1-4419-8598-9},
+  note={.
+    Abadi and Cardelli are well known and respected, and this classic book of theirs
+    was long presented as the gold standard of what it means to formalize OO.
+    A student at the time the book was published, I was dreaming one day I’d be able
+    to understand it and write papers half as good as A&C’s.
+    But the book left me stumped, and I thought the problem was with me.
+    Re-reading it now that I do understand OO, I realize the problem was with it all along.
+    A&C hold false beliefs about OO (see above), then deploy their vast intelligence
+    using fancy logical semantics in doomed attempts to find
+    models that satisfy their inconsistent beliefs.
+    Each time, they can explain why it doesn't quite work—then go find a more sophisticated
+    model that of course will also fail—instead of questioning their premises.
+    A sad waste of brilliant minds—for both authors and readers who
+    after those lengthy constructions may believe they understand OO.
+  }
+}
+
+@article{Abadi1996Primitive,
+  title = {A Theory of Primitive Objects: Untyped and First-Order Systems},
+  journal = {Information and Computation},
+  volume = {125},
+  number = {2},
+  pages = {78-102},
+  year = {1996},
+  issn = {0890-5401},
+  doi = {10.1006/inco.1996.0024},
+  url = {https://www.sciencedirect.com/science/article/pii/S0890540196900243},
+  author = {Martín Abadi and Luca Cardelli},
+  abstract = {We introduce simple object calculi that support method override and object subsumption. We give an untyped calculus, typing rules, and equational rules. We illustrate the expressiveness of our calculi and the pitfalls that we avoid.},
+  note={.
+    A&C fall into all the common traps of OO:
+    they confuse specification and target, therefore firmly believe in the NNOOTT;
+    they try to use modular definitions and fail to understand modular extensions,
+    therefore can’t apprehend mixin and multiple inheritance.
+    They deploy all their brilliance to seek ever more sophisticated models that
+    will push back the point at which they confront the contradictions in their beliefs;
+    they won’t abandon their beliefs so they abandon the models.
+    Their “Self-Application Semantics” turns a lambda into a primitive “sigma”
+    that inverts basic logic so they can avoid obvious contradiction.
+    Their “Recursive Record Semantics” is perfectly correct for targets,
+    but of course doesn’t apply to specifications, and A&C can’t imagine
+    that the two need to be solved separately before they can be joined.
+    Their “Generator Semantics” is on the right track, and A&C can almost articulate
+    the distinction of target (“record”) and specification (“generator”),
+    but once again find the solution problematic (they are missing our “recursive conflation”).
+    Then they go in and out of some Pierce “split-self” semantics (see Pierce and Turner 1993)
+    and note that it works well for Class OO but move on rather than dig into
+    the interesting fine reasons why.
+    Finally their “solution” is to implement objects on top of the same
+    syntactic rewrite logic paradigm as the λ-calculus is usually presented in.
+    A low-level implementation,
+    just for a mathematical “virtual machine” foreign to anyone but logicians.
+    “Cool. So what?”
+    Low-level object implementations in Lisp, BCPL or C existed for 2 decades already.
+    Their calculus won’t help OO practitioners understand semantics,
+    and won't help logicians appreciate OO.
+    We already knew such feat was possible, since rewrite logic is a universal subtratum.
+    Instead, the important semantic details worth discussing and arguing
+    get lost in the details of a tedious construction.
+    So nobody learns anything.}
+}
+
 %% 1997
+
+@inproceedings{Foote1997BBoM,
+  title={Big Ball of Mud},
+  author={Brian Foote and Joseph W. Yoder},
+  booktitle={PLoP},
+  year={1997},
+  url={http://www.laputan.org/mud/}
+}
 
 % ECMAScript language specification, 1st edition. Says "inheritance" and not "delegation". Yay.
 % Before that, there was Netscape documentation that says "prototype" but neither "inheritance" nor "delegation", e.g. at
@@ -1599,13 +1803,6 @@ and Matsuoka, Satoshi",
   pages="104--127",
   abstract="We present the design and rationale of a new statically-typed object-oriented language, LOOM. LOOM, retains most of the features of the earlier language PolyTOIL. However the subtyping relation is dropped from LOOM in favor of the matching relation. ``Hash types'', which are denned in terms of matching, are introduced to provide some of the benefits of subtyping. These types can be used to provide support for heterogeneous data stuctures in LOOM. LOOM. is considerably simpler than PolyTOIL, yet is just as expressive. The type system for the language is decidable and provably type safe. The addition of modules to the language provides better control over information hiding and allows the provision of access like that of C++'s friends.",
   ISBN="978-3-540-69127-3"
-}
-
-@Book{AbadiCardelli1997ToO,
-  author = {Martín Abadi and Luca Cardelli},
-  title = {A theory of objects},
-  year = {1997},
-  doi = {10.1007/978-1-4419-8598-9}
 }
 
 @InProceedings{aop97,
@@ -1923,6 +2120,7 @@ series = {PLDI '99}
 %% 2007
 
 % Section 4.2 describes the failure of their "sender path" attempt at multiple inheritance
+% Pages 9-1 to 9-50, scriblib/bibtex can’t parse that :-/
 @InProceedings{self2007hopl,
   author = {Ungar, David and Smith, Randall B.},
   title = {Self},
@@ -1934,7 +2132,7 @@ series = {PLDI '99}
   doi = {10.1145/1238844.1238853},
   abstract = {The years 1985 through 1995 saw the birth and development of the language Self, starting from its design by the authors at Xerox PARC, through first implementations by Ungar and his graduate students at Stanford University, and then with a larger team formed when the authors joined Sun Microsystems Laboratories in 1991. Self was designed to help programmers become more productive and creative by giving them a simple, pure, and powerful language, an implementation that combined ease of use with high performance, a user interface that off-loaded cognitive burden, and a programming environment that captured the malleability of a physical world of live objects. Accomplishing these goals required innovation in several areas: a simple yet powerful prototype-based object model for mainstream programming, many compilation techniques including customization, splitting, type prediction, polymorphic inline caches, adaptive optimization, and dynamic deoptimization, the application of cartoon animation to enhance the legibility of a dynamic graphical interface, an object-centered programming environment, and a user-interface construction framework that embodied a uniform use-mention distinction. Over the years, the project has published many papers and released four major versions of Self.Although the Self project ended in 1995, its implementation, animation, user interface toolkit architecture, and even its prototype object model impact computer science today (2006). Java virtual machines for desktop and laptop computers have adopted Self's implementation techniques, many user interfaces incorporate cartoon animation, several popular systems have adopted similar interface frameworks, and the prototype object model can be found in some of today's languages, including JavaScript. Nevertheless, the vision we tried to capture in the unified whole has yet to be achieved.},
   booktitle = {Proceedings of the Third ACM SIGPLAN Conference on History of Programming Languages},
-  pages = {9–1–9–50},
+  xxpages = {9–1--9–50},
   keywords = {virtual machine, prototype-based programming language, programming environment, object-oriented language, morphic, history of programming languages, exploratory programming, dynamic optimization, dynamic language, cartoon animation, adaptive optimization, Self},
   location = {San Diego, California},
   series = {HOPL III}
@@ -1974,43 +2172,56 @@ series = {PLDI '99}
 @InProceedings{dolstra2008nixos,
   title={NixOS: A purely functional Linux distribution},
   author={Dolstra, Eelco and L{\"o}h, Andres},
-  booktitle={Proceedings of the 13th ACM SIGPLAN international conference on Functional programming},
+  booktitle={the 13th ACM SIGPLAN international conference on Functional programming},
   pages={367--378},
   year={2008},
   url={https://edolstra.github.io/pubs/nixos-jfp-final.pdf}
 }
 
-% April 2
-@Misc{minsky08,
+@webpage{Minsky2008,
   author = {Yaron Minsky},
   title = {The {ML} sweet spot},
   year = 2008,
+  month = April,
   url = {https://blog.janestreet.com/the-ml-sweet-spot/},
-  urldate = {2021-03-14}
+  lastchecked = {2021-03-14}
 }
 
-% EOPL only has classes with single inheritance.
-% barely touches multiple inheritance, "powerful, but … problematic", in exercise 9.26,
-% and prototypes in exercise 9.27-9.29
 @book{eopl3,
   author = {Friedman, Daniel P. and Haynes, Christopher T. and Wand, Mitchell},
-  title = {Essentials of Programming Languages (3rd Ed.)},
+  title = {Essentials of Programming Languages},
+  edition = {3rd},
   year = {2008},
   publisher = {Massachusetts Institute of Technology},
   address = {USA},
-  url = {https://www.eopl3.com/}
+  url = {https://www.eopl3.com/},
+  isbn = {978-0-262-06279-4},
+  doi = {10.5555/1378240},
+  note={.
+    EOPL is a great classic about Programming Languages.
+    However, its chapter on OO only has classes with single inheritance.
+    EOPL barely touches multiple inheritance, “powerful, but … problematic”, in exercise 9.26,
+    and prototypes in exercise 9.27-9.29. Disappointing.
+  }
 }
 
-% PLAI 1st ed has objects as closures and even prototypes in ch 10.
-% 10.3.3 shits on multiple inheritance.
-% 10.3.5 introduces mixins as a mechanism on top of first-class single-inheritance classes.
 @book{plai,
   author = {Shriram Khrisnamurthi},
-  title = {Programming Languages: Application and Interpretation (1st Ed.)},
+  title = {Programming Languages: Application and Interpretation},
+  edition = {1st},
   year = {2008},
   publisher = {Massachusetts Institute of Technology},
   address = {USA},
   url = {https://plai.org/},
+  note = {.
+    This is a great book about Programming Languages in general, and I love SK.
+    SK introduces objects as closures, and even prototypes, in chapter 10.
+    But one thing he just doesn’t get is multiple inheritance (10.3.3).
+    In 10.3.5 he introduces mixins as a mechanism on top of first-class single-inheritance classes,
+    which certainly works, but to me feels like putting the cart before the ox.
+    Great stuff outside OO, and even the OO is decent,
+    but in the end, like many academics, SK doesn’t grok OO.
+  }
 }
 
 %% 2009
@@ -2022,9 +2233,21 @@ series = {PLDI '99}
   year = {2009},
 }
 
-% TODO
+% William R. Cook: On Understanding Data Abstraction, Revisited
+% Good presentation of ADTs
+% 3.1 notes the "OO" (re)presentation eschews the existential type, hiding it under HOF i/f,
+% but that's false in general---the existential type is there for compatibility between values you can build and modify.
+% 3.2 claims with ref to his thesis that inheritance is orthogonal to OO (!)
+% misses that what makes method invocation "dynamic binding" isn't the HOF records,
+% but the open recursion on self and the sharing of methods between multiple selves
+% thanks to inheritance.
+% Also identifies classes as their constructor...
+% 3.3 "Autognosis" is the criterion what Bracha calls "Pure OO", i.e. all accesses through interface
+% Wholly skips CLOS, unlike his 1990 paper.
+% Wholly skips Prototypes.
+% In the end, does not bring much lights to the topic, beyond the obvious.
 % Claims that objects are about modularity of "classes" used only through "interfaces", not inheritance
-% https://dl.acm.org/doi/10.1145/1640089.1640133
+% Onward! Essay in Proceedings of the 24th ACM SIGPLAN conference on Object oriented programming systems languages and applications (OOPSLA). pp. 557-572 (2009).
 @Misc{Cook2009,
   author={William Cook},
   title={On Understanding Data Abstraction, Revisited},
@@ -2040,7 +2263,6 @@ series = {PLDI '99}
   year = {2009},
   url = {https://www.cs.ox.ac.uk/publications/publication2965-abstract.html}
 }
-
 
 % Recursion Scheme, FP & OOP ???
 @article{gibbons2009essence,
@@ -2164,7 +2386,17 @@ series = {PLDI '99}
   year = 2014,
   url = {https://jsonnet.org},
   urldate = {2021-03-11},
-  note = {Accessed 2021-03-01}
+  note={.
+    Dave took GCL, reduced it to its core concepts,
+    rightfully replaced dynamic scoping by lexical scoping,
+    and used a syntax in between JavaScript and Python,
+    for a beautiful pure functional lazy dynamic language
+    with builtin first-class Prototype OO.
+    Semantically equivalent to Nix, with a nicer syntax,
+    but little tooling and a small ecosystem
+    (Dave sadly never got much support from his then employer Google).
+    Learning Jsonnet then Nix was key to making me understand OO at long last.
+  }
 }
 
 % Random memory access is in sqrt(N) where N is the size of the working set
@@ -2177,7 +2409,6 @@ series = {PLDI '99}
   day       = {21},
   url       = {https://www.ilikebigbits.com/2014_04_21_myth_of_ram_1.html},
   urldate   = {2025-12-01},
-  note      = {Accessed 2025-12-01},
   howpublished = {Blog post}
 }
 
@@ -2214,12 +2445,18 @@ series = {PLDI '99}
   url={https://github.com/NixOS/nixpkgs/blob/master/lib/fixed-points.nix},
   year={2015},
   urldate={2023-11-29},
-  note = {Accessed 2023-11-29}
+  note={.
+    Nix implements prototype OO in two functions. Impressive.
+    Seeing that after having used Jsonnet (that implements an equivalent object system
+    the hard way in C++) is what made OO click for me.
+    Peter doesn’t call his extension system “OO” and didn’t know about Prototype OO
+    when he wrote that (but had been influenced by others who did);
+    but his extensions are used exactly like objects are in Jsonnet,
+    for sensibly the same purposes—configuring complex systems in a modular extensible way.
+  }
 }
 
-% This article is great in desugaring the prototype sublanguage of JS,
-% but doesn't cover classes.
-@Article{DBLP:journals/corr/GuhaSK15,
+@Article{Guha2015EssenceJS,
   author    = {Arjun Guha and
                Claudiu Saftoiu and
                Shriram Krishnamurthi},
@@ -2232,7 +2469,11 @@ series = {PLDI '99}
   eprint    = {1510.00925},
   timestamp = {Mon, 13 Aug 2018 16:46:22 +0200},
   biburl    = {https://dblp.org/rec/journals/corr/GuhaSK15.bib},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
+  bibsource = {dblp computer science bibliography, https://dblp.org},
+  note={.
+    This article is great in desugaring the prototype sublanguage of JS,
+    but doesn't cover classes.
+  }
 }
 
 %% 2016
@@ -2454,31 +2695,7 @@ series = {PLDI '99}
 % Conway's Law
 % Conway, Melvin (1968). "How do committees invent" (PDF). Datamation: 28–31.
 
-% 1979 https://constraints.cs.washington.edu/ui/thinglab-tr.pdf
-
 % Wegner Zdonik "Inheritance as an incremental modification mechanism or what Like is or isn't like" 1988
-
-% [2] Object-Oriented Programming Versus Abstract Data Types In Proceedings of the REX School/Workshop on Foundations of Object-Oriented Languages, Springer-Verlag, pp. 151-178 (1990).
-% http://www.cs.utexas.edu/~wcook/papers/OOPvsADT/CookOOPvsADT90.pdf
-% PDA (Procedural Data Abstraction) organized around constructors (for classes, etc.) vs
-% ADT (Abstract Data Types) organized around observations (pattern-matching for data types).
-% Cook is baffled by CLOS and its multimethods wrt his PDA (like Smalltalk) vs ADT (like CLU)
-
-% William R. Cook: On Understanding Data Abstraction, Revisited
-% [1] On understanding data abstraction, revisited. Onward! Essay in Proceedings of the 24th ACM SIGPLAN conference on Object oriented programming systems languages and applications (OOPSLA). pp. 557-572 (2009).
-% https://cs.utexas.edu/~wcook/Drafts/2009/essay.pdf
-% Good presentation of ADTs
-% 3.1 notes the "OO" (re)presentation eschews the existential type, hiding it under HOF i/f,
-% but that's false in general---the existential type is there for compatibility between values you can build and modify.
-% 3.2 claims with ref to his thesis that inheritance is orthogonal to OO (!)
-% misses that what makes method invocation "dynamic binding" isn't the HOF records,
-% but the open recursion on self and the sharing of methods between multiple selves
-% thanks to inheritance.
-% Also identifies classes as their constructor...
-% 3.3 "Autognosis" is the criterion what Bracha calls "Pure OO", i.e. all accesses through interface
-% Wholly skips CLOS, unlike his 1990 paper.
-% Wholly skips Prototypes.
-% In the end, does not bring much lights to the topic, beyond the obvious.
 
 % Bracha and Lindstrom 1992 Modularity meets inheritance
 
@@ -2489,10 +2706,7 @@ series = {PLDI '99}
 
 % C++ template lambda calculus https://gist.github.com/glaebhoerl/8970f682958826ed36f9
 
-% TODO: trace prototypes back to earlier Actor systems???
-%
 % Hewitt, Carl, Viewing Control Structures as Patterns of Passing Messages, MIT AI Lab Memo 410, Dec 1976.
-
 
 % Gilad Bracha's Newspeak? It's class-based only, though.
 
@@ -2501,8 +2715,6 @@ series = {PLDI '99}
 % https://wiki.c2.com/?ClassesPrototypesComparison
 % https://wiki.c2.com/?PrototypeBasedLanguage
 % "Popular" Prototype language: NewtonScript, LambdaMOO, Io, REBOL, Lua...
-
-% ThingLab https://github.com/cdglabs/thinglab
 
 % https://okmij.org/ftp/Computation/typeclass.html#Kaes
 
@@ -2562,14 +2774,11 @@ series = {PLDI '99}
 
 % Luc Steels "An Applicative View of OOP" 1982
 
-% TODO: Henry Lieberman papers about Actors, etc. -- when did he do inheritance / delegation?
-
 % 2003  Tom Hirschowitz  Call-by-value mixin modules
 % https://hirschowitz.pages.math.cnrs.fr/phd/these-tom.pdf
 % https://hirschowitz.pages.math.cnrs.fr/
 
 % https://www.quora.com/Why-is-functional-programming-seen-as-the-opposite-of-OOP-rather-than-an-addition-to-it/answer/Henry-Story
-%
 
 % https://people.mpi-sws.org/~rossberg/mixml/
 % Andreas Rossberg, Derek Dreyer. Mixin' Up the ML Module System. TOPLAS 35(1), 2013. Revised and significantly extended version of the ICFP paper, including material from the appendices and a lot more.
@@ -2585,7 +2794,6 @@ series = {PLDI '99}
 
 % Goguen...
 
-
 % change-class: https://github.com/shriram/plai-public/issues/60
 
 % Bob Harper PFPL existential types / inversion of scope
@@ -2598,7 +2806,6 @@ series = {PLDI '99}
 % Category Theory in Programming
 % Noah Ma <noahstorym@gmail.com>
 % https://docs.racket-lang.org/ctp/index.html
-%
 
 % Cardelli Wegner 1985
 
@@ -2621,4 +2828,3 @@ series = {PLDI '99}
 % https://www.jot.fm/issues/issue_2005_01/column2/
 
 % Jonathan Aldrich workshop paper on capability-safe reflection and an ECOOP on modular reasoning in aspect-oriented programming (the latter a bit dated now).
-

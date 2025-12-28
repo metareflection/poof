@@ -17,11 +17,13 @@
               (list 'href "resources/pic/Half-life_lambda_logo.svg")))]}
 
 @title[
-]{Lambda, the Ultimate Object
+]{Lambda, the Ultimate Object@;
 @linebreak[] @linebreak[] @;
 @; } @subtitle{ @; <- for scribble/acmart
-       A Theory of Object-Orientation, with @linebreak[]
-       a modest contribution on Optimal Inheritance}
+@smaller{Object-Orientation Elucidated}
+@;       A Theory of Object-Orientation, with @linebreak[]
+@;       a modest contribution on Optimal Inheritance
+}
 
 @author[
 @;{ For acmart:
@@ -30,35 +32,65 @@
                                #:country "USA") }
 ]{François-René Rideau}
 
-@; For acmart: @abstract{
-  We present our new C4 algorithm to best combine
-  single and multiple inheritance in Object-Oriented languages.
-  To explain what our algorithm does and why it matters,
-  we first recapitulate a complete theory of Object-Orientation (OO),
-  sufficient to establish what we mean by “best”:
-  what OO is and isn’t, what is its purpose, what is inheritance, what are known variants of it,
-  what makes each variant desirable or not, what are the relevant challenges with
-  using, implementing or combining them.
-  In particular, we reconstruct from first principles OO
-  as a mechanism for reified (in-language) Modular Extensibility,
-  with examples in a subset of Scheme that is a minimal extension of the untyped λ-calculus.
-  We explain why multiple inheritance is more expressive and modular than single inheritance,
-  why (prototype or class) linearization is desirable
-  and what are known desired properties of linearization.
+@tex{\noindent}
+  As a software practitioner, you have not only heard of Object-Orientation (OO),
+  but seen it or used it, loved it or hated it.
+  Yet you may have been frustrated that there never seems to be clear answers as to
+  what exactly OO is or isn’t, what it is @emph{for}, when and how to use it or not use it.
+  There are many examples of OO; but everyone does it differently;
+  every OO language offers an incompatible variant.
+  There is no theory as to what common ground there is if any,
+  even less so one on the best way to do OO.
+  Certainly, none that two computer scientists can agree about.
+  By comparison, you and everyone well understand Functional Programming (FP).
 
-  Our algorithm simply combines two well-known ideas:
-  C3 linearization and the treatment of single and multiple inheritance by Scala 3.
-  It also brings new insight into the nature single and multiple inheritance,
-  and what matters about each of them.
-  While this contribution is quite modest in light of prior art,
-  it illustrates how our theory of OO is productive of new solutions and explanations for them,
-  and not just a posteriori justifications of existing practices.
-  Our theory yields answers that mostly coincide with
-  prevalent academic discourse and industrial practice,
-  but sometimes goes against either or both.
-  Our unified theory of OO might therefore be the bigger contribution,
-  compared to getting the one last concept of inheritance just right.
-@;}
+  Can you explain OO in simple terms to an apprentice, or to yourself?
+  Can you reason about OO programs, what they do, what they mean?
+  Can you make sense of the common opposition between proponents of OO and FP?
+  Maybe you’ve enjoyed OO in the past, or been teased by colleagues who have,
+  and are wondering what you are or aren’t missing?
+  Maybe you’d fancy implementing OO on top of the OO-less language
+  you are currently using or building, but from what you know it looks too complicated?
+  Indeed do you really understand why to implement which of no inheritance, single inheritance,
+  mixin inheritance, or multiple inheritance?
+  Can you weigh the arguments for multiple inheritance done C++ or Ada style,
+  versus Lisp, Ruby, Python or Scala style?
+  Is there a provably best variant of inheritance anyway?
+  And do concepts like prototypes, method combinations and multiple dispatch seem natural to you,
+  or are they mysteries that challenge your mental model of OO?
+  Last but not least… have you had enough of Lispers bragging about how their 1990 OO system
+  is still decades ahead of yours?
+
+  If any of these questions bother you, then this book is for you.
+  This book offers a Theory of OO that it elucidates in simple terms on top of FP—as
+  Intralinguistic Modular Extensibility.
+  A mouthful, but actually all simple concepts you already know,
+  though you may not know that you know them.
+  This Theory of OO can answer all the questions above, and more.
+  The answers almost always coincide with
+  @emph{some} existing academic discourse or industry practice;
+  but obviously, they cannot possibly coincide with
+  @emph{all} the mutually conflicting discourses and practices out there;
+  and, often enough, this theory will reject currrently prevalent majority views and
+  promote underrated answers.
+
+  But this Theory of OO is not just connecting previously known yet disparate lore;
+  nor is it yet another a posteriori rationalization
+  for the author’s arbitrary preferences.
+  This theory is @emph{productive}, offering new, never before articulated ways to think about OO,
+  based on which you can implement OO in radically simpler ways,
+  in a handful of short functions you can write in any language that has higher-order functions;
+  and it can @emph{objectively} (hey!) justify every choice made.
+  This theory reconciles Class OO, Prototype OO, and even a more primitive classless OO
+  that few computer scientists are even aware exists.
+  And, what is easily underappreciated, this theory can demarcate
+  this common domain of OO from a lot of related but quite distinct domains
+  that may look like OO and even share some of its vocabulary,
+  yet can be shown to be conceptually foreign.
+  The crown of this Theory of OO though is a new algorithm, C4, that allows combining
+  single and multiple inheritance in a way that is objectively better—and provably so—than
+  the alternatives used in any programming language so far.
+
 
 @(require scriblib/bibtex
 @;        (only-in scribble/core make-style)
@@ -76,7 +108,7 @@
           "util/util.rkt"
           (for-label racket))
 
-@(define (anonymize x . y) x)
+@(define (anonymize x . y) y)
 @(define (GerbilScheme) @anonymize["our Scheme implementation"]{Gerbil Scheme})
 @(define (principle . x) (bold (emph x)))
 
@@ -99,6 +131,14 @@
 
 @(define super 'super)
 @(define self 'self)
+@(define (XXXX . x)
+   (list @tex{\noindent}
+         @bold{XXXXXXXXXXXXXXXXXXX EDIT HERE XXXXXXXXXXXXXXXXXXX}))
+
+@; scribble/report subsubsub*section does not work https://github.com/racket/scribble/issues/540
+@(define (sub3section . x)
+   (list (html-only (list (bold x) "  "))
+         (list (tex "\\paragraph{") x (tex "}"))))
 
 @;; Suppress the page count for the Camera-ready version by uncommenting the below.
 @;@tex{\thispagestyle{empty}\pagestyle{empty}}
@@ -123,9 +163,106 @@
 \setcopyright{none}
 }}}
 
+@tex{\tableofcontents{}}
+
 @section[#:tag "Intro"]{Introduction}
 
-@subsection{Our Contribution: An Optimal Inheritance Mechanism — and a Theory Why}
+@subsection{Object-Orientation}
+
+@subsubsection{OO what?}
+Object-Oriented Programming (OOP), or Object-Orientation (OO),
+is a paradigm for programming in terms of “objects”.
+
+What even are objects? What aren’t? What is OO? What isn’t?
+What is it for? What is a paradigm to begin with?
+How do I use OO to write programs? How do I make sense of existing OO programs?
+How may I best think about OO programs, to design them?
+How may I best reason about them, to debug them?
+What are variants of OO? How do I compare them?
+How can I build OO if I don’t have it yet (or not a good variant of it)?
+And why are so many people so into OO, and so many others so against it?
+Which of their arguments is right or wrong when?
+Am I missing something by not using OO, or by using it?
+
+These are the kinds of questions this book will help you answer.
+But to get there, we will have to introduce many concepts.
+Don’t worry: when others relish in complexity, we will instead aspire be simplicity.
+There lies the real sophistication.
+So yes, you may have to learn new ideas and new words.
+But if you practice programming, and think about your practice,
+then you are in my target audience;
+and you will find it will be easier to program
+with the right ideas than with the wrong ones.
+And the Internet is certainly full of wrong and sometimes toxic ideas
+about OO and programming in general.
+
+@subsubsection{Decades too late, better than never}
+
+Conceived around 1967 with Dahl and Nygaard’s Simula and Kay’s musings,
+OO was actually born in 1976 when the two finally collided,
+and together with other influences, led to Smalltalk 76.
+OO took off from there, at first reserved to the happy few who could use the most high-end systems.
+It became popular among researchers in the 1980s, and was the next big thing.
+In the 1990s, OO became available to every programmer, accompanied by endless industry hype.
+By the mid 2000s it had become the normal paradigm to program in.
+Then, at some point in the mid 2010s it started to become as boring as ubiquitous.
+Now in the mid 2020s it is on its way to become forgotten, at least among the cool kids.
+Yet one thing OO never was, was understood.
+Until now.
+
+As the jest goes, “Every technique is first developed,
+then used, important, obsolete, normalized, and finally understood.”
+This book then is here to bring the final nail on the coffin of OO: understanding it.
+Too bad no one reads books anymore, except AIs.
+If that book, and most importantly its understanding, had come a few decades earlier,
+it could have saved a lot of people a lot of trouble.
+I for sure was baffled for a long time, and many around me.
+Now that I am not baffled anymore, I can bring you my explanations, but long after the battle.
+Still, maybe a few old timers, and some curious minds, natural or artificial,
+who are still interested in programming, will read that book and exclaim:
+“so @emph{that} is what OO was always all about!”
+And if they are grateful enough to send a few dollars my way for it,
+I will be satisfied.
+
+@subsubsection{Towards a Rebirth of OO}
+
+When I mention OO becoming boring then forgotten, or nailing its coffin,
+I may sound pessimistic as to the value of OO and to its future.
+But actually, I am not, quite the opposite.
+I don’t mean that OO deserves to die. To the contrary.
+I think OO is a fantastic programming paradigm to build software,
+one that I tremendously enjoy when I use it in Lisp, and miss when I can’t.
+But what passes for OO in mainstream programming languages leaves me unimpressed at best.
+Meanwhile, there is little interest or funding in either industry or academia
+to further research into OO, a topic (wrongly) considered to be understood already.
+
+Bright programmers these days seem more interested in Functional Programming (FP),
+a topic that was unjustly neglected by the industry in the heyday of OO,
+but raised interest when distributed systems became mainstream,
+and functional style proved it was more practical than the bad old imperative style,
+in that it avoids the unwanted interactions that make programs slow and buggy.
+Unhappily, OO had so been sold in a package deal with said imperative style
+that it fell out of fashion.
+Meanwhile, grumpy old Lispers like me yell at the clouds that
+there was never an opposition between OO and FP, that we Lispers have been enjoying
+both together since the 1970s, and OO can be so much more than you “blub” programmers can even imagine.
+
+My hope—my faith, contrary to evidence—is that OO can and will be resurrected.
+A better OO than was once popular:
+Simpler. Unbundled from imperative programming.
+More powerful. With the advanced features of Lisp OO at long last adopted by the mainstream.
+
+But I have to admit my defeat so far: I failed to build a system to my liking
+that would attract a critical mass of adopters to become self-sustaining@xnote["."]{
+  Good OO is only a small part of what I would like in a Computing System,
+  but that is the part this book is about.
+}
+And so, like all researchers who title their papers “Towards a …”
+when they fail to achieve their goals, I am switching to plan B:
+trying to convince others that there’s gold in them thar hills,
+so they will go dig it for me.
+
+@subsection{An Optimal Inheritance Mechanism — and a Theory Why}
 
 @subsubsection{Context: Inheritance}
 Object-Oriented Programming (OOP), or
@@ -136,9 +273,9 @@ partial specifications of code @~cite{inheritance1996}@xnote["."]{
   A notable dissident to this characterization is William Cook,
   a respected academic who made many key contributions to understanding the semantics of inheritance
   @~cite{Cook1989 cook1989inheritance cook1989denotational bracha1990mixin Cook1994}
-  yet later argued that inheritance was orthogonal to OO @; Also Cook1989?
+  yet also argued that inheritance was orthogonal to OO @; Also Cook1989?
   and that OO is about “classes” of “objects” that can only be accessed through “interfaces”
-  @~cite{Cook2009 Cook2012}.
+  @~cite{Cook1990PDAvsADT Cook2009 Cook2012}.
 
   However, coding against an SML “module” would count as OO by Cook’s criteria,
   and indeed Cook explicitly calls the untyped λ-calculus “the first object-oriented language”,
@@ -150,13 +287,14 @@ partial specifications of code @~cite{inheritance1996}@xnote["."]{
   no light on any of the Functional Programming (FP) languages blessed by Cook as actually being OO
   to the surprise of their users, and no light on the difference between the two.
 
-  Cook’s many works on OO over the years also systematically neglect important concepts
-  in OO, such as prototypes, multiple inheritance, method combination or multiple dispatch.
+  Cook’s many works on OO over the years also systematically neglect important concepts in OO,
+  such as prototypes, multiple inheritance, method combination or multiple dispatch.
   In the end, Cook’s PhD and subsequent academic career grew out of
   brilliantly modeling the key mechanism of OO (inheritance)
   from the foreign point of view of FP;
-  but his wilful ignorance and deep misunderstanding of the OO tradition, indeed missing the point,
-  were such that they have become proverbial: immortalized in Gabriel’s essay
+  but his lack of appreciation and understanding for the OO tradition,
+  indeed missing the point of it all,
+  were such, that they have become proverbial: immortalized in Gabriel’s essay
   “The Structure of a Programming Language Revolution” @~cite{gabriel2012}
   as a prototypical failure to understand a phenomenon when viewed
   through a scientific paradigm incommensurable with the one that produced it.
@@ -166,7 +304,7 @@ partial specifications of code @~cite{inheritance1996}@xnote["."]{
   who practice and study OO, even or especially
   among notable academics with deep expertise in the field.
   And yet, there are undeniably common practices, common phenomena, common concepts,
-  common language features, common design patterns,
+  common language features, common design patterns, common goals, common aspirations,
   worth understanding, conceptualizing, defining and naming
   in the rich (though sometimes mutually conflicting) traditions
   that grew around OO.
@@ -179,7 +317,7 @@ Now programmers (resp. programming language designers)
 have faced a dilemma since almost the very beginning,
 of which of several variants of inheritance to use (resp. implement), if any at all:
 many prefer single inheritance for its simplicity and performance
-@~cite{Simula1967 kay1996early};
+@~cite{Simula1967 Kay1993EHoS};
 others prefer multiple inheritance
 for its greater expressiveness and modularity @~cite{Bobrow1976 Cannon1979}.
 A few outliers prefer mixin inheritance, a variant in some sense intermediary between the two above,
@@ -1271,7 +1409,7 @@ Hoare introduced the notions of “class” and “subclass” of records
 The first implementation of the concept appeared in Simula 67 @~cite{Simula1967}.
 Alan Kay later dubbed this mechanism “single inheritance” and adopted it for Smalltalk 76
 as a compromise instead of the more general but then less well understood multiple inheritance
-@~cite{kay1996early}. @; TODO or was is Bobrow who named it? Do a deeper search.
+@~cite{Kay1993EHoS}. @; TODO or was is Bobrow who named it? Do a deeper search.
 Many other languages adopted it after Smalltalk,
 including Java that made it especially popular circa 1995. @;{@~cite{}. @TODO{or C#}}
 
@@ -1525,7 +1663,7 @@ prove constructively that prototypes can be pure, and that they use
 the very same inheritance mechanisms as classes,
 indeed with classes as a particular case of prototypes with the usual construction.
 Meanwhile, old reflective Class OO systems like Lisp and Smalltalk
-@~cite{Kahn1976 kay1996early gabriel1991clos AMOP}
+@~cite{Kahn1976 Kay1993EHoS gabriel1991clos AMOP}
 also support mutable state to modify the inheritance structure at runtime,
 for the sake of dynamic redefinition of classes at runtime,
 in what remains semantically a pure functional model once when the structure is set.
@@ -1596,43 +1734,58 @@ rather than delegation (as it isn’t particularly “message passing”, just c
 @~cite{ecmascript1997}
 
 @subsection{Epistemological Digression}
-Many people will inevitably quibble about our definition or characterization of OO.
-@itemlist[#:style'ordered
-@item{Is our definition correct?}
-@item{What does it even mean for a definition to be correct?
-Aren’t definitions “just” arbitrary conventions?}
-@item{Is there an authority on those words?}
-@item{Shouldn’t we use the same definition as Alan Kay,
-who invented the expression “Object Oriented Programming”?}
-@item{Shouldn’t we just let others define “OO” however they want,
-and stick to “inheritance” when discussing the field characterized by the use of inheritance?}]
 
+Many people will inevitably quibble about our definition or characterization of OO.
 Though a treatise of epistemology is beyond the scope of this article, @;{TODO cite}
-we can briefly answer these questions as follow:
-@itemlist[#:style'ordered
-@item{Yes, our definition is correct:
+we can briefly answer the most frequent epistemological questions as follow.
+
+@subsubsection{Is our definition correct?}
+
+Yes, our definition is correct:
 it accurately identifies what people mean usually by those words,
 and distinguishes situations where they apply from situations where they do not,
-in the contexts that people care about.}
-@item{No, the phenomena that effectively affect people,
+in the contexts that people care about.
+
+@subsubsection{What does it even mean for a definition to be correct?}
+
+Some people will argue that definitions are “just” arbitrary conventions,
+and that there is therefore no rational criterion of correctness,
+only arbitrary political power of the strong over the weak,
+to determine what the definition of words are or should be.
+
+But no, such a point of view is worse than wrong, it is evil incarnate.
+The phenomena that effectively affect people,
 that they care to name, discuss, think about and act on, are not arbitrary.
 Thus the important part of definitions isn’t convention at all:
 it is the structure and understanding of these phenomena, rather than the labels used for them.
 A correct definition precisely identifies the concepts that are relevant to people’s concerns,
 that help them make better decisions that improve their lives,
-whereas an incorrect definition misleads them into counterproductive choices.}
-@item{No, there is no authority on software vocabulary, person or committee,
+whereas an incorrect definition misleads them into counterproductive choices.
+Seeking to annihilate or override reason to replace it by power is the very definition of evil,
+and an act of war against those whose reason is denied.
+
+@subsubsection{Is there an authority on those words?}
+
+No, there is no authority on software vocabulary, person or committee,
 that can decree different words for others to use,
 even less so different phenomena for others to care about.
 And people care about OO even if you try to change the name for it,
 or denature the name “OO” not to identify the same phenomenon anymore;
 they will keep caring about the same phenomenon under a different name,
-rather than care about whatever those who corrupt the name may want them to.}
-@item{Not quite. We should definitely listen to Alan Kay@xnote[","]{
-  Alan Kay, who coined the term “object-oriented programming” in 1967, explains in 2003 @~cite{Kay2003}
-  that “OOP to me means only messaging, local retention and protection and hiding of state-process,
-  and extreme late-binding of all things”.
+rather than care about whatever those who corrupt the name may want them to.
 
+@subsubsection{Shouldn’t we just use the same definition as Alan Kay?}
+
+No, that isn’t possible, nor would it be appropriate if it were.
+
+Alan Kay coined the expression “Object Oriented Programming” in 1967.
+Originalists might say we need to take it to mean whatever he defined it to mean,
+and sometimes cite him saying in @citet{Kay2003} that
+“OOP to me means only messaging, local retention and protection and hiding of state-process,
+and extreme late-binding of all things”.
+
+But neither the above nor any of Kay’s pronouncement on OO constitutes a precise definition,
+if a definition at all@xnote["."]{
   Our interpretation is that the first part of this definition (until the last comma)
   corresponds to modularity, the ability to think about programs in terms of separate
   “local” entities each with its own “state-process” wherein interactions only happen
@@ -1653,10 +1806,11 @@ rather than care about whatever those who corrupt the name may want them to.}
 
   Note that Kay didn’t immediately adopt SIMULA’s inheritance mechanism in Smalltalk-72
   (it wasn’t called that yet in SIMULA, either);
-  but he did adopt it eventually in Smalltalk-76, and
-  this adoption is what launched OO as a phenomenon.
+  but he did adopt it eventually in Smalltalk-76,
+  notably under the push of Larry Tesler,
+  and this adoption is what launched OO as a phenomenon.
   Kay stated adopting single inheritance over multiple inheritance
-  was a compromise @~cite{kay1996early},
+  was a compromise @~cite{Kay1993EHoS},
   yet still didn’t adopt multiple inheritance later, though his team experimented with it.
   More broadly, Kay didn’t endorse any specific inheritance mechanism,
   and never focused on that part of the design. To Kay it was only a means to an end,
@@ -1670,23 +1824,31 @@ rather than care about whatever those who corrupt the name may want them to.}
   And if other means are found to arguably satisfy Kay’s “extreme late binding”,
   then we’ll have to give them a name that distinguishes them from what is now called OO.
 }
-and to other pioneers and experts;
-but none is an ultimate authority, and
-we should look at what the pioneers and experts do and not (just) what they say,
-especially since you could recursively apply
-the same skepticism to the words they use in their definitions.
-Also, be wary that pioneers provide inspiration, insight and discoveries,
-but seldom well-rounded neatly-conceptualized theories:
-often these theories arise only after lots of
-experience, filtering, and reformulation@xnote["."]{
-As the jest goes, “Every technique is first developed,
-then used, important, obsolete, normalized, and finally understood.”
-}}
-@item{No, it is no good to let an ignorant majority “define” the term “Object-Orientation”
+And even if he had at some point given a definition,
+we still should remain skeptical of what Kay, and to other pioneers, said,
+if only to recursively apply the same semantic attention to the definition of the words
+they used in their definitions.
+Now, we should certainly pay close attention to what pioneers say,
+but we should pay even closer attention to what they @emph{do}.
+The pioneer’s authority lies not in precise words, but in inspiring or insightful ones;
+not in well-rounded neatly-conceptualized theories,
+but in the discovery of successful new practices that are not yet well understood.
+Solid theories arise only after lots of experience, filtering, and reformulation.
+
+@subsubsection{Shouldn’t we just let others define “OO” however they want?}
+
+Not at all.
+Some people are reluctant to fight over the meaning of words,
+and are ready to cave to popular opinion or spurious authorities
+when they define and redefine “OO” or any word to have whatever precise or murky meaning.
+Instead they propose that we should stick to “inheritance”
+when discussing the field characterized by the use of inheritance.
+
+But it is no good to let an ignorant majority “define” the term “Object-Orientation”
 to mean what little they know of it—for instance, to pick the most popular elements:
 Class OO only, always mutable records,
 only single-inheritance or C++ style flavorless “multiple inheritance”,
-single dispatch, no method combination, etc.
+only single dispatch, no method combination, etc.
 Letting those who don’t know and don’t care define technical words
 would be knowledge bowing to ignorance;
 it would be for those who know and care to abdicate their responsibility
@@ -1715,13 +1877,15 @@ only terrible loss@xnote["."]{
   and be made to use ever increasingly flowery “politically correct” vocabulary
   as a humiliation ritual before those who will wantonly take your words away
   to abuse you and thereby assert their dominance over you.
-}}]
+}
 
-So what phenomena count as OO?
+@subsubsection{So what phenomena count as OO?}
+
 The design patterns used by programmers when they write code in an OO language;
-the interactions they have with computers and with each other.
-the decision trees that are enabled or disabled when evolving a program into another.
-In the case of OO, these phenomena are what is captured by
+the interactions they have with computers and with each other;
+the decision trees that are enabled or disabled when evolving a program into another—these
+phenomena are what OO is.
+And these phenomena are what is captured by
 the intralinguistic extensible modularity as defined above:
 (a) the ability to “code against an interface” and
 pass any value of any type that satisfies the interface
@@ -1737,8 +1901,8 @@ exist @emph{within} the programming language rather than as an external preproce
 We contend that the above is what usually meant by OO,
 that matches the variety of OO languages and systems
 without including systems that are decidedly not OO like Erlang, SML or UML.
-Whatever clear or murky correspondance between names and concepts others may use,
-this paradigm is what we will call OO—it is what we will discuss in this article,
+And whatever clear or murky correspondance between names and concepts others may use,
+this paradigm is what matters, and what we will call OO—it is what we will discuss in this article,
 and systematically reduce to elementary concepts.
 
 @section{OO as Internal Extensible Modularity}
@@ -2974,8 +3138,7 @@ from which he can invoke a programmer-defined “main” entry-point with his ch
 Before we model Modularity as such, let us delve deeper into the modeling of Records,
 that are the usual substrate for much of Modularity.
 
-@subsubsub*section{Record Nomenclature}
-
+@sub3section{Record Nomenclature}
 We will follow Hoare @~cite{hoare1965record} in calling
 “record” the concrete representation of data that contains zero, one or many “fields”.
 A typical low-level implementation of records is as
@@ -2998,8 +3161,7 @@ keys, elements, components, columns, etc.
 Mapping which terms are used in any given paper to those used in this or another paper
 is left as an exercise to the reader.
 
-@subsubsub*section{Typing Records}
-
+@sub3section{Typing Records}
 We could be content with a simple type @c{Record}, but then
 every access would be require some kind of type casting.
 Instead, we will have slightly more elaborate types.
@@ -3031,8 +3193,7 @@ and a point @c{point-q} of type @c{∏R} defined as follows:
   (record (x 3) (y 4) (color "blue")))
 }
 
-@subsubsub*section{Implementing Records}
-
+@sub3section{Implementing Records}
 Let’s assume that there is a type for identifiers
 and primitives for deciding equality between them,
 and evaluating conditionally based on equality or not.
@@ -3096,8 +3257,7 @@ based on either known field offsets or hashing@xnote["."]{
   due to the limitations of physics@~cite{MythOfRAM2014}.
 }
 
-@subsubsub*section{Merging Records}
-
+@sub3section{Merging Records}
 Given a list of bindings as pairs of an identifier and a value,
 you can define a record that maps each identifier to the value in the first
 binding with that identifier in the list, if any
@@ -3253,8 +3413,7 @@ Here are two ways in which Scheme departs from the theoretical model of Function
 that also apply to many (but not all) other programming languages, and that affect
 their suitability to modeling Object Orientation.
 
-@subsubsub*section{Many Y combinators}
-
+@sub3section{Many Y combinators}
 First, there are many variants to the fixpoint (or fixed-point) combinator Y,
 and the pure applicative Y combinator you could write in Scheme’s
 pure subset of the λ-calculus is actually quite bad in practice.
@@ -3414,8 +3573,7 @@ Since we are interested in first-class semantics for OO, we will ignore this sol
 in the rest of this essay, and leave it as an exercise for the reader.
 @;{TODO CITE Aaron Stump from U Iowa, etc.}
 
-@subsubsub*section{Function Arity}
-
+@sub3section{Function Arity}
 Functional Programming usually is written with unary functions (that take exactly one argument),
 and to express more than one arguments, you “curry” it:
 you define a function of one argument that returns a function that processes the next argument, etc.,
@@ -4028,7 +4186,17 @@ when instantiating the specification.
 This is achieved by having the instantiation function compose a “magic” wrapper specification
 in front of the user-given specification before it takes a fixpoint;
 said magic wrapper will wrap any recursive reference to the target into
-an implicit conflation pair of the specification and the target.
+an implicit conflation pair of the specification and the target@xnote["."]{
+  @citet{Abadi1996Primitive} struggle with variants of this problem,
+  and fail to find a solution, because they @emph{want} to keep confusing target and specification
+  even though they can see they are different things.
+  If they had conceptualized the two as being entities that need to be distinguished semantically
+  then explicitly kept together as a pair, they could have solved the problem and stayed
+  on top of the λ-calculus. Instead, they abandon such attempts, and rebuild their own
+  syntactic theory of a variant of the λ-calculus just for object,
+  an insanely complex abstraction inversion that won’t enlighten OO practitioners,
+  nor make OO interesting to mathematical syntax theoreticians.
+}
 Here is an implementation of that idea, wherein we prefix function names with @c{qproto}:
 
 @Code{
@@ -4166,7 +4334,7 @@ you can often simplify it away.
 Once again, some special extension is used in front, that is not strict,
 and is almost-but-not-quite an isomorphism, and specially memorizes the specification.
 
-@subsubsection{Small-Scale Advantages of Conflation: Performance, State Sharing}
+@subsubsection{Small-Scale Advantages of Conflation: Performance, Sharing}
 
 First, note how, if a specification is pure functional,
 i.e. without side-effect, whether state, non-determinism, I/O or otherwise,
@@ -4790,7 +4958,7 @@ will match the future actual module constraint, that may satisfy many more const
 meanwhile, the “positive” constraints about types for the identifiers being provided
 may satisfy more many constraints than those actually required from other modules using it.
 
-@subsubsection[#:tag "NNOOTT"]{The NNOOTT, Naive Non-recursive Object-Oriented Type Theory}
+@subsubsection[#:tag "NNOOTT"]{The NNOOTT: Naive Non-recursive OO Type Theory}
 
 The simplest and most obvious theory for typing OO,
 that we will dub the Naive Non-recursive Object-Oriented Type Theory (NNOOTT),
@@ -5364,8 +5532,7 @@ but this coping strategy requires defining a lot of subclasses,
 makes it hard to track whether all cases have been processed;
 essentially, the case analysis of the sum type is being dynamically rather than statically typed.
 
-@subsubsub*section{Note on Types for Second-Class Class OO}
-
+@sub3section{Note on Types for Second-Class Class OO}
 Types for second-class classes can be easily deduced
 from types for first-class classes:
 A second-class class is “just” a first-class class that happens
@@ -5546,15 +5713,17 @@ is all too often to introduce a single mother-of-all syntactic and semantic cons
 of immense complexity, the “class”, that frankly not a single person in the world fully understands,
 and of which scientific papers only dare study
 but simplified (yet still very complex) models@xnote["."]{
-  The class is the “Katamari” of semantics: just like in the 2004 game “Katamari Damacy”,
-  it is an initially small ball that indiscriminately clumps together with everything on its path
-  into a chaotic mish mash, until it grows so large that it collapses
-  under its own weight to become a star—then, eventually,
-  a black hole into which all reasonable meaning disappears never to reappear again.
-  Languages like C++, Java, C#, Scala, have a notion of class so complex that it boggles the mind,
+  The concept of class is the “Katamari” of semantics:
+  just like in the 2004 game “Katamari Damacy”,
+  it is an initially tiny ball that indiscriminately clumps together with everything on its path,
+  growing into a Big Ball of Mud @~cite{Foote1997BBoM},
+  then a giant chaotic mish mash of miscellaneous protruding features,
+  until it is so large that it collapses under its own weight to become a star—and,
+  eventually, a black hole into which all reasonable meaning disappears never to reappear again.
+  Languages like C++, Java, C#, Scala, have a concept of class so complex that it boggles the mind,
   and it keeps getting more complex with each release.
   “C++, like Perl, is a swiss army chainsaw of a programming language.
-  But all the blades are permanently stuck half-open while they run at full-speed.”
+  But all the blades are permanently stuck half-open while running full throttle.”
   @; Emacs: Kitchen Sink
   We much prefer the opposite approach: have a small basis of orthogonal primitives,
   that follow a few simple rules that can simultaneously fit in a brain,
@@ -5569,15 +5738,15 @@ but simplified (yet still very complex) models@xnote["."]{
   modularity, the ability to clearly think in terms
   of entities that minimally interact with each other.
   If a large utility function or macro must exist to define classes, each use of it
-  should clearly reduces to an entity that could have been directly written without the utility,
-  perhaps in a more awkward way, but still can be described in terms of simple primitives,
-  with no more protruding affordances than needed.
+  should clearly reduce to an entity that could have been directly written without the utility,
+  though perhaps in a less concise way, but still can be described in terms of simple primitives,
+  with no more exhibited affordances than needed.
   Now, at a certain scale, the smaller entities disappear behind the abstraction, and
   those that were large become the building blocks;
   but if they were built with bad primitives, the protruding affordances will generate
   lots of unwanted interactions that break the abstraction,
   causing the semantic plumbing to leak everywhere,
-  and offering attack vectors to parasites who enter between the cracks.
+  and offering attack vectors for active enemies to enter between the cracks.
 }
 
 Actually, when we remember that in most OO languages, OO is only ever relevant but at compile-time,
@@ -5799,8 +5968,7 @@ Might we not as well directly adopt the simpler and more expressive mixin inheri
 
 @subsubsection[#:tag "CMSI"]{Comparing Mixin- and Single- Inheritance}
 
-@subsubsub*section{Mixin Inheritance is Simpler than Single Inheritance, @emph{assuming FP}}
-
+@sub3section{Mixin Inheritance is Simpler than Single Inheritance, @emph{assuming FP}}
 Assuming knowledge of Functional Programming (FP),
 the definitions of single inheritance above
 are slightly more complex than those of mixin inheritance,
@@ -5843,8 +6011,7 @@ to implement or use it.
 @; they tend to be clever enough not to need it to be simplified for them,
 @; and not to care enough to simplify it for others.
 
-@subsubsub*section{Mixin Inheritance is More Expressive than Single Inheritance}
-
+@sub3section{Mixin Inheritance is More Expressive than Single Inheritance}
 Single inheritance can be trivially expressed in terms of Mixin inheritance:
 a single inheritance specification is just a list of modular extensions composed
 with a base generator at one end;
@@ -5902,8 +6069,7 @@ the language syntax, static type system, dynamic semantics,
 or socially-enforced coding conventions, or development costs
 somehow disallow or strongly discourage modular extensions as first-class entities.
 
-@subsubsub*section{Mixin Inheritance is More Modular than Single Inheritance}
-
+@sub3section{Mixin Inheritance is More Modular than Single Inheritance}
 In second-class class OO with single inheritance,
 each modular extension can only be used once, at the site that it is defined,
 extending one modular definition’s implicit list of modular extensions.
@@ -5932,8 +6098,7 @@ rather than internal modularity through better language semantics.
 Overall, single inheritance is much less modular than mixin inheritance,
 and in that respect, it fails to fulfill the very purpose of inheritance.
 
-@subsubsub*section{Mixin Inheritance is Less Performant than Single Inheritance}
-
+@sub3section{Mixin Inheritance is Less Performant than Single Inheritance}
 If single inheritance is more complex, less expressive and less modular than mixin inheritance,
 is there any reason to ever use it? Yes:
 the very semantic limitations of single inheritance are what enables
@@ -6115,8 +6280,7 @@ is the record of effective modular definitions for the individual methods.
 What then should be the “super” argument passed to a each modular extension,
 given the place of its specification in the ancestry DAG?
 
-@subsubsub*section{The Diamond Problem}
-
+@sub3section{The Diamond Problem}
 One naive approach could be to view the inheritance DAG as some kind of attribute grammar,
 and compute the (open modular definition for) the super at each node of the DAG
 as a synthetic attribute@xnote[","]{
@@ -6196,8 +6360,7 @@ synthesizing a child’s modular definition from its parents’ modular definiti
 @; TODO See also Malayeri & Aldrich’s 2009 "CZ: Multiple Inheritance without Diamonds" and its citations 43, 46.
 @; TODO Discuss Snyder’s idiotic "make ancestry a tree" idea reprised by C++ and Ada.
 
-@subsubsub*section{Cooperation not Conflict}
-
+@sub3section{Cooperation not Conflict}
 To find a better consistent behavior than conflict requires a reassessment
 of what better designed attribute than a modular definition
 should be synthesized from the inheritance DAG if any.
@@ -6220,7 +6383,7 @@ also known as constraints on the method resolution algorithm.
 There is sadly no consistent naming for those properties across literature,
 so we will propose our own while recalling the names previously used.
 
-@subsubsub*section{Inheritance Order: Consistency with Inheritance}
+@sub3section{Inheritance Order: Consistency with Inheritance}
 A specification’s modular extension shall always be composed
 “to the left” of any of its ancestors’,
 where sequential effects and computation results flow right to left.
@@ -6241,7 +6404,7 @@ database of parts to which to register it to (at least if the latter wasn’t ig
 This property is so fundamental it is respected by all OO languages since SIMULA @~cite{Simula1967},
 and may not have been explicitly named before as distinct from inheritance itself.
 
-@subsubsub*section{Linearity: Conservation of Information}
+@sub3section{Linearity: Conservation of Information}
 The information contributed by each ancestor’s modular extension
 shall be taken into account once and only once.
 User-specified extensions may drop or duplicate information,
@@ -6279,7 +6442,7 @@ Flavors’ flavor of multiple inheritance, that includes many more innovations,
 was a vast improvement in paradigm over all its precedessors,
 and sadly, also over most of its successors.
 
-@subsubsub*section{Linearization: Consistency across Methods}
+@sub3section{Linearization: Consistency across Methods}
 Any sequential effects from the ancestor’s modular extension should be run
 in a consistent “Method Resolution Order@xnote["”"]{
    The term and its abbreviation MRO were introduced by Python 2.3 circa 2003,
@@ -6362,7 +6525,7 @@ an OO language could have users annotate their methods with a keyword @c{base}
 and issue a warning or error if one inherits two different @c{base} definitions for a method,
 and tries to call the super method (either through an override, or through the lack thereof).
 
-@subsubsub*section{Local Order: Consistency with User-Provided Order}
+@sub3section{Local Order: Consistency with User-Provided Order}
 The “local (precedence) order” in which users list parents in each specification must be respected:
 if a parent appears before another in the list of parents local to some specification,
 then the two will appear in the same relative order (though not necessarily consecutively)
@@ -6394,7 +6557,7 @@ Among popular “flavorful” languages,
 Python, Perl, Lisp and Solidity notably respect this constraint,
 but Ruby and Scala fail to.
 
-@subsubsub*section{Monotonicity: Consistency across Ancestry}
+@sub3section{Monotonicity: Consistency across Ancestry}
 The “method resolution order” for a child specification should be consistent
 with the orders from each of its parents:
 if the precedence list for a parent places one extension before another,
@@ -6416,7 +6579,7 @@ Among popular “flavorful” languages, Python, Perl and Solidity respect this 
 but Ruby, Scala and Lisp fail to.
 (Though at least in Common Lisp you can use metaclasses to fix the issue in your code.)
 
-@subsubsub*section{Shape Determinism: Consistency across Equivalent Ancestries}
+@sub3section{Shape Determinism: Consistency across Equivalent Ancestries}
 Two specifications with equivalent inheritance DAGs
 (with an isomorphism between them, bijection preserving partial order both ways)
 will yield equivalent precedence lists, up to the same isomorphism.
@@ -6570,7 +6733,7 @@ Sadly, multiple inheritance often remains
 unjustly overlooked, summarily dismissed,
 or left as an exercise to the reader in books that discuss the formalization
 of programming languages in general and/or OO in particular
-@~cite{AbadiCardelli1997ToO Pierce2002TAPL eopl3 plai}. @TODO{more?}
+@~cite{AbadiCardelli1996ToO Pierce2002TAPL eopl3 plai}. @TODO{more?}
 The wider academic literature is also lacking in proper treatment of
 types for multiple inheritance, with some notable exceptions like@~cite{allen2011type}.
 @TODO{cite more: Jonathan Aldrich ? Odersky ?}
@@ -6621,8 +6784,7 @@ Together, they also tell us that some features could be automated in theory
 yet cannot be so in practice due to lack of synchronization between programmers,
 due to lack of a better OO variant.
 
-@subsubsub*section{Multiple Inheritance is less Simple than Mixin Inheritance}
-
+@sub3section{Multiple Inheritance is less Simple than Mixin Inheritance}
 Obviously, multiple inheritance requires the system to implement some extra logic
 either to handle proper ancestor linearization, or to implement
 some really bad method resolution algorithm instead.
@@ -6634,8 +6796,7 @@ In other words, does multiple inheritance solve a problem you would have to face
 with mixin inheritance, or does it introduce concepts you do not need?
 And assuming it is a problem you face anyway, does it solve it in the simplest manner?
 
-@subsubsub*section{Multiple Inheritance is as Expressive as Mixin Inheritance}
-
+@sub3section{Multiple Inheritance is as Expressive as Mixin Inheritance}
 Mixin inheritance is clearly not less expressive as multiple inheritance,
 since every entity that can be written using multiple inheritance
 can just as well be written using mixin inheritance,
@@ -6662,8 +6823,7 @@ would instead export a multiple inheritance specification to use once,
 that defines a helper that it possibly calls once, but can be thereafter called many times.
 Therefore we can say that multiple inheritance is as expressive as mixin inheritance in practice.
 
-@subsubsub*section{Multiple Inheritance is more Modular than Mixin Inheritance}
-
+@sub3section{Multiple Inheritance is more Modular than Mixin Inheritance}
 Let us now compare the two variants of inheritance from the point of view of modularity.
 Multiple inheritance requires somewhat more sophistication than mixin inheritance,
 adding the cognitive burden of a few more concepts,
@@ -6799,8 +6959,7 @@ the modularity issues one experiences with one kind of inheritance are still sup
 to the lack of modularity issues one experiences with the kinds of inheritance
 lacking the modularity about which to have issues to begin with.
 
-@subsubsub*section{Multiple Inheritance is slightly less Performant than Mixin Inheritance}
-
+@sub3section{Multiple Inheritance is slightly less Performant than Mixin Inheritance}
 Compared to Mixin Inheritance, Multiple Inheritance involves this extra step of
 computing a specification’s precedence list.
 The linearization algorithm has a worst case complexity O(dn),
@@ -7159,16 +7318,38 @@ where the steps tagged with (C4) are those added to the C3 algorithm
 Note that the C3 algorithm as published by @~cite{Barrett1996C3},
 has complexity O(d²n²) where d is the number of parents, n of ancestors,
 because of the naive way it does a linear membership scan
-in the tails of the lists for each parent.
+in the tails of the lists for each parent@xnote["."]{
+  A worst-case example is, two parameters d and n,
+  to find a linear order of size n, more or less evenly divided in d segments of size n/d,
+  and for each segment head Si, define a specification S'i that Si as its single parent;
+  Make the local precedence order the S'i sorted from shortest to longest ancestry.
+  The S'i serve to defeat the local order property in allowing the Si
+  to be put on the tails list in this pessimal order.
+  Then each candidate Θ(n) times will be consulted an amortized Θ(d) times,
+  each time causing
+  (a, without optimization) an amortized Θ(d) searches through lists of amortized size Θ(n), or
+  (b, with optimization) a Θ(1) table search followed by an amortized Θ(d) table maintenance adjustment.
+  Worst case is indeed Θ(d²n²) for the unoptimized algorithm, Θ(dn) for the optimized one.
+}
 But by maintaining a single hash-table of counts on all tails,
-we can keep the complexity O(dn)
-just like for simpler but less consistent algorithms.
+we can keep the complexity O(dn), a quadratic improvement, that bring the cost of C3 or C4
+back down to the levels of less consistent algorithms such as used in Ruby or Scala.
+Unhappily, it looks like at least the Python and Perl implementations
+are missing this crucial optimization; it might not matter too much because
+their d and n values are we suspect even lower than in Common Lisp@xnote["."]{
+  As mentioned in a previous note, in loading almost all of Quicklisp 2025-06-22 we found
+  d≤3 99% of the time, d=61 max, n≤5 90% of the time, n≤19 99% of the time, n=66 max.
+}
 
 There is also a space vs time tradeoff to check subtyping of suffixes,
-by using a vector (O(1) time, O(n²) space)
-instead of a linked lists (O(n) time, O(n) space).
+by using a vector (O(1) time, O(k) space per struct,
+where k is the inheritance depth the largest struct at stake)
+instead of a linked lists (O(k) time, O(1) space per struct).
 However, if we skip the infix specifications in between,
-suffix hierarchies usually remain shallow (n≤4 usually, n=8 very rare),
+suffix hierarchies usually remain shallow@xnote[","]{
+  In our Quicklisp 2025-06-22 evaluation, we found
+  k≤4 usually, k=8 at most, very rare.
+}
 so it’s unclear what to optimize for.
 
 @subsubsection{C3 Tie-Breaking Heuristic}
@@ -7215,7 +7396,13 @@ that should probably be formalized and added to the constraints of C4@xnote["."]
 
 @section{Advanced Topics in OO}
 
+@subsection{More Conflation}
+
+@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+
 @subsection{Optics for OO}
+@; https://golem.ph.utexas.edu/category/2020/01/profunctor_optics_the_categori.html
+@; Profunctor Optics: The Categorical View
 
 @subsubsection{Focused Specifications}
 
@@ -7247,28 +7434,31 @@ we may as well enjoy the benefits for basic features as well.
 @subsubsection{Short Recap on Lenses}
 
 A lens @~cite{bananas1991 Foster2007CombinatorsFB oconnor2012lenses Pickering2017Optics}
-is the pure Functional Programming take on what in stateful languages would be
+is the pure Functional Programming take on what in stateful languages would typically be
 a C pointer, ML reference, Lisp Machine locative, Common Lisp place, etc.:
 a way to pin-point some location to inspect and modify within the wider program’s state.
 A lens is determined by a “getter”, function from a “source” to a “focus”,
 and an “updater”, function from a change to the focused data to a change
 of the wider state from “source” to an updated “target”.
 As a function from source to focus and back, it can thus also be seen as generalizing
-paths of fields and accessors, i.e. field @c{bar} of the 3rd element of field @c{foo}
+paths of fields and accessors, e.g. field @c{bar} of the 3rd element of field @c{foo}
 of the entry with key @c{(42, "baz")} within a table.
 
-A monomorphic lens (or simple lens) of type @c{Lens' s a} can be seen as
+@sub3section{Monomorphic Lens}
+A monomorphic lens (or simple lens), of type @c{Lens' s a}, can be seen as
 a pair of a getter function @c{s → a}, and a setter function @c{a → s → s},
 that allow you to get or set a current value under focus of type @c{a}
 from a whole or source of type @c{s};
 however, instead of a setter function, we will use a representation based on
-a more composable updater function @c{(a → a) → s → s}:
+a the more composable notion of updater function @c{(a → a) → s → s}:
 it transforms a local change under focus into a global change to the current source.
-A polymorphic lens (or stabby lens) of type @c{Lens s t a b} generalizes the above:
+
+@sub3section{Polymorphic Lens}
+A polymorphic lens (or “stabby” lens), of type @c{Lens s t a b}, generalizes the above:
 you still have a getter function @c{s → a} to view what is under focus from the source
 (called @c{view} in Haskell, we’ll call it @c{get} below),
 but your updater function now has type
-@c{(a → b) → s → t}, transforming an update under focus from @c{a} to @c{b}
+@c{(a → b) → s → t}, transforming an change under focus from @c{a} to @c{b}
 into a change from source @c{s} to target @c{t}
 (called @c{over} in Haskell, we’ll call it @c{update} below)@xnote["."]{
   As usual, you can represent your lenses such that you can compose them with the
@@ -7277,31 +7467,12 @@ into a change from source @c{s} to target @c{t}
   that some claim is more efficient, “van Laarhoven” lenses,
   but we will avoid it for the sake of clarity.
 }
-Monomorphic lenses are a special case or polymorphic lenses with @c{t = s} and @c{b = a},
-and lenses form a category with a compose function and identity lenses;
-and in our previous representation of records as functions from identifiers to value,
-we can easily define a field lens:
+Monomorphic lenses are a special case or polymorphic lenses with @c{t = s} and @c{b = a}.
 @Code{
 type Getter s a = s → a
 type Updater s t a b = (a → b) → s → t
 type Lens s t a b = { get : Getter s a ; update : Updater s t a b }
-type Lens' s a = Lens s s a a
-
-composeLens : Lens x y s t → Lens s t a b → Lens x y a b
-idLens : Lens a a a a
-
-(define composeLens (λ (k) (λ (l)
-  { get = l.get ∘ k.get ; update = k.update ∘ l.update })))
-(define idLens
-  { get = (λ (x) x) ; update = (λ (f) f) })
-
-(define fieldGetter (λ (key) (λ (s)
-  (s key))))
-(define fieldUpdater (λ (key) (λ (f) (λ (s)
-  (extend-record s key (f (s key)))))))
-(define fieldLens (λ (key)
-  { get = (fieldGetter key) ; update = (fieldUpdater key) }))
-}
+type Lens' s a = Lens s s a a}
 
 Monomorphic lenses suffice in simple cases
 where updates merely reflect a local change in a broader structure;
@@ -7311,6 +7482,29 @@ Then come more general kind of “optic” functions,
 that e.g. take into account that a value may be undefined, etc.,
 but we will leave their application as exercise to the reader.
 
+@sub3section{Composing Lens}
+Lenses form a category with a compose function and identity lenses.
+@Code{
+composeLens : Lens x y s t → Lens s t a b → Lens x y a b
+idLens : Lens a a a a
+
+(define composeLens (λ (k) (λ (l)
+  { get = l.get ∘ k.get ; update = k.update ∘ l.update })))
+(define idLens
+  { get = (λ (x) x) ; update = (λ (f) f) })}
+
+@sub3section{Field Lens}
+In our previous representation of records as functions from identifiers to value,
+we can easily define a field lens:
+@Code{
+(define fieldGetter (λ (key) (λ (s)
+  (s key))))
+(define fieldUpdater (λ (key) (λ (f) (λ (s)
+  (extend-record s key (f (s key)))))))
+(define fieldLens (λ (key)
+  { get = (fieldGetter key) ; update = (fieldUpdater key) }))
+}
+
 A typical monomorphic lens @c{Lens' s a} would specify how to get or set a field
 at a given identifier within a record;
 thus the getter for field @c{foo} would given a record @c{x : s}
@@ -7319,8 +7513,7 @@ whereas the setter would take a new value @c{v : a} and an old record @c{x : s}
 and return a new record @c{y : s} that copies @c{x} except for the field @c{foo} wherein
 @c{y.foo} is set to @c{v : a}.
 You could similarly define lenses for the nth element of a tuple or a list.
-You can also compose lenses, so that composing lenses for a series of fields
-allow you to follow a path within an module context.
+Composing lenses for a series of fields allow you to follow a path within an module context.
 
 @subsubsection{Functional Focused Specification}
 
@@ -7330,34 +7523,160 @@ what that specification is modularly extending.
 A modular extension @c{C → V → W} will thus have to point within the whole program @c{P}
 a getter to locate the extension’s input module context @c{C} from @c{P},
 and an updater to locate from @c{P} the value @c{V} being extended into a value @c{W}.
+Importantly, the two need not be at the same place;
+and so whether your practical implementation uses pure functions, stateful functions,
+or low-level pointers, it will have to maintain a pair of separate ones
+for the module context and the entity under focus.
 
-The getter can narrow the context of the extension:
-so that if you extend a class @c{blog.database} within your program,
+Informally, the getter is the “eye” or sensor of the the modular extension;
+the updater its “hand” or actuator. The two together we will call a @emph{sensactor},
+a combination of a sensor and an actuator.
+Informally, just like a submarine captain may be looking
+in a @emph{periscope} while piloting his boat,
+a surgeon may be using an endoscope while operating through a different port,
+or a painter may be applying paint on canvas while looking at his model,
+a modular extension could be looking at some module context while extending an entity
+that could be narrower than, wider than or disjoint from the module context.
+Actually, the common case would be for the entity being extended to be narrower,
+since you generally need to see some context around what you act upon to decide how to act;
+but you could be looking at a small crucial detail to make a big change,
+or may have internalized enough what you’re doing
+to be able to to act while looking at the context that really matters
+without having to look at your hand.
+
+A @emph{focused specification} will be the datum of a sensactor and a specification.
+As usual, we consider open specifications in general,
+and closed specifications as a special case.
+The specification to be focused may be a modular definition, a modular extension,
+an optimal inheritance specification, etc.
+
+@sub3section{Adjusting the Context}
+The getter can narrow the context of a modular extension:
+if you extend a class @c{blog.database} within your program,
 you can apply a database extension, say one that specifies PostgreSQL with your favorite options,
 that is itself agnostic to the “location” of your database within your program,
 and indeed could be independently applied to several databases within your program.
+
 You can also use the getter to narrow the context in terms of access permissions,
-rather than breadth of scope as such, to control the visibility of your definitions
-and ensure the security of your system.
+rather than breadth of scope as such.
+Thus, you can control the visibility of your definitions,
+or add a proxy that virtualizes some of them,
+or otherwise ensure the security of your system.
 
-The updater will often, but not always, further narrow a method within the prototype being extended,
-such as say @c{blog.database.postgres.port} to specify what port to use for that database server.
+At times, the getter can be used to broaden the picture.
+To zoom out of a heretofore useful narrow focus, and adopt a wider point of view.
+To undo a temporary zoom in, from a method back to an object, back to a library,
+or back to an entire ecosystem.
 
-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+@sub3section{Adjusting the Focus}
+The updater will often, but not always,
+further narrow a method within the prototype being extended.
+That is how you can extend a library within an ecosystem,
+a prototype within a library, a method within a prototype, etc.,
+each time the modular extension being able to use
+information from the surrounding context as it modifies the current focus.
 
-@subsubsection{Composing Focused Modular Extensions}
+Thus, in a configuration to deploy a service @c{frob},
+you may focus the module context on its database via the getter,
+to access path @c{frob.database} of the environment,
+while at some point you may have configured it to use a postgres server,
+and then update its port by narrowing the focus further to
+such as say @c{frob.database.postgres.port} to specify what port to use for that database server.
 
-The generalization of OO from overriding methods in records
-to overriding arbitrary aspects of arbitrary computations using functional lenses or zippers.
+At times, you may want to make the focus broader than the module context, or disjoint:
+the module context contains the narrow execution context that interests you, and
+in that context, you operate on the system:
+for instance, you may manage
+versioned backups, access controls, user interface, or accounting
+for the entire system, or a disjoint subsystem.
+
+And of course, when you want to take a fixpoint, you need to make
+the module context the very same as the focus.
 
 @subsubsection{Methods with Focus}
 
+One you have focused specifications,
+the semantics of specifying a method in a prototype (including class) become simple:
+it’s just narrowing the updater focus further than the context getter.
+Given lens @c{l} to locate your prototype from the top to your object,
+and lens @c{k = (fieldLens key)} to locate the method of given key from the prototype,
+then @c{(view l, update l.k)} will be the sensactor in a focused specification
+that extends that method of that prototype.
+
+Prototypes, including classes, can thus be defined incrementally,
+by assembling or composing plenty of such focused specifications;
+and using lenses and sensactors to programmatically select each time
+how and where they fit in the bigger picture.
+You can give types to method specifications independently
+from any specific surrounding prototype or class specification.
+You can reuse these specification as part of multiple prototype specifications.
+You can transform them, store and transmit them, compose them, decompose them, recompose them,
+as first class objects.
+
+@; TODO EXAMPLES:
+@; DEFINING A METHOD OUTSIDE A CLASS
+@; COMBINING METHODS INTO DIFFERENT CLASSES
+@; WRAPPING A METHOD INTO... A RENAMING?
+
 @subsection{Method Combinations}
 
-Flavors, New Flavors, LOOPS, CommonLOOPS, CLOS.
-Teitelman ADVISE.
+@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+
+Another fantastic contribution by Flavors @~cite{Cannon1979} is Method Combinations:
+the idea that the many methods declared in partial specifications
+are each to contribute partial information that will be harmonously combined (mixed in),
+rather than complete information that have to compete with other conflicting methods
+that contradict it, the winners erasing the losers.
+Win-win interactions rather win-lose, that was a revolution
+that made multiple inheritance sensible when it otherwise wasn’t.
+
+But in Flavors methods do not have to be combined with the usual @c{mix} function.
+Instead of being viewed as (modular) extensions that you compose,
+they could be (modular) numbers that you add or multiply or get the maximum or minimum of;
+they could be lists that you concatenate, or sets that you merge;
+Any monoidal operation will do: associative, and with a neutral element:
+@Code{
+  
+}
+
+
+
+But, what is more, there could be several kinds of methods cooperating:
+“primary” methods that you combine as above, but also
+additional routines that you execute in one order (or the opposite)
+@c{before} or @c{after} the “primary” methods;
+wrapper routines that run @c{around} those methods so they can setup and tear down
+some environment, grab locks, transform arguments and results.
+CLOS, the polished successor of Flavors and LOOPS,
+
+There is a rich
+and, really, anything the programmer may choose to implement
+
+
+They 
+that composes 
+
+
+to be  not just to compete
+over which will survive or be delete
+
+
+, itself inspired by Teitelman’s ADVISE facility @~cite{Teitelman1966}:
+
+
+Method Combinations kept evolving in New Flavors @~cite{Moon1986Flavors},
+and were adopted by CommonLOOPS @~cite{Bobrow86CommonLoops}, CLOS @~cite{Bobrow88CLOS},
+and a whole lot of object systems, mainly in languages of the Lisp and Scheme family.
+Sadly, the feature seems not to have been adopted in other ecosystems, except that
+a lot of the “advice” part lives in Aspect Oriented Programming @; TODO cite
+frameworks, for Java and C#, and less popularly, for other languages.
+
+The most basic method combination is the one used by default by methods
+when we have been defining them so far: after the list of available methods
+
 
 Generic functions for declarations. (CommonLOOPS?)
+
 
 @subsection{Multiple Dispatch}
 
@@ -7373,6 +7692,8 @@ can’t back out of narrowing decision. Breaks “linearity” (conservation of 
 Purity vs Orphan Typeclasses in Haskell.
 
 @emph{Global} fixpoint.
+
+@subsection{Meta-Object Protocols}
 
 @section{Conclusion}
 
@@ -7390,10 +7711,11 @@ Here are original contributions from this paper:
 }
 @item{
   Our Theory explains not just what OO is, but also what it is not.
-  We could debunk the major common misbeliefs about OO is, explain why they’re wrong:
+  @principle{We could debunk the major common misbeliefs about OO is},
+  explain why they’re wrong:
   OO is not C++, OO is not based on Classes, OO is not imperative,
   OO is not about “encapsulation”, OO is not opposed to Functional Programming (FP),
-  OO is not about message passing, OO is not a data model.
+  OO is not about message passing, OO is not a data model, nor rewrite logic.
 }
 @item{
   Remarkably, and contrary to popular belief, we found that:
@@ -7441,12 +7763,26 @@ Here are original contributions from this paper:
   two known yet never previously combined ideas
   (first mixing suffix and infix specifications, and second the C3 algorithm)—we
   provided the theory why the combination is not just good but necessary.
+  We also found an important performance optimization to C3
+  seemingly not used in existing language implementations, from O(d²n²) to O(dn),
+  that can make it up to hundreds of times faster in on real-world sizes,
+  eliminating performance-based reasons not to use C3 over its previous rivals
+  ensuring fewer consistency properties.
+}
+@item{
+  Whereas other theories are focused on single classes as giant balls of semantic acreting mud,
+  @principle{our theory seamlessly covers modular extension patterns at all scales},
+  from simple method definitions that you combine into larger effective methods
+  using simple or elaborated method combination strategies,
+  to entire prototypes or classes, to mutually recursive sets of prototypes or classes,
+  to entire OO ecosystems, all seemlessly, in one unified algebraic view,
+  using lenses as unifying way to view the modular extension phenomenon at many scales.
 }
 @item{
   @principle{Our Theory is Constructive}.
-  We built minimal OO in two lines of code,
-  both simpler and more general than the formulas from the 1990s,
-  and not just used as a “semantic model”,
+  We built minimal OO in two lines of code directly relating principles to code;
+  our code is both simpler and more general than the formulas from the 1990s;
+  it can be used not just as a “semantic model”,
   but as a practical implementation usable in actual applications.
   A few more lines gave us recursive conflation;
   yet a few more tens of lines give you multiple inheritance.
@@ -7458,4 +7794,4 @@ Here are original contributions from this paper:
 
 @appendix
 
-@section{The C4 algorithm}
+@;@section{The C4 algorithm}
