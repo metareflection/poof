@@ -6,8 +6,7 @@
 % Scientific Memoirs, Selected from the Transactions of Foreign Academies of Science and Learned Societies, and from Foreign Journals, R. and J. E. Taylor , Vol III, 1843
 % https://x.com/Ngnghm/status/1940199868037046726
 % From https://www.netlib.org/bibnet/authors/l/lovelace-ada-augusta.html
-% InCollection
-@Misc{Lovelace1843,
+@InCollection{Lovelace1843,
   author={{Augusta Ada Lovelace}},
   booktitle={Richard Taylor's Scientific Memoirs},
   title={Notes [on translation of {Luigi Federico Menebrae}'s paper on {Babbage's Analytical Engine}]},
@@ -24,7 +23,7 @@
     by Luigi Menebrae, who would later become Prime Minister of newly-unified Italy;
     and her translator’s notes are fantastic.
     Only her initials appear (A.A.L, at one point mistyped, A.L.L.),
-    because a woman, especially a noble one, shall not write such lowly things.
+    because a woman, especially a noble one, shall not write on such lowly topics.
     But my, her understanding of “operations”, the general notion of pure computation,
     is better than most computer scientists of today.
     “First the symbols of *operation* are frequently *also* the symbols of the *results* of operations.
@@ -184,21 +183,27 @@
 
 %% 1967
 
-% Ole-Johan Dahl and Kristen Nygaard. Class and subclass declarations 1967 (pdf)
 % https://www.ub.uio.no/english/subjects/naturalscience-technology/informatics/themes/dns/index.html
-% First implements classes, and introduces inheritance (though not the word);
-% introduces the words "prefix class", "subclasses", "prefix sequence", "this", "inner".
-% The "prefix" class also offers a suffix, and uses the "inner" separator to "split" its "body"
-% and specify where the subclass body will go. BETA will also follow this approach
-% of the superclass specifying how to compose with the subclass semantics,
-% when most other OO languages take the approach of the subclass specifying
-% how to reuse information specified by superclasses.
-% "objects" have "attributes"
 @Misc{Simula1967,
   author = {Dahl, Ole-Johan and Nygaard, Kristen},
   title = {Class and subclass declarations},
   year = {1967},
-  url = {https://www.ub.uio.no/fag/naturvitenskap-teknologi/informatikk/faglig/dns/dokumenter/classandsubclass1967.pdf}
+  url = {https://www.ub.uio.no/fag/naturvitenskap-teknologi/informatikk/faglig/dns/dokumenter/classandsubclass1967.pdf},
+  note={.
+    THE breakthrough paper that leads to OO,
+    though we can debate whether it is itself OO as such;
+    not in the modern form made popular by Smalltalk, at least.
+    Dahl and Nygaard implement classes for the first time.
+    They do not have the word “inheritance”, but the concept is there somehow.
+    A class may have a “prefix class” and “subclasses” of which it is the prefix class.
+    Its ancestry is its “prefix sequence”, weirdly kept in most- to least- specific order.
+    The keyword “this” is introduced that C++ will popularize.
+    Because a prefix class may also include suffix code,
+    the “body” for subclasses can be “split” with the keyword “inner”
+    that pinpoints where to put the body of subclasses (by default, at the end).
+    The successor BETA will also follow this approach.
+    As in Hoare 1965, “objects” have “attributes”.
+  }
 }
 
 % Introduces the notion of "Ad hoc polymorphism"
@@ -221,16 +226,18 @@
 
 %% 1972
 
-% Identifies class with procedure that computes an algorithm and constructs a record
-% and yields current values multiple times to other activities with "detach" (call again for next)
-% section 6 has "concatenation" for single inheritance
-% InCollection
-@Misc{dahl1972chapter,
+@InCollection{dahl1972chapter,
   title={Chapter III: Hierarchical program structures},
   author={Dahl, Ole-Johan and Hoare, Charles Antony Richard},
   booktitle={Structured programming},
   pages={175--220},
-  year={1972}
+  year={1972},
+  notes={.
+    The paper identifies a class with a procedure that computes an algorithm,
+    constructs a record, and yields current values multiple times
+    to other activities with "detach" (call again for next).
+    Section 6 has "concatenation" for single inheritance.
+  }
 }
 
 @Article{Parnas1972,
@@ -290,10 +297,8 @@
 % and the issues with representing knowledge for that.
 
 
-% This only has to p. 8, but we need 185:
-% https://api.pageplace.de/preview/DT0400.9781483299150_A23889670/preview-9781483299150_A23889670.pdf
-% InCollection
-@Misc{Winograd1975,
+% https://web.archive.org/web/20200511083536/https://hci.stanford.edu/winograd/papers/FrameRep.pdf
+@InCollection{Winograd1975,
   author = {Terry Winograd},
   title = {Frame Representations and the Declarative/Procedural Controversy},
   editor = {Daniel G. Bobrow and Allan Collins},
@@ -308,19 +313,20 @@
   abstract = {Publisher Summary
 This chapter presents some criteria for evaluating ideas for representation. It also presents a rough sketch of a particular version of a frame representation, and discusses the ways in which it can deal with the issues raised. The proceduralists assert that human knowledge is primarily a knowing how. The human information processor is a stored program device, with its knowledge of the world embedded in the programs. The declarativists do not believe that knowledge of a subject is intimately bound with the procedures for its use. They see intelligence as resting on two bases: a quite general set of procedures for manipulating facts of all sorts, and a set of specific facts describing particular knowledge domains. In thinking, the general procedures are applied to the domain-specific data to make deductions. Often this process has been based on the model of axiomatic mathematics. The facts are axioms and the thought process involves proof procedures for drawing conclusions from them.},
   note={.
-    This paper has so far as I can tell,
-    the earliest use of “inheritance” in a context that directly inspired OO,
+    This paper has so far as I can tell
+    the earliest use of “inheritance” in a context that directly applicable to OO.
     Winograd also inspired Kahn and Borning for their Prototype OO systems,
     and worked with Bobrow whose team was next to Kay’s, etc.
-    The word “inherit” appears in other papers from MIT AI researchers at the time (e.g. Hewitt),
+    The word “inherit” does appears in other papers from MIT AI researchers at the time (e.g. Hewitt),
     but it is unclear who talks about it first and gets it from where.
     Winograd talks about “inheritance of properties”, p. 197.,
     to compute properties of a frame based on its hierarchy.
-    Frame hierarchies are a form of multiple inheritance, though that word isn't coined.
+    Frame hierarchies are a form of multiple inheritance, though that word isn’t coined.
     The exact resolution algorithm is not explained.
-    Frames are not quite data, not quite code, but something in between;
-    Lisp is system more than a programming language, and the lines are blurred.
-    The use of the name “inheritance” is not fully formal, though.
+    Frames are not quite data, not quite code,
+    but something in between, “knowledge representation”;
+    Lisp, being a system more than a programming language, blurs the lines.
+    The use of the word “inheritance” is not fully formal, though.
     Indeed, I can see at least four kinds of ways of naming things
     (beware though I’m making up this nomenclature on the spot):
     (1) evocation: neither name nor concept owns the other, yet an allusion is made;
@@ -328,11 +334,11 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     (3) identification: name and concept own each other, though the limits of the concept
     may not be clear;
     (4) definition: the essence of the concept being named is finally well understood.
-    For “inheritance”, evocation happened in Minsky 1975, distinction in Winograd 1975,
+    For “inheritance”, evocation may have happened in Minsky 1974, distinction in Winograd 1975,
     and identification around 1976 quite possibly by Bobrow or Kay
     (and Kay later says Larry Tesler insisted on implementing “slot inheritance”
     the way he had done in previous desktop publishing projects).
-    Practical definition would happen in the early 1980s, and
+    Informal practical definition would happen in the early 1980s, and
     more formal theoretical definitions around 1990 with e.g. Cook & Bracha,
     refining their immediate predecessors like Kamin, Reddy, Cook.
 }}
@@ -1430,14 +1436,9 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-% Inheritance is discussed in section 11.5.1.
-% SIMULA-style inheritance was deliberately left out of his work on FLEX and early Smalltalk.
-% Kay credits Larry Tesler (slot inheritance), Henry Lieberman (delegation),
-% and Bobrow and Winograd's KRL (Frames).
-% InCollection ?
 % 1996 variant has better PDF: doi={10.1145/234286.1057828},
 % Read by Eric Normand https://ericnormand.me/podcast/the-early-history-of-smalltalk
-@Misc{Kay1993EHoS,
+@InCollection{Kay1993EHoS,
   title={The Early History of Smalltalk},
   author={Alan C. Kay},
   booktitle={History of programming languages---II},
@@ -1454,7 +1455,14 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   journal = {SIGPLAN Not.},
   month = mar,
   pages = {69–95},
-  numpages = {27}
+  numpages = {27},
+  note={.
+    Great read about Smalltalk.
+    Inheritance is discussed in section 11.5.1:
+    Simula-style inheritance was deliberately left out of Kay’s work on FLEX and early Smalltalk.
+    Kay credits Larry Tesler (slot inheritance), Henry Lieberman (delegation),
+    and Bobrow and Winograd's KRL (Frames), for the invention of Smalltalk inheritance.
+  }
 }
 
 %% 1994
@@ -1501,7 +1509,14 @@ series = {OOPSLA '94}
   author={Erich Gamma and Richard Helm and Ralph Johnson and John Vlissides},
   year={1994},
   publisher={Addison-Wesley},
-  url={https://github.com/ansbilalgit/Books/blob/master/Erich%20Gamma,%20Richard%20Helm,%20Ralph%20Johnson,%20John%20M.%20Vlissides-Design%20Patterns_%20Elements%20of%20Reusable%20Object-Oriented%20Software%20%20-Addison-Wesley%20Professional%20(1994).pdf}
+  url={https://github.com/ansbilalgit/Books/blob/master/Erich%20Gamma,%20Richard%20Helm,%20Ralph%20Johnson,%20John%20M.%20Vlissides-Design%20Patterns_%20Elements%20of%20Reusable%20Object-Oriented%20Software%20%20-Addison-Wesley%20Professional%20(1994).pdf},
+  note={.
+    The classic "Gang of Four" (GoF) book on Design Patterns. Much loved, much hated.
+    To quote Rich Hickey, «Patterns mean “I have run out of language.”»
+    I.e. patterns are using fourth class entities because you can’t (or otherwise fail to)
+    afford automation and abstraction.
+    Which is a bad thing to happen, but sometimes it does and then you’re glad you have patterns.
+  }
 }
 
 % Extend a simply typed LC (terminating) with simple objects and a typesystem
@@ -1516,47 +1531,59 @@ series = {OOPSLA '94}
   pages={3-37}
 }
 
-% https://www.researchgate.net/publication/225917432_Object_inheritance_beyond_subtyping
-% Yet another bullshit Category Theory application to the NNOOTT.
-% No warning about cluelessness
-% Tries to redefine "inheritance" as refinement, except that when it's "non-monotonic",
-% you only have a partial map, and anything goes (you said nothing). Shameful.
 @article{sernadas1994,
-  author = {Costa, J. and Sernadas, Amilcar and Sernadas, Cristina},
-  year = {1994},
-  month = {06},
-  pages = {5-26},
-  title = {Object inheritance beyond subtyping},
-  volume = {31},
-  journal = {Acta Informatica},
-  doi = {10.1007/BF01178920}
+  author={Costa, J. and Sernadas, Amilcar and Sernadas, Cristina},
+  year={1994},
+  month={06},
+  pages={5-26},
+  title={Object inheritance beyond subtyping},
+  volume={31},
+  journal={Acta Informatica},
+  doi={10.1007/BF01178920},
+  url={https://www.researchgate.net/publication/225917432_Object_inheritance_beyond_subtyping},
+  note={.
+    This is yet another paper that claims to model OO using Category Theory,
+    but actually models the NNOOTT instead.
+    The authors seem clueless about what they do, and provide no warning.
+    They also try to redefine "inheritance" as refinement,
+    except that when it's "non-monotonic", you only have a partial map,
+    and anything goes (you said nothing). Shameful.
+  }
 }
 
-% Modules & Functors for SML
-% https://dl.acm.org/doi/pdf/10.1145/174675.176927
-% Problem is that subtyping is not decidable
-% @InProceedings
-@Misc{harper1994modules,
+@InProceedings{harper1994modules,
   title={A type-theoretic approach to higher-order modules with sharing},
   author={Harper, Robert and Lillibridge, Mark},
-  booktitle={Proceedings of the 21st ACM SIGPLAN-SIGACT symposium on Principles of programming languages},
+  booktitle={the 21st ACM SIGPLAN-SIGACT symposium on Principles of programming languages},
   pages={123--137},
-  year={1994}
+  year={1994},
+  doi={10.1145/174675.176927},
+  note={.
+    This paper brilliantly introduces what will become Modules and Functors for SML.
+    One problem is that subtyping is not decidable.
+  }
 }
 
-% https://scispace.com/pdf/programming-objects-with-ml-art-an-extension-to-ml-with-3s0xd52vz4.pdf
-% Uses extensible records and a form of existential,
-% plus "projective types" (to palliate lack for *->*),
-% to emulate what Pierce and Turner do with F^\omega_\leq
-% Implements multiple inheritance (or is it really mixin inheritance?), mutation or not.
-% No subtyping.
 @inproceedings{remy1994mlart,
   title={Programming objects with ML-ART an extension to ML with abstract and record types},
-  author={R{\'e}my, Didier},
+  author={Didier Rémy},
   booktitle={International Symposium on Theoretical Aspects of Computer Software},
   pages={321--346},
   year={1994},
-  organization={Springer}
+  organization={Springer},
+  url={https://scispace.com/pdf/programming-objects-with-ml-art-an-extension-to-ml-with-3s0xd52vz4.pdf},
+  doi={10.1145/263699.263707},
+  note={.
+    The author uses extensible records and a form of existential,
+    plus "projective types" (to palliate lack for higher order kind *->*),
+    to emulate what Pierce and Turner do with F^\omega_\leq.
+    He implements flavorless multiple inheritance, with or without mutation.
+    This is solid work as a formal system, but not very usable as an object system,
+    and the limited support for subtyping doesn’t help.
+    The basis for what will be the O in OCaml.
+    (Though I often jest that that O actually stands for how much the authors of OCaml
+    actually care about Objects.)
+  }
 }
 
 % introduces the "Liskov substitution principle"
@@ -1565,7 +1592,6 @@ series = {OOPSLA '94}
 
 %% 1995
 
-% I-SOOP
 % https://pl.cs.jhu.edu/projects/type-constraints/papers/type-inference-for-recursively-constrained-types-and-its-application-to-oop-longer-version.pdf
 @article{isoop1995,
   title={Type inference for recursively constrained types and its application to OOP},
@@ -1575,20 +1601,27 @@ series = {OOPSLA '94}
   pages={132--153},
   year={1995},
   publisher={Elsevier},
-  url={https://pl.cs.jhu.edu/projects/type-constraints/papers/type-inference-for-recursively-constrained-types-and-its-application-to-oop.pdf}
+  url={https://pl.cs.jhu.edu/projects/type-constraints/papers/type-inference-for-recursively-constrained-types-and-its-application-to-oop.pdf},
+  note={.
+    This paper presents I-SOOP, a simple language with polymorphic recursively constrained types,
+    for which they present a type inference algorithm,
+    and that is the Right Thing™ on top of which to type OO.
+  }
 }
 
-% I-LOOP, language with classes, macro-reduced to I-SOOP, with type inference.
-% "Sound polymorphic type inference for objects" 1995
-% Polymorphic recursively constrained types
 % https://dl.acm.org/doi/pdf/10.1145/217838.217858
 @inproceedings{iloop1995,
-  title={Sound polymorphic type inference for objects},
+  title={Sound Polymorphic Type Inference for Objects},
   author={Eifrig, Jonathan and Smith, Scott and Trifonov, Valery},
   booktitle={Proceedings of the tenth annual conference on Object-oriented programming systems, languages, and applications},
   pages={169--184},
   year={1995},
-  doi={10.1145/217838.217858}
+  doi={10.1145/217838.217858},
+  note={.
+    This paper presents I-LOOP, a language with classes, macro-reduced to I-SOOP, with type inference.
+    AFAICT, the authors are the first to use polymorphic recursively constrained types,
+    which is the Right Thing™ to type OO, what more with type inference.
+  }
 }
 
 % AAI0576129 ???
@@ -1608,51 +1641,64 @@ series = {OOPSLA '94}
   }
 }
 
-% Cited by Cook2012, mentioned positively by him in private email
-% https://static.aminer.org/pdf/PDF/000/137/588/objects_and_classes_co_algebraically.pdf
-% In the last paragraph of section 2, Jacobs says that Ai, Bi, Ci are (constant) sets.
-% All the bullshit concentrated in a single word, what more in parentheses,
-% that restricts classes to the non-recursive subset where the NNOOTT applies. Wow.
 % https://x.com/Ngnghm/status/1985873697949761682
-% InProceedings
-@Misc{Jacobs1995ObjectsAC,
+@InProceedings{Jacobs1995ObjectsAC,
   title={Objects and Classes, Co-Algebraically},
   author={Bart Jacobs},
   booktitle={Object Orientation with Parallelism and Persistence},
   pages={83--103},
   year={1995},
-  url={https://api.semanticscholar.org/CorpusID:15457129}
+  doi={10.5555/261075.261479},
+  url={https://static.aminer.org/pdf/PDF/000/137/588/objects_and_classes_co_algebraically.pdf},
+  note={.
+    Cook positively mentioned Jacobs in private email, and cites him in Cook 2012,
+    as justification why OO doesn’t need inheritance.
+    But this paper is actually not OO at all, but relational modeling with Category Theory.
+    In the last paragraph of section 2, Jacobs says that “Ai, Bi, Ci are (constant) sets.”
+    All the negation of actual OO is concentrated in a single word, what more in parentheses,
+    lost in the middle of the article, that restricts classes
+    to the non-recursive subset where the NNOOTT applies. Wow.
+    But that doesn’t require malice, only ignorance. Jacobs cites Goguen,
+    who was also using Category Theory; but Goguen was using it to do rewrite logic
+    and software specification with the trappings of OO.
+    Jacobs does just relational data modeling.
+  }
 }
 
 %% 1996
 
-% ECMA/TC39/96/2
-% No official document published in 1995, only webpages on archive.org
-% "JavaScript Language Specification" "Preliminary Draft" "JavaScript 1.1"
-% Says neither "inheritance" nor "delegation" about its objects, though the introduction says
-% "JavaScript borrows most of its syntax from Java, but also inherits from Awk and Perl, with some
-% indirect influence from Self in its object system."
 @Misc{Eich1996JavaScript,
-  title={JavaScript},
+  title={JavaScript Language Specification},
   author={Brendan Eich},
   year={1996},
-  url={https://archives.ecma-international.org/1996/TC39/96-002.pdf}
+  url={https://archives.ecma-international.org/1996/TC39/96-002.pdf},
+  note={
+    The ECMA/TC39/96/2 is the very first version of the JavaScript Language Specification.
+    There was documentation on webpages in 1995, but no official specification yet.
+    This document mentions neither "inheritance" nor "delegation" about its objects.
+    Notably, the introduction says
+    "JavaScript borrows most of its syntax from Java, but also inherits from Awk and Perl, with some
+    indirect influence from Self in its object system."
+  }
 }
 
-% Same bullshit as in 1995. At least constant
 % https://sci-hub.ru/https://link.springer.com/chapter/10.1007/BFb0053063
-% Second paragraph of section 2:
-% "where A and B are constant sets, not depending on the “unknown” type X (of self)"
-% InProceedings
-@Misc{Jacobs1996InheritanceAC,
+@InProceedings{Jacobs1996InheritanceAC,
   title={Inheritance and Cofree Constructions},
   author={Bart Jacobs},
   booktitle={European Conference on Object-Oriented Programming},
   year={1996},
-  url={https://api.semanticscholar.org/CorpusID:1143267}
+  doi={10.1007/BFb0053063},
+  note={.
+    Jacbos claims to formalize inheritance, but actually goes full NNOOTT.
+    At least, he understands what he is doing,
+    for in the second paragraph of section 2, he explicitly disallows open recursion
+    through the module context:
+    «where A and B are constant sets, not depending on the “unknown” type X (of self)».
+    But he doesn’t understand why that’s a wrong thing to do when you claim you’re doing OO.
+  }
 }
 
-% The C3 superclass linearization algorithm
 @InProceedings{Barrett1996C3,
   author = {Kim Barrett and Bob Cassels and Paul Haahr and David A. Moon and Keith Playford and P. Tucker Withington},
   title = {A Monotonic Superclass Linearization for Dylan},
@@ -1665,10 +1711,17 @@ series = {OOPSLA '94}
   publisher = {Association for Computing Machinery},
   address = {New York, NY, USA},
   doi = {10.1145/236337.236343},
-  %url = {https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.19.3910},
+  url = {https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.19.3910},
+  note={.
+    This paper introduces the C3 superclass linearization algorithm,
+    providing a simple practical solution to the problem first solved by Ducournau 1994:
+    a multiple inheritance Linearization algorithm that satisfies the Monotonicity property
+    as well as the Local Precedence Order (and, without saying it, Shape Determinism).
+    The best way to do Multiple Inheritance.
+  }
 }
 
-@article{inheritance1996,
+@Article{inheritance1996,
   author = {Taivalsaari, Antero},
   title = {On the Notion of Inheritance},
   year = {1996},
@@ -1688,8 +1741,7 @@ series = {OOPSLA '94}
   keywords = {object-oriented programming, language constructs, delegation, inheritance, incremental modification, programming languages}
 }
 
-% PhDThesis
-@book{Fisher1996thesis,
+@PhDThesis{Fisher1996thesis,
   title={Type Systems for object-oriented programming languages},
   author={Fisher, Kathleen Shanahan},
   year={1996},
@@ -1788,6 +1840,34 @@ series = {OOPSLA '94}
     Instead, the important semantic details worth discussing and arguing
     get lost in the details of a tedious construction.
     So nobody learns anything.}
+}
+
+@Book{SICP2,
+  Author={Harold Abelson and Gerald Sussman},
+  Title={Structure and Interpretation of Computer Program},
+  Edition={2nd},
+  Publisher={MIT Press},
+  Year={1996},
+  doi={10.5555/547755},
+  isbn={978-0-262-01153-2},
+  url={https://web.mit.edu/6.001/6.037/sicp.pdf},
+  note={.
+    This a classic book in Computer Science, first published in 1985, inspired generations.
+    It is somewhat outdated in its style, but many of its insights are timeless.
+    Even its footnotes alone are gold.
+  }
+}
+
+@book{Queinnec1996LiSP,
+  title={Lisp in Small Pieces},
+  author={Queinnec, Christian},
+  translator={Callaway, Kathleen},
+  publisher={Cambridge University Press},
+  year={1996},
+  note={.
+    This classic book will demystify the implementation of languages in the Lisp or Scheme family.
+    Great for theory and practice alike.
+  }
 }
 
 %% 1997
@@ -2149,6 +2229,7 @@ series = {PLDI '99}
   title={Mathematics as Metaphor},
   year=2007,
   isbn={978-0-8218-4331-4},
+  doi={10.1093/philmat/nkn013},
   publisher={American Mathematical Society},
   note={.
     This edition includes a nice Foreword by Freeman Dyson.
@@ -2244,7 +2325,7 @@ series = {PLDI '99}
   }
 }
 
-@book{plai,
+@book{PLAI,
   author = {Shriram Khrisnamurthi},
   title = {Programming Languages: Application and Interpretation},
   edition = {1st},
@@ -2295,8 +2376,7 @@ series = {PLDI '99}
   url={https://www.cs.utexas.edu/~wcook/Drafts/2009/essay.pdf}
 }
 
-% Unpublished
-@Misc{MonadsMixins,
+@Unpublished{MonadsMixins,
   title = "The Different Aspects of Monads and Mixins",
   author = "Oliveira, Bruno C. d. S.",
   year = {2009},
@@ -2334,7 +2414,7 @@ series = {PLDI '99}
   url = {http://common-lisp.net/project/asdf/doc/ilc2010draft.pdf}
 }
 
-@Misc{OOP2010,
+@Webpage{OOP2010,
   title={Ralph Johnson, Joe Armstrong on the State of OOP (Interview at QCon)},
   author={Ralph Johnson and Joe Armstrong},
   year={2010},
@@ -2355,25 +2435,38 @@ series = {PLDI '99}
 
 %% 2012
 
-% Incommensurability -- uses bracha1990mixin as its pivot!
-@inproceedings{gabriel2012,
+@InProceedings{Gabriel2012,
   title={The Structure of a Programming Language Revolution},
   author={Richard P. Gabriel},
   booktitle={Proceedings of the ACM international symposium on New ideas, new paradigms, and reflections on programming and software},
   pages={195--214},
   year={2012},
-  url={https://www.dreamsongs.com/Files/Incommensurability.pdf}
+  url={https://www.dreamsongs.com/Files/Incommensurability.pdf},
+  note={.
+    A magnificent paper that discusses how different people think about software
+    (and everything else) in often incommensurable paradigms.
+    In the illustrative example,
+    old timers and Lispers approach programming with a “system” paradigm,
+    whereas the academic and industrial mainstream since sometime in the 1980s
+    has a very different “language” paradigm.
+    Interestingly, the paper it rightfully excoriates
+    for its authors’ paradigmatic misunderstanding of OO due to their language paradigm,
+    is also one of the best papers on the semantics of OO, the Bracha & Cook 1990.
+    I suspect it was Cook who wrote the more paradigmatically foreign parts of the paper,
+    for I personally know Bracha to very much follow the system paradigm
+    (see his beautiful work on Newspeak).
+    He still wrongly believes mixin inheritance to be more modular than multiple inheritance, though.
+  }
 }
 
-@misc{oconnor2012lenses,
-  author    = {Russell O’Connor},
-  title     = {Polymorphic Update with van Laarhoven Lenses},
-  year      = {2012},
-  month     = {June},
-  day       = {23},
-  url       = {http://r6.ca/blog/20120623T104901Z.html},
-  urldate   = {2025-12-01},
-  howpublished = {Blog post}
+@webpage{oconnor2012lenses,
+  author={Russell O’Connor},
+  title={Polymorphic Update with van Laarhoven Lenses},
+  year={2012},
+  month={June},
+  day={23},
+  url={http://r6.ca/blog/20120623T104901Z.html},
+  lastchecked={2025-12-01}
 }
 
 @InProceedings{LIL2012,
@@ -2386,7 +2479,7 @@ series = {PLDI '99}
 
 % My replies: https://twitter.com/Ngnghm/status/1791988260266234028
 % XXXX UPDATE ENTRY
-@Misc{Cook2012,
+@Webpage{Cook2012,
   author = {William Cook},
   title = {A Proposal for Simplified, Modern Definitions of "Object" and "Object Oriented"},
   url = {https://wcook.blogspot.com/2012/07/proposal-for-simplified-modern.html},
@@ -2415,16 +2508,18 @@ series = {PLDI '99}
   volume={301},
   pages={3--19},
   year={2014},
-  publisher={Elsevier}
+  publisher={Elsevier},
+  note={
+    The author falls deep into the NNOOTT without realizing it.
+  }
 }
 
-% @online leads to scribble complaining about undefined tag(?)
-@Webpage{jsonnet,
+@webpage{jsonnet,
   author = {Dave Cunningham},
   title = {Jsonnet},
   year = 2014,
   url = {https://jsonnet.org},
-  urldate = {2021-03-11},
+  lastchecked = {2021-03-11},
   note={.
     Dave took GCL, reduced it to its core concepts,
     rightfully replaced dynamic scoping by lexical scoping,
@@ -2438,17 +2533,22 @@ series = {PLDI '99}
   }
 }
 
-% Random memory access is in sqrt(N) where N is the size of the working set
-% @online
-@misc{MythOfRAM2014,
+@webpage{MythOfRAM2014,
   author    = {Emil Ernerfeldt},
   title     = {The Myth of RAM},
   year      = {2014},
   month     = {April},
   day       = {21},
   url       = {https://www.ilikebigbits.com/2014_04_21_myth_of_ram_1.html},
-  urldate   = {2025-12-01},
-  howpublished = {Blog post}
+  lastchecked = {2025-12-01},
+  note={.
+    These blog posts explain why physics constraints random memory access
+    to be actually in O(√N) rather than O(1), where N is the size of the working set.
+    The "memory hierarchy" of caches, RAM, disk, remote storage, etc.,
+    makes for discrete jumps in latency as you exceed local capacity.
+    The ultimate physical limit is ultimately a square root rather than cubic root
+    to avoid collapsing into a blackhole.
+  }
 }
 
 % InProceedings
@@ -2536,20 +2636,29 @@ series = {PLDI '99}
 }
 
 
-% https://sci-hub.ru/https://link.springer.com/chapter/10.1007/978-3-319-30936-1_4
-% Has two elaborate examples of how inheritance can help better define software.
 % https://x.com/Ngnghm/status/1988891187340615763
-% It saddens me when three authors I love and respect wallow in disenlightening handwaving instead of seeking and bringing clarity.
-% It's not that the paper says anything outright false, but that it accepts complexity, ineffable semantics, and abandons the ambition of clear knowledge—all that in a vain attempt to thereby convince Wadler that inheritance is useful, by example.
-% Also, I find the examples long-winded. Maybe the one that takes on a Wadler paper is relevant to Wadler—but I would think the example was artificial even to him. And the Armstrong example is also way too much investment to the payoff.
-% Finally, the mistreatment of multiple inheritance, what more citing Cook 1990 and Snyder 1986 about "conflicts" when Cannon 1979 showed there needed not be conflicts (solution ignored by C++ but adopted by Lisp, Ruby, Python, Scala)... it feels like OO academia missed the train.
 @incollection{EssenceOfInheritance2016,
   title={The Essence of Inheritance},
   author={Black, Andrew P and Bruce, Kim B and Noble, James},
   booktitle={A List of Successes That Can Change the World: Essays Dedicated to Philip Wadler on the Occasion of His 60th Birthday},
   pages={73--94},
   year={2016},
-  publisher={Springer}
+  publisher={Springer},
+  doi={10.48550/arXiv.1601.02059},
+  url={https://sci-hub.ru/https://link.springer.com/chapter/10.1007/978-3-319-30936-1_4},
+  note={.
+    The paper vainly tries to convince Philip Wadler
+    of how inheritance can help better define software,
+    by using two lengthily elaborated examples, respectively based on
+    the "expression problem" and extending Erlang code.
+    I appreciate the authors and their attempt, but I find the paper too handwavy,
+    too accepting of complexity, ineffable semantics.
+    The paper lacks an ambition of clear knowledge.
+    The authors also have the usual conflict mistreatment of multiple inheritance.
+    I love and respect all the authors, and Wadler, but, maybe due to the Paradigm discrepancy
+    noticed by Gabriel, they all seem unable understand some key issues about OO—even
+    though they are specialists in the field!
+  }
 }
 
 % https://github.com/namin/dot
@@ -2563,11 +2672,10 @@ series = {PLDI '99}
 }
 
 % https://sci-hub.ru/https://link.springer.com/article/10.1007/BF01178920
-% InProceedings
 % Review of object inheritance for prototypes.
 % Discusses multiple inheritance, but fails to cite Ani, ThingLab, T, Slate, Sheeple.
 % Only passingly discusses super linearization or mixin inheritance. Sad.
-@Misc{oiwc2016,
+@InProceedings{oiwc2016,
   author =	{Jones, Timothy and Homer, Michael and Noble, James and Bruce, Kim},
   title =	{{Object Inheritance Without Classes}},
   booktitle =	{30th European Conference on Object-Oriented Programming (ECOOP 2016)},
@@ -2628,14 +2736,14 @@ series = {PLDI '99}
 
 @InProceedings{Rideau2018Climbing,
   author={François-René Rideau},
-  title={{C}limbing {U}p the {S}emantic {T}ower --- at {R}untime},
+  title={Climbing Up the Semantic Tower --- at Runtime},
   booktitle={Off the Beaten Track Workshop at POPL},
   month={January},
   year={2018},
   url={https://github.com/fare/climbing}
 }
 
-@phdthesis{FarePhD,
+@Unpublished{FarePhD,
   Author={François-René Rideau},
   Title={Reconciling Semantics and Reflection},
   School={Telecom Paristech},
@@ -2656,12 +2764,12 @@ series = {PLDI '99}
   year = 2020
 }
 
-@Misc{GerbilPOO,
+@webpage{GerbilPOO,
   author = {François-René Rideau},
   title = {Gerbil-POO},
   year = 2020,
   url = {https://github.com/fare/gerbil-poo},
-  urldate = {2021-04-06}
+  lastchecked = {2021-04-06}
 }
 
 @Misc{Kay2020,
