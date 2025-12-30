@@ -216,4 +216,3 @@ Note that it's not a matter of bad people, but of bad incentives: universities d
 Of course, the industry has its own host of bad incentives. They notably explain a consistent neglect of FP and formal methods, except in a few companies that recruit at the high end. And then don't get me started about Applications and "IP". But that's for another thread.
 
 CRDT: I'm using the modern name—just a fancy way of saying that whichever way you encode your "wrapper" results must intrinsically avoid duplicating effects… which comes for free if you linearize your ancestors and apply a plain old wrapper (or one from your method combination).
-

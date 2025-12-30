@@ -1,6 +1,9 @@
 %%% Bibliography, roughly sorted by year of publication
 % (See TODO at the end for more)
 
+@preamble{
+}
+
 %% 1843
 
 % Scientific Memoirs, Selected from the Transactions of Foreign Academies of Science and Learned Societies, and from Foreign Journals, R. and J. E. Taylor , Vol III, 1843
@@ -26,15 +29,15 @@
     because a woman, especially a noble one, shall not write on such lowly topics.
     But my, her understanding of “operations”, the general notion of pure computation,
     is better than most computer scientists of today.
-    “First the symbols of *operation* are frequently *also* the symbols of the *results* of operations.
-    We say that symbols are apt to have both a *retrospective* and a *prospective* signification. […]”
+    “First the symbols of _operation_ are frequently _also_ the symbols of the _results_ of operations.
+    We say that symbols are apt to have both a _retrospective_ and a _prospective_ signification. […]”
     She groks both that there is a conflation of multiple meanings, and that it is good,
     yet can lead to confusion if not made explicit:
     past vs present or future, passive vs active, values vs continuations.
     She also anticipates symbolic computing:
     “symbolical” vs “numerical” “results” or “data” (outputs or inputs);
     and the equivalence of code and data:
-    “the symbols of *numerical magnitude*, are frequently *also* the symbols of *operations*”.
+    “the symbols of _numerical magnitude_, are frequently _also_ the symbols of _operations_”.
     She understands that programmability (though she uses other words)
     is what the Analytical engine vastly superior to the finite-configuration Difference Engine,
     making it “the executive right hand of abstract algebra”.
@@ -58,6 +61,20 @@
         famously has four musketeers as protagonists.
         Admittedly, the main protagonist isn’t one yet
         when he meets (and duels!) the other three.}
+}
+
+%% 1947
+@book{levi1947,
+  author = {Primo Levi},
+  title = {Se questo è un uomo},
+  publisher = {De Silva},
+  year = {1947},
+  note={
+    This book impressed me when I read it as a young man (in a French translation),
+    and the words “Hier ist kein ‘Warum’!” (Here there is no ‘Why’!) still haunt me.
+    A translation to English by Stuart Woolf was published as “If this is a man”,
+    or in other editions “Survival in Auschwitz”.
+  }
 }
 
 %% 1961
@@ -482,21 +499,25 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 1979
 
-% ACT1.
-% Discusses Delegation (for "actors", prototypes) and Inheritance
-% (for "sharing of descriptions common to many actors", classes).
-% "increasing the modularity of the system"
-% a Buck_pass [message: m] [inside: inside_client] [outside: client]
-% where inside_client has internal access rights
-% cites Simula, Smalltalk and Director (Kahn) "developed jointly with Kahn"
-% AI_WP_180
-@Misc{Hewitt1979Security,
+@TechReport{Hewitt1979Security,
   title={Security and Modularity in Message Passing},
   author={Hewitt, Carl and Attardi, Giuseppe and Lieberman, Henry},
   year={1979},
   month=February,
-  publisher={MIT Artificial Intelligence Laboratory},
-  url={https://dspace.mit.edu/handle/1721.1/41147}
+  institution={MIT Artificial Intelligence Laboratory},
+  number={AI-WP-180},
+  url={https://dspace.mit.edu/handle/1721.1/41147},
+  note={.
+    16 years before Rees 1995, the authors use scoping as a security mechanism
+    in their Actor system ACT1.
+    They also implement both Prototype OO (“delegation”) and Class OO (“inheritance”).
+    Prototypes “increas[e] the modularity of the system”;
+    classes allow “sharing of descriptions common to many actors”.
+    Actors have both When an actor delegates message handling to another,
+    messages it does not handle itself result in a call to the other actor
+    with a method “Buck_pass” that reifies the message and its context.
+    Cites Simula, Smalltalk and Director (Kahn) “developed jointly with Kahn”.
+  }
 }
 
 @PhDThesis{Borning1979,
@@ -552,7 +573,17 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   author={Howard Cannon},
   publisher={Symbolics Inc.},
   year=1979,
-  url={https://www.softwarepreservation.org/projects/LISP/MIT/nnnfla1-20040122.pdf}
+  url={https://www.softwarepreservation.org/projects/LISP/MIT/nnnfla1-20040122.pdf},
+  note={.
+    Cannon’s groundbreaking work unexpectedly solved the problem of multiple inheritance,
+    by harmonously combining the methods in a way that generalizes Teitelman’s ADVISE facility.
+    The paper is full of ideas and genius insights, even though it is obviously unpolished,
+    and written by an inexperienced young man.
+    Cannon’s software and his report were widely circulated at MIT and in the Lisp community,
+    but unhappily the report was never officially published.
+    Only with Moon 1986’s paper on New Flavors would Cannon’s works be known
+    to the wider programming language community.
+  }
 }
 
 %% 1981
@@ -574,7 +605,15 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   journal = {ACM Trans. Program. Lang. Syst.},
   month = oct,
   pages = {353--387},
-  numpages = {35}
+  numpages = {35},
+  note={.
+    ThingLab is an extension to Smalltalk that supports Prototype OO,
+    and integrates it with the Class OO of Smalltalk.
+    On top of that, Borning builds a constraint-based graphic system
+    that generalizes Sketchpad, and can be used to build simulations.
+    ThingLab also implements multiple inheritance, although
+    the flavorless conflict kind (ThingLab predates Flavors).
+  }
 }
 
 %% 1982
@@ -1673,12 +1712,12 @@ series = {OOPSLA '94}
   year={1996},
   url={https://archives.ecma-international.org/1996/TC39/96-002.pdf},
   note={
-    The ECMA/TC39/96/2 is the very first version of the JavaScript Language Specification.
+    The ECMA/TC39/96/2 is the very first Draft version of the JavaScript Language Specification.
     There was documentation on webpages in 1995, but no official specification yet.
-    This document mentions neither "inheritance" nor "delegation" about its objects.
+    This document mentions neither “inheritance” nor “delegation” about its objects.
     Notably, the introduction says
-    "JavaScript borrows most of its syntax from Java, but also inherits from Awk and Perl, with some
-    indirect influence from Self in its object system."
+    “JavaScript borrows most of its syntax from Java, but also inherits from Awk and Perl, with some
+    indirect influence from Self in its object system.”
   }
 }
 
@@ -1722,7 +1761,7 @@ series = {OOPSLA '94}
 }
 
 @Article{inheritance1996,
-  author = {Taivalsaari, Antero},
+  author = {Antero Taivalsaari},
   title = {On the Notion of Inheritance},
   year = {1996},
   issue_date = {Sept. 1996},
@@ -1750,14 +1789,22 @@ series = {OOPSLA '94}
 }
 
 % https://kbb04747.sites.pomona.edu/README.html#Match
-% Good explanation of the problems with the NNOOTT
-% "The notions of type and class are often confounded in object-oriented programming languages" p.5
 @article{Bruce1996Typing,
   title={Typing in Object-Oriented Languages: Achieving Expressiveness and Safety},
   author={Bruce, Kim B},
   journal={Unpublished, June},
   year={1996},
-  url={https://www.academia.edu/2617908/Typing_in_object_oriented_languages_Achieving_expressibility_and_safety}
+  url={https://www.academia.edu/2617908/Typing_in_object_oriented_languages_Achieving_expressibility_and_safety},
+  note={.
+    This paper includes a good explanation of the problems with the NNOOTT.
+    It also is somewhat aware of the issue of conflation:
+    “The notions of type and class are often confounded
+    in object-oriented programming languages” p. 5.
+    But it still chooses an approach with an ad hoc class primitive,
+    in which the open recursion type is accessible via the special type variable MyType,
+    and subtyping before the fixpoint is called “matching”
+    (though this (correct) technique is not explained in those terms).
+  }
 }
 
 % https://www.stroustrup.com/hopl2.pdf
@@ -1781,19 +1828,20 @@ series = {OOPSLA '94}
   year = {1996},
   doi = {10.1007/978-1-4419-8598-9},
   note={.
-    Abadi and Cardelli are well known and respected, and this classic book of theirs
-    was long presented as the gold standard of what it means to formalize OO.
-    A student at the time the book was published, I was dreaming one day I’d be able
-    to understand it and write papers half as good as A&C’s.
-    But the book left me stumped, and I thought the problem was with me.
-    Re-reading it now that I do understand OO, I realize the problem was with it all along.
-    A&C hold false beliefs about OO (see above), then deploy their vast intelligence
+    Abadi and Cardelli (A&C) are well known and well respected authors,
+    and this classic book of theirs was long presented as the gold standard
+    of what it means to formalize OO. A student at the time the book was published,
+    I was dreaming one day I’d be able to understand it
+    and write papers half as good as I was told A&C’s were.
+    But their book (and papers) left me stumped, and so I thought the problem was with me.
+    Re-reading it now that I do understand OO, I realize the problem was with A&C all along.
+    A&C hold false beliefs about OO, then deploy their vast intelligence
     using fancy logical semantics in doomed attempts to find
     models that satisfy their inconsistent beliefs.
     Each time, they can explain why it doesn't quite work—then go find a more sophisticated
     model that of course will also fail—instead of questioning their premises.
     A sad waste of brilliant minds—for both authors and readers who
-    after those lengthy constructions may believe they understand OO.
+    after those lengthy constructions believe they understand OO better rather than worse.
   }
 }
 
@@ -1853,7 +1901,8 @@ series = {OOPSLA '94}
   url={https://web.mit.edu/6.001/6.037/sicp.pdf},
   note={.
     This a classic book in Computer Science, first published in 1985, inspired generations.
-    It is somewhat outdated in its style, but many of its insights are timeless.
+    It is somewhat outdated in its style or its treatment of some topics,
+    but many of its insights are timeless.
     Even its footnotes alone are gold.
   }
 }
@@ -2126,16 +2175,11 @@ series = {PLDI '99}
   year={2003},
   school={University of Washington},
   doi={10.5555/997550},
-  url={https://web.cs.ucla.edu/~todd/research/dissertation.pdf}
+  url={https://web.cs.ucla.edu/~todd/research/dissertation.pdf},
 }
 
-% Section 3.8 Dynamic Code Change describes support for hot code upgrade;
-% Only 2 versions of the code allowed; at the 3rd, processes using the 1st are killed.
-% I *suppose* that means there are again only 2 versions,
-% and only 1 after all processes are fully updated.
-% module-qualified name = dynamic, unqualified = static. Tail-call recommended but not mandated.
 % https://erlang.org/download/armstrong_thesis_2003.pdf
-@phdthesis{DBLP:phd/basesearch/Armstrong03,
+@phdthesis{Armstrong2003,
   author       = {Joe Armstrong},
   title        = {Making reliable distributed systems in the presence of software errors},
   school       = {Royal Institute of Technology, Stockholm, Sweden},
@@ -2144,7 +2188,20 @@ series = {PLDI '99}
   urn          = {urn:nbn:se:kth:diva-3658},
   timestamp    = {Mon, 21 Nov 2022 17:42:05 +0100},
   biburl       = {https://dblp.org/rec/phd/basesearch/Armstrong03.bib},
-  bibsource    = {dblp computer science bibliography, https://dblp.org}
+  bibsource    = {dblp computer science bibliography, https://dblp.org},
+  note={.
+    Joe gives an overview of Erlang, the great Concurrency-Oriented Programming Language
+    of which he was one of the main authors. Actors taken seriously into production.
+    Section 3.8 “Dynamic Code Change” describes support for hot code upgrade.
+    Only 2 versions of the code allowed; at the 3rd, processes using the 1st are killed.
+    I _suppose_ that means there are again only 2 versions left, and
+    only 1 after all processes are fully updated.
+    That’s good enough great in Erlang because failure is always a valid fallback,
+    but may might not be enough in less resilient systems.
+    The semantics of upgrade is well-defined:
+    calls to module-qualified name are dynamic, to unqualified name are static.
+    Tail-calls are recommended but not mandated.
+  }
 }
 
 %% 2005
@@ -2405,7 +2462,6 @@ series = {PLDI '99}
   year = {2010}
 }
 
-% Why won't InProceedings work in eoo* ?
 @InProceedings{ASDF2,
   author = {François-René Rideau and Robert Goldman},
   title = {Evolving ASDF: More Cooperation, Less Coordination},
@@ -2429,8 +2485,20 @@ series = {PLDI '99}
   author={Allen, Eric and Hilburn, Justin and Kilpatrick, Scott and Luchangco, Victor and Ryu, Sukyoung and Chase, David and Steele, Guy},
   booktitle={OOPSLA},
   pages={973--992},
+  doi={10.1145/2048066.2048140},
   year={2011},
-  url={https://people.mpi-sws.org/~skilpat/papers/multipoly.pdf}
+  url={https://people.mpi-sws.org/~skilpat/papers/multipoly.pdf},
+  note={.
+    A great paper that shows how to properly type multiple dispatch and multiple inheritance together,
+    with a very interesting concept of runtime kin vs compile-time types.
+    And yet, at some point the paper becomes too formal and I admit I don’t follow it anymore
+    to tell what is missing or what is there that I’m missing.
+    One day when I get serious about typesystems,
+    I shall surely re-read this paper and try to fully understand it.
+    In the meantime, I have complete trust in Guy Steele, and will therefore assume that
+    the paper correctly achieves what it says it did, and provides a constructive proof
+    that indeed the problem of typing multimethods is solved.
+  }
 }
 
 %% 2012
@@ -2466,12 +2534,15 @@ series = {PLDI '99}
   month={June},
   day={23},
   url={http://r6.ca/blog/20120623T104901Z.html},
-  lastchecked={2025-12-01}
+  lastchecked={2025-12-01},
+  note={
+    Classic essay on functional lenses.
+  }
 }
 
 @InProceedings{LIL2012,
   author = {François-René Rideau},
-  title = {{LIL}: {CLOS} ~ Reaches Higher-Order, Sheds Identity and has a Transformative Experience},
+  title = {{LIL}: {CLOS} Reaches Higher-Order, Sheds Identity and has a Transformative Experience},
   url = "http://github.com/fare/lil-ilc2012/",
   booktitle = {International Lisp Conference},
   year = 2012
@@ -2480,10 +2551,41 @@ series = {PLDI '99}
 % My replies: https://twitter.com/Ngnghm/status/1791988260266234028
 % XXXX UPDATE ENTRY
 @Webpage{Cook2012,
-  author = {William Cook},
-  title = {A Proposal for Simplified, Modern Definitions of "Object" and "Object Oriented"},
-  url = {https://wcook.blogspot.com/2012/07/proposal-for-simplified-modern.html},
-  year = 2012
+  author={William Cook},
+  title={A Proposal for Simplified, Modern Definitions of "Object" and "Object Oriented"},
+  url={https://wcook.blogspot.com/2012/07/proposal-for-simplified-modern.html},
+  year=2012,
+  note={.
+    Cook delivers lots of precise insight in OO, that show a deep familiarity with the subject
+    that few ever possessed, and can much enlighten his readers.
+    Then, at crucial times, in the most sophisticated way, he totally misses the point.
+    For instance, he claims that “dynamic dispatch of operations is
+    the essential characteristic of objects”. But no, all that means is that the object is
+    _first-class_, which was the topic of his previous section, yet he failed to notice.
+    And being first-class is not specific to OO.
+    Maybe Cook’s note on “dynamic dispatch” tells us something important
+    about most Class OO languages:
+    that despite inheritance happening on second-class entities (classes),
+    dispatch still happens on first-class entities (objects).
+    Yet Haskell typeclasses show that need not be always the case
+    (though in Haskell you can explicitly use Data.Typeable class constraint
+    to enable runtime dispatch).
+    Now, when Cook claims that inheritance is “useful but not absolutely essential" for OO:
+    that's where he loses track of the plot.
+    As for 2012 JavaScript (before classes), it _was_ OO already, because it had inheritance.
+    What makes OO is inheritance, not existentially-quantified types.
+    Cook claims that “inheritance can also be used for… extending ML-style modules”.
+    Did he even try??? I did, it doesn’t type.
+    “Delegation is the dynamic analog of inheritance, which is usually defined statically.”
+    So close to the truth: “delegation”, i.e. inheritance among first-class entities
+    (see our section on delegation), is the one and only inheritance that matters,
+    it’s just that most people somehow only use it at the type-level
+    for ultra restricted metaprogramming.
+    The paragraph on "classes" is so right it what little it says, and
+    so wrong for being so short—there's an entire topic deserving to be deepened there!
+    It's a shame that Cook never took Prototypes seriously except as a short counter-example.
+    Telling: he never even says the word!
+  }
 }
 
 %% 2013
@@ -2493,7 +2595,11 @@ series = {PLDI '99}
   title={Inheritance \emph{is} Subtyping},
   author={Cartwright, Robert and Moez, A AbdelGawad},
   booktitle={The 25th Nordic Workshop on Programming Theory (NWPT)},
-  year={2013}
+  year={2013},
+  note={.
+    Lots of handwaving for what is in the but the NNOOTT combined with
+    a lack of appreciation for the many previous works that went beyond it.
+  }
 }
 
 %% 2014
@@ -2511,6 +2617,12 @@ series = {PLDI '99}
   publisher={Elsevier},
   note={
     The author falls deep into the NNOOTT without realizing it.
+    It is more sad than funny to see a young researcher “discover” sixty years later
+    as if they were new the naive ideas that our forefathers had when they first
+    stumbled upon OO, and dismiss without truly understanding it
+    the research that he is citing.
+    He is first responsible for his own failing, but
+    his publications also reflect poorly on his advisors.
   }
 }
 
@@ -2521,10 +2633,11 @@ series = {PLDI '99}
   url = {https://jsonnet.org},
   lastchecked = {2021-03-11},
   note={.
-    Dave took GCL, reduced it to its core concepts,
+    Dave took the Google Configuration Language (GCL),
+    reduced it to its core concepts,
     rightfully replaced dynamic scoping by lexical scoping,
     and used a syntax in between JavaScript and Python,
-    for a beautiful pure functional lazy dynamic language
+    resulting in a beautiful pure functional lazy dynamic language
     with builtin first-class Prototype OO.
     Semantically equivalent to Nix, with a nicer syntax,
     but little tooling and a small ecosystem
@@ -2544,7 +2657,7 @@ series = {PLDI '99}
   note={.
     These blog posts explain why physics constraints random memory access
     to be actually in O(√N) rather than O(1), where N is the size of the working set.
-    The "memory hierarchy" of caches, RAM, disk, remote storage, etc.,
+    The “memory hierarchy” of caches, RAM, disk, remote storage, etc.,
     makes for discrete jumps in latency as you exceed local capacity.
     The ultimate physical limit is ultimately a square root rather than cubic root
     to avoid collapsing into a blackhole.
@@ -2562,20 +2675,23 @@ series = {PLDI '99}
 
 %% 2015
 
-@Book{EcmaScript:15,
+@Book{EcmaScript2015,
   added-at = {2015-08-28T15:36:26.000+0200},
   address = {Geneva},
   author = {{Ecma International}},
   biburl = {https://www.bibsonomy.org/bibtex/28d67e2ebf933f3b6f684fcfb1f53b020/gron},
   edition = {6th},
-  interhash = {8212a5bb4b7ac3137534f10d599cb526},
-  intrahash = {8d67e2ebf933f3b6f684fcfb1f53b020},
   keywords = {JavaScript spec specification},
   month = {June},
-  timestamp = {2015-08-28T15:37:30.000+0200},
   title = {{ECMAScript 2015 Language Specification}},
   url = {http://www.ecma-international.org/ecma-262/6.0/ECMA-262.pdf},
-  year = 2015
+  year = 2015,
+  note={.
+    ECMAScript is the official name of the standard everyone more or less follows for JavaScript.
+    This 2015 version introduces ECMAScript 6, that includes
+    many improvements over previous versions, including a builtin notion of classes,
+    when the only form of OO previously was prototypes.
+  }
 }
 
 @Misc{nix2015,
