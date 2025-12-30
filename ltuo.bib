@@ -10,9 +10,9 @@
 % https://x.com/Ngnghm/status/1940199868037046726
 % From https://www.netlib.org/bibnet/authors/l/lovelace-ada-augusta.html
 @InCollection{Lovelace1843,
-  author={{Augusta Ada Lovelace}},
+  author={Augusta Ada Lovelace},
   booktitle={Richard Taylor's Scientific Memoirs},
-  title={Notes [on translation of {Luigi Federico Menebrae}'s paper on {Babbage's Analytical Engine}]},
+  title={Notes [on translation of Luigi Federico Menebrae's paper on Babbage's Analytical Engine]},
   pages={666--731},
   month=August,
   year=1843,
@@ -25,25 +25,25 @@
     an article (in French) about the Babbage Analytical Engine,
     by Luigi Menebrae, who would later become Prime Minister of newly-unified Italy;
     and her translator’s notes are fantastic.
-    Only her initials appear (A.A.L, at one point mistyped, A.L.L.),
-    because a woman, especially a noble one, shall not write on such lowly topics.
+    Only her initials appear (A.A.L, at one point mistyped A.L.L.),
+    because a woman, especially a noble one, shall not write, especially not on such lowly topics.
     But my, her understanding of “operations”, the general notion of pure computation,
-    is better than most computer scientists of today.
+    is better than that of most computer scientists of today.
     “First the symbols of _operation_ are frequently _also_ the symbols of the _results_ of operations.
     We say that symbols are apt to have both a _retrospective_ and a _prospective_ signification. […]”
     She groks both that there is a conflation of multiple meanings, and that it is good,
     yet can lead to confusion if not made explicit:
-    past vs present or future, passive vs active, values vs continuations.
+    past vs future, passive vs active, values vs continuations.
     She also anticipates symbolic computing:
     “symbolical” vs “numerical” “results” or “data” (outputs or inputs);
     and the equivalence of code and data:
     “the symbols of _numerical magnitude_, are frequently _also_ the symbols of _operations_”.
-    She understands that programmability (though she uses other words)
-    is what the Analytical engine vastly superior to the finite-configuration Difference Engine,
-    making it “the executive right hand of abstract algebra”.
+    She understands that programmability (she lacks the word)
+    makes the Analytical engine vastly superior to the finite-configuration Difference Engine,
+    indeed makes it “the executive right hand of abstract algebra”.
     She also confronts the problem that a variable may be bound to multiple values during an execution,
-    and proposes an elegant solution, using a superscript to the left of a variable to number
-    each successive binding, turning them into actual variables again.
+    and proposes an elegant solution, using a superscript to the left of a variable
+    to number each successive binding, turning them into actual mathematical variables again.
     Way more advanced than most computer scientists even today.
     Prescient.
   }
@@ -65,15 +65,15 @@
 
 %% 1947
 @book{levi1947,
-  author = {Primo Levi},
-  title = {Se questo è un uomo},
-  publisher = {De Silva},
-  year = {1947},
+  author={Primo Levi},
+  title={Se questo è un uomo},
+  publisher={De Silva},
+  year={1947},
   note={
     This book impressed me when I read it as a young man (in a French translation),
     and the words “Hier ist kein ‘Warum’!” (Here there is no ‘Why’!) still haunt me.
-    A translation to English by Stuart Woolf was published as “If this is a man”,
-    or in other editions “Survival in Auschwitz”.
+    A 1959 translation to English by Stuart Woolf was published as “If this is a man”,
+    or in later editions “Survival in Auschwitz”.
   }
 }
 
@@ -175,7 +175,14 @@
   title={PILOT: a step toward man-computer symbiosis},
   year={1966},
   school={MIT},
-  url={https://dspace.mit.edu/bitstream/handle/1721.1/6905/AITR-221.pdf}
+  url={https://dspace.mit.edu/bitstream/handle/1721.1/6905/AITR-221.pdf},
+  note={.
+    This thesis is very rich in ideas, but the one that matters most for OO
+    is Teitelman’s introduction of ADVISE, a facility a function with new behavior:
+    advices to be run before or after the function, or somehow wrapping it,
+    that you add or remove dynamically.
+    This would later inspire Cannon 1979’s method combinations.
+  }
 }
 
 % Simula I back in 1966 has processes and more, but DOES NOT have OO
@@ -490,7 +497,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url = {https://doi.org/10.1145/512760.512762},
   doi = {10.1145/512760.512762},
   abstract = {This paper describes a programming system based on the metaphor of communicating objects. Experience with a running system shows that this model provides flexibility, modularity and compactness. A compiled representation for the language is presented, along with an interpreter suitable for microcoding. The object-oriented model provides naturally efficient addressing; a corresponding virtual memory is described which offers dense utilization of resident space.},
-  booktitle = {Proceedings of the 5th ACM SIGACT-SIGPLAN Symposium on Principles of Programming Languages},
+  booktitle = {the 5th ACM SIGACT-SIGPLAN Symposium on Principles of Programming Languages},
   pages = {9–16},
   numpages = {8},
   location = {Tucson, Arizona},
@@ -2378,7 +2385,7 @@ series = {PLDI '99}
     EOPL is a great classic about Programming Languages.
     However, its chapter on OO only has classes with single inheritance.
     EOPL barely touches multiple inheritance, “powerful, but … problematic”, in exercise 9.26,
-    and prototypes in exercise 9.27-9.29. Disappointing.
+    and prototypes in exercise 9.27-9.29. Disappointing on the OO front.
   }
 }
 
@@ -2410,27 +2417,39 @@ series = {PLDI '99}
   year = {2009},
 }
 
-% William R. Cook: On Understanding Data Abstraction, Revisited
-% Good presentation of ADTs
-% 3.1 notes the "OO" (re)presentation eschews the existential type, hiding it under HOF i/f,
-% but that's false in general---the existential type is there for compatibility between values you can build and modify.
-% 3.2 claims with ref to his thesis that inheritance is orthogonal to OO (!)
-% misses that what makes method invocation "dynamic binding" isn't the HOF records,
-% but the open recursion on self and the sharing of methods between multiple selves
-% thanks to inheritance.
-% Also identifies classes as their constructor...
-% 3.3 "Autognosis" is the criterion what Bracha calls "Pure OO", i.e. all accesses through interface
-% Wholly skips CLOS, unlike his 1990 paper.
-% Wholly skips Prototypes.
-% In the end, does not bring much lights to the topic, beyond the obvious.
-% Claims that objects are about modularity of "classes" used only through "interfaces", not inheritance
-% Onward! Essay in Proceedings of the 24th ACM SIGPLAN conference on Object oriented programming systems languages and applications (OOPSLA). pp. 557-572 (2009).
-@Misc{Cook2009,
+@InProceedings{Cook2009,
   author={William Cook},
   title={On Understanding Data Abstraction, Revisited},
   year=2009,
   doi={10.1145/1640089.1640133},
-  url={https://www.cs.utexas.edu/~wcook/Drafts/2009/essay.pdf}
+  url={https://www.cs.utexas.edu/~wcook/Drafts/2009/essay.pdf},
+  year = {2009},
+  isbn = {9781605587660},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  booktitle = {Proceedings of the 24th ACM SIGPLAN Conference on Object Oriented Programming Systems Languages and Applications},
+  pages = {557–572},
+  numpages = {16},
+  keywords = {ADT, abstract data type, class, object},
+  location = {Orlando, Florida, USA},
+  series = {OOPSLA '09},
+  note={.
+    Cook in 3.1 notes the OO (re)presentation eschews the existential type,
+    hiding it under a higher-order function interface,
+    but that's false in general—the existential type is there for compatibility
+    between values you can build and modify.
+    3.2 claims with reference to his thesis that inheritance is orthogonal to OO (!)
+    but misses that what makes method invocation “dynamic binding”
+    isn’t the records of higher-order functions, but the open recursion on self
+    and the sharing of methods between multiple selves thanks to inheritance.
+    He also identifies classes as their constructor… a nice implementation trick
+    in simple OO languages that does not cover the general case of OO.
+    3.3 Cook wrongfully calls “autognosis” (a word that implies runtime reflection)
+    the criterion what Bracha calls “Pure OO”, i.e. having all access go through interfaces.
+    Cook wholly skips CLOS, and Prototypes. Sad.
+    In the end, does not bring much lights to the topic, beyond the obvious.
+    Cook understands modularity, not at all extensibility.
+  }
 }
 
 @Unpublished{MonadsMixins,
@@ -2542,7 +2561,7 @@ series = {PLDI '99}
 
 @InProceedings{LIL2012,
   author = {François-René Rideau},
-  title = {{LIL}: {CLOS} Reaches Higher-Order, Sheds Identity and has a Transformative Experience},
+  title = {LIL: CLOS Reaches Higher-Order, Sheds Identity and has a Transformative Experience},
   url = "http://github.com/fare/lil-ilc2012/",
   booktitle = {International Lisp Conference},
   year = 2012
@@ -2592,13 +2611,15 @@ series = {PLDI '99}
 
 % extended abstract with idiotic proof-by-citation of abdelgawad2014domain
 @InProceedings{Cartwright2013Inheritance,
-  title={Inheritance \emph{is} Subtyping},
+  title={Inheritance IS Subtyping},
   author={Cartwright, Robert and Moez, A AbdelGawad},
   booktitle={The 25th Nordic Workshop on Programming Theory (NWPT)},
   year={2013},
+  url={https://cs.rice.edu/~javaplt/papers/Inheritance.pdf},
   note={.
     Lots of handwaving for what is in the but the NNOOTT combined with
-    a lack of appreciation for the many previous works that went beyond it.
+    a lack of appreciation for the many previous works that went beyond it,
+    some of which is cited. Refers to AbdelGawad 2014 for actual content.
   }
 }
 
@@ -2614,6 +2635,7 @@ series = {PLDI '99}
   volume={301},
   pages={3--19},
   year={2014},
+  doi={10.1016/j.entcs.2014.01.002},
   publisher={Elsevier},
   note={
     The author falls deep into the NNOOTT without realizing it.
@@ -2627,11 +2649,11 @@ series = {PLDI '99}
 }
 
 @webpage{jsonnet,
-  author = {Dave Cunningham},
-  title = {Jsonnet},
-  year = 2014,
-  url = {https://jsonnet.org},
-  lastchecked = {2021-03-11},
+  author={Dave Cunningham},
+  title={Jsonnet},
+  year=2014,
+  url={https://jsonnet.org},
+  lastchecked={2021-03-11},
   note={.
     Dave took the Google Configuration Language (GCL),
     reduced it to its core concepts,
@@ -2667,7 +2689,7 @@ series = {PLDI '99}
 % InProceedings
 @Misc{ASDF3,
   author = {François-René Rideau},
-  title = {{ASDF 3}, or {W}hy {L}isp is {N}ow an {A}cceptable {S}cripting {L}anguage},
+  title = {ASDF 3, or Why Lisp is Now an Acceptable Scripting Language},
   url = "https://github.com/fare/asdf3-2013",
   booktitle = {European Lisp Symposium},
   year = 2014

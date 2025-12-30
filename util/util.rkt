@@ -5,7 +5,7 @@
 (require (only-in scribble/base elem linebreak nested italic smaller bold)
          (only-in scribble/core make-paragraph make-style)
          (only-in scriblib/footnote note)
-         (only-in scriblib/render-cond cond-element)
+         (only-in scriblib/render-cond cond-element cond-block)
          (only-in scribble/html-properties css-addition html-defaults)
          (only-in scribble/latex-properties tex-addition make-tex-addition latex-defaults))
 
@@ -17,22 +17,27 @@
 (define-syntax-rule (when/list condition body ...)
   (if condition (begin body ...) '()))
 
-(define-syntax-rule (tex-only content)
+(define-syntax-rule (tex-block content)
+  (cond-block (latex content) (else (nested))))
+(define-syntax-rule (tex-elem content)
   (cond-element (latex content) (else '())))
-(define-syntax-rule (html-only content)
+
+(define-syntax-rule (html-block content)
+  (cond-block (html content) (else (nested))))
+(define-syntax-rule (html-elem content)
   (cond-element (html content) (else '())))
 
 (define (exact-chars . args) (apply elem #:style (make-style #f '(exact-chars)) args))
 (define (pretitle content) (make-paragraph (make-style 'pretitle '()) content))
-(define (tex . args) (tex-only (apply exact-chars args)))
+(define (tex . args) (tex-elem (apply exact-chars args)))
 (define (noindent) (tex "\\noindent"))
 
 ;; TODO: find how to insert raw html
 ;;(define (Html . args) (html-only (apply elem #:style (make-style #f '(exact-chars)) args)))
-(define (hhr) (html-only (elem #:style (make-style #f (list (make-alt-tag "hr"))))))
+(define (hhr) (html-block (elem #:style (make-style #f (list (make-alt-tag "hr"))))))
 
 (define (xnote x . y)
-  (list (apply note (append y (list (html-only (list (linebreak) (linebreak) (linebreak))))))
+  (list (apply note (append y (list (html-elem (list (linebreak) (linebreak) (linebreak))))))
         x))
 
 (define epigraph-style
@@ -41,36 +46,39 @@
    (list (make-tex-addition
           (bytes-append
            #"\n\\usepackage{epigraph}\n"
-           #"\\setlength\\epigraphwidth{.6\\textwidth}\n"))
+           #"\\setlength\\epigraphwidth{.63\\textwidth}\n"))
          (make-css-addition
           (bytes-append
-           #".epigraph { margin: 2em 0; text-align: right; max-width: 60%;"
-           #"  margin-left: auto; font-size: 1.1em; }\n"
-           #".epigraph blockquote { font-style: italic; margin: 0; }\n"
-           #".epigraph .epigraph-attribution { margin-top: 1em; font-style: normal;"
-           #"  font-size: 0.95em; color: #555; }")))))
+           #".epigraph { "
+           #"  width: 70%; max-width: 70%;"
+           #"  font-size: 0.95em; "
+           #"  margin-left: 30%; }\n"
+           #".epigraph-attribution { margin-top: 1em; font-style: normal;"
+           #"  font-size: 0.90em; color: #555; }\n"
+           )))))
 
 (define (epigraph #:author (author #f) . text)
-  (elem
+  (nested
    #:style epigraph-style
-   (tex-only
-    (elem
+   (tex-block
+    (nested
      (exact-chars "\\epigraph{")
      text
      (exact-chars "}{")
      (or author '())
      (exact-chars "}")
      (noindent)))
-   (html-only
-    (elem
-     #:style "epigraph"
-     (italic text)
-     (if author
-       (elem #:style "epigraph-attribution"
-             (apply smaller (list "— " author)))
-       '())))))
+   (html-block
+    (nested
+     (nested
+      #:style "epigraph"
+      text
+      (if author
+        (elem #:style "epigraph-attribution"
+              (apply smaller (list "— " author)))
+        '()))))))
 
 ;; scribble/report subsubsub*section does not work https://github.com/racket/scribble/issues/540
 (define (Paragraph . x)
-  (list (html-only (list (bold x) "  "))
+  (list (html-elem (list (bold x) "  "))
         (list (tex "\\paragraph{") x (tex "}"))))
