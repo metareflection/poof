@@ -1084,4 +1084,83 @@ and @c{d} is a type parameter for the entity being defined.
 type FMExt d r i p = Lens' r d × MExt r i p
 }
 
-DO THE THING INFORMALLY, WITHOUT TYPES, WITH STATE FIRST, THEN FORMALIZE WITH LENSES
+
+Also, I'd make the footnote number a superscript both in the text and at the beginning of the footnote, I suppose by printing then adding some unicode magic constant (- #⁰ #\0)) to each digit's code.
+
+
+------>8------>8------>8------>8------>8------>8------>8------>8------>8------
+
+But in Flavors methods do not have to be combined with the usual @c{mix} function.
+Instead of being viewed as (modular) extensions that you compose,
+they could be (modular) numbers that you add or multiply or get the maximum or minimum of;
+they could be lists that you concatenate, or sets that you merge;
+Any monoidal operation will do: associative, and with a neutral element:
+@Code{
+  
+}
+
+
+
+But, what is more, there could be several kinds of methods cooperating:
+“primary” methods that you combine as above, but also
+additional routines that you execute in one order (or the opposite)
+@c{before} or @c{after} the “primary” methods;
+wrapper routines that run @c{around} those methods so they can setup and tear down
+some environment, grab locks, transform arguments and results.
+CLOS, the polished successor of Flavors and LOOPS,
+
+There is a rich
+and, really, anything the programmer may choose to implement
+
+
+to be  not just to compete
+over which will survive or be delete
+
+
+, itself inspired by Teitelman’s ADVISE facility @~cite{Teitelman1966}:
+
+
+Method Combinations kept evolving in New Flavors @~cite{Moon1986Flavors},
+and were adopted by CommonLOOPS @~cite{Bobrow86CommonLoops}, CLOS @~cite{Bobrow88CLOS},
+and a whole lot of object systems, mainly in languages of the Lisp and Scheme family.
+Sadly, the feature seems not to have been adopted in other ecosystems, except that
+a lot of the “advice” part lives in Aspect Oriented Programming @; TODO cite
+frameworks, for Java and C#, and less popularly, for other languages.
+
+The most basic method combination is the one used by default by methods
+when I have been defining them so far: after the list of available methods
+XXXX
+
+Generic functions for declarations. (New Flavors)
+
+
+
+LOOPS(?), CommonLOOPS, CLOS. Cecil. Dylan. Fortress. Julia.
+
+Generic functions for declarations. (CommonLOOPS?) CLOS.
+
+The visitor pattern, even after you go through all the pain of it,
+doesn't fully capture the expressiveness of multiple dispatch with method combination,
+because it finds only one method, and like Self’s ill-fated sender path inheritance,
+can’t back out of narrowing decision. Breaks “linearity” (conservation of information).
+
+Purity vs Orphan Typeclasses in Haskell.
+
+@emph{Global} fixpoint.
+Other theories of OO, being focused on closed specifications,
+cannot only deal with one class at a time, separate from the rest.
+But that is never, ever, the right level at which to think software.
+In the simple cases where a single class works,
+you don’t need a class, you don’t even need OO at all.
+In the complex cases, putting all the semantics a single class will boggle the mind,
+and trying to put it in multiple classes will cause lots of friction,
+and fail to take advantage of the mutual recursion.
+With open specifications,
+I can literally use functional optics to zoom into the semantics of single method declarations,
+and zoom out to the semantics of entire ecosystems of mutually recursive
+classes and configuration prototypes, with everything in between.
+I decoupled the fixpoints and the extensions, fulfilling the promise of modularity of OO,
+that was systematically ignored or destroyed by the programming language researchers
+focused on coupling them.
+
+

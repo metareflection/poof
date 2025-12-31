@@ -95,10 +95,10 @@ build/ltuo.pdf: ltuo.scrbl ltuo.bib header.tex util/eval-check.rkt util/examples
 build/ltuo.html: ltuo.scrbl ltuo.bib util/eval-check.rkt util/examples-module.rkt util/util.rkt build/resources
 	scribble --dest build --html ltuo.scrbl
 ltuopdf: build/ltuo.pdf
-ltuo: build/ltuo.pdf build/ltuo.html
-	$(PDFVIEWER) $< $P
-ltuo2: build/ltuo.pdf build/ltuo.html
+ltuo: build/ltuo.html build/ltuo.pdf
+	$(PDFVIEWER) build/ltuo.pdf $P
+ltuo2: build/ltuo.html build/ltuo.pdf
 	rsync -av $^ ~fare/files/cs/poof/
 	rsync -av $^ bespin:files/cs/poof/
-	wc ltuo.scrbl eoomi2024.scrbl ltuo.bib
-	$(PDFVIEWER) $< $P
+	wc ltuo.scrbl ltuo.bib eoomi2024.scrbl
+	$(PDFVIEWER) build/ltuo.pdf $P

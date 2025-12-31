@@ -46,7 +46,7 @@
    (list (make-tex-addition
           (bytes-append
            #"\n\\usepackage{epigraph}\n"
-           #"\\setlength\\epigraphwidth{.63\\textwidth}\n"))
+           #"\\setlength\\epigraphwidth{.70\\textwidth}\n"))
          (make-css-addition
           (bytes-append
            #".epigraph { "
@@ -57,7 +57,13 @@
            #"  font-size: 0.90em; color: #555; }\n"
            )))))
 
-(define (epigraph #:author (author #f) . text)
+(define (epigraph-attribution attribution)
+  (if attribution
+    (elem #:style "epigraph-attribution"
+          (smaller (list "— " attribution)))
+    '()))
+
+(define (epigraph #:attribution (attribution #f) #:- (- #f) . text)
   (nested
    #:style epigraph-style
    (tex-block
@@ -65,7 +71,7 @@
      (exact-chars "\\epigraph{")
      text
      (exact-chars "}{")
-     (or author '())
+     (or attribution - '())
      (exact-chars "}")
      (noindent)))
    (html-block
@@ -73,12 +79,37 @@
      (nested
       #:style "epigraph"
       text
-      (if author
-        (elem #:style "epigraph-attribution"
-              (apply smaller (list "— " author)))
-        '()))))))
+      (epigraph-attribution (or attribution -)))))))
 
 ;; scribble/report subsubsub*section does not work https://github.com/racket/scribble/issues/540
 (define (Paragraph . x)
   (list (html-elem (list (bold x) "  "))
-        (list (tex "\\paragraph{") x (tex "}"))))
+        (tex-elem (list (tex "\\paragraph{") x (tex "}")))))
+
+
+(define book-abstract-style
+  (make-style
+   #f
+   (list (make-css-addition
+          (bytes-append
+           #".book-abstract { "
+           #"  margin: 2em auto 2em 2em; max-width: 90%;"
+           #"  font-size: 0.92em; "
+           #"  line-height: 1.2; }\n"
+           )))))
+
+(define (book-abstract . text)
+  (nested
+   #:style book-abstract-style
+   (tex-block
+    (nested
+     (exact-chars
+      (string-append "\n\\begin{center}\\begin{minipage}{0.90\\textwidth}"
+                     "\\small{}")) ;; between \\small and \\normalsize
+     text
+     (exact-chars "\\end{minipage}\\end{center}")))
+   (html-block
+    (nested
+     (nested
+      #:style "book-abstract"
+      text)))))

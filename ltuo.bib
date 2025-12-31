@@ -208,7 +208,9 @@
 %% 1967
 
 % https://www.ub.uio.no/english/subjects/naturalscience-technology/informatics/themes/dns/index.html
-@Misc{Simula1967,
+% Making it a booklet, but maybe it's a techreport?
+% Re-printed as chapter in 2002 "Software Pioneers: Contributions to Software Engineering"
+@Booklet{Simula1967,
   author = {Dahl, Ole-Johan and Nygaard, Kristen},
   title = {Class and subclass declarations},
   year = {1967},
@@ -1334,8 +1336,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url = {http://www.bracha.org/jigsaw.pdf}
 }
 
-@Article{dickey1992scheming,
-  title={Scheming with objects},
+@Article{Dickey1992SWOB,
+  title={Scheming with Objects},
   author={Dickey, Ken},
   url={http://www.cs.cmu.edu/afs/cs/project/ai-repository/ai/lang/scheme/oop/yasos/swob.txt},
   journal={AI Expert},
@@ -1550,12 +1552,14 @@ series = {OOPSLA '94}
   url = {https://www.cs.utexas.edu/~wcook/papers/ic94/ic94.pdf}
 }
 
+% PDF: https://github.com/ansbilalgit/Books/blob/master/Erich%20Gamma,%20Richard%20Helm,%20Ralph%20Johnson,%20John%20M.%20Vlissides-Design%20Patterns_%20Elements%20of%20Reusable%20Object-Oriented%20Software%20%20-Addison-Wesley%20Professional%20(1994).pdf
 @book{GoF1994,
   title={Design patterns: elements of reusable object-oriented software},
   author={Erich Gamma and Richard Helm and Ralph Johnson and John Vlissides},
   year={1994},
   publisher={Addison-Wesley},
-  url={https://github.com/ansbilalgit/Books/blob/master/Erich%20Gamma,%20Richard%20Helm,%20Ralph%20Johnson,%20John%20M.%20Vlissides-Design%20Patterns_%20Elements%20of%20Reusable%20Object-Oriented%20Software%20%20-Addison-Wesley%20Professional%20(1994).pdf},
+  isbn={9780201633610},
+  url={https://hillside.net/elements-of-reusable-object-oriented-software-book},
   note={.
     The classic "Gang of Four" (GoF) book on Design Patterns. Much loved, much hated.
     To quote Rich Hickey, «Patterns mean “I have run out of language.”»
@@ -1914,11 +1918,16 @@ series = {OOPSLA '94}
   }
 }
 
+% https://github.com/appleby/Lisp-In-Small-Pieces?tab=readme-ov-file
+% https://christian.queinnec.org/WWW/LiSP.html
+% Les Langages Lisp 1994
 @book{Queinnec1996LiSP,
   title={Lisp in Small Pieces},
   author={Queinnec, Christian},
   translator={Callaway, Kathleen},
   publisher={Cambridge University Press},
+  url={https://christian.queinnec.org/WWW/LiSP.html},
+  doi={10.1017/CBO9781139172974},
   year={1996},
   note={.
     This classic book will demystify the implementation of languages in the Lisp or Scheme family.
@@ -2335,6 +2344,19 @@ series = {PLDI '99}
 
 %% 2008
 
+@book{OSullivan2008RWH,
+  title={Real World Haskell},
+  author={O'Sullivan, Bryan and Goerzen, John and Stewart, Donald Bruce},
+  year={2008},
+  publisher={O'Reilly Media},
+  doi={10.5555/1523280},
+  url={https://book.realworldhaskell.org/},
+  note={.
+    This book demonstrates how Haskell by 2008 had grown into a practical language
+    usable to write “Real World” applications.
+  }
+}
+
 @article{bracha2008newspeak,
   title={The Newspeak Programming Platform},
   author={Bracha, Gilad and Ahe, Peter and Bykov, Vassili and Kashai, Yaron and Miranda, Eliot},
@@ -2448,7 +2470,7 @@ series = {PLDI '99}
     the criterion what Bracha calls “Pure OO”, i.e. having all access go through interfaces.
     Cook wholly skips CLOS, and Prototypes. Sad.
     In the end, does not bring much lights to the topic, beyond the obvious.
-    Cook understands modularity, not at all extensibility.
+    Cook understands modularity, but not extensibility.
   }
 }
 
@@ -2645,6 +2667,23 @@ series = {PLDI '99}
     the research that he is citing.
     He is first responsible for his own failing, but
     his publications also reflect poorly on his advisors.
+  }
+}
+
+@book{chiusano2014functional,
+  title={Functional Programming in Scala},
+  author={Chiusano, Paul and Bjarnason, Rúnar},
+  year={2014},
+  publisher={Manning Publications},
+  doi={10.5555/2688794},
+  isbn={9781617290657},
+  url={Standard/official URL (publisher page): https://www.manning.com/books/functional-programming-in-scala},
+  note={.
+    The authors, core contributors to the ScalaZ library,
+    show how to write pure functional programs in Scala.
+    ScalaZ uses multiple inheritance to encode mathematical relationships between abstractions
+    (like “every monad is a functor”) in the style of Haskell typeclasses,
+    not to build traditional stateful imperative object-oriented class hierarchies.
   }
 }
 

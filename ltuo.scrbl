@@ -10,28 +10,16 @@
         (list (list 'rel "icon")
               (list 'type "image/svg+xml")
               (list 'href "resources/pic/Half-life_lambda_logo.svg")))]}
+@(define ~~ (tex-elem (list ~ ~)))
 
-@title[
-  (html-elem
-   @elem{
-    Lambda: the Ultimate Object
-      @linebreak[]
-      @smaller{Object-Orientation Elucidated}})
-  (tex-elem
-   @elem{
-      @|~|Lambda: the Ultimate Object
-      @linebreak[] @linebreak[]
-      @smaller{@|~|Object-Orientation Elucidated}})]
+@title{
+  Lambda: the Ultimate Object
+    @linebreak[] @tex-elem{@linebreak[]}
+    @smaller{Object-Orientation Elucidated@|~~|}}
 
-@author[
-@;{ For acmart:
-    #:email (email "fare@mukn.com")
-    #:affiliation (affiliation #:institution @institution{@emph{MUKN, Inc.}}
-                               #:country "USA") }
-]{François-René Rideau}
+@author{François-René Rideau}
 
-@;{
-@noindent[]
+@book-abstract{
 As a software practitioner, you have not only heard of Object-Orientation (OO),
 but seen it or used it, loved it or hated it.
 Yet you may have been frustrated that there never seems to be clear answers as to
@@ -166,7 +154,7 @@ the alternatives used in any programming language so far.
 @subsection{Wherefore this Book}
 @subsubsection{Curiosity about OO, Familiarity with FP}
 @epigraph{It was probably in 1967 when someone asked me what I was doing,
- and I said: “It’s object-oriented programming”. @|#:author "Alan Kay"|
+ and I said: “It’s object-oriented programming”. @|#:- "Alan Kay"|
 }
 Object-Oriented Programming (OOP), or Object-Orientation (OO),
 is a paradigm for programming in terms of “objects”.
@@ -195,9 +183,10 @@ And the Internet is certainly full of wrong and sometimes toxic ideas
 about OO and programming in general.
 
 To answer those questions about OO,
-I will assume passing familiarity with Functional Programming (FP).
-You don’t have to be an expert at FP (though it shouldn’t hurt either);
-you just need basic knowledge about how to read and use “anonymous higher-order” functions
+I will assume from my readers a passing familiarity with Functional Programming (FP).
+You don’t have to be an expert at FP;
+you just need basic knowledge about how to read and write
+“anonymous higher-order” functions
 in your favorite programming language:
 functions that do not need to have a name,
 that can take other functions as arguments,
@@ -207,16 +196,16 @@ These days, in 2026, most mainstream languages have such functions,
 quite unlike 20 years ago.
 It is also possible to emulate such functions in languages that do not have them yet;
 but that is a topic I will not cover, and I will refer you
-to classic books about programming languages @~cite{SICP2 Queinnec1996LiSP EOPL3 Pierce2002TAPL PLAI},
-that treat this question very satisfactorily,
-whereas their treatment of OO, while correct, is quite underwhelming
-(or I wouldn't be writing the present book).
+to classic books about programming languages @~cite{EOPL3 SICP2 Queinnec1996LiSP Pierce2002TAPL PLAI},
+that treat this question very satisfactorily.
+On the other hand, I find their treatment of OO correct but lacking—or else
+I wouldn't be writing the present book.
 
-@subsubsection{Decades too late, but still decades in advance}
+@subsubsection{Decades too late, but still decades ahead}
 @epigraph{Each new generation born is in effect
   an invasion of civilization by little barbarians,
   who must be civilized before it is too late.
-  @|#:author "Thomas Sowell"|
+  @|#:- "Thomas Sowell"|
 }
 Why write a book about OO in 2026?
 It is present year; don’t people know everything they need to know by now,
@@ -231,7 +220,7 @@ Conceived around 1967 with Dahl and Nygaard’s Simula and Alan Kay’s musings,
 OO was actually born in 1976 when the two finally collided,
 together with other influences, and resulted in Smalltalk-76.
 OO took off from there, at first reserved to the happy few
-who could use the most high-end systems from Xerox or from MIT.
+who could use the most high-end systems from Xerox or MIT.
 OO became popular among researchers in the 1980s, and at some point was the Next Big Thing™.
 In the 1990s, OO finally became available to every programmer,
 accompanied by endless industry hype to promote it.
@@ -253,10 +242,13 @@ but long after the battle.
 
 It would be nice to hear a few of my old colleagues tell me:
 “so @emph{that} is what OO was about all along!”
-But I have little hope of convincing many in old generation,
-and even if I did, they will be retiring soon.
-But a new generation of programmers is born every year,
-and it is always time to inspire and educate a new generation,
+But I have little hope of convincing many in old generation
+of the benefits of OO done right
+(yes, I am one of those Lispers bragging about how their 1990 OO system
+is still decades ahead of yours).
+And even if I did, they will be retiring soon.
+However, a new generation of programmers is born every year,
+and it is always time to inspire and educate the generation,
 that they do not fall as low as their predecessors, or lower.
 And even if the AIs take over programming, the AIs too will need be educated.
 
@@ -264,7 +256,7 @@ And even if the AIs take over programming, the AIs too will need be educated.
 @epigraph{If you want to build a ship,
 don’t drum up the men to gather wood, divide the work, and give orders.
 Instead, teach them to yearn for the vast and endless sea.
-@|#:author "Antoine de Saint-Exupéry, creatively misquoted."|
+@|#:- "Antoine de Saint-Exupéry, creatively misquoted."|
 }
 When I mention OO becoming boring then forgotten, or nailing its coffin,
 I may sound pessimistic as to the value of OO and to its future.
@@ -305,7 +297,7 @@ so they will go dig it—because I can’t dig it all by myself.
 
 @subsection{Why this Book}
 @epigraph{If there’s a book you really want to read but it hasn’t been written yet,
-  then you must write it. @|#:author "Toni Morrison"|
+  then you must write it. @|#:- "Toni Morrison"|
 }
 This section is about me, not you, so most of you should skip away to the next section.
 Come back when you care about me, if you ever do.
@@ -313,7 +305,7 @@ Come back when you care about me, if you ever do.
 @subsubsection{Proximate Cause}
 @epigraph{
   The world will never starve for want of wonders, but for want of wonder.
-  @|#:author "Gilbert K. Chesterton"|
+  @|#:- "Gilbert K. Chesterton"|
 }
 After I used the Prototype OO programming language Jsonnet @~cite{jsonnet} in production,
 then discovered that Nix @~cite{nix2015} implemented the very same object model in two lines of code,
@@ -370,7 +362,7 @@ I would have to write a book. This book.
   Manin is a bird.
   I happen to be a frog, but I am happy to introduce this book
   which shows us his bird’s-eye view of mathematics.
-  @|#:author @elem{Freeman Dyson, in his foreword to @citet{Manin2007}}|
+  @|#:- @elem{Freeman Dyson, in his foreword to @citet{Manin2007}}|
 }
 I am not new to ideas that are hard to publish.
 My thesis on Reconciling Reflection and Semantics
@@ -383,12 +375,12 @@ and the earlier parts can seem trivial, and mostly pointless
 unless you understand the applications in the latter parts;
 but the applications in the latter parts seem impossible or don’t even make sense
 unless I introduce the concepts from the first parts.
-Yet I can’t fit enough of those parts together
-in a paper short enough to be publishable.
+Yet I haven’t been able to fit enough of those parts together
+within the size limits of publishable papers.
 No doubt the main culprits in the matter are me, myself and I;
 and only I can fix this failure, when I take the time to do things right.
 
-A related reason why my ideas are hard to publish is that
+Another related reason why my ideas are hard to publish is that
 I like to think about big pictures, or what others call big pictures,
 because I am an aphantasiac—one with no man’s eye except when dreaming.
 Great ideas that explain large scale human behaviors,
@@ -410,17 +402,17 @@ and maintaining two object systems for Gerbil Scheme@~cite{GerbilPOO}.
 OO is a topic both easier and more concrete, in general and for me in particular.
 A topic where I have direct experience, and where I can stand on the shoulders of giants
 who already did most of the work, and wrote papers that solved most of the many hard problems.
-On this mature topic, I am ready and capable, to can explain a complete Theory of OO
+On this mature topic, I am ready and capable, and can explain a complete Theory of OO
 that is also fully implemented and immediately usable.
 
 @subsection{How this Book}
 
-Some advice on how to read this book.
-
 @subsubsection{Stop and Go}
-
-This book is written a narrative
-from the most informal, most generic and most basic information about OO,
+@epigraph{
+“When it comes to giving, some men stop at nothing.” @|#:- "Saul Gorn"|
+}
+I wrote this book so you can stop reading at any point, and resume later if you feel like it.
+The narrative goes from the most informal, most generic and most basic information about OO,
 to the most formal, most specific and most advanced.
 
 If you are enthusiastic OO about going all the way into using and implementing
@@ -429,7 +421,7 @@ and may end up writing your OO system, and writing a sequel to this book.
 (But then again, why not join me to write those systems and books together?)
 But not everyone has to take this book that way.
 
-As less than completely enthusiastic about OO,
+If you are less than completely enthusiastic about OO,
 you may want to only keep reading until you have had enough,
 and the topic becomes too formal.
 You can stay longer, and learn more,
@@ -439,16 +431,20 @@ and no grudges will be held against you if you drop out before the end.
 
 The book is organized so it will hopefully still make sense and bring you value,
 wherever you stop. And if your interest in OO is rekindled, you can resume from where you left.
-You can also skip or shim over the footnotes, the digressions,
+You can also skip or skim over the footnotes, the digressions,
 the sections like this one that digress from the topic of OO itself.
 Especially if you’re in a hurry.
 And you can come back read them later if and when you have more time and interest.
-There is no word index, but these days you can use text search on an electronic copy
+There is no word index, but you can use text search on an electronic copy
 to zoom directly to the section that interests you.
-Or, these days, you may ask an AI to help you navigate the document.
+These days, you may even ask an AI to help you navigate the document.
 
 @subsubsection{Self-Description}
-
+@epigraph{
+  An adjective is autological if it describes itself (e.g., "short" is short).
+  An adjective is heterological if it does not describe itself (e.g., "long" is not long).
+  Now consider the adjective "heterological": Is it heterological?
+}
 This book hopefully includes enough descriptions of what it is going to be,
 that you may make reasonable desicions of which parts to read,
 which parts to skip, which parts to skim, which parts to read attentively,
@@ -462,12 +458,25 @@ That standard is the principle you really hold.”}
 The above principle describes principles;
 in this case, it was written not by me, but by my friend Jesse Forgione.
 
+I readily admit this book does not contain enough examples at this time.
+Examples take space and time to write.
+Hopefully, a future edition will include more examples where that matters.
+But, examples are easy to find online.
+OO code in general is abundant.
+If you want more specifically code that uses Prototype OO and multiple inheritance,
+you may look at my library Gerbil-POO @~cite{GerbilPOO},
+for instance my trie data structures,
+and its further specialization in the gerbil-persist library.
+Finally, AIs these days may be able to let you figure it out.
+And if you find good illustrative examples for ideas you or others struggled with,
+please send them my way!
+
 @subsubsection{Being Objectively Subjective}
 @epigraph{
   Be… suspicious… of all those who employ the term ‘we’ or ‘us’ without your permission.
   This is [a] form of surreptitious conscription… Always ask who this ‘we’ is;
   as often as not it’s an attempt to smuggle tribalism through the customs.
-  @|#:author "Christopher Hitchens"|
+  @|#:- "Christopher Hitchens"|
 }
 You will see me using the first person singular a lot in this book.
 That doesn’t mean I don’t want to include you in my the narrative.
@@ -497,7 +506,7 @@ while rejecting the responsibility upon others.
 
 @subsubsection{Technical Nomenclature}
 @epigraph{When words are unfit, speech is unadapted and actions are unsuccessful.
-@|#:author "Confucius"|
+@|#:- "Confucius"|
 }
 As I restate well-known and less-known lore of Object Orientation,
 I will endeavour to precisely define the terms I use.
@@ -538,15 +547,16 @@ that is itself derivative of what I’ll call a
   his own theory is worthless, and his practice baseless—yet
   claims he knows better than you.
 }
-@principle{Object-Orientation (OO),
-is a programming style characterized by the use of @emph{inheritance}},
+@Paragraph{OO is the paradigm of programming with Inheritance}
+Despite what its name says,
+the actual central concept in Object-Orientation is @emph{inheritance},
 a mechanism for programming by modularly extending
 partial specifications of code.
 OO usually depends on explicit support from the Programming Language (PL) at hand,
 then called an Object-Oriented (Programming) Language (OOPL).
 
-The first statement above should be obvious to all familiar with OO;
-yet remarkably, even such as definition isn’t universally accepted@xnote["."]{
+This characterization of OO should be retrospectively obvious to all familiar with OO.
+Yet remarkably, some programmers explicitly reject it, eminent professors even@xnote["!"]{
   A notable dissident to this characterization is William Cook,
   a respected academic who made many key contributions to understanding the semantics of inheritance
   @~cite{Cook1989 cook1989inheritance cook1989denotational bracha1990mixin Cook1994}
@@ -595,8 +605,8 @@ Such is the main purpose of this book.
 The main contribution of this book will thus be a @emph{Theory of OO}:
 a body of explanations necessary and sufficient to explain
 what we do when we do OO, and we don’t when we don’t.
-A @emph{meaningful} theory, it will be sufficient to clearly state
-the problems to be solved by or for OO, and
+This theory will be @emph{meaningful}:
+it will be sufficient to clearly state the problems to be solved by or for OO, and
 the criteria by which we can judge some solutions as better than others,
 good or bad, acceptable or unacceptable.
 In these explanatory abilities, the negative is as important as the positive:
@@ -605,12 +615,13 @@ to distinguish that which partakes in it, that explains it,
 from that which doesn’t, and would only corrupt it if accepted as part of OO.
 
 @Paragraph{Relevant Theory}
-This theory will be @emph{relevant} as a theory of OO, and not of something else,
-because it will match the lore of OO:
+This Theory of OO is @emph{relevant} to OO, and not of something else,
+because it matches the lore of OO:
 it will restate most if not all the things we know for sure about OO,
 especially what has been well-known for decades.
-Now, to remain consistent, this theory must filter out some things we falsely believed we knew:
-that is absolutely necessary whenever there is controversy between contradictory opinions,
+Now, to remain @emph{consistent},
+this theory must filter out false ideas that people sometimes hold about OO;
+that is an absolute necessity whenever there is controversy between contradictory opinions,
 and not two such opinions can be consistently held.
 Thus, this theory will not merely restate, but organize the existing information,
 and offer ways to distinguish the good from the bad information.
@@ -641,8 +652,9 @@ Remarkably, the main feature needed is lazy evaluation, or ways to emulate it,
 as OO is most naturally defined in a pure lazy functional setting,
 and eager evaluation of OO without side-effects leads to exponential recomputations.
 
-One aspect for which I do not provide a construction, however, is static typing,
-for this a topic where I am a proficient user, but have no experience as designer or implementer.
+One aspect for which I do not provide a construction, however, is static typing.
+Types are topic where I am quite a proficient user,
+but have no experience as designer, implementer or theorist.
 Therefore I will only provide semi-formal designs
 for what better static types for OO should look like.
 And I will refer to the better papers among the many I have read,
@@ -654,27 +666,30 @@ Dependent types are not necessary, but of course can help.
 @;{ TODO evaluate Scala DOT in this context. Ask nada.}
 
 @subsubsection{Multiple Variants of Inheritance}
-
-There are many different variants of inheritance in common use @~cite{inheritance1996}:
+@epigraph{
+  When you come to a fork in the road, take it. @|#:-"Yogi Berra"|
+}
+Now since nearly the very beginning of OO,
+there have been multiple variants of inheritance to choose from @~cite{inheritance1996}.
 Many prefer single inheritance for its simplicity and performance
 @~cite{Simula1967 Kay1993EHoS}.
 Others prefer multiple inheritance, that itself comes in multiple flavors (ahem),
 for its greater expressiveness and modularity @~cite{Bobrow1976 Cannon1979}.
 A few outliers prefer mixin inheritance,
 a variant in some sense intermediary between the two above,
-but also more fundamental, more composable @~cite{bracha1990mixin}.
+but in another sense more fundamental, more composable @~cite{bracha1990mixin}.
 Some prefer no inheritance at all, at which point it isn’t OO anymore,
-but is an important base line to which to compare things. @;
+but that option is an important base line to which to compare other variants. @;
 @;{ Cite https://freedium.cfd/https://medium.com/better-programming/object-oriented-programming-the-trillion-dollar-disaster-92a4b666c7c7 } @;
-And then there are dubious or derivative variants published in papers that are deservedly obscure,
-and that I will gladly help stay thus by not citing them.
-Hopefully, after reading and understanding my chapter on Inheritance (@seclink{IMSMO})
-you will be able to understand why they are wrong if you ever read them.
-@; XXX Reverse Inheritance as trivially expressible in terms of mixin or multiple inheritance.
+And then there are dubious or derivative variants published in deservedly obscure papers,
+that I will not grace with a citation.
+@; e.g. Reverse Inheritance as trivially expressible in terms of mixin or multiple inheritance.
+Hopefully, after reading and understanding @seclink{IMSMO} on Inheritance,
+you will be able to understand why they are wrong if you ever stumble on them.
 
 With so many variants, programmers (respectively programming language designers)
-have faced a dilemma, since almost the very beginning,
-of which of several variants of inheritance to use (respectively implement), if any at all.
+face a choice of which of several variants of inheritance to use (respectively implement),
+if any at all.
 Is there a form of inheritance that is objectively better than the others,
 with respect to expressiveness, modularity, extensibility, runtime performance,
 and whatever else might matter?
@@ -692,6 +707,10 @@ And of course, OO has many detractors who claim that the best inheritance is no 
 What are the reasons to use or not use inheritance to begin with?
 
 @subsubsection{Optimal Inheritance}
+@epigraph{
+  An extreme optimist is a man who believes that humanity will probably survive
+  even if it doesn’t take his advice. @|#:-"John McCarthy"|
+}
 I will claim that (a) indeed there is a best way to combine single and multiple inheritance,
 that (b) indeed it involves linearization of the inheritance graph,
 that (c) there are enough constraints on linearization for the optimal algorithm
@@ -712,13 +731,15 @@ the builtin object system of @(GerbilScheme)@xnote["."]{
   However, there is no standard object system,
   instead plenty of different object systems that span the entire design space for OO—except for
   their generally lacking static types.
+  @(GerbilScheme) provides its own builtin object system, not compatible with any standard,
+  just better, and as of 2025, with the best inheritance of any object system.
 }
 
 It is unusual for a book to claim some significant innovation like that:
 usually, a researcher stumbling upon it, or a colleague,
 would rush to get it published in some conference.
-However, my innovation looks quite random and unimportant without the context:
-C4 is just a minor arbitrary variant combining long well-known ideas, plus a minor optimization.
+However, my innovation looks quite random without the context:
+C4 combines a couple well-known ideas and a speed optimization—sure but so what?
 Only with the context of this wider Theory of OO does C4 look both meaningful and important:
 a necessary variant, that can claim optimality within the design space,
 and is rather obvious once the problem of optimality is formalized.
@@ -729,10 +750,12 @@ I will offer C4 here, as a comparatively modest yet meaningful innovation on top
 Crucially, it is a proof that the theory can produce new useful knowledge that didn’t exist prior;
 it thus crowns crowns the theory as productive indeed.
 But don’t bother about that: as far as you’re concerned, mostly, C4 means
-there is a better inheritance algorithm with which you can improve your existing (or future) language.
+you can improve your existing (or future) language with a better inheritance algorithm.
 
 @subsection{Plan of the Book}
-
+@epigraph{Begin at the beginning and go on till you come to the end: then stop.
+  @|#:-"Lewis Carroll"|
+}
 Chapter 1, in which you are presently, is a meta-level description of the book.
 Don’t worry, the rest of the book will be discussing OO, not the book itself.
 
@@ -795,7 +818,7 @@ Finally, in chapter 9 I conclude by recapitulating my findings.
 @section[#:tag "WOOin"]{What Object-Orientation is @emph{not}}
 @epigraph{
   It’s not ignorance that does so much damage;
-  it’s knowing so darned much that ain’t so. @|#:author "Josh Billings"|
+  it’s knowing so darned much that ain’t so. @|#:- "Josh Billings"|
 }
 Before I explain in detail what OO @emph{is},
 I shall cast aside a lot of things it @emph{isn’t}
@@ -804,15 +827,22 @@ falsely identify with OO.
 This is important, because attempts at building or explaining a theory of OO often fail
 due authors and readers having wrong expectations about what OO is supposed to be.
 
-@subsection{Whatever C++ is}
+If you find yourself shocked and in disagreement, that’s fine.
+You don’t have to agree at this point.
+Just consider that what I call OO and discuss at length in this book
+may be something slightly different from what you currently call OO.
+Then please allow me to narrow down what I mean, and make my argument.
+Or don’t and close this book.
+
+@subsection{OO isn’t Whatever C++ is}
 @epigraph{
   I made up the term ‘object-oriented’, and I can tell you I didn’t have C++ in mind.
-  @|#:author @elem{Alan Kay, at OOPSLA ’97 (near peak C++ popularity)}|
+  @|#:- @elem{Alan Kay, at OOPSLA ’97 (near peak C++ popularity)}|
 }
 The most popular OO language in the decades that OO was a popular trend (roughly 1980 to 2010),
 C++ indeed supports some form of OOP.
 But C++ is a rich language with many aspects completely independent of OO
-(e.g. efficient bit-banging, RAII, template metaprogramming or pointer aliasing and a memory model),
+(e.g. efficient bit-banging, RAII, template metaprogramming, pointer aliasing, a memory model),
 whereas the OO aspect that it undoubtly offers
 is very different from how OO works in most other OO languages,
 and colloquial C++ often goes against the principles of OO.
@@ -843,7 +873,7 @@ with some kind of “duplication” of superclasses (for non-@c{virtual} classes
   which would instead be to identify the actual problem and its correct solution.
 }
 and a subset of multiple inheritance (for @c{virtual} classes and members).
-Moreover, C++ crucially lacks the proper method resolution
+Notably, C++ crucially lacks the proper method resolution
 that enables a lot of the modularity of multiple inheritance in other languages.
 
 Now, you can use C++’s powerful template language to reconstitute actual mixin inheritance
@@ -868,8 +898,7 @@ and you could no doubt further implement proper multiple inheritance on top of t
   the language itself is eventually amended to do the Right Thing™.
 }
 But this technique is quite uncolloquial, syntactically heavy, slower than the colloquial ersatz,
-and programmers have to rigorously
-follow, enforce and maintain some complex design patterns.
+and programmers have to rigorously follow, enforce and maintain some complex design patterns.
 
 Finally, and at the very least, consider that
 unless you explicitly tag your classes and their members @c{virtual},
@@ -885,11 +914,15 @@ and even most of those that look like OO are often different enough that
   since Lisp got it right ten years earlier@~cite{Cannon1979}.
   Ignorance is even less forgivable in the case of Ada
   copying C++’s “multiple inheritance” yet 14 years later.
-  Meanwhile, many languages got it right: Ruby, Python, Scala, etc.
+  By contrast, many languages got it right in the same time frame:
+  Python (1991), Ruby (1995), Scala (2004), etc.
 }
 
 @subsection[#:tag "classes_only"]{Classes Only}
-
+@epigraph{
+  The class/instance distinction is not needed if the alternative of using prototypes is adopted.
+  @|#:- @citet{Lieberman1986}|
+}
 Many claim that classes, as first implemented by Simula 67@~cite{Simula1967}
 (though implementing a concept previously named by Hoare@~cite{Hoare1965Record}),
 are essential to OO, and only ever care to implement, use, formalize,
@@ -938,8 +971,10 @@ yet types are undoubtly an important topic that occupies much of the theory and 
 Actually, the analogy goes further since, as we’ll see,
 classes are precisely an application of OO to types.
 
-@subsection{Imperative Programming}
-
+@subsection{OO isn’t Imperative Programming}
+@epigraph{Objects are a poor man’s closures. @|#:- "Norman Adams"|}
+@epigraph{Closures are a poor man’s objects. @|#:- "Christian Queinnec"|
+}
 Many people assume that OO requires mutation,
 wherein all attributes of all objects should be mutable, or at least be so by default,
 and object initialization must happen by mutation.
@@ -956,8 +991,9 @@ having to do with speed and memory limitations at both runtime and compile-time,
 why early OO and FP languages alike, from the 1960s to the 1980s,
 as well as most languages until relatively recently,
 were using mutable state everywhere, and an eager evaluation model, at least by default.
-And with early 1980s slogans like “objects are a poor man’s closures” and
-“closures are a poor man’s objects”@~cite{adams88oopscheme},
+And with 1980s slogans among Lispers like
+“objects are a poor man’s closures”@~cite{Dickey1992SWOB}, and
+“closures are a poor man’s objects”@~cite{Queinnec1996LiSP},
 the problem back then was clearly not
 whether OO could be done purely with functions (obviously it could), but
 whether it made practical sense to program purely without side-effects in general.
@@ -965,12 +1001,12 @@ That question that would only be slowly answered positively,
 in theory in the early 1990s @~cite{Moggi1991Monads}
 and in practice in the mid 2000s to mid 2010s,
 as Haskell grew up to become a practical language@xnote["."]{
-  Some may identify darcs (2003) as the first widely used real-world application of Haskell.
+  Some may identify darcs (2003) as the first widely used real-world application written in Haskell.
   After it came innovations such as bytestring (2005), cabal (2005)
   (and the “cabal hell” it started causing around 2006 until later solved by stack),
   ghc6 (2006), that made Haskell much more practical to use, and
   new notable applications appeared like pandoc (2006), or xmonad (2007).
-  A turning point maybe was the publication of “Real World Haskell” (2008). @; TODO CITE
+  A turning point maybe was the publication of “Real World Haskell” @~cite{OSullivan2008RWH}.
   Eventually, Stack (2015) made non-trivial haskell programs and scripts repeatable.
   Now there’s obviously a lot of subjectivity in deciding
   when exactly Haskell became “practical”—but one should expect
@@ -1002,27 +1038,35 @@ and even with laziness and normal-order evaluation.
 Actually, I will argue based on studying of the semantics of OO that
 @principle{Pure Lazy Functional Programming is the natural setting for OO}. @;{TODO secref}
 
-@subsection{Encapsulation}
-
+@subsection{OO isn’t Encapsulation}
+@epigraph{A half-truth is a whole lie. @|#:-"Yiddish proverb"|
+}
 Many OO pundits claim that an essential concept in OO
-is “encapsulation” or “information hiding”@~cite{DeRemerKron1975},
-though there is no consensus as to what this or these concepts mean,
-and no clear definition. @; TODO{CITE}
+is “encapsulation” or “information hiding”@~cite{DeRemerKron1975}.
+Some instead speak of “data abstraction” or some other kind of “abstraction”.
+There is no consensus as to what this or these concepts mean, and no clear definition,
+@; TODO{CITE} @; XXX cite Liskov??? Mary Shaws???
+but overall, these words refer either to what I call @emph{modularity}
+(see @secref{MO}, @secref{M}),
+or to some specific set of visibility primitives in some OO languages.
 
 Inasmuch as “encapsulation” informally denotes but part or all of
 modularity—the ability to code against an interface,
-with code on either side not caring which way the other side implements its part of the interface
-(or not even being able to distinguish between multiple such implementations)—then
-yes, this is half of the essence of OO, as per my definition
-(the other half being extensibility).
-Some may also call this concept “data abstraction” or some other kind of “abstraction”.
-@; XXX cite Liskov??? Mary Shaws???
+with code on either side not caring which way the other side implements its part of the interface,
+not even being able to distinguish between multiple such implementations,
+even less to look inside at the state of the other module—then
+yes, this is indeed half of the essence of OO, as per my definition.
+But the word modularity much better identifies the broader purpose beyond the technical property.
+And even then, modularity only characterizes half of OO.
+So people who try to equate OO with that half only
+crucially miss the other half, @emph{extensibility} (see @secref{EO}, @secref{E}),
+and fail to properly identify OO.
 
-However, inasmuch as some people identify encapsulation as the presence
+Now, inasmuch as some people identify encapsulation as the presence
 of specific visibility mechanisms such as found in C++ or Java
 (with some attributes or methods being @c{public}, @c{private} or something in–between,
 on the precise semantics of which designers of different languages cannot agree),
-I’ll easily dismiss such mechanisms as not actually essential to OO,
+I’ll easily dismiss such mechanisms as not essential to OO,
 since many quintessential OO languages like Smalltalk or Common Lisp
 lack any such specific mechanism,
 whereas many non-OO languages possess mechanisms to achieve the same effect,
@@ -1040,7 +1084,12 @@ Misidentifying OO as being about these mechanisms rather
 than about the modularity they do or do not support can only lead to
 sacrificing the ends to the means.
 
-@subsection{Inheritance as opposed to Composition}
+@subsection{OO isn’t opposite to FP}
+@; I destroy my enemies when I make them my friends. — Lincoln
+@; What about side by side with a friend? — Legolas in The Two Towers (movie)
+@epigraph{¿Por qué no los dos? (Why not both?)
+  @|#:- "Old El Paso"|
+}
 Some argue that there is an essential conflict between OO and FP,
 between Inheritance and Composition,
 wherein OO is about model every possible domain in terms of inheritance,
@@ -1116,21 +1165,24 @@ to changing situations, at which point thoughtful uses of inheritance can help a
   actually has nothing to do with the OO vs FP debate, it is about using OO effectively.
 }
 
-@subsection{Message Passing}
+@subsection{OO isn’t Message Passing}
+@epigraph{Name the greatest of all inventors. Accident.
+  @|#:-"Mark Twain"|
+}
 Alan Kay, who invented Smalltalk and coined the term “Object-Oriented Programming” circa 1967
 notably explained@~cite{Kay2020} that by that he originally meant
 a metaphor of computation through independent (concurrent, isolated) processes
 communicating by passing asynchronous messages.
 This metaphor also guided the modifications originally
-brought by Simula to Algol@~cite{Simula1966}.
+brought to Algol by Simula@~cite{Simula1966}.
 It is also present in notable early object systems such as
 Director @~cite{Kahn1976 Kahn1979Ani Kahn1979Director} and
 ThingLab @~cite{Borning1977 Borning1979 Borning1981}.
 
 However, neither Simula, nor Smalltalk nor any popular claimed OO language
-actually fits that metaphor, though some obscure Actor languages might @~cite{Hewitt1979Security}.
+actually fits that metaphor, though some Actor languages might @~cite{Hewitt1979Security}.
 @; TODO cite Yonezawa ?
-Instead, the only popular language ever to fit this metaphor
+Instead, the only popular language ever to truly embody this metaphor
 is Erlang@~cite{OOP2010};
 yet Erlang is not part of the OO tradition,
 and its authors have instead described its paradigm as “Concurrency-Oriented Programming”.
@@ -1178,7 +1230,7 @@ and there is no single prototype, class, or single independent entity of any kin
 capable of either “receiving” or “sending” a message.
 Instead, they are attached to a “generic function”
 that handles the dispatch based on the types of its arguments@xnote["."]{
-  The “generic function” functionality from in the Common Lisp Object System (CLOS) @; TODO cite
+  The “generic function” functionality from the Common Lisp Object System (CLOS) @; TODO cite
   can be viewed as isomorphic to the “protocols” functionality of Clojure;
   and Common Lispers also use the word “protocol” informally to designate a set of generic functions.
   They would in turn be isomorphic to the “typeclasses” of Haskell
@@ -1256,9 +1308,13 @@ that describes a different set of programming languages and patterns@xnote["."]{
   but not always those anticipated.
 }
 
-@subsection[#:tag "modeling_the_world"]{Modeling the World}
-
+@subsection[#:tag "modeling_the_world"]{OO isn’t a Model of the World}
+@epigraph{If you call a tail a leg, how many legs has a dog? Five?
+  No! Calling a tail a leg doesn't make it a leg.
+  @|#:-"Abraham Lincoln, explaining the difference between lexical scoping and dynamic scoping"|
+}
 Some have claimed that OO is meant to be @emph{the} way to model the world,
+or at least @emph{a} way,
 often in association with the concurrent message passing model
 I already established above was not quite OO,
 or with some class-based OO framework they sell.
@@ -1387,11 +1443,11 @@ you can actually use OO as you do it.
 
 @section{What Object-Orientation @emph{is} — Informal Overview}
 
-In this section I map out the important concepts of OO,
+In this chapter, I map out the important concepts of OO,
 as developed in the rest of this book.
-The little explanations I offer are what is strictly necessary
+I offer only as little explanations as strictly necessary
 to relate concepts to one another, and avoid misinterpreting them.
-More details explanations, and justifications, will follow in subsequent sections.
+More details, and justifications, will follow in subsequent chapters.
 
 @subsection{Extensible Modular Specifications}
 Object-Orientation (“OO”) is a technique that enables the specification of programs
@@ -1403,12 +1459,13 @@ A program is made of many parts that can be written independently,
 enabling division of labor,
 as opposed to all logic being expressed in a single big monolithic loop@xnote["."]{
   The entire point of partial specifications is that they are not complete,
-  and trying to “instantiate” them before all the information has been assembled should fail.
+  and you want to be able to manipulate those incomplete specifications even though of course
+  trying to “instantiate” them before all the information has been assembled should fail.
   Type systems and semantic frameworks incapable of dealing with such incomplete information
   are thereby incapable of apprehending OO.
 }
 
-@subsubsection{Modularity (Overview)}
+@subsubsection[#:tag "MO"]{Modularity (Overview)}
 A programmer can write or modify one part (or “module”)
 while knowing very little information about the contents of other parts,
 enabling specialization of tasks. Modularity is achieved by having modules
@@ -1416,7 +1473,7 @@ interact with each other through well-defined “interfaces” only,
 as opposed to having to understand in detail the much larger contents
 of the other modules so as to interact with them.
 
-@subsubsection{Extensibility (Overview)}
+@subsubsection[#:tag "EO"]{Extensibility (Overview)}
 A programmer can start from the existing specification and only need contribute
 as little incremental information as possible when specifying a part
 that modifies, extends, specializes or refines other parts,
@@ -2044,14 +2101,28 @@ Though a treatise of epistemology is beyond the scope of this article, @;{TODO c
 I can briefly answer the most frequent epistemological questions as follow.
 
 @subsubsection{Is my definition correct?}
-
+@epigraph{
+  The truth or falsehood of all of man’s conclusions, inferences, thought and knowledge
+  rests on the truth or falsehood of his definitions.
+  @|#:- "Ayn Rand"|
+}
 Yes, my definition is correct:
 it accurately identifies what people mean usually by those words,
 and distinguishes situations where they apply from situations where they do not,
 in the contexts that people care about.
+People using my definition will be able to make good decisions,
+whereas those using other definitions will make bad decisions where their definitions differ.
 
 @subsubsection{What does it even mean for a definition to be correct?}
-
+@epigraph{
+  “When I use a word,” Humpty Dumpty said, in rather a scornful tone,
+  “it means just what I choose it to mean—neither more nor less.”
+  @linebreak[]
+  “The question is,” said Alice, “whether you can make words mean so many different things.”
+  @linebreak[]
+  “The question is,” said Humpty Dumpty, “which is to be master—that’s all.”
+  @|#:-"Lewis Carroll"|
+}
 Some people will argue that definitions are “just” arbitrary conventions,
 and that there is therefore no rational criterion of correctness,
 only arbitrary political power of the strong over the weak,
@@ -2070,7 +2141,7 @@ and an act of war against those whose reason is denied.
 
 @subsubsection{Is there an authority on those words?}
 @epigraph{Those who need leaders aren't qualified to choose them.
-  @|#:author "Michael Malice"|
+  @|#:- "Michael Malice"|
 }
 No, there is no authority on software vocabulary, person or committee,
 that can decree different words for others to use,
@@ -2082,16 +2153,17 @@ then they will keep caring about it under a different name,
 rather than care about whatever those who corrupt the name may want them to.
 
 @subsubsection{Shouldn’t I just use the same definition as Alan Kay?}
-
+@epigraph{OOP to me means only messaging,
+local retention and protection and hiding of state-process,
+and extreme late-binding of all things. #|#:- @citet{Kay2003}|
+}
 No, that isn’t possible, nor would it be appropriate if it were.
-
 Alan Kay coined the expression “Object Oriented Programming” in 1967.
 Originalists might say everyone must take it to mean whatever He defined It to mean,
-and sometimes cite him saying in @citet{Kay2003} that
-“OOP to me means only messaging, local retention and protection and hiding of state-process,
-and extreme late-binding of all things”.
+and sometimes cite him as in the epigraph above.
 
-But neither the above nor any of Kay’s pronouncement on OO constitutes a precise definition,
+But neither the above nor any of Kay’s pronouncement on OO constitutes
+a precise definition with an objective criteria,
 if a definition at all@xnote["."]{
   My interpretation is that the first part of this definition (until the last comma)
   corresponds to modularity, the ability to think about programs in terms of separate
@@ -2144,7 +2216,7 @@ Solid theories arise only after lots of experience, filtering, and reformulation
 
 @subsubsection{Shouldn’t I just let others define “OO” however they want?}
 @epigraph{The opinion of 10,000 men is of no value
-  if none of them know anything about the subject. @|#:author "Marcus Aurelius"|
+  if none of them know anything about the subject. @|#:- "Marcus Aurelius"|
 }
 Not at all.
 Some people are reluctant to fight over the meaning of words,
@@ -2216,7 +2288,7 @@ this paradigm is what matters, and what I will call OO—it is what I will discu
 and systematically reduce to elementary concepts.
 
 @section{OO as Internal Extensible Modularity}
-@subsection{Modularity}
+@subsection[#:tag "M"]{Modularity}
 
 @subsubsection{Division of Labor}
 
@@ -2232,7 +2304,7 @@ as long as they satisfy the interface.
 
 @subsubsection{First- to Fourth-class, Internal or External}
 @epigraph{I object to doing things that computers can do.
-  @|#:author "Olin Shivers"|
+  @|#:- "Olin Shivers"|
 }
 A few languages offer a builtin notion of modules as @emph{first-class} entities,
 that can be manipulated as values at runtime.
@@ -2735,7 +2807,7 @@ often leading to indirect solutions like “builder” classes in Java,
 that stage all the complex computations before
 the initialization of objects of the actually desired class.
 
-@subsection[#:tag "extensibility"]{Extensibility}
+@subsection[#:tag "E"]{Extensibility}
 @subsubsection{Extending an Entity}
 Extensibility is the ability to take a software entity and create a new entity
 that includes all the functionality of the previous entity,
@@ -7643,6 +7715,7 @@ where the steps tagged with (C4) are those added to the C3 algorithm
      instead of just remembering the most specific one,
      allowing for O(1) checks for subtyping among suffix specifications.}}
   @item{@bold{C4 cleanup step}:
+     For each prefix list, remove redundant suffix specifications from its end:
      Then, in each precedence list prefix, remove from its end the infix specifications
         that are already in the suffix in the same order;
         stop if you reach one that is in the suffix but in the wrong order,
@@ -7913,7 +7986,7 @@ and closed specifications as a special case.
 The specification to be focused may be a modular definition, a modular extension,
 an optimal inheritance specification, etc.
 
-@Paragraph{Adjusting the Context}
+@subsubsection{Adjusting the Context}
 The getter can narrow the context of a modular extension:
 if you extend a class @c{blog.database} within your program,
 you can apply a database extension, say one that specifies PostgreSQL with your favorite options,
@@ -7931,7 +8004,7 @@ To zoom out of a heretofore useful narrow focus, and adopt a wider point of view
 To undo a temporary zoom in, from a method back to an object, back to a library,
 or back to an entire ecosystem.
 
-@Paragraph{Adjusting the Focus}
+@subsubsection{Adjusting the Focus}
 The updater will often, but not always,
 further narrow a method within the prototype being extended.
 That is how you can extend a library within an ecosystem,
@@ -7993,96 +8066,23 @@ that contradict it, the winners erasing the losers.
 Win-win interactions rather win-lose, that was a revolution
 that made multiple inheritance sensible when it otherwise wasn’t.
 
-But in Flavors methods do not have to be combined with the usual @c{mix} function.
-Instead of being viewed as (modular) extensions that you compose,
-they could be (modular) numbers that you add or multiply or get the maximum or minimum of;
-they could be lists that you concatenate, or sets that you merge;
-Any monoidal operation will do: associative, and with a neutral element:
-@Code{
-  
-}
-
-
-
-But, what is more, there could be several kinds of methods cooperating:
-“primary” methods that you combine as above, but also
-additional routines that you execute in one order (or the opposite)
-@c{before} or @c{after} the “primary” methods;
-wrapper routines that run @c{around} those methods so they can setup and tear down
-some environment, grab locks, transform arguments and results.
-CLOS, the polished successor of Flavors and LOOPS,
-
-There is a rich
-and, really, anything the programmer may choose to implement
-
-
-They 
-that composes 
-
-
-to be  not just to compete
-over which will survive or be delete
-
-
-, itself inspired by Teitelman’s ADVISE facility @~cite{Teitelman1966}:
-
-
-Method Combinations kept evolving in New Flavors @~cite{Moon1986Flavors},
-and were adopted by CommonLOOPS @~cite{Bobrow86CommonLoops}, CLOS @~cite{Bobrow88CLOS},
-and a whole lot of object systems, mainly in languages of the Lisp and Scheme family.
-Sadly, the feature seems not to have been adopted in other ecosystems, except that
-a lot of the “advice” part lives in Aspect Oriented Programming @; TODO cite
-frameworks, for Java and C#, and less popularly, for other languages.
-
-The most basic method combination is the one used by default by methods
-when I have been defining them so far: after the list of available methods
-
-
-Generic functions for declarations. (CommonLOOPS?)
-
-
 @subsection{Multiple Dispatch}
-
-LOOPS(?), CommonLOOPS, CLOS. Cecil. Dylan. Fortress. Julia.
-
-Generic functions for declarations. (CommonLOOPS?) CLOS.
-
-The visitor pattern, even after you go through all the pain of it,
-doesn't fully capture the expressiveness of multiple dispatch with method combination,
-because it finds only one method, and like Self’s ill-fated sender path inheritance,
-can’t back out of narrowing decision. Breaks “linearity” (conservation of information).
-
-Purity vs Orphan Typeclasses in Haskell.
-
-@emph{Global} fixpoint.
-Other theories of OO, being focused on closed specifications,
-cannot only deal with one class at a time, separate from the rest.
-But that is never, ever, the right level at which to think software.
-In the simple cases where a single class works,
-you don’t need a class, you don’t even need OO at all.
-In the complex cases, putting all the semantics a single class will boggle the mind,
-and trying to put it in multiple classes will cause lots of friction,
-and fail to take advantage of the mutual recursion.
-With open specifications,
-I can literally use functional optics to zoom into the semantics of single method declarations,
-and zoom out to the semantics of entire ecosystems of mutually recursive
-classes and configuration prototypes, with everything in between.
-I decoupled the fixpoints and the extensions, fulfilling the promise of modularity of OO,
-that was systematically ignored or destroyed by the programming language researchers
-focused on coupling them.
-
 
 @subsection{Meta-Object Protocols}
 
 @section{Conclusion}
 
 @subsection{Scientific Contributions}
+@epigraph{Early in life I had to choose between honest arrogance and hypocritical humility.
+I chose honest arrogance and have seen no occasion to change.
+@|#:- "Frank LLoyd Wright"|
+}
 
 Here is the part of this book where I actually do the bragging,
 with a list of never-done-before feats I achieved in its book
 or the work that immediately preceded it:
 
-@subsubsection{OO is Extensible Modularity, Internal to a Programming Language}
+@subsubsection{OO is Internal Modular Extensibility}
 I rebuilt Object-Orientation (OO) from First Principles,
 offering an explanation of how the basic mechanisms of OO
 directly stem from Modularity, Extensibility, and Internality.
@@ -8117,16 +8117,17 @@ OO is not C++, OO is not based on Classes, OO is not imperative,
 OO is not about “encapsulation”, OO is not opposed to Functional Programming (FP),
 OO is not about message passing, OO is not a data model, OO is not rewrite logic.
 
-@subsubsection{The Natural Paradigm for OO is Pure Lazy Functional Programming}
+@subsubsection{OO is naturally Pure Lazy FP}
 Remarkably, and contrary to popular belief,
-I proved that OO at its core is the very opposite of the eager imperative model,
-that almost everyone had associated to it,
-and is indeed used by currently popular static Class OO languages.
-In these languages, OO only happens at compile-time,
+I proved the natural paradigm for OO is Pure Lazy Functional Programming.
+This is the very opposite of the eager imperative model
+that almost everyone associates to OO,
+indeed used by currently popular static Class OO languages.
+Yet in these languages, OO only happens at compile-time,
 indeed in a pure lazy dynamic functional programming language,
 though often a severely stunted one.
 
-@subsubsection{The Conflation of Specification and Target is an All-Important Concept in OO}
+@subsubsection{Conflation of Specification and Target is All-Important in OO}
 I elucidated the concept of conflation, latent in all OO since @citet{Hoare1965Record},
 necessarily though implicitly addressed by each and every one of my predecessors,
 yet never a single time once explicitly documented before. Shame on them.
@@ -8136,7 +8137,7 @@ After making it explicit, the semantics of objects is astoundingly simple,
 it just involves a regular use of the simplest of recursion operators, the fixpoint.
 Plus a pair to bundle specification and target together.
 
-@subsubsection{Open Modular Extensions are the Fundamental Building Blocks of OO}
+@subsubsection{Open Modular Extensions are the Fundamental Concept of OO}
 Compared to previous theories that only consider @emph{closed} modular extensions
 (where the extension focus coincides with the module context),
 or worse, closed modular definitions (with no notion of extension),
@@ -8147,7 +8148,7 @@ my @emph{open} modular extensions @emph{vastly} simplify OO, by enabling:
   @item{Using optics to zoom semantics at all scales, down from individual method declarations
         up to entire ecosystems of mutually recursive prototypes}]
 
-@subsubsection{Flavorful Multiple Inheritance is More Expressive and More Modular}
+@subsubsection{Flavorful Multiple Inheritance is Most Modular}
 I explained why Flavorful Multiple Inheritance with Local Order and Monotonicity
 is more expressive and more modular than the alternatives,
 be it less consistent flavorful multiple inheritance,
@@ -8169,13 +8170,9 @@ This Optimal Inheritance is now part of @(GerbilScheme);
 you can easily port my code to add it to your own language.
 
 @subsection{Why Bragging Matters}
-@epigraph{Early in life I had to choose between honest arrogance and hypocritical humility.
-I chose honest arrogance and have seen no occasion to change.
-@|#:author "Frank LLoyd Wright"|
-}
 @subsubsection{Spreading the New Ideas}
 @epigraph{Don’t have good ideas if you aren’t willing to be responsible for them.
-@|#:author "Alan Perlis"|
+@|#:- "Alan Perlis"|
 }
 What’s the use of having good ideas and writing about them if the readers don’t even notice?
 
@@ -8203,7 +8200,7 @@ I thank the rejecting reviewer who once told me to make my claims clearer.
 but till your reputation is well established,
 be sparing in publishing theory.
 It makes persons doubt your observations.
-@|#:author "Charles Darwin to a young botanist"|
+@|#:- "Charles Darwin to a young botanist"|
 }
 My mentor Jacques Pitrat once told me that when a French researcher has three ideas,
 he writes one paper. when an American researcher has one idea, he writes three papers.
