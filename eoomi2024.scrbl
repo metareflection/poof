@@ -1,43 +1,3 @@
-#lang scribble/acmart @manuscript @anonymous @review @nonacm
-@; -*- Scribble -*-
-@title{The Essence of Object-Orientation: Modularity and Incrementality}
-@(require scriblib/bibtex
-          (only-in scribble/core make-paragraph make-style)
-          (only-in scribble/manual racket racketblock code codeblock litchar itemize item)
-          (only-in scribble/example examples make-base-eval)
-          (only-in scriblib/footnote note)
-          (only-in scribble-abbrevs appendix)
-          (only-in scribble-math/dollar $)
-          syntax/parse/define "util/enumitem.rkt" "util/util.rkt" (for-label racket))
-@(define-simple-macro (c a ...) (elem #:style 'tt a ...))
-@(define-simple-macro (Code a ...) (verbatim a ...))
-@(define-simple-macro (r a ...) (racket a ...))
-@(define-simple-macro (TODO body ...) '())
-@(define (principle . x) (bold (emph x))) @(define (anonymize x . y) x)
-@(define (GerbilScheme) @anonymize["our Scheme implementation"]{Gerbil Scheme})
-@(define-bibtex-cite "ltuo.bib" ~cite citet generate-bibliography)
-@section[#:tag "foo"]{FOO} @subsection[#:tag "bar"]{BAR} @subsubsection[#:tag "quux"]{QUUX}
-
-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-@subsubsection{Computations vs Values}
-
-And indeed, laziness (call-by-need)
-is the best good way to reify a computation as a value,
-bridging between the universes of computations and values.
-Compared to mere thunking (call-by-name) that can also bridge between these universes,
-laziness enables sharing, with advantages both in terms of performance and semantic expressiveness,
-without requiring any stateful side-effect to be observable in the language,
-thus preserving equational reasoning.
-Thunking can still be expressed on top of a lazy language,
-but laziness cannot be expressed on top of a language with thunks only,
-without using side-effects.
-
-@; Note again that there is no guarantee of convergence of a fixed-point
-@; for arbitrary prototypes, and that indeed, inasmuch as
-@; most prototypes are meant as incomplete specifications,
-@; their fixed-points won’t converge, or not to anything useful.
-
 @subsubsection{Method Initialization Order}
 Traditional imperative OO languages often have a problem
 with the order of slot initialization.
@@ -1162,5 +1122,3 @@ classes and configuration prototypes, with everything in between.
 I decoupled the fixpoints and the extensions, fulfilling the promise of modularity of OO,
 that was systematically ignored or destroyed by the programming language researchers
 focused on coupling them.
-
-
