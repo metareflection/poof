@@ -105,7 +105,8 @@
     (nested
      (exact-chars
       (string-append "\n\\begin{center}\\begin{minipage}{0.90\\textwidth}"
-                     "\\small{}")) ;; between \\small and \\normalsize
+                     "\\setlength{\\parindent}{15pt}\\noindent" ;; restore regular indentation
+                     "\\small{}"))
      text
      (exact-chars "\\end{minipage}\\end{center}")))
    (html-block
