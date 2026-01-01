@@ -597,6 +597,24 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 1981
 
+% chinual 3ed, 1981 has Flavors and defsystem. 1979 2ed doesn't.
+% Stroustrup1989Multiple cites 3ed or 4ed (also 1981)
+@manual{Weinreb1981Chinual,
+  author    = {Daniel Weinreb and David Moon},
+  title     = {Lisp Machine Manual},
+  edition   = {3rd},
+  month     = {March},
+  year      = {1981},
+  publisher = {Massachusetts Institute of Technology},
+  address   = {Cambridge, MA},
+  url={http://bitsavers.org/pdf/mit/cadr/chinual_3rdEd_Mar81.pdf},
+  note={.
+     Also known as the “Chinual”, this legendary book explains the interface of the Lisp Machine,
+     then commercialized under license by Symbolics, Inc., the first .com.
+     Chapter 20 discusses Flavors.
+   }
+}
+
 % http://worrydream.com/refs/Borning%20-%20The%20Programming%20Language%20Aspects%20of%20ThingLab.pdf
 % https://dl.acm.org/doi/abs/10.1145/357146.357147
 @Article{Borning1981,
@@ -784,15 +802,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-% Calls "graph oriented" the conflict view of multiple inheritance
-% Discusses the consequence for his clients of the designer of a class making a change.
-% Explains the advantages of the Flavors "Linear Solution",
-% but claims sometimes a subclass wants to directly call some method of its superclass
-% without intermediate classes meddling from somewhere else in the hierarchy. Why?
-% Why not then call a static helper, or a helper with a different name?
-% Seems very dubious-solution in search of a problem.
-% His solution in CommonObjects is systematic conflict, and "duplicating nodes",
-% i.e. like C++ non-virtual classes later. Shame.
 % NB: Much updated 1987 version at https://archive.org/details/researchdirectio00shri/page/164/mode/2up
 @InProceedings{Snyder1986Encapsulation,
   author = {Snyder, Alan},
@@ -808,7 +817,42 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   pages = {38--45},
   numpages = {8},
   location = {Portland, Oregon, USA},
-  series = {OOPSLA '86}
+  series = {OOPSLA '86},
+  notes={.
+    This very well-informed, very interesting paper, and its extended version in
+    Research Directions in Object-Oriented Programming (1987),
+    gets a whole lot right about inheritance, yet enough crucially wrong.
+    It brilliantly introduces parent, ancestor, child, descendant, instead of the
+    awkward direct-superclass, superclass, direct-subclass, subclass.
+    He identifies the importance of modularity, but instead of that word,
+    somehow divides it in two separate properties “encapsulation” and “data abstraction”.
+    He notes the need for reflection to defeat this encapsulation for debugging purposes.
+    He has good discussions of inheritance, visibility, subtyping, etc.
+    But multiple inheritance is a topic where he majorly fails, despite Snyder’s erudition.
+    He calls “graph oriented solutions” the conflict view of multiple inheritance,
+    and identifies many problems with it.
+    He calls “linear solutions” the Flavors and CommonLOOPS view,
+    and regrets lack of conflict where he expects one, then regrets lack of communication
+    with “real” parents (but… that’s what defining more methods is for),
+    for which he wishes for the “graph oriented solutions” ability
+    to directly call another method (which is a terrible idea and as he saw didn’t work),
+    and finally worries about name clashes (yes, but that’s not specific to “linear solutions”).
+    Dissatisfied for wrong reasons, and not having any theory of what OO should and why,
+    he invents his own “tree solutions” for his system CommonObjects,
+    trying to wish his simple Tree to solve a problem
+    that obviously requires a DAG, admitting his solution
+    “radically changes the semantics of inheritance” and that
+    “[f]urther experimentation is needed to determine the practicality of
+    this alternative programming style”.
+    In other words, he has no clue what he’s doing, try something random because
+    it is simple and convenient to him, and hoping that “solution” will stick.
+    But note that “solution” to stick would mean that his predecessors
+    have completely misidentified the problem, yet for reasons he cannot explain,
+    since he is lacking a theory. That's, well, not respectful of them and himself.
+    Next time, don't kick down that Chesterton fence.
+    Now what does it tell us that Stroustrup 1989 came up with sensibly
+    the same solution for C++, just with less research behind it?
+  }
 }
 
 %% 1987
@@ -2146,14 +2190,9 @@ series = {PLDI '99}
   url={https://bracha.org/mixins-paper.pdf}
 }
 
-% See notably chapters 18, 19, 24, 32.
 % downloaded from https://www.cs.sjtu.edu.cn/~kzhu/cs383/Pierce_Types_Programming_Languages.pdf
 % This post claims that TAPL introduces the term "Open Recursion" https://journal.stuffwithstuff.com/2013/08/26/what-is-open-recursion/ - but Cardelli 1992 mentions it already.
-% 32.10 Notes gives pointers to a lot of papers on types for OO.
 % ... see a system $F_{<:}^\omega$
-% See note on PT1993STTFOOP about the approach of letting the user provide a rep type.
-% Pierce does discuss the actual solution, recursive data types, but
-% leaves it as an exercise after pointing to the bibliography.
 @Book{Pierce2002TAPL,
   Author = {Pierce, Benjamin C.},
   Title = {Types and Programming Languages},
@@ -2161,7 +2200,21 @@ series = {PLDI '99}
   ISBN = {0262162091},
   Publisher = {MIT Press},
   Edition = {1st},
-  url = {https://www.cis.upenn.edu/~bcpierce/tapl/}
+  url = {https://www.cis.upenn.edu/~bcpierce/tapl/},
+  note={.
+    TAPL treats objects in chapters 18, 19, 24, 32.
+    18 has a gradual approach to implementing not-quite-objects, and adding features
+    until the reader has actually implemented objects. It’s clever, but a bit long-winded.
+    See my note on Pierce & Turner 1993 regarding letting the user provide a rep type.
+    32.10 Pierce does discuss the actual solution, recursive data types, but
+    leaves it as an exercise after pointing to the bibliography.
+    Pierce is technically masterful, but my impression is that he doesn’t understand the
+    purpose of OO, because it is a foreign paradigm (see Gabriel 2012);
+    and so not only he cannot drill into the essence of it,
+    he spends more time on the non-essentials (imperative programming),
+    and leaves the actually interesting essential (recursive types) out of his text,
+    using a shortcut (his rep type) to survive without it.
+  }
 }
 
 % inproceedings
@@ -2673,7 +2726,7 @@ series = {PLDI '99}
   }
 }
 
-@book{chiusano2014functional,
+@book{Chiusano2014FPScala,
   title={Functional Programming in Scala},
   author={Chiusano, Paul and Bjarnason, Rúnar},
   year={2014},
@@ -3185,3 +3238,6 @@ series = {PLDI '99}
 % https://www.jot.fm/issues/issue_2005_01/column2/
 
 % Jonathan Aldrich workshop paper on capability-safe reflection and an ECOOP on modular reasoning in aspect-oriented programming (the latter a bit dated now).
+
+
+% https://github.com/fogus/lang-genealogy
