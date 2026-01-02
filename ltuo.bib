@@ -473,6 +473,21 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 1977
 
+@TechReport{Stansfield1977COMEX,
+  title={COMEX: A Support System for a Commodities Expert},
+  author={Stansfield, James L},
+  year={1977},
+  institution={MIT},
+  number={AIM-423},
+  url={https://dspace.mit.edu/handle/1721.1/6281},
+  note={.
+    An early expert system for Commodities, written in Lisp,
+    and organizing data in a knowledge base of frames.
+    The paper is the earliest one to mention single and multiple inheritance, p.12 and p.13,
+    about the frame representation of the COMEX data.
+  }
+}
+
 % ThingLab https://github.com/cdglabs/thinglab
 % Uses the word "prototypes", and has no classes. And multiple inheritance.
 @InProceedings{Borning1977,
@@ -489,7 +504,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 % Starts with modularity principle
 % Mentions multiple inheritance of traits, but does not explain too much
-@inproceedings{Smalltalk78,
+@inproceedings{Ingalls1978,
   author = {Ingalls, Daniel H. H.},
   title = {The Smalltalk-76 programming system design and implementation},
   year = {1978},
@@ -539,43 +554,47 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   year = 1979
 }
 
-% This paper is about the higher-level system Ani, that generates plans for Director.
-% Director is the actor-based system with turtle graphics
-% (see Director Guide, AIM-482b, 1978 revised 1979),
-% while Ani is a constraint solver based on a knowledge representation of the film being directed:
-% very crude 2d film with polygons as "performers" that move toward, away from,
-% around or between each other, at various speeds appropriate for the action,
-% as would humans on a stage.
-% Does cite Bobrow & Winograd, as well as Kay, Hewitt, Lieberman and many more (Licklider, Catmull!)
 @PhDThesis{Kahn1979Ani,
   title = {Creation of computer animation from story descriptions},
   author = {Kahn, Kenneth Michael},
   school = {MIT},
   year = {1979},
-  url = {https://dspace.mit.edu/handle/1721.1/16012}
+  url = {https://dspace.mit.edu/handle/1721.1/16012},
+  note={.
+    This paper is about the higher-level system Ani,
+    that generates turtle graphics plans on top of
+    the actor-based object system Director (see AIM-482b).
+    While Ani is a constraint solver based on a knowledge representation of the film being directed:
+    very crude 2d film with polygons as "performers" that move toward, away from,
+    around or between each other, at various speeds appropriate for the action,
+    as would humans on a stage.
+    Kahn cites Bobrow & Winograd, as well as Kay, Hewitt, Lieberman,
+    and many more (Licklider, Catmull!)
+  }
 }
 
-% AIM-482b (revised from 1978 AIM-482)
-% Does not cite Bobrow & Winograd, cites Kay, Hewitt, Lieberman
-% p.10 only one parent(!) single inheritance
-% p.40 call-next-method is called "continue-asking"
-@Misc{Kahn1979Director,
+@TechReport{Kahn1979Director,
   title = {Director Guide},
   author = {Kahn, Kenneth Michael},
-  school = {MIT},
+  institution={MIT},
+  number={AIM-482b},
   year = {1979},
-  url = {https://dspace.mit.edu/handle/1721.1/6302}
+  url = {https://dspace.mit.edu/handle/1721.1/6302},
+  note={.
+    This paper, revised from a previous 1978 edition,
+    presents Director, the earliest Lisp OO system as such,
+    where inheritance exists in the context of programming
+    and not just knowledge representation from which it evolved (see Kahn 1976).
+    Dirctor by then had been extracted from Kahn’s wider animation project built atop it.
+    Director implements single inheritance by message passing on top of an Actor system.
+    It has an early form of call-next-method called continue-asking (p.40).
+    The Actor team would later adapt Kahn’s system, see Hewitt 1979.
+    Kahn cites Smalltalk and Actors as an influence for Director,
+    but not KRL (Kahn does cite KRL in other papers).
+  }
 }
 
-
 % Borning1982 cites a 1980 version of the Flavors report, from MIT. Originally from 1979.
-% Also a 1982 version of LOOPS
-% Flavors calls Smalltalk "hierarchical" and itself "non-hierarchical"
-% p.7 Section "Multiple Superclasses", "instead of a hierarchy, more of a lattice structure is formed"
-% Doesn't mention DAG, tree or acyclic, lattice is not quite correct:
-% there are common descendents (above the class) and ancestors (below the top system class),
-% but no unique *most generic common descendent* nor unique *most specific common ancestor*
-% conflict semantics.
 % p.9 Section "Flavors" - as distinguished from the previous class thing! - linearizes
 @Misc{Cannon1979,
   title={Flavors: A Non-Hierarchical Approach to Object-Oriented Programming},
@@ -585,21 +604,63 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={https://www.softwarepreservation.org/projects/LISP/MIT/nnnfla1-20040122.pdf},
   note={.
     Cannon’s groundbreaking work unexpectedly solved the problem of multiple inheritance,
-    by harmonously combining the methods in a way that generalizes Teitelman’s ADVISE facility.
+    by harmoniously combining the methods in a way that generalizes Teitelman’s ADVISE facility.
     The paper is full of ideas and genius insights, even though it is obviously unpolished,
     and written by an inexperienced young man.
     Cannon’s software and his report were widely circulated at MIT and in the Lisp community,
     but unhappily the report was never officially published.
-    Only with Moon 1986’s paper on New Flavors would Cannon’s works be known
-    to the wider programming language community.
+    The MIT Lisp Machine Manual from 1981 on (3rd edition and later) includes Flavors.
+    The first academic publication on Flavors would be Moon 1986’s paper on New Flavors.
+    An October 1980 CADR backup tape shows Flavors was implemented as a short 1428 line program.
+    It has linearization by a two-pass depth-first search algorithm,
+    where parents are called “components” that a flavor “depends-on”,
+    but there are also other flavors it “includes” that go at the end to act as defaults,
+    which by default includes at the end the system-defined vanilla-flavor.
+    A mixin (or mix-in) is a flavor meant to be combined-in but not instantiated.
+    The Flavors paper describes the Smalltalk  “hierarchical”; discusses the conflict view
+    of multiple inheritance (from Borning, looking at his bibliography)
+    as “a scheme called _multiple superclasses_”, and how it fails
+    to support _modular_ interactions between orthogonal issues.
+    and itself “non-hierarchical” by comparison, with flavors instead of superclasses, so
+    “instead of a hierarchy, more of a lattice structure is formed”.
+    While 20-year old Cannon’s underlying concepts and arguments show his genius,
+    his incorrect wording shows his then lack of education:
+    the DAG of ancestors (words he doesn’t use) is still a hierarchy
+    (just a partial rather than total order), and not a lattice
+    (which requires existence and unicity of least upper and least lower bounds).
+    Finally, note that Flavors as such offers no call-next-method.
+    The default method combination, :DAEMON, supports only one primary method,
+    lots of wrappers (macros with :around powers),
+    and side-effects from :before and :after methods to combine methods;
+    but other method-combinations can combine things (:LIST :INVERSE-LIST :PROGN :AND :OR),
+    and you could create your own method-combination that returns a function to compose.
   }
+}
+
+%% 1980
+
+@inproceedings{Goldstein1980Extending,
+  author = {Goldstein, Ira P. and Bobrow, Daniel G.},
+  title = {Extending Object Oriented Programming in Smalltalk},
+  year = {1980},
+  isbn = {9781450373968},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/800087.802792},
+  doi = {10.1145/800087.802792},
+  abstract = {Smalltalk is an object oriented programming language with behavior invoked by passing messages between objects. Objects with similar behavior are grouped into classes. These classes form a hierarchy. When an object receives a message, the class or one of its superclasses provides the corresponding method to be executed. We have built an experimental Personal Information Environment (PIE) in Smalltalk that extends this paradigm in several ways. A PIE object, called a node, can have multiple perspectives, each of which provides independent specialized behaviors for the object as a whole, thus providing multiple inheritance for nodes. Nodes have metadescription to guide viewing of the objects during browsing, provide default values, constrain the values of attributes, and define procedures to be run when values are sought or set. All nodes have unique names which allow objects to migrate between users and machines. Finally attribute lookup for nodes is context sensitive, thereby allowing alternative descriptions to be created and manipulated.This paper first reviews Smalltalk, then discusses our implementation of each of the above capabilities within PIE, a Smalltalk system for representing and manipulating designs. We then describe our experience with PIE applied to software development and technical writing. Our conclusion is that the resulting hybrid is a viable offspring for exploring design problems.},
+  booktitle = {Proceedings of the 1980 ACM Conference on LISP and Functional Programming},
+  pages = {75–81},
+  numpages = {7},
+  location = {Stanford University, California, USA},
+  series = {LFP '80}
 }
 
 %% 1981
 
-% chinual 3ed, 1981 has Flavors and defsystem. 1979 2ed doesn't.
+% Chine Nual or chinual 3ed, 1981 has Flavors and defsystem. 1979 2ed doesn't.
 % Stroustrup1989Multiple cites 3ed or 4ed (also 1981)
-@manual{Weinreb1981Chinual,
+@manual{Weinreb1981Chinual3,
   author    = {Daniel Weinreb and David Moon},
   title     = {Lisp Machine Manual},
   edition   = {3rd},
@@ -611,7 +672,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   note={.
      Also known as the “Chinual”, this legendary book explains the interface of the Lisp Machine,
      then commercialized under license by Symbolics, Inc., the first .com.
-     Chapter 20 discusses Flavors.
+     Chapter 20 presents Flavors, its concepts and its API,
+     but does not include all the rationale from the Flavors paper.
    }
 }
 
@@ -699,6 +761,37 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 1983
 
+
+@article{Novak1983GLISP,
+  author = {Novak, Gordon S.},
+  title = {Data abstraction in GLISP},
+  year = {1983},
+  issue_date = {June 1983},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume = {18},
+  number = {6},
+  issn = {0362-1340},
+  url = {https://doi.org/10.1145/872728.806863},
+  doi = {10.1145/872728.806863},
+  abstract = {GLISP is a high-level language that is based on Lisp and is compiled into Lisp. It provides a versatile abstract-data-type facility with hierarchical inheritance of properties and object-centered programming. The object code produced by GLISP is optimized, so that it is about as efficient as handwritten Lisp. An integrated programming environment is provided, including editors for programs and data-type descriptions, interpretive programming features, and a display-based inspector/editor for data. GLISP is fully implemented.},
+  journal = {SIGPLAN Not.},
+  month = jun,
+  pages = {170–177},
+  numpages = {8},
+  note={.
+    Earliest find of “single inheritance” by Google Scholar... when describing Smalltalk as having a
+    “single inheritance hierarchy” (i.e. only one “inheritance hierarchy”).
+    GLISP is an impressive Lisp dialect with a compiler to Lisp implemented in Lisp
+    (ported to Interlisp, Maclisp, Franz Lisp, UCI Lisp, Elisp, Portable Standard Lisp),
+    with type inference, and a message-passing object system with multiple inheritance;
+    “responses” to messages can be function calls, but also inlined function calls,
+    or outright macro-expansion. Objects can be virtual, expanded away at compile-time
+    (e.g. for a view that changes coordinates in another object). An object editor
+    that works both on graphical Xerox D machines and text terminals is implemented in GLISP.
+  }
+}
+
 % Has metaclasses, multiple inheritance.
 % Still ugly syntax, with INTERLISP-style very short uppercase identifiers.
 @book{Bobrow1983Loops,
@@ -706,7 +799,17 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   author={Bobrow, Daniel Gureasko and Stefik, Mark},
   volume={10},
   year={1983},
-  publisher={Xerox Corporation Palo Alto, CA}
+  publisher={Xerox Corporation Palo Alto, CA},
+  note={.
+    LOOPS has multiple inheritance. The authors cite the right Flavors passage on
+    _modular_ interactions between orthogonal issues. But instead of linearization,
+    they instead offer tools for methods to manually call methods from one or all
+    parents, or from a named ancestor. On the other hand, LOOPS also includes
+    a rich slot access protocol, a metaclass protocol, and a knowledge base with
+    a rule-oriented programming engine.
+    Interestingly, the paper has a mix of UPPERCASE primitives,
+    CamelCase functions and objects and classes, camelCase variables.
+  }
 }
 
 %% 1984
@@ -762,18 +865,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   doi={10.5555/324493.324538},
 }
 
-% Also a 1985 report.
-% Has generic functions, method caching, multimethods,
-% As in 1983, metaclasses-mediated definitions&slots, etc.
-% Almost modern syntax, lower case long(ish) identifiers.
-@InProceedings{Bobrow86CommonLoops,
-  title={CommonLoops: Merging Lisp and Object-Oriented Programming},
-  author={Daniel G. Bobrow and Kenneth Kahn and Gregor Kiczales and Larry Masinter and Mark Stefyk and Frank Zdybel},
-  booktitle={OOPSLA},
-  year={1986},
-  doi={10.1145/28697.28700}
-}
-
 @article{Moon1986Flavors,
   author = {Moon, David A.},
   title = {Object-Oriented Programming with Flavors},
@@ -792,13 +883,47 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   numpages = {8},
   notes={.
     According to Gabriel 2012, this was the first academic publication about Flavors,
-    outside of Cannon’s 1979 report that was not seen outside MIT (the 1982 revision is cited).
-    It describes the New Flavors system from Symbolics,
-    after it acquired the new “generic function” syntax,
-    respect for local precedence order, and other niceties.
-    Moon rightfully insists on the modularity advantage of Flavors.
-    This is a fantastic explanation on how to do multiple inheritance right,
-    only way too short.
+    outside of Cannon’s 1979 report (this paper cites a 1982 copy), that was not seen
+    outside MIT and other Lisp circles (however, the Lisp Machine Manual from 1981 on
+    includes a chapter on Flavors). This paper describes the New Flavors system from
+    Symbolics, after it acquired the new “generic function” syntax, respect for
+    local precedence order, and other niceties. Moon rightfully insists on the modularity
+    advantage of Flavors (already mentions by Cannon). This is a fantastic explanation
+    on how to do multiple inheritance right, only way too short.
+  }
+}
+
+% Almost modern syntax, lower case long(ish) identifiers.
+@InProceedings{Bobrow1986CommonLoops,
+  title={CommonLoops: Merging Lisp and Object-Oriented Programming},
+  author={Daniel G. Bobrow and Kenneth Kahn and Gregor Kiczales and Larry Masinter and Mark Stefik and Frank Zdybel},
+  booktitle={OOPSLA},
+  issue_date = {Nov. 1986},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume = {21},
+  number = {11},
+  issn = {0362-1340},
+  doi = {10.1145/960112.28700},
+  journal = {SIGPLAN Not.},
+  month = jun,
+  pages = {17–29},
+  numpages = {13},
+  year={1986},
+  doi={10.1145/28697.28700},
+  note={.
+    Excellent paper.
+    This reprint of a 1985 report presents CommonLoops, an evolution from LOOPS
+    that integrates lessons from New Flavors, from which it takes linearization and generic functions,
+    that it extends to support multimethods. As in LOOPS, there are metaclasses
+    (that control single or multiple inheritance, slot accessors).
+    It has a form of call-next-method named run-super.
+    Method calls are compiled with various optimizations including local and global method caches.
+    Introduces class variables, init-forms in slot descriptions
+    instead of access-time default values as in LOOPS, slot properties,
+    “active values” (kind of method combination for slot accessors?).
+    More nice design discussions and comparisons.
+    Symbols are all lowercase.
   }
 }
 
@@ -3239,5 +3364,6 @@ series = {PLDI '99}
 
 % Jonathan Aldrich workshop paper on capability-safe reflection and an ECOOP on modular reasoning in aspect-oriented programming (the latter a bit dated now).
 
-
 % https://github.com/fogus/lang-genealogy
+
+% https://research.scheme.org/lambda-papers/

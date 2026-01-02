@@ -1122,3 +1122,9 @@ classes and configuration prototypes, with everything in between.
 I decoupled the fixpoints and the extensions, fulfilling the promise of modularity of OO,
 that was systematically ignored or destroyed by the programming language researchers
 focused on coupling them.
+
+
+
+A class being an uninteresting special case of a prototype, the word "class" is practically useless to discuss OO in general.
+And "object" meaning totally different things for Class OO vs Prototype OO, the word is actively toxic to use when discussing OO in general.
+Hilarious.
