@@ -60,7 +60,8 @@
         This novel, despite being named “The Three Musketeers”,
         famously has four musketeers as protagonists.
         Admittedly, the main protagonist isn’t one yet
-        when he meets (and duels!) the other three.}
+        when he meets (and duels!) the other three.
+  }
 }
 
 %% 1947
@@ -202,7 +203,13 @@
   journal = {Commun. ACM},
   month = {sep},
   pages = {671--678},
-  numpages = {8}
+  numpages = {8},
+  note={.
+    SIMULA is an extension of Algol for “quasi-parallel processing”.
+    In 1966, it doesn’t have classes yet, but has some variant
+    of what MIT people will later call “Actors”, will asynchronous message passing
+    between independently running entities.
+  }
 }
 
 %% 1967
@@ -232,13 +239,16 @@
   }
 }
 
-% Introduces the notion of "Ad hoc polymorphism"
 @Misc{Strachey67,
   Author = {Christopher Strachey},
   Title = {Fundamental Concepts in Programming Languages},
   Year = {1967},
   url = {http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.332.3161},
-}
+  doi="10.1023/A:101000031310",
+  note={.
+    This classic paper, among many other things,
+    introduces the notion of “Ad hoc polymorphism”.
+  }}
 
 %% 1968
 
@@ -261,8 +271,8 @@
   notes={.
     The paper identifies a class with a procedure that computes an algorithm,
     constructs a record, and yields current values multiple times
-    to other activities with "detach" (call again for next).
-    Section 6 has "concatenation" for single inheritance.
+    to other activities with “detach” (call again for next).
+    Section 6 has “concatenation” for single inheritance.
   }
 }
 
@@ -276,14 +286,17 @@
   volume = {15},
   number = {12},
   issn = {0001-0782},
-  url = {https://doi.org/10.1145/361598.361623},
+  url = {http://sunnyday.mit.edu/16.355/parnas-criteria.html},
   doi = {10.1145/361598.361623},
   abstract = {This paper discusses modularization as a mechanism for improving the flexibility and comprehensibility of a system while allowing the shortening of its development time. The effectiveness of a “modularization” is dependent upon the criteria used in dividing the system into modules. A system design problem is presented and both a conventional and unconventional decomposition are described. It is shown that the unconventional decompositions have distinct advantages for the goals outlined. The criteria used in arriving at the decompositions are discussed. The unconventional decomposition, if implemented with the conventional assumption that a module consists of one or more subroutines, will be less efficient in most cases. An alternative approach to implementation which does not have this effect is sketched.},
   journal = {Commun. ACM},
   month = {dec},
   pages = {1053--1058},
   numpages = {6},
-  keywords = {modules, software, KWIC index, modularity, software engineering, software design}
+  keywords = {modules, software, KWIC index, modularity, software engineering, software design},
+  note={.
+    A truly classic paper on Modularity.
+  }
 }
 
 %% 1973
@@ -672,8 +685,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   note={.
      Also known as the “Chinual”, this legendary book explains the interface of the Lisp Machine,
      then commercialized under license by Symbolics, Inc., the first .com.
-     Chapter 20 presents Flavors, its concepts and its API,
-     but does not include all the rationale from the Flavors paper.
+     Chapter 20 presents how to use Flavors, what are its concepts and its API;
+     but it does not include all the rationale from the Flavors paper.
    }
 }
 
@@ -999,29 +1012,52 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 % https://beta.cs.au.dk/ ?
-@article{kristensen1987beta,
+% https://www.semanticscholar.org/paper/The-BETA-Programming-Language-Kristensen-Madsen/3971897f708518e13809d3c0772105bd86526e50
+% https://tidsskrift.dk/daimipb/article/view/7578
+@TechReport{Kristensen1987Beta,
   title={The BETA programming language},
   author={Kristensen, Bent Bruun and Madsen, Ole Lehrmann and Møller-Pedersen, Birger and Nygaard, Kristen},
   journal={DAIMI Report Series},
+  month=Oct,
   number={229},
   year={1987},
-  url={https://www.semanticscholar.org/paper/The-BETA-Programming-Language-Kristensen-Madsen/3971897f708518e13809d3c0772105bd86526e50}
+  doi={10.7146/dpb.v16i229.7578},
+  volume={16},
+  url={https://tidsskrift.dk/daimipb/article/view/7578},
+  note={.
+    Beta is the successor of Simula. It unifies classes, procedures, functions and types
+    as a single abstraction mechanism called “patterns”, that may be akin to prototypes.
+    It uses the same concatenation semantics as Simula for inheritance,
+    with the infamous “inner” keyword wherein parents specify where the child’s code will go,
+    rather than the child controlling how it makes use of the parent-provided value.
+    In the end, each can be expressed in terms of the other one, but it seems to me that
+    the one with the better ergonomics did win.
+    The paper is hard to read. The authors are in their own world, and
+    fail to try to reduce their semantics to something simple in terms of logic,
+    or anything understandable by others.
+  }
 }
 
 
 %% 1988
 
-% Specification of function behavior, similar to later CLHS
 % https://www.researchgate.net/publication/220178512_Common_Lisp_Object_System_Specification_X2JI3_Document_88-002R
-@Article{Bobrow88CLOS,
+% https://link.springer.com/content/pdf/10.1007/bf01806962.pdf
+@Article{Bobrow1988CLOS,
   title={Common Lisp Object Specification X3J13},
   author={D. G. Bobrow and L. D. DeMichiel and R. P. Gabriel and S. E. Kleene and G. Kiczales and D. A. Moon},
   journal={SIGPLAN Notices 23 (Special Issue)},
   year={1988},
   doi={10.1007/bf01806962},
-  url={https://link.springer.com/content/pdf/10.1007/bf01806962.pdf}
+  note={.
+    This paper is a chapter of the Common Lisp specification then in the process of being standardized.
+    The introduction is very short, and most of the paper is a description of the API,
+    primitive by primitive. There it no presentation of the concepts.
+    But the paper shows that CLOS was already mature in 1988 (the standard was finalized in 1991).
+  }
 }
 
+% https://dl.acm.org/doi/10.1145/73560.73567
 @InProceedings{Kamin1988,
   title={Inheritance in Smalltalk-80: A Denotational Definition},
   author={Samuel N. Kamin},
@@ -1029,19 +1065,39 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   booktitle={POPL},
   year={1988},
   doi={10.1145/73560.73567},
-  %url={https://dl.acm.org/doi/10.1145/73560.73567}
+  note={.
+    With Reddy 1988, one of the very first formal semantics for OO,
+    with a simplified static model of Smalltalk-80 with single inheritance.
+    Kamin uses syntactic rewrite rules, that he directly translated into a running ML program.
+    This paper deserves much praise for being a first of its genre,
+    translating a foreign paradigm in the vocabulary of FP,
+    and being constructive with an actual running implementation.
+    In a way, the paper does too much by trying to have a realistic subset of Smalltalk,
+    and too little by spending too little time explaining its dense model of inheritance,
+    indeed as the fixpoint of the hierarchy of class definitions.
+    But that’s OK, because Reddy 1988 is a very complementary paper
+    that explains the concepts behind Kamin.
+  }
 }
 
 % https://core.ac.uk/download/pdf/42828491.pdf
 @InProceedings{ObjectsAsClosures,
   author = {Reddy, Uday},
   title = {Objects as Closures - Abstract Semantics of Object Oriented Languages},
-  %booktitle = {ACM Symposium on LISP and Functional Programming},
-  booktitle = {LFP},
-  %month = {02},
+  booktitle = {ACM Symposium on LISP and Functional Programming},
+  month = {02},
   pages = {289–-297},
   doi = {10.1145/62678.62721},
   year = {1988},
+  note={.
+    This paper is a great sequel and complement to Kamin 1988.
+    Where Kamin implemented a complete workable subset of Smalltalk-80,
+    Reddy instead decomposes the concepts of OO into simpler concepts
+    that he gradually extends.
+    Reddy doesn’t provide running code, though he says Kamin implemented Reddy’s
+    variant as well as Kamin’s own.
+    Together a great pair of paper.
+  }
 }
 
 % First entry (alphabetically by name?) in ltuo
@@ -1052,6 +1108,14 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   booktitle = {Proceedings of the 1988 ACM Conference on LISP and Functional Programming},
   pages = {277--288},
   Year = {1988},
+  isbn = {089791273X},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  doi = {10.1145/62678.62720},
+  abstract = {We describe a small set of additions to Scheme to support object-oriented programming, including a form of multiple inheritance. The extensions proposed are in keeping with the spirit of the Scheme language and consequently differ from Lisp-based object systems such as Flavors and the Common Lisp Object System. Our extensions mesh neatly with the underlying Scheme system. We motivate our design with examples, and then describe implementation techniques that yields efficiency comparable to dynamic object-oriented language implementations considered to be high performance. The complete design has an almost-portable implementation, and the core of this design comprises the object system used in T, a dialect of Scheme. The applicative bias of our approach is unusual in object-oriented programming systems.},
+  numpages = {12},
+  location = {Snowbird, Utah, USA},
+  series = {LFP '88},
   note={.
     This paper expounds the object system of Yale T Scheme, actually implemented circa 1982,
     and notably used for its GUI:
@@ -1066,14 +1130,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     a rudimentary protocol of delegation;
     however “components” provide mixin inheritance (before the name was invented).
     Impressive, but sadly largely unknown outside Lisp circles.},
-  isbn = {089791273X},
-  publisher = {Association for Computing Machinery},
-  address = {New York, NY, USA},
-  doi = {10.1145/62678.62720},
-  abstract = {We describe a small set of additions to Scheme to support object-oriented programming, including a form of multiple inheritance. The extensions proposed are in keeping with the spirit of the Scheme language and consequently differ from Lisp-based object systems such as Flavors and the Common Lisp Object System. Our extensions mesh neatly with the underlying Scheme system. We motivate our design with examples, and then describe implementation techniques that yields efficiency comparable to dynamic object-oriented language implementations considered to be high performance. The complete design has an almost-portable implementation, and the core of this design comprises the object system used in T, a dialect of Scheme. The applicative bias of our approach is unusual in object-oriented programming systems.},
-  numpages = {12},
-  location = {Snowbird, Utah, USA},
-  series = {LFP '88}
 }
 
 @book{cct1988,
@@ -2156,6 +2212,21 @@ and Matsuoka, Satoshi",
 }
 
 %% 1998
+
+@phdthesis{Russo1998,
+  author = {Russo, Claudio V.},
+  title = {Types for Modules},
+  school = {University of Edinburgh},
+  year = {1998},
+  month = jul,
+  note = {LFCS Thesis ECS-LFCS-98-389},
+  url = {https://era.ed.ac.uk/handle/1842/385},
+  note={.
+    Russo adds first-class modules to ML, that only had second-class modules up until then.
+    Includes a lot of work on the type system, admittedly more than I can follow.
+  }
+}
+
 
 % Defines a dialect of Java with mixins, MixedJava, to illustrate the approach taken in MzScheme,
 % later better described in their 2006 paper.

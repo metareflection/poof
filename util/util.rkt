@@ -34,7 +34,7 @@
 
 ;; TODO: find how to insert raw html
 ;;(define (Html . args) (html-only (apply elem #:style (make-style #f '(exact-chars)) args)))
-(define (hhr) (html-block (elem #:style (make-style #f (list (make-alt-tag "hr"))))))
+(define (hhr) (html-elem (elem #:style (make-style #f (list (make-alt-tag "hr"))))))
 
 (define (xnote x . y)
   (list (apply note (append y (list (html-elem (list (linebreak) (linebreak) (linebreak))))))

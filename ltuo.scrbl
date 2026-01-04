@@ -50,7 +50,7 @@ is still decades ahead of yours?
 
 If any of these questions bother you, then this book is for you.
 This book offers a Theory of OO that it elucidates in simple terms on top of FP—as
-Intralinguistic Modular Extensibility.
+Intra-linguistic Modular Extensibility.
 A mouthful, but actually all simple concepts you already use,
 though you may not have clear names for them yet.
 This Theory of OO can answer all the questions above, and more.
@@ -699,7 +699,7 @@ at @secref{MOO}, about a third into the book.
 The most enthusiastic among you will read the book cover to cover,
 including footnotes and bibliographical notes, and
 go all the way into using and implementing
-the most advanced OO techniques of @secref{ATiOO},
+the most advanced OO techniques of the later chapters (see @secref{EtSoO}, @secref{IO}),
 end up building your OO system, and writing a sequel to this book.
 If you do, why not contact me and join me to build and write them together?
 
@@ -1103,7 +1103,7 @@ in the form of modules defining but not exporting identifiers
 or simply lexical scoping@~cite{Rees1995W7}.
 @; TODO{cite Simula? JS?}
 
-Now, these mechanisms can be very useful,
+Certainly, these mechanisms can be very useful,
 worthy features to add to an OO language.
 They are just not essential to OO and not specific to it,
 though of course their adaptation to OO languages will follow
@@ -1267,7 +1267,7 @@ that Alan Kay also once mentioned was essential for OO@xnote["."]{
 
 Moreover, many OO languages generalize and extend their method dispatch mechanism
 from “single dispatch” to “multiple dispatch”@~cite{
-  Bobrow1986CommonLoops bobrow88clos CecilMultimethods allen2011type}.
+  Bobrow1986CommonLoops Bobrow1988CLOS CecilMultimethods allen2011type}.
 Their “multimethods” are attached to tuples of prototypes or classes,
 and there is no single prototype, class, or single independent entity of any kind
 capable of either “receiving” or “sending” a message.
@@ -1551,7 +1551,7 @@ which can be done for any language.
   That every Poet is a Fool: @linebreak[]
   But you yourself may serve to show it, @linebreak[]
   That every Fool is not a Poet.
-  @|#:- "Alexander Pope (or Jonathan Swift), translating a French quip"|
+  @|#:- "Alexander Pope (or Jonathan Swift), adapting a French quip"|
 }
 @subsubsection{Prototype OO vs Class OO}
 These in-language entities are called @emph{prototypes} if first-class
@@ -1948,7 +1948,7 @@ in order from least specific superclass to most specific@xnote["."]{
   after Smalltalk, languages instead let subclass methods control the context
   for possible call of superclass methods, rather than the other way around).
   Beta behavior is easily expressible using user-defined method combinations
-  in e.g. CLOS @~cite{bobrow88clos}, or can also be retrieved by having methods
+  in e.g. CLOS @~cite{Bobrow1988CLOS}, or can also be retrieved by having methods
   explicitly build an effective method chained the other way around.
   Thus I can rightfully say that Inheritance, and OO,
   were only invented and named through the interaction of
@@ -2013,7 +2013,7 @@ used Multiple Inheritance,
 @~cite{Cannon1979 Weinreb1981Chinual3},
 refined and improved by successor Lisp object systems
 New Flavors@~cite{Moon1986Flavors}, CommonLoops@~cite{Bobrow1986CommonLoops}
-and CLOS@~cite{bobrow88clos cltl2}.
+and CLOS@~cite{Bobrow1988CLOS cltl2}.
 Since then, many languages including Ruby, Perl, Python and Scala
 correctly adopted the basic design of Flavors (though none of its more advanced features)—I
 will call them @emph{flavorful}@xnote["."]{
@@ -2452,7 +2452,7 @@ phenomena are what OO is.
 What programmers do, not what programmers say.
 
 And these phenomena are what is captured by
-the intralinguistic extensible modularity as defined above:
+the intra-linguistic extensible modularity as defined above:
 (a) the ability to “code against an interface” and
 pass any value of any type that satisfies the interface
 (modularity, be it following structural or nominative rules),
@@ -2474,9 +2474,15 @@ and systematically reduce to elementary concepts.
 
 @section[#:tag "OOaIEM"]{OO as Internal Extensible Modularity}
 @subsection[#:tag "M"]{Modularity}
-
 @subsubsection{Division of Labor}
-
+@epigraph{The benefits expected of modular programming are:
+(1) managerial—development time should be shortened because separate groups
+would work on each module with little need for communication;
+(2) product flexibility—it should be possible to make drastic changes to one module
+without a need to change others;
+(3) comprehensibility—it should be possible to study the system one module at a time.
+  @|#:- "David Parnas"|
+}
 Modularity@~cite{Parnas1972 Dennis1975} is the organization of software source code
 in order to support division of labor, dividing it into “modules” that can each be
 understood and worked on mostly independently from other modules,
@@ -2509,12 +2515,12 @@ entities that exist at compile-time but are not available as regular runtime val
 Either first-class or second-class entities are considered @emph{internal} to the language,
 part of its semantics, handled by its processors (compiler, interpreter, type system, etc.).
 
-However many languages offer no such internal notion of modules.
+However, many languages offer no such internal notion of modules.
 Indeed modules are a complex and costly feature to design and implement,
 and few language designers and implementers will expend the necessary efforts toward it
-at the start of language’s development;
+at the start of their language’s development;
 only the few that have success and see their codebase grow
-in size and complexity generally bother@xnote["."]{
+in size and complexity will generally bother to add a module system@xnote["."]{
   Unless they develop their language within an existing modular framework
   for language-oriented programming, such as Racket,
   @;TODO{cite. Also Stratego http://strategoxt.org/ ? Pypy https://pypy.org/ ?}
@@ -2539,7 +2545,7 @@ yet conceptually present in the minds of the programmers@xnote["."]{
   as well as the distinction between “internal” and “external” entities.
   Of course, depending on where you draw the line for “the language”,
   the very same entity processed by the very same tools may shift between these classes:
-  thus, in C++ classes are second-class entities in;
+  thus, in C++ classes are second-class entities;
   but if the language being considered is C, and C++ is seen as an external metalanguage
   (as was the case in the original implementation @c{cfront} of C++,
   a preprocessor that generated C code),
@@ -2577,9 +2583,9 @@ For instance, the object-oriented design of the Common Lisp build system
 ASDF@~cite{ASDF2 ASDF3}
 made it simple to configure, to extend, and
 to refactor to use algorithms in @emph{O(n)} rather than @emph{O(n³)} or worse,
-all of it without any of the clients having to change their code.
+all without any of the clients having to change their code.
 This makes it arguably more modular than its predecessor MK-DEFSYSTEM@~cite{kantrowitz1991}
-that shunned use of objects (possibly for portability reasons at the time),
+that shunned the use of objects (possibly for portability reasons at the time),
 was notably hard to configure, and resisted several attempts to extend or refactor it.
 
 Note that while external modularity enables cooperation during development,
@@ -2592,7 +2598,7 @@ For a more complete theory of Modularity, see @citet{ngnghm9}.
 
 @subsubsection{Historical Modularity Breakthroughs}
 
-Programmers developers these days are very aware of files, and file hierarchies,
+Programmers these days are very aware of files, and file hierarchies,
 as units of modularity they have to think about quite often,
 naming, opening, visiting and closing them in their editors,
 manipulating them in their source control, etc.
@@ -2622,7 +2628,7 @@ files embody modularity internal to programming languages@xnote["."]{
   can constitute yet another notion of modules, several of which can be present in a file.
   At a bigger scale, groups of files in one or multiple directories may constitute a library,
   and a “package” in a software “distribution” may include one or several libraries, etc.
-  Thus, Even within a single language, there can be many notions of modularity
+  Thus, even within a single language, there can be many notions of modularity
   at several different scales of software construction,
   enabling division of labor across time for a single person, for a small team, for a large team,
   between several teams, etc., each time with different correspondences
@@ -2668,8 +2674,8 @@ that’s the very definition of modularity.
 Sadly, the generalization of call stacks to first-class continuations in the 1970s,
 @; TODO cite Steve Russell 1960, van Wijngaarden 1964, Landin 1964, Strachey 1974, Steele 1978
 and later to delimited control in 1988 and beyond @; TODO cite Felleisen 1988
-are still not available @; TODO cite
-in most programming languages, eschewing another progress in modularity,
+is still not available @; TODO cite
+in most programming languages, eschewing another advance in modularity,
 wherein programmers could otherwise abstract over the execution of some fragment of code
 without having to worry about transformations to their control structure,
 e.g. for the sake of non-deterministic search, @; TODO cite
@@ -2679,33 +2685,19 @@ dynamic discovery and management of side-effects, etc. @;{TODO cite}
 
 On a different dimension,
 separately compiled object files, as implemented by FORTRAN (1956), @; TODO cite
-provides third-class modularity through an external linker.
+provided third-class modularity through an external linker.
 Later developments like
-typechecked second-class Modules a la Modula-2 (1978), @; TODO cite Wirth;
-@; TODO also look into Liskov’s CLU, Mary Shaws’ Alphart, etc.
-Higher-Order Modules a la ML (1985), @; TODO cite McQueen 1985
-typeclasses a la Haskell (or traits in Rust),
-interfaces a la Java, and much more,
+typechecked second-class Modules à la Modula-2 (1978), @; TODO cite Wirth;
+@; TODO also look into Liskov’s CLU, Mary Shaw’s Alphard, etc.
+Higher-Order Modules à la ML (1985), @; TODO cite McQueen 1985
+typeclasses à la Haskell (or traits in Rust),
+interfaces à la Java, and much more,
 @; TODO cite
-provide second-class modularity as part of a language itself.
+provided second-class modularity as part of a language itself.
+Finally, objects in Smalltalk-72 (even before Smalltalk adopted inheritance in 1976),
+or first-class modules in ML @~cite{Russo1998},
+provided first-class modularity.
 
-@;{  objects in Smalltalk 72, etc.
-  First-class modules in ML (199x?), etc.
-  provide first-class modularity. }
-
-These are all examples of modularity that don’t involve extensibility as such.
-By combining modularity with extensibility, I can also add all kinds of
-OO classes and prototypes since Simula 1967, but also precursor breakthroughs like
-the “locator words” of the Burroughs B5000 @~cite{lonergan1961 barton1961}, and
-Ivan Sutherland’s Sketchpad’s “masters and instances” @~cite{sketchpad1963},
-that both inspired Kay, or Warren Teitelman’s Pilot’s ADVISE facility @~cite{teitelman1966},
-that was influential at least in the Lisp community
-(eventually leading to method combination in Flavors and CLOS).
-@;{
-  I wonder how much the Smalltalk and Interlisp teams did or did not interact at PARC.
-  I can’t imagine they didn’t, and yet, Interlisp seems to have had more influence
-  on the the MIT Lispers than the co-located Smalltalkers.
-}
 
 @subsubsection{Modularity and Complexity}
 
@@ -2777,7 +2769,7 @@ programmers may have to manage large interfaces to achieve small results@xnote["
   }
   @Xitem{(2)
     Given the factoring of a program into modules,
-    these techniques add runtime-time barriers
+    these techniques add runtime barriers
     that do not improve safety compared to compile-time barriers
     (e.g. using strong types, whether static or dynamic).
   }
@@ -2804,14 +2796,14 @@ programmers may have to manage large interfaces to achieve small results@xnote["
     The overall system is not made one bit smaller for being divided in smaller parts;
     actually, all the artificial process crossings, marshallings and unmarshallings,
     actually make the overall system noticeably larger in proportion to how small those parts are.
-    Lots of small problems are added a both runtime and compile-time,
+    Lots of small problems are added at both runtime and compile-time,
     while no actual problem whatsoever is solved.
   }
   @Xitem{(7)
-    These designs are thus actually detrimental in very proportion to how much they are followed,
+    These designs are thus actually detrimental in direct proportion to how much they are followed,
     and in proportion to how beneficial they claim to be. They are, technically, a lie.
   }
-  @Xitem{(9)
+  @Xitem{(8)
     In practice, “successful” microkernels import all services into a monolithic “single server”,
     and successful microservices are eventually successfully rebuilt
     as vertically integrated single services.
@@ -2822,13 +2814,13 @@ programmers may have to manage large interfaces to achieve small results@xnote["
   Modularity is a matter of semantics, as manipulated by programmers at programming-time,
   and by compilers at compile-time;
   the runtime barrier crossings of these myopic designs
-  cannot conceivably do nothing to help about that, only hinder.
+  cannot conceivably do anything to help about that, only hinder.
   @;{ TODO cite something about HURD? Footnote? }
 
   Now, there are sometimes quite valid socio-economical (and not technical) justifications
   to dividing a program into multiple services:
   when there are many teams having distinct incentives, feedback loops, responsibilities,
-  service level agreement their are financially accountable for, etc.,
+  service level agreements they are financially accountable for, etc.,
   it makes sense for them to deploy distinct services.
   Indeed, Conway’s Law @;TODO CITE ?
   states that the technical architecture of software follows its business or management architecture.
@@ -2842,13 +2834,19 @@ programmers may have to manage large interfaces to achieve small results@xnote["
   (on top of its high-level virtual machine rather than of the lower-level model
   of more popular languages),
   to the point of replacing many routine names
-  by common idioms, known sequences of combinators. @;{TODO cite - ask arcfide / sacrideo}
+  by common idioms—known sequences of combinators.
+  (The many talks by Aaron Hsu at LambdaConf are an amazing glimpse at this style of programming.)
+  @;{TODO cite - ask arcfide / sacrideo}
+  The programmer can then directly express the concepts of the domain being implemented
+  in terms of concrete APL’s tables and functions, stripped of all the unnecessary abstractions,
+  until the solution is both so simple and task-specific that there is no need for shared modules.
+  By using his terse combinators to directly manipulate entire tables of data at a time,
+  a competent APLer can find a complete solution to a problem
+  in fewer lines of code than it takes for programmers in other
+  languages just to name the structures, their fields and accessors.
   Admittedly, there is only so much room in this direction:
-  as the software grows in intent and the features
-  to simplify and monomorphize code
-  until it is both so simple and task-specific that there is no need for shared modules:
-  at some point, you reach the intrinsic complexity of the task at hand,
-  the point at which it is too big to fit wholly in any programmer’s mind;
+  as the software grows in scope, and the required features grow in intrinsic complexity,
+  there is a point at which it is becomes big to fit wholly in any programmer’s mind,
   then it must be chipped away by moving parts into other modules,
   notably by reusing common algorithms and data structures from libraries
   rather than inline specialized versions.
@@ -2870,7 +2868,7 @@ When comes time to integrate all the module specifications into a complete compu
 then comes the problem of implementing the circularity between the definition of the module context
 and the definitions of those modules.
 
-With third-class modularity, the modules context and module context are resolved
+With third-class modularity, the module context and modules are resolved
 before the language processor starts,
 by whatever preprocessor external to the language generates the program.
 With second-class internal modularity, they are resolved by some passes of the
@@ -2895,7 +2893,7 @@ For local or first-class modules, compilers usually generate some kind of
 for each modularly defined entity, that, if it cannot resolve statically,
 will exist as such at runtime.
 Thus, Haskell typeclasses become “dictionaries” that may or may not be fully inlined.
-The case of OO, prototypes are indeed typically represented
+In the case of OO, prototypes are indeed typically represented
 by such “dispatch table” at runtime—which in Class OO
 would be the type descriptor for each object, carried at runtime for dynamic dispatch.
 
@@ -2957,9 +2955,9 @@ each field is initialized before it is used@xnote["."]{
   Interestingly, whichever safety mode is used, programmers have to manually follow
   some protocol to ensure init-before-use.
   However the lazy evaluation approach minimizes artificial constraints on such protocol,
-  that when not sensible might force him to fall back to the not-so-safe variant.
+  that when not sensible might force them to fall back to the not-so-safe variant.
 
-  The init-before-issue issue is well-known and exists outside of OO: it may happen
+  The init-before-use issue is well-known and exists outside of OO: it may happen
   whenever there is mutual recursion between variables or initial elements of data structures.
   However, we’ll see that “open recursion” @~cite{cardelli1992extensible Pierce2002TAPL},
   i.e. the use of operators meant to be the argument of a fixpoint combinator,
@@ -2977,7 +2975,7 @@ each field is initialized before it is used@xnote["."]{
   rather than in the semantic mechanism that is being applied to these domains
   (extensible modular definitions of arbitrary code using Inheritance).
   But this is no surprise to those who are deeply familiar with C++ templates, Jsonnet or Nix,
-  and other systems that programmers to directly use unrestricted OO
+  and other systems that allow programmers to directly use unrestricted OO
   in a more fundamental purely functional setting wherein OO can be leveraged
   into arbitrary programming and metaprogramming, not just for “classes” stricto sensu.
   In the next subsubsection, I argue the case from the point of view of modularity
@@ -2987,18 +2985,21 @@ each field is initialized before it is used@xnote["."]{
 The more programmers must agree on a protocol to follow, the less modular the approach.
 In a stateful applicative language, where the various modular definitions
 are initialized by side-effects, programmers need to follow some rigid protocol
-that may not be expressive enough to follow the modular dependencies between internal definitions,
+that may not be expressive enough to capture the modular dependencies between internal definitions,
 often leading to indirect solutions like “builder” classes in Java,
 that stage all the complex computations before
 the initialization of objects of the actually desired class.
 
 @subsection[#:tag "E"]{Extensibility}
+@epigraph{Malum est consilium, quod mutari non potest. @linebreak[]
+@~ @~ (It is a bad plan that admits of no modification.)
+@|#:- "Publius Syrus (1st century BC)"|}
 @subsubsection{Extending an Entity}
 Extensibility is the ability to take a software entity and create a new entity
 that includes all the functionality of the previous entity,
 and adds new functionality, refines existing functionality,
 or otherwise modifies the previous entity.
-Extensibility that can be realized inside or outside of a programming language.
+Extensibility can be realized inside or outside of a programming language.
 
 @subsubsection{First-class to Fourth-class Extensibility}
 
@@ -3031,27 +3032,35 @@ based on all the information available to the program.
 
 These notions of extensibility are complementary and not opposite, for often to extend a program,
 you will first extract from the existing code a shared subset that can be used as a library
-(which is extra-linguistic extension),
-and re(write) both the old and new functionality as extensions of that library
-(which is intra-linguistic extension),
+(which is an extra-linguistic extension),
+and rewrite both the old and new functionality as extensions of that library
+(which is an intra-linguistic extension),
 as much as possible at compile-time for efficiency (which is second-class extensibility),
-yet what you need to runtime (which is first-class extensibility).
+yet enough at runtime to cover your needs (which is first-class extensibility).
 
-Finally, and as for modularity, the use of reflection, “live” interactive environments,
-or even for a “regular” computing system considered from a wider point of view
-that includes not just “dead” programs from “end-user” programmers,
-but also all human interaction loops from operating system and compiler writers
-as well as those end-users, can blur the lines between “external” and “internal”,
-between “second-class” and “first-class”, or reclassify them as demarcations
-in the division of labor that may be opportune to some of the participating humans
-but not to others.
+Finally, as with modularity, the lines between “external” and “internal”, or
+between “second-class” and “first-class”, can often be blurred by
+reflection and “live” interactive environments.
+But these demarcations are not clear-cut objective features of physical human-computer interactions.
+They are subjective features of the way humans plan and analyze those interactions.
+To end-users who won’t look inside programs, first-class, second-class, third-class,
+and if sufficiently helpless even fourth-class, are all the same: things they cannot change.
+For adventurous hackers willing to look under the hood of the compiler and the operating system,
+first-class to fourth-class are also all the same: things they can change and automate,
+even when playing with otherwise “dead” programs on “regular” computing systems.
+The demarcations are still useful though:
+division of labor can be facilitated or inhibited by software architecture.
+A system that empowers an end-user to make the simple changes they need and understand,
+might prove much more economical than a largely equivalent system that requires
+a high-agency world expert to make an analogous change.
+
 
 @subsubsection[#:tag "CfE"]{A Criterion for Extensibility}
 
 @principle{A design is more extensible if it enables developers
-to enact more kinds of change through smaller more local modifications}
+to enact more kinds of change through smaller, more local modifications}
 compared to alternative designs that require larger (costlier) rewrites
-or more global modifications (or prohibit change, same as making its cost infinite).
+or more global modifications, or that prohibit change (equivalent to making its cost infinite).
 
 Extensibility should be understood within a framework of what changes
 are or aren’t “small” for a human (or AI?) developer, rather than
@@ -3059,82 +3068,87 @@ for a fast and mindless algorithm.
 
 Thus, for instance, changing some arithmetic calculations to use
 bignums (large variable-size integers) instead of fixnums (builtin fixed-size integers)
-in C demands a whole-program rewrite with non-local modifications to the program structure.
-in Java it involves some changes all over though straightforward
-and preserving the local program structure;
-in Lisp requires minimal local changes, and Haskell requires one local change only.
-Thus with respect to this and similar kinds of change, if expected,
-Haskell is more extensible than Lisp that is more extensible than Java that is more extensible than C.
+in C demands a whole-program rewrite with non-local modifications to the program structure;
+in Java it involves changes throughout the code—straightforward but numerous—while
+preserving the local program structure;
+in Lisp it requires minimal local changes; and
+in Haskell it requires one local change only.
+Thus, with respect to this and similar kinds of change, if expected,
+Haskell is more extensible than Lisp, which is more extensible than Java,
+which is more extensible than C.
 @;{TODO examples for C, Java, Lisp, Haskell}
 
 Extensibility does not necessarily mean that a complex addition or refactoring
-can be done in a single small change;
-rather, code evolution can be achieved in many small changes, wherein
-the system can assist the developer into only having to care
-about a small change at a time, while the system tracks down what are all
-the small remaining changes necessary.
+can be done in a single small change.
+Rather, code evolution can be achieved through many small changes, where
+the system assists developers by allowing them to focus
+on only one small change at a time,
+while the system tracks down the remaining necessary adjustments.
 
-For instance, a rich static type system can often be used as a tool
-to guide large refactorings by dividing them in manageably small changes
-(as extralinguistic code modifications),
-making the typechecker happy one redefinition at a time after a type modification.
+For instance, a rich static type system can often serve as a tool
+to guide large refactorings by dividing them
+into manageably small steps—as extra-linguistic code modifications—making the typechecker
+happy one redefinition at a time after an initial type modification.
 This example also illustrates how
 @principle{Extensibility and Modularity usually happen through
-meta-linguistic mechanisms rather than linguistic mechanisms},
+meta-linguistic mechanisms rather than linguistic ones},
 i.e. through tooling outside the language rather than
-expressions inside the language.
-Even then, having the locus of such extensible modularity be internalized within the language
-enables dynamic extension, runtime code sharing, user-guided specialization
-as intralinguistic deployment processes that leverage the result of
-the extralinguistic development process.
+through expressions inside the language.
+Even then, internalizing the locus of such extensible modularity within the language
+enables dynamic extension, runtime code sharing and user-guided specialization
+as intra-linguistic deployment processes that leverage the result of
+the extra-linguistic development process.
 
 @subsubsection{Historical Extensibility Breakthroughs}
 
 While any software is externally extensible by patching the executable binary,
-the invention of assembly code made it much easier to extend programs,
-especially so with automatic offset calculations from labels.
+the invention of assembly code made it far easier to extend programs,
+especially with automatic offset calculations from labels.
 Compilers and interpreters that process source code meant for human consumption and production,
-preprocessors, interactive editors, and all kinds of software tooling,
-also much facilitated external extensibility.
-And software that requires configuration through many files
-that must be carefully kept in synch manually
-is less extensible than one that can be configured through a single file
-from which all required changes are automatically propagated in a coherent manner
-(whether that configuration is internal or external, first-class to fourth-class);
-if multiple files must be modified together
+along with preprocessors, interactive editors, and all kinds of software tooling,
+greatly facilitated external extensibility, too.
+Meanwhile, software that requires configuration through many files
+that must be carefully and manually kept in synch
+is less extensible than one configurable through a single file
+from which all required changes are automatically propagated coherently
+(whether that configuration is internal or external, first-class to fourth-class).
+Whenever multiple files must be modified together
 (such as interface and implementation files in many languages),
-then the units of modularity are not each single file, but
-each group of files that need be modified together;
-or sometimes, groups that include parts of multiple files, which is even more cumbersome.
+the true units of modularity (or in this case extensibility)
+are not the individual files—but each group of files that must be modified in tandem;
+and sometimes, the units of extensibility are entities that span parts of multiple files,
+which is even more cumbersome.
 
 Higher-level languages facilitate external extensibility compared to lower-level ones,
-by enabling programmers to make smaller more local changes for larger effects;
-thus FORTRAN enables more extensible code than assembly, and Haskell more than FORTRAN.
-Languages with higher-order functions or object-orientation enable more internal extensibility
-by enabling the creation of new in-language entities built from existing entities
+by enabling programmers to achieve larger effects they desire
+through smaller, more local changes that cost them less.
+Thus, FORTRAN enables more code extensibility than assembly, and Haskell more than FORTRAN.
+Languages with higher-order functions or object orientation enable greater internal extensibility
+by allowing the creation of new in-language entities built from existing ones
 in more powerful ways.
-One particular way that OO can be showed to enable more extensibility than lack thereof,
-is when some course on data structures explains variants of a data structure require
-complete rewrite of each variant and all associated functions from scratch
+To demonstrate how OO enables more extensibility, consider
+a course or library about increasingly more sophisticated data structures:
 when using a functional language with simple Hindley-Milner typechecking, @; TODO cite Okasaki book?
-but can be simply written as a series of classes refining previous classes
-with a couple of changes at each step when using OO.
+each variant requires a near-complete rewrite from scratch
+of the data structure and all associated functions;
+but when using OO,
+each variant can be expressed as a refinement of previous variants
+with only a few targeted changes.
 
 @subsubsection{Extensibility without Modularity}
 
-Before I go deep into how OO the brings together extensibility and modularity,
-I may want to explain what extensibility without modularity means.
+Before delving deeply into how OO brings together extensibility and modularity,
+it is worth explaining what extensibility without modularity means.
 
-Operating Systems, applications or games sometimes deliver updates using some kind of binary patch
-format that minimizes the size that has to be transmitted
-while maximizing the changes made to the software.
-Such patches embody extensibility yet total lack of modularity:
-they are meaningful only in the context of the exact previous version of the software.
-Text-based diff files can similarly be used as patches for source code,
-and are somewhat more modular, being meaningful even in presence
-of independent changes to the source code, but overall remain not very modular,
-due to being fragile and making changes without respecting any semantic code interface;
-actually their power to extend software lies precisely in their not having to respect such interfaces.
+Operating Systems, applications or games sometimes deliver updates via binary patch formats
+that minimize data transmitted while maximizing changes effected to the software.
+Such patches embody pure extensibility with total lack of modularity:
+they are meaningful only when applied to the exact previous version of the software.
+Text-based diff files can similarly serve as patches for source code,
+and are somewhat more modular, remaining applicable even in the presence
+of certain independent changes to the source code, yet are still not very modular overall:
+they are fragile and operate without respecting any semantic code interface;
+indeed their power to extend software lies precisely in their not having to respect such interfaces.
 
 The ultimate in extensibility without modularity would be to specify modifications to the software
 as bytes concatenated at the end of a compressed stream (e.g. using @c{gzip} or some AI model)
@@ -3148,18 +3162,18 @@ Interestingly, these forms of external extensibility without modularity,
 while good for distributing software, are totally infeasible for humans to directly create:
 they vastly increase rather than decrease the cognitive load required to write software.
 Instead, humans use modular forms of extensibility, such as editing source code
-as part of a edit-evaluate-debug development loop, until they reach a new version
+as part of an edit-evaluate-debug development loop, until they reach a new version
 of the software they want to release, after which point they use automated tools
 to extract from the modularly-achieved new version some non-modular compressed patches.
 
 As for internal extensibility without modularity,
 UML, co-Algebras or relational modeling, as previously discussed in @secref{OiaMotW},
 fail to model OO precisely because the “classes” they specify are mere types:
-they lack the modularity context that enables self-reference in actual OO classes.
+they lack the module context that enables self-reference in actual OO classes.
 As in-language entities, they can be extended by adding new attributes,
 but these attributes have to be constants:
-attributes being defined cannot vary modularly by referring to the class being defined it-“self”
-or its many other attributes being defined.
+they may not contain any self-reference to the entity being defined and its attributes.
+
 
 @subsubsection{Extensibility and Complexity}
 
@@ -3205,7 +3219,7 @@ Internal and external extensibility are thus mutual friends, not mutual enemies.
 By decreasing not only overall complexity, but the complexity of @emph{incremental} changes,
 extensibility also supports shorter software development feedback loops,
 therefore more agile development.
-By contrast, without extensibility, developers may require more efforts
+By contrast, without extensibility, developers may require more effort
 before any tangible incremental progress is achieved,
 leading to loss of direction, of motivation, of support from management
 and of buy-in from investors and customers.
@@ -3218,9 +3232,9 @@ that allows semantic manipulation in dimensions meaningful to programmers.
 By the very nature of programming, any such representation is enough to
 enable arbitrary extensions, given a universal programming language,
 though some representations may be simpler to work with than others:
-they may enable programmers can express concisely and precisely the changes they want,
+they may enable programmers to express concisely and precisely the changes they want,
 at the correct level of abstraction, detailed enough that they expose the concepts at stake,
-yet not so detailed that the programmer in drowned in minutia.
+yet not so detailed that the programmer is drowned in minutiae.
 
 Now, in the case of second-class internal extensibility,
 or of first-class internal extensibility in a less-than-universal language,
@@ -3242,8 +3256,13 @@ using “hot-patches” that were not foreseen by the original programmer.
 @;{TODO examples}
 
 @subsection[#:tag "extensible_modularity"]{Extensible Modularity}
+@epigraph{
+  Power Couple:
+    Two individuals that are super heroes by themselves
+    yet when powers combine become an unstoppable, complementary unit.
+      @|#:-"Urban Dictionary"|
+}
 @subsubsection{A Dynamic Duo}
-
 Modularity and Extensibility work hand in hand:
 @principle{Modularity means you only need to know
 a small amount of old information to make software progress.
@@ -3257,12 +3276,23 @@ compared with using less-modular and less-extensible programming language design
 Together they enable the organic development of cooperative systems
 that grow with each programmer’s needs without getting bogged down in coordination issues.
 
+Early examples of Modularity and Extensibility together that pre-date fully-formed OO include
+of course classes in Simula 1967 @~cite{Simula1967}, but also precursor breakthroughs like
+the “locator words” of the Burroughs B5000 @~cite{lonergan1961 barton1961}, and
+Ivan Sutherland’s Sketchpad’s “masters and instances” @~cite{sketchpad1963},
+that both inspired Kay, or Warren Teitelman’s Pilot’s ADVISE facility @~cite{teitelman1966},
+that was influential at least in the Lisp community and led to method combination
+in Flavors and CLOS@xnote["."]{
+  I wonder how much the Smalltalk and Interlisp teams did or did not interact at PARC.
+  I can’t imagine they didn’t, and yet, Interlisp seems to have had more influence
+  on the MIT Lispers than the co-located Smalltalkers.
+}
+
 @subsubsection{Modular Extensible Specifications}
 
 A modular extensible specification specifies how to extend a previous value,
-but in a modular way, wherein the extension is able to refer
-through some modular context to values defined by other people,
-and those other definitions being referenced can themselves be extended.
+but in a modular way: the extension is able to use some modular context
+to refer to values defined and extended by other pieces of code.
 
 At this point, I reach the end of what can be clearly explained while remaining informal,
 and have to introduce a formal model of modularity, extensibility, and the two together,
@@ -3278,7 +3308,7 @@ and inasmuch as it can be understood, it is only because I expect my readers
 to be seasoned programmers and scientists familiar with those concepts.
 My most complex explanations were in terms of functions from a modular context to a value,
 or from some (original) value to another (extended) value (of essentially the same type).
-As I try to combine these kinds of functions, the complexity is larger
+As I try to combine these kinds of functions, the complexity is greater
 than can be explained away in a few words, and the devil will be in the details.
 
 A formal model allows one to precisely define and discuss the building blocks of OO,
@@ -3288,12 +3318,15 @@ handwaving, imprecision, ambiguity, confusions, and
 identical words used with crucially different meanings by different people.
 
 @subsubsection{Why a Minimal Model?}
-
+@epigraph{Actually a person does not @emph{really} understand something
+until teaching it to a @emph{computer}, i.e. expressing it as an algorithm.
+@|#:- "Donald Knuth"|
+}
 I seek a @emph{minimal} model because a non-minimal model means there are still concepts
 that haven’t been teased apart from each other, but are confused and confusing.
 
 If I @emph{can} express classes in terms of prototypes, prototypes in terms of specifications,
-or multiple and Single Inheritance in terms of Mixin Inheritance,
+or Multiple and Single Inheritance in terms of Mixin Inheritance,
 then I @emph{must} do so, until I reduce OO to its simplest expression,
 and identify the most fundamental building blocks within it,
 from which all the usual concepts can be reconstituted, explained, justified, evaluated,
@@ -3313,14 +3346,9 @@ to cover the Categories of mathematics, and more.
 Therefore, in an essential sense, FP is indeed the “simplest” paradigm
 in which to describe the semantics of OO and other programming paradigms:
 it is simultaneously amenable to both computation and reasoning
-with the least amount of scaffolding to bridging between the two.
+with the least amount of scaffolding for bridging between the two.
 
 @subsubsection{Why an Executable Model?}
-
-In the words of Donald Knuth:
-“Actually a person does not @emph{really} understand something
-until teaching it to a @emph{computer}, i.e. expressing it as an algorithm.”.
-
 While I could achieve a slightly simpler algorithmic model
 by using a theoretical variant of the λ-calculus,
 I and other people would not be able to directly run and test my algorithms
@@ -3385,14 +3413,14 @@ as a dialect in the wider tradition of LISP. @; CITE
 It has many implementations, dialects and close cousins, @; cite Racket
 a lot of documentation, modern libraries, @; TODO cite SRFIs
 decades of established lore, code base, user base, academic recognition.
-and also macro systems @; TODO cite
-that allow to tailor the syntax of the language to your needs.
+It also has macro systems @; TODO cite
+that allow you to tailor the syntax of the language to your needs.
 
 Some other languages, like ML or Haskell, @; CITE
-are closer to the theoretical λ-calculus, but come with builtin “typesystems”
+are closer to the theoretical λ-calculus, but come with builtin typesystems
 that are way too inexpressive to accept the λ-terms I use.
-I suspect that using dependent types such as in Rocq, Agda or Lean @; CITE
-have sufficiently expressive typesystems, but the types involved might be unweildy
+I suspect that systems with dependent types, such as in Rocq, Agda or Lean, @; CITE
+are sufficiently expressive, but the types involved might be unwieldy
 and would make it harder to explain the basic concepts I present.
 I leave it as an exercise to the reader to port my code to such platforms,
 and look forward to the result.
@@ -3403,11 +3431,11 @@ But it would require more care for implementers trying to port such an implement
 to most programming contexts that are applicative.
 Also, Nix is more recent, less well-known, its syntax and semantics less recognizable;
 the Lindy effect @; TODO cite
-means it will probably disappear sooner that Scheme,
+means it will probably disappear sooner than Scheme,
 making this book harder to read for potential readers across time.
 Finally, Nix as compared to Scheme, is missing a key feature beyond the basic λ-calculus,
 that I will use when building Multiple Inheritance:
-the ability to test the equality of two specifications.
+the ability to test two specifications for equality.
 
 Therefore, I pick Scheme as the best compromise in which to formalize OO.
 
@@ -3424,8 +3452,7 @@ I can introduce formal semantics for it, starting with a truly minimal model:
 (2) The simplest and most fundamental form of Inheritance, Mixin Inheritance.
 Mixin Inheritance is indeed simplest from the point of view of post-1970s formal logic,
 though not from the point of view of implementation using mid-1960s computer technology,
-at which point I’d be using single-Inheritance indeed.
-@; XXX remove the above paragraph, check its content is available
+at which point I’d be using Single Inheritance indeed.
 
 @subsection{Minimal First-Class Extensibility}
 
@@ -3433,11 +3460,11 @@ at which point I’d be using single-Inheritance indeed.
 
 I will start by formalizing First-Class Extensibility in pure FP,
 as it will be easier than modularity, and a good warmup.
-To make clearer what kind of computational objects I am talkimg about,
+To make clearer what kind of computational objects I am talking about,
 I will be using semi-formal types as fourth-class entities,
 i.e. purely as design-patterns to be enforced by humans.
 I leave a coherent typesystem as an exercise to the reader,
-and I will later direct him to relevant literature (see @secref{TfOO}).
+though I will offer some guidance and references to relevant literature (see @secref{TfOO}).
 
 Now, to extend to some computation returning some value of type @c{V},
 is simply to do some more computation, starting from that value,
@@ -3446,24 +3473,32 @@ Thus, in general an “extension” is actually an arbitrary transformation,
 which in FP, will be modeled as a function of type @c{V → W}.
 
 However, under a stricter notion of extension,
-@c{W} must be the same as @c{V} or a subtype thereof,
-such that you can add or refine information about the entity being extended,
-or adjust it in minor ways,
-but not in ways that invalidate the information specified so far,
+@c{W} must be the same as @c{V} or a subtype thereof:
+you can add or refine type information about the entity being extended,
+or adjust it in minor ways;
+you may not invalidate the information specified so far,
 at least none of the information encoded in the type.
-when that is the case, I will then speak of a “strict extension”.
+When that is the case, I will then speak of a “strict extension”.
 
 Obviously, if types are allowed to be too precise,
-then any value @c{v} is, among other things, element of
+then any value @c{v} is, among other things, an element of
 the singleton type that contains only @c{v}, at which point
 the only allowed transformation is a constant non-transformation.
 Still, in a system in which developers can @emph{explicitly} declare
-a type @c{V} if any (i.e. if not @c{Any})
-that encodes information they require to be preserved,
+the information they @emph{intend} to be preserved,
+as a type @c{V} if any (which funnily is non-trivial if @emph{not} @c{Any}),
 it makes sense to require only extensions that strictly respect that type,
 i.e. functions of type @c{V → V}, or @c{W ⊂ V ⇒ V → W}
 (meaning @c{V → W} under the constraint that @c{W} is a subtype of @c{V},
-for some type @c{W} to be declared, in which case the function is also of type @c{V → V}).
+for some type @c{W} to be declared, in which case the function is also of type @c{V → V})@xnote["."]{
+  And even without static types, the pure lazy functional language Jsonnet @~cite{jsonnet}
+  allows programmers to specify dynamically checked constraints
+  that objects must satisfy after they are instantiated (if they are, lazily).
+  These constraints can ensure a runtime error is issued
+  when a desired invariant is broken, and cannot be disabled or removed by inheriting objects.
+  They can be used to enforce the same invariants as types could, and richer invariants too,
+  albeit at runtime only and not at compile-time.
+}
 
 @subsubsection{Coloring a Point}
 
@@ -3474,18 +3509,18 @@ I could define a record as follows:
 i.e. the variable @c{point-p} is bound to a record that associates
 to symbol @c{x} the number @c{2} and to symbol @c{y} the number @c{4}.
 
-An sample (strict) extension would be the function @c{paint-blue} below,
+A sample (strict) extension would be the function @c{paint-blue} below,
 that extends a given record (lexically bound to @c{p} within the body of the function)
 into a record that is a copy of the previous
 with a new or overriding binding associating to symbol @c{color} the string @c{"blue"}:
 @Code{(define (paint-blue p) (extend-record p 'color "blue"))}
 
 Obviously, if you apply this extension to that value with @c{(paint-blue point-p)}
-you obtain the a record equal to what you could have directly defined as:
+you obtain a record equal to what you could have directly defined as:
 @Code{(record (x 2) (y 4) (color "blue"))}
 
 Readers familiar with the literature will recognize the “colored point” example
-used in many OO papers. Note however, that in the present example,
+used in many OO papers. Note, however, that in the present example,
 as contrasted to most such papers, and to further examples in subsequent sections:
 @itemlist[#:style enumparenalph
 @item{I am extending a point @emph{value} rather than a point @emph{type},}
@@ -3503,7 +3538,7 @@ your extensions could be adding some increment to a previous number,
 which could be useful to count the price, weight or number of parts in a project being specified.}
 @item{The values could be bags of strings, and
 your extensions could append part identifiers to the list of spare parts or ingredients to order
-before to start assembly of a physical project.}
+before starting assembly of a physical project.}
 @item{The values could be lists of dependencies, where each dependency
 is a package to build, action to take or node to compute,
 in a build system, a reactive functional interface or a compiler.}]
@@ -3521,7 +3556,7 @@ The ultimate purpose of an extension @c{ext} is
 to be applied to some value @c{val},
 which in Scheme syntax is written @c{(ext val)}.
 
-But interestingly, extensions can be composed, such from two extensions
+But interestingly, extensions can be composed, such that from two extensions
 @c{ext1} and @c{ext2} you can extract an extension @c{(compose ext1 ext2)},
 also commonly written @c{ext1 ∘ ext2},
 that applies @c{ext1} to the result of applying @c{ext2} to the argument value.
@@ -3530,7 +3565,7 @@ you can always define the @c{compose} if not yet defined, as follows,
 which is an associative operator with the identity function @c{id} as neutral element:
 @Code{
 (define compose (λ (ext1 ext2) (λ (val) (ext1 (ext2 val)))))
-(define id (λ (val) (val)))}
+(define id (λ (val) val))}
 
 Now if I were discussing second-class extensions in a restricted compile-time language,
 composition might not be definable, and not expressible unless available as a primitive.
@@ -3553,7 +3588,7 @@ in addition to the extension they use.
 A better solution is to identify some default value containing
 the minimum amount of information for the base type @c{V}
 that is being strictly extended.
-Each extension then transform their “inherited” input value
+Each extension then transforms its “inherited” input value
 into the desired extended output value,
 possibly refining the type @c{V} along the way,
 such that the initial type is the “top” type of this refinement hierarchy.
@@ -3563,7 +3598,8 @@ as well as the domain type of values.
 
 @itemize[
 @item{For the type @c{Record} of records, @c{⊤ = (record-empty)} the empty record.}
-@item{For the type @c{Number} of numbers, @c{⊤ = 0}, seen additively, or @c{1} if multiplicatively,
+@item{For the type @c{Number} of numbers, @c{⊤ = 0} if seen additively,
+or @c{1} if seen multiplicatively,
 or @c{-∞} (IEEE floating-point number) seen with @c{max} as the operator, or @c{+∞} with @c{min}.}
 @item{For the type @c{Pointer} of pointers into a graph of records, @c{⊤ = null},
 the universal null pointer@xnote["."]{
@@ -3577,19 +3613,20 @@ the universal null pointer@xnote["."]{
 }}
 @item{For the type @c{Type} of types (in a compiler, at the meta-level),
 @c{⊤ = Any}, the top type (“contains everything, about which you know nothing”) that you refine,
-or bottom type @c{⊤ = Nothing} (“contains nothing, about which you know everything”) that you extend.}
+or the bottom type @c{⊤ = Nothing}
+(“contains nothing, about which you know everything”) that you extend.}
 @item{For any function type in a language with partial functions, @c{⊤ = abort},
 a function that never returns regularly,
-and instead always abort regular evaluation and/or throws an error.}
-@item{For the type @c{Lazy} of lazy computations, which would be an appropriate default
-in a language with lazy evaluation,
+and instead always aborts regular evaluation and/or throws an error.}
+@item{For the type @c{Lazy} of lazy computations,
+which would be an appropriate default in a language with lazy evaluation,
 even and especially a pure functional language with partial functions,
 such as Haskell or Nix,
 @c{⊤ = (lazy ⊥)} is a universal top value, where @c{⊥ = (abort)} is a computation
 that never terminates normally. Indeed, @c{(lazy ⊥)} carries no useful information
 but can be passed around, and has “negative infinite” information
 if you try to force, open or dereference it, which is much less than
-the 0 information as provided by a regular null value.
+the 0 information provided by a regular null value.
 In Scheme, one may explicitly use the @c{delay} primitive to express such laziness,
 though you must then explicitly @c{force} the resulting value rather than
 having the language implicitly force computations whenever needed.}
@@ -3614,9 +3651,10 @@ OO languages usually use @c{Record} as their top type,
 or some more specific @c{Object} subtype thereof that carries
 additional information as instance of Prototype or Class (depending on the language),
 with some null value or empty object as their top value.
-YMMV, but in my examples below, I will be more ambitious as to how widely applicable
-OO techniques can be, and, using Scheme as my language, I will choose
-the @c{Any} type as my top type, and the false boolean @c{#f} as my top value:
+Your mileage may vary, but in my examples below,
+I will be more ambitious as to how widely applicable OO techniques can be,
+and, using Scheme as my language, I will choose the @c{Any} type as my top type,
+and the false boolean @c{#f} as my top value:
 @Code{
 (define top #f)}
 
@@ -3633,8 +3671,8 @@ for any lazy type @c{V} (and similarly for function types),
 any extension that would return a useful result applied to @c{(lazy ⊥)}
 passing it as argument to the lazy @c{Y} combinator would also yield a result.
 And indeed the results will be the same if the extension wholly ignores its argument,
-as is often the intent in those situations:
-typically, you’d compose extensions, with one “to the right”
+as is often the intent in those situations.
+Typically, you’d compose extensions, with one “to the right”
 ignoring its argument, overriding any previous value
 (or lack thereof, as the default default is a bottom computation),
 and returning some default value that is more useful in context
@@ -3642,13 +3680,13 @@ and returning some default value that is more useful in context
 further extensions “to the left” then build something useful from that default value.
 
 However, if there is no such overriding extension, then
-the results would not necessarily the same between applying the extension or passing it to @c{Y}.
+the results would not necessarily be the same between applying the extension or passing it to @c{Y}.
 For instance, given the extension @c{(λ (x) (lazy-cons 1 x))}
 for some @c{lazy-cons} function creating a co-inductive stream of computations
 (as opposed to an inductive list of values as with the regular Scheme @c{cons}),
 applying the extension to @c{(lazy ⊥)} yields a stream you can destructure once,
-yielding @c{1} as first value, and “exploding at your face” if you try to destructure the rest;
-meanwhile, applying the @c{Y} combinator yields an infinite stream of 1’s.
+yielding @c{1} as first value, and “exploding in your face” if you try to destructure the rest.
+Meanwhile, applying the @c{Y} combinator yields an infinite stream of 1’s.
 
 Then comes the question of which answer is more appropriate.
 Using the @c{Y} combinator only applies to functions and lazy values,
@@ -3667,7 +3705,7 @@ is far superior to the approach of using a fixpoint combinator
 for the purpose of extracting a value from an extension.
 Thus, as far as one cares about extensibility:
 @emph{here, there is no Y}@xnote["."]{
-  With apologies to @citet{Levi1947}.
+  With apologies to Primo Levi @~cite{Levi1947}.
 }
 
 @subsection[#:tag "MFCM"]{Minimal First-Class Modularity}
@@ -3684,15 +3722,15 @@ For that, I introduce the notions of module context as a record,
 and modular definition as function from module context to entity.}
 @item{Third, programmers must be able to publish the entities they define
 as part of the modular context that can be used by other programmers.
-For that, I introduce to notion of module as record,
+For that, I introduce the notion of module as record,
 and (open) modular module definition, as function from module context to module.}
 @item{Last, programmers need to be able to link together
 those independent modular definitions into complete programs that end-users can run.
 For that, I introduce closed modular module definitions,
 and show how to resolve the open references.}]
 
-The end-user is provided with a “linked” program as a resolved module context
-from which he can invoke a programmer-defined “main” entry-point with his choice of arguments.
+End-users are provided with a “linked” program as a resolved module context
+from which they can invoke a programmer-defined “main” entry-point with their choice of arguments.
 
 @subsubsection{Records}
 
@@ -3735,7 +3773,7 @@ the record will associate a value of type @(Ri),
 where @c{R} is a schema of types, a function from @c{I} to @c{Type}.
 
 To simplify this model, a pure functional record of type @c{∏R}
-can be seen as an indexed function from the codomain @c{I} of indexes
+can be seen as an indexed function from the domain @c{I} of indexes
 to @(Ri) for each @c{i}.
 When invoked on a value not in @c{I}, the function may return any value, or diverge.
 To further simplify, and for the sake of modeling records as first-class functions,
@@ -3754,7 +3792,7 @@ and a point @c{point-q} of type @c{∏R} defined as follows:
   (record (x 3) (y 4) (color "blue")))
 }
 
-@Paragraph{Implementing Records}
+@Paragraph{Implementing Records} @; TODO secref to chapter 9?
 I will call @emph{identifier} some large or infinite type of values
 over which equality or inequality can be decided at runtime by using a suitable primitive,
 or calling a suitable function.
@@ -3765,7 +3803,7 @@ the @c{(if @emph{condition then-clause else-clause})} special form for condition
 In other programming languages that lack symbols as a builtin functionality,
 they can be implemented as interned strings, or instead of them,
 uninterned strings or numbers can be used as identifiers.
-And you if you only care about the pure λ-calculus, there are many embeddings and encodings
+And if you only care about the pure λ-calculus, there are many embeddings and encodings
 of unary or binary numbers, and lists or trees thereof, that will do.
 
 Programming languages usually already provide some data structure for records
@@ -3784,7 +3822,7 @@ but that is even simpler.
 
 The basic reference operator is just function application:
 @Code{
-(define record-ref (λ (rec) (λ (key) (rec key))))}
+(define record-ref (λ (key) (λ (rec) (rec key))))}
 
 The empty record can be represented as a function that always fails. In Scheme:
 @Code{
@@ -3799,12 +3837,13 @@ To extend a record with one key-value binding, you can use
 
 Note how this trivial implementation does not support
 getting a list of bindings, or removing a binding.
-Not only one doesn’t need these features to implement OO@xnote[","]{
+Not only does one not need these features to implement OO@xnote[","]{
   I generate HTML for my presentations using exactly this implementation strategy.
   The Scheme implementation I use has builtin record support, and
-  there are libraries now somewhat portable libraries for records in Scheme,
+  there are now somewhat portable libraries for records in Scheme;
   but I made it a point to use a minimal portable object system
-  to show the feasability and practicality of the approach.
+  to show the feasability and practicality of the approach;
+  and this way the code can be directly ported to any language with higher-order functions.
 }
 they constitute a “reflection” API
 that if exposed would interfere with various compiler optimizations,
@@ -3812,10 +3851,11 @@ the use of which is actively rejected when statically typing records.
 However, there are other reasons why my implementation is not practical for long-running programs:
 it leaks space when a binding is overridden,
 and the time to retrieve a binding is proportional to the total number of bindings
-(including overridden ones) instead of being logarithmic in the number of visible bindings only,
-for a pure functional implementation based on balanced trees,
-or constant time, for a linear or stateful implementation
-based on either known field offsets or hashing@xnote["."]{
+(including overridden ones) instead of being logarithmic in the number of visible bindings only
+as it could be in a pure functional implementation based on balanced trees,
+or constant time, for a stateful implementation
+based on either known field offsets within an array,
+or hashing@xnote["."]{
   The nitpicky would also account for an extra square root factor
   due to the limitations of physics@~cite{MythOfRAM2014}.
 }
@@ -3833,8 +3873,8 @@ and such a list of all bindings in the record;
 but this “reflection” feature is not necessary for most uses of records.
 Indeed, the trivial implementation I will use,
 wherein records are functions from identifier to value, doesn’t;
-and even more elaborate implementations often deliberately not only support runtime reflection,
-only second-class knowledge of what are the identifiers bound by a record.
+and some more elaborate implementations will deliberately omit runtime reflection,
+and only support second-class knowledge of what identifiers are bound in a record.
 
 Finally, given a list of records and for each record a set of identifiers
 (that may or may not be the set of all identifiers bound by it,
@@ -3851,7 +3891,7 @@ or just @emph{module context}, of type @c{C}.
 The module context contains all the available software entities,
 that were defined in other modules by other programmers
 (or even by the same programmer, at different times,
-who doesn’t presently have to hold the details of them in his limited brain).
+who doesn’t presently have to hold the details of them in their limited brain).
 And the simplest way to model a modular definition as a first-class value,
 is as a function of type @c{C → E}, from module context to specified entity@xnote["."]{
   A Haskeller may well interpret “modular” in this book as meaning
@@ -3901,9 +3941,9 @@ or could otherwise assume it was a language builtin).
 
 @subsubsection[#:tag "OMD"]{Open Modular Definitions}
 
-Now, programmers usually do not just specify just a single entity of type @c{E},
+Now, programmers usually do not specify just a single entity of type @c{E},
 but many entities, that they distinguish by associating them to identifiers.
-i.e. they modularly define a @emph{module} of type @c{∏P}.
+That is, they modularly define a @emph{module} of type @c{∏P}.
 A modular module definition is thus “just” a function from record to record:
 the input record is the modular context of type @c{∏R}, and
 the output record is the specified module of type @c{∏P}.
@@ -3931,9 +3971,11 @@ or the merging of records can be recursive, at which point a strategy must be de
 to determine how deep to recurse, for instance by somehow distinguishing “modules”
 from regular “records”.}]
 
-In the end, the programmer could somehow specify how his modular definition will extend
-the module context, with whatever merges he wants, however deeply nested—which
-will lead him to modular extensibility.
+@; TODO secref Optics
+
+In the end, programmers could somehow specify how their modular definition will extend
+the module context, with whatever merges they want, however deeply nested—which
+will lead them to modular extensibility.
 But for now, I will abstract over which strategy is used to
 assemble many modular definitions together.
 
@@ -3954,7 +3996,7 @@ of type @c{(C → C) → C} where @c{C = ∏R}.
 Interestingly, I already mentioned a solution:
 the fixpoint combinator @c{Y}.
 And whereas it was the wrong solution to resolve extensions,
-it is exactly what the doctor ordered to resolve modular definitions:
+it is precisely the right solution to resolve modular definitions:
 the @c{Y} combinator “ties the knots”,
 links each reference requiring an entity to the definition providing it,
 and closes all the open loops.
@@ -3970,12 +4012,14 @@ If there remain identifiers that are provided but not required,
 and they are not otherwise (meant to) be used via reflection,
 then a “tree shaker” or global dead code optimizer may eliminate them.
 
+
+@; TODO move to an appendix, with a summary of the conclusions?
 @subsubsection[#:tag "DSF"]{Digression: Scheme and FP}
 @epigraph{Purely applicative languages are poorly applicable. @|#:-"Alan Perlis"|
 }
 Here are two ways in which Scheme departs from the theoretical model of Functional Programming,
-that also apply to many (but not all) other programming languages, and that affect
-their suitability to modeling Object Orientation.
+that affect their suitability to modeling Object Orientation.
+These discrepancies also apply to many (but not all) other programming languages.
 
 @Paragraph{Many Y combinators}
 First, there are many variants to the fixpoint (or fixed-point) combinator Y,
@@ -4003,7 +4047,7 @@ The Y combinator works by composing the argument function @c{f}
 with indefinite copies (duplications) of itself (and accompanying plumbing).
 In this applicative variant, the first, minor, issue with this combinator is
 that it only works to compute functions,
-because the only way to prevent a overly eager evaluation of a computation
+because the only way to prevent an overly eager evaluation of a computation
 that would otherwise diverge is to protect this evaluation under a λ.
 I happen to have chosen a representation of records as functions,
 such that the applicative Y still directly applies;
@@ -4019,7 +4063,7 @@ only for sharing (fully-reduced) values@xnote[";"]{
   or through a virtual machine interpreter, inside the applicative λ-calculus,
   and then reimplementing your entire program on top of that richer calculus.
   But that would be a global transformation, not a local one,
-  and in the end, it’s the new paradigm you would be using,
+  and in the end, it’s the new stateful paradigm you would be using,
   not the pure applicative λ-calculus anymore.
 }
 therefore the fixpoint computations are duplicated,
@@ -4039,10 +4083,10 @@ the practically inapplicable applicative Y combinator:
 
 A stateful Y combinator is what the @c{letrec} construct of Scheme provides
 (and also its @c{letrec*} variant, that the internal @c{define} expands to):
-it uses state mutation underneath to create and initialize a mutable cell
+it uses some underlying state mutation to create and initialize a mutable cell
 that will hold the shared fixpoint value, with the caveat that you should be careful
 not to access the variable before it was initialized@xnote["."]{
-  A variable won’t be accessed before it is used if you’re immediately binding it variable
+  A variable won’t be accessed before it is used if you’re immediately binding the variable
   to a λ expression, but may happen if you bind the variable to a function application expression,
   wherein the variable is passed as argument without wrapping it in a λ,
   or the λ it is wrapped in is called before the evaluation of this expression completes.
@@ -4063,9 +4107,10 @@ and the rest of the program is pure and doesn’t capture intermediate continuat
 with Scheme’s famous @c{call/cc}, the mutation cannot be exposed as a side-effect,
 and the computation remains overall pure (deterministic, referentially transparent),
 though not definable in terms of the pure applicative λ-calculus.
-Note however how in the definition below, @c{p} below still needs be a function,
+Note however how in the definition below, @c{p} still needs be a function,
 and one must η-convert it into the equivalent but protected @c{(λ (y) (p y))}
-before to pass it to @c{f} to prevent access to the variable @c{p} before its initialization:
+before passing it to @c{f}, to prevent access to the variable @c{p} before its initialization
+(and @c{f} must also be careful not to invoke this protected @c{p} before returning):
 @Code{
 (define (stateful-Y f) (letrec ((p (f (λ (y) (p y))))) p))
 }
@@ -4110,7 +4155,7 @@ What the @c{delay} does buy you, on the other hand, is sharing of computations
 before they are evaluated, without duplication of computation costs or side-effects@xnote["."]{
   Whether wrapped in a thunk, an explicit delay, an implicitly lazy variable,
   a call-by-name argument, or some other construct, what is interesting is that
-  ultimately the fixpoint combinator indefinitely iterates a @emph{computation},
+  ultimately the fixpoint combinator iterates indefinitely on a @emph{computation},
   and this wrapping is a case of mapping computations into values in an otherwise
   call-by-value model that requires you to talk about values.
   In a calculus such as call-by-push-value@~cite{Levy1999CBPV},
@@ -4139,13 +4184,14 @@ in the rest of this book, and leave it as an exercise for the reader.
 
 @Paragraph{Function Arity}
 Functional Programming usually is written with unary functions (that take exactly one argument),
-and to express more than one arguments, you “curry” it:
+and to express more than one argument, you “curry” it:
 you define a function of one argument that returns a function that processes the next argument, etc.,
 and when all the arguments are received you evaluate the desired function body.
 Then to apply a function to multiple arguments, you apply to the first argument,
 and apply the function returned to the second argument, etc.
 The syntax for defining and using such curried functions is somewhat heavy in Scheme,
-involving a lot of parentheses, when the usual convention for Functional Programming languages
+involving a lot of parentheses.
+By contrast, the usual convention for Functional Programming languages
 is to do away with these extra parentheses:
 in FP languages, two consecutive terms is function application, which is left-associative,
 so that @c{f x y} is syntactic sugar for @c{((f x) y)};
@@ -4153,18 +4199,41 @@ and function definition is curried, so that @c{λ x y . E} is syntactic sugar fo
 
 Thus, there is some syntactic discrepancy that makes code written in
 the “native” Functional style look ugly and somewhat hard to follow in Scheme.
-Meanwhile, colloquial or “native” Scheme code may use any number of argument as function arity,
-and even variable numbers of argument, or, in some dialects, optional or keyword arguments,
+Meanwhile, colloquial or “native” Scheme code may use any number of arguments as function arity,
+and even variable numbers of arguments, or, in some dialects, optional or keyword arguments,
 which does not map directly to mathematical variants of Functional Programming;
 but it is an error to call a function with the wrong number of arguments.
 
 One approach to resolving this discrepancy is to just cope with
-the syntactic ugliness of unary functions in Scheme, and just use them nonetheless,
-despite Lots of Insipid and Stupid Parentheses.
+the syntactic ugliness of unary functions in Scheme, and use them nonetheless,
+despite Lots of Insipid and Stupid Parentheses@xnote["."]{
+  Detractors of the LISP language and its many dialects and derivatives,
+  among which Scheme is prominent, invented the backronym
+  “Lots of Insipid and Stupid Parentheses” to deride its syntax.
+  While Lispers sometimes yearn for terser syntax—and
+  at least one famous Schemer, Aaron Hsu, adopted APL—to them,
+  the parentheses, while a bit verbose, are just a familiar universal syntax that allows them
+  to quickly understand the basic structure of any program or data,
+  even when they are unfamiliar with the syntactic extensions it uses.
+  By contrast, in most “blub” languages, @; TODO cite Paul Graham
+  as Lispers call non-Lisp languages, parentheses, beyond function calls,
+  carry the emotional weight of “warning: this expression is complex,
+  and doesn’t use the implicit order of operations”.
+  Ironically, the syntactic and semantic abstraction powers of Lisp
+  allow for programs that are significantly shorter than their equivalent
+  in a mainstream language like Java,
+  and as a result have fewer parentheses overall, not counting all kinds of brackets.
+  It is therefore not the number of parentheses, but their density, that confuses
+  mainstream programmer, due to unfamiliarity and emotional connotations.
+  Now, it may well be that the same abstraction powers of Lisp make it unsuitable
+  for a majority of programmers incapable of mastering such powers.
+  As an age of AI programmers approaches that will have abstraction powers vastly superior
+  to the current average human programmer, it remains to be seen what kind of syntax they prefer.
+}
 
 A second approach is to adopt a more native Scheme style over FP style,
 with a variety of different function arities, making sure that a function is always called
-with the correct number of arguments. This approach melds best with the rest of the Scheme
+with the correct number of arguments. This approach blends best with the rest of the Scheme
 ecosystem, but may hurt the eyes of regular FP practitioners, and
 require extra discipline (or extra debugging) to use.
 
@@ -4182,12 +4251,15 @@ of the above solutions to these two issues, in Scheme and other languages.
 For the rest of this book, I will adopt a more “native” Scheme style,
 assuming @c{stateful-Y} and using multiple function arities
 that I will ensure are carefully matched by function callers;
-yet or to keep things simple and portable, I will avoid variable arity
+yet to keep things simple and portable, I will avoid variable arity
 with optional arguments, rest arguments or keyword arguments.
 As a result, the reader should be able both to easily copy and test
 all the code in this book at their favorite Scheme REPL,
 and also easily translate it to any other language
 that sports first-class higher-order functions.
+
+And with these issues settled, I will close this digression
+and return to rebuilding OO from first principles.
 
 @subsection[#:tag "MFCME"]{Minimal First-Class Modular Extensibility}
 
@@ -4213,7 +4285,7 @@ While you could conceivably merge such modular extensions,
 the more interesting operation is to compose them, or more precisely,
 to compose each extension under the module context and bound identifier,
 an operation that for reasons that will soon become obvious,
-I will call Mixin Inheritance for modular extensions:
+I will call Mixin Inheritance (for modular extensions):
 @Code{
 (define mix (λ (c p) (λ (s) (λ (t) (c s (p s t))))))}
 The variables @c{c} and @c{p} stand for “child” and “parent” specifications,
@@ -4225,7 +4297,7 @@ where @c{s} is the module context
   The @c{self} argument is the one involved in open recursion or “late binding”;
   it embodies the @emph{modular} side of OO.
   It is called @c{self} because it is destined to be bound as the fixpoint variable
-  of a fixpoint operator, wherein it refers to the entity being defined itself.
+  of a fixpoint operator, wherein it refers to the very entity being defined.
   The name @c{self} is used in Smalltalk, Scheme, Self, Python, Jsonnet, Nix,
   many more languages, and in a lot of the literature about OO semantics.
   In Simula, and after it, in C++, Java, JavaScript or Scala, the @c{this} keyword is used instead.
@@ -4252,11 +4324,12 @@ and @c{t} is the inherited value
   and in many languages and object systems after it,
   such as Java or Python, to access inherited methods.
   In CLOS you’d use @c{call-next-method}.
-  In C++ you can’t quite directly express that concept in general, because you have to name
+  In C++ you cannot directly express that concept in general, because you have to name
   the superclass whose method (or “(virtual) member function”) you want to call,
   so you can’t directly write traits that inherit “super” behavior along the class precedence list;
-  but it works if you restrict yourself to Inheritance, or if you use template metaprogramming
-  to arrange to pass a superclass, or list or DAG of superclasses, as argument to your template,
+  but it works if you restrict yourself to Single Inheritance,
+  or if you use template metaprogramming to arrange to pass a superclass,
+  or list or DAG of superclasses, as argument to your template,
   and manually reimplement Mixin Inheritance @~cite{Smaragdakis2000Mixin},
   or if you’re adventurous, Multiple Inheritance, on top of C++.
 }
@@ -4264,8 +4337,8 @@ The function can also be written with @c{compose}, eliding the “super” varia
 @Code{
 (define mix (λ (c p) (λ (s) (compose (c s) (p s)))))}
 
-General modular extensions for a given context form a category,
-and strict modular extensions for a given context and type form a monoid,
+Modular extensions and their composition have nice algebraic properties.
+Indeed, modular extensions for a given context form a category,
 wherein the operation is composition with the @c{mix} function,
 and the neutral element @c{idMExt} is the specification that “extends”
 any and every value by returning it unchanged, as follows@xnote[":"]{
@@ -4292,9 +4365,9 @@ A closed modular extension is
 a function of type @c{C → C → C},
 i.e. a modular extensible module specification where @c{C = V = W}.
 In the common case that @c{C} is a record, this means that
-wherein every identifier required is also extended.
+an extension is provided for every identifier required.
 
-As before for closed modular module definitions, the question is:
+As with closed modular module definitions before, the question is:
 how do you get from such a closed modular module extension
 to an actual module definition where all the loops are closed,
 and every identifier is mapped to a value of the expected type?
@@ -4312,24 +4385,23 @@ In this expression,
 @c{s} is the fixpoint variable for the module context being computed.
 
 @subsubsection{Default and non-default Top Type}
-
 Assuming some common top type @c{Top} and default value @c{top} in that type
 (I will use @c{Any} and @c{#f} in my example Scheme implementation),
 I will define the common instantiation operation for modular extensions:
 @Code{(define fixt (fix top))}
-or to inline @c{fix}:
+or to inline @c{fix} in its definition:
 @Code{(define fixt (λ (m) (Y (λ (s) ((m s) top)))))}
-
-Note that if the language-wide top type is too wide in some context,
-for instance in my choice of Scheme and @c{Any} because that you want
-to work with the narrower @c{Record} so as to define individual methods,
-and a default value @c{empty-record} instead of @c{#f}, then you can
-compose your modular extension with a modular extension as follows to the right,
+Note that if the language-wide top type is too wide in some context:
+for instance I chose @c{Any} as my top type in Scheme, with @c{#f} as my top value; but
+you may want to choose the narrower @c{Record} as your top type,
+so as to be able define individual methods,
+with a @c{empty-record} as default value.
+Then you can compose your modular extension with a modular extension as follows to the right,
 that throws away the previous value or computation (ignores its @c{super} argument)
 and returns the new default value regardless of context (ignores its @c{self} argument;
 unless that default is extracted from the context):
 @Code{(define record-spec (λ (self) (λ (super) empty-record)))}
-I could then equivalently define a variant of fix specialized for records
+I could then equivalently define a variant of @c{fix} specialized for records
 in any of the following ways:
 @Code{(define fix-record (fix empty-record))}
 @Code{(define fix-record (λ (m) (Y (λ (s) ((m s) empty-record)))))}
@@ -4337,14 +4409,12 @@ in any of the following ways:
 Note that because it ignores its @c{super} argument and thus throws away any inherited value,
 the @c{record-spec} modular extension must appear last, or at least
 after any modular extension the result of which isn’t to be ignored.
-
 Why not make @c{empty-record} the language-wide default?
 Because the language-wide default will apply not just to the specification of records,
 but also to the specification of individual fields of each record,
 and in this more general context, the default value @c{#f} is
 possibly more efficient at runtime, and definitely more colloquial—therefore more efficient
 in the most expensive resource, human-time.
-
 
 @subsubsection[#:tag "MOI"]{Minimal OO Indeed}
 
@@ -4353,12 +4423,12 @@ to the theoretical model of OO from Bracha and Cook @~cite{bracha1990mixin}
 and to the actual implementation of “extensions” in nixpkgs @~cite{nix2015}@xnote["."]{
   My presentation of Mixin Inheritance is actually slightly more general than what
   Bracha, Cook or Simons did define, in that my definition is not specialized for records.
-  Indeed, my closed modular extensions work on values of any type,
-  even their modularity aspect is indeed more useful for types
-  that somehow directly or indirectly encode.
+  Indeed, my closed modular extensions work on values of any type;
+  though indeed to fully enjoy modularity, modular extensions work better
+  when the module context is a record, or somehow contains or encodes a record.
   But my theory also importantly considers not just closed modular extensions,
   but also the more general open modular extensions, for which it is essential
-  that they universally apply to target values of any type.
+  that they universally apply to target values of any type, with a module context of any type.
   I can therefore claim as my innovation a wider, more general understanding of Mixin Inheritance,
   of which there is no evidence in earlier publications.
 }.
@@ -4372,8 +4442,10 @@ This style of Inheritance was dubbed “Mixin Inheritance” by Bracha and Cook@
   whereas the “mixins” of Bracha and Cook are a more rudimentary and more fundamental concept,
   that does not include automatic linearization of transitive dependencies.
   Also, “mixins” in Flavors are not distinguished by the language syntax or by the compiler;
-  they are just classes that are intended to be typically used with Multiple Inheritance,
-  as part of many disjoint hierarchies, and might indeed not otherwise make sense as base classes.
+  they are just abstract classes not meant to be instantiated,
+  but to be inherited from (the word “abstract class” didn’t exist back then);
+  a mixin in Flavors need not make sense as a base class, and
+  can instead be inherited as part of many different hierarchies.
   Since the word implies no special processing by the compiler or by the human operator,
   it can be dispensed with in the original context, and gladly assigned
   a new, useful, technical meaning.
@@ -4385,7 +4457,7 @@ and the two functions, that can easily be ported to any language with first-clas
 are enough to implement a complete object system.
 
 How does one use these Inheritance and instantiation functions?
-By defining, composing and closing modular extensions of type @c{C → V → V)} where
+By defining, composing and closing modular extensions of type @c{C → V → V} where
 @c{C} is the type of the module context,
 and @c{V} that of the value under focus being extended:
 @Code{
@@ -4405,8 +4477,8 @@ and the body uses @c{(super method-id)} as a default when no overriding behavior
 
 Alternatively, this can be abstracted in terms of using a mix of one or multiple
 calls to this method-defining specification, that specifies a single method
-with given @c{key} as name for a recognized value of @c{method-id},
-and given open modular extension function @c{compute-value}
+with a given @c{key} as name for a recognized value of @c{method-id},
+and a given open modular extension function @c{compute-value}
 that takes the @c{self} context and the @c{inherited} value @c{(super method-id)} as arguments
 and returns an extended value for the method at @c{key}:
 @Code{
@@ -4422,17 +4494,18 @@ into an open modular extension for a record (that has this value under some key)
 In this case, the module context @c{self} is the same,
 whereas the @c{super} value for the inner function @c{compute-value}
 is the specialized @c{(super method-id)} value extracted from the record.
-That’s an example for how open modular extensions themselves have a rich algebraic structure,
+That’s an example of how open modular extensions themselves have a rich algebraic structure,
 wherein you can combine, compose, decompose, extract, and otherwise
 operate on open modular extensions to get richer open modular extensions,
 and eventually build a closed modular extension that you can instantiate.
 
+@; secref ch9
 Now, where performance or space matters,
 you would use an encoding of records-as-structures instead of records-as-functions.
 Then, instead of calling the record as a function with an identifier,
 you would invoke a dereference function with the record as first argument
 and the identifier as second argument.
-But with a some small overhead, records-as-functions is perfectly usable
+But with some small overhead, the records-as-functions encoding is perfectly usable
 for many simple applications@xnote["."]{
   I notably use this technique to generate all my slides in a pure functional way
   in Racket (a close cousin of Scheme). @; TODO CITE
@@ -4447,25 +4520,26 @@ for many simple applications@xnote["."]{
   to import data from slides that will only be defined later
   into a whichever slide is being defined now;
   and yet the Y combinator achieves this feat,
-  and though I use the stateful Y for performance,
+  and although I use the stateful Y for performance,
   a pure applicative Y also works without too much slowdown,
   because the substructures I recursively examine remain shallow.
 }
 Also, in a more practical implementation,
 the inherited value in the @c{method-spec} would be made lazy,
-or would be wrapped in a thunk, to avoid unneeded computations (that might even bottom);
+or would be wrapped in a thunk, to avoid unneeded computations (that might not even terminate);
 or for more power, the @c{compute-value} function
 would directly take @c{super} as its second argument,
 and @c{(super method-id)} would only be computed in the second branch.
 In a lazy context, @c{lazy-method-spec} could also directly use @c{lazy-record-cons}
-to add a binding to the record without having to eagerly compute the bound value.
+@; TODO secref to future definition of lazy variants?
+to add a binding to a record without having to eagerly compute the bound value.
 
 Whichever way simple modular extensions are defined,
 they can thereafter be composed into larger modular extensions
 using the @c{mix} function, and eventually instantiate a target record
 from a modular extension using the @c{fix} function.
 Since I will be using records a lot,
-I will use the @c{fix-record} function above specialized for records.
+I will use the specialized @c{fix-record} function above.
 Note that since my targets are records, my minimal object system is
 closer to Prototype OO than to Class OO,
 though, as I will show, it doesn’t offer “prototypes” per se,
@@ -4482,63 +4556,70 @@ I can define a modular extension for a point’s coordinates as follows:
 The modular extension defines two methods @c{x} and @c{y},
 that respectively return the constant numbers @c{2} and @c{4}.
 
-I can similarly define a modular extension for some record’s @c{color} field as follows:
+I can similarly define a modular extension for a record’s @c{color} field as follows:
 @Code{
 (define color-spec
   (method-spec 'color (λ (self) (λ (inherited) "blue"))))}
 
-And I can check that indeed I can instantiate a point specified by combining
-the color and coordinate modular extensions above, and verify that indeed the values
-for @c{x} and @c{color} are as expected:
+Indeed, I will check that one can instantiate a point specified by combining
+the color and coordinate modular extensions above, and that the values
+for @c{x} and @c{color} are then as expected:
 @Code{
-(define point-p (fix-record (mix color-spec coord-spec)))}
-@Code{
+(define point-p (fix-record (mix color-spec coord-spec)))
+
 (point-p 'x) ;⇒ 2
 (point-p 'color) ;⇒ "blue"}
-When querying the composed modular extensions for the value for method @c{x},
-in a call-by-value right-to-left propagation of information,
-the first modular extension, @c{coord-spec}, ignores the top value @c{#f} passed to it
-and returns @c{2} that is then returned unchanged by @c{color-spec} since
-@c{x} is not recognized by the @c{case} in @c{color-spec}.
+Consider how @c{x} is computed.
+@c{fix-record} provides the @c{empty-record} as the top value for mixin composition.
+Then, mixins are applied under call-by-value evaluation,
+with right-to-left flow of information across function calls,
+When querying the composed modular extension for method @c{x},
+the rightmost modular extension, @c{coord-spec}, is applied first, and matches the key @c{x};
+it is then passed the top value @c{#f} extracted as a fallback default
+when trying to read a missing field from @c{empty-record};
+it proceeds to ignore that value, and return @c{2};
+that value is then returned unchanged by @c{color-spec},
+since @c{x} does not match its key @c{color}.
 Similarly, the query for method @c{color} returns the string @c{"blue"}.
 
 However, this colored point example is actually trivial:
 there is no collision in method identifiers between the two modular extensions,
-such that the two modular extensions commute;
+and thus the two modular extensions commute;
 and more importantly, the values defined by the modular extensions are constant
 and exercise neither modularity nor extensibility:
-their value-computing functions make no use of either their @c{self} and @c{super} arguments.
-I will then show more interesting examples.
+their value-computing functions make no use of their @c{self} or @c{super} arguments.
+I will now show more interesting examples.
 
 @subsubsection{Minimal Extensibility and Modularity Examples}
 
-I will illustrate extensibility with this example wherein function @c{add-x-spec}
+I will illustrate extensibility with this example wherein the function @c{add-x-spec}
 accepts an argument @c{dx}, and returns a modular extension that
-overrides method @c{x} with a new value to adds @c{dx} to its @c{inherited} value:
+overrides method @c{x} with a new value that adds @c{dx} to the @c{inherited} value:
 @Code{
 (define add-x-spec
   (λ (dx) (method-spec 'x (λ (self) (λ (inherited) (+ dx inherited))))))}
 
-And I will illustrate modularity with another example wherein @c{rho-spec}
-specifies a new field @c{rho} bound to the euclidian distance
-to the point from the origin of the coordinate system, using the pythagorean formula.
+Now I will illustrate modularity with another example wherein @c{rho-spec}
+specifies a new field @c{rho} bound to the Euclidean distance
+from the origin of the coordinate system to the point, using the Pythagorean theorem.
 I assume two functions @c{sqrt} for the square root (builtin in Scheme)
-and @c{sqr} for the square (that could be defined as @c{(λ (x) (* x x))}).
+and @c{sqr} for the square (which could be defined as @c{(λ (x) (* x x))}).
 Note how the coordinates @c{x} and @c{y} are modularly extracted
-from the module context @c{self}, which is the record being defined,
-into which they have to be specified by other modular extensions
-to be composed with @c{rho-spec} using @c{mix}:
+from the module context @c{self}, which is the record being defined;
+and these coordinates are not provided by @c{rho-spec},
+but have to be provided by other modular extensions to be composed with it using @c{mix}:
 @Code{
 (define rho-spec
   (method-spec 'rho (λ (self) (λ (inherited)
     (sqrt (+ (sqr (self 'x)) (sqr (self 'y))))))))}
 
-I can check that the above definitions work by instantiating
-the composed modular extensions @c{(add-x-spec 1)}, @c{coord-spec} and @c{rho-spec},
-and verifying that the @c{x} value is indeed @c{3},
-i.e. first (right-to-left) specified to be @c{2} by @c{coord-spec},
-then incremented by @c{1} by @c{(add-x-spec 1)},
-whereas @c{rho} is @c{5}, as computed by @c{rho-spec} from the @c{x} and @c{y} coordinates:
+I can check that the above definitions work,
+by instantiating the composed modular extensions
+@c{(add-x-spec 1)}, @c{coord-spec} and @c{rho-spec},
+and verifying that the @c{x} value is indeed @c{3}:
+i.e., first (right-to-left) specified to be @c{2} by @c{coord-spec},
+then incremented by @c{1} by @c{(add-x-spec 1)}.
+Meanwhile @c{rho} is @c{5}, as computed by @c{rho-spec} from the @c{x} and @c{y} coordinates:
 @Code{
 (define point-r (fix-record
    (mix (add-x-spec 1)
@@ -4548,66 +4629,93 @@ whereas @c{rho} is @c{5}, as computed by @c{rho-spec} from the @c{x} and @c{y} c
 (point-r 'x) ;⇒ 3
 (point-r 'rho) ;⇒ 5}
 
-This demonstrates how modular extensions do work,
+This demonstrates how modular extensions work
 and indeed implement the basic design patterns of OO.
 
 Now, note how trying to instantiate @c{(add-x-spec 1)} or @c{rho-spec} alone would fail:
 the former relies on the @c{super} record to provide a useful inherited value to extend,
 whereas the latter relies on the @c{self} context to modularly provide @c{x} and @c{y} values.
-Neither modular extension is meant to stand alone, but instead to be a mixin in the sense of Flavors.
-That not every specification can be successfully instantiated,
+Neither modular extension is meant to stand alone,
+but instead to be a mixin, in the sense of Flavors—an abstract class, or a trait,
+members of some programming language ecosystems would say.
+That not every specification can be successfully instantiated
 is actually an essential feature of modular extensibility,
 since the entire point of a specification is to contribute some @emph{partial} information
-about a small aspect of an overall computation,
-that in general depends on other aspects being defined by other specifications.
+about one small aspect of an overall computation,
+that in general depends on other aspects being defined by complementary specifications.
 
 @subsubsection[#:tag "IME"]{Interaction of Modularity and Extensibility}
 
 Without extensibility, a modular module specification need never access
-the identifiers it specifies via the global module context,
+the identifiers it specifies via the global module context (@c{self}),
 since it can more directly access or inline their local definition
-(though it may have to explicitly call a fixpoint locally
-if these definitions implicitly involved recursion globally via the module context).
+(though it may then have to explicitly call a fixpoint locally if the definitions
+are mutually recursive, instead of
+implicitly relying on a global fixpoint via the module context).
 
 For instance, consider the following modular definition,
-to be merged with other specifications defining disjoint sets of identifiers,
-where the @c{case} special form of Scheme selects a clause to execute
-based on which constant if any (constant symbol, in these clauses) matches its first argument:
+to be merged with other specifications defining disjoint sets of identifiers.
+In this definition, the @c{case} special form of Scheme selects a clause to execute
+based on which constant, if any, matches its first argument.
+This definition provides (a) a @c{start} method that returns the constant 42;
+(b) a @c{length} utility function that computes the length of a list,
+using the open recursion through @c{self} for its recursion;
+(c) a @c{size} method that subtracts the @c{start} value from the length
+of a list returned by the @c{contents} method,
+while using the @c{length} method, provided above, for the length computation.
+The @c{contents} method is required but not provided;
+it must be modularly provided by another modular definition.
 @Code{
-(define my-modular-spec
+(define my-modular-def (λ (self) (λ (method-id)
    (case method-id
       ((start) 42)
-      ((size ((self 'length) (- (self 'end) (self 'start)))))
-      ((length) (λ (l) (if (null? l) 0 (+ 1 ((self 'length) l)))))))}
+      ((length) (λ (l) (if (null? l) 0 (+ 1 ((self 'length) l)))))
+      ((size) (- ((self 'length) (self 'contents)) (self 'start)))
+      (else #f)))))}
 Since by my disjointness hypothesis,
-the global specification for @c{start}, @c{len} and @c{length}
+the global specification for @c{start}, @c{length} and @c{size}
 will not be overridden, then @c{(self 'start)} and @c{(self 'length)}
-will always return be bound to the values locally specified.
+will always be bound to the values locally specified.
 Therefore, the value @c{42} may be inlined into the specification for @c{size},
 and a fixpoint combinator or @c{letrec} can be used to define the @c{length} function,
-that can also be inlined in the specification for @c{size}:
+that can also be inlined in the specification for @c{size}.
+The @c{contents} method, not being provided, must still be queried through open recursion.
 @Code{
-(define my-modular-spec-without-global-recursion
+(define my-modular-def-without-global-recursion
   (let ((_start 42))
     (letrec ((_length (λ (l) (if (null? l) 0 (+ 1 (_length l))))))
       (λ (self) (λ (method-id)
         (case method-id
           ((start) _start)
-          ((size) (_length (- (self 'end) _start)))
-          ((length) _length)))))))}
+          ((length) _length)
+          ((size) (- (_length (self 'contents)) _start))
+          (else #f)))))))}
 
-Now with extensibility, a modular extensible module specification may usefully access
-the identifiers @emph{an extension to which} it specifies,
-to refer to the final resolved value bound to this identifier
-after all the extensions are accounted for,
-information that obviously cannot be provided locally by the specification
+By contrast, with extensibility, a modular extensible module specification may usefully
+require @emph{a value} for a method for which it also provides @emph{an extension} (and not a value).
+The value received will then be, not that returned by the extension,
+but the final fully-resolved value bound to this identifier
+after all the extensions are accounted for.
+That information obviously cannot be provided locally by the specification,
 since it involves further extensions that are not knowable in advance,
-many different variants of which can be instantiated in the future.
+many different variants of which can be instantiated, in the future@xnote["."]{
+  Unless the specification ignores its @c{super} argument, the value may also depend
+  on an inherited value that is not provided yet.
+  However, using this @c{super} argument and providing an updated, extended value from it,
+  is something the specification is explicitly allowed and expected to do.
+  But the specification cannot expect that extended value to be the @emph{final} value
+  that the “effective method” will return.
+  Thus, the problem is not with the inherited @c{super} argument,
+  but with the fact that the value returned by the current method is itself
+  the @c{super} value inherited by further methods.
+}
 
-Thus, consider the specification below, a list of parts method is defined,
-with the empty list being the initial default, and a count of parts method is defined
-that will count the parts in the future instantiated record,
-rather than in the specification so far:
+Thus, consider the base specification for a parts-tracking protocol below.
+It provides a @c{parts} method, returning a list of parts, initialized to the empty list;
+also a @c{part-count} method that returns the length of the @c{parts} list;
+and it is otherwise pass-through for other methods.
+The @c{part-count} method crucially accesses the final value of the @c{parts} method
+through the module context @c{self}, and not the currently available initial empty value:
 @Code{
 (define base-bill-of-parts
   (λ (self) (λ (super) (λ (method-id)
@@ -4617,15 +4725,15 @@ rather than in the specification so far:
       (else (super method-id)))))))}
 You cannot inline the empty list in the call to @c{(self 'parts)}
 because the method @c{parts} can be extended, and indeed
-such is the very intent and entire point of this @c{base-bill-of-parts} specification.
+such is the very intent and entire point of this @c{base-bill-of-parts} specification!
 Even future extensions cannot inline the value they reach,
 unless they are guaranteed that no further extension will extend the list of parts
 (a declaration known as “sealing”, after Dylan). @;{CITE Dylan}
 
 The interaction between modularity and extensibility therefore
-extends the scope of useful uses for modularity
+expands the scope of useful opportunities for modularity,
 compared to modularity without extensibility.
-Programming with modularity and extensibility is more modular than modularity alone!
+@principle{Programming with modularity and extensibility is more modular than with modularity alone}.
 This makes sense when you realize that when the software is divided into
 small modular extensions many of which conspire to define each bigger target,
 there are more modular entities than when there is only
@@ -4640,8 +4748,8 @@ especially since it is not quite natural in other settings
 such as existed historically during the discovery of OO
 or still exist today for most programmers:
 Modularity alone was content with a single global module context that everyone linked into,
-but the whole point of extensibility is that you will have many entities
-that will be extended in multiple different ways;
+but @principle{the whole point of extensibility is that you will have many entities
+that will be extended in multiple different ways};
 therefore when you combine the two, it becomes essential that module contexts
 be not a single global entity, but many local entities.
 This shift from singular and global to plural and local is essential for Class OO,
@@ -4649,9 +4757,9 @@ and even more so for Prototype OO.
 
 @section[#:tag "ROOfiMC"]{Rebuilding OO from its Minimal Core}
 
-Now that I have reconstructed a minimal OO system from first principle,
-I can rebuild all the usual features from OO languages on top of that core.
-This section will rebuild the most common features from popular OO languages,
+Now that I have reconstructed a minimal OO system from first principles,
+I can layer all the usual features from OO languages on top of that core.
+In this chapter, I will rebuild the most common features from popular OO languages:
 those so omnipresent that most developers think they are necessary for OO,
 even though they are just affordances easily added on top of the above core.
 More advanced and less popular features will follow in subsequent sections.
@@ -5340,7 +5448,7 @@ based on which positions in each method’s type is of the proper self-type.
   then you have “pure OO”.
   @xnote["."]{
     Even then, primitive types are not usually be extensible,
-    though tricks a la CLOS MOP could be used to make them so. @~cite{AMOP}
+    though tricks à la CLOS MOP could be used to make them so. @~cite{AMOP}
   }
 }
 Simple metaprograms that enact this transformation have been written in Lisp @~cite{LIL2012}
@@ -6427,7 +6535,7 @@ Third, I must note how languages such as Smalltalk and Common Lisp include a lot
 for updating class definitions, including well-defined behavior with respect to how objects
 are updated when their classes change:
 see for instance the protocol around @c{update-instance-for-redefined-class}
-in CLOS, the Common Lisp Object System @~cite{bobrow88clos}.
+in CLOS, the Common Lisp Object System @~cite{Bobrow1988CLOS}.
 These facilities allow continuous concurrent processing of data elements
 with some identity preserved as the code evolves, even as
 the data associated to these identities evolves with the code.
@@ -7161,7 +7269,7 @@ This property was first used in New Flavors @~cite{Moon1986Flavors},
 speaks of “local ordering”.
 CommonLoops @~cite{Bobrow1986CommonLoops} adopted it as
 “local precedence”, “local ordering”, and “local precedence list”.
-CLOS @~cite{Bobrow88CLOS cltl2} adopts it as “local precedence order”.
+CLOS @~cite{Bobrow1988CLOS cltl2} adopts it as “local precedence order”.
 Ducournau et al. speak of “local ordering” or “local precedence order”
 @~cite{Ducournau1992Monotonic Ducournau1994Monotonic}.
 C3 says “local precedence order”.
@@ -7632,7 +7740,7 @@ Now, as far back as at least 1979, Lisp offered both single-Inheritance with its
 and multiple-Inheritance with its @c{class}es (nées Flavors).
 @; David Moon’s MacLisp Reference Manual (April 1974) does not mention DEFSTRUCT.
 @; Ani/Director is from 1976, but never widely used.
-Since 1988 or so, the Common Lisp Object System (a.k.a. CLOS) @~cite{bobrow88clos cltl2}
+Since 1988 or so, the Common Lisp Object System (a.k.a. CLOS) @~cite{Bobrow1988CLOS cltl2}
 even offered a way to interface uniformly with either structs or classes,
 using generic functions and metaclasses.
 Programmers could develop software with the flexibility of classes,
@@ -7685,7 +7793,7 @@ calls them respectively “classes” and “traits” @~cite{scalableComponentA
   And to make things even more confusing, “Multiple Inheritance” in C++ is not
   what it is in Ruby, Scala, Lisp, Python and other flavorful languages;
   instead it’s a mix of flavorlesss “conflict” Inheritance (for “virtual” classes),
-  and weird path-renamed duplicated Inheritance a la CommonObjects (for the non “virtual”)
+  and weird path-renamed duplicated Inheritance à la CommonObjects (for the non “virtual”)
   that tries hard to fit the DAG square of Multiple Inheritance into a round tree hole.
   Anyway, the conclusion here once again is that the word “class” is utterly useless
   at conveying precise connotations about Inheritance
@@ -8037,9 +8145,7 @@ that should probably be formalized and added to the constraints of C4@xnote["."]
   I also leave that problem as an exercise to the reader.
 }
 
-@section[#:tag "ATiOO"]{Advanced Topics in OO}
-
-@subsection{More Conflation}
+@section[#:tag "EtSoO"]{Extending the Scope of OO}
 
 @XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
 
@@ -8279,6 +8385,10 @@ that made Multiple Inheritance sensible when it otherwise wasn’t.
 
 @subsection{Multiple Dispatch}
 
+@subsection{Dynamic Dispatch}
+
+@section[#:tag "IO"]{Implementing Objects}
+
 @subsection{Meta-Object Protocols}
 
 @section{Conclusion}
@@ -8393,6 +8503,8 @@ to add OO to their language, and add the best variant of it
 rather than the pathetic variants that are mainstream today,
 then my work will not have been in vain.
 By providing a clear list, I am making sure they know where to start from, and what not to forget.
+Readers, @principle{the list of achievements above is a list of opportunities for you to improve
+the software you use and build}.
 
 I actually started the list of achievements above back when this book was supposed to be a short paper
 to submit to a conference or journal.
@@ -8440,26 +8552,48 @@ and fighting false ideas before it could establish a result
 the utility of which would be far from obvious.
 Yet together, they build a solid coherent Theory of OO that I hope you’ll agree is compelling.
 
-@Paragraph{A note about the bibliography}
+@subsection{OO in the age of AI}
+
+@section[#:style 'unnumbered]{Annotated Bibliography}
+@epigraph{If we knew what it was we were doing, it would not be called research, would it?
+  @|#:- "Albert Einstein"|
+}
 I absolutely loathe bibliographies that are just a wall of references,
 without any guidance as to what matters about each work referred.
-What was good about it? What was bad? What makes it relevant to the text that cites them?
-What should I pay attention to? What are the traps, or underrated gems, in that work?
-What historical context makes it important?
+What was good about it? What was bad? What made it relevant to the text that cites them?
+What should I pay attention to?
+What are the notable achievements, and especially the underrated gems, in that work?
+What traps did the author fall into that the reader should be wary of?
+What historical context makes that work important?
+What relevant words have changed meanings since this text was written?
 What does the citing author think of the cited work, and
 how does that differ from the general opinion of said works?
 Should I read the paper or not? If not, what should I know of it?
 If yes, what need I know to make the best of the reading?
 
-Even for the bibliographies of articles I myself wrote in the past—I long forgot
-what made which reference relevant, what each paper did or did not contribute.
-And so at least for this book,
-I am making sure that each reference comes with useful notes.
+As an author, I need to have those notes anyway, for my own use,
+because there are far too many of those articles for me to remember details about each.
+And many of those papers I read, I definitely want to forget, to make space for more worthy readings;
+yet not without making a note somewhere, so I never have to re-read those forsaken papers,
+even if need to revisit the topic—which I definitely do many times over while writing.
+I think it is my duty as an author to share those notes with my readers.
+Thus I am making sure that each reference below comes with useful notes.
+And I invite other authors to do as much.
 
-PS: I also hate that the software I currently use won’t let me insert this paragraph
-at the front (or back) of the bibliography. But that will be a fight for another day.
+My notes are opinionated. They skip over aspects of the cited works that I didn’t care about,
+or at least not insofar as this book is concerned.
+They also lay judgement upon some of the authors. These judgements are summary.
+They are based on very limited information about the authors and their context.
+Strong opinions, weakly held.
+I’ll be happy to be proven wrong, or to be shown nuances I missed.
+But those are still the best opinions I could make, and still worth sharing.
+@principle{You should always judge a book by its cover}:
+that’s the only information you have before you may decide to even open the book.
+But you should be ready to revise the judgement after you get more information.
 
-@(generate-bibliography)
+@(hhr)
+
+@(generate-bibliography #:sec-title #f)
 
 @appendix
 
