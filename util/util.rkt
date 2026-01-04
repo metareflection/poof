@@ -37,7 +37,8 @@
 (define (hhr) (html-elem (elem #:style (make-style #f (list (make-alt-tag "hr"))))))
 
 (define (xnote x . y)
-  (list (apply note (append y (list (html-elem (list (linebreak) (linebreak) (linebreak))))))
+  (list (note #:number #t
+              (list y (html-elem (list (linebreak) (linebreak) (linebreak)))))
         x))
 
 (define epigraph-style
