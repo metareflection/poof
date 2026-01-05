@@ -7183,8 +7183,7 @@ will not be cancelled by a duplicate of the initialization.
 Similarly, if specification adds a part to a design,
 it can depend on @c{base-bill-of-parts} as a declared parent,
 it can be confident that when it registers a part,
-the part database will already be a initialized, and will not be overwritten.
-database of parts to which to register it to (at least if the latter wasn’t ignored due to conflict).
+the part database will already be initialized, and will not be overwritten later.
 
 This property is so fundamental it is respected by all OO languages since Simula @~cite{Simula1967},
 and may not have been explicitly named before as distinct from inheritance itself.
@@ -7218,13 +7217,13 @@ This property also was not respected by the once “sender path” approach of S
 This property would be expressible but not modular and hard to enforce in
 hypothetical languages that would require users to manually synthesize attributes
 from the inheritance DAG so as to extract semantics of methods.
-I are naming this property after the similar notion from “linear logic”, @; TODO cite
+I am naming this property after the similar notion from “linear logic”, @; TODO cite
 wherein the preservation of computational resources corresponds to
 some operator being “linear” in the mathematical sense of linear algebra.
 
 This property was the groundbreaking innovation of Flavors @~cite{Cannon1979}.
-Flavors’ flavor of multiple inheritance, that includes many more innovations,
-was a vast improvement in paradigm over all its precedessors,
+Flavors’ flavor of multiple inheritance, which includes many more innovations,
+was a vast improvement in paradigm over all its predecessors,
 and sadly, also over most of its successors.
 
 @Paragraph{Linearization: Consistency across Methods}
@@ -7305,9 +7304,10 @@ is actually ignored, and it might not be obvious which,
 and there probably should be at least some warning@~cite{Snyder1986Encapsulation},
 if not an outright error.
 However, if that were actually a problem practically worth addressing,
-then just like some languages like Java or C++ have you annotate some methods
-with a keyword @c{override} to signify that they modify a previous method,
-an OO language could have users annotate their methods with an opposite keyword @c{base}
+then you could have a solution similar to that of languages like Java or C++
+that have you annotate some methods with a keyword @c{override}
+to signify that they modify a previous method;
+another option would be to have users annotate their methods with an opposite keyword @c{base}
 (or deduce it from the method body ignoring the @c{super} argument),
 and issue a warning or error if one inherits two different @c{base} definitions for a method,
 and tries to call the super method (either through an override, or through the lack thereof).
@@ -7317,7 +7317,7 @@ might be interleaved with runtime).
 However, whether such a feature is worth it depends crucially on its costs and benefits.
 The benefits would be the ability to find and locate bugs that are not easily found and located
 by existing forms of testing and debugging, which is not obvious.
-The costs, that are obvious, are that it increases the cost of writing programs,
+The costs, which are obvious, are that it increases the cost of writing programs,
 forcing programmers to insert a lot of dummy methods that call or reimplement the “right” base method.
 Instead, with linearization, the issue of which method to prefer is perfectly under
 the control of the programmer, thanks to one cheap tool: the local order.
@@ -7342,7 +7342,7 @@ despite a very slight decrease in modularity when the ordering is partly an arbi
 heuristically made by the linearization algorithm.
 
 This property was first used in New Flavors @~cite{Moon1986Flavors},
-speaks of “local ordering”.
+that calls it “local ordering”.
 CommonLoops @~cite{Bobrow1986CommonLoops} adopted it as
 “local precedence”, “local ordering”, and “local precedence list”.
 CLOS @~cite{Bobrow1988CLOS cltl2} adopts it as “local precedence order”.
@@ -7433,7 +7433,7 @@ from most specific to most generic (left to right).
 This is the convention established both by Flavors’ “class precedence list”
 and, maybe surprisingly, also by Simula’s “prefix sequence”,
 though in the case of Simula this convention is contravariant with
-to the order in which the bodies of the “prefix classes” are concatenated into
+the order in which the bodies of the “prefix classes” are concatenated into
 the effective class definition.
 @; TODO secref appendix
 Most (all?) OO systems seem to have adopted this convention.
@@ -7445,16 +7445,16 @@ The original Flavors used a variant of such an algorithm,
     See MAP-OVER-COMPONENT-FLAVORS in src/lispm2/flavor.160
     https://github.com/mietek/mit-cadr-system-software }
 and Ruby still does to this day. @; Also NewtonScript, and probably more
-Unhappily, this approaches fails at respecting either Local Order or Monotonicity.
+Unhappily, this approach fails at respecting either Local Order or Monotonicity.
 
 Another approach is to consider the precedence list a synthesized attribute,
 and compute a child’s precedence list from those of its parents.
 That’s the only reasonable way to ensure monotonicity.
 However, the naive way to do it, by concatenating the lists then removing duplicates,
-like LOOPS @~cite{Bobrow1983Loops}
+like LOOPS @~cite{Bobrow1983LOOPS}
 or after it (though removing from the other end) Scala @~cite{scalableComponentAbstractions2005},
 preserves neither Local Order nor Monotonicity.
-The slightly more careful algorithm used by CommonLoops @~cite{Bobrow1986CommonLoops}
+The somewhat more careful algorithm used by CommonLoops @~cite{Bobrow1986CommonLoops}
 and after it by CLOS (with minor changes) @; TODO check what those changes are
 preserves Local Order, but not monotonicity.
 The slightly complex algorithm by Ducournau et al. @~cite{Ducournau1994Monotonic},
@@ -7462,7 +7462,7 @@ and the latter somewhat simpler C3 algorithm @~cite{Barrett1996C3 WikiC3},
 synthesize the precedence list while preserving all desired properties.
 C3 was notably adopted by OpenDylan, Python, Raku (Perl), Parrot, Solidity, PGF/TikZ.
 
-I provide in a section @secref{C4} below an informal description of
+I provide in @secref{C4} below an informal description of
 my extension to the C3 algorithm, and, in appendix, the complete code.
 
 @subsubsection{Mixin Inheritance plus Precedence List}
@@ -7513,7 +7513,7 @@ single inheritance and mixin inheritance don’t:
 In those simpler variants of inheritance, the programmer controls precisely
 what are the next modular extensions to be composed with, and so does not need to rely on subtyping;
 indeed, I showed when introducing wrappers for conflation that
-sometimes one really want to use modular extensions
+sometimes one really wants to use modular extensions
 that do not follow the usual subtyping constraints
 (in that case in @secref{RC}, @c{qproto-wrapper} that wraps the value into a pair).
 By contrast, with multiple inheritance, a specification only controls the relative order of its
@@ -7539,7 +7539,7 @@ Much of the focus of the literature is on subtyping,
 with a deemphasis or outright avoidance of fixpoints and self-recursion,
 leading many authors to confuse subtyping of specification and target.
 Subtyping is then often studied in the context of single inheritance,
-even though subtyping isn’t quite as important without multiple inheritance.
+which is ironic since subtyping isn’t quite as important without multiple inheritance.
 
 More generally, computer science researchers seem largely uninterested in the nature
 of modularity or extensibility, at best assuming they are purely technical
@@ -7638,7 +7638,7 @@ Thus, consider the issue of dependencies between modular extensions.
 I showed that in practice, the common modular extension @c{method-spec} depends on @c{record-spec},
 while part specifications in my notional example depend on @c{base-bill-of-parts}.
 More generally, a specification may depend on a method having been implemented in an ancestor
-so its inherited value may be modified in a wrapper (in this case, the “database” of parts),
+so that its inherited value may be modified in a wrapper (in this case, the “database” of parts),
 or, in some languages, just declared so it may be used (though with a proper type system
 this might not have to be in a parent).
 Dependency constraints between modular extensions are an ubiquitous phenomenon in mixin inheritance,
@@ -7836,7 +7836,7 @@ anywhere in that hierarchy, and losing any modularity benefit you might have enj
   Another limitation of structs and classes in Common Lisp is that for historical reasons,
   the default syntax to define and use structs is very different (and much simpler)
   from the CLOS syntax to use and define objects. You can use the explicitly use the CLOS
-  syntax to define structs by specifying an appropriate metaclass @c{structure-class}9
+  syntax to define structs by specifying an appropriate metaclass @c{structure-class}
   as opposed to @c{standard-class} for the standard objects of CLOS;
   however, the resulting syntax is more burdensome than either plain struct or plain CLOS syntax.
   This syntax discrepancy creates another barrier to refactoring of code
@@ -7864,8 +7864,9 @@ calls them respectively “classes” and “traits” @~cite{scalableComponentA
   and uses the word “class” ambiguously, sometimes to mean suffix specifications only,
   sometimes to mean “class-or-trait”, specifications both infix and suffix.
   To further confuse terminology, a C++ @c{struct} is just a regular class,
-  that always supports multiple inheritance (there are no “single inheritance entities” in C++),
-  except that classes defined with the @c{struct} keyword
+  that always supports (flavorless) multiple inheritance—there are no
+  “single inheritance entities” in C++;
+  the only difference is that classes defined with the @c{struct} keyword
   have all their members public by default rather than private as with the @c{class} keyword,
   which makes the @c{struct} statement backward compatible with the equivalent statement in C.
   Thus there is a “struct/class” distinction in C++, but as a minor syntactic feature
@@ -7873,8 +7874,8 @@ calls them respectively “classes” and “traits” @~cite{scalableComponentA
   And to make things even more confusing, “multiple inheritance” in C++ is not
   what it is in Ruby, Scala, Lisp, Python and other flavorful languages;
   instead it’s a mix of flavorlesss “conflict” inheritance (for “virtual” classes),
-  and weird path-renamed duplicated Inheritance à la CommonObjects (for the non “virtual”)
-  that tries hard to fit the DAG square of multiple inheritance into a round tree hole.
+  and weird path-renamed duplicated inheritance à la CommonObjects (for the non “virtual”)
+  that tries hard to fit the square peg of a multiple inheritance DAG into the round hole of a tree.
   Anyway, the conclusion here once again is that the word “class” is utterly useless
   at conveying precise connotations about inheritance
   outside the context of a specific language.
@@ -7888,7 +7889,7 @@ However, Ruby uses a variant of the Flavors algorithm
 and Scala a variant of the LOOPS algorithm
 (concatenation of precedence lists then removal of duplicates),
 and neither respects Local Order nor Monotonicity,
-making them less modular than they could, and sub-optimal@xnote["."]{
+making them less modular than they could be, and sub-optimal@xnote["."]{
   Interestingly, and although this change and its rationale are not explained
   in Scala documentation or papers,
   Scala removes duplicates from the beginning of the concatenate list
@@ -7939,17 +7940,17 @@ only the inheritance structure of my specifications matters to this discussion.
 As seen in @secref{CMSI}, what enables the optimizations of single inheritance is
 that the indexes to the fields and methods of a specification’s target
 are also the indexes of the same fields and methods in the targets of its extensions.
-These indexes are computed by walk the specification’s ancestry
+These indexes are computed by walking the specification’s ancestry
 from least specific to most specific ancestor.
 In the terminology of multiple inheritance,
-this is walk along the reverse of the precedence list.
+this is a walk along the reverse of the precedence list.
 And for the walks to yield the same results,
 after putting those lists in the usual order,
 can be stated as the following property, that I will call the @emph{suffix property}:
 @principle{the precedence list of a struct is a suffix of that of every descendant of it}.
 
 Now this is semantic constraint, not a syntactic one,
-and it can be very well be expressed and enforced
+and it can very well be expressed and enforced
 in a system that has multiple inheritance.
 Thus it turns out that indeed, a struct can inherit from a class, and a class from a struct,
 as long as this property holds: the optimizations of single inheritance are still valid,
@@ -7987,8 +7988,8 @@ and a “trait” is an infix specification@xnote["."]{
   Now, since Simula only has single inheritance, all its classes are “prefix”
   (i.e. my “suffix”).
   by contrast, in a multiple inheritance system, regular classes are infix, and
-  their precedence list, while an ordered sublist of an extension’s precedence list,
-  is not necessarily at the end of it, and necessarily contiguously embedded.
+  their precedence list, while an ordered sublist of an descendant’s precedence list,
+  is not necessarily at the end of it, and is not necessarily contiguously embedded.
   It can also be confusing that Simula calls “prefix sequence” the list of superclasses
   that it keeps in the same order as the precedence list of Flavors and its successors,
   from most specific to least specific, which is opposite to the order of “prefixing”.
@@ -8106,28 +8107,56 @@ where the steps tagged with (C4) are those added to the C3 algorithm
      of these suffix specifications in a vector you remember
      instead of just remembering the most specific one,
      allowing for O(1) checks for subtyping among suffix specifications.}}
+  @item{@bold{Local Order support step}:
+     add the local order (list of parents) to the end of the list of prefixes;
+     (keep it in the same order as those prefix lists, reversed if need be;)
+     call the elements of those lists candidates, the list candidate lists,
+     and this list the candidate list list.}
   @item{@bold{C4 cleanup step}:
-     For each prefix list, remove redundant suffix specifications from its end:
-     Then, in each precedence list prefix, remove from its end the infix specifications
-        that are already in the suffix in the same order;
-        stop if you reach one that is in the suffix but in the wrong order,
-        in which case it’s an error due to incompatible ancestries;
-        stop if you reach one that isn’t in the merged suffix,
-        at which point you check that no specification remains in the prefix is in the merged suffix
-        (another incompatibility).
-        If you didn’t find any incompatibility, you have cleaned your prefix.}
-  @item{Proceed with C3 on the cleaned up prefixes:
-        first, add the list of parents to the list of precedence lists,
-        to enforce the local order;
-        then, and until all the lists are empty,
-        pick out as next element of the merged precedence list,
-        from the front elements of what remains of the lists,
-        the first (in local order) that isn’t in any of the lists
-        excluding each of their front element;
-        if none fits, that’s an incompatibility error.
-        If you eventually exhaust the lists, you’ve got your merged prefix.}
-  @item{(C4 join step) Append the merged suffix to the end of the merged prefix.}
-  @item{Return the merged prefix.}]
+     @itemlist[
+       @item{Build a hash-table mapping elements of the merged suffix list
+             to their distance from the tail of the list.}
+       @item{For each candidate list,
+         remove redundant suffix specifications from its end:
+         @itemlist[
+           @item{Start from the tail of the candidate list@xnote["."]{
+               You may already have gotten that list in reverse order at the previous step;
+               or you can reverse it now;
+               or if you keep your precedence lists in arrays, just iterate from the end.}}
+           @item{if the list is empty, discard it and go to the next list.}
+           @item{otherwise, consider the next element, and look it up in the above hash-table;}
+           @item{if it was present in the merged suffix list,
+               with an increased distance from its tail,
+               then remove it from the candidate list and go to the next element;}
+           @item{if it was present in the merged suffix list,
+               but the distance from its tail decreased,
+               throw an error, the precedence lists are not compatible;}
+           @item{if it was not present in the merged suffix list,
+               then keep it and the rest of the elements,
+               now in most specific to least specific order
+               (again, if the candidate lists were reversed),
+               and process the next candidate list;}
+           ]}]}
+  @item{@bold{C3 merge on cleaned prefixes}:
+     @itemlist[
+       @item{Create a hash-table for ancestor counts, mapping ancestors to integers, initially 0.}
+       @item{For each ancestor, count the number of times it appears in the merged suffix list
+         and in the candidate lists; however, do not count the head element of each candidate list.}
+       @item{Repeatedly, and until all the lists are empty,
+         identify the next winning candidate in the candidate list list:
+         @itemlist[
+           @item{The winning candidate is the first head of a candidate list (in order)
+              that has a count of zero in the ancestor count table.}
+           @item{If no candidate won, throw an error.}
+           @item{If one candidate won, add it to the tail of the merged prefix.
+              Then, for each candidate list of which it was the head:
+              @itemlist[
+                 @item{pop it off the candidate list;}
+                 @item{if the rest of the candidate list is empty, remove it from the candidate lists;}
+                 @item{otherwise the candidate list is not empty, promote its next element as head,
+                    and decrement its count of the new head in the ancestor count table.}]}]}]}
+  @item{(C4 join step) Append the merged prefix and the merged suffix.}
+  @item{Return the resulting list.}]
 
 @;{TODO examples of the working algorithm, of incompatibility cases,
         of discrepancies with C3.
