@@ -957,11 +957,13 @@ Yet KRL@~cite{Winograd1975 Bobrow1976},
 the second recognizable precursor to OO,
 whose authors introduced the words “inheritance” and “prototypes”
 with the same meaning as in OO in the context of their language
-(though the words were used as descriptions rather than definitions),
+(though the words were initially used as descriptions rather than definitions),
 has what I would now call prototype-based OO (a.k.a. Prototype OO).
 The modern concept of OO can be traced back to Smalltalk adopting inheritance in 1976,
 naming inheritance after KRL’s usage,
-and popularizing the word and concept of it among programming language designers.
+and popularizing the word and concept of it among programming language designers
+(KRL, a layer on top of Lisp, is arguably not a @emph{programming} language,
+though it integrates with one).
 Certainly, Smalltalk was class-based.
 Yet contemporary with Smalltalk or immediately after it
 were prototype-based languages Director @~cite{Kahn1976 Kahn1979Ani Kahn1979Director} and
@@ -3597,7 +3599,7 @@ and somewhat depends on what monoidal operation is used to extend it
 as well as the domain type of values.
 
 @itemize[
-@item{For the type @c{Record} of records, @c{⊤ = (record-empty)} the empty record.}
+@item{For the type @c{Record} of records, @c{⊤ = record-empty} the empty record.}
 @item{For the type @c{Number} of numbers, @c{⊤ = 0} if seen additively,
 or @c{1} if seen multiplicatively,
 or @c{-∞} (IEEE floating-point number) seen with @c{max} as the operator, or @c{+∞} with @c{min}.}
@@ -3824,9 +3826,17 @@ The basic reference operator is just function application:
 @Code{
 (define record-ref (λ (key) (λ (rec) (rec key))))}
 
-The empty record can be represented as a function that always fails. In Scheme:
+The empty record can be represented as a function that always fails,
+such as @c{(λ (_) (error "empty record"))}.
+Now, the “fail if not present” representation is great when implementing a (notionally)
+statically typed model. But for a dynamic environment, a “nicer” representation
+is as a function that always returns a language-wide top value, such as @c{undefined} in JavaScript.
+This is especially the case in this book
+where we don’t have space to deal with error handling protocols.
+But you should use what makes sense in your language.
+In portable Scheme, we will use:
 @Code{
-(define record-empty (λ (_) (error "empty record")))}
+(define record-empty (λ (_) #f))}
 
 To extend a record with one key-value binding, you can use
 @Code{
@@ -4340,10 +4350,10 @@ The function can also be written with @c{compose}, eliding the “super” varia
 Modular extensions and their composition have nice algebraic properties.
 Indeed, modular extensions for a given context form a category,
 wherein the operation is composition with the @c{mix} function,
-and the neutral element @c{idMExt} is the specification that “extends”
+and the neutral element @c{idModExt} is the specification that “extends”
 any and every value by returning it unchanged, as follows@xnote[":"]{
   As usual, a change of representation from @c{p} to @c{mp = mix p},
-  with inverse transformation @c{p = mp idMExt},
+  with inverse transformation @c{p = mp idModExt},
   would enable use of the regular @c{compose} function
   for composition of specifications.
   Haskellers and developers using similar composition-friendly languages
@@ -4357,7 +4367,7 @@ any and every value by returning it unchanged, as follows@xnote[":"]{
   my explanations, and, in later sections, the types of specifications, slightly simpler.
 }
 @Code{
-(define idMExt (λ (s) (λ (t) t)))}
+(define idModExt (λ (s) (λ (t) t)))}
 
 @subsubsection{Closing Modular Extensions}
 
@@ -5044,7 +5054,7 @@ so as to get a fresh state to be modified by its own set of side-effects,
 they can always clone the prototype,
 i.e. create a new prototype that uses the same specification.
 Equivalently, they can create a prototype that inherits from it
-using as extension the neutral element @c{(rproto←spec idMExt)}.
+using as extension the neutral element @c{(rproto←spec idModExt)}.
 
 Now, plenty of earlier or contemporary Prototype OO languages,
 from Director and ThingLab to Self and JavaScript and beyond,
@@ -5731,9 +5741,9 @@ indexed products for records, subtyping (@c{⊂} or @c{≤} or in ASCII @c{<:})
 and type intersections (@c{∩}).
 In this NNOOTT variant, a NNOOTT Modular Extension could have a type of the form
 @Code{
-type NMExt required inherited provided =
+type NModExt required inherited provided =
   required → inherited → (inherited ∩ provided)}
-A @c{NMExt} is a type with three parameters,
+A @c{NModExt} is a type with three parameters,
 the type @c{required} of the information required by the modular extension from the module context,
 the type @c{inherited} of the information inherited and to be extended,
 and the type @c{provided} of the information provided to extend what is inherited.
@@ -5761,8 +5771,8 @@ The @c{mix} operator chains two mixins, with the asymmetry that
 information provided by the parent (parameter @c{p2} for the second argument)
 can be used by the child (first argument), but not the other way around.
 @Code{
-fix : top → NMExt target top target → target
-mix : NMExt r1 i1∩p2 p1 → NMExt r2 i2 p2 → NMExt r1∩r2 i1∩i2 p1∩p2
+fix : top → NModExt target top target → target
+mix : NModExt r1 i1∩p2 p1 → NModExt r2 i2 p2 → NModExt r1∩r2 i1∩i2 p1∩p2
 }
 
 This model is simple and intuitive, and
@@ -6091,14 +6101,14 @@ it does not follow that @c{Y F ⊂ Y G} where @c{Y} is the fixpoint operator for
 A more precise view of a modular extension is thus as
 an entity parameterized by the varying type @c{self} of the module context
 (that Bruce calls @c{MyType} @~cite{bruce1996typing SubtypingMatch1997}). @; TODO cite further
-As compared to the previous parametric type @c{NMExt} that is parametrized by types @c{r i p},
-this parametric type @c{MExt} is itself parametrized by parametric types @c{r i p}
+As compared to the previous parametric type @c{NModExt} that is parametrized by types @c{r i p},
+this parametric type @c{ModExt} is itself parametrized by parametric types @c{r i p}
 that each take the module context type @c{self} as parameter@xnote[":"]{
   The letters @c{r i p}, by contrast to the @c{s t a b} commonly used for generalized lenses,
   suggest the mnemonic slogan: “Generalized lenses can stab, but modular extensions can rip!”
 }
 @Code{
-type MExt required inherited provided =
+type ModExt required inherited provided =
   ∀ self, super : Type
     self ⊂ required self, super ⊂ inherited self ⇒
         self → super → provided self ∩ super}
@@ -6127,19 +6137,19 @@ fix : ∀ required, inherited, provided : Type → Type, ∀ self, top : Type,
       self = inherited self ∩ provided self,
       self ⊂ required self,
       top ⊂ inherited self ⇒
-        top → MExt required inherited provided → self
-mix : MExt r1 i1∩d2 p1 → MExt r2 i2 p2 → MExt r1∩r2 i1∩i2 p1∩p2}
+        top → ModExt required inherited provided → self
+mix : ModExt r1 i1∩d2 p1 → ModExt r2 i2 p2 → ModExt r1∩r2 i1∩i2 p1∩p2}
 
 In the @c{fix} function, I implicitly define a fixpoint @c{self}
 via suitable recursive subtyping constraints.
 I could instead make the last constraint a definition
 @c{self = Y (inherited ∩ provided)}
 and check the two subtyping constraints about @c{top} and @c{referenced}.
-As for the type of @c{mix}, though it looks identical with @c{MExt}
-as the NNOOTT type previously defined with @c{NMExt},
+As for the type of @c{mix}, though it looks identical with @c{ModExt}
+as the NNOOTT type previously defined with @c{NModExt},
 there is an important but subtle difference:
-with @c{MExt}, the arguments being intersected
-are not of kind @c{Type} as with @c{NMExt},
+with @c{ModExt}, the arguments being intersected
+are not of kind @c{Type} as with @c{NModExt},
 but @c{Type → Type}, where
 given two parametric types @c{f} and @c{g},
 the intersection @c{f∩g} is defined by @c{(f∩g)(x) = f(x)∩g(x)}.
@@ -6204,7 +6214,7 @@ the value under @c{Focus} is different from the @c{Context}, is also very versat
 by comparison to other encodings, that are typically quite rigid, specialized for classes,
 and unable to deal with OO features and extensions.
 Beyond closed specifications for classes, or for more general prototypes,
-my @c{MExt} type can scale down to open specifications for individual methods,
+my @c{ModExt} type can scale down to open specifications for individual methods,
 or for submethods that partake in method combination;
 it can scale up to open specifications for groups of mutually defined or nested classes or prototypes,
 all the way to open or closed specifications for entire ecosystems.
@@ -6670,14 +6680,14 @@ will proceed to build the other variants on top of it.
 @subsubsection{Mixin Semantics}
 I showed above (see @secref{MFCME})
 that mixin inheritance involves just
-one type constructor @c{MExt} and two functions @c{fix} and @c{mix},
+one type constructor @c{ModExt} and two functions @c{fix} and @c{mix},
 repeated here more concisely from above:
 @Code{
-type MExt r i p = ∀ s, t : Type . s ⊂ r s, t ⊂ i s ⇒ s → t → (p s)∩t
+type ModExt r i p = ∀ s, t : Type . s ⊂ r s, t ⊂ i s ⇒ s → t → (p s)∩t
 fixt : ∀ r i p : Type → Type, ∀ s, t : Type .
        s = i s ∩ p s, s ⊂ r s, t ⊂ i s ⇒
-       t → MExt r i p → s
-mix : MExt r1 i1∩p2 p1 → MExt r2 i2 p2 → MExt r1∩r2 i1∩i2 p1∩p2
+       t → ModExt r i p → s
+mix : ModExt r1 i1∩p2 p1 → ModExt r2 i2 p2 → ModExt r1∩r2 i1∩i2 p1∩p2
 
 (define fixt (λ (m) (Y (λ (s) ((m s) top)))))
 (define mix (λ (c p) (λ (r) (compose (c r) (p r)))))}
@@ -6715,15 +6725,15 @@ not an open choice to make in the future; it is baked into the modular definitio
 The semantics can then be reduced to the following types and functions:
 @; TODO CITE Cook
 @Code{
-type MDef r p = ∀ s : Type . s ⊂ r s ⇒ s → p s
-fixMDef : MDef p p → Y p
-extendMDef : MExt r1 p2 p1 → MDef r2 p2 → MDef r1∩r2 p1∩p2
-baseMDef : MDef (λ (_) Top) (λ (_) Top)
+type ModDef r p = ∀ s : Type . s ⊂ r s ⇒ s → p s
+fixModDef : ModDef p p → Y p
+extendModDef : ModExt r1 p2 p1 → ModDef r2 p2 → ModDef r1∩r2 p1∩p2
+baseModDef : ModDef (λ (_) Top) (λ (_) Top)
 
-(define fixMDef Y)
-(define extendMDef (λ (mext) (λ (parent) (λ (self)
+(define fixModDef Y)
+(define extendModDef (λ (mext) (λ (parent) (λ (self)
   (mext self (parent self))))))
-(define baseMDef (λ (_) top))}
+(define baseModDef (λ (_) top))}
 
 Note how the type for an open modular definition has two parameters @c{r} (required)
 and @c{p} (provided), but a closed modular definition
@@ -6741,7 +6751,7 @@ you use a modular @emph{extension} in addition to an existing modular definition
 
 When building a modular definition through successive extensions,
 an initial known existing modular definition is needed as a base case to those extensions;
-this role is easily filled by the base modular definition @c{baseMDef},
+this role is easily filled by the base modular definition @c{baseModDef},
 that given some modular context, just returns the @c{top} value.
 Now the recursive case involves a different kind of entities, modular extensions.
 But I showed that modular extensions were already sufficient by themselves
@@ -6782,7 +6792,7 @@ Neither lexical scoping nor higher-order functions are required for single inher
 because the “modular extension” conceptually present in the extension of a modular definition
 need never be explicitly realized as a first-class entity:
 literally using my above recipe to implement a class or prototype definition with single inheritance
-would involve building a modular extension, then immediately applying it with @c{extendMDef},
+would involve building a modular extension, then immediately applying it with @c{extendModDef},
 only to forget it right afterwards;
 but instead, most OO languages would support some special purpose syntax for the definition,
 and process it by applying the extension to its super specification as it is being parsed,
@@ -7049,8 +7059,8 @@ type MISpec r i p =
   ∀ pr pi pp : Iota l → Type → Type .
   r ⊂ Intersection pr,
   i ∩ Intersection pp ⊂ Intersection pi ⇒
-  { getMExt : MExt r i p ;
-    parents : DependentList j: (MExt (pr j) (pi j) (pp j)) ;
+  { getModExt : ModExt r i p ;
+    parents : DependentList j: (ModExt (pr j) (pi j) (pp j)) ;
     tag : Tag }}
 
 @subsubsection[#:tag "DMRMI"]{Difficulty of Method Resolution in Multiple Inheritance}
@@ -7474,13 +7484,13 @@ composing them as per mixin inheritance:
 
 @Code{
 compute-precedence-list : MISpec ? ? ? → DependentList ? (MISpec ? ? ?)
-effectiveMExt : MISpec r i p → MExt r i p
+effectiveModExt : MISpec r i p → ModExt r i p
 fixMISpec : top → MISpec p top p → p
 
-(define effectiveMExt (λ (mispec)
-  (foldr mix idMExt (map getMExt (compute-precedence-list mispec)))))
+(define effectiveModExt (λ (mispec)
+  (foldr mix idModExt (map getModExt (compute-precedence-list mispec)))))
 (define fixMISpec (λ (top) (λ (mispec)
-  (fix top (effectiveMExt mispec)))))}
+  (fix top (effectiveModExt mispec)))))}
 
 The @c{map} function is the standard Scheme function to map a function over a list.
 The @c{foldr} function is the standard Scheme function to fold a list with a function
@@ -7503,7 +7513,7 @@ including many features and optimizations fits in about a thousand lines of code
 
 @subsubsection{Notes on Types for Multiple Inheritance}
 
-As usual, @c{effectiveMExt} works on open specifications,
+As usual, @c{effectiveModExt} works on open specifications,
 whereas @c{fixMISpec} only works on closed specifications.
 The present formalization’s ability to deal with open specification
 and not just closed ones crucially enables finer granularity for modular code.
@@ -7723,7 +7733,7 @@ Tight coupling is the antithesis of modularity@xnote["."]{
 One thing that @emph{could} actually help deal with dependencies without multiple inheritance
 would be a rich enough strong static type system such that
 the @c{r}, @c{i} and @c{p} parameters (for required, inherited and provided)
-of my parameterized type @c{MExt r i p} can identify whether modular extensions
+of my parameterized type @c{ModExt r i p} can identify whether modular extensions
 are composed in ways that make sense.
 This strategy can indeed greatly help in dealing with dependencies of modular extensions.
 However, it does not fully solve the problem:
@@ -8112,7 +8122,7 @@ where the steps tagged with (C4) are those added to the C3 algorithm
      (keep it in the same order as those prefix lists, reversed if need be;)
      call the elements of those lists candidates, the list candidate lists,
      and this list the candidate list list.}
-  @item{@bold{C4 cleanup step}:
+  @item{@bold{Cleanup Step}:
      @itemlist[
        @item{Build a hash-table mapping elements of the merged suffix list
              to their distance from the tail of the list.}
@@ -8155,8 +8165,8 @@ where the steps tagged with (C4) are those added to the C3 algorithm
                  @item{if the rest of the candidate list is empty, remove it from the candidate lists;}
                  @item{otherwise the candidate list is not empty, promote its next element as head,
                     and decrement its count of the new head in the ancestor count table.}]}]}]}
-  @item{(C4 join step) Append the merged prefix and the merged suffix.}
-  @item{Return the resulting list.}]
+  @item{@bold{Join Step}: Append the merged prefix and the merged suffix.}
+  @item{@bold{Return Step}: Return the resulting list; also the most specific suffix.}]
 
 @;{TODO examples of the working algorithm, of incompatibility cases,
         of discrepancies with C3.
@@ -8187,6 +8197,12 @@ are missing this crucial optimization; it might not matter too much because
 their d and n values are I suspect even lower than in Common Lisp@xnote["."]{
   As mentioned in a previous note, in loading almost all of Quicklisp 2025-06-22, I found
   d≤3 99% of the time, d=61 max, n≤5 90% of the time, n≤19 99% of the time, n=66 max.
+
+  Now at these common sizes, a linear scan might actually be faster than a hash-table lookup.
+  However, a good “hash-table” implementation might avoid hashing altogether and fallback
+  to linear scan when the size of the table is small enough (say less than 20 or so),
+  all while preserving the usual API, so users are seamlessly upgraded to hashing
+  when their tables grow large enough, and behavior remains O(1).
 }
 
 There is also a space vs time tradeoff to check subtyping of suffixes,
@@ -8255,9 +8271,16 @@ that should probably be formalized and added to the constraints of C4@xnote["."]
 }
 
 @section[#:tag "EtSoO"]{Extending the Scope of OO}
-
-@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
-
+@epigraph{
+  The psychological profile [of a programmer] is mostly
+  the ability to shift levels of abstraction, from low level to high level.
+  To see something in the small and to see something in the large.
+  When you’re writing a program, you’re saying, ‘Add one to the counter,’
+  but you know why you’re adding one to the counter.
+  You can step back and see a picture of the way a process is moving.
+  Computer scientists see things simultaneously at the low level and the high level.
+    @|#:- "Donald Knuth"|
+}
 @subsection{Optics for OO}
 @; https://golem.ph.utexas.edu/category/2020/01/profunctor_optics_the_categori.html
 @; Profunctor Optics: The Categorical View
@@ -8295,61 +8318,117 @@ A lens @~cite{bananas1991 Foster2007CombinatorsFB oconnor2012lenses Pickering201
 is the pure Functional Programming take on what in stateful languages would typically be
 a C pointer, ML reference, Lisp Machine locative, Common Lisp place, etc.:
 a way to pin-point some location to inspect and modify within the wider program’s state.
-A lens is determined by a “getter”, function from a “source” to a “focus”,
-and an “updater”, function from a change to the focused data to a change
-of the wider state from “source” to an updated “target”.
+A lens is determined by a “view”, function from a “source” to a “focus”;
+and an “update”, function from a change to the focused data to a change
+of the wider state from “source” to an updated “target”@xnote["."]{
+  In more stateful languages, a more popular view is that of
+  a pair of a “getter” and a “setter”;
+  this maps well to lower-level primitives of stateful languages.
+  But these variants do not compose well in a pure functional setting,
+  where composability is a good sign of good design,
+  while lack of composability is a strong “smell” of bad design.
+  In a pure functional setting, the “getter” part is fine (same as view),
+  but the “setter” part drops crucial information about the flow of information,
+  and does not compose well, instead requiring the flow of information to be
+  be awkwardly moved to other parts of the program to be reinjected into the setter.
+  By contrast, the “update” API trivially composes.
+  In the Haskell lens libraries, the “update” function is instead called “over”;
+  maybe because it “applies an update @emph{over} a change in focus”;
+  maybe also because the word “update” was taken by other functions;
+  it’s not a great name. We’ll stick to “update”.
+}
 As a function from source to focus and back, it can thus also be seen as generalizing
 paths of fields and accessors, e.g. field @c{bar} of the 3rd element of field @c{foo}
 of the entry with key @c{(42, "baz")} within a table.
 
 @Paragraph{Monomorphic Lens}
-A monomorphic lens (or simple lens), of type @c{Lens' s a}, can be seen as
-a pair of a getter function @c{s → a}, and a setter function @c{a → s → s},
-that allow you to get or set a current value under focus of type @c{a}
-from a whole or source of type @c{s};
-however, instead of a setter function, I will use a representation based on
-a the more composable notion of updater function @c{(a → a) → s → s}:
-it transforms a local change under focus into a global change to the current source.
+A monomorphic lens (or simple lens), can be seen as
+a pair of a view function @c{s → a}, and an update function @c{(a → a) → s → s}.
+The view function allows you to get a current “inner” value under focus, of type @c{a},
+from the “outer” context, of type @c{s}.
+The update function allows you to see how a local change in the “inner” value under focus
+transforms the “outer” context being focused:
+@Code{
+type MonoLens s a = { view : s → a ; update : (a → a) → s → s }
+}
 
 @Paragraph{Polymorphic Lens}
-A polymorphic lens (or “stabby” lens), of type @c{Lens s t a b}, generalizes the above:
-you still have a getter function @c{s → a} to view what is under focus from the source
-(called @c{view} in Haskell, I’ll call it @c{get} below),
-but your updater function now has type
-@c{(a → b) → s → t}, transforming an change under focus from @c{a} to @c{b}
-into a change from source @c{s} to target @c{t}
-(called @c{over} in Haskell, I’ll call it @c{update} below)@xnote["."]{
+A polymorphic lens (or “stabby” lens), of type @c{PolyLens s t a b}, generalizes the above:
+you still have a view function @c{s → a} to extract an inner value from the outer context,
+but your update function now has type @c{(a → b) → s → t},
+so that the inner change in value can involve different input and output types,
+and so can the outer change in context.
+But the starting points of the update function are the same as
+the start and end points of the the view function,
+so that you are updating the same thing you are viewing.
+Monomorphic lenses are a special case or polymorphic lenses.
+@Code{
+type PolyLens s t a b = { view : s → a ; update : (a → b) → s → t }
+type MonoLens s a = PolyLens s s a a
+}
+
+@Paragraph{Skew Lens}
+A skew lens (or “ripsjq” lens, pronounced “rip sick”), yet generalized the above:
+now the types for the update are not required to be the same as those for the view,
+so you don’t have to be looking exactly at the change you’re experiencing.
+The view @c{s → r} goes from an outer context @c{s} to an inner context @c{r}
+(where “r” is for required, and “s” is just the next letter),
+and the update goes from an extension @c{i → p} to @c{j → q}
+(where “i” is for inherited, “p” is for provided, and “j” and “q” are just the next letters).
+Polymorphic lenses are a special case of skew lenses.
+@Code{
+type SkewLens r i p s j q = { view : s → r ; update : (i → p) → j → q }
+type PolyLens s t a b = SkewLens a a b s s t
+}
+
+@Paragraph{View and Update}
+We can also give separate types fo View and Update:
+@Code{
+type View r s = s → r
+type Update i p j q = (i → p) → j → q }
+type SkewLens r i p s j q = { view : View r s ; update : Update i p j q }
+}
+
+@Paragraph{Composing Lenses}
+We can compose view, update and lenses as follows,
+with the obvious identity lens:
+@Code{
+composeView : View s t → View r s → View r t
+(define composeView (λ (v) (λ (w)
+  (compose w v))))
+
+composeUpdate : Update i p j q → Update j q k r → Update i p k r
+(define composeUpdate (λ (f) (λ (g)
+  (compose f g))))
+
+makeLens : View r s → Update i p j q → SkewLens r i p s j q
+(define makeLens (λ (v) (λ (u)
+  (extend-record 'view v
+    (extend-record 'update u
+      record-empty)))))
+
+composeLens : SkewLens s j q ss jj qq → SkewLens r i p s j q →
+                SkewLens r i p ss jj qq
+(define composeLens (λ (l) (λ (k)
+  ((makeLens (composeView (l 'view) (k 'view)))
+    (composeUpdate (l 'update) (k 'update))))))
+
+idLens : SkewLens r i p r i p
+(define idLens
+  ((makeLens (λ (v) v)) (λ (u) u)))}
+
+You’ll notice that @c{composeView} is just @c{compose} with flipped arguments,
+and @c{composeUpdate} is just @c{compose}.
+@c{composeLens} just composes each component with the proper function@xnote["."]{
   As usual, you can represent your lenses such that you can compose them with the
   regular @c{compose} function, by pre-applying the @c{composeLens} function to them.
   Haskellers use a further condensed representation as a single composable function
   that some claim is more efficient, “van Laarhoven” lenses,
   but I will avoid it for the sake of clarity.
 }
-Monomorphic lenses are a special case or polymorphic lenses with @c{t = s} and @c{b = a}.
-@Code{
-type Getter s a = s → a
-type Updater s t a b = (a → b) → s → t
-type Lens s t a b = { get : Getter s a ; update : Updater s t a b }
-type Lens' s a = Lens s s a a}
+Views, Updates, Lenses are categories, wherein composition is associative,
+and identities are neutral elements.
 
-Monomorphic lenses suffice in simple cases
-where updates merely reflect a local change in a broader structure;
-but I will show how polymorphic lenses are useful in more advanced cases
-where local updates partake in a broader ongoing change.
-Then come more general kind of “optic” functions,
-that e.g. take into account that a value may be undefined, etc.,
-but I will leave their application as exercise to the reader.
-
-@Paragraph{Composing Lens}
-Lenses form a category with a compose function and identity lenses.
-@Code{
-composeLens : Lens x y s t → Lens s t a b → Lens x y a b
-idLens : Lens a a a a
-
-(define composeLens (λ (k) (λ (l)
-  { get = l.get ∘ k.get ; update = k.update ∘ l.update })))
-(define idLens
-  { get = (λ (x) x) ; update = (λ (f) f) })}
 
 @Paragraph{Field Lens}
 Given some record representation, a getter for a field of identifier key @c{k}
@@ -8357,56 +8436,85 @@ is just a function that returns the field value @c{r.k} for given as argument th
 whereas an updater gives you a change in record given a change for that field.
 More sophisticated representations will have more sophisticated lenses,
 but here is what it looks like in my trivial representation of records
-as functions from identifiers to value:
+as functions from identifiers to value, where @c{r.k = (r 'k)}:
 @Code{
-(define fieldGetter (λ (key) (λ (s)
+(define fieldView (λ (key) (λ (s)
   (s key))))
-(define fieldUpdater (λ (key) (λ (f) (λ (s)
+(define fieldUpdate (λ (key) (λ (f) (λ (s)
   (extend-record s key (f (s key)))))))
 (define fieldLens (λ (key)
-  { get = (fieldGetter key) ; update = (fieldUpdater key) }))
-}
+  ((makeLens (fieldView key)) (fieldUpdate key))))}
 
-A typical monomorphic lens @c{Lens' s a} would specify how to get or set a field
-at a given identifier within a record;
-thus the getter for field @c{foo} would given a record @c{x : s}
-return the field value @c{x.foo : a};
-whereas the setter would take a new value @c{v : a} and an old record @c{x : s}
-and return a new record @c{y : s} that copies @c{x} except for the field @c{foo} wherein
-@c{y.foo} is set to @c{v : a}.
-You could similarly define lenses for the nth element of a tuple or a list.
-Composing lenses for a series of fields allow you to follow a path within an module context.
+To access the subfield @c{bar} of the field @c{foo} of an object @c{x},
+you can apply @c{(composeLens (fieldLens 'bar) (fieldLens 'foo))} to @c{x}.
+Note that the order of fields is contravariant with
+the usual notation @c{x.foo.bar}, but you can always use combinators
+that flip the order of arguments to retrieve left-to-right dataflow.
 
-@subsubsection{Functional Focused Specification}
 
-A focused specification is the data of a specification,
-and of “locations” that point within a broader context
-what that specification is modularly extending.
-A modular extension @c{C → V → W} will thus have to point within the whole program @c{P}
-a getter to locate the extension’s input module context @c{C} from @c{P},
-and an updater to locate from @c{P} the value @c{V} being extended into a value @c{W}.
-Importantly, the two need not be at the same place;
-and so whether your practical implementation uses pure functions, stateful functions,
-or low-level pointers, it will have to maintain a pair of separate ones
-for the module context and the entity under focus.
+@subsubsection{Focusing a Modular Extension}
 
-Informally, the getter is the “eye” or sensor of the the modular extension;
-the updater its “hand” or actuator. The two together I will call a @emph{sensactor},
-a combination of a sensor and an actuator.
-Informally, just like a submarine captain may be looking
-in a @emph{periscope} while piloting his boat,
-a surgeon may be using an endoscope while operating through a different port,
-or a painter may be applying paint on canvas while looking at his model,
-a modular extension could be looking at some module context while extending an entity
-that could be narrower than, wider than or disjoint from the module context.
-Actually, the common case would be for the entity being extended to be narrower,
-since you generally need to see some context around what you act upon to decide how to act;
-but you could be looking at a small crucial detail to make a big change,
-or may have internalized enough what you’re doing
-to be able to to act while looking at the context that really matters
-without having to look at your hand.
+@Paragraph{From Sick to Ripped}
 
-A @emph{focused specification} will be the datum of a sensactor and a specification.
+You may have notice that I used the same letters @c{r i p}
+to parameterize a @c{SkewLens} (plus their successors)
+as to parameterize a @c{ModExt}. This is not a coincidence.
+You can focus a modular extension by looking at it through a matching skew lens:
+@Code{
+skewModext : SkewLens r i p s j q → ModExt r i p → ModExt s j q
+(define skewModExt (λ (l) (λ (m)
+  (compose (l 'update)
+    (compose m (l 'view))))))}
+
+@Paragraph{Metaphors for Modular Extensions and Skew Lenses}
+
+A modular extension can be conceived as a @emph{sensactor}:
+it has a sensor, the input from the module context,
+and an actuator, the output of an extension to the value under focus.
+
+A single skew lens can change both the module context, and the extension focus.
+A @c{SkewLens r i p s j q} can transform an inner @c{ModExt r i p}
+into an outer @c{ModExt s j q}.
+As always, note that in general, @c{r} (required, the module context)
+is largely independent from @c{i p} (inherited and provided, the extension focus).
+They only coincide just before the end of the specification,
+to obtain a closed modular definition you can resolve with a single use of the Y combinator.
+
+One way to think of a skew lens is as similar to the pair of a periscope
+through with a submarine pilot may look outside,
+and the wheel or yoke through which they may pilot their boat:
+the submarine pilot is the sensactor, and the skew lens
+transforms the I/O loop of the pilot into the I/O loop of the submarine.
+Similarly, one may consider the laparoscope that a surgeon may use,
+and the separate instrument with which he will operate the patient:
+the “skew lens” transforms the surgeon I/O into the instrument I/O.
+
+It is a common case that the actuator is within the frame of the sensor,
+such that the sensactor may observe not only what they are modifying, but also a wider context.
+In formal words, there are two polymorphic lenses @c{l} and @c{k}
+such that the skew lens view is @c{(l 'view)}, and the skew lens update is
+@c{((composeLens k l) 'update)}, further specializing the previous view.
+But that is not necessary in the general case.
+Just like competent painters can put paint on canvas while looking at their model,
+not at their hand, the “skew lens” does not imply that the hand is seen by the eye,
+that the actuator is somehow visible in the frame of the sensor.
+The actuator may involve a bigger extension focus (heating the whole room, not just the thermometer),
+or an extension focus completely disjoint from the context being observed
+(like a caricaturist reproducing features observed in his model,
+but in an exaggerated style).
+
+Now, inasmuch as you consider those function types as a model for stateful mutation
+with in-memory pointers, that means that the “read pointer” @c{r}
+and the “(re(ad)-write) pointer” @c{p} (with its “initial value” @c{i}) are independent;
+in a mutable variant of a skew lens, you will have two pointers,
+not just one as with monomorphic or polymorphic lens.
+
+@Paragraph{Focused Specification}
+
+A @emph{focused specification} will be the datum of a skew lens and a specification.
+
+@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+
 As usual, I consider open specifications in general,
 and closed specifications as a special case.
 The specification to be focused may be a modular definition, a modular extension,
@@ -8465,6 +8573,7 @@ and lens @c{k = (fieldLens key)} to locate the method of given key from the prot
 then @c{(view l, update l.k)} will be the sensactor in a focused specification
 that extends that method of that prototype.
 
+
 Prototypes, including classes, can thus be defined incrementally,
 by assembling or composing plenty of such focused specifications;
 and using lenses and sensactors to programmatically select each time
@@ -8475,6 +8584,9 @@ You can reuse these specification as part of multiple prototype specifications.
 You can transform them, store and transmit them, compose them, decompose them, recompose them,
 as first class objects.
 
+@subsubsection{Methods on Class Elements}
+
+
 @; TODO EXAMPLES:
 @; DEFINING A METHOD OUTSIDE A CLASS
 @; COMBINING METHODS INTO DIFFERENT CLASSES
@@ -8482,7 +8594,8 @@ as first class objects.
 
 @subsection{Method Combinations}
 
-@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+
+@subsubsection{Win-Win}
 
 Another fantastic contribution by Flavors @~cite{Cannon1979} is Method Combinations:
 the idea that the many methods declared in partial specifications
@@ -8492,11 +8605,31 @@ that contradict it, the winners erasing the losers.
 Win-win interactions rather win-lose, that was a revolution
 that made multiple inheritance sensible when it otherwise wasn’t.
 
+I will quickly present the refined method combinations from CLOS @~cite{cltl2 clhs},
+rather than the more limited method combinations of the original Flavors.
+
+
+
 @subsection{Multiple Dispatch}
 
 @subsection{Dynamic Dispatch}
 
+Kin vs type.
+
 @section[#:tag "IO"]{Implementing Objects}
+
+@subsection{Representing Records}
+
+@subsubsection{Records as Records}
+
+Records as functions... OK, but.
+
+Records as records?
+
+@subsubsection{Lazy Records}
+
+
+
 
 @subsection{Meta-Object Protocols}
 
@@ -8699,6 +8832,11 @@ But those are still the best opinions I could make, and still worth sharing.
 @principle{You should always judge a book by its cover}:
 that’s the only information you have before you may decide to even open the book.
 But you should be ready to revise the judgement after you get more information.
+
+Most of the books and papers listed in this bibliography are available online for free.
+For some of them, I only list the DOI (Digital Object Identifier) that identifies them,
+from which you cannot access the resource without paying some “legal” monopoly middleman.
+Yet I trust my readers to locate free copies if they try hard enough.
 
 @(hhr)
 

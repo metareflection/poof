@@ -1324,7 +1324,21 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   publisher = {Digital Press},
   address = {USA},
   doi = {10.5555/1098646},
-  url = {http://www.cs.cmu.edu/afs/cs.cmu.edu/project/ai-repository/ai/html/cltl/cltl2.html}
+  url = {http://www.cs.cmu.edu/afs/cs.cmu.edu/project/ai-repository/ai/html/cltl/cltl2.html},
+  note={.
+    This book, known as CLtL2, presents a snapshot of the work of X3J13,
+    the committee that was standardizing ANSI Common Lisp.
+    While there are discrepancies between the contents of this book and the actual standard,
+    a lot of the material is already there in essentially its final form.
+    CLtL2 contains many features that were not included in the standard due to lack of consensus;
+    nevertheless, many implementations also adopted these features in some form.
+    Still, the standard is the actual reference document.
+    On the other hand, the standard is dry, whereas CLtL2 is much more didactic.
+    CLtL2 is thus a better introduction to the concepts, though it is not authoritative.
+    There was also a first edition of CLtL, back in 1984, but the language evolved a lot
+    between the two editions, and the first edition came years before the Object System was designed.
+    Objects are described in chapter 28 of CLtL2.
+  }
 }
 
 % https://www.semanticscholar.org/paper/Mixin-based-inheritance-Bracha-Cook/cbc4f2d93bb62d1c287f4fe458de6ac416379282
@@ -2182,6 +2196,30 @@ series = {OOPSLA '94}
     Great for theory and practice alike.
   }
 }
+
+@webpage{CLHS,
+  title={Common Lisp HyperSpec},
+  author={Kent Pitman},
+  url={https://www.lispworks.com/documentation/HyperSpec/Front/index.htm},
+  year={1996},
+  lastchecked={2026-01-06},
+  note={.
+    The Common Lisp HyperSpec, or CLHS, is a carefully digitized version of
+    the ANSI Common Lisp standard,
+    the final draft of which was approved by X3J13 on December 8, 1994.
+    It is fully clickable, includes the (non-binding, but enlightening) “issue writeups”
+    that explain some of the design decisions, etc.
+    Objects are described in chapter 7.
+    Importantly, the document is meant as a reference, and not as a tutorial.
+    You will have a hard time learning how to use Common Lisp in general or CLOS in particular
+    by reading this document. But you can read tutorials,
+    look at plenty of working examples in free software libraries,
+    and then make sense of the finer details by reading the CLHS.
+    Practical Common Lisp, the Common Lisp Cookbook, (or I’m told the OOP in CL by Keene)
+    might be better to start learning, or CLtL2, AMOP.
+  }
+}
+
 
 %% 1997
 
