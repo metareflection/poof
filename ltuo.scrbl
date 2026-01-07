@@ -19,6 +19,16 @@
 
 @author{François-René Rideau}
 
+@noindent[]
+@italic{This book is a work in progress.
+Please send feedback to fahree at gmail.}@xnote[""]{
+  For your convenience, a current draft is available
+  in PDF at @url{http://fare.tunes.org/files/cs/poof/ltuo.pdf}
+  and in HTML at @url{http://fare.tunes.org/files/cs/poof/ltuo.html}.
+  The source code is at @url{https://github.com/metareflection/poof}.
+}
+@linebreak[]@tex{\\{}}
+
 @book-abstract{
 As a software practitioner, you have not only heard of Object-Orientation (OO),
 but seen it or used it, loved it or hated it.
@@ -45,7 +55,7 @@ versus Lisp, Ruby, Python or Scala style?
 Is there a best variant of inheritance anyway?
 And do concepts like prototypes, method combinations and multiple dispatch seem natural to you,
 or are they mysteries that challenge your mental model of OO?
-Last but not least… have you had enough of us Lispers bragging about how our 1990 OO system
+Last but not least… have you had enough of us Lispers bragging about how our 1988 OO system
 is still decades ahead of yours?
 
 If any of these questions bother you, then this book is for you.
@@ -70,7 +80,7 @@ in a handful of short functions you can write in any language that has higher-or
 and it can @emph{objectively} (hey!) justify every choice made.
 This theory reconciles Class OO, Prototype OO, and even a more primitive classless OO
 that few computer scientists are even aware exists.
-And, what is easily underappreciated, this theory can demarcate
+What is easily underappreciated, this theory can demarcate
 this common domain of OO from a lot of related but quite distinct domains
 that may look like OO and even share some of its vocabulary,
 yet can be shown to be conceptually foreign.
@@ -121,8 +131,10 @@ the alternatives used in any programming language so far.
 @(define super 'super)
 @(define self 'self)
 @(define (XXXX . x)
-   (list @tex{\noindent}
-         @bold{XXXXXXXXXXXXXXXXXXX EDIT HERE XXXXXXXXXXXXXXXXXXX}))
+   (list
+     @subsection[#:style 'unnumbered]{XXX EDIT HERE XXX}
+     @tex{\noindent}
+     @bold{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}))
 
 @;; Suppress the page count for the Camera-ready version by uncommenting the below.
 @;@tex{\thispagestyle{empty}\pagestyle{empty}}
@@ -196,7 +208,8 @@ in your favorite programming language@xnote["."]{
   @|#:- "Thomas Sowell"|
 }
 Why write a book about OO in 2026?
-It is present year; don’t people know everything they need to know about OO by now,
+It is present year;
+don’t people know everything they need to know (about OO or otherwise) by now,
 unlike the barbarians of times past?
 No, people of past years were not barbarians
 though they were ignorant of what we now know;
@@ -225,14 +238,14 @@ Too bad no one reads books anymore, except AIs.
 If that book, and most importantly its understanding, had come a few decades earlier,
 it could have saved a lot of people a lot of trouble.
 OO sure baffled me for a long time, and many around me.
-Now that I am not baffled anymore, I can bring you all my explanations;
-but long after the battle.
+Now that I am not baffled anymore,
+I can bring you all my explanations—but long after the battle.
 
 It would be nice to hear a few of my old colleagues tell me:
 “so @emph{that} is what OO was about all along!”
 But I have little hope of convincing many in the old generations
 of the benefits of OO done right
-(yes, I am one of those Lispers bragging about how their 1990 OO system
+(yes, I am one of those Lispers bragging about how their 1988 OO system
 is still decades ahead of yours).
 And even if I did, they will be retiring soon.
 However, a new generation of programmers is born every year,
@@ -525,7 +538,7 @@ I am a proficient user of types, but am no expert at the design, implementation 
 Therefore I will only provide semi-formal designs
 for what better static types for OO should look like.
 And I will refer to the better papers among the many I have read,
-for what I believe are good foundations for typing OO@~cite{isoop1995 iloop1995 allen2011type}.
+for what I believe are good foundations for typing OO@~cite{isoop1995 iloop1995 Allen2011Type}.
 Among other things, good OO types should work not just for Second-Class Classes,
 but also for First-Class Prototypes;
 they require recursive types, subtyping, and some form of existential types.
@@ -549,7 +562,7 @@ but in another sense more fundamental, more composable @~cite{bracha1990mixin}.
 With this variety of options, programmers (respectively programming language designers)
 face a choice of which of several variants of inheritance to use (respectively implement),
 if any at all@xnote["."]{
-  And then there are dubious variants published in obscure papers, that we will not discuss.
+  And then there are dubious variants published in obscure papers, that I will not discuss.
   @; e.g. "Reverse Inheritance"
   Hopefully, after reading @secref{IMSMO},
   you will be able to understand why they are either trivially expressible
@@ -576,7 +589,7 @@ If so, how does it relate to the multiple flavors of multiple inheritance?
 
 And of course, critics of OO argue against using inheritance at all.
 What are the reasons to use or not use inheritance to begin with?
-We will use the absence of inheritance as a baseline against which to evaluate our variants.
+I will use the absence of inheritance as a baseline against which to evaluate our variants.
 @;{ Cite https://freedium.cfd/https://medium.com/better-programming/object-oriented-programming-the-trillion-dollar-disaster-92a4b666c7c7 } @;
 
 @subsubsection{Optimal Inheritance}
@@ -1269,7 +1282,7 @@ that Alan Kay also once mentioned was essential for OO@xnote["."]{
 
 Moreover, many OO languages generalize and extend their method dispatch mechanism
 from “single dispatch” to “multiple dispatch”@~cite{
-  Bobrow1986CommonLoops Bobrow1988CLOS CecilMultimethods allen2011type}.
+  Bobrow1986CommonLoops Bobrow1988CLOS CecilMultimethods Allen2011Type}.
 Their “multimethods” are attached to tuples of prototypes or classes,
 and there is no single prototype, class, or single independent entity of any kind
 capable of either “receiving” or “sending” a message.
@@ -1351,8 +1364,8 @@ that describes a different set of programming languages and patterns@xnote["."]{
   An invention is always surprising, original, and never, ever,
   exactly what you knew in advance it would be—or else
   the invention happened earlier and @emph{then} was surprising and original.
-  Also, an invention is shaped by the technical constraints of the time—some of which it may lift,
-  but not always those anticipated.
+  Also, an invention is shaped by the technical constraints of the time—some of which
+  the inventor may lift, but not always those anticipated.
 }
 
 @subsection[#:tag "OiaMotW"]{OO isn’t a Model of the World}
@@ -1750,7 +1763,7 @@ and are aware of when they are being conflated for practical purposes,
 so you can distinguish which of the two aspects should be invoked in which context,
 then the semantics of OO becomes quite simple.
 Shockingly, conflation was first explicitly discussed only in @citet{poof2021} even though
-(a) the concept is implicitly older than OO, going at least as far back as @citet{hoare1965record},
+(a) the concept is implicitly older than OO, going at least as far back as @citet{Hoare1965Record},
 and (b) the implementation of various Prototype OO systems has to explicitly accommodate for it
 (see e.g. the @c{__unfix__} attribute in @citet{nix2015})
 even when the documentation is silent about it.
@@ -1898,7 +1911,7 @@ parents, ancestors, children and descendants—also specifications.
 Historically, the first inheritance mechanism discovered
 was @emph{single inheritance} @~cite{Simula1967},
 though it was not known by that name until a decade later.
-In an influential paper@~cite{hoare1965record},
+In an influential paper@~cite{Hoare1965Record},
 Hoare introduced the notions of “class” and “subclass” of records
 (as well as, infamously, the @c{null} pointer).
 The first implementation of the concept appeared in Simula 67 @~cite{Simula1967}.
@@ -2464,7 +2477,7 @@ additions and overrides in their behavior rather than repeat their specification
 wherein each extension can modularly refer to functionality defined
 in other yet-unapplied extensions; and
 (c) the fact that these entities and the primitives to define, use and specialize them
-exist @emph{within} the programming language rather than as an external preprocessing layer.
+exist @emph{within} the programming language rather than in an external preprocessing layer.
 
 I contend that the above is what is usually meant by OO,
 that matches the variety of OO languages and systems
@@ -3305,8 +3318,8 @@ The last task to carry informally is therefore a justification of my approach to
 
 @subsubsection{Why a Formal Model?}
 
-The current section was largely appealing to well-established concepts in Computing,
-and inasmuch as it can be understood, it is only because I expect my readers
+The current section was largely appealing to well-established concepts in Computing.
+Inasmuch as it can be understood, it is only because I expect my readers
 to be seasoned programmers and scientists familiar with those concepts.
 My most complex explanations were in terms of functions from a modular context to a value,
 or from some (original) value to another (extended) value (of essentially the same type).
@@ -3379,7 +3392,7 @@ all inheritance happens at compile-time when defining classes.
 But for some programmers to use OO as a second-class programming construct,
 language implementers still have to implement OO as a first-class construct
 within their compilers and other semantic processors.
-@emph{Anyone’s second-class entities are someone else’s first-class entities.}
+@principle{Anyone’s second-class entities are someone else’s first-class entities.}
 And you still don’t fully understand those entities until you have implemented them,
 at which point they are first class.
 Thus, every useful minimal semantic model is always a first-class model,
@@ -3611,11 +3624,11 @@ the universal null pointer@xnote["."]{
   as Dahl and Nygaard would implement after his article,
   yet that he (and they) wrongfully assimilate to subtyping,
   was a trillion dollar happy mistake.
-  Overall, the effect of his article @~cite{hoare1965record} was probably net vastly positive.
+  Overall, the effect of his article @~cite{Hoare1965Record} was probably net vastly positive.
 }}
 @item{For the type @c{Type} of types (in a compiler, at the meta-level),
 @c{⊤ = Any}, the top type (“contains everything, about which you know nothing”) that you refine,
-or the bottom type @c{⊤ = Nothing}
+or the bottom type @c{⊥ = Nothing}
 (“contains nothing, about which you know everything”) that you extend.}
 @item{For any function type in a language with partial functions, @c{⊤ = abort},
 a function that never returns regularly,
@@ -3740,7 +3753,7 @@ Before I model Modularity as such, I shall delve deeper into the modeling of Rec
 that are the usual substrate for much of Modularity.
 
 @Paragraph{Record Nomenclature}
-I will follow Hoare @~cite{hoare1965record} in calling
+I will follow Hoare @~cite{Hoare1965Record} in calling
 “record” the concrete representation of data that contains zero, one or many “fields”.
 A typical low-level implementation of records is as
 consecutive “words” (or “characters”) of “computer store” or “storage space”,
@@ -3832,9 +3845,9 @@ Now, the “fail if not present” representation is great when implementing a (
 statically typed model. But for a dynamic environment, a “nicer” representation
 is as a function that always returns a language-wide top value, such as @c{undefined} in JavaScript.
 This is especially the case in this book
-where we don’t have space to deal with error handling protocols.
+where we don’t have space to discuss error handling protocols.
 But you should use what makes sense in your language.
-In portable Scheme, we will use:
+In portable Scheme, I will use:
 @Code{
 (define record-empty (λ (_) #f))}
 
@@ -5772,7 +5785,8 @@ information provided by the parent (parameter @c{p2} for the second argument)
 can be used by the child (first argument), but not the other way around.
 @Code{
 fix : top → NModExt target top target → target
-mix : NModExt r1 i1∩p2 p1 → NModExt r2 i2 p2 → NModExt r1∩r2 i1∩i2 p1∩p2
+mix : NModExt r1 i1∩p2 p1 → NModExt r2 i2 p2 →
+        NModExt r1∩r2 i1∩i2 p1∩p2
 }
 
 This model is simple and intuitive, and
@@ -5883,7 +5897,7 @@ These methods will break the precondition for subclassing being subtyping.
 
 And such methods are not an “advanced” or “anomalous” case, but quintessential.
 The very first example in the very first paper about actual classes @~cite{Simula1967},
-involves recursion data types:
+involves recursive data types:
 it is a class @c{linkage} that defines references @c{suc} and @c{pred} to the “same” type,
 that classes can inherit from so that their elements shall be part of a doubly linked list.
 This example, and any data structure defined using recursion,
@@ -5928,7 +5942,7 @@ In other words, it makes us realize once again that @emph{recursion is not free}
 @subsubsection{Why NNOOTT?}
 
 The NNOOTT was implicit in the original OO paper @~cite{Simula1967}
-as well as in Hoare’s seminal paper that inspired it @~cite{hoare1965record}@xnote["."]{
+as well as in Hoare’s seminal paper that inspired it @~cite{Hoare1965Record}@xnote["."]{
   Hoare probably intended subtyping initially indeed for his families of record types;
   yet subclassing is what he and the Simula authors discovered instead.
   Such is scientific discovery:
@@ -7543,7 +7557,7 @@ or left as an exercise to the reader in books that discuss the formalization
 of programming languages in general and/or OO in particular
 @~cite{AbadiCardelli1996ToO Pierce2002TAPL eopl3 plai}. @TODO{more?}
 The wider academic literature is also lacking in proper treatment of
-types for multiple inheritance, with some notable exceptions like@~cite{allen2011type}.
+types for multiple inheritance, with some notable exceptions like@~cite{Allen2011Type}.
 @TODO{cite more: Jonathan Aldrich ? Odersky ?}
 Much of the focus of the literature is on subtyping,
 with a deemphasis or outright avoidance of fixpoints and self-recursion,
@@ -8349,7 +8363,8 @@ from the “outer” context, of type @c{s}.
 The update function allows you to see how a local change in the “inner” value under focus
 transforms the “outer” context being focused:
 @Code{
-type MonoLens s a = { view : s → a ; update : (a → a) → s → s }
+type MonoLens s a =
+       { view : s → a ; update : (a → a) → s → s }
 }
 
 @Paragraph{Polymorphic Lens}
@@ -8363,7 +8378,8 @@ the start and end points of the the view function,
 so that you are updating the same thing you are viewing.
 Monomorphic lenses are a special case or polymorphic lenses.
 @Code{
-type PolyLens s t a b = { view : s → a ; update : (a → b) → s → t }
+type PolyLens s t a b =
+       { view : s → a ; update : (a → b) → s → t }
 type MonoLens s a = PolyLens s s a a
 }
 
@@ -8377,7 +8393,8 @@ and the update goes from an extension @c{i → p} to @c{j → q}
 (where “i” is for inherited, “p” is for provided, and “j” and “q” are just the next letters).
 Polymorphic lenses are a special case of skew lenses.
 @Code{
-type SkewLens r i p s j q = { view : s → r ; update : (i → p) → j → q }
+type SkewLens r i p s j q =
+       { view : s → r ; update : (i → p) → j → q }
 type PolyLens s t a b = SkewLens a a b s s t
 }
 
@@ -8386,8 +8403,29 @@ We can also give separate types fo View and Update:
 @Code{
 type View r s = s → r
 type Update i p j q = (i → p) → j → q }
-type SkewLens r i p s j q = { view : View r s ; update : Update i p j q }
+type SkewLens r i p s j q =
+  { view : View r s ; update : Update i p j q }
 }
+
+@Paragraph{Getter and Setter}
+There are cases when one may prefer the familiar view of lenses
+as involving a getter and a setter, instead of a view and an update.
+The getter and the view are the same thing, so that’s easy.
+On the other hand, the setter and the update are slightly harder.
+@Code{
+type Setter s t b = b → s → t
+lensOfGetterSetter : View a s → Setter s t b → PolyLens s t a b
+(define lensOfGetterSetter (λ (get) (λ (set)
+  ((makeLens get)
+     (λ (f) (λ (s) (set (f (g s)))))))))
+setterOfLens : PolyLens s t a b → Setter s t b
+(define setterOfLens (λ (l)
+  (λ (b) (λ (s) ((l 'update) (λ (a) b))))))
+}
+Note how you need a matching getter and setter to achieve a polymorphic lens.
+To achieve a skew lens, you would need two getters and a setter:
+one getter for the view, another getter and a setter for the update;
+the two getters needn’t match, but the second getter and the setter must.
 
 @Paragraph{Composing Lenses}
 We can compose view, update and lenses as follows,
@@ -8431,9 +8469,9 @@ and identities are neutral elements.
 
 
 @Paragraph{Field Lens}
-Given some record representation, a getter for a field of identifier key @c{k}
+Given some record representation, a view for a field of identifier key @c{k}
 is just a function that returns the field value @c{r.k} for given as argument the record @c{r},
-whereas an updater gives you a change in record given a change for that field.
+whereas an update gives you a change in record given a change for that field.
 More sophisticated representations will have more sophisticated lenses,
 but here is what it looks like in my trivial representation of records
 as functions from identifiers to value, where @c{r.k = (r 'k)}:
@@ -8446,11 +8484,18 @@ as functions from identifiers to value, where @c{r.k = (r 'k)}:
   ((makeLens (fieldView key)) (fieldUpdate key))))}
 
 To access the subfield @c{bar} of the field @c{foo} of an object @c{x},
-you can apply @c{(composeLens (fieldLens 'bar) (fieldLens 'foo))} to @c{x}.
-Note that the order of fields is contravariant with
-the usual notation @c{x.foo.bar}, but you can always use combinators
-that flip the order of arguments to retrieve left-to-right dataflow.
+you can apply @c{(composeLens (fieldLens 'foo) (fieldLens 'bar))} to @c{x}.
+Note that the order of lenses is covariant with
+the usual notation @c{x.foo.bar}.
+A little bit of syntactic sugar could help you achieve a similar notation, too;
+but we are deliberately avoiding syntactic sugar in this book.
 
+A @c{(fieldLens key)} can be a simple lens of type @c{MonoLens s a}
+when applied to a record of type @c{s} that has a field @c{key} of type @c{a}.
+But it can also be used as a polymorphic lens or skew lens,
+where you view the field @c{key} of your context and
+also modify the field @c{key} of the value you extend,
+but the two need not be the same, and the modification need not preserve types.
 
 @subsubsection{Focusing a Modular Extension}
 
@@ -8465,6 +8510,11 @@ skewModext : SkewLens r i p s j q → ModExt r i p → ModExt s j q
 (define skewModExt (λ (l) (λ (m)
   (compose (l 'update)
     (compose m (l 'view))))))}
+
+Thus with a @c{SkewLens r i p s j q},
+we can change the continuation for a modular extension
+from expecting @c{s j q} (pronounced “sick”)
+to expecting @c{r i p} (pronounced “rip”).
 
 @Paragraph{Metaphors for Modular Extensions and Skew Lenses}
 
@@ -8512,16 +8562,125 @@ not just one as with monomorphic or polymorphic lens.
 @Paragraph{Focused Specification}
 
 A @emph{focused specification} will be the datum of a skew lens and a specification.
+Above, the specification was a modular extension;
+but in general, it may as well be a modular definition,
+a multiple inheritance specification, an optimal inheritance specification, etc.,
+depending on the kind of specification you’re interested in.
+
+The skew lens says what the specification is modifying exactly,
+relative to a known place—typically the entire ecosystem, but
+potentially any other place you may currently be looking at.
+
+@;{
+I will call @emph{specification focus} the datum of a skew lens
+to the complete or somehow outermost ecosystem of type @c{ES}:
+@Code{
+type SpecFocus r i p = ModExt r i p → ModExt ES ⊤ ES
+}
+More generally, you could use any answer type @c{A}, or even @c{⊥},
+and consider that a SpecFocus is just a continuation that consume a specification
+@Code{
+type SpecFocus r i p = ModExt r i p → A
+
+A specification focus is the context for a specification or focused specification:
+fit a specification into it, and you get your program.
+The general case above is an @emph{open} specification focus;
+a @emph{closed} specification focus is of the form:
+@Code{
+type ClosedSpecFocus a = ModExt p ⊤ p → A
+}
+}}
+
+@subsubsection{Adjusting Context and Focus}
+
+@Paragraph{Adjusting both together}
+
+A monomorphic lens, or simple lens, can refocus a closed specification focus
+into another closed specification focus, such that a local closed specification
+@c{ClosedSpec a} can be turned into a global closed specification for the complete ecosystem,
+@c{ClosedSpec ES}. Thus, when specifying a value @c{foo.bar} in the ecosystem,
+you will use @c{(composeLens (fieldLens 'Foo) (fieldLens 'Bar))} as your @c{SpecFocus}.
+
+As is a theme in this book, though,
+and which was never discussed before in the OO literature,
+the interesting entities are the @emph{open} specifications, not just the closed ones.
+This is what makes skew lenses interesting.
+If you considered only closed specifications, you would only consider monomorphic lenses
+(or maybe polymorphic lenses when you specifically want to distinguish types
+for the ecosystem before and after extension).
+But then, you wouldn’t be able to formalize the advanced notions
+we are going to discuss in the rest of this chapter.
+
+@Paragraph{Adjusting the Extension Focus}
+Given a focus on a specification
+one can focus on a specific method of that specification
+by further adjusting the extension focus using @c{u = (fieldUpdate key)}
+where @c{key} is the identifier for the method.
+Thus, @c{(composeLens (composeLens (fieldLens 'foo) (fieldLens 'bar))
+(updateOnlyLens (fieldUpdate 'baz)))} will let you specify a method @c{baz}
+for the specification under @c{foo.bar} in the ecosystem, where:
+@Code{
+updateOnlyLens : Update i p j q → SkewLens r i p r j q
+(define updateOnlyLens (λ (u)
+  ((makeLens (λ (v) v)) u)))
+}
+
+More generally, given a lens @c{l} to focus on the specification,
+and a lens update @c{u} to refocus on just the extension focus,
+the lens @c{(composeLens l (updateOnlyLens u))} will up focus on the method at @c{u}
+of the specification at @c{l}.
+This is a common case when specifying
+a sub-method in a methods (more on that coming),
+a method in a specification,
+a specification in a library,
+a library in the ecosystem—all while keeping the broader entity
+as context when specifying the narrower one.
+
+@Paragraph{Broadening the Focus}
+
+At times, you may want to make the focus broader than the module context.
+Then, you can use a lens with “negative focal length”:
+instead of narrowing the focus to some subset of it,
+it broadens the focus.
+
+For instance, given a broader context @c{c : s},
+and a lens @c{l : MonoLens s a}, then the following “reverse lens” broadens the focus,
+by completing the “rest” of the reverse focus with data from the context.
+Beware though that if you use the update more than once, you will always get answers
+completed with data from the same non updated context.
+If you want to update the context each time, you have to reverse the lens
+with the updated context every time.
+@Code{
+reverseView : s → MonoLens s a → View a s
+reverseUpdate : s → MonoLens s a → Update a s a s
+reverseLens : s → MonoLens s a → MonoLens a s
+(define reverseView (λ (s) (λ (l)
+  (λ (a) (((setterOfLens l) s) a)))))
+(define reverseUpdate (λ (s) (λ (l) (λ (a) (λ (f)
+  ((l 'view) (f ((reverseView s) l) a)))))))
+(define reverseLens (λ (s) (λ (l)
+  ((makeView ((reverseView s) l)) ((reverseUpdate s) l)))))}
+
+@Paragraph{Adjusting the Context}
+
+The module context contains the data based on which a modular extension may compute its extension.
+Sometimes, one may want to narrow the context, to match the already narrowed extension focus;
+or to broaden the context to the next broader entity;
+or to locally override some configuration in the context;
+or to locally instrument some of the context entities
+(e.g. for debugging, testing, profiling performance, etc.);
+or just to switch the context to something different for any reason.
+
 
 @XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
 
-As usual, I consider open specifications in general,
-and closed specifications as a special case.
-The specification to be focused may be a modular definition, a modular extension,
-an optimal inheritance specification, etc.
+for instance, you may manage
+versioned backups, access controls, user interface, or accounting
+for the entire system, or a disjoint subsystem.
 
-@subsubsection{Adjusting the Context}
-The getter can narrow the context of a modular extension:
+And of course, when you want to take a fixpoint, you need to make
+the module context the very same as the focus.
+
 if you extend a class @c{blog.database} within your program,
 you can apply a database extension, say one that specifies PostgreSQL with your favorite options,
 that is itself agnostic to the “location” of your database within your program,
@@ -8538,30 +8697,7 @@ To zoom out of a heretofore useful narrow focus, and adopt a wider point of view
 To undo a temporary zoom in, from a method back to an object, back to a library,
 or back to an entire ecosystem.
 
-@subsubsection{Adjusting the Focus}
-The updater will often, but not always,
-further narrow a method within the prototype being extended.
-That is how you can extend a library within an ecosystem,
-a prototype within a library, a method within a prototype, etc.,
-each time the modular extension being able to use
-information from the surrounding context as it modifies the current focus.
 
-Thus, in a configuration to deploy a service @c{frob},
-you may focus the module context on its database via the getter,
-to access path @c{frob.database} of the environment,
-while at some point you may have configured it to use a postgres server,
-and then update its port by narrowing the focus further to
-such as say @c{frob.database.postgres.port} to specify what port to use for that database server.
-
-At times, you may want to make the focus broader than the module context, or disjoint:
-the module context contains the narrow execution context that interests you, and
-in that context, you operate on the system:
-for instance, you may manage
-versioned backups, access controls, user interface, or accounting
-for the entire system, or a disjoint subsystem.
-
-And of course, when you want to take a fixpoint, you need to make
-the module context the very same as the focus.
 
 @subsubsection{Methods with Focus}
 
@@ -8614,17 +8750,36 @@ rather than the more limited method combinations of the original Flavors.
 
 @subsection{Dynamic Dispatch}
 
-Kin vs type.
+Kin vs type. @~cite{Allen2011Type}
 
 @section[#:tag "IO"]{Implementing Objects}
+@epigraph{
+  Metaobject protocols also disprove the adage that adding
+  more flexibility to a programming language reduces its performance.
+  @|#:- "Kiczales, des Rivières, Bobrow"| @; AMOP
+}
 
 @subsection{Representing Records}
 
 @subsubsection{Records as Records}
 
-Records as functions... OK, but.
+So far we encoded Records as opaque functions
+with some kind of identifier as input argument,
+and returning a value as output.
+This strategy works, and is portable to any language with Higher-Order Functions.
+But, (1) it isn’t efficient, and, (2) it leaks space.
 
-Records as records?
+Meanwhile, the name “record” itself, as per @citet{Hoare1965Record},
+suggests a low-level representation in terms of consecutive words of memory.
+And so, I will cons
+
+A better strategy is possible.
+
+It is possible to do better... but to actually efficient, I’ll have to write non-portable code.
+the code won’t be trivially portable.
+Your LLMs will help you.
+
+Records as records? Now we’re talking.
 
 @subsubsection{Lazy Records}
 
@@ -8838,7 +8993,7 @@ For some of them, I only list the DOI (Digital Object Identifier) that identifie
 from which you cannot access the resource without paying some “legal” monopoly middleman.
 Yet I trust my readers to locate free copies if they try hard enough.
 
-@(hhr)
+@(hhr)  @tex{~\\{}\\{}~}
 
 @(generate-bibliography #:sec-title #f)
 

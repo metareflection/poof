@@ -143,7 +143,7 @@
 
 %% 1965
 
-@article{hoare1965record,
+@article{Hoare1965Record,
   title={Record handling},
   author={Hoare, C.A.R.},
   journal={Algol Bulletin},
@@ -2441,7 +2441,26 @@ series = {PLDI '99}
   author={Bak, Lars and Bracha, Gilad and Grarup, Steffen and Griesemer, Robert and Griswold, David and Hölzle, Urs},
   booktitle={ECOOP 2002 Workshop on Inheritance},
   year={2002},
-  url={https://bracha.org/mixins-paper.pdf}
+  url={https://bracha.org/mixins-paper.pdf},
+  note={.
+    This paper reports on the typesystem of Strongtalk,
+    a dialect of Smalltalk with mixins and optional types,
+    allowing for efficient compilation of code in cases that matter.
+    The techniques described notably had a powerful influence
+    on subsequent implementations of the JVM.
+    This is a very nice paper with great practical applications.
+    However, I should note that its type theory seems to be the NNOOTT,
+    checking method types with no regard for the open recursion
+    in the types that involve self-reference.
+    Yet, that is alright if those recursive references of a “same” are dynamically typechecked,
+    as we suppose they are, since the system being optionally typed
+    obviously supports such checks. But the authors never explicitly discuss that.
+    Their discussions of related work conflates mixin inheritance and multiple inheritance,
+    which is alright if you’re only interested in the types of mixins as they are in this paper;
+    but that too could and should have been made explicit.
+    The authors thus seem to have a lot of implicit knowledge of the issues that do and do not matter,
+    but will leave unsuspecting readers unsuspecting of those issues.
+  }
 }
 
 % downloaded from https://www.cs.sjtu.edu.cn/~kzhu/cs383/Pierce_Types_Programming_Languages.pdf
@@ -2831,7 +2850,7 @@ series = {PLDI '99}
 %% 2011
 
 % From the Fortress team
-@InProceedings{allen2011type,
+@InProceedings{Allen2011Type,
   title={Type checking modular multiple dispatch with parametric polymorphism and multiple inheritance},
   author={Allen, Eric and Hilburn, Justin and Kilpatrick, Scott and Luchangco, Victor and Ryu, Sukyoung and Chase, David and Steele, Guy},
   booktitle={OOPSLA},
