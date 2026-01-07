@@ -15,6 +15,15 @@ and `Scheme-Workshop-2021-slides` for the [slides](poof-slides.rkt) as presented
 A presentation was made at LambdaConf 2024, with a longer variant later made online for
 [Legends of LambdaConf](https://youtu.be/oAzBfY8OtG0).
 
+After giving up on getting a paper published on my broader ideas about OO,
+I (Faré) am instead am preparing a book, titled “Lambda: the Ultimate Object”,
+(subtitle “Object-Orientation Elucidated”), see its
+[Scribble source](ltuo.scrbl) and [annotated bibliography](ltuo.bib).
+It is still a Work-In-Progress, but I regularly update some precompiled draft
+[PDF](http://fare.tunes.org/files/cs/ltuo.pdf) and
+[HTML](http://fare.tunes.org/files/cs/ltuo.html).
+Please send me feedback if you proofread.
+
 ## Abstract
 
 This paper elucidates the essence of Object-Oriented Programming (OOP),
