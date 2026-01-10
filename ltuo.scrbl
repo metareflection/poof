@@ -136,11 +136,6 @@ the alternatives used in any programming language so far.
      @tex{\noindent}
      @bold{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}))
 
-@;; Suppress the page count for the Camera-ready version by uncommenting the below.
-@;@tex{\thispagestyle{empty}\pagestyle{empty}}
-@;; Instead, I could set the start page for the document with:
-@;@pageStart{42}
-
 @(define-bibtex-cite "ltuo.bib" ~cite citet generate-bibliography)
 @(define (~nocite . x) (let ((_ (apply @~cite x))) (void)))
 
@@ -178,10 +173,10 @@ But if you practice programming, and think about your practice,
 then you are in my target audience;
 and you will find it will be easier to program
 with the right ideas than with the wrong ones.
-And the Internet is certainly full of wrong and sometimes toxic ideas
-about OO and programming in general.
+And the Internet is certainly full of wrong and sometimes toxic ideas,
+about OO as about anything.
 
-To answer those questions about OO,
+To answer those questions,
 I will assume from my readers a passing familiarity with Functional Programming (FP).
 You don’t have to be an expert at FP;
 you just need basic knowledge about how to read and write
@@ -209,7 +204,7 @@ in your favorite programming language@xnote["."]{
 }
 Why write a book about OO in 2026?
 It is present year;
-don’t people know everything they need to know (about OO or otherwise) by now,
+don’t people know everything they need to know by now (about OO or otherwise),
 unlike the barbarians of times past?
 No, people of past years were not barbarians
 though they were ignorant of what we now know;
@@ -218,8 +213,8 @@ Every mind is just too busy with knowledge from their time,
 that would have been useless earlier, and will soon be useless again.
 
 Conceived around 1967 with Dahl and Nygaard’s Simula and Alan Kay’s musings,
-OO was actually born in 1976 when these and other influences collided,
-resulting in Smalltalk-76.
+OO was actually born in 1976 when these two collided with each other and
+with influences from the Lisp AI community, resulting in Smalltalk-76.
 OO took off from there, at first reserved to the happy few
 who could use the most high-end systems from Xerox or MIT.
 OO became popular among researchers in the 1980s, and at some point was the Next Big Thing™.
@@ -249,9 +244,9 @@ of the benefits of OO done right
 is still decades ahead of yours).
 And even if I did, they will be retiring soon.
 However, a new generation of programmers is born every year,
-and it is always time to inspire and educate the generation,
+and it is always time to inspire and educate the new generation,
 that they do not fall as low as their predecessors, or lower.
-And even if the AIs take over programming, they too will need education.
+And even if AIs take over programming, they too will need education.
 
 @subsubsection{Towards a Rebirth of OO}
 @epigraph{If you want to build a ship,
@@ -317,21 +312,21 @@ certainly not in clear and simple terms—at last, I understood.
 And then I realized I might be the only one who understood OO from both
 the theoretical side of programming language semantics, and
 the practical side of actually building large systems—with the advanced features of untyped Lisp OO
-as well as with the advanced types of feature-poor OO systems like Scala’s.
-At least the only one who cared enough to talk about it.
+as well as with the advanced types of feature-poorer OO systems like Scala’s.
+At least the only one who cared enough to write about it.
 
 So I tried to get the Good News out, by getting a paper published.
-And I did get a paper published @~cite{poof2021},
+And I did get a paper published eventually @~cite{poof2021},
 but only at the Scheme Workshop, a small venue of sympathetic Lispers,
 who already understood half of it and did not need much effort to understand the rest,
 but who already had plenty of good object systems to play with.
 Meanwhile, my repeated attempts at publishing in more mainstream
-Computer Science conferences or journals were met with incomprehension.
-Also with great technical feedback, of course, that helped me learn and improve a lot,
+Computer Science conferences or journals were met with incomprehension—also
+with great technical feedback, of course, that helped me learn and improve a lot,
 and for which I am most grateful;
-but fundamentally, with deep misunderstanding about what I was even talking about.
+but fundamentally, with a deep misunderstanding about what I was even talking about.
 As @citet{Gabriel2012} would say, my reviewers were trying to evaluate my work
-while making sense of it from an Incommensurable Paradigm.
+while making sense of it from an @emph{Incommensurable Paradigm}.
 
 Certainly, I could try to explain myself, to translate between their language and mine;
 spend time explaining the denotations and connotations of my words as I was using them,
@@ -583,7 +578,7 @@ Is one of the usual variants superior to the others in every way?
 If not, is there a combination of them, or a superset of them, that is?
 Some languages notably support forms of both single inheritance and multiple inheritance,
 though with some constraints:
-Lisp @~cite{cltl2}, Ruby, Scala @~cite{scalableComponentAbstractions2005}.
+Lisp @~cite{cltl2}, Ruby @~cite{Matsumoto2001}, Scala @~cite{scalableComponentAbstractions2005}.
 Would the best way to do inheritance subsume these combinations?
 If so, how does it relate to the multiple flavors of multiple inheritance?
 
@@ -659,15 +654,15 @@ the rationale for OO.
 This chapter remains informal, but lays the conceptual groundwork
 for the formal approach I take in the rest of this book.
 
-In chapter 5, I introduce minimal formal models of Modularity and Extensibility.
+In chapter 5, I introduce minimal formal models of Modularity and Extensibility,
 Using pure Functional Programming (FP) as a foundation, with Scheme syntax,
 I derive from first principles a minimal OO system, in two lines of code.
 This minimal OO system uses mixin inheritance, and, remarkably,
 has neither objects nor prototypes, much less classes,
 only specifications and targets.
 
-In chapter 6, I rebuild all the mainstream features and appurtenances of OO
-as additions or modifications to the minimal system from chapter 5:
+In chapter 6, I rebuild all the mainstream features and appurtenances
+of popular OO systems as additions or modifications to the minimal system from chapter 5:
 prototypes, classes, types, mutation, etc.
 I notably clarify the all-too-common confusion between subtyping and subclassing,
 and discuss the actual relationship between OO and imperative programming,
@@ -681,7 +676,7 @@ for linearization algorithms in the context of multiple inheritance,
 and the state-of-the-art in satisfying them, the C3 algorithm.
 Finally, I discuss how to combine multiple and single inheritance,
 and examine the existing solutions adopted by
-Common Lisp @~cite{cltl2}, Ruby, @; TODO cite
+Common Lisp @~cite{cltl2}, Ruby @~cite{Matsumoto2001}
 and Scala @~cite{scalableComponentAbstractions2005}.
 I then propose my solution, a linearization algorithm I call C4,
 that satisfies all the constraints of C3 plus
@@ -1034,8 +1029,8 @@ were using mutable state everywhere, and an eager evaluation model, at least by 
 And with 1990s slogans among Lispers like
 “objects are a poor man’s closures”@~cite{Dickey1992SWOB}, and
 “closures are a poor man’s objects”@~cite{Queinnec1996LiSP},
-the problem back then was clearly not
-whether OO could be done purely with functions (obviously it could), but
+the problem back then (and as early as at least Yale T Scheme @~cite{Rees1982T})
+was clearly not whether OO could be done purely with functions (obviously it could), but
 whether it made practical sense to program purely without side-effects in general.
 That question would only be slowly answered positively,
 in theory in the early 1990s @~cite{Moggi1991Monads}
@@ -1043,11 +1038,11 @@ and in practice in the mid 2000s to mid 2010s,
 as Haskell grew up to become a practical language@xnote["."]{
   Some may identify darcs (2003) as the first widely used real-world application written in Haskell.
   After it came innovations such as bytestring (2005), cabal (2005)
-  (and the “cabal hell” it started causing around 2006 until later solved by stack),
+  (and the “cabal hell” it started causing around 2006 until later solved by Stack),
   ghc6 (2006), that made Haskell much more practical to use, and
   new notable applications appeared like pandoc (2006), or xmonad (2007).
   A turning point was perhaps the publication of “Real World Haskell” @~cite{OSullivan2008RWH}.
-  Eventually, Stack (2015) made non-trivial haskell programs and scripts repeatable.
+  Eventually, Stack (2015) made non-trivial Haskell programs and scripts repeatable.
   Now there’s obviously a lot of subjectivity in deciding
   when exactly Haskell became “practical”—but one should expect
   the transition to practicality to be an S curve, such that
@@ -1153,7 +1148,8 @@ Lisp has harmoniously combined OO and FP together ever since they both emerged i
 @; TODO cite
 decades before anyone had the idea to fantasize a conflict between the two.
 
-The argument is actually a distortion of a legitimate question of OO design, @; TODO cite
+The argument of Composition vs Inheritance is actually a distortion
+of a legitimate question of OO design, @; TODO cite
 wherein one has to decide whether some aspect of a class@xnote[""]{
   My counter-argument also works for prototypes or arbitrary OO specifications,
   but since the argument is usually given for classes, I will use classes in this section.
@@ -1163,36 +1159,7 @@ embodied as attributes or methods, should be included directly in the class
 (the class @emph{is-a} subclass of the aspect class—inheritance of classes), or
 (b) indirectly by the class having as an attribute an object of that other class
 (the class @emph{has-a}n attribute of the aspect class—composition of classes
-seen as constructor functions).
-
-The answer of course depends on expectations about how the class will be further specialized
-within a static or dynamically evolving schema of data structures and algorithms.
-If the schema is small, static, well-understood and won’t need to evolve,
-it doesn’t really matter which technique is used to model it.
-But as it grows, evolves and boggles the mind,
-a more modular and extensible approach is more likely to enable adapting the software
-to changing situations, at which point thoughtful uses of inheritance can help a lot@;
-@xnote[""]{
-  @emph{Is} a car a chassis (inheritance),
-  or does it @emph{have} a chassis while not @emph{being} it (composition)?
-  If you’re writing a program that is only interested in the length of objects,
-  you may model a @c{car} as a @c{lengthy} object with a @c{length} slot,
-  and a @c{chassis} too. Now if your program will only ever be interested
-  but in the length of objects, you may altogether skip any object modelling:
-  and only use numeric length values directly everywhere for all program variables.
-  Is a car a chassis? Yes, they are both their length, which is the same number,
-  and you may unify the three, or let your compiler’s optimizer unify the two variables
-  as you initialize them from the same computation.
-  Now if you know your program will evolve to become interested in
-  the width of objects as well as their length,
-  you might have records with length and width rather than mere numbers,
-  and still unify a car and its chassis.
-  But if your program eventually becomes interested in the height, weight or price of objects,
-  you’ll soon enough see that the two entities may somehow share some attributes
-  yet be actually distinct: ultimately, both @c{car} and @c{chassis} @emph{are} @c{lengthy},
-  but a @c{car} @emph{has} a @c{chassis} and @emph{is not} a @c{chassis}.
-}
-@xnote[""]{
+seen as constructor functions)@xnote["."]{
   There is also an old slogan of OO design,
   notably found in the famous “Gang of Four” (“GoF”) book @~cite{GoF1994},
   that you should “favor object composition over class inheritance”.
@@ -1213,7 +1180,35 @@ to changing situations, at which point thoughtful uses of inheritance can help a
   rather than on vague heuristics that substitute for lack of understanding.
   At any rate, this slogan, though oft quoted out of context in online debates,
   actually has nothing to do with the OO vs FP debate—it is about using OO effectively.
-}.
+}
+
+The answer of course depends on expectations about how the class will be further specialized
+within a static or dynamically evolving schema of data structures and algorithms.
+If the schema is small, static, well-understood and won’t need to evolve,
+it doesn’t really matter which technique is used to model it.
+But as it grows, evolves and boggles the mind,
+a more modular and extensible approach is more likely to enable adapting the software
+to changing situations, at which point thoughtful uses of inheritance can help a lot@xnote["."]{
+  @emph{Is} a car a chassis (inheritance),
+  or does it @emph{have} a chassis while not @emph{being} it (composition)?
+  If you’re writing a program that is only interested in the length of objects,
+  you may model a @c{car} as a @c{lengthy} object with a @c{length} slot,
+  and a @c{chassis} too. Now if your program will only ever be interested
+  but in the length of objects, you may altogether skip any object modelling:
+  and only use numeric length values directly everywhere for all program variables.
+  Is a car a chassis? Yes, they are both their length, which is the same number,
+  and you may unify the three, or let your compiler’s optimizer unify them
+  as you initialize them from the same computation.
+  Now if you know your program will evolve to become interested in
+  the width of objects as well as their length,
+  you might have records with length and width rather than mere numbers,
+  and still unify a car and its chassis.
+  But if your program eventually becomes interested in the height, weight or price of objects,
+  and those of their components when they need be replaced,
+  you’ll soon enough see that the two entities may somehow share some attributes
+  yet be actually distinct: ultimately, both @c{car} and @c{chassis} @emph{are} @c{lengthy},
+  but a @c{car} @emph{has} a @c{chassis} and @emph{is not} a @c{chassis}.
+}
 
 In the end, @principle{OO and FP are complementary, not opposite}.
 If there is a real opposition, it is not between two perfectly compatible techniques,
@@ -1492,11 +1487,11 @@ existential and universal types, and more—including, especially, fixpoints (re
 And you can always go beyond with session types, substructural types, temporal types,
 separation types, dependent types, etc.
 In the end, if you care about modeling the types in your software (and you usually should),
-you should write your software in a language with a rich and strong type system,
+you should write your software in a language with a rich and strong typesystem,
 one that is logically consistent or at least whose inconsistencies are well mapped and can be avoided,
 one that is statically enforced by the compiler or at least
 that you will systematically enforce socially.
-Then you should use that type system to describe not just
+Then you should use that typesystem to describe not just
 records of elementary data types over the wire or on disk,
 but all the rich entities within your software, their interactions and interrelations.
 This will provide much more help with design and safety than any code-less methodology can.
@@ -1512,8 +1507,8 @@ you can actually use OO as you do it.
   @|#:- "Nicolas Boileau"|
 }
 In this chapter, I map out the important concepts of OO,
-as I develop in the rest of this book.
-I provide only what explanation is strictly necessary
+that I will develop in the rest of this book.
+This chapter will contain only what explanation is strictly necessary
 to relate concepts to one another and prevent their misinterpretation.
 More details, and justifications, will follow in subsequent chapters.
 
@@ -1533,7 +1528,7 @@ as opposed to all logic being expressed in a single monolithic loop@xnote["."]{
   The entire point of partial specifications is that they are not complete,
   and you want to be able to manipulate those incomplete specifications even though of course
   trying to “instantiate” them before all the information has been assembled should fail.
-  Type systems and semantic frameworks incapable of dealing with such incomplete information
+  Typesystems and semantic frameworks incapable of dealing with such incomplete information
   are thereby incapable of apprehending OO.
 }
 
@@ -2093,7 +2088,7 @@ Mixin inheritance works better at runtime, either with Prototype OO,
 or for Class OO in a dynamic and somewhat reflective system.
 
 Mixin inheritance is in some way simpler than single inheritance
-(but only if you understand FP yet are not bound by limitations of most of today’s FP type systems),
+(but only if you understand FP yet are not bound by limitations of most of today’s FP typesystems),
 and as expressive as multiple inheritance
 (arguably slightly more, though not in a practically meaningful way),
 but is less modular than multiple inheritance because it doesn’t automatically handle
@@ -2110,7 +2105,14 @@ Jsonnet @~cite{jsonnet},
 and Nix @~cite{nix2015}.
 Yet it still has outsized outreach, for just the use of GCL at Google means
 a large part of the world computing infrastructure
-is built upon configurations written using mixin inheritance.
+is built upon configurations written using mixin inheritance@xnote["."]{
+  My understanding is that GCL as such only had single inheritance,
+  but that users would define their own mixins by abstracting over
+  the base class being extended using single inheritance, e.g.
+  @c{lambda base: base { a = 1 + super.a; b = c + d;}}
+  Semantically, this is just the same trick as used by Racket to implement mixins
+  on top of single inheritance.
+}
 One may also construe the way C++ handles non-“virtual” repeated superclasses
 as a form of mixin inheritance with automatic renaming,
 at which point mixin inheritance is actually very popular, just not well-understood.
@@ -2528,7 +2530,7 @@ entities that exist at compile-time but are not available as regular runtime val
   even in languages that don’t otherwise provide support APIs for it. @; TODO cite Goo
 }
 Either first-class or second-class entities are considered @emph{internal} to the language,
-part of its semantics, handled by its processors (compiler, interpreter, type system, etc.).
+part of its semantics, handled by its processors (compiler, interpreter, typesystem, etc.).
 
 However, many languages offer no such internal notion of modules.
 Indeed modules are a complex and costly feature to design and implement,
@@ -3100,7 +3102,7 @@ the system assists developers by allowing them to focus
 on only one small change at a time,
 while the system tracks down the remaining necessary adjustments.
 
-For instance, a rich static type system can often serve as a tool
+For instance, a rich static typesystem can often serve as a tool
 to guide large refactorings by dividing them
 into manageably small steps—as extra-linguistic code modifications—making the typechecker
 happy one redefinition at a time after an initial type modification.
@@ -3520,17 +3522,16 @@ for some type @c{W} to be declared, in which case the function is also of type @
 The prototypical type @c{V} to (strictly) extend would be the type @c{Record} for records.
 Assuming for the moment some syntactic sugar, and postponing discussion of precise semantics,
 I could define a record as follows:
-@Code{(define point-p (record (x 2) (y 4)))}
-i.e. the variable @c{point-p} is bound to a record that associates
+@Code{(define point-a (record (x 2) (y 4)))}
+i.e. the variable @c{point-a} is bound to a record that associates
 to symbol @c{x} the number @c{2} and to symbol @c{y} the number @c{4}.
 
 A sample (strict) extension would be the function @c{paint-blue} below,
 that extends a given record (lexically bound to @c{p} within the body of the function)
 into a record that is a copy of the previous
 with a new or overriding binding associating to symbol @c{color} the string @c{"blue"}:
-@Code{(define (paint-blue p) (extend-record p 'color "blue"))}
-
-Obviously, if you apply this extension to that value with @c{(paint-blue point-p)}
+@Code{(define (paint-blue p) (((extend-record 'color) "blue") p))}
+Obviously, if you apply this extension to that value with @c{(paint-blue point-a)}
 you obtain a record equal to what you could have directly defined as:
 @Code{(record (x 2) (y 4) (color "blue"))}
 
@@ -3580,7 +3581,7 @@ you can always define the @c{compose} if not yet defined, as follows,
 which is an associative operator with the identity function @c{id} as neutral element:
 @Code{
 (define compose (λ (ext1 ext2) (λ (val) (ext1 (ext2 val)))))
-(define id (λ (val) val))}
+(define identity (λ (val) val))}
 
 Now if I were discussing second-class extensions in a restricted compile-time language,
 composition might not be definable, and not expressible unless available as a primitive.
@@ -3612,7 +3613,7 @@ and somewhat depends on what monoidal operation is used to extend it
 as well as the domain type of values.
 
 @itemize[
-@item{For the type @c{Record} of records, @c{⊤ = record-empty} the empty record.}
+@item{For the type @c{Record} of records, @c{⊤ = empty-record} the empty record.}
 @item{For the type @c{Number} of numbers, @c{⊤ = 0} if seen additively,
 or @c{1} if seen multiplicatively,
 or @c{-∞} (IEEE floating-point number) seen with @c{max} as the operator, or @c{+∞} with @c{min}.}
@@ -3801,9 +3802,9 @@ I could have a record type
 @Code{
 type ∏R = {x: Number, y: Number, color: String}
 }
-and a point @c{point-q} of type @c{∏R} defined as follows:
+and a point @c{point-c} of type @c{∏R} defined as follows:
 @Code{
-(define point-q
+(define point-c
   (record (x 3) (y 4) (color "blue")))
 }
 
@@ -3849,12 +3850,12 @@ where we don’t have space to discuss error handling protocols.
 But you should use what makes sense in your language.
 In portable Scheme, I will use:
 @Code{
-(define record-empty (λ (_) #f))}
+(define empty-record (λ (_) #f))}
 
 To extend a record with one key-value binding, you can use
 @Code{
-(define record-cons (λ (key) (λ (val) (λ (rec) (λ (i)
-  (if (eqv? key i)
+(define extend-record (λ (key) (λ (val) (λ (rec) (λ (i)
+  (if (equal? key i)
      val
      (rec i)))))))}
 
@@ -4053,19 +4054,25 @@ expressed in terms of the composition combinator B and the duplication combinato
   A simple way to test the @c{applicative-Y} combinator,
   or the subsequent variants @c{applicative-Y-expanded} and @c{stateful-Y}
   is to use it to define the factorial function:
-  @c{(define fact (applicative-Y (λ (f) (λ (n) (if (<= n 1) n (* n (f (1- n))))))))}
+  first define the applicative recursion scheme for factorial:
+  @c{(define eager-pre-fact (λ (f) (λ (n) (if (<= n 1) n (* n (f (1- n)))))))}
+  then you can define factorial as
+  @c{(define fact (applicative-Y eager-pre-fact))}
   and you can then test that e.g. @c{(fact 6)} returns @c{720}.
 }
 @Code{
-(define B (λ (x) (λ (y) (λ (z) (x (y z))))))
-(define applicative-D (λ (x) (λ (y) ((x x) y))))
-(define applicative-Y (λ (f) (applicative-D ((B f) applicative-D))))
-(define applicative-Y-expanded
-  (λ (f) ((λ (x) (λ (y) ((x x) y)))
-          (λ (x) (f (λ (y) ((x x) y)))))))
+(define B (λ (x) (λ (y) (λ (z)
+  (x (y z))))))
+(define applicative-D (λ (x) (λ (y)
+  ((x x) y))))
+(define applicative-Y (λ (f)
+  (applicative-D ((B f) applicative-D))))
+(define applicative-Y-expanded (λ (f)
+  ((λ (x) (λ (y) ((x x) y)))
+   (λ (x) (f (λ (y) ((x x) y)))))))
 }
-@; Test: ((applicative-Y (λ (f) (λ (n) (if (<= n 1) n (* n (f (1- n))))))) 6) ;==> 720
-@; Test: ((applicative-Y-expanded (λ (f) (λ (n) (if (<= n 1) n (* n (f (1- n))))))) 6) ;==> 720
+@; Test: ((applicative-Y eager-pre-fact) 6) ;==> 720
+@; Test: ((applicative-Y-expanded eager-pre-fact) 6) ;==> 720
 The Y combinator works by composing the argument function @c{f}
 with indefinite copies (duplications) of itself (and accompanying plumbing).
 In this applicative variant, the first, minor, issue with this combinator is
@@ -4135,9 +4142,10 @@ and one must η-convert it into the equivalent but protected @c{(λ (y) (p y))}
 before passing it to @c{f}, to prevent access to the variable @c{p} before its initialization
 (and @c{f} must also be careful not to invoke this protected @c{p} before returning):
 @Code{
-(define (stateful-Y f) (letrec ((p (f (λ (y) (p y))))) p))
+(define stateful-Y (λ (f)
+  (letrec ((p (f (λ (y) (p y))))) p)))
 }
-@; Test: ((stateful-Y (λ (f) (λ (n) (if (<= n 1) n (* n (f (1- n))))))) 6) ;==> 720
+@; Test: ((stateful-Y eager-pre-fact) 6) ;==> 720
 
 A second solution is to use a lazy Y. In a language like Nix
 (where @c{λ (f)} is written @c{f:}, and @c{let} like Scheme @c{letrec}
@@ -4147,8 +4155,10 @@ every argument variable or function result must be protected by @c{delay},
 and one must @c{force} the delayed reference to extract the result value,
 you would write@xnote[":"]{
   Again, a simple way to test the lazy Y combinator is to use it
-  to define the factorial function:
-  @c{(define fact (lazy-Y (λ (f) (λ (n) (if (<= n 1) n (* n ((force f) (1- n))))))))}
+  to define the factorial function. First define the lazy “recursion schema” for the factorial:
+  @c{(define lazy-pre-fact (delay (λ (f) (λ (n) (if (<= n 1) n (* n ((force f) (1- n))))))))}
+  Then the factorial function is
+  @c{(define fact (lazy-Y lazy-pre-fact))}
   and you can then test that e.g. @c{(fact 6)} returns @c{720}.
   Note that I do without wrapping of @c{n} in a @c{delay},
   but @c{f} itself is a delayed function value to fit the calling convention of @c{lazy-Y},
@@ -4156,20 +4166,23 @@ you would write@xnote[":"]{
   The subsequent variants of @c{lazy-Y} can be tested in the same way.
 }
 @Code{
-(define (lazy-Y f) (letrec ((p (f (delay p)))) p))
+(define lazy-Y (λ (f)
+  (letrec ((p ((force f) (delay p)))) p)))
 }
 Or, if you want a variant based on combinators:
 @Code{
-(define lazy-B (λ (x) (λ (y) (λ (z) ((force x) (delay ((force y) z)))))))
-(define lazy-D (λ (x) ((force x) x)))
-(define lazy-Y-with-combinators
-  (λ (f) (lazy-D (delay ((lazy-B f) (delay lazy-D))))))
-(define lazy-Y-expanded
-  (λ (f) ((λ (x) ((force x) x))
-          (delay (λ (x) ((force f) (delay ((force x) x))))))))
+(define lazy-B (λ (x) (λ (y) (λ (z)
+  ((force x) (delay ((force y) z)))))))
+(define lazy-D (λ (x)
+  ((force x) x)))
+(define lazy-Y-with-combinators (λ (f)
+  (lazy-D (delay ((lazy-B f) (delay lazy-D))))))
+(define lazy-Y-expanded (λ (f)
+  ((λ (x) ((force x) x))
+   (delay (λ (x) ((force f) (delay ((force x) x))))))))
 }
-@; Test: ((lazy-Y-with-combinators (λ (f) (λ (n) (if (<= n 1) n (* n ((force f) (1- n))))))) 6) ;==> 720
-@; Test: ((lazy-Y-expanded (λ (f) (λ (n) (if (<= n 1) n (* n ((force f) (1- n))))))) 6) ;==> 720
+@; Test: ((lazy-Y-with-combinators lazy-pre-fact) 6) ;==> 720
+@; Test: ((lazy-Y-expanded lazy-pre-fact) 6) ;==> 720
 One advantage of a lazy Y is that evaluation is already protected by the @c{delay}
 primitive and thus can apply to any kind of computation, not just to functions;
 though if you consider that @c{delay} is no cheaper than a @c{λ} and indeed uses
@@ -4310,7 +4323,8 @@ to compose each extension under the module context and bound identifier,
 an operation that for reasons that will soon become obvious,
 I will call Mixin Inheritance (for modular extensions):
 @Code{
-(define mix (λ (c p) (λ (s) (λ (t) (c s (p s t))))))}
+(define mix (λ (c) (λ (p) (λ (s) (λ (t)
+  ((c s) ((p s) t)))))))}
 The variables @c{c} and @c{p} stand for “child” and “parent” specifications,
 wherein the value “inherited” by the composed function
 will be extended (right to left, with the usual function-as-prefix syntax)
@@ -4356,9 +4370,10 @@ and @c{t} is the inherited value
   and manually reimplement mixin inheritance @~cite{Smaragdakis2000Mixin},
   or if you’re adventurous, multiple inheritance, on top of C++.
 }
-The function can also be written with @c{compose}, eliding the “super” variable:
+The function can also be written with @c{compose}, eliding the “super” variable @c{t}:
 @Code{
-(define mix (λ (c p) (λ (s) (compose (c s) (p s)))))}
+(define mix (λ (c p) (λ (s)
+  (compose (c s) (p s)))))}
 
 Modular extensions and their composition have nice algebraic properties.
 Indeed, modular extensions for a given context form a category,
@@ -4380,7 +4395,8 @@ any and every value by returning it unchanged, as follows@xnote[":"]{
   my explanations, and, in later sections, the types of specifications, slightly simpler.
 }
 @Code{
-(define idModExt (λ (s) (λ (t) t)))}
+(define idModExt (λ (s) (λ (t)
+  t)))}
 
 @subsubsection{Closing Modular Extensions}
 
@@ -4401,7 +4417,9 @@ you apply your extension to the top value for a module context
 then you have reduced your problem to a regular modular module definition
 @c{∏R → ∏R}, at which point you only have to compute the fixpoint.
 I will call this operation instantiation for modular extensions:
-@Code{(define fix (λ (t) (λ (m) (Y (λ (s) ((m s) t))))))}
+@Code{
+(define fix (λ (t) (λ (m)
+  (Y (λ (s) ((m s) t))))))}
 In this expression,
 @c{t} is the top value for the type being specified (typically the empty record, for records),
 @c{m} is the modular extension, and
@@ -4419,16 +4437,22 @@ for instance I chose @c{Any} as my top type in Scheme, with @c{#f} as my top val
 you may want to choose the narrower @c{Record} as your top type,
 so as to be able define individual methods,
 with a @c{empty-record} as default value.
+
 Then you can compose your modular extension with a modular extension as follows to the right,
 that throws away the previous value or computation (ignores its @c{super} argument)
 and returns the new default value regardless of context (ignores its @c{self} argument;
 unless that default is extracted from the context):
-@Code{(define record-spec (λ (self) (λ (super) empty-record)))}
+@Code{
+(define record-spec (λ (self) (λ (super)
+  empty-record)))}
 I could then equivalently define a variant of @c{fix} specialized for records
 in any of the following ways:
-@Code{(define fix-record (fix empty-record))}
-@Code{(define fix-record (λ (m) (Y (λ (s) ((m s) empty-record)))))}
-@Code{(define fix-record (λ (m) (fixt (mix m record-spec))))}
+@Code{
+(define fix-record (fix empty-record))
+(define fix-record (λ (m)
+  (Y (λ (s) ((m s) empty-record)))))
+(define fix-record (λ (m)
+  (fixt ((mix m) record-spec))))}
 Note that because it ignores its @c{super} argument and thus throws away any inherited value,
 the @c{record-spec} modular extension must appear last, or at least
 after any modular extension the result of which isn’t to be ignored.
@@ -4508,7 +4532,7 @@ and returns an extended value for the method at @c{key}:
 (define method-spec (λ (key) (λ (compute-value)
     (λ (self) (λ (super) (λ (method-id)
       (let ((inherited (super method-id)))
-        (if (eqv? key method-id)
+        (if (equal? key method-id)
           (compute-value self inherited)
           inherited))))))))}
 
@@ -4553,7 +4577,7 @@ or would be wrapped in a thunk, to avoid unneeded computations (that might not e
 or for more power, the @c{compute-value} function
 would directly take @c{super} as its second argument,
 and @c{(super method-id)} would only be computed in the second branch.
-In a lazy context, @c{lazy-method-spec} could also directly use @c{lazy-record-cons}
+In a lazy context, @c{lazy-method-spec} could also directly use @c{extend-lazy-record}
 @; TODO secref to future definition of lazy variants?
 to add a binding to a record without having to eagerly compute the bound value.
 
@@ -4574,24 +4598,24 @@ I will demonstrate the classic “colored point” example in my Minimal Object 
 I can define a modular extension for a point’s coordinates as follows:
 @Code{
 (define coord-spec
-  (mix (method-spec 'x (λ (self) (λ (inherited) 2)))
-       (method-spec 'y (λ (self) (λ (inherited) 4)))))}
+  ((mix ((method-spec 'x) (λ (self) (λ (inherited) 2))))
+        ((method-spec 'y) (λ (self) (λ (inherited) 4)))))}
 The modular extension defines two methods @c{x} and @c{y},
 that respectively return the constant numbers @c{2} and @c{4}.
 
 I can similarly define a modular extension for a record’s @c{color} field as follows:
 @Code{
 (define color-spec
-  (method-spec 'color (λ (self) (λ (inherited) "blue"))))}
+  ((method-spec 'color) (λ (self) (λ (inherited) "blue"))))}
 
 Indeed, I will check that one can instantiate a point specified by combining
 the color and coordinate modular extensions above, and that the values
 for @c{x} and @c{color} are then as expected:
 @Code{
-(define point-p (fix-record (mix color-spec coord-spec)))
+(define point-r (fix-record ((mix color-spec) coord-spec)))
 
-(point-p 'x) ;⇒ 2
-(point-p 'color) ;⇒ "blue"}
+(point-r 'x) ;⇒ 2
+(point-r 'color) ;⇒ "blue"}
 Consider how @c{x} is computed.
 @c{fix-record} provides the @c{empty-record} as the top value for mixin composition.
 Then, mixins are applied under call-by-value evaluation,
@@ -4619,8 +4643,8 @@ I will illustrate extensibility with this example wherein the function @c{add-x-
 accepts an argument @c{dx}, and returns a modular extension that
 overrides method @c{x} with a new value that adds @c{dx} to the @c{inherited} value:
 @Code{
-(define add-x-spec
-  (λ (dx) (method-spec 'x (λ (self) (λ (inherited) (+ dx inherited))))))}
+(define add-x-spec (λ (dx)
+  ((method-spec 'x) (λ (self) (λ (inherited) (+ dx inherited))))))}
 
 Now I will illustrate modularity with another example wherein @c{rho-spec}
 specifies a new field @c{rho} bound to the Euclidean distance
@@ -4633,7 +4657,7 @@ and these coordinates are not provided by @c{rho-spec},
 but have to be provided by other modular extensions to be composed with it using @c{mix}:
 @Code{
 (define rho-spec
-  (method-spec 'rho (λ (self) (λ (inherited)
+  ((method-spec 'rho) (λ (self) (λ (inherited)
     (sqrt (+ (sqr (self 'x)) (sqr (self 'y))))))))}
 
 I can check that the above definitions work,
@@ -4645,9 +4669,9 @@ then incremented by @c{1} by @c{(add-x-spec 1)}.
 Meanwhile @c{rho} is @c{5}, as computed by @c{rho-spec} from the @c{x} and @c{y} coordinates:
 @Code{
 (define point-r (fix-record
-   (mix (add-x-spec 1)
-     (mix coord-spec
-          rho-spec))))
+   ((mix (add-x-spec 1))
+     ((mix coord-spec)
+           rho-spec))))
 
 (point-r 'x) ;⇒ 3
 (point-r 'rho) ;⇒ 5}
@@ -4680,7 +4704,7 @@ For instance, consider the following modular definition,
 to be merged with other specifications defining disjoint sets of identifiers.
 In this definition, the @c{case} special form of Scheme selects a clause to execute
 based on which constant, if any, matches its first argument.
-This definition provides (a) a @c{start} method that returns the constant 42;
+This definition provides (a) a @c{start} method that returns the constant 5;
 (b) a @c{length} utility function that computes the length of a list,
 using the open recursion through @c{self} for its recursion;
 (c) a @c{size} method that subtracts the @c{start} value from the length
@@ -4691,22 +4715,22 @@ it must be modularly provided by another modular definition.
 @Code{
 (define my-modular-def (λ (self) (λ (method-id)
    (case method-id
-      ((start) 42)
-      ((length) (λ (l) (if (null? l) 0 (+ 1 ((self 'length) l)))))
+      ((start) 5)
+      ((length) (λ (l) (if (null? l) 0 (+ 1 ((self 'length) (cdr l))))))
       ((size) (- ((self 'length) (self 'contents)) (self 'start)))
       (else #f)))))}
 Since by my disjointness hypothesis,
 the global specification for @c{start}, @c{length} and @c{size}
 will not be overridden, then @c{(self 'start)} and @c{(self 'length)}
 will always be bound to the values locally specified.
-Therefore, the value @c{42} may be inlined into the specification for @c{size},
+Therefore, the value @c{5} may be inlined into the specification for @c{size},
 and a fixpoint combinator or @c{letrec} can be used to define the @c{length} function,
 that can also be inlined in the specification for @c{size}.
 The @c{contents} method, not being provided, must still be queried through open recursion.
 @Code{
 (define my-modular-def-without-global-recursion
-  (let ((_start 42))
-    (letrec ((_length (λ (l) (if (null? l) 0 (+ 1 (_length l))))))
+  (let ((_start 5))
+    (letrec ((_length (λ (l) (if (null? l) 0 (+ 1 (_length (cdr l)))))))
       (λ (self) (λ (method-id)
         (case method-id
           ((start) _start)
@@ -4751,7 +4775,8 @@ because the method @c{parts} can be extended, and indeed
 such is the very intent and entire point of this @c{base-bill-of-parts} specification!
 Even future extensions cannot inline the value they reach,
 unless they are guaranteed that no further extension will extend the list of parts
-(a declaration known as “sealing”, after Dylan). @;{CITE Andrew Shalit, The Dylan Reference Manual: The Definitive Guide to the New Object-Oriented Dynamic Language 1996}
+(a declaration known as “sealing”, after Dylan).
+@;{CITE Andrew Shalit, The Dylan Reference Manual: The Definitive Guide to the New Object-Oriented Dynamic Language 1996}
 
 The interaction between modularity and extensibility therefore
 expands the scope of useful opportunities for modularity,
@@ -4860,7 +4885,7 @@ so you may call methods on it:
 (define target←pproto (λ (pproto)
   (cdr pproto)))
 (define pproto-mix (λ (child parent)
-  (pproto←spec (mix (spec←pproto child) (spec←pproto parent)))))}
+  (pproto←spec ((mix (spec←pproto child)) (spec←pproto parent)))))}
 
 Now, there is a subtle issue with the above implementation:
 when a target recursively refers to “itself” as per its specification,
@@ -4902,7 +4927,7 @@ Here is an implementation of that idea, wherein I prefix function names with @c{
 (define qproto-wrapper (λ (spec) (λ (self) (λ (super)
   (cons spec super)))))
 (define qproto←spec (λ (spec)
-  (fix-record (mix qproto-wrapper spec))))}
+  (fix-record ((mix qproto-wrapper) spec))))}
 
 Note how the following functions are essentially unchanged compared to @c{pproto}:
 @Code{
@@ -4911,7 +4936,7 @@ Note how the following functions are essentially unchanged compared to @c{pproto
 (define target←qproto (λ (qproto)
   (cdr qproto)))
 (define qproto-mix (λ (child parent)
-  (qproto←spec (mix (spec←qproto child) (spec←qproto parent)))))}
+  (qproto←spec ((mix (spec←qproto child)) (spec←qproto parent)))))}
 
 What changed from the previous @c{pproto} variant was that the
 @c{(λ (x) (cons spec x))} extension was moved from outside the fixpoint to inside:
@@ -5029,16 +5054,21 @@ you can often inline it away.
 (define rproto-wrapper (λ (spec) (λ (self) (λ (super) (λ (method-id)
   (if method-id (super method-id) spec))))))
 (define rproto←spec (λ (spec)
-  (fix-record (mix (rproto-wrapper spec) spec))))
+  (fix-record ((mix (rproto-wrapper spec)) spec))))
 (define spec←rproto (λ (rproto)
   (rproto #f)))
 (define target←rproto (λ (rproto)
   rproto))
 (define rproto-mix (λ (child parent)
-  (rproto←spec (mix (spec←rproto child) (spec←rproto parent)))))}
+  (rproto←spec ((mix (spec←rproto child)) (spec←rproto parent)))))}
 
 Once again, some special extension is used in front, that is not strict,
 and is almost-but-not-quite an isomorphism, and specially memorizes the specification.
+
+You may also define a prototype from a record by giving it a “spec”
+that just returns the record as a constant:
+(define rproto←record (λ (r)
+  (rproto←spec (λ (_self) (λ (_super) r)))))
 
 @subsubsection{Small-Scale Advantages of Conflation: Performance, Sharing}
 
@@ -5124,7 +5154,7 @@ using GCL, Jsonnet or Nix as (pure functional) Prototype OO languages:
 @item{
   The Google Control Language GCL@~cite{gclviewer2008} (née BCL, Borg Control Language),
   has been used to specify all of Google’s distributed software deployments
-  since about 2004 (but uses dynamic rather than static scoping,
+  since about 2003 (but uses dynamic rather than static scoping,
   causing dread among Google developers).}
 @item{
   Jsonnet@~cite{jsonnet}, inspired by GCL but cleaned up to use static scoping,
@@ -5171,7 +5201,7 @@ frown at inheriting from a concrete class,
 or trying to instantiate an abstract class.
 
 Theorists have also long implicitly recognized the conflated concepts
-when working to develop sound type systems for OO:
+when working to develop sound typesystems for OO:
 for instance, Fisher @~cite{Fisher1996thesis} distinguishes
 @c{pro} types for objects-as-prototypes and @c{obj} types for objects-as-records;
 and Bruce @~cite{bruce1996typing} complains that
@@ -5181,7 +5211,7 @@ and for its open specification (which he calls “matching”).
 Yet though they offer correct models for typing OO,
 both authors fail to distinguish specification and target
 as syntactically and semantically separate entities in their languages,
-leading to much extraneous complexity in their respective type systems.
+leading to much extraneous complexity in their respective typesystems.
 
 Implementers of stateful object systems at runtime may not have realized the conflation of entities,
 because they are too focused on low-level mechanisms for “delegation” or “inheritance”.
@@ -5442,6 +5472,13 @@ There are many tradeoffs that can make one style preferable to the other, or not
     as elements of varying types, often enough or at a fine enough grain,
     that it does not make sense to re-conflate the entire data set with every change of point of view.
     Class-style works better if type reinterpretations are few and localized.}
+  @item{
+    In particular, typeclass-style works better when type descriptors applied to objects
+    can be extended after those objects are defined;
+    class-style works better when new kinds of objects that match a type descriptor
+    can be created after those type descriptors have been defined;
+    in either style, you can use an extra parameter to describe at runtime the discrepancy
+    between the semantics you could express at compile-time and the one you want at runtime.}
   @item{
     There can be many different type descriptors that match any given object,
     with different methods to work with them from a different point of view,
@@ -5924,7 +5961,7 @@ Similarly, for trees with leaves of type @c{B}, you couldn’t write the recursi
 would instead write just the non-recursive and dynamically typed
 @c{Tree(B) = B + List(Any))}.
 
-To compensate for the imprecision of the type system
+To compensate for the imprecision of the typesystem
 when retrieving an element of the desired self-type,
 some kind of explicit dereference, typecast (downcast), or coercion
 is required from the programmer;
@@ -6082,7 +6119,7 @@ it does not follow that @c{Y F ⊂ Y G} where @c{Y} is the fixpoint operator for
 
   If the two entities are treated as a single one syntactically and semantically,
   as all OO languages so far have done, @; ALL??
-  then their type system will have to encode in a weird way a pair of subtly different types
+  then their typesystem will have to encode in a weird way a pair of subtly different types
   for each such entity, and the complexity will have to be passed on to the user,
   with the object, and each of its field having two related but different declared types,
   and potentially different visibility settings.
@@ -6292,7 +6329,7 @@ in any position “positive” or “negative”, etc.
 So far, this is the kind of thing you could write with first-class ML modules, @; TODO cite
 which embodies first-class modularity, but not modular extensibility.
 
-Now, if the type system includes subtypes, extensible records, and
+Now, if the typesystem includes subtypes, extensible records, and
 fixpoints involving open recursion,
 e.g. based on recursively constrained types @~cite{isoop1995 iloop1995}, then
 those first-class module values can be the targets of modular extensions.
@@ -6873,7 +6910,7 @@ Finally, since the two are equivalent in the context of first-class OO with high
 but different in the more common context of second-class OO
 without higher-order second-class functions,
 it makes sense to only speak of single inheritance in a context where
-the language syntax, static type system, dynamic semantics,
+the language syntax, static typesystem, dynamic semantics,
 or socially enforced coding conventions, or development costs
 somehow disallow or strongly discourage modular extensions as first-class entities.
 
@@ -7584,7 +7621,7 @@ left uncited, or is only cited to quickly dismiss it with no attempt
 to take its contents seriously.
 
 And yet languages that care more about expressiveness, modularity and incrementality
-than about ease of writing performant implementations with simpler type systems,
+than about ease of writing performant implementations with simpler typesystems,
 will choose multiple inheritance over the less expressive and less modular alternatives:
 see for instance Common Lisp, C++, Python, Scala, Rust.
 @TODO{cite Scala OO model. What else? Kathleen Fisher’s thesis?}
@@ -7663,7 +7700,7 @@ I showed that in practice, the common modular extension @c{method-spec} depends 
 while part specifications in my notional example depend on @c{base-bill-of-parts}.
 More generally, a specification may depend on a method having been implemented in an ancestor
 so that its inherited value may be modified in a wrapper (in this case, the “database” of parts),
-or, in some languages, just declared so it may be used (though with a proper type system
+or, in some languages, just declared so it may be used (though with a proper typesystem
 this might not have to be in a parent).
 Dependency constraints between modular extensions are an ubiquitous phenomenon in mixin inheritance,
 and these constraints exist even when they are not represented within the language
@@ -7671,15 +7708,15 @@ as internal notions of “parent” and “ancestor”.
 
 Some clever chaps might suggest to pre-compose each modular extension with all its dependencies,
 such that when modular extension @c{B1} depends on @c{A},
-you’d export @c{B1precomposed = (mix B1 A)} instead of @c{B1},
+you’d export @c{B1precomposed = ((mix B1) A)} instead of @c{B1},
 and that’s what your users would use.
 Unhappily, that means that if another module @c{B2} also depends on @c{A}
-and exports @c{B2precomposed = (mix B2 A)},
+and exports @c{B2precomposed = ((mix B2) A)},
 then users who want to define a class @c{C} that uses both @c{B1} and @c{B2},
 will experience the very same diamond problem as when trying to synthesize
 a modular definition from an attribute grammar view of of multiple inheritance in @secref{DMRMI}:
 the pre-composed dependencies (@c{A} in this case) would be duplicated in the mix of
-@c{(mix B1precomposed B2precomposed) = (mix (mix B1 A) (mix B2 A))};
+@c{((mix B1precomposed) B2precomposed) = ((mix ((mix B1) A)) ((mix B2) A))};
 these copies would badly interfere, in addition to leading to an exponential resource explosion
 as you keep pre-composing deeper graphs.
 Therefore, pre-composing modular extensions is the same non-solution
@@ -7745,7 +7782,7 @@ Tight coupling is the antithesis of modularity@xnote["."]{
 }
 
 One thing that @emph{could} actually help deal with dependencies without multiple inheritance
-would be a rich enough strong static type system such that
+would be a rich enough strong static typesystem such that
 the @c{r}, @c{i} and @c{p} parameters (for required, inherited and provided)
 of my parameterized type @c{ModExt r i p} can identify whether modular extensions
 are composed in ways that make sense.
@@ -8443,7 +8480,7 @@ makeLens : View r s → Update i p j q → SkewLens r i p s j q
 (define makeLens (λ (v) (λ (u)
   (extend-record 'view v
     (extend-record 'update u
-      record-empty)))))
+      empty-record)))))
 
 composeLens : SkewLens s j q ss jj qq → SkewLens r i p s j q →
                 SkewLens r i p ss jj qq
@@ -8453,7 +8490,7 @@ composeLens : SkewLens s j q ss jj qq → SkewLens r i p s j q →
 
 idLens : SkewLens r i p r i p
 (define idLens
-  ((makeLens (λ (v) v)) (λ (u) u)))}
+  ((makeLens identity) identity))}
 
 You’ll notice that @c{composeView} is just @c{compose} with flipped arguments,
 and @c{composeUpdate} is just @c{compose}.
@@ -8622,7 +8659,7 @@ for the specification under @c{foo.bar} in the ecosystem, where:
 @Code{
 updateOnlyLens : Update i p j q → SkewLens r i p r j q
 (define updateOnlyLens (λ (u)
-  ((makeLens (λ (v) v)) u)))
+  ((makeLens identity) u)))
 }
 
 More generally, given a lens @c{l} to focus on the specification,
@@ -8642,6 +8679,9 @@ At times, you may want to make the focus broader than the module context.
 Then, you can use a lens with “negative focal length”:
 instead of narrowing the focus to some subset of it,
 it broadens the focus.
+Thus you can zoom out rather than only zoom in.
+Zooming out can take you back to were you were previously,
+or to a completely different place.
 
 For instance, given a broader context @c{c : s},
 and a lens @c{l : MonoLens s a}, then the following “reverse lens” broadens the focus,
@@ -8664,50 +8704,109 @@ reverseLens : s → MonoLens s a → MonoLens a s
 @Paragraph{Adjusting the Context}
 
 The module context contains the data based on which a modular extension may compute its extension.
-Sometimes, one may want to narrow the context, to match the already narrowed extension focus;
+Sometimes, you may want to narrow the context, to match the already narrowed extension focus;
 or to broaden the context to the next broader entity;
 or to locally override some configuration in the context;
 or to locally instrument some of the context entities
 (e.g. for debugging, testing, profiling performance, etc.);
 or just to switch the context to something different for any reason.
+You can also use the getter to narrow the context in terms
+of visibility, access rights, or some other system of permissions or capabilities,
+so the extension may only invoke safe primitives,
+or primitives that were suitably wrapped in a “security proxy” for safety.
+Or you can focus the context on one object to specify extensions for another object
+that somehow “mirrors” or reacts to the object in context,
+or logs its history, backs up or persists its data, does resource accounting, etc.
+
+To adjust the context without adjusting the extension focus, use:
+@Code{
+viewOnlyLens : View r s → SkewLens r i p s i p
+(define updateOnlyLens (λ (v)
+  ((makeLens v) identity)))}
+
+@subsubsection{Optics for Specifications, Prototypes and Classes}
+
+So far the only primitive lens I showed was the field lens.
+Here are two kinds of lenses that are essential to deal with prototypes and classes.
+
+@Paragraph{Specification Methods}
+
+@Paragraph{Prototype Specification}
+
+I’ll assume for now that prototypes are records implemented with the @c{rproto} encoding
+from @secref{CfR}. Then, if you have a lens @c{l} to focus onto a prototype,
+you may further focus on the prototype’s specification by further composing @c{l}
+with the following lens:
+@Code{
+(define rprotoSpecView spec←rproto)
+(define rprotoSpecUpdate rproto←spec)
+(define rprotoSpecLens
+  ((makeLens rprotoSpecView) rprotoSpecUpdate))}
+
+The entire point of @c{rproto} is that the target view is @c{id}.
+However, what the target update should be is an interesting question.
+There are many options; none of them seems universally correct;
+any of them can be a feature or a bug, depending on user intent, but is often a bug;
+and so the error behavior is probably the safest one to use by default:
+@itemlist[
+  @item{If you update some fields of the target, then the target will not be in sync
+    with the specification anymore unless the user keeps it so the hard way.
+    If some further program extends that prototype, it will restart from the specification,
+    and ignore any update otherwise made to fields.}
+  @item{If you try to have an update function that arbitrary changes the specification
+    to be a function that constantly returns the current state of the record,
+    then the result remains extensible, but in a way that forgets the formulas,
+    only remembers the current values.}
+  @item{If you erase the magic spec field,
+    then the object is not extensible through inheritance anymore.}
+  @item{If you make an update an error,
+    then you won’t have to debug very hard surprises.}]
+The effects on the fixpoint can be “interesting”.
+Or you could erase the magic slot for the prototype, but
+that would definitely break the fixpoint.
+Or you could try and be careful about which fields are being updated, and modify
+the prototype just for those fields.
+Or, if your language supports error reporting, you could issue an error
+if someone tries to update the target in any way other than by updating the specification.
+@Code{
+(define rprotoTargetUpdate/OutOfSync
+  identity)
+(define rprotoTargetUpdate/OverwriteSpec
+  rproto←record)
+(define rprotoTargetUpdate/NoMoreSpec
+  (λ (r) (extend-record r #f #f)))
+(define rprotoTargetUpdate/Error
+  abort)
+}
+
+@Paragraph{Class Instance Methods}
+
+Inasmuch as classes are prototypes, the way to deal with methods on a class are the
+same as for prototypes. To define more refined lenses,
+I’ll further assume the encoding of @secref{SFCTD}.
+
+To focus on the instance methods of a prototype, you can use
+@c{(composeLens rprotoSpecLens (fieldLens 'instance-methods))}
+and further compose with the @c{(fieldLens method-id)} for a specific instance method.
+Just use the update component if you want to define an extension to that method.
+Similarly with @c{'instance-fields} and the name of the field, to access a field descriptor.
+
+
+
+To ac
+To modify an instance method, assuming it takes as first argument
+an element of the type, you can use
+@Code{
+(define classInstanceMethodView (λ (method-id) (λ (element)
+  ((((type-of element) 'instance-methods) method-id) instance))))
+(define classInstanceMethodUpdate (λ (method-id) (λ (element)
+  ((((type-of element) 'instance-methods) method-id) instance))))
+
+}
+
 
 
 @XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
-
-for instance, you may manage
-versioned backups, access controls, user interface, or accounting
-for the entire system, or a disjoint subsystem.
-
-And of course, when you want to take a fixpoint, you need to make
-the module context the very same as the focus.
-
-if you extend a class @c{blog.database} within your program,
-you can apply a database extension, say one that specifies PostgreSQL with your favorite options,
-that is itself agnostic to the “location” of your database within your program,
-and indeed could be independently applied to several databases within your program.
-
-You can also use the getter to narrow the context in terms of access permissions,
-rather than breadth of scope as such.
-Thus, you can control the visibility of your definitions,
-or add a proxy that virtualizes some of them,
-or otherwise ensure the security of your system.
-
-At times, the getter can be used to broaden the picture.
-To zoom out of a heretofore useful narrow focus, and adopt a wider point of view.
-To undo a temporary zoom in, from a method back to an object, back to a library,
-or back to an entire ecosystem.
-
-
-
-@subsubsection{Methods with Focus}
-
-One you have focused specifications,
-the semantics of specifying a method in a prototype (including class) become simple:
-it’s just narrowing the updater focus further than the context getter.
-Given lens @c{l} to locate your prototype from the top to your object,
-and lens @c{k = (fieldLens key)} to locate the method of given key from the prototype,
-then @c{(view l, update l.k)} will be the sensactor in a focused specification
-that extends that method of that prototype.
 
 
 Prototypes, including classes, can thus be defined incrementally,
@@ -8722,14 +8821,12 @@ as first class objects.
 
 @subsubsection{Methods on Class Elements}
 
-
 @; TODO EXAMPLES:
 @; DEFINING A METHOD OUTSIDE A CLASS
 @; COMBINING METHODS INTO DIFFERENT CLASSES
 @; WRAPPING A METHOD INTO... A RENAMING?
 
 @subsection{Method Combinations}
-
 
 @subsubsection{Win-Win}
 
@@ -8744,15 +8841,13 @@ that made multiple inheritance sensible when it otherwise wasn’t.
 I will quickly present the refined method combinations from CLOS @~cite{cltl2 clhs},
 rather than the more limited method combinations of the original Flavors.
 
-
-
 @subsection{Multiple Dispatch}
 
 @subsection{Dynamic Dispatch}
 
 Kin vs type. @~cite{Allen2011Type}
 
-@section[#:tag "IO"]{Implementing Objects}
+@section[#:tag "IO"]{Efficient Object Implementation}
 @epigraph{
   Metaobject protocols also disprove the adage that adding
   more flexibility to a programming language reduces its performance.
@@ -8767,11 +8862,13 @@ So far we encoded Records as opaque functions
 with some kind of identifier as input argument,
 and returning a value as output.
 This strategy works, and is portable to any language with Higher-Order Functions.
-But, (1) it isn’t efficient, and, (2) it leaks space.
+But, (1) it is rather inefficient in time, and, (2) it leaks space.
 
 Meanwhile, the name “record” itself, as per @citet{Hoare1965Record},
 suggests a low-level representation in terms of consecutive words of memory.
-And so, I will cons
+And so, I will show how to better implement records.
+The downside is that the techniques involved will be less portable,
+and less readable without the kind of syntactic abstraction I cannot afford in this book.
 
 A better strategy is possible.
 
@@ -8923,11 +9020,11 @@ It makes persons doubt your observations.
 @|#:- "Charles Darwin to a young botanist"|
 }
 My mentor Jacques Pitrat once told me that when a French researcher has three ideas,
-he writes one paper. when an American researcher has one idea, he writes three papers.
-If you want your paper published in an american conference,
-you need not only use the american language, as explicitly demanded,
-but also the american style, as tacitly required;
-otherwise, the reviewers won’t be able to understand you,
+he writes one paper. When an American researcher has one idea, he writes three papers.
+If you want your paper published in an American conference,
+you need not only use the American language, as explicitly demanded,
+but also the American style, as tacitly required.
+Otherwise, the reviewers won’t be able to understand you,
 and even with the best intentions, they will reject your paper.
 So split your paper in nine parts, and submit each of them independently.
 
@@ -8937,7 +9034,7 @@ Some other ideas don’t make sense without all the ideas that precede.
 What is the value of debunking bad ideas about OO and
 saying mean words about a lot of good scientists?
 Yet how can I even explain the basic principles of OO if the readers misinterpret what I say
-because they are confused by those bad ideas about OO?
+because they are confused by those bad ideas about OO, spread by good people they respect?
 And what is the value of those basic principles if they have no correspondance to actual code?
 But how could I derive a minimal model from the principles without having examined them? etc.
 
@@ -8947,9 +9044,19 @@ Trying to publish them separately would be a lot of effort,
 each article spending most of its time recapitulating knowledge
 and fighting false ideas before it could establish a result
 the utility of which would be far from obvious.
-Yet together, they build a solid coherent Theory of OO that I hope you’ll agree is compelling.
+Even if possible, getting all the ideas in this book published in academic venues
+would take ten times the effort of writing this book,
+for a result that is overall more repetitive, yet locally too concise and less clear.
+By bringing all these ideas together, and taking time to expose them in detail,
+I can build a solid coherent Theory of OO that I hope you’ll agree is compelling.
 
 @subsection{OO in the age of AI}
+
+AIs will hit complexity walls too, and need to factor code in good ways
+to cooperate on larger, better, safer software.
+
+XXXX
+
 
 @section[#:style 'unnumbered]{Annotated Bibliography}
 @epigraph{If we knew what it was we were doing, it would not be called research, would it?
@@ -8973,25 +9080,26 @@ because there are far too many of those articles for me to remember details abou
 And many of those papers I read, I definitely want to forget, to make space for more worthy readings;
 yet not without making a note somewhere, so I never have to re-read those forsaken papers,
 even if need to revisit the topic—which I definitely do many times over while writing.
-I think it is my duty as an author to share those notes with my readers.
-Thus I am making sure that each reference below comes with useful notes.
-And I invite other authors to do as much.
+I deem it my duty as an author to share my notes with my readers.
+Each reference below comes with useful notes.
+I invite other authors to do as much.
 
-My notes are opinionated. They skip over aspects of the cited works that I didn’t care about,
-or at least not insofar as this book is concerned.
-They also lay judgement upon some of the authors. These judgements are summary.
-They are based on very limited information about the authors and their context.
-Strong opinions, weakly held.
+My notes are opinionated. They skip over aspects of cited works that I didn’t care about,
+at least for this book.
+They also lay judgement upon some authors.
+My judgements are summary, based on limited information
+about the authors and their works—strong opinions, weakly held.
 I’ll be happy to be proven wrong, or to be shown nuances I missed.
-But those are still the best opinions I could make, and still worth sharing.
-@principle{You should always judge a book by its cover}:
+But those are the best opinions I could make, and still worth sharing.
+@principle{Always judge a book by its cover}:
 that’s the only information you have before you may decide to even open the book.
-But you should be ready to revise the judgement after you get more information.
+But be ready to revise your judgement after you get more information.
 
-Most of the books and papers listed in this bibliography are available online for free.
-For some of them, I only list the DOI (Digital Object Identifier) that identifies them,
-from which you cannot access the resource without paying some “legal” monopoly middleman.
-Yet I trust my readers to locate free copies if they try hard enough.
+Most (all?) of the papers and books listed below are available online for free—but
+not always from their DOI (Digital Object Identifier).
+I trust my readers to locate free copies if they try hard enough to circumvent
+“legal” monopoly middlemen.
+
 
 @(hhr)  @tex{~\\{}\\{}~}
 

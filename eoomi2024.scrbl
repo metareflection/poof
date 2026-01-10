@@ -1128,3 +1128,10 @@ focused on coupling them.
 A class being an uninteresting special case of a prototype, the word "class" is practically useless to discuss OO in general.
 And "object" meaning totally different things for Class OO vs Prototype OO, the word is actively toxic to use when discussing OO in general.
 Hilarious.
+
+
+And you make me realize I have the opposite issue: that I should make it clearer early on that, though I focus on the OO aspect only at first, I can and will reconstruct all the expected trappings of popular OO systems on top of OO.
+
+
+Mutable State in Smalltalk and CL is thin 2nd class encapsulation of 2 1st-class concepts,
+the getter and the setter. (though can be seen as 1st class, with reflection)

@@ -564,8 +564,13 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   publisher = {Palo Alto Research Center XEROX},
   url = {https://constraints.cs.washington.edu/ui/thinglab-tr.pdf},
   school = {Stanford University},
-  year = 1979
+  year = 1979,
+  note={.
+    Alan Borning’s thesis on ThingLab. A constraint system built on top of Smalltalk,
+    inspired by Sketchpad, with Prototype OO, and also classes.
+  }
 }
+% XXXXXX
 
 @PhDThesis{Kahn1979Ani,
   title = {Creation of computer animation from story descriptions},
@@ -673,6 +678,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 % Chine Nual or chinual 3ed, 1981 has Flavors and defsystem. 1979 2ed doesn't.
 % Stroustrup1989Multiple cites 3ed or 4ed (also 1981)
+% NB: The chapter on Flavors, signed by Weinreb & Moon, also published as AIM-602, November 1980, updated 1981-01-16
 @manual{Weinreb1981Chinual3,
   author    = {Daniel Weinreb and David Moon},
   title     = {Lisp Machine Manual},
@@ -756,12 +762,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   numpages = {9}
 }
 
-% Successor to a 1980 experiment by Borning. No method combination. Unclear linearization. Low on details.
-% Uses the Link class from SIMULA, and ReadWriteStream as motivations for multiple inheritance.
-% ThingLab 1981 has multiple inheritance (already in 1977),
-% and so have PIE (Goldstein&Bobrow 1980), Flavors 1980, LOOPS 1982.
-% Traits from Mesa since 1979 [Curry 1982]
-% Conflict resolution is by erroring if inheriting more than one method without an explicit override
 @InProceedings{Borning1982Multiple,
   title={Multiple inheritance in Smalltalk-80},
   author={Borning, Alan H and Ingalls, Daniel HH},
@@ -769,11 +769,21 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   volume={82},
   pages={234--237},
   year={1982},
-  url={http://www.laputan.org/pub/papers/MI-Borning-Ingalls.PDF}
+  url={http://www.laputan.org/pub/papers/MI-Borning-Ingalls.PDF},
+  note={.
+    A paper about yet another implementation of multiple inheritance in Smalltalk,
+    that does not teach us much new, except that the Smalltalk community
+    still had trouble getting past the “conflict” view of multiple inheritance,
+    but could do that view over and over.
+    Uses the Link class from SIMULA, and ReadWriteStream as motivations for multiple inheritance.
+    Uses the “conflict” view of multiple inheritance.
+    Successor to ThingLab 1977, to a Smalltalk experiment by Borning 1980,
+    or to PIE in Smalltalk by Goldstein&Bobrow 1980.
+    Cites Flavors and LOOPS as contrasts.
+  }
 }
 
 %% 1983
-
 
 @article{Novak1983GLISP,
   author = {Novak, Gordon S.},
@@ -805,23 +815,23 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-% Has metaclasses, multiple inheritance.
-% Still ugly syntax, with INTERLISP-style very short uppercase identifiers.
+% Borning & Ingalls 1982 cite an early 1982 version of this paper
 @book{Bobrow1983Loops,
   title={The LOOPS manual},
   author={Bobrow, Daniel Gureasko and Stefik, Mark},
-  volume={10},
   year={1983},
   publisher={Xerox Corporation Palo Alto, CA},
   note={.
-    LOOPS has multiple inheritance. The authors cite the right Flavors passage on
-    _modular_ interactions between orthogonal issues. But instead of linearization,
+    LOOPS has multiple inheritance, but not quite right.
+    The authors cite the right Flavors passage on _modular_ interactions
+    between orthogonal issues. But instead of linearization,
     they instead offer tools for methods to manually call methods from one or all
     parents, or from a named ancestor. On the other hand, LOOPS also includes
-    a rich slot access protocol, a metaclass protocol, and a knowledge base with
-    a rule-oriented programming engine.
+    a rich slot access protocol, a metaclass protocol, and
+    a knowledge base with a rule-oriented programming engine.
     Interestingly, the paper has a mix of UPPERCASE primitives,
-    CamelCase functions and objects and classes, camelCase variables.
+    CamelCase functions and objects and classes, camelCase variables;
+    good Lisp style hadn’t been standardized yet.
   }
 }
 
@@ -1074,7 +1084,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     This paper is a chapter of the Common Lisp specification then in the process of being standardized.
     The introduction is very short, and most of the paper is a description of the API,
     primitive by primitive. There it no presentation of the concepts.
-    But the paper shows that CLOS was already mature in 1988 (the standard was finalized in 1991).
+    But the paper shows that CLOS was already mature in 1988 (the standard was finalized in 1994).
   }
 }
 
@@ -1209,9 +1219,9 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % Authors of EuLisp don't like multiple inheritance, want mixin inheritance
 @book{bretthauer1989multiple,
   title={Multiple Vs. Single Inheritance in Object-oriented Programming Languages: What Do We Really Want?},
-  author={Bretthauer, Harry and Christaller, Thomas and Kopp, J{\"u}rgen},
+  author={Bretthauer, Harry and Christaller, Thomas and Kopp, Jürgen},
   year={1989},
-  publisher={Gesellschaft f{\"u}r Mathematik und Datenverarbeitung mbH}
+  publisher={Gesellschaft für Mathematik und Datenverarbeitung mbH}
 }
 
 % Cook2012 cites his own thesis in arguing that Inheritance is neither necessary nor specific to OO.
@@ -1307,11 +1317,19 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 @TechReport{PCLSRing,
-        Author={Alan Bawden},
-	Title={{PCLSR}ing: {K}eeping {P}rocess {S}tate {M}odular},
-	Institution={MIT},
-	Year="1989",
-	url={http://fare.tunes.org/tmp/emergent/pclsr.htm}
+  author={Alan Bawden},
+  title={{PCLSR}ing: {K}eeping {P}rocess {S}tate {M}odular},
+  institution={MIT},
+  year="1989",
+  url={http://fare.tunes.org/tmp/emergent/pclsr.htm},
+  note={.
+    An amazing paper by Alan Bawden, on how the ITS operating system managed to interrupting processes
+    in a way that “a process couldn’t be caught with its pants down”,
+    i.e. maintaining some important system invariants, when a stopped processes is observed
+    by other processes, even though the invariants may have been temporarily broken by the system
+    at the precise moment that the timer interrupt stopped the execution.
+    If anything, a big part of my (incomplete) PhD thesis was a generalization of this paper.
+  }
 }
 
 %% 1990
@@ -1447,46 +1465,57 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   publisher = {Kluwer Academic Publishers}
 }
 
-@TechReport{eppl91,
-  Author={Matthias Felleisen},
-  Title={On the Expressive Power of Programming Languages},
-  Institution={Rice University},
-  Year={1991},
-  url={https://www.cs.rice.edu/CS/PLT/Publications/Scheme/}
+@article{eppl91,
+  author={Matthias Felleisen},
+  title={On the Expressive Power of Programming Languages},
+  institution={Rice University},
+  year={1991},
+  url={https://www.cs.rice.edu/CS/PLT/Publications/Scheme/},
+  doi={10.1016/0167-6423(91)90036-W},
+  journal = {Science of Computer Programming},
+  volume = {17},
+  number = {1},
+  pages = {35-75},
+  issn = {0167-6423},
+  note={.
+    A beautiful paper on what it means for a programming language to be more expressive than another.
+    It is far from the last word on the topic, but it offers a simple, objective formal criterion
+    for the expressibility of one language by another.
+  }
 }
 
 % What a mess. https://x.com/xadh/status/1945251704011665663
 % https://github.com/shriram/plai-public/issues/62
-%
-% "prioritized inheritance": superclasses are assigned priorities,
-% and between "ordered" superclasses at different priorities, it's like linearization,
-% but between "unordered" superclasses at same priority, it's ambiguousMessage error.
-% Also, when invoking a method, remember not just the self but the invoking super,
-% according to a "sender path tiebreaking rule" unique to SELF.
-% so that further slot accesses follow the path (what about nested access, though?
-% Reset at SELF? stack of previous super?)
-% Also, dynamic inheritance: can dynamically add/remove slots and superclasses (at various priorities)
-% call-next-method is called "resend" and can change method (unlike CLOS, to follow same path)
-% and arguments but not self, and also specify the sending parent (one level of parent,
-% must be superclass of current sending parent).
-% No method combinations: cites CLOS, but wants "simplicity" for SELF.
-% Mention rename in Eiffel as an alternative, static way to deal with unordered inheritance
-% Notes that C++ linearizes superclasses for constructors and destructors, just not for regular methods
-%
-% Issues: SELF mixins must be parentless to avoid their general parents
-% overriding the mixed class's specific slots. "Backtracking", i.e. lack of a stack of senders as above.
-% "considering altering SELF's lookup rule to always search children before their ancestors"
-% and be more like CLOS in this way.
-% NB: In their "complexities" they note how their lack a clear story for resend with dynamic inheritance
-% --- but then I'm not sure if CLOS specifies it, especially in presence of concurrency, so there.
-% They also support cycles but say it's too complex to explain how in the paper.
-%
 @InProceedings{parentsSharedParts1991,
   title={Parents are Shared Parts of Objects: Inheritance and Encapsulation in SELF},
   author={Craig Chambers and David Ungar and Bay-Wei Chang and Urs Hölzle},
   booktitle={Lisp and Symbolic Computation},
   year={1991},
-  url={https://bibliography.selflanguage.org/parents-shared-parts.html}
+  url={https://bibliography.selflanguage.org/parents-shared-parts.html},
+  note={.
+    The authors present an erstwhile design that the Self team had for multiple inheritance.
+    The paper explicitly shuns linearization and method combination from CLOS,
+    in the name of "simplicity", though without a theory of what makes things simple.
+    even more so when they have to code against the kluginess of it all.
+    Because they have a low-level mutable data model,
+    they have to deal with dynamic inheritance,
+    and look for low-level graph traversal strategies, and end up adopting a rule
+    of following a “sender path tiebreaking rule” unique to Self
+    when choosing which super method to call next.
+    (In a later paper they explain they abandoned this idea as causing more problems than it solved,
+    falling back to the “conflict” view of multiple inheritance).
+    Mention rename in Eiffel as an alternative, static way to deal with “unordered” inheritance
+    (by contrast with the flavorful approach they call “ordered”).
+    Authors note that C++ linearizes superclasses for constructors and destructors,
+    just not for regular methods.
+    Issues due to their design: Self mixins must be parentless to avoid their general parents
+    overriding the mixed class's specific slots.
+    “Backtracking”, i.e. lack of a stack of senders as above.
+    “considering altering Self's lookup rule to always search children before their ancestors”
+    They also support cycles but say it's too complex to explain how in the paper.
+    All in all, authors claim to strive for “simplicity”, but shun theory,
+    so end up doing _vastly_ complex things in the end.
+ }
 }
 
 % HPL-91-50
@@ -1577,7 +1606,15 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   volume={4},
   pages={371-398},
   doi={10.1007/BF01807180},
-  url={https://junk.8325.org/hbaker/CritLisp.html}
+  url={https://junk.8325.org/hbaker/CritLisp.html},
+  note={.
+    A brilliantly insightful critique of a programming language design.
+    Introduces the notion of “abstraction inversion”, wherein a low-level
+    notion is implemented on top of a high-level notion, rather than the other way around,
+    creating inefficient software, and programmers thinking at the wrong level of abstraction.
+    hbaker was one of those wizards you are sad didn’t write more, and left the field too soon.
+    I recommend the entire archive of his writings.
+  }
 }
 
 % Dissects the mechanisms of modularity in programming languages,
@@ -1632,8 +1669,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={https://cseweb.ucsd.edu/~goguen/ps/sheaf.ps.gz}
 }
 
-% Defines the constraints used by C3, but uses a global rather than local tie break rule,
-% and goes on rather than errors out if rules are incompatible
 @article{Ducournau1992Monotonic,
   title={Monotonic conflict resolution mechanisms for inheritance},
   author={Ducournau, Roland and Habib, Michel and Huchard, Marianne and Mugnier, Marie-Laure},
@@ -1643,7 +1678,15 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   pages={16--24},
   year={1992},
   publisher={ACM New York, NY, USA},
-  url={https://www.researchgate.net/publication/234827636_Monotonic_conflict_resolution_mechanisms_for_inheritance}
+  url={https://www.researchgate.net/publication/234827636_Monotonic_conflict_resolution_mechanisms_for_inheritance},
+  note={.
+    A great paper about flavorful multiple inheritance, the properties one may expect
+    the linearization algorithm to satisfy, and why they matter. The authors notably
+    introduce the heretofore unknown property of monotonicity.
+    Problems with their proposed algorithm, it uses a global rather than local tie break rule,
+    and they do a “best effort” rather than issue an error out if rules are incompatible.
+    See their 1994 paper and the C3 paper for improvements.
+  }
 }
 
 %% 1993
@@ -1656,14 +1699,18 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   year = "1993",
   url = "http://web.cecs.pdx.edu/~mpj/pubs/pldi93.html",
   publisher = {Elsevier Science},
+  note={.
+    A classic paper on how to implement typeclasses in Haskell,
+    by desugaring them into extra dictionary arguments
+    in a core calculus that does not have typeclasses.
+  }
 }
 
-% Traces (A cut at the “make isn't generic” problem)
 % https://link.springer.com/chapter/10.1007/3-540-57342-9_64
 @InProceedings{Kiczales1993Traces,
   author="Kiczales, Gregor",
   editor="Nishio, Shojiro and Yonezawa, Akinori",
-  title="Traces (A cut at the ``make isn't generic'' problem)",
+  title="Traces (A cut at the ‘‘make isn’t generic’’ problem)",
   booktitle="Object Technologies for Advanced Software",
   year="1993",
   publisher="Springer Berlin Heidelberg",
@@ -1674,7 +1721,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   doi={10.1007/3-540-57342-9_64}
 }
 
-% No mention of recursive types, or fixpoints, etc.: Looks like the NNOOTT to me.
 % StrongTalk.org still runs on Windows 10.
 @InProceedings{Bracha1993Strongtalk,
   title={Strongtalk: Typechecking Smalltalk in a production environment},
@@ -1694,9 +1740,13 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   location = {Washington, D.C., USA},
   series = {OOPSLA '93},
   note={.
-    A good paper on a very influential system, about practical techniques
+    A good paper about Strongtalk, a very influential system
+    for the many practical implementation techniques it spearheaded,
     that were widely adopted thereafter by the JVM.
-    Yet, from a theoretical point of view... it looks like they are falling for the NNOOTT. Meh.
+    Yet, from a theoretical point of view... their typesystem is the NNOOTT
+    (which is OK if you’re going to dynamically check recursive references).
+    The biggest problem with this paper is that it is too short and covers too much terrain
+    to give more than an overview of this very interesting system.
   },
 }
 
@@ -2135,7 +2185,7 @@ series = {OOPSLA '94}
     They deploy all their brilliance to seek ever more sophisticated models that
     will push back the point at which they confront the contradictions in their beliefs;
     they won’t abandon their beliefs so they abandon the models.
-    Their “Self-Application Semantics” turns a lambda into a primitive “sigma”
+    Their “Self-Application Semantics” turns a λ into a primitive “ς”
     that inverts basic logic so they can avoid obvious contradiction.
     Their “Recursive Record Semantics” is perfectly correct for targets,
     but of course doesn’t apply to specifications, and A&C can’t imagine
@@ -2243,14 +2293,12 @@ series = {OOPSLA '94}
   url={https://ecma-international.org/publications-and-standards/standards/ecma-262/}
 }
 
-% InProceedings
-@Misc{SubtypingMatch1997,
+@InProceedings{SubtypingMatch1997,
   doi={10.1007/BFb0053376},
   author="Bruce, Kim B.
 and Petersen, Leaf
 and Fiech, Adrian",
-  editor="Ak{\c{s}}it, Mehmet
-and Matsuoka, Satoshi",
+  editor="Akşit, Mehmet and Matsuoka, Satoshi",
   title="Subtyping is not a good ``match'' for object-oriented languages",
   booktitle="ECOOP'97 --- Object-Oriented Programming",
   year="1997",
@@ -2308,21 +2356,21 @@ and Matsuoka, Satoshi",
 
 %% 1999
 
-@inproceedings{10.1145/301618.301638,
-author = {Fisher, Kathleen and Reppy, John},
-title = {The design of a class mechanism for Moby},
-year = {1999},
-isbn = {1581130945},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-url = {https://doi.org/10.1145/301618.301638},
-doi = {10.1145/301618.301638},
-abstract = {Typical class-based languages, such as C++ and JAVA, provide complex class mechanisms but only weak module systems. In fact, classes in these languages incorporate many of the features found in richer module mechanisms. In this paper, we describe an alternative approach to designing a language that has both classes and modules. In our design, we rely on a rich ML-style module system to provide features such as visibility control and parameterization, while providing a minimal class mechanism that includes only those features needed to support inheritance. Programmers can then use the combination of modules and classes to implement the full range of class-based features and idioms. Our approach has the advantage that it provides a full-featured module system (useful in its own right), while keeping the class mechanism quite simple.We have incorporated this design in MOBY, which is an ML-style language that supports class-based object-oriented programming. In this paper, we describe our design via a series of simple examples, show how various class-based features and idioms are realized in MOBY, compare our design with others, and sketch its formal semantics.},
-booktitle = {Proceedings of the ACM SIGPLAN 1999 Conference on Programming Language Design and Implementation},
-pages = {37–49},
-numpages = {13},
-location = {Atlanta, Georgia, USA},
-series = {PLDI '99}
+@InProceedings{10.1145/301618.301638,
+  author = {Fisher, Kathleen and Reppy, John},
+  title = {The design of a class mechanism for Moby},
+  year = {1999},
+  isbn = {1581130945},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/301618.301638},
+  doi = {10.1145/301618.301638},
+  abstract = {Typical class-based languages, such as C++ and JAVA, provide complex class mechanisms but only weak module systems. In fact, classes in these languages incorporate many of the features found in richer module mechanisms. In this paper, we describe an alternative approach to designing a language that has both classes and modules. In our design, we rely on a rich ML-style module system to provide features such as visibility control and parameterization, while providing a minimal class mechanism that includes only those features needed to support inheritance. Programmers can then use the combination of modules and classes to implement the full range of class-based features and idioms. Our approach has the advantage that it provides a full-featured module system (useful in its own right), while keeping the class mechanism quite simple.We have incorporated this design in MOBY, which is an ML-style language that supports class-based object-oriented programming. In this paper, we describe our design via a series of simple examples, show how various class-based features and idioms are realized in MOBY, compare our design with others, and sketch its formal semantics.},
+  booktitle = {Proceedings of the ACM SIGPLAN 1999 Conference on Programming Language Design and Implementation},
+  pages = {37–49},
+  numpages = {13},
+  location = {Atlanta, Georgia, USA},
+  series = {PLDI '99}
 }
 
 @article{10.1145/301631.301638,
@@ -2352,13 +2400,16 @@ series = {PLDI '99}
   publisher = {Springer},
   booktitle = {Typed Lambda Calculi and Applications, 4th International Conference, TLCA'99, L'Aquila, Italy, April 7-9, 1999, Proceedings},
   pages = {228--243},
-  doi = {10.1007/3-540-48959-2_17}
+  doi = {10.1007/3-540-48959-2_17},
+  note={.
+    A wow-good paper, that explains the duality between computations and values,
+    call-by-name and call-by-value, etc., with practical implications on the design
+    and implementation of programming languages.
+  }
 }
 
 %% 2000
 
-% Introduces explicit implemented-by relationship to avoid confusion between metalevels
-% when extending (e.g. adding shadow slots for history, implementing persistence, etc.)
 % https://www.researchgate.net/publication/2436142_Avoiding_Confusion_in_Metacircularity_The_Meta-Helix
 @article{Chiba2000MetaHelix,
   author = {Chiba, Shigeru and Kiczales, Gregor and Lamping, John},
@@ -2367,36 +2418,76 @@ series = {PLDI '99}
   title = {Avoiding Confusion in Metacircularity: The Meta-Helix},
   isbn = {978-3-540-60954-4},
   journal = {Lecture Notes in Computer Science},
-  doi = {10.1007/3-540-60954-7_49}
+  doi = {10.1007/3-540-60954-7_49},
+  note={.
+    Great paper about a missing piece in Meta-Object Protocols
+    (therefore even more so with systems lacking a MOP):
+    the ability to distinguish an object from the underlying object implementing it.
+    There’s obviously a useful conflation in practice;
+    yet at crucial times when implementing some features,
+    you need to distinguish the two (and so on, in a tower of implementation).
+    The paper thus introduces an explicit implemented-by relationship
+    to avoid confusion between metalevels when extending implementations,
+    e.g. adding shadow slots for history, implementing persistence, etc.
+  }
 }
 
-% Implements proper multiple inheritance on top of C++, but
-% you have to manually linearize and pass the Super in a template.
-% InProceedings
-@Misc{Smaragdakis2000Mixin,
+@InProceedings{Smaragdakis2000Mixin,
   title={Mixin-based programming in C++},
   author={Yannis Smaragdakis and Don Batory},
   booktitle={International Symposium on Generative and Component-Based Software Engineering},
+  editor={Butler, Greg and Jarzabek, Stan},
   pages={164--178},
   year={2000},
   organization={Springer},
-  url={https://www.researchgate.net/publication/2617570_Mixin-Based_Programming_in_C}
+  address={Berlin, Heidelberg},
+  isbn={978-3-540-44815-0},
+  url={https://www.researchgate.net/publication/2617570_Mixin-Based_Programming_in_C},
+  doi={10.1007/3-540-44815-2_12},
+  note={.
+    This paper very nice paper implements proper mixin inheritance on top of C++ using templates.
+    Note that it does not try to implement ancestry linearization,
+    and therefore does not implement flavorful multiple inheritance;
+    though such linearization could probably be done on top of their mixin inheritance.
+  }
 }
 
 % https://www.math.nagoya-u.ac.jp/~garrigue/papers/variant-reuse.pdf
-% Open Recursion, etc., is not just for extensible products, but also extensible variants.
-% The requirement for the subclass's type to be a subtype is imbecillic at best,
-% even at the specification level, what more at the target level.
 @inproceedings{garrigue2000code,
   title={Code reuse through polymorphic variants},
   author={Garrigue, Jacques},
   booktitle={Workshop on Foundations of Software Engineering},
   volume={13},
   year={2000},
-  url={https://www.math.nagoya-u.ac.jp/~garrigue/papers/fose2000.html}
+  url={https://www.math.nagoya-u.ac.jp/~garrigue/papers/fose2000.html},
+  note={.
+    Open Recursion, etc., is not just for extensible products, but also extensible variants.
+    The requirement for the subclass’s type to be a subtype is wrongheaded,
+    even at the specification level, what more at the target level.
+  }
 }
+% Check ???
+%    This paper shows how and why extensions to type descriptors in general
+%    need not try to be anything like subtypes of the inherited type.
+%    Unhappily, this is incompatible with the OCaml type system, so
+%    the author does that with modules instead.
+
 
 %% 2001
+
+@book{Matsumoto2001,
+  title={Ruby in a Nutshell: a Desktop Quick Reference},
+  author={Matsumoto, Yukihiro},
+  year={2001},
+  publisher={"O'Reilly Media, Inc."},
+  isbn={0596002149},
+  note={.
+    I wanted to cite a book or publication about Ruby,
+    if possible by the author of Ruby so I could credit him.
+    But admittedly, this book is but a Quick Reference (and an old one, too).
+    What you actually want to read is the documentation on the website.
+  }
+}
 
 @InProceedings{DSU2001,
   author = {Hicks, Michael and Moore, Jonathan T. and Nettles, Scott},
@@ -2443,23 +2534,24 @@ series = {PLDI '99}
   year={2002},
   url={https://bracha.org/mixins-paper.pdf},
   note={.
-    This paper reports on the typesystem of Strongtalk,
+    This paper describes the typesystem of Strongtalk,
     a dialect of Smalltalk with mixins and optional types,
     allowing for efficient compilation of code in cases that matter.
     The techniques described notably had a powerful influence
     on subsequent implementations of the JVM.
     This is a very nice paper with great practical applications.
-    However, I should note that its type theory seems to be the NNOOTT,
+    However, its type theory is the NNOOTT,
     checking method types with no regard for the open recursion
     in the types that involve self-reference.
-    Yet, that is alright if those recursive references of a “same” are dynamically typechecked,
-    as we suppose they are, since the system being optionally typed
-    obviously supports such checks. But the authors never explicitly discuss that.
+    Yet, that is alright if those recursive references to objects
+    of the “same” type are dynamically typechecked, as we suppose they are,
+    since the system being optionally typed obviously supports such checks.
+    But the authors never explicitly discuss that.
     Their discussions of related work conflates mixin inheritance and multiple inheritance,
     which is alright if you’re only interested in the types of mixins as they are in this paper;
     but that too could and should have been made explicit.
     The authors thus seem to have a lot of implicit knowledge of the issues that do and do not matter,
-    but will leave unsuspecting readers unsuspecting of those issues.
+    but will leave unsuspecting readers ignorant of those issues.
   }
 }
 
@@ -2490,8 +2582,7 @@ series = {PLDI '99}
   }
 }
 
-% inproceedings
-@Misc{findler2002contracts,
+@InProceedings{findler2002contracts,
   title={Contracts for higher-order functions},
   author={Findler, Robert Bruce and Felleisen, Matthias},
   booktitle={Proceedings of the seventh ACM SIGPLAN international conference on Functional programming},
@@ -2626,6 +2717,35 @@ series = {PLDI '99}
 
 %% 2007
 
+% Not worth citing in the book; worth remembering why.
+@InProceedings{Smith2007,
+  author="Smith, Michael Anthony
+  and Gibbons, Jeremy",
+  editor="Davies, Jim
+  and Gibbons, Jeremy",
+  title="Unifying Theories of Objects",
+  booktitle="Integrated Formal Methods",
+  year="2007",
+  publisher="Springer Berlin Heidelberg",
+  address="Berlin, Heidelberg",
+  pages="599--618",
+  abstract="We present an approach to modelling Abadi-Cardelli-style object calculi as Unifying Theories of Programming (UTP) designs. Here we provide a core object calculus with an operational small-step evaluation rule semantics, and a corresponding UTP model with a denotational relational predicate semantics. For clarity, the UTP model is defined in terms of an operand stack, which is used to store the results of subprograms. Models of a less operational nature are briefly discussed. The consistency of the UTP model is demonstrated by a structural induction proof over the operations of the core object calculus. Overall, our UTP model is intended to provide facilities for encoding both object-based and class-based languages.",
+  isbn="978-3-540-73210-5",
+  doi={10.1007/978-3-540-73210-5_31},
+  url={https://www.cs.ox.ac.uk/jeremy.gibbons/publications/uto.pdf},
+  note={.
+    Meh, S&G just take a calculus from A&C
+    (same as their 1996 article or chapter 6 of their 1996 book),
+    with their magic λ renamed to ς to cheat their type system,
+    then formalize it using a formalism from Hoare and He
+    called UTP (Unifying Theories of Programming),
+    that involves non-deterministic choice.
+    Then they refine that with a model of stack vs heap allocation of intermediate data.
+    A nice exercise, but disappointing for who was attracted to the title.
+  }
+}
+
+
 @Book{Manin2007,
   author={Yuri I. Manin},
   title={Mathematics as Metaphor},
@@ -2695,18 +2815,32 @@ series = {PLDI '99}
 }
 
 % Master Thesis. BCL
-@TechReport{gclviewer2008,
+% https://pure.tue.nl/ws/portalfiles/portal/46927079/638953-1.pdf
+@MastersThesis{gclviewer2008,
   Author = "Ibrahim Bokharouss",
   Title = "GCL Viewer: a study in improving the understanding of GCL programs",
   Institution = {Eindhoven University of Technology},
   year = 2008,
-  url = {https://research.tue.nl/en/studentTheses/gcl-viewer}
+  month = Aug,
+  day = 31,
+  url = {https://research.tue.nl/en/studentTheses/gcl-viewer},
+  note={.
+    This is the earliest and one of the few publications on GCL that I could find
+    that was not internal to Google. Some of the details and examples are blacked out,
+    censored by Google as sensitive data. The paper is about GCL Viewer, a graphical utility
+    to interact with GCL, the Google Configuration Language, to visualize configurations
+    and what sets of bindings they expand to.
+    It comes four years after GCL was introduced at Google (as BCL, the Borg Control Language).
+    The semantics of GCL are described in section 2.0
+    Prototypes are called “tuples”. They can be merged or combined with inheritance.
+    Only single inheritance is showed; if mixin inheritance is supported, nothing is said about it.
+    Neither dynamic scoping nor lazy evaluation are mentioned. Section on types is blacked out.
   }
-% https://pure.tue.nl/ws/portalfiles/portal/46927079/638953-1.pdf
+}
 
 @InProceedings{dolstra2008nixos,
   title={NixOS: A purely functional Linux distribution},
-  author={Dolstra, Eelco and L{\"o}h, Andres},
+  author={Dolstra, Eelco and Löh, Andres},
   booktitle={the 13th ACM SIGPLAN international conference on Functional programming},
   pages={367--378},
   year={2008},
@@ -3054,8 +3188,7 @@ series = {PLDI '99}
   }
 }
 
-% InProceedings
-@Misc{ASDF3,
+@InProceedings{ASDF3,
   author = {François-René Rideau},
   title = {ASDF 3, or Why Lisp is Now an Acceptable Scripting Language},
   url = "https://github.com/fare/asdf3-2013",
@@ -3192,7 +3325,7 @@ series = {PLDI '99}
   year =	{2016},
   volume =	{56},
   editor =	{Krishnamurthi, Shriram and Lerner, Benjamin S.},
-  publisher =	{Schloss Dagstuhl -- Leibniz-Zentrum f{\"u}r Informatik},
+  publisher =	{Schloss Dagstuhl -- Leibniz-Zentrum für Informatik},
   address =	{Dagstuhl, Germany},
   URL =		{https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.ECOOP.2016.13},
   URN =		{urn:nbn:de:0030-drops-61077},
@@ -3231,7 +3364,7 @@ series = {PLDI '99}
   author       = {Jan Bessai and
                   Tzu{-}Chun Chen and
                   Andrej Dudenhefner and
-                  Boris D{\"{u}}dder and
+                  Boris Düdder and
                   Ugo de'Liguoro and
                   Jakob Rehof},
   title        = {Mixin Composition Synthesis based on Intersection Types},
@@ -3515,3 +3648,19 @@ series = {PLDI '99}
 % https://github.com/fogus/lang-genealogy
 
 % https://research.scheme.org/lambda-papers/
+
+% [CONFLANG23] Evolving a configuration language in place at Google scale
+% https://2023.splashcon.org/details/conflang-2023-papers/7/Evolving-a-configuration-language-in-place-at-Google-scale
+% https://www.youtube.com/watch?v=Dm8hygWaMXg
+% Talk about reimplementing the language and evolving its semantics a bit---but doesn't describe the semantics.
+
+% Hyperfunctions: Communicating Continuations
+% https://doisinkidney.com/pdfs/hyperfunctions.pdf
+
+% Programming Language Pragmatics
+% https://mlscott14627.github.io/PLP5e_online/
+
+% https://github.com/arl/E-Books-1/tree/master/program%20language
+
+% David A. Fisher, “Control Structures for Programming Languages” (CMU, May 1970):
+% https://cds.cern.ch/record/697456/files/CM-P00068047.pdf
