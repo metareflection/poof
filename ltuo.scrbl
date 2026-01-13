@@ -4529,14 +4529,14 @@ and a given open modular extension function @c{compute-value}
 that takes the @c{self} context and the @c{inherited} value @c{(super method-id)} as arguments
 and returns an extended value for the method at @c{key}:
 @Code{
-(define method-spec (λ (key) (λ (compute-value)
+(define field-spec (λ (key) (λ (compute-value)
     (λ (self) (λ (super) (λ (method-id)
       (let ((inherited (super method-id)))
         (if (equal? key method-id)
           (compute-value self inherited)
           inherited))))))))}
 
-Note how @c{method-spec} turns an open modular extension for a value
+Note how @c{field-spec} turns an open modular extension for a value
 into an open modular extension for a record (that has this value under some key).
 In this case, the module context @c{self} is the same,
 whereas the @c{super} value for the inner function @c{compute-value}
@@ -4572,12 +4572,12 @@ for many simple applications@xnote["."]{
   because the substructures I recursively examine remain shallow.
 }
 Also, in a more practical implementation,
-the inherited value in the @c{method-spec} would be made lazy,
+the inherited value in the @c{field-spec} would be made lazy,
 or would be wrapped in a thunk, to avoid unneeded computations (that might not even terminate);
 or for more power, the @c{compute-value} function
 would directly take @c{super} as its second argument,
 and @c{(super method-id)} would only be computed in the second branch.
-In a lazy context, @c{lazy-method-spec} could also directly use @c{extend-lazy-record}
+In a lazy context, @c{lazy-field-spec} could also directly use @c{extend-lazy-record}
 @; TODO secref to future definition of lazy variants?
 to add a binding to a record without having to eagerly compute the bound value.
 
@@ -4598,15 +4598,15 @@ I will demonstrate the classic “colored point” example in my Minimal Object 
 I can define a modular extension for a point’s coordinates as follows:
 @Code{
 (define coord-spec
-  ((mix ((method-spec 'x) (λ (self) (λ (inherited) 2))))
-        ((method-spec 'y) (λ (self) (λ (inherited) 4)))))}
+  ((mix ((field-spec 'x) (λ (self) (λ (inherited) 2))))
+        ((field-spec 'y) (λ (self) (λ (inherited) 4)))))}
 The modular extension defines two methods @c{x} and @c{y},
 that respectively return the constant numbers @c{2} and @c{4}.
 
 I can similarly define a modular extension for a record’s @c{color} field as follows:
 @Code{
 (define color-spec
-  ((method-spec 'color) (λ (self) (λ (inherited) "blue"))))}
+  ((field-spec 'color) (λ (self) (λ (inherited) "blue"))))}
 
 Indeed, I will check that one can instantiate a point specified by combining
 the color and coordinate modular extensions above, and that the values
@@ -4635,6 +4635,11 @@ and thus the two modular extensions commute;
 and more importantly, the values defined by the modular extensions are constant
 and exercise neither modularity nor extensibility:
 their value-computing functions make no use of their @c{self} or @c{super} arguments.
+They could have been defined with a constant field helper:
+@Code{
+(define constant-field-spec (λ (key) (λ (value)
+  (field-spec key (λ (_self) (λ (_inherited) value))))))
+}
 I will now show more interesting examples.
 
 @subsubsection{Minimal Extensibility and Modularity Examples}
@@ -4644,7 +4649,7 @@ accepts an argument @c{dx}, and returns a modular extension that
 overrides method @c{x} with a new value that adds @c{dx} to the @c{inherited} value:
 @Code{
 (define add-x-spec (λ (dx)
-  ((method-spec 'x) (λ (self) (λ (inherited) (+ dx inherited))))))}
+  ((field-spec 'x) (λ (self) (λ (inherited) (+ dx inherited))))))}
 
 Now I will illustrate modularity with another example wherein @c{rho-spec}
 specifies a new field @c{rho} bound to the Euclidean distance
@@ -4657,7 +4662,7 @@ and these coordinates are not provided by @c{rho-spec},
 but have to be provided by other modular extensions to be composed with it using @c{mix}:
 @Code{
 (define rho-spec
-  ((method-spec 'rho) (λ (self) (λ (inherited)
+  ((field-spec 'rho) (λ (self) (λ (inherited)
     (sqrt (+ (sqr (self 'x)) (sqr (self 'y))))))))}
 
 I can check that the above definitions work,
@@ -5067,8 +5072,9 @@ and is almost-but-not-quite an isomorphism, and specially memorizes the specific
 
 You may also define a prototype from a record by giving it a “spec”
 that just returns the record as a constant:
+@Code{
 (define rproto←record (λ (r)
-  (rproto←spec (λ (_self) (λ (_super) r)))))
+  (rproto←spec (λ (_self) (λ (_super) r)))))}
 
 @subsubsection{Small-Scale Advantages of Conflation: Performance, Sharing}
 
@@ -7235,7 +7241,7 @@ A specification’s modular extension shall always be composed
 where sequential effects and computation results flow right to left.
 Thus children may have as preconditions the postconditions of their parents.
 
-Thus, if @c{method-spec} declares @c{record-spec} as a parent,
+Thus, if @c{field-spec} declares @c{record-spec} as a parent,
 every method defined or overridden by the former can safely assume
 that indeed there will be a properly initialized record
 into a specific field of which to define or override the value.
@@ -7415,6 +7421,15 @@ Among popular “flavorful” languages,
 Python, Perl, Lisp and Solidity notably respect this constraint,
 but Ruby and Scala fail to.
 
+For even more user control, and thus more expressiveness, some systems might accept
+specification of more precise ordering constraints between its parents and ancestors:
+instead of one totally ordered list of parents,
+they might accept a partial order between parents,
+to be specified e.g. as a list of totally ordered lists of parents instead of a single one.
+If that list is itself a singleton, then it is the same as if a total order was specified.
+If that list is made of singletons, then it is the same as if
+there were no specified local order constraint between parents.
+
 @Paragraph{Monotonicity: Consistency across Ancestry}
 The “method resolution order” for a child specification should be consistent
 with the orders from each of its parents:
@@ -7560,7 +7575,11 @@ in a few tens of lines of code are given
 in my previous paper using Scheme@~cite{poof2021},
 or in a proof of concept in Nix@~cite{POP2021}.
 My production-quality implementation in @(GerbilScheme)@~cite{GerbilPOO}
-including many features and optimizations fits in about a thousand lines of code.
+including many features and optimizations fits in few hundred lines of code@xnote["."]{
+  285 lines with lots of comments, 163 lines after stripping comments and blank lines.
+  Even converted to plain Scheme, with additional utility functions,
+  it’s under 400 lines of code with comments, under 300 stripped.
+}
 
 @subsubsection{Notes on Types for Multiple Inheritance}
 
@@ -7696,7 +7715,7 @@ that mixin inheritance requires users to handle manually,
 thereby reducing modularity.
 
 Thus, consider the issue of dependencies between modular extensions.
-I showed that in practice, the common modular extension @c{method-spec} depends on @c{record-spec},
+I showed that in practice, the common modular extension @c{field-spec} depends on @c{record-spec},
 while part specifications in my notional example depend on @c{base-bill-of-parts}.
 More generally, a specification may depend on a method having been implemented in an ancestor
 so that its inherited value may be modified in a wrapper (in this case, the “database” of parts),
@@ -8142,8 +8161,14 @@ where the steps tagged with (C4) are those added to the C3 algorithm
 (remove them for plain C3):
 @itemize[#:style'ordered
   @item{@bold{Extract parent precedence lists}:
-        Get the precedence lists of each parent,
-        preserving the declared Local Order.}
+        For each parent appearing in the Local Order
+        (which in general can be several lists of totally ordered parents),
+        add the precedence list of the parent to the list of list of candidates,
+        if said parent didn’t appear as ancestor already.
+        Maintain a table of ancestor counts, that counts how many times each ancestor appears
+        in the precedence lists so far;
+        use it to determine if a parent appeared already;
+        you will also use it later in the algorithm during candidate selection.}
   @item{@bold{Split step}:
         Split each precedence list into:
         @itemize[
@@ -8168,15 +8193,15 @@ where the steps tagged with (C4) are those added to the C3 algorithm
      of these suffix specifications in a vector you remember
      instead of just remembering the most specific one,
      allowing for O(1) checks for subtyping among suffix specifications.}}
-  @item{@bold{Local Order support step}:
-     add the local order (list of parents) to the end of the list of prefixes;
-     (keep it in the same order as those prefix lists, reversed if need be;)
+  @item{@bold{Local Order Support Step}:
+     append the local order (list of lists of parents) to the end of the list of prefixes;
+     (if the prefix lists are kept reversed, also reverse each local order list for consistency;)
      call the elements of those lists candidates, the list candidate lists,
      and this list the candidate list list.}
   @item{@bold{Cleanup Step}:
      @itemlist[
        @item{Build a hash-table mapping elements of the merged suffix list
-             to their distance from the tail of the list.}
+             to their (positive) distance from the tail of the list.}
        @item{For each candidate list,
          remove redundant suffix specifications from its end:
          @itemlist[
@@ -8187,7 +8212,7 @@ where the steps tagged with (C4) are those added to the C3 algorithm
            @item{if the list is empty, discard it and go to the next list.}
            @item{otherwise, consider the next element, and look it up in the above hash-table;}
            @item{if it was present in the merged suffix list,
-               with an increased distance from its tail,
+               with an increased distance from its tail from the previous seen element if any,
                then remove it from the candidate list and go to the next element;}
            @item{if it was present in the merged suffix list,
                but the distance from its tail decreased,
@@ -8200,9 +8225,8 @@ where the steps tagged with (C4) are those added to the C3 algorithm
            ]}]}
   @item{@bold{C3 merge on cleaned prefixes}:
      @itemlist[
-       @item{Create a hash-table for ancestor counts, mapping ancestors to integers, initially 0.}
-       @item{For each ancestor, count the number of times it appears in the merged suffix list
-         and in the candidate lists; however, do not count the head element of each candidate list.}
+       @item{From the table of ancestor counts created in the first step,
+             for each candidate list, decrement the ancestor count of its head element.}
        @item{Repeatedly, and until all the lists are empty,
          identify the next winning candidate in the candidate list list:
          @itemlist[
@@ -8251,7 +8275,8 @@ their d and n values are I suspect even lower than in Common Lisp@xnote["."]{
 
   Now at these common sizes, a linear scan might actually be faster than a hash-table lookup.
   However, a good “hash-table” implementation might avoid hashing altogether and fallback
-  to linear scan when the size of the table is small enough (say less than 20 or so),
+  to linear scan when the size of the table is small enough
+  (say less than 20 to 100, depending on the cost of hashing and consulting a table),
   all while preserving the usual API, so users are seamlessly upgraded to hashing
   when their tables grow large enough, and behavior remains O(1).
 }
@@ -8439,7 +8464,7 @@ type PolyLens s t a b = SkewLens a a b s s t
 We can also give separate types fo View and Update:
 @Code{
 type View r s = s → r
-type Update i p j q = (i → p) → j → q }
+type Update i p j q = (i → p) → j → q
 type SkewLens r i p s j q =
   { view : View r s ; update : Update i p j q }
 }
@@ -8543,8 +8568,8 @@ to parameterize a @c{SkewLens} (plus their successors)
 as to parameterize a @c{ModExt}. This is not a coincidence.
 You can focus a modular extension by looking at it through a matching skew lens:
 @Code{
-skewModext : SkewLens r i p s j q → ModExt r i p → ModExt s j q
-(define skewModExt (λ (l) (λ (m)
+skewExt : SkewLens r i p s j q → ModExt r i p → ModExt s j q
+(define skewExt (λ (l) (λ (m)
   (compose (l 'update)
     (compose m (l 'view))))))}
 
@@ -8729,6 +8754,8 @@ viewOnlyLens : View r s → SkewLens r i p s i p
 So far the only primitive lens I showed was the field lens.
 Here are two kinds of lenses that are essential to deal with prototypes and classes.
 
+@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+
 @Paragraph{Specification Methods}
 
 @Paragraph{Prototype Specification}
@@ -8803,10 +8830,6 @@ an element of the type, you can use
   ((((type-of element) 'instance-methods) method-id) instance))))
 
 }
-
-
-
-@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
 
 
 Prototypes, including classes, can thus be defined incrementally,
@@ -8942,17 +8965,18 @@ Yet in these languages, OO only happens at compile-time,
 indeed in a pure lazy dynamic functional programming language,
 though often a severely stunted one.
 
-@subsubsection{Conflation of Specification and Target is All-Important in OO}
-I elucidated the concept of conflation, latent in all OO since @citet{Hoare1965Record},
+@subsubsection{Conflation of Specification and Target as All-Important}
+I elucidated the concept of conflation,
+latent in all OO since @citet{Hoare1965Record},
 necessarily though implicitly addressed by each and every one of my predecessors,
 yet never a single time once explicitly documented before. Shame on them.
 Before making this concept explicit,
 the semantics of objects was extremely complex and ad hoc.
 After making it explicit, the semantics of objects is astoundingly simple,
 it just involves a regular use of the simplest of recursion operators, the fixpoint.
-Plus a pair to bundle specification and target together.
+Plus an implicit pair to bundle specification and target together.
 
-@subsubsection{Open Modular Extensions are the Fundamental Concept of OO}
+@subsubsection{Open Modular Extensions as Fundamental}
 Compared to previous theories that only consider @emph{closed} modular extensions
 (where the extension focus coincides with the module context),
 or worse, closed modular definitions (with no notion of extension),
@@ -8980,7 +9004,10 @@ though even that, or just my optimization of C3 from O(d²n²) to O(dn),
 would have been a (modest) contribution:
 I also showed that the design is necessary to fulfill a higher purpose of optimality;
 and not arbitrary, not just a clever hack made necessary
-for backward compatibility with existing infrastructure.
+for backward compatibility with existing infrastructure:
+optimal inheritance subsumes both multiple inheritance and single inheritance,
+being no less modular, no less expressive and no less performant
+than any of the known forms of inheritance.
 This optimal inheritance is now part of @(GerbilScheme);
 you can easily port my code to add it to your own language.
 
@@ -9052,11 +9079,89 @@ I can build a solid coherent Theory of OO that I hope you’ll agree is compelli
 
 @subsection{OO in the age of AI}
 
-AIs will hit complexity walls too, and need to factor code in good ways
-to cooperate on larger, better, safer software.
+@subsubsection{Farewell to the OO you know}
 
-XXXX
+AIs are not as limited as humans in terms of mental context.
+They do not experience the same pressure towards reusable code as humans do.
+And so in many cases, AIs may prefer to deal directly with a lot of low-level details at once,
+tangle many aspects of a problem, and embrace the complexity of it all,
+so as to achieve more efficient results.
 
+As a result, many AI programs may be much less modular than human programs.
+As the size of modules might gets larger,
+there will be fewer opportunities for meaningful incremental specifications:
+the overhead of each increment might not be worth making a lot of them.
+But sparser bigger increments might also mean fewer opportunities
+to share code between programs.
+
+OO languages and frameworks currently popular among humans
+may prove especially not interesting for AIs:
+AI ways of thinking will differ from the humans who produced them;
+and AIs can evolve code faster than humans,
+meaning that whatever languages and frameworks they use needn’t be tethered
+to the path-dependence that led to the historical artifacts humans currently use.
+
+Less need for modularity and extensibility mean that AIs
+will have less need for OO in general.
+Different and faster capabilities mean that AIs
+will be less interested in current OO code in particular.
+
+And yet…
+
+@subsubsection{OO will still matter in the end}
+@epigraph{
+  “reasoning about the code” means that you can draw conclusions
+  using only the information that you have right in front of you,
+  rather than having to delve into other parts of the codebase.
+  @|#:- @elem{Scott Wlashcin, @citet{Wlaschin2015}}|
+}
+@emph{Modularity will still matter}:
+AIs too will eventually hit complexity walls;
+factoring code in good ways that promote reuse across agents will be essential
+for AIs to cooperate together on larger, better, safer software.
+
+@emph{Extensibility will still matter}:
+The code that AIs produce will still have to fit into resource-constrained machines.
+Code reuse will thus remain instrumental in making efficient use of limited resources.
+
+@emph{Internality will still matter}:
+Systems that evolve alone may only also need external extensibility;
+but inasmuch as they branch from modules shared between AIs,
+this extensibility will better be internal rather than merely external.
+
+And so, all the reasons that make OO useful and necessary will still exist.
+
+For in the end, OO is about @emph{compositional semantics},
+and these matter not merely for human convenience, but for the sake any intelligent entity
+that wants to reason about programs in ways simple enough to manage.
+Complexity leads to exponential explosion of program spaces to reason about,
+and even orders of magnitude more context will only give AIs
+a few layers of complexity more than humans before they too need to actively seek simplicity.
+If anything, at least some AIs in some contexts may be more adamant than humans about
+software security (a more direct matter of life and death, for them),
+and thus about reasoning about software, and thus about simplicity.
+
+@subsubsection{Not your grandfather’s OO}
+@epigraph{It is difficult to make predictions, especially about the future.
+ @|#:- "Karl Kristian Steincke"|
+}
+Who can say what software will look like in the future?
+By the time you can precisely describe a piece of software, it is not in the future anymore.
+
+But my safe bet is that the future not only will still have OO, but much more OO than today,
+because OO is useful to grow @emph{reasonable} ecosystems.
+However, OO style will end up covering a smaller overall share of the software than it does today.
+Moreover, I will also bet that today’s popular forms of
+second-OO Class OO with single inheritance or flavorless multiple inheritance,
+to specify mutable eager programs will keep decreasing in relative popularity.
+
+And if my book has any influence, then pure functional lazy OO,
+either dynamically typed or with recursively constrained subtyping,
+in typeclass-style more so than in class-style,
+with flavorful optimal inheritance, method combinations and multiple dispatch—will
+increase in relative popularity.
+
+May you live free, and enjoy software written in OO style!
 
 @section[#:style 'unnumbered]{Annotated Bibliography}
 @epigraph{If we knew what it was we were doing, it would not be called research, would it?

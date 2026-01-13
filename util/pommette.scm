@@ -1,6 +1,11 @@
+;;#lang r7rs
+;;; ^ uncomment to compile with racket
+;; (import (scheme base) (scheme case-lambda) (scheme lazy) (scheme write) (scheme inexact))
+;;; ^ Uncomment to use r7rs
+
 ;;;;;; pommette - a cheeky, barebones implementation of a meta-object protocol.
-;;;;;; LtUO demonstration mini object systems written in R7RS Scheme
-;;#lang lang/scheme/r7rs
+;;;;;; LtUO demonstration mini object systems written in Scheme
+;;;;;; It should work on r6rs or r7rs-small implementations
 #|
 With Gerbil Scheme: gxi pommette.scm
 With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pommette.scm
@@ -109,13 +114,13 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
 (define identity (λ (val) val))
 
 ;; Example of the short form syntax for defining functions without writing a lambda
-(define (10* x) (* x 10))
-(define (1+ x) (+ x 1))
-(define (2- x) (- x 2))
+(define (mul10 x) (* x 10))
+(define (add1 x) (+ x 1))
+(define (sub2 x) (- x 2))
 
 ;; Check that our composition works as expected:
-(expect (((compose 10*) 1+) 4) => 50
-        (((compose 1+) 10*) 4) => 41)
+(expect (((compose mul10) add1) 4) => 50
+        (((compose add1) mul10) 4) => 41)
 
 ;; Generalizing compose to n-ary composition.
 (define compose*
@@ -127,11 +132,11 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
 
 (expect
   ((compose*) 5) => 5
-  ((compose* 1+) 99) => 100
-  ((compose* 1+ 1+) 67) => 69
-  ((compose* 1+ 1+ 1+) 20) => 23
-  ((compose* 1+ 1+ 10*) 4) => 42
-  ((compose* 1+ 10* 2-) 0) => -19)
+  ((compose* add1) 99) => 100
+  ((compose* add1 add1) 67) => 69
+  ((compose* add1 add1 add1) 20) => 23
+  ((compose* add1 add1 mul10) 4) => 42
+  ((compose* add1 mul10 sub2) 0) => -19)
 
 ;;; 5.1.5
 (define top #f)
@@ -174,9 +179,9 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
 
 ;; Compute Factorial 6 with Y
 (define eager-pre-fact (λ (f) (λ (n)
-  (if (<= n 1) n (* n (f (1- n)))))))
+  (if (<= n 1) n (* n (f (- n 1)))))))
 (define lazy-pre-fact (delay (λ (f) (λ (n)
-  (if (<= n 1) n (* n ((force f) (1- n))))))))
+  (if (<= n 1) n (* n ((force f) (- n 1))))))))
 
 (expect ((applicative-Y eager-pre-fact) 6) => 720
         ((applicative-Y-expanded eager-pre-fact) 6) => 720
@@ -204,7 +209,7 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
 ;;(define-syntax delay (syntax-rules () ((_ . body) (once (λ () . body)))))
 ;;(define force (λ (p) (p)))
 ;;(define once-thunk (λ (thunk) (lazy (thunk)))) ;; only for nullary thunks
-(define foo (once 1+))
+(define foo (once add1))
 (expect (foo 41) => 42
         (foo 4) => 42
         (foo) => 42
@@ -214,26 +219,38 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
 (define mix (λ (c) (λ (p) (λ (s) (λ (t)
   ((c s) ((p s) t)))))))
 
-(define idModExt (λ (s) (λ (t)
+(define idModExt (λ (_s) (λ (t)
   t)))
 
 ;;; 5.3.3 Closing Modular Extensions
 (define fix (λ (t) (λ (m)
   (Y (λ (s) ((m s) t))))))
 
-(define mix*
-  (case-lambda
-    (() idModExt)
-    ((x) x)
-    ((x y) ((mix x) y))
-    ((x . r) ((mix x) (apply mix* r))))) ;; or (foldl mix* x r)
+;; Generalizing compose*
+;; Take a monoid two-argument operation op2, return the n-ary variant.
+(define op*←op2 (λ (op2 id)
+  ;; Simpler, though less efficient: (λ args (foldl op2 id args))
+  (letrec ((op* (case-lambda
+                 (() id)
+                 ((x) x)
+                 ((x y) (op2 x y))
+                 ((x . r) (op2 x (apply op* r)))))) ;; or (foldl op2 x r)
+    op*)))
+;; Variant of op*←op2, but for a curried operator that takes one argument then the next.
+(define op*←op1.1 (λ (op1.1 id)
+  (op*←op2 (λ (x y) ((op1.1 x) y)) id)))
+
+(define mix* (op*←op1.1 mix idModExt))
+
+;; Specification that calls a unary operation on the super value
+(define op-super-spec (λ (op) (λ (self) (λ (super)
+  (op super)))))
 
 (expect
-;;  ((fix 4) (mix*)) => 4
-;;  ((fix 4) (mix* 1+ 1+)) => 6
-;;  ((fix 4) (mix* 10* 1+ 1+)) => 60
-;;  ((fix 4) (mix* 1+ 10* 1+ 1+)) => 61
-  )
+  ((fix 4) (mix*)) => 4
+  ((fix 4) (mix* (op-super-spec add1) (op-super-spec add1))) => 6
+  ((fix 4) (apply mix* (map op-super-spec (list mul10 add1 add1)))) => 60
+  ((fix 4) (apply mix* (map op-super-spec (list add1 mul10 add1 add1)))) => 61)
 
 ;;; 5.3.4 Default and non-default Top Type
 (define fixt (fix top))
@@ -241,8 +258,22 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
 (define fixt/inlined (λ (m)
   (Y (λ (s) ((m s) top)))))
 
-(define record-spec (λ (self) (λ (super)
+(define record-spec (λ (_self) (λ (_super)
   empty-record)))
+
+;; With single inheritance, you inherit from record-spec.
+;; With mixin inheritance and with some dynamic typing, you may want your mixin
+;; to inherit (even repeatedly) from record!-spec,
+;; so it doesn't matter who does or doesn't initialize the record.
+;; use dynamic typing to make something a record if not previously?
+;; OR use static typing to get an appropriate top?
+;; Or have a universal null? test for the default top object?
+;; With multiple inheritance, you can instead depend on record-spec;
+;; with optimal inheritance, it can further be a suffix specification.
+(define record!-spec
+  (λ (_self) (λ (super)
+    (or super empty-record))))
+
 
 (define fix-record (fix empty-record))
 (define fix-record/inlined (λ (m)
@@ -251,7 +282,7 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
   (fixt ((mix m) record-spec))))
 
 ;;; 5.3.5 Minimal OO Indeed
-(define method-spec (λ (key) (λ (compute-value) (λ (self) (λ (super) (λ (method-id)
+(define field-spec (λ (key) (λ (compute-value) (λ (self) (λ (super) (λ (method-id)
   (let ((inherited (super method-id)))
     (if (equal? key method-id)
         ((compute-value self) inherited)
@@ -259,11 +290,11 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
 
 ;;; 5.3.6 Minimal Colored Point
 (define coord-spec
-  ((mix ((method-spec 'x) (λ (self) (λ (inherited) 2))))
-        ((method-spec 'y) (λ (self) (λ (inherited) 4)))))
+  ((mix ((field-spec 'x) (λ (_self) (λ (_inherited) 2))))
+        ((field-spec 'y) (λ (_self) (λ (_inherited) 4)))))
 
 (define color-spec
-  ((method-spec 'color) (λ (self) (λ (inherited) "blue"))))
+  ((field-spec 'color) (λ (_self) (λ (_inherited) "blue"))))
 
 (define point-p (fix-record ((mix color-spec) coord-spec)))
 
@@ -273,15 +304,20 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
         (map (fix-record/inlined ((mix color-spec) coord-spec)) '(x y z color)) => '(2 4 #f "blue")
         (map (fix-record/fixt ((mix color-spec) coord-spec)) '(x y z color)) => '(2 4 #f "blue"))
 
+(define constant-spec (λ (constant) (λ (_self) (λ (_super) constant))))
+(define constant-field-spec (λ (key) (λ (value)
+  (field-spec key (λ (_self) (λ (_inherited) value))))))
+
+
 ;;; 5.3.7 Minimal Extensibility and Modularity Examples
 (define add-x-spec (λ (dx)
-  ((method-spec 'x) (λ (self) (λ (inherited) (+ dx inherited))))))
+  ((field-spec 'x) (λ (_self) (λ (inherited) (+ dx inherited))))))
 
 (define sqr (λ (x)
   (* x x)))
 
 (define rho-spec
-  ((method-spec 'rho) (λ (self) (λ (inherited)
+  ((field-spec 'rho) (λ (self) (λ (_inherited)
     (sqrt (+ (sqr (self 'x)) (sqr (self 'y))))))))
 
 (define point-r (fix-record
@@ -301,11 +337,11 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
     (else #f)))))
 
 (define my-saying
-  '(Designing a computer programming system that doesn’t address transactional
-    persistence means that you’re proud of having no data worth keeping.))
+  '(Designing a computer programming system that "doesn’t" address transactional
+    persistence means that "you’re" proud of having no data worth keeping.))
 
 (define my-contents-spec
-  ((method-spec 'contents) (λ (self) (λ (inherited) my-saying))))
+  ((field-spec 'contents) (λ (self) (λ (inherited) my-saying))))
 
 (define my-contents
   (stateful-Y (λ (self) ((my-contents-spec self) (my-modular-def self)))))
@@ -339,7 +375,7 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
       (else (super method-id)))))))
 
 (define part-spec (λ (part)
-  ((method-spec 'parts) (λ (self) (λ (inherited) (cons part inherited))))))
+  ((field-spec 'parts) (λ (self) (λ (inherited) (cons part inherited))))))
 
 (define torso-spec (part-spec 'torso))
 (define head-spec (part-spec 'head))
@@ -351,14 +387,17 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
 (expect (map body-rec '(parts part-count)) => '((head arms legs torso) 4))
 
 ;;;;; 6 Rebuilding OO from its Minimal Core
+
 ;;;; 6.1.2 Conflation: Crouching Typecast, Hidden Product
 
 (define pproto←spec (λ (spec)
   (cons spec (fix-record spec))))
 (define spec←pproto car)
 (define target←pproto cdr)
+(define pproto-id (pproto←spec idModExt))
 (define pproto-mix (λ (child) (λ (parent)
   (pproto←spec (mix* (spec←pproto child) (spec←pproto parent))))))
+(define pproto-mix* (op*←op1.1 pproto-mix pproto-id))
 
 (define coord-pproto (pproto←spec coord-spec))
 (define color-pproto (pproto←spec color-spec))
@@ -370,12 +409,166 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
 
 (define add-x-pproto (λ (dx)
   (pproto←spec (add-x-spec dx))))
-
 (define rho-pproto (pproto←spec rho-spec))
 
-(define point-r-pproto ((pproto-mix (add-x-pproto 1))
-                        ((pproto-mix coord-pproto)
-                         rho-pproto)))
+(define point-r-pproto (pproto-mix* (add-x-pproto 1) coord-pproto rho-pproto))
+(define point-rc-pproto (pproto-mix* color-pproto point-r-pproto))
+
+(expect (map (target←pproto point-r-pproto) '(x y rho color)) => '(3 4 5 #f)
+        (map (target←pproto point-rc-pproto) '(x y rho color)) => '(3 4 5 "blue"))
+
+;;; TODO: find a simple yet meaningful example for recursive protos...
+;;; and their further specialization, nested or not
+
+#|
+(define web-config-spec
+  (mix*
+   (field-spec 'database
+      (mix*
+        (constant-field-spec 'port 80)
+        (field-spec 'allowed
+        (record!-spec)))
+   record!-spec))
+   (override-
+  (λ (self) (λ (super) (λ (method-id)
+    (case method-id
+      ((port) 80)
+      ((database) (length (self 'parts)))
+      (else (super method-id)))))))
+|#
+
+;;;; 6.1.3 Recursive Conflation
+
+(define rproto-wrapper (λ (spec) (λ (self) (λ (super) (λ (method-id)
+  (if method-id (super method-id) spec))))))
+(define rproto←spec (λ (spec)
+  (fix-record ((mix (rproto-wrapper spec)) spec))))
+(define rproto-id (rproto←spec idModExt))
+(define spec←rproto (λ (rproto)
+  (rproto #f)))
+(define target←rproto (λ (rproto)
+  rproto))
+(define rproto-mix (λ (child) (λ (parent)
+  (rproto←spec ((mix (spec←rproto child)) (spec←rproto parent))))))
+(define rproto-mix* (op*←op1.1 rproto-mix rproto-id))
+
+(define coord-rproto (rproto←spec coord-spec))
+(define color-rproto (rproto←spec color-spec))
+(define point-p-rproto ((rproto-mix coord-rproto) color-rproto))
+
+(expect (map (target←rproto coord-rproto) '(x y z color)) => '(2 4 #f #f)
+        (map (target←rproto color-rproto) '(x y z color)) => '(#f #f #f "blue")
+        (map (target←rproto point-p-rproto) '(x y z color)) => '(2 4 #f "blue"))
+
+(define add-x-rproto (λ (dx)
+  (rproto←spec (add-x-spec dx))))
+(define rho-rproto (rproto←spec rho-spec))
+
+(define point-r-rproto (rproto-mix* (add-x-rproto 1) coord-rproto rho-rproto))
+(define point-rc-rproto (rproto-mix* color-rproto point-r-rproto))
+
+(expect (map (target←rproto point-r-rproto) '(x y rho color)) => '(3 4 5 #f)
+        (map (target←rproto point-rc-rproto) '(x y rho color)) => '(3 4 5 "blue"))
+
+;;;; 6.2.2 Simple First-Class Type Descriptors
+;;;; TODO: examples of SCFTP.
+
+(define type-of (λ (instance)
+  (instance #t)))
+(define instance-call (λ (instance) (λ (method-id)
+  ((((type-of instance) 'instance-methods) method-id) instance))))
+
+;;;; 6.2.3 Parametric First-Class Type Descriptors
+;;;; TODO: examples in both monomorphic and polymorphic styles
+
+;;;; 6.2.4 Class-style vs Typeclass-style
+;;;; TODO: examples in both class-style and typeclass-style
+
+;;;; 6.3 Types for OO
+;;;; TODO: implement a type system???
+
+;;;; 6.4 Stateful OO
+;;;; TODO: show stateful examples???
+
+;;;;; 7 Inheritance: Mixin, Single, Multiple, or Optimal
+
+;;;; 7.2 Single Inheritance
+
+;;; type ModDef r p = ∀ s : Type . s ⊂ r s ⇒ s → p s
+;;; fixModDef : ModDef p p → Y p
+;;; extendModDef : ModExt r1 p2 p1 → ModDef r2 p2 → ModDef r1∩r2 p1∩p2
+;;; baseModDef : ModDef (λ (_) Top) (λ (_) Top)
+
+(define fixModDef Y)
+(define extendModDef (λ (mext) (λ (parent) (λ (self)
+  (mext self (parent self))))))
+(define baseModDef (λ (_) top))
+
+;;;;; 8 Extending the Scope of OO
+
+;;;; 8.1.2 Short Recap on Lenses
+(define lensOfGetterSetter (λ (get) (λ (set)
+  ((makeLens get)
+     (λ (f) (λ (s) (set (f (g s)))))))))
+(define setterOfLens (λ (l)
+  (λ (b) (λ (s) ((l 'update) (λ (a) b))))))
+
+;;; Composing Lenses
+;; composeView : View s t → View r s → View r t
+(define composeView (λ (v) (λ (w)
+  (compose w v))))
+
+;; composeUpdate : Update i p j q → Update j q k r → Update i p k r
+(define composeUpdate (λ (f) (λ (g)
+  (compose f g))))
+
+;; makeLens : View r s → Update i p j q → SkewLens r i p s j q
+(define makeLens (λ (v) (λ (u)
+  (((extend-record 'view) v)
+    (((extend-record 'update) u)
+       empty-record)))))
+
+;; composeLens : SkewLens s j q ss jj qq → SkewLens r i p s j q →
+;;                SkewLens r i p ss jj qq
+(define composeLens (λ (l) (λ (k)
+  ((makeLens (composeView (l 'view) (k 'view)))
+    ((composeUpdate (l 'update)) (k 'update))))))
+
+;; idLens : SkewLens r i p r i p
+(define idLens
+  ((makeLens identity) identity))
+
+;;; Field Lens
+(define fieldView (λ (key) (λ (s)
+  (s key))))
+(define fieldUpdate (λ (key) (λ (f) (λ (s)
+  (((extend-record s) key) (f (s key)))))))
+(define fieldLens (λ (key)
+  ((makeLens (fieldView key)) (fieldUpdate key))))
+
+;;;; 8.1.3 Focusing a Modular Extension
+;;; From Sick to Ripped
+;; skewExt : SkewLens r i p s j q → ModExt r i p → ModExt s j q
+(define skewExt (λ (l) (λ (m)
+  (compose (l 'update)
+    (compose m (l 'view))))))
+
+;; updateOnlyLens : Update i p j q → SkewLens r i p r j q
+(define updateOnlyLens (λ (u)
+  ((makeLens identity) u)))
+
+;;;; 8.1.4 Adjusting Context and Focus
+
+;;; Broadening the Focus
+;; reverseView : s → MonoLens s a → View a s
+;; reverseUpdate : s → MonoLens s a → Update a s a s
+;; reverseLens : s → MonoLens s a → MonoLens a s
+(define reverseView (λ (s) (λ (l)
+  (λ (a) (((setterOfLens l) s) a)))))
+(define reverseUpdate (λ (s) (λ (l) (λ (a) (λ (f)
+  ((l 'view) (f ((reverseView s) l) a)))))))
+(define reverseLens (λ (s) (λ (l)
+  ((makeView ((reverseView s) l)) ((reverseUpdate s) l)))))
 
 #||#
 #|
