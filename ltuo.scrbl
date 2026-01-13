@@ -3530,7 +3530,7 @@ A sample (strict) extension would be the function @c{paint-blue} below,
 that extends a given record (lexically bound to @c{p} within the body of the function)
 into a record that is a copy of the previous
 with a new or overriding binding associating to symbol @c{color} the string @c{"blue"}:
-@Code{(define (paint-blue p) (((extend-record 'color) "blue") p))}
+@Code{(define (paint-blue p) (extend-record 'color "blue" p))}
 Obviously, if you apply this extension to that value with @c{(paint-blue point-a)}
 you obtain a record equal to what you could have directly defined as:
 @Code{(record (x 2) (y 4) (color "blue"))}
@@ -3580,8 +3580,8 @@ And since I am discussing first-class extensions in Scheme,
 you can always define the @c{compose} if not yet defined, as follows,
 which is an associative operator with the identity function @c{id} as neutral element:
 @Code{
-(define compose (λ (ext1 ext2) (λ (val) (ext1 (ext2 val)))))
-(define identity (λ (val) val))}
+(def compose (λ (ext1 ext2) (λ (val) (ext1 (ext2 val)))))
+(def identity (λ (val) val))}
 
 Now if I were discussing second-class extensions in a restricted compile-time language,
 composition might not be definable, and not expressible unless available as a primitive.
@@ -3672,7 +3672,7 @@ I will be more ambitious as to how widely applicable OO techniques can be,
 and, using Scheme as my language, I will choose the @c{Any} type as my top type,
 and the false boolean @c{#f} as my top value:
 @Code{
-(define top #f)}
+(def top #f)}
 
 @subsubsection{Here there is no Y}
 
@@ -3838,26 +3838,27 @@ but that is even simpler.
 
 The basic reference operator is just function application:
 @Code{
-(define record-ref (λ (key) (λ (rec) (rec key))))}
-
+(def (record-ref key rec) (rec key))
+}
 The empty record can be represented as a function that always fails,
 such as @c{(λ (_) (error "empty record"))}.
 Now, the “fail if not present” representation is great when implementing a (notionally)
 statically typed model. But for a dynamic environment, a “nicer” representation
 is as a function that always returns a language-wide top value, such as @c{undefined} in JavaScript.
 This is especially the case in this book
-where we don’t have space to discuss error handling protocols.
+where I don’t have space to discuss error handling protocols.
 But you should use what makes sense in your language.
 In portable Scheme, I will use:
 @Code{
-(define empty-record (λ (_) #f))}
+(def empty-record (λ (_) #f))
+}
 
 To extend a record with one key-value binding, you can use
 @Code{
-(define extend-record (λ (key) (λ (val) (λ (rec) (λ (i)
+(def (extend-record key val rec) (λ (i)
   (if (equal? key i)
      val
-     (rec i)))))))}
+     (rec i))))}
 
 Note how this trivial implementation does not support
 getting a list of bindings, or removing a binding.
@@ -4045,6 +4046,92 @@ Here are two ways in which Scheme departs from the theoretical model of Function
 that affect their suitability to modeling Object Orientation.
 These discrepancies also apply to many (but not all) other programming languages.
 
+@Paragraph{Function Arity}
+Functional Programming usually is written with unary functions (that take exactly one argument),
+and to express more than one argument, you “curry” it:
+you define a function of one argument that returns a function that processes the next argument, etc.,
+and when all the arguments are received you evaluate the desired function body.
+Then to apply a function to multiple arguments, you apply to the first argument,
+and apply the function returned to the second argument, etc.
+The syntax for defining and using such curried functions is somewhat heavy in Scheme,
+involving a lot of parentheses.
+By contrast, the usual convention for Functional Programming languages
+is to do away with these extra parentheses:
+in FP languages, two consecutive terms is function application, which is left-associative,
+so that or even just @c{f x y} is syntactic sugar for @c{((f x) y)};
+and function definition is curried, so that @c{λ x y . E}
+is syntactic sugar for @c{λ x . λ y . E}.
+
+Thus, there is some syntactic discrepancy that makes code written in
+the “native” Functional style look ugly and somewhat hard to follow in Scheme.
+Meanwhile, colloquial or “native” Scheme code may use any number of arguments as function arity,
+and even variable numbers of arguments, or, in some dialects, optional or keyword arguments,
+which does not map directly to mathematical variants of Functional Programming;
+but it is an error to call a function with the wrong number of arguments.
+
+One approach to resolving this discrepancy is to just cope with
+the syntactic ugliness of unary functions in Scheme, and use them nonetheless,
+despite Lots of Insipid and Stupid Parentheses@xnote["."]{
+  Detractors of the LISP language and its many dialects and derivatives,
+  among which Scheme is prominent, invented the backronym
+  “Lots of Insipid and Stupid Parentheses” to deride its syntax.
+  While Lispers sometimes yearn for terser syntax—and
+  at least one famous Schemer, Aaron Hsu, adopted APL—to them,
+  the parentheses, while a bit verbose, are just a familiar universal syntax that allows them
+  to quickly understand the basic structure of any program or data,
+  even when they are unfamiliar with the syntactic extensions it uses.
+  By contrast, in most “blub” languages, @; TODO cite Paul Graham
+  as Lispers call non-Lisp languages, parentheses, beyond function calls,
+  carry the emotional weight of “warning: this expression is complex,
+  and doesn’t use the implicit order of operations”.
+  Ironically, the syntactic and semantic abstraction powers of Lisp
+  allow for programs that are significantly shorter than their equivalent
+  in a mainstream language like Java,
+  and as a result have fewer parentheses overall, not counting all kinds of brackets.
+  It is therefore not the number of parentheses, but their density, that confuses
+  mainstream programmer, due to unfamiliarity and emotional connotations.
+  Now, it may well be that the same abstraction powers of Lisp make it unsuitable
+  for a majority of programmers incapable of mastering such powers.
+  As an age of AI programmers approaches that will have abstraction powers vastly superior
+  to the current average human programmer, it remains to be seen what kind of syntax they prefer.
+}
+
+A second approach is to adopt a more native Scheme style over FP style,
+with a variety of different function arities, making sure that a function is always called
+with the correct number of arguments. This approach blends best with the rest of the Scheme
+ecosystem, but may hurt the eyes of regular FP practitioners, and
+require extra discipline (or extra debugging) to use.
+
+The third approach, that I will adopt in this book, is to use Scheme macros
+to automatically curry function definitions and function applications:
+@itemize[
+  @item{Thus, anonymous functions defined with @c{λ} (unicode character)
+    as opposed to the builtin Scheme @c{lambda} (ascii string)
+    will be automatically curried, defining a chain of unary functions.
+    Furthermore, calls to the variables they bind will also be automatically curried.
+    Calls with insufficient arguments will return a partially applied function,
+    rather that throw an error.}
+  @item{Additionally, functions defined with @c{def}, as opposed to the builtin Scheme @c{define},
+    will also be automatically curried as with @c{λ};
+    calls to these functions and to variables they bind will also automatically curried.}
+  @item{To define regular Scheme functions, especially for the sake of
+    functions accepting variable numbers of arguments to lighten the syntax,
+    I will still use the regular @c{lambda} and @c{define}.
+    In other FP languages, you might instead use explicit list arguments,
+    or record arguments for heterogeneous types.}
+  @item{Regular scheme functions can use the @c["@"] macro to explcitly call curried function
+    with uncurried arguments when the function isn’t bound to an autocurrying variable.}]
+
+The macros defining @c{λ}, @c{def} and @c["@"] fit within fifty lines of code.
+Production-quality Scheme might use native Scheme style instead, for extra performance;
+but the performance penalty for curried code should remain relatively small,
+especially with a sufficiently optimizing compiler.
+I will thus write @c{(f x y)} where functional programmers write @c{f x y} or @c{(f x) y},
+@c{(λ (x y) expr)} where functional programmers write @c{λ x . λ y . expr} or @c{λ x y . expr},
+and @c{(def (foo x y) expr)} where functional programmers write
+@c{foo x y = expr} or @c{f = λ x . λ y . expr}.
+And the code will actually run in Scheme after a short prelude.
+
 @Paragraph{Many Y combinators}
 First, there are many variants to the fixpoint (or fixed-point) combinator Y,
 and the pure applicative Y combinator you could write in Scheme’s
@@ -4055,21 +4142,21 @@ expressed in terms of the composition combinator B and the duplication combinato
   or the subsequent variants @c{applicative-Y-expanded} and @c{stateful-Y}
   is to use it to define the factorial function:
   first define the applicative recursion scheme for factorial:
-  @c{(define eager-pre-fact (λ (f) (λ (n) (if (<= n 1) n (* n (f (1- n)))))))}
+  @c{(def (eager-pre-fact f n) (if (<= n 1) n (* n (f (1- n)))))}
   then you can define factorial as
-  @c{(define fact (applicative-Y eager-pre-fact))}
+  @c{(def fact (applicative-Y eager-pre-fact))}
   and you can then test that e.g. @c{(fact 6)} returns @c{720}.
 }
 @Code{
-(define B (λ (x) (λ (y) (λ (z)
-  (x (y z))))))
-(define applicative-D (λ (x) (λ (y)
-  ((x x) y))))
-(define applicative-Y (λ (f)
-  (applicative-D ((B f) applicative-D))))
-(define applicative-Y-expanded (λ (f)
-  ((λ (x) (λ (y) ((x x) y)))
-   (λ (x) (f (λ (y) ((x x) y)))))))
+(def (B x y z)
+  (x (y z)))
+(def (applicative-D x y)
+  (x x y))
+(def (applicative-Y f)
+  (applicative-D (B f applicative-D)))
+(def (applicative-Y-expanded f)
+  ((λ (x y) (x x y))
+   (λ (x) (f (λ (y) (x x y))))))
 }
 @; Test: ((applicative-Y eager-pre-fact) 6) ;==> 720
 @; Test: ((applicative-Y-expanded eager-pre-fact) 6) ;==> 720
@@ -4142,8 +4229,8 @@ and one must η-convert it into the equivalent but protected @c{(λ (y) (p y))}
 before passing it to @c{f}, to prevent access to the variable @c{p} before its initialization
 (and @c{f} must also be careful not to invoke this protected @c{p} before returning):
 @Code{
-(define stateful-Y (λ (f)
-  (letrec ((p (f (λ (y) (p y))))) p)))
+(def (stateful-Y f)
+  (letrec ((p (f (λ (y) (p y))))) p))
 }
 @; Test: ((stateful-Y eager-pre-fact) 6) ;==> 720
 
@@ -4156,9 +4243,9 @@ and one must @c{force} the delayed reference to extract the result value,
 you would write@xnote[":"]{
   Again, a simple way to test the lazy Y combinator is to use it
   to define the factorial function. First define the lazy “recursion schema” for the factorial:
-  @c{(define lazy-pre-fact (delay (λ (f) (λ (n) (if (<= n 1) n (* n ((force f) (1- n))))))))}
+  @c{(def lazy-pre-fact (delay (λ (f n) (if (<= n 1) n (* n ((force f) (1- n)))))))}
   Then the factorial function is
-  @c{(define fact (lazy-Y lazy-pre-fact))}
+  @c{(def fact (lazy-Y lazy-pre-fact))}
   and you can then test that e.g. @c{(fact 6)} returns @c{720}.
   Note that I do without wrapping of @c{n} in a @c{delay},
   but @c{f} itself is a delayed function value to fit the calling convention of @c{lazy-Y},
@@ -4166,20 +4253,20 @@ you would write@xnote[":"]{
   The subsequent variants of @c{lazy-Y} can be tested in the same way.
 }
 @Code{
-(define lazy-Y (λ (f)
-  (letrec ((p ((force f) (delay p)))) p)))
+(def (lazy-Y f)
+  (letrec ((p ((force f) (delay p)))) p))
 }
 Or, if you want a variant based on combinators:
 @Code{
-(define lazy-B (λ (x) (λ (y) (λ (z)
-  ((force x) (delay ((force y) z)))))))
-(define lazy-D (λ (x)
-  ((force x) x)))
-(define lazy-Y-with-combinators (λ (f)
-  (lazy-D (delay ((lazy-B f) (delay lazy-D))))))
-(define lazy-Y-expanded (λ (f)
+(def (lazy-B x y z)
+  ((force x) (delay ((force y) z))))
+(def (lazy-D x)
+  ((force x) x))
+(def (lazy-Y-with-combinators f)
+  (lazy-D (delay (lazy-B f (delay lazy-D)))))
+(def (lazy-Y-expanded f)
   ((λ (x) ((force x) x))
-   (delay (λ (x) ((force f) (delay ((force x) x))))))))
+   (delay (λ (x) ((force f) (delay ((force x) x)))))))
 }
 @; Test: ((lazy-Y-with-combinators lazy-pre-fact) 6) ;==> 720
 @; Test: ((lazy-Y-expanded lazy-pre-fact) 6) ;==> 720
@@ -4217,70 +4304,6 @@ and uses a fixpoint combinator or any other representation for recursion.
 Since I am interested in first-class semantics for OO, I will ignore this solution
 in the rest of this book, and leave it as an exercise for the reader.
 @;{TODO CITE Aaron Stump from U Iowa, etc.}
-
-@Paragraph{Function Arity}
-Functional Programming usually is written with unary functions (that take exactly one argument),
-and to express more than one argument, you “curry” it:
-you define a function of one argument that returns a function that processes the next argument, etc.,
-and when all the arguments are received you evaluate the desired function body.
-Then to apply a function to multiple arguments, you apply to the first argument,
-and apply the function returned to the second argument, etc.
-The syntax for defining and using such curried functions is somewhat heavy in Scheme,
-involving a lot of parentheses.
-By contrast, the usual convention for Functional Programming languages
-is to do away with these extra parentheses:
-in FP languages, two consecutive terms is function application, which is left-associative,
-so that @c{f x y} is syntactic sugar for @c{((f x) y)};
-and function definition is curried, so that @c{λ x y . E} is syntactic sugar for @c{λ x . λ y . E}.
-
-Thus, there is some syntactic discrepancy that makes code written in
-the “native” Functional style look ugly and somewhat hard to follow in Scheme.
-Meanwhile, colloquial or “native” Scheme code may use any number of arguments as function arity,
-and even variable numbers of arguments, or, in some dialects, optional or keyword arguments,
-which does not map directly to mathematical variants of Functional Programming;
-but it is an error to call a function with the wrong number of arguments.
-
-One approach to resolving this discrepancy is to just cope with
-the syntactic ugliness of unary functions in Scheme, and use them nonetheless,
-despite Lots of Insipid and Stupid Parentheses@xnote["."]{
-  Detractors of the LISP language and its many dialects and derivatives,
-  among which Scheme is prominent, invented the backronym
-  “Lots of Insipid and Stupid Parentheses” to deride its syntax.
-  While Lispers sometimes yearn for terser syntax—and
-  at least one famous Schemer, Aaron Hsu, adopted APL—to them,
-  the parentheses, while a bit verbose, are just a familiar universal syntax that allows them
-  to quickly understand the basic structure of any program or data,
-  even when they are unfamiliar with the syntactic extensions it uses.
-  By contrast, in most “blub” languages, @; TODO cite Paul Graham
-  as Lispers call non-Lisp languages, parentheses, beyond function calls,
-  carry the emotional weight of “warning: this expression is complex,
-  and doesn’t use the implicit order of operations”.
-  Ironically, the syntactic and semantic abstraction powers of Lisp
-  allow for programs that are significantly shorter than their equivalent
-  in a mainstream language like Java,
-  and as a result have fewer parentheses overall, not counting all kinds of brackets.
-  It is therefore not the number of parentheses, but their density, that confuses
-  mainstream programmer, due to unfamiliarity and emotional connotations.
-  Now, it may well be that the same abstraction powers of Lisp make it unsuitable
-  for a majority of programmers incapable of mastering such powers.
-  As an age of AI programmers approaches that will have abstraction powers vastly superior
-  to the current average human programmer, it remains to be seen what kind of syntax they prefer.
-}
-
-A second approach is to adopt a more native Scheme style over FP style,
-with a variety of different function arities, making sure that a function is always called
-with the correct number of arguments. This approach blends best with the rest of the Scheme
-ecosystem, but may hurt the eyes of regular FP practitioners, and
-require extra discipline (or extra debugging) to use.
-
-A third approach is to use Scheme macros to automatically curry function definitions
-and function applications, such that a function called with insufficient arguments
-becomes the same function partially applied, whereas a function called with too many arguments
-becomes a call of the result of calling the function with the correct number of arguments,
-with the rest of the arguments. Such macros can be written in a few tens of lines of code,
-though they incur a performance penalty; an efficient variant of these macros
-that statically optimize function calls could be much larger,
-and might require some level of symbiosis with the compiler.
 
 I have implemented variants of my minimal OO system in many combinations
 of the above solutions to these two issues, in Scheme and other languages.
@@ -4323,8 +4346,9 @@ to compose each extension under the module context and bound identifier,
 an operation that for reasons that will soon become obvious,
 I will call Mixin Inheritance (for modular extensions):
 @Code{
-(define mix (λ (c) (λ (p) (λ (s) (λ (t)
-  ((c s) ((p s) t)))))))}
+(def (mix c p s t)
+  (c s (p s t)))
+}
 The variables @c{c} and @c{p} stand for “child” and “parent” specifications,
 wherein the value “inherited” by the composed function
 will be extended (right to left, with the usual function-as-prefix syntax)
@@ -4372,9 +4396,9 @@ and @c{t} is the inherited value
 }
 The function can also be written with @c{compose}, eliding the “super” variable @c{t}:
 @Code{
-(define mix (λ (c p) (λ (s)
-  (compose (c s) (p s)))))}
-
+(def (mix c p s)
+  (compose (c s) (p s)))
+}
 Modular extensions and their composition have nice algebraic properties.
 Indeed, modular extensions for a given context form a category,
 wherein the operation is composition with the @c{mix} function,
@@ -4395,8 +4419,11 @@ any and every value by returning it unchanged, as follows@xnote[":"]{
   my explanations, and, in later sections, the types of specifications, slightly simpler.
 }
 @Code{
-(define idModExt (λ (s) (λ (t)
-  t)))}
+(def (idModExt _s t)
+  t)
+}
+Note that by convention I will start with the underscore @c{_}
+the name of variables that are ignored.
 
 @subsubsection{Closing Modular Extensions}
 
@@ -4418,8 +4445,9 @@ then you have reduced your problem to a regular modular module definition
 @c{∏R → ∏R}, at which point you only have to compute the fixpoint.
 I will call this operation instantiation for modular extensions:
 @Code{
-(define fix (λ (t) (λ (m)
-  (Y (λ (s) ((m s) t))))))}
+(def (fix t m)
+  (Y (λ (s) (m s t))))
+}
 In this expression,
 @c{t} is the top value for the type being specified (typically the empty record, for records),
 @c{m} is the modular extension, and
@@ -4429,9 +4457,9 @@ In this expression,
 Assuming some common top type @c{Top} and default value @c{top} in that type
 (I will use @c{Any} and @c{#f} in my example Scheme implementation),
 I will define the common instantiation operation for modular extensions:
-@Code{(define fixt (fix top))}
+@Code{(def fixt (fix top))}
 or to inline @c{fix} in its definition:
-@Code{(define fixt (λ (m) (Y (λ (s) ((m s) top)))))}
+@Code{(def (fixt m) (Y (λ (s) (m s top))))}
 Note that if the language-wide top type is too wide in some context:
 for instance I chose @c{Any} as my top type in Scheme, with @c{#f} as my top value; but
 you may want to choose the narrower @c{Record} as your top type,
@@ -4443,16 +4471,18 @@ that throws away the previous value or computation (ignores its @c{super} argume
 and returns the new default value regardless of context (ignores its @c{self} argument;
 unless that default is extracted from the context):
 @Code{
-(define record-spec (λ (self) (λ (super)
-  empty-record)))}
+(def (record-spec _self _super)
+  empty-record)
+}
 I could then equivalently define a variant of @c{fix} specialized for records
 in any of the following ways:
 @Code{
-(define fix-record (fix empty-record))
-(define fix-record (λ (m)
-  (Y (λ (s) ((m s) empty-record)))))
-(define fix-record (λ (m)
-  (fixt ((mix m) record-spec))))}
+(def fix-record (fix empty-record))
+(def fix-record (λ (m)
+  (Y (λ (s) (m s empty-record)))))
+(def (fix-record m)
+  (fixt (mix m record-spec)))
+}
 Note that because it ignores its @c{super} argument and thus throws away any inherited value,
 the @c{record-spec} modular extension must appear last, or at least
 after any modular extension the result of which isn’t to be ignored.
@@ -4508,7 +4538,7 @@ By defining, composing and closing modular extensions of type @c{C → V → V} 
 @c{C} is the type of the module context,
 and @c{V} that of the value under focus being extended:
 @Code{
-(define my-spec (λ (self) (λ (super) body ...)))}
+(def (my-spec self super) body ...)}
 where @c{self} is the module context,
 @c{super} is the inherited value to be extended,
 and @c{body ...} is the body of the function, returning the extended value.
@@ -4518,7 +4548,7 @@ and with my trivial representation of such records as @c{∏P = I → P}
 where @c{I} is the type of identifiers,
 a typical modular module extension will look like:
 @Code{
-(define my-spec (λ (self) (λ (super) (λ (method-id) body ...))))}
+(def (my-spec self super method-id) body ...)}
 where @c{method-id} is the identifier for the method to be looked up,
 and the body uses @c{(super method-id)} as a default when no overriding behavior is specified.
 
@@ -4529,13 +4559,12 @@ and a given open modular extension function @c{compute-value}
 that takes the @c{self} context and the @c{inherited} value @c{(super method-id)} as arguments
 and returns an extended value for the method at @c{key}:
 @Code{
-(define field-spec (λ (key) (λ (compute-value)
-    (λ (self) (λ (super) (λ (method-id)
-      (let ((inherited (super method-id)))
-        (if (equal? key method-id)
-          (compute-value self inherited)
-          inherited))))))))}
-
+(def (field-spec key compute-value self super method-id)
+  (let ((inherited (super method-id)))
+    (if (equal? key method-id)
+        (compute-value self inherited)
+        inherited)))
+}
 Note how @c{field-spec} turns an open modular extension for a value
 into an open modular extension for a record (that has this value under some key).
 In this case, the module context @c{self} is the same,
@@ -4597,25 +4626,25 @@ or “objects” of any kind.
 I will demonstrate the classic “colored point” example in my Minimal Object System.
 I can define a modular extension for a point’s coordinates as follows:
 @Code{
-(define coord-spec
-  ((mix ((field-spec 'x) (λ (self) (λ (inherited) 2))))
-        ((field-spec 'y) (λ (self) (λ (inherited) 4)))))}
+(def coord-spec
+  (mix (field-spec 'x (λ (_self _inherited) 2))
+       (field-spec 'y (λ (_self _inherited) 4))))
+}
 The modular extension defines two methods @c{x} and @c{y},
 that respectively return the constant numbers @c{2} and @c{4}.
 
 I can similarly define a modular extension for a record’s @c{color} field as follows:
 @Code{
-(define color-spec
-  ((field-spec 'color) (λ (self) (λ (inherited) "blue"))))}
-
+(def color-spec
+  (field-spec 'color (λ (_self _inherited) "blue")))
+}
 Indeed, I will check that one can instantiate a point specified by combining
 the color and coordinate modular extensions above, and that the values
 for @c{x} and @c{color} are then as expected:
 @Code{
-(define point-r (fix-record ((mix color-spec) coord-spec)))
-
-(point-r 'x) ;⇒ 2
-(point-r 'color) ;⇒ "blue"}
+(def point-ac (fix-record (mix color-spec coord-spec)))
+(point-ac 'x) ;⇒ 2
+(point-ac 'color) ;⇒ "blue"}
 Consider how @c{x} is computed.
 @c{fix-record} provides the @c{empty-record} as the top value for mixin composition.
 Then, mixins are applied under call-by-value evaluation,
@@ -4635,10 +4664,12 @@ and thus the two modular extensions commute;
 and more importantly, the values defined by the modular extensions are constant
 and exercise neither modularity nor extensibility:
 their value-computing functions make no use of their @c{self} or @c{super} arguments.
-They could have been defined with a constant field helper:
+They could have been defined with constant field helpers:
 @Code{
-(define constant-field-spec (λ (key) (λ (value)
-  (field-spec key (λ (_self) (λ (_inherited) value))))))
+(def (constant-spec value _self _super)
+  value)
+(def (constant-field-spec key value)
+  (field-spec key (constant-spec value)))
 }
 I will now show more interesting examples.
 
@@ -4648,9 +4679,9 @@ I will illustrate extensibility with this example wherein the function @c{add-x-
 accepts an argument @c{dx}, and returns a modular extension that
 overrides method @c{x} with a new value that adds @c{dx} to the @c{inherited} value:
 @Code{
-(define add-x-spec (λ (dx)
-  ((field-spec 'x) (λ (self) (λ (inherited) (+ dx inherited))))))}
-
+(def (add-x-spec dx)
+  (field-spec 'x (λ (_self inherited) (+ dx inherited))))
+}
 Now I will illustrate modularity with another example wherein @c{rho-spec}
 specifies a new field @c{rho} bound to the Euclidean distance
 from the origin of the coordinate system to the point, using the Pythagorean theorem.
@@ -4661,10 +4692,10 @@ from the module context @c{self}, which is the record being defined;
 and these coordinates are not provided by @c{rho-spec},
 but have to be provided by other modular extensions to be composed with it using @c{mix}:
 @Code{
-(define rho-spec
-  ((field-spec 'rho) (λ (self) (λ (inherited)
-    (sqrt (+ (sqr (self 'x)) (sqr (self 'y))))))))}
-
+(def rho-spec
+  (field-spec 'rho (λ (self _inherited)
+    (sqrt (+ (sqr (self 'x)) (sqr (self 'y)))))))
+}
 I can check that the above definitions work,
 by instantiating the composed modular extensions
 @c{(add-x-spec 1)}, @c{coord-spec} and @c{rho-spec},
@@ -4673,17 +4704,21 @@ i.e., first (right-to-left) specified to be @c{2} by @c{coord-spec},
 then incremented by @c{1} by @c{(add-x-spec 1)}.
 Meanwhile @c{rho} is @c{5}, as computed by @c{rho-spec} from the @c{x} and @c{y} coordinates:
 @Code{
-(define point-r (fix-record
-   ((mix (add-x-spec 1))
-     ((mix coord-spec)
-           rho-spec))))
-
+(def point-r
+  (fix-record (mix (add-x-spec 1) (mix coord-spec rho-spec))))
 (point-r 'x) ;⇒ 3
-(point-r 'rho) ;⇒ 5}
-
+(point-r 'rho) ;⇒ 5
+}
 This demonstrates how modular extensions work
 and indeed implement the basic design patterns of OO.
 
+Because @c{mix} is associative, instead of using long chains of nested binary calls to @c{mix},
+I will instead use a n-ary @c{mix*} that can defined as follows
+(though in practice I would use a longer definition with more optimizations):
+@Code{
+(define (uncurry2 f) (lambda (x y) ((f x) y)))
+(define (mix* . l) (foldl (uncurry2 mix) idModExt l))
+}
 Now, note how trying to instantiate @c{(add-x-spec 1)} or @c{rho-spec} alone would fail:
 the former relies on the @c{super} record to provide a useful inherited value to extend,
 whereas the latter relies on the @c{self} context to modularly provide @c{x} and @c{y} values.
@@ -4718,12 +4753,13 @@ while using the @c{length} method, provided above, for the length computation.
 The @c{contents} method is required but not provided;
 it must be modularly provided by another modular definition.
 @Code{
-(define my-modular-def (λ (self) (λ (method-id)
-   (case method-id
-      ((start) 5)
-      ((length) (λ (l) (if (null? l) 0 (+ 1 ((self 'length) (cdr l))))))
-      ((size) (- ((self 'length) (self 'contents)) (self 'start)))
-      (else #f)))))}
+(def (my-modular-def self method-id)
+  (case method-id
+    ((start) 5)
+    ((length) (λ (l) (if (null? l) 0 (+ 1 ((self 'length) (cdr l))))))
+    ((size) (- ((self 'length) (self 'contents)) (self 'start)))
+    (else #f)))
+}
 Since by my disjointness hypothesis,
 the global specification for @c{start}, @c{length} and @c{size}
 will not be overridden, then @c{(self 'start)} and @c{(self 'length)}
@@ -4733,16 +4769,16 @@ and a fixpoint combinator or @c{letrec} can be used to define the @c{length} fun
 that can also be inlined in the specification for @c{size}.
 The @c{contents} method, not being provided, must still be queried through open recursion.
 @Code{
-(define my-modular-def-without-global-recursion
+(def my-modular-def-without-global-recursion
   (let ((_start 5))
     (letrec ((_length (λ (l) (if (null? l) 0 (+ 1 (_length (cdr l)))))))
-      (λ (self) (λ (method-id)
+      (λ (self method-id)
         (case method-id
           ((start) _start)
           ((length) _length)
           ((size) (- (_length (self 'contents)) _start))
-          (else #f)))))))}
-
+          (else #f))))))
+}
 By contrast, with extensibility, a modular extensible module specification may usefully
 require @emph{a value} for a method for which it also provides @emph{an extension} (and not a value).
 The value received will then be, not that returned by the extension,
@@ -4769,12 +4805,12 @@ and it is otherwise pass-through for other methods.
 The @c{part-count} method crucially accesses the final value of the @c{parts} method
 through the module context @c{self}, and not the currently available initial empty value:
 @Code{
-(define base-bill-of-parts
-  (λ (self) (λ (super) (λ (method-id)
-    (case method-id
-      ((parts) '())
-      ((part-count) (length (self 'parts)))
-      (else (super method-id)))))))}
+(def (base-bill-of-parts self super method-id)
+  (case method-id
+    ((parts) '())
+    ((part-count) (length (self 'parts)))
+    (else (super method-id))))
+}
 You cannot inline the empty list in the call to @c{(self 'parts)}
 because the method @c{parts} can be extended, and indeed
 such is the very intent and entire point of this @c{base-bill-of-parts} specification!
@@ -4883,14 +4919,15 @@ so you may inherit from it.
 The function @c{target←pproto} extracts the target from a prototype,
 so you may call methods on it:
 @Code{
-(define pproto←spec (λ (spec)
-  (cons spec (fix-record spec))))
-(define spec←pproto (λ (pproto)
-  (car pproto)))
-(define target←pproto (λ (pproto)
-  (cdr pproto)))
-(define pproto-mix (λ (child parent)
-  (pproto←spec ((mix (spec←pproto child)) (spec←pproto parent)))))}
+(def (pproto←spec spec)
+  (cons spec (fix-record spec)))
+(def spec←pproto car)
+(def target←pproto cdr)
+(def pproto-id (pproto←spec idModExt))
+(def (pproto-mix child parent)
+  (pproto←spec (mix (spec←pproto child) (spec←pproto parent))))
+(define (pproto-mix* . l) (foldl (uncurry2 pproto-mix) pproto-id l))
+}
 
 Now, there is a subtle issue with the above implementation:
 when a target recursively refers to “itself” as per its specification,
@@ -4929,20 +4966,18 @@ an implicit conflation pair of the specification and the target@xnote["."]{
 Here is an implementation of that idea, wherein I prefix function names with @c{qproto}:
 
 @Code{
-(define qproto-wrapper (λ (spec) (λ (self) (λ (super)
-  (cons spec super)))))
-(define qproto←spec (λ (spec)
-  (fix-record ((mix qproto-wrapper) spec))))}
-
+(def (qproto-wrapper spec _self super)
+  (cons spec super))
+(def (qproto←spec spec)
+  (fix-record (mix qproto-wrapper spec)))
+}
 Note how the following functions are essentially unchanged compared to @c{pproto}:
 @Code{
-(define spec←qproto (λ (qproto)
-  (car qproto)))
-(define target←qproto (λ (qproto)
-  (cdr qproto)))
-(define qproto-mix (λ (child parent)
-  (qproto←spec ((mix (spec←qproto child)) (spec←qproto parent)))))}
-
+(def spec←qproto car)
+(def target←qproto cdr)
+(def (qproto-mix child parent)
+  (qproto←spec (mix (spec←qproto child) (spec←qproto parent))))
+}
 What changed from the previous @c{pproto} variant was that the
 @c{(λ (x) (cons spec x))} extension was moved from outside the fixpoint to inside:
 If @c{R} is the parametric type of the reference wrapper
@@ -5056,26 +5091,27 @@ The function @c{target←rproto} extracts the target from a prototype,
 so you may call methods on it—it is the identity function, and
 you can often inline it away.
 @Code{
-(define rproto-wrapper (λ (spec) (λ (self) (λ (super) (λ (method-id)
-  (if method-id (super method-id) spec))))))
-(define rproto←spec (λ (spec)
-  (fix-record ((mix (rproto-wrapper spec)) spec))))
-(define spec←rproto (λ (rproto)
-  (rproto #f)))
-(define target←rproto (λ (rproto)
-  rproto))
-(define rproto-mix (λ (child parent)
-  (rproto←spec ((mix (spec←rproto child)) (spec←rproto parent)))))}
-
+(def (rproto-wrapper spec self super method-id)
+  (if method-id (super method-id) spec))
+(def (rproto←spec spec)
+  (fix-record (mix (rproto-wrapper spec) spec)))
+(def rproto-id (rproto←spec idModExt))
+(def (spec←rproto rproto)
+  (rproto #f))
+(def target←rproto identity)
+(def (rproto-mix child parent)
+  (rproto←spec (mix (spec←rproto child) (spec←rproto parent))))
+(define (rproto-mix* . l) (foldl (uncurry2 rproto-mix) rproto-id l))
+}
 Once again, some special extension is used in front, that is not strict,
 and is almost-but-not-quite an isomorphism, and specially memorizes the specification.
 
 You may also define a prototype from a record by giving it a “spec”
 that just returns the record as a constant:
 @Code{
-(define rproto←record (λ (r)
-  (rproto←spec (λ (_self) (λ (_super) r)))))}
-
+(def (rproto←record r)
+  (rproto←spec (constant-spec r)))
+}
 @subsubsection{Small-Scale Advantages of Conflation: Performance, Sharing}
 
 First, note how, if a specification is pure functional,
@@ -5342,11 +5378,11 @@ to call an “instance method” on it, you use the function “instance-call”
 and it calls the method from the instance’s type’s @c{instance-methods} record,
 with the instance as first argument.
 @Code{
-(define type-of (λ (instance)
-  (instance #t)))
-(define instance-call (λ (instance) (λ (method-id)
-  ((((type-of instance) 'instance-methods) method-id) instance))))}
-
+(def (type-of instance)
+  (instance #t))
+(def (instance-call instance method-id)
+  (type-of instance 'instance-methods method-id instance))
+}
 Note that, if I use the Nix approach of zero-cost casting to target when the target is a record,
 then I can use the very same representation for type descriptors, whether they were generated
 as the fixpoint target of a specification, or directly created as records without such a fixpoint.
@@ -6746,8 +6782,8 @@ fixt : ∀ r i p : Type → Type, ∀ s, t : Type .
        t → ModExt r i p → s
 mix : ModExt r1 i1∩p2 p1 → ModExt r2 i2 p2 → ModExt r1∩r2 i1∩i2 p1∩p2
 
-(define fixt (λ (m) (Y (λ (s) ((m s) top)))))
-(define mix (λ (c p) (λ (r) (compose (c r) (p r)))))}
+(def (fixt m) (Y (λ (s) (m s top))))
+(def (mix c p s) (compose (c s) (p s)))}
 
 @subsection{Single Inheritance}
 
@@ -6787,10 +6823,11 @@ fixModDef : ModDef p p → Y p
 extendModDef : ModExt r1 p2 p1 → ModDef r2 p2 → ModDef r1∩r2 p1∩p2
 baseModDef : ModDef (λ (_) Top) (λ (_) Top)
 
-(define fixModDef Y)
-(define extendModDef (λ (mext) (λ (parent) (λ (self)
-  (mext self (parent self))))))
-(define baseModDef (λ (_) top))}
+(def fixModDef Y)
+(def (extendModDef mext parent self)
+  (mext self (parent self)))
+(def (baseModDef _) top)
+}
 
 Note how the type for an open modular definition has two parameters @c{r} (required)
 and @c{p} (provided), but a closed modular definition
@@ -7727,15 +7764,15 @@ as internal notions of “parent” and “ancestor”.
 
 Some clever chaps might suggest to pre-compose each modular extension with all its dependencies,
 such that when modular extension @c{B1} depends on @c{A},
-you’d export @c{B1precomposed = ((mix B1) A)} instead of @c{B1},
+you’d export @c{B1precomposed = (mix B1 A)} instead of @c{B1},
 and that’s what your users would use.
 Unhappily, that means that if another module @c{B2} also depends on @c{A}
-and exports @c{B2precomposed = ((mix B2) A)},
+and exports @c{B2precomposed = (mix B2 A)},
 then users who want to define a class @c{C} that uses both @c{B1} and @c{B2},
 will experience the very same diamond problem as when trying to synthesize
 a modular definition from an attribute grammar view of of multiple inheritance in @secref{DMRMI}:
 the pre-composed dependencies (@c{A} in this case) would be duplicated in the mix of
-@c{((mix B1precomposed) B2precomposed) = ((mix ((mix B1) A)) ((mix B2) A))};
+@c{(mix B1precomposed B2precomposed) = (mix (mix B1 A) (mix B2 A))};
 these copies would badly interfere, in addition to leading to an exponential resource explosion
 as you keep pre-composing deeper graphs.
 Therefore, pre-composing modular extensions is the same non-solution
@@ -8477,12 +8514,12 @@ On the other hand, the setter and the update are slightly harder.
 @Code{
 type Setter s t b = b → s → t
 lensOfGetterSetter : View a s → Setter s t b → PolyLens s t a b
-(define lensOfGetterSetter (λ (get) (λ (set)
-  ((makeLens get)
-     (λ (f) (λ (s) (set (f (g s)))))))))
 setterOfLens : PolyLens s t a b → Setter s t b
-(define setterOfLens (λ (l)
-  (λ (b) (λ (s) ((l 'update) (λ (a) b))))))
+
+(def (lensOfGetterSetter get set)
+  (makeLens get (λ (f s) (set (f (get s))))))
+(def (setterOfLens l)
+  (λ (b s) (l 'update (λ (_a) b))))
 }
 Note how you need a matching getter and setter to achieve a polymorphic lens.
 To achieve a skew lens, you would need two getters and a setter:
@@ -8494,28 +8531,31 @@ We can compose view, update and lenses as follows,
 with the obvious identity lens:
 @Code{
 composeView : View s t → View r s → View r t
-(define composeView (λ (v) (λ (w)
-  (compose w v))))
+(def (composeView v w)
+  (compose w v))
 
 composeUpdate : Update i p j q → Update j q k r → Update i p k r
-(define composeUpdate (λ (f) (λ (g)
-  (compose f g))))
+(def composeUpdate compose)
 
 makeLens : View r s → Update i p j q → SkewLens r i p s j q
-(define makeLens (λ (v) (λ (u)
+(def (makeLens v u)
   (extend-record 'view v
     (extend-record 'update u
-      empty-record)))))
+      empty-record)))
 
 composeLens : SkewLens s j q ss jj qq → SkewLens r i p s j q →
                 SkewLens r i p ss jj qq
-(define composeLens (λ (l) (λ (k)
-  ((makeLens (composeView (l 'view) (k 'view)))
-    (composeUpdate (l 'update) (k 'update))))))
+(def (composeLens l k)
+  (makeLens
+    (composeView (l 'view) (k 'view))
+    (composeUpdate (l 'update) (k 'update))))
 
 idLens : SkewLens r i p r i p
-(define idLens
-  ((makeLens identity) identity))}
+(def idLens
+  (makeLens identity identity))
+
+(define composeLens* (op*←op1.1 composeLens idLens))
+}
 
 You’ll notice that @c{composeView} is just @c{compose} with flipped arguments,
 and @c{composeUpdate} is just @c{compose}.
@@ -8538,19 +8578,23 @@ More sophisticated representations will have more sophisticated lenses,
 but here is what it looks like in my trivial representation of records
 as functions from identifiers to value, where @c{r.k = (r 'k)}:
 @Code{
-(define fieldView (λ (key) (λ (s)
-  (s key))))
-(define fieldUpdate (λ (key) (λ (f) (λ (s)
-  (extend-record s key (f (s key)))))))
-(define fieldLens (λ (key)
-  ((makeLens (fieldView key)) (fieldUpdate key))))}
+(def (fieldView key s)
+  (s key))
+(def (fieldUpdate key f s)
+  (extend-record s key (f (s key))))
+(def (fieldLens key)
+  (makeLens (fieldView key) (fieldUpdate key)))
+
+(define (fieldLens* . keys)
+  (apply composeLens* (map fieldLens keys)))
+}
 
 To access the subfield @c{bar} of the field @c{foo} of an object @c{x},
-you can apply @c{(composeLens (fieldLens 'foo) (fieldLens 'bar))} to @c{x}.
-Note that the order of lenses is covariant with
+you can apply @c{(fieldLens* 'foo 'bar)} to @c{x}.
+Note that the order of lenses in @c{fieldLens*} is covariant with
 the usual notation @c{x.foo.bar}.
-A little bit of syntactic sugar could help you achieve a similar notation, too;
-but we are deliberately avoiding syntactic sugar in this book.
+Some syntactic sugar could help you achieve a similar notation, too,
+but that would require implementation-dependent extensions to Scheme.
 
 A @c{(fieldLens key)} can be a simple lens of type @c{MonoLens s a}
 when applied to a record of type @c{s} that has a field @c{key} of type @c{a}.
@@ -8569,9 +8613,11 @@ as to parameterize a @c{ModExt}. This is not a coincidence.
 You can focus a modular extension by looking at it through a matching skew lens:
 @Code{
 skewExt : SkewLens r i p s j q → ModExt r i p → ModExt s j q
-(define skewExt (λ (l) (λ (m)
-  (compose (l 'update)
-    (compose m (l 'view))))))}
+(def (skewExt l m)
+  (compose* (l 'update) m (l 'view)))
+
+(define (compose* . l) (foldl (uncurry2 compose) identity l))
+}
 
 Thus with a @c{SkewLens r i p s j q},
 we can change the continuation for a modular extension
@@ -8643,6 +8689,7 @@ More generally, you could use any answer type @c{A}, or even @c{⊥},
 and consider that a SpecFocus is just a continuation that consume a specification
 @Code{
 type SpecFocus r i p = ModExt r i p → A
+}
 
 A specification focus is the context for a specification or focused specification:
 fit a specification into it, and you get your program.
@@ -8650,7 +8697,6 @@ The general case above is an @emph{open} specification focus;
 a @emph{closed} specification focus is of the form:
 @Code{
 type ClosedSpecFocus a = ModExt p ⊤ p → A
-}
 }}
 
 @subsubsection{Adjusting Context and Focus}
@@ -8683,8 +8729,8 @@ Thus, @c{(composeLens (composeLens (fieldLens 'foo) (fieldLens 'bar))
 for the specification under @c{foo.bar} in the ecosystem, where:
 @Code{
 updateOnlyLens : Update i p j q → SkewLens r i p r j q
-(define updateOnlyLens (λ (u)
-  ((makeLens identity) u)))
+(def (updateOnlyLens u)
+  (makeLens identity u))
 }
 
 More generally, given a lens @c{l} to focus on the specification,
@@ -8719,12 +8765,14 @@ with the updated context every time.
 reverseView : s → MonoLens s a → View a s
 reverseUpdate : s → MonoLens s a → Update a s a s
 reverseLens : s → MonoLens s a → MonoLens a s
-(define reverseView (λ (s) (λ (l)
-  (λ (a) (((setterOfLens l) s) a)))))
-(define reverseUpdate (λ (s) (λ (l) (λ (a) (λ (f)
-  ((l 'view) (f ((reverseView s) l) a)))))))
-(define reverseLens (λ (s) (λ (l)
-  ((makeView ((reverseView s) l)) ((reverseUpdate s) l)))))}
+
+(def (reverseView s l)
+  (setterOfLens l s))
+(def (reverseUpdate s l a f)
+  (l 'view (f (reverseView s l) a)))
+(def (reverseLens s l)
+  (makeLens (reverseView s l) (reverseUpdate s l)))
+}
 
 @Paragraph{Adjusting the Context}
 
@@ -8746,8 +8794,9 @@ or logs its history, backs up or persists its data, does resource accounting, et
 To adjust the context without adjusting the extension focus, use:
 @Code{
 viewOnlyLens : View r s → SkewLens r i p s i p
-(define updateOnlyLens (λ (v)
-  ((makeLens v) identity)))}
+(def (viewOnlyLens v)
+  (makeLens v identity))
+}
 
 @subsubsection{Optics for Specifications, Prototypes and Classes}
 
@@ -8770,7 +8819,7 @@ with the following lens:
 (define rprotoSpecView spec←rproto)
 (define rprotoSpecUpdate rproto←spec)
 (define rprotoSpecLens
-  ((makeLens rprotoSpecView) rprotoSpecUpdate))}
+  (makeLens rprotoSpecView rprotoSpecUpdate))}
 
 The entire point of @c{rproto} is that the target view is @c{id}.
 However, what the target update should be is an interesting question.
@@ -8798,12 +8847,12 @@ the prototype just for those fields.
 Or, if your language supports error reporting, you could issue an error
 if someone tries to update the target in any way other than by updating the specification.
 @Code{
-(define rprotoTargetUpdate/OutOfSync
+(def rprotoTargetUpdate/OutOfSync
   identity)
-(define rprotoTargetUpdate/OverwriteSpec
+(def rprotoTargetUpdate/OverwriteSpec
   rproto←record)
-(define rprotoTargetUpdate/NoMoreSpec
-  (λ (r) (extend-record r #f #f)))
+(def (rprotoTargetUpdate/NoMoreSpec r)
+  (extend-record r #f #f))
 (define rprotoTargetUpdate/Error
   abort)
 }
@@ -8825,11 +8874,10 @@ Similarly with @c{'instance-fields} and the name of the field, to access a field
 To modify an instance method, assuming it takes as first argument
 an element of the type, you can use
 @Code{
-(define classInstanceMethodView (λ (method-id) (λ (element)
-  ((((type-of element) 'instance-methods) method-id) instance))))
-(define classInstanceMethodUpdate (λ (method-id) (λ (element)
-  ((((type-of element) 'instance-methods) method-id) instance))))
-
+(def (classInstanceMethodView method-id element)
+  (type-of element 'instance-methods method-id instance))
+(def (classInstanceMethodUpdate method-id element)
+  (type-of element 'instance-methods method-id instance))
 }
 
 

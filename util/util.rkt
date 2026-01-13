@@ -36,13 +36,13 @@
 ;;(define (Html . args) (html-only (apply elem #:style (make-style #f '(exact-chars)) args)))
 (define (hhr) (html-elem (elem #:style (make-style #f (list (make-alt-tag "hr"))))))
 
-;;(define-footnote my-note #:margin)
+(define-footnote my-note #:margin)
 
 (define (xnote x . y)
   (list x
-        (note #:number 'next
-              (list y (html-elem (list (linebreak) (linebreak) (linebreak)))))
-        ))
+        (;;note #:number 'next
+         my-note
+           (list y (html-elem (list (linebreak) (linebreak) (linebreak)))))))
 
 (define epigraph-style
   (make-style
