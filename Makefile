@@ -102,3 +102,12 @@ ltuo2: build/ltuo.html build/ltuo.pdf
 	rsync -av $^ bespin:files/cs/poof/
 	wc ltuo.scrbl ltuo.bib eoomi2024.scrbl
 	$(PDFVIEWER) build/ltuo.pdf $P
+
+check-pommette-gerbil: util/pommette-chez.scm util/pommette.scm
+	gxi util/pommette.scm
+
+check-pommette-chez: util/pommette-chez.scm util/pommette.scm
+	cd util ; chezscheme pommette-chez.scm < /dev/null
+
+check-pommette-racket: util/pommette.rkt util/pommette.scm
+	racket util/pommette.rkt

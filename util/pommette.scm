@@ -8,6 +8,7 @@
 ;;;;;; It should work on r6rs or r7rs-small implementations
 #|
 With Gerbil Scheme: gxi pommette.scm
+With Chez Scheme: chezscheme pommette.scm
 With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pommette.scm
 |#
 
@@ -17,7 +18,7 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
 ;;;;; Chapter 5: Minimal Object System
 ;;;; Prelude: general purpose utilities
 
-;; Abbreviation for the whole book: Unicode λ instead of ASCII lambda.
+;;; Abbreviation for the whole book: Unicode λ instead of ASCII lambda.
 #| This abbreviation also illustrates use of simple Scheme hygienic macros
    To learn more about Scheme syntax and semantics in general,
    please consult the R7RS-small, some Scheme tutorial,
@@ -33,7 +34,7 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
     ((_ args . body)
      (lambda args . body))))
 
-;; Expectations -- trivial test suite
+;;; Expectations -- trivial test suite
 (define (check-expectation check-expr good-expr checked-thunk good-thunk)
   (let ((actual (checked-thunk))
         (expected (good-thunk)))
@@ -44,32 +45,69 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
                     (display " both evaluated to ") (write actual) (newline)))
         (error "Expected " check-expr " to evaluate to " good-expr
                " but instead got " actual " instead of " expected))))
+(define (check-failure expr thunk msg)
+  (let ((failed?
+         (cond-expand
+           (gerbil
+            (with-catch true (λ () (thunk) #f)))
+           (chezscheme
+            (guard (e (#t #t)) (thunk) #f))
+           (guile
+            (catch #t (λ () (thunk) #f) (λ args #t)))
+           (gambit
+            (with-exception-catcher (λ (_) #t) (λ () (thunk) #f)))
+           (else
+            'unsupported))))
+    (case failed?
+      ((#t) (and verbose
+                 (begin (display "Checked that ")
+                        (write expr)
+                        (display " fails as expected")
+                        (newline))))
+      ((#f) (error msg expr "did not fail"))
+      ((unsupported)
+       (and verbose
+            (begin (display "Unsupported Scheme implementation, skipping failure check for ")
+                   (write expr)
+                   (newline)))))))
+
 (define-syntax expect
-  (syntax-rules (=>)
+  (syntax-rules (=> =>fail!)
     ((expect) #t)
     ((expect expr => result . r)
      (begin
        (check-expectation 'expr 'result (lambda () expr) (lambda () result))
+       (expect . r)))
+    ((expect expr =>fail! . r)
+     (begin
+       (check-failure 'expr (lambda () expr) "Expected failure, but ")
        (expect . r)))))
 
+;; Test our expectation and failure infrastructure
 (expect (+ 2 3) => 5
         (+ 20 3) => (+ 3 20)
-        (* 6 7) => 42)
-
-;; TODO: use cond-expand to define expect-failure
-
+        (* 6 7) => 42
+        (/ 1 0) =>fail!
+        (car '()) =>fail!)
 
 ;; Let's not forget to minimally check the previously defined λ
 (expect ((λ (x) (+ x 3)) 2) => 5)
 
-;; Aborting
+;;; Aborting
 #| Note the use of variable-length arguments:
    The unparenthesized args variable catches all arguments;
    apply passes them at the end of the arguments to the function error. |#
 (define abort (λ args (apply error "Aborting" args)))
 
-#;(abort "foo") ;<== should fail the evaluation if uncommented
+(expect (abort "intentional") =>fail!)
 
+;;; We are going to write a lot of curried functions, so let's have a macro for uncurried calls.
+(define-syntax @
+  (syntax-rules ()
+    ((@ f) f)
+    ((@ f a . rest) (@ (f a) . rest))))
+
+(expect (@ (λ (x) (λ (y) (λ (z) (λ (t) (+ x y z t))))) 1 2 3 4) => 10)
 
 ;;; 5.2.2 Records (moved ahead, because we use it in 5.1.2 already)
 (define (empty-record _)
@@ -85,7 +123,7 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
 
 (expect (empty-record 'foo) => #f
         ((((extend-record 'foo) 1) empty-record) 'foo) => 1
-        ((((extend-record 'foo) 1) empty-record) 'bar) => #f)
+        (@ extend-record 'foo 1 empty-record 'bar) => #f)
 
 ;;; 5.1.2 Coloring a point
 (define point-a (record (x 2) (y 4))) ;; Using the syntax above
@@ -100,7 +138,7 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
         (point-a 'z) => #f
         (point-a 'color) => #f
         ((record-ref 'x) point-a) => 2
-        ((record-ref 'y) point-a) => 4)
+        (@ record-ref 'y point-a) => 4)
 
 ;; To speed up those tests, we use map function point-p over various values
 (expect (map point-a '(x y z color)) => '(2 4 #f #f)
@@ -120,15 +158,15 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
 
 ;; Check that our composition works as expected:
 (expect (((compose mul10) add1) 4) => 50
-        (((compose add1) mul10) 4) => 41)
+        (@ compose add1 mul10 4) => 41)
 
 ;; Generalizing compose to n-ary composition.
 (define compose*
   (case-lambda
     (() identity)
     ((x) x)
-    ((x y) ((compose x) y))
-    ((x . r) ((compose x) (apply compose* r))))) ;; or (foldl compose* x r)
+    ((x y) (@ compose x y))
+    ((x . r) (@ compose x (apply compose* r))))) ;; or (foldl compose* x r)
 
 (expect
   ((compose*) 5) => 5
@@ -217,14 +255,14 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
 
 ;;; 5.3.2 Composing Modular Extensions
 (define mix (λ (c) (λ (p) (λ (s) (λ (t)
-  ((c s) ((p s) t)))))))
+  (@ c s (@ p s t)))))))
 
 (define idModExt (λ (_s) (λ (t)
   t)))
 
 ;;; 5.3.3 Closing Modular Extensions
 (define fix (λ (t) (λ (m)
-  (Y (λ (s) ((m s) t))))))
+  (Y (λ (s) (@ m s t))))))
 
 ;; Generalizing compose*
 ;; Take a monoid two-argument operation op2, return the n-ary variant.
@@ -238,7 +276,7 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
     op*)))
 ;; Variant of op*←op2, but for a curried operator that takes one argument then the next.
 (define op*←op1.1 (λ (op1.1 id)
-  (op*←op2 (λ (x y) ((op1.1 x) y)) id)))
+  (op*←op2 (λ (x y) (@ op1.1 x y)) id)))
 
 (define mix* (op*←op1.1 mix idModExt))
 
@@ -256,7 +294,7 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
 (define fixt (fix top))
 
 (define fixt/inlined (λ (m)
-  (Y (λ (s) ((m s) top)))))
+  (Y (λ (s) (@ m s top)))))
 
 (define record-spec (λ (_self) (λ (_super)
   empty-record)))
@@ -277,26 +315,26 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
 
 (define fix-record (fix empty-record))
 (define fix-record/inlined (λ (m)
-  (Y (λ (s) ((m s) empty-record)))))
+  (Y (λ (s) (@ m s empty-record)))))
 (define fix-record/fixt (λ (m)
-  (fixt ((mix m) record-spec))))
+  (fixt (@ mix m record-spec))))
 
 ;;; 5.3.5 Minimal OO Indeed
 (define field-spec (λ (key) (λ (compute-value) (λ (self) (λ (super) (λ (method-id)
   (let ((inherited (super method-id)))
     (if (equal? key method-id)
-        ((compute-value self) inherited)
+        (@ compute-value self inherited)
         inherited))))))))
 
 ;;; 5.3.6 Minimal Colored Point
 (define coord-spec
-  ((mix ((field-spec 'x) (λ (_self) (λ (_inherited) 2))))
-        ((field-spec 'y) (λ (_self) (λ (_inherited) 4)))))
+  (mix* (@ field-spec 'x (λ (_self) (λ (_inherited) 2)))
+        (@ field-spec 'y (λ (_self) (λ (_inherited) 4)))))
 
 (define color-spec
-  ((field-spec 'color) (λ (_self) (λ (_inherited) "blue"))))
+  (@ field-spec 'color (λ (_self) (λ (_inherited) "blue"))))
 
-(define point-p (fix-record ((mix color-spec) coord-spec)))
+(define point-p (fix-record (mix* color-spec coord-spec)))
 
 (expect (point-p 'x) => 2
         (point-p 'color) => "blue"
@@ -304,20 +342,21 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
         (map (fix-record/inlined ((mix color-spec) coord-spec)) '(x y z color)) => '(2 4 #f "blue")
         (map (fix-record/fixt ((mix color-spec) coord-spec)) '(x y z color)) => '(2 4 #f "blue"))
 
-(define constant-spec (λ (constant) (λ (_self) (λ (_super) constant))))
+(define constant-spec (λ (value) (λ (_self) (λ (_super)
+  value))))
 (define constant-field-spec (λ (key) (λ (value)
-  (field-spec key (λ (_self) (λ (_inherited) value))))))
+  (@ field-spec key (constant-spec value)))))
 
 
 ;;; 5.3.7 Minimal Extensibility and Modularity Examples
 (define add-x-spec (λ (dx)
-  ((field-spec 'x) (λ (_self) (λ (inherited) (+ dx inherited))))))
+  (@ field-spec 'x (λ (_self) (λ (inherited) (+ dx inherited))))))
 
 (define sqr (λ (x)
   (* x x)))
 
 (define rho-spec
-  ((field-spec 'rho) (λ (self) (λ (_inherited)
+  (@ field-spec 'rho (λ (self) (λ (_inherited)
     (sqrt (+ (sqr (self 'x)) (sqr (self 'y))))))))
 
 (define point-r (fix-record
@@ -361,7 +400,7 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
           (else #f)))))))
 
 (define my-contents-2
-  (stateful-Y (λ (self) ((my-contents-spec self) (my-modular-def self)))))
+  (stateful-Y (λ (self) (@ my-contents-spec self (my-modular-def self)))))
 
 (expect (my-contents-2 'contents) => my-saying
         ((my-contents-2 'length) my-saying) => 20
@@ -375,7 +414,7 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
       (else (super method-id)))))))
 
 (define part-spec (λ (part)
-  ((field-spec 'parts) (λ (self) (λ (inherited) (cons part inherited))))))
+  (@ field-spec 'parts (λ (self) (λ (inherited) (cons part inherited))))))
 
 (define torso-spec (part-spec 'torso))
 (define head-spec (part-spec 'head))
@@ -442,14 +481,14 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
 (define rproto-wrapper (λ (spec) (λ (self) (λ (super) (λ (method-id)
   (if method-id (super method-id) spec))))))
 (define rproto←spec (λ (spec)
-  (fix-record ((mix (rproto-wrapper spec)) spec))))
+  (fix-record (mix* (rproto-wrapper spec) spec))))
 (define rproto-id (rproto←spec idModExt))
 (define spec←rproto (λ (rproto)
   (rproto #f)))
 (define target←rproto (λ (rproto)
   rproto))
 (define rproto-mix (λ (child) (λ (parent)
-  (rproto←spec ((mix (spec←rproto child)) (spec←rproto parent))))))
+  (rproto←spec (mix* (spec←rproto child) (spec←rproto parent))))))
 (define rproto-mix* (op*←op1.1 rproto-mix rproto-id))
 
 (define coord-rproto (rproto←spec coord-spec))
@@ -476,7 +515,7 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
 (define type-of (λ (instance)
   (instance #t)))
 (define instance-call (λ (instance) (λ (method-id)
-  ((((type-of instance) 'instance-methods) method-id) instance))))
+  (@ type-of instance 'instance-methods method-id instance))))
 
 ;;;; 6.2.3 Parametric First-Class Type Descriptors
 ;;;; TODO: examples in both monomorphic and polymorphic styles
@@ -501,74 +540,94 @@ With Racket (fails so far): raco pkg install r7rs ; racket -I r7rs --script pomm
 
 (define fixModDef Y)
 (define extendModDef (λ (mext) (λ (parent) (λ (self)
-  (mext self (parent self))))))
+  (@ mext self (parent self))))))
 (define baseModDef (λ (_) top))
 
 ;;;;; 8 Extending the Scope of OO
 
 ;;;; 8.1.2 Short Recap on Lenses
 (define lensOfGetterSetter (λ (get) (λ (set)
-  ((makeLens get)
-     (λ (f) (λ (s) (set (f (g s)))))))))
+  (@ makeLens get (λ (f) (λ (s) (set (f (get s)))))))))
 (define setterOfLens (λ (l)
-  (λ (b) (λ (s) ((l 'update) (λ (a) b))))))
+  (λ (b) (λ (s) (@ l 'update (λ (_a) b))))))
 
 ;;; Composing Lenses
 ;; composeView : View s t → View r s → View r t
 (define composeView (λ (v) (λ (w)
-  (compose w v))))
+  (@ compose w v))))
 
 ;; composeUpdate : Update i p j q → Update j q k r → Update i p k r
 (define composeUpdate (λ (f) (λ (g)
-  (compose f g))))
+  (@ compose f g))))
 
 ;; makeLens : View r s → Update i p j q → SkewLens r i p s j q
 (define makeLens (λ (v) (λ (u)
-  (((extend-record 'view) v)
-    (((extend-record 'update) u)
+  (@ extend-record 'view v
+     (@ extend-record 'update u
        empty-record)))))
 
 ;; composeLens : SkewLens s j q ss jj qq → SkewLens r i p s j q →
 ;;                SkewLens r i p ss jj qq
 (define composeLens (λ (l) (λ (k)
-  ((makeLens (composeView (l 'view) (k 'view)))
-    ((composeUpdate (l 'update)) (k 'update))))))
+  (@ makeLens
+     (@ composeView (l 'view) (k 'view))
+     (@ composeUpdate (l 'update) (k 'update))))))
 
 ;; idLens : SkewLens r i p r i p
 (define idLens
-  ((makeLens identity) identity))
+  (@ makeLens identity identity))
+
+(define composeLens* (op*←op1.1 composeLens idLens))
 
 ;;; Field Lens
 (define fieldView (λ (key) (λ (s)
   (s key))))
 (define fieldUpdate (λ (key) (λ (f) (λ (s)
-  (((extend-record s) key) (f (s key)))))))
+  (@ extend-record s key (f (s key)))))))
 (define fieldLens (λ (key)
-  ((makeLens (fieldView key)) (fieldUpdate key))))
+  (@ makeLens (fieldView key) (fieldUpdate key))))
+
+(define fieldLens* (λ keys
+  (apply composeLens* (map fieldLens keys))))
+
+(define test-rec (record (a (record (b (record (c 42)))))))
+
+(expect
+  (@ (composeLens*) 'view test-rec) => test-rec
+  (@ (fieldLens* 'a 'b 'c) 'view test-rec) => 42)
 
 ;;;; 8.1.3 Focusing a Modular Extension
 ;;; From Sick to Ripped
 ;; skewExt : SkewLens r i p s j q → ModExt r i p → ModExt s j q
 (define skewExt (λ (l) (λ (m)
-  (compose (l 'update)
-    (compose m (l 'view))))))
-
-;; updateOnlyLens : Update i p j q → SkewLens r i p r j q
-(define updateOnlyLens (λ (u)
-  ((makeLens identity) u)))
+  (compose* (l 'update) m (l 'view)))))
 
 ;;;; 8.1.4 Adjusting Context and Focus
+;;; Adjusting the Extension Focus
+;; updateOnlyLens : Update i p j q → SkewLens r i p r j q
+(define updateOnlyLens (λ (u)
+  (@ makeLens identity u)))
 
 ;;; Broadening the Focus
 ;; reverseView : s → MonoLens s a → View a s
 ;; reverseUpdate : s → MonoLens s a → Update a s a s
 ;; reverseLens : s → MonoLens s a → MonoLens a s
 (define reverseView (λ (s) (λ (l)
-  (λ (a) (((setterOfLens l) s) a)))))
+  (@ setterOfLens l s))))
 (define reverseUpdate (λ (s) (λ (l) (λ (a) (λ (f)
-  ((l 'view) (f ((reverseView s) l) a)))))))
+  (@ l 'view (@ f (@ reverseView s l) a)))))))
 (define reverseLens (λ (s) (λ (l)
-  ((makeView ((reverseView s) l)) ((reverseUpdate s) l)))))
+  (@ makeLens (@ reverseView s l) (@ reverseUpdate s l)))))
+
+;;; Adjusting the Context
+;; viewOnlyLens : View r s → SkewLens r i p s i p
+(define viewOnlyLens (λ (v)
+  (@ makeLens v identity)))
+
+;; TODO: examples and tests for all these
+
+;;;; 8.1.5 Optics for Specifications, Prototypes and Classes
+
 
 #||#
 #|

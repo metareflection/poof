@@ -4,7 +4,7 @@
 
 (require (only-in scribble/base elem linebreak nested italic smaller bold)
          (only-in scribble/core make-paragraph make-style)
-         (only-in scriblib/footnote note)
+         (only-in scriblib/footnote note define-footnote)
          (only-in scriblib/render-cond cond-element cond-block)
          (only-in scribble/html-properties css-addition html-defaults)
          (only-in scribble/latex-properties tex-addition make-tex-addition latex-defaults))
@@ -35,6 +35,8 @@
 ;; TODO: find how to insert raw html
 ;;(define (Html . args) (html-only (apply elem #:style (make-style #f '(exact-chars)) args)))
 (define (hhr) (html-elem (elem #:style (make-style #f (list (make-alt-tag "hr"))))))
+
+;;(define-footnote my-note #:margin)
 
 (define (xnote x . y)
   (list x

@@ -15,7 +15,7 @@
 @title{
   Lambda: the Ultimate Object
     @linebreak[] @tex-elem{@linebreak[]}
-    @smaller{Object-Orientation Elucidated@|~~|}}
+    @smaller{Object Orientation Elucidated@|~~|}}
 
 @author{François-René Rideau}
 
@@ -30,7 +30,7 @@ Please send feedback to fahree at gmail.}@xnote[""]{
 @linebreak[]@tex{\\{}}
 
 @book-abstract{
-As a software practitioner, you have not only heard of Object-Orientation (OO),
+As a software practitioner, you have not only heard of Object Orientation (OO),
 but seen it or used it, loved it or hated it.
 Yet you may have been frustrated that there never seems to be clear answers as to
 what exactly OO is or isn’t, what it is @emph{for}, when and how to use it or not use it.
@@ -151,7 +151,7 @@ the alternatives used in any programming language so far.
 @epigraph{It was probably in 1967 when someone asked me what I was doing,
  and I said: “It’s object-oriented programming”. @|#:- "Alan Kay"|
 }
-Object-Oriented Programming (OOP), or Object-Orientation (OO),
+Object-Oriented Programming (OOP), or Object Orientation (OO),
 is a paradigm for programming in terms of “objects”.
 
 What even are objects? What aren’t? What is OO? What isn’t?
@@ -389,7 +389,7 @@ And I suspect that even other “birds” who do think at a high enough level, s
 not being aphantasiac, are overwhelmed or distracted by their visual imagery,
 and miss structural patterns I perceive non-visually.
 
-However in the case of this book on Object-Orientation,
+However in the case of this book on Object Orientation,
 there is the difference that I actually have
 three decades of practical as well as theoretical experience with OO.
 I studied the semantics of programming languages in college.
@@ -417,7 +417,7 @@ but that I can share in the form of a book.
 }
 @principle{OO is the Paradigm of Programming with Inheritance.}
 Despite what its name says,
-the actual central concept in Object-Orientation is @emph{Inheritance},
+the actual central concept in Object Orientation is @emph{Inheritance},
 a mechanism for programming by modularly extending
 partial specifications of code.
 OO usually depends on explicit support from the Programming Language (PL) at hand,
@@ -842,7 +842,7 @@ I will define those terms precisely in
 @; TODO: Describe Appendices
 
 @; TODO for submission, move to appendix?
-@section[#:tag "WOOin"]{What Object-Orientation is @emph{not}}
+@section[#:tag "WOOin"]{What Object Orientation is @emph{not}}
 @epigraph{
   It’s not ignorance that does so much damage;
   it’s knowing so darned much that ain’t so. @|#:- "Josh Billings"|
@@ -1499,7 +1499,7 @@ And if you picked an OO-capable language like C++, Java, C# or Scala,
 (or, with manually enforced dynamic types, Lisp, Ruby or Python),
 you can actually use OO as you do it.
 
-@section[#:tag "WOOiIO"]{What Object-Orientation @emph{is} — Informal Overview}
+@section[#:tag "WOOiIO"]{What Object Orientation @emph{is} — Informal Overview}
 @epigraph{Ce qui se conçoit bien s'énonce clairement, @linebreak[]
   Et les mots pour le dire arrivent aisément. @linebreak[]
   @~ @~ (What is clearly conceived is clearly expressed, @linebreak[]
@@ -1516,7 +1516,7 @@ More details, and justifications, will follow in subsequent chapters.
 @epigraph{Say what you mean and mean what you say.
   @|#:- "Lewis Carroll"|
 }
-Object-Orientation (“OO”) is a technique that enables the specification of programs
+Object Orientation (“OO”) is a technique that enables the specification of programs
 through extensible and modular @emph{partial} specifications,
 embodied as entities @emph{within} a programming language
 (see @secref{OOaIEM}, @secref{MOO}).
@@ -2294,7 +2294,7 @@ If so, you should also be careful never to ask about the philosophical opinions 
 authors, inventors, colleagues, etc., in your technical field.
 
 
-@subsubsection{Is my definition correct?}
+@subsubsection[#:tag "Imdc"]{Is my definition correct?}
 @epigraph{
   The truth or falsehood of all of man’s conclusions, inferences, thought and knowledge
   rests on the truth or falsehood of his definitions.
@@ -2421,7 +2421,7 @@ when they define and redefine “OO” or any word to have whatever precise or m
 Instead they propose that I should stick to “inheritance”
 when discussing the field characterized by the use of inheritance.
 
-But it is no good to let an ignorant majority “define” the term “Object-Orientation”
+But it is no good to let an ignorant majority “define” the term “Object Orientation”
 to mean what little they know of it—for instance, to pick the most popular elements:
 Class OO only, always mutable records,
 only single inheritance or C++ style flavorless “multiple inheritance”,
@@ -8758,6 +8758,8 @@ Here are two kinds of lenses that are essential to deal with prototypes and clas
 
 @Paragraph{Specification Methods}
 
+Overriding a method in a specification...
+
 @Paragraph{Prototype Specification}
 
 I’ll assume for now that prototypes are records implemented with the @c{rproto} encoding
@@ -8820,7 +8822,6 @@ Similarly with @c{'instance-fields} and the name of the field, to access a field
 
 
 
-To ac
 To modify an instance method, assuming it takes as first argument
 an element of the type, you can use
 @Code{
@@ -8864,11 +8865,33 @@ that made multiple inheritance sensible when it otherwise wasn’t.
 I will quickly present the refined method combinations from CLOS @~cite{cltl2 clhs},
 rather than the more limited method combinations of the original Flavors.
 
+@subsubsection{Method Specification}
+
+Define a method-specification as a derived field next to the effective method
+(or maybe inside it, if conflation or function and object is allowed),
+and the effective method as “just”
+calling effective-method resolution on the method-specification.
+overriding a method now composes a modular extension on a field of the method-specification object:
+the primary field, before field, etc.
+
 @subsection{Multiple Dispatch}
+
+Together with multiple dispatch, requires some shared (and usually global)
+dispatch table.
+Can still be pure, with global modular extension.
+How does that work for classes defined or extended in a narrow scope?
 
 @subsection{Dynamic Dispatch}
 
+First-class modularity vs second-class.
+Note that in most second-class OO languages, you often also have this as first-class modularity
+yet without first-class modular extensibility. (Subtle distinction.)
+
 Kin vs type. @~cite{Allen2011Type}
+
+Also works in typeclass-style vs class-style.
+
+How that interacts with multiple dispatch tables, global or local.
 
 @section[#:tag "IO"]{Efficient Object Implementation}
 @epigraph{
@@ -8921,7 +8944,7 @@ with a list of never-done-before feats I achieved in its book
 or the work that immediately preceded it:
 
 @subsubsection{OO is Internal Modular Extensibility}
-I rebuilt Object-Orientation (OO) from First Principles,
+I rebuilt Object Orientation (OO) from First Principles,
 offering an explanation of how the basic mechanisms of OO
 directly stem from Modularity, Extensibility, and Internality.
 The equations of @citet{Bracha1990Mixin} were not arbitrary axioms,
@@ -9075,21 +9098,26 @@ Even if possible, getting all the ideas in this book published in academic venue
 would take ten times the effort of writing this book,
 for a result that is overall more repetitive, yet locally too concise and less clear.
 By bringing all these ideas together, and taking time to expose them in detail,
-I can build a solid coherent Theory of OO that I hope you’ll agree is compelling.
+I built a solid coherent Theory of OO that I hope you’ll agree is compelling.
 
 @subsection{OO in the age of AI}
 
 @subsubsection{Farewell to the OO you know}
-
+@epigraph{
+  AI is a collective name for problems which we do not yet know how to solve properly by computer.
+  @|#:- "Bertram Raphael"|
+  @; https://quoteinvestigator.com/2024/06/20/not-ai/
+  @; https://en.wikipedia.org/wiki/AI_effect
+}
 AIs are not as limited as humans in terms of mental context.
 They do not experience the same pressure towards reusable code as humans do.
 And so in many cases, AIs may prefer to deal directly with a lot of low-level details at once,
 tangle many aspects of a problem, and embrace the complexity of it all,
 so as to achieve more efficient results.
 
-As a result, many AI programs may be much less modular than human programs.
+As a result, AI may write programs that are much less modular than those human write.
 As the size of modules might gets larger,
-there will be fewer opportunities for meaningful incremental specifications:
+there will also be fewer opportunities for meaningful incremental specifications:
 the overhead of each increment might not be worth making a lot of them.
 But sparser bigger increments might also mean fewer opportunities
 to share code between programs.
@@ -9130,6 +9158,10 @@ but inasmuch as they branch from modules shared between AIs,
 this extensibility will better be internal rather than merely external.
 
 And so, all the reasons that make OO useful and necessary will still exist.
+The very reason that makes my definition of OO correct (@secref{Imdc})
+is what keeps it relevant into the future:
+OO is a phenomenon that programmers (humans or AIs) care about because
+we can write much better programs if we understand and use it properly than if we don’t.
 
 For in the end, OO is about @emph{compositional semantics},
 and these matter not merely for human convenience, but for the sake any intelligent entity
@@ -9147,21 +9179,30 @@ and thus about reasoning about software, and thus about simplicity.
 }
 Who can say what software will look like in the future?
 By the time you can precisely describe a piece of software, it is not in the future anymore.
+It is very unlikely that the OO languages, programs and libraries that are popular today
+will survive very long in the future—although paradoxically, in the short term,
+increased AI capabilities also means increased ability to survive the nonsense of it all.
 
-But my safe bet is that the future not only will still have OO, but much more OO than today,
-because OO is useful to grow @emph{reasonable} ecosystems.
-However, OO style will end up covering a smaller overall share of the software than it does today.
-Moreover, I will also bet that today’s popular forms of
-second-OO Class OO with single inheritance or flavorless multiple inheritance,
-to specify mutable eager programs will keep decreasing in relative popularity.
+But my safe bet is that in the future not only there will still be OO, but much more OO than today,
+because OO is useful to grow @emph{reasonable} ecosystems,
+for which the demand will only increase.
+However, I also bet that OO style will end up covering
+a smaller overall share of the software than it does today,
+because AIs can manage a level complexity that reduces the relative demand
+for modularity and extensibility within a programming language.
+Moreover, I will also bet that today’s popular forms of OO
+will keep decreasing in relative popularity:
+mutable eager programs, specified using second-class Class OO
+with single inheritance or flavorless multiple inheritance,
+are just too unreasonable.
 
-And if my book has any influence, then pure functional lazy OO,
-either dynamically typed or with recursively constrained subtyping,
+Now if my book has any influence, and quite possibly even if it has none,
+a better form of OO will increase in relative popularity:
+pure functional lazy OO, either dynamically typed or with recursively constrained subtyping,
 in typeclass-style more so than in class-style,
-with flavorful optimal inheritance, method combinations and multiple dispatch—will
-increase in relative popularity.
+with flavorful optimal inheritance, method combinations and multiple dispatch.
 
-May you live free, and enjoy software written in OO style!
+May you live free, and enjoy software written with Object Orientation!
 
 @section[#:style 'unnumbered]{Annotated Bibliography}
 @epigraph{If we knew what it was we were doing, it would not be called research, would it?
