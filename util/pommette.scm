@@ -204,13 +204,17 @@ With Racket: racket pommette.rkt
     ((x y) (compose x y))
     ((x . r) (compose x (apply compose* r))))) ;; or (foldl compose* x r)
 
+(define (uncurry2 f) (lambda (x y) ((f x) y)))
+
 (expect
   ((compose*) 5) => 5
   ((compose* add1) 99) => 100
   ((compose* add1 add1) 67) => 69
   ((compose* add1 add1 add1) 20) => 23
   ((compose* add1 add1 mul10) 4) => 42
-  ((compose* add1 mul10 sub2) 0) => -19)
+  ((compose* add1 mul10 sub2) 0) => -19
+  ((uncurry2 (λ (x y) (+ x y))) 4 5) => 9
+  ((λ (x y) (+ x y)) 4 5) =>fail!)
 
 ;;; 5.1.5
 (define top #f)
@@ -401,7 +405,6 @@ With Racket: racket pommette.rkt
 
 ;;; 5.3.8 Interaction of Modularity and Extensibility
 
-(display "foo001")(newline)
 (def (my-modular-def self method-id)
   (case method-id
     ((start) 5)
@@ -419,12 +422,9 @@ With Racket: racket pommette.rkt
 (def my-contents
   (stateful-Y (λ (self) (my-contents-spec self (my-modular-def self)))))
 
-(display "foo002")(newline)
 (expect (my-contents 'contents) => my-saying
         (my-contents 'length my-saying) => 20
         (my-contents 'size) => 15)
-
-(display "foo")(newline)
 
 (def my-modular-def-without-global-recursion
   (let ((_start 5))
@@ -473,7 +473,7 @@ With Racket: racket pommette.rkt
 (def (pproto-mix child parent)
   (pproto←spec (mix (spec←pproto child) (spec←pproto parent))))
 (define pproto-mix* (op*←op1.1 pproto-mix pproto-id))
-;;(define (pproto-mix* . l) (foldl (lambda (x y) (pproto-mix x y)) pproto-id l))
+;;(define (pproto-mix* . l) (foldl (uncurry2 pproto-mix) pproto-id l))
 
 (def coord-pproto (pproto←spec coord-spec))
 (def color-pproto (pproto←spec color-spec))
@@ -598,18 +598,20 @@ With Racket: racket pommette.rkt
 ;; effectiveModExt : MISpec r i p → ModExt r i p
 ;; fixMISpec : top → MISpec p top p → p
 
+#|
 (def (effectiveModExt mispec)
   (foldl (uncurry2 mix) idModExt (map getModExt (compute-precedence-list mispec))))
 (def (fixMISpec top mispec)
   (fix top (effectiveModExt mispec)))
+|#
 
 ;;;;; 8 Extending the Scope of OO
 
 ;;;; 8.1.2 Short Recap on Lenses
-(def (lensOfGetterSetter get set)
-  (makeLens get (λ (f s) (set (f (get s))))))
-(def (setterOfLens l)
-  (λ (b s) (@ l 'update (λ (_a) b))))
+
+;; type View r s = s → r
+;; type Update i p j q = (i → p) → j → q
+;; type SkewLens r i p s j q = { view : View r s ; update : Update i p j q }
 
 ;;; Composing Lenses
 ;; composeView : View s t → View r s → View r t
@@ -639,11 +641,17 @@ With Racket: racket pommette.rkt
 
 (define composeLens* (op*←op1.1 composeLens idLens))
 
+;;; Getter and Setter (moved after makeLens)
+(def (lensOfGetterSetter get set)
+  (makeLens get (λ (f s) (set (f (get s)) s))))
+(def (setterOfLens l)
+  (λ (b) (@ l 'update (λ (_a) b))))
+
 ;;; Field Lens
-(def (fieldView key s)
-  (s key))
-(def (fieldUpdate key f s)
-  (extend-record s key (f (s key))))
+(def (fieldView key r)
+  (r key))
+(def (fieldUpdate key f r)
+  (extend-record key (f (r key)) r))
 (def (fieldLens key)
   (makeLens (fieldView key) (fieldUpdate key)))
 
@@ -651,10 +659,29 @@ With Racket: racket pommette.rkt
   (apply composeLens* (map fieldLens keys)))
 
 (def test-rec (record (a (record (b (record (c 42)))))))
-
+(def test-point (record (x 10) (y 20)))
+(def x-lens (fieldLens 'x))
+(def set-x (setterOfLens x-lens))
+(def x-lens-2 (lensOfGetterSetter (fieldView 'x) (extend-record 'x)))
 (expect
   (@ (composeLens*) 'view test-rec) => test-rec
-  (@ (fieldLens* 'a 'b 'c) 'view test-rec) => 42)
+  (@ (fieldLens* 'a 'b 'c) 'view test-rec) => 42
+  (@ (fieldLens*) 'view test-rec) => test-rec
+  (fieldView 'x test-point) => 10
+  (fieldView 'y test-point) => 20
+  (fieldLens 'x 'view test-point) => 10
+  (fieldLens 'y 'view test-point) => 20
+  (fieldLens 'x 'update add1 test-point 'x) => 11
+  (fieldLens 'x 'update mul10 test-point 'x) => 100
+  (fieldLens 'x 'update mul10 test-point 'y) => 20  ;; y unchanged
+  (idLens 'view test-point) => test-point
+  (idLens 'update add1 5) => 6
+  (composeLens (fieldLens 'a) (fieldLens 'b) 'view
+    (record (a (record (b 99))))) => 99
+  (set-x 999 test-point 'x) => 999
+  (set-x 999 test-point 'y) => 20
+  (x-lens-2 'view test-point) => 10
+  (x-lens-2 'update add1 test-point 'x) => 11)
 
 ;;;; 8.1.3 Focusing a Modular Extension
 ;;; From Sick to Ripped
@@ -668,21 +695,49 @@ With Racket: racket pommette.rkt
 (def (updateOnlyLens u)
   (makeLens identity u))
 
+(def outer-rec (record (inner (record (val 5)))))
+(def inner-val-lens (fieldLens* 'inner 'val))
+(def (double-ext _self super) (* 2 super))
+(def focused-ext (skewExt (updateOnlyLens (inner-val-lens 'update)) double-ext))
+(expect
+  (fix outer-rec focused-ext 'inner 'val) => 10)
+(expect
+  ;; updateOnlyLens: view is identity, update applies transformation
+  (updateOnlyLens (compose mul10) 'view 7) => 7
+  (updateOnlyLens (compose mul10) 'update add1 7) => 80)  ;; mul10 (add1 7)
+
 ;;; Broadening the Focus
 ;; reverseView : s → MonoLens s a → View a s
 ;; reverseUpdate : s → MonoLens s a → Update a s a s
 ;; reverseLens : s → MonoLens s a → MonoLens a s
-(def (reverseView s l)
-  (setterOfLens l s))
-(def (reverseUpdate s l a f)
-  (l 'view (f (reverseView s l) a)))
+(def (reverseView s l a)
+  (setterOfLens l a s))
+(def (reverseUpdate s l f a)
+  (l 'view (f (reverseView s l a))))
 (def (reverseLens s l)
   (makeLens (reverseView s l) (reverseUpdate s l)))
+
+(def rev-x (reverseLens test-point x-lens))
+
+(expect
+  (x-lens 'view test-point) => 10
+  (rev-x 'view 42 'x) => 42
+  (rev-x 'view 42 'y) => 20 ;; y unchanged from test-point
+
+  ;; update transforms the record, then extracts the value
+  (rev-x 'update (fieldLens 'x 'update mul10) 10) => 100
+  (rev-x 'update (fieldLens 'y 'update mul10) 10) => 10) ;; y unchanged from test-point
 
 ;;; Adjusting the Context
 ;; viewOnlyLens : View r s → SkewLens r i p s i p
 (def (viewOnlyLens v)
   (makeLens v identity))
+
+(expect
+   ;; viewOnlyLens: view transforms, update is identity
+  (viewOnlyLens mul10 'view 7) => 70
+  (viewOnlyLens mul10 'update add1 7) => 8)
+
 
 ;; TODO: examples and tests for all these
 

@@ -5272,7 +5272,7 @@ and shrugged it off as yet another one of those annoying implementation details
 they had to face along the way.
 
 Finally, the confusion between target and specification can be seen as a special case of
-the confusion between object and implementation discussed in @~cite{Chiba2000MetaHelix},
+the confusion between object and implementation discussed in @citet{Chiba2000MetaHelix},
 wherein you can see the specification as @emph{implementing} the target.
 But though these authors saw a more general case in a wider theory with far reaching potential,
 they do not seem to have noticed this common case application.
@@ -5987,7 +5987,7 @@ when considering modularity or extensibility separately,
 open recursion through module contexts becomes essential when considering them together.
 In the general and common case in which a class or prototype specification
 includes self-reference, subtyping and subclassing are very different,
-a crucial distinction that was first elucidated in @~cite{Cook1989Inheritance}.
+a crucial distinction that was first elucidated in @citet{Cook1989Inheritance}.
 
 Now, the NNOOTT can be “saved” by reserving static typing to non-self-referential methods,
 whereas any self-reference must dynamically typed:
@@ -6042,7 +6042,7 @@ and continually reinvented even when not explicitly transmitted
 @~cite{Cartwright2013Inheritance abdelgawad2014domain}.
 And I readily admit it’s the first idea I too had
 when I tried to put types on my modular extensions,
-as you can see in @~cite{poof2021}.
+as you can see in @citet{poof2021}.
 
 The reasons why, despite being inconsistent, the NNOOTT was and remains so popular,
 not just among the ignorant masses, but even among luminaries in computer science,
@@ -6386,7 +6386,7 @@ a subtype of its superclass’s specification.
 Indeed, adding new variants to a sum type, which makes the extended type a supertype of the previous,
 is just as important as adding fields to a product type (or specializing its fields),
 which makes the extended type a subtype of the previous.
-Typical uses include extending a language grammar (as in @~cite{garrigue2000code}),
+Typical uses include extending a language grammar (as in @citet{garrigue2000code}),
 defining new error cases, specializing the API of some reified protocol, etc.
 In most statically typed OO languages, that historically mandate the subclass specification type
 to be a subtype of its superclass specification types, programmers work around this limitation
@@ -6792,7 +6792,7 @@ mix : ModExt r1 i1∩p2 p1 → ModExt r2 i2 p2 → ModExt r1∩r2 i1∩i2 p1∩p
 @principle{In Single Inheritance, the specifications at stake are open modular definitions},
 as studied in @secref{MFCM},
 simpler than the modular extensions of mixin inheritance from @secref{MFCME}@xnote["."]{
-  In @~cite{Cook1989 bracha1990mixin}, Cook calls “generator” what I call “modular definition”,
+  In @citet{Cook1989 bracha1990mixin}, Cook calls “generator” what I call “modular definition”,
   and “wrapper” what I call “modular extension”.
   But those terms are a bit too general, while Cook’s limitation to records
   makes his term assignment a bit not general enough (only closed and specialized for record).
@@ -8724,8 +8724,8 @@ Given a focus on a specification
 one can focus on a specific method of that specification
 by further adjusting the extension focus using @c{u = (fieldUpdate key)}
 where @c{key} is the identifier for the method.
-Thus, @c{(composeLens (composeLens (fieldLens 'foo) (fieldLens 'bar))
-(updateOnlyLens (fieldUpdate 'baz)))} will let you specify a method @c{baz}
+Thus, @c{(composeLens (fieldLens* 'foo 'bar) (updateOnlyLens (fieldUpdate 'baz)))}
+will let you specify a method @c{baz}
 for the specification under @c{foo.bar} in the ecosystem, where:
 @Code{
 updateOnlyLens : Update i p j q → SkewLens r i p r j q
@@ -8807,7 +8807,29 @@ Here are two kinds of lenses that are essential to deal with prototypes and clas
 
 @Paragraph{Specification Methods}
 
-Overriding a method in a specification...
+As told in the previous section,
+given a Lens @c{l} to focus on a specification from the environment,
+and an Update @c{u} to focus the extension on a method or submethod within that specification,
+one can extend that method of that specification with a modular extension @c{m}, with:
+@Code{
+(skewExt (composeLens l (updateOnlyLens u)) m)
+}
+For instance, to move 50 pixels to the right a widget registered under the name “foo”,
+you might use:
+@Code{
+(skewLens (composeLens (fieldLens* 'widgets 'foo)
+                       (updateOnlyLens (fieldUpdate 'x-pos)))
+          (λ (_self super) (+ super 50)))
+}
+Helper functions might provide terser syntax for common cases,
+but what matters for the purpose of this book is that
+the semantics of such method definitions can be described
+by composing a few simple first-class functions.
+Reasoning about method definitions, proving correctness or security properties about them,
+building automation to define methods in systematic ways that minimize programmer hassle
+and maximize the chances that the result is correct and performant, etc.,
+all that is not just possible, but simple, using this pure functional approach to OO
+based on composing open modular extensions.
 
 @Paragraph{Prototype Specification}
 
@@ -8851,8 +8873,8 @@ if someone tries to update the target in any way other than by updating the spec
   identity)
 (def rprotoTargetUpdate/OverwriteSpec
   rproto←record)
-(def (rprotoTargetUpdate/NoMoreSpec r)
-  (extend-record r #f #f))
+(def rprotoTargetUpdate/NoMoreSpec
+  (λ (r) (extend-record r #f #f)))
 (define rprotoTargetUpdate/Error
   abort)
 }
@@ -8875,10 +8897,11 @@ To modify an instance method, assuming it takes as first argument
 an element of the type, you can use
 @Code{
 (def (classInstanceMethodView method-id element)
-  (type-of element 'instance-methods method-id instance))
+  (type-of element 'instance-methods method-id element))
 (def (classInstanceMethodUpdate method-id element)
-  (type-of element 'instance-methods method-id instance))
+  ...)
 }
+@; XXXXX TODO write code
 
 
 Prototypes, including classes, can thus be defined incrementally,

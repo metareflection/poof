@@ -14,6 +14,23 @@
 (define (identity x) x)
 
 ;; 1.1.2. Apply a curried function to a list of argument
+(define-syntax define-identifier-macro
+  (syntax-rules ()
+    ((_ name symbol-expr list-expr)
+     (cond-expand
+       (gerbil
+        (define-syntax name
+          (syntax-rules ()
+            ((_ . x) (list-expr . x))
+            (_ symbol-expr))))
+       ((or racket chezscheme)
+        (define-syntax (name stx)
+          (syntax-case stx ()
+            ((_ . x) #'(list-expr . x))
+            (_ #'symbol-expr))))))
+    ((_ name expr)
+     (define-identifier-macro name expr expr))))
+
 (define (%app . a)
   (cond ((null? a) identity)
         ((null? (cdr a)) (car a))

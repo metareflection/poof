@@ -1,5 +1,3 @@
 #lang racket
-
-(require (only-in r7rs cond-expand))
-
+(include "prelude-racket.scm")
 (include "pommette.scm")

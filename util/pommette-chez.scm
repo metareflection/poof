@@ -1,5 +1,2 @@
-(import (srfi :0 cond-expand)
-        (rnrs base)
-        (rnrs lists (6)))
-(define foldl fold-left)
+(include "prelude-chez.scm")
 (include "pommette.scm")
