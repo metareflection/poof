@@ -1,27 +1,47 @@
+#|
+The code below this comment was generated and cleaned up by Claude Code (something 4.5)
+
+Test it with:
+sbcl --load conflict-semantics.lisp --load conflict-semantics-test.lisp --eval '(conflict-semantics::run-tests)'
+|#
+;;;; conflict-semantics.lisp
+;;;;
+;;;; A CLOS extension that implements "conflict semantics" for multiple
+;;;; inheritance, similar to C++/Eiffel style conflict detection rather
+;;;; than CLOS's standard linearization-based resolution.
+;;;;
+;;;; When a class inherits from multiple superclasses that have different
+;;;; methods for the same generic function, this signals an error rather
+;;;; than silently picking one based on class precedence list order.
+;;;;
+;;;; Conflicts can be resolved by:
+;;;; 1. Defining a method on the conflicting class itself
+;;;; 2. Using DELEGATE-TO to explicitly choose a superclass's method
+
 (defpackage :conflict-semantics
   (:use :cl)
   (:export #:conflict-detecting-generic-function
+           #:defgeneric/conflict
            #:delegate-to
            #:undelegate
            #:method-conflict-error
-           #:defgeneric/conflict
-           #:clear-resolution-cache))
+           #:clear-resolution-cache
+           #:describe-resolution
+           #:list-delegations))
 
 (in-package :conflict-semantics)
 
 ;;; ============================================================
 ;;; Implementation compatibility layer
+;;;
+;;; These wrappers provide a uniform interface to MOP functionality
+;;; that differs between SBCL and CCL.
 ;;; ============================================================
 
 (defun cs-class-direct-subclasses (class)
   #+sbcl (sb-mop:class-direct-subclasses class)
   #+ccl (ccl:class-direct-subclasses class)
   #-(or sbcl ccl) (error "class-direct-subclasses not implemented for this Lisp"))
-
-(defun cs-class-direct-superclasses (class)
-  #+sbcl (sb-mop:class-direct-superclasses class)
-  #+ccl (ccl:class-direct-superclasses class)
-  #-(or sbcl ccl) (error "class-direct-superclasses not implemented for this Lisp"))
 
 (defun cs-generic-function-methods (gf)
   #+sbcl (sb-mop:generic-function-methods gf)
@@ -64,7 +84,7 @@
   #-(or sbcl ccl) (error "class-precedence-list not implemented for this Lisp"))
 
 ;;; ============================================================
-;;; Condition for conflicts
+;;; Error condition
 ;;; ============================================================
 
 (define-condition method-conflict-error (error)
@@ -85,7 +105,7 @@
                      (conflict-contributors c))))))
 
 ;;; ============================================================
-;;; Custom GF class
+;;; Custom generic function class
 ;;; ============================================================
 
 (defclass conflict-detecting-generic-function (standard-generic-function)
@@ -108,12 +128,28 @@
               #-(or sbcl ccl) standard-class))
 
 (defmacro with-cache-lock ((gf) &body body)
+  "Execute BODY with the cache lock held for GF."
   (let ((lock-var (gensym "LOCK")))
     `(let ((,lock-var (gf-cache-lock ,gf)))
        (declare (ignorable ,lock-var))
        #+sbcl (sb-thread:with-mutex (,lock-var) ,@body)
        #+ccl (ccl:with-lock-grabbed (,lock-var) ,@body)
        #-(or sbcl ccl) (progn ,@body))))
+
+;;; ============================================================
+;;; Tracking generic functions for cache invalidation
+;;; ============================================================
+
+(defvar *tracked-gfs*
+  #+sbcl (make-hash-table :test 'eq :weakness :key)
+  #+ccl (make-hash-table :test 'eq :weak :key)
+  #-(or sbcl ccl) (make-hash-table :test 'eq)
+  "Weak table tracking all conflict-detecting generic functions.
+   Used to invalidate caches when classes are redefined.")
+
+(defmethod initialize-instance :after
+    ((gf conflict-detecting-generic-function) &key)
+  (setf (gethash gf *tracked-gfs*) t))
 
 ;;; ============================================================
 ;;; Cache invalidation
@@ -137,6 +173,13 @@
   "Public interface to clear a GF's resolution cache."
   (invalidate-cache-for-gf gf))
 
+(defun invalidate-all-gfs-for-class (class)
+  "Invalidate caches in all conflict-detecting GFs that might involve CLASS."
+  (maphash (lambda (gf val)
+             (declare (ignore val))
+             (invalidate-cache-for-class gf class))
+           *tracked-gfs*))
+
 ;;; Hook into method addition/removal for cache invalidation
 (defmethod add-method :after ((gf conflict-detecting-generic-function) method)
   (let ((spec (first (cs-method-specializers method))))
@@ -148,12 +191,26 @@
     (when (typep spec 'class)
       (invalidate-cache-for-class gf spec))))
 
+;;; Hook into class finalization for cache invalidation on class redefinition
+#+sbcl
+(defmethod sb-mop:finalize-inheritance :after ((class standard-class))
+  (invalidate-all-gfs-for-class class))
+
+#+ccl
+(defmethod ccl:finalize-inheritance :after ((class standard-class))
+  (invalidate-all-gfs-for-class class))
+
 ;;; ============================================================
 ;;; Delegation declarations
+;;;
+;;; These allow explicit resolution of conflicts by declaring that
+;;; a class delegates a method to a specific superclass.
 ;;; ============================================================
 
 (defmacro delegate-to (class generic-function superclass &optional qualifier)
-  "Declare that CLASS delegates GF (optionally for QUALIFIER) to SUPERCLASS."
+  "Declare that CLASS delegates GF (optionally for QUALIFIER) to SUPERCLASS.
+   This resolves method conflicts by explicitly choosing which inherited
+   method to use."
   (let ((class-name (if (symbolp class) class `(class-name ,class))))
     `(progn
        (setf (gethash (list ',class-name ,qualifier)
@@ -172,7 +229,11 @@
        ',class-name)))
 
 ;;; ============================================================
-;;; DAG analysis
+;;; DAG node structure
+;;;
+;;; We build a DAG (directed acyclic graph) of classes relevant to
+;;; method resolution. Each node tracks the methods defined directly
+;;; on that class, organized by qualifier.
 ;;; ============================================================
 
 (defstruct (dag-node (:constructor make-dag-node (class)))
@@ -181,23 +242,8 @@
   (before-methods '())
   (after-methods '())
   (around-methods '())
-  (children '())
-  (parents '()))
-
-(defun dag-node-methods-for-qualifier (node qualifier)
-  (ecase qualifier
-    ((nil) (let ((m (dag-node-primary-method node)))
-             (if m (list m) nil)))
-    (:before (dag-node-before-methods node))
-    (:after (dag-node-after-methods node))
-    (:around (dag-node-around-methods node))))
-
-(defun add-method-to-node (method node qualifier)
-  (ecase qualifier
-    ((nil) (setf (dag-node-primary-method node) method))
-    (:before (push method (dag-node-before-methods node)))
-    (:after (push method (dag-node-after-methods node)))
-    (:around (push method (dag-node-around-methods node)))))
+  (children '())   ; more specific classes
+  (parents '()))   ; less specific classes (ancestors)
 
 (defun method-qualifier-key (method)
   "Return the qualifier key for a method (nil for primary)."
@@ -208,8 +254,39 @@
           ((equal quals '(:around)) :around)
           (t (error "Unsupported method qualifiers: ~S" quals)))))
 
+(defun add-method-to-node (method node qualifier)
+  "Add METHOD to NODE under the given QUALIFIER."
+  (ecase qualifier
+    ((nil) (setf (dag-node-primary-method node) method))
+    (:before (push method (dag-node-before-methods node)))
+    (:after (push method (dag-node-after-methods node)))
+    (:around (push method (dag-node-around-methods node)))))
+
+(defun dag-node-methods-for-qualifier (node qualifier)
+  "Return list of methods on NODE for QUALIFIER."
+  (ecase qualifier
+    ((nil) (let ((m (dag-node-primary-method node)))
+             (if m (list m) nil)))
+    (:before (dag-node-before-methods node))
+    (:after (dag-node-after-methods node))
+    (:around (dag-node-around-methods node))))
+
+;;; ============================================================
+;;; DAG construction
+;;;
+;;; We build the DAG including ALL classes in the class precedence
+;;; list, not just those with methods. This is necessary to detect
+;;; conflicts through intermediate classes that don't define methods
+;;; themselves but establish inheritance paths.
+;;;
+;;; Example: If A has a method, B and C inherit from A, and D inherits
+;;; from both B and C, we need B and C in the DAG even if they don't
+;;; have their own methods, so we can detect that D has only one
+;;; inherited method (no conflict).
+;;; ============================================================
+
 (defun build-method-dag (gf class)
-  "Build DAG of classes with methods for GF, restricted to ancestors of CLASS.
+  "Build DAG of classes relevant to GF for CLASS.
    Returns (values node-table root-nodes class-node)."
   (unless (cs-class-finalized-p class)
     (cs-finalize-inheritance class))
@@ -226,13 +303,17 @@
                 (qual (method-qualifier-key method)))
             (add-method-to-node method node qual)))))
 
-    ;; Add ALL classes in the class precedence list to the DAG
+    ;; Second pass: add ALL classes in the class precedence list.
     ;; This is necessary to detect conflicts through intermediate classes
+    ;; that don't have methods but establish distinct inheritance paths.
     (dolist (c (cs-class-precedence-list class))
       (unless (gethash c nodes)
         (setf (gethash c nodes) (make-dag-node c))))
 
-    ;; Build parent/child relationships
+    ;; Third pass: build parent/child relationships.
+    ;; A class C1 has C2 as a "parent" in our DAG if:
+    ;;   - C1 is a proper subtype of C2
+    ;;   - There is no intermediate C3 in our DAG where C1 < C3 < C2
     (let ((node-classes (loop for k being the hash-keys of nodes collect k)))
       (dolist (c1 node-classes)
         (let ((node1 (gethash c1 nodes)))
@@ -240,21 +321,21 @@
             (when (and (not (eq c1 c2))
                        (subtypep c1 c2))
               ;; c1 < c2 (c1 more specific)
-              ;; Check no intermediate node
-              (let ((dominated nil))
+              ;; Check for intermediate node
+              (let ((has-intermediate nil))
                 (dolist (c3 node-classes)
                   (when (and (not (eq c3 c1))
                              (not (eq c3 c2))
                              (subtypep c1 c3)
                              (subtypep c3 c2))
-                    (setq dominated t)
+                    (setq has-intermediate t)
                     (return)))
-                (unless dominated
+                (unless has-intermediate
                   (let ((node2 (gethash c2 nodes)))
                     (pushnew node2 (dag-node-parents node1))
                     (pushnew node1 (dag-node-children node2))))))))))
 
-    ;; Find roots
+    ;; Find roots (nodes with no parents)
     (let ((roots '()))
       (maphash (lambda (c node)
                  (declare (ignore c))
@@ -268,23 +349,28 @@
 ;;; ============================================================
 
 (defstruct resolution
-  method
-  source-class
-  conflict-p
-  contributors)
+  method         ; the resolved method, or nil
+  source-class   ; class that provided the method
+  conflict-p     ; t if there's an unresolved conflict
+  contributors)  ; list of (class . method) pairs for conflict error messages
 
 (defstruct composite-resolution
   (primary nil :type (or resolution null))
-  (before '() :type list)
-  (after '() :type list)
-  (around '() :type list))
+  (before '() :type list)   ; list of methods, most-specific-first
+  (after '() :type list)    ; list of methods, least-specific-first
+  (around '() :type list))  ; list of methods, most-specific-first
 
 ;;; ============================================================
 ;;; Conflict resolution engine
+;;;
+;;; We walk the DAG from roots toward the target class, tracking
+;;; which method each class "inherits" and detecting when a class
+;;; would inherit conflicting methods from multiple parents.
 ;;; ============================================================
 
 (defun resolve-for-qualifier (gf class node-table qualifier)
-  "Resolve which method(s) CLASS should use for QUALIFIER."
+  "Resolve which method CLASS should use for QUALIFIER.
+   Returns a RESOLUTION struct."
   (let ((resolutions (make-hash-table :test 'eq))
         (delegation-table (gf-delegation-table gf)))
 
@@ -307,7 +393,7 @@
 
              (setf (gethash cls resolutions)
                    (cond
-                     ;; Explicit delegation
+                     ;; Explicit delegation takes precedence
                      (explicit-del
                       (let* ((super (find-class explicit-del nil))
                              (super-node (and super (gethash super node-table))))
@@ -324,7 +410,7 @@
                              :conflict-p nil
                              :contributors nil))))
 
-                     ;; Has own method(s)
+                     ;; Own method takes precedence (shadows inherited)
                      (own
                       (make-resolution
                        :method (first own)
@@ -332,16 +418,16 @@
                        :conflict-p nil
                        :contributors nil))
 
-                     ;; No parents
+                     ;; No parents = no method
                      ((null parents)
                       (make-resolution :method nil :source-class nil
                                        :conflict-p nil :contributors nil))
 
-                     ;; Single parent
+                     ;; Single parent = inherit its resolution
                      ((null (cdr parents))
                       (get-resolution (car parents)))
 
-                     ;; Multiple parents - check conflict
+                     ;; Multiple parents = check for conflict
                      (t
                       (let* ((parent-res (mapcar #'get-resolution parents))
                              (distinct (remove-duplicates
@@ -349,13 +435,16 @@
                                                 (mapcar #'resolution-method parent-res))
                                         :test #'eq)))
                         (cond
+                          ;; No parent has a method
                           ((null distinct)
                            (make-resolution :method nil :source-class nil
                                             :conflict-p nil :contributors nil))
 
+                          ;; All parents agree (same method, e.g. diamond)
                           ((null (cdr distinct))
                            (find-if #'resolution-method parent-res))
 
+                          ;; Conflict: multiple distinct inherited methods
                           (t
                            (make-resolution
                             :method nil
@@ -376,15 +465,17 @@
             (make-resolution :method nil :source-class nil
                              :conflict-p nil :contributors nil))))))
 
-(defun collect-auxiliary-methods (gf class node-table qualifier)
-  "Collect all auxiliary methods for QUALIFIER in inheritance order."
-  (declare (ignore gf))
+(defun collect-auxiliary-methods (class node-table qualifier)
+  "Collect all auxiliary methods for QUALIFIER in inheritance order.
+   For :before and :around, returns most-specific-first.
+   For :after, returns least-specific-first (so they run after the primary)."
   (let ((methods '())
         (seen-methods (make-hash-table :test 'eq)))
 
     (unless (cs-class-finalized-p class)
       (cs-finalize-inheritance class))
 
+    ;; Walk the CPL collecting methods
     (dolist (c (cs-class-precedence-list class))
       (let ((node (gethash c node-table)))
         (when node
@@ -393,26 +484,30 @@
               (setf (gethash m seen-methods) t)
               (push m methods))))))
 
+    ;; Methods are now in least-specific-first order (due to push)
     (let ((ordered (nreverse methods)))
       (if (eq qualifier :after)
-          (reverse ordered)
-          ordered))))
+          (reverse ordered)  ; after methods run least-specific-first
+          ordered))))        ; before/around run most-specific-first
 
 (defun resolve-all-for-class (gf class)
-  "Compute complete resolution for CLASS including primary and auxiliary methods."
+  "Compute complete resolution for CLASS including primary and auxiliary methods.
+   Returns a COMPOSITE-RESOLUTION struct."
   (multiple-value-bind (node-table roots class-node)
       (build-method-dag gf class)
     (declare (ignore roots class-node))
 
     (let ((primary-res (resolve-for-qualifier gf class node-table nil)))
 
+      ;; If primary has a conflict, return early
       (when (resolution-conflict-p primary-res)
         (return-from resolve-all-for-class
           (make-composite-resolution :primary primary-res)))
 
-      (let ((before (collect-auxiliary-methods gf class node-table :before))
-            (after (collect-auxiliary-methods gf class node-table :after))
-            (around (collect-auxiliary-methods gf class node-table :around)))
+      ;; Collect auxiliary methods
+      (let ((before (collect-auxiliary-methods class node-table :before))
+            (after (collect-auxiliary-methods class node-table :after))
+            (around (collect-auxiliary-methods class node-table :around)))
 
         (make-composite-resolution
          :primary primary-res
@@ -421,87 +516,34 @@
          :around around)))))
 
 ;;; ============================================================
-;;; Effective method construction
+;;; Effective method function construction
+;;;
+;;; We build a function that executes the resolved methods in the
+;;; correct order: around methods wrap before/primary/after.
+;;;
+;;; SBCL method functions have signature (args next-methods) where
+;;; call-next-method invokes (car next-methods) with (cdr next-methods).
+;;; CCL may differ; the build-emf-ccl function handles that.
 ;;; ============================================================
-
-(defun invoke-method (method args)
-  "Invoke METHOD with ARGS, handling implementation differences."
-  (let ((fn (cs-method-function method)))
-    #+sbcl (funcall fn args nil)
-    #+ccl (apply fn args)
-    #-(or sbcl ccl) (apply fn args)))
 
 (defun invoke-method-function (fn args)
   "Invoke a method function with ARGS."
   #+sbcl (funcall fn args nil)
-  #+ccl (apply fn args)
+  #+ccl (funcall fn args nil)
   #-(or sbcl ccl) (apply fn args))
-
-(defun build-around-chain (around-methods before-fns primary-fn after-fns)
-  "Build a chain of around methods with call-next-method support."
-  (let ((around-fns (mapcar #'cs-method-function around-methods)))
-    (labels
-        ((make-inner-callable ()
-           "Create the innermost callable (before + primary + after)."
-           (lambda (args)
-             (dolist (fn before-fns)
-               (invoke-method-function fn args))
-             (multiple-value-prog1
-                 (invoke-method-function primary-fn args)
-               (dolist (fn after-fns)
-                 (invoke-method-function fn args)))))
-
-         (wrap-around (inner around-fn)
-           "Wrap INNER with an around method."
-           (lambda (args)
-             ;; SBCL method functions take (args next-methods)
-             ;; where next-methods is a list and call-next-method
-             ;; invokes the first one with the same args pattern
-             #+sbcl
-             (funcall around-fn
-                      args
-                      (list (sb-mop:make-method-lambda
-                             ;; This is tricky - we need a callable that
-                             ;; SBCL's call-next-method can invoke
-                             ;; Actually, let's use a simpler approach
-                             )))
-             ;; Simpler approach: we construct the chain at build time
-             (funcall around-fn args (list inner)))))
-
-      ;; For simplicity, we'll construct the effective method differently:
-      ;; Build a single lambda that manually chains the around methods
-      (let ((inner-fn (make-inner-callable)))
-        (lambda (&rest args)
-          (let ((next-fn inner-fn))
-            ;; Process around methods from innermost to outermost
-            (dolist (around-fn (reverse around-fns))
-              (let ((current-next next-fn))
-                (setf next-fn
-                      (lambda (args)
-                        ;; Create a fake "next-methods" for the around method
-                        #+sbcl
-                        (funcall around-fn args
-                                 (list (cons :pseudo-method
-                                             (lambda (a n)
-                                               (declare (ignore n))
-                                               (funcall current-next a)))))
-                        #+ccl
-                        (let ((ccl::*next-methods*
-                                (list (lambda (&rest a)
-                                        (funcall current-next a)))))
-                          (apply around-fn args))
-                        #-(or sbcl ccl)
-                        (funcall around-fn args)))))
-            (funcall next-fn args)))))))
 
 #+sbcl
 (defun build-emf-sbcl (primary-method before-methods after-methods around-methods)
-  "Build EMF for SBCL where method functions take (args next-methods)."
+  "Build effective method function for SBCL.
+   SBCL method functions take (args next-methods) and call-next-method
+   invokes (funcall (car next-methods) args (cdr next-methods))."
   (let* ((before-fns (mapcar #'cs-method-function before-methods))
          (after-fns (mapcar #'cs-method-function after-methods))
          (primary-fn (cs-method-function primary-method))
          (around-fns (mapcar #'cs-method-function around-methods))
 
+         ;; The innermost callable runs before/primary/after
+         ;; It has the same signature as method functions for call-next-method
          (inner-callable
            (lambda (args next-methods)
              (declare (ignore next-methods))
@@ -513,8 +555,10 @@
                  (funcall fn args nil))))))
 
     (if (null around-fns)
+        ;; No around methods - just call inner directly
         (lambda (&rest args)
           (funcall inner-callable args nil))
+        ;; With around methods - build the next-methods chain
         (lambda (&rest args)
           (funcall (first around-fns)
                    args
@@ -522,16 +566,8 @@
 
 #+ccl
 (defun build-emf-ccl (primary-method before-methods after-methods around-methods)
-  "Build EMF for CCL."
-  ;; CCL method functions are regular functions, and call-next-method
-  ;; uses ccl::*next-methods* (a list of methods, not functions)
-  ;; and ccl::%call-next-method-with-args / ccl::%call-next-method
-  ;;
-  ;; Actually CCL is more complex - it stores method objects, not functions.
-  ;; We may need to create wrapper "pseudo-methods" or use a different approach.
-  ;;
-  ;; For now, let's try the simple approach and see if CCL method functions
-  ;; also take (args next-methods):
+  "Build effective method function for CCL."
+  ;; CCL's method function calling convention - adjust if needed
   (let* ((before-fns (mapcar #'cs-method-function before-methods))
          (after-fns (mapcar #'cs-method-function after-methods))
          (primary-fn (cs-method-function primary-method))
@@ -556,9 +592,10 @@
                    (append (cdr around-fns) (list inner-callable)))))))
 
 (defun build-effective-method-function (gf class composite-res)
-  "Build effective method with proper call-next-method support."
+  "Build the effective method function from a composite resolution."
   (let ((primary-res (composite-resolution-primary composite-res)))
 
+    ;; Handle conflict
     (when (and primary-res (resolution-conflict-p primary-res))
       (return-from build-effective-method-function
         (lambda (&rest args)
@@ -574,121 +611,27 @@
           (after-methods (composite-resolution-after composite-res))
           (around-methods (composite-resolution-around composite-res)))
 
+      ;; Handle no applicable method
       (unless primary-method
         (return-from build-effective-method-function
           (lambda (&rest args)
             (error "No applicable primary method for ~S on ~S with args ~S"
                    (cs-generic-function-name gf) class args))))
 
+      ;; Build implementation-specific EMF
       #+sbcl (build-emf-sbcl primary-method before-methods after-methods around-methods)
       #+ccl (build-emf-ccl primary-method before-methods after-methods around-methods)
       #-(or sbcl ccl) (error "Unsupported implementation"))))
 
-
-;;; Dynamic variable for call-next-method support
-(defvar *next-method-function* nil
-  "The next method function for call-next-method.")
-(defvar *current-args* nil
-  "Current arguments for call-next-method with no args.")
-
-(defun call-with-next-method-binding (next-fn args thunk)
-  "Call THUNK with *next-method-function* bound to NEXT-FN."
-  (let ((*next-method-function* next-fn)
-        (*current-args* args))
-    (funcall thunk)))
-
-(defun cs-call-next-method (&rest args)
-  "Call the next method in the chain."
-  (unless *next-method-function*
-    (error "No next method"))
-  (funcall *next-method-function*
-           (if args args *current-args*)))
-
-(defun build-method-chain (around-methods before-methods primary-method after-methods)
-  "Build a callable chain for around methods."
-  (let ((before-fns (mapcar #'cs-method-function before-methods))
-        (after-fns (mapcar #'cs-method-function after-methods))
-        (primary-fn (cs-method-function primary-method)))
-
-    ;; The innermost function runs before/primary/after
-    (let ((inner (lambda (args)
-                   (dolist (fn before-fns)
-                     (invoke-method-function fn args))
-                   (multiple-value-prog1
-                       (invoke-method-function primary-fn args)
-                     (dolist (fn after-fns)
-                       (invoke-method-function fn args))))))
-
-      ;; Wrap with around methods, outermost first in the list
-      ;; so we process in reverse to build inside-out
-      (dolist (around-method (reverse around-methods))
-        (let ((current-inner inner)
-              (around-fn (cs-method-function around-method)))
-          (setf inner
-                (lambda (args)
-                  (call-with-next-method-binding
-                   current-inner args
-                   (lambda ()
-                     (invoke-method-function around-fn args)))))))
-
-      inner)))
-
-;;; The around method handling is complex due to call-next-method.
-;;; Let's use a cleaner approach that doesn't try to fake the MOP machinery:
-
-(defun build-effective-method-function-v2 (gf class composite-res)
-  "Build the effective method function (simpler around handling)."
-  (let ((primary-res (composite-resolution-primary composite-res)))
-
-    (when (and primary-res (resolution-conflict-p primary-res))
-      (return-from build-effective-method-function-v2
-        (lambda (&rest args)
-          (declare (ignore args))
-          (error 'method-conflict-error
-                 :generic-function gf
-                 :class class
-                 :qualifier nil
-                 :contributors (resolution-contributors primary-res)))))
-
-    (let ((primary-method (and primary-res (resolution-method primary-res)))
-          (before-methods (composite-resolution-before composite-res))
-          (after-methods (composite-resolution-after composite-res))
-          (around-methods (composite-resolution-around composite-res)))
-
-      (unless primary-method
-        (return-from build-effective-method-function-v2
-          (lambda (&rest args)
-            (error "No applicable primary method for ~S on ~S with args ~S"
-                   (cs-generic-function-name gf) class args))))
-
-      ;; For around methods, we need to support call-next-method.
-      ;; We'll use a dynamic variable approach.
-      (if (null around-methods)
-          ;; Simple case: no around methods
-          (let ((primary-fn (cs-method-function primary-method))
-                (before-fns (mapcar #'cs-method-function before-methods))
-                (after-fns (mapcar #'cs-method-function after-methods)))
-            (lambda (&rest args)
-              (dolist (fn before-fns)
-                (invoke-method-function fn args))
-              (multiple-value-prog1
-                  (invoke-method-function primary-fn args)
-                (dolist (fn after-fns)
-                  (invoke-method-function fn args)))))
-
-          ;; Complex case: around methods present
-          ;; We construct a chain where each around can call the next
-          (let ((chain (build-method-chain
-                        around-methods before-methods primary-method after-methods)))
-            (lambda (&rest args)
-              (funcall chain args)))))))
-
 ;;; ============================================================
 ;;; MOP integration
+;;;
+;;; We override compute-discriminating-function to use our own
+;;; method resolution instead of the standard CLOS linearization.
 ;;; ============================================================
 
 (defun compute-and-cache-emf (gf class)
-  "Compute EMF for CLASS and cache it."
+  "Compute effective method function for CLASS and cache it."
   (let* ((composite-res (resolve-all-for-class gf class))
          (emf (build-effective-method-function gf class composite-res)))
     (with-cache-lock (gf)
@@ -720,40 +663,13 @@
       (apply emf args))))
 
 ;;; ============================================================
-;;; Class redefinition hooks
-;;; ============================================================
-
-(defvar *tracked-gfs*
-  #+sbcl (make-hash-table :test 'eq :weakness :key)
-  #+ccl (make-hash-table :test 'eq :weak :key)
-  #-(or sbcl ccl) (make-hash-table :test 'eq)
-  "Weak table of conflict-detecting GFs.")
-
-(defmethod initialize-instance :after
-    ((gf conflict-detecting-generic-function) &key)
-  (setf (gethash gf *tracked-gfs*) t))
-
-(defun invalidate-all-gfs-for-class (class)
-  "Invalidate all conflict-detecting GF caches for CLASS."
-  (maphash (lambda (gf val)
-             (declare (ignore val))
-             (invalidate-cache-for-class gf class))
-           *tracked-gfs*))
-
-#+sbcl
-(defmethod sb-mop:finalize-inheritance :after ((class standard-class))
-  (invalidate-all-gfs-for-class class))
-
-#+ccl
-(defmethod ccl:finalize-inheritance :after ((class standard-class))
-  (invalidate-all-gfs-for-class class))
-
-;;; ============================================================
-;;; Convenience macro
+;;; Public interface
 ;;; ============================================================
 
 (defmacro defgeneric/conflict (name lambda-list &body options)
-  "Define a generic function with conflict-detecting semantics."
+  "Define a generic function with conflict-detecting semantics.
+   This is like DEFGENERIC but uses conflict detection instead of
+   standard CLOS linearization for method resolution."
   `(defgeneric ,name ,lambda-list
      (:generic-function-class conflict-detecting-generic-function)
      ,@options))
@@ -771,23 +687,33 @@
             (if (symbolp class) class (class-name class-obj)))
 
     (let ((primary (composite-resolution-primary composite)))
-      (format t "  Primary: ~:[NONE~;~:*~S from ~S~]~@[ (CONFLICT: ~{~S~^, ~})~]~%"
-              (and primary (resolution-method primary))
-              (and primary (resolution-source-class primary)
-                   (class-name (resolution-source-class primary)))
-              (and primary
-                   (resolution-conflict-p primary)
-                   (mapcar (lambda (c) (class-name (car c)))
-                           (resolution-contributors primary)))))
+      (cond
+        ((null primary)
+         (format t "  Primary: NONE~%"))
+        ((resolution-conflict-p primary)
+         (format t "  Primary: CONFLICT~%")
+         (format t "    Contributors:~%")
+         (dolist (c (resolution-contributors primary))
+           (format t "      ~S -> ~S~%"
+                   (class-name (car c))
+                   (cdr c))))
+        ((resolution-method primary)
+         (format t "  Primary: ~S (from ~S)~%"
+                 (resolution-method primary)
+                 (class-name (resolution-source-class primary))))
+        (t
+         (format t "  Primary: NONE~%"))))
 
     (flet ((show-methods (label methods)
              (format t "  ~A (~D):~%" label (length methods))
              (dolist (m methods)
-               (format t "    ~S~%"
+               (format t "    from ~S~%"
                        (class-name (first (cs-method-specializers m)))))))
       (show-methods "Before" (composite-resolution-before composite))
       (show-methods "After" (composite-resolution-after composite))
-      (show-methods "Around" (composite-resolution-around composite)))))
+      (show-methods "Around" (composite-resolution-around composite)))
+
+    (values)))
 
 (defun list-delegations (gf)
   "List all delegations for GF."
@@ -797,5 +723,9 @@
       (maphash (lambda (key value)
                  (format t "  ~S~@[ (~S)~] -> ~S~%"
                          (first key) (second key) value))
-               (gf-delegation-table gf))))
+               (gf-delegation-table gf)))
+  (values))
 
+;;; ============================================================
+;;; End of conflict-semantics.lisp
+;;; ============================================================
