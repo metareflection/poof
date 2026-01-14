@@ -243,17 +243,22 @@ With Racket: racket pommette.rkt
 
 (def Y stateful-Y)
 
-(def (lazy-Y f)
+;; lazy convention: arguments are delayed, results are forced
+;; TODO: add types for these and for other variants. ^ X = delayed X
+(def (lazy-Y f) ;; : ^(^X→X)→X
   (letrec ((p ((force f) (delay p)))) p))
-(def (lazy-B x y z)
+(def (lazy-B x y z) ;; : ^(^Y→X)→^(Z→Y)→Z→X
   ((force x) (delay ((force y) z))))
-(def (lazy-D x)
+(def (lazy-D x) ;; : µX.^(X→A)→A
   ((force x) x))
-(def (lazy-Y-with-combinators f)
+(def (lazy-Y-with-combinators f) ;; : ^(^X→X)→X
   (lazy-D (delay (lazy-B f (delay lazy-D)))))
-(def (lazy-Y-expanded f)
+(def (lazy-Y-expanded f) ;; : ^(^X→X)→X
   ((λ (x) ((force x) x))
    (delay (λ (x) ((force f) (delay ((force x) x)))))))
+
+;; TODO: would this work? with what type?
+;; (def (Y^ f) (letrec ((x (delay (f x)))) x))
 
 ;; Compute Factorial 6 with Y
 (def (eager-pre-fact f n)
@@ -695,6 +700,10 @@ With Racket: racket pommette.rkt
 (def (updateOnlyLens u)
   (makeLens identity u))
 
+;; updateLens : SkewLens r i p s j q → Update j q jj qq → SkewLens r i p r jj qq
+(def (updateLens l u)
+  (makeLens (l 'view) (compose (l 'update) u)))
+
 (def outer-rec (record (inner (record (val 5)))))
 (def inner-val-lens (fieldLens* 'inner 'val))
 (def (double-ext _self super) (* 2 super))
@@ -733,16 +742,32 @@ With Racket: racket pommette.rkt
 (def (viewOnlyLens v)
   (makeLens v identity))
 
+;; viewLens : SkewLens r i p s j q → View rr r → SkewLens rr i p r j q
+(def (viewLens l v)
+  (makeLens (composeView (l 'view) v) (l 'update)))
+
 (expect
    ;; viewOnlyLens: view transforms, update is identity
   (viewOnlyLens mul10 'view 7) => 70
   (viewOnlyLens mul10 'update add1 7) => 8)
 
-
-;; TODO: examples and tests for all these
-
 ;;;; 8.1.5 Optics for Specifications, Prototypes and Classes
 
+;;; Specification Methods
+(def widget-shop
+  (record (widgets (record (foo (record (x-pos 100) (y-pos 500)))))))
+(expect
+ (skewExt
+  (updateLens (fieldLens* 'widgets 'foo) (fieldUpdate 'x-pos))
+  (λ (_self super) (+ super 50))
+  widget-shop
+  widget-shop
+  'widgets 'foo 'x-pos) => 150)
+
+;;; Prototype Specification
+(def rprotoSpecView spec←rproto)
+(def rprotoSpecSetter rproto←spec)
+(def rprotoSpecLens (lensOfGetterSetter rprotoSpecView rprotoSpecSetter))
 
 #||#
 #|

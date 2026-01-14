@@ -446,19 +446,6 @@ and should be a natural part of the OO ecosystem.
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLEH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-Smalltalk and most OO languages never fully embraced concurrency,
-that remains an afterthought (if a thought at all) in most OO languages,
-despite being an essential element of the original target programming model;
-further method invocations in OO languages are almost always synchronous,
-as opposed to asynchronous in Erlang or in the original SIMULA.
-
-It is not unusual that a field is misnamed: a concept is usually named
-as soon as it starts to become relevant to distinguish it
-from other concepts it may have originated from, but before it is well-understood.
-The name then reflects the intuitions, expectations and misunderstandings of early innovators,
-before later theorists settle on what was the essence of their innovations.
-}
-
 Lack of awareness of this conflation
 can cause much confusion among students of OO.
 So can, to a lesser extent,
@@ -469,53 +456,22 @@ the stateful imperative model used within those modules in a lot of traditional 
 or more generally of the essence of OO vs features of popular OO languages
 that may not actually be essential to OO.
 @note{
-Also confusing is OO often being touted opposite to Functional Programming (“FP”)
-rather than complementary with it.
-While FP emphasizes reducing problems into neatly separable, simpler subproblems
-that can be solved independently and then composed together,
-Object Orientation enables the chipping away of irreducible problems
-that cannot be thus reduced into aspects that while connected
-can be addressed in many successive layers.
-FP is simpler if you can fit those problems in your mind,
-and understand the abstractions required to decompose them.
-OO is easier if you cannot.
-People very bright yet not ambitious enough may never understand the appeal of OO.
-People who lack the smarts may never understand the appeal of FP.
-Those of us who, bright as we may be, aspire to greater software than fits in our brains,
-can appreciate both, and how they nicely complement each other.
+  Also confusing is OO often being touted opposite to Functional Programming (“FP”)
+  rather than complementary with it.
+  While FP emphasizes reducing problems into neatly separable, simpler subproblems
+  that can be solved independently and then composed together,
+  Object Orientation enables the chipping away of irreducible problems
+  that cannot be thus reduced into aspects that while connected
+  can be addressed in many successive layers.
+  FP is simpler if you can fit those problems in your mind,
+  and understand the abstractions required to decompose them.
+  OO is easier if you cannot.
+  People very bright yet not ambitious enough may never understand the appeal of OO.
+  People who lack the smarts may never understand the appeal of FP.
+  Those of us who, bright as we may be, aspire to greater software than fits in our brains,
+  can appreciate both, and how they nicely complement each other.
 }
 
-@subsubsection{Method Combinations}
-Another innovation of Flavors
-was the notion of method combinations:
-users can specify for each method name,
-how the methods with that name defined in all of a class’s class precedence list
-would be combined into an @emph{effective method} for that class.
-
-The method combination can be the standard combination after linearization above
-(enriched with @code{before after} methods,
-that can notably be used to emulate the behavior of SIMULA);
-or it can apply a simple monoidal operation on their result
-(@code{+ max min or and list append nconc progn});
-or it can be whatever the user specifies,
-including an error-on-conflict strategy if desired.
-
-Later, the introduction of builtin @code{around} methods
-would also enable code wrappings not expressible
-merely with before and after methods.
-Furthermore, in New Flavors @~cite{Moon1986Flavors},
-CommonLOOPS @~cite{bobrow86commonloops} and
-CLOS @~cite{gabriel1991clos},
-as inspired by T’s unification of functions and objects @~cite{Rees82t:a adams88oopscheme},
-a “generic function” would embody the “calling a method of a given name”
-and become the locus for this specification of a method combination.
-@; TODO quickly mention multi-methods, cite LOOPS, Cecil, Fortress and more.
-
-Importantly for our discussion, the use of class-wide class precedence lists
-ensures consistency of semantics across all classes, methods, method combinations,
-effective methods, and generic functions.
-Class precedence lists also offer a simple interface
-for users defining their own method combinations.
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLOH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
@@ -613,136 +569,21 @@ And the other general solution in last resort is to introduce a do-nothing wrapp
 to shield a superclass from a local local precedence order constraint,
 just like the @code{EngineLess} shields @code{DayBoat}.
 
-@section{Conclusion: Best of Both Worlds}
-@subsection{Findings}
-@subsubsection{Restating the Obvious}
-Our presentation of Object-Orientation and Inheritance
-only included what should have been obvious and well-known lore by now.
-Yet so far as our bibliographical search could identify,
-a lot of it seems to be
-unstated in academic literature, @; cite more papers and books that miss the point?
-or implicitly assumed by ones and blatantly ignored by others,
-or once mentioned in an otherwise obscure uncited paper
-— and overall largely acted against in practice
-by most language designers, implementers and users.
-
-Without claiming originality in that part of this article,
-we would like to insist on our simple explanation and rationale for each of:
-@itemize[
-@item{The relationship between OO, modularity and incrementality.}
-@item{The relationship between prototypes, classes, objects and conflation.}
-@item{The relative advantages of single, mixin and multiple inheritance.}
-@item{Why linearization beats manual conflict resolution.}
-@item{The importance of well-documented yet oft-ignored consistency constraints on linearization.}]
-
-@subsubsection{Struct Suffix}
-We identified the @emph{struct suffix} constraint as
-the one semantic constraint necessary and sufficient
-to achieve the optimizations associated with single inheritance,
-even in the context of multiple inheritance.
-The constraint was implicitly enforced by Scala,
-but does not seem to have been identified and made explicit in any publication yet.
-
-@subsubsection{C4 Algorithm}
-We implemented a new C4 Algorithm that combines all the above features.
-While each of these features may have been implemented separately in the past,
-ours seems to be the first implementation to combine them.
-
-@subsection{Implementation}
-@subsubsection{Our Scheme}
-We have implemented the C4 algorithm
-in our open-source dialect of the Scheme programming language, @anonymize[""]{Gerbil Scheme,}
-and it will be available in the next release@anonymize[""]{ 0.18.2}.
-
-Our users can enjoy the benefits, as our language can legitimately claim
-to have the single Best Inheritance mechanism of them all.
-At least until other language implementers copy our language.
-
-@subsubsection{Code Size}
-The C4 algorithm itself is under 200 lines of code with lots of explanatory comments.
-
-The entire object system is about 1400 lines of commented code for its runtime,
-including all runtime optimizations enabled by single inheritance where appropriate.
-
-The compile-time and macro-expansion-time support for the object system are harder to account for,
-not being isolated in their own files but spliced all over.
-We estimate they total between one and two thousand lines of code,
-wherein the entire compiler and the language prelude each total a bit over 8000 lines of code.
-However, they are also the parts of our system that implementers of other languages
-will least care to reuse.
-
-Overall, the complexity of our implementation is quite low, and
-it shouldn’t be too much effort for a dedicated language implementer
-to port our technology to their language.
-
-@subsubsection{Open Source}
-We invite all language implementers to likewise adopt C4
-in the next version of their object system,
-whether class-based or prototype-based, static or dynamic, etc.
-Then your users too can enjoy the Best Inheritance in the World.
-
-@section{Data-Availability Statement} @appendix
-Our code is available in our github repository as part of our Scheme implementation.
-We will reveal the address after deanonymization.
-
-For the sake of artifact review, we will build an anonymized implementation
-of the C4 algorithm isolated from the rest of our object system.
-We will include a few execution test cases.
-We will not attempt to anonymize a complete variant of our object system,
-which would be overly costly and would easily fail to be anonymous.
-
-The algorithm description we give above
-should already be sufficient for any person skilled in the art
-to reimplement and adapt the C4 algorithm to their own object system.
-Furthermore, the artifact we provide will only allow a language implementer
-to compare their implementation to ours and check for any bugs in their reimplementation.
-
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLUH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-To avoid exponential recomputations, though, it is preferrable to emulate laziness
-by having wrappers be functions of two delayed computations,
-with the delayed fixed-point combinator @r[Y^] as follows:
-  (define (instantiate-wrapper^ w b) (Y^ (λ (s) (w s b))))
-  (define (Y^ f) (letrec ((x (delay (f x)))) x)) ; fixed-point}
-}:
-
-@subsection{Claims}
-
-The present paper claim the following original contributions:
-
-@TODO{see defsection in poof.scrbl, use that here and everywhere.}
-
-@itemize[
-@;#:style enumparenalph
-@item{Dispel common misconceptions as to what OO is about (@seclink{what_oo_is_not_about}).}
-@item{Propose criteria for Modularity (@seclink{modularity})
-  and Incrementality (@seclink{incrementality})
-  in terms of information needed to make software modifications.}
-@item{Elucidate how Incrementality and Modularity go together (@seclink{incremental_modularity}).}
-@item{Map the basic concepts of OO to modularity and incrementality
-  (@seclink{internal_incremental_modularity}),
-  as embodied in the simplest kind of OO Prototypes
-  using mixin inheritance (@seclink{simplest_prototypes}).}
-@item{Explain how single inheritance
-  is less expressive and modular than mixin inheritance (@seclink{single_inheritance}),
-  that is less so than multiple inheritance (@seclink{multiple_inheritance}).}
-@item{Show how “structs” with the performance benefits of single-inheritance
-  can be expressed in a system with multiple-inheritance
-  (@seclink{single_and_multiple_inheritance_together}).}
 @item{Discuss how purity and laziness make OO more modular,
   and solve difficult initialization order issues (@seclink{laziness}).}
 @; ^ and are actually used in practice in most OO languages—but only at the metalevel.
-@item{Discuss how purity and laziness make OO more modular,
-  and solve difficult initialization order issues (@seclink{laziness}).}
-@; ^ and are actually used in practice in most OO languages—but only at the metalevel.
-@item{Expose the conflation between prototypes and instances (or classes and types)
-  at the heart of most OO, and why it contributes to modularity (@seclink{objects}).}
+
 @item{Clarify the relationship between Prototype OO and Class OO,
   and why Prototypes, being first-class, enable more modularity (@seclink{classes}).}
+
 @item{Generalize OO methods from fixed slots to functional lenses,
   very simply enable modular features like method combinations (@seclink{optics}).}
+
 @item{Show how the “typeclass” approach can be more composable and thus
   more modular than the “class” approach (@seclink{typeclasses}).}
+
 @item{Provide a pure functional modular solution to issues with
   multiple dispatch vs single dispatch, friend classes or mutually recursive classes,
   by making library namespace management an explicit part of the language
@@ -751,21 +592,7 @@ The present paper claim the following original contributions:
 Many of the concepts and relationships we tackle have long been part of OO practice and lore,
 yet have been largely neglected in scientific literature and formalization attempts.
 
-
 @@@
-
-History:
-Not Burroughs B5000, though its builtin support for dispatch tables is cool..
-First integrated OO is not Ivan Sutherland's Sketchpad (1963)
-Not Alan Kay 1966 inventing the word, though it's an essential step
-Arguably but also arguably not Dahl and Nygaard (1967) first implementing classes, though it is a breakthrough and quite close to it.
-Not Smalltalk 1972
-Not Hewitt's Actors (PLANNER 1969, Actors 1973; got delegation and inheritance in 1979 with help from Kahn)
-Not Frames or KRL (1975, "inheritance", almost)
-Smalltalk 1976 - YES
-Directory 1976 - YES
-ThingLab 1977 - YES
-
 
 
 https://x.com/Ngnghm/status/1976680711345299533
@@ -1055,9 +882,6 @@ Instead of being viewed as (modular) extensions that you compose,
 they could be (modular) numbers that you add or multiply or get the maximum or minimum of;
 they could be lists that you concatenate, or sets that you merge;
 Any monoidal operation will do: associative, and with a neutral element:
-@Code{
-  
-}
 
 
 

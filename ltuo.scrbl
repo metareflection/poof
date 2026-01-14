@@ -1,8 +1,7 @@
 #lang scribble/report
 @; -*- Scheme -*-
 
-@; TODO: a ltuo.bib with per-entry summary and commentary tailored to the relevance of the cited piece
-@; to the current one.
+@; TODO: use bookcover to create a book cover.
 
 @;{ TODO: get this header in the HTML??? Or somehow the CSS?
 @head-extra[
@@ -578,7 +577,7 @@ Is one of the usual variants superior to the others in every way?
 If not, is there a combination of them, or a superset of them, that is?
 Some languages notably support forms of both single inheritance and multiple inheritance,
 though with some constraints:
-Lisp @~cite{cltl2}, Ruby @~cite{Matsumoto2001}, Scala @~cite{scalableComponentAbstractions2005}.
+Lisp @~cite{CLtL2}, Ruby @~cite{Matsumoto2001}, Scala @~cite{scalableComponentAbstractions2005}.
 Would the best way to do inheritance subsume these combinations?
 If so, how does it relate to the multiple flavors of multiple inheritance?
 
@@ -676,7 +675,7 @@ for linearization algorithms in the context of multiple inheritance,
 and the state-of-the-art in satisfying them, the C3 algorithm.
 Finally, I discuss how to combine multiple and single inheritance,
 and examine the existing solutions adopted by
-Common Lisp @~cite{cltl2}, Ruby @~cite{Matsumoto2001}
+Common Lisp @~cite{CLtL2}, Ruby @~cite{Matsumoto2001}
 and Scala @~cite{scalableComponentAbstractions2005}.
 I then propose my solution, a linearization algorithm I call C4,
 that satisfies all the constraints of C3 plus
@@ -979,7 +978,7 @@ ThingLab @~cite{Borning1977 Borning1979 Borning1981}@xnote["."]{
   ThingLab was built on top of Smalltalk by members of the same team at PARC,
   and oscillated between having or not having classes in addition to prototypes.}
 Plenty more Prototype OO or “class-less” OO languages followed
-@~cite{Hewitt1979Security Rees1982T adams88oopscheme chambers1989efficient Lawall89SelfInScheme Salzman2005PrototypesMultipleDispatch jsonnet nix2015 poof2021}.
+@~cite{Hewitt1979Security Rees1982T Adams1988oopscheme chambers1989efficient Lawall89SelfInScheme Salzman2005PrototypesMultipleDispatch jsonnet nix2015 poof2021}.
 There are a lot more Prototype OO languages than I could have time to review @~cite{WikiProto},
 but prominent among them is JavaScript @~cite{Eich1996JavaScript},
 one of the most used programming languages in the world @~cite{TopPL2022},
@@ -990,7 +989,7 @@ Moreover, I will argue that Prototype OO @~cite{Borning1986}
 is more general than Class OO, that is but a special case of it @~cite{Lieberman1986}
 (see @secref{CaPfT}, @secref{RCOO}).
 And I will even argue that you can recognizably have OO
-with neither prototypes nor classes, as in T @~cite{adams88oopscheme}
+with neither prototypes nor classes, as in T @~cite{Adams1988oopscheme}
 (see @secref{MFtPaC}, @secref{MOO}, @secref{ROOfiMC}).
 Despite common misinformed opinions to the contrary,
 @principle{Class-less OO is part and parcel of the OO tradition},
@@ -1275,6 +1274,10 @@ that Alan Kay also once mentioned was essential for OO@xnote["."]{
   including the pure applicative functional paradigm.
 }
 
+Most OO languages have no support whatsoever for concurrency,
+or then again only as an afterthought added years or decades
+after the language was originally designed,
+and not integrated in any meaningful way with OO message dispatch.
 Moreover, many OO languages generalize and extend their method dispatch mechanism
 from “single dispatch” to “multiple dispatch”@~cite{
   Bobrow1986CommonLoops Bobrow1988CLOS CecilMultimethods Allen2011Type}.
@@ -1358,8 +1361,8 @@ that describes a different set of programming languages and patterns@xnote["."]{
   if you knew beforehand what you would discover, you would already have discovered it.
   An invention is always surprising, original, and never, ever,
   exactly what you knew in advance it would be—or else
-  the invention happened earlier and @emph{then} was surprising and original.
-  Also, an invention is shaped by the technical constraints of the time—some of which
+  the invention happened earlier, back when it was still surprising and original indeed.
+  Also, an invention is shaped by the technical constraints of its time—some of which
   the inventor may lift, but not always those anticipated.
 }
 
@@ -1821,7 +1824,7 @@ of an OO framework actual or imagined, but then again sometimes they may@xnote["
 
 Furthermore, the fundamental patterns of OO can exist and be usefully leveraged in a language
 that lacks any notion of object, merely with the notions of specification and target:
-Indeed, Yale T Scheme has a class-less “object system” @~cite{adams88oopscheme},
+Indeed, Yale T Scheme has a class-less “object system” @~cite{Adams1988oopscheme},
 wherein the authors call “object” any language value,
 and “instance” those records of multiple function entry points used as the non-extensible targets
 of their extensible specifications, themselves called “components”,
@@ -2023,7 +2026,7 @@ used multiple inheritance,
 @~cite{Cannon1979 Weinreb1981Chinual3},
 refined and improved by successor Lisp object systems
 New Flavors@~cite{Moon1986Flavors}, CommonLoops@~cite{Bobrow1986CommonLoops}
-and CLOS@~cite{Bobrow1988CLOS cltl2}.
+and CLOS@~cite{Bobrow1988CLOS CLtL2}.
 Since then, many languages including Ruby, Perl, Python and Scala
 correctly adopted the basic design of Flavors (though none of its more advanced features)—I
 will call them @emph{flavorful}@xnote["."]{
@@ -2275,7 +2278,11 @@ rather than delegation (as it isn’t particularly “message passing”, just c
 
 
 @subsection{Epistemological Digression}
-
+@epigraph{
+  Knowledge is something which you can use.
+  Belief is something which uses you.
+  @|#:- "Idries Shah"|
+}
 Many people will inevitably quibble about my definition or characterization of OO.
 Though a treatise of epistemology is beyond the scope of this book, @;{TODO cite}
 I can briefly answer the most frequent epistemological questions as follows.
@@ -2594,7 +2601,25 @@ complex, ugly, and hard to use, develop and maintain.
 @principle{A design is more modular if it enables developers to cooperate more while coordinating less}
 compared to alternative designs that enable less cooperation or require more coordination,
 given some goals for developers, a space of changes they may be expected to enact in the future, etc.
-More ability to code one’s part, while requiring less knowledge about other people’s parts.
+More ability to code one’s part, while requiring less knowledge about other people’s parts@xnote["."]{
+  Note how, in the great ledger of software development costs and benefits,
+  coordination counts negatively, in the column of costs:
+  coordination, whether by one-on-one communication, meetings, emails, documents, chat rooms,
+  code comments, edicts principled or whimsical, reports, processes, etc.,
+  all take their toll on the developers’ resources.
+  Hopefully, the coordination methods used come not only with benefits greater than the costs,
+  but also with a greater profit (difference between benefits and costs) than
+  possible alternative methods considering the total capital immobilized in the development process.
+  However there is nothing automatic to that, contrary to the apparent belief of many a manager.
+  If the benefits of active business practices in general
+  tend to be commensurate with and superior to their costs,
+  that is only the precarious result of market forces,
+  through the feedback of businesses persisting in their bad practices losing resources
+  and eventually stopping activity. Selection bias of the businesses still alive.
+  But these market forces do not happen magically outside of human activity, or outside yourself:
+  your actions partake in those market forces, and so will your going bankrupt
+  if you persist in pursuing counter-productive practices.
+}
 
 For instance, the object-oriented design of the Common Lisp build system
 ASDF@~cite{ASDF2 ASDF3}
@@ -4863,7 +4888,7 @@ the principles being modularity, extensibility, and first-class entities.
 I will shortly extend this model to support more features
 (at the cost of more lines of code).
 Yet my “object system” so far has no classes, and indeed no objects at all:
-instead, like the object system of Yale T Scheme @~cite{adams88oopscheme},
+instead, like the object system of Yale T Scheme @~cite{Adams1988oopscheme},
 on top of which its windowing system was built,
 my system is made of target records and their specifications,
 that can do almost everything that a Prototype object system does,
@@ -6792,7 +6817,8 @@ mix : ModExt r1 i1∩p2 p1 → ModExt r2 i2 p2 → ModExt r1∩r2 i1∩i2 p1∩p
 @principle{In Single Inheritance, the specifications at stake are open modular definitions},
 as studied in @secref{MFCM},
 simpler than the modular extensions of mixin inheritance from @secref{MFCME}@xnote["."]{
-  In @citet{Cook1989 bracha1990mixin}, Cook calls “generator” what I call “modular definition”,
+  In @citet{Cook1989}, @citet{bracha1990mixin},
+  Cook calls “generator” what I call “modular definition”,
   and “wrapper” what I call “modular extension”.
   But those terms are a bit too general, while Cook’s limitation to records
   makes his term assignment a bit not general enough (only closed and specialized for record).
@@ -6800,7 +6826,7 @@ simpler than the modular extensions of mixin inheritance from @secref{MFCME}@xno
   I already used the term “wrapper” in a related yet more specific way
   when discussing wrapping references for recursive conflation in @secref{RC};
   and a decade before Cook, Cannon @~cite{Cannon1979} also used a notion of wrapper
-  closer to what I use, in Flavor’s predecessor to CLOS @c{:around} methods @~cite{cltl2},
+  closer to what I use, in Flavor’s predecessor to CLOS @c{:around} methods @~cite{CLtL2},
   or in the more general case, to CLOS declarative method combinations.
   @; TODO seclink
   The term “generator” is also too generic, and could describe many concepts in this book,
@@ -7023,7 +7049,7 @@ across all the subclasses of a given class.
 
 @subsection[#:tag "MI"]{Multiple Inheritance}
 
-@subsubsection{Correct and Incorrect Semantics for Multiple Inheritance}
+@subsubsection[#:tag "C&IS4MI"]{Correct and Incorrect Semantics for Multiple Inheritance}
 
 With multiple inheritance (see @secref{MULIO}), a specification can declare
 a list of parent specifications that it inherits from.
@@ -7248,6 +7274,7 @@ synthesizing a child’s modular definition from its parents’ modular definiti
 
 @; TODO See also Malayeri & Aldrich’s 2009 "CZ: Multiple Inheritance without Diamonds" and its citations 43, 46.
 @; TODO Discuss Snyder’s idiotic "make ancestry a tree" idea reprised by C++ and Ada.
+@; TODO refer to later implementation of conflict on top of method combination.
 
 @Paragraph{Cooperation not Conflict}
 To find a better consistent behavior than conflict requires a reassessment
@@ -7449,7 +7476,7 @@ This property was first used in New Flavors @~cite{Moon1986Flavors},
 that calls it “local ordering”.
 CommonLoops @~cite{Bobrow1986CommonLoops} adopted it as
 “local precedence”, “local ordering”, and “local precedence list”.
-CLOS @~cite{Bobrow1988CLOS cltl2} adopts it as “local precedence order”.
+CLOS @~cite{Bobrow1988CLOS CLtL2} adopts it as “local precedence order”.
 Ducournau et al. speak of “local ordering” or “local precedence order”
 @~cite{Ducournau1992Monotonic Ducournau1994Monotonic}.
 C3 says “local precedence order”.
@@ -7616,6 +7643,9 @@ including many features and optimizations fits in few hundred lines of code@xnot
   285 lines with lots of comments, 163 lines after stripping comments and blank lines.
   Even converted to plain Scheme, with additional utility functions,
   it’s under 400 lines of code with comments, under 300 stripped.
+
+  The entire object system under 2000 lines of commented code for its runtime,
+  including all runtime optimizations enabled by single inheritance where appropriate.
 }
 
 @subsubsection{Notes on Types for Multiple Inheritance}
@@ -7937,7 +7967,7 @@ Lisp offered both single inheritance with its @c{struct}s,
 and multiple inheritance with its @c{class}es (nées flavors).
 @; David Moon’s MacLisp Reference Manual (April 1974) does not mention DEFSTRUCT.
 @; Ani/Director is from 1976, but never widely used.
-Since 1988 or so, the Common Lisp Object System (a.k.a. CLOS) @~cite{Bobrow1988CLOS cltl2}
+Since 1988 or so, the Common Lisp Object System (a.k.a. CLOS) @~cite{Bobrow1988CLOS CLtL2}
 even offered a way to interface uniformly with either structs or classes,
 using generic functions and metaclasses.
 Programmers could develop software with the flexibility of classes,
@@ -8725,12 +8755,18 @@ one can focus on a specific method of that specification
 by further adjusting the extension focus using @c{u = (fieldUpdate key)}
 where @c{key} is the identifier for the method.
 Thus, @c{(composeLens (fieldLens* 'foo 'bar) (updateOnlyLens (fieldUpdate 'baz)))}
+or equivalently @c{(updateLens (fieldLens* 'foo 'bar) (fieldUpdate 'baz))}
 will let you specify a method @c{baz}
 for the specification under @c{foo.bar} in the ecosystem, where:
 @Code{
 updateOnlyLens : Update i p j q → SkewLens r i p r j q
 (def (updateOnlyLens u)
   (makeLens identity u))
+
+updateLens : SkewLens r i p s j q → Update j q jj qq →
+     SkewLens r i p r jj qq
+(def (updateLens l u)
+  (makeLens (l 'view) (compose (l 'update) u)))
 }
 
 More generally, given a lens @c{l} to focus on the specification,
@@ -8796,14 +8832,17 @@ To adjust the context without adjusting the extension focus, use:
 viewOnlyLens : View r s → SkewLens r i p s i p
 (def (viewOnlyLens v)
   (makeLens v identity))
+
+viewLens : SkewLens r i p s j q → View rr r →
+    SkewLens rr i p r j q
+(def (viewLens l v)
+  (makeLens (composeView (l 'view) v) (l 'update)))
 }
 
 @subsubsection{Optics for Specifications, Prototypes and Classes}
 
 So far the only primitive lens I showed was the field lens.
 Here are two kinds of lenses that are essential to deal with prototypes and classes.
-
-@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
 
 @Paragraph{Specification Methods}
 
@@ -8812,14 +8851,14 @@ given a Lens @c{l} to focus on a specification from the environment,
 and an Update @c{u} to focus the extension on a method or submethod within that specification,
 one can extend that method of that specification with a modular extension @c{m}, with:
 @Code{
-(skewExt (composeLens l (updateOnlyLens u)) m)
+(skewExt (updateLens l u) m)
 }
 For instance, to move 50 pixels to the right a widget registered under the name “foo”,
 you might use:
 @Code{
-(skewLens (composeLens (fieldLens* 'widgets 'foo)
-                       (updateOnlyLens (fieldUpdate 'x-pos)))
-          (λ (_self super) (+ super 50)))
+(skewExt (updateLens (fieldLens* 'widgets 'foo)
+                     (fieldUpdate 'x-pos))
+         (λ (_self super) (+ super 50)))
 }
 Helper functions might provide terser syntax for common cases,
 but what matters for the purpose of this book is that
@@ -8836,14 +8875,15 @@ based on composing open modular extensions.
 I’ll assume for now that prototypes are records implemented with the @c{rproto} encoding
 from @secref{CfR}. Then, if you have a lens @c{l} to focus onto a prototype,
 you may further focus on the prototype’s specification by further composing @c{l}
-with the following lens:
+with the following lens, after which you can further use lenses
+to modularly extend the specification methods as above:
 @Code{
-(define rprotoSpecView spec←rproto)
-(define rprotoSpecUpdate rproto←spec)
-(define rprotoSpecLens
-  (makeLens rprotoSpecView rprotoSpecUpdate))}
+(def rprotoSpecView spec←rproto)
+(def rprotoSpecSetter rproto←spec)
+(def rprotoSpecLens
+  (lensOfGetterSetter rprotoSpecView rprotoSpecSetter))}
 
-The entire point of @c{rproto} is that the target view is @c{id}.
+The entire point of @c{rproto} is that the target view is @c{identity}.
 However, what the target update should be is an interesting question.
 There are many options; none of them seems universally correct;
 any of them can be a feature or a bug, depending on user intent, but is often a bug;
@@ -8854,35 +8894,33 @@ and so the error behavior is probably the safest one to use by default:
     If some further program extends that prototype, it will restart from the specification,
     and ignore any update otherwise made to fields.}
   @item{If you try to have an update function that arbitrary changes the specification
-    to be a function that constantly returns the current state of the record,
+    to be @c{constant-spec} that constantly returns the current state of the record,
     then the result remains extensible, but in a way that forgets the formulas,
     only remembers the current values.}
-  @item{If you erase the magic spec field,
-    then the object is not extensible through inheritance anymore.}
-  @item{If you make an update an error,
-    then you won’t have to debug very hard surprises.}]
-The effects on the fixpoint can be “interesting”.
-Or you could erase the magic slot for the prototype, but
-that would definitely break the fixpoint.
-Or you could try and be careful about which fields are being updated, and modify
-the prototype just for those fields.
-Or, if your language supports error reporting, you could issue an error
-if someone tries to update the target in any way other than by updating the specification.
+  @item{If you update the target then the magic specification field will be erased by default,
+    and the object will not be extensible through inheritance anymore,
+    unless you make it so again the hard way by explicitly providing a new magic specification field.}
+  @item{If you try to update the target, an error will be thrown,
+    and you won’t have to debug very hard surprises later.}]
+To a first approximation, this corresponds to using variants of these Update functions:
 @Code{
 (def rprotoTargetUpdate/OutOfSync
   identity)
 (def rprotoTargetUpdate/OverwriteSpec
   rproto←record)
 (def rprotoTargetUpdate/NoMoreSpec
-  (λ (r) (extend-record r #f #f)))
+  (extend-record #f #f))
 (define rprotoTargetUpdate/Error
   abort)
 }
 
+@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+
 @Paragraph{Class Instance Methods}
 
-Inasmuch as classes are prototypes, the way to deal with methods on a class are the
-same as for prototypes. To define more refined lenses,
+Inasmuch as classes are prototypes, the way to deal with methods on a class
+are sensibly the same as for prototypes, or a refinement thereof.
+To define more precise lenses,
 I’ll further assume the encoding of @secref{SFCTD}.
 
 To focus on the instance methods of a prototype, you can use
@@ -8890,6 +8928,23 @@ To focus on the instance methods of a prototype, you can use
 and further compose with the @c{(fieldLens method-id)} for a specific instance method.
 Just use the update component if you want to define an extension to that method.
 Similarly with @c{'instance-fields} and the name of the field, to access a field descriptor.
+
+Mind that a class instance method is not pre-parameterized by the class
+(it may be called on an extension to the “current” class that its definition is part of),
+and does not take the class as its parameter; instead,
+it takes as first parameter an instance of the class’s target type,
+The class instance method can extract the class target type descriptor
+from the instance through its magic type descriptor field.
+See the @c{type-of} and @c{instance-call} functions from @secref{SFCTD}.
+The @c{self} parameter to the method extension is usually the type descriptor;
+the @c{super} parameter to the extension is the next method,
+that can be called with the same or updated parameters, as follows:
+@Code{
+(def (my-instance-method-extension self super instance args ...)
+  ... (super instance args ...) ...)
+
+}
+
 
 
 
@@ -8933,10 +8988,110 @@ that contradict it, the winners erasing the losers.
 Win-win interactions rather win-lose, that was a revolution
 that made multiple inheritance sensible when it otherwise wasn’t.
 
-I will quickly present the refined method combinations from CLOS @~cite{cltl2 clhs},
+I will present the more refined generalization of this principle as the
+method combinations from CLOS @~cite{CLtL2 clhs},
 rather than the more limited method combinations of the original Flavors.
 
-@subsubsection{Method Specification}
+The simplest case of method combination is actually
+the usual composition of modular extensions,
+wherein each extension can refer to its super argument
+along a multiple inheritance specification’s precedence list,
+as discussed in @secref{MI}.
+But we can do better.
+
+@subsubsection{Effective Methods and Generic Functions}
+
+With method combinations, a target method is called the effective method,
+and computed based on tagged methods declared by each specification along the way.
+Method tags, known as @emph{method qualifiers}, are some kind of symbols,
+though, in many Lisp or Scheme dialects, a “keyword” may be used that is somehow
+distinct from regular symbols, often with a syntax involving a colon@xnote["."]{
+  Depending on the language or dialect, keywords are typically written with a some variant of
+  a colon @c{:before} (in Common Lisp, where they are self-evaluating subset of symbols),
+  or @c{after:} (in Gerbil Scheme, where they are self-evaluating separate from symbols), or
+  hash-colon @c{#:before} (in Racket, where they second-class syntax unless quoted,
+  and then separate from symbols).
+  Many dialects only have symbols, though many programs may still have a @emph{convention}
+  of using symbols starting or ending with a colon as keyword specifiers in some protocols.
+  Compare also to @c{~labels} or polymorphic @c{`Variants} in OCaml,
+  or a choice of named arguments in many languages.
+}
+In this book, we will use the colon @c{:before} convention of CLOS for method qualifiers,
+to minimize confusion if you look into CLOS documentation
+for detailed semantic specification @~cite{CLtL2 CLHS AMOP}.
+In our source code, we will quote them, since most Scheme dialects will not consider
+that special syntax for self-evaluating keywords as in Common Lisp.
+
+A regular method that is not explicitly tagged by the user
+is implicitly qualified as a @emph{primary method} by the system.
+We will use the @c{:primary} keyword for that in our implementation@xnote["."]{
+  In Common Lisp, primary method are tagged with the unit value @c{NIL}
+  that is also a magic self-evaluating constant symbol, a boolean,
+  the conventional end-of-list marker, and general-purpose
+  null value, default value and unit value.
+  We could similarly have used the less-overloaded but still commonly used
+  boolean false value @c{#f} for the same purpose.
+  Each adaptation of CLOS to a different language will choose its own.
+}
+But beside @c{:primary} methods,
+the @emph{standard method combination}, used by default,
+supports @c{:before} methods that will be executed before the primary methods, and
+@c{:after} methods that will be executed after them, and
+@c{:around} methods that will wrap around the execution of each super method.
+These methods can then enact any kind of setup or cleanup,
+resource allocation and deallocation, locking, error handling, access control,
+argument normalization, etc.,
+that the primary methods can safely rely on.
+Of course, methods thus named only make sense in the context of side-effects;
+but in a pure functional language, they may still be useful,
+just translated into monadic functions that provide equivalent functionality
+in the user’s favorite monad.
+
+But that is not all. CLOS, after Flavors, allows users to select different
+method combinations from the @emph{standard method combination} that is the default.
+With the @c{list} combination, each defined method provides a single answer,
+and the effective method will collect those answers into a list.
+With the @c{append} combination, each defined method may provide a list of answers,
+and the effective method will append those lists into a single one.
+Similar method combinations are available for other monoidal operations:
+@c{+}, @c{*}, @c{min}, @c{max}, @c{and} (boolean short-circuiting logical and),
+@c{or} (boolean short-circuiting logical and), @c{progn} (sequential execution of side-effects).
+Users can define their own simple method combinations with their own monoidal operation,
+that can chain methods defined along the precedence list
+from @c{:most-specific-first} to least specific,
+or @c{:least-specific-first} to most specific.
+
+But users can also define their own method combinations,
+that will compute an @emph{effective method} in whichever arbitrary way they want,
+from whichever methods were declared with whatever qualifiers they want to support,
+ordered whichever way they prefer.
+A method combination could easily implement
+flavorless conflict-style multiple inheritance@xnote["."]{
+  Claude Code in a few minutes created and debugged a working solution for SBCL and CCL
+  using the CLOS MOP, in 800 lines of code and 200 of tests.
+  Yet, the fact that, in over 46 years,
+  no human seems to have ever bothered to implement such a mechanism, much less use it,
+  is a strong symptom that in fact it is a silly thing to do.
+  Claude comments:
+  “once you’ve grasped that methods can @emph{combine} rather than @emph{collide},
+  deliberately implementing collision semantics would feel like building
+  a car that refuses to start if you have both a driver and a passenger.”
+}
+
+The original Flavors adopted the “message passing” paradigm,
+and associated method combinations to messages.
+But its successor New Flavors @~cite{Moon1986Flavors},
+introduced the notion of a @emph{generic function},
+that preserves the usual syntax and semantics of a function,
+and encapsulates the same notion of a named entity you invoke with arguments,
+the behavior of which can be specified in modular extensible ways.
+Method combinations are then associated to such generic functions.
+@;{ adopted by CommonLOOPS @~cite{Bobrow1986CommonLoops}, CLOS, Cecil, Fortress, etc.}
+Generic functions were partly inspired by T’s unification of functions and objects
+@~cite{Rees1982T Adams1988OOPScheme}.
+@; TODO quickly mention multi-methods with secref
+
+@subsubsection{Implementing Method Combination}
 
 Define a method-specification as a derived field next to the effective method
 (or maybe inside it, if conflation or function and object is allowed),
@@ -9007,12 +9162,13 @@ Records as records? Now we’re talking.
 @subsection{Scientific Contributions}
 @epigraph{Early in life I had to choose between honest arrogance and hypocritical humility.
 I chose honest arrogance and have seen no occasion to change.
-@|#:- "Frank LLoyd Wright"|
+@|#:- "Frank Lloyd Wright"|
 }
-
 Here is the part of this book where I actually do the bragging,
 with a list of never-done-before feats I achieved in its book
 or the work that immediately preceded it:
+
+@;TODO add secref's everywhere
 
 @subsubsection{OO is Internal Modular Extensibility}
 I rebuilt Object Orientation (OO) from First Principles,
@@ -9035,7 +9191,7 @@ And it’s portable to any language with higher-order functions.
 @subsubsection{Precise Characterization of those Principles}
 So I may derive OO from them, I first gave novel and precise, though informal,
 characterizations of Modularity and Extensibility, based on objective criteria,
-when familiar notions previously have often invoked a lot but never defined well.
+when familiar notions previously were often invoked a lot but never well defined.
 For Internality, I extended the familiar but not always understood
 notions of “first-class” and “second-class”
 with new notions of “third-class” and “fourth-class”.
@@ -9049,12 +9205,12 @@ OO is not C++, OO is not based on Classes, OO is not imperative,
 OO is not about “encapsulation”, OO is not opposed to Functional Programming (FP),
 OO is not about message passing, OO is not a data model, OO is not rewrite logic.
 
-@subsubsection{OO is naturally Pure Lazy FP}
+@subsubsection{OO is naturally Pure Lazy FP with first-class Prototypes}
 Remarkably, and contrary to popular belief,
 I proved the natural paradigm for OO is Pure Lazy Functional Programming.
 This is the very opposite of the eager imperative model
 that almost everyone associates to OO,
-indeed used by currently popular static Class OO languages.
+indeed used by currently popular second-class Class OO languages.
 Yet in these languages, OO only happens at compile-time,
 indeed in a pure lazy dynamic functional programming language,
 though often a severely stunted one.
@@ -9069,6 +9225,8 @@ the semantics of objects was extremely complex and ad hoc.
 After making it explicit, the semantics of objects is astoundingly simple,
 it just involves a regular use of the simplest of recursion operators, the fixpoint.
 Plus an implicit pair to bundle specification and target together.
+I also argued why conflation, if properly understood, can increase modularity,
+even though when misunderstood it brings lost of harmful confusion.
 
 @subsubsection{Open Modular Extensions as Fundamental}
 Compared to previous theories that only consider @emph{closed} modular extensions
@@ -9082,13 +9240,42 @@ my @emph{open} modular extensions @emph{vastly} simplify OO, by enabling:
         up to entire ecosystems of mutually recursive prototypes}]
 
 @subsubsection{Flavorful Multiple Inheritance is Most Modular}
-I explained why flavorful multiple inheritance with local order and monotonicity
-is more expressive and more modular than the alternatives,
-be it less consistent flavorful multiple inheritance,
-flavorless multiple inheritance, mixin inheritance, single inheritance, or no inheritance.
-I also explained why so many great computer scientists
-got stuck into the “conflict” view of multiple inheritance
+Using my characterization of modularity, I could prove that the following variants of inheritance
+are in order of strictly decreasing modularity:
+(1) flavorful multiple inheritance with local order and monotonicity,
+(2) less consistent flavorful multiple inheritance,
+(3) mixin inheritance,
+(4) flavorless “conflict” multiple inheritance,
+(5) single inheritance, and
+(6) no inheritance.
+And I explained why so many great computer scientists
+got stuck into the flavorless “conflict” multiple inheritance
 and how and why the “harmonious combination” view is so much better.
+
+@subsubsection{The Prefix Property, not Single Inheritance, matters}
+I explained why exactly single inheritance is more performant
+than other kind of inheritance so far.
+I precisely identified the @emph{semantic} constraint that enables the extra performance:
+the @emph{prefix property},
+when other authors were incorrectly associating the performance with the
+more @emph{syntactic} constraint of single inheritance@xnote["."]{
+  More precisely, the prefix property is a semantic constraint
+  on the context of future use of a specification.
+  While single inheritance is either a syntactic constraint on how the specification is defined.
+  You could insist on calling that a semantic constraint, too:
+  a semantic constraint on the text of past specification construction.
+  But beware not to make the concept of “semantic” completely useless by
+  declaring everything semantic, thus making it incapable of discrimination.
+  And what is a syntactic constraint if not such semantic constraint
+  on the text of past specification construction?
+  Anyway, this shift from text/past to context/future is what matters, call it what you may.
+}
+I found that this property is actually compatible with mixin inheritance and multiple inheritance,
+wherein it can enable the same performance improvements for specifications
+for which the system enforces the property.
+I realized that some languages (including Ruby, Strongtalk, Racket, Scala)
+may have relied on this property before in contexts beyond mere single inheritance;
+yet so far as I can tell their authors never precisely identified the property.
 
 @subsubsection{There is an Optimal Inheritance}
 I implemented a new variant of inheritance.
@@ -9096,13 +9283,12 @@ It is more than just combining previous ideas,
 such as tucking C3 onto the design of Ruby or Scala,
 though even that, or just my optimization of C3 from O(d²n²) to O(dn),
 would have been a (modest) contribution:
-I also showed that the design is necessary to fulfill a higher purpose of optimality;
-and not arbitrary, not just a clever hack made necessary
-for backward compatibility with existing infrastructure:
-optimal inheritance subsumes both multiple inheritance and single inheritance,
-being no less modular, no less expressive and no less performant
-than any of the known forms of inheritance.
-This optimal inheritance is now part of @(GerbilScheme);
+I also showed that the resulting design is necessary to fulfill a higher purpose of optimality:
+it subsumes multiple inheritance, from which it keeps the maximum modularity,
+and single inheritance, from which it keeps the maximum performance.
+It is not arbitrary, not just a clever hack made necessary
+for backward compatibility with existing infrastructure.
+This Optimal Inheritance, as implemented by my C4 algorithm, is now part of @(GerbilScheme);
 you can easily port my code to add it to your own language.
 
 @subsection{Why Bragging Matters}
@@ -9286,15 +9472,16 @@ What should I pay attention to?
 What are the notable achievements, and especially the underrated gems, in that work?
 What traps did the author fall into that the reader should be wary of?
 What historical context makes that work important?
-What relevant words have changed meanings since this text was written?
+What crucial words shifted in meaning since this text was written?
+What concepts does it touch that were only fully identified later?
 What does the citing author think of the cited work, and
 how does that differ from the general opinion of said works?
 Should I read the paper or not? If not, what should I know of it?
 If yes, what need I know to make the best of the reading?
 
 As an author, I need to have those notes anyway, for my own use,
-because there are far too many of those articles for me to remember details about each.
-And many of those papers I read, I definitely want to forget, to make space for more worthy readings;
+because there are far too many of those works for me to remember details about each.
+Many of those writings I read, I definitely want to forget, to make space for more worthy readings;
 yet not without making a note somewhere, so I never have to re-read those forsaken papers,
 even if need to revisit the topic—which I definitely do many times over while writing.
 I deem it my duty as an author to share my notes with my readers.
@@ -9305,16 +9492,16 @@ My notes are opinionated. They skip over aspects of cited works that I didn’t 
 at least for this book.
 They also lay judgement upon some authors.
 My judgements are summary, based on limited information
-about the authors and their works—strong opinions, weakly held.
+about the authors and their works—@emph{strong opinions, weakly held}.
 I’ll be happy to be proven wrong, or to be shown nuances I missed.
-But those are the best opinions I could make, and still worth sharing.
+Yet those are the best opinions I could make, and still worth sharing.
 @principle{Always judge a book by its cover}:
 that’s the only information you have before you may decide to even open the book.
 But be ready to revise your judgement after you get more information.
 
-Most (all?) of the papers and books listed below are available online for free—but
+Most (all?) of the publications listed below are available online for free—but
 not always from their DOI (Digital Object Identifier).
-I trust my readers to locate free copies if they try hard enough to circumvent
+I trust my readers to locate free copies if they care to circumvent
 “legal” monopoly middlemen.
 
 
