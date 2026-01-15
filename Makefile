@@ -88,11 +88,11 @@ eoomi: build/eoomi2024.pdf
 	$(PDFVIEWER) $< $P
 
 # Side paper: LTUO
-build/ltuo.pdf: ltuo.scrbl ltuo.bib header.tex util/eval-check.rkt util/examples-module.rkt util/util.rkt build/resources
+build/ltuo.pdf: ltuo.scrbl ltuo.bib header.tex util/eval-check.rkt util/examples-module.rkt util/util.rkt build/resources $(wildcard ltuo_*.scrbl)
 #scribble --dest build --pdf --style header.tex ltuo.scrbl
 #	cd build ; scribble --pdf ../ltuo.scrbl
 	scribble --dest build --pdf ltuo.scrbl
-build/ltuo.html: ltuo.scrbl ltuo.bib util/eval-check.rkt util/examples-module.rkt util/util.rkt build/resources
+build/ltuo.html: ltuo.scrbl ltuo.bib util/eval-check.rkt util/examples-module.rkt util/util.rkt build/resources $(wildcard ltuo_*.scrbl)
 	scribble --dest build --html ltuo.scrbl
 ltuopdf: build/ltuo.pdf
 ltuo: build/ltuo.html build/ltuo.pdf

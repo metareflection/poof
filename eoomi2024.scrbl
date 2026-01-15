@@ -959,3 +959,23 @@ And you make me realize I have the opposite issue: that I should make it clearer
 
 Mutable State in Smalltalk and CL is thin 2nd class encapsulation of 2 1st-class concepts,
 the getter and the setter. (though can be seen as 1st class, with reflection)
+
+
+Generic functions were partly inspired by T’s unification of functions and objects
+@~cite{Rees1982T Adams1988OOPScheme}.  <=== WHY DID I EVEN WRITE THAT??? IS THERE A SOURCE?
+
+
+After chatting with Claude, I think I understand Beta:
+- a pattern is "just" a second-class constant specification self→record
+- when instantiating it, you compute the fixpoint then must immediately call its main entry point.
+- main returns self if no enter/exit.
+
+Ugly asymmetry after computing fix(spec) you must immediately call init method:
+no enter, no exit: input (), do, output self
+enter, no exit: input enter, do, output ()
+no enter, exit: input (), do, output exit
+enter, exit: input enter, do, output exit
+
+But there's no implicit or explicit self variable in Beta, so make the fixpoint record accessible, the no enter no exit option is the only way.
+And in presence of enter, it's a function so makes more sense to return unit.
+Makes sense, but still ugly.
