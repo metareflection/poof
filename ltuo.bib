@@ -869,7 +869,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 1986
 
-@book{cardelli1986understanding,
+@book{Cardelli1986Understanding,
   title={On understanding types, data abstraction, and polymorphism},
   author={Cardelli, Luca and Wegner, Peter},
   year={1986},
@@ -892,7 +892,21 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   booktitle={OOPLSA},
   pages={214--223},
   year={1986},
-  url={https://web.media.mit.edu/~lieber/Lieberary/OOP/Delegation/Delegation.html}
+  url={https://web.media.mit.edu/~lieber/Lieberary/OOP/Delegation/Delegation.html},
+  note={.
+    This is a rightfully influential paper about Prototype OO, as compared to Class OO,
+    which he unhelpfully identifies with the respective underlying “delegation” and “inheritance”
+    mechanisms rather than the nature of the target of an identical specification mechanism.
+    Lieberman starts with philosophical underpinnings of these two idea-complexes,
+    which is quite interesting from a historical and psychological point of view,
+    but has little relevance to a technical discussion decades later
+    on the semantics of OO, its proper use or implementation.
+    He then contrasts how the two OO paradigms are typically used to represent knowledge,
+    how they compare in expressiveness, efficiency, concurrency issues,
+    suitability for interactive use.
+    He notably explains how to implement inheritance (i.e. Classes)
+    in terms of delegation (i.e. Prototypes).
+  }
 }
 
 @InProceedings{Borning1986,
@@ -902,6 +916,12 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   pages={36--40},
   year={1986},
   doi={10.5555/324493.324538},
+  note={.
+    Alan Borning proposes Prototype as an alternative to Classes for OO.
+    He shows the model, and how to use it and to implement it.
+    Sadly, he fails to explain how to express classes directly as Prototypes
+    (unlike Lieberman 1986, that he cites).
+  }
 }
 
 @article{Moon1986Flavors,
@@ -1021,12 +1041,46 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 1987
 
+@article{Ungar1987,
+  title={SELF: The power of simplicity},
+  author={David M. Ungar and Randall B. Smith},
+  journal={LISP and Symbolic Computation},
+  year={1987},
+  month=dec,
+  pages = {227–242},
+  numpages = {16},
+  location = {Orlando, Florida, USA},
+  series = {OOPSLA '87}
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume = {22},
+  number = {12},
+  issn = {0362-1340},
+  doi={10.1007/BF01806105},
+  note={.
+    The original paper about the influential language Self,
+    an OOPL in the tradition of Smalltalk,
+    but with Prototypes instead of Classes at the basis of the system.
+    This contrasts with the (cited) systems by Borning,
+    that were implemented on top of Smalltalk’s classes.
+    At that time, the authors speak of inheritance, not delegation, though they cite Lieberman 1986.
+    (Flavorless) multiple inheritance is not implemented yet,
+    but is listed first in the Work in Progress section.
+    Encapsulation is listed next, implied as public vs private mechanisms.
+    The many boxes-and-arrows diagrams indicate a low-level of abstraction;
+    the section about Closures requiring “separate provision for both objects and closures”
+    shows that they do not get it, especially since their bibliography includes the T manual,
+    that unifies the two.
+    Let’s just say that the authors and I have notably different notions of simplicity.
+  }
+}
+
+
 % TODO: re-read it. Some overly formal bits.
 % Starts by citing Lieberman 1986. Only single inheritance.
 % focuses on storage for variables and methods
 % 2.1 "Inheritance schemes involve two kinds of objects: classes and instances" - Yikes
-
-@article{stein1987delegation,
+@article{Stein1987Delegation,
   title={Delegation is Inheritance},
   author={Stein, Lynn Andrea},
   journal={ACM SIGPLAN Notices},
@@ -1034,7 +1088,22 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   number={12},
   pages={138--146},
   year={1987},
-  publisher={ACM New York, NY, USA}
+  publisher={ACM New York, NY, USA},
+  note={.
+    The paper, as a response to Lieberman 1986 arguing that
+    delegation is more powerful than inheritance,
+    introduces formal models of inheritance and of delegation,
+    and proves (with more formal mathematics than is called for or that I care to examine)
+    that they are equivalent, if you map prototypes to classes rather than to class instances.
+    The two papers are actually not so different in their formal claims,
+    but in the way they frame the informal conclusions of the same argument.
+    What they both should have said in the end is that Classes can be seen
+    as a special case of Prototypes, with the same inheritance mechanism.
+    But Lieberman and Stein both incorrectly frame the argument in terms of
+    a comparison between delegation and inheritance, with opposite conclusions,
+    instead of correctly framing it as a comparison between prototypes and classes,
+    with prototypes indeed being more expressive.
+  }
 }
 
 % https://beta.cs.au.dk/ ?
@@ -1051,18 +1120,36 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   volume={16},
   url={https://tidsskrift.dk/daimipb/article/view/7578},
   note={.
-    Beta is the successor of Simula. It unifies classes, procedures, functions and types
-    as a single abstraction mechanism called “patterns”, that may be akin to prototypes.
-    It uses the same concatenation semantics as Simula for inheritance,
-    with the infamous “inner” keyword wherein parents specify where the child’s code will go,
-    rather than the child controlling how it makes use of the parent-provided value.
-    In the end, each can be expressed in terms of the other one, but it seems to me that
-    the one with the better ergonomics did win.
-    The paper is hard to read. The authors are in their own world, and
-    fail to try to reduce their semantics to something simple in terms of logic,
-    or anything understandable by others.
+    Beta is the successor of Simula. It claims to unify classes, procedures, functions and types
+    as a single abstraction mechanism called “patterns”.
+    Patterns are second-class prototypes (lexical constants),
+    with a magic “do” initialization method called at instantiation after computing the fixpoint.
+    If neither an “enter” nor an “exit” block is specified,
+    the fixpoint record is returned after initialization
+    (there is no variable or pseudo-variable like “self” to otherwise refer to the fixpoint record).
+    If either is defined, then the init takes specified input arguments (none if no enter block)
+    and returns the specified values (none if no exit block).
+    Inheritance works by extending a pattern and its transitive subpatterns,
+    using the same concatenation semantics as Simula:
+    in each “do” block, an “inner” keyword may specify where a subpattern’s additional do code will go
+    (if there is no “inner”, then the do block is final).
+    Any communication of information between descendent and ancestor do blocks
+    must happen through side-effects to the target record’s variables.
+    This is in contrast with more colloquial OO, in which, after Smalltalk,
+    the child controls how it makes use of a parent-provided method,
+    and communication of information usually happens without side-effect
+    through argument and return values of function calls.
+    In the end, each form of inheritance can be expressed in terms of the other one,
+    but it seems to me that the one with vastly better ergonomics happily did win.
+    The report is hard to read: The authors are in their own world, with their own vocabulary,
+    syntax and semantics, and fail to try to reduce their semantics
+    to something simple in terms of logic, or anything understandable by others.
   }
 }
+% Do we want to talk about gBeta, where patterns are first-class,
+% and can be extended at runtime, allowing for mixins?
+% (and sometimes in-place, as in a monotonic change-class).
+
 
 % Also published in ACM SIGPLAN Notices 23(5):17--34, May 1988
 @InProceedings{Liskov1987,
@@ -1291,7 +1378,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   doi={10.1145/96709.96721}
 }
 
-@InProceedings{chambers1989efficient,
+@InProceedings{Chambers1989,
   author = {Chambers, C. and Ungar, D. and Lee, E.},
   title = {An Efficient Implementation of SELF a Dynamically-Typed Object-Oriented Language Based on Prototypes},
   year = {1989},
@@ -1304,7 +1391,24 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   booktitle = {OOPSLA},
   pages = {49–70},
   numpages = {22},
-  location = {New Orleans, Louisiana, USA}
+  location = {New Orleans, Louisiana, USA},
+  note={.
+    This paper describes the kind of optimization techniques used to make Self efficient:
+    “maps” reconstituting class-like representation metadata for objects in a same “clone family”;
+    choice of low-level memory representation and bit-level tagging of memory words for dynamic types;
+    dynamic translation from a very general-purpose bytecode to assembly code;
+    inline caching, message inlining and type prediction to make this translation efficient;
+    incremental recompilation, source-level debugging.
+    While I am not impressed with Self as a language,
+    the ingenuity used to implement it is itself impressive and inspired many successor systems
+    (in particular, implementations of the JVM).
+    Still, I remember that circa 1994, running a Self environment required a lot of RAM,
+    and would cause thrashing, making it very slow,
+    even if you had 8MB of RAM, a very large amount of RAM at the time.
+    So Self was never practical for most users despite those optimizations—or
+    perhaps because of them, since indiscriminate dynamic translation of bytecode to binary
+    does take a lot of RAM.
+  }
 }
 
 % Not obviously worth citing in this context?
@@ -1339,12 +1443,19 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   year="1989",
   url={http://fare.tunes.org/tmp/emergent/pclsr.htm},
   note={.
-    An amazing paper by Alan Bawden, on how the ITS operating system managed to interrupting processes
-    in a way that “a process couldn’t be caught with its pants down”,
-    i.e. maintaining some important system invariants, when a stopped processes is observed
-    by other processes, even though the invariants may have been temporarily broken by the system
-    at the precise moment that the timer interrupt stopped the execution.
-    If anything, a big part of my (incomplete) PhD thesis was a generalization of this paper.
+    This amazing though never officially published technical report by Alan Bawden
+    describes how the ITS operating system managed to interrupting processes
+    in a way that “a process couldn’t be caught with its pants down”:
+    when a stopped processes is observed by other processes,
+    it will always be in the middle of a system call, but always fully in userland,
+    its state fully reflected by the contents of its memory.
+    The system obviously can and must temporarily break this important invariant at times
+    to service system calls, but never while users are observing.
+    The system will take care to repair the invariant if it did not hold
+    at the precise moment that the timer interrupt stopped the execution of the process.
+    If anything, a big part of my (incomplete) PhD thesis was a generalization of this paper:
+    how and why to make a system observable by restoring system and user invariants
+    when needed, from any intermediate state that the program may be interrupted at.
   }
 }
 
@@ -1391,12 +1502,26 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url = {https://bracha.org/oopsla90.pdf},
   doi = {10.1145/97945.97982},
   abstract = {The diverse inheritance mechanisms provided by Smalltalk, Beta, and CLOS are interpreted as different uses of a single underlying construct. Smalltalk and Beta differ primarily in the direction of class hierarchy growth. These inheritance mechanisms are subsumed in a new inheritance model based on composition of mixins, or abstract subclasses. This form of inheritance can also encode a CLOS multiple-inheritance hierarchy, although changes to the encoded hierarchy that would violate encapsulation are difficult. Practical application of mixin-based inheritance is illustrated in a sketch of an extension to Modula-3.},
-  booktitle = {OOPLSA/ECOOP},
-  pages = {303--311},
-  numpages = {9},
-  location = {Ottawa, Canada},
-  journal = {SIGPLAN Not.},
-  month = sep
+  booktitle={OOPLSA/ECOOP},
+  pages={303--311},
+  numpages={9},
+  location={Ottawa, Canada},
+  journal={SIGPLAN Not.},
+  month=sep,
+  note={.
+    This paper is remarkably in being simultaneously
+    one of the very best and very worst paper ever written about OO.
+    It brilliantly identifies the key mechanism of inheritance,
+    that can explain single and multiple inheritance alike,
+    that is eminently composable, and sufficient in itself,
+    thereafter known as “mixin inheritance”,
+    and thereby stealing the word “mixin”
+    from the Flavors tradition to ascribe it a different meaning.
+    The authors also deeply misunderstand and misrepresent CLOS,
+    and more generally the purpose OO and the context of its invention,
+    to the point that they inspired Gabriel 2012 about failure of understanding
+    due to looking at an issue through incommensurable paradigms.
+  }
 }
 
 %% 1991
@@ -1633,20 +1758,25 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-% Dissects the mechanisms of modularity in programming languages,
-% offers a zoo of solution, but not in a constructive way.
-% The constructive part, mixin inheritance, is great, though.
 % p. 24 Says "diamond problem", quoted Bertrand Meyer who says "repeated inheritance",
 % Gilad says he didn't invent "diamond" but probably got it from C++ community newsgroups.
 % His [65] is a 1987 updated reprint as a book chapter the [64] OOPSLA 1986
-% p. 25 Cites CLOS but wrongly claims without argument that it shares the same diamond problem
-% as Flavor-less multiple inheritance system. Not aware of how method combination changes the game.
 @PhDThesis{bracha1992jigsaw,
   author = {Gilad Bracha},
   title = {The Programming Language Jigsaw: Mixins, Modularity and Multiple Inheritance},
   school = {University of Utah},
   year = {1992},
-  url = {http://www.bracha.org/jigsaw.pdf}
+  url = {http://www.bracha.org/jigsaw.pdf},
+  note={.
+    This thesis dissects the mechanisms of modularity in programming languages,
+    offering a zoo of solution, though not in a constructive way.
+    The constructive part, mixin inheritance, is just great.
+    However, the analysis of multiple inheritance is lacking:
+    p. 25 Cites CLOS but wrongly claims without argument that it shares the same diamond problem
+    as flavorless multiple inheritance system;
+    Gilad seems unaware of how method combination changes the game.
+    Still a good read despite the issues.
+  }
 }
 
 @Article{Dickey1992SWOB,
@@ -1950,15 +2080,17 @@ series = {OOPSLA '94}
   url={https://scispace.com/pdf/programming-objects-with-ml-art-an-extension-to-ml-with-3s0xd52vz4.pdf},
   doi={10.1145/263699.263707},
   note={.
-    The author uses extensible records and a form of existential,
-    plus "projective types" (to palliate lack for higher order kind *->*),
-    to emulate what Pierce and Turner do with F^\omega_\leq.
+    Rémy uses extensible records and a form of existential types,
+    plus “projective types” (to palliate lack for higher order kind *→*),
+    to emulate what Pierce and Turner do with Fω≤.
     He implements flavorless multiple inheritance, with or without mutation.
-    This is solid work as a formal system, but not very usable as an object system,
+    This is solid work as a typesystem, but not very usable as an object system,
     and the limited support for subtyping doesn’t help.
-    The basis for what will be the O in OCaml.
-    (Though I often jest that that O actually stands for how much the authors of OCaml
-    actually care about Objects.)
+    Indeed, Rémy admits in a personal conversation that he was only interested
+    in typesystems, not object systems.
+    Yet, this work is the basis for what will be the O in OCaml.
+    As I often say, the O in OCaml actually stands for how much the authors of OCaml
+    actually care about Objects.
   }
 }
 
@@ -2543,6 +2675,7 @@ and Fiech, Adrian",
 %% 2002
 
 % No mention of recursive types, or fixpoints, etc.: Looks like the NNOOTT to me.
+% No DOI.
 @inproceedings{Bak2002Mixins,
   title={Mixins in Strongtalk},
   author={Bak, Lars and Bracha, Gilad and Grarup, Steffen and Griesemer, Robert and Griswold, David and Hölzle, Urs},
@@ -2560,7 +2693,7 @@ and Fiech, Adrian",
     checking method types with no regard for the open recursion
     in the types that involve self-reference.
     Yet, that is alright if those recursive references to objects
-    of the “same” type are dynamically typechecked, as we suppose they are,
+    of the “same” type are dynamically typechecked, as I suppose they are,
     since the system being optionally typed obviously supports such checks.
     But the authors never explicitly discuss that.
     Their discussions of related work conflates mixin inheritance and multiple inheritance,
@@ -2657,6 +2790,19 @@ and Fiech, Adrian",
 }
 
 %% 2005
+
+@webpage{graham2005,
+  title={Beating the Averages},
+  author={Graham, Paul},
+  year={2001},
+  url={https://paulgraham.com/avg.html},
+  lastchecked={2026-01-19},
+  note={.
+    A classic essay on how the expressiveness of Lisp helped Paul Graham and his associates
+    implement and copy features faster than competition,
+    which was key to the success of their business.
+  }
+}
 
 @InProceedings{Salzman2005PrototypesMultipleDispatch,
   author = {Lee Salzman and Jonathan Aldrich},
@@ -2827,7 +2973,7 @@ and Fiech, Adrian",
   author={Bracha, Gilad and Ahe, Peter and Bykov, Vassili and Kashai, Yaron and Miranda, Eliot},
   journal={Cadence Design Systems},
   year={2008},
-  url={https://bracha.org/newspeak.pdf}
+  url={https://bracha.org/newspeak.pdf},
 }
 
 % Master Thesis. BCL
@@ -3263,11 +3409,11 @@ and Fiech, Adrian",
   urldate={2023-11-29},
   note={.
     Nix implements prototype OO in two functions. Impressive.
-    Seeing that after having used Jsonnet (that implements an equivalent object system
-    the hard way in C++) is what made OO click for me.
+    Seeing this system after having used Jsonnet (that implements an equivalent object system
+    the hard way in C++, documented in two pages of semantic rules) is what made OO click for me.
     Peter doesn’t call his extension system “OO” and didn’t know about Prototype OO
-    when he wrote that (but had been influenced by others who did);
-    but his extensions are used exactly like objects are in Jsonnet,
+    when he wrote that—but had been influenced by others who did.
+    Nevertheless, his extensions are used exactly like objects are in Jsonnet,
     for sensibly the same purposes—configuring complex systems in a modular extensible way.
   }
 }
@@ -3457,11 +3603,12 @@ and Fiech, Adrian",
   lastchecked = {2021-04-06}
 }
 
-@Misc{Kay2020,
+@webpage{Kay2020,
   title={What thought process would lead one to invent Object-Oriented Programming?},
   author={Alan Kay},
   year={2020},
-  url={https://www.quora.com/What-thought-process-would-lead-one-to-invent-object-oriented-programming/answer/Alan-Kay-11}
+  url={https://www.quora.com/What-thought-process-would-lead-one-to-invent-object-oriented-programming/answer/Alan-Kay-11},
+  lastchecked = {2026-01-18}
 }
 
 %% 2021
@@ -3519,13 +3666,26 @@ and Fiech, Adrian",
 }
 
 %% 2022
-
 @Webpage{TopPL2022,
   author={GitHub},
   title={The top programming languages},
   url={https://octoverse.github.com/2022/top-programming-languages},
   year=2022,
   lastchecked={2024-01-04}
+}
+
+%% 2024
+@Webpage{Kiselyov2024Y,
+  title={Many Faces of the Fixed-Point Combinator},
+  author={Oleg Kiselyov},
+  url={https://okmij.org/ftp/Computation/fixed-point-combinators.html},
+  year={2024},
+  lastchecked={2026-01-18},
+  note={.
+    Oleg is a genius whose every writing deserves being read.
+    This page has collection of interesting snippets about the Y combinator.
+    Started in the early 2000s, last updated in 2024 (as of my reading the page).
+  }
 }
 
 %% 2025
@@ -3706,3 +3866,8 @@ and Fiech, Adrian",
 
 % David A. Fisher, “Control Structures for Programming Languages” (CMU, May 1970):
 % https://cds.cern.ch/record/697456/files/CM-P00068047.pdf
+
+% The Implementation of Functional Programming Languages by Simon Peyton Jones (1987)
+% url={https://simon.peytonjones.org/slpj-book-1987/},
+% doi={10.5555/1096899},
+% Nah, only has lazy Y. For lazy languages only.

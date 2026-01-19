@@ -1,6 +1,7 @@
 #lang scribble/base
 @; -*- Scheme -*-
 @(require "util/ltuo_lib.rkt")
+@(set-chapter-number 6)
 
 @title[#:tag "ROOfiMC"]{Rebuilding OO from its Minimal Core}
 @epigraph{Well begun is half done. @|#:- "Aristotle"|
@@ -37,6 +38,8 @@ wherein Nix has prototype objects and I don’t: conflation.
 
 @subsection{Conflation: Crouching Typecast, Hidden Product}
 
+@Paragraph{Notional Pair}
+
 Prototype object systems have a notion of “object”, also known as “prototype”,
 that can be used both for computing methods, as with my model’s record @emph{targets},
 and for composing with other objects through some form of inheritance,
@@ -61,14 +64,24 @@ when composing prototypes using inheritance, their respective specifications are
 and then the resulting composed specification is wrapped into a pair consisting of
 the specification and its target.
 
+@Paragraph{Trivial Implementation}
+
 My implementation below makes this product explicit,
 where I use the prefix @c{pproto} to denote a prototype implemented as a pair.
 I use the @c{cons} function of Scheme to create a pair, and
-the functions @c{car} and @c{cdr} to extract its respective first and second components;
-in a more practical implementation, a special kind of tagged pair would be used,
+the functions @c{car} and @c{cdr} to extract its respective first and second components.
+In a more practical implementation, a special kind of tagged pair would be used,
 so the runtime would know to implicitly dereference the target in the common case,
 without developers having to painfully maintain the knowledge and
 explicitly tell the program when to dereference it (most of the time).
+If more data is to be conflated with the specification and its record
+(such as debugging information, static type annotations, etc.),
+a record could be used for all these kinds of data and metadata, instead of a pair@xnote["."]{
+  In Clojure, for instance, native data types all come with a @c{meta} accessor for
+  an immutable record of arbitrary metadata.
+  All data elements except the “main” one could be stored in that record.
+}
+
 The function @c{pproto←spec} is used to define a prototype from a specification,
 and is used implicitly when composing prototypes using inheritance
 with the @c{pproto-mix} function.
@@ -76,22 +89,56 @@ The function @c{spec←pproto} extracts the specification from a prototype,
 so you may inherit from it.
 The function @c{target←pproto} extracts the target from a prototype,
 so you may call methods on it:
+
 @Code{
 (def (pproto←spec spec)
   (cons spec (fix-record spec)))
 (def spec←pproto car)
-(def target←pproto cdr)
+(def (target←pproto pproto)
+  (cdr pproto))
 (def pproto-id (pproto←spec idModExt))
 (def (pproto-mix child parent)
   (pproto←spec (mix (spec←pproto child) (spec←pproto parent))))
 (define (pproto-mix* . l) (foldl (uncurry2 pproto-mix) pproto-id l))
 }
 
+@Paragraph{First Issue: Incomplete Specifications}
+
+There is an important catch, however:
+the whole point of specifications is that most specifications are not complete,
+and cannot be instantiated without error or divergence.
+In an abstract mathematical model where you can manipulate failing terms,
+that’s not a problem.
+But for a concrete implementation, that’s an issue.
+
+To be able to uniformly conflate a specification and its target,
+some device must be used to delay the evaluation of the target,
+or delay errors and divergence until after the target is computed,
+when a further attempt is made to use the target.
+In other words, a way to consider the target as an unevaluated computation,
+rather than as the value returned by that computation if it ever finishes without an error.
+
+The simplest such device is lazy evaluation: @c{Proto = Spec × Lazy Target}.
+In second-class Class OO, the target is a descriptor for type,
+that itself can always be computed without error in finite time,
+though the type may be empty, and trying to use it may result in static or dynamic errors.
+Execution in a latter stage of computation (runtime vs compile-time)
+can be seen as the ultimate form of delayed evaluation.
+
+Note how in our representation of records as function so far,
+all the potentially non-terminating or error-throwing behavior,
+including but not limited to recursion, was protected by lambda-abstractions.
+Thus, delay and force are not necessary in XXXXXXXXXXXXXX
+
+@Paragraph{Second Issue: Recursion}
+
 Now, there is a subtle issue with the above implementation:
 when a target recursively refers to “itself” as per its specification,
 it sees the target only, and not the conflation of the target and the specification.
 This is not a problem with second-class OO, or otherwise with a statically staged style
-of programming where all the specifications are closed before any target is instantiated.
+of programming where all the specifications are closed before any target is instantiated;
+then at one stage you consider only specifications, at the other, you consider only targets.
+
 But with a more dynamic style of programming where no such clear staging is guaranteed,
 it is insufficient@xnote["."]{
   @; TODO Have a later chapter just on metaobjects?
@@ -127,14 +174,16 @@ Here is an implementation of that idea, wherein I prefix function names with @c{
 (def (qproto-wrapper spec _self super)
   (cons spec super))
 (def (qproto←spec spec)
-  (fix-record (mix qproto-wrapper spec)))
+  (delay (fix-record (mix (qproto-wrapper spec) spec))))
 }
 Note how the following functions are essentially unchanged compared to @c{pproto}:
 @Code{
 (def spec←qproto car)
-(def target←qproto cdr)
+(def (target←qproto qproto)
+  (force (cdr qproto)))
 (def (qproto-mix child parent)
   (qproto←spec (mix (spec←qproto child) (spec←qproto parent))))
+(define (qproto-mix* . l) (foldl (uncurry2 qproto-mix) pproto-id l))
 }
 What changed from the previous @c{pproto} variant was that the
 @c{(λ (x) (cons spec x))} extension was moved from outside the fixpoint to inside:
@@ -217,6 +266,12 @@ such a wrapping as I showed earlier.
 But if the target type is guaranteed to be a (subtype of) Record,
 it is possible to do better.
 
+Another device might be for the targets to be records of lazy values,
+The target
+they could also be records of modular definitions
+wherein the fixpoint is only computed when the user tries to call a method.
+XXXXX
+
 In the Nix extension system, a target is a record (called an attrset in Nix),
 mapping string keys to arbitrary values,
 and the modular extension instantiation function @c{fix'} stores
@@ -231,6 +286,8 @@ As a minor consequence, casting to a specification becomes slightly more expensi
 whereas casting to a target (the more common operation by far) becomes slightly cheaper
 (free vs fixed-offset field access).
 The semantics are otherwise essentially the same as for my implementation using pairs.
+
+
 
 Here is a Scheme implementation of the same idea,
 where the prefix @c{rproto} denotes a prototype implemented as a record,
@@ -992,7 +1049,8 @@ and type intersections (@c{∩}).
 In this NNOOTT variant, a NNOOTT Modular Extension could have a type of the form
 @Code{
 type NModExt required inherited provided =
-  required → inherited → (inherited ∩ provided)}
+  required → inherited → (inherited ∩ provided)
+}
 A @c{NModExt} is a type with three parameters,
 the type @c{required} of the information required by the modular extension from the module context,
 the type @c{inherited} of the information inherited and to be extended,
@@ -1362,7 +1420,8 @@ that each take the module context type @c{self} as parameter@xnote[":"]{
 type ModExt required inherited provided =
   ∀ self, super : Type
     self ⊂ required self, super ⊂ inherited self ⇒
-        self → super → provided self ∩ super}
+        self → super → (provided self) ∩ super
+}
 
 Notice how the type @c{self} of the module context
 is @emph{recursively} constrained by @c{self ⊂ required self}),
@@ -1389,7 +1448,8 @@ fix : ∀ required, inherited, provided : Type → Type, ∀ self, top : Type,
       self ⊂ required self,
       top ⊂ inherited self ⇒
         top → ModExt required inherited provided → self
-mix : ModExt r1 i1∩d2 p1 → ModExt r2 i2 p2 → ModExt r1∩r2 i1∩i2 p1∩p2}
+mix : ModExt r1 i1∩d2 p1 → ModExt r2 i2 p2 → ModExt r1∩r2 i1∩i2 p1∩p2
+}
 
 In the @c{fix} function, I implicitly define a fixpoint @c{self}
 via suitable recursive subtyping constraints.

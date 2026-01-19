@@ -288,6 +288,11 @@ With Racket: racket pommette.rkt
                   (set! computed? #t)
                   (set! value result)))))
       value)))
+(define
+(def (eager-pre-fact f n)
+  (if (<= n 1) n (* n (f (- n 1)))))
+
+
 ;; Trivial implementation of lazy from once
 ;;(define-syntax delay (syntax-rules () ((_ . body) (once (λ () . body)))))
 ;;(define force (λ (p) (p)))
@@ -297,6 +302,7 @@ With Racket: racket pommette.rkt
         (foo 4) => 42
         (foo) => 42
         (foo 1 2 3) => 42)
+
 
 ;;; 5.3.2 Composing Modular Extensions
 (def (mix c p s t)
@@ -397,6 +403,10 @@ With Racket: racket pommette.rkt
 (def (sqr x)
   (* x x))
 
+(def area-spec
+  (field-spec 'area (λ (self _inherited)
+    (* (self 'x)) (self 'y))))
+
 (def rho-spec
   (field-spec 'rho (λ (self _inherited)
     (sqrt (+ (sqr (self 'x)) (sqr (self 'y)))))))
@@ -431,6 +441,7 @@ With Racket: racket pommette.rkt
         (my-contents 'length my-saying) => 20
         (my-contents 'size) => 15)
 
+;; TODO: don't use _ here
 (def my-modular-def-without-global-recursion
   (let ((_start 5))
     (letrec ((_length (λ (l) (if (null? l) 0 (+ 1 (_length (cdr l)))))))
@@ -471,14 +482,15 @@ With Racket: racket pommette.rkt
 ;;;; 6.1.2 Conflation: Crouching Typecast, Hidden Product
 
 (def (pproto←spec spec)
-  (cons spec (fix-record spec)))
+  (cons spec (delay (fix-record spec))))
 (def spec←pproto car)
-(def target←pproto cdr)
+(def (target←pproto pproto)
+  (force (cdr pproto)))
 (def pproto-id (pproto←spec idModExt))
 (def (pproto-mix child parent)
   (pproto←spec (mix (spec←pproto child) (spec←pproto parent))))
-(define pproto-mix* (op*←op1.1 pproto-mix pproto-id))
 ;;(define (pproto-mix* . l) (foldl (uncurry2 pproto-mix) pproto-id l))
+(define pproto-mix* (op*←op1.1 pproto-mix pproto-id))
 
 (def coord-pproto (pproto←spec coord-spec))
 (def color-pproto (pproto←spec color-spec))
@@ -522,12 +534,14 @@ With Racket: racket pommette.rkt
 (def (qproto-wrapper spec _self super)
   (cons spec super))
 (def (qproto←spec spec)
-  (fix-record (mix qproto-wrapper spec)))
+  (delay (fix-record (mix (qproto-wrapper spec) spec))))
 (def spec←qproto car)
-(def target←qproto cdr)
-(def qproto-id (qproto←spec idModExt))
+(def (target←qproto qproto)
+  (force (cdr qproto)))
 (def (qproto-mix child parent)
   (qproto←spec (mix (spec←qproto child) (spec←qproto parent))))
+(define (qproto-mix* . l) (foldl (uncurry2 qproto-mix) pproto-id l))
+
 
 ;;;; 6.1.4 Conflation for Records
 
@@ -773,3 +787,20 @@ With Racket: racket pommette.rkt
 #|
 The End. (For Now)
 |#
+
+
+
+#|
+p1 = { a: Int , ...}
+p2 = { b: String, ... }
+p1∩p2 = {a : Int, b : String , ... }
+|#
+
+
+a : Int
+b : String
+c : List(Int)
+
+
+a : Self
+compare : Self -> Self -> Bool

@@ -1,6 +1,7 @@
 #lang scribble/base
 @; -*- Scheme -*-
 @(require "util/ltuo_lib.rkt")
+@(set-chapter-number 4)
 
 @title[#:tag "OOaIEM"]{OO as Internal Extensible Modularity}
 @section[#:tag "M"]{Modularity}
@@ -537,6 +538,40 @@ that may not be expressive enough to capture the modular dependencies between in
 often leading to indirect solutions like “builder” classes in Java,
 that stage all the complex computations before
 the initialization of objects of the actually desired class.
+
+@exercise[#:difficulty "Easy"]{
+  Identify languages with each of first-class, second-class, third-class and fourth-class
+  module systems. Maybe the same language across the years.
+}
+
+@exercise[#:difficulty "Medium"]{
+  Use a preprocessor to achieve third-class modularity for a language lacking internal modularity.
+}
+
+@exercise[#:difficulty "Medium"]{
+  Pick one of the features I argue makes a language more modular,
+  a language with the feature, and a program using that feature heavily.
+  Explain how to reproduce the effect of that program without using the language feature.
+  Does it indeed involve authors of part of a program having to learn more
+  about other parts of the program, having to manually enforce more complex invariants?
+}
+
+@exercise[#:difficulty "Hard"]{
+  Identify a language with some modularity features that are less modular than could be:
+  the feature still requires programmers to manually curate redundancies within or across files,
+  to tightly couple changes in multiple locations, etc.
+  Use macros or a preprocessor to reduce the coupling and offer a more modular abstraction
+  (though the language ecosystem will not become more modular
+  without other people adopting this innovation).
+}
+
+@exercise[#:difficulty "Research"]{
+  Find a more modular design pattern to use in an existing language ecosystem;
+  possibly patch the language implementation, standard library, or key piece of infrastructure,
+  to support this pattern.
+  Provide backward compatibility for better results.
+  See how hard it is not just to implement, but to get it adopted.
+}
 
 @section[#:tag "E"]{Extensibility}
 @epigraph{Malum est consilium, quod mutari non potest. @linebreak[]

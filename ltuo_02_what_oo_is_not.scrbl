@@ -1,6 +1,7 @@
 #lang scribble/base
 @; -*- Scheme -*-
 @(require "util/ltuo_lib.rkt")
+@(set-chapter-number 2)
 
 @title[#:tag "WOOin"]{What Object Orientation is @emph{not}}
 @epigraph{
@@ -31,8 +32,8 @@ The most popular OO language in the decades that OO was a popular trend (roughly
 C++ indeed supports some form of OOP.
 But C++ is a rich language with many aspects completely independent of OO
 (e.g. efficient bit-banging, RAII, template metaprogramming, pointer aliasing, a memory model),
-whereas the OO aspect that it undoubtedly offers
-is very different from how OO works in most other OO languages,
+whereas the OO aspects that it undoubtedly offers
+are very different from how OO works in most other OO languages,
 and colloquial C++ often goes against the principles of OO.
 Therefore, C++ is in no way representative of OO in general, and
 if what you know of “Object Orientation” comes from C++,
@@ -139,7 +140,7 @@ ThingLab @~cite{Borning1977 Borning1979 Borning1981}@xnote["."]{
   ThingLab was built on top of Smalltalk by members of the same team at PARC,
   and oscillated between having or not having classes in addition to prototypes.}
 Plenty more Prototype OO or “class-less” OO languages followed
-@~cite{Hewitt1979Security Rees1982T Adams1988oopscheme chambers1989efficient Lawall89SelfInScheme Salzman2005PrototypesMultipleDispatch jsonnet nix2015 poof2021}.
+@~cite{Hewitt1979Security Rees1982T Adams1988OOPScheme Ungar1987 Chambers1989 Lawall89SelfInScheme Salzman2005PrototypesMultipleDispatch jsonnet nix2015 poof2021}.
 There are a lot more Prototype OO languages than I could have time to review @~cite{WikiProto},
 but prominent among them is JavaScript @~cite{Eich1996JavaScript},
 one of the most used programming languages in the world @~cite{TopPL2022},
@@ -176,9 +177,9 @@ and object initialization must happen by mutation.
 Furthermore, they assume that OO requires the same applicative (eager) evaluation model
 for procedure calls and variable references as in every common imperative language.
 @; TODO{CITE? C++ Perl5 Python Java JavaScript Scala Ruby Go (see GitHub)}
-On the other side, many now claim that purity (the lack of side-effects including mutable state)
+At the same time, many now claim that purity (the lack of side-effects including mutable state)
 is essential to FP, making it incompatible with OO.
-Some purists even argue that normal-order evaluation (call-by-name or call-by-need)
+Some purists further argue that normal-order evaluation (call-by-name or call-by-need)
 is also essential for “true” FP, making it (they say) even more incompatible with OO.
 
 However, there are many good historical reasons,
@@ -190,13 +191,13 @@ And with 1990s slogans among Lispers like
 “objects are a poor man’s closures”@~cite{Dickey1992SWOB}, and
 “closures are a poor man’s objects”@~cite{Queinnec1996LiSP},
 the problem back then (and as early as at least Yale T Scheme @~cite{Rees1982T})
-was clearly not whether OO could be done purely with functions (obviously it could), but
+was clearly not whether OO could be done purely with functions—obviously it could—but
 whether it made practical sense to program purely without side-effects in general.
 That question would only be slowly answered positively,
 in theory in the early 1990s @~cite{Moggi1991Monads}
 and in practice in the mid 2000s to mid 2010s,
 as Haskell grew up to become a practical language@xnote["."]{
-  Some may identify darcs (2003) as the first widely used real-world application written in Haskell.
+  Some identify darcs (2003) as the first widely used real-world application written in Haskell.
   After it came innovations such as bytestring (2005), cabal (2005)
   (and the “cabal hell” it started causing around 2006 until later solved by Stack),
   ghc6 (2006), that made Haskell much more practical to use, and
@@ -242,7 +243,7 @@ Many OO pundits claim that an essential concept in OO
 is “encapsulation” or “information hiding”@~cite{DeRemerKron1975}.
 Some instead speak of “data abstraction” or some other kind of “abstraction”.
 There is no consensus as to what this or these concepts mean, and no clear definition,
-@; TODO{CITE} @; XXX cite Liskov??? Mary Shaws???
+@; TODO{CITE} @; XXX cite Liskov??? Mary Shaw???
 but overall, these words refer either (a) to part or all of what I call @emph{modularity}
 (see @secref{MO}, @secref{M}),
 or (b) to some specific set of visibility primitives in some OO languages.
@@ -338,7 +339,7 @@ seen as constructor functions)@xnote["."]{
   Yet it is always preferable to understand the difference between “is” and “has”,
   and to use the correct one based on understanding of the domain being modeled,
   rather than on vague heuristics that substitute for lack of understanding.
-  At any rate, this slogan, though oft quoted out of context in online debates,
+  At any rate, this slogan, though oft-quoted out of context in online debates,
   actually has nothing to do with the OO vs FP debate—it is about using OO effectively.
 }
 
@@ -380,8 +381,8 @@ unable to comprehend what the other is saying.
 @epigraph{Name the greatest of all inventors. Accident.
   @|#:-"Mark Twain"|
 }
-Alan Kay, who invented Smalltalk and coined the term “Object-Oriented Programming” circa 1967
-notably explained@~cite{Kay2020} that by that he originally meant
+Alan Kay, who invented Smalltalk and coined the term “Object-Oriented Programming” circa 1967,
+notably explained@~cite{Kay2020} that he originally meant
 a metaphor of computation through independent (concurrent, isolated) processes
 communicating by passing asynchronous messages.
 This metaphor also guided the modifications originally
@@ -392,7 +393,7 @@ ThingLab @~cite{Borning1977 Borning1979 Borning1981}.
 
 However, neither Simula nor Smalltalk nor any popular OO language
 actually fits that metaphor.
-Some less popular Actor languages might @~cite{Hewitt1979Security},
+Some less popular Actor languages might @~cite{Hewitt1979Security};
 but they remain marginal in the tradition.
 @; TODO cite Yonezawa ?
 Instead, the only widely-used language to truly embody this metaphor
@@ -571,7 +572,7 @@ In presence of recursion, UML falls apart,
 by failing to distinguish between subclassing and subtyping,
 between self-reference and reference to a constant (see @secref{TfOO}).
 
-Interestingly, Amílcar Sernadas or Bart Jacobs’s categorical theories
+Interestingly, Amílcar Sernadas’s or Bart Jacobs’s categorical theories
 of “objects” and “inheritance”
 @~cite{sernadas1994 Jacobs1995ObjectsAC Jacobs1996InheritanceAC}
 actually model UML and refinement,
@@ -579,7 +580,7 @@ and not at all actual objects and inheritance as used in Programming Languages;
 a hijacking of the same words for completely different meanings,
 with the only similarity being that both sets of meanings
 involve arrows between specifications.
-At least Jacobs explicitly embraces early on the limitation whereby
+At least Jacobs early on explicitly embraces the limitation whereby
 self-reference or recursion is prohibited from field definitions.
 Just like UML, his co-algebra utterly fails to model OO;
 but at least his theory is internally consistent if not externally.
@@ -663,3 +664,83 @@ And if you picked an OO-capable language like C++, Java, C# or Scala,
 (or, with manually enforced dynamic types, Lisp, Ruby or Python),
 you can actually use OO as you do it.
 
+@exercise[#:difficulty "Easy"]{
+  Identify cases where what I claim OO is @emph{not},
+  contradicts your prior assumptions about what OO was.
+}
+
+@exercise[#:difficulty "Easy"]{
+  Use your experience, or AI, to identify—for each section of this chapter
+  (or at least a couple of them picked at random)—examples
+  of how OO and the concept often wrongly identified with it do not coincide:
+  either something that is an instance of OO and not the other,
+  or something that is an instance of the other and not OO.
+  Be careful not to blindly trust the answer of AI,
+  especially as your prompt may lead it to slightly misunderstand the question,
+  if the context of this chapter’s text is not included.
+  Notably, it’s not just C++ or UML that are not OO, but their object model.
+}
+
+@exercise[#:difficulty "Easy"]{
+  With the help of a search engine or an AI,
+  find OO languages or libraries that illustrate each possible combination
+  in the space defined by the following axes:
+  (a) having an inheritance mechanism poorer than that of C++, equivalent, or richer;
+  (b) having or not having classes;
+  (c) using or not using mutable state;
+  (d) with or without notions of “public” or “private” methods;
+  (e) with or without the ability to express functional programs;
+  (f) with or without a notion message passing;
+  (g) with or without its authors claiming that it is OO.
+  Note that some combinations may not be found, and that is fine;
+  try to find at least one answer on each side of each axis.
+}
+
+@exercise[#:difficulty "Medium"]{
+  In each of the above cases, or at least for a couple that you’re least familiar with,
+  dig deeper into the counter-example, and build an OO program
+  that doesn’t match the other paradigm, or a program in that other paradigm
+  that doesn’t match OO at all.
+}
+
+@exercise[#:difficulty "Medium"]{
+  Use a search engine to find online documents criticizing OO,
+  or ask some AI to criticize OO for you.
+  Identify which of the points made actually apply or do not apply
+  to OO as such, as opposed to things I identified as not being OO,
+  or other specific uses of OO that do not represent OO in general.
+
+  Bonus: Take one of the criticisms you found that does not actually apply to OO.
+  Rewrite it to address what the critic was probably actually concerned about
+  (e.g., C++ specifically, imperative programming, etc.)
+  without incorrectly blaming "OO" for it.
+}
+
+@exercise[#:difficulty "Hard"]{
+  Find some criticism (valid or invalid) that actually pertains to OO,
+  rather than to something else wrongly identified with OO.
+  Wrong targets for which criticism will not count, include:
+  the things I denounced as not OO,
+  particular systems written in OO style,
+  not just to a particular substyle of OO,
+  and not to mistakes that are not specific to OO
+  but are being done in plenty of non-OO systems too.
+  (This is notably harder than the previous exercise!)
+}
+
+@exercise[#:difficulty "Hard, Recommended"]{
+  After reading this chapter, but before you read the next,
+  try to characterize what you think OO @emph{is} about in the end,
+  or at least my definition of it, that isn’t any of the things I denounced.
+  While this exercise is somewhat hard, it will make next chapter more enlightening.
+}
+
+@exercise[#:difficulty "Research"]{
+  Find some other technique, field of knowledge, school of thought, ideology, etc., beside OO,
+  that, having once been trendy or popular,
+  was overtaken by plenty of people wrongly claiming its name,
+  to advance very different sets of ideas.
+  Characterize the real thing under the original name,
+  and the main variants that corrupt the name
+  (though they may have interesting contributions of their own beside this corruption).
+} @; Solution: consider the word "ideology" itself.

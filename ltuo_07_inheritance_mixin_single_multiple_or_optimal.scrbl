@@ -1,6 +1,7 @@
 #lang scribble/base
 @; -*- Scheme -*-
 @(require "util/ltuo_lib.rkt")
+@(set-chapter-number 7)
 
 @title[#:tag "IMSMO"]{Inheritance: Mixin, Single, Multiple, or Optimal}
 @epigraph{
@@ -77,7 +78,8 @@ The semantics can then be reduced to the following types and functions:
 @Code{
 type ModDef r p = ∀ s : Type . s ⊂ r s ⇒ s → p s
 fixModDef : ModDef p p → Y p
-extendModDef : ModExt r1 p2 p1 → ModDef r2 p2 → ModDef r1∩r2 p1∩p2
+extendModDef : ModExt r1 p2 p1 → ModDef r2 p2 →
+    ModDef r1∩r2 p1∩p2
 baseModDef : ModDef (λ (_) Top) (λ (_) Top)
 
 (def fixModDef Y)
@@ -1178,6 +1180,14 @@ while not eliminating the much slower behavior in case of cache miss.
 For all these reasons, many performance-conscious programmers
 prefer to use or implement single inheritance when offered the choice.
 
+@exercise[#:difficulty "Hard"]{
+  With the help of an AI if needed, implement then use flavorful multiple inheritance
+  from @secref{IMSMO} on top of C++ templates.
+  You will thereby both prove that C++ can implement the same multiple inheritance
+  patterns as Lisp, Ruby, Python, Scala do—but also how much effort that takes,
+  and how uncolloquial the resulting style is.
+}
+
 @section[#:tag "OISMIT"]{Optimal Inheritance: Single and Multiple Inheritance Together}
 
 @subsection{State of the Art in Mixing Single and Multiple Inheritance}
@@ -1643,4 +1653,3 @@ that should probably be formalized and added to the constraints of C4@xnote["."]
   or of a better variant that would also respect the hard constraints of C3.
   I also leave that problem as an exercise to the reader.
 }
-

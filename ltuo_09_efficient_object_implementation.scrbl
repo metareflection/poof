@@ -1,6 +1,7 @@
 #lang scribble/base
 @; -*- Scheme -*-
 @(require "util/ltuo_lib.rkt")
+@(set-chapter-number 9)
 
 @title[#:tag "IO"]{Efficient Object Implementation}
 @epigraph{

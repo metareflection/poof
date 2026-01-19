@@ -100,7 +100,7 @@ ltuo: build/ltuo.html build/ltuo.pdf
 ltuo2: build/ltuo.html build/ltuo.pdf
 	rsync -av $^ ~fare/files/cs/poof/
 	rsync -av $^ bespin:files/cs/poof/
-	wc ltuo.scrbl ltuo.bib eoomi2024.scrbl
+	wc ltuo*.scrbl ltuo.bib eoomi2024.scrbl
 	$(PDFVIEWER) build/ltuo.pdf $P
 
 check-pommette-gerbil: util/pommette-chez.scm util/pommette.scm

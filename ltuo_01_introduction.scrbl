@@ -1,6 +1,7 @@
 #lang scribble/base
 @; -*- Scheme -*-
 @(require "util/ltuo_lib.rkt")
+@(set-chapter-number 1)
 
 @title[#:tag "Intro"]{Introduction}
 
@@ -46,7 +47,7 @@ in your favorite programming language@xnote["."]{
   both old and new (by e.g. applying or composing previous functions).
   These days, in 2026, most mainstream languages have such functions,
   quite unlike 20 years ago.
-  It is also possible to emulate such functions in languages that do not have them yet;
+  It is also possible to emulate such functions in languages that do not have them;
   that is a topic I will not cover, but I can refer you
   to classic books about programming languages that do it well
   @~cite{EOPL3 SICP2 Queinnec1996LiSP Pierce2002TAPL PLAI}.
@@ -67,7 +68,7 @@ unlike the barbarians of times past?
 No, people of past years were not barbarians
 though they were ignorant of what we now know;
 and neither are we barbarians for failing to know what our successors will.
-Every mind is just too busy with knowledge from their time,
+Every mind is just too busy with knowledge from its time,
 that would have been useless earlier, and will soon be useless again.
 
 Conceived around 1967 with Dahl and Nygaard’s Simula and Alan Kay’s musings,
@@ -133,7 +134,10 @@ it fell out of fashion alongside it.
 Grumpy old Lispers like me yell at the clouds that
 there was never an opposition between OO and FP—that
 we Lispers have been enjoying both together since the 1970s, and that
-OO can be so much more than you “blub” programmers can even imagine. @; TODO cite Paul Graham
+OO can be so much more than you “blub” programmers can even imagine@xnote["."]{
+  Blub is how Lispers disparagingly call less expressive languages, after @citet{Graham2005}.
+  Ironically, Graham doesn’t understand the appeal of OO, as is clear in his other writings.
+}
 
 My hope—my faith, even, despite available evidence—is that
 a better OO can and will rise from the dead:
@@ -148,6 +152,29 @@ when they fail to achieve their goals, I am switching to plan B:
 trying to convince others that there’s gold in them thar hills,
 so they will go dig it—because I can’t dig it all by myself.
 In writing this book, I am sharing the treasure map with you.
+
+@exercise[#:difficulty "Easy"]{
+  Rate from 0-10 (a) how well you understand OO, and
+  (b) how well you understand FP.
+  You can redo the rating after reading this book
+  (and reflect on your earlier opinions), to see if it improved.
+}
+
+@exercise[#:difficulty "Medium"]{
+  In a paragraph, write what you expect from reading this book.
+  You can later use this paragraph to decide which sections to skim and which to focus on.
+  But also after you read the book, to decide whether you were satisfied,
+  and whether you were surprised.
+}
+
+@exercise[#:difficulty "Hard"]{
+  In one sentence to one page maximum, draft what you think is the essence of OO,
+  as if you had to explain it to a junior programmer.
+}
+
+@exercise[#:difficulty "Research"]{
+  Write your own book about OO. Show me how it’s done.
+}
 
 @section{Why this Book}
 @epigraph{If there’s a book you really want to read but it hasn’t been written yet,
@@ -197,7 +224,7 @@ limited to 12-25 pages, depending on the venue.
 That was barely enough to address actual misunderstandings experienced by previous reviewers,
 and make my claims clear—see how much that takes
 in @secref{WOOin} and @secref{WOOiIO} respectively—with
-no space left to properly explain and subtantiate them.
+no space left to properly explain and substantiate those claims.
 Attempts to compress that information into this kind of format
 would again lead to loss of clarity, and the inevitable misunderstanding by reviewers,
 and frankly, the readers they rightfully stand for.
@@ -238,7 +265,7 @@ I repeatedly develop theories too large to publish in parts
 because I tend to think in terms of big pictures—or
 what others call big pictures, for I am also an aphantasiac:
 one with no mind’s eye except when dreaming.
-A “bird”, I like to explain large-scale human behaviors,
+A “bird”, I like to explain large-scale human behavior,
 or tie together seemingly disparate phenomena,
 by identifying common causal patterns that you can observe from “above”.
 Ideas that are hard to communicate to “frogs”,
@@ -257,7 +284,7 @@ I kept writing papers about OO while working in the industry@~cite{LIL2012 poof2
 And for many years, I have been implementing OO,
 and maintaining two object systems for Gerbil Scheme@~cite{GerbilScheme GerbilPOO}.
 OO is a topic both easier and more concrete, in general and for me in particular.
-A topic where I have direct experience as a frog,
+A topic in which I have direct experience as a frog,
 and where I can stand as a bird on the shoulders of giants
 who already solved many of the foundational problems.
 On this mature topic, I am ready and capable, and can explain a complete Theory of OO
@@ -266,6 +293,54 @@ that is also fully implemented and immediately usable.
 Ultimately, then, OO is the topic where my bird’s view and frog’s experience meet,
 where I made worthy findings that won’t fit in a short publication,
 but that I can share in the form of a book.
+
+@exercise[#:difficulty "Easy"]{
+  Laugh at me.
+  I am spending so much time being serious about a topic
+  that is relatively silly to anyone else.
+  I feel smug about my opinions, yet I mostly can’t get my message through.
+}
+
+@exercise[#:difficulty "Medium"]{
+  Laugh at the reviewers, the other readers.
+  Their preconceptions, their paradigms, wouldn’t let them understand what I wrote,
+  even after reading it.
+}
+
+@exercise[#:difficulty "Medium"]{
+  Laugh at other authors who wrote about OO.
+  They like me spent lot of time serious about the topic (or pretending to be),
+  yet failed to see the simple things I will explain.
+}
+
+@exercise[#:difficulty "Hard"]{
+  Laugh at yourself.
+  You care enough about this topic and my opinions to be reading this book.
+  Congratulations.
+  Yet your own preconceptions are clouding your judgement and you still won’t get it all.
+}
+
+@exercise[#:difficulty "Hard"]{
+  Love the other authors who wrote about OO, the reviewers, the other readers,
+  and maybe even me—and of course yourself.
+  Beyond our differences, we all share an interest in this same topic.
+  But we all have a limited ability to focus, with finite time and energy,
+  necessary preconceptions, to care about whatever it is we each care about.
+  Most everyone means well and does their best—and even the few who don’t could use a hug.
+}
+
+@exercise[#:difficulty "Research"]{
+  Find out what topic or subtopic you really care about.
+  Get to understand it better than most other people.
+  Become even better at that topic than those who teach it.
+  Write a book about it.
+}
+
+@exercise[#:difficulty "Research"]{
+  Make the world a better place.
+  The world can use your positive contributions.
+  They need not be books, and need not be about OO.
+}
 
 @section{What this Book}
 
@@ -282,7 +357,7 @@ OO usually depends on explicit support from the Programming Language (PL) at han
 then called an Object-Oriented (Programming) Language (OOPL).
 
 This characterization of OO should be retrospectively obvious to all familiar with OO.
-Yet remarkably, some programmers explicitly reject it, eminent professors even@xnote["!"]{
+Yet remarkably, some programmers explicitly reject it, eminent professors even@xnote["."]{
   A notable dissident to this characterization is William Cook,
   a respected academic who made many key contributions to understanding the semantics of inheritance
   @~cite{Cook1989 Cook1989Inheritance cook1989denotational bracha1990mixin Cook1994}
@@ -294,7 +369,7 @@ Yet remarkably, some programmers explicitly reject it, eminent professors even@x
   and indeed Cook explicitly calls the untyped λ-calculus “the first object-oriented language”,
   while dismissing Smalltalk as not OO enough because its integers are not pure objects@~cite{Cook2009}.
   Cook’s definition, that embraces the modular aspect of OO while rejecting
-  its extensible or dynamic aspect, runs contrary to all practice.
+  its extensible or dynamic aspect, runs contrary to common practice.
   It brings no light on any of the languages commonly considered OO
   yet derided by Cook as not being OO enough,
   no light on any of the Functional Programming (FP) languages blessed by Cook as actually being OO
@@ -407,7 +482,8 @@ Many prefer Single Inheritance for its simplicity and performance
 @~cite{Simula1967 Kay1993EHoS}.
 Others prefer Multiple Inheritance, for its greater expressiveness and modularity,
 and this multiple inheritance itself comes in multiple flavors,
-notably divided on whether to use a technique called “linearization” @~cite{Bobrow1976 Cannon1979}.
+notably divided on whether to use a technique called “linearization”
+@~cite{Bobrow1976 Cannon1979 Traits}.
 A few prefer Mixin Inheritance,
 a variant in some sense intermediary between the two above,
 but in another sense more fundamental, more composable @~cite{bracha1990mixin}.
@@ -422,7 +498,7 @@ if any at all@xnote["."]{
   in terms of the above variants, or fundamentally flawed,
   if you should come across them.
   That said, when, in old papers, I see pioneers struggling to find solutions to problems
-  few if anyone else suspected existed, then make mistakes, and take wrong turns—I
+  few if anyone else suspected existed, then make mistakes, or take wrong turns—I
   laugh, I cry, but I root for them.
   On the other hand, when, in more recent papers, I see researchers propose wrong solutions
   to problems that were solved long ago, I just shake my head, and express sadness that
@@ -482,6 +558,42 @@ But the theory behind it is the real achievement.
 
 What that means for you in practice, though, is that a good theory brought you
 a better inheritance algorithm with which to improve your existing (or future) languages.
+
+@exercise[#:difficulty "Easy"]{
+  Pick a theory you hate on whatever topic you know about.
+  Analyze how this theory satisfies or fails to satisfy the criteria I have set for mine.
+}
+
+@exercise[#:difficulty "Medium"]{
+  For each of the criteria that I claim my theory satisfies,
+  identify a theory you know about that fails this criterium.
+  With regards to productivity, mind that it is enough for the theory
+  to have produced novel results @emph{at the time it was first proposed}—it is fine
+  if the results of that theory are not novel anymore.
+}
+
+@exercise[#:difficulty "Hard"]{
+  Pick a theory you believe in that is controversial in the public at large.
+  Identify how at least the way it is presented by people on your side,
+  that theory is failing one of the criteria I set for my theory.
+}
+
+@exercise[#:difficulty "Research"]{
+  Pick some phenomenon you’re interested in and able to observe.
+  It can be something small or large, but has to be something you can repeatedly interact with.
+  Some of your behavior or that of a member of your direct family or colleague at work is fine,
+  but not the behavior of a random stranger you won’t meet again, unless it’s a general enough
+  behavior that many people exhibit around you every week.
+  Develop a meaningful, consistent, relevant, productive and constructive theory of that phenomenon.
+}
+
+@exercise[#:difficulty "Research"]{
+  Identify some technique that comes in many variants,
+  with divergent opinions on which variant is better,
+  in a field you’re interested in.
+  Determine whether you can devise an optimal variant of that technique,
+  or an optimal strategy to pick which variant in which circumstances.
+}
 
 @section{How this Book}
 
@@ -545,7 +657,12 @@ In chapter 8, I discuss more advanced topics including
 Focused Modular Extensions, Method Combination, Multiple Dispatch (Multimethods),
 Monotonicity, Orphan Typeclasses, and Global Fixpoints.
 
-Finally, in chapter 9, I conclude by recapitulating my findings.
+In chapter 9, I discuss object representation and meta-object protocols.
+
+Finally, in chapter 10, I conclude by recapitulating my original findings.
+If you want to check whether there’s anything new for you in this book,
+or are a future researcher interested in when now-well-known ideas were introduced,
+you may peek there first.
 
 @subsection{Stop and Go}
 @epigraph{Begin at the beginning and go on till you come to the end: then stop.
@@ -696,6 +813,42 @@ since a class is but a quite limited special case of a @emph{prototype},
 that is itself derivative of what I’ll call a @emph{specification}.
 I will define those terms precisely in
 @secref{WOOiIO}, @secref{OOaIEM}, @secref{MOO}, @secref{ROOfiMC}.
+
+@exercise[#:difficulty "Easy"]{
+  What does the word “function” mean to a mathematician? To a C programmer?
+  To a Haskell programmer? To a Rocq user? Are they the same thing?
+}
+
+@exercise[#:difficulty "Easy"]{
+  Identify a case where someone tries to bamboozle others by using the word “we” or “us”.
+}
+
+@exercise[#:difficulty "Medium"]{
+  Identify in your domain of expertise, a technical word that is used to mean different things
+  by practitioners of different backgrounds and communities.
+}
+
+@exercise[#:difficulty "Medium"]{
+  State a principle that pertains to writing good programs,
+  that many seasoned professionals know (though not necessarily all, or the majority, of them),
+  and that uninitiated beginners will have trouble figuring out by themselves.
+}
+
+@exercise[#:difficulty "Hard"]{
+  Identify a case where you were once bamboozled by someone using the word “we”
+  and your granting undue credit or accepting undue responsibility.
+}
+
+@exercise[#:difficulty "Research"]{
+  Articulate some principle of good program design,
+  that stems from your experience, that few other people really master,
+  and that hasn’t been fully articulated yet.
+}
+
+@exercise[#:difficulty "Research"]{
+  Help a friend or family member who has been bamboozled by words
+  see through the deception they fell for.
+}
 
 @; TODO: Describe Appendices
 

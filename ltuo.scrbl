@@ -49,7 +49,7 @@ Maybe you’d fancy implementing OO on top of the OO-less language
 you are currently using or building, but from what you know it looks too complicated?
 Indeed do you really understand why to implement which of no inheritance, single inheritance,
 mixin inheritance, or multiple inheritance?
-can you weigh the arguments for multiple inheritance done C++ or Ada style,
+Can you weigh the arguments for multiple inheritance done C++ or Ada style,
 versus Lisp, Ruby, Python or Scala style?
 Is there a best variant of inheritance anyway?
 And do concepts like prototypes, method combinations and multiple dispatch seem natural to you,

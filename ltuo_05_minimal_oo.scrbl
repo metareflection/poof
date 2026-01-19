@@ -1,6 +1,7 @@
 #lang scribble/base
 @; -*- Scheme -*-
 @(require "util/ltuo_lib.rkt")
+@(set-chapter-number 5)
 
 @title[#:tag "MOO"]{Minimal OO}
 @epigraph{
@@ -630,6 +631,12 @@ despite Lots of Insipid and Stupid Parentheses@xnote["."]{
   as Lispers call non-Lisp languages, parentheses, beyond function calls,
   carry the emotional weight of “warning: this expression is complex,
   and doesn’t use the implicit order of operations”.
+  Non-Lispers see parentheses as lacking cues from the other kinds of brackets their languages have,
+  but these cues in Lisp are present, just in the head identifier of an expression.
+  Matching parentheses can also be confusing,
+  especially when not using the parentheses-aware semi-structured editors
+  that Lispers have been using since the 1970s, or
+  when failing to format code properly (which those editors can also help automate).
   Ironically, the syntactic and semantic abstraction powers of Lisp
   allow for programs that are significantly shorter than their equivalent
   in a mainstream language like Java,
@@ -639,7 +646,8 @@ despite Lots of Insipid and Stupid Parentheses@xnote["."]{
   Now, it may well be that the same abstraction powers of Lisp make it unsuitable
   for a majority of programmers incapable of mastering such powers.
   As an age of AI programmers approaches that will have abstraction powers vastly superior
-  to the current average human programmer, it remains to be seen what kind of syntax they prefer.
+  to the current average human programmer, it remains to be seen what kind of syntaxes
+  will make them more efficient, when working in isolation, with each other, and with humans.
 }
 
 A second approach is to adopt a more native Scheme style over FP style,
@@ -665,7 +673,7 @@ to automatically curry function definitions and function applications:
     I will still use the regular @c{lambda} and @c{define}.
     In other FP languages, you might instead use explicit list arguments,
     or record arguments for heterogeneous types.}
-  @item{Regular scheme functions can use the @c["@"] macro to explcitly call curried function
+  @item{Regular scheme functions can use the @c["@"] macro to explicitly call curried function
     with uncurried arguments when the function isn’t bound to an autocurrying variable.}]
 
 The macros defining @c{λ}, @c{def} and @c["@"] fit within fifty lines of code.
@@ -838,10 +846,33 @@ before they are evaluated, without duplication of computation costs or side-effe
 (Note that @c{delay} can be easily implemented on top of any stateful applicative language,
 though a thread-safe variant, if needed, is somewhat trickier to achieve.)
 
+Here is one implementation of laziness that works in a single-threaded environment:
+it takes a thunk as argument, and only calls the thunk the first time around,
+thereafter memoizes the result of that first invocation and returning it.
+@Code{
+(define (once thunk)
+  (let ((computed? #f)
+        (value #f))
+    (λ _
+      (or computed?
+          (let ((result (thunk)))
+            (or computed?
+                (begin
+                  (set! computed? #t)
+                  (set! value result)))))
+      value)))
+}
+If you already assume @c{delay} and @c{force}, you could write it as
+@c{(λ (thunk) (let ((x (delay (thunk)))) (λ _ (force x))))}.
+This approach transforms laziness into functions,
+and you can use the stateful Y on that function and get the same as a lazy Y on its result.
+
+
 A third solution, often used in programming languages with second-class OO only
 (or languages in which first-class functions must terminate), is
 for the @c{Y} combinator (or its notional equivalent) to only be called at compile-time,
-and only on modular definitions that abide by some kind of structural restriction
+as a metaprogram, and only on modular definitions
+that abide by some kind of structural restriction
 that guarantees the existence and well-formedness of a fixpoint,
 as well as e.g. induction principles to reason about said fixpoint.
 Also, the compile-time language processor usually doesn’t expose any side-effect to the user,
@@ -850,14 +881,16 @@ and uses a fixpoint combinator or any other representation for recursion.
 Since I am interested in first-class semantics for OO, I will ignore this solution
 in the rest of this book, and leave it as an exercise for the reader.
 @;{TODO CITE Aaron Stump from U Iowa, etc.}
+@; TODO: Fix as a metaprogram. Kirill Gobulev.
+
+
 
 I have implemented variants of my minimal OO system in many combinations
 of the above solutions to these two issues, in Scheme and other languages.
-For the rest of this book, I will adopt a more “native” Scheme style,
-assuming @c{stateful-Y} and using multiple function arities
-that I will ensure are carefully matched by function callers;
-yet to keep things simple and portable, I will avoid variable arity
-with optional arguments, rest arguments or keyword arguments.
+For the rest of this book, I will adopt a style where most functions are unary,
+but the syntax to define and use them implicitly uses curry with @c{def} and @c{λ};
+I will also be assuming @c{Y = stateful-Y} as my fixed-point operator,
+unless explicitly mentioned otherwise.
 As a result, the reader should be able both to easily copy and test
 all the code in this book at their favorite Scheme REPL,
 and also easily translate it to any other language
@@ -865,6 +898,9 @@ that sports first-class higher-order functions.
 
 And with these issues settled, I will close this digression
 and return to rebuilding OO from first principles.
+
+@; TODO exercise measure number of uses of Y
+@; TODO once
 
 @section[#:tag "MFCME"]{Minimal First-Class Modular Extensibility}
 

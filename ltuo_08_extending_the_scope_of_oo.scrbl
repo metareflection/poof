@@ -1,6 +1,7 @@
 #lang scribble/base
 @; -*- Scheme -*-
 @(require "util/ltuo_lib.rkt")
+@(set-chapter-number 8)
 
 @title[#:tag "EtSoO"]{Extending the Scope of OO}
 @epigraph{
@@ -516,18 +517,12 @@ that it then invoked with @c{'instance-methods}, the @c{method-id}, and the elem
 To modularly extend it a class instance method, one needs first
 focus on it, by composing a lens focusing on a prototype for a type descriptor
 with an @c{instanceMethodLens} below, to obtain
-a skew lens for a specific instance method.
-Similarly one may use @c{instanceFieldLens} to obtain
-a skew lens for a field descriptor:
+a skew lens for a specific instance method:
 @Code{
 (def (instanceMethodLens method-id)
   (updateLens rprotoSpecLens
     (composeUpdate (fieldUpdate 'instance-methods)
                    (fieldUpdate method-id))))
-(def (instanceFieldLens field-id)
-  (updateLens rprotoSpecLens
-    (composeUpdate (fieldUpdate 'instance-fields)
-                   (fieldUpdate field-id))))
 }
 
 Now, when specifying a class instance method, the programmer thinks in terms of
@@ -614,6 +609,103 @@ in writing these specifications.
 @; DEFINING A METHOD OUTSIDE A CLASS
 @; COMBINING METHODS INTO DIFFERENT CLASSES
 @; WRAPPING A METHOD INTO... A RENAMING?
+
+@subsubsection{Simple Class Initialization}
+
+One may specify the fields of a class instance,
+by specifying individual field descriptors under a @c{instanceFieldLens}:
+@Code{
+(def (instanceFieldLens field-id)
+  (updateLens rprotoSpecLens
+    (composeUpdate (fieldUpdate 'instance-fields)
+                   (fieldUpdate field-id))))
+}
+A simple field descriptor would be a record of an @c{init} modular extension to initialize it,
+and other information such as whether the slot is mutable (in a language with side-effects),
+type information (that could be static if the class is second-class, but will be dynamic here), etc.
+We will stick to just the @c{init} protocol for now:
+@Code{
+(def (simpleInstanceFieldSpec field-id initModExt)
+  (skewExt (instanceFieldLens field-id)
+    (rproto←record (record (init initModExt)))))
+}
+To initialize a field @c{parts} that is a list of parts,
+defaulting to an empty list, you would use something like:
+@Code{
+(simpleInstanceFieldSpec 'parts (constant-spec '()))
+}
+To initialize a field @c{price} that defaults as a baseline
+to the sum of the prices of the parts times the contents of the field @c{markup},
+you would use:
+@Code{
+(simpleInstanceFieldSpec 'parts (λ (self _inherited)
+  (* (self 'markup)
+     (foldl + 0 (λ (part) (part 'price)) (self 'parts)))))
+}
+A field @c{markup} that has no default initializer must be provided by users could be defined as:
+@Code{
+(simpleInstanceFieldSpec 'parts (λ (_self _inherited)
+  (abort "missing field markup")))
+}
+A class could then define a default prototype for new instances as:
+@Code{
+(skewExt (updateLens rprotoSpecLens (fieldUpdate 'new-instance-prototype))
+  (λ (self _inherited)
+    (rproto-mix*
+      (apply mix*
+        (map (λ (slot)
+             (compose (fieldUpdate (slot 'name))
+                      (slot 'init-spec)))
+           slots)))))
+}
+
+
+A class descriptor holds a list of slot descriptors
+and builds the instance prototype by focusing and mixing:
+@Code{
+(def (class-proto slots)
+}
+
+Each slot's @c{init-spec} is focused onto its field
+by composing with @c{fieldUpdate},
+then all are mixed together.
+The @c{fix-record} closes the recursion,
+yielding a prototype where each slot is initialized
+according to its descriptor.
+
+For example, a @c{Rectangle} class with width, height, and computed area:
+@Code{
+(def rectangle-slots
+  (list
+    (default-slot 'width 10)
+    (default-slot 'height 20)
+    (computed-slot 'area
+      (λ (self) (* (self 'width) (self 'height))))))
+
+(def rectangle-proto (class-proto rectangle-slots))
+}
+@Code{
+(expect
+  (rectangle-proto 'width) => 10
+  (rectangle-proto 'height) => 20
+  (rectangle-proto 'area) => 200)
+}
+
+Extending the class is just adding more slots to the mix:
+@Code{
+(def colored-rectangle-slots
+  (cons (default-slot 'color "black") rectangle-slots))
+
+(def colored-rectangle-proto (class-proto colored-rectangle-slots))
+}
+@Code{
+  (colored-rectangle-proto 'color) => "black"
+  (colored-rectangle-proto 'area) => 200)
+}
+
+The entire class definition reduces to composing focused modular extensions—
+the same pattern used for methods, now lifted to slot initialization.Claude is AI and can make mistakes. Please double-check responses. Opus 4.5Claude is AI and can make mistakes. Please double-check responses.Share
+
 
 @; TODO section on multiple and optimal inheritance in this context
 

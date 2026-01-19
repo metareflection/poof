@@ -2,7 +2,7 @@
 
 (provide (all-defined-out))
 
-(require (only-in scribble/base elem linebreak nested italic smaller bold)
+(require (only-in scribble/base elem linebreak nested italic smaller bold include-section para)
          (only-in scribble/core make-paragraph make-style)
          (only-in scriblib/footnote note define-footnote)
          (only-in scriblib/render-cond cond-element cond-block)
@@ -40,8 +40,9 @@
 
 (define (xnote x . y)
   (list x
-        (;;note #:number 'next
-         my-note
+        (
+        ;;note #:number 'next
+        my-note
            (list y (html-elem (list (linebreak) (linebreak) (linebreak)))))))
 
 (define epigraph-style
@@ -87,9 +88,8 @@
 
 ;; scribble/report subsubsub*section does not work https://github.com/racket/scribble/issues/540
 (define (Paragraph . x)
-  (list (html-elem (list (bold x) "  "))
-        (tex-elem (list (tex "\\paragraph{") x (tex "}")))))
-
+  (list (html-elem (elem (bold x) "  "))
+        (tex-elem (elem (tex "\\paragraph{") x (tex "}")))))
 
 (define book-abstract-style
   (make-style
@@ -118,3 +118,25 @@
      (nested
       #:style "book-abstract"
       text)))))
+
+
+(define chapter-number (make-parameter 1))
+(define (set-chapter-number n)
+  (chapter-number n)
+  (exercise-number 1))
+(define exercise-number (make-parameter 1))
+(define tagged-exercises (make-hash))
+(define (exercise-ref tag)
+  (hash-ref tagged-exercises tag #f))
+
+;; Easy Medium Difficult Research
+(define (exercise #:difficulty (difficulty #f) #:tag (tag #f) . text)
+  (let* ((chapter (chapter-number))
+         (number (exercise-number))
+         (id (format "~a.~a" chapter number)))
+    (when tag (hash-set! tagged-exercises tag id))
+    (exercise-number (+ number 1))
+    (apply para (tex "~\\\\{}\\noindent")
+           (bold (elem "Exercise " id (if difficulty (elem " (" difficulty ")") "")))
+     " "
+     text)))

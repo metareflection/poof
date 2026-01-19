@@ -1,6 +1,7 @@
 #lang scribble/base
 @; -*- Scheme -*-
 @(require "util/ltuo_lib.rkt")
+@(set-chapter-number 10)
 
 @title{Conclusion}
 
@@ -305,4 +306,3 @@ in typeclass-style more so than in class-style,
 with flavorful optimal inheritance, method combinations and multiple dispatch.
 
 May you live free, and enjoy software written with Object Orientation!
-

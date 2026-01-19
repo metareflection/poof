@@ -1,6 +1,7 @@
 #lang scribble/base
 @; -*- Scheme -*-
 @(require "util/ltuo_lib.rkt")
+@(set-chapter-number 3)
 
 @title[#:tag "WOOiIO"]{What Object Orientation @emph{is} — Informal Overview}
 @epigraph{Ce qui se conçoit bien s'énonce clairement, @linebreak[]
@@ -29,8 +30,9 @@ A program is made of many parts that can be written independently,
 enabling division of labor,
 as opposed to all logic being expressed in a single monolithic loop@xnote["."]{
   The entire point of partial specifications is that they are not complete,
-  and you want to be able to manipulate those incomplete specifications even though of course
-  trying to “instantiate” them before all the information has been assembled should fail.
+  and you want to be able to manipulate those incomplete specifications,
+  even though, of course, trying to “instantiate” them
+  before all the information has been assembled should fail.
   Typesystems and semantic frameworks incapable of dealing with such incomplete information
   are thereby incapable of apprehending OO.
 }
@@ -60,11 +62,11 @@ which can be done for any language.
 @; TODO: examples, secref, etc.
 @section[#:tag "P&C"]{Prototypes and Classes}
 @epigraph{
-  SIR, I admit your gen'ral Rule @linebreak[]
+  Sir, I admit your gen'ral Rule @linebreak[]
   That every Poet is a Fool: @linebreak[]
   But you yourself may serve to show it, @linebreak[]
   That every Fool is not a Poet.
-  @|#:- "Alexander Pope (or Jonathan Swift), adapting a French quip"|
+  @|#:- "Alexander Pope (or Jonathan Swift), “Epigram from the French”"|
 }
 @subsection{Prototype OO vs Class OO}
 These in-language entities are called @emph{prototypes} if first-class
@@ -116,7 +118,7 @@ directly applies just as well to the special case that is Class OO.
 Dynamic languages with reflection, such as Lisp, Smalltalk or JavaScript,
 can blur the distinction between runtime and compile-time,
 and thus between Prototype OO and Class OO.
-Indeed many languages implement Class OO on top of Prototype OO
+Indeed, many languages implement Class OO on top of Prototype OO
 exactly that way, with classes being prototypes for type descriptors. @;{ TODO cite JavaScript ?}
 
 Static languages, on the other hand, tend to have very restricted sublanguages at compile-time
@@ -150,7 +152,7 @@ or of their compile-time or runtime representation.
 
 A (partial or complete) specification is a piece of information that
 (partially or completely) describes a computation.
-Multiple specifications can be combined together into a larger specification.
+Multiple specifications can be combined into a larger specification.
 From a complete specification, a target computation is specified that can be extracted;
 but most specifications are incomplete and you can’t extract any meaningful target from them.
 A specification is modular inasmuch as it can define certain aspects of the target
@@ -158,13 +160,13 @@ while referring to other aspects to be defined in other specifications.
 A specification is extensible inasmuch as it can refer to some aspects of the target
 as partially defined so far by previous specifications, then amend or extend them.
 In Prototype OO, access to this modular context and to the previous value being extended
-are usually referred to through respective variables often named @c{self} and @c{super}.
+are usually referred to through variables often named @c{self} and @c{super} respectively.
 In Class OO, such variables may also exist, but there is an extra layer of indirection
 as they refer to an element of the target type rather than to the target itself.
 
 @subsection[#:tag "PaC"]{Prototypes as Conflation}
-A specification is not a prototype, not a class, not a type, not an object:
-it is not even a value of the target domain.
+A specification is not a prototype, not a class, not a type, not an object—it is not even
+a value of the target domain.
 It is not a record and does not have methods, fields, attributes or any such thing.
 
 A target value in general is not an object, prototype or class either;
@@ -256,7 +258,7 @@ between subtyping and subclassing due to
 confusing target (subtyping) and specification (subclassing).
 @;{TODO cite Meyer OOSC, see other section}
 
-Still when you clearly tease the two notions apart,
+Still, when you clearly tease the two notions apart,
 and are aware of when they are being conflated for practical purposes,
 so you can distinguish which of the two aspects should be invoked in which context,
 then the semantics of OO becomes quite simple.
@@ -339,7 +341,7 @@ around its many possible mutually incompatible meanings@xnote["."]{
   It’s a bit as if you had to discuss Linear Algebra without being able to talk about lines,
   or had to discuss Imperative Programming without being able to talk about the Emperor.
   Ridiculous.
-  Or then again just an artefact of etymology.
+  Or perhaps just an artefact of etymology.
 }
 Meanwhile, the word “class” is practically useless,
 denoting a rather uninteresting special case of a prototype.
@@ -351,9 +353,9 @@ To avoid confusion, I will be careful in this book to only speak of
 “specification”, “target”, “prototype”, and (target type) “element”
 and to avoid the words “object” or “class” unless necessary, and then
 only in narrowly defined contexts@xnote["."]{
-  I am however under no illusion that my chosen words would remain unambiguous very long
+  I am, however, under no illusion that my chosen words would remain unambiguous very long
   if my works were to find any success. They would soon be rallying targets
-  not just for honest people to use, but also for spammers, cranks, and frauds
+  not just for honest people to use, but also for ignoramus, spammers, cranks, and frauds
   to subvert—and hopefully for pioneers to creatively misuse
   as they make some unforeseen discovery.
 }
@@ -436,42 +438,52 @@ in order from least specific superclass to most specific@xnote["."]{
   wherein the body of each subclass or subprocedure
   is the “inner” part between this prefix and suffix,
   marked by the @c{inner} keyword as a placeholder.
+  Lack of explicit @c{inner} keyword is same as before, as if the keyword was at the end.
   This approach by Simula and its successor Beta @~cite{kristensen1987beta}
-  (that generalized classes to “patterns” that also covered method definitions the same way)
-  is in sharp contrast with how inheritance is done in about all other languages,
+  (that generalized classes to “patterns” that also covered method definitions the same way;
+  except that lack of “inner” means the “do” block cannot be extended anymore,
+  like “final” in Java or C++),
+  is in sharp contrast with how inheritance is done in almost all other languages,
   that copy Smalltalk.
   The “prefix” makes sense to initialize variables, and to allow procedure definitions
-  to be overridden by latter more specialized definitions;
+  to be overridden by later more specialized definitions;
   the “suffix” is sufficient to do cleanups and post-processing,
-  especially when procedures store their working return value
-  in a variable with the same name as the procedure being defined, in Algol style.
+  especially when all communication of information between concatenated code fragments
+  happens through side-effects to shared instance variables
+  (including, in Algol style, a special variable with the same name as the procedure being defined,
+  to store the working return value).
   The entire “inner” setup also makes sense in the context of spaghetti code with GOTOs,
-  before Dijkstra made everyone consider them harmful in 1968,
-  as well as return values controlled by assigning a value to a variable named after the function.
-  But frankly, it is both limited and horribly complex to use in the post-1968 context
-  of structured code blocks, not to mention post-1970s higher-order functions, etc.,
-  even though in Beta you can still express what you want in a round-about way
-  by explicitly building a list or nesting of higher-order functions
-  that re-invert control back the way everyone else does it,
-  that you call at the end.
+  before Dijkstra made everyone consider them harmful in 1968;
+  the reliance on side-effects everywhere also made more sense before Lisp,
+  Functional Programming, and eventually concurrency and large distributed systems,
+  made people realize side-effects can be more confusing than pure information flow
+  through function calls, return values and immutable let bindings.
+  But this concatenation semantics is both limited and horribly complex to use
+  in the post-1968 context of structured code blocks,
+  not to mention post-1970s higher-order functions, etc.
+  You could express the modern approach in a roundabout way in Beta,
+  by explicitly building a list or nesting of higher-order functions as your only side-effect,
+  that re-invert control in a pure way back the way everyone else does it,
+  that you call at the end; but that would be an awkward design pattern.
   And so, while Simula was definitely a breakthrough, its particular form of inheritance
-  was also a dead-end;
-  no one but the Simula inventors want anything resembling @c{inner} for their language;
-  no other known language uses it:
-  after Smalltalk, languages instead let subclass methods control the context
+  was also a dead-end.
+  No one but the Simula inventors wants anything resembling @c{inner}
+  for the language they build or use.
+  After Smalltalk, languages instead let subclass methods control the context
   for possible call of superclass methods, rather than the other way around).
-  Beta behavior is easily expressible using user-defined method combinations
-  in e.g. CLOS @~cite{Bobrow1988CLOS}, or can also be retrieved by having methods
+  Beta behavior is easily expressible with user-defined method combinations
+  in CLOS @~cite{Bobrow1988CLOS},
+  or can also be retrieved by having methods
   explicitly build an effective method chained the other way around.
-  Thus I can rightfully say that inheritance, and OO,
+  Thus, I can rightfully say that inheritance, and OO,
   were only invented and named through the interaction of
-  Bobrow’s Interlisp team and Kay’s Smalltalk team at PARC circa 76,
+  Bobrow’s Interlisp team and Kay’s Smalltalk team at PARC circa 1976,
   both informed by ideas from Simula, and Minsky’s frames,
-  and able to integrate these ideas in their wider respective
+  and able to integrate these ideas in their respective
   AI and teachable computing experiments thanks to their dynamic environments,
   considerably more flexible than the static Algol context of Simula.
-  In the end, Simula should count as a precursor to OO, or at best an early draft of it,
-  but either way, not the real, fully-formed concept.
+  In the end, Simula should count as a precursor to OO, or at best an early draft of it—but
+  either way, not the real, fully-formed concept.
   Dahl and Nygaard never invented, implemented, used or studied OO as most of us know it:
   not then with Simula, not later with Beta, and never later in their life either.
   Just like Columbus never set foot on the continent of America.
@@ -511,13 +523,13 @@ Even today, most languages that support OO only support single inheritance, for 
 @subsection[#:tag "MULIO"]{Multiple Inheritance Overview}
 
 Discovered a few years later, and initially just called @emph{inheritance},
-in what in retrospect was prototype OO, in KRL @~cite{Winograd1975 Bobrow1976},
+in what, in retrospect, was prototype OO, in KRL @~cite{Winograd1975 Bobrow1976},
 Multiple inheritance allows a specification (frame, class, prototype, etc.)
 to have multiple direct parents.
 The notion of (multiple) inheritance thus predates Smalltalk-76 @~cite{Ingalls1978}
-adopting the term, retroactively applying it to Simula,
-and subsequently inventing the terms “single” and “multiple” inheritance
-to distinguish the two approaches as well as recognize their commonality.
+adopting the term, retroactively applying it to Simula.
+The terms “single” and “multiple” inheritance were subsequently invented
+to distinguish the two approaches as well as recognize their commonality @~cite{Stansfield1977COMEX}.
 
 Although some more early systems
 @~cite{Borning1977 Traits Goldstein1980Extending Borning1982Multiple Bobrow1983LOOPS}
@@ -555,7 +567,7 @@ The newer (1979) “flavorful” viewpoint sees it as a cooperation between meth
 Unhappily, too many in both academia and industry are stuck in 1976,
 and haven’t even heard of the flavorful viewpoint, or, when they have, still don’t understand it.
 For this reason, despite its being more expressive and more modular than single inheritance,
-flavorful multiple inheritance still isn’t as widely adopted.@xnote["."]{
+flavorful multiple inheritance still isn’t as widely adopted as of 2026@xnote["."]{
   Out of the top 50 most popular languages in the TIOBE index, 2025, @;{TODO cite}
   6 support flavorful multiple inheritance (Python, Perl, Ruby, Lisp, Scala, Solidity),
   3 only support flavorless multiple inheritance (C++, Ada, PHP),
@@ -567,8 +579,8 @@ flavorful multiple inheritance still isn’t as widely adopted.@xnote["."]{
 @subsection[#:tag "MIXIO"]{Mixin Inheritance Overview}
 
 Mixin inheritance was discovered last @~cite{bracha1990mixin},
-probably because it relies on a more abstract pure functional view of OO;
-maybe also because it was one of the first successful attempts at elucidating inheritance
+probably because it relies on a more abstract pure functional view of OO—maybe
+also because it was one of the first successful attempts at elucidating inheritance
 in the paradigm of programming language semantics,
 when the concept had previously been developed in paradigm of computing systems @~cite{Gabriel2012}.
 Yet, for the same reasons,
@@ -588,7 +600,7 @@ and the inheritance structure of a specification is just
 the flattened list of elementary specifications chained into it,
 as simple as single inheritance.
 Mixin inheritance works better at runtime, either with Prototype OO,
-or for Class OO in a dynamic and somewhat reflective system.
+or, in a dynamic and somewhat reflective system, with Class OO.
 
 Mixin inheritance is in some way simpler than single inheritance
 (but only if you understand FP yet are not bound by limitations of most of today’s FP typesystems),
@@ -605,7 +617,7 @@ Racket @~cite{Mixins1998 Flatt2006Mixins},
 Newspeak @~cite{bracha2008newspeak},
 GCL @~cite{gclviewer2008},
 Jsonnet @~cite{jsonnet},
-and Nix @~cite{nix2015}.
+and Nix @~cite{nix2015}. @; TODO: cite gBeta ?
 Yet it still has outsized outreach, for just the use of GCL at Google means
 a large part of the world computing infrastructure
 is built upon configurations written using mixin inheritance@xnote["."]{
@@ -621,32 +633,47 @@ as a form of mixin inheritance with automatic renaming,
 at which point mixin inheritance is actually very popular, just not well-understood.
 
 @subsection{False dichotomy between Inheritance and Delegation}
-Many authors have called “Delegation” the mechanism used by Prototype OO@~cite{Hewitt1979Security},
+Many authors have called “delegation” the mechanism used by Prototype OO
 @; TODO CITE Self, Castagna Cardelli 1996, …
 as distinct from the “inheritance” mechanism of Class OO.
-However, Lieberman, in one of the papers that popularized this dichotomy@~cite{Lieberman1986},
-discusses the two joined concepts of Prototype-Delegation vs Class-Inheritance@xnote[","]{
-  Lieberman also explores at length the philosophical underpinnings of these two idea-complexes,
-  which is quite interesting from a historical and psychological point of view,
-  but has little relevance to a technical discussion on the semantics of OO,
-  its proper use or implementation decades later.
-}
-and explains in detail how classes and their “inheritance” can be expressed
-as a special case of prototypes and their “delegation”,
-while classes cannot express prototypes.
-He gives multiple examples of behaviors expressible with prototypes but not with classes,
-wherein prototypes enable dynamic extension of individual “objects” (prototypes) at runtime,
+This wrongheaded distinction started with @citet{Hewitt1979Security},
+in whose ACT1 language the two concepts were both implemented,
+but through separate implementation paths.
+The distinction was further popularized by @citet{Lieberman1986},
+who contrasts the two joined concepts of prototype-delegation vs class-inheritance.
+
+Yet, identifying inheritance with classes to the exclusion of prototypes
+is historically counterfactual:
+the words “inheritance” and “prototype” were both simultaneously introduced
+by KRL @~cite{Winograd1975 Bobrow1976},
+a system with (multiple) inheritance and prototype OO—from before
+the word Object Oriented was popular.
+Indeed, KRL was instrumental as an inspiration to Smalltalk-76,
+the system that made OO popular.
+
+Opposing inheritance and delegation is also logically counterfactual:
+@citet{Lieberman1986} itself explains how “inheritance” (i.e. classes)
+can be expressed as a special use of “delegation” (i.e. prototypes).
+On the other hand, paper also explains you cannot go the other way around
+and express prototypes in terms of classes:
+prototypes enable dynamic extension of individual “objects” (prototypes) at runtime,
 while classes only allow extension at compile-time, and only
 for an entire type (“class”) of “objects” (elements of the type).
-But while it is extremely important indeed to understand the distinction and the relationship
-between the general notion of prototypes from the special case of classes,
-it only begets confusion to treat Inheritance and Delegation
-as separate concepts when they have identical concerns of semantics, implementation or performance,
-whether used for prototypes versus classes,
-when the word “inheritance” had already been used by “frames” and other “classless” objects,
-that would later be dubbed “prototypes” in the early 1980s,
-and it is much more useful to see classes as a special case of prototypes
-that partake in the very same mechanism of inheritance@xnote["."]{
+
+In the end, the inheritance mechanism is indeed the same, and it is very wrong to
+give it two different names depending on whether it is used for prototypes or for classes.
+Even Self, that became the most popular language with “delegation” in academia,
+uses the word “inheritance” in its papers @~cite{Ungar1987 Chambers1989 parentsSharedParts1991}.
+And @citet{Stein1987} argues that delegation and inheritance are the same concept,
+and notes that prototypes map to classes, not class instances
+(though strictly speaking she gets the mathematical direction of the map wrong).
+The real distinction and comparison that should have been made was between the relative
+expressiveness of prototypes and classes, especially if considered as second-class entities
+and in absence of reflection (or refraint from using it).
+But that is the conclusion that none of the authors who wrote on the topic made explicit,
+even though it is implicit in both.
+And so the authors focus on arguing about different ways to name the same concept in two contexts
+while failing to argue on the different contextual concepts that do matter@xnote["."]{
   If irrelevant changes in the context are a valid excuse to give an existing concept a new name
   and get a publication with hundreds of citations based on such a great original discovery,
   I here dub “ainheritance” the concept of “inheritance”
@@ -718,7 +745,7 @@ As I introduce formal models of OO,
 I will start with pure functional models (see @secref{MOO}), and
 will only discuss the confounding matter of side-effects much later
 (see @secref{SOO})@xnote["."]{
-  It might be interesting to explain @emph{why} previous authors failed so hard to
+  It might be interesting to explain @emph{why} many authors failed so hard to
   identify Delegation and Inheritance, when the similarities are frankly obvious,
   and the relationship between classes and prototypes is well-known
   to anyone who implemented classes atop prototypes.
@@ -766,7 +793,7 @@ will only discuss the confounding matter of side-effects much later
 }
 
 As for which words to keep, the word “inheritance” was used first for the general concept,
-in a language with “prototypes”, KRL @~cite{Winograd1975}.
+in a language with “prototypes”.
 The word “delegation” stems from the Actor message-passing model,
 and is both later and less general,
 from after the words “inheritance” and “prototypes” were better established,
@@ -996,3 +1023,29 @@ this paradigm is what matters, and what I will call OO—it is what I will discu
 and systematically reduce to elementary concepts.
 
 
+@exercise[#:difficulty "Easy"]{
+  Identify one of the concepts I listed that you were not familiar with.
+}
+
+@exercise[#:difficulty "Medium"]{
+  Identify an OO language in a point of the OO design space you didn’t suspect existed.
+  Read the tutorial for that language,
+  look at examples exercising idioms not possible in OO languages you know of.
+  Play with it. Use it to extend programs or configurations that you or other people wrote.
+}
+
+@exercise[#:difficulty "Hard"]{
+  Identify another phenomenon named with a word the meaning of which
+  has been diluted in the public at large,
+  yet a precise definition of which can be given;
+  see how people misled by the dilution of meaning may hold wrong beliefs
+  and make bad decisions based on the misidentification of concepts.
+}
+
+@exercise[#:difficulty "Research"]{
+  Find a case where you and someone you know have a fundamental disagreement.
+  Talk to them, to drill down to what fundamental underlying concept you disagree about.
+  Then, use criteria about good theories from chapter 1 to determine whether
+  one or both of your theories is failing to satisfy the properties of a good theory,
+  thus hinting at which of the two of you might be misidentifying that base concept.
+}
