@@ -36,7 +36,7 @@ and indeed Nix defines its “extension” system similarly@~cite{nix2015}.
 But there is indeed one extra thing Nix does that my model so far doesn’t,
 wherein Nix has prototype objects and I don’t: conflation.
 
-@subsection{Conflation: Crouching Typecast, Hidden Product}
+@subsection[#:tag "CCTHP"]{Conflation: Crouching Typecast, Hidden Product}
 
 @Paragraph{Notional Pair}
 

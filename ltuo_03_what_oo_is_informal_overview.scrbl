@@ -113,6 +113,7 @@ so they only support classes@xnote["."]{
 }
 Still my discussion of OO, and my exploration of inheritance in particular,
 directly applies just as well to the special case that is Class OO.
+See @secref{RCOO}.
 
 @subsection{Classes in Dynamic and Static Languages}
 Dynamic languages with reflection, such as Lisp, Smalltalk or JavaScript,
@@ -190,6 +191,7 @@ In the case of a prototype, you’ll implicitly refer to its specification
 when speaking of extending it or inheriting from it;
 and you’ll implicitly refer to its target when speaking of calling a method,
 looking at its attributes, reading or writing a field, etc.
+See @secref{CCTHP}.
 
 @subsection{Modularity of Conflation}
 
@@ -614,7 +616,7 @@ For all these reasons adoption of mixin inheritance remains relatively limited,
 to languages like
 StrongTalk @~cite{Bracha1993Strongtalk Bak2002Mixins},
 Racket @~cite{Mixins1998 Flatt2006Mixins},
-Newspeak @~cite{bracha2008newspeak},
+Newspeak @~cite{bracha2008},
 GCL @~cite{gclviewer2008},
 Jsonnet @~cite{jsonnet},
 and Nix @~cite{nix2015}. @; TODO: cite gBeta ?
@@ -694,7 +696,7 @@ while failing to argue on the different contextual concepts that do matter@xnote
   for all these never discussed before original inventions related to OO.
 
   The Lieberman paper deserves its thousands of citations because it is a great paper.
-  However, a lot of citers seem to only fixate on the unfortunate choice
+  However, a lot of citers seem to fixate only on the unfortunate choice
   of concept delineation and naming by Lieberman,
   who probably did not anticipate that he would set a bad trend with it.
   The delineation made sense in the historical context of the Actor team
@@ -745,8 +747,8 @@ As I introduce formal models of OO,
 I will start with pure functional models (see @secref{MOO}), and
 will only discuss the confounding matter of side-effects much later
 (see @secref{SOO})@xnote["."]{
-  It might be interesting to explain @emph{why} many authors failed so hard to
-  identify Delegation and Inheritance, when the similarities are frankly obvious,
+  It might be interesting to explain @emph{why} many authors failed so systematically to
+  identify delegation and inheritance, when the similarities are frankly obvious,
   and the relationship between classes and prototypes is well-known
   to anyone who implemented classes atop prototypes.
   But lacking direct access to those authors’ brains, my explanations must remain speculative.
@@ -769,8 +771,8 @@ will only discuss the confounding matter of side-effects much later
 
   Second, and with more specificity to Prototypes,
   Computer Scientists following the Programming Language (PL) paradigm@~cite{Gabriel2012}
-  might have been incapable of unifying Prototypes and Classes
-  when Delegation happens at runtime while inheritance happens at compile-time:
+  might have been unable to unify Prototypes and Classes
+  when delegation happens at runtime while inheritance happens at compile-time:
   not only does the machinery look very different to users and somewhat different as implementers,
   written in different languages with different formalisms,
   but PL people tend to deeply compartmentalize the two.
@@ -783,7 +785,8 @@ will only discuss the confounding matter of side-effects much later
   who freely mix or interleave runtime and compile-time in the very same language,
   might have had no trouble unifying the two across evaluation times,
   but they tend not to publish articles about PL semantics,
-  and not to be read and understood by PL semanticians when they do.
+  and not to be read by most PL semanticians, or
+  not understood by those that do read the articles.
 
   Revisiting these topics several decades after they were in vogue,
   and finding their then-treatment lacking, with errors from the time still uncorrected to this day,
@@ -1006,7 +1009,7 @@ And these phenomena are what is captured by
 the intra-linguistic extensible modularity as defined above:
 (a) the ability to “code against an interface” and
 pass any value of any type that satisfies the interface
-(modularity, be it following structural or nominative rules),
+(modularity, whether following structural or nominative rules),
 (b) the ability to extend and specialize existing code by creating a new entity
 that “inherits” the properties of existing entities and only needs specify
 additions and overrides in their behavior rather than repeat their specifications,
@@ -1018,20 +1021,96 @@ exist @emph{within} the programming language rather than in an external preproce
 I contend that the above is what is usually meant by OO,
 that matches the variety of OO languages and systems
 without including systems that are decidedly not OO, like Erlang, SML or UML.
-And whatever clear or murky correspondence between names and concepts others may use,
+Whatever clear or murky correspondence between names and concepts others may use,
 this paradigm is what matters, and what I will call OO—it is what I will discuss in this book,
 and systematically reduce to elementary concepts.
 
 
 @exercise[#:difficulty "Easy"]{
-  Identify one of the concepts I listed that you were not familiar with.
+  Identify one to three concepts from this chapter that you were not familiar with.
+  For each, write a one-sentence definition in your own words.
+}
+
+@exercise[#:difficulty "Easy"]{
+  For each concept above you feel comfortable with, and among the programs you know,
+  identify a program that illustrates the use of the concept, if you know any.
+  If you don’t know any program that illustrates the concept,
+  you might know instead a language that offers a builtin construct for it.
+}
+
+@exercise[#:difficulty "Easy"]{
+  Look back at the previous chapter on what OO is not.
+  Explain how the concepts of this chapter justifies the previous judgements.
+  Consider sections of the previous chapter in a random order, so that,
+  if you stop before the end, you don’t just do the first few sections like everyone else.
+}
+
+@exercise[#:difficulty "Easy"]{
+  Make a mindmap of the concepts I presented, and
+  establish correspondences with OO languages you know.
+  Include at least: modularity, extensibility, internality;
+  specification, target, prototype, class, and conflation;
+  single, multiple and mixin inheritance.
+  Do you now have a clearer understanding of these languages and how their concepts relate?
+  Write a couple of sentences describing how your understanding has changed.
+}
+
+@exercise[#:difficulty "Medium"]{
+  Make a note of cases where you were confused in the past
+  by people using the same word for what turned out to be
+  very different concepts (though possibly related)
+  or by people using different words for what turned out to be the same concept.
+  The words “object”, “inheritance”, “delegation” are obvious candidates;
+  but there are probably more such words, beyond the field of OO,
+  for which you know or suspect this might be the case.
 }
 
 @exercise[#:difficulty "Medium"]{
   Identify an OO language in a point of the OO design space you didn’t suspect existed.
   Read the tutorial for that language,
-  look at examples exercising idioms not possible in OO languages you know of.
+  look at examples exercising idioms not directly expressible in languages you know of.
   Play with it. Use it to extend programs or configurations that you or other people wrote.
+}
+
+@exercise[#:difficulty "Medium"]{
+  Consider among programs you are familiar with.
+  For each, ask:
+  Does it have multiple variants or configurations?
+  Do different parts need to be modified independently?
+  Are there places the code could be extended, specialized or modified in different ways
+  to satisfy different goals?
+  Would there be a benefit to users if a shared core were maintained
+  on top of which users each have their own custom variant?
+  See if you can devise a simple criterion (1-2 sentences) for what separates
+  programs that would benefit from modular extensibility from those that wouldn’t.
+}
+
+@exercise[#:difficulty "Medium"]{
+  In the first footnote of the chapter, I claim that
+  “typesystems and semantic frameworks incapable of dealing with such incomplete information
+  are thereby incapable of apprehending OO.”
+  Find a type system you know (Java, Haskell, TypeScript, etc.) and explain:
+  Can it represent incomplete specifications? If so, how?
+  If not, what would need to be added?
+  Describe the transition from incomplete specification to complete.
+  Hint: Many typesystems can deal with incomplete specifications at the level of types,
+  but not directly of values. You might however a different “partial” record type
+  with options on each field as a feature outside the language if not inside it.
+}
+
+@exercise[#:difficulty "Medium, Recommended"]{
+  If you did exercise @exercise-ref{02to03}, compare your previous answers to mine.
+  See what surprised you—what you agreed and disagreed with before you read this chapter,
+  and how your understanding has evolved already.
+}
+
+@exercise[#:difficulty "Hard, Recommended" #:tag "03to04"]{
+  Based on this informal overview, and before you read the next chapter,
+  try to write down your own short theory of what the main concepts like “modularity”,
+  “extensibility” and “internality” might mean, and what formalizing them might look like.
+  Bonus if you can then explain how the three together
+  can mean something more than the same three apart.
+  Save your answer to compare with Chapter 4’s treatment.
 }
 
 @exercise[#:difficulty "Hard"]{
@@ -1043,9 +1122,21 @@ and systematically reduce to elementary concepts.
 }
 
 @exercise[#:difficulty "Research"]{
-  Find a case where you and someone you know have a fundamental disagreement.
-  Talk to them, to drill down to what fundamental underlying concept you disagree about.
-  Then, use criteria about good theories from chapter 1 to determine whether
-  one or both of your theories is failing to satisfy the properties of a good theory,
-  thus hinting at which of the two of you might be misidentifying that base concept.
+  Find a controversy on the Internet where two sides have a fundamental disagreement—if
+  possible in a technical topic with verifiable facts, though possibly not.
+  (The exercise is much easier if you’re on neither side, but can be more useful if you are.)
+  Talk to people on both sides, to drill down to what words they may be using
+  with different meanings or hidden connotations and assumptions.
+  Identify fundamental underlying concepts they actually disagree about,
+  which may include such hidden assumptions.
+  Try to “strongman” the theories on both sides, taking their best arguments
+  (but also noting their worst);
+  use neutral parties or verifiable facts to assess the strength of arguments.
+  Then, use criteria about good theories from chapter 1 to determine whether the better
+  theories on either or both sides are failing to satisfy the properties of a good theory.
+  After clarifying words and concepts and theories, make your own theory,
+  possibly unifying concepts and arguments from the previous two, about the topic.
+  Bonus: study the kind of bias that makes each party blind
+  to the strength of some arguments from the other side,
+  and to the weakness of some arguments from their own side.
 }

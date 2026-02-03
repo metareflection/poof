@@ -855,9 +855,14 @@ First-class modularity vs second-class.
 Note that in most second-class OO languages, you often also have this as first-class modularity
 yet without first-class modular extensibility. (Subtle distinction.)
 
+Dynamic dispatch as such is not OO: it is first-class modularity, that can happen with or without OO (which is first-class or second-class modular extensibility). Proof: Microsoft COM, first-class modules in ML, "objects" without inheritance in SICP, etc.
+
+Now if you have first-class OO, then you necessarily have dynamic dispatch.
+
+But you could have second-class OO without dynamic dispatch: C++ without "virtual" methods; Java with only static methods; Interface passing style with constant interfaces; etc.
+
 Kin vs type. @~cite{Allen2011Type}
 
 Also works in typeclass-style vs class-style.
 
 How that interacts with multiple dispatch tables, global or local.
-

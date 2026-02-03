@@ -815,6 +815,12 @@ I will define those terms precisely in
 @secref{WOOiIO}, @secref{OOaIEM}, @secref{MOO}, @secref{ROOfiMC}.
 
 @exercise[#:difficulty "Easy"]{
+  Note that this book addresses readers with some familiarity with programming,
+  and that it starts having code at @seclink["MOO"]{chapter 5}.
+  Adjust your expectations and reading pattern accordingly.
+}
+
+@exercise[#:difficulty "Easy"]{
   What does the word “function” mean to a mathematician? To a C programmer?
   To a Haskell programmer? To a Rocq user? Are they the same thing?
 }
@@ -836,7 +842,16 @@ I will define those terms precisely in
 
 @exercise[#:difficulty "Hard"]{
   Identify a case where you were once bamboozled by someone using the word “we”
-  and your granting undue credit or accepting undue responsibility.
+  and your granting undue credit or accepting undue responsibility—or
+  a case were you bamboozled someone (typically child or spouse)
+  with the same technique.
+}
+
+@exercise[#:difficulty "Hard" #:tag "01to02"]{
+  If you are familiar with OO, then, in advance of reading the next chapter,
+  try to make a list of things many people claim are OO, but that aren’t really,
+  at least not what programmers mean when they think of an OO language.
+  You can later compare your list to mine after reading @secref{WOOin}.
 }
 
 @exercise[#:difficulty "Research"]{

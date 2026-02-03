@@ -126,7 +126,7 @@
   (exercise-number 1))
 (define exercise-number (make-parameter 1))
 (define tagged-exercises (make-hash))
-(define (exercise-ref tag)
+(define (exercise-ref tag) ;; TODO: make it clickable
   (hash-ref tagged-exercises tag #f))
 
 ;; Easy Medium Difficult Research

@@ -124,7 +124,7 @@
 
 %% 1963
 
-@inproceedings{sketchpad1963,
+@InProceedings{sketchpad1963,
   author = {Ivan E. Sutherland},
   title = {Sketchpad: A Man-Machine Graphical Communication System},
   year = {1963},
@@ -134,7 +134,7 @@
   url = {https://doi.org/10.1145/1461551.1461591},
   doi = {10.1145/1461551.1461591},
   abstract = {The Sketchpad system makes it possible for a man and a computer to converse rapidly through the medium of line drawings. Heretofore, most interaction between man and computers has been slowed down by the need to reduce all communication to written statements that can be typed; in the past, we have been writing letters to rather than conferring with our computers. For many types of communication, such as describing the shape of a mechanical part or the connections of an electrical circuit, typed statements can prove cumbersome. The Sketchpad system, by eliminating typed statements (except for legends) in favor of line drawings, opens up a new area of man-machine communication.},
-  booktitle = {Proceedings of the May 21-23, 1963, Spring Joint Computer Conference},
+  booktitle = {May 21-23, 1963, Spring Joint Computer Conference},
   pages = {329–346},
   numpages = {18},
   location = {Detroit, Michigan},
@@ -435,7 +435,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url = {https://doi.org/10.1145/800027.808431},
   doi = {10.1145/800027.808431},
   abstract = {We distinguish the activity of writing large programs from that of writing small ones. By large programs we mean systems consisting of many small programs (modules), possibly written by different people.We need languages for programming-in-the-small, i.e. languages not unlike the common programming languages of today, for writing modules. We also need a “module interconnection language” for knitting those modules together into an integrated whole and for providing an overview that formally records the intent of the programmer(s) and that can be checked for consistency by a compiler.We explore the software reliability aspects of such an interconnection language. Emphasis is placed on facilities for information hiding and for defining layers of virtual machines.},
-  booktitle = {Proceedings of the International Conference on Reliable Software},
+  booktitle = {International Conference on Reliable Software},
   pages = {114–121},
   numpages = {8},
   keywords = {Module interconnection language, Accessibility, Visibility, Protection, Linking, Scope of definition, Virtual machine, Project management tool., Information hiding, External name, System hierarchy},
@@ -443,29 +443,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 %% 1976
-
-% Unnamed language inspired by Hewitt's actors (PLASMA) and Smalltalk-72.
-% Prototype-based ("objects" reply to "messages", "prototype" not used),
-% that have "parents" or "children" (single inheritance is described; "inheritance of properties" is used)
-% There are "classes" that handle otherwise unhandled messages, but the relationship between
-% classes and parents is not explained -- are they the same hierarchy? a separate one?
-% Are the child/parent and class/instance relationships the same or different?
-@InProceedings{Kahn1976,
-  author = {Kahn, Kenneth Michael},
-  title = {An Actor-Based Computer Animation Language},
-  year = {1976},
-  isbn = {9781450377898},
-  publisher = {Association for Computing Machinery},
-  address = {New York, NY, USA},
-  doi = {10.1145/1024273.1024278},
-  abstract = {This paper describes a computer language based upon actor semantics designed especially for computer graphics and animation. The thesis that animation is best facilitated by considering each entity on the display screen as an independent process is discussed and demonstrated by examples. The system is built upon MacLisp and is compatible with Lisp-Logo. The language is designed to be used by both very sophisticated programmers and by school children.},
-  booktitle = {Proceedings of the ACM/SIGGRAPH Workshop on User-Oriented Design of Interactive Graphics Systems},
-  pages = {37–43},
-  numpages = {7},
-  location = {Pittsburgh, PA},
-  series = {UODIGS '76},
-  url = {https://dspace.mit.edu/handle/1721.1/41950}
-}
 
 % Also published in Cognitive Science, V. 1, No. 1, 1977.
 @TechReport{Bobrow1976,
@@ -475,12 +452,64 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   institution={Stanford Artificial Intelligence Laboratory},
   number={AIM-293},
   url={https://exhibits.stanford.edu/stanford-pubs/catalog/pf235fy3176},
+  doi={10.1207/s15516709cog0101_2},
   note={.
-    This paper has multiple inheritance (without using the word) as multiple “descriptors”
-    each providing a “perspective” on a given “object” or “prototype”,
-    and “inheritance of properties”,
-    meant as a declarative system of data on which operations are then performed,
-    rather than as code as such (though coding is possible).
+    Stanford Artificial Intelligence Laboratory Memo AIM-293,
+    later published in Cognitive Science, V. 1, No. 1, 1977.
+    This watershed paper is maybe the first in a formal publication
+    (or at least one of the very firsts) that uses the words
+    “object-oriented”, “inheritance”, “prototype”, “class” in their modern meaning.
+    The paper describes KRL-0, a first iteration of the design of KRL, written in Lisp,
+    as of May 1976.
+    KRL is a Knowledge Representation Language built in terms of objects.
+    Bobrow and Winogard acknowledge the heritage of Minsky's frames,
+    as well as of Smalltalk and Simula for the “object-oriented” definition
+    of “procedural attachments” (that we would now call methods).
+    An object is a “unit”, that has “slots”;
+    a “prototype” can provide one of multiple “perspectives” on the object
+    (thereby constituting multiple inheritance, though the two words aren’t used together),
+    with each prototype slot either being a “further specification”
+    or being left with “default assumptions” from its “class”.
+    Each slot, including a “self” slot for the object itself,
+    has a “description” made of one or many “descriptors”;
+    descriptors can match more specific descriptors,
+    thereby constituting a query language for the knowledge base.
+    There are further notions of feature, category,
+    category type (basic, abstract, specialization, individual, manifestation, relation, proposition),
+    subclass, multiprocessing, demons that trap on objects or trigger on classes, etc.
+    A very rich system for the day, with ambitions to become even richer.
+    The paper demonstrates the birth of OO as an interaction between Bobrow and Kay:
+    “inheritance of properties” is used definitionally when Winograd 1975 used it descriptively,
+    and “object-oriented” is used three times, citing Kay
+    (multi-process oriented is also used three times, but with slightly different words each time).
+  }
+}
+
+@InProceedings{Kahn1976,
+  author = {Kahn, Kenneth Michael},
+  title = {An Actor-Based Computer Animation Language},
+  year = {1976},
+  isbn = {9781450377898},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  doi = {10.1145/1024273.1024278},
+  abstract = {This paper describes a computer language based upon actor semantics designed especially for computer graphics and animation. The thesis that animation is best facilitated by considering each entity on the display screen as an independent process is discussed and demonstrated by examples. The system is built upon MacLisp and is compatible with Lisp-Logo. The language is designed to be used by both very sophisticated programmers and by school children.},
+  booktitle = {ACM/SIGGRAPH Workshop on User-Oriented Design of Interactive Graphics Systems},
+  pages = {37–43},
+  numpages = {7},
+  location = {Pittsburgh, PA},
+  series = {UODIGS '76},
+  url = {https://dspace.mit.edu/handle/1721.1/41950},
+  note={.
+    Kahn describes his yet unnamed language inspired by Hewitt's actors (PLASMA) and Smalltalk-72,
+    later called “Director”.
+    It is Prototype-based (“objects” reply to “messages”, “prototype” not used).
+    Objects have “parents” or “children” (single inheritance is described;
+    “inheritance of properties” is used).
+    There are “classes” that handle otherwise unhandled messages, but the relationship between
+    classes and parents is not explained — are they the same hierarchy? a separate one?
+    Are the child/parent and class/instance relationships the same or different?
+    Kahn cites Kay, and Hewitt, but not Bobrow and Winograd (though he later does in his thesis).
   }
 }
 
@@ -664,7 +693,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 1980
 
-@inproceedings{Goldstein1980Extending,
+@InProceedings{Goldstein1980Extending,
   author = {Goldstein, Ira P. and Bobrow, Daniel G.},
   title = {Extending Object Oriented Programming in Smalltalk},
   year = {1980},
@@ -674,7 +703,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url = {https://doi.org/10.1145/800087.802792},
   doi = {10.1145/800087.802792},
   abstract = {Smalltalk is an object oriented programming language with behavior invoked by passing messages between objects. Objects with similar behavior are grouped into classes. These classes form a hierarchy. When an object receives a message, the class or one of its superclasses provides the corresponding method to be executed. We have built an experimental Personal Information Environment (PIE) in Smalltalk that extends this paradigm in several ways. A PIE object, called a node, can have multiple perspectives, each of which provides independent specialized behaviors for the object as a whole, thus providing multiple inheritance for nodes. Nodes have metadescription to guide viewing of the objects during browsing, provide default values, constrain the values of attributes, and define procedures to be run when values are sought or set. All nodes have unique names which allow objects to migrate between users and machines. Finally attribute lookup for nodes is context sensitive, thereby allowing alternative descriptions to be created and manipulated.This paper first reviews Smalltalk, then discusses our implementation of each of the above capabilities within PIE, a Smalltalk system for representing and manipulating designs. We then describe our experience with PIE applied to software development and technical writing. Our conclusion is that the resulting hybrid is a viable offspring for exploring design problems.},
-  booktitle = {Proceedings of the 1980 ACM Conference on LISP and Functional Programming},
+  booktitle = {1980 ACM Conference on LISP and Functional Programming},
   pages = {75–81},
   numpages = {7},
   location = {Stanford University, California, USA},
@@ -1050,7 +1079,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   pages = {227–242},
   numpages = {16},
   location = {Orlando, Florida, USA},
-  series = {OOPSLA '87}
+  series = {OOPSLA '87},
   publisher = {Association for Computing Machinery},
   address = {New York, NY, USA},
   volume = {22},
@@ -1080,7 +1109,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % Starts by citing Lieberman 1986. Only single inheritance.
 % focuses on storage for variables and methods
 % 2.1 "Inheritance schemes involve two kinds of objects: classes and instances" - Yikes
-@article{Stein1987Delegation,
+@article{Stein1987,
   title={Delegation is Inheritance},
   author={Stein, Lynn Andrea},
   journal={ACM SIGPLAN Notices},
@@ -1089,6 +1118,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   pages={138--146},
   year={1987},
   publisher={ACM New York, NY, USA},
+  doi={10.1145/38765.38820},
   note={.
     The paper, as a response to Lieberman 1986 arguing that
     delegation is more powerful than inheritance,
@@ -1239,7 +1269,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   Author = {Norman Adams and Jonathan Rees},
   Title = {Object-Oriented Programming in Scheme},
   url = "http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.46.954",
-  booktitle = {Proceedings of the 1988 ACM Conference on LISP and Functional Programming},
+  booktitle = {1988 ACM Conference on LISP and Functional Programming},
   pages = {277--288},
   Year = {1988},
   isbn = {089791273X},
@@ -1347,7 +1377,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % Also single-inheritance, records only
 @Article{Cook1989Denotational,
   title={A Denotational Semantics of Inheritance and its Correctness},
-  author={Cook, William and Palsberg, Jens},
+  author={William Cook and Jens Palsberg},
   journal={ACM Sigplan Notices},
   volume={24},
   number={10},
@@ -1355,27 +1385,43 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   year={1989},
   publisher={ACM New York, NY, USA},
   doi={10.1145/74877.74922},
-  url={https://web.cs.ucla.edu/~palsberg/paper/ic94.pdf}
+  note={.
+    Groundbreaking paper, based on Cook’s PhD work, on the semantics of inheritance.
+    (Also extended version in Information and Computation 1994.)
+    The paper formalizes first inheritance in the λ-calculus,
+    in terms of “generators” (that I call “modular definitions”)
+    and “wrappers” (that I call “modular extensions”),
+    capturing the essence of Reddy 1988 in a much simpler way.
+    The paper only covers single inheritance,
+    but 1990 paper with Bracha later generalizes the approach to mixin inheritance.
+    The paper only covers Class OO, but does it by identifying a class
+    with a constructor for a record of methods,
+    which trivially generalizes to Prototype OO.
+  }
 }
 
-% The right fixed-point semantics, actually for prototypes as well as classes!
 % 2.2 claims to avoid the "subsumption" rule for record subtyping in Cardelli (allows more rows)
 % but in later sections seem to implicitly rely on it (or else on some dynamic or deferred typing?)
-% 3 uses specs and targets without saying it
-% 4.1 Has class as object constructor, reflexively accessible from object as "self class" method,
-% and then uses double Y to resolve both class and self prototypes,
-% instead of having an explicit Lieberman-like construction of class as prototype.
-% 4.2 seems to implicitly have a type dependency (what are F and G ib (5)?)
+% 4.2 seems to implicitly have a type dependency (what are F and G in (5)? I think typo G should be F)
 % url={https://dl.acm.org/doi/abs/10.1145/96709.96721}
 % Cites Mitch Wand 1987, 1989, 1989... gotta go deeper
 @InProceedings{cook1989inheritance,
   title={Inheritance is not subtyping},
   author={Cook, William R and Hill, Walter and Canning, Peter S},
-  %booktitle={Proceedings of the 17th ACM SIGPLAN-SIGACT symposium on Principles of programming languages},
-  booktitle={POPL},
+  booktitle={17th ACM SIGPLAN-SIGACT symposium on Principles of programming languages},
   pages={125--135},
   year={1989},
-  doi={10.1145/96709.96721}
+  doi={10.1145/96709.96721},
+  note={.
+    This pivotal paper finally debunks the NNOOTT, that prevailed since 1965.
+    It leverages the correct fixed-point semantics from Cook’s thesis;
+    actually works for prototypes as well as classes.
+    Section 3 implicitly uses specifications and targets, but without saying it.
+    The paper’s class construction is actually more complex than need be,
+    with double use of Y in 4.1 at each of class and object level,
+    instead of a simpler construction of class as prototype as in Lieberman 1986;
+    but that doesn’t affect the argument made.
+  }
 }
 
 @InProceedings{Chambers1989,
@@ -1431,8 +1477,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   language = "English",
   isbn = "0-89791-294-2",
   pages = "60--76",
-  %booktitle = "POPL '89 Proceedings of the 16th ACM SIGPLAN-SIGACT symposium on Principles of programming languages",
-  booktitle = "POPL",
+  booktitle = "16th ACM SIGPLAN-SIGACT symposium on Principles of programming languages",
+  series = "POPL 1989",
   publisher = "ACM"
 }
 
@@ -1551,14 +1597,14 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 % Introduces Recursion Schemes. Heavy on math notation.
 % Kind of category theory
-@inproceedings{bananas1991,
+@InProceedings{bananas1991,
   author = {Meijer, Erik and Fokkinga, Maarten and Paterson, Ross},
   title = {Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire},
   year = {1991},
   isbn = {0387543961},
   publisher = {Springer-Verlag},
   address = {Berlin, Heidelberg},
-  booktitle = {Proceedings of the 5th ACM Conference on Functional Programming Languages and Computer Architecture},
+  booktitle = {5th ACM Conference on Functional Programming Languages and Computer Architecture},
   pages = {124–144},
   numpages = {21},
   location = {Cambridge, Massachusetts, USA},
@@ -1713,21 +1759,34 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 1992
 
-% According to Scholar.Google.com, this paper introduces "Open Recursion" in the context of CS,
-% p.31,32, to describe how to extract a class and subclass from fixpoint of operator, after Cook89.
-@book{cardelli1992extensible,
+
+@TechReport{Cardelli1992,
   title={Extensible records in a pure calculus of subtyping},
   author={Cardelli, Luca},
   year={1992},
-  publisher={Digital. Systems Research Center},
-  url="https://bitsavers.trailing-edge.com/pdf/dec/tech_reports/SRC-RR-81.pdf"
+  institution={Digital. Systems Research Center},
+  number={SRC-RR-81},
+  url="https://bitsavers.trailing-edge.com/pdf/dec/tech_reports/SRC-RR-81.pdf",
+  note={.
+    Cardelli presents F≤ρ, a calculus for records with row-variables and subtyping,
+    that he translates to F≤, a known variant of System F (second-order λ-calculus)
+    with subtyping but without row variables.
+    (Cardelli uses ASCII <: instead of ≤ as syntax for subtyping.)
+    Cardelli is notably inspired by Wand 1987, Wand 1989, Cook 1989 and more.
+    Lots of deduction rules with greek symbols. The record types precisely track present fields,
+    rather than a subset of them, with row variables to represent entire sets of fields.
+    This paper also seems to introduce the term “open recursion” in Computer Science (p. 31-32)
+    to describe how to extract a class and subclass from fixpoint of operator, after Cook 1989.
+    The paper does not directly discuss inheritance, but the calculus is obviously made
+    with the modeling of multiple inheritance in mind, citing plenty of papers that do.
+  }
 }
 
 % Like Traits 1982, errors out in case of conflicting methods along the hierarchy
 @InProceedings{CecilMultimethods,
   author="Chambers, Craig",
   editor="Madsen, Ole Lehrmann",
-  title="Object-oriented multi-methods in Cecil",
+  title="Object-Oriented Multi-Methods in Cecil",
   booktitle="ECOOP",
   year="1992",
   publisher="Springer Berlin Heidelberg",
@@ -1735,7 +1794,24 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   pages="33--56",
   abstract="Multiple dispatching provides increased expressive power over single dispatching by guiding method lookup using the values of all arguments instead of only the receiver. However, existing languages with multiple dispatching do not encourage the data-abstraction-oriented programming style that is encouraged by traditional single-dispatching languages; instead existing multiple-dispatching languages tend to foster a function-oriented programming style organized around generic functions. We propose an alternative view of multiple dispatching that is intended to promote a data-abstraction-oriented programming style. Instead of viewing a multi-method as ``outside'' of all objects, we view a multi-method as ``inside'' the objects for which the multi-method applies (on which it dispatches). Because objects are closely connected to the multi-methods implementing their operations, the internals of an object can be encapsulated by being accessible only to the closely-connected multi-methods. We are exploring this object-oriented view of multi-methods in the context of a new programming language named Cecil.",
   isbn="978-3-540-47268-1",
-  url="http://www.laputan.org/pub/papers/cecil-ecoop-92.pdf"
+  url="http://www.laputan.org/pub/papers/cecil-ecoop-92.pdf",
+  doi={10.1007/BFb0053029},
+  note={.
+    A brilliant paper that gets many things right, straightens many wrongs of other papers,
+    and does what many confused others thought impossible, with humility and simplicity,
+    and all the right citations.
+    The Prototype OO language Cecil is one of the very few languages outside Lisp
+    that adopted CLOS-style “multi-methods” and their “multiple dispatching”.
+    Chambers notably discusses how multi-methods can be viewed as “part of” the data types
+    they specialize on, rather than outside them, thereby preserving
+    “object-level encapsulation” and the “data-abstraction-oriented programming methodology”
+    common in single-dispatch OOPLs.
+    Chambers distinguishes “inheritance of code” and
+    “subtyping (inheritance of interface or specification)”.
+    Cecil has multiple inheritance, however only the “conflict” kind,
+    failing to learn from CLOS in this regard.
+    Cecil doesn’t claim to do delegation, but compares its approach to that of Self and Lieberman.
+  }
 }
 
 % Introduces the concept of “Abstraction Inversion”
@@ -1841,7 +1917,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 @InProceedings{ImplementingTypeClasses,
   title = "Implementing Type Classes",
   author = "John Peterson and Mark Jones",
-  booktitle = "Proceedings of ACM SIGPLAN Symposium on Programming Language Design and Implementation",
+  booktitle = "ACM SIGPLAN Symposium on Programming Language Design and Implementation",
   year = "1993",
   url = "http://web.cecs.pdx.edu/~mpj/pubs/pldi93.html",
   publisher = {Elsevier Science},
@@ -1971,21 +2047,21 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 1994
 
-@inproceedings{Ducournau1994Monotonic,
-author = {Ducournau, R. and Habib, M. and Huchard, M. and Mugnier, M. L.},
-title = {Proposal for a monotonic multiple inheritance linearization},
-year = {1994},
-isbn = {0897916883},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-url = {https://doi.org/10.1145/191080.191110},
-doi = {10.1145/191080.191110},
-abstract = {Previous studies concerning multiple inheritance convinced us that a better analysis of conflict resolution mechanisms was necessary. In [DHHM92], we stated properties that a sound mechanism has to respect. Among them, a monotonicity principle plays a critical role, ensuring that the inheritance mechanism behaves “naturally” relative to the incremental design of the inheritance hierarchy. We focus here on linearizations and present an intrinsically monotonic linearization, whereas currently used linearizations are not. This paper describes the algorithm in detail, explains the design choices, and compares it to other linearizations, with LOOPS and CLOS taken as references. In particular, this new linearization extends CLOS and LOOPS linearizations, producing the same  results when these linearizations are sound.},
-booktitle = {Proceedings of the Ninth Annual Conference on Object-Oriented Programming Systems, Language, and Applications},
-pages = {164–175},
-numpages = {12},
-location = {Portland, Oregon, USA},
-series = {OOPSLA '94}
+@InProceedings{Ducournau1994Monotonic,
+  author = {Ducournau, R. and Habib, M. and Huchard, M. and Mugnier, M. L.},
+  title = {Proposal for a monotonic multiple inheritance linearization},
+  year = {1994},
+  isbn = {0897916883},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/191080.191110},
+  doi = {10.1145/191080.191110},
+  abstract = {Previous studies concerning multiple inheritance convinced us that a better analysis of conflict resolution mechanisms was necessary. In [DHHM92], we stated properties that a sound mechanism has to respect. Among them, a monotonicity principle plays a critical role, ensuring that the inheritance mechanism behaves “naturally” relative to the incremental design of the inheritance hierarchy. We focus here on linearizations and present an intrinsically monotonic linearization, whereas currently used linearizations are not. This paper describes the algorithm in detail, explains the design choices, and compares it to other linearizations, with LOOPS and CLOS taken as references. In particular, this new linearization extends CLOS and LOOPS linearizations, producing the same  results when these linearizations are sound.},
+  booktitle = {Ninth Annual Conference on Object-Oriented Programming Systems, Language, and Applications},
+  pages = {164–175},
+  numpages = {12},
+  location = {Portland, Oregon, USA},
+  series = {OOPSLA '94}
 }
 
 % https://api.semanticscholar.org/CorpusID:16832709
@@ -2000,12 +2076,16 @@ series = {OOPSLA '94}
 
 @Article{Cook1994,
   title={A Denotational Semantics of Inheritance and Its Correctness},
-  author={W. Cook and J. Palsberg},
+  author={William Cook and Jens Palsberg},
   journal={Information and Computation},
   year={1994},
   volume={114},
   pages={329--350},
-  url = {https://www.cs.utexas.edu/~wcook/papers/ic94/ic94.pdf}
+  url={https://www.cs.utexas.edu/~wcook/papers/ic94/ic94.pdf},
+  doi={10.1006/inco.1994.1090},
+  note={.
+    Extended version of the OOPSLA 1989 article, with a bit more formalism and theorems.
+  }
 }
 
 % PDF: https://github.com/ansbilalgit/Books/blob/master/Erich%20Gamma,%20Richard%20Helm,%20Ralph%20Johnson,%20John%20M.%20Vlissides-Design%20Patterns_%20Elements%20of%20Reusable%20Object-Oriented%20Software%20%20-Addison-Wesley%20Professional%20(1994).pdf
@@ -2117,10 +2197,10 @@ series = {OOPSLA '94}
 }
 
 % https://dl.acm.org/doi/pdf/10.1145/217838.217858
-@inproceedings{iloop1995,
+@InProceedings{iloop1995,
   title={Sound Polymorphic Type Inference for Objects},
   author={Eifrig, Jonathan and Smith, Scott and Trifonov, Valery},
-  booktitle={Proceedings of the tenth annual conference on Object-oriented programming systems, languages, and applications},
+  booktitle={tenth annual conference on Object-oriented programming systems, languages, and applications},
   pages={169--184},
   year={1995},
   doi={10.1145/217838.217858},
@@ -2454,7 +2534,20 @@ and Fiech, Adrian",
   address="Berlin, Heidelberg",
   pages="104--127",
   abstract="We present the design and rationale of a new statically-typed object-oriented language, LOOM. LOOM, retains most of the features of the earlier language PolyTOIL. However the subtyping relation is dropped from LOOM in favor of the matching relation. ``Hash types'', which are denned in terms of matching, are introduced to provide some of the benefits of subtyping. These types can be used to provide support for heterogeneous data stuctures in LOOM. LOOM. is considerably simpler than PolyTOIL, yet is just as expressive. The type system for the language is decidable and provably type safe. The addition of modules to the language provides better control over information hiding and allows the provision of access like that of C++'s friends.",
-  ISBN="978-3-540-69127-3"
+  ISBN="978-3-540-69127-3",
+  note={.
+    This paper presents LOOM, a statically typed Class OO PL with single inheritance,
+    successor to PolyTOIL, that advantageously replaces
+    subtyping (for targets) with “matching” (subtyping for specifications), though the paper
+    fails to explicitly conceptualize specifications and targets and make that connection.
+    A magic type variable MyType serves as the type of the self magic variable for class instance;
+    in my words, it is the open recursion variable for the target type of a class.
+    Thus specifications as modular definitions of type descriptors are almost but not quite
+    conceptualized, and even then remain as second-class entities.
+    Typing is decidable because matching has a very restricted variant
+    of subtyping (for specifications).
+    Matching implies subtyping when MyType only appears in positive positions in method types.
+  }
 }
 
 @InProceedings{aop97,
@@ -2485,7 +2578,7 @@ and Fiech, Adrian",
 % Defines a dialect of Java with mixins, MixedJava, to illustrate the approach taken in MzScheme,
 % later better described in their 2006 paper.
 % https://www.semanticscholar.org/paper/Classes-and-mixins-Flatt-Krishnamurthi/c20e5f2a424b96209e6b400b23d319558932afa3
-@Misc{Mixins1998,
+@InProceedings{Mixins1998,
   author = {Flatt, Matthew and Krishnamurthi, Shriram and Felleisen, Matthias},
   title = {Classes and mixins},
   year = {1998},
@@ -2495,7 +2588,7 @@ and Fiech, Adrian",
   url = {https://doi.org/10.1145/268946.268961},
   doi = {10.1145/268946.268961},
   abstract = {While class-based object-oriented programming languages provide a flexible mechanism for re-using and managing related pieces of code, they typically lack linguistic facilities for specifying a uniform extension of many classes with one set of fields and methods. As a result, programmers are unable to express certain abstractions over classes.In this paper we develop a model of class-to-class functions that we refer to as mixins. A mixin function maps a class to an extended class by adding or overriding fields and methods. Programming with mixins is similar to programming with single inheritance classes, but mixins more directly encourage programming to interfaces.The paper develops these ideas within the context of Java. The results are 1. an intuitive model of an essential Java subset; 2. an extension that explains and models mixins; and 3. type soundness theorems for these languages.},
-  booktitle = {Proceedings of the 25th ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
+  booktitle = {25th ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
   pages = {171–183},
   numpages = {13},
   location = {San Diego, California, USA},
@@ -2514,7 +2607,7 @@ and Fiech, Adrian",
   url = {https://doi.org/10.1145/301618.301638},
   doi = {10.1145/301618.301638},
   abstract = {Typical class-based languages, such as C++ and JAVA, provide complex class mechanisms but only weak module systems. In fact, classes in these languages incorporate many of the features found in richer module mechanisms. In this paper, we describe an alternative approach to designing a language that has both classes and modules. In our design, we rely on a rich ML-style module system to provide features such as visibility control and parameterization, while providing a minimal class mechanism that includes only those features needed to support inheritance. Programmers can then use the combination of modules and classes to implement the full range of class-based features and idioms. Our approach has the advantage that it provides a full-featured module system (useful in its own right), while keeping the class mechanism quite simple.We have incorporated this design in MOBY, which is an ML-style language that supports class-based object-oriented programming. In this paper, we describe our design via a series of simple examples, show how various class-based features and idioms are realized in MOBY, compare our design with others, and sketch its formal semantics.},
-  booktitle = {Proceedings of the ACM SIGPLAN 1999 Conference on Programming Language Design and Implementation},
+  booktitle = {ACM SIGPLAN 1999 Conference on Programming Language Design and Implementation},
   pages = {37–49},
   numpages = {13},
   location = {Atlanta, Georgia, USA},
@@ -2647,7 +2740,7 @@ and Fiech, Adrian",
   url = {https://doi.org/10.1145/378795.378798},
   doi = {10.1145/378795.378798},
   abstract = {Many important applications must run continuously and without interruption, yet must be changed to fix bugs or upgrade functionality. No prior general-purpose methodology for dynamic updating achieves a practical balance between flexibility, robustness, low overhead, and ease of use.We present a new approach for C-like languages that provides type-safe dynamic updating of native code in an extremely flexible manner (code, data, and types may be updated, at programmer-determined times) and permits the use of automated tools to aid the programmer in the updating process. Our system is based on dynamic patches that both contain the updated code and the code needed to transition from the old version to the new. A novel aspect of our patches is that they consist of verifiable native code (e.g. Proof-Carrying Code [17] or Typed Assembly Language [16]), which is native code accompanied by annotations that allow on-line verification of the code's safety. We discuss how patches are generated mostly automatically, how they are applied using dynamic-linking technology, and how code is compiled to make it updateable.To concretely illustrate our system, we have implemented a dynamically-updateable web server, FlashEd. We discuss our experience building and maintaining FlashEd. Performance experiments show that for FlashEd, the overhead due to updating is typically less than 1\%.},
-  booktitle = {Proceedings of the ACM SIGPLAN 2001 Conference on Programming Language Design and Implementation},
+  booktitle = {ACM SIGPLAN 2001 Conference on Programming Language Design and Implementation},
   pages = {13–23},
   numpages = {11},
   location = {Snowbird, Utah, USA},
@@ -2664,7 +2757,7 @@ and Fiech, Adrian",
   url = {https://doi.org/10.1145/503209.503224},
   doi = {10.1145/503209.503224},
   abstract = {The concept of information hiding modularity is a cornerstone of modern software design thought, but its formulation remains casual and its emphasis on changeability is imperfectly related to the goal of creating added value in a given context. We need better explanatory and prescriptive models of the nature and value of information hiding. We evaluate the potential of a new theory---developed to account for the influence of modularity on the evolution of the computer industry---to inform software design. The theory uses design structure matrices to model designs and real options techniques to value them. To test the potential utility of the theory for software we apply it to Parnas's KWIC designs. We contribute an extension to design structure matrices, and we show that the options results are consistent with Parnas's conclusions. Our results suggest that such a theory does have potential to help inform software design.},
-  booktitle = {Proceedings of the 8th European Software Engineering Conference Held Jointly with 9th ACM SIGSOFT International Symposium on Foundations of Software Engineering},
+  booktitle = {8th European Software Engineering Conference Held Jointly with 9th ACM SIGSOFT International Symposium on Foundations of Software Engineering},
   pages = {99–108},
   numpages = {10},
   keywords = {real options, design structure matrix, modularity, software},
@@ -2734,7 +2827,7 @@ and Fiech, Adrian",
 @InProceedings{findler2002contracts,
   title={Contracts for higher-order functions},
   author={Findler, Robert Bruce and Felleisen, Matthias},
-  booktitle={Proceedings of the seventh ACM SIGPLAN international conference on Functional programming},
+  booktitle={seventh ACM SIGPLAN international conference on Functional programming},
   pages={48--59},
   year={2002},
   url={https://users.cs.northwestern.edu/~robby/publications/papers/ho-contracts-icfp2002.pdf}
@@ -2813,7 +2906,7 @@ and Fiech, Adrian",
   url={https://www.cs.cmu.edu/~aldrich/papers/ecoop05pmd.pdf}
 }
 
-@article{scalableComponentAbstractions2005,
+@InProceedings{scalableComponentAbstractions2005,
   author = {Odersky, Martin and Zenger, Matthias},
   title = {Scalable component abstractions},
   year = {2005},
@@ -2833,9 +2926,7 @@ and Fiech, Adrian",
   numpages = {17},
   keywords = {Scala, abstract types, classes, components, mixins},
   isbn = {1595930310},
-  %booktitle = {Proceedings of the 20th Annual ACM SIGPLAN Conference on Object-Oriented Programming, Systems, Languages, and Applications},
-  %%booktitle = {OOPSLA '05},
-  booktitle = {OOPSLA},
+  booktitle = {20th Annual ACM SIGPLAN Conference on Object-Oriented Programming, Systems, Languages, and Applications},
   location = {San Diego, CA, USA},
   series = {OOPSLA '05}
 }
@@ -2876,6 +2967,13 @@ and Fiech, Adrian",
     year = {2006},
 }
 % http://citeseerx.ist.psu.edu/viewdoc/similar?doi=10.1.1.211.6777&type=cc
+
+@PhDThesis{miller2006,
+  title={Robust Composition: Towards a Unified Approach to Access Control and Concurrency Control},
+  author={Mark Miller},
+  year={2006},
+  institution={Johns Hopkins University}
+}
 
 %% 2007
 
@@ -2931,7 +3029,7 @@ and Fiech, Adrian",
   url = {https://doi.org/10.1145/1238844.1238853},
   doi = {10.1145/1238844.1238853},
   abstract = {The years 1985 through 1995 saw the birth and development of the language Self, starting from its design by the authors at Xerox PARC, through first implementations by Ungar and his graduate students at Stanford University, and then with a larger team formed when the authors joined Sun Microsystems Laboratories in 1991. Self was designed to help programmers become more productive and creative by giving them a simple, pure, and powerful language, an implementation that combined ease of use with high performance, a user interface that off-loaded cognitive burden, and a programming environment that captured the malleability of a physical world of live objects. Accomplishing these goals required innovation in several areas: a simple yet powerful prototype-based object model for mainstream programming, many compilation techniques including customization, splitting, type prediction, polymorphic inline caches, adaptive optimization, and dynamic deoptimization, the application of cartoon animation to enhance the legibility of a dynamic graphical interface, an object-centered programming environment, and a user-interface construction framework that embodied a uniform use-mention distinction. Over the years, the project has published many papers and released four major versions of Self.Although the Self project ended in 1995, its implementation, animation, user interface toolkit architecture, and even its prototype object model impact computer science today (2006). Java virtual machines for desktop and laptop computers have adopted Self's implementation techniques, many user interfaces incorporate cartoon animation, several popular systems have adopted similar interface frameworks, and the prototype object model can be found in some of today's languages, including JavaScript. Nevertheless, the vision we tried to capture in the unified whole has yet to be achieved.},
-  booktitle = {Proceedings of the Third ACM SIGPLAN Conference on History of Programming Languages},
+  booktitle = {Third ACM SIGPLAN Conference on History of Programming Languages},
   xxpages = {9–1--9–50},
   keywords = {virtual machine, prototype-based programming language, programming environment, object-oriented language, morphic, history of programming languages, exploratory programming, dynamic optimization, dynamic language, cartoon animation, adaptive optimization, Self},
   location = {San Diego, California},
@@ -2968,13 +3066,23 @@ and Fiech, Adrian",
   }
 }
 
-@article{bracha2008newspeak,
+@TechReport{Bracha2008,
   title={The Newspeak Programming Platform},
   author={Bracha, Gilad and Ahe, Peter and Bykov, Vassili and Kashai, Yaron and Miranda, Eliot},
-  journal={Cadence Design Systems},
+  institution={Cadence Design Systems},
   year={2008},
   url={https://bracha.org/newspeak.pdf},
+  note={.
+    A minimal class-based OO system in the tradition of Smalltalk and Strongtalk,
+    with mixin inheritance, and lexical scoping used for object capability security
+    (a la Rees 1995, not cited, though citing Miller 2006 who cites it),
+    inheritance of entire nested class hierarchies,
+    reflection (if left accessible in scope), GUI, IDE, FFI.
+    Very inspiring.
+  }
 }
+% TODO: find Ossher & Harrison "Combination of inheritance hierarchies" OOPSLA 1992
+
 
 % Master Thesis. BCL
 % https://pure.tue.nl/ws/portalfiles/portal/46927079/638953-1.pdf
@@ -3074,7 +3182,7 @@ and Fiech, Adrian",
   isbn = {9781605587660},
   publisher = {Association for Computing Machinery},
   address = {New York, NY, USA},
-  booktitle = {Proceedings of the 24th ACM SIGPLAN Conference on Object Oriented Programming Systems Languages and Applications},
+  booktitle = {24th ACM SIGPLAN Conference on Object Oriented Programming Systems Languages and Applications},
   pages = {557–572},
   numpages = {16},
   keywords = {ADT, abstract data type, class, object},
@@ -3172,7 +3280,7 @@ and Fiech, Adrian",
 @InProceedings{Gabriel2012,
   title={The Structure of a Programming Language Revolution},
   author={Richard P. Gabriel},
-  booktitle={Proceedings of the ACM international symposium on New ideas, new paradigms, and reflections on programming and software},
+  booktitle={ACM international symposium on New ideas, new paradigms, and reflections on programming and software},
   pages={195--214},
   year={2012},
   url={https://www.dreamsongs.com/Files/Incommensurability.pdf},

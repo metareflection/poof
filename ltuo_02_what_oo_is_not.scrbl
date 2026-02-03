@@ -728,7 +728,13 @@ you can actually use OO as you do it.
   (This is notably harder than the previous exercise!)
 }
 
-@exercise[#:difficulty "Hard, Recommended"]{
+@exercise[#:difficulty "Medium, Recommended"]{
+  If you did exercise @exercise-ref{01to02},
+  compare your previous answers to mine.
+  See what surprised you, and how your understanding evolved.
+}
+
+@exercise[#:difficulty "Hard, Recommended" #:tag "02to03"]{
   After reading this chapter, but before you read the next,
   try to characterize what you think OO @emph{is} about in the end,
   or at least my definition of it, that isn’t any of the things I denounced.
@@ -743,4 +749,4 @@ you can actually use OO as you do it.
   Characterize the real thing under the original name,
   and the main variants that corrupt the name
   (though they may have interesting contributions of their own beside this corruption).
-} @; Solution: consider the word "ideology" itself.
+} @; Solution: consider the word “ideology” itself.

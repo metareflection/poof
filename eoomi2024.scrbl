@@ -976,6 +976,6 @@ enter, no exit: input enter, do, output ()
 no enter, exit: input (), do, output exit
 enter, exit: input enter, do, output exit
 
-But there's no implicit or explicit self variable in Beta, so make the fixpoint record accessible, the no enter no exit option is the only way.
-And in presence of enter, it's a function so makes more sense to return unit.
+But there’s no implicit or explicit self variable in Beta, so make the fixpoint record accessible, the no enter no exit option is the only way.
+And in presence of enter, it’s a function so makes more sense to return unit.
 Makes sense, but still ugly.

@@ -28,11 +28,12 @@ as long as they satisfy the interface.
 @epigraph{I object to doing things that computers can do.
   @|#:- "Olin Shivers"|
 }
-A few languages offer a builtin notion of modules as @emph{first-class} entities,
-that can be manipulated as values at runtime.
+A few languages offer a builtin notion of modules as @emph{first-class} entities:
+@principle{Entities are first-class if they can be manipulated as values at runtime}.
 But popular modern programming languages usually only offer
-@emph{some} builtin notion of modules as @emph{second-class} entities,
-entities that exist at compile-time but are not available as regular runtime values@xnote["."]{
+@emph{some} builtin notion of modules as @emph{second-class} entities:
+@principle{Entities are second-class if they exist at compile-time
+but are not available as regular runtime values}@xnote["."]{
   In between the two, some languages offer a “reflection” API that gives some often limited
   runtime access to representations of the module entities.
   This API is often limited to introspection only or mostly;
@@ -40,7 +41,7 @@ entities that exist at compile-time but are not available as regular runtime val
   to define new modules or the linker to load them.
   Yet some languages support APIs to dynamically evaluate code,
   that can be used to define new modules;
-  and some clever hackers find ways to call a compiler and dynamic linker,
+  and some clever hackers find ways to call a compiler and a dynamic linker,
   even in languages that don’t otherwise provide support APIs for it. @; TODO cite Goo
 }
 Either first-class or second-class entities are considered @emph{internal} to the language,
@@ -61,12 +62,18 @@ in size and complexity will generally bother to add a module system@xnote["."]{
 Now modularity is foremost a @emph{meta-linguistic} concept:
 Even in a language that provides no support whatsoever for modules
 @emph{within} the language itself (such as C),
-programmers will find means to express modules as @emph{third-class} entities,
-automated by tools @emph{outside} the language:
-a preprocessor, an object file linker, editor macros, “wizards” or LLMs.
-And even if they somehow don’t because they can’t use or can’t afford to use such automation,
-developers may achieve modules as @emph{fourth-class} entities,
-ones that they handle manually, with design patterns, editors, copy-paste, and lots of debugging.
+programmers will find means to express modules as @emph{third-class} entities:
+@principle{Entities are third-class if they are automated by tools
+outside the language process itself}.
+Those tools, known as metaprograms, include (but are not limited to)
+preprocessors, object file linkers, editor macros, “wizards” or LLMs.
+And even if programmers somehow don’t use such automation,
+because they can’t or won’t afford to build or acquire or lease it,
+developers may achieve modules as @emph{fourth-class} entities:
+@principle{Entities are fourth-class if they are notions in the programmer’s head,
+manually translated into tool usage and program modifications}.
+Fourth-class entities include design patterns, as translated into code using
+editors, copy-paste, and lots of debugging.
 Either third-class or fourth-class entities are considered @emph{external} to the language,
 not part of its semantics, not handled by its processors,
 yet conceptually present in the minds of the programmers@xnote["."]{
@@ -122,7 +129,7 @@ More ability to code one’s part, while requiring less knowledge about other pe
   tend to be commensurate with and superior to their costs,
   that is only the precarious result of market forces,
   through the feedback of businesses persisting in their bad practices losing resources
-  and eventually stopping activity. Selection bias of the businesses still alive.
+  and eventually stopping activity. Selection bias: we only observe the businesses still alive.
   But these market forces do not happen magically outside of human activity, or outside yourself:
   your actions partake in those market forces, and so will your going bankrupt
   if you persist in pursuing counter-productive practices.
@@ -238,7 +245,7 @@ provided third-class modularity through an external linker.
 Later developments like
 typechecked second-class Modules à la Modula-2 (1978), @; TODO cite Wirth;
 @; TODO also look into Liskov’s CLU, Mary Shaw’s Alphard, etc.
-Higher-Order Modules à la ML (1985), @; TODO cite McQueen 1985
+Higher-Order Modules à la ML (1985), @; TODO cite David MacQueen 1985
 typeclasses à la Haskell (or traits in Rust),
 interfaces à la Java, and much more,
 @; TODO cite
@@ -342,7 +349,7 @@ programmers may have to manage large interfaces to achieve small results@xnote["
     that become a bottleneck for the dataflow.
   }
   @Xitem{(6)
-    The overall system is not made one bit smaller for being divided in smaller parts;
+    The overall system is not made any smaller for being divided in smaller parts;
     actually, all the artificial process crossings, marshallings and unmarshallings,
     actually make the overall system noticeably larger in proportion to how small those parts are.
     Lots of small problems are added at both runtime and compile-time,
@@ -463,10 +470,10 @@ each field is initialized before it is used@xnote["."]{
 
   In unsafe languages, your program will happily load nonsensical values from
   uninitialized bindings, then silently corrupt the entire memory image,
-  dancing a fandango on core, causing a segmentation fault and other low-level failures,
-  or even worse, veering off into arbitrary undefined behavior and yielding
-  life-shatteringly wrong results to unsuspecting users.
-  The symptoms if any are seen long after the invalid use-before-init,
+  “dance a fandango on core”, cause a segmentation fault and other low-level failures,
+  or even worse, veer off into arbitrary undefined behavior and yield
+  catastrophically wrong results to unsuspecting users.
+  The symptoms, if any, are seen long after the invalid use-before-init,
   making the issue hard to pin-point and debugging extremely difficult
   unless you have access to time-travel debugging at many levels of abstraction.
 
@@ -492,7 +499,7 @@ each field is initialized before it is used@xnote["."]{
   you may still experience resource exhaustion if you generate infinite new dynamic dependencies,
   but so would you in the less safe alternatives if you could reach that point.
 
-  Safest languages may require you to statically prove init-before-use,
+  Safest languages may require you to statically prove init-before-use in finite time,
   which may be very hard with full dependent types,
   or very constraining with a more limited proof system,
   possibly forcing you to fall back to only the “not-so-safe” alternative.
@@ -508,7 +515,7 @@ each field is initialized before it is used@xnote["."]{
 
   The init-before-use issue is well-known and exists outside of OO: it may happen
   whenever there is mutual recursion between variables or initial elements of data structures.
-  However, we’ll see that “open recursion” @~cite{cardelli1992extensible Pierce2002TAPL},
+  However, we’ll see that “open recursion” @~cite{Cardelli1992 Pierce2002TAPL},
   i.e. the use of operators meant to be the argument of a fixpoint combinator,
   but also possibly composition before fixpointing,
   is ubiquitous in OO,
@@ -544,16 +551,44 @@ the initialization of objects of the actually desired class.
   module systems. Maybe the same language across the years.
 }
 
-@exercise[#:difficulty "Medium"]{
-  Use a preprocessor to achieve third-class modularity for a language lacking internal modularity.
+@exercise[#:difficulty "Easy"]{
+  Pick one of the modularity breakthroughs I listed.
+  Does it actually make code more modular?
+  Compare code written without said breakthrough to code written with it,
+  and how much that code needs to be modified to accommodate for a desired change.
+}
+
+@exercise[#:difficulty "Easy"]{
+  Consider software projects you have written or used.
+  Identify what are the units of modularity, and for each unit,
+  what are its interface vs its implementation.
+  How much of the interface is formal, versus how much is informal?
 }
 
 @exercise[#:difficulty "Medium"]{
-  Pick one of the features I argue makes a language more modular,
-  a language with the feature, and a program using that feature heavily.
+  Consider various programming interactions you are having with colleagues,
+  members of a community, or authors of libraries.
+  How much do you and other people have to synchronize for your software to work well with each other?
+  Did you have to modify the code of other people’s software? To read the code?
+  To read only an interface? What did they need to do with respect to your code?
+  How much cooperation could you achieve, with how much coordination?
+}
+
+@exercise[#:difficulty "Medium"]{
+  Use a preprocessor to achieve third-class modularity for a language lacking internal modularity,
+  splitting code into many files.
+}
+
+@exercise[#:difficulty "Medium"]{
+  Pick one of the features I list as making a language more modular, at random.
+  Pick a language with the feature, and a program using that feature heavily.
   Explain how to reproduce the effect of that program without using the language feature.
   Does it indeed involve authors of part of a program having to learn more
   about other parts of the program, having to manually enforce more complex invariants?
+}
+
+@exercise[#:difficulty "Medium"]{
+  Pick an example of a system with too much modularity, or modularity where it doesn’t belong.
 }
 
 @exercise[#:difficulty "Hard"]{
@@ -838,6 +873,28 @@ using “hot-patches” that were not foreseen by the original programmer.
 
 @;{TODO examples}
 
+
+@exercise[#:difficulty "Easy"]{
+  Find examples for first-class, second-class, third-class and third-class extensibility.
+}
+
+@exercise[#:difficulty "Medium"]{
+}
+
+@exercise[#:difficulty "Hard"]{
+  With the help of an AI if needed, write a simple numerical program,
+  say polynomial interpolation using Newton’s or Lagrange’s method,
+  with floating point numbers.
+  How much do you need to modify it to work with arbitrary-precision rational numbers?
+  With numbers finite field @c{F_q}, yielding a Reed-Solomon code?
+  Can you write a version that shares the logic between different number fields,
+  and gets instantiated into a variant with a specific field in a single line, or two to the most?
+  Compare the situation in C, Java, Lisp, Haskell.
+}
+
+@exercise[#:difficulty "Research"]{
+}
+
 @section[#:tag "extensible_modularity"]{Extensible Modularity}
 @epigraph{
   Power Couple:
@@ -859,6 +916,18 @@ compared with using less-modular and less-extensible programming language design
 Together they enable the organic development of cooperative systems
 that grow with each programmer’s needs without getting bogged down in coordination issues.
 
+Remarkably, though, you can have each of modularity and extensibility separately, and
+that isn’t the same as having the two together.
+For instance, first-class modules in ML are units of modularity,
+on which you can do dynamic dispatch, and that you can transform with “functors”,
+functions that take modules as parameters and return modules as a result.
+But somehow you cannot define an extension in a modular way.
+First-class modules, while units of modularity with respect to dispatch,
+and units of extension with respect to functors, remain second-class
+with respect one crucial aspect of modularity:
+resolving many modular definitions from many people together into a single program.
+
+
 Early examples of Modularity and Extensibility together that pre-date fully-formed OO include
 of course classes in Simula 1967 @~cite{Simula1967}, but also precursor breakthroughs like
 the “locator words” of the Burroughs B5000 @~cite{lonergan1961 barton1961}, and
@@ -866,9 +935,14 @@ Ivan Sutherland’s Sketchpad’s “masters and instances” @~cite{sketchpad19
 that both inspired Kay, or Warren Teitelman’s Pilot’s ADVISE facility @~cite{teitelman1966},
 that was influential at least in the Lisp community and led to method combination
 in Flavors and CLOS@xnote["."]{
-  I wonder how much the Smalltalk and Interlisp teams did or did not interact at PARC.
-  I can’t imagine they didn’t, and yet, Interlisp seems to have had more influence
-  on the MIT Lispers than the co-located Smalltalkers.
+  There were definitely exchanges between the Smalltalk and Interlisp teams at PARC:
+  In the 1970s, Kay got “inheritance” from Bobrow’s KRL, and
+  Lispers quickly copied Kay’s OO design as a mechanism
+  to define code rather than just to represent data.
+  In the 1980s Bobrow did work on Smalltalk projects like PIE as well as Lisp projects like LOOPS,
+  but it seems that—maybe after Kay’s and many others’ departure from PARC—the Smalltalk team
+  stopped following or understanding OO developments from the Lisp world,
+  and Interlisp had much more influence on the MIT Lispers than on the co-located Smalltalkers.
 }
 
 @subsection{Modular Extensible Specifications}
@@ -1022,3 +1096,18 @@ the ability to test two specifications for equality.
 
 Therefore, I pick Scheme as the best compromise in which to formalize OO.
 
+@exercise[#:difficulty "Medium, Recommended"]{
+  If you did exercise @exercise-ref{03to04}, compare your previous answers with mine.
+  See what surprised you—what you agreed and disagreed with before you read this chapter,
+  and how your understanding has evolved already.
+}
+
+@exercise[#:difficulty "Hard, Recommended" #:tag "04to05"]{
+  Based on this informal explanation of modularity and extensibility, and
+  before you read the next chapter, build your own minimal models
+  of what “modularity” and “extensibility” could mean
+  in terms of pure functional programming with first-class entities,
+  which would be “internality”.
+  Bonus if you can then put them together to mean something greater than either apart.
+  Save your answer to compare with Chapter 5’s treatment.
+}

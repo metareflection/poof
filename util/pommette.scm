@@ -308,8 +308,8 @@ With Racket: racket pommette.rkt
 (def (mix c p s t)
   (c s (p s t)))
 
-(def (idModExt _s t)
-  t)
+(def (idModExt _s)
+  identity) ;; neutral element for mix
 
 ;;; 5.3.3 Closing Modular Extensions
 (def (fix t m)
