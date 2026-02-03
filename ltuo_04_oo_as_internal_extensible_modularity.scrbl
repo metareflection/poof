@@ -470,7 +470,8 @@ each field is initialized before it is used@xnote["."]{
 
   In unsafe languages, your program will happily load nonsensical values from
   uninitialized bindings, then silently corrupt the entire memory image,
-  “dance a fandango on core”, cause a segmentation fault and other low-level failures,
+  “dance a fandango on core” @~cite{Raymond1996},
+  cause a segmentation fault and other low-level failures,
   or even worse, veer off into arbitrary undefined behavior and yield
   catastrophically wrong results to unsuspecting users.
   The symptoms, if any, are seen long after the invalid use-before-init,
@@ -565,7 +566,7 @@ the initialization of objects of the actually desired class.
   How much of the interface is formal, versus how much is informal?
 }
 
-@exercise[#:difficulty "Medium"]{
+@exercise[#:difficulty "Easy"]{
   Consider various programming interactions you are having with colleagues,
   members of a community, or authors of libraries.
   How much do you and other people have to synchronize for your software to work well with each other?
@@ -577,6 +578,11 @@ the initialization of objects of the actually desired class.
 @exercise[#:difficulty "Medium"]{
   Use a preprocessor to achieve third-class modularity for a language lacking internal modularity,
   splitting code into many files.
+  For instance, generate instructions for your LLM from a template
+  that mixes project-specific instructions with generic and conditional shared instructions.
+  Or, if you manage several Unix machines,
+  generate some machine-wide (in @c{/etc}) or personal configuration file
+  (in @c{~/.*} of @c{~/.config/*}) from a script specialized with machine-specific parameters.
 }
 
 @exercise[#:difficulty "Medium"]{
@@ -588,7 +594,9 @@ the initialization of objects of the actually desired class.
 }
 
 @exercise[#:difficulty "Medium"]{
-  Pick an example of a system with too much modularity, or modularity where it doesn’t belong.
+  Find an example of a system with too much modularity,
+  or modularity where it doesn’t belong,
+  actually making things worse.
 }
 
 @exercise[#:difficulty "Hard"]{
@@ -873,12 +881,76 @@ using “hot-patches” that were not foreseen by the original programmer.
 
 @;{TODO examples}
 
-
 @exercise[#:difficulty "Easy"]{
   Find examples for first-class, second-class, third-class and third-class extensibility.
 }
 
+@exercise[#:difficulty "Easy"]{
+  For each of the following, identify whether it is an example of
+  first-class, second-class, third-class, or fourth-class extensibility,
+  or not extensibility at all:
+}
+@itemize[
+  @item{
+     Downloading a new version of some software.
+  }@item{
+     Downloading an update to some software that modifies it in place.
+  }@item{
+     Manually fixing a bug in source code bug.
+  }@item{
+     Having an AI fix a bug in source code bug.
+  }@item{
+     Applying a patch file to modify some pristine source code release to fix bugs.
+  }@item{
+     Filing a bug report in a bug system.
+  }@item{
+     Manually modifying a binary executable to add extra player health,
+     defeat copy protection, disable remote telemetry, etc.
+  }@item{
+     Publishing a script that can automatically modify some executable,
+     so you can share your fix with others without having to republish
+     the proprietary software (or a direct derivative thereof)
+     and violate its license terms.
+  }@item{
+     Using a “decorator”, “advice”, “aspect”, “around method”, or “newtype”, etc.,
+     to add some functionality to a function, class or type.
+  }@item{
+     Passing a first-class function to a higher-order wrapper that modifies its behavior.
+  }@item{
+     Using subclassing to specialize a class.
+  }@item{
+     Calling a function in a locally modified environment that overrides
+     the values of variables it relies on.
+}]
+
 @exercise[#:difficulty "Medium"]{
+  Which variants of extensibility above have you used?
+  If you haven't tried them all, can you try one you haven't used before?
+}
+
+@exercise[#:difficulty "Medium"]{
+  Consider various programming interactions you are having with colleagues,
+  members of a community, or authors of libraries.
+  What are pieces of software you might want to extend
+  but cannot extend in practice without reimplementing it completely?
+  What prevents you?
+  How could you (or the original authors) modify the software to make it more extensible?
+}
+
+@exercise[#:difficulty "Hard"]{
+  Use some text-processing tools to achieve third-class extensibility
+  for a language lacking internal extensibility,
+  by programmatically extending some existing code without modifying the original function.
+  You may insert markers in the original code for where things should be edited,
+  without modifying its semantics;
+  the third-class extension should use those markers, or contextual information,
+  to generate modified code that extends the original one;
+  simple modifications to the original file should be automatically reflected
+  in the extended file after re-running the third-class extension.
+  @; TODO make a more concrete example
+
+  Notice how much harder this is than with modularity,
+  because you have to deal non-trivially with programs as input, not just output.
 }
 
 @exercise[#:difficulty "Hard"]{
@@ -893,6 +965,13 @@ using “hot-patches” that were not foreseen by the original programmer.
 }
 
 @exercise[#:difficulty "Research"]{
+  Identify some existing software you actually use,
+  that should be internally extensible in some way, but isn’t.
+  Formalize a reasonable use case as code that ought to work if it were indeed extensible.
+  Propose a change making the software extensible that way,
+  that would make your use case actually work.
+  Implement the change, enjoy your extension.
+  Get your change accepted upstream by the maintainers.
 }
 
 @section[#:tag "extensible_modularity"]{Extensible Modularity}
@@ -927,7 +1006,6 @@ and units of extension with respect to functors, remain second-class
 with respect one crucial aspect of modularity:
 resolving many modular definitions from many people together into a single program.
 
-
 Early examples of Modularity and Extensibility together that pre-date fully-formed OO include
 of course classes in Simula 1967 @~cite{Simula1967}, but also precursor breakthroughs like
 the “locator words” of the Burroughs B5000 @~cite{lonergan1961 barton1961}, and
@@ -936,7 +1014,8 @@ that both inspired Kay, or Warren Teitelman’s Pilot’s ADVISE facility @~cite
 that was influential at least in the Lisp community and led to method combination
 in Flavors and CLOS@xnote["."]{
   There were definitely exchanges between the Smalltalk and Interlisp teams at PARC:
-  In the 1970s, Kay got “inheritance” from Bobrow’s KRL, and
+  In the 1970s, Kay got “inheritance” from Bobrow’s KRL,
+  who in return got “object-oriented” and applied inheritance to procedures.
   Lispers quickly copied Kay’s OO design as a mechanism
   to define code rather than just to represent data.
   In the 1980s Bobrow did work on Smalltalk projects like PIE as well as Lisp projects like LOOPS,
@@ -951,9 +1030,9 @@ A modular extensible specification specifies how to extend a previous value,
 but in a modular way: the extension is able to use some modular context
 to refer to values defined and extended by other pieces of code.
 
-At this point, I reach the end of what can be clearly explained while remaining informal,
-and have to introduce a formal model of modularity, extensibility, and the two together,
-to further convey the ideas behind OO.
+At this point, I reach the end of what can be clearly explained while remaining informal.
+I must introduce a formal model of modularity, extensibility,
+and the two together, to further convey the ideas behind OO without resorting to handwaving.
 The last task to carry informally is therefore a justification of my approach to formalization.
 
 @section{Why a Minimal Model of First-Class OO using FP?}
@@ -977,7 +1056,7 @@ identical words used with crucially different meanings by different people.
 @subsection{Why a Minimal Model?}
 @epigraph{Actually a person does not @emph{really} understand something
 until teaching it to a @emph{computer}, i.e. expressing it as an algorithm.
-@|#:- "Donald Knuth"|
+  @|#:- "Donald Knuth"|
 }
 I seek a @emph{minimal} model because a non-minimal model means there are still concepts
 that haven’t been teased apart from each other, but are confused and confusing.
@@ -1024,8 +1103,8 @@ and later to extend and to adapt it.
 My code will also provide a baseline for implementers who would want to use my ideas,
 and who may just port my code to their programming language of choice,
 and be able to debug their port by comparing its behavior to that of the original I provide.
-They can achieve implement basic OO in two lines of code in any modern programming language,
-add have a full-featured OO system in a few hundreds of lines of code.
+They can implement basic OO in two lines of code in any modern programming language,
+and have a full-featured OO system in a few hundreds of lines of code.
 
 @subsection{Why First-Class?}
 
@@ -1034,7 +1113,7 @@ all inheritance happens at compile-time when defining classes.
 But for some programmers to use OO as a second-class programming construct,
 language implementers still have to implement OO as a first-class construct
 within their compilers and other semantic processors.
-@principle{Anyone’s second-class entities are someone else’s first-class entities.}
+@principle{Anyone’s second-class entities are someone else’s first-class entities}.
 And you still don’t fully understand those entities until you have implemented them,
 at which point they are first class.
 Thus, every useful minimal semantic model is always a first-class model,
@@ -1095,6 +1174,28 @@ that I will use when building multiple inheritance:
 the ability to test two specifications for equality.
 
 Therefore, I pick Scheme as the best compromise in which to formalize OO.
+
+@exercise[#:difficulty "Easy, Required"]{
+  Install on your computer an implementation of the programming language Scheme,
+  read the tutorial (if necessary), and play with it.
+  I personally use Gerbil Scheme @~cite{GerbilScheme};
+  but if you are a beginner, you will probably find it much easier to use
+  the closely related language Racket @~cite{Felleisen2015}.
+  You can also play with it on websites like replit.
+  Another option is for you to do all exercises in your own programming language of choice,
+  which will be much easier if your language at least support first-class higher-order functions,
+  and either dynamic typing, or recursively constrained (sub)types;
+  you’re on your own to translate the problems and their solutions in said language of your choice.
+}
+
+@exercise[#:difficulty "Medium, Recommended"]{
+  If you are not yet familiar with the λ-calculus,
+  read a tutorial about it, for instance @citet{Bertot2015}.
+  You don’t have to absorb the entire @citet{Barendregt1984} though.
+  Just understand the basics, how they map to higher-order functions in your favorite language,
+  or how to implement them (e.g. as “closures”) if not available in said favorite language.
+  Your language tutorial might already include a section on such functions.
+}
 
 @exercise[#:difficulty "Medium, Recommended"]{
   If you did exercise @exercise-ref{03to04}, compare your previous answers with mine.
