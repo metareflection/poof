@@ -37,9 +37,21 @@
 (define (hhr) (html-elem (elem #:style (make-style #f (list (make-alt-tag "hr"))))))
 
 (define-footnote my-note #:margin)
+(define footnote-style
+  (make-style "footnote-style"
+    (list (make-css-addition
+            #"
+.FootnoteTargetNumber {
+  vertical-align: baseline; /* cancel superscript */
+  font-size: 1em; /* cancel superscript scale */
+}
+.FootnoteTargetNumber:after {
+  content: \": \"
+}
+"))))
 
 (define (xnote x . y)
-  (list x
+  (list (elem #:style footnote-style x)
         (
         ;;note #:number 'next
         my-note

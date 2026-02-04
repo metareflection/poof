@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <!-- Left face gradient - Red -->
+    <linearGradient id="leftGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff4444"/>
+      <stop offset="100%" stop-color="#aa0000"/>
+    </linearGradient>
+    
+    <!-- Right face gradient - Blue -->
+    <linearGradient id="rightGrad" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#4488ff"/>
+      <stop offset="100%" stop-color="#0044aa"/>
+    </linearGradient>
+    
+    <!-- Top face gradient - Yellow -->
+    <linearGradient id="topGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#ffee44"/>
+      <stop offset="100%" stop-color="#ddaa00"/>
+    </linearGradient>
+  </defs>
+
+  <!-- True isometric cube with correct proportions, no margin -->
+  <!-- Edge length s = 32, so:
+       - dx (horizontal projection of diagonal edge) = s × cos(30°) = 32 × 0.866 = 27.71
+       - dy (vertical projection of diagonal edge) = s × sin(30°) = 32 × 0.5 = 16
+       - vertical edge = s = 32
+       - total width = 2 × dx = 55.42, centered at 32 → left = 4.29, right = 59.71
+       - total height = 2 × dy + s = 64, from 0 to 64
+       
+       Key points:
+       Top: (32, 0)
+       Left: (4.29, 16)
+       Right: (59.71, 16)
+       Center: (32, 32)
+       Bottom-left: (4.29, 48)
+       Bottom-right: (59.71, 48)
+       Bottom: (32, 64)
+  -->
+  
+  <!-- Left face -->
+  <polygon points="32,64 32,32 4.29,16 4.29,48" fill="url(#leftGrad)"/>
+  <!-- Right face -->
+  <polygon points="32,64 32,32 59.71,16 59.71,48" fill="url(#rightGrad)"/>
+  <!-- Top face -->
+  <polygon points="32,32 4.29,16 32,0 59.71,16" fill="url(#topGrad)"/>
+  
+  <!-- Edges -->
+  <polygon points="32,64 32,32 4.29,16 4.29,48" fill="none" stroke="#222" stroke-width="1.2" stroke-linejoin="round"/>
+  <polygon points="32,64 32,32 59.71,16 59.71,48" fill="none" stroke="#222" stroke-width="1.2" stroke-linejoin="round"/>
+  <polygon points="32,32 4.29,16 32,0 59.71,16" fill="none" stroke="#222" stroke-width="1.2" stroke-linejoin="round"/>
+  
+  <!-- Y on left face - centroid: ((32+32+4.29+4.29)/4, (64+32+16+48)/4) = (18.145, 40) -->
+  <g transform="translate(18.145, 40)">
+    <g transform="matrix(0.866, 0.5, 0, 1, 0, 0)">
+      <text x="0" y="2" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">Y</text>
+    </g>
+  </g>
+  
+  <!-- λ on right face - centroid: ((32+32+59.71+59.71)/4, (64+32+16+48)/4) = (45.855, 40) -->
+  <g transform="translate(45.855, 40)">
+    <g transform="matrix(0.866, -0.5, 0, 1, 0, 0)">
+      <text x="1.5" y="2" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">λ</text>
+    </g>
+  </g>
+  
+  <!-- → on top face - centroid: (32, (32+16+0+16)/4) = (32, 16) -->
+  <g transform="translate(32, 16)">
+    <g transform="matrix(1, 0, 0, 0.5, 0, 0)">
+      <line x1="-9" y1="0" x2="5" y2="0" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+      <polygon points="4,-7 14,0 4,7" fill="#ffffff"/>
+    </g>
+  </g>
+</svg>

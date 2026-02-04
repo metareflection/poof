@@ -56,7 +56,7 @@
 (define-simple-macro (TODO body ...) '())
 (define-simple-macro (Xitemize body ...) (list body ...))
 (define-simple-macro (Xitem body ...) (list " " body ... " "))
-(define (ᵢ) (list (html-elem (list (c "ᵢ") (tex "${}_i$")))))
+(define (ᵢ) (list (html-elem (c "ᵢ")) (tex "${}_i$")))
 (define (Ri) (list (c "R") (ᵢ)))
 (define (Pi) (list (c "P") (ᵢ)))
 (define (⋂) (list (tex "$\bigcap$" (html-elem "⋂"))))

@@ -451,7 +451,31 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   pages={114–121},
   numpages={8},
   keywords={Module interconnection language, Accessibility, Visibility, Protection, Linking, Scope of definition, Virtual machine, Project management tool., Information hiding, External name, System hierarchy},
-  location={Los Angeles, California}
+  location={Los Angeles, California},
+  note={.
+    An extremely stimulating paper on the essence of modularity,
+    that starts by noticing the difference between
+    programming-in-the-small and programming-in-the-large.
+    The authors emphasize how modularity matters when programs grow large and
+    may have to be written by multiple people.
+    (Though the authors don’t mention it,
+    this explains why many academics fundamentally misunderstand modularity, because
+    they never get to program much “in the large”;
+    they only or mostly write programs “in the small”.)
+    The authors identify that most programming languages are (or at the time were) only
+    “languages for programming-in-the-small” (LPSs),
+    and that to achieve large systems, the “modules” obtained from using them
+    must somehow be assembled using a “module interconnection language” (MIL).
+    They lay down requirements for what makes a good MIL,
+    from being able to combine modules from different LPSs
+    up to and including the ability to prove software correct,
+    and offer a design for a language MIL 75 that might satisfy them.
+    Now, some modern languages, though LPS by the authors’ definition,
+    have an advanced builtin module system—none better than Racket (see Felleisen 2015);
+    yet even LPSes with the most advanced such module system cannot do everything,
+    unless and until they actually cover an entire operating software distribution,
+    such as Nix (see Dolstra 2008), the ultimate MIL by these authors’ standards.
+  }
 }
 
 %% 1976
@@ -2316,7 +2340,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   note={.
     Also known online as The Jargon File, a classic for all programmers.
     Foreword and cartoons by Guy L. Steele Jr.
-    The website has various updates compared to the book.
+    The website has various updates compared to the book, and is stable since 2003.
   }
 }
 

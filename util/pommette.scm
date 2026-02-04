@@ -277,12 +277,12 @@ With Racket: racket pommette.rkt
 ;;; of the first successful evaluation.
 ;;; Tries to survive escaping continuations by consistently returning the first successful result.
 ;;; Not remotely thread safe though.
-(define (once fun)
+(define (once thunk)
   (let ((computed? #f)
         (value #f))
     (λ args
       (or computed?
-          (let ((result (apply fun args)))
+          (let ((result (apply thunk args)))
             (or computed?
                 (begin
                   (set! computed? #t)

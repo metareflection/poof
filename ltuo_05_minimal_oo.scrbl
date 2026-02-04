@@ -271,6 +271,58 @@ Thus, as far as one cares about extensibility:
   With apologies to Primo Levi @~cite{Levi1947}.
 }
 
+@exercise[#:difficulty "Easy"]{
+  Discuss what top values may be appropriate or inappropriate for the follow types:
+  boolean, string, comparison function, integer, floating-point number,
+  point (record of two coordinates @c{x} and @c{y}), in Scheme,
+  and/or in your favorite language.
+}
+
+@exercise[#:difficulty "Easy"]{
+  Write an extension for ASCII strings that downcases the contents
+  (converts all letters to lowercase), and another that capitalizes the string
+  (makes the first letter uppercase).
+  Do the two extensions commute when you compose them?
+  (i.e. are the results the same when you switch the order?
+  or else does the order matter?)
+}
+
+@exercise[#:difficulty "Easy"]{
+  Write an extension that takes records representing
+  a rectangle of given @c{length} and @c{width},
+  that extend them with a new field @c{area}, being the area of the rectangle.
+}
+
+@exercise[#:difficulty "Medium"]{
+  Write an “discount” extension, that takes a price and reduces it by some specified percentage
+  (the percentage being a first argument to pass to the extension; or, if you want to be nitpicky,
+  to the function that creates the actual extension as a closure).
+
+  Note: using binary floating point numbers is malpractice in the context of accounting,
+  that will may you fired or sued.
+  Always use integers (multiples of the minor unit of accounting)
+  or fixed-point decimal numbers (in terms of the major unit of accounting),
+  and round to the nearest multiple of the applicable minor unit
+  (e.g. one cent of a dollar, for retail prices in the USA in 2026).
+}
+
+@exercise[#:difficulty "Medium"]{
+  The text argues against using Y combinator for extensibility.
+  Create an example demonstrating the difference between
+  applying an extension to a top value and using the Y combinator on the extension.
+  Show a case where they produce different results.
+  In your example, which best corresponds to the notion of extending a specification?
+}
+
+@exercise[#:difficulty "Hard"]{
+  Identify some domain on which to apply extensibility:
+  for instance, configuration files for a given program you use.
+  Define an appropriate type for these configurations,
+  a top value and some simple extensions for that types.
+  If possible, reuse existing parsers and printers (e.g. for JSON, YAML, .INI, etc.),
+  or else build simple ones.
+}
+
 @section[#:tag "MFCM"]{Minimal First-Class Modularity}
 
 @subsection{Modeling Modularity (Overview)}
@@ -366,8 +418,8 @@ the @c{(if @emph{condition then-clause else-clause})} special form for condition
 In other programming languages that lack symbols as a builtin functionality,
 they can be implemented as interned strings, or instead of them,
 uninterned strings or numbers can be used as identifiers.
-And if you only care about the pure λ-calculus, there are many embeddings and encodings
-of unary or binary numbers, and lists or trees thereof, that will do.
+And if somehow you only care about the pure λ-calculus, there are many embeddings and encodings
+of booleans, unary or binary numbers, and lists or trees thereof, that will do.
 
 Programming languages usually already provide some data structure for records
 with second-class identifiers, or “dictionaries” with first-class identifiers,
@@ -375,12 +427,17 @@ or have some library that does.
 For instance, while the core Scheme language has no such data structure,
 each implementation tends to have its own extension for this purpose, and
 there are multiple standard extensions for records or hash tables.
-Many papers and experiments use a linked list of (key, value) pairs,
+Be mindful, though, that mutable variants of these data structures
+(e.g. mutable hash-tables) may not be appropriate to use
+in the context of pure functional programming that I am currently discussing,
+though they might be used (with caution) in the context of mutable objects.
+Also, many papers and experiments use a linked list of (key, value) pairs,
 known in the Lisp tradition as an alist (association list),
 as a simple implementation for records;
-alists don’t scale, but don’t need to in the context of such experiments.
+alists don’t scale beyond a few hundreds of elements,
+but don’t need to in the context of the present experiments.
 Nevertheless to make the semantics of records clear, I will provide
-a trivial purely functional implementation, that also doesn’t scale,
+a trivial purely functional implementation, that has even more scaling issues,
 but that is even simpler.
 
 The basic reference operator is just function application:
@@ -883,8 +940,6 @@ in the rest of this book, and leave it as an exercise for the reader.
 @;{TODO CITE Aaron Stump from U Iowa, etc.}
 @; TODO: Fix as a metaprogram. Kirill Gobulev.
 
-
-
 I have implemented variants of my minimal OO system in many combinations
 of the above solutions to these two issues, in Scheme and other languages.
 For the rest of this book, I will adopt a style where most functions are unary,
@@ -899,8 +954,64 @@ that sports first-class higher-order functions.
 And with these issues settled, I will close this digression
 and return to rebuilding OO from first principles.
 
-@; TODO exercise measure number of uses of Y
-@; TODO once
+@exercise[#:difficulty "Easy"]{
+  Use existing library functions in your Scheme implementation of choice
+  to actually implement the example of modularly sorting a list of files.
+}
+@exercise[#:difficulty "Medium"]{
+  Implement a trivial record system based on alists (lists of pairs of symbol and value)
+  instead of functions from symbol to value.
+  Reimplement and evaluate the same examples using this record system instead of the one I used.
+  Notice that you cannot directly use the applicative or stateful Y on such alists.
+  Instead, you have to use Y on e.g. nullary functions that return alists,
+  which would be equivalent to using the lazy Y, if only your nullary functions were memoized.
+}
+@exercise[#:difficulty "Medium"]{
+  Implement memoization of nullary functions:
+  a higher-order function @c{once} will take as argument a nullary function @c{thunk},
+  and return a new function that evaluates @c{thunk} the first time around,
+  then caches the resulting value, and thereafter returns it at every subsequent call.
+  For the sake of simplicity, assume single-threaded evaluation.
+}
+@exercise[#:difficulty "Medium"]{
+  Spice up the previous exercise, make the previous implementation more robust
+  along the following axes, which may require use of implementation-dependent extensions:
+  (a) support non-nullary functions wherein provded arguments are passed through the first time
+    and ignored afterwards;
+  (b) detect attempts at reentrancy, and issue an error with backtrace if detected.
+}
+@exercise[#:difficulty "Medium"]{
+  Study how your language implementation supports
+  concurrent evaluation of lazy expressions in multiple processor threads,
+  wherein only the first thread actually tries to call the thunk;
+  see how it detects and supports non-local exits (e.g. error) from within the thunk, etc.
+  For instance, in Gerbil Scheme, look for the implementation of function @c{make-atomic-promise},
+  as internally used by the form @c{delay-atomic}.
+  Alternatively, to make exercise hard, try implementing it all yourself from low-level primitives
+  before you see how it is done; or try to port the Gerbil Scheme implementation
+  to your favorite language if that language doesn’t yet support this feature
+  (and then send a patch upstream, or publish a new library if the feature is not desired upstream).
+}
+@exercise[#:difficulty "Hard"]{
+  Compare three implementations of the Y combinator:
+  @c{applicative-Y}, @c{stateful-Y} and @c{lazy-Y} on some real-world application.
+  For instance, look at the slides I wrote @~cite{poof2021},
+  instrument the code to count how many times the @c{plan-slide} function is called
+  and display the result at the end, and see how that count changes if using
+  @c{applicative-Y} instead of @c{stateful-Y}.
+  For extra points, modify the code to use lazy evaluation,
+  and see if there is a difference when using @c{lazy-Y}.
+}
+@exercise[#:difficulty "Hard"]{
+  Devise an example that illustrates how @c{applicative-Y} can cause exponential recomputations
+  with the depth of recursive definitions, compared to @c{stateful-Y}.
+}
+@exercise[#:difficulty "Hard"]{
+  Devise an example that illustrates how @c{stateful-Y}
+  without the fixed-point functions also caching their results
+  can cause exponential recomputations compared to using @c{lazy-Y}
+  or explicitly using state to cache results (which amounts to the same).
+}
 
 @section[#:tag "MFCME"]{Minimal First-Class Modular Extensibility}
 
