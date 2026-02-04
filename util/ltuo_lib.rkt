@@ -2,9 +2,9 @@
 ; -*- Scheme -*-
 
 (require
-  (only-in scribble/base ~ bold emph nested elem section subsection seclink verbatim)
+  (only-in scribble/base ~ bold emph nested elem section subsection seclink verbatim linebreak)
   scriblib/bibtex
-;; (only-in scribble/core make-style)
+  (only-in scribble/core make-style)
   (only-in scribble/manual racket racketblock code codeblock litchar itemize item)
 ;; (only-in scribble/example examples make-base-eval)
 ;; (only-in scriblib/footnote note)
@@ -12,6 +12,9 @@
   (only-in scribble-abbrevs appendix)
 ;; (only-in scribble/html-properties head-extra html-defaults)
   (only-in scribble-math/dollar $)
+  scribble/html-properties
+  scriblib/render-cond
+
 ;; scribble/minted
   syntax/parse/define
 ;;  "util/examples-module.rkt"
@@ -37,7 +40,10 @@
   (all-from-out "util.rkt")
   (for-syntax (all-from-out "util.rkt")))
 
-(define ~~ (tex-elem (list ~ ~)))
+(define (tex-linebreak)
+  (when/list (render-latex?) (linebreak)))
+(define ~~
+  (when/list (render-latex?) (list ~ ~)))
 
 (define (anonymize x . y) y)
 (define (GerbilScheme) (anonymize "our Scheme implementation" "Gerbil Scheme"))
@@ -76,3 +82,11 @@
 (define-simple-macro (defsection name tag text) (define (name (x text)) (seclink tag x)))
 (defsection section1 "Prototypes_bottom_up" "section 1")
 
+(define (favicon-style)
+  (and (render-html?)
+    (make-style "favicon" ; name is arbitrary, just needs to be non-false
+      (list (head-extra
+              '(link ([rel "icon"]
+                            ;;[href "resources/pic/Half-Life_lambda_logo.svg"]
+                            [href "resources/pic/cube.svg"]
+                            [type "image/svg+xml"]))))))) ;; or image/x-icon, image/png

@@ -955,30 +955,31 @@ And with these issues settled, I will close this digression
 and return to rebuilding OO from first principles.
 
 @exercise[#:difficulty "Easy"]{
+  Play with the simple record system I implemented.
+  How do you get the values for a list of slots in a single function call?
+  (You may use functions from your language’s standard library.)
+}
+@exercise[#:difficulty "Easy"]{
   Use existing library functions in your Scheme implementation of choice
   to actually implement the example of modularly sorting a list of files.
 }
 @exercise[#:difficulty "Medium"]{
   Implement a trivial record system based on alists (lists of pairs of symbol and value)
-  instead of functions from symbol to value.
+  instead of functions from symbol to value (you can reuse library functions if available).
   Reimplement and evaluate the same examples using this record system instead of the one I used.
-  Notice that you cannot directly use the applicative or stateful Y on such alists.
+  Implement conversions between the two representations.
+  What limitation do you notice in one direction?
+
+@;{TODO Notice that you cannot directly use the applicative or stateful Y on such alists.
   Instead, you have to use Y on e.g. nullary functions that return alists,
-  which would be equivalent to using the lazy Y, if only your nullary functions were memoized.
+  which would be equivalent to using the lazy Y, if only your nullary functions were memoized.}
 }
 @exercise[#:difficulty "Medium"]{
-  Implement memoization of nullary functions:
-  a higher-order function @c{once} will take as argument a nullary function @c{thunk},
-  and return a new function that evaluates @c{thunk} the first time around,
-  then caches the resulting value, and thereafter returns it at every subsequent call.
-  For the sake of simplicity, assume single-threaded evaluation.
-}
-@exercise[#:difficulty "Medium"]{
-  Spice up the previous exercise, make the previous implementation more robust
-  along the following axes, which may require use of implementation-dependent extensions:
-  (a) support non-nullary functions wherein provded arguments are passed through the first time
-    and ignored afterwards;
-  (b) detect attempts at reentrancy, and issue an error with backtrace if detected.
+  Extend the @c{once} function above to:
+  (a) support non-nullary functions wherein provided arguments are passed through
+    the first time around and ignored afterwards; optionally, also support multiple values;
+  (b) detect attempts at reentrancy, and issue an error if detected,
+    with backtrace if available in your language implementation.
 }
 @exercise[#:difficulty "Medium"]{
   Study how your language implementation supports
@@ -1009,7 +1010,7 @@ and return to rebuilding OO from first principles.
 @exercise[#:difficulty "Hard"]{
   Devise an example that illustrates how @c{stateful-Y}
   without the fixed-point functions also caching their results
-  can cause exponential recomputations compared to using @c{lazy-Y}
+  can still cause exponential recomputations compared to using @c{lazy-Y}
   or explicitly using state to cache results (which amounts to the same).
 }
 

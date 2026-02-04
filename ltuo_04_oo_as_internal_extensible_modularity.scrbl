@@ -1131,8 +1131,9 @@ though the author wasn’t aware of the lineage, or indeed even that he was doin
   as “extensions”, wrote in a private communication that
   he did not not know anything about their relationship to Prototypes, Mixins or OO,
   but semi-independently reinvented them and their use,
-  inspired by examples and by discussions with Andres Löh and Conor McBride;
-  the latter two unlike Simons were well-versed in OO literature,
+  inspired by the Haskell support code by Russell O’Connor,
+  and by examples and discussions with Andres Löh and Conor McBride;
+  These inspirers unlike Simons were well-versed in OO literature,
   though they are usually known to advocate FP over OO.
 }
 however, Nix also implements conflation, a crucial element missing from Bracha and Cook.

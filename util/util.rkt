@@ -3,7 +3,7 @@
 (provide (all-defined-out))
 
 (require (only-in scribble/base elem linebreak nested italic smaller bold include-section para)
-         (only-in scribble/core make-paragraph make-style)
+         (only-in scribble/core make-paragraph make-style content->string)
          (only-in scriblib/footnote note define-footnote)
          (only-in scriblib/render-cond cond-element cond-block)
          (only-in scribble/html-properties css-addition html-defaults)
@@ -13,6 +13,13 @@
 #;
 (define-syntax-rule (when-not condition body ...)
   (when (not condition) body ...))
+
+(define render-mode
+  (make-parameter (string->symbol (or (getenv "RENDER_MODE") "html"))))
+
+(define (render-html?) (eq? (render-mode) 'html))
+(define (render-latex?) (eq? (render-mode) 'latex))
+(define (render-text?) (eq? (render-mode) 'text))
 
 (define-syntax-rule (when/list condition body ...)
   (if condition (begin body ...) '()))
@@ -37,10 +44,11 @@
 (define (hhr) (html-elem (elem #:style (make-style #f (list (make-alt-tag "hr"))))))
 
 (define-footnote my-note #:margin)
-(define footnote-style
-  (make-style "footnote-style"
-    (list (make-css-addition
-            #"
+(define (footnote-style)
+  (and (render-html?)
+    (make-style "footnote-style"
+      (list (make-css-addition
+             #"
 .FootnoteTargetNumber {
   vertical-align: baseline; /* cancel superscript */
   font-size: 1em; /* cancel superscript scale */
@@ -48,10 +56,10 @@
 .FootnoteTargetNumber:after {
   content: \": \"
 }
-"))))
+")))))
 
 (define (xnote x . y)
-  (list (elem #:style footnote-style x)
+  (list (elem #:style (footnote-style) x)
         (
         ;;note #:number 'next
         my-note

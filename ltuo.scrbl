@@ -1,22 +1,12 @@
 #lang scribble/report
 @; -*- Scheme -*-
-@(require "util/ltuo_lib.rkt"
-          scribble/html-properties
-          scribble/core)
+@(require "util/ltuo_lib.rkt")
 
 @;{ TODO: use bookcover to create a book cover. }
 
-@(define favicon-style
-  (make-style "favicon" ; name is arbitrary, just needs to be non-false
-    (list (head-extra
-            '(link ([rel "icon"]
-                    ;;[href "resources/pic/Half-Life_lambda_logo.svg"]
-                    [href "resources/pic/cube.svg"]
-                    [type "image/svg+xml"])))))) @; or image/x-icon, image/png
-
-@title[#:style favicon-style]{
+@title[#:style (favicon-style)]{
   Lambda: the Ultimate Object
-    @linebreak[] @tex-elem{@linebreak[]}
+    @linebreak[] @tex-linebreak[]
     @smaller{Object Orientation Elucidated@|~~|}}
 
 @author{François-René Rideau}
