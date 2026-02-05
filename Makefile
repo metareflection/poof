@@ -88,10 +88,15 @@ eoomi: build/eoomi2024.pdf
 	$(PDFVIEWER) $< $P
 
 # Side paper: LTUO
-build/ltuo.pdf: ltuo.scrbl ltuo.bib header.tex util/util.rkt util/ltuo_lib.rkt build/resources $(wildcard ltuo_*.scrbl)
+build/ltuo.pdf: ltuo.scrbl ltuo.bib header.tex util/util.rkt util/ltuo_lib.rkt build/resources $(wildcard ltuo_*.scrbl) resources/pic/cube.pdf
 	RENDER_MODE=latex scribble --dest build --pdf ltuo.scrbl
 build/ltuo.html: ltuo.scrbl ltuo.bib util/util.rkt util/ltuo_lib.rkt build/resources $(wildcard ltuo_*.scrbl)
 	RENDER_MODE=html scribble --dest build --html ltuo.scrbl
+resources/pic/cube.pdf: resources/pic/cube.svg
+	inkscape resources/pic/cube.svg --export-type=pdf \
+	--export-width=640 --export-height=640 \
+	--export-background-opacity=0 \
+	--export-filename=resources/pic/cube.pdf
 ltuopdf: build/ltuo.pdf
 ltuo: build/ltuo.html build/ltuo.pdf
 	$(PDFVIEWER) build/ltuo.pdf $P

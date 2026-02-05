@@ -738,7 +738,8 @@ you can actually use OO as you do it.
   After reading this chapter, but before you read the next,
   try to characterize what you think OO @emph{is} about in the end,
   or at least my definition of it, that isn’t any of the things I denounced.
-  While this exercise is somewhat hard, it will make next chapter more enlightening.
+  While this exercise is somewhat hard, it will make next chapter more enlightening,
+  so save your answers to compare them to the treatment in @secref{WOOiIO}.
 }
 
 @exercise[#:difficulty "Research"]{

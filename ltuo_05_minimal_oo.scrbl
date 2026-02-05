@@ -854,7 +854,7 @@ and one must @c{force} the delayed reference to extract the result value,
 you would write@xnote[":"]{
   Again, a simple way to test the lazy Y combinator is to use it
   to define the factorial function. First define the lazy “recursion schema” for the factorial:
-  @c{(def lazy-pre-fact (delay (λ (f n) (if (<= n 1) n (* n ((force f) (1- n)))))))}
+  @c{(def lazy-pre-fact (λ (f n) (if (<= n 1) n (* n ((force f) (1- n))))))}
   Then the factorial function is
   @c{(def fact (lazy-Y lazy-pre-fact))}
   and you can then test that e.g. @c{(fact 6)} returns @c{720}.
@@ -865,19 +865,19 @@ you would write@xnote[":"]{
 }
 @Code{
 (def (lazy-Y f)
-  (letrec ((p ((force f) (delay p)))) p))
+  (letrec ((p (f (delay p)))) p))
 }
 Or, if you want a variant based on combinators:
 @Code{
 (def (lazy-B x y z)
-  ((force x) (delay ((force y) z))))
+  (x (delay ((force y) z))))
 (def (lazy-D x)
   ((force x) x))
 (def (lazy-Y-with-combinators f)
   (lazy-D (delay (lazy-B f (delay lazy-D)))))
 (def (lazy-Y-expanded f)
   ((λ (x) ((force x) x))
-   (delay (λ (x) ((force f) (delay ((force x) x)))))))
+   (delay (λ (x) (f (delay ((force x) x)))))))
 }
 @; Test: ((lazy-Y-with-combinators lazy-pre-fact) 6) ;==> 720
 @; Test: ((lazy-Y-expanded lazy-pre-fact) 6) ;==> 720
@@ -1450,7 +1450,8 @@ it must be modularly provided by another modular definition.
 (def (my-modular-def self method-id)
   (case method-id
     ((start) 5)
-    ((length) (λ (l) (if (null? l) 0 (+ 1 ((self 'length) (cdr l))))))
+    ((length) (λ (l) (if (null? l) 0
+                         (+ 1 ((self 'length) (cdr l))))))
     ((size) (- ((self 'length) (self 'contents)) (self 'start)))
     (else #f)))
 }
@@ -1464,13 +1465,14 @@ that can also be inlined in the specification for @c{size}.
 The @c{contents} method, not being provided, must still be queried through open recursion.
 @Code{
 (def my-modular-def-without-global-recursion
-  (let ((_start 5))
-    (letrec ((_length (λ (l) (if (null? l) 0 (+ 1 (_length (cdr l)))))))
+  (let ((start% 5))
+    (letrec ((length% (λ (l) (if (null? l) 0
+                                 (+ 1 (length% (cdr l)))))))
       (λ (self method-id)
         (case method-id
-          ((start) _start)
-          ((length) _length)
-          ((size) (- (_length (self 'contents)) _start))
+          ((start) start%)
+          ((length) length%)
+          ((size) (- (length% (self 'contents)) start%))
           (else #f))))))
 }
 By contrast, with extensibility, a modular extensible module specification may usefully
@@ -1538,3 +1540,43 @@ be not a single global entity, but many local entities.
 This shift from singular and global to plural and local is essential for Class OO,
 and even more so for Prototype OO.
 
+@exercise[#:difficulty "Easy"]{
+  Define your own points of various colors and names,
+  with 2d or 3d coordinates, with or without using specifications.
+}
+
+@exercise[#:difficulty "Easy"]{
+  Write a specification that defines polar coordinates for a 2d point
+  with defined cartesian coordinates, and another specification the other way around.
+  Test your specifications with various points.
+  What happens if you compose those two specifications, try to instantiate them,
+  and extract coordinates?
+}
+
+@exercise[#:difficulty "Medium"]{
+  Write modular extensible specifications that rely on @c{base-bill-of-parts}
+  to contribute a chassis, axles, wheels, etc., where, to simplify, each part is just a string,
+  e.g. @c{"front left wheel"}, and each specification contribute one or many parts.
+  Define overall specifications for a toy car, a toy truck, a toy motorcycle, a toy bicycle,
+  while trying to share as much code as possible between the different toys.
+  You may define functions that take arguments, manipulate strings, and return specifications.
+  Use the @c{parts} and @c{part-count} functions on each of your complete specifications.
+}
+
+@exercise[#:difficulty "Medium, Recommended"]{
+  If you did exercise @exercise-ref{04to05}, compare your previous formalization with mine.
+  See what surprised you—how your formalization of modular extensibility compares to mine:
+  whether they are equivalent, which can be expressed in terms of the other,
+  which is more minimal, what insights you missed, what features I left out (at least so far),
+  and how your understanding has evolved already.
+}
+
+@exercise[#:difficulty "Hard, Recommended" #:tag "05to06"]{
+  Based on this minimal model of OO as modular extensibility,
+  and on the informal explanations in @secref{WOOiIO},
+  sketch how you would (1) rebuild Prototype OO as a layer on top of the model,
+  (2) rebuild Class OO on top of Prototype OO, and
+  (3) assign Types to OO.
+  Assume mixin inheritance for now, i.e. via using the @c{mix} function.
+  Save your answer to compare with the treatment in @secref{ROOfiMC}.
+}

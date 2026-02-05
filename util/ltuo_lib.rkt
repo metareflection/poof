@@ -2,7 +2,7 @@
 ; -*- Scheme -*-
 
 (require
-  (only-in scribble/base ~ bold emph nested elem section subsection seclink verbatim linebreak)
+  (only-in scribble/base ~ bold emph nested elem section subsection seclink verbatim linebreak image)
   scriblib/bibtex
   (only-in scribble/core make-style)
   (only-in scribble/manual racket racketblock code codeblock litchar itemize item)
@@ -10,7 +10,8 @@
 ;; (only-in scriblib/footnote note)
   (only-in scriblib/autobib make-bib authors define-cite)
   (only-in scribble-abbrevs appendix)
-;; (only-in scribble/html-properties head-extra html-defaults)
+  (only-in scribble/html-properties css-addition head-extra html-defaults)
+  (only-in scribble/latex-properties tex-addition make-tex-addition latex-defaults)
   (only-in scribble-math/dollar $)
   scribble/html-properties
   scriblib/render-cond
@@ -90,3 +91,18 @@
                             ;;[href "resources/pic/Half-Life_lambda_logo.svg"]
                             [href "resources/pic/cube.svg"]
                             [type "image/svg+xml"]))))))) ;; or image/x-icon, image/png
+
+(define (cube-logo)
+  (cond
+    ((render-html?)
+     (image "resources/pic/cube.svg"
+       #:scale 1.25
+       #:style (make-style "centered-inline"
+                 (list
+                   (css-addition #".centered-inline { display: block; text-align: center; margin: 0.5em auto; max-width: 100%; }")))
+       (elem "Cube logo")))
+    ((render-latex?)
+      (define cube-path
+        (path->string (build-path (current-directory) "resources/pic/cube.pdf")))
+      (exact-chars (string-append "\\includegraphics[width=0.75\\textwidth]{" cube-path "}")))
+    (else '())))

@@ -1022,8 +1022,8 @@ I contend that the above is what is usually meant by OO,
 that matches the variety of OO languages and systems
 without including systems that are decidedly not OO, like Erlang, SML or UML.
 Whatever clear or murky correspondence between names and concepts others may use,
-this paradigm is what matters, and what I will call OO—it is what I will discuss in this book,
-and systematically reduce to elementary concepts.
+this paradigm is what matters, and is what I will call OO—it is what I will discuss in this book,
+and will systematically reduce to elementary concepts.
 
 
 @exercise[#:difficulty "Easy"]{
@@ -1110,7 +1110,7 @@ and systematically reduce to elementary concepts.
   “extensibility” and “internality” might mean, and what formalizing them might look like.
   Bonus if you can then explain how the three together
   can mean something more than the same three apart.
-  Save your answer to compare with Chapter 4’s treatment.
+  Save your answer to compare with the treatment in @secref{OOaIEM}.
 }
 
 @exercise[#:difficulty "Hard"]{
@@ -1129,8 +1129,8 @@ and systematically reduce to elementary concepts.
   with different meanings or hidden connotations and assumptions.
   Identify fundamental underlying concepts they actually disagree about,
   which may include such hidden assumptions.
-  Try to “strongman” the theories on both sides, taking their best arguments
-  (but also noting their worst);
+  Try to “strongman” the theories on both sides, keeping only their very best arguments
+  (though also recording their worst);
   use neutral parties or verifiable facts to assess the strength of arguments.
   Then, use criteria about good theories from chapter 1 to determine whether the better
   theories on either or both sides are failing to satisfy the properties of a good theory.

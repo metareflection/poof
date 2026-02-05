@@ -1,56 +1,185 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <defs>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 64 64"
+   width="64"
+   height="64"
+   version="1.1"
+   id="svg51"
+   sodipodi:docname="cube.svg"
+   inkscape:export-filename="cube.png"
+   inkscape:export-xdpi="1000"
+   inkscape:export-ydpi="1000"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview53"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="3.6875"
+     inkscape:cx="31.864407"
+     inkscape:cy="32"
+     inkscape:window-width="1920"
+     inkscape:window-height="1200"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg51" />
+  <defs
+     id="defs17">
     <!-- Left face gradient - Red -->
-    <linearGradient id="leftGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ff4444"/>
-      <stop offset="100%" stop-color="#aa0000"/>
+    <linearGradient
+       id="leftGrad"
+       x1="0%"
+       y1="0%"
+       x2="100%"
+       y2="100%">
+      <stop
+         offset="0%"
+         stop-color="#ff4444"
+         id="stop2" />
+      <stop
+         offset="100%"
+         stop-color="#aa0000"
+         id="stop4" />
     </linearGradient>
-    
     <!-- Right face gradient - Blue -->
-    <linearGradient id="rightGrad" x1="100%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#4488ff"/>
-      <stop offset="100%" stop-color="#0044aa"/>
+    <linearGradient
+       id="rightGrad"
+       x1="100%"
+       y1="0%"
+       x2="0%"
+       y2="100%">
+      <stop
+         offset="0%"
+         stop-color="#4488ff"
+         id="stop7" />
+      <stop
+         offset="100%"
+         stop-color="#0044aa"
+         id="stop9" />
     </linearGradient>
-    
     <!-- Top face gradient - Yellow -->
-    <linearGradient id="topGrad" x1="50%" y1="0%" x2="50%" y2="100%">
-      <stop offset="0%" stop-color="#ffee44"/>
-      <stop offset="100%" stop-color="#ddaa00"/>
+    <linearGradient
+       id="topGrad"
+       x1="50%"
+       y1="0%"
+       x2="50%"
+       y2="100%">
+      <stop
+         offset="0%"
+         stop-color="#ffee44"
+         id="stop12" />
+      <stop
+         offset="100%"
+         stop-color="#ddaa00"
+         id="stop14" />
     </linearGradient>
   </defs>
-
   <!-- True isometric cube -->
   <!-- Left face -->
-  <polygon points="32,64 32,32 4.29,16 4.29,48" fill="url(#leftGrad)"/>
+  <polygon
+     points="32,64 32,32 4.29,16 4.29,48"
+     fill="url(#leftGrad)"
+     id="polygon19" />
   <!-- Right face -->
-  <polygon points="32,64 32,32 59.71,16 59.71,48" fill="url(#rightGrad)"/>
+  <polygon
+     points="32,64 32,32 59.71,16 59.71,48"
+     fill="url(#rightGrad)"
+     id="polygon21" />
   <!-- Top face -->
-  <polygon points="32,32 4.29,16 32,0 59.71,16" fill="url(#topGrad)"/>
-  
+  <polygon
+     points="32,32 4.29,16 32,0 59.71,16"
+     fill="url(#topGrad)"
+     id="polygon23" />
   <!-- White edges -->
-  <polygon points="32,64 32,32 4.29,16 4.29,48" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-linejoin="round"/>
-  <polygon points="32,64 32,32 59.71,16 59.71,48" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-linejoin="round"/>
-  <polygon points="32,32 4.29,16 32,0 59.71,16" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-linejoin="round"/>
-  
+  <polygon
+     points="32,64 32,32 4.29,16 4.29,48"
+     fill="none"
+     stroke="#ffffff"
+     stroke-width="1.2"
+     stroke-linejoin="round"
+     id="polygon25" />
+  <polygon
+     points="32,64 32,32 59.71,16 59.71,48"
+     fill="none"
+     stroke="#ffffff"
+     stroke-width="1.2"
+     stroke-linejoin="round"
+     id="polygon27" />
+  <polygon
+     points="32,32 4.29,16 32,0 59.71,16"
+     fill="none"
+     stroke="#ffffff"
+     stroke-width="1.2"
+     stroke-linejoin="round"
+     id="polygon29" />
   <!-- Y on left face - black -->
-  <g transform="translate(18.145, 40)">
-    <g transform="matrix(0.866, 0.5, 0, 1, 0, 0)">
-      <text x="0" y="2" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="bold" fill="#000000" text-anchor="middle" dominant-baseline="middle">Y</text>
+  <g
+     transform="translate(17.589436,40.373499)"
+     id="g35">
+    <g
+       transform="matrix(0.866,0.5,0,1,0,0)"
+       id="g33">
+      <text
+         x="0"
+         y="2"
+         font-family="Helvetica, Arial, sans-serif"
+         font-size="22px"
+         font-weight="bold"
+         fill="#000000"
+         text-anchor="middle"
+         dominant-baseline="middle"
+         id="text31">Y</text>
     </g>
   </g>
-  
   <!-- λ on right face - black -->
-  <g transform="translate(45.855, 40)">
-    <g transform="matrix(0.866, -0.5, 0, 1, 0, 0)">
-      <text x="1.5" y="2" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="bold" fill="#000000" text-anchor="middle" dominant-baseline="middle">λ</text>
+  <g
+     transform="translate(45.692622,40.689002)"
+     id="g41">
+    <g
+       transform="matrix(0.866,-0.5,0,1,0,0)"
+       id="g39">
+      <text
+         x="1.5"
+         y="2"
+         font-family="Helvetica, Arial, sans-serif"
+         font-size="22px"
+         font-weight="bold"
+         fill="#000000"
+         text-anchor="middle"
+         dominant-baseline="middle"
+         id="text37">λ</text>
     </g>
   </g>
-  
   <!-- → on top face - black -->
-  <g transform="translate(32, 16)">
-    <g transform="matrix(1, 0, 0, 0.5, 0, 0)">
-      <line x1="-9" y1="0" x2="5" y2="0" stroke="#000000" stroke-width="6" stroke-linecap="round"/>
-      <polygon points="4,-7 14,0 4,7" fill="#000000"/>
+  <g
+     transform="translate(32, 16)"
+     id="g49">
+    <g
+       transform="matrix(1, 0, 0, 0.5, 0, 0)"
+       id="g47">
+      <line
+         x1="-9"
+         y1="0"
+         x2="5"
+         y2="0"
+         stroke="#000000"
+         stroke-width="6"
+         stroke-linecap="round"
+         id="line43" />
+      <polygon
+         points="4,-7 14,0 4,7"
+         fill="#000000"
+         id="polygon45" />
     </g>
   </g>
 </svg>

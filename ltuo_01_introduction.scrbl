@@ -821,8 +821,9 @@ I will define those terms precisely in
 }
 
 @exercise[#:difficulty "Easy"]{
-  What does the word “function” mean to a mathematician? To a C programmer?
-  To a Haskell programmer? To a Rocq user? Are they the same thing?
+  What does the word “function” mean to a mathematician?
+  To a C programmer? A Scheme programmer? Haskell programmer? Rocq user?
+  Are they the same thing?
 }
 
 @exercise[#:difficulty "Easy"]{
@@ -863,6 +864,11 @@ I will define those terms precisely in
 @exercise[#:difficulty "Research"]{
   Help a friend or family member who has been bamboozled by words
   see through the deception they fell for.
+}
+
+@exercise[#:difficulty "Research"]{
+  Hardest of all: let apparent enemies help you identify
+  where you yourself are being bamboozled right now.
 }
 
 @; TODO: Describe Appendices

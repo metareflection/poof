@@ -7,10 +7,13 @@
 @title[#:style (favicon-style)]{
   Lambda: the Ultimate Object
     @linebreak[] @tex-linebreak[]
-    @smaller{Object Orientation Elucidated@|~~|}}
+    @smaller{Object Orientation Elucidated@|~~|}
+    @linebreak[] @tex-linebreak[]
+    @(when/list (render-latex?) (cube-logo))}
 
 @author{François-René Rideau}
 
+@(when/list (render-html?) (cube-logo))
 @noindent[]
 @italic{This book is a work in progress.
 Please send feedback to fahree at gmail.}@xnote[""]{

@@ -958,7 +958,7 @@ using “hot-patches” that were not foreseen by the original programmer.
   say polynomial interpolation using Newton’s or Lagrange’s method,
   with floating point numbers.
   How much do you need to modify it to work with arbitrary-precision rational numbers?
-  With numbers finite field @c{F_q}, yielding a Reed-Solomon code?
+  With numbers from finite field @c{F_q}, yielding a Reed-Solomon code (say with q=256)?
   Can you write a version that shares the logic between different number fields,
   and gets instantiated into a variant with a specific field in a single line, or two to the most?
   Compare the situation in C, Java, Lisp, Haskell.
@@ -1181,12 +1181,22 @@ Therefore, I pick Scheme as the best compromise in which to formalize OO.
   read the tutorial (if necessary), and play with it.
   I personally use Gerbil Scheme @~cite{GerbilScheme};
   but if you are a beginner, you will probably find it much easier to use
-  the closely related language Racket @~cite{Felleisen2015}.
+  the closely related language Racket @~cite{Felleisen2015};
+  or for a plain Scheme experience, we recommend Chez Scheme, that is very fast.
   You can also play with it on websites like replit.
   Another option is for you to do all exercises in your own programming language of choice,
   which will be much easier if your language at least support first-class higher-order functions,
   and either dynamic typing, or recursively constrained (sub)types;
   you’re on your own to translate the problems and their solutions in said language of your choice.
+}
+
+@exercise[#:difficulty "Easy, Required"]{
+  Locate file @c{util/pommette.scm} that comes with the source code for this book,
+  e.g. at @url{https://github.com/metareflection/poof}.
+  It contains all the examples in the book, and more, so you can run them,
+  copy/paste them, modify them, play with with them, etc.
+  See in the @c{Makefile} how to run it with your favorite implementation
+  (currently supported: Gerbil Scheme, Chez Scheme, Racket).
 }
 
 @exercise[#:difficulty "Medium, Recommended"]{
@@ -1210,6 +1220,10 @@ Therefore, I pick Scheme as the best compromise in which to formalize OO.
   of what “modularity” and “extensibility” could mean
   in terms of pure functional programming with first-class entities,
   which would be “internality”.
+  In each case, make a first model that can adequately describe what you think it means;
+  then strip it to the barest minimum, removing any feature not strictly necessary,
+  anything that couldn’t be implemented by specializing a function argument,
+  refactoring it down until nothing can be removed.
   Bonus if you can then put them together to mean something greater than either apart.
-  Save your answer to compare with Chapter 5’s treatment.
+  Save your answer to compare with the treatment in @secref{MOO}.
 }

@@ -65,8 +65,8 @@ With Racket: racket pommette.rkt
      (begin
        ;; Allow autocurrying self-reference in the definition body
        (define-syntax @tmp (syntax-rules () ((_ . a) (@ tmp . a))))
-       (define-identifier-macro v tmp @tmp)
-       (define tmp (let () . body))))))
+       (define tmp (let () . body))
+       (define-identifier-macro v tmp @tmp)))))
 
 ;;; Expectations -- trivial test suite
 (define (check-expectation check-expr good-expr checked-thunk good-thunk)
@@ -214,7 +214,8 @@ With Racket: racket pommette.rkt
   ((compose* add1 add1 mul10) 4) => 42
   ((compose* add1 mul10 sub2) 0) => -19
   ((uncurry2 (λ (x y) (+ x y))) 4 5) => 9
-  ((λ (x y) (+ x y)) 4 5) =>fail!)
+  (((λ (x y) (+ x y)) 4) 5) => 9
+  ((λ (x y) (+ x y)) 4 5) =>fail!) ;; wrong number of arguments to curried function
 
 ;;; 5.1.5
 (define top #f)
@@ -245,17 +246,17 @@ With Racket: racket pommette.rkt
 
 ;; lazy convention: arguments are delayed, results are forced
 ;; TODO: add types for these and for other variants. ^ X = delayed X
-(def (lazy-Y f) ;; : ^(^X→X)→X
-  (letrec ((p ((force f) (delay p)))) p))
-(def (lazy-B x y z) ;; : ^(^Y→X)→^(Z→Y)→Z→X
-  ((force x) (delay ((force y) z))))
+(def (lazy-Y f) ;; : (^X→X)→X
+  (letrec ((p (f (delay p)))) p))
+(def (lazy-B f g x) ;; : (^Y→X)→^(Z→Y)→Z→X
+  (f (delay ((force g) x))))
 (def (lazy-D x) ;; : µX.^(X→A)→A
   ((force x) x))
 (def (lazy-Y-with-combinators f) ;; : ^(^X→X)→X
   (lazy-D (delay (lazy-B f (delay lazy-D)))))
 (def (lazy-Y-expanded f) ;; : ^(^X→X)→X
   ((λ (x) ((force x) x))
-   (delay (λ (x) ((force f) (delay ((force x) x)))))))
+   (delay (λ (x) (f (delay ((force x) x)))))))
 
 ;; TODO: would this work? with what type?
 ;; (def (Y^ f) (letrec ((x (delay (f x)))) x))
@@ -263,8 +264,8 @@ With Racket: racket pommette.rkt
 ;; Compute Factorial 6 with Y
 (def (eager-pre-fact f n)
   (if (<= n 1) n (* n (f (- n 1)))))
-(def lazy-pre-fact (delay (λ (f n)
-  (if (<= n 1) n (* n ((force f) (- n 1)))))))
+(def lazy-pre-fact (λ (f n)
+  (if (<= n 1) n (* n ((force f) (- n 1))))))
 
 (expect ((applicative-Y eager-pre-fact) 6) => 720
         ((applicative-Y-expanded eager-pre-fact) 6) => 720
@@ -277,27 +278,48 @@ With Racket: racket pommette.rkt
 ;;; of the first successful evaluation.
 ;;; Tries to survive escaping continuations by consistently returning the first successful result.
 ;;; Not remotely thread safe though.
-(define (once thunk)
+(define (make-once thunk)
   (let ((computed? #f)
         (value #f))
-    (λ args
+    (λ _
       (or computed?
-          (let ((result (apply thunk args)))
+          (let ((result (thunk)))
             (or computed?
                 (begin
                   (set! computed? #t)
                   (set! value result)))))
       value)))
-(define
-(def (eager-pre-fact f n)
-  (if (<= n 1) n (* n (f (- n 1)))))
+(define-syntax once
+  (syntax-rules ()
+    ((_ body ...) (make-once (lambda () body ...)))))
 
+(def (once-Y f) ;; : ^(^X→X)→X
+  (letrec ((p (f (once p)))) p))
+(def (once-B x y z) ;; : (^Y→X)→^(Z→Y)→Z→X
+  (x (once ((y 0) z))))
+(def (once-D x) ;; : µX.^(X→A)→A
+  ((x 0) x))
+(def (once-Y-with-combinators f) ;; : ^(^X→X)→X
+  (once-D (once (once-B f (once once-D)))))
+(def (once-Y-expanded f) ;; : ^(^X→X)→X
+  ((lambda (x) ((x) x))
+   (once (lambda (x) (f (once ((x) x)))))))
+
+(def once-pre-fact (λ (f n)
+  (if (<= n 1) n (* n ((f 0) (- n 1))))))
+
+(expect
+ ((once-Y once-pre-fact) 6) => 720
+ ((once-Y-with-combinators once-pre-fact) 6) => 720
+ ((once-Y-expanded once-pre-fact) 6) => 720)
 
 ;; Trivial implementation of lazy from once
 ;;(define-syntax delay (syntax-rules () ((_ . body) (once (λ () . body)))))
 ;;(define force (λ (p) (p)))
 ;;(define once-thunk (λ (thunk) (lazy (thunk)))) ;; only for nullary thunks
-(define foo (once add1))
+(define foo
+  (let ((twice #f))
+    (once (if twice (error "called twice")) (begin (set! twice #t) 42))))
 (expect (foo 41) => 42
         (foo 4) => 42
         (foo) => 42
@@ -443,13 +465,13 @@ With Racket: racket pommette.rkt
 
 ;; TODO: don't use _ here
 (def my-modular-def-without-global-recursion
-  (let ((_start 5))
-    (letrec ((_length (λ (l) (if (null? l) 0 (+ 1 (_length (cdr l)))))))
+  (let ((start% 5))
+    (letrec ((length% (λ (l) (if (null? l) 0 (+ 1 (length% (cdr l)))))))
       (λ (self method-id)
         (case method-id
-          ((start) _start)
-          ((length) _length)
-          ((size) (- (_length (self 'contents)) _start))
+          ((start) start%)
+          ((length) length%)
+          ((size) (- (length% (self 'contents)) start%))
           (else #f))))))
 
 (def my-contents-2
@@ -788,19 +810,8 @@ With Racket: racket pommette.rkt
 The End. (For Now)
 |#
 
-
-
 #|
 p1 = { a: Int , ...}
 p2 = { b: String, ... }
 p1∩p2 = {a : Int, b : String , ... }
 |#
-
-
-a : Int
-b : String
-c : List(Int)
-
-
-a : Self
-compare : Self -> Self -> Bool

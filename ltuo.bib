@@ -3543,8 +3543,9 @@ and Fiech, Adrian",
     to be actually in O(√N) rather than O(1), where N is the size of the working set.
     The “memory hierarchy” of caches, RAM, disk, remote storage, etc.,
     makes for discrete jumps in latency as you exceed local capacity.
-    The ultimate physical limit is ultimately a square root rather than cubic root
-    to avoid collapsing into a blackhole.
+    The ultimate physical limit is a square root rather than cubic root
+    to avoid collapsing into a blackhole, though
+    gravity is already a problem at planetary scale.
   }
 }
 
@@ -3553,7 +3554,19 @@ and Fiech, Adrian",
   title={ASDF 3, or Why Lisp is Now an Acceptable Scripting Language},
   url="https://github.com/fare/asdf3-2013",
   booktitle={European Lisp Symposium},
-  year=2014
+  year=2014,
+  note={.
+    In this paper, I describe the build system ASDF, and
+    its design, its evolution from ASDF 1 (and its predecessors) to ASDF 3,
+    with surprising challenges from portability to extension of project scope,
+    to a bug that was half-fixed in one line of code
+    but required a complete rewrite for a real fix.
+    The heart of ASDF is a protocol using plenty of multi-methods specialized
+    on an operation and a component. The combination of flavorful multiple inheritance
+    and multiple dispatch makes for an extremely modular and extensible design,
+    that accomplishes in a few thousands of lines what other build systems do
+    in tens or hundreds of thousands of lines of code.
+  }
 }
 
 %% 2015
@@ -3564,7 +3577,7 @@ and Fiech, Adrian",
   year={2015},
   url={http://www-sop.inria.fr/members/Yves.Bertot/misc/types-eng.pdf},
   note={.
-    Long ago, I learned a lot from Yves’s lecture notes.
+    Long ago while at École Normale Supérieure, I learned a lot from Yves’s lecture notes.
     My memory fails regarding how this particular document compares to them.
     The bibliography has more documents, in particular the classic Barendregt 1984.
   }
