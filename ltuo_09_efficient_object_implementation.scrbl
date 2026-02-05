@@ -20,7 +20,7 @@ and returning a value as output.
 This strategy works, and is portable to any language with Higher-Order Functions.
 But, (1) it is rather inefficient in time, and, (2) it leaks space.
 
-Meanwhile, the name “record” itself, as per @citet{Hoare1965Record},
+Meanwhile, the name “record” itself, as per @citet{Hoare1965},
 suggests a low-level representation in terms of consecutive words of memory.
 And so, I will show how to better implement records.
 The downside is that the techniques involved will be less portable,

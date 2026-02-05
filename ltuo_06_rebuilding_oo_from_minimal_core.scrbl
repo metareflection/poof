@@ -675,7 +675,7 @@ whereas the “descriptor-of-functions” strategy leads to descriptors the call
 requires clients to systematically pass the descriptor itself to the methods it contains
 so as to close the fixpoint loop.
 
-@subsection[#:tag "Class_style_vs_Typeclass_style"]{Class-style vs Typeclass-style}
+@subsection[#:tag "CSvTS"]{Class-style vs Typeclass-style}
 
 Now, there are two common styles for using type descriptors: Class-style and Typeclass-style.
 
@@ -1237,7 +1237,7 @@ In other words, it makes us realize once again that @emph{recursion is not free}
 @subsection{Why NNOOTT?}
 
 The NNOOTT was implicit in the original OO paper @~cite{Simula1967}
-as well as in Hoare’s seminal paper that inspired it @~cite{Hoare1965Record}@xnote["."]{
+as well as in Hoare’s seminal paper that inspired it @~cite{Hoare1965}@xnote["."]{
   Hoare probably intended subtyping initially indeed for his families of record types;
   yet subclassing is what he and the Simula authors discovered instead.
   Such is scientific discovery:
@@ -1658,7 +1658,7 @@ can be typed with some variant of the @c{C → V → V} pattern,
 composed, assembled in products or co-products, etc.,
 with no coupling making the unit of specification the same as the unit of fixpointing.
 
-Finally, with typeclass-style (as in @secref{Class_style_vs_Typeclass_style}),
+Finally, with typeclass-style (as in @secref{CSvTS}),
 the unit of fixpointing need not be a type descriptor;
 it could be a value without an existential type, or a descriptor for multiple existential types;
 it could be a descriptor not just for a finite set of types,

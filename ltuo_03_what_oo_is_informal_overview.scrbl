@@ -265,7 +265,7 @@ and are aware of when they are being conflated for practical purposes,
 so you can distinguish which of the two aspects should be invoked in which context,
 then the semantics of OO becomes quite simple.
 Shockingly, conflation was first explicitly discussed only in @citet{poof2021} even though
-(a) the concept is implicitly older than OO, going at least as far back as @citet{Hoare1965Record},
+(a) the concept is implicitly older than OO, going at least as far back as @citet{Hoare1965},
 and (b) the implementation of various Prototype OO systems has to explicitly accommodate for it
 (see e.g. the @c{__unfix__} attribute in @citet{nix2015})
 even when the documentation is silent about it.
@@ -413,7 +413,7 @@ parents, ancestors, children and descendants—also specifications.
 Historically, the first inheritance mechanism discovered
 was @emph{single inheritance} @~cite{Simula1967},
 though it was not known by that name until a decade later.
-In an influential paper@~cite{Hoare1965Record},
+In an influential paper@~cite{Hoare1965},
 Hoare introduced the notions of “class” and “subclass” of records
 (as well as, infamously, the @c{null} pointer).
 The first implementation of the concept appeared in Simula 67 @~cite{Simula1967}.

@@ -63,7 +63,7 @@ though often a severely stunted one.
 
 @subsection{Conflation of Specification and Target as All-Important}
 I elucidated the concept of conflation,
-latent in all OO since @citet{Hoare1965Record},
+latent in all OO since @citet{Hoare1965},
 necessarily though implicitly addressed by each and every one of my predecessors,
 yet never a single time once explicitly documented before. Shame on them.
 Before making this concept explicit,

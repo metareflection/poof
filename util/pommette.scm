@@ -293,20 +293,21 @@ With Racket: racket pommette.rkt
   (syntax-rules ()
     ((_ body ...) (make-once (lambda () body ...)))))
 
+(define (! x) (x)) ;; force, even if from def or λ
 (def (once-Y f) ;; : ^(^X→X)→X
   (letrec ((p (f (once p)))) p))
 (def (once-B x y z) ;; : (^Y→X)→^(Z→Y)→Z→X
-  (x (once ((y 0) z))))
+  (x (once ((! y) z))))
 (def (once-D x) ;; : µX.^(X→A)→A
-  ((x 0) x))
+  ((! x) x))
 (def (once-Y-with-combinators f) ;; : ^(^X→X)→X
   (once-D (once (once-B f (once once-D)))))
 (def (once-Y-expanded f) ;; : ^(^X→X)→X
   ((lambda (x) ((x) x))
-   (once (lambda (x) (f (once ((x) x)))))))
+   (once (λ (x) (f (once ((! x) x)))))))
 
 (def once-pre-fact (λ (f n)
-  (if (<= n 1) n (* n ((f 0) (- n 1))))))
+  (if (<= n 1) n (* n ((! f) (- n 1))))))
 
 (expect
  ((once-Y once-pre-fact) 6) => 720
@@ -319,7 +320,7 @@ With Racket: racket pommette.rkt
 ;;(define once-thunk (λ (thunk) (lazy (thunk)))) ;; only for nullary thunks
 (define foo
   (let ((twice #f))
-    (once (if twice (error "called twice")) (begin (set! twice #t) 42))))
+    (once (if twice (error "called twice") (begin (set! twice #t) 42)))))
 (expect (foo 41) => 42
         (foo 4) => 42
         (foo) => 42

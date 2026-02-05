@@ -166,13 +166,14 @@ or @c{1} if seen multiplicatively,
 or @c{-∞} (IEEE floating-point number) seen with @c{max} as the operator, or @c{+∞} with @c{min}.}
 @item{For the type @c{Pointer} of pointers into a graph of records, @c{⊤ = null},
 the universal null pointer@xnote["."]{
-  Hoare called his 1965 invention of null his “billion dollar mistake”. @; CITE both
+  Hoare called his 1965 invention of null his “billion dollar mistake”
+  @~cite{Hoare1965 Hoare2009}.
   Now, to Hoare’s credit, his invention of classes in the same article,
   for which he vaguely suggests the semantics of single inheritance
   as Dahl and Nygaard would implement after his article,
   yet that he (and they) wrongfully assimilate to subtyping,
   was a trillion dollar happy mistake.
-  Overall, the effect of his article @~cite{Hoare1965Record} was probably net vastly positive.
+  Overall, the effect of his article @~cite{Hoare1965} was probably net vastly positive.
 }}
 @item{For the type @c{Type} of types (in a compiler, at the meta-level),
 @c{⊤ = Any}, the top type (“contains everything, about which you know nothing”) that you refine,
@@ -276,6 +277,7 @@ Thus, as far as one cares about extensibility:
   boolean, string, comparison function, integer, floating-point number,
   point (record of two coordinates @c{x} and @c{y}), in Scheme,
   and/or in your favorite language.
+  Justify your choices.
 }
 
 @exercise[#:difficulty "Easy"]{
@@ -353,7 +355,7 @@ Before I model Modularity as such, I shall delve deeper into the modeling of Rec
 that are the usual substrate for much of Modularity.
 
 @Paragraph{Record Nomenclature}
-I will follow Hoare @~cite{Hoare1965Record} in calling
+I will follow Hoare @~cite{Hoare1965} in calling
 “record” the concrete representation of data that contains zero, one or many “fields”.
 A typical low-level implementation of records is as
 consecutive “words” (or “characters”) of “computer store” or “storage space”,
@@ -684,8 +686,9 @@ despite Lots of Insipid and Stupid Parentheses@xnote["."]{
   the parentheses, while a bit verbose, are just a familiar universal syntax that allows them
   to quickly understand the basic structure of any program or data,
   even when they are unfamiliar with the syntactic extensions it uses.
-  By contrast, in most “blub” languages, @; TODO cite Paul Graham
-  as Lispers call non-Lisp languages, parentheses, beyond function calls,
+  By contrast, in most “blub” languages,
+  as Lispers call non-Lisp languages @~cite{Graham2001},
+  parentheses, beyond function calls,
   carry the emotional weight of “warning: this expression is complex,
   and doesn’t use the implicit order of operations”.
   Non-Lispers see parentheses as lacking cues from the other kinds of brackets their languages have,
@@ -956,23 +959,19 @@ and return to rebuilding OO from first principles.
 
 @exercise[#:difficulty "Easy"]{
   Play with the simple record system I implemented.
-  How do you get the values for a list of slots in a single function call?
+  How do you extract all the values for multiple fields in a single function call?
   (You may use functions from your language’s standard library.)
 }
 @exercise[#:difficulty "Easy"]{
   Use existing library functions in your Scheme implementation of choice
   to actually implement the example of modularly sorting a list of files.
 }
-@exercise[#:difficulty "Medium"]{
+@exercise[#:difficulty "Medium" #:tag "alist0"]{
   Implement a trivial record system based on alists (lists of pairs of symbol and value)
   instead of functions from symbol to value (you can reuse library functions if available).
   Reimplement and evaluate the same examples using this record system instead of the one I used.
   Implement conversions between the two representations.
   What limitation do you notice in one direction?
-
-@;{TODO Notice that you cannot directly use the applicative or stateful Y on such alists.
-  Instead, you have to use Y on e.g. nullary functions that return alists,
-  which would be equivalent to using the lazy Y, if only your nullary functions were memoized.}
 }
 @exercise[#:difficulty "Medium"]{
   Extend the @c{once} function above to:
@@ -1541,8 +1540,15 @@ This shift from singular and global to plural and local is essential for Class O
 and even more so for Prototype OO.
 
 @exercise[#:difficulty "Easy"]{
-  Define your own points of various colors and names,
+  Reproduce the examples from the chapter.
+  Then define your own points of various colors and names,
   with 2d or 3d coordinates, with or without using specifications.
+}
+
+@exercise[#:difficulty "Easy"]{
+  Verify that @c{idModExt} is indeed a neutral element for
+  the composition of modular extensions via @c{mix}.
+  What happens if you instantiate it with @c{(fix top)}?
 }
 
 @exercise[#:difficulty "Easy"]{
@@ -1551,6 +1557,10 @@ and even more so for Prototype OO.
   Test your specifications with various points.
   What happens if you compose those two specifications, try to instantiate them,
   and extract coordinates?
+}
+
+@exercise[#:difficulty "Medium"]{
+  Prove that @c{mix} is associative. Test it in practice.
 }
 
 @exercise[#:difficulty "Medium"]{
@@ -1579,4 +1589,34 @@ and even more so for Prototype OO.
   (3) assign Types to OO.
   Assume mixin inheritance for now, i.e. via using the @c{mix} function.
   Save your answer to compare with the treatment in @secref{ROOfiMC}.
+}
+
+@exercise[#:difficulty "Hard"]{
+  Define an API for manipulating records, as a set of methods.
+  Provide an implementation of that API with functions in the style I used.
+  Provide another implementation of it with alists as in @exercise-ref{alist0}.
+  Provide another implementation of it with balanced binary trees (say, red-black trees).
+  Define that red-black-tree implementation in multiple specifications:
+  one for binary trees, an abstract one for balancing and rebalancing based on some metadata,
+  a more concrete one for red-black-trees.
+  Along the way, you may also have to define an API for order and comparisons.
+  In the end, you will have bootstrapped a more efficient representation for records
+  from a simple one.
+  Write functions to convert between the two. Notice the limitations in one direction.
+  Can you use alist- or tree- based records directly with the Y combinator?
+  If not, explain why not, and consider if wrapping in a thunk, delay or once may help.
+  With or without wrapper, do it.
+}
+
+@exercise[#:difficulty "Research"]{
+  Port this minimal OO system to your language of choice.
+  What issues are you facing and why?
+  Can you make the system usable?
+  Make a library out of it that you actually use?
+  (See for instance the slides next to the source code for this book,
+  at @url{https://github.com/metareflection/poof}.)
+  Can you attract users beside yourself?
+  What patches to your language implementation did you need,
+  or would you need to implement the system better?
+  If your language has static types, how do you deal with them?
 }

@@ -331,7 +331,7 @@ This may explain why using the above implementation kernel for OO in FP
 has so far only been found non-trivial use but in dynamically typed languages.
 
 Record classes were initially identified with record types
-and subclassing with subtyping@~cite{hoare1965record}.
+and subclassing with subtyping@~cite{Hoare1965}.
 However, the assumption soon proved to be false;
 many attempts were made to find designs that made it true or ignored its falsity,
 but it was soon enough clear to be an impossible mirage. @; TODO CITE

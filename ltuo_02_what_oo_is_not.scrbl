@@ -115,7 +115,7 @@ and even most of those that look like OO are often different enough that
   @|#:- @citet{Lieberman1986}|
 }
 Many claim that classes, as first implemented by Simula 67@~cite{Simula1967}
-(though implementing a concept previously named by Hoare@~cite{Hoare1965Record}),
+(though implementing a concept previously named by Hoare@~cite{Hoare1965}),
 are essential to OO, and only ever care to implement, use, formalize,
 study, teach, promote, or criticize class-based OO (a.k.a. Class OO).
 Books from luminaries in Programming Languages @~cite{Pierce2002TAPL plai eopl3},
@@ -123,17 +123,35 @@ in their chapter about OO, barely even mention any other kind of OO if at all,
 much less study it.
 
 Yet KRL@~cite{Winograd1975 Bobrow1976},
-the second recognizable precursor to OO,
+the very first system@xnote[""]{
+  KRL, though its name stands for “Knowledge Representation Language”,
+  was arguably not a @emph{programming} language in most people’s understanding,
+  though it was one in the then understanding of Lispers:
+  it is a layer on top of Lisp, what one would now call an “object system”,
+  and beyond that strictly, a system for representing knowledge.
+  But Lisp, being extensible, blurs the distinction between a new language
+  and an extension to the existing language, and KRL was certainly a language by that standard;
+  and though there is no explicit trace of such intention in the original 1975 papers,
+  by May 1976 part of the knowledge being represented definitely included
+  procedures defined using inheritance, in a way that fits the modern understanding of OO.
+}
+that claimed the words “object-oriented” in print
+(though the expression was taken from Alan Kay), and
+the second recognizable precursor to modern OO,
 whose authors introduced the words “inheritance” and “prototypes”
-with the same meaning as in OO in the context of their language
-(though the words were initially used as descriptions rather than definitions),
-has what I would now call prototype-based OO (a.k.a. Prototype OO).
-The modern concept of OO can be traced back to Smalltalk adopting inheritance in 1976,
-naming inheritance after KRL’s usage,
-and popularizing the word and concept of it among programming language designers
-(KRL, a layer on top of Lisp, is arguably not a @emph{programming} language,
-though it integrates with one).
-Certainly, Smalltalk was class-based.
+(initially as descriptions, later as definitions),
+has what is now called prototype-based OO (a.k.a. Prototype OO).
+The modern concept of OO can be traced back to the interaction between
+Bobrow’s KRL team and Kay’s Smalltalk team at PARC around 1976,
+both informed not just by Simula but also by many other predecessors.
+Kay took KRL’s inheritance, made it a well-defined concept specifically for @emph{programming}
+(which it was not originally in KRL) by identifying it with the prefix mechanism in Simula,
+that he replaced with the better resend mechanism, and popularized
+the word and concept of inheritance as well as the term “object-oriented”;
+Bobrow adopted Kay’s improvements together with his own (hard to say which is whose).
+Then others at PARC, at MIT, and eventually Stroustrup at Bell Labs, adopted OO,
+and the rest is history.
+Certainly, Smalltalk was class-based, unlike KRL.
 Yet contemporary with Smalltalk or immediately after it
 were prototype-based languages Director @~cite{Kahn1976 Kahn1979Ani Kahn1979Director} and
 ThingLab @~cite{Borning1977 Borning1979 Borning1981}@xnote["."]{
@@ -151,7 +169,7 @@ Moreover, I will argue that Prototype OO @~cite{Borning1986}
 is more general than Class OO, that is but a special case of it @~cite{Lieberman1986}
 (see @secref{CaPfT}, @secref{RCOO}).
 And I will even argue that you can recognizably have OO
-with neither prototypes nor classes, as in T @~cite{Adams1988oopscheme}
+with neither classes nor even prototypes, as in T @~cite{Adams1988oopscheme}
 (see @secref{MFtPaC}, @secref{MOO}, @secref{ROOfiMC}).
 Despite common misinformed opinions to the contrary,
 @principle{Class-less OO is part and parcel of the OO tradition},
@@ -190,7 +208,8 @@ were using mutable state everywhere, and an eager evaluation model, at least by 
 And with 1990s slogans among Lispers like
 “objects are a poor man’s closures”@~cite{Dickey1992SWOB}, and
 “closures are a poor man’s objects”@~cite{Queinnec1996LiSP},
-the problem back then (and as early as at least Yale T Scheme @~cite{Rees1982T})
+the problem back then (and as early as at least Yale T Scheme @~cite{Rees1982T},
+that developed the underlying concepts and implemented an entire system on them),
 was clearly not whether OO could be done purely with functions—obviously it could—but
 whether it made practical sense to program purely without side-effects in general.
 That question would only be slowly answered positively,
@@ -217,7 +236,7 @@ as Haskell grew up to become a practical language@xnote["."]{
 }
 
 Yet, there are (a) pure models of OO such as those of
-Kamin, Reddy, Cook and Bracha@~cite{Kamin1988 ObjectsAsClosures Cook1989 bracha1990mixin},
+Kamin, Reddy, Cook and Bracha@~cite{Kamin1988 ObjectsAsClosures Cook1989 Cook1989Denotational bracha1990mixin},
 (b) pure lazy dynamic OO languages such as Jsonnet or Nix@~cite{jsonnet dolstra2008nixos nix2015},
 and pure lazy OO systems for Scheme@~cite{poof2021},
 (c) languages happily combining OO and FP such as Common Lisp or Scala,
@@ -229,8 +248,7 @@ in the pure FP language Haskell(!) @~cite{Kiselyov2005HaskellOOS}.
 These provide ample evidence that OO does not at all require mutation,
 but can be done in a pure setting, and is very compatible with FP, purity,
 and even with laziness and normal-order evaluation.
-@; Haskell typeclasses embody half of OO@~cite{typeclasses LIL2012},
-@; and could be tweaked to embody all of it.
+@; TODO secref{CSvTS} for typeclass style OO
 @; though its designers might not wholly embrace the OO tradition. @; TODO{CITE}
 @; TODO: add inheritance to Haskell typeclasses or Rust traits, or just cite CL gf, Clojure protocols.
 Actually, I will argue based on studying of the semantics of OO that
