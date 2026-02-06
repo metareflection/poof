@@ -262,6 +262,33 @@
 
 %% 1972
 
+@InProceedings{Bobrow1972,
+  author={Bobrow, Robert J.},
+  title={An Experimental Data Management System},
+  booktitle={Data Base Systems: Proceedings of the Courant Computer Science Symposium 3},
+  editor={Rustin, Randall},
+  year={1972},
+  pages={125--142},
+  publisher={Prentice-Hall},
+  address={Englewood Cliffs, NJ},
+  month=may,
+  url={https://archive.org/details/databasesystems0000cour/page/124/mode/2up},
+  note={.
+    Symposium held May 1971.
+    The entire book uses the expression “-oriented” a lot
+    (user (2x), calculus (5x), computation, retrieval, algebra (4x), terminal),
+    and two articles use the word “object” a lot,
+    but the word “object-oriented” appears just once, in the article by
+    Robert J. “Rusty” Bobrow, younger brother of Daniel, also working on BBN Lisp,
+    informally describes his work on a data management system:
+    “there is no inherent antagonism between the relational point of view and
+    the object-oriented network viewpoint in database management”,
+    by which he refers to what we would now call graph databases,
+    not to object-oriented programming.
+    Still, the word was in the air, if not yet the technical meaning.
+  }
+}
+
 @InCollection{dahl1972chapter,
   title={Chapter III: Hierarchical program structures},
   author={Dahl, Ole-Johan and Hoare, Charles Antony Richard},
@@ -309,7 +336,7 @@
 
 %% 1974
 
-@TechReport{minsky1974framework,
+@TechReport{Minsky1974,
   title={A Framework for Representing Knowledge},
   author={Minsky, Marvin},
   year={1974},
@@ -317,8 +344,12 @@
   number={AIM-306},
   url={https://dspace.mit.edu/handle/1721.1/6089},
   note={.
+    Minsky describes his ideas on how to represent knowledge in a computer
+    as part of his project for Artificial Intelligence,
+    in terms of a network of clear-cut named concepts or “frames”,
+    that relate to each other in various ways.
     Minsky uses the words “prototype” and “inherit”, but incidentally,
-    NOT AT ALL to refer to the concepts at stake.
+    and NOT AT ALL to refer to the concepts at stake for OO.
   }
 }
 
@@ -425,16 +456,17 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-% AITR-346.ps
 % Uses the word prototypes and objects in a suggestive but informal way.
 % The knowledge representation is a decision tree in a 3kloc LISP program
 % with over a thousand COND.
 % There is some notion of hierarchy and overriding/extending descriptive features,
 % but not obviously one of fixed-point or self-reference; at least not discussed.
-@article{hollerbach1975hierarchical,
+@TechReport{Hollerbach1975,
   title={Hierarchical shape description of objects by selection and modification of prototypes},
   author={Hollerbach, John M},
+  institution={MIT},
   year={1975},
+  number={AITR-346},
   url={https://dspace.mit.edu/handle/1721.1/6897}
 }
 
@@ -485,6 +517,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   author={Daniel G. Bobrow and Terry Winograd},
   title={An Overview of KRL, A Knowledge Representation Language},
   year={1976},
+  month={November},
   institution={Stanford Artificial Intelligence Laboratory},
   number={AIM-293},
   url={https://exhibits.stanford.edu/stanford-pubs/catalog/pf235fy3176},
@@ -518,6 +551,56 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     and “object-oriented” is used three times, though Kay is only cited indirectly through
     a paper of his Learning Research Group that doesn’t use the expression
     (multi-process oriented is also used three times, but with slightly different words each time).
+  }
+}
+
+@InProceedings{Ross1976,
+  author = {Ross, Douglas T.},
+  title = {Toward foundations for the understanding of type},
+  year = {1976},
+  month = March,
+  isbn = {9781450378987},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/800237.807120},
+  doi = {10.1145/800237.807120},
+  abstract = {I have now written, have available from SofTech, and have submitted for publication elsewhere, the first two of a series of deep philosophical papers [1, 2] about Plex [3]. Among other things, I believe these papers begin to provide a proper foundation for our endeavors in computer science and software engineering. The trend of these developments is indicated in the following, which I call The Proem of Plex1 and Plex2 [“Proem: 1.) A preliminary discourse to a longer piece of writing. 2.) An introductory comment before a speech. 3.) Something that opens or begins.”—Webster's].},
+  booktitle = {Proceedings of the 1976 Conference on Data : Abstraction, Definition and Structure},
+  pages = {63–65},
+  numpages = {3},
+  location = {Salt Lake City, Utah, USA},
+  note={.
+    In unreadable manic publication that is more poetry than science,
+    Ross first uses in print (March 1976) the word “object-oriented”
+    in a way that vaguely refers to thinking about data types in an abstract way.
+    But since it’s all poetic handwaving (despite the invocation of mathematical symbols),
+    this publication can be dismissed as worthless.
+  }
+}
+
+% TODO
+% One of the very first papers on OO, that defines "object-oriented language",
+% including Simula, CLU (no inheritance) and Alphard (never implemented)
+% Also MIT CSG Memo 137 (April 1976)
+@article{Jones1976,
+  author={Jones, A.K. and Liskov, B.H.},
+  journal={IEEE Transactions on Software Engineering},
+  title={A Language Extension for Controlling Access to Shared Data},
+  year={1976},
+  month=April,
+  volume={SE-2},
+  number={4},
+  pages={277-285},
+  keywords={Computer languages;Operating systems;Control systems;Access control;Proposals;Programming profession;Writing;Buildings;Computer science;Protection;Access control;capabilities;data types;programming languages;type checking},
+  url={https://sci-hub.ru/https://ieeexplore.ieee.org/abstract/document/1702384},
+  doi={10.1109/TSE.1976.233833},
+  note={.
+    One of the very first papers mentioning “object-oriented” languages,
+    but in a way that refers to modularity without extensibility,
+    as in the authors’ language CLU.
+    That said, the authors cite Simula 67 and the vaporware Alphard as being object-oriented.
+    They also cite Lisp, but only in the context of already offering the kind of functionality
+    they use as a code example.
   }
 }
 
@@ -603,7 +686,19 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   pages={9–16},
   numpages={8},
   location={Tucson, Arizona},
-  series={POPL '78}
+  series={POPL '78},
+  note={.
+    This very influential paper is the first formal paper about Smalltalk
+    that uses the word “object-oriented”,
+    describing Smalltalk-76, from high-level principles, to
+    screenshots of their graphical user interface with overlapping windows,
+    to description of the language with plenty of examples,
+    including subclasses and inheritance (multiple inheritance is mentioned but not discussed),
+    to a low-level box-and-arrow diagrams for how objects are structured in memory
+    and description of the virtual machine, message passing and memory management,
+    with a model implementation of the virtual machine interpreter in Smalltalk in appendix.
+    Wow.
+  }
 }
 
 %% 1979
@@ -798,7 +893,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 1982
 
-% Yale T Scheme. Introduces functional syntax for object method invocation.
 % Norman I. Adams, IV -- but the IV doesn't get processed correctly
 % Can't find it on http://mumble.net/~jar/tproject/
 % See also Olin Shivers' "A History of T" https://paulgraham.com/thist.html
@@ -816,8 +910,10 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     and that among other things supports Prototype OO
     based on such lexically scoped closures.
     An object is essentially a record of methods
-    that are invoked by passing them the object as first argument;
-    see Adams 1988 for details.
+    that are invoked by passing them the object as first argument.
+    A “generic operation protocol” offers a functional syntax to object method invocation,
+    which anticipates generic functions in New Flavors, CommonLoops and CLOS.
+    See Adams 1988 for details.
   }
 }
 
@@ -1328,7 +1424,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-% First entry (alphabetically by name?) in ltuo
 @InProceedings{Adams1988OOPScheme,
   Author={Norman Adams and Jonathan Rees},
   Title={Object-Oriented Programming in Scheme},
@@ -1353,12 +1448,22 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     a method being a function that take the object as first argument.
     “Operations” encapsulate the calling convention of objects and
     support operation-specific default behavior.
-    Objects conflate specification and target, as in my section 6.1.5;
-    single inheritance is well-supported, and
-    you could simply implement mixin inheritance on top, maybe even multiple inheritance;
-    but the authors don’t include such infrastructure in their documentation or code.
     The T virtual machine helps with performance, and notably supports
     callable instances that are as efficient as regular function calls.
+    Objects conflate specification and target, as in my section 6.1.5.
+    The inheritance system is minimal:
+    the builtin syntax to create objects from existing ones
+    offers mixin inheritance but with the restriction that you can’t call super methods;
+    yet calling super methods is supported with the provided “operate-as” primitive,
+    based on which you could implement your own design patterns
+    for single or mixin (or, conceivably, even multiple) inheritance,
+    that you could even automate with functions and macros.
+    This power to extend the OO system directly derives from it being first-class.
+    Yet, it is unclear whether anyone actually wrote such extensions.
+    Thus, T is in the curious position of both supporting all those things potentially,
+    yet being so overly simple that it is not offering them in practice.
+    (I didn’t look into the code base to confirm whether the graphical layer and the compiler,
+    that used the object system, made any non-trivial use of this power.)
     Overall impressive, but sadly largely unknown outside Lisp circles,
     though probably indirectly an inspiration for JavaScript’s very similar object system.
   }
@@ -1566,7 +1671,22 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   pages="60--76",
   booktitle="16th ACM SIGPLAN-SIGACT symposium on Principles of programming languages",
   series="POPL 1989",
-  publisher="ACM"
+  publisher="ACM",
+  note={.
+    This groundbreaking paper introduces type classes
+    as a mechanism to achieve ad-hoc polymorphism in Haskell.
+    It is a great way to vastly increase the modularity of the language,
+    via a language pass that desugars type classes into the use of a dictionary of methods
+    for each class that a function relies on.
+    There is however no mechanism for extension of existing type classes via inheritance;
+    new type classes must reimplement everything and may not implicitly share code.
+    In that sense, the mechanism is thus weaker than OO.
+    On the other hand, type classes can be associated with multiple types,
+    making them akin to multiple-dispatch in OO,
+    rather than the single dispatch only available in most OO languages.
+    Also, the way type class parameters can relate in a subclass relationship
+    is more powerful than the equivalent in OO languages.
+  }
 }
 
 @TechReport{PCLSRing,
@@ -1668,18 +1788,29 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   pages={55--92},
   year={1991},
   publisher={Elsevier},
-  doi={10.1016/0890-5401(91)90052-4}
+  doi={10.1016/0890-5401(91)90052-4},
+  note={.
+    This seminal paper that explains how computations with all kinds of side-effects
+    can be expressed on top of the pure λ-calculus using monads.
+    Though presented as an abstract tool for reasoning about the semantics of programming languages,
+    the technique would quickly be adapted as the concrete basis for
+    how Haskell exposes side-effects indeed.
+    Math heavy with category theory diagrams.
+  }
 }
 
-% Studies λ-calculus with polymorphism, meets and joins, expresses naturals and others in it.
-% Discusses the need for type annotations due to undecidable typechecking without.
-% Does not discuss general fixpoints, though implicitly can deal with recursion for numbers.
-% Fun, but not applicable to OO.
 @article{pierce1991programming,
   title={Programming with intersection types, union types, and polymorphism},
   author={Pierce, Benjamin C},
   year={1991},
-  publisher={Carnegie Mellon University}
+  publisher={Carnegie Mellon University},
+  note={.
+    Pierce studies a λ-calculus with polymorphism, meets and joins,
+    and expresses naturals and other types in it.
+    He discusses the need for type annotations due to undecidable typechecking without.
+    He does not discuss general fixpoints, though implicitly can deal with recursion for numbers.
+    A fun paper, but ultimately not directly applicable to OO.
+  }
 }
 
 % Introduces Recursion Schemes. Heavy on math notation.
@@ -1952,9 +2083,13 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   number={10},
   pages={24--33},
   year={1992},
-  XXXnote={.
-    Dickey’s article is a gentle tutorial with complete implementation of an object system
-    in the style of Rees 1982.
+  note={.
+    Dickey’s article is a gentle tutorial with complete implementation of
+    an object system for Scheme in the style of T (Rees 1982):
+    prototypes with a minimal inheritance system you can extend,
+    based on an encoding where callers pass the unresolved self record
+    as first argument to methods.
+    Complete practical object system in a few tens of lines of code.
   }
 }
 
@@ -3240,7 +3375,10 @@ and Fiech, Adrian",
   booktitle={the 13th ACM SIGPLAN international conference on Functional programming},
   pages={367--378},
   year={2008},
-  url={https://edolstra.github.io/pubs/nixos-jfp-final.pdf}
+  url={https://edolstra.github.io/pubs/nixos-jfp-final.pdf},
+  doi={10.1145/1411204.1411255},
+  note={.
+  }
 }
 
 @webpage{Minsky2008,
@@ -3291,12 +3429,12 @@ and Fiech, Adrian",
 
 %% 2009
 
-@online{Hoare2009,
+@webpage{Hoare2009,
   author={Hoare, C.A.R.},
   title={Null References: The Billion Dollar Mistake},
   year={2009},
   url={https://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare},
-  urldate={2026-02-04},
+  lastchecked={2026-02-04},
   note={.
     Talk delivered at QCon London, August 2009.
     “I call it my billion-dollar mistake. It was the invention of the null reference in 1965.”
@@ -3636,7 +3774,7 @@ and Fiech, Adrian",
   author={Michael Gale},
   year={2015},
   url={https://github.com/mbg/hoop/},
-  urldate={2026-02-05},
+  lastchecked={2026-02-05},
   note={.
     Originally published as MSH in 2015, then renamed to Hoop in 2020, Hoop is
     an pure functional object system written in Haskell.
@@ -3712,12 +3850,12 @@ and Fiech, Adrian",
   }
 }
 
-@Misc{nix2015,
+@webpage{nix2015,
   title={Nixpkgs fixed-points library},
   author={Peter Simons},
   url={https://github.com/NixOS/nixpkgs/blob/master/lib/fixed-points.nix},
   year={2015},
-  urldate={2023-11-29},
+  lastchecked={2023-11-29},
   note={.
     Nix implements prototype OO in two functions. Impressive.
     Seeing this system after having used Jsonnet (that implements an equivalent object system
@@ -3761,12 +3899,12 @@ and Fiech, Adrian",
       url={https://arxiv.org/abs/1605.05274},
 }
 
-@Misc{ngnghm9,
+@webpage{ngnghm9,
   author={François-René Rideau},
   title={Build Systems and Modularity},
   year=2016,
   url={https://ngnghm.github.io/blog/2016/04/26/chapter-9-build-systems-and-modularity/},
-  urldate={2023-11-29}
+  lastchecked={2023-11-29}
 }
 
 
@@ -3989,7 +4127,17 @@ and Fiech, Adrian",
   title="C3 linearization",
   author="Wikipedia",
   year=2021,
+  lastchecked={2021-04-15},
   url={https://en.wikipedia.org/wiki/C3_linearization},
+  note={.
+    This sadly defunct page used to describe C3 linearization,
+    with a good explanation, examples, and citations.
+    Some versions of that page had errors.
+    But editors somehow chose to delete it rather than fix it.
+    The fate of that page reminds us that life is ephemeral and full of uncertainties,
+    and should be enjoyed while we still can.
+    See Barrett 1996 for the original C3 citation.
+  }
 }
 @InProceedings{poof2021,
   title={Prototypes: Object-Orientation, Functionally},
@@ -4055,6 +4203,15 @@ and Fiech, Adrian",
   author="Wikipedia",
   year=2025,
   url={https://en.wikipedia.org/wiki/Prototype-based_programming},
+  lastchecked={2026-02-06},
+  note={.
+    At some point I rewrote the history section of that wiki page
+    (except the 1990s paragraph).
+    But I didn’t write or change much in the rest of the page, that
+    I don’t find of particularly good quality.
+    The page however links to a whole lot of languages that support Prototype OO,
+    most of which I admit I didn’t look at in detail.
+  }
 }
 
 % References Butler Lampson https://bwlampson.site/Slides/TuringLecture.htm
@@ -4064,6 +4221,15 @@ and Fiech, Adrian",
   author="Wikipedia",
   year=2025,
   url={https://en.wikipedia.org/wiki/Fundamental_theorem_of_software_engineering},
+  lastchecked={2026-02-06},
+  note={.
+    The article starts as follows:
+    “The fundamental theorem of software engineering (FTSE) is a term originated
+    by Andrew Koenig to describe a remark by Butler Lampson attributed to David J. Wheeler:
+     ‘We can solve any problem by introducing an extra level of indirection.’”
+    The many levels of indirection in the attribution
+    are themselves an illustration of the so-called theorem.
+  }
 }
 
 %% UNCLASSIFIED
@@ -4231,3 +4397,40 @@ and Fiech, Adrian",
 % url={https://simon.peytonjones.org/slpj-book-1987/},
 % doi={10.5555/1096899},
 % Nah, only has lazy Y. For lazy languages only.
+
+% Never implemented, modularity and attempt at specification / verification,
+% No story for quantification, goes nowhere.
+% https://www.cs.cmu.edu/~Compose/VerificationofAlphard1976.pdf
+% Wulf, William A.; London, Ralph L.; Shaw, Mary (December 1976). "An Introduction to the Construction and Verification of Alphard Programs" (PDF). IEEE Transactions on Software Engineering. 2 (4): 253–265. doi:10.1109/TSE.1976.233830.
+
+% https://ootips.org/history.html
+% https://news.ycombinator.com/item?id=36826762
+
+% POPL 1975 Plex
+% object-oriented exceptions
+% https://dl.acm.org/doi/10.1145/512976.512997
+% A good predecessor to Lisp exceptions
+% paper is extremely verbose; while exception handling is well-described,
+% and the ability for users to define exceptions in addition to those provided to the system
+% seems assumed, no mechanism or example of such definition is provided,
+% and in particular, no discussion about the extensibility of such definition
+@inproceedings{10.1145/512976.512997,
+author={Goodenough, John B.},
+title={Structured exception handling},
+year={1975},
+isbn={9781450373517},
+publisher={Association for Computing Machinery},
+address={New York, NY, USA},
+url={https://doi.org/10.1145/512976.512997},
+doi={10.1145/512976.512997},
+abstract={In this paper, we define what exception conditions are, discuss the requirements exception handling language features must satisfy, survey and analyze existing approaches to exception handling, and propose some new language features for dealing with exceptions in an orderly and reliable way. Our objective is not solely to put forward a language proposal. It is also to analyze exception handling issues and principles in detail. The proposed language features serve to highlight exception handling issues by showing how deficiencies in current approaches could be remedied in a coherent and orderly way.},
+booktitle={Proceedings of the 2nd ACM SIGACT-SIGPLAN Symposium on Principles of Programming Languages},
+pages={204–224},
+numpages={21},
+location={Palo Alto, California},
+series={POPL '75}
+}
+
+% https://ojs.aaai.org/aimagazine/index.php/aimagazine/article/view/2770
+% DOI: https://doi.org/10.1609/aimag.v38i4.2770
+% doi={10.1609/aimag.v38i4.2770}

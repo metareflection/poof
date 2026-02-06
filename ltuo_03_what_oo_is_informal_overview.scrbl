@@ -1024,6 +1024,11 @@ Whatever clear or murky correspondence between names and concepts others may use
 this paradigm is what matters, and is what I will call OO—it is what I will discuss in this book,
 and will systematically reduce to elementary concepts.
 
+As to why should this particular meaning of “object-oriented” should win over
+other plausible meanings offered before or after Kay’s and Bobrow’s 1976 invention,
+or other names for the concept, I will conclude with this tweet by Harrison Ainsworth:
+@principle{Naming is two-way: a strong name changes the meaning of a thing, and
+a strong thing changes the meaning of a name.}
 
 @exercise[#:difficulty "Easy"]{
   Identify one to three concepts from this chapter that you were not familiar with.

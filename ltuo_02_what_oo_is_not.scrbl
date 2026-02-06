@@ -122,24 +122,26 @@ Books from luminaries in Programming Languages @~cite{Pierce2002TAPL plai eopl3}
 in their chapter about OO, barely even mention any other kind of OO if at all,
 much less study it.
 
-Yet KRL@~cite{Winograd1975 Bobrow1976},
+Yet KRL@~cite{Bobrow1976},
 the very first system@xnote[""]{
   KRL, though its name stands for “Knowledge Representation Language”,
   was arguably not a @emph{programming} language in most people’s understanding,
   though it was one in the then understanding of Lispers:
-  it is a layer on top of Lisp, what one would now call an “object system”,
-  and beyond that strictly, a system for representing knowledge.
+  it is a layer on top of Lisp, what one would now call an “object system”.
   But Lisp, being extensible, blurs the distinction between a new language
-  and an extension to the existing language, and KRL was certainly a language by that standard;
-  and though there is no explicit trace of such intention in the original 1975 papers,
-  by May 1976 part of the knowledge being represented definitely included
-  procedures defined using inheritance, in a way that fits the modern understanding of OO.
+  and an extension to the existing language, and KRL was certainly a language by that standard.
+  Also, while the original intention in the original 1975 paper @~cite{Winograd1975} was
+  to model knowledge in terms of Frames @~cite{Minsky1974}, and not to write programs;
+  but by the 1976 report @~cite{Bobrow1976} the concern has shifted, and
+  while the frames model is still present and cited, it has taken a secondary role,
+  while defining procedures has taken a prominent role.
+  The 1975 article introduces the expression “inheritance of properties” descriptively,
+  without implementation;
+  the 1976 article uses it as a more formal definition, with an implementation.
 }
-that claimed the words “object-oriented” in print
-(though the expression was taken from Alan Kay), and
-the second recognizable precursor to modern OO,
-whose authors introduced the words “inheritance” and “prototypes”
-(initially as descriptions, later as definitions),
+that claimed the words “object-oriented” in print with the modern sense
+(though the choice of expression itself was likely influenced by Alan Kay), and
+that also introduced the words “inheritance” and “prototype” in their OO meaning,
 has what is now called prototype-based OO (a.k.a. Prototype OO).
 The modern concept of OO can be traced back to the interaction between
 Bobrow’s KRL team and Kay’s Smalltalk team at PARC around 1976,
@@ -398,6 +400,29 @@ unable to comprehend what the other is saying.
   @|#:-"Mark Twain"|
 }
 Alan Kay, who invented Smalltalk and coined the term “Object-Oriented Programming” circa 1967,
+before the modern concept of OO was fully formed (in 1976)@xnote[","]{
+  While Kay had a crucial role in the invention and naming of OO,
+  it is important not to put too much weight in the name without the full concept.
+  Back in the 1960s and 1970s, many things were user-oriented,
+  calculus-oriented, terminal-oriented, etc.
+  The word “object-oriented” appears in print in works about psychology, sociology, and
+  even in a few papers in Computer Science, before Smalltalk and KRL,
+  the earliest I could find being written in 1971 by Bobrow’s brother @~cite{Bobrow1972},
+  but not quite with that meaning. @; TODO Goodenough. Ross? @citet{Ross1976} -- earlier?
+  @citet{Jones1976} also come close,
+  using the word with respect to encapsulating types and code together,
+  though without the extensibility aspect that has been the defining trait
+  of what programmers expect from OO languages.
+  Jones and Liskov published that paper months
+  before the Bobrow and Winograd memo @~cite{Bobrow1976}
+  that first uses “object-oriented” the modern way, presumably after Kay.
+  Were these earlier uses in print legitimate?
+  Yes, but they are not the ones whose meaning took on. Kay’s meaning won—for good reasons.
+  However, for the same reason, while Kay’s personal use of the term dates back to 1967,
+  we should still only credit the invention at the date that the concept became fully formed,
+  which is with Kay’s Smalltalk-76 and Bobrow’s KRL-0, both in 1976,
+  because of each other (they were colleagues at PARC and cite each other).
+}
 notably explained@~cite{Kay2020} that he originally meant
 a metaphor of computation through independent (concurrent, isolated) processes
 communicating by passing asynchronous messages.
@@ -409,8 +434,9 @@ ThingLab @~cite{Borning1977 Borning1979 Borning1981}.
 
 However, neither Simula nor Smalltalk nor any popular OO language
 actually fits that metaphor.
-Some less popular Actor languages might @~cite{Hewitt1979Security};
-but they remain marginal in the tradition.
+Actor languages actually do @~cite{Hewitt1979Security},
+but though somewhat influential on paper, they never got popular
+and always remained somewhat marginal in the tradition.
 @; TODO cite Yonezawa ?
 Instead, the only widely-used language to truly embody this metaphor
 is Erlang@~cite{OOP2010};

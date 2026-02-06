@@ -1221,7 +1221,11 @@ as being “(constant) sets” @~cite{Jacobs1995ObjectsAC}@xnote[","]{
   and quickly dismissed inheritance to focus on her own expertise,
   which involves modularity without extensibility—and stating
   her famous “Liskov Substitution Principle” as she did @~cite{Liskov1987};
-  brilliant, though not OO. @; CITE
+  brilliant, though not OO;
+  that said, she did use the word “object-oriented” in print as far back as @citet{Jones1976}
+  to describe her style of programming, one month before Bobrow published
+  the memo on KRL-0 that first used it right,
+  so she did have a stake in the name, though not the winning one.
   Are either those who talk and publish what turns out not to be OO at all at OO conferences,
   or those who invite them to talk and publish, being deliberately misleading?
   Probably not, yet, the public can be fooled just the same as if dishonesty were meant:

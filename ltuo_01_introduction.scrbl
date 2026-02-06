@@ -73,9 +73,9 @@ that would have been useless earlier, and will soon be useless again.
 
 Conceived around 1967 with Dahl and Nygaard’s Simula and Alan Kay’s musings,
 OO was actually born in 1976 when these two collided with each other and
-with influences from the Lisp AI community, resulting in Smalltalk-76.
+with Bobrow’s Lisp AI work, resulting in Smalltalk-76 and KRL-0.
 OO took off from there, at first reserved to the happy few
-who could use the most high-end systems from Xerox or MIT.
+who could use the most high-end systems from Xerox, BBN or MIT.
 OO became popular among researchers in the 1980s, and at some point was the Next Big Thing™.
 In the 1990s, OO finally became available to every programmer,
 accompanied by endless industry hype to promote it.
