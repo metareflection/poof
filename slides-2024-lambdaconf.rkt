@@ -360,7 +360,7 @@ flowchart TD
             Lack of awareness ⇒ formalizations that miss the point}
         @L{Conflation with Distinction = Simplicity @bri
             “reasonable” semantics, superior ergonomics}
-        @L{Jsonnet (2014) [“Components” in T (1982)]}))
+        @L{T (1982), Jsonnet (2014), Nix (2015)}))
     ($section "Class = Proto Type"
      $plan-slide
      ($slide "Where are the Classes?"
@@ -378,7 +378,7 @@ flowchart TD
             an @em{element} of a Class (seen as its Target Type)}
         @L{A class is a @em{second-class} Prototype for a Type}
         @nbsp
-        @L{Mutable: Simula ’67, Smalltalk ’71, Flavors ’82, C++ ’85}
+        @L{Mutable: Simula ’67, Smalltalk ’71, Flavors ’79, C++ ’85}
         @L{Pure: OCaml(?) ’96, OOHaskell 2005})
      ($slide "From Type Descriptor to Type"
         @L{Staging, Existential types, Dependent types…}

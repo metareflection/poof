@@ -24,7 +24,7 @@ at which point I’d be using single inheritance indeed.
 
 I will start by formalizing First-Class Extensibility in pure FP,
 as it will be easier than modularity, and a good warmup.
-To make clearer what kind of computational objects I am talking about,
+To make it clearer what kind of computational objects I am talking about,
 I will be using semi-formal types as fourth-class entities,
 i.e. purely as design-patterns to be enforced by humans.
 I leave a coherent typesystem as an exercise to the reader,
@@ -124,8 +124,8 @@ But interestingly, extensions can be composed, such that from two extensions
 also commonly written @c{ext1 ∘ ext2},
 that applies @c{ext1} to the result of applying @c{ext2} to the argument value.
 And since I am discussing first-class extensions in Scheme,
-you can always define the @c{compose} if not yet defined, as follows,
-which is an associative operator with the identity function @c{id} as neutral element:
+you can always define the @c{compose} if not yet defined, as follows;
+@c{compose} is an associative operator with the identity function @c{id} as neutral element:
 @Code{
 (def compose (λ (ext1 ext2) (λ (val) (ext1 (ext2 val)))))
 (def identity (λ (val) val))}
@@ -301,7 +301,7 @@ Thus, as far as one cares about extensibility:
   to the function that creates the actual extension as a closure).
 
   Note: using binary floating point numbers is malpractice in the context of accounting,
-  that will may you fired or sued.
+  that may get you fired or sued.
   Always use integers (multiples of the minor unit of accounting)
   or fixed-point decimal numbers (in terms of the major unit of accounting),
   and round to the nearest multiple of the applicable minor unit
@@ -351,8 +351,8 @@ from which they can invoke a programmer-defined “main” entry-point with thei
 
 @subsection{Records}
 
-Before I model Modularity as such, I shall delve deeper into the modeling of Records,
-that are the usual substrate for much of Modularity.
+Before I model modularity as such, I shall delve deeper into the modeling of records,
+that are the usual substrate for much of modularity.
 
 @Paragraph{Record Nomenclature}
 I will follow Hoare @~cite{Hoare1965} in calling
@@ -390,7 +390,7 @@ the record will associate a value of type @(Ri),
 where @c{R} is a schema of types, a function from @c{I} to @c{Type}.
 
 To simplify this model, a pure functional record of type @c{∏R}
-can be seen as an indexed function from the domain @c{I} of indexes
+can be viewed as a function indexed by the domain @c{I} of indexes
 to @(Ri) for each @c{i}.
 When invoked on a value not in @c{I}, the function may return any value, or diverge.
 To further simplify, and for the sake of modeling records as first-class functions,
@@ -447,7 +447,16 @@ The basic reference operator is just function application:
 (def (record-ref key rec) (rec key))
 }
 The empty record can be represented as a function that always fails,
-such as @c{(λ (_) (error "empty record"))}.
+such as @c{(λ (_) (error "empty record"))}@xnote["."]{
+  As a convention, I will call @c{_} a generic variable that is never used,
+  and prefix with @c{_} the names of variables that are not used in a specific functions,
+  even though they are used by other functions satisfying the same interface.
+  Thus @c{_string} is a name for a string variable that is not used by the present function,
+  @c{_self} a variable usually called @c{self} that is ignored in the current function, etc.
+  This convention makes it easier to identify at a glance
+  which parts of a higher-order functional interface are used or ignored by a given function.
+  Some compilers enforce this kind of conventions, making them part of the language.
+}
 Now, the “fail if not present” representation is great when implementing a (notionally)
 statically typed model. But for a dynamic environment, a “nicer” representation
 is as a function that always returns a language-wide top value, such as @c{undefined} in JavaScript.
@@ -523,7 +532,7 @@ The module context contains all the available software entities,
 that were defined in other modules by other programmers
 (or even by the same programmer, at different times,
 who doesn’t presently have to hold the details of them in their limited brain).
-And the simplest way to model a modular definition as a first-class value,
+And the simplest way to model a modular definition as a first-class value
 is as a function of type @c{C → E}, from module context to specified entity@xnote["."]{
   A Haskeller may well interpret “modular” in this book as meaning
   “in the reader monad of a module context”, in that a modular something
@@ -751,7 +760,7 @@ First, there are many variants to the fixpoint (or fixed-point) combinator Y,
 and the pure applicative Y combinator you could write in Scheme’s
 pure subset of the λ-calculus is actually quite bad in practice.
 Here is the applicative Y combinator,
-expressed in terms of the composition combinator B and the duplication combinator D@xnote[":"]{
+expressed in terms of the composition combinator B and the duplication combinator D@xnote[""]{
   A simple way to test the @c{applicative-Y} combinator,
   or the subsequent variants @c{applicative-Y-expanded} and @c{stateful-Y}
   is to use it to define the factorial function:
@@ -760,7 +769,13 @@ expressed in terms of the composition combinator B and the duplication combinato
   then you can define factorial as
   @c{(def fact (applicative-Y eager-pre-fact))}
   and you can then test that e.g. @c{(fact 6)} returns @c{720}.
-}
+}@xnote[""]{
+  Also note that the duplication combinator D is also sometimes called
+  the U combinator, or self-application combinator, and does
+  the heavy lifting of the Y combinator, if you know to call it recursively,
+  hence the double use of it in the definition of Y.
+  It can be viewed as the essence of the object encoding in @secref{CwUAoS}.
+}:
 @Code{
 (def (B x y z)
   (x (y z)))
@@ -884,12 +899,14 @@ Or, if you want a variant based on combinators:
 }
 @; Test: ((lazy-Y-with-combinators lazy-pre-fact) 6) ;==> 720
 @; Test: ((lazy-Y-expanded lazy-pre-fact) 6) ;==> 720
-One advantage of a lazy Y is that evaluation is already protected by the @c{delay}
-primitive and thus can apply to any kind of computation, not just to functions;
-though if you consider that @c{delay} is no cheaper than a @c{λ} and indeed uses
+One advantage of a lazy Y is that evaluation is already protected by the @c{delay} primitive,
+enabling self-reference for computations returning any type of data.
+The lazy Y can thus apply to any kind of computation, not just to functions.
+However, if you consider that @c{delay} is no cheaper than a @c{λ} and indeed uses
 a @c{λ} underneath, that’s not actually a gain, just a semantic shift.
-What the @c{delay} does buy you, on the other hand, is sharing of computations
-before they are evaluated, without duplication of computation costs or side-effects@xnote["."]{
+What the @c{delay} does buy you, on the other hand, compared to a simple applicative thunk,
+is naming and sharing of computations before they are evaluated,
+without duplication of computation costs or side-effects@xnote["."]{
   Whether wrapped in a thunk, an explicit delay, an implicitly lazy variable,
   a call-by-name argument, or some other construct, what is interesting is that
   ultimately the fixpoint combinator iterates indefinitely on a @emph{computation},
@@ -1115,8 +1132,6 @@ any and every value by returning it unchanged, as follows@xnote[":"]{
 (def (idModExt _s t)
   t)
 }
-Note that by convention I will start with the underscore @c{_}
-the name of variables that are ignored.
 
 @subsection{Closing Modular Extensions}
 
@@ -1167,8 +1182,8 @@ unless that default is extracted from the context):
 (def (record-spec _self _super)
   empty-record)
 }
-I could then equivalently define a variant of @c{fix} specialized for records
-in any of the following ways:
+I could then equivalently define a variant of @c{fix}
+specialized for records in any of the following ways:
 @Code{
 (def fix-record (fix empty-record))
 (def fix-record (λ (m)
@@ -1204,10 +1219,10 @@ and to the actual implementation of “extensions” in nixpkgs @~cite{nix2015}@
 }.
 This style of inheritance was dubbed “mixin inheritance” by Bracha and Cook@xnote[";"]{
   The name “mixin” originally comes from Flavors @~cite{Cannon1979},
-  inspired by the ice cream offerings at Emack & Bolios
-  (as for the concept itself, it was inspired both by
+  inspired by the ice cream offerings at Emack & Bolios.
+  As for the concept itself, it was inspired both by
   previous attempts at multiple inheritance in KRL @~cite{Bobrow1976} or ThingLab @~cite{Borning1977},
-  combined with the ADVISE facility @~cite{teitelman1966}).
+  combined with the ADVISE facility @~cite{teitelman1966}.
   However, Flavors offers full multiple inheritance (and was the first system to do it right),
   whereas the “mixins” of Bracha and Cook are a more rudimentary and more fundamental concept,
   that does not include automatic linearization of transitive dependencies.

@@ -15,7 +15,7 @@ allowing object types to be built up from a toolkit of
 component parts.
 @|#:- @elem{David Moon @~cite{Moon1986Flavors}}|
 }
-@section{Mixin Inheritance}
+@section[#:tag "MxI"]{Mixin Inheritance}
 @subsection{The Last Shall Be First}
 
 What I implemented in the previous chapters is mixin inheritance
@@ -42,7 +42,7 @@ mix : ModExt r1 i1∩p2 p1 → ModExt r2 i2 p2 → ModExt r1∩r2 i1∩i2 p1∩p
 (def (fixt m) (Y (λ (s) (m s top))))
 (def (mix c p s) (compose (c s) (p s)))}
 
-@section{Single Inheritance}
+@section[#:tag "SI"]{Single Inheritance}
 
 @subsection{Semantics of Single Inheritance}
 

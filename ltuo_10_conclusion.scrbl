@@ -3,7 +3,7 @@
 @(require "util/ltuo_lib.rkt")
 @(set-chapter-number 10)
 
-@title{Conclusion}
+@title[#:tag "Conclusion"]{Conclusion}
 
 @section{Scientific Contributions}
 @epigraph{Early in life I had to choose between honest arrogance and hypocritical humility.
@@ -138,7 +138,7 @@ This Optimal Inheritance, as implemented by my C4 algorithm, is now part of @(Ge
 you can easily port my code to add it to your own language.
 
 @section{Why Bragging Matters}
-@subsection{Spreading the New Ideas}
+@subsection{Spreading New Ideas}
 @epigraph{Don’t have good ideas if you aren’t willing to be responsible for them.
 @|#:- "Alan Perlis"|
 }

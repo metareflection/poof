@@ -126,7 +126,7 @@ to further improvement to OO—a topic wrongly considered already understood.
 These days, bright programmers gravitate toward Functional Programming (FP),
 a paradigm unjustly neglected in the industry during OO’s heyday.
 As distributed systems became widespread, FP proved more practical
-than imperative style for managing state and avoiding the problematic interactions
+than imperative programming for managing state and avoiding the problematic interactions
 that make concurrent programs slow and buggy.
 Because OO had been sold in a package deal with imperative programming,
 it fell out of fashion alongside it.
@@ -136,7 +136,8 @@ there was never an opposition between OO and FP—that
 we Lispers have been enjoying both together since the 1970s, and that
 OO can be so much more than you “blub” programmers can even imagine@xnote["."]{
   Blub is how Lispers disparagingly call less expressive languages, after @citet{Graham2001}.
-  Ironically, Graham doesn’t understand the appeal of OO, as is clear in his other writings.
+  Ironically, Graham doesn’t understand either the semantics or purpose of OO,
+  as is clear from his other writings@~cite{Graham1995}.
 }
 
 My hope—my faith, even, despite available evidence—is that
@@ -220,7 +221,20 @@ tell my readers to put aside the concepts they think they know,
 and somehow teach them the concepts I am putting behind the words, so they understand.
 But that takes a lot of time and space. For me. And for my readers.
 Resources that we both lack, especially scientific publications
-limited to 12-25 pages, depending on the venue.
+limited to 12-25 pages, depending on the venue@xnote["."]{
+  Even a journal, with articles sometimes up to 70 pages,
+  would require splitting the content of this book into four parts;
+  maybe more, because each part would have to spend a good chunk of its page limit
+  to summarize enough of what comes before so that the current part is understandable,
+  and enough of what comes after so that it doesn’t appear pointless or petty.
+  This is much more effort than just writing a book,
+  an already costly and time-consuming endeavor.
+  Splitting the same content over a dozen or more 25-page papers would be even more work.
+  And so, as Pascal wrote about one of his letters:
+  @italic{Je n’ai fait celle-ci plus longue que parce que
+          je n’ai pas eu le loisir de la faire plus courte.}
+  (I have made this longer than usual because I have not had time to make it shorter.)
+}
 That was barely enough to address actual misunderstandings experienced by previous reviewers,
 and make my claims clear—see how much that takes
 in @secref{WOOin} and @secref{WOOiIO} respectively—with
@@ -511,8 +525,7 @@ and whatever else might matter?
 Is one of the usual variants superior to the others in every way?
 If not, is there a combination of them, or a superset of them, that is?
 Some languages notably support forms of both single inheritance and multiple inheritance,
-though with some constraints:
-Lisp @~cite{CLtL2}, Ruby @~cite{Matsumoto2001}, Scala @~cite{scalableComponentAbstractions2005}.
+though with some constraints: Lisp, Ruby, Scala.
 Would the best way to do inheritance subsume these combinations?
 If so, how does it relate to the multiple flavors of multiple inheritance?
 
@@ -603,14 +616,14 @@ a better inheritance algorithm with which to improve your existing (or future) l
   — That depends a good deal on where you want to get to.
   @|#:- "Lewis Carroll"|
 }
-Chapter 1, which you are presently reading, is an introduction to the book itself.
-The remaining chapters focus on OO itself.
+In @secref{Intro}, which you are presently reading, I introduce the book itself.
+The remaining chapters focus on OO as such.
 
-In chapter 2, I dispel common misconceptions about OO,
+In @secref{WOOin}, I dispel common misconceptions about OO,
 to ensure that my theory isn’t met with misunderstanding
 due to misconceptions or disagreements about what is being theorized.
 
-In chapter 3, I provide a quick overview of Object Orientation,
+In @secref{WOOiIO}, I provide a quick overview of Object Orientation,
 and the three variants of inheritance in common use.
 This chapter serves as a map of the concepts and of the words I use to describe them,
 necessary because there is no common theory of OO, and
@@ -619,47 +632,45 @@ Importantly, I introduce the essential yet oft-ignored notion of
 Conflation between Specification and Target value.
 I then describe the relationship between Specifications, Prototypes, Classes and Objects.
 
-In chapter 4, I explain what I mean by Internal Extensible Modularity,
-the rationale for OO.
+In @secref{OOaIEM}, I explain what I mean by Internal Extensible Modularity,
+the rationale for OO, its motivation and purpose.
 This chapter remains informal, but lays the conceptual groundwork
 for the formal approach I take in the rest of this book.
 
-In chapter 5, I introduce minimal formal models of Modularity and Extensibility,
+In @secref{MOO}, I introduce minimal formal models of Modularity and Extensibility,
 Using pure Functional Programming (FP) as a foundation, with Scheme syntax,
 I derive from first principles a minimal OO system, in two lines of code.
 This minimal OO system uses mixin inheritance, and, remarkably,
 has neither objects nor prototypes, much less classes,
 only specifications and targets.
 
-In chapter 6, I rebuild all the mainstream features and appurtenances
+In @secref{ROOfiMC}, I rebuild all the mainstream features and appurtenances
 of popular OO systems as additions or modifications to the minimal system from chapter 5:
 prototypes, classes, types, mutation, etc.
 I notably clarify the all-too-common confusion between subtyping and subclassing,
 and discuss the actual relationship between OO and imperative programming,
 when the natural framework for OO is actually pure lazy functional programming.
 
-In chapter 7, I discuss in detail the main forms of inheritance:
+In @secref{IMSMO}, I discuss in detail the main forms of inheritance:
 single inheritance, multiple inheritance and mixin inheritance.
 I examine issues surrounding method conflict and resolution, or harmonious combination.
 I explain the known consistency constraints that matter
 for linearization algorithms in the context of multiple inheritance,
 and the state-of-the-art in satisfying them, the C3 algorithm.
 Finally, I discuss how to combine multiple and single inheritance,
-and examine the existing solutions adopted by
-Common Lisp @~cite{CLtL2}, Ruby @~cite{Matsumoto2001}
-and Scala @~cite{scalableComponentAbstractions2005}.
+and examine the existing solutions adopted by Common Lisp, Ruby and Scala.
 I then propose my solution, a linearization algorithm I call C4,
 that satisfies all the constraints of C3 plus
 those for combining single and multiple inheritance.
 I explain why the residual heuristic I also adopt from C3 is arguably the best one.
 
-In chapter 8, I discuss more advanced topics including
+In @secref{EtSoO}, I discuss more advanced topics including
 Focused Modular Extensions, Method Combination, Multiple Dispatch (Multimethods),
 Monotonicity, Orphan Typeclasses, and Global Fixpoints.
 
-In chapter 9, I discuss object representation and meta-object protocols.
+In @secref{EOI}, I discuss object representation and meta-object protocols.
 
-Finally, in chapter 10, I conclude by recapitulating my original findings.
+Finally, in @secref{Conclusion}, I conclude by recapitulating my original findings.
 If you want to check whether there’s anything new for you in this book,
 or are a future researcher interested in when now-well-known ideas were introduced,
 you may peek there first.
@@ -682,7 +693,7 @@ at @secref{MOO}, about a third into the book.
 The most enthusiastic among you will read the book cover to cover,
 including footnotes and bibliographical notes, and
 go all the way into using and implementing
-the most advanced OO techniques of the later chapters (see @secref{EtSoO}, @secref{IO}),
+the most advanced OO techniques of the later chapters (see @secref{EtSoO}, @secref{EOI}),
 end up building your OO system, and writing a sequel to this book.
 If you do, why not contact me and join me to build and write them together?
 
@@ -746,7 +757,7 @@ please send them my way.
 }
 You will see me using the first person singular a lot in this book.
 That doesn’t mean I don’t want to include you in my narrative.
-Believe me, I would most delight me if you could feel the same joy at exploring this topic as I do.
+Believe me, it would most delight me if you could feel the same joy at exploring this topic as I do.
 Every sentence of this very book is an invitation for you to see and practice OO my way.
 That doesn’t mean I am bragging, either.
 That means I am taking responsibility for my actions.

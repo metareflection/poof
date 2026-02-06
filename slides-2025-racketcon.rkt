@@ -232,11 +232,11 @@ This document is available under the bugroff license.
         @L{GCL 2004: Runs all Google (lazy, dynamic scope)} ;; has objects
         @L{Jsonnet 2014: GCL cleanup (lexical scope, JS-y syntax)}
         @L{Nix extensions 2015: isomorphic to above, OO in 2 funs})
-     ($slide "OO without objects (as in Yale T Scheme)"
-        @L{“object” is any value, “instance” is just a regular record @br
-           @em{No inheriting from an “instance”}} ;; yes extending it, but non-modularly
-        @L{“component” is a specification @br
-           @em{No computing methods from a “component”}} ;; not quite a record
+     ($slide "OO without objects"
+        @L{“target” is any value @br
+           @em{No inheriting from a “target”}} ;; yes extending it, but non-modularly
+        @L{“specification” is not a record, but a function @br
+           @em{No computing methods from a “specification”}} ;; not quite a record
         @L{No equivalent to object (or class) in other OO languages! @br
            ... contrast with GCL, Jsonnet, Nix, that have objects(!?)})
      ($slide "Conflation: hidden product, implicit cast"
@@ -332,7 +332,7 @@ This document is available under the bugroff license.
         @L{Most expressive, most modular @br
            Most complex (~100 loc), somewhat inefficient in general})
      ($slide "Mixin Inheritance"
-        @L{Yale T Scheme 1982: implemented, not conceptualized @br
+        @L{Yale T Scheme 1982: possible, but not conceptualized @br
            Bracha/Cook 1990: conceptualized, not implemented}
         @L{PLT Scheme 1998, Strongtalk 2002, GCL 2004, Newspeak 2006, Jsonnet 2014, Nix 2015}
         @L{Simplest in FP, more expressive & modular than Single @br

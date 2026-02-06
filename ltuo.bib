@@ -365,7 +365,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     Frames are not quite data, not quite code,
     but something in between, “knowledge representation”;
     Lisp, being a system more than a programming language, blurs the lines.
-    The use of the word “inheritance” is not fully formal, though.
+    The use of the word “inheritance” is not fully formal, though,
+    unlike in Bobrow and Winograd’s 1976 Overview of KRL.
     Indeed, I can see at least four kinds of ways of naming things
     (beware though I’m making up this nomenclature on the spot):
     (1) evocation: neither name nor concept owns the other, yet an allusion is made;
@@ -374,10 +375,10 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     may not be clear;
     (4) definition: the essence of the concept being named is finally well understood.
     For “inheritance”, evocation may have happened in Minsky 1974, distinction in Winograd 1975,
-    and identification around 1976 quite possibly by Bobrow or Kay
+    and identification in Bobrow 1976, quite likely based on interaction with Kay’s team
     (and Kay later says Larry Tesler insisted on implementing “slot inheritance”
     the way he had done in previous desktop publishing projects).
-    Informal practical definition would happen in the early 1980s, and
+    Informal but practical definition was clearly there by 1977 or 1978, and
     more formal theoretical definitions around 1990 with e.g. Cook & Bracha,
     refining their immediate predecessors like Kamin, Reddy, Cook.
 }}
@@ -807,7 +808,17 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   booktitle={Symposium on Lisp and Functional Programming, ACM},
   pages={114--122},
   year={1982},
-  url={https://www.researchgate.net/publication/221252249_T_a_dialect_of_Lisp_or_LAMBDA_The_ultimate_software_tool}
+  url={https://www.researchgate.net/publication/221252249_T_a_dialect_of_Lisp_or_LAMBDA_The_ultimate_software_tool},
+  doi={10.1145/800068.802142},
+  note={.
+    A short overview of the Yale T Scheme system, a dialect of Lisp
+    that is a lexically-scoped (which was not yet the norm at the time),
+    and that among other things supports Prototype OO
+    based on such lexically scoped closures.
+    An object is essentially a record of methods
+    that are invoked by passing them the object as first argument;
+    see Adams 1988 for details.
+  }
 }
 
 @article{Traits,
@@ -1334,19 +1345,23 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   location={Snowbird, Utah, USA},
   series={LFP '88},
   note={.
-    This paper expounds the object system of Yale T Scheme, actually implemented circa 1982,
+    This paper expounds the object system of Yale T Scheme,
+    actually implemented circa 1982 (see Rees 1982),
     and notably used for its GUI:
-    class-less, object-less (what they call “object” is any value),
-    it is a sort of Prototype OO, but without conflation of targets (that they call instances)
-    and specifications (that they call components).
-    Their virtual machine merges instances and functions:
-    an instance is a function with multiple entry points (one per method)
-    including a default one, used when just calling it as a function.
-    A function stricto sensu is an object with a single method.
-    T instances as such implement single-inheritance, through
-    a rudimentary protocol of delegation;
-    however “components” provide mixin inheritance (before the name was invented).
-    Impressive, but sadly largely unknown outside Lisp circles.},
+    class-less, it is a simple form of Prototype OO simply built on top of closures,
+    wherein each object is conceptually a record of methods,
+    a method being a function that take the object as first argument.
+    “Operations” encapsulate the calling convention of objects and
+    support operation-specific default behavior.
+    Objects conflate specification and target, as in my section 6.1.5;
+    single inheritance is well-supported, and
+    you could simply implement mixin inheritance on top, maybe even multiple inheritance;
+    but the authors don’t include such infrastructure in their documentation or code.
+    The T virtual machine helps with performance, and notably supports
+    callable instances that are as efficient as regular function calls.
+    Overall impressive, but sadly largely unknown outside Lisp circles,
+    though probably indirectly an inspiration for JavaScript’s very similar object system.
+  }
 }
 
 @book{cct1988,
@@ -1927,7 +1942,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-@Article{Dickey1992SWOB,
+% No DOI: not published in an "academic" journal.
+@Article{Dickey1992,
   title={Scheming with Objects},
   author={Dickey, Ken},
   url={http://www.cs.cmu.edu/afs/cs/project/ai-repository/ai/lang/scheme/oop/yasos/swob.txt},
@@ -1935,7 +1951,11 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   volume={7},
   number={10},
   pages={24--33},
-  year={1992}
+  year={1992},
+  XXXnote={.
+    Dickey’s article is a gentle tutorial with complete implementation of an object system
+    in the style of Rees 1982.
+  }
 }
 
 @InProceedings{chambers92objectoriented,
@@ -2324,10 +2344,26 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
+@book{Graham1995,
+  author={Graham, Paul},
+  title={ANSI Common Lisp},
+  year={1995},
+  publisher={Prentice Hall},
+  address={Englewood Cliffs, NJ},
+  series={Prentice Hall Series in Artificial Intelligence},
+  isbn={0133708756},
+  note={.
+    A good introduction to Common Lisp, except for Paul Graham not quite
+    understanding the purpose of OO and therefore skipping it.
+    The section on macros once generated a fad for anaphoric macros among Common Lispers,
+    and may have inspired others to implement CPS transform libraries for Lisp.
+  }
+}
+
 %% 1996
 
-% No author=, only editor=, but Racket chokes on that because it then wants
-% to compare the title as a string but it's not a string. TODO: report and/or fix BUG.
+% Or should we remove author and put Eric Raymond as editor?
+% See https://github.com/racket/scribble/pull/549 to enable that.
 @Book{Raymond1996,
   author={Eric S. Raymond and others},
   title="The New Hacker's Dictionary",
@@ -3595,6 +3631,22 @@ and Fiech, Adrian",
   }
 }
 
+@webpage{Hoop,
+  title={Hoop},
+  author={Michael Gale},
+  year={2015},
+  url={https://github.com/mbg/hoop/},
+  urldate={2026-02-05},
+  note={.
+    Originally published as MSH in 2015, then renamed to Hoop in 2020, Hoop is
+    an pure functional object system written in Haskell.
+    Hoop uses template Haskell to provide a nice syntax to the underlying functionality,
+    where manually expanding said syntax would be verbose and redundant;
+    but it does not “cheat” in any way, e.g.
+    by using some unsafe magic, non-standard compiler extension, or non-local code transformations.
+  }
+}
+
 @InProceedings{Felleisen2015,
   author={Felleisen, Matthias and Findler, Robert Bruce and Flatt, Matthew and Krishnamurthi, Shriram and Barzilay, Eli and McCarthy, Jay and Tobin-Hochstadt, Sam},
   title={The Racket Manifesto},
@@ -3840,7 +3892,12 @@ and Fiech, Adrian",
   booktitle={Off the Beaten Track Workshop at POPL},
   month={January},
   year={2018},
-  url={https://github.com/fare/climbing}
+  url={https://github.com/fare/climbing},
+  note={.
+    A very short presentation of the concepts in the first part of my thesis:
+    how to formalize the notion of implementation, what good properties to achieve,
+    with a note on how this could lead to a runtime reflection protocol.
+  }
 }
 
 @Unpublished{FarePhD,
@@ -3849,27 +3906,61 @@ and Fiech, Adrian",
   School={Telecom Paristech},
   Year={2018},
   url={https://bit.ly/FarePhD},
-  Note={Unpublished because undefended.
-    First draft completed in 2018, yet still not in a publishable state as of 2025.
+  Note={.
+    Unpublished because undefended.
+    First draft completed in 2018, yet still not in a publishable state as of 2026.
+    In my thesis, I reconcile Semantics (knowing as much as possible about the meaning
+    of a program before you even run it, which might not terminate) and
+    Reflection (being able to modify a program and its meaning while it’s running),
+    two seemingly antinomic concepts—by developing a protocol to negotiate
+    what can be changed and what must be preserved about a given program.
+    Thus, users can trust the integrity of the software they use,
+    developers can debug the most difficult situations and update the software as needed,
+    and administrators can ensure the software runs on affordable and reliable hardware,
+    even as requirements evolve, computers age and economic conditions change.
+    The thesis distinguishes three orthogonal axes of “reflection”
+    that people commonly conflate or confuse:
+    pre/post (code generation), hypo/hyper (semantic implementation), back/fore (runtime control).
+    The thesis has four parts:
+    The first part focuses on the notion of implementation, and
+    the good properties one might expect from an implementation;
+    one property is particularly important that everyone else neglects: observability.
+    The second part shows how the same properties, well formalized, become
+    a protocol for runtime reflection, wherein observability does the heavy lifting
+    of synchronizing the system in a quiescent state that makes transformations possible.
+    The third part explores what kind of existing practices can be simplified when
+    explained in terms of such reflection protocol.
+    The fourth part proposes a software architecture for reflective runtime control of software,
+    based on the previous.
+    The first two sound boring or trivial without the last two;
+    the last two sound fantastic or impossible without the first two.
+    And yet, the end result sounds simple and necessary once you have shifted your point of view
+    from the common wisdom (or lack thereof) that most people induce from standard practice.
   }
 }
 
 %% 2020
-
-% Withhold citation until after deanomization
-@Misc{GerbilPOOwithheld,
-  author={Author withheld},
-  title={Title withheld},
-  url={https://github.com/repository/withheld},
-  year=2020
-}
 
 @webpage{GerbilPOO,
   author={François-René Rideau},
   title={Gerbil-POO},
   year=2020,
   url={https://github.com/fare/gerbil-poo},
-  lastchecked={2021-04-06}
+  lastchecked={2021-04-06},
+  note={.
+    A simple Prototype Object System on top of Gerbil Scheme,
+    with flavorful multiple inheritance,
+    in a mostly pure functional lazy style, yet also allowing for mutable state
+    (though without support for dynamic changes in inheritance hierarchy).
+    I implemented it initially as an exercise after discovering the Nix extension system,
+    as a demonstration of how an object system could at the same time be radically simple
+    and radically more expressive than all the others that had ever been written
+    (thanks to both being first-class and having flavorful multiple inheritance).
+    I liked the result so much that I used it in many software packages I wrote,
+    achieving a level of simplicity and generality that was not available to me
+    in Common Lisp, OCaml or Haskell (see for instance the trie implementation,
+    and its merkleized extension in gerbil-persist).
+  }
 }
 
 @webpage{Kay2020,

@@ -21,13 +21,7 @@ a minimal yet recognizable model of OO from first principles,
 the principles being modularity, extensibility, and first-class entities.
 I will shortly extend this model to support more features
 (at the cost of more lines of code).
-Yet my “object system” so far has no classes, and indeed no objects at all:
-instead, like the object system of Yale T Scheme @~cite{Adams1988oopscheme},
-on top of which its windowing system was built,
-my system is made of target records and their specifications,
-that can do almost everything that a Prototype object system does,
-but without either records or specifications being objects or prototypes
-(see @secref{PaC}).
+Yet my “object system” so far has no classes, and indeed no objects at all!
 
 I defined my system in two lines of code, that can be similarly defined
 in any language that has higher-order functions,
@@ -113,12 +107,13 @@ But for a concrete implementation, that’s an issue.
 
 To be able to uniformly conflate a specification and its target,
 some device must be used to delay the evaluation of the target,
-or delay errors and divergence until after the target is computed,
+or delay potential errors and divergence until after the target is computed,
 when a further attempt is made to use the target.
-In other words, a way to consider the target as an unevaluated computation,
-rather than as the value returned by that computation if it ever finishes without an error.
+Otherwise, an invalid target, which is a necessarily common case,
+would prevent access to the specification, defeating the entire point of conflation.
 
-The simplest such device is lazy evaluation: @c{Proto = Spec × Lazy Target}.
+The simplest device to delay evaluation of the target is lazy evaluation:
+@c{Proto = Spec × Lazy Target}.
 In second-class Class OO, the target is a descriptor for type,
 that itself can always be computed without error in finite time,
 though the type may be empty, and trying to use it may result in static or dynamic errors.
@@ -126,26 +121,45 @@ Execution in a latter stage of computation (runtime vs compile-time)
 can be seen as the ultimate form of delayed evaluation.
 
 Note how in our representation of records as function so far,
-all the potentially non-terminating or error-throwing behavior,
-including but not limited to recursion, was protected by lambda-abstractions.
-Thus, delay and force are not necessary in XXXXXXXXXXXXXX
+we already delay the potentially non-terminating or error-throwing behavior,
+until the time that the function is invoked.
+The function definition itself is guaranteed to terminate early on.
+The actual computations within are protected by λ-abstractions.
+Thus, delay and force are not necessary to prevent an invalid target from
+causing an error when computing the product.
 
 @Paragraph{Second Issue: Recursion}
 
 Now, there is a subtle issue with the above implementation:
 when a target recursively refers to “itself” as per its specification,
 it sees the target only, and not the conflation of the target and the specification.
-This is not a problem with second-class OO, or otherwise with a statically staged style
-of programming where all the specifications are closed before any target is instantiated;
+This is not a problem with second-class OO, or otherwise with
+a programming style involving strictly stratified stages
+of evaluation wherein all the specifications are closed before any target is instantiated;
 then at one stage you consider only specifications, at the other, you consider only targets.
+And runtime recursion only happens during that other, latter stage.
 
 But with a more dynamic style of programming where no such clear staging is guaranteed,
-it is insufficient@xnote["."]{
-  @; TODO Have a later chapter just on metaobjects?
+lack of support for recursion is insufficient for full first-class OO:
+it means programs and programmers must deal
+with two different kinds of entities, conflated or unconflated,
+depending on whether they are specified as second-class entities before recursion happens,
+or produced during the recursion as first-class entities.
+Tracking which kind you are dealing with at which time can be a big limitation,
+that is extremely complex, time-consuming, and bug-prone to lift or work around@xnote["."]{
+  @; TODO secref chapter 9 on metaobjects
   Metaobjects are a typical use case where you don’t (in general) have a clean program-wide staging
   of specification and targets: to determine the meta methods,
-  you partially instantiate the meta part of the objects, based on which you can instantiate the rest.
+  you partially instantiate the “meta” part of the objects,
+  based on which you can instantiate the rest.
 }
+
+As is often the case in software,
+if you need to access some information (here, the specification)
+that existed at some point but isn’t available anymore,
+your best bet is to stop throwing away the useful information during the computation,
+but keep it conflated with whichever entity should have remembered the information
+(here, the target in a recursive reference).
 
 @subsection[#:tag "RC"]{Recursive Conflation}
 
@@ -159,13 +173,14 @@ an implicit conflation pair of the specification and the target@xnote["."]{
   @citet{Abadi1996Primitive} struggle with variants of this problem,
   and fail to find a solution, because they @emph{want} to keep confusing target and specification
   even though at some level they can clearly see they are different things.
-  If they had conceptualized the two as being entities that need to be distinguished semantically
-  then explicitly grouped together as a pair, they could have solved the problem and stayed
-  on top of the λ-calculus.
+  If they had conceptualized the two as being entities that need to be distinguished semantically,
+  then must be explicitly re-grouped together as a pair,
+  they could have solved the problem and stayed on top of the λ-calculus.
   Instead, they abandon such attempts, and rebuild their own syntactic theory
   of a variant of the λ-calculus just for object,
-  an insanely complex @emph{abstraction inversion} @~cite{Baker1992CritiqueDKL}
-  that won’t enlighten OO practitioners,
+  with hundreds of pages of greek symbols that still fail to properly modeling objects,
+  in an insanely complex @emph{abstraction inversion} @~cite{Baker1992CritiqueDKL}.
+  Their futile theory can neither enlighten OO practitioners,
   nor make OO interesting to mathematical syntax theoreticians.
 }
 Here is an implementation of that idea, wherein I prefix function names with @c{qproto}:
@@ -199,10 +214,10 @@ a raw record that follows the recursion scheme and uses references for recursion
 instead of the type of reference to such, i.e. I have in turn @c{Y (M ∘ R) = M (Y (R ∘ M))};
 people interested in low-level memory access might want to privilege this latter @c{Y (M ∘ R)}
 representation instead of @c{Y (R ∘ M)}, which indeed is a notable difference
-between the OO models of C++ vs Java: C++ makes you deal with data structures,
+between the OO models of C++ vs Java: C++ makes you deal with raw data structures,
 Java with references to data structures.
 
-Now, it is not unusual in computer science for access to records, recursive or not,
+Now, it is not unusual in software for access to records, recursive or not,
 to be wrapped inside some kind of reference type:
 pointer into memory, index into a table,
 key into a database, cryptographic hash into a content-addressed store,
@@ -212,7 +227,8 @@ such level of indirection is inevitable, as there is no way to have a contiguous
 of some size contain as a strict subset a contiguous region of memory of the same size,
 as would be required for a data structure to directly
 include an recursive element of the same type@xnote["."]{
-  Exception: If the only element of a structure is an element of the same structure.
+  Exception: If after simplifying unit types away
+  the only element of a structure is an element of the same structure.
   At which point it’s just an infinite loop to the same element,
   the type is isomorphic to the unit type, and can be represented as
   a trivial data structure of width zero.
@@ -233,7 +249,8 @@ at a more concrete level, recursion involves fetching data from another memory r
 In the best case of a simple sequence of data,
 the sequence can be a contiguous array of memory and this fetching is constant time;
 in general, this fetching goes through the memory caching hierarchy,
-the latency of which grows as the square root of the size of the working set@~cite{MythOfRAM2014}.
+which logically requires a number of bits that grows logarithmically with the size of the working set,
+and physically requires a latency which grows as the square root of that size@~cite{MythOfRAM2014}.
 
 Importantly, isomorphic as it might be at some abstract level,
 the reference type is not equal to the type being referenced,
@@ -266,12 +283,6 @@ such a wrapping as I showed earlier.
 But if the target type is guaranteed to be a (subtype of) Record,
 it is possible to do better.
 
-Another device might be for the targets to be records of lazy values,
-The target
-they could also be records of modular definitions
-wherein the fixpoint is only computed when the user tries to call a method.
-XXXXX
-
 In the Nix extension system, a target is a record (called an attrset in Nix),
 mapping string keys to arbitrary values,
 and the modular extension instantiation function @c{fix'} stores
@@ -286,8 +297,6 @@ As a minor consequence, casting to a specification becomes slightly more expensi
 whereas casting to a target (the more common operation by far) becomes slightly cheaper
 (free vs fixed-offset field access).
 The semantics are otherwise essentially the same as for my implementation using pairs.
-
-
 
 Here is a Scheme implementation of the same idea,
 where the prefix @c{rproto} denotes a prototype implemented as a record,
@@ -327,6 +336,67 @@ that just returns the record as a constant:
 (def (rproto←record r)
   (rproto←spec (constant-spec r)))
 }
+
+@subsection[#:tag "CwUAoS"]{Conflation with User Application of Self}
+
+One simple encoding of objects conflates specification and target
+in a way that is subtly different from the previous one.
+It is notable for being used by Yale T Scheme @~cite{Rees1982T Adams1988oopscheme},
+and after it by YASOS @~cite{Dickey1992}, and also for being the essence of
+the JavaScript object system @~cite{Eich1996JavaScript}:
+a prototype is a record of methods encoded as functions that take
+the record itself as parameter.
+
+The subtle difference is that instead of taking a resolved module context as first argument,
+functions take as first argument an unresolved record of functions
+that themselves take the same unresolved record as first argument.
+Callers, whether from outside the object or recursively from inside,
+must constantly be aware of the calling convention and pass the record as argument.
+At no point in this encoding is there a handle on a fully resolved target,
+only to the half-resolved specification@xnote["."]{
+  The encoding can be considered as being based on the duplication combinator D
+  rather than on the fixpoint combinator Y.
+  D is sometimes known as the self-application operator U (see @secref{DSF}),
+  and can also be viewed as half of Y.
+}
+
+In T and after it YASOS, an @c{operation} can abstract over the calling convention
+(see also generic functions in CLOS). @; TODO secref ch8
+An @c{operate-as} function that extracts a method from an ancestor prototype,
+then applies it to the “real” self helps support inheritance,
+and can be the basis for a @c{call-next-method} protocol.
+Single inheritance (@secref{SI}) is trivially supported,
+and even the easy case of mixin inheritance
+where methods override but do not combine.
+Actual mixin inheritance (@secref{MxI})
+can be implemented with mixins as first-class functions,
+that take a super prototype as argument and return an updated self
+that calls @c{operate-as} if needs be.
+However, multiple inheritance (@secref{MI}), while possible, is not well supported;
+supporting it efficiently would require passing another argument to all functions,
+to specify the tail of the precedence-list (or effective method list)
+from which to extract further methods to combine;
+the information can be retrieved from the self and the current ancestor,
+without being thus passed around, but at a significant performance penalty.
+
+This specialized object representation is efficient,
+which was very important in early OO systems in which it was developed;
+and gives you conflation for free.
+But comes with significant complexity, both technical and conceptual.
+Now, to me, the main downside with this approach is that historically it has contributed
+to blurring the lines between specification and target,
+and therefore to the ongoing confusion between them,
+making their conceptual conflation harder to untangle.
+Often efficiency is important at runtime, yet simplicity is even more important
+at the conceptual layer, for programmers to understand the software they work with.
+That is why I describe this most common implementation strategy last instead of first,
+and leave its details as an exercise to the reader. @; TODO exercise-ref
+
+
+
+
+
+
 @subsection{Small-Scale Advantages of Conflation: Performance, Sharing}
 
 First, note how, if a specification is pure functional,
@@ -435,9 +505,10 @@ yet this feature is arguably essential to the ergonomics of these languages.
 The notion of a @emph{conflation of specification and target},
 that I presented, is largely unknown by OO developers, and
 seems never, ever, to have been made explicit in the literature until
-I published it @~cite{poof2021}.
+I published @citet{poof2021}, that itself remained confidential.
 And yet, the knowledge of this conflation is necessarily present, if implicit,
-if not across the OO community, at the very least among OO implementers—or else
+if not across the community of OO practioners,
+at the very least among individual OO implementers—or else
 OO wouldn’t be possible at all.
 Sixty years of crucial information you don’t know you know!
 
@@ -448,7 +519,7 @@ a flavor meant to be inherited from, but not to be instantiated,
 by opposition to an instantiatable flavor;
 however, the nomenclature only stuck in the Lisp community
 (and even there, flavors yielded to classes though the term mixin stayed).
-In other communities, the terms of art are
+In other communities, the decade-later terms of art are
 @emph{abstract classes} and @emph{concrete classes}@~cite{johnson1988designing}:
 an abstract class is one that is only used for its specification—to inherit from it;
 a concrete class is one that is only used for its target type—to use its methods
@@ -458,7 +529,7 @@ frown at inheriting from a concrete class,
 or trying to instantiate an abstract class.
 
 Theorists have also long implicitly recognized the conflated concepts
-when working to develop sound typesystems for OO:
+when developing sound typesystems for OO:
 for instance, Fisher @~cite{Fisher1996thesis} distinguishes
 @c{pro} types for objects-as-prototypes and @c{obj} types for objects-as-records;
 and Bruce @~cite{bruce1996typing} complains that
@@ -478,9 +549,10 @@ level it’s all pure functional specification with no target until runtime.
 One group of people though, must explicitly deal with the conflation of specification and target
 embodied as a first-class value: implementers of pure functional prototype systems.
 Nix @~cite{nix2015} explicitly remembers the specification by inserting
-the @c{__unfix__} attribute into its target records,
-and Jsonnet @~cite{jsonnet} must do something similar under the hood;
-yet the authors of neither system make note of it in their documentation
+the @c{__unfix__} attribute into its target records;
+and Jsonnet @~cite{jsonnet} must do something similar under the hood,
+though it is hidden under much complexity in the implementation.
+Yet the authors of neither system make note of it in their documentation
 as a phenomenon worthy of remark. Though they implicitly rediscovered the concept
 and made it flesh, they failed to realize how momentous the discovery was,
 and shrugged it off as yet another one of those annoying implementation details
@@ -506,8 +578,7 @@ Having elucidated Prototype OO in the previous sections,
 including its notion of Object, a.k.a. Prototype, as conflation of Specification and Target,
 I can now fully elucidate Class OO including its notion of Class:
 @principle{A Class is a Prototype for a Type}.
-Or, to be pedantic, a class is a prototype, the target of which is a @emph{type descriptor},
-i.e. a record describing a type together with methods associated with the type.
+Or, to be pedantic, a class is a prototype, the target of which is a @emph{type descriptor},i.e. a record describing a type together with methods associated with the type.
 
 The target type of a class is usually, but not always,
 a record type (indexed product, structure, struct, named tuple),
@@ -683,7 +754,7 @@ In Class-style, each type element
 (known in this style as “class instance”, “instance”, or “object”)
 carries its own type descriptor.
 To this end, the type descriptor is conflated with the type element
-in the same way that specifications were conflated with their targets
+in the same way that specifications are conflated with their targets
 (see @secref{RC}, @secref{CfR}).
 As mentioned before, this can be very cheap when the type elements are records
 (see @secref{CfR}, @secref{SFCTD}): just add a special field with a “magic” key.
@@ -1366,7 +1437,8 @@ i.e. type-level functions from @c{Type} to @c{Type},
 and @c{F ⊂ G} (where @c{⊂}, sometimes written @c{≤} or @c{<:},
 is the standard notation for “is a subtype of”,
 and for elements of @c{Type → Type} means @c{∀ t, F t ⊂ G t}),
-it does not follow that @c{Y F ⊂ Y G} where @c{Y} is the fixpoint operator for types@xnote["."]{
+it does not necessarily follow that @c{Y F ⊂ Y G}
+where @c{Y} is the fixpoint operator for types@xnote["."]{
   The widening rules for the types of specification
   and their fixpoint targets are different;
   in other words, forgetting a field in a target record, or its some of its precise type information,
@@ -1551,7 +1623,9 @@ as is the case in languages like C++, Java, C#, etc.
 
 I am aiming at understanding OO as @emph{first-class} modular extensibility,
 so I need to identify what kind of types are suitable for that.
-The hard part is to type @emph{classes}, and more generally specifications
+Typing individual prototypes that only contain fields of concrete primitive types is easy.
+The hard part is to type @emph{classes} with abstract methods,
+and more generally specifications
 wherein the type of the target recursively refers to itself
 through the open recursion on the module context.
 
@@ -1773,7 +1847,7 @@ before a well-known general-purpose fixpoint.
 
 @subsection{Mutability of Fields as Orthogonal to OO}
 
-I showed how OO is best explained in terms of pure lazy functional programming,
+I have shown how OO is best explained in terms of pure lazy functional programming,
 and how mutable state is therefore wholly unnecessary for OO.
 There have been plenty of pure functional object libraries since at least the 1990s,
 even for languages that support mutable objects;
@@ -1868,7 +1942,7 @@ when the specification and targets of prototypes and classes are being updated?
 
 First, I must note that such events are relatively rare,
 because they involve programmers not only typing, but thinking,
-which happens millions of times slower than computers process data.
+which happens millions of times slower than computers process data—even when the programmer is an AI.
 Most evaluation of most programs, especially where performance matters,
 happens in-between two such code upgrades,
 in large spans of time during which the code is constant.
@@ -1876,8 +1950,8 @@ Therefore, the usual semantics that consider inheritance structures as constant
 still apply for an overwhelming fraction of the time and an overwhelming fraction of objects,
 even in presence of such mutability.
 There are indeed critical times when these usual semantics are insufficient,
-and the actual semantics must be explained;
-but these usual semantics are not rendered irrelevant
+and the actual semantics at those times must be explained;
+but the usual semantics wherein inheritance is constant are not rendered irrelevant
 by the possibility of dynamic changes to object inheritance.
 
 Second, updates to the inheritance structure of OO specifications
@@ -1959,8 +2033,37 @@ If anything, thinking in terms of objects with identity and mutable state
 both forces software designers to face these issues,
 inevitable in interactive or long-lived persistent systems,
 and provides them with a framework to give coherent answers to these questions.
-Languages that assume “purity” or lack of code upgrade, thereby deny these issues,
-and leave their users helpless, forced to reinvent entire frameworks of mutation
+Languages that assume “purity” or absence of code upgrade, thereby deny these issues,
+and leave their users helpless, forced to reinvent entire frameworks of identity and update
 so they may then live in systems they build on top of these frameworks,
 rather than directly in the language that denies the issues.
 
+@exercise[#:difficulty "Medium, Recommended"]{
+  If you did exercise @exercise-ref{05to06}, compare your previous answers with mine.
+  See what you got right or wrong about Prototype OO, Class OO, and Types for OO,
+  and more importantly, what surprised you—which is what you actually learn from this book.
+}
+
+@exercise[#:difficulty "Hard, Recommended" #:tag "06to07"]{
+  Now that you are familiar with how to use and implement OO,
+  using what underneath is mixin inheritance,
+  can you model other forms of inheritance in wide use
+  that you are familiar with?
+  Unless you have never used any OO before,
+  making a model of single inheritance should be relatively easy.
+  Making a model of multiple inheritance, on the other hand can be quite hard,
+  especially since there are actually two very different kinds of multiple inheritance,
+  the “flavorless” (as in Smalltalk, C++, Ada) and
+  the “flavorful” (as in CLOS, Ruby, Python, Scala).
+  Can you model whichever kinds of multiple inheritance you have used in the past, if any?
+  Or invent your own, if you are not familiar with either?
+  Save your answer to compare with the treatment in @secref{IMSMO}.
+}
+
+@exercise[#:difficulty "Research"]{
+  Add support for class update to an existing object system that doesn’t support it yet,
+  or implement a new object system that supports it.
+  You may have to add a level of indirection to your representations, or a read barrier.
+  For extra brownies, specify and implement a protocol to ensure objects are quiescent
+  before they may be updated (see notably my thesis @~cite{FarePhD Rideau2018Climbing})
+}

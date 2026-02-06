@@ -3,7 +3,7 @@
 @(require "util/ltuo_lib.rkt")
 @(set-chapter-number 9)
 
-@title[#:tag "IO"]{Efficient Object Implementation}
+@title[#:tag "EOI"]{Efficient Object Implementation}
 @epigraph{
   Metaobject protocols also disprove the adage that adding
   more flexibility to a programming language reduces its performance.

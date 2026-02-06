@@ -117,12 +117,12 @@ This document is available under the bugroff license.
         @L{Incrementally extend software @(br)
            with minimal knowledge what's inside or outside})
      ($slide @list{Not Essential: Classes, Objects}
-        @L{Classes: SIMULA 1967 @(br)
-           Smalltalk 1976, Flavors 1979, C++ 1985, Java 1996}
-        @L{Prototypes: KRL 1975 @(br)
-           Ani 1976, ThingLab 1977, SELF 1986, JS 1995}
-        @L{“Specifications” (no classes, not even objects!) @(br)
-           Yale T Scheme 1982 “components”}))
+        @L{Classes: SIMULA '67 @(br)
+           Smalltalk '76, Flavors '79, C++ '85, Java '96}
+        @L{Prototypes: KRL '75 @(br)
+           Director '76, ThingLab '77, T '82, SELF '86, JS '95}
+        @L{“Specifications”: COOP 2023 (by yours truly) @(br)
+           No classes, not even objects!}))
     ($section "Minimal OO, Formally"
      $plan-slide
      ($slide "Minimal (First-Class) Extensibility"

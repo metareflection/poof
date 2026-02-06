@@ -96,7 +96,7 @@ This document is available under the bugroff license.
         @L{A way to organize software development}
         @L{... to support @em{Division of Labor}})
      ($slide "Prototype OO"
-        @Li{Proto: KRL'75 Ani'76 ThingLab'77 T'83 Self'85 JS'95} ;; after Simula 67, before Smalltalk 76
+        @Li{Proto: KRL'75 Ani'76 ThingLab'77 T'82 Self'85 JS'95} ;; after Simula 67, before Smalltalk 76
         @Li{Class: Simula'67 Smalltalk'76 Flavors'79 C++'79 Java'96} ;; Mesa'79 C_with_Classes'79 LOOPS'82 CLOS'84 C++'85 Eiffel'86
         @Li{OO w/o Classes… sometimes w/o Objects!}
         @Li{Not as well known, yet more fundamental}

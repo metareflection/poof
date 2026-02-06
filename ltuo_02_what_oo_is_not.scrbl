@@ -106,7 +106,7 @@ and even most of those that look like OO are often different enough that
   Ignorance is even less excusable in the case of Ada
   copying C++’s “multiple inheritance” yet 14 years later.
   By contrast, many languages got it right in the same time frame,
-  including Python (1991), Ruby (1995), Scala (2004).
+  including Common Lisp (1988), Python (1991), Ruby (1995), Scala (2004).
 }
 
 @section[#:tag "OOiCO"]{OO isn’t Classes Only}
@@ -206,7 +206,7 @@ why early OO and FP languages alike, from the 1960s to the 1980s,
 as well as most languages until relatively recently,
 were using mutable state everywhere, and an eager evaluation model, at least by default.
 And with 1990s slogans among Lispers like
-“objects are a poor man’s closures”@~cite{Dickey1992SWOB}, and
+“objects are a poor man’s closures”@~cite{Dickey1992}, and
 “closures are a poor man’s objects”@~cite{Queinnec1996LiSP},
 the problem back then (and as early as at least Yale T Scheme @~cite{Rees1982T},
 that developed the underlying concepts and implemented an entire system on them),
@@ -242,15 +242,13 @@ and pure lazy OO systems for Scheme@~cite{poof2021},
 (c) languages happily combining OO and FP such as Common Lisp or Scala,
 with plenty of libraries restricting themselves
 to pure functional objects only @~cite{LIL2012 Chiusano2014FPScala}, and
-(d) last but not least, Oleg Kiselyov’s implementation of OO, even stateful OO if you want,
-in the pure FP language Haskell(!) @~cite{Kiselyov2005HaskellOOS}.
+(d) last but not least, Oleg Kiselyov’s or Michael Gale’s implementations of
+statically typed OO both stateful and pure in the pure FP language Haskell(!)
+@~cite{Kiselyov2005HaskellOOS Hoop}.
 
 These provide ample evidence that OO does not at all require mutation,
-but can be done in a pure setting, and is very compatible with FP, purity,
-and even with laziness and normal-order evaluation.
-@; TODO secref{CSvTS} for typeclass style OO
-@; though its designers might not wholly embrace the OO tradition. @; TODO{CITE}
-@; TODO: add inheritance to Haskell typeclasses or Rust traits, or just cite CL gf, Clojure protocols.
+but is very compatible with FP, purity, and even with laziness and consistent static typing.
+(This does not mean that Haskell typeclasses or Rust traits are OO; they are not—see @secref{CSvTS}.)
 Actually, I will argue based on studying of the semantics of OO that
 @principle{Pure Lazy Functional Programming is the natural setting for OO}. @;{TODO secref}
 

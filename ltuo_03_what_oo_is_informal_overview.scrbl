@@ -327,12 +327,11 @@ of an OO framework actual or imagined, but then again sometimes they may@xnote["
 @subsection[#:tag "OOwoO"]{OO without Objects}
 
 Furthermore, the fundamental patterns of OO can exist and be usefully leveraged in a language
-that lacks any notion of object, merely with the notions of specification and target:
-Indeed, Yale T Scheme has a class-less “object system” @~cite{Adams1988oopscheme},
+that lacks any notion of object, merely with the notions of specification and target,
+as we will show in @secref{MOO}.
+Meanwhile, Yale T Scheme has a class-less object system @~cite{Rees1982T Adams1988oopscheme},
 wherein the authors call “object” any language value,
-and “instance” those records of multiple function entry points used as the non-extensible targets
-of their extensible specifications, themselves called “components”,
-that use mixin inheritance (see @secref{MOO}, @secref{WdIjd}).
+and “instance” the prototypes in their object system.
 
 Therefore @principle{the word “object” is worse than useless when discussing OO in general}.
 It is actively misleading.
@@ -343,9 +342,9 @@ around its many possible mutually incompatible meanings@xnote["."]{
   It’s a bit as if you had to discuss Linear Algebra without being able to talk about lines,
   or had to discuss Imperative Programming without being able to talk about the Emperor.
   Ridiculous.
-  Or perhaps just an artefact of etymology.
+  Or perhaps just an artifact of etymology.
 }
-Meanwhile, the word “class” is practically useless,
+Meanwhile, the word “class” is also practically useless,
 denoting a rather uninteresting special case of a prototype.
 Even the word “prototype”, while meaningful, is uncommon to use when discussing OO in general.
 If discussing inheritance, one will only speak of “specifications”.
@@ -379,7 +378,7 @@ at which point they must soon enough go from the general to the particular:
 before a programmer may even write any code, they have to pick
 a specific OO language or system in which to write their software.
 At that point, the context of the language and its ecosystem
-as wide as it is, is plenty narrow enough to disambiguate the meanings of all those words.
+as wide as it may be, is plenty narrow enough to disambiguate the meanings of all those words.
 And likely, “object”, and either or both of “prototype” or “class”
 will become both well-defined and very relevant.
 Suddenly, the programmer becomes able to utter their thought and communicate
