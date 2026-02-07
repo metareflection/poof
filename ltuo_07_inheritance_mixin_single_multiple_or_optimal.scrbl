@@ -344,7 +344,7 @@ or which each specification’s ancestry is a “suffix” sub-DAG
 of which the specification is the most specific element.
 
 Note that in this book, I will reserve the word “parent” for a specification
-another (“child”) specification depends on, and the word “super” to the partial target
+another “child” specification depends on, and the word “super” to the partial target,
 the value that is inherited as argument passed to the child’s modular extension.
 This is consistent with my naming the second argument to my modular extensions @c{super}
 (sometimes shortened to @c{t}, since @c{s} is taken for the first @c{self} argument)
@@ -356,8 +356,8 @@ My nomenclature also yields distinct terms for “parent” and “ancestor”
 where the prevailing nomenclature has the slightly confusing “direct super” and “super”
 (or “direct superclass” and “superclass”, in a literature dominated by Class OO).
 
-The ancestor relation can also be viewed as a partial order on specifications
-(and so can the opposite descendant relation).
+The ancestor relation can also be viewed as a partial order on specifications,
+and so can the opposite descendant relation.
 In the single inheritance case, this relation is a total order over a given specification’s ancestry,
 and the union of all ancestries is a tree, which is a partial order but more restricted than a DAG.
 I can also try to contrast these structures with that of mixin inheritance, where

@@ -944,7 +944,6 @@ If you already assume @c{delay} and @c{force}, you could write it as
 This approach transforms laziness into functions,
 and you can use the stateful Y on that function and get the same as a lazy Y on its result.
 
-
 A third solution, often used in programming languages with second-class OO only
 (or languages in which first-class functions must terminate), is
 for the @c{Y} combinator (or its notional equivalent) to only be called at compile-time,
@@ -969,7 +968,10 @@ unless explicitly mentioned otherwise.
 As a result, the reader should be able both to easily copy and test
 all the code in this book at their favorite Scheme REPL,
 and also easily translate it to any other language
-that sports first-class higher-order functions.
+that sports first-class higher-order functions@xnote["."]{
+  I can’t leave the topic of the Y combinator without citing Oleg’s fantastic page on the topic,
+  even though it doesn’t directly address any of my concerns above: @citet{Kiselyov2024Y}.
+}.
 
 And with these issues settled, I will close this digression
 and return to rebuilding OO from first principles.

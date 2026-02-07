@@ -136,8 +136,8 @@ there was never an opposition between OO and FP—that
 we Lispers have been enjoying both together since the 1970s, and that
 OO can be so much more than you “blub” programmers can even imagine@xnote["."]{
   Blub is how Lispers disparagingly call less expressive languages, after @citet{Graham2001}.
-  Ironically, Graham doesn’t understand either the semantics or purpose of OO,
-  as is clear from his other writings@~cite{Graham1995}.
+  Graham notably wrote two books on Lisp, that both interesting chapters on OO
+  @~cite{Graham1994 Graham1995}.
 }
 
 My hope—my faith, even, despite available evidence—is that

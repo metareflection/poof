@@ -579,9 +579,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 % TODO
-% One of the very first papers on OO, that defines "object-oriented language",
-% including Simula, CLU (no inheritance) and Alphard (never implemented)
-% Also MIT CSG Memo 137 (April 1976)
 @article{Jones1976,
   author={Jones, A.K. and Liskov, B.H.},
   journal={IEEE Transactions on Software Engineering},
@@ -595,12 +592,19 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={https://sci-hub.ru/https://ieeexplore.ieee.org/abstract/document/1702384},
   doi={10.1109/TSE.1976.233833},
   note={.
-    One of the very first papers mentioning “object-oriented” languages,
-    but in a way that refers to modularity without extensibility,
-    as in the authors’ language CLU.
-    That said, the authors cite Simula 67 and the vaporware Alphard as being object-oriented.
-    They also cite Lisp, but only in the context of already offering the kind of functionality
-    they use as a code example.
+    Also MIT CSG Memo 137, this is one of the very first papers
+    using the words “object-oriented”, and AFAICT
+    the very first one to do it with a definition.
+    However, this not a definition that I or much anyone else accepts,
+    since (in my words) the J&L have it mean modularity but without extensibility.
+    J&L list Simula 67, CLU and Alphard as their examples of OO.
+    Simula is a good example, but Alphard is just hopeless vaporware,
+    and the authors’ language CLU is at the forefront of internal modularity
+    but completely ignores internal extensibility.
+    J&L also cite Lisp, but only in the context of already offering the kind of functionality
+    they use as a code example. Their not including it in their list of examples of OO is correct,
+    since KRL wasn’t a part of Lisp but an extension on top of it.
+    Still, a good paper, with some of CLU’s great contributions to the topic of modularity.
   }
 }
 
@@ -838,7 +842,17 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   pages={75–81},
   numpages={7},
   location={Stanford University, California, USA},
-  series={LFP '80}
+  series={LFP '80},
+  note={.
+    This paper implements PIE, a knowledge representation system on top of Smalltalk.
+    PIE implements the Frame model as descended from KRL via FRL,
+    wherein each Node in the knowledge graph can be described via multiple Perspectives,
+    which constitutes form of multiple inheritance,
+    though one built as part of a layer on top of the Smalltalk language,
+    rather than as an extension to the language itself.
+    This distinction is sharper in Smalltalk than in Lisp,
+    where syntactic extensibility blurs the difference.
+  }
 }
 
 %% 1981
@@ -1542,10 +1556,12 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   note={.
     Cook’s seminal thesis deconstructs (single) inheritance in terms of the λ-calculus.
     A shorter presentation of the idea is in Cook & Palsberg 1989 (extended 1994);
-    see our notes about it.
-    Cook fails to understand multiple inheritance
-    (2.5, explicitly trying the doomed approach of
-    computing a modular definition as synthesized attribute, which only leads to conflict).
+    see my notes about it.
+    Cooks fails to notice or address conflation,
+    but that doesn’t affect the validity of his work.
+    Cook repeatedly fails to understand multiple inheritance:
+    In 2.5, he explicitly tries the doomed approach of
+    computing a modular definition as synthesized attribute, which only leads to conflict.
     In chapter 10, Cook gives a correct model of Flavors (cites Moon 1986),
     yet at the same time, his explanations show that he doesn’t get the point of Flavors at all;
     Cook even claims that “linearization is potentially detrimental to the encapsulation of programs”
@@ -1850,7 +1866,11 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   pages={29--38},
   year={1991},
   publisher={ACM New York, NY, USA},
-  url={https://www.researchgate.net/publication/220422719_CLOS_Integrating_Object-Oriented_and_Functional_Programming}
+  url={https://dreamsongs.com/Files/clos-cacm.pdf},
+  doi={10.1145/114669.114671},
+  note={.
+    An informal overview of CLOS and its many features.
+  }
 }
 
 @Book{amop,
@@ -2000,7 +2020,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-% Like Traits 1982, errors out in case of conflicting methods along the hierarchy
 @InProceedings{CecilMultimethods,
   author="Chambers, Craig",
   editor="Madsen, Ole Lehrmann",
@@ -2008,6 +2027,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   booktitle="ECOOP",
   year="1992",
   publisher="Springer Berlin Heidelberg",
+  series={LNCS},
   address="Berlin, Heidelberg",
   pages="33--56",
   abstract="Multiple dispatching provides increased expressive power over single dispatching by guiding method lookup using the values of all arguments instead of only the receiver. However, existing languages with multiple dispatching do not encourage the data-abstraction-oriented programming style that is encouraged by traditional single-dispatching languages; instead existing multiple-dispatching languages tend to foster a function-oriented programming style organized around generic functions. We propose an alternative view of multiple dispatching that is intended to promote a data-abstraction-oriented programming style. Instead of viewing a multi-method as ``outside'' of all objects, we view a multi-method as ``inside'' the objects for which the multi-method applies (on which it dispatches). Because objects are closely connected to the multi-methods implementing their operations, the internals of an object can be encapsulated by being accessible only to the closely-connected multi-methods. We are exploring this object-oriented view of multi-methods in the context of a new programming language named Cecil.",
@@ -2026,7 +2046,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     common in single-dispatch OOPLs.
     Chambers distinguishes “inheritance of code” and
     “subtyping (inheritance of interface or specification)”.
-    Cecil doesn’t claim to do delegation, but compares its approach to that of Self and Lieberman.
     Cecil has multiple inheritance, however only the “conflict” kind,
     failing to learn from CLOS in this regard.
   }
@@ -2093,20 +2112,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-@InProceedings{chambers92objectoriented,
-  author={Craig Chambers},
-  title={Object-oriented multi-methods in Cecil},
-  booktitle={ECOOP},
-  volume="615",
-  publisher="Springer-Verlag",
-  address="Berlin, Heidelberg, New York, Tokyo",
-  editor="Ole Lehrmann Madsen",
-  isbn="3-540-55668-0",
-  pages="33--56",
-  year="1992",
-  url="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.121.134"
-}
-
 @article{Goguen1992Sheaf,
   title={Sheaf Semantics for Concurrent Interacting Objects},
   author={Goguen, Joseph A},
@@ -2114,8 +2119,22 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   volume={2},
   number={2},
   year={1992},
+  pages = {159--191},
   doi={10.1017/S0960129500001420},
-  url={https://cseweb.ucsd.edu/~goguen/ps/sheaf.ps.gz}
+  url={https://cseweb.ucsd.edu/~goguen/ps/sheaf.ps.gz},
+  note={.
+    One of many papers by Goguen, who mixes the vocabulary of OO and
+    the mathematical approach of category theory to model the semantics of programs.
+    In this paper he identifies “inheritance relations” with “sheaf morphisms”,
+    which in layman terms means a refinement calculus wherein the “subclass” behavior
+    cannot change anything to the superclass behavior, only add more details.
+    This is completely different from what everyone else calls OO, inheritance, etc.
+    Now, refinement is an interesting concept, and AFAICT,
+    Goguen contributes meaningful to its use.
+    But the wilful and systematic abuse of words, stealing them from a then-trendy field,
+    so as to ascribe them different concepts that already had perfectly good names, is,
+    well, deceitful marketing at best.
+  }
 }
 
 @InProceedings{Ducournau1992Monotonic,
@@ -2224,24 +2243,25 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={https://www.cambridge.org/core/journals/journal-of-functional-programming/article/simple-typetheoretic-foundations-for-objectoriented-programming/5C18E2E055B028F7214FBB183701830E},
   note={.
     This is a solid paper worth reading, though
-    I disagree with both the “Simple” and “Foundations” in the title.
+    I staunchly disagree with both the “Simple” and “Foundations” in the title.
     Pierce and Turner do not provide solid foundations
     that pin-point the essence of all OO, based on which to build any OO system.
     Instead, they show how you can side-step
     some of the really hard problems in OO (recursive types!),
     yet achieve most of the value in practice,
-    using existential types for modularity—by
-    pushing the problematic fixpoint into a corner,
-    and asking the user to tie the knot manually in a case
-    where it’s relatively easy for the user to do,
-    then the system can handle the rest and do the heavy lifting from there.
+    using existential types for modularity:
+    they push the problematic fixpoint into a corner,
+    and ask the user to tie the knot manually in a case
+    where it’s relatively easy for the user to do;
+    then their system handles the rest and does the heavy lifting from there.
     Users can then achieve most of the benefits of OO
     despite the system being unable to tie the knot and solve the problem automatically.
     It is a “tell me what you need, I’ll show you how to do without!” kind of paper.
     And you shouldn’t take this description disparagingly:
     this is a great kind of paper, one that shows you how to do more with less.
     Brilliant and insightful.
-    Yet, ultimately, a failure, as it dodges rather than solves the problem announced in its title.
+    Yet, ultimately, an utter failure at the task its set upon itself,
+    since it dodges rather than solves the problem announced in its title.
   }
 }
 
@@ -2276,6 +2296,28 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 1994
 
+@book{Graham1994,
+  author={Paul Graham},
+  title={On Lisp: Advanced Techniques for Common Lisp},
+  publisher={Prentice Hall},
+  year={1994},
+  isbn={0130305529},
+  url={https://paulgraham.com/onlisptext.html},
+  note={.
+    A book on practical software development in Lisp,
+    with much focus on how to define and use macros.
+    The section on anaphoric macros generated a fad among Common Lispers,
+    happily short-lived after they realized the benefits are not worth the costs.
+    Chapter 20 may have inspired several CPS transform libraries for Lisp.
+    Chapter 25 is an alright introduction to OO, but mixes in one chapter what his 1995 book
+    does better in two separate chapters: teaching CLOS, and explaining OO in general.
+    Graham’s style is abductive: he has absorbed the concepts,
+    but tries to lead the reader to it via a hands on approach,
+    rather than explaining the concepts to them or to himself.
+  }
+}
+
+% TODO Ducournau 1987?
 @InProceedings{Ducournau1994Monotonic,
   author={Ducournau, Roland and Habib, Michel and Huchard, Marianne and Mugnier, Marie-Laure},
   title={Proposal for a Monotonic Multiple Inheritance Linearization},
@@ -2336,11 +2378,14 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   isbn={9780201633610},
   url={https://hillside.net/elements-of-reusable-object-oriented-software-book},
   note={.
-    The classic "Gang of Four" (GoF) book on Design Patterns. Much loved, much hated.
+    The classic “Gang of Four” (GoF) book on Design Patterns. Much loved, much hated.
     To quote Rich Hickey, «Patterns mean “I have run out of language.”»
     I.e. patterns are using fourth class entities because you can’t (or otherwise fail to)
     afford automation and abstraction.
     Which is a bad thing to happen, but sometimes it does and then you’re glad you have patterns.
+    Also, having recognizing patterns is a good and necessary first step before you can automate them.
+    What is very wrong indeed is being satisfied with their staying unautomated patterns,
+    when they recur enough to be important to your job.
   }
 }
 
@@ -2491,18 +2536,23 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   note={.
     Cook positively mentioned Jacobs in private email, and cites him in Cook 2012,
     as justification why OO doesn’t need inheritance.
-    But this paper is actually not OO at all, but relational modeling with Category Theory.
+    But this paper is actually not OO at all, it is relational modeling with Category Theory.
     In the last paragraph of section 2, Jacobs says that “Ai, Bi, Ci are (constant) sets.”
-    All the negation of actual OO is concentrated in a single word, what more in parentheses,
+    All the negation of actual OO is concentrated in this single word hidden between parentheses,
     lost in the middle of the article, that restricts classes
     to the non-recursive subset where the NNOOTT applies. Wow.
     But that doesn’t require malice, only ignorance. Jacobs cites Goguen,
     who was also using Category Theory; but Goguen was using it to do rewrite logic
     and software specification with the trappings of OO.
     Jacobs does just relational data modeling.
+    Jacobs can be partly forgiven for straying out of his usual domain
+    and wrongly trusting apparent authorities (Goguen).
+    Cook cannot be forgiven for spreading nonsense precisely on the domain
+    in which he sought and acquired authority.
   }
 }
 
+% https://github.com/61--/weiyanmin/blob/master/BOOK/Lisp/Graham,%20Paul%20-%20ANSI%20Common%20Lisp.pdf
 @book{Graham1995,
   author={Graham, Paul},
   title={ANSI Common Lisp},
@@ -2510,12 +2560,18 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   publisher={Prentice Hall},
   address={Englewood Cliffs, NJ},
   series={Prentice Hall Series in Artificial Intelligence},
+  url={https://archive.org/details/ansicommonlisp00grah},
   isbn={0133708756},
   note={.
-    A good introduction to Common Lisp, except for Paul Graham not quite
-    understanding the purpose of OO and therefore skipping it.
-    The section on macros once generated a fad for anaphoric macros among Common Lispers,
-    and may have inspired others to implement CPS transform libraries for Lisp.
+    A good introduction to Common Lisp.
+    Chapter 10 is a solid introduction to CLOS.
+    Chapter 17 is an impressive walk through to implement your own
+    increasingly elaborate object system.
+    As usual, Graham has a great style for a tutorial,
+    taking you to the place you need to be,
+    building understanding incrementally
+    through examples rather than abstract theory,
+    in an elegant and practical style.
   }
 }
 
@@ -2646,18 +2702,20 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   year={1996},
   url={https://www.academia.edu/2617908/Typing_in_object_oriented_languages_Achieving_expressibility_and_safety},
   note={.
-    This paper includes a good explanation of the problems with the NNOOTT.
-    It also is somewhat aware of the issue of conflation:
+    This paper includes a good explanation of the problems with the NNOOTT,
+    and a solution on how to instead type object correctly.
+    The author is somewhat aware of the issue of conflation:
     “The notions of type and class are often confounded
     in object-oriented programming languages” p. 5.
-    But it still chooses an approach with an ad hoc class primitive,
-    in which the open recursion type is accessible via the special type variable MyType,
-    and subtyping before the fixpoint is called “matching”
-    (though this (correct) technique is not explained in those terms).
+    But ultimately, the author still conflates specification and target without full awareness.
+    He successfully works around the issue by having a notion of subtyping _before_ the fixpoint,
+    which he calls “matching” (though this technique is not explained in those terms),
+    with an ad hoc class primitive
+    wherein the open recursion type is accessible via the special type variable MyType.
+    Ultimately correct yet less helpful than could be due to the ad hoc approach.
   }
 }
 
-% https://www.stroustrup.com/hopl2.pdf
 @InBook{stroustrup1996hopl,
   author={Stroustrup, Bjarne},
   title={A history of C++: 1979--1991},
@@ -2665,7 +2723,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   isbn={0201895021},
   publisher={Association for Computing Machinery},
   address={New York, NY, USA},
-  url={https://doi.org/10.1145/234286.1057836},
+  url={https://www.stroustrup.com/hopl2.pdf},
+  doi={10.1145/234286.1057836},
   abstract={This paper outlines the history of the C++ programming language. The emphasis is on the ideas, constraints, and people that shaped the language, rather than the minutiae of language features. Key design decisions relating to language features are discussed, but the focus is one the overall design goals and practical constraints. The evolution of C++ is traced from C with Classes to the current ANSI and ISO standards work and the explosion of use, interest, commercial activity, compilers, tools, environments, and libraries.},
   booktitle={History of Programming Languages---II},
   pages={699–769},
@@ -3008,6 +3067,7 @@ and Fiech, Adrian",
   }
 }
 
+% No DOI
 % https://www.math.nagoya-u.ac.jp/~garrigue/papers/variant-reuse.pdf
 @inproceedings{garrigue2000code,
   title={Code reuse through polymorphic variants},
@@ -3017,17 +3077,19 @@ and Fiech, Adrian",
   year={2000},
   url={https://www.math.nagoya-u.ac.jp/~garrigue/papers/fose2000.html},
   note={.
-    Open Recursion, etc., is not just for extensible products, but also extensible variants.
-    The requirement for the subclass’s type to be a subtype is wrongheaded,
-    even at the specification level, what more at the target level.
+    The paper demonstrates how polymorphic variants in OCaml
+    (extensible variant types with row polymorphism),
+    enable code reuse in a modular, extensible way.
+    Importantly, the author shows how and why extensions to type descriptors in general
+    need not try to be anything like subtypes of the inherited type.
+    Garrigue’s approach would provide a much saner and powerful foundation to OO
+    than the existing object system, if only it could be combined with
+    open recursion of modules.
+    Unhappily, OCaml support for subtyping and recursive modules is limited,
+    and so it is unclear whether a complete and better object system could be
+    built this way on top of the current OCaml.
   }
 }
-% Check ???
-%    This paper shows how and why extensions to type descriptors in general
-%    need not try to be anything like subtypes of the inherited type.
-%    Unhappily, this is incompatible with the OCaml type system, so
-%    the author does that with modules instead.
-
 
 %% 2001
 
@@ -3139,8 +3201,8 @@ and Fiech, Adrian",
   note={.
     TAPL treats objects in chapters 18, 19, 24, 32.
     18 has a gradual approach to implementing not-quite-objects, and adding features
-    until the reader has actually implemented objects. It’s clever, but a bit long-winded.
-    See my note on Pierce & Turner 1993 regarding letting the user provide a rep type.
+    until the reader has actually implemented objects. It’s clever, but a bit long-winded;
+    also see my note on Pierce & Turner 1993 regarding letting the user provide a rep type.
     32.10 Pierce does discuss the actual solution, recursive data types, but
     leaves it as an exercise after pointing to the bibliography.
     Pierce is technically masterful, but my impression is that he doesn’t understand the
@@ -3256,20 +3318,31 @@ and Fiech, Adrian",
   series={OOPSLA '05}
 }
 
-% Open Data Types and Open Functions https://www.andres-loeh.de/OpenDatatypes.pdf
-% Andres Löh and Ralf Hinze, PPDP 2006 -- not really OO, just use of typeclasses.
-% cites O'Haskell (Norlander 2001) vs OOHaskell (Kiselyov & Lämmel 2005)
 % https://github.com/nkaretnikov/OOHaskell
 % https://arxiv.org/pdf/cs/0509027
 % https://api.semanticscholar.org/CorpusID:13547784
 @misc{Kiselyov2005HaskellOOS,
-      title={Haskell's overlooked object system},
-      author={Oleg Kiselyov and Ralf Lämmel},
-      year={2005},
-      eprint={cs/0509027},
-      archivePrefix={arXiv},
-      primaryClass={cs.PL},
-      url={https://arxiv.org/abs/cs/0509027},
+  title={Haskell's overlooked object system},
+  author={Oleg Kiselyov and Ralf Lämmel},
+  year={2005},
+  eprint={cs/0509027},
+  archivePrefix={arXiv},
+  primaryClass={cs.PL},
+  url={https://arxiv.org/abs/cs/0509027},
+  note={.
+    The magical Oleg @~cite{Kiselyov2005HaskellOOS} shows that, actually,
+    there is enough structural subtyping hidden in the Haskell typesystem
+    to do precisely the kind of things people usually do with OO,
+    with lists of types at the type-level to handle extensible record types.
+    Though Oleg does not bother to implement multiple inheritance,
+    some have implemented Quicksort at the type-level in Haskell,
+    so topological sort with C4 is probably just some more type astronautics away.
+    As compared to most OO papers that discuss theory only, or push their own ad hoc system,
+    Oleg discusses pragmatics, and reuses someone else’s language, without having to change it,
+    all by programming at the type-level.
+    On the other hand, Oleg is well versed in the theory precisely because he does his practical work
+    decades after the theorists wrote their papers.
+  }
 }
 
 %% 2006
@@ -3281,6 +3354,7 @@ and Fiech, Adrian",
   year={2006},
   pages={270--289},
   url={https://www2.ccs.neu.edu/racket/pubs/asplas06-fff.pdf},
+  doi={10.1007/11924661_17},
   note={.
     The authors present the elaborate object system used to implement the GUI of
     PLT Scheme (since renamed to Racket), featuring first-class classes with single inheritance,
@@ -3376,15 +3450,24 @@ and Fiech, Adrian",
   }
 }
 
-% NB: Extended version of the seminal 2005 TOPLAS paper.
+
 % For a history of lenses, see Jules Hedges' https://julesh.com/2018/08/16/lenses-for-philosophers/
+% https://www.cis.upenn.edu/~bcpierce/papers/lenses-full.pdf
 @Article{Foster2007CombinatorsFB,
   title={Combinators for bidirectional tree transformations: A linguistic approach to the view-update problem},
   author={Nate Foster and M. Greenwald and J. T. Moore and B. Pierce and A. Schmitt},
   journal={ACM Trans. Program. Lang. Syst.},
   year={2007},
   volume={29},
-  url={https://www.cis.upenn.edu/~bcpierce/papers/lenses-full.pdf}
+  doi={10.1145/1232420.1232424},
+  url={https://www.cis.upenn.edu/~bcpierce/papers/lenses-toplas-final.pdf},
+  note={.
+    Extended version of the seminal POPL 2005 paper.
+    A very formal treatment of lenses, yet with concrete applications
+    on how to edit a view on some data structure and reflect the changes back onto
+    an updated value for the data structure.
+    I admit too formal for my tastes.
+  }
 }
 
 %% 2008
@@ -3575,11 +3658,19 @@ and Fiech, Adrian",
   }
 }
 
-@Unpublished{MonadsMixins,
+% https://www.cs.ox.ac.uk/files/2136/Mixins.pdf
+@TechReport{MonadsMixins,
   title="The Different Aspects of Monads and Mixins",
   author="Oliveira, Bruno C. d. S.",
+  institution={Oxford University Computing Laboratory},
   year={2009},
-  url={https://www.cs.ox.ac.uk/publications/publication2965-abstract.html}
+  url={https://www.cs.ox.ac.uk/publications/publication2965-abstract.html},
+  note={.
+    Oliveira shows that there is enough subtyping in Haskell typeclasses
+    for cool applications of Mixins, even without resorting to
+    the type astronautics of Kiselyov 2005 or Gale 2015.
+    A very nice paper on Mixins, though short of being capable of typing OO.
+  }
 }
 
 % Recursion Scheme, FP & OOP ???
@@ -3633,6 +3724,7 @@ and Fiech, Adrian",
   note={.
     A great paper that shows how to properly type multiple dispatch and multiple inheritance together,
     with a very interesting concept of runtime kin vs compile-time types.
+    No type theorist seems to have even tried, and they just did it.
     And yet, at some point the paper becomes too formal and I admit I don’t follow it anymore
     to tell what is missing or what is there that I’m missing.
     One day when I get serious about typesystems,
@@ -3640,6 +3732,10 @@ and Fiech, Adrian",
     In the meantime, I have complete trust in Guy Steele, and will therefore assume that
     the paper correctly achieves what it says it did, and provides a constructive proof
     that indeed the problem of typing multimethods is solved.
+    That said, I suspect that this article combines in ad hoc ways
+    two or three concepts that could be usefully be decomposed and treated separately,
+    leading to several great papers that would simplify it all.
+    Maybe an AI can do that in the near future.
   }
 }
 
@@ -3652,6 +3748,7 @@ and Fiech, Adrian",
   pages={195--214},
   year={2012},
   url={https://www.dreamsongs.com/Files/Incommensurability.pdf},
+  doi={10.1145/2384592.2384611},
   note={.
     A magnificent paper that discusses how different people think about software
     (and everything else) in often incommensurable paradigms.
@@ -4014,7 +4111,7 @@ and Fiech, Adrian",
     The paper vainly tries to convince Philip Wadler
     of how inheritance can help better define software,
     by using two lengthily elaborated examples, respectively based on
-    the "expression problem" and extending Erlang code.
+    the “expression problem” and extending Erlang code.
     I appreciate the authors and their attempt, but I find the paper too handwavy,
     too accepting of complexity, ineffable semantics.
     The paper lacks an ambition of clear knowledge.
@@ -4032,18 +4129,20 @@ and Fiech, Adrian",
   title={Dependent Object Types},
   author={Nada Amin, Adriaan Moors, Martin Odersky},
   year={2016},
-  url={https://api.semanticscholar.org/CorpusID:265751928}
+  url={https://api.semanticscholar.org/CorpusID:265751928},
+  note={.
+    A cool way to think about types for Scala,
+    but the formalism doesn’t even try to address inheritance.
+  }
 }
 
 % https://sci-hub.ru/https://link.springer.com/article/10.1007/BF01178920
-% Review of object inheritance for prototypes.
-% Discusses multiple inheritance, but fails to cite Ani, ThingLab, T, Slate, Sheeple.
-% Only passingly discusses super linearization or mixin inheritance. Sad.
+% Bug: Scribble autobib can’t handle these kinds of pages
 @InProceedings{oiwc2016,
   author={Jones, Timothy and Homer, Michael and Noble, James and Bruce, Kim},
   title={{Object Inheritance Without Classes}},
   booktitle={30th European Conference on Object-Oriented Programming (ECOOP 2016)},
-  pages={13:1--13:26},
+  Xpages={13:1--13:26},
   series={Leibniz International Proceedings in Informatics (LIPIcs)},
   ISBN={978-3-95977-014-9},
   ISSN={1868-8969},
@@ -4055,7 +4154,12 @@ and Fiech, Adrian",
   URL={https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.ECOOP.2016.13},
   URN={urn:nbn:de:0030-drops-61077},
   doi={10.4230/LIPIcs.ECOOP.2016.13},
-  annote={Keywords: Inheritance, Objects, Classes, Operational semantics}
+  annote={Keywords: Inheritance, Objects, Classes, Operational semantics},
+  note={.
+    Review of object inheritance for prototypes.
+    Discusses multiple inheritance, but fails to cite KRL, Director, ThingLab, T, Slate, Sheeple.
+    Only passingly discusses super linearization or mixin inheritance. Sad.
+  }
 }
 
 @webpage{GerbilScheme,
@@ -4271,7 +4375,14 @@ and Fiech, Adrian",
   title={The top programming languages},
   url={https://octoverse.github.com/2022/top-programming-languages},
   year=2022,
-  lastchecked={2024-01-04}
+  lastchecked={2024-01-04},
+  note={.
+    Since that study was published,
+    a lot of the JavaScript code has ceded first place to TypeScript;
+    still basically the same language, same ecosystem,
+    still supporting prototypes as well as classes, just with types.
+    Ask your AI to find the latest update.
+  }
 }
 
 %% 2024
@@ -4529,3 +4640,7 @@ series={POPL '75}
 % https://ojs.aaai.org/aimagazine/index.php/aimagazine/article/view/2770
 % DOI: https://doi.org/10.1609/aimag.v38i4.2770
 % doi={10.1609/aimag.v38i4.2770}
+
+% TODO: Open Data Types and Open Functions https://www.andres-loeh.de/OpenDatatypes.pdf
+% Andres Löh and Ralf Hinze, PPDP 2006 -- not really OO, just use of typeclasses.
+% cites O'Haskell (Norlander 2001) vs OOHaskell (Kiselyov & Lämmel 2005)

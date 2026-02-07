@@ -1375,7 +1375,21 @@ subtyping of modular extensions coincides with subtyping of their targets.
 Indeed, in general, specifications may contain so called “binary methods”
 that take another value of the same target type as argument,
 such as in very common comparison functions (e.g. equality or order)
-or algebraic operations (e.g. addition, multiplication, composition), etc.;
+or algebraic operations (e.g. addition, multiplication, composition), etc.@xnote[";"]{
+  Actually, there is One Weird Trick™ by which equality and partial order operations
+  can be considered regular unary methods rather than binary methods:
+  they can be seen as a comparison with objects of type @c{Any},
+  returning a boolean that is always false when types mismatch.
+  That type is compatible with the NNOOTT, whereas
+  addition has no correct behavior like this returning false
+  if the second object is of the wrong type:
+  you could try to make every mistyped value into a neutral element, which would break commutativity,
+  or to add an error effect or null value which would significantly warp the type;
+  but there is no way to preserve the laws and respect the types in the context of the NNOOTT,
+  because the NNOOTT is inconsistent.
+  Once you forsake the NNOOTT, you stop trying to force subclass pegs into subtype holes,
+  and all these problems evaporate.
+}
 and beyond these, they can actually contain arbitrary higher-order functions
 involving the target type in zero, one or many positions,
 both “negative” (as an overall argument)
@@ -1446,7 +1460,7 @@ as well as in Hoare’s seminal paper that inspired it @~cite{Hoare1965}@xnote["
 It then proceeded to dominate the type theory of OO
 until debunked in the late 1980s @~cite{Cook1989Inheritance}.
 Even after that debunking, it has remained prevalent in popular opinion,
-and still very active also in academia and industry alike,
+and still very active in academia and industry alike,
 and continually reinvented even when not explicitly transmitted
 @~cite{Cartwright2013Inheritance abdelgawad2014domain}.
 And I readily admit it’s the first idea I too had
@@ -1485,10 +1499,15 @@ is well worth examining.
   first experimented with OO in the 1970s and 1980s,
   mostly Smalltalk, Lisp and their respective close relatives.
   In those languages, the “types” sometimes specified for record fields
-  are suggestions in comments, dynamic checks at best,
-  sometimes promises made by the user to the compiler,
-  never static guarantees made by the language;
-  the recursive case was always dynamically typed, as was any non “atomic” value.}
+  are often but suggestions in comments, dynamic checks,
+  sometimes promises made by the user to the compiler;
+  and if they are actual static guarantees that only works outside of the recursive case,
+  well, that is already most of the benefit of static guarantees
+  when most of the work is not that recursive case.
+  It takes an advanced functional programming language or style,
+  or a rare care for total correctness, for the recursive case to dominate the issue,
+  which was never a mainstream concern.
+  }
 @item{
   Even in the 1980s and 1990s, theorists and practitioners being mostly disjoint populations,
   did not realize that they were not talking about precisely the same thing
@@ -1535,9 +1554,9 @@ Meanwhile, those who insist on treating them as a single entity with a common ty
 only set themselves for tremendous complexity and pain.
 
 That is how I realized that what most people actually mean by “subtyping” in extant literature is
-@emph{subtyping for the target type of a class} (or target prototype),
+@emph{subtyping for the target of a class} (or prototype),
 which is distinct from
-@emph{subtyping for the specification type of a class} (or prototype),
+@emph{subtyping for the specification of a class} (or prototype),
 variants of the latter of which Kim Bruce calls “matching” @~cite{SubtypingMatch1997}.
 @; TODO cite further
 But most people, being confused about the conflation of specification and target,
@@ -1869,46 +1888,59 @@ especially so than second-class classes of traditional Class OO.
 First-class OO can directly express sets of cooperating values, types and algorithms
 parameterized by other values, types and algorithms.
 
-@;{TODO
-@subsection{More Static Typing for OO}
-XXX TODO integrate citations to the below and more
+@subsection{More Types for OO}
 
-Pierce @~cite{PT1993STTFOOP Pierce2002TAPL} at times manages
-to push the difficulty with fixpoints and recursion
-into a small corner wherein they let the user manually tie a simple knot,
-and their automation can take it from there;
-it’s brilliant and even insightful, yet in the end they are dodging
-the hard problem behind OO, rather than solving it—as in the classic joke:
-“Tell me everything you need, and I’ll show you how to do without it.”
+Types for OO is a vast topic of which I am not a specialist.
+Instead of trying to build the ultimate theory of it,
+invite you to read some of the better papers I’ve managed to identify,
+and collect in my annotated bibliography, with the hope that
+the notes I wrote on these papers will be helpful to you@xnote["."]{
+  Inasmuch as I’m still alive to write a next edition to this book,
+  I appreciate your feedback in updating or improving the list below,
+  as well as this book in general.
+}
 
-Oliveira @~cite{MonadsMixins}
-shows that there is enough subtyping in Haskell typeclasses
-for cool applications of Mixins, though he stays short of the type astronautics
-needed to enable the structural subtyping of extensible records of colloquial OO.
+My very favorite papers are @citet{isoop1995 iloop1995},
+that have the exact right approach of building objects the simple way
+on top of general-purpose recursively constrained types;
+then comes @citet{Kiselyov2005HaskellOOS} or @citet{Hoop}, who
+also have the right attitude of just building OO on top of a general-purpose FP language,
+but choose Haskell as a practical substrate instead of a minimal but theoretical model.
+Also, I want to love @citet{Allen2011Type} because it shows you can just type
+multiple dispatch and multiple inheritance, topics that most type theorists
+don’t even try to address when considering OO.
 
-Special mention for the magical Oleg @~cite{Kiselyov2005HaskellOOS}
-who shows that, actually, there is enough structural subtyping hidden in the Haskell typesystem
-to do precisely the kind of things people usually do with OO,
-with lists of types at the type-level to handle extensible record types.
-Though Oleg does not bother to implement multiple inheritance,
-some have implemented Quicksort at the type-level in Haskell,
-so topological sort with C3 is probably just some more type astronautics away.
-As compared to most OO papers that discuss theory only, or push their own ad hoc system,
-Oleg discusses pragmatics, and reuses someone else’s language, without having to change it,
-all by programming at the type-level.
-On the other hand, Oleg is well versed in the theory precisely because he does his practical work
-decades after the theorists wrote their papers.
+Then come papers that I think bring useful insight, but
+ultimately fail to offer a positive solution to the actual problem of types for OO,
+because it is incompatible with some of their self-imposed assumptions or constraints:
+@citet{PT1993STTFOOP}, @citet{Pierce2002TAPL},
+@citet{MonadsMixins}, @citet{Amin2016DependentOT}.
+@; TODO Cook 1987 A self-ish model of inheritance ?
+@; @citet{Cook1989} ? @citet{Cook1989Denotational} ?
 
-Wegner and Cardelli 1985 @~cite{cardelli1986understanding}. NNOOTT.
+Papers that successfully type OO, but take the bad approach of a toy calculus
+that doesn’t generalize to anything useful in practice,
+often with much complexity and many restrictions so as to maintain conflation.
+I want to tell everyone else: look, absolutely not a single soul cares one damn
+about your toy object system, not even yourself, obviously,
+since not even you cares to use it for any real code.
+Instead, please give me a variant of the λ-calculus with simple yet powerful enough types
+that I may express and type any actual object system as a simple program on top of it.
+@citet{remy1994mlart},
+@citet{Fisher1994}, @citet{Fisher1996}, @; TODO @citet{Fisher1999}
+@; TODO: Kim Bruce 1993 1994 1995, PolyTOIL
+@citet{Bruce1996Typing}, @citet{SubtypingMatch1997}.
 
-Cardelli 1988. NNOOTT.
+Other papers that are not incorrect but just disappointing to me:
+@citet{EssenceOfInheritance2016}, @citet{oiwc2016}.
 
-OCaml 199x. @~cite{remy1994mlart}
+Publications that are just bad cases of the NNOOTT with lots of pointless formalism
+to hide how misguided the authors are, and should serve as examples for everyone to scorn:
+@citet{Cardelli1986Understanding}, @; TODO Cardelli 1988
+@citet{AbadiCardelli1996ToO Abadi1996Primitive},
+@citet{Cartwright2013Inheritance}, @citet{abdelgawad2014domain}.
 
-Scala DOT 200x. <= doesn't do inheritance.
-Ask nada.
-
-Fortress 2011
+@;{ TODO
 
 Typescript
 https://www.typescriptlang.org/docs/handbook/utility-types.html
@@ -1916,11 +1948,7 @@ https://www.typescriptlang.org/docs/handbook/utility-types.html
 Type-Safe Prototype-Based Component Evolution" (2002)
 https://www.cs.cornell.edu/andru/cs711/2002fa/reading/zenger02typesafe.pdf
 
-Ego
 https://www.cs.cmu.edu/~aldrich/ego/
-
-Bad(?): NOOP Robert Cartwright & Moez Abdelgawad
-https://www.semanticscholar.org/reader/3855d0beac44b1623731bf581f80ec4d348eb4ba
 
 https://counterexamples.org/subtyping-vs-inheritance.html
 
@@ -1940,19 +1968,10 @@ there is one obvious place from which to copy the extended rest of the object;
 when multiple objects are returned... that is still a possible interpretation
 (and though that’s seldom the useful one, that’s enough for the type theorist).
 
-Kim Bruce, @;CITE 1993 1994 1995
-thereafter gave sounder types to OO,
-saving subtyping where it could be saved because the NNOOTT applies, @; CITE PolyTOIL
-but otherwise abandoning subtyping as a goal. @; CITE LOOM 1997
-@; Kathleen Fisher @;CITE ...
-
 Meanwhile, the relationship between a module context and a focused value being
 modularly and extensibly specified within it is characterized by
 a @emph{lens} @~cite{Foster2007CombinatorsFB},
 generalizing a path of identifiers to some arbitrary way of accessing a subcomputation.
-
-Classes as object-generator see Cook87, A self-ish model of inheritance
-or Cook89a A Denotational Semantics of Inheritance, thesis
 
 What makes Typing OO so complex is the confusion of specification and target.
 People are trying to give types to an entity that is the fruit of a fixpoint,
@@ -1963,6 +1982,15 @@ proudly show their superdupercomplex calculi as if they’ve solved the problem 
 The real solution is to reject complexity, just unbundled specification and target,
 and it all becomes the trivial matter of lots simple regular algebraic operations
 before a well-known general-purpose fixpoint.
+}
+
+@exercise[#:difficulty "Easy"]{
+  Browse some OO library you wrote, or know, or else the standard library
+  of some language you know. Identify at least three classes and three method signatures
+  for which the NNOOTT will give a good type, and at least three for which it will give a bad type.
+  What is the criterion already?
+  Can you explain in each case what makes treating subclassing as subtyping the same
+  sound or unsound?
 }
 
 @section[#:tag "SOO"]{Stateful OO}
@@ -2159,6 +2187,7 @@ Languages that assume “purity” or absence of code upgrade, thereby deny thes
 and leave their users helpless, forced to reinvent entire frameworks of identity and update
 so they may then live in systems they build on top of these frameworks,
 rather than directly in the language that denies the issues.
+
 
 @exercise[#:difficulty "Medium, Recommended"]{
   If you did exercise @exercise-ref{05to06}, compare your previous answers with mine.
