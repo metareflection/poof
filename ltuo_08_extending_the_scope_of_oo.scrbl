@@ -36,7 +36,17 @@ within the context of the greater program state.
 Furthermore, to keep formalizing OO features in terms of pure functional semantics,
 these access paths I will formalize as functional @emph{lenses} (see below).
 
-And before I discuss new features, I will start with showing how focused specifications
+This approach I propose to specifying OO software is a potential game-changer
+in making OO even more modular than it used to be, because now
+method specifications can now be considered individually,
+then grouped incrementally into larger algebraically coherent chunks,
+and at each step, parsed, defined, typed, analyzed, proven correct, and generally reasoned about,
+at whichever granularity they make sense—whereas before then,
+you couldn’t even start to parse a definition, much less reason about it,
+until after it was part of a potentially very large class, involving more semantic context
+than can safely fit in anyone’s ability to reason without mistake.
+
+Before I discuss new features, I will start with showing how focused specifications
 can simplify the formalization of individual classes or prototypes within an ecosystem,
 or of regular methods within a prototype.
 Having to introduce lenses means the notion of focused specification

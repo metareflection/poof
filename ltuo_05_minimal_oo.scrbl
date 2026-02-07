@@ -1606,7 +1606,7 @@ and even more so for Prototype OO.
   Save your answer to compare with the treatment in @secref{ROOfiMC}.
 }
 
-@exercise[#:difficulty "Hard"]{
+@exercise[#:difficulty "Hard" #:tag "5alist"]{
   Define an API for manipulating records, as a set of methods.
   Provide an implementation of that API with functions in the style I used.
   Provide another implementation of it with alists as in @exercise-ref{alist0}.

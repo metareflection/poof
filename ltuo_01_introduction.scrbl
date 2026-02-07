@@ -616,14 +616,14 @@ a better inheritance algorithm with which to improve your existing (or future) l
   — That depends a good deal on where you want to get to.
   @|#:- "Lewis Carroll"|
 }
-In @secref{Intro}, which you are presently reading, I introduce the book itself.
-The remaining chapters focus on OO as such.
+In @seclink["Intro"]{chapter 1}, which you are presently reading, I introduce the book itself.
+The remaining chapters focus on OO as such, until the conclusion, where I take a step back.
 
-In @secref{WOOin}, I dispel common misconceptions about OO,
+In @seclink["WOOin"]{chapter 2}, I dispel common misconceptions about OO,
 to ensure that my theory isn’t met with misunderstanding
 due to misconceptions or disagreements about what is being theorized.
 
-In @secref{WOOiIO}, I provide a quick overview of Object Orientation,
+In @seclink["WOOiIO"]{chapter 3}, I provide a quick overview of Object Orientation,
 and the three variants of inheritance in common use.
 This chapter serves as a map of the concepts and of the words I use to describe them,
 necessary because there is no common theory of OO, and
@@ -632,26 +632,26 @@ Importantly, I introduce the essential yet oft-ignored notion of
 Conflation between Specification and Target value.
 I then describe the relationship between Specifications, Prototypes, Classes and Objects.
 
-In @secref{OOaIEM}, I explain what I mean by Internal Extensible Modularity,
+In @seclink["OOaIEM"]{chapter 4}, I explain what I mean by Internal Extensible Modularity,
 the rationale for OO, its motivation and purpose.
 This chapter remains informal, but lays the conceptual groundwork
 for the formal approach I take in the rest of this book.
 
-In @secref{MOO}, I introduce minimal formal models of Modularity and Extensibility,
+In @seclink["MOO"]{chapter 5}, I introduce minimal formal models of Modularity and Extensibility,
 Using pure Functional Programming (FP) as a foundation, with Scheme syntax,
 I derive from first principles a minimal OO system, in two lines of code.
 This minimal OO system uses mixin inheritance, and, remarkably,
 has neither objects nor prototypes, much less classes,
 only specifications and targets.
 
-In @secref{ROOfiMC}, I rebuild all the mainstream features and appurtenances
+In @seclink["ROOfiMC"]{chapter 6}, I rebuild all the mainstream features and appurtenances
 of popular OO systems as additions or modifications to the minimal system from chapter 5:
 prototypes, classes, types, mutation, etc.
 I notably clarify the all-too-common confusion between subtyping and subclassing,
 and discuss the actual relationship between OO and imperative programming,
 when the natural framework for OO is actually pure lazy functional programming.
 
-In @secref{IMSMO}, I discuss in detail the main forms of inheritance:
+In @seclink["IMSMO"]{chapter 7}, I discuss in detail the main forms of inheritance:
 single inheritance, multiple inheritance and mixin inheritance.
 I examine issues surrounding method conflict and resolution, or harmonious combination.
 I explain the known consistency constraints that matter
@@ -664,13 +664,14 @@ that satisfies all the constraints of C3 plus
 those for combining single and multiple inheritance.
 I explain why the residual heuristic I also adopt from C3 is arguably the best one.
 
-In @secref{EtSoO}, I discuss more advanced topics including
+In @seclink["EtSoO"]{chapter 8}, I discuss more advanced topics including
 Focused Modular Extensions, Method Combination, Multiple Dispatch (Multimethods),
 Monotonicity, Orphan Typeclasses, and Global Fixpoints.
 
-In @secref{EOI}, I discuss object representation and meta-object protocols.
+In @seclink["EOI"]{chapter 9}, I discuss object representation and meta-object protocols.
 
-Finally, in @secref{Conclusion}, I conclude by recapitulating my original findings.
+Finally, in @seclink["Conclusion"]{chapter 10},
+I conclude by recapitulating my original findings.
 If you want to check whether there’s anything new for you in this book,
 or are a future researcher interested in when now-well-known ideas were introduced,
 you may peek there first.

@@ -14,6 +14,12 @@ even though they are just affordances easily added on top of the above core.
 More advanced and less popular features will follow in subsequent sections.
 
 @section[#:tag "RPOO"]{Rebuilding Prototype OO}
+@epigraph{
+  If you have built castles in the air, your work need not be lost;
+  that is where they should be.
+  Now put the foundations under them.
+    @|#:- "Henry David Thoreau"|
+}
 
 @subsection[#:tag "WdIjd"]{What did I just do?}
 In the previous chapter, I reconstructed
@@ -351,7 +357,8 @@ The subtle difference is that instead of taking a resolved module context as fir
 functions take as first argument an unresolved record of functions
 that themselves take the same unresolved record as first argument.
 Callers, whether from outside the object or recursively from inside,
-must constantly be aware of the calling convention and pass the record as argument.
+must constantly be aware of the calling convention and pass the record as argument
+to all methods after extracting the methods from the record.
 At no point in this encoding is there a handle on a fully resolved target,
 only to the half-resolved specification@xnote["."]{
   The encoding can be considered as being based on the duplication combinator D
@@ -361,41 +368,47 @@ only to the half-resolved specification@xnote["."]{
 }
 
 In T and after it YASOS, an @c{operation} can abstract over the calling convention
-(see also generic functions in CLOS). @; TODO secref ch8
-An @c{operate-as} function that extracts a method from an ancestor prototype,
-then applies it to the “real” self helps support inheritance,
-and can be the basis for a @c{call-next-method} protocol.
-Single inheritance (@secref{SI}) is trivially supported,
-and even the easy case of mixin inheritance
-where methods override but do not combine.
-Actual mixin inheritance (@secref{MxI})
-can be implemented with mixins as first-class functions,
-that take a super prototype as argument and return an updated self
-that calls @c{operate-as} if needs be.
-However, multiple inheritance (@secref{MI}), while possible, is not well supported;
-supporting it efficiently would require passing another argument to all functions,
-to specify the tail of the precedence-list (or effective method list)
-from which to extract further methods to combine;
-the information can be retrieved from the self and the current ancestor,
-without being thus passed around, but at a significant performance penalty.
+providing a regular functional interface to the functionality,
+as well as a locus to define an operation-specific default behavior,
+and potentially more (see also generic functions in CLOS). @; TODO secref ch8
 
-This specialized object representation is efficient,
-which was very important in early OO systems in which it was developed;
-and gives you conflation for free.
-But comes with significant complexity, both technical and conceptual.
-Now, to me, the main downside with this approach is that historically it has contributed
+Meanwhile, inheritance is supported by an @c{operate-as} function
+that extracts a method from an ancestor prototype,
+then calls it to the “real” self as first argument:
+single or mixin inheritance are simply about chaining calls to
+the method for the next ancestor.
+T or YASOS themselves do not offer builtin infrastructure to locate the next ancestor,
+but it is trivial to roll your own for single inheritance
+by having each object delegate to the known next ancestor (@secref{SI}).
+Mixin inheritance can be achieved by abstracting over the super object
+(i.e. function that takes it as argument and returns the half-resolved record),
+though it requires a bit of infrastructure to dynamically skip
+over objects that do not handle a message (@secref{MxI}).
+A uniform field in which to store the super object (if any) could help in both cases above.
+Multiple inheritance can be done as a layer above mixin inheritance,
+or else by a change in protocol wherein methods take
+a “method resolution continuation” argument in addition to the “self” argument (@secref{MI}).
+
+In the end, this specialized object encoding is efficient,
+which is why it has been adopted, in many variants,
+by many implementations of many languages.
+But it comes with significant complexity, both technical and conceptual.
+It also sets objects apart from other kinds of records or values,
+with their own distinct query protocol, when my fixpoint encoding
+allows any value of any type to be the target of a specification,
+after which it follows the same protocol as any other value of that type.
+Also, this encoding giving you conflation for free is both a blessing and a curse.
+A blessing because the object implicitly embodies both target and specification
+without extra effort.
+A curse because this costlessness historically contributed
 to blurring the lines between specification and target,
 and therefore to the ongoing confusion between them,
 making their conceptual conflation harder to untangle.
+
 Often efficiency is important at runtime, yet simplicity is even more important
 at the conceptual layer, for programmers to understand the software they work with.
 That is why I describe this most common implementation strategy last instead of first,
-and leave its details as an exercise to the reader. @; TODO exercise-ref
-
-
-
-
-
+and leave its details as an exercise to the reader.
 
 @subsection{Small-Scale Advantages of Conflation: Performance, Sharing}
 
@@ -530,7 +543,7 @@ or trying to instantiate an abstract class.
 
 Theorists have also long implicitly recognized the conflated concepts
 when developing sound typesystems for OO:
-for instance, Fisher @~cite{Fisher1996thesis} distinguishes
+for instance, Fisher @~cite{Fisher1996} distinguishes
 @c{pro} types for objects-as-prototypes and @c{obj} types for objects-as-records;
 and Bruce @~cite{bruce1996typing} complains that
 “the notions of type and class are often confounded in object-oriented programming languages” and
@@ -569,6 +582,46 @@ Thus, through all the confusion of class OO languages so far,
 both practitioners and theorists have felt the need
 to effectively distinguish specification and target,
 yet no one seems to have been able to fully tease apart the concepts up until recently.
+
+@exercise[#:difficulty "Easy"]{
+  Reimplement the code from the previous chapter
+  to use the @c{rproto} encoding above.
+  Include both code I wrote, and code you wrote in exercises.
+}
+@exercise[#:difficulty "Easy"]{
+  Locate and read the YASOS source code (it’s short).
+  Play with it.
+  Write a function that takes an object in YASOS encoding,
+  and wraps it into an target record as per my minimal OO model.
+}
+@exercise[#:difficulty "Medium"]{
+  Use Jsonnet, Nix, or some other Prototype OO language
+  to read and write configurations of some kind.
+  Then use prototype OO to import an existing useful configuration
+  and extend it into a new one without modifying the original.
+  For instance, use Nix extensions or customizations or functions of self and super
+  of some kind to change the version of a library or compiler used by other packages.
+  Can you identify a case where you enjoy such extension not just globally,
+  but only for a small subset of packages?
+}
+@exercise[#:difficulty "Medium"]{
+  Implement a variant of @c{qproto} where instead of a pair,
+  your recursive proxy object is itself a record with fields @c{specification} and @c{target}.
+  Then add more metadata fields such as for object @c{type}, provenance annotation, etc.
+  Notice you can also add metadata fields (or one master metadata field)
+  in the @c{rproto} representation.
+}
+@exercise[#:difficulty "Hard"]{
+  Modify YASOS to correctly support mixin inheritance.
+  Play with it.
+  Write functions that translate both ways
+  between your modified YASOS encoding and the @c{rproto} encoding.
+}
+@exercise[#:difficulty "Hard"]{
+  Assuming you did exercise @exercise-ref{5alist},
+  write a variant of @c{rproto} that uses your representation of records
+  as data structures rather than as functions from symbol to value.
+}
 
 @section[#:tag "RCOO"]{Rebuilding Class OO}
 
@@ -881,7 +934,7 @@ Such automation could be generalized to work with any kind of higher-order funct
 where occurrences of the self-type in arbitrary position
 require suitable wrapping of arguments and return values,
 in ways similar to how higher-order contracts
-wrap arguments and return values with checks@~cite{findler2002contracts}.
+wrap arguments and return values with checks@~cite{Findler2002}.
 Note how similarly, metaprograms have been written to transform pure objects into
 mutable objects that store a current pure value, or mutable objects into
 linear pure objects that become invalid if a use is attempted after mutation.
@@ -1034,6 +1087,71 @@ There could be code sharing between the two; yet trying to fit prototypes
 on top of classes rather than the other way around is what Henry Baker dubbed
 an @emph{abstraction inversion} @~cite{Baker1992CritiqueDKL},
 i.e. putting the cart before the horse.
+
+
+@exercise[#:difficulty "Easy"]{
+  Implement a simple type descriptor for a @c{Point} class with fields @c{x} and @c{y},
+  an @c{instance-methods} record containing a @c{distance-from-origin} method.
+  What are the space and time tradeoffs of such a method
+  compared to the @c{rho-spec} of previous chapter?
+}
+@exercise[#:difficulty "Easy"]{
+  If you did exercise @exercise-ref{alist0},
+  package the functions together in one prototype.
+  You now have a typeclass-style type descriptor.
+}
+@exercise[#:difficulty "Medium"]{
+  Wrap the typeclass-style type descriptor above into a class-style type descriptor.
+  Play with it on some examples.
+}
+@exercise[#:difficulty "Medium"]{
+  The usual idiotic puzzle in Class OO design is whether
+  @c{Square} should be a subclass of @c{Rectangle}
+  or the other way around,
+  when a Square is defined by its width,
+  and the Rectangle by its width and height,
+  so it looks Rectangle is a subclass of Square,
+  yet clearly a Square is a subtype of Rectangle.
+  The two classes should both inherit from a common superclass @c{Shape}
+  with a method @c{area} that the @c{Square} and @c{Rectangle} classes should appropriately override.
+  Can you figure out and implement the correct solution without reading the footnote?@xnote[""]{
+    The actual solution is of course that should distinguish a
+    @c{RectangleInterface} that has @emph{getter methods} @c{width} and @c{height},
+    from @c{RectangleImplementation} that has @emph{fields} @c{%width} and @c{%height},
+    and similarly for the Square having only a single field @c{%side}
+    with and a getter method @c{side},
+    wherein @c{SquareImplementation} inherits from @c{SquareInterface}
+    that inherits from @c{RectangleInterface}
+    (that it could also implement, though that might happen in a separate helper class),
+    whereas @c{RectangleImplementation} only inherits from @c{RectangleInterface}.
+    In practice, it is nicer to have a short prefix and/or suffix for interfaces,
+    and another for implementations, as your naming conventions, e.g.
+    @c{IRectangle} or @c{<Rectangle>} for interface,
+    and @c{$Rectangle} or @c{Rectangle%} for implementation.
+    You might choose the bare word without prefix or suffix for either,
+    but obviously not for both.
+    Many apparent paradoxes in OO design having to do with covariance and contravariance
+    can similarly be solved by separating the
+    “positive” and “negative” sides of a class
+    (what it provides to users vs what it requires from users).
+}}
+@exercise[#:difficulty "Medium"]{
+  Unwrap the class-style type descriptors from the previous exercise
+  into typeclass-style type descriptors, and play with them.
+  What did using data in one style feel compared to the other?
+}
+@exercise[#:difficulty "Hard"]{
+  If you did the exercise @exercise-ref{4polyinterpol},
+  redo it with parametric typeclass-style type descriptors.
+  Throw a dice for which available representation to use
+  for records, for prototypes, for polymorphism.
+}
+@exercise[#:difficulty "Hard"]{
+  Define a typeclass-style multi-type descriptor for
+  a Graph with Vertex and Edge types, and
+  implement Tarjan’s Strongly Connected Component algorithm
+  as a client to that descriptor.
+}
 
 @section[#:tag "TfOO"]{Types for OO}
 
@@ -1403,7 +1521,7 @@ is well worth examining.
 @subsection{Beyond the NNOOTT}
 
 The key to dispelling the
-“conflation of subtyping and inheritance” @~cite{Fisher1996thesis}
+“conflation of subtyping and inheritance” @~cite{Fisher1996}
 or the “notions of type and class [being] often confounded” @~cite{bruce1996typing}
 is indeed first to have dispelled, as I just did previously,
 the conflation of specification and target.
@@ -2062,6 +2180,17 @@ rather than directly in the language that denies the issues.
   Can you model whichever kinds of multiple inheritance you have used in the past, if any?
   Or invent your own, if you are not familiar with either?
   Save your answer to compare with the treatment in @secref{IMSMO}.
+}
+
+@exercise[#:difficulty "Research"]{
+  Implement a typesystem for a language including the applicative λ-calculus and
+  an extension for lazy evaluation, with a type inference engine.
+  Extend your typesystem so it should include
+  recursively constrained types as in @citet{isoop1995}.
+  Implement a minimal object system on top as in the previous chapter, or as in @citet{iloop1995}.
+  Now extend it to support universal and existential quantification.
+  Add it to Gerbil Scheme or some other language.
+  Get your system published.
 }
 
 @exercise[#:difficulty "Research"]{

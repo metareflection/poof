@@ -150,7 +150,8 @@ Kay took KRL’s inheritance, made it a well-defined concept specifically for @e
 (which it was not originally in KRL) by identifying it with the prefix mechanism in Simula,
 that he replaced with the better resend mechanism, and popularized
 the word and concept of inheritance as well as the term “object-oriented”;
-Bobrow adopted Kay’s improvements together with his own (hard to say which is whose).
+Bobrow adopted Kay’s improvements together with his own (hard to say which is whose),
+and was first at the publish line.
 Then others at PARC, at MIT, and eventually Stroustrup at Bell Labs, adopted OO,
 and the rest is history.
 Certainly, Smalltalk was class-based, unlike KRL.
@@ -171,7 +172,7 @@ Moreover, I will argue that Prototype OO @~cite{Borning1986}
 is more general than Class OO, that is but a special case of it @~cite{Lieberman1986}
 (see @secref{CaPfT}, @secref{RCOO}).
 And I will even argue that you can recognizably have OO
-with neither classes nor even prototypes, as in T @~cite{Adams1988oopscheme}
+with neither classes nor even prototypes
 (see @secref{MFtPaC}, @secref{MOO}, @secref{ROOfiMC}).
 Despite common misinformed opinions to the contrary,
 @principle{Class-less OO is part and parcel of the OO tradition},

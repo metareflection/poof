@@ -953,7 +953,7 @@ using “hot-patches” that were not foreseen by the original programmer.
   because you have to deal non-trivially with programs as input, not just output.
 }
 
-@exercise[#:difficulty "Hard"]{
+@exercise[#:difficulty "Hard" #:tag "4polyinterpol"]{
   With the help of an AI if needed, write a simple numerical program,
   say polynomial interpolation using Newton’s or Lagrange’s method,
   with floating point numbers.

@@ -2118,9 +2118,10 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={https://cseweb.ucsd.edu/~goguen/ps/sheaf.ps.gz}
 }
 
-@article{Ducournau1992Monotonic,
+@InProceedings{Ducournau1992Monotonic,
   title={Monotonic conflict resolution mechanisms for inheritance},
   author={Ducournau, Roland and Habib, Michel and Huchard, Marianne and Mugnier, Marie-Laure},
+  booktitle={Object-Oriented Programming Systems, Languages, and Applications (OOPSLA '92)},
   journal={ACM SIGPLAN Notices},
   volume={27},
   number={10},
@@ -2128,6 +2129,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   year={1992},
   publisher={ACM New York, NY, USA},
   url={https://www.researchgate.net/publication/234827636_Monotonic_conflict_resolution_mechanisms_for_inheritance},
+  doi={10.1145/141937.141939},
   note={.
     A great paper about flavorful multiple inheritance, the properties one may expect
     the linearization algorithm to satisfy, and why they matter. The authors notably
@@ -2275,8 +2277,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 %% 1994
 
 @InProceedings{Ducournau1994Monotonic,
-  author={Ducournau, R. and Habib, M. and Huchard, M. and Mugnier, M. L.},
-  title={Proposal for a monotonic multiple inheritance linearization},
+  author={Ducournau, Roland and Habib, Michel and Huchard, Marianne and Mugnier, Marie-Laure},
+  title={Proposal for a Monotonic Multiple Inheritance Linearization},
   year={1994},
   isbn={0897916883},
   publisher={Association for Computing Machinery},
@@ -2288,7 +2290,17 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   pages={164–175},
   numpages={12},
   location={Portland, Oregon, USA},
-  series={OOPSLA '94}
+  series={OOPSLA '94},
+  note={.
+    In this sequel to their 1992 paper, the authors offer the first solution to the problem
+    of a class linearization algorithm that satisfies all the good properties
+    they had explained such an algorithm should satisfy
+    (that they restate in a simpler way).
+    The algorithm is not the simplest, but it works
+    thanks to its clever requirements-matching construction.
+    It is unclear when and how the results from it differ,
+    from those from the simpler C3 algorithm that has since been widely accepted.
+  }
 }
 
 % https://api.semanticscholar.org/CorpusID:16832709
@@ -2332,16 +2344,27 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-% Extend a simply typed LC (terminating) with simple objects and a typesystem
-% (can add or override messages; difference meaningful because of type system)
-% Prove the typesystem sound.
-@article{LambdaCalculusObjects1994,
+@article{Fisher1994,
   title={A Lambda-Calculus of Objects and Method Specialization},
   author={Kathleen Fisher and Furio Honsell and John C. Mitchell},
   year={1994},
   journal={Nordic Journal of Computing},
   volume={1},
-  pages={3-37}
+  pages={3-37},
+  doi={10.1109/LICS.1993.287603},
+  note={.
+    Fisher extends the simply typed λ-calculus (STLC, terminating)
+    with simple objects and a typesystem, wherein you can add or override messages
+    (the difference between the two being meaningful because of the type system).
+    She proves the typesystem sound with lots of formalism.
+    Then she explores how objects actually added recursion to the STLC,
+    and made it non-terminating.
+    Cool, but I find the entire approach upside-down.
+    It would have been much easier to realize, based e.g. on Cook 1989 or Bracha and Cook 1990,
+    that objects are a trivial case of using and exposing the Y combinator,
+    and then written or reused a general-purpose version of the λ-calculus with recursion,
+    that would then work with any object system, not just a toy system.
+  }
 }
 
 @article{sernadas1994,
@@ -2416,6 +2439,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   year={1995},
   publisher={Elsevier},
   url={https://pl.cs.jhu.edu/projects/type-constraints/papers/type-inference-for-recursively-constrained-types-and-its-application-to-oop.pdf},
+  doi={10.1016/S1571-0661(04)80008-2},
   note={.
     This paper presents I-SOOP, a simple language with polymorphic recursively constrained types,
     for which they present a type inference algorithm,
@@ -2589,12 +2613,29 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   keywords={object-oriented programming, language constructs, delegation, inheritance, incremental modification, programming languages}
 }
 
-@PhDThesis{Fisher1996thesis,
+@PhDThesis{Fisher1996,
   title={Type Systems for object-oriented programming languages},
   author={Fisher, Kathleen Shanahan},
   year={1996},
-  publisher={Stanford University},
-  url={https://www.researchgate.net/publication/2828333_Type_Systems_For_Object-Oriented_Programming_Languages}
+  school={Stanford University},
+  url={http://i.stanford.edu/pub/cstr/reports/cs/tr/98/1602/CS-TR-98-1602.pdf},
+  note={.
+    Fisher goes through great lengths to define a sound type system for
+    a variant of the λ-calculus extended with a simple toy prototype object system.
+    A great deal of the complexity is tied to trying to type an entity that conflates
+    specification and target, that she calls the “pro” and “obj” types of her calculus.
+    Things would have been so much easier if she had stopped conflating them,
+    and just types them separately as semantically distinct entities
+    that you are allowed but not required to pair together.
+    A lot of the restrictions and complexities in message typing are also linked
+    to having to track available message names, wherein it should be easy to
+    forget messages for the target, but not for the specification.
+    In particular, public and private fields exist because the system tries to manage
+    specification-level and target-level fields at the same time.
+    In the end, a technical tour de force, yet a huge waste of resource on a toy,
+    when a better approach, for the same effort, could have yielded a general purpose
+    treatment of recursion in the λ-calculus and a trivial implementation of objects on top.
+  }
 }
 
 % https://kbb04747.sites.pomona.edu/README.html#Match
@@ -2767,19 +2808,35 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   author={Brian Foote and Joseph W. Yoder},
   booktitle={PLoP},
   year={1997},
-  url={http://www.laputan.org/mud/}
+  url={http://www.laputan.org/mud/},
+  note={.
+    A very entertaining yet also enlightening essay about the good and bad things
+    that often happen as developers build software in the large.
+    The authors give names to common phenomena they describe,
+    borrowing metaphors from architecture and urban development.
+    A great read for who wants to think about software at a scale larger than code.
+  }
 }
 
-% ECMAScript language specification, 1st edition. Says "inheritance" and not "delegation". Yay.
-% Before that, there was Netscape documentation that says "prototype" but neither "inheritance" nor "delegation", e.g. at
+% Before that, there was Netscape documentation that says "prototype"
+% but neither "inheritance" nor "delegation", e.g. at
 % https://web.archive.org/web/20060318153542/http://wp.netscape.com/eng/mozilla/3.0/handbook/javascript/index.html
-% Note that the book "Programming JavaScript for Netscape 2.0" (1996) by Tim Ritchey also talks of inherit / inheritance, not delegate / delegation https://archive.org/details/programmingjavas00ritc/mode/2up?q=inherit
+% Note that the book "Programming JavaScript for Netscape 2.0" (1996) by Tim Ritchey
+% also talks of inherit / inheritance, not delegate / delegation
+% https://archive.org/details/programmingjavas00ritc/mode/2up?q=inherit
 @Misc{ecmascript1997,
   title={ECMAScript: A general purpose cross-platform programming language},
   author={ECMA-262},
   year={1997},
   month=June,
-  url={https://ecma-international.org/publications-and-standards/standards/ecma-262/}
+  url={https://ecma-international.org/publications-and-standards/standards/ecma-262/},
+  note={.
+    This is the ECMAScript language specification, 1st edition,
+    the first “official” specification for JavaScript, for what that is worth,
+    that thereby replaces Eich 1996 in defining JavaScript.
+    It says “inheritance” and not “delegation” for its prototype object system—many thanks
+    to the authors for thereby killing the “delegation” naming nonsense.
+  }
 }
 
 @InProceedings{SubtypingMatch1997,
@@ -2836,8 +2893,6 @@ and Fiech, Adrian",
 }
 
 
-% Defines a dialect of Java with mixins, MixedJava, to illustrate the approach taken in MzScheme,
-% later better described in their 2006 paper.
 % https://www.semanticscholar.org/paper/Classes-and-mixins-Flatt-Krishnamurthi/c20e5f2a424b96209e6b400b23d319558932afa3
 @InProceedings{Mixins1998,
   author={Flatt, Matthew and Krishnamurthi, Shriram and Felleisen, Matthias},
@@ -2853,12 +2908,31 @@ and Fiech, Adrian",
   pages={171–183},
   numpages={13},
   location={San Diego, California, USA},
-  series={POPL '98}
+  series={POPL '98},
+  note={.
+    This paper is one of the earliest works using mixin inheritance
+    after those of Bracha himself, and shows how Java, a familiar language (to the masses)
+    could be extended to support mixin inheritance.
+    The authors define a dialect of Java with mixin inheritance, MixedJava,
+    to illustrate the approach taken in MzScheme.
+    MixedJava is based on ClassicJava, a simplified model of Java.
+    Like Java, ClassicJava has single inheritance.
+    Mixins are defined as second-class functions that take a superclass as parameter
+    and extend it to a new class combined with the mixin.
+    New classes can then be declared by combining mixins.
+    The semantics of those mixins is more convincingly described in the 2006 sequel,
+    in which attempt of doing things with Java and its types is dropped,
+    and simpler first-class classes and mixins are used instead.
+    I admit I like the idea, but the choice of Java makes me less interested,
+    with all the time spent describing Java-like semantics being a waste of time.
+    I also admit I suspect the authors share my taste, but chose Java precisely because
+    much of the intended public has opposite preferences.
+  }
 }
 
 %% 1999
 
-@InProceedings{10.1145/301618.301638,
+@InProceedings{Fisher1999,
   author={Fisher, Kathleen and Reppy, John},
   title={The design of a class mechanism for Moby},
   year={1999},
@@ -2875,26 +2949,6 @@ and Fiech, Adrian",
   series={PLDI '99}
 }
 
-@article{10.1145/301631.301638,
-  author={Kathleen Fisher and John Reppy},
-  title={The Design of a Class Mechanism for Moby},
-  year={1999},
-  issue_date={May 1999},
-  publisher={Association for Computing Machinery},
-  address={New York, NY, USA},
-  volume={34},
-  number={5},
-  issn={0362-1340},
-  url={https://doi.org/10.1145/301631.301638},
-  doi={10.1145/301631.301638},
-  abstract={Typical class-based languages, such as C++ and JAVA, provide complex class mechanisms but only weak module systems. In fact, classes in these languages incorporate many of the features found in richer module mechanisms. In this paper, we describe an alternative approach to designing a language that has both classes and modules. In our design, we rely on a rich ML-style module system to provide features such as visibility control and parameterization, while providing a minimal class mechanism that includes only those features needed to support inheritance. Programmers can then use the combination of modules and classes to implement the full range of class-based features and idioms. Our approach has the advantage that it provides a full-featured module system (useful in its own right), while keeping the class mechanism quite simple.We have incorporated this design in MOBY, which is an ML-style language that supports class-based object-oriented programming. In this paper, we describe our design via a series of simple examples, show how various class-based features and idioms are realized in MOBY, compare our design with others, and sketch its formal semantics.},
-  journal={SIGPLAN Not.},
-  month=may,
-  pages={37–49},
-  numpages={13}
-}
-
-% CBPV
 @InProceedings{Levy1999CBPV,
   title={Call-by-Push-Value: A Subsuming Paradigm},
   year={1999},
@@ -3098,13 +3152,23 @@ and Fiech, Adrian",
   }
 }
 
-@InProceedings{findler2002contracts,
-  title={Contracts for higher-order functions},
+@InProceedings{Findler2002,
+  title={Contracts for Higher-Order Functions},
   author={Findler, Robert Bruce and Felleisen, Matthias},
   booktitle={seventh ACM SIGPLAN international conference on Functional programming},
   pages={48--59},
   year={2002},
-  url={https://users.cs.northwestern.edu/~robby/publications/papers/ho-contracts-icfp2002.pdf}
+  url={https://users.cs.northwestern.edu/~robby/publications/papers/ho-contracts-icfp2002.pdf},
+  doi={10.1145/581478.581484},
+  note={.
+    This great paper explains how you can define a check contracts for higher-order functions,
+    wherein a function is responsible for all values in “positive” positions
+    in the type or contract signature (produced by the function as results),
+    and its callers or callbacks for values in “negative” positions
+    in the type or contract signature (received by the function as arguments),
+    thus establishing clear blame in case of contract failure.
+    Contracts can be enforced by wrapping functions in a way that follows the shape of the contract.
+  }
 }
 
 %% 2003
@@ -3216,7 +3280,18 @@ and Fiech, Adrian",
   booktitle={In Asian Symposium on Programming Languages and Systems (APLAS) 2006},
   year={2006},
   pages={270--289},
-  url={https://www2.ccs.neu.edu/racket/pubs/asplas06-fff.pdf}
+  url={https://www2.ccs.neu.edu/racket/pubs/asplas06-fff.pdf},
+  note={.
+    The authors present the elaborate object system used to implement the GUI of
+    PLT Scheme (since renamed to Racket), featuring first-class classes with single inheritance,
+    on top of which they can implement mixins as usual as simple functions
+    that take the super-class as parameter, and on top of which they also implement traits,
+    that kind of implement the conflict view of method resolution, but also offer
+    simple primitives for developers to manually resolve these conflicts,
+    such as through excluding or renaming methods.
+    All in all, a solid example of the power and expressiveness of first-class OO,
+    though I personally prefer system based on simpler primitives.
+  }
 }
 
 @InProceedings{BruceCardelliPierce2006,
@@ -3350,7 +3425,7 @@ and Fiech, Adrian",
 @MastersThesis{gclviewer2008,
   Author="Ibrahim Bokharouss",
   Title="GCL Viewer: a study in improving the understanding of GCL programs",
-  Institution={Eindhoven University of Technology},
+  School={Eindhoven University of Technology},
   year=2008,
   month=Aug,
   day=31,
@@ -3378,6 +3453,23 @@ and Fiech, Adrian",
   url={https://edolstra.github.io/pubs/nixos-jfp-final.pdf},
   doi={10.1145/1411204.1411255},
   note={.
+    This paper presents NixOS, a Linux distribution that Dolstra had been building since 2003,
+    and was now quite mature, based on the Nix package manager, itself configured using
+    a pure functional lazy dynamic language, Nix. Nix is a game changer compared to
+    the previous package managers using an imperative model:
+    installation, upgrade and rollback are atomic, deterministic and reproducible,
+    eliminating many failure modes of existing systems.
+    Package files and directories are stored with names that include the content hash,
+    ensuring that multiple versions of software can be installed without interfering with each other,
+    without requiring administrator privilege.
+    The configuration under management includes not just software packages, but
+    also all the system configuration files, making for always coherent yet minimal installations.
+    Purity, laziness, dynamic types, recursion, higher-order functions,
+    are all heavily relied upon features of the Nix language.
+    The paper does not present OO features of Nix, that indeed would only be introduced in 2015;
+    but it does mention the kind of circularity between inputs and outputs
+    that allow for modular definition of package software—internal modularity
+    that hasn’t yet been combined with internal extensibility.
   }
 }
 
@@ -4229,6 +4321,8 @@ and Fiech, Adrian",
      ‘We can solve any problem by introducing an extra level of indirection.’”
     The many levels of indirection in the attribution
     are themselves an illustration of the so-called theorem.
+    Bonus points to whoever cites _this book_ regarding the FTSE,
+    thereby adding yet another level of indirection.
   }
 }
 
@@ -4245,20 +4339,7 @@ and Fiech, Adrian",
 
 % 2000 Oleg Kiselyov USENET post on okmij.org on the possibility of a pure variant of YASOS ?
 
-% Featherweight Jigsaw - Replacing inheritance by composition in Java-like languages
-% https://dl.acm.org/doi/10.1016/j.ic.2012.02.004
-
-% C++ template lambda calculus https://gist.github.com/glaebhoerl/8970f682958826ed36f9
-
-% Hewitt, Carl, Viewing Control Structures as Patterns of Passing Messages, MIT AI Lab Memo 410, Dec 1976.
-
-% Gilad Bracha's Newspeak? It's class-based only, though.
-
-% C2 wiki?
-% https://wiki.c2.com/?PrototypeBasedProgramming
-% https://wiki.c2.com/?ClassesPrototypesComparison
-% https://wiki.c2.com/?PrototypeBasedLanguage
-% "Popular" Prototype language: NewtonScript, LambdaMOO, Io, REBOL, Lua...
+% http://okmij.org/ftp/Computation/Subtyping/
 
 % https://okmij.org/ftp/Computation/typeclass.html#Kaes
 
@@ -4271,12 +4352,23 @@ and Fiech, Adrian",
 % Dissertation: TU Darmstadt, Fachbereich Informatik, 2005
 % <http://tuprints.ulb.tu-darmstadt.de/epda/000544/>
 
+% Featherweight Jigsaw - Replacing inheritance by composition in Java-like languages
+% https://dl.acm.org/doi/10.1016/j.ic.2012.02.004
+
+% C++ template lambda calculus https://gist.github.com/glaebhoerl/8970f682958826ed36f9
+
+% Hewitt, Carl, Viewing Control Structures as Patterns of Passing Messages, MIT AI Lab Memo 410, Dec 1976.
+
+% C2 wiki?
+% https://wiki.c2.com/?PrototypeBasedProgramming
+% https://wiki.c2.com/?ClassesPrototypesComparison
+% https://wiki.c2.com/?PrototypeBasedLanguage
+% "Popular" Prototype language: NewtonScript, LambdaMOO, Io, REBOL, Lua...
+
 % A History of Haskell: being lazy with class
 % Simon Peyton Jones
 % The Third ACM SIGPLAN History of Programming Languages Conference (HOPL-III) | June 2007
 % https://www.microsoft.com/en-us/research/publication/a-history-of-haskell-being-lazy-with-class/
-
-% http://okmij.org/ftp/Computation/Subtyping/
 
 % Barak Pearlmutter & Kevin Lang's Oaklisp https://github.com/barak/oaklisp
 
@@ -4285,7 +4377,9 @@ and Fiech, Adrian",
 % https://www.semanticscholar.org/paper/Object-Inheritance-Without-Classes-Jones-Homer/3dbc00e08dd1fa7c29faae9b2da544fb7e8d5579
 
 % Modularity: ch4 and ch9 of taoup, e.g. http://www.catb.org/~esr/writings/taoup/html/ch04s02.html#orthogonality
+
 % Semantics and Types for Objects with First-Class Member Names
+
 % Joe Gibbs Politz, Arjun Guha, Shriram Krishnamurthi
 % Foundations of Object-Oriented Languages, 2012
 % https://cs.brown.edu/~sk/Publications/Papers/Published/pgk-sem-type-fc-member-name/
@@ -4334,6 +4428,8 @@ and Fiech, Adrian",
 
 % B. Jacobs, Coalgebraic Reasoning about Classes in Object-Oriented Languages. Electr. Notes in Theor. Comp. Sci. 11, 1998. (Special issue on the workshop Coalgebraic Methods in Computer Science (CMCS 1998))
 
+% Cardelli Wegner 1985
+
 % Peter Wegner. Concepts and Paradigms of O..O..P.. 1990
 
 % Goguen...
@@ -4350,8 +4446,6 @@ and Fiech, Adrian",
 % Category Theory in Programming
 % Noah Ma <noahstorym@gmail.com>
 % https://docs.racket-lang.org/ctp/index.html
-
-% Cardelli Wegner 1985
 
 % See this article and its bibliography? https://scholarworks.iu.edu/iuswrrest/api/core/bitstreams/2706b860-ef5e-42b9-98c6-f29e3486220e/content
 
@@ -4431,6 +4525,7 @@ location={Palo Alto, California},
 series={POPL '75}
 }
 
+% Tribute to Daniel Bobrow by his brother. Weak on technical content.
 % https://ojs.aaai.org/aimagazine/index.php/aimagazine/article/view/2770
 % DOI: https://doi.org/10.1609/aimag.v38i4.2770
 % doi={10.1609/aimag.v38i4.2770}
