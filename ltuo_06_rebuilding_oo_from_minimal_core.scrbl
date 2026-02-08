@@ -1032,18 +1032,20 @@ deliberately restricted in expressiveness so as to enable static analysis and op
 in which the types and the base-level functions operating on them
 are being modularly and extensibly specified.
 
-Restrictions on the type-level language
-often attempt to keep it from being “Turing-equivalent”.
-This attempt sometimes succeeds (as in OCaml), but more often than not
-utterly fails, as computational power emerges from unforeseen interactions
-between language features, especially as features get added over time
-(as in C++, Java, Haskell) @~cite{Grigore2016}@xnote["."]{
-  Even the C preprocessor, with annoying rules added to “guarantee” termination,
+Programming language designers put restrictions on their type-level language
+as they attempt to keep them both (1) sound, and also, inasmuch as possible
+(2) terminating in finite and practically guaranteed short time.
+These attempt sometimes succeed, but more often than not utterly fail,
+because computational power and/or logical contradiction emerge
+from unforeseen interactions as the languages grow in complexity over time
+(see @secref{OOTP})@xnote["."]{
+  Even the C preprocessor, with annoying rules added to “guarantee” termination in finite time,
   ends up allowing arbitrary metaprogramming in practice.
-  @; TODO cite hbaker usenet
   @; TODO cite metalang99, https://github.com/Hirrolot/awesome-c-preprocessor
-@TODO{cite 2016__Amin_Tate__Java_and_Scala_s_Type_Systems_are_Unsound}
-@TODO{cite LangSec on unforeseen emergence of Turing-equivalence through “weird machines”?}
+  Henry Baker tried to explain it in old posts on USENET that I never understood,
+  stupidly believing the guarantees, even though I could myself prove that
+  the “finite time” of termination could easily be made longer than the age of the universe.
+  @; TODO cite hbaker usenet
 }
 The attempts do usually succeed, however, at making these type-level languages
 require a completely different mindset from the “base language”,
@@ -1888,11 +1890,11 @@ especially so than second-class classes of traditional Class OO.
 First-class OO can directly express sets of cooperating values, types and algorithms
 parameterized by other values, types and algorithms.
 
-@subsection{More Types for OO}
+@subsection{OO Type Theory}
 
-Types for OO is a vast topic of which I am not a specialist.
-Instead of trying to build the ultimate theory of it,
-invite you to read some of the better papers I’ve managed to identify,
+Types for OO is a vast topic of which I am not a specialist,
+for which I am incapable of producing and presenting the Ultimate Theory.
+Instead, I invite you to read some of the better papers I’ve managed to identify
 and collect in my annotated bibliography, with the hope that
 the notes I wrote on these papers will be helpful to you@xnote["."]{
   Inasmuch as I’m still alive to write a next edition to this book,
@@ -1901,43 +1903,50 @@ the notes I wrote on these papers will be helpful to you@xnote["."]{
 }
 
 My very favorite papers are @citet{isoop1995 iloop1995},
-that have the exact right approach of building objects the simple way
-on top of general-purpose recursively constrained types;
-then comes @citet{Kiselyov2005HaskellOOS} or @citet{Hoop}, who
+that have the exact right approach to types for OO:
+start from a sound, minimal yet expressive enough general-purpose type theory,
+then build OO in a couple of simple λ-terms under this type theory.
+A decade or two later come @citet{Kiselyov2005HaskellOOS} and @citet{Hoop}, who
 also have the right attitude of just building OO on top of a general-purpose FP language,
-but choose Haskell as a practical substrate instead of a minimal but theoretical model.
-Also, I want to love @citet{Allen2011Type} because it shows you can just type
+but choose Haskell as a now-practical substrate instead.
+Also, I love @citet{Allen2011Type} because it shows you can just type
 multiple dispatch and multiple inheritance, topics that most type theorists
-don’t even try to address when considering OO.
+don’t even try to address when considering OO, even though I think
+it could have been three even greater papers factoring things the right way.
 
-Then come papers that I think bring useful insight, but
-ultimately fail to offer a positive solution to the actual problem of types for OO,
+Then come papers that I think bring useful insight, though they
+ultimately fail to offer a positive solution to the actual problem
+designing good OOPL with good types,
 because it is incompatible with some of their self-imposed assumptions or constraints:
 @citet{PT1993STTFOOP}, @citet{Pierce2002TAPL},
-@citet{MonadsMixins}, @citet{Amin2016DependentOT}.
+@citet{MonadsMixins}, @citet{Amin2016DependentOT},
+@citet{EssenceOfInheritance2016}, @citet{oiwc2016}.
 @; TODO Cook 1987 A self-ish model of inheritance ?
 @; @citet{Cook1989} ? @citet{Cook1989Denotational} ?
 
-Papers that successfully type OO, but take the bad approach of a toy calculus
-that doesn’t generalize to anything useful in practice,
-often with much complexity and many restrictions so as to maintain conflation.
-I want to tell everyone else: look, absolutely not a single soul cares one damn
-about your toy object system, not even yourself, obviously,
-since not even you cares to use it for any real code.
-Instead, please give me a variant of the λ-calculus with simple yet powerful enough types
-that I may express and type any actual object system as a simple program on top of it.
+Now there are papers that successfully type OO, but take the bad approach of starting with
+a toy calculus that cannot generalize to anything useful in practice,
+often with much complexity and many restrictions so as to maintain
+conflation of specification and target.
+I want to tell the authors: look, not a single soul cares one damn
+about your toy object system—not even yourself, obviously,
+since not even you care to use it to build any real software with it.
+And your approach cannot possibly scale to a real object system.
+Instead, you’ve rested logic on top of brittle OO,
+when logic should instead be the solid foundation on top of which to build OO.
+An absolute travesty, a complete inversion of right and wrong,
+and a colossal waste of otherwise tremendous brainpower.
 @citet{remy1994mlart},
 @citet{Fisher1994}, @citet{Fisher1996}, @; TODO @citet{Fisher1999}
 @; TODO: Kim Bruce 1993 1994 1995, PolyTOIL
 @citet{Bruce1996Typing}, @citet{SubtypingMatch1997}.
 
-Other papers that are not incorrect but just disappointing to me:
-@citet{EssenceOfInheritance2016}, @citet{oiwc2016}.
-
-Publications that are just bad cases of the NNOOTT with lots of pointless formalism
-to hide how misguided the authors are, and should serve as examples for everyone to scorn:
-@citet{Cardelli1986Understanding}, @; TODO Cardelli 1988
-@citet{AbadiCardelli1996ToO Abadi1996Primitive},
+Finally, some publications are just bad cases of the NNOOTT,
+with heaps of pointless formalism piled on top to hide just how misguided the authors are,
+even though most of them came even after the NNOOTT had been utterly debunked.
+They should serve as laughingstock for everyone to scorn:
+@citet{Cardelli1984}, @citet{Cardelli1986Understanding},
+@citet{Abadi1996Primitive AbadiCardelli1996ToO},
 @citet{Cartwright2013Inheritance}, @citet{abdelgawad2014domain}.
 
 @;{ TODO
@@ -1955,8 +1964,6 @@ https://counterexamples.org/subtyping-vs-inheritance.html
 Andrew K. Wright & Robert Cartwright
 "A practical soft type system for Scheme"
 1997
-
-TODO
 
 Why do "unary methods" work in class OO, but not e.g. binary methods?
 Because you moved construction / destruction out of the way,
@@ -1982,6 +1989,92 @@ proudly show their superdupercomplex calculi as if they’ve solved the problem 
 The real solution is to reject complexity, just unbundled specification and target,
 and it all becomes the trivial matter of lots simple regular algebraic operations
 before a well-known general-purpose fixpoint.
+}
+
+@subsection[#:tag "OOTP"]{OO Type Practice}
+
+I shook my head at theorists who put types on top of toy object systems rather than underneath;
+but at least they produced sound typesystems.
+What then shall I say about practitioners who do this at industrial scale
+on top of object systems so overgrown that no one can conceivably hold them in their head,
+much less reason about their logical soundness?
+On what quicksands are they having millions of programmers build billions of lines of actual code?
+What a waste at world-wide scale.
+
+Thus, for instance, building a typesystem on top of Java has occupied the minds
+of hundreds of top computer scientists over decades, publishing in the top conferences,
+pouring billions of dollars into creating the best possible system given the design constraints.
+Could this typesystem pass the minimal bar for a typesystem, of being sound?
+No—types give you no guarantees @~cite{Amin2016Unsound}.
+At the same time the expressiveness of the typesystem was deliberated stunted and restricted
+so the typesystem could guarantee termination in reasonable finite time. Did that succeed?
+Also no—typechecking is Turing-equivalent @~cite{Grigore2017}.
+Programmers are deliberately deprived of the power to do good,
+but the power to do bad is just as present as ever.
+
+How could the endeavour fail despite such tremendous efforts?
+Well, it failed @emph{because} of the tremendous effort.
+Not only do too many cooks spoil the broth, but
+the very approach of trying to fit a typesystem
+on top of an ad hoc object system of ever increasing complexity
+is completely backwards.
+@citet{Amin2016Unsound} notes how the peer review system is not designed to scale
+beyond a few tens of pages per publication,
+which is wholly insufficient to address the typesystem of Java,
+or any of its industrial rivals.
+But since these languages evolve by piling ever more features onto the concept of “class”,
+even doubling or decupling the page limit could never contain the required complexity.
+
+Yet this complexity derives directly from the conflation and confusion of specification and target:
+@itemize[
+  @item{
+    If the two were decoupled, you wouldn’t need types that simultaneously reflect
+    the semantics of specification and target.
+    Each could separately be covered by very simple recursive types.
+  }@item{
+    If the two were decoupled, your unit of modular semantics wouldn’t be
+    humongous closed specifications that acrete all features,
+    that interact uncontrollably@xnote["."]{
+      The concept of class is the “Katamari” of semantics:
+      just like in the 2004 game “Katamari Damacy”,
+      it is an initially tiny ball that indiscriminately clumps together with everything on its path,
+      growing into a Big Ball of Mud @~cite{Foote1997BBoM},
+      then a giant chaotic mish mash of miscellaneous protruding features,
+      until it is so large that it collapses under its own weight to become a star—and,
+      eventually, a black hole into which all information disappears never to get out again.
+      Languages like C++, Java, C#, Scala, have a concept of class so complex that it boggles the mind,
+      and it keeps getting more complex with each release.
+      “C++, like Perl, is a Swiss-Army chainsaw of a programming language.
+      But all the blades are permanently stuck half-open while running full throttle.”
+    }
+    They would be small open specifications
+    that you would assemble out of an orthogonal basis of small contained primitives,
+    that follow a few simple rules that can simultaneously fit in a brain.
+  }@item{
+    If the two were decoupled, you wouldn’t need to segregate objects and classes
+    from regular values and types.
+    Modular extensible specifications could be used to compute any value or type,
+    and once obtained, it wouldn’t otherwise matter for a value or type
+    whether it was computed through such a process or not.
+  }@item{
+    If the two were decoupled, you wouldn’t need to constantly adjust your logic
+    to sit on top of the ever shaking ground of changing and growing classes;
+    you could have permanent solid foundations that actually sit beneath,
+    with the changes on top.
+}]
+
+And so, to the almost entirety of industry and academia alike,
+composed of people most of whom are better and cleverer than me in more ways than one,
+still I declare,
+  @;{ TODO insert meme picture?
+      https://xach.livejournal.com/170311.html
+      https://www.xach.com/img/doing-it-wrong.jpg
+  }
+@principle{Programming: You're Doing It Completely Wrong.}@xnote[""]{
+  Zach Beane famously made a meme of John McCarthy, inventor of Lisp,
+  ostensibly uttering that condemnation.
+  The actual McCarthy, however, called himself an “extreme optimist”, viz,
+  “a man who believes that humanity will probably survive even if it doesn’t take his advice.”
 }
 
 @exercise[#:difficulty "Easy"]{
@@ -2030,42 +2123,7 @@ By contrast, the “solution” found in popular languages like C++ or Java
 is all too often to introduce a single mother-of-all syntactic and semantic construct
 of immense complexity, the “class”, that frankly not a single person in the world fully understands,
 and of which scientific papers only dare study
-but simplified (yet still very complex) models@xnote["."]{
-  The concept of class is the “Katamari” of semantics:
-  just like in the 2004 game “Katamari Damacy”,
-  it is an initially tiny ball that indiscriminately clumps together with everything on its path,
-  growing into a Big Ball of Mud @~cite{Foote1997BBoM},
-  then a giant chaotic mish mash of miscellaneous protruding features,
-  until it is so large that it collapses under its own weight to become a star—and,
-  eventually, a black hole into which all reasonable meaning disappears never to reappear again.
-  Languages like C++, Java, C#, Scala, have a concept of class so complex that it boggles the mind,
-  and it keeps getting more complex with each release.
-  “C++, like Perl, is a Swiss-Army chainsaw of a programming language.
-  But all the blades are permanently stuck half-open while running full throttle.”
-  @; Emacs: Kitchen Sink
-  I much prefer the opposite approach: have a small basis of orthogonal primitives,
-  that follow a few simple rules that can simultaneously fit in a brain,
-  out of which to make large assemblies (but no larger than needed),
-  from which the emerging meaning is always explainable.
-  Certainly, there is a time when the emerging meaning of a large enough assembly
-  has a complexity of its own that cannot be reduced,
-  but this is @emph{intrinsic} complexity.
-  Classes made into humongously complex language primitives
-  introduce @emph{extrinsic} complexity, omnipresent unnecessary parasitic interactions—which
-  utterly defeats the very purpose for which classes were invented:
-  modularity, the ability to clearly think in terms
-  of entities that minimally interact with each other.
-  If a large utility function or macro must exist to define classes, each use of it
-  should clearly reduce to an entity that could have been directly written without the utility,
-  though perhaps in a less concise way, but still can be described in terms of simple primitives,
-  with no more exhibited affordances than needed.
-  Now, at a certain scale, the smaller entities disappear behind the abstraction, and
-  those that were large become the building blocks;
-  but if they were built with bad primitives, the protruding affordances will generate
-  lots of unwanted interactions that break the abstraction,
-  causing the semantic plumbing to leak everywhere,
-  and offering attack vectors for active enemies to enter between the cracks.
-}
+but simplified (yet still very complex) models.
 
 Actually, when I remember that in most OO languages,
 OO is only ever relevant but at compile-time,

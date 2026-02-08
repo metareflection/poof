@@ -130,7 +130,7 @@ Pure Functional Lazy Dynamically-Typed Prototype OO language at compile-time: te
 On the other hand, Java and after it Scala are also Turing-universal at compile-time,
 but not in an intentional way that enables practical metaprogramming,
 only an unintentional way that defeats guarantees of termination
-@~cite{Grigore2016}.
+@~cite{Grigore2017}.
 
 
 @section[#:tag "MFtPaC"]{More Fundamental than Prototypes and Classes}

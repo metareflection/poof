@@ -696,7 +696,7 @@ despite Lots of Insipid and Stupid Parentheses@xnote["."]{
   to quickly understand the basic structure of any program or data,
   even when they are unfamiliar with the syntactic extensions it uses.
   By contrast, in most “blub” languages,
-  as Lispers call non-Lisp languages @~cite{Graham2001},
+  as Lispers call non-Lisp languages @~cite{Graham2001avg},
   parentheses, beyond function calls,
   carry the emotional weight of “warning: this expression is complex,
   and doesn’t use the implicit order of operations”.

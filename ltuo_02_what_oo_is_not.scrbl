@@ -762,13 +762,21 @@ you can actually use OO as you do it.
 @exercise[#:difficulty "Hard"]{
   Find some criticism (valid or invalid) that actually pertains to OO,
   rather than to something else wrongly identified with OO.
-  Wrong targets for which criticism will not count, include:
-  the things I denounced as not OO,
-  particular systems written in OO style,
-  not just to a particular substyle of OO,
-  and not to mistakes that are not specific to OO
-  but are being done in plenty of non-OO systems too.
-  (This is notably harder than the previous exercise!)
+  Wrong targets for which criticism will not count as answers to this exercise
+  (though they may be otherwise interesting), include:
+  (1) criticism of things I already denounced as not being OO,
+  (2) criticism of particular systems that happen to written with OO,
+    but for which this aspect of the system is irrelevant,
+  (3) criticism of mistakes that do apply to OO,
+    but actually, much more broadly, apply unchanged to software development in general.
+  (This is notably harder than the previous exercise!)@xnote[""]{
+    As a hint, you may consider the criticism from @citet{Graham2001noop},
+    and the reply by Rees.
+    Which of the points actually pertain to OO and which don’t?
+    You don’t have to have perfect answers, especially before I even explained what OO is.
+    The point of the exercise is to engage critically with what OO is or isn’t,
+    and what its costs and benefits may be.
+  }
 }
 
 @exercise[#:difficulty "Medium, Recommended"]{
@@ -792,5 +800,8 @@ you can actually use OO as you do it.
   to advance very different sets of ideas.
   Characterize the real thing under the original name,
   and the main variants that corrupt the name
-  (though they may have interesting contributions of their own beside this corruption).
-} @; Solution: consider the word “ideology” itself.
+  (though they may have interesting contributions of their own beside this corruption)@xnote["."]{
+If you have trouble with this question, you may consider digging on the etymology
+and early history of the word “ideology” itself.
+But it’s much better if you manage to find your own example of such hostile take-over of a word.
+}}

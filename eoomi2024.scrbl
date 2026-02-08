@@ -860,10 +860,6 @@ and the value provided is the one for the entity being defined:
 type CFMExt r p = Lens' r p × MExt r top p
 }
 
-sub-definition: a is the user-visible object or method, b is what the extension contributes
-sub-context: s is the narrow context for the object definition, t is wider context for the ecosystem.
-
-
 A monomorphic open focused modular extension
 where @c{r i p} are the required, inherited, provided type parameters for a modular extension,
 and @c{d} is a type parameter for the entity being defined.
@@ -871,6 +867,9 @@ and @c{d} is a type parameter for the entity being defined.
 type FMExt d r i p = Lens' r d × MExt r i p
 }
 
+
+sub-definition: a is the user-visible object or method, b is what the extension contributes
+sub-context: s is the narrow context for the object definition, t is wider context for the ecosystem.
 
 Also, I'd make the footnote number a superscript both in the text and at the beginning of the footnote, I suppose by printing then adding some unicode magic constant (- #⁰ #\0)) to each digit's code.
 
@@ -896,12 +895,11 @@ CLOS, the polished successor of Flavors and LOOPS,
 There is a rich
 and, really, anything the programmer may choose to implement
 
-
 to be  not just to compete
 over which will survive or be delete
 
 
-, itself inspired by Teitelman’s ADVISE facility @~cite{Teitelman1966}:
+itself inspired by Teitelman’s ADVISE facility @~cite{Teitelman1966}:
 
 
 Method Combinations kept evolving in New Flavors @~cite{Moon1986Flavors},
@@ -917,9 +915,7 @@ XXXX
 
 Generic functions for declarations. (New Flavors)
 
-
-
-LOOPS(?), CommonLOOPS, CLOS. Cecil. Dylan. Fortress. Julia.
+Multimethods: (not LOOPS), CommonLOOPS, CLOS. Cecil. Dylan. Fortress. Julia.
 
 Generic functions for declarations. (CommonLOOPS?) CLOS.
 
@@ -948,34 +944,26 @@ that was systematically ignored or destroyed by the programming language researc
 focused on coupling them.
 
 
-
-A class being an uninteresting special case of a prototype, the word "class" is practically useless to discuss OO in general.
-And "object" meaning totally different things for Class OO vs Prototype OO, the word is actively toxic to use when discussing OO in general.
-Hilarious.
-
-
-And you make me realize I have the opposite issue: that I should make it clearer early on that, though I focus on the OO aspect only at first, I can and will reconstruct all the expected trappings of popular OO systems on top of OO.
-
-
 Mutable State in Smalltalk and CL is thin 2nd class encapsulation of 2 1st-class concepts,
 the getter and the setter. (though can be seen as 1st class, with reflection)
 
 
-Generic functions were partly inspired by T’s unification of functions and objects
-@~cite{Rees1982T Adams1988OOPScheme}.  <=== WHY DID I EVEN WRITE THAT??? IS THERE A SOURCE?
-
-
-After chatting with Claude, I think I understand Beta:
-- a pattern is "just" a second-class constant specification self→record
-- when instantiating it, you compute the fixpoint then must immediately call its main entry point.
-- main returns self if no enter/exit.
-
-Ugly asymmetry after computing fix(spec) you must immediately call init method:
-no enter, no exit: input (), do, output self
-enter, no exit: input enter, do, output ()
-no enter, exit: input (), do, output exit
-enter, exit: input enter, do, output exit
-
-But there’s no implicit or explicit self variable in Beta, so make the fixpoint record accessible, the no enter no exit option is the only way.
-And in presence of enter, it’s a function so makes more sense to return unit.
-Makes sense, but still ugly.
+      from which the emerging meaning is always explainable.
+      Certainly, there is a time when the emerging meaning of a large enough assembly
+      has a complexity of its own that cannot be reduced,
+      but this is @emph{intrinsic} complexity.
+      Classes made into humongously complex language primitives
+      introduce @emph{extrinsic} complexity, omnipresent unnecessary parasitic interactions—which
+      utterly defeats the very purpose for which classes were invented:
+      modularity, the ability to clearly think in terms
+      of entities that minimally interact with each other.
+      If a large utility function or macro must exist to define classes, each use of it
+      should clearly reduce to an entity that could have been directly written without the utility,
+      though perhaps in a less concise way, but still can be described in terms of simple primitives,
+      with no more exhibited affordances than needed.
+      Now, at a certain scale, the smaller entities disappear behind the abstraction, and
+      those that were large become the building blocks;
+      but if they were built with bad primitives, the protruding affordances will generate
+      lots of unwanted interactions that break the abstraction,
+      causing the semantic plumbing to leak everywhere,
+      and offering attack vectors for active enemies to enter between the cracks.

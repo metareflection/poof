@@ -135,9 +135,11 @@ Grumpy old Lispers like me yell at the clouds that
 there was never an opposition between OO and FP—that
 we Lispers have been enjoying both together since the 1970s, and that
 OO can be so much more than you “blub” programmers can even imagine@xnote["."]{
-  Blub is how Lispers disparagingly call less expressive languages, after @citet{Graham2001}.
-  Graham notably wrote two books on Lisp, that both interesting chapters on OO
+  Blub is how Lispers disparagingly call less expressive languages, after @citet{Graham2001avg}.
+  Graham notably wrote two books on Lisp, with interesting chapters on OO
   @~cite{Graham1994 Graham1995}.
+  He is however rightfully skeptical of the overuse of OO in corporate software
+  @~cite{Graham2001noop}.
 }
 
 My hope—my faith, even, despite available evidence—is that
@@ -617,13 +619,15 @@ a better inheritance algorithm with which to improve your existing (or future) l
   @|#:- "Lewis Carroll"|
 }
 In @seclink["Intro"]{chapter 1}, which you are presently reading, I introduce the book itself.
-The remaining chapters focus on OO as such, until the conclusion, where I take a step back.
+The remaining chapters focus on OO as such, until the conclusion, where I again take a step back.
 
-In @seclink["WOOin"]{chapter 2}, I dispel common misconceptions about OO,
+In @seclink["WOOin"]{chapter 2}, I dispel
+common misconceptions about OO,
 to ensure that my theory isn’t met with misunderstanding
-due to misconceptions or disagreements about what is being theorized.
+due to these misconceptions or to disagreements about what is or isn’t being theorized.
 
-In @seclink["WOOiIO"]{chapter 3}, I provide a quick overview of Object Orientation,
+In @seclink["WOOiIO"]{chapter 3}, I provide
+a quick overview of Object Orientation,
 and the three variants of inheritance in common use.
 This chapter serves as a map of the concepts and of the words I use to describe them,
 necessary because there is no common theory of OO, and
@@ -632,20 +636,23 @@ Importantly, I introduce the essential yet oft-ignored notion of
 Conflation between Specification and Target value.
 I then describe the relationship between Specifications, Prototypes, Classes and Objects.
 
-In @seclink["OOaIEM"]{chapter 4}, I explain what I mean by Internal Extensible Modularity,
+In @seclink["OOaIEM"]{chapter 4}, I explain
+what I mean by Internal Extensible Modularity,
 the rationale for OO, its motivation and purpose.
 This chapter remains informal, but lays the conceptual groundwork
 for the formal approach I take in the rest of this book.
 
-In @seclink["MOO"]{chapter 5}, I introduce minimal formal models of Modularity and Extensibility,
+In @seclink["MOO"]{chapter 5}, I introduce
+minimal formal models of Modularity and Extensibility.
 Using pure Functional Programming (FP) as a foundation, with Scheme syntax,
 I derive from first principles a minimal OO system, in two lines of code.
 This minimal OO system uses mixin inheritance, and, remarkably,
 has neither objects nor prototypes, much less classes,
 only specifications and targets.
 
-In @seclink["ROOfiMC"]{chapter 6}, I rebuild all the mainstream features and appurtenances
-of popular OO systems as additions or modifications to the minimal system from chapter 5:
+In @seclink["ROOfiMC"]{chapter 6}, I rebuild
+all the mainstream features and appurtenances of popular OO systems
+as additions or modifications to the minimal system from chapter 5:
 prototypes, classes, types, mutation, etc.
 I notably clarify the all-too-common confusion between subtyping and subclassing,
 and discuss the actual relationship between OO and imperative programming,
@@ -664,7 +671,8 @@ that satisfies all the constraints of C3 plus
 those for combining single and multiple inheritance.
 I explain why the residual heuristic I also adopt from C3 is arguably the best one.
 
-In @seclink["EtSoO"]{chapter 8}, I discuss more advanced topics including
+In @seclink["EtSoO"]{chapter 8}, I discuss
+more advanced topics including
 Focused Modular Extensions, Method Combination, Multiple Dispatch (Multimethods),
 Monotonicity, Orphan Typeclasses, and Global Fixpoints.
 

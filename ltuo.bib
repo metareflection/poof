@@ -555,20 +555,20 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 @InProceedings{Ross1976,
-  author = {Ross, Douglas T.},
-  title = {Toward foundations for the understanding of type},
-  year = {1976},
-  month = March,
-  isbn = {9781450378987},
-  publisher = {Association for Computing Machinery},
-  address = {New York, NY, USA},
-  url = {https://doi.org/10.1145/800237.807120},
-  doi = {10.1145/800237.807120},
-  abstract = {I have now written, have available from SofTech, and have submitted for publication elsewhere, the first two of a series of deep philosophical papers [1, 2] about Plex [3]. Among other things, I believe these papers begin to provide a proper foundation for our endeavors in computer science and software engineering. The trend of these developments is indicated in the following, which I call The Proem of Plex1 and Plex2 [“Proem: 1.) A preliminary discourse to a longer piece of writing. 2.) An introductory comment before a speech. 3.) Something that opens or begins.”—Webster's].},
-  booktitle = {Proceedings of the 1976 Conference on Data : Abstraction, Definition and Structure},
-  pages = {63–65},
-  numpages = {3},
-  location = {Salt Lake City, Utah, USA},
+  author={Ross, Douglas T.},
+  title={Toward foundations for the understanding of type},
+  year={1976},
+  month=March,
+  isbn={9781450378987},
+  publisher={Association for Computing Machinery},
+  address={New York, NY, USA},
+  url={https://doi.org/10.1145/800237.807120},
+  doi={10.1145/800237.807120},
+  abstract={I have now written, have available from SofTech, and have submitted for publication elsewhere, the first two of a series of deep philosophical papers [1, 2] about Plex [3]. Among other things, I believe these papers begin to provide a proper foundation for our endeavors in computer science and software engineering. The trend of these developments is indicated in the following, which I call The Proem of Plex1 and Plex2 [“Proem: 1.) A preliminary discourse to a longer piece of writing. 2.) An introductory comment before a speech. 3.) Something that opens or begins.”—Webster's].},
+  booktitle={Proceedings of the 1976 Conference on Data : Abstraction, Definition and Structure},
+  pages={63–65},
+  numpages={3},
+  location={Salt Lake City, Utah, USA},
   note={.
     In unreadable manic publication that is more poetry than science,
     Ross first uses in print (March 1976) the word “object-oriented”
@@ -1049,7 +1049,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-@InProceedings{Cardelli1984ASO,
+% The PDF is for the 1988 extended version
+@InProceedings{Cardelli1984,
   title={A Semantics of Multiple Inheritance},
   author={Luca Cardelli},
   booktitle={Information and Computation},
@@ -1062,11 +1063,14 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   doi={10.1016/0890-5401(88)90007-7},
   url={http://lucacardelli.name/papers/inheritance.pdf},
   note={.
-    After discussing multiple inheritance informally,
-    Cardelli omits it completely from the formal treatment.
-    He introduces a framework for subtyping of a lambda-calculus with records and fixed-points,
-    but fails to understand the interaction between the two.
-    Both seminal and ultimately wrongheaded.
+    Despite the title of this paper being about multiple inheritance,
+    it (or the 1988 revised PDF on the author’s site),
+    only discusses this topic briefly.
+    Then Cardelli on page 4 assumes the NNOOTT, i.e. that subclassing is subtyping,
+    and completely omits any attempt at modeling inheritance from his formal treatment.
+    Instead, he introduces a framework for subtyping
+    in a λ-calculus with records and fixed-points.
+    Both a historically seminal paper and a complete intellectual travesty.
   }
 }
 
@@ -1333,11 +1337,14 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     (there is no variable or pseudo-variable like “self” to otherwise refer to the fixpoint record).
     If either is defined, then the init takes specified input arguments (none if no enter block)
     and returns the specified values (none if no exit block).
+    This asymmetry is there in the name of both keeping the system minimal
+    and still identifying a pattern with both procedures and objects.
     Inheritance works by extending a pattern and its transitive subpatterns,
     using the same concatenation semantics as Simula:
-    in each “do” block, an “inner” keyword may specify where a subpattern’s additional do code will go
-    (if there is no “inner”, then the do block is final).
-    Any communication of information between descendent and ancestor do blocks
+    in each “do” block, an “inner” keyword may specify
+    where a subpattern’s additional “do” code will go
+    (if there is no “inner”, then the “do” block is final).
+    Any communication of information between descendent and ancestor “do” blocks
     must happen through side-effects to the target record’s variables.
     This is in contrast with more colloquial OO, in which, after Smalltalk,
     the child controls how it makes use of a parent-provided method,
@@ -2119,7 +2126,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   volume={2},
   number={2},
   year={1992},
-  pages = {159--191},
+  pages={159--191},
   doi={10.1017/S0960129500001420},
   url={https://cseweb.ucsd.edu/~goguen/ps/sheaf.ps.gz},
   note={.
@@ -2313,7 +2320,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     does better in two separate chapters: teaching CLOS, and explaining OO in general.
     Graham’s style is abductive: he has absorbed the concepts,
     but tries to lead the reader to it via a hands on approach,
-    rather than explaining the concepts to them or to himself.
+    rather than explaining the theory.
   }
 }
 
@@ -3093,7 +3100,7 @@ and Fiech, Adrian",
 
 %% 2001
 
-@webpage{Graham2001,
+@webpage{Graham2001avg,
   title={Beating the Averages},
   author={Graham, Paul},
   year={2001},
@@ -3103,6 +3110,19 @@ and Fiech, Adrian",
     A classic essay on how the expressiveness of Lisp helped Paul Graham and his associates
     implement and copy features faster than competition,
     which was key to the success of their business.
+  }
+}
+
+% Date unconfirmed. archive.org only has it in 2002.
+@webpage{Graham2001noop,
+  title={Why Arc Isn't Especially Object-Oriented},
+  author={Graham, Paul},
+  year={2001},
+  url={https://paulgraham.com/noop.html},
+  lastchecked={2026-02-07},
+  note={.
+    A short but interesting essay on why OO may be (or have been) overhyped and overused,
+    with an interesting reply by Jonathan Rees about what OO may or may not be to begin with.
   }
 }
 
@@ -3134,7 +3154,17 @@ and Fiech, Adrian",
   pages={13–23},
   numpages={11},
   location={Snowbird, Utah, USA},
-  series={PLDI '01}
+  series={PLDI '01},
+  note={.
+    This seminal PLDI paper introduced one of the earliest practical, type-safe systems
+    for dynamic software updating (DSU) in low-level languages like C,
+    targeting long-running servers or systems that can't afford downtime
+    (e.g., web servers, routers, telecom switches).
+    The proposed system automates a lot of the issues, but still relies on the programmer
+    to insert explicit “safe update points”, so that upgrades shall only happen
+    when the system has reached a “quiescent state”,
+    and the upgrade shall not interfere catastrophically with running request handlers.
+  }
 }
 
 @InProceedings{SullivanGriswoldCaiHallen2001,
@@ -3832,7 +3862,7 @@ and Fiech, Adrian",
 % extended abstract with idiotic proof-by-citation of abdelgawad2014domain
 @InProceedings{Cartwright2013Inheritance,
   title={Inheritance IS Subtyping},
-  author={Cartwright, Robert and Moez, A AbdelGawad},
+  author={Robert Cartwright and Moez A AbdelGawad},
   booktitle={The 25th Nordic Workshop on Programming Theory (NWPT)},
   year={2013},
   url={https://cs.rice.edu/~javaplt/papers/Inheritance.pdf},
@@ -3850,7 +3880,7 @@ and Fiech, Adrian",
 % He thanks bpierce for feedback.
 @article{abdelgawad2014domain,
   title={A domain-theoretic model of nominally-typed object-oriented programming},
-  author={AbdelGawad, Moez A},
+  author={Moez A AbdelGawad},
   journal={Electronic Notes in Theoretical Computer Science},
   volume={301},
   pages={3--19},
@@ -4078,16 +4108,6 @@ and Fiech, Adrian",
 
 %% 2016
 
-@Misc{Grigore2016,
-      title={Java Generics are Turing Complete},
-      author={Radu Grigore},
-      year={2016},
-      eprint={1605.05274},
-      archivePrefix={arXiv},
-      primaryClass={cs.PL},
-      url={https://arxiv.org/abs/1605.05274},
-}
-
 @webpage{ngnghm9,
   author={François-René Rideau},
   title={Build Systems and Modularity},
@@ -4136,6 +4156,31 @@ and Fiech, Adrian",
   }
 }
 
+@InProceedings{Amin2016Unsound,
+  author={Amin, Nada and Tate, Ross},
+  title={Java and scala's type systems are unsound: the existential crisis of null pointers},
+  year={2016},
+  isbn={9781450344449},
+  publisher={Association for Computing Machinery},
+  address={New York, NY, USA},
+  url={https://doi.org/10.1145/2983990.2984004},
+  doi={10.1145/2983990.2984004},
+  abstract={We present short programs that demonstrate the unsoundness of Java and Scala's current type systems. In particular, these programs provide parametrically polymorphic functions that can turn any type into any type without (down)casting. Fortunately, parametric polymorphism was not integrated into the Java Virtual Machine (JVM), so these examples do not demonstrate any unsoundness of the JVM. Nonetheless, we discuss broader implications of these findings on the field of programming languages.},
+  booktitle={Proceedings of the 2016 ACM SIGPLAN International Conference on Object-Oriented Programming, Systems, Languages, and Applications},
+  pages={838–848},
+  numpages={11},
+  keywords={Existential, Java, Null, Scala, Unsoundness},
+  location={Amsterdam, Netherlands},
+  series={OOPSLA 2016},
+  note={.
+    Amin and Tate use null pointers at the type level to defeat the Java and Scala type systems
+    and prove them unsound. Technically brilliant as such, but the paper is great for discussing
+    the broader sociological reasons why these kinds of failures happen
+    precisely in this domain of typechecking that was supposed to prevent those failures.
+    Insightful.
+  }
+}
+
 % https://sci-hub.ru/https://link.springer.com/article/10.1007/BF01178920
 % Bug: Scribble autobib can’t handle these kinds of pages
 @InProceedings{oiwc2016,
@@ -4181,6 +4226,26 @@ and Fiech, Adrian",
 }
 
 %% 2017
+
+@InProceedings{Grigore2017,
+  author={Radu Grigore},
+  title={Java Generics are Turing Complete},
+  booktitle={44th ACM SIGPLAN Symposium on Principles of Programming Languages},
+  series={POPL '17},
+  pages={73--85},
+  publisher={ACM},
+  year={2017},
+  isbn={978-1-4503-4660-3},
+  doi={10.1145/3009837.3009871},
+  url={https://arxiv.org/abs/1605.05274},
+  note={.
+    Grigore builds Turing machines inside the Java typechecking language,
+    with O(n²) code the size of the Turing machine. Oops.
+    So much for sacrificing power in exchange for guarantees:
+    you have no guarantees, and no power for good but still all the power for evil.
+  }
+}
+;; TODO cite LangSec on unforeseen emergence of Turing-equivalence through “weird machines”?
 
 @Article{Pickering2017Optics,
   title={Profunctor Optics: Modular Data Accessors},
@@ -4612,8 +4677,7 @@ and Fiech, Adrian",
 % https://news.ycombinator.com/item?id=36826762
 
 % POPL 1975 Plex
-% object-oriented exceptions
-% https://dl.acm.org/doi/10.1145/512976.512997
+% say "object-oriented" exceptions
 % A good predecessor to Lisp exceptions
 % paper is extremely verbose; while exception handling is well-described,
 % and the ability for users to define exceptions in addition to those provided to the system
