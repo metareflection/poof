@@ -544,9 +544,9 @@ that indeed there will be a properly initialized record
 into a specific field of which to define or override the value.
 Overrides will happen after initialization, and
 will not be cancelled by a duplicate of the initialization.
-Similarly, if specification adds a part to a design,
-it can depend on @c{base-bill-of-parts} as a declared parent,
-it can be confident that when it registers a part,
+Similarly, if a specification adds some part to a design,
+it can declare a dependency on @c{base-bill-of-parts} as a parent,
+and then it can be confident that when it registers a part,
 the part database will already be initialized, and will not be overwritten later.
 
 This property is so fundamental it is respected by all OO languages since Simula @~cite{Simula1967},
@@ -567,21 +567,34 @@ and won’t be reinitialized again after registration, cancelling the registrati
 will be counted once and only once, even and especially when contributed by independent
 specifications that are in no mutual ancestry relation.
 
-The linearity property is not respected by the languages that see “conflict”
-in independent method specifications as above;
-instead this linearity property replaces conflict with @emph{cooperation}.
-Instead of distrust and negative sum games
-where developers have to fight over which extension will prevail,
-contributions from others extensions are dropped and must be reimplemented,
-there can be trust and positive sum games,
-where developers of each specification contribute their extension to the final result,
-and all these contributions combine harmoniously into the whole.
-This property also was not respected by the once “sender path” approach of Self
-@~cite{parentsSharedParts1991 self2007hopl}.
-This property would be expressible but not modular and hard to enforce in
-hypothetical languages that would require users to manually synthesize attributes
-from the inheritance DAG so as to extract semantics of methods.
-I am naming this property after the similar notion from “linear logic”, @; TODO cite
+Languages that respect this linearity property replace conflict with @emph{cooperation}.
+In these languages, there exist trust and positive sum games
+between developers and between their specifications;
+each specification always contributes its extension once and only once to the final result,
+and all these contributions combine into a harmonious whole.
+
+Languages that fail to respect the linearity property
+institute distrust and negative sum games
+between developers and between their specifications,
+who have to fight over which specifications will prevail and have their extensions applied,
+which specifications will be defeated and see their extensions dropped by the system;
+developers will then have to reimplement or otherwise reproduce the effects
+of the extensions that would have been contributed but were dropped;
+or they will have to live without.
+
+Languages that see “conflict” in independent method specifications,
+fail to respect the linearity property.
+Self’s once “sender path” approach to method resolution also failed to respect the linearity property
+@~cite{parentsSharedParts1991 self2007hopl};
+and after the authors realized the failure, they revert to plain conflict, which still fails.
+
+Hypothetical languages that would require users to manually synthesize attributes
+from the inheritance DAG so as to extract semantics of methods,
+could conceivably do that in modular ways that respect the linearity property;
+but that would be a lot of hard work, and in the end would yield a result no better
+than if it had been automated.
+
+I am naming this property linearity after the similar notion from “linear logic”, @; TODO cite
 wherein the preservation of computational resources corresponds to
 some operator being “linear” in the mathematical sense of linear algebra.
 
@@ -615,21 +628,23 @@ i.e. a total (“linear”) order that has the partial order of the DAG as a sub
   necessarily implies finding a total order (linearization) in which to compose them.
   Still the same word has very different meanings in the two contexts.
 }
-Since CommonLoops @~cite{Bobrow1986CommonLoops}, it has been customary to call it the
-class (or object, for Prototype OO) @emph{precedence list}, a term I will use@xnote["."]{
+Since CommonLoops @~cite{Bobrow1986CommonLoops}, it has been customary to call this order
+the @emph{precedence list} of the class, prototype or specification, a term I will use@xnote["."]{
+  The Simula manual has a “prefix sequence” but it only involves single inheritance
+  (that it calls concatenation semantics).
   The original Flavors paper just mentions that
   “the lattice structure is @emph{flattened} into a linear one”,
   and the original source code caches the list in a field called @c{FLAVOR-DEPENDS-ON-ALL}.
-  The LOOPS manual talks of precedence but not yet of precedence list.
-  The Simula manual has a “prefix sequence” but it only involves single inheritance.
+  The New Flavors paper speaks of “ordering flavor components”.
+  The LOOPS manual talks of precedence, but not yet of precedence list.
 }
 
 Thanks to this property, methods that marshal (“serialize”) and unmarshal (“deserialize”)
 the fields of a class can follow matching orders and actually work together.
 Methods that acquire and release resources can do it correctly,
 and avoid deadlock when these resources include holding a mutual exclusion lock.
-Inconsistency can lead to resource leak, use-before-initialization, use-after-free, deadlock,
-data corruption, security vulnerability, and other catastrophic failures.
+Ordering inconsistencies can lead to resource leak, use-before-initialization, use-after-free,
+deadlock, data corruption, security vulnerability, and other catastrophic failures.
 
 This property was also one of the major innovations of Flavors @~cite{Cannon1979}.
 As I will show, it implies that the semantics of multiple inheritance
@@ -646,11 +661,11 @@ when they allocate field indexes and initialize instance fields,
 they too must walk the inheritance DAG in some total order preserving
 the linearity of slots, initialized in inheritance order.
 Unhappily, they do not expose this order to the user,
-and so pay the costs without providing the benefits@xnote["."]{
+and so pay the full costs without providing the full benefits@xnote["."]{
   A clever C++ programmer might recover the linearization implicit in object initialization
-  by having all classes in his code base follow the design pattern of constructors
-  computing the effective methods for the class as Flavors would do.
-  Unhappily, “static” member initialization does not rely on linearization,
+  by having all classes in his code base follow a design pattern
+  whereby constructors help compute the effective methods for the class as Flavors would do.
+  Unhappily, “static” member initialization does not rely on such linearization,
   only instance member initialization does; thus object constructors would have to do it
   the first time an object of the class is instantiated;
   but the test for this first time would slow down every instantiated a little bit,
@@ -719,13 +734,16 @@ Python, Perl, Lisp and Solidity notably respect this constraint,
 but Ruby and Scala fail to.
 
 For even more user control, and thus more expressiveness, some systems might accept
-specification of more precise ordering constraints between its parents and ancestors:
+specification of more precise ordering constraints between its parents and ancestors
+(I will later propose an algorithm that does just that):
 instead of one totally ordered list of parents,
 they might accept a partial order between parents,
 to be specified e.g. as a list of totally ordered lists of parents instead of a single one.
-If that list is itself a singleton, then it is the same as if a total order was specified.
-If that list is made of singletons, then it is the same as if
+If the list is itself a singleton, then it is the same as if a total order was specified.
+If the list is made of singletons, then it is the same as if
 there were no specified local order constraint between parents.
+Every partial order can be expressed that way,
+even if only with a list of lists of two elements, one list for each pair of comparable elements.
 
 @Paragraph{Monotonicity: Consistency across Ancestry}
 The “method resolution order” for a child specification should be consistent
@@ -742,8 +760,8 @@ or security vulnerabilities instead of deadlocks.
 By contrast, with this consistency property, developers may not even have to care
 what kind of resources their parents may be allocating, if any, much less in what order.
 
-This property was first described @~cite{Ducournau1992Monotonic}
-then implemented @~cite{Ducournau1994Monotonic} by Ducournau & al.,
+This property was first described by @citet{Ducournau1992Monotonic}
+then implemented by @citet{Ducournau1994Monotonic},
 and is the third of the three constraints after which C3 is named @~cite{Barrett1996C3}.
 Among popular “flavorful” languages, Python, Perl and Solidity respect this constraint,
 but Ruby, Scala and Lisp fail to.

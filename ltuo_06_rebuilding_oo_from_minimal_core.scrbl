@@ -1377,21 +1377,7 @@ subtyping of modular extensions coincides with subtyping of their targets.
 Indeed, in general, specifications may contain so called “binary methods”
 that take another value of the same target type as argument,
 such as in very common comparison functions (e.g. equality or order)
-or algebraic operations (e.g. addition, multiplication, composition), etc.@xnote[";"]{
-  Actually, there is One Weird Trick™ by which equality and partial order operations
-  can be considered regular unary methods rather than binary methods:
-  they can be seen as a comparison with objects of type @c{Any},
-  returning a boolean that is always false when types mismatch.
-  That type is compatible with the NNOOTT, whereas
-  addition has no correct behavior like this returning false
-  if the second object is of the wrong type:
-  you could try to make every mistyped value into a neutral element, which would break commutativity,
-  or to add an error effect or null value which would significantly warp the type;
-  but there is no way to preserve the laws and respect the types in the context of the NNOOTT,
-  because the NNOOTT is inconsistent.
-  Once you forsake the NNOOTT, you stop trying to force subclass pegs into subtype holes,
-  and all these problems evaporate.
-}
+or algebraic operations (e.g. addition, multiplication, composition), etc.
 and beyond these, they can actually contain arbitrary higher-order functions
 involving the target type in zero, one or many positions,
 both “negative” (as an overall argument)
@@ -1911,13 +1897,13 @@ also have the right attitude of just building OO on top of a general-purpose FP 
 but choose Haskell as a now-practical substrate instead.
 Also, I love @citet{Allen2011Type} because it shows you can just type
 multiple dispatch and multiple inheritance, topics that most type theorists
-don’t even try to address when considering OO, even though I think
-it could have been three even greater papers factoring things the right way.
+don’t even try to address when considering OO, even though
+it could have been three even greater papers if things were factored the right way.
 
-Then come papers that I think bring useful insight, though they
+Then come papers that bring useful insight, though they
 ultimately fail to offer a positive solution to the actual problem
-designing good OOPL with good types,
-because it is incompatible with some of their self-imposed assumptions or constraints:
+designing good OO with good types,
+because it is incompatible with some of their self-inflicted assumptions or constraints:
 @citet{PT1993STTFOOP}, @citet{Pierce2002TAPL},
 @citet{MonadsMixins}, @citet{Amin2016DependentOT},
 @citet{EssenceOfInheritance2016}, @citet{oiwc2016}.
@@ -1925,17 +1911,16 @@ because it is incompatible with some of their self-imposed assumptions or constr
 @; @citet{Cook1989} ? @citet{Cook1989Denotational} ?
 
 Now there are papers that successfully type OO, but take the bad approach of starting with
-a toy calculus that cannot generalize to anything useful in practice,
-often with much complexity and many restrictions so as to maintain
-conflation of specification and target.
+a toy calculus, which cannot generalize to anything useful in practice,
+often with much complexity and many restrictions
+so as to maintain conflation of specification and target.
 I want to tell the authors: look, not a single soul cares one damn
 about your toy object system—not even yourself, obviously,
 since not even you care to use it to build any real software with it.
 And your approach cannot possibly scale to a real object system.
 Instead, you’ve rested logic on top of brittle OO,
 when logic should instead be the solid foundation on top of which to build OO.
-An absolute travesty, a complete inversion of right and wrong,
-and a colossal waste of otherwise tremendous brainpower.
+A travesty, an inversion of right and wrong, and a waste of tremendous brainpower.
 @citet{remy1994mlart},
 @citet{Fisher1994}, @citet{Fisher1996}, @; TODO @citet{Fisher1999}
 @; TODO: Kim Bruce 1993 1994 1995, PolyTOIL
@@ -1949,52 +1934,10 @@ They should serve as laughingstock for everyone to scorn:
 @citet{Abadi1996Primitive AbadiCardelli1996ToO},
 @citet{Cartwright2013Inheritance}, @citet{abdelgawad2014domain}.
 
-@;{ TODO
-
-Typescript
-https://www.typescriptlang.org/docs/handbook/utility-types.html
-
-Type-Safe Prototype-Based Component Evolution" (2002)
-https://www.cs.cornell.edu/andru/cs711/2002fa/reading/zenger02typesafe.pdf
-
-https://www.cs.cmu.edu/~aldrich/ego/
-
-https://counterexamples.org/subtyping-vs-inheritance.html
-
-Andrew K. Wright & Robert Cartwright
-"A practical soft type system for Scheme"
-1997
-
-Why do "unary methods" work in class OO, but not e.g. binary methods?
-Because you moved construction / destruction out of the way,
-so all you’re doing is consuming data,
-in a way that (as far as types are concerned) is extensible.
-(if considered not trivially returning unit, but effectful with linear resources to forcibly manage).
-Also, when an object of same type is linearly returned,
-there is one obvious place from which to copy the extended rest of the object;
-when multiple objects are returned... that is still a possible interpretation
-(and though that’s seldom the useful one, that’s enough for the type theorist).
-
-Meanwhile, the relationship between a module context and a focused value being
-modularly and extensibly specified within it is characterized by
-a @emph{lens} @~cite{Foster2007CombinatorsFB},
-generalizing a path of identifiers to some arbitrary way of accessing a subcomputation.
-
-What makes Typing OO so complex is the confusion of specification and target.
-People are trying to give types to an entity that is the fruit of a fixpoint,
-and also retroactively undo the fixpoint to somehow type what was before.
-Some superbright people manage to juggle the immense complexity of the endeavor
-(by actually remembering the operator before fixpoint, of course), and
-proudly show their superdupercomplex calculi as if they’ve solved the problem of semantics for OO.
-The real solution is to reject complexity, just unbundled specification and target,
-and it all becomes the trivial matter of lots simple regular algebraic operations
-before a well-known general-purpose fixpoint.
-}
-
 @subsection[#:tag "OOTP"]{OO Type Practice}
 
 I shook my head at theorists who put types on top of toy object systems rather than underneath;
-but at least they produced sound typesystems.
+but at least those I cited produced sound typesystems.
 What then shall I say about practitioners who do this at industrial scale
 on top of object systems so overgrown that no one can conceivably hold them in their head,
 much less reason about their logical soundness?
@@ -2002,18 +1945,19 @@ On what quicksands are they having millions of programmers build billions of lin
 What a waste at world-wide scale.
 
 Thus, for instance, building a typesystem on top of Java has occupied the minds
-of hundreds of top computer scientists over decades, publishing in the top conferences,
-pouring billions of dollars into creating the best possible system given the design constraints.
-Could this typesystem pass the minimal bar for a typesystem, of being sound?
+of hundreds of top computer scientists over decades, publishing at top conferences,
+pouring billions of dollars in research and engineering
+into creating the best possible system given these constraints.
+Could this typesystem pass the minimal bar for a typesystem, that of being sound?
 No—types give you no guarantees @~cite{Amin2016Unsound}.
 At the same time the expressiveness of the typesystem was deliberated stunted and restricted
 so the typesystem could guarantee termination in reasonable finite time. Did that succeed?
 Also no—typechecking is Turing-equivalent @~cite{Grigore2017}.
 Programmers are deliberately deprived of the power to do good,
-but the power to do bad is just as present as ever.
+but the power to do bad hasn’t been stopped one bit.
 
 How could the endeavour fail despite such tremendous efforts?
-Well, it failed @emph{because} of the tremendous effort.
+Well, I’ll say it failed @emph{because} of the tremendous effort.
 Not only do too many cooks spoil the broth, but
 the very approach of trying to fit a typesystem
 on top of an ad hoc object system of ever increasing complexity
@@ -2021,20 +1965,20 @@ is completely backwards.
 @citet{Amin2016Unsound} notes how the peer review system is not designed to scale
 beyond a few tens of pages per publication,
 which is wholly insufficient to address the typesystem of Java,
-or any of its industrial rivals.
+or that of any of its industrial rivals.
 But since these languages evolve by piling ever more features onto the concept of “class”,
-even doubling or decupling the page limit could never contain the required complexity.
+even increasing the page limit tenfold could never contain the required complexity.
 
 Yet this complexity derives directly from the conflation and confusion of specification and target:
 @itemize[
   @item{
     If the two were decoupled, you wouldn’t need types that simultaneously reflect
-    the semantics of specification and target.
-    Each could separately be covered by very simple recursive types.
+    the semantics of both specification and target.
+    Each could separately be covered its own very simple recursive type.
   }@item{
     If the two were decoupled, your unit of modular semantics wouldn’t be
-    humongous closed specifications that acrete all features,
-    that interact uncontrollably@xnote["."]{
+    humongous closed specifications that must acrete all features
+    yielding uncontrollable interactions@xnote["."]{
       The concept of class is the “Katamari” of semantics:
       just like in the 2004 game “Katamari Damacy”,
       it is an initially tiny ball that indiscriminately clumps together with everything on its path,
@@ -2058,22 +2002,24 @@ Yet this complexity derives directly from the conflation and confusion of specif
     whether it was computed through such a process or not.
   }@item{
     If the two were decoupled, you wouldn’t need to constantly adjust your logic
-    to sit on top of the ever shaking ground of changing and growing classes;
+    to sit on top of the ever shaking ground of an ever growing notion of classes;
     you could have permanent solid foundations that actually sit beneath,
-    with the changes on top.
+    and the changes on top.
 }]
 
 And so, to the almost entirety of industry and academia alike,
 composed of people most of whom are better and cleverer than me in more ways than one,
-still I declare,
+still I declare:
   @;{ TODO insert meme picture?
       https://xach.livejournal.com/170311.html
       https://www.xach.com/img/doing-it-wrong.jpg
   }
 @principle{Programming: You're Doing It Completely Wrong.}@xnote[""]{
-  Zach Beane famously made a meme of John McCarthy, inventor of Lisp,
+  Zach Beane famously made a funny meme of John McCarthy, inventor of Lisp,
   ostensibly uttering that condemnation.
-  The actual McCarthy, however, called himself an “extreme optimist”, viz,
+  The actual McCarthy, of course, was not the kind who would say anything like that,
+  even if he might have thought so at times.
+  Instead, he called himself an “extreme optimist”, viz,
   “a man who believes that humanity will probably survive even if it doesn’t take his advice.”
 }
 
@@ -2084,6 +2030,49 @@ still I declare,
   What is the criterion already?
   Can you explain in each case what makes treating subclassing as subtyping the same
   sound or unsound?
+}
+
+@exercise[#:difficulty "Easy"]{
+  The chapter claims that the very first example in the very first OO paper
+  involves recursive types that defeat the NNOOTT.
+  Read the @c{linkage} class example in @~cite{Simula1967}.
+  Explain precisely which field types involve self-reference,
+  and why a subclass of @c{linkage} cannot be a subtype of @c{linkage}
+  under standard subtyping rules and still actually be a linkage
+  between elements of the same type only as intended.
+}
+
+@exercise[#:difficulty "Easy"]{
+  Using the @c{ModExt} type, manually work through the types for the code in @secref{MOO}.
+}
+
+@exercise[#:difficulty "Medium"]{
+  The chapter mentions “binary methods” as a case where NNOOTT fails.
+  Implement a specification for @c{Comparable} values with a method
+  @c{compare : Self → Self → Ordering} (where @c{Ordering} is @c{LT | EQ | GT}).
+  Assume a type: @c{Number} is a subclass of @c{Comparable} and has a subclass @c{Integer}.
+  Show concretely how assuming @c{Integer ≤ Number} leads to a runtime type error@xnote["."]{
+    Actually, there is One Weird Trick™ by which comparison operations
+    can be considered regular unary methods rather than binary methods,
+    and thus work with the NNOOTT:
+    in languages with dynamic typing, where you can check the type of a value at runtime,
+    comparisons can be done with all objects of the base type
+    (e.g. @c{Any} in general, or @c{Number} in the above case),
+    returning a boolean that is always false when types mismatch.
+    The base type never changes, and the method remains covariant.
+    Note how that trick doesn’t work for addition, though.
+  }
+}
+
+@exercise[#:difficulty "Research"]{
+  Implement a typesystem for a language including the applicative λ-calculus and
+  an extension for lazy evaluation, with a type inference engine.
+  Extend your typesystem so it should include
+  recursively constrained types as in @citet{isoop1995}.
+  Implement a minimal object system on top as in the previous chapter, or as in @citet{iloop1995}.
+  Now extend it to support universal and existential quantification.
+  Add it to Gerbil Scheme or some other language.
+  Get your system published.
 }
 
 @section[#:tag "SOO"]{Stateful OO}
@@ -2246,6 +2235,29 @@ and leave their users helpless, forced to reinvent entire frameworks of identity
 so they may then live in systems they build on top of these frameworks,
 rather than directly in the language that denies the issues.
 
+@exercise[#:difficulty "Easy"]{
+  Implement a @c{Counter} prototype two ways:
+  @itemize[
+    @item{Pure functional: @c{increment} returns a new counter with value increased by 1}
+    @item{Mutable: @c{increment!} modifies the counter in place and returns @c{#f},
+           or some other appropriate unit value (e.g. @c{(void)} in many Scheme implementations).}
+    }]
+  Show that both versions can be used to count from 0 to 10.
+  What is the key difference in how client code must be written for each version?
+}
+
+@exercise[#:difficulty "Easy"]{
+  The chapter claims that mutation is orthogonal to OO
+  because OO is fully evaluated at compile-time in most languages.
+  Examine a simple class hierarchy in Java or C++.
+  Identify which computations happen at compile-time (class structure, method resolution)
+  versus runtime (field mutation, method execution).
+  Does mutation ever affect the compile-time OO computations? Why or why not?
+}
+
+@exercise[#:difficulty "Medium"]{
+
+}
 
 @exercise[#:difficulty "Medium, Recommended"]{
   If you did exercise @exercise-ref{05to06}, compare your previous answers with mine.
@@ -2269,15 +2281,13 @@ rather than directly in the language that denies the issues.
   Save your answer to compare with the treatment in @secref{IMSMO}.
 }
 
-@exercise[#:difficulty "Research"]{
-  Implement a typesystem for a language including the applicative λ-calculus and
-  an extension for lazy evaluation, with a type inference engine.
-  Extend your typesystem so it should include
-  recursively constrained types as in @citet{isoop1995}.
-  Implement a minimal object system on top as in the previous chapter, or as in @citet{iloop1995}.
-  Now extend it to support universal and existential quantification.
-  Add it to Gerbil Scheme or some other language.
-  Get your system published.
+@exercise[#:difficulty "Hard"]{
+  C++ is a pure functional lazy dynamic language—at compile-time.
+  With the help of AI if needed, implement lazy streams, a lazy stream of all the integers,
+  and a stream of the all the factorial numbers, plus a test for the tenth one,
+  @c{using} a recent version of the C++ template metaprogramming language.
+  If you feel gung ho about C++ templates, implement the λ-calculus,
+  and on top of it the @c{mix} and @c{fix} functions and the examples from @secref{MOO}.
 }
 
 @exercise[#:difficulty "Research"]{

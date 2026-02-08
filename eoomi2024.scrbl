@@ -947,6 +947,7 @@ focused on coupling them.
 Mutable State in Smalltalk and CL is thin 2nd class encapsulation of 2 1st-class concepts,
 the getter and the setter. (though can be seen as 1st class, with reflection)
 
+### Intrinsic Complexity
 
       from which the emerging meaning is always explainable.
       Certainly, there is a time when the emerging meaning of a large enough assembly
@@ -967,3 +968,49 @@ the getter and the setter. (though can be seen as 1st class, with reflection)
       lots of unwanted interactions that break the abstraction,
       causing the semantic plumbing to leak everywhere,
       and offering attack vectors for active enemies to enter between the cracks.
+
+
+### OO and Types
+
+Typescript
+https://www.typescriptlang.org/docs/handbook/utility-types.html
+
+Type-Safe Prototype-Based Component Evolution" (2002)
+https://www.cs.cornell.edu/andru/cs711/2002fa/reading/zenger02typesafe.pdf
+
+https://www.cs.cmu.edu/~aldrich/ego/
+
+https://counterexamples.org/subtyping-vs-inheritance.html
+
+Andrew K. Wright & Robert Cartwright
+"A practical soft type system for Scheme"
+1997
+
+Why do "unary methods" work in class OO, but not e.g. binary methods?
+Because you moved construction / destruction out of the way,
+so all you’re doing is consuming data,
+in a way that (as far as types are concerned) is extensible.
+(if considered not trivially returning unit, but effectful with linear resources to forcibly manage).
+Also, when an object of same type is linearly returned,
+there is one obvious place from which to copy the extended rest of the object;
+when multiple objects are returned... that is still a possible interpretation
+(and though that’s seldom the useful one, that’s enough for the type theorist).
+
+Meanwhile, the relationship between a module context and a focused value being
+modularly and extensibly specified within it is characterized by
+a @emph{lens} @~cite{Foster2007CombinatorsFB},
+generalizing a path of identifiers to some arbitrary way of accessing a subcomputation.
+
+What makes Typing OO so complex is the confusion of specification and target.
+People are trying to give types to an entity that is the fruit of a fixpoint,
+and also retroactively undo the fixpoint to somehow type what was before.
+Some superbright people manage to juggle the immense complexity of the endeavor
+(by actually remembering the operator before fixpoint, of course), and
+proudly show their superdupercomplex calculi as if they’ve solved the problem of semantics for OO.
+The real solution is to reject complexity, just unbundled specification and target,
+and it all becomes the trivial matter of lots simple regular algebraic operations
+before a well-known general-purpose fixpoint.
+
+
+  Once you forsake the NNOOTT, you stop trying to force subclass pegs into subtype holes,
+  and all these problems evaporate.

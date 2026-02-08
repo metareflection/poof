@@ -1314,6 +1314,31 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
+@InProceedings{ducournau1987algorithms,
+  author={Ducournau, Roland and Habib, Michel},
+  title={On Some Algorithms for Multiple Inheritance in Object-Oriented Programming},
+  booktitle={ECOOP '87: European Conference on Object-Oriented Programming},
+  year={1987},
+  pages={243--252},
+  publisher={Springer-Verlag},
+  series={Lecture Notes in Computer Science},
+  volume={276},
+  doi={10.1007/3-540-47891-4_23},
+  url={https://link.springer.com/chapter/10.1007/3-540-47891-4_23},
+  isbn={978-3-540-47891-1},
+  note={.
+    Ducournau and Habib exploring the graph properties of inheritance algorithms,
+    but not yet having formulated monotonicity.
+    They call “multiplicity” (why?) the local precedence order.
+    IIUC, their property 1 is linearization, 4 is local precedence order,
+    and 2 is their expressing the tie break heuristic as “greediness”,
+    i.e. in terms of working with minimal lookahead from the list of available candidates.
+    The only thing that’s missing to make it C3 is the monotonicity requirement;
+    funny then that they didn’t immediately find that C3 as a solution
+    when they invented monotonicity in 1992. Maybe I’m misreading what they mean by “greediness”.
+  }
+}
+
 % https://beta.cs.au.dk/ ?
 % https://www.semanticscholar.org/paper/The-BETA-Programming-Language-Kristensen-Madsen/3971897f708518e13809d3c0772105bd86526e50
 % https://tidsskrift.dk/daimipb/article/view/7578
