@@ -360,7 +360,7 @@ but that I can share in the form of a book.
 
 @section{What this Book}
 
-@subsection{A Theory of OO}
+@subsection[#:tag "aToOO"]{A Theory of OO}
 @epigraph{There is nothing so practical as a good theory.
   @|#:- "Kurt Lewin"|
 }

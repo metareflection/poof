@@ -41,3 +41,11 @@ Records as records? Now we’re talking.
 
 @section{Meta-Object Protocols}
 
+@exercise[#:difficulty "Medium"]{
+  Read about the Meta-Object Protocol in CLOS @~cite{amop},
+  particularly the protocols for class redefinition and instance update.
+  Compare the CLOS approach to the simpler models discussed in this chapter.
+  What additional flexibility does the MOP provide?
+  What are the costs of that flexibility in terms of
+  implementation complexity and reasoning difficulty?
+}

@@ -278,7 +278,17 @@ beyond a mere technical property.
 And even then, modularity only characterizes half of OO,
 so that people who try to equate OO with that half only
 crucially miss the other half—@emph{extensibility} (see @secref{EO}, @secref{E})—and
-thus fail to properly identify OO.
+thus fail to properly identify OO@xnote["."]{
+  Someone who disregards the extensibility aspect of OO to only consider modularity
+  would count as OO any language with a module system, or encapsulated entities of any kind,
+  to the great surprise of the users and implementers of these languages.
+  “OO” languages by this standard would include
+  not just languages like Go that explicitly reject OO, but also
+  all Functional Programming (FP) languages,
+  since lexical scoping is enough to provide encapsulation.
+  See in the introduction (@seclink{aToOO}) the footnote about William Cook,
+  who held such views, and my notes of some of his more egregious writings.
+}
 
 Now, insofar as some people identify encapsulation narrowly as the presence
 of specific visibility mechanisms such as found in C++ or Java

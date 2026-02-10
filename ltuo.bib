@@ -1111,8 +1111,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     He then contrasts how the two OO paradigms are typically used to represent knowledge,
     how they compare in expressiveness, efficiency, concurrency issues,
     suitability for interactive use.
-    He notably explains how to implement inheritance (i.e. Classes)
-    in terms of delegation (i.e. Prototypes).
+    He even explains (section 6) how to implement inheritance (i.e. Classes)
+    in terms of delegation (i.e. Prototypes) and why a correspondence the other way is impossible.
   }
 }
 
@@ -1363,7 +1363,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     If either is defined, then the init takes specified input arguments (none if no enter block)
     and returns the specified values (none if no exit block).
     This asymmetry is there in the name of both keeping the system minimal
-    and still identifying a pattern with both procedures and objects.
+    and still identifying a pattern’s target (my word) with both procedures and records.
     Inheritance works by extending a pattern and its transitive subpatterns,
     using the same concatenation semantics as Simula:
     in each “do” block, an “inner” keyword may specify
@@ -1973,6 +1973,36 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     All in all, authors claim to strive for “simplicity”, but shun theory,
     so end up doing _vastly_ complex things in the end.
  }
+}
+
+@article{Baker1991CLOStrophobia,
+  author={Baker, Henry G.},
+  title={CLOStrophobia: its etiology and treatment},
+  year={1991},
+  issue_date={Oct. 1991},
+  publisher={Association for Computing Machinery},
+  address={New York, NY, USA},
+  volume={2},
+  number={4},
+  issn={1055-6400},
+  url={https://doi.org/10.1145/126983.126984},
+  doi={10.1145/126983.126984},
+  abstract={The Common Lisp Object System (CLOS) has received some praise and some criticism, both deserved. One of the most controversial features of standard CLOS is its linearly-ordered "class precedence list", which is used to linearly order the execution of its "combination" methods. In addition to the problems already known regarding the linear ordering of superclasses, we show that the standard CLOS class precedence ordering produces gratuitously complex and non-intuitive behavior. We then show that a slight modification of the standard ordering rules produces a linear ordering which can achieve most of the goals of CLOS more efficiently, and without impacting most programs. We describe a subset of CLOS called Static CLOS which preserves much of the praise due CLOS, while eliminating some of the criticism. Static CLOS is tuned for delivery of debugged code, rather than for prototype development. This "delivery" CLOS determines as many methods as possible at compile-time using "type inference" techniques. While these techniques generally result in faster-executing code, the space requirements can grow quite large. We argue that this space explosion can be partially ameliorated through the use of our modified class precedence ordering.},
+  journal={SIGPLAN OOPS Mess.},
+  month=oct,
+  pages={4–15},
+  numpages={12},
+  note={.
+    In this paper, the ever-insightful hbaker, whose every publications may be worth reading,
+    discusses some downsides of CLOS’s focus on runtime extensibility
+    when statically compiling code for which performance and static analysis matter.
+    As an answer, he defines Static CLOS, a subset that can be efficiently compiled
+    to a static language (with an implementation targetting ADA),
+    with type inference and type-directed optimizations.
+    As part of his treatment of inheritance, besides prohibiting class redefinition,
+    the use of change-class, or methods with declared generic function,
+    hbaker introduces the concept of a global class precedence list.
+  }
 }
 
 % HPL-91-50
@@ -2681,6 +2711,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
+% https://github.com/alexisread/kevo/tree/main/0.9b6
 @Article{inheritance1996,
   author={Antero Taivalsaari},
   title={On the Notion of Inheritance},
@@ -2698,8 +2729,43 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   month={sep},
   pages={438--479},
   numpages={42},
-  keywords={object-oriented programming, language constructs, delegation, inheritance, incremental modification, programming languages}
+  keywords={object-oriented programming, language constructs, delegation, inheritance, incremental modification, programming languages},
+  note={.
+    Taivalsaari makes a nice exploration of inheritance in its many forms, in a rather literary style.
+    The paper is remarkable in having strengths and weaknesses at odds with those
+    of most or all papers in the field:
+    PL researchers usually have an easier time with the modularity of OO while struggling
+    to understand its extensibility aspect, inheritance, its purpose,
+    how to model it or not, what are or aren’t acceptable accommodations to make it fit their models.
+    They tend to have strict formal ideas of what they are doing and
+    be uncurious and closed to opposite approaches.
+    Many focus on types and not on code, and study and sometimes implement OO systems
+    but never use them much for anything.
+    Taivalsaari is all the opposite. He as a knack for extensibility and inheritance,
+    what it is for and how to use it; he also has a good understanding of “late binding”
+    through self-reference as the mechanism that makes inheritance more than plain extension,
+    but lacks the interest in making it formal and relating it to modularity.
+    Indeed, modularity only makes a brief appearance in the paper,
+    as a mechanism independent from OO that OO can simulate in languages that lack it.
+    Flavorful multiple inheritance is mentioned, but does not receive the treatment it deserves;
+    it is just one of many variants of inheritance that Taivalsaari cites and briefly presents
+    without bringing judgement.
+    Indeed, Taivalsaari is very curious with a broad interest in anything and everything OO,
+    but is seems also accepting and uncritical, and largely informal.
+    He was by far the most original researcher in the field,
+    and his paper is refreshing in many ways.
+    It is a necessary guide for anyone interested in mastering all aspects OO.
+    But the weaknesses of the paper make it ultimately frustrating,
+    albeit in a way opposite to that of all the other papers.
+    Still, this is a read that shows that a better treatment of OO is possible.
+    I hope this book is such a treatment.
+    I don’t have the resources to be as comprehensive as Taivalsaari,
+    especially when thirty more years of R&D mean even more systems and papers to review.
+    But I hope after reading my book, you will have to tools to evaluate
+    the systems I didn’t have time to mention.
+  }
 }
+
 
 @PhDThesis{Fisher1996,
   title={Type Systems for object-oriented programming languages},
@@ -3758,11 +3824,19 @@ and Fiech, Adrian",
   url={http://common-lisp.net/project/asdf/doc/ilc2010draft.pdf}
 }
 
+% Meh, not that much worth listening to.
 @Webpage{OOP2010,
   title={Ralph Johnson, Joe Armstrong on the State of OOP (Interview at QCon)},
   author={Ralph Johnson and Joe Armstrong},
   year={2010},
-  url={https://www.infoq.com/interviews/johnson-armstrong-oop/}
+  url={https://www.infoq.com/interviews/johnson-armstrong-oop/},
+  lastchecked={2026-02-09},
+  note={.
+    After Ralph discusses lessons from Smalltalk,
+    Joe Armstrong, speaking around the 7:45 mark, says that OOP for Alan Kay
+    was about messaging rather than objects, polymorphism and isolation,
+    and Erlang is the only language to actually do message passing this way.
+  }
 }
 
 %% 2011
@@ -3779,14 +3853,16 @@ and Fiech, Adrian",
   note={.
     A great paper that shows how to properly type multiple dispatch and multiple inheritance together,
     with a very interesting concept of runtime kin vs compile-time types.
-    No type theorist seems to have even tried, and they just did it.
-    And yet, at some point the paper becomes too formal and I admit I don’t follow it anymore
-    to tell what is missing or what is there that I’m missing.
+    No type theorist seems to have even tried, and they just did it—sadly
+    they use flavorless rather than flavorful multiple inheritance,
+    but that doesn’t change the type theory much if at all, which is what the paper is mainly about.
+    Now, at some point the paper becomes too formal for me, and I admit I don’t follow it enough
+    to have an authoritative opinion on the type theory, and whether the paper is actually legit.
     One day when I get serious about typesystems,
     I shall surely re-read this paper and try to fully understand it.
     In the meantime, I have complete trust in Guy Steele, and will therefore assume that
     the paper correctly achieves what it says it did, and provides a constructive proof
-    that indeed the problem of typing multimethods is solved.
+    that indeed the problem of typing multiple inheritance with multiple dispatch is solved.
     That said, I suspect that this article combines in ad hoc ways
     two or three concepts that could be usefully be decomposed and treated separately,
     leading to several great papers that would simplify it all.
@@ -4459,6 +4535,20 @@ and Fiech, Adrian",
   }
 }
 
+@webpage{Hirrolot2021,
+  author=Hirrolot,
+  title={awesome-c-preprocessor: A list of awesome C preprocessor stuff},
+  year=2021,
+  url={https://github.com/Hirrolot/awesome-c-preprocessor},
+  lastchecked={2026-02-09},
+  note={.
+    GitHub repository containing a curated list of C preprocessor metaprogramming frameworks,
+    extensions, interpreters, articles, and related resources.
+    See notably hirrolot/metalang99 or boostorg/preprocessor.
+    If only I could trace the old hbaker USENET posts on this topic and see how far he got back then!
+  }
+}
+
 %% 2022
 @Webpage{TopPL2022,
   author={GitHub},
@@ -4733,3 +4823,12 @@ series={POPL '75}
 % TODO: Open Data Types and Open Functions https://www.andres-loeh.de/OpenDatatypes.pdf
 % Andres Löh and Ralf Hinze, PPDP 2006 -- not really OO, just use of typeclasses.
 % cites O'Haskell (Norlander 2001) vs OOHaskell (Kiselyov & Lämmel 2005)
+
+% TODO: more papers by Ducournau
+% https://dl.acm.org/doi/abs/10.1145/1391956.1391960
+% https://dl.acm.org/doi/abs/10.1145/1639949.1640093
+% https://dl.acm.org/doi/abs/10.1145/1922649.1922655
+
+% The NIMBLE Project - Real-time common LISP for embedded expert systems applications
+% Henry Baker
+% https://doi.org/10.2514/6.1989-3140

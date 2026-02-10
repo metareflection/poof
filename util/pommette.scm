@@ -328,10 +328,10 @@ With Racket: racket pommette.rkt
 
 
 ;;; 5.3.2 Composing Modular Extensions
-(def (mix c p s t)
+(def (mix c p s t) ;;  child parent self super
   (c s (p s t)))
 
-(def (idModExt _s)
+(def (idModExt _s) ;; _self super, ignore self return super
   identity) ;; neutral element for mix
 
 ;;; 5.3.3 Closing Modular Extensions
@@ -428,7 +428,7 @@ With Racket: racket pommette.rkt
 
 (def area-spec
   (field-spec 'area (λ (self _inherited)
-    (* (self 'x)) (self 'y))))
+    (* (self 'x) (self 'y)))))
 
 (def rho-spec
   (field-spec 'rho (λ (self _inherited)
@@ -806,6 +806,80 @@ With Racket: racket pommette.rkt
 (def rprotoSpecSetter rproto←spec)
 (def rprotoSpecLens (lensOfGetterSetter rprotoSpecView rprotoSpecSetter))
 
+
+;;; HPROTO encoding
+;;; (pass half before method-id, not after as in YASOS
+;;; also take a late-bound hyper/htop for mixin semantics)
+
+(define rop*←op2 (lambda (op2 id)
+  ;; Simpler, though less efficient: (λ args (foldl op2 id args))
+  (letrec ((op* (case-lambda
+                 (() id)
+                 ((x) x)
+                 ((x y) (op2 x y))
+                 ((x . r) (foldl (lambda (x y) (op2 y x)) x r))))) ;; or (foldl op2 x r)
+    op*)))
+;; Variant of rop*←op2, but for a curried operator that takes one argument then the next.
+(define rop*←op1.1 (lambda (op1.1 id)
+  (rop*←op2 (lambda (x y) (@ op1.1 x y)) id)))
+
+(def (id-hspec hyper half) hyper)
+(def (half-top half) #f)
+(def (half-empty-record half msg-id) #f)
+(def (hspec-half hyper hspec) (hspec hyper))
+(def (hspec-fix hyper hspec) (hspec hyper (hspec hyper)))
+(def (half-ref half) (half half))
+(def (hspec-rmix hparent hchild hyper half)
+  (hchild (hparent hyper) half))
+(define hspec-rmix* (rop*←op1.1 hspec-rmix id-hspec))
+(def (hspec-half-top) (hspec-half half-top))
+(def (hspec-half-record) (hspec-half half-empty-record))
+(def (field-hspec key hcompute-value hyper half method-id)
+  (let ((inherited (hyper half method-id)))
+    (if (equal? key method-id)
+        (hcompute-value inherited half)
+        inherited)))
+(def (constant-field-hspec key val)
+  (field-hspec key (constant-spec val)))
+
+;;; Reproducing earlier examples in this encoding
+(def coord-hspec
+  (hspec-rmix* (constant-field-hspec 'x 2)
+               (constant-field-hspec 'y 4)))
+(def color-hspec
+  (field-hspec 'color (λ (_half _hinherited) "blue")))
+(def point-24h (hspec-half-record (hspec-rmix coord-hspec color-hspec)))
+(def (add-x-hspec dx) (field-hspec 'x (λ (inherited _half) (+ dx inherited))))
+(def area-hspec (field-hspec 'area (λ (_inherited half) (* (half half 'x) (half half 'y)))))
+
+(def point-34ah (hspec-half-record (hspec-rmix* coord-hspec color-hspec (add-x-hspec 1) area-hspec)))
+(def blue-h (hspec-half-record color-hspec))
+
+(expect (half-ref half-top) => #f
+        (half-ref blue-h 'color) => "blue"
+        (map (half-ref blue-h) '(x y z color area)) => '(#f #f #f "blue" #f)
+        (map (half-ref point-24h) '(x y z color area)) => '(2 4 #f "blue" #f)
+        (map (half-ref point-34ah) '(x y z color area)) => '(3 4 #f "blue" 12))
+
+
+;; TODO: write and test wrapper to Y-style spec from a U-style hspec, and back
+(def (hspec→spec hspec self super)
+   (letrec ((half (λ (_) (hspec (λ (_) super) half))))
+     (half #f)))
+(expect (map (fix-record (hspec→spec (hspec-rmix* coord-hspec color-hspec (add-x-hspec 1) area-hspec)))
+             '(x y z color area)) => '(3 4 #f "blue" 12))
+
+;; TODO: fix this
+(def (spec→hspec spec hyper half)
+  (letrec ((self (λ (x) (half half x)))
+           (super (λ (x) (hyper half x))))
+      (spec self super)))
+
+(define u-comp (spec→hspec (mix* color-spec (add-x-spec 1) area-spec coord-spec)))
+
+(expect (map (half-ref (hspec-half-record u-comp)) '(x y z color area)) => '(3 4 #f "blue" 12))
+
+
 #||#
 #|
 The End. (For Now)
@@ -816,3 +890,4 @@ p1 = { a: Int , ...}
 p2 = { b: String, ... }
 p1∩p2 = {a : Int, b : String , ... }
 |#
+

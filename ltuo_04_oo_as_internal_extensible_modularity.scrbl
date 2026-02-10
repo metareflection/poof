@@ -2,10 +2,6 @@
 @; -*- Scheme -*-
 @(require "util/ltuo_lib.rkt")
 @(set-chapter-number 4)
-
-@title[#:tag "OOaIEM"]{OO as Internal Extensible Modularity}
-@section[#:tag "M"]{Modularity}
-@subsection{Division of Labor}
 @epigraph{The benefits expected of modular programming are:
 (1) managerial—development time should be shortened because separate groups
 would work on each module with little need for communication;
@@ -13,6 +9,49 @@ would work on each module with little need for communication;
 without a need to change others;
 (3) comprehensibility—it should be possible to study the system one module at a time.
   @|#:- "David Parnas"|
+}
+In this chapter, I start my detailed explanation of OO by focusing on its @emph{purpose}:
+supporting fine-grained division of labor in software development.
+
+Some readers may balk at the formal part of this book being delayed one more chapter.
+But to distinguish OO from non-OO, and better OO from worse OO,
+and to decide when to use which OO and when not to use OO at all,
+one must understand the purpose of OO. And that is not formal.
+Just like to distinguish a chair from a non-chair, or a better chair from a worse chair,
+and decide when to use which chair and when not to use one,
+one must understand the purpose of a chair. And that goes beyond a formal description of a chair.
+Otherwise, one won’t be able to make the difference between the real thing and
+a broken version, a cheap plastic imitation, a mere representation, a decoy, a parody,
+a torture implement made to look like it, or a pile of toxic waste vaguely shaped like it.
+
+Would you sit on cactus arranged into a chair?
+Or on drum full of radioactive material?
+Because this is what could happen if you define a chair by its shape,
+or by the ability to sit on it, with no regard for its bigger purpose.
+Yet you will do the equivalent or inflict it upon others
+if you don’t understand the purpose of OO.
+Crooks will actively sell bad OO to whoever spends millions of dollars
+in software development, training, tools and products based on it being labelled “OO”,
+without being able to distinguish the real thing from toxic waste.
+Indeed, this very fraud is happening right now, and has been since the 1990s at least,
+to the tune of billions of dollars, as you may know if you have been following the industry.
+And industry or academic pundits who are satisfied with the appearance of OO,
+with the mere presence of some or all of its usual trappings,
+without understanding its purpose, what it is supposed to do or not do for programmers, are complicit:
+they mislead those who listen to them into being victims of the fraud.
+
+
+@title[#:tag "OOaIEM"]{OO as Internal Extensible Modularity}
+
+@section[#:tag "M"]{Modularity}
+@subsection{Division of Labor}
+@epigraph{
+  We take the following statements to be the objectives of modular programming:
+  1. One must be able to convince himself of the correctness of a program module,
+  independently of the context of its use in building larger units of software.
+  2. One must be able to conveniently put together program modules written under
+  different authorities without knowledge of their inner workings.
+  @|#:- "Jack Dennis"|
 }
 Modularity@~cite{Parnas1972 Dennis1975} is the organization of software source code
 in order to support division of labor, dividing it into “modules” that can each be
@@ -22,7 +61,6 @@ The “interface” of each module defines a semi-formal contract between the us
 of the module, such that users need only know and understand the interface to enjoy the functionality
 of the module, whereas the implementers have freedom to build and modify the module internals
 as long as they satisfy the interface.
-
 
 @subsection{First- to Fourth-class, Internal or External}
 @epigraph{I object to doing things that computers can do.

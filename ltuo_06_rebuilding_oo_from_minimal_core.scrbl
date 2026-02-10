@@ -363,8 +363,14 @@ At no point in this encoding is there a handle on a fully resolved target,
 only to the half-resolved specification@xnote["."]{
   The encoding can be considered as being based on the duplication combinator D
   rather than on the fixpoint combinator Y.
-  D is sometimes known as the self-application operator U (see @secref{DSF}),
-  and can also be viewed as half of Y.
+  D is sometimes known as the self-application operator U (see @secref{DSF})
+  in the context of computing fixpoints, and can also be viewed as half of Y.
+  That is why we can speak of Y-encoding and U-encoding of recursion schemes,
+  and also why, when comparing the two, I like to write U-encoded specifications
+  as using @c{half} rather than @c{self} as the name of the first variable,
+  essentially, you have @c{self = (half half)} and @c{super = (hyper half)}.
+  Most implementations traditionally switch the order of arguments between
+  that @c{half} and @c{method-id} but that is immaterial to the semantics.
 }
 
 In T and after it YASOS, an @c{operation} can abstract over the calling convention
@@ -613,10 +619,15 @@ yet no one seems to have been able to fully tease apart the concepts up until re
 }
 @exercise[#:difficulty "Hard"]{
   Modify YASOS to correctly support mixin inheritance.
-  Play with it.
-  Write functions that translate both ways
+  What do the equivalent of @c{mix}, @c{fix} and @c{field-spec} look like?
+  Instead of @c{record-ref}, what function @c{yasos-ref} do you call
+  to consult an object method?
+  Play with the representation, manually translate functions to use this encoding.
+  Write functions that can wrap specifications both ways
   between your modified YASOS encoding and the @c{rproto} encoding.
+  What tradeoffs can you see between the two encodings?
 }
+
 @exercise[#:difficulty "Hard"]{
   Assuming you did exercise @exercise-ref{5alist},
   write a variant of @c{rproto} that uses your representation of records
@@ -624,6 +635,11 @@ yet no one seems to have been able to fully tease apart the concepts up until re
 }
 
 @section[#:tag "RCOO"]{Rebuilding Class OO}
+@epigraph{
+  JavaScript classes, introduced in ECMAScript 2015,
+  are primarily syntactical sugar over JavaScript’s existing prototype-based inheritance.
+  The class syntax does not introduce a new object-oriented inheritance model to JavaScript.
+    @|#:- "Mozilla Developer Network"|}
 
 @subsection{A Class is a Prototype for a Type}
 
@@ -631,7 +647,8 @@ Having elucidated Prototype OO in the previous sections,
 including its notion of Object, a.k.a. Prototype, as conflation of Specification and Target,
 I can now fully elucidate Class OO including its notion of Class:
 @principle{A Class is a Prototype for a Type}.
-Or, to be pedantic, a class is a prototype, the target of which is a @emph{type descriptor},i.e. a record describing a type together with methods associated with the type.
+Or, to be pedantic, a class is a prototype, the target of which is a @emph{type descriptor},
+i.e. a record describing a type together with methods associated with the type.
 
 The target type of a class is usually, but not always,
 a record type (indexed product, structure, struct, named tuple),
@@ -1040,12 +1057,11 @@ because computational power and/or logical contradiction emerge
 from unforeseen interactions as the languages grow in complexity over time
 (see @secref{OOTP})@xnote["."]{
   Even the C preprocessor, with annoying rules added to “guarantee” termination in finite time,
-  ends up allowing arbitrary metaprogramming in practice.
-  @; TODO cite metalang99, https://github.com/Hirrolot/awesome-c-preprocessor
+  ends up allowing arbitrary metaprogramming in practice @~cite{Hirrolot2021}.
   Henry Baker tried to explain it in old posts on USENET that I never understood,
   stupidly believing the guarantees, even though I could myself prove that
   the “finite time” of termination could easily be made longer than the age of the universe.
-  @; TODO cite hbaker usenet
+  @; TODO find and cite hbaker usenet
 }
 The attempts do usually succeed, however, at making these type-level languages
 require a completely different mindset from the “base language”,
@@ -1226,7 +1242,7 @@ consists in considering subclassing (a relation between specifications)
 as the same as subtyping (a relation between targets).
 Thus, in this theory, a subclass, that extends a class with new fields,
 is (supposedly) a subtype of the parent “superclass” being extended.
-@;{ XXX Eiffel, Java, C#, Smalltalk
+@;{ XXX Eiffel, Java, C#, Smalltalk,
   The theory is implicit in the names of the @c{is} operator in C#.
 }
 
@@ -1345,7 +1361,9 @@ as being “(constant) sets” @~cite{Jacobs1995ObjectsAC}@xnote[","]{
   that said, she did use the word “object-oriented” in print as far back as @citet{Jones1976}
   to describe her style of programming, one month before Bobrow published
   the memo on KRL-0 that first used it right,
-  so she did have a stake in the name, though not the winning one.
+  so she did have a stake in the name, though
+  her definition happily didn’t prevail.
+  @; TODO cite Wegner "object-based"
   Are either those who talk and publish what turns out not to be OO at all at OO conferences,
   or those who invite them to talk and publish, being deliberately misleading?
   Probably not, yet, the public can be fooled just the same as if dishonesty were meant:
@@ -1372,13 +1390,13 @@ as meaning «not depending on the “unknown” type X (of self).»
 This makes his paper inapplicable to most OO, but interestingly,
 precisely identifies the subset of OO for which inheritance coincides with subtyping,
 or, to speak more precisely,
-subtyping of modular extensions coincides with subtyping of their targets.
+for which subtyping of modular extensions coincides with subtyping of their targets.
 
 Indeed, in general, specifications may contain so called “binary methods”
 that take another value of the same target type as argument,
 such as in very common comparison functions (e.g. equality or order)
 or algebraic operations (e.g. addition, multiplication, composition), etc.
-and beyond these, they can actually contain arbitrary higher-order functions
+and beyond these, specifications may actually contain arbitrary higher-order functions
 involving the target type in zero, one or many positions,
 both “negative” (as an overall argument)
 or “positive” (as an overall result), @; TODO cite Felleisen???
@@ -1548,7 +1566,7 @@ which is distinct from
 variants of the latter of which Kim Bruce calls “matching” @~cite{SubtypingMatch1997}.
 @; TODO cite further
 But most people, being confused about the conflation of specification and target,
-don’t conceptualize the distinction, and either
+fail to conceptualize the distinction, and either
 try to treat them as if it were the same thing,
 leading to logical inconsistency hence unsafety and failure;
 or they build extremely complex calculi to do the right thing despite the confusion.
@@ -1560,7 +1578,7 @@ and apply them separately to the types of specifications and their targets,
 knowing that “subtyping and fixpointing do not commute”,
 or to be more mathematically precise,
 @emph{fixpointing does not distribute over subtyping},
-or said otherwise, @principle{the fixpoint operator is not monotonic}:
+or, said otherwise, @principle{the fixpoint operator is not monotonic}:
 If @c{F} and @c{G} are parametric types,
 i.e. type-level functions from @c{Type} to @c{Type},
 and @c{F ⊂ G} (where @c{⊂}, sometimes written @c{≤} or @c{<:},
@@ -1929,7 +1947,9 @@ A travesty, an inversion of right and wrong, and a waste of tremendous brainpowe
 Finally, some publications are just bad cases of the NNOOTT,
 with heaps of pointless formalism piled on top to hide just how misguided the authors are,
 even though most of them came even after the NNOOTT had been utterly debunked.
-They should serve as laughingstock for everyone to scorn:
+They should serve as cautionary tales for how even brilliant minds can go wrong
+and have a negative impact on science when they become attached to flawed assumptions
+they can’t let go even after these assumptions have been debunked:
 @citet{Cardelli1984}, @citet{Cardelli1986Understanding},
 @citet{Abadi1996Primitive AbadiCardelli1996ToO},
 @citet{Cartwright2013Inheritance}, @citet{abdelgawad2014domain}.
@@ -2141,7 +2161,7 @@ First, I must note that such events are relatively rare,
 because they involve programmers not only typing, but thinking,
 which happens millions of times slower than computers process data—even when the programmer is an AI.
 Most evaluation of most programs, especially where performance matters,
-happens in-between two such code upgrades,
+happens in between two such code upgrades,
 in large spans of time during which the code is constant.
 Therefore, the usual semantics that consider inheritance structures as constant
 still apply for an overwhelming fraction of the time and an overwhelming fraction of objects,
@@ -2237,14 +2257,14 @@ rather than directly in the language that denies the issues.
 
 @exercise[#:difficulty "Easy"]{
   Implement a @c{Counter} prototype two ways:
-  @itemize[
-    @item{Pure functional: @c{increment} returns a new counter with value increased by 1}
-    @item{Mutable: @c{increment!} modifies the counter in place and returns @c{#f},
-           or some other appropriate unit value (e.g. @c{(void)} in many Scheme implementations).}
-    }]
-  Show that both versions can be used to count from 0 to 10.
-  What is the key difference in how client code must be written for each version?
 }
+@itemize[
+  @item{Pure functional: @c{increment} returns a new counter with value increased by 1}
+  @item{Mutable: @c{increment!} modifies the counter in place and returns @c{#f},
+         or some other appropriate unit value (e.g. @c{(void)} in many Scheme implementations).
+  }]
+Show that both versions can be used to count from 0 to 10.
+What is the key difference in how client code must be written for each version?
 
 @exercise[#:difficulty "Easy"]{
   The chapter claims that mutation is orthogonal to OO
@@ -2256,8 +2276,27 @@ rather than directly in the language that denies the issues.
 }
 
 @exercise[#:difficulty "Medium"]{
-
+  The chapter mentions that conflation enables state sharing
+  between all users of a prototype.
+  Demonstrate this by creating a mutable @c{SharedCounter} prototype,
+  obtaining two "references" to it (by extracting the target twice),
+  incrementing through one reference, and observing the change through the other.
+  Then demonstrate cloning (creating a new prototype with the same specification)
+  to obtain independent state. What is the semantic difference between
+  "extracting the target" and "cloning the prototype"?
 }
+
+@exercise[#:difficulty "Medium"]{
+  The chapter states that “laziness proves essential to OO,
+  even and especially in presence of side-effects.”
+  Demonstrate this by:}
+  @itemize[
+    @item{Creating a specification that performs I/O (e.g., prints a message)
+          during instantiation.}
+    @item{Showing that without laziness, composing specifications via @c{mix}
+          causes unwanted duplicate I/O.}
+    @item{Showing that with lazy instantiation, I/O only happens once,
+          when the final target is forced.}]
 
 @exercise[#:difficulty "Medium, Recommended"]{
   If you did exercise @exercise-ref{05to06}, compare your previous answers with mine.
@@ -2282,6 +2321,15 @@ rather than directly in the language that denies the issues.
 }
 
 @exercise[#:difficulty "Hard"]{
+  Read my article @citet{LIL2012}, and implement in your language of choice
+  the automated wrapping between pure and stateful style, class and typeclass styles.
+  For extra points, also implement higher-order wrappings in the style of @citet{Findler2002}.
+  For research points, instead of wrapping just the interface, translate the code itself.
+  For extra research points, automate the translation between styles at the compiler level,
+  on demand, depending on the context.
+}
+
+@exercise[#:difficulty "Hard"]{
   C++ is a pure functional lazy dynamic language—at compile-time.
   With the help of AI if needed, implement lazy streams, a lazy stream of all the integers,
   and a stream of the all the factorial numbers, plus a test for the tenth one,
@@ -2289,6 +2337,49 @@ rather than directly in the language that denies the issues.
   If you feel gung ho about C++ templates, implement the λ-calculus,
   and on top of it the @c{mix} and @c{fix} functions and the examples from @secref{MOO}.
 }
+
+@exercise[#:difficulty "Hard"]{
+  Design and implement a simple protocol for updating instances
+  when their class is redefined, inspired by CLOS’s
+  @c{update-instance-for-redefined-class}.
+  Your protocol should handle:}
+  @itemize[
+    @item{Adding a new field with a default value}
+    @item{Removing a field (what happens to its data?)}
+    @item{Renaming a field (preserving its value)}
+    @item{Changing a field's type (with a user-provided conversion function)}]
+  Demonstrate with a @c{Person} class that evolves through three versions:
+  v1 has @c{name}; v2 adds @c{age}; v3 renames @c{name} to @c{full-name}
+  and adds @c{email}.
+  Bonus: Make it a research topic by generalizing the issue to that
+  of schema upgrade for a persistent object store with many indexes
+  that may require multiple phases to update.
+
+@exercise[#:difficulty "Hard"]{
+  The chapter discusses the question of what happens to computed targets
+  when a specification is updated.
+  Implement and compare three strategies:}
+  @itemize[
+    @item{@emph{Eager invalidation}: all targets are immediately recomputed
+          when any specification changes.}
+    @item{@emph{Lazy invalidation}: targets are marked "dirty" and only recomputed
+          on next access.}
+    @item{@emph{Versioned}: old targets remain valid for their specification version;
+          new accesses get new targets.}]
+  Discuss the tradeoffs in terms of consistency, performance, and complexity.
+  Which strategy is most appropriate for (a) interactive development,
+  (b) long-running servers, (c) real-time systems?
+
+@exercise[#:difficulty "Hard"]{
+  The chapter mentions that Erlang is the only popular language
+  that fully addresses code upgrade semantics.
+  Research Erlang's hot code loading mechanism and its interaction with processes.
+  Then design (and optionally implement) a similar mechanism for a Scheme-based OO system:}
+  @itemize[
+    @item{How do you ensure "quiescence" before applying updates?}
+    @item{How do you handle objects that are mid-operation during an upgrade?}
+    @item{How do you handle objects referenced from the call stack?}]
+  What simplifying assumptions does your design make compared to Erlang?
 
 @exercise[#:difficulty "Research"]{
   Add support for class update to an existing object system that doesn’t support it yet,

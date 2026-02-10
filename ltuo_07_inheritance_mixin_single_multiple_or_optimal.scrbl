@@ -31,7 +31,7 @@ will proceed to build the other variants on top of it.
 I showed above (see @secref{MFCME})
 that mixin inheritance involves just
 one type constructor @c{ModExt} and two functions @c{fix} and @c{mix},
-repeated here more concisely from above:
+repeated here more concisely from the previous chapter:
 @Code{
 type ModExt r i p = ∀ s, t : Type . s ⊂ r s, t ⊂ i s ⇒ s → t → (p s)∩t
 fixt : ∀ r i p : Type → Type, ∀ s, t : Type .
@@ -70,7 +70,7 @@ simpler than the modular extensions of mixin inheritance from @secref{MFCME}@xno
 Modular definitions take a @c{self} as open recursion argument
 and return a record using @c{self} for self-reference.
 Unlike modular extensions, they do not take a @c{super} argument,
-since they only are inherited from, but don’t themselves inherit, at least not anymore:
+since they are only inherited from, but don’t themselves inherit, at least not anymore:
 what superclass they did inherit from is a closed choice made in the past,
 not an open choice to make in the future; it is baked into the modular definition already.
 The semantics can then be reduced to the following types and functions:
@@ -113,7 +113,7 @@ Why then ever use single inheritance,
 since it still requires the entities of mixin inheritance in addition to its own?
 Might one not as well directly adopt the simpler and more expressive mixin inheritance?
 
-@subsection[#:tag "CMSI"]{Comparing Mixin- and Single- Inheritance}
+@subsection[#:tag "CMSI"]{Comparing Mixin and Single Inheritance}
 
 @Paragraph{Mixin Inheritance is Simpler than Single Inheritance, @emph{assuming FP}}
 Assuming knowledge of Functional Programming (FP),
@@ -134,7 +134,7 @@ C++, Java in the 2010s, and slightly earlier for C#,
 after JavaScript became popular in application development
 and made FP popular with it, in the 2000s.
 Back when single inheritance was invented in the 1960s,
-these were extremely advanced concepts that very few mastered
+these were extremely advanced concepts that very few mastered,
 even among language designers.
 Unlike mixin inheritance, single inheritance does not require any FP,
 and many languages have or had single inheritance and no FP, including
@@ -147,16 +147,19 @@ need never be explicitly realized as a first-class entity:
 literally using my above recipe to implement a class or prototype definition with single inheritance
 would involve building a modular extension, then immediately applying it with @c{extendModDef},
 only to forget it right afterwards;
-but instead, most OO languages would support some special purpose syntax for the definition,
+but instead, most OO languages support some special purpose syntax for the definition,
 and process it by applying the extension to its super specification as it is being parsed,
 without actually building any independent first-class entity embodying this extension.
+Instead of applying a second-order functions,
+OO languages follow a generation schema for first-order code,
+in a special metaprogram part of their compiler.
 The semantics of this special purpose syntax are
-extremely complex to explain without introducing FP concepts,
+quite complex to explain without introducing FP concepts;
 but neither implementors nor users need actually conceptualize that semantics
 to implement or use it.
-@; As for those clever enough to figure out that semantics,
-@; they tend to be clever enough not to need it to be simplified for them,
-@; and not to care enough to simplify it for others.
+@;{ As for those clever enough to figure out that semantics,
+   they tend to be clever enough not to need it to be simplified for them,
+   and not to care enough to simplify it for others. }
 
 @Paragraph{Mixin Inheritance is More Expressive than Single Inheritance}
 Single inheritance can be trivially expressed in terms of mixin inheritance:
@@ -309,10 +312,10 @@ and after it Ada not only issue an error like older systems,
 they also try to force the ancestry DAG into a tree
 like CommonObjects @~cite{Snyder1986Encapsulation}.
 Self initially tried a weird resolution method along a “sender path”
-that dives depth first into the first available branch of the inheritance DAG
+that each time dived into the first available branch of the inheritance DAG
 without backtracking @~cite{parentsSharedParts1991},
 but the authors eventually recognized how wrongheaded that was,
-and reverted to, sadly, the conflict paradigm @~cite{self2007hopl}@xnote["."]{
+and reverted to—sadly—the conflict paradigm @~cite{self2007hopl}@xnote["."]{
   Like the “visitor pattern” approach to multiple dispatch, the
   Self’s once “sender path” approach to multiple inheritance
   fails to capture semantics contributed by concurrent branches of a partial order,
@@ -333,7 +336,7 @@ and along the way, I will explain where the @emph{flavorless} dead end of
 
 I will call “inheritance hierarchy”, or when the context is clear, “ancestry”,
 the transitive closure of the parent relation, and “ancestor” is an element of this ancestry.
-With single inheritance, this ancestry was a list.
+With single inheritance, this ancestry is a list.
 With multiple inheritance, where each specification may inherit from multiple parents,
 the ancestry of a specification is not a list as it was with single inheritance.
 It is not a tree, either, because a given ancestor can be reached through many paths.
@@ -564,7 +567,7 @@ the base-bill-of-parts as a parent then safely assume that the part database
 will be initialized before it is used (no ignoring the initialization),
 and won’t be reinitialized again after registration, cancelling the registration
 (no duplicating the initialization). Each part registered by its respective extension
-will be counted once and only once, even and especially when contributed by independent
+will be counted once and only once, even—and especially—when contributed by independent
 specifications that are in no mutual ancestry relation.
 
 Languages that respect this linearity property replace conflict with @emph{cooperation}.
@@ -642,7 +645,14 @@ the @emph{precedence list} of the class, prototype or specification, a term I wi
 Thanks to this property, methods that marshal (“serialize”) and unmarshal (“deserialize”)
 the fields of a class can follow matching orders and actually work together.
 Methods that acquire and release resources can do it correctly,
-and avoid deadlock when these resources include holding a mutual exclusion lock.
+and avoid deadlock when these resources include holding a mutual exclusion lock@xnote["."]{
+  Note that consistent linearization of methods within a class
+  is sufficient to order locks this holds if locks only if the locks are class-specific.
+  If the locks are shared with objects of other classes,
+  you need consistency across all classes that use those locks,
+  and potentially across all classes.
+  See monotonicity and global consistency below.
+}
 Ordering inconsistencies can lead to resource leak, use-before-initialization, use-after-free,
 deadlock, data corruption, security vulnerability, and other catastrophic failures.
 
@@ -650,7 +660,7 @@ This property was also one of the major innovations of Flavors @~cite{Cannon1979
 As I will show, it implies that the semantics of multiple inheritance
 can be reduced to those of mixin inheritance
 (though mixin inheritance would only be formalized a decade later).
-It is the first of the constraints after which C3 @~cite{Barrett1996C3} is named.
+It is the first of three eponymous constraints of C3 @~cite{Barrett1996C3}.
 Inheritance order and linearity together imply linearization,
 especially since some methods involve sequential computations,
 and a uniform behavior is mandated over all methods.
@@ -760,12 +770,15 @@ or security vulnerabilities instead of deadlocks.
 By contrast, with this consistency property, developers may not even have to care
 what kind of resources their parents may be allocating, if any, much less in what order.
 
-This property was first described by @citet{Ducournau1992Monotonic}
+This property was described but not specifically named
+in corollary 2 of theorem 1 of @citet{Baker1991CLOStrophobia}, when discussing
+the consistency properties of linearization in CLOS (or in this case, the lack thereof).
+This property was first explicitly described by @citet{Ducournau1992Monotonic}
 then implemented by @citet{Ducournau1994Monotonic},
-and is the third of the three constraints after which C3 is named @~cite{Barrett1996C3}.
+and is the third of the three eponymous constraints of C3 @~cite{Barrett1996C3}.
 Among popular “flavorful” languages, Python, Perl and Solidity respect this constraint,
 but Ruby, Scala and Lisp fail to.
-(Though at least in Common Lisp you can use metaclasses to fix the issue in your code.)
+(Though at least in Common Lisp you can use metaclasses to fix this issue for your code.)
 
 @Paragraph{Shape Determinism: Consistency across Equivalent Ancestries}
 Two specifications with equivalent inheritance DAGs
@@ -799,7 +812,7 @@ it purports to implement @~cite{Barrett1996C3}@xnote["."]{
   The Three Musketeers @~cite{Dumas1844}.
 }
 
-As an alternative to Shape Determinism, you could establish a global ordering
+As an alternative to Shape Determinism, you could establish a global ordering of
 all defined classes across a program,
 e.g. lexicographically by their name or full path,
 or by assigning a number in some traversal order,
@@ -811,13 +824,42 @@ whenever the constraints otherwise allow multiple solutions.
 But the instability of such a heuristic when the code changes
 would lead to many @emph{heisenbugs}.
 
+@Paragraph{Global Precedence: Consistency across All Ancestries}
+
+@citet{Baker1991CLOStrophobia} introduces the property that there should exist
+a global precedence list, i.e. a total ordering of classes
+compatible with every class’s precedence list.
+Unlike Shape Determinism, this is not a local property of every class,
+but a global property of the program, that enables
+global optimization techniques and correctness enforcement.
+For instance, a global ordering of ensures no deadlock from using class-associated locks.
+Also, subclass checking can be done by consulting a bitmap with global indexes,
+the number of static method combinations could be minimized, etc.
+
+Baker suggests that the order could be based on class definition order,
+where forward references are prohibited and local order must match previous load order.
+Unlike the proposed alternative to Shape Determinism above,
+this order would be authoritative as the actual linearization order,
+not just a tie-breaking heuristic in case of multiple possible solutions.
+Baker’s solution is great for statically compiling code,
+as long as the load order is guaranteed to be consistent
+in presence of separate compilation and incremental source code modifications.
+Dynamic code update, e.g. in an interactive environment, make this property harder to enforce;
+some mechanism may trigger recompilation or reconfiguration of all subsequent classes
+after a change to any given class.
+
+A dummy mother-of-all precedence list can be produced at the end of static compilation
+to check global consistency, with an error issued if incompatibilities are detected
+(and if possible actionable error messages).
+At the very least, an order can be enforced on lock-issuing classes.
+
 @subsection{Computing the Precedence List}
 
 Consider a function @c{compute-precedence-list}
-that takes a specification featuring multiple inheritance (and possibly more features)
+that takes a specification using multiple inheritance (and possibly more features)
 and returns a list of specifications, that is
-a linearization of the specification’s ancestry DAG,
-as per the linearization property above.
+a linearization of the argument specification’s ancestry DAG,
+satisfying the linearization property above.
 Further assume that the above returned precedence-list
 starts with specification itself, followed by its ancestors
 from most specific to most generic (left to right).
@@ -903,7 +945,7 @@ including many features and optimizations fits in few hundred lines of code@xnot
 
 As usual, @c{effectiveModExt} works on open specifications,
 whereas @c{fixMISpec} only works on closed specifications.
-The present formalization’s ability to deal with open specification
+The present formalization’s ability to deal with open specifications
 and not just closed ones crucially enables finer granularity for modular code.
 
 Now, note how multiple inheritance relies on subtyping of specifications in a way that
@@ -931,7 +973,18 @@ or left as an exercise to the reader in books that discuss the formalization
 of programming languages in general and/or OO in particular
 @~cite{AbadiCardelli1996ToO Pierce2002TAPL eopl3 plai}. @TODO{more?}
 The wider academic literature is also lacking in proper treatment of
-types for multiple inheritance, with some notable exceptions like@~cite{Allen2011Type}.
+types for multiple inheritance, with some notable exceptions like
+@citet{CecilMultimethods} or @citet{Allen2011Type},
+and even then, there has been zero interest whatsoever in flavorful multiple inheritance
+in the programming language part of academia outside of the Lisp community@xnote["."]{
+  Interestingly, work on flavorful multiple inheritance was done
+  mostly by MIT students or graduates who had a career in the industry
+  (Flavors itself was written by an undergrad at MIT, and
+  Dylan was made by former MIT hackers after the demise of Symbolics),
+  plus a few academics from France.
+  Plus there is one recent paper by a French mathematician working
+  on a system written in Python. @; TODO SageMath
+}
 @TODO{cite more: Jonathan Aldrich ? Odersky ?}
 Much of the focus of the literature is on subtyping,
 with a deemphasis or outright avoidance of fixpoints and self-recursion,
@@ -963,7 +1016,7 @@ will choose multiple inheritance over the less expressive and less modular alter
 see for instance Common Lisp, C++, Python, Scala, Rust.
 @TODO{cite Scala OO model. What else? Kathleen Fisher’s thesis?}
 
-@subsection{Comparing Multiple- to Mixin- Inheritance}
+@subsection{Comparing Multiple and Mixin Inheritance}
 
 Since all variants of OO can be expressed simply as first-class concepts in FP,
 comparing the variants of OO actually requires assuming second-class OO,
@@ -1023,7 +1076,7 @@ Therefore I can say that multiple inheritance is as expressive as mixin inherita
 I will now compare the two variants of inheritance from the point of view of modularity.
 Multiple inheritance requires somewhat more sophistication than mixin inheritance,
 adding the cognitive burden of a few more concepts,
-which at first glance can be seen as detrimental to modularity.
+which at first glance might be seen as detrimental to modularity.
 Yet, I will argue that inasmuch as modularity matters,
 these concepts are already relevant,
 and that multiple inheritance only internalizes modularity issues
@@ -1058,7 +1111,7 @@ these copies would badly interfere, in addition to leading to an exponential res
 as you keep pre-composing deeper graphs.
 Therefore, pre-composing modular extensions is the same non-solution
 that led to the “conflict” view of multiple inheritance,
-based on the naive conceptualization of how to generalize single inheritance.
+based on a naive conceptualization of how to generalize single inheritance.
 Indeed, precomposed modular extensions are essentially the same as modular definitions.
 
 In the end, composing modular extensions is subject to dependency constraints.
@@ -1206,6 +1259,14 @@ prefer to use or implement single inheritance when offered the choice.
   and how uncolloquial the resulting style is.
 }
 
+@exercise[#:difficulty "Hard"]{
+  With the help of an AI if needed, implement then use flavorless multiple inheritance
+  from @secref{IMSMO} on top of CLOS.
+  You will thereby both prove that CLOS can implement the same multiple inheritance
+  patterns as C++, ADA, Smalltalk do—but also how much effort that takes,
+  and how uncolloquial the resulting style is.
+}
+
 @section[#:tag "OISMIT"]{Optimal Inheritance: Single and Multiple Inheritance Together}
 
 @subsection{State of the Art in Mixing Single and Multiple Inheritance}
@@ -1226,7 +1287,7 @@ Lisp offered both single inheritance with its @c{struct}s,
 and multiple inheritance with its @c{class}es (nées flavors).
 @; David Moon’s MacLisp Reference Manual (April 1974) does not mention DEFSTRUCT.
 @; Ani/Director is from 1976, but never widely used.
-Since 1988 or so, the Common Lisp Object System (a.k.a. CLOS) @~cite{Bobrow1988CLOS CLtL2}
+Since 1988, the Common Lisp Object System (a.k.a. CLOS) @~cite{Bobrow1988CLOS CLtL2}
 even offered a way to interface uniformly with either structs or classes,
 using generic functions and metaclasses.
 Programmers could develop software with the flexibility of classes,
@@ -1455,7 +1516,7 @@ that it further extends to support suffixes, in what I call the C4 algorithm.
 It is the first and so far only implementation of @emph{optimal inheritance}@xnote["."]{
   Interestingly, Ruby, Scala and @(GerbilScheme) seem to each have independently
   reinvented variants of the same general design based on the suffix property.
-  This is a good symptom that this is a universally important design.
+  This is good evidence that this is a universally important design.
   However, only with @(GerbilScheme) was the suffix property formalized
   and was the C3 algorithm used.
 }
@@ -1642,7 +1703,7 @@ The C3 algorithm (and after it C4) adopts the heuristics that,
 when faced with a choice,
 it will pick for next leftmost element the candidate that appears leftmost
 in the concatenation of precedence lists.
-I @emph{believe} (but haven’t proved) that this is also equivalent to
+I believe (but haven’t proved) that this is also equivalent to
 picking for next rightmost element the candidate
 that appears rightmost in that concatenation@xnote["."]{
   Exercise: prove or disprove this equivalence.

@@ -186,8 +186,10 @@ and instead always aborts regular evaluation and/or throws an error.}
 which would be an appropriate default in a language with lazy evaluation,
 even and especially a pure functional language with partial functions,
 such as Haskell or Nix,
-@c{⊤ = (lazy ⊥)} is a universal top value, where @c{⊥ = (abort)} is a computation
-that never terminates normally. Indeed, @c{(lazy ⊥)} carries no useful information
+@c{⊤ = (lazy ⊥)} is a universal top value, where @c{⊥ = (abort)} is
+a computation that never returns
+(but may issue an abnormal termination, if the language supports that).
+Indeed, @c{(lazy ⊥)} carries no useful information
 but can be passed around, and has “negative infinite” information
 if you try to force, open or dereference it, which is much less than
 the 0 information provided by a regular null value.
@@ -249,7 +251,7 @@ For instance, given the extension @c{(λ (x) (lazy-cons 1 x))}
 for some @c{lazy-cons} function creating a co-inductive stream of computations
 (as opposed to an inductive list of values as with the regular Scheme @c{cons}),
 applying the extension to @c{(lazy ⊥)} yields a stream you can destructure once,
-yielding @c{1} as first value, and “exploding in your face” if you try to destructure the rest.
+yielding @c{1} as first value, and aborting with an error if you try to destructure the rest.
 Meanwhile, applying the @c{Y} combinator yields an infinite stream of 1’s.
 
 Then comes the question of which answer is more appropriate.
@@ -296,9 +298,12 @@ Thus, as far as one cares about extensibility:
 }
 
 @exercise[#:difficulty "Medium"]{
-  Write an “discount” extension, that takes a price and reduces it by some specified percentage
-  (the percentage being a first argument to pass to the extension; or, if you want to be nitpicky,
-  to the function that creates the actual extension as a closure).
+  Write an “discount” extension @c{(discount-spec percent)},
+  of the form @c{(λ (_self price) ...)}
+  that takes a price and reduces it by some specified percentage.
+  The percentage being a first argument to pass to the extension;
+  or, if you want to be nitpicky,
+  to the function that creates the actual extension as a closure.
 
   Note: using binary floating point numbers is malpractice in the context of accounting,
   that may get you fired or sued.
@@ -312,8 +317,13 @@ Thus, as far as one cares about extensibility:
   The text argues against using Y combinator for extensibility.
   Create an example demonstrating the difference between
   applying an extension to a top value and using the Y combinator on the extension.
-  Show a case where they produce different results.
-  In your example, which best corresponds to the notion of extending a specification?
+  Show a case where they produce different behaviors.
+  Is the difference merely a matter of performance, or one of semantics?
+  In your example, which best corresponds to the notion of extending a specification?@xnote[""]{
+    Hint: you may define a lazy stream extension: @c{(λ (x) (lazy-cons 1 x))}.
+    Apply it to @c{top = (lazy ⊥)} and compare the behavior to that of @c{(Y f)}.
+    What happens when you force the first few elements?
+  }
 }
 
 @exercise[#:difficulty "Hard"]{
@@ -508,11 +518,11 @@ binding with that identifier in the list, if any
 Conversely, given a list of identifiers and a record, you can get a list of bindings
 as pairs of an identifier and the value that the record maps it to.
 Most practical implementations of records support
-extracting from a record the list of identifiers it binds,
-and such a list of all bindings in the record;
-but this “reflection” feature is not necessary for most uses of records.
+extracting from a record the list of all identifiers it binds;
+but this “reflection” feature is not necessary for most uses of records,
+and indeed breaks the record abstraction that some typesystems enforce.
 Indeed, the trivial implementation I will use,
-wherein records are functions from identifier to value, doesn’t;
+wherein records are functions from identifier to value, doesn’t support this feature;
 and some more elaborate implementations will deliberately omit runtime reflection,
 and only support second-class knowledge of what identifiers are bound in a record.
 
@@ -687,11 +697,14 @@ but it is an error to call a function with the wrong number of arguments.
 One approach to resolving this discrepancy is to just cope with
 the syntactic ugliness of unary functions in Scheme, and use them nonetheless,
 despite Lots of Insipid and Stupid Parentheses@xnote["."]{
-  Detractors of the LISP language and its many dialects and derivatives,
+  Detractors of the Lisp language
+  (that like many languages was customarily written in uppercase until the mid-1980s,
+  and is usually capitalized since)
+  and its many dialects and derivatives,
   among which Scheme is prominent, invented the backronym
   “Lots of Insipid and Stupid Parentheses” to deride its syntax.
   While Lispers sometimes yearn for terser syntax—and
-  at least one famous Schemer, Aaron Hsu, adopted APL—to them,
+  at least one famous Schemer, Aaron Hsu, jumped ship to APL—to them,
   the parentheses, while a bit verbose, are just a familiar universal syntax that allows them
   to quickly understand the basic structure of any program or data,
   even when they are unfamiliar with the syntactic extensions it uses.
@@ -700,23 +713,26 @@ despite Lots of Insipid and Stupid Parentheses@xnote["."]{
   parentheses, beyond function calls,
   carry the emotional weight of “warning: this expression is complex,
   and doesn’t use the implicit order of operations”.
-  Non-Lispers see parentheses as lacking cues from the other kinds of brackets their languages have,
+  Non-Lispers see parentheses as lacking cues from the other kinds of brackets their languages have;
   but these cues in Lisp are present, just in the head identifier of an expression.
   Matching parentheses can also be confusing,
-  especially when not using the parentheses-aware semi-structured editors
-  that Lispers have been using since the 1970s, or
-  when failing to format code properly (which those editors can also help automate).
+  especially when not using the parentheses-aware, indentation-enforcing,
+  semi-structured text editors that Lispers have been using since the 1970s, or
+  when failing to format code properly (which those editors also help automate).
   Ironically, the syntactic and semantic abstraction powers of Lisp
   allow for programs that are significantly shorter than their equivalent
   in a mainstream language like Java,
-  and as a result have fewer parentheses overall, not counting all kinds of brackets.
+  and as a result have not just fewer parentheses overall,
+  but fewer brackets of any kind.
   It is therefore not the number of parentheses, but their density, that confuses
   mainstream programmer, due to unfamiliarity and emotional connotations.
   Now, it may well be that the same abstraction powers of Lisp make it unsuitable
-  for a majority of programmers incapable of mastering such powers.
+  for a majority of programmers, incapable of mastering such abstraction.
   As an age of AI programmers approaches that will have abstraction powers vastly superior
   to the current average human programmer, it remains to be seen what kind of syntaxes
-  will make them more efficient, when working in isolation, with each other, and with humans.
+  will make them more efficient, when working in isolation, with each other, or with humans.
+  And maybe even statistical AIs will need the rapid feedback of algorithmic editors
+  to balance their parentheses.
 }
 
 A second approach is to adopt a more native Scheme style over FP style,
@@ -978,7 +994,8 @@ and return to rebuilding OO from first principles.
 
 @exercise[#:difficulty "Easy"]{
   Play with the simple record system I implemented.
-  How do you extract all the values for multiple fields in a single function call?
+  With what function can you extract all the values for multiple fields
+  in a single function call?
   (You may use functions from your language’s standard library.)
 }
 @exercise[#:difficulty "Easy"]{
