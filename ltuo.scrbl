@@ -4,7 +4,7 @@
 
 @;{ TODO: use bookcover to create a book cover. }
 
-@title[#:style (favicon-style)]{
+@title[#:style (ltuo-style)]{
   Lambda: the Ultimate Object
     @linebreak[] @tex-linebreak[]
     @smaller{Object Orientation Elucidated@|~~|}

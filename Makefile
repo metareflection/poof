@@ -89,7 +89,8 @@ eoomi: build/eoomi2024.pdf
 
 # Side paper: LTUO
 build/ltuo.pdf: ltuo.scrbl ltuo.bib header.tex util/util.rkt util/ltuo_lib.rkt build/resources $(wildcard ltuo_*.scrbl) resources/pic/cube.pdf
-	RENDER_MODE=latex scribble --dest build --style header.tex --pdf ltuo.scrbl
+        # --style header.tex ==> causes my chapters to become 0.x !!!
+	RENDER_MODE=latex scribble --dest build --pdf ltuo.scrbl
 build/ltuo.html: ltuo.scrbl ltuo.bib util/util.rkt util/ltuo_lib.rkt build/resources $(wildcard ltuo_*.scrbl)
 	RENDER_MODE=html scribble --dest build --html ltuo.scrbl
 resources/pic/cube.pdf: resources/pic/cube.svg

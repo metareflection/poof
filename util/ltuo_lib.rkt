@@ -83,14 +83,26 @@
 (define-simple-macro (defsection name tag text) (define (name (x text)) (seclink tag x)))
 (defsection section1 "Prototypes_bottom_up" "section 1")
 
-(define (favicon-style)
-  (and (render-html?)
-    (make-style "favicon" ; name is arbitrary, just needs to be non-false
-      (list (head-extra
-              '(link ([rel "icon"]
-                            ;;[href "resources/pic/Half-Life_lambda_logo.svg"]
-                            [href "resources/pic/cube.svg"]
-                            [type "image/svg+xml"]))))))) ;; or image/x-icon, image/png
+(define (favicon-style-properties)
+  (when/list (render-html?)
+    (list (head-extra
+            '(link ([rel "icon"]
+                    [href "resources/pic/cube.svg"]
+                    [type "image/svg+xml"])))))) ;; or image/x-icon, image/png
+
+(define (latex-extras-properties)
+  (when/list (render-latex?)
+    (list (tex-addition
+            (bytes-append
+              #"\\DeclareUnicodeCharacter{3BB}{$\\lambda$}" ;; λ
+              #"\\DeclareUnicodeCharacter{22C2}{$\\cap$}" ;; ⋂
+              #"\\DeclareUnicodeCharacter{225C}{$\\triangleq$}" ;; ≜
+              #"\\DeclareUnicodeCharacter{1D52D}{$\\mathfrak{p}$}"))))) ;; 𝔭
+
+(define (ltuo-style)
+  (make-style "ltuo" ; name is arbitrary, just needs to be non-false
+    (append (favicon-style-properties)
+            (latex-extras-properties))))
 
 (define (cube-logo)
   (cond
