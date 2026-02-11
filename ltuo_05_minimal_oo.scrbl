@@ -775,36 +775,39 @@ And the code will actually run in Scheme after a short prelude.
 First, there are many variants to the fixpoint (or fixed-point) combinator Y,
 and the pure applicative Y combinator you could write in Scheme’s
 pure subset of the λ-calculus is actually quite bad in practice.
-Here is the applicative Y combinator,
-expressed in terms of the composition combinator B and the duplication combinator D@xnote[""]{
-  A simple way to test the @c{applicative-Y} combinator,
-  or the subsequent variants @c{applicative-Y-expanded} and @c{stateful-Y}
+Here is the applicative Y combinator, that I will call Ye (for Y, eager)
+expressed in terms of the composition combinator B and
+the self-application combinator U (called Ue for U, eager)@xnote[""]{
+  A simple way to test the applicative/eager @c{Ye} combinator,
+  or the subsequent variants @c{Yex} and @c{Yes}
   is to use it to define the factorial function:
   first define the applicative recursion scheme for factorial:
   @c{(def (eager-pre-fact f n) (if (<= n 1) n (* n (f (1- n)))))}
   then you can define factorial as
-  @c{(def fact (applicative-Y eager-pre-fact))}
+  @c{(def fact (Ye eager-pre-fact))}
   and you can then test that e.g. @c{(fact 6)} returns @c{720}.
 }@xnote[""]{
-  Also note that the duplication combinator D is also sometimes called
-  the U combinator, or self-application combinator, and does
-  the heavy lifting of the Y combinator, if you know to call it recursively,
-  hence the double use of it in the definition of Y.
-  It can be viewed as the essence of the object encoding in @secref{CwUAoS}.
+  Also note that the self-application combinator U @~cite{Kiselyov2024Y},
+  sometimes called the duplication combinator Δ, or ω
+  (because @c{Ω = (ω ω)} is the canonical λ-term that never terminates),
+  does the heavy lifting of the Y combinator,
+  hence the double use of it in the definition of Y = U (B U).
+  It can be viewed as doing half the job of Y, and is
+  the essence of the object encoding in @secref{CwUAoS}.
 }:
 @Code{
-(def (B x y z)
+(def (B x y z) ;; composition
   (x (y z)))
-(def (applicative-D x y)
+(def (Ue x y) ;; eager U
   (x x y))
-(def (applicative-Y f)
-  (applicative-D (B f applicative-D)))
-(def (applicative-Y-expanded f)
+(def (Ye f) ;; eager Y
+  (Ue (B f Ue)))
+(def (Yex f) ;; eager Y, expanded
   ((λ (x y) (x x y))
    (λ (x) (f (λ (y) (x x y))))))
 }
-@; Test: ((applicative-Y eager-pre-fact) 6) ;==> 720
-@; Test: ((applicative-Y-expanded eager-pre-fact) 6) ;==> 720
+@; Test: ((Ye eager-pre-fact) 6) ;==> 720
+@; Test: ((Yex eager-pre-fact) 6) ;==> 720
 The Y combinator works by composing the argument function @c{f}
 with indefinite copies (duplications) of itself (and accompanying plumbing).
 In this applicative variant, the first, minor, issue with this combinator is
@@ -870,51 +873,56 @@ with Scheme’s famous @c{call/cc}, the mutation cannot be exposed as a side-eff
 and the computation remains overall pure (deterministic, referentially transparent),
 though not definable in terms of the pure applicative λ-calculus.
 Note however how in the definition below, @c{p} still needs be a function,
-and one must η-convert it into the equivalent but protected @c{(λ (y) (p y))}
+and one must η-convert it into the equivalent but protected @c{(η p) = (λ (y) (p y))}
+(a syntactic definition, not a runtime function which would defeat the purpose),
 before passing it to @c{f}, to prevent access to the variable @c{p} before its initialization
-(and @c{f} must also be careful not to invoke this protected @c{p} before returning):
+(and @c{f} must also be careful not to invoke this protected @c{p} before returning).
+Here is the Y combinator, eager, stateful:
 @Code{
-(def (stateful-Y f)
-  (letrec ((p (f (λ (y) (p y))))) p))
+(def (Yes f) (letrec ((p (f (η p)))) p))
 }
-@; Test: ((stateful-Y eager-pre-fact) 6) ;==> 720
+@; Test: ((Yes eager-pre-fact) 6) ;==> 720
 
-A second solution is to use a lazy Y. In a language like Nix
-(where @c{λ (f)} is written @c{f:}, and @c{let} like Scheme @c{letrec}
+A second solution is to use a lazy Y, defined as Yl below.
+In a language like Nix (where @c{λ (f)} is written @c{f:}, and @c{let} like Scheme @c{letrec}
 recursively binds the variable in the definition body), you can simply define
 @c{Y = f: let p = f p; in p}. In Scheme, using the convention that
 every argument variable or function result must be protected by @c{delay},
 and one must @c{force} the delayed reference to extract the result value,
 you would write@xnote[":"]{
-  Again, a simple way to test the lazy Y combinator is to use it
+  Again, a simple way to test the lazy Y combinator Yl is to use it
   to define the factorial function. First define the lazy “recursion schema” for the factorial:
   @c{(def lazy-pre-fact (λ (f n) (if (<= n 1) n (* n ((force f) (1- n))))))}
   Then the factorial function is
-  @c{(def fact (lazy-Y lazy-pre-fact))}
+  @c{(def fact (Yl lazy-pre-fact))}
   and you can then test that e.g. @c{(fact 6)} returns @c{720}.
   Note that I do without wrapping of @c{n} in a @c{delay},
   but @c{f} itself is a delayed function value to fit the calling convention of @c{lazy-Y},
   and I therefore must @c{force} it before I call it.
-  The subsequent variants of @c{lazy-Y} can be tested in the same way.
+  The subsequent variants of the lazy @c{Yl} can be tested in the same way.
+  The earliest variant of @c{Yl} is Turing’s Θ formula @~cite{Turing1937 Curry1958}.
+  @; TODO Look into Kleene1935, Kleene1936x2
+  @; https://chatgpt.com/c/698b8f11-a504-832d-9187-1fcb3d62640f
 }
 @Code{
-(def (lazy-Y f)
-  (letrec ((p (f (delay p)))) p))
+(def (Yl f) (letrec ((p (f (delay p)))) p))
 }
-Or, if you want a variant based on combinators:
+Or, if you want variant based on combinators,
+here are respectively the lazy B (composition),
+lazy U (self-application), lazy Y written with combinators,
+and lazy Y with expanded definition:
 @Code{
-(def (lazy-B x y z)
+(def (Bl x y z)
   (x (delay ((force y) z))))
-(def (lazy-D x)
+(def (Ul x)
   ((force x) x))
-(def (lazy-Y-with-combinators f)
-  (lazy-D (delay (lazy-B f (delay lazy-D)))))
-(def (lazy-Y-expanded f)
-  ((λ (x) ((force x) x))
-   (delay (λ (x) (f (delay ((force x) x)))))))
+(def (Ylc f)
+  (Ul (delay (Bl f (delay Ul)))))
+(def (Ylx f) ((λ (x) ((force x) x)) (delay (λ (x) (f (delay ((force x) x)))))))
 }
-@; Test: ((lazy-Y-with-combinators lazy-pre-fact) 6) ;==> 720
-@; Test: ((lazy-Y-expanded lazy-pre-fact) 6) ;==> 720
+@; Test: ((Yl lazy-pre-fact) 6) ;==> 720
+@; Test: ((Ylc lazy-pre-fact) 6) ;==> 720
+@; Test: ((Ylx lazy-pre-fact) 6) ;==> 720
 One advantage of a lazy Y is that evaluation is already protected by the @c{delay} primitive,
 enabling self-reference for computations returning any type of data.
 The lazy Y can thus apply to any kind of computation, not just to functions.
@@ -943,7 +951,7 @@ Here is one implementation of laziness that works in a single-threaded environme
 it takes a thunk as argument, and only calls the thunk the first time around,
 thereafter memoizes the result of that first invocation and returning it.
 @Code{
-(define (once thunk)
+(define (compute-once thunk)
   (let ((computed? #f)
         (value #f))
     (λ _
@@ -979,7 +987,7 @@ I have implemented variants of my minimal OO system in many combinations
 of the above solutions to these two issues, in Scheme and other languages.
 For the rest of this book, I will adopt a style where most functions are unary,
 but the syntax to define and use them implicitly uses curry with @c{def} and @c{λ};
-I will also be assuming @c{Y = stateful-Y} as my fixed-point operator,
+I will also be assuming @c{Y = Yes} (eager, stateful) as my fixed-point operator,
 unless explicitly mentioned otherwise.
 As a result, the reader should be able both to easily copy and test
 all the code in this book at their favorite Scheme REPL,
@@ -1030,22 +1038,23 @@ and return to rebuilding OO from first principles.
 }
 @exercise[#:difficulty "Hard"]{
   Compare three implementations of the Y combinator:
-  @c{applicative-Y}, @c{stateful-Y} and @c{lazy-Y} on some real-world application.
+  eager @c{Ye}, eager stateful @c{Yes} and lazy @c{Yl} on some real-world application.
   For instance, look at the slides I wrote @~cite{poof2021},
   instrument the code to count how many times the @c{plan-slide} function is called
   and display the result at the end, and see how that count changes if using
-  @c{applicative-Y} instead of @c{stateful-Y}.
+  the eager (applicative) @c{Ye} instead of the eager stateful @c{Yes}.
   For extra points, modify the code to use lazy evaluation,
-  and see if there is a difference when using @c{lazy-Y}.
+  and see if there is a difference when using the lazy @c{Yl}.
 }
 @exercise[#:difficulty "Hard"]{
-  Devise an example that illustrates how @c{applicative-Y} can cause exponential recomputations
-  with the depth of recursive definitions, compared to @c{stateful-Y}.
+  Devise an example that illustrates how the eager (applicative) @c{Ye}
+  can cause exponential recomputations with the depth of recursive definitions,
+  compared to the eager, stateful @c{Yes}.
 }
 @exercise[#:difficulty "Hard"]{
-  Devise an example that illustrates how @c{stateful-Y}
+  Devise an example that illustrates how the eager stateful @c{Yes}
   without the fixed-point functions also caching their results
-  can still cause exponential recomputations compared to using @c{lazy-Y}
+  can still cause exponential recomputations compared to using the lazy @c{Yl}
   or explicitly using state to cache results (which amounts to the same).
 }
 

@@ -228,57 +228,107 @@ With Racket: racket pommette.rkt
 #;(define ls-sorted (λ (ctx) (compose* (ctx 'sort) (ctx 'ls))))
 
 ;;; Y combinator
+;; https://www.hjorthjort.xyz/2018/11/08/2018-11-08-really_getting_the_y-combinator.html
 
+;; eta-conversion of a function
+;; Often used to protect it from over-eager evaluation, in applicative context.
+(define-syntax η (syntax-rules () ((_ f) (λ (x) (f x)))))
+
+;; B combinator, composition
+;; a.k.a. Z for Schönfinkel (Zusammensetzungsfunktion) (compoZition function)
+;; : (Y→X)→(Z→Y)→Z→X
 (def (B x y z)
   (x (y z)))
-(def (applicative-D x y)
-  ((x x) y)) ;; same as (x x y)
-(def (applicative-Y f)
-  (applicative-D (B f applicative-D)))
-(def (applicative-Y-expanded f)
-  ((λ (x y) (x x y))
-   (λ (x) (f (λ (y) (x x y))))))
 
-(def (stateful-Y f)
-  (letrec ((p (f (λ (y) (p y))))) p))
+;; Ue: U, eager -- self-application combinator
+;; a.k.a. duplication combinator Δ \Delta, or ω, half of Ω = (ω ω)
+;; "Half of Y"
+;; https://en.wikipedia.org/wiki/SKI_combinator_calculus
+;; https://www.tfeb.org/fragments/2020/03/09/the-u-combinator/
+;; same as (def (Ue x) (eta (x x)))
+;; : µX.(X→A)→A
+(def (Ue x y)
+  ((x x) y))
 
-(def Y stateful-Y)
+;; Y, eager -- fixpoint combinator
+;; a.k.a. Z https://en.wikipedia.org/wiki/Fixed-point_combinator#Z_combinator
+(def (Ye f)
+  (Ue (B f Ue)))
 
-;; lazy convention: arguments are delayed, results are forced
-;; TODO: add types for these and for other variants. ^ X = delayed X
-(def (lazy-Y f) ;; : (^X→X)→X
+;; Y, eager, expanded. Same as Ye without intermediate definitions,
+;; so you can just copy/paste a one-liner
+(def Yex (λ (f) ((λ (x y) (x x y)) (λ (x) (f (λ (y) (x x y)))))))
+
+;; Turing 1937's Θ formula (Theta) -- only work in lazy context,
+;; and I don’t feel lize rewriting it with force and delay. Exercise: do it.
+;; (def Θ ((λ (v u) (u (v v u))) (λ (v u) (u (v v u)))))
+#| nix repl
+let Y = f: (x: x x) (x: f (x x));
+    Theta = (v: u: (u (v v u))) (v: u: (u (v v u)));
+    pre_fact = f: n: if n <= 1 then n else n * f (n - 1); in
+    [(Y pre_fact 6) (Theta pre_fact 6)]
+|#
+
+;; Y, eager, stateful -- the statefulness is hidden in letrec.
+;; Note: (eta p) = (λ (x) (p x))
+(def (Yes f) (letrec ((p (f (η p)))) p))
+
+(def Y Yes)
+
+;; lazy convention: arguments are delayed, results are forced.
+;; Note that we are optimizing away some unnecessary delays and forces
+;; to optimize this lazy representation in Scheme.
+;; Another approach would be to be more systematic in delaying all arguments,
+;; which would introduce lots of unnecessary "administrative" forcings for no gain;
+;; and then introduce automated compiler optimizations. That's a project for another time.
+;; I will annotate these functions with their type, where ^X is the type for delayed X.
+
+;; Y, lazy, written with a letrec
+;; : (^X→X)→X
+(def (Yl f)
   (letrec ((p (f (delay p)))) p))
-(def (lazy-B f g x) ;; : (^Y→X)→^(Z→Y)→Z→X
-  (f (delay ((force g) x))))
-(def (lazy-D x) ;; : µX.^(X→A)→A
-  ((force x) x))
-(def (lazy-Y-with-combinators f) ;; : ^(^X→X)→X
-  (lazy-D (delay (lazy-B f (delay lazy-D)))))
-(def (lazy-Y-expanded f) ;; : ^(^X→X)→X
-  ((λ (x) ((force x) x))
-   (delay (λ (x) (f (delay ((force x) x)))))))
 
-;; TODO: would this work? with what type?
-;; (def (Y^ f) (letrec ((x (delay (f x)))) x))
+;; B, lazy -- composition, but the first argument’s argument is delayed.
+;; : (^Y→X)→^(Z→Y)→Z→X
+(def (Bl f g x)
+  (f (delay ((force g) x))))
+
+;; U, lazy -- self-application / duplication, for delayed functions
+;; : µX.^(X→A)→A
+(def (Ul x)
+  ((force x) x))
+
+;; Y, lazy, written with combinators
+;; essentially, Y f = U (B f U); a form also known as X,
+;; versus stricto sensu Y f = (B f U) (B f U) that (X f) β-expands into.
+(def (Ylc f) ;; : ^(^X→X)→X
+  (Ul (delay (Bl f (delay Ul)))))
+
+;; Y, lazy, expanded from Yl without intermediate definitions, for a one-linear
+;; : ^(^X→X)→X
+(def (Ylx f) ((λ (x) ((force x) x)) (delay (λ (x) (f (delay ((force x) x)))))))
 
 ;; Compute Factorial 6 with Y
-(def (eager-pre-fact f n)
+(def (eager-pre-fact f n) ;; precursor for Ye encoding
   (if (<= n 1) n (* n (f (- n 1)))))
-(def lazy-pre-fact (λ (f n)
+(def lazy-pre-fact (λ (f n) ;; precursor for Yl encoding
   (if (<= n 1) n (* n ((force f) (- n 1))))))
+(def (half-pre-fact f n) ;; precursor for Ue encoding
+  (if (<= n 1) n (* n (Ue f (- n 1)))))
 
-(expect ((applicative-Y eager-pre-fact) 6) => 720
-        ((applicative-Y-expanded eager-pre-fact) 6) => 720
-        ((stateful-Y eager-pre-fact) 6) => 720
-        ((lazy-Y lazy-pre-fact) 6) => 720
-        ((lazy-Y-with-combinators lazy-pre-fact) 6) => 720
-        ((lazy-Y-expanded lazy-pre-fact) 6) => 720)
+(expect ((Ye eager-pre-fact) 6) => 720
+        ((Ye eager-pre-fact) 6) => 720
+        ((Yes eager-pre-fact) 6) => 720
+        ((Yl lazy-pre-fact) 6) => 720
+        ((Ylc lazy-pre-fact) 6) => 720
+        ((Ylx lazy-pre-fact) 6) => 720
+        ((Ue half-pre-fact) 6) => 720)
 
 ;;; Poor man's implementation of lazy as a function that always returns the results
 ;;; of the first successful evaluation.
 ;;; Tries to survive escaping continuations by consistently returning the first successful result.
 ;;; Not remotely thread safe though.
-(define (make-once thunk)
+(define (compute-once thunk)
   (let ((computed? #f)
         (value #f))
     (λ _
@@ -291,28 +341,30 @@ With Racket: racket pommette.rkt
       value)))
 (define-syntax once
   (syntax-rules ()
-    ((_ body ...) (make-once (lambda () body ...)))))
+    ((_ body ...) (compute-once (lambda () body ...)))))
 
 (define (! x) (x)) ;; force, even if from def or λ
-(def (once-Y f) ;; : ^(^X→X)→X
+
+;; Y, once; B, once; U, once; Y, once with combinators; Y, once, expanded
+;; direct adaptations of Yl Bl Ul Ylc Ylx to once and ! instead of delay and force.
+(def (Yo f) ;; : ^(^X→X)→X
   (letrec ((p (f (once p)))) p))
-(def (once-B x y z) ;; : (^Y→X)→^(Z→Y)→Z→X
+(def (Bo x y z) ;; : (^Y→X)→^(Z→Y)→Z→X
   (x (once ((! y) z))))
-(def (once-D x) ;; : µX.^(X→A)→A
+(def (Uo x) ;; : µX.^(X→A)→A
   ((! x) x))
-(def (once-Y-with-combinators f) ;; : ^(^X→X)→X
-  (once-D (once (once-B f (once once-D)))))
-(def (once-Y-expanded f) ;; : ^(^X→X)→X
-  ((lambda (x) ((x) x))
-   (once (λ (x) (f (once ((! x) x)))))))
+(def (Yoc f) ;; : ^(^X→X)→X
+  (Uo (once (Bo f (once Uo)))))
+;; : ^(^X→X)→X
+(def (Yox f) ((lambda (x) ((x) x)) (once (λ (x) (f (once ((! x) x)))))))
 
 (def once-pre-fact (λ (f n)
   (if (<= n 1) n (* n ((! f) (- n 1))))))
 
 (expect
- ((once-Y once-pre-fact) 6) => 720
- ((once-Y-with-combinators once-pre-fact) 6) => 720
- ((once-Y-expanded once-pre-fact) 6) => 720)
+ ((Yo once-pre-fact) 6) => 720
+ ((Yoc once-pre-fact) 6) => 720
+ ((Yox once-pre-fact) 6) => 720)
 
 ;; Trivial implementation of lazy from once
 ;;(define-syntax delay (syntax-rules () ((_ . body) (once (λ () . body)))))
@@ -458,7 +510,7 @@ With Racket: racket pommette.rkt
   (constant-field-spec 'contents my-saying))
 
 (def my-contents
-  (stateful-Y (λ (self) (my-contents-spec self (my-modular-def self)))))
+  (Yes (λ (self) (my-contents-spec self (my-modular-def self)))))
 
 (expect (my-contents 'contents) => my-saying
         (my-contents 'length my-saying) => 20
@@ -476,7 +528,7 @@ With Racket: racket pommette.rkt
           (else #f))))))
 
 (def my-contents-2
-  (stateful-Y (λ (self) (my-contents-spec self (my-modular-def-without-global-recursion self)))))
+  (Yes (λ (self) (my-contents-spec self (my-modular-def-without-global-recursion self)))))
 
 (expect (my-contents-2 'contents) => my-saying
         (my-contents-2 'length my-saying) => 20
@@ -817,7 +869,8 @@ With Racket: racket pommette.rkt
                  (() id)
                  ((x) x)
                  ((x y) (op2 x y))
-                 ((x . r) (foldl (lambda (x y) (op2 y x)) x r))))) ;; or (foldl op2 x r)
+                 ;; weird: (foldl (lambda (x y) (op2 y x)) x r) doesn't work with Chez (?)
+                 ((x y . r) (apply op* (op2 x y) r)))))
     op*)))
 ;; Variant of rop*←op2, but for a curried operator that takes one argument then the next.
 (define rop*←op1.1 (lambda (op1.1 id)
@@ -871,9 +924,10 @@ With Racket: racket pommette.rkt
 
 ;; TODO: fix this
 (def (spec→hspec spec hyper half)
-  (letrec ((self (λ (x) (half half x)))
-           (super (λ (x) (hyper half x))))
-      (spec self super)))
+  ;; eta-conversions necessary in eager context
+  (letrec ((self (λ (x) (half half x))) ;; (η (half half))
+           (super (λ (x) (hyper half x)))) ;; (η (hyper half))
+    (spec self super)))
 
 (define u-comp (spec→hspec (mix* color-spec (add-x-spec 1) area-spec coord-spec)))
 

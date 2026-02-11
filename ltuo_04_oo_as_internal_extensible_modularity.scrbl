@@ -842,7 +842,7 @@ they may not contain any self-reference to the entity being defined and its attr
 @subsection{Extensibility and Complexity}
 
 Extensibility of software entities means that variants of these software entities
-may be reused many times in as many different contexts,
+may be reused many times in as many different contexts @~cite{Johnson1988},
 so more software can be achieved for fewer efforts.
 
 Now, external extensibility through editing (as opposed to e.g. preprocessing)

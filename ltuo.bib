@@ -1,6 +1,29 @@
 %%% Bibliography, roughly sorted by year of publication
 % (See TODO at the end for more)
 
+Instructions for bibliography assistant:
+* Must be valid BibTeX.
+* Capitalize Article Book InCollection InProceedings, etc.
+* AuthorYYYY format, without suffix, unless needed to disambiguate.
+  If needed to disambiguate, then add suffix with most distinguishing word
+  on each of the ambiguous papers, e.g. Kleene1936Metamathematics Kleene1936Recursive.
+* Author names in First Last instead of Last, First style where possible,
+  but keep commas (and ands) that are required by BibTex format.
+* Include all standard entries when available and meaningful for that kind of BibTeX entry and not redundant with other entry:
+  author title booktitle editor journal year month school institution organization publisher isbn issn chapter pages eid numpages location number volume series address edition howpublished type
+* Always include doi= if available, and url= if available (no linebreak)
+* If fulltext is paywalled, try a sci-hub.ru prefix or archive.org search to see if available there.
+* Prefer Webpage (with lastchecked={YYYY-MM-DD} entry) over Online or Misc where applicable.
+* No spaces immediately around =
+* Two spaces indentation for entries, 4 spaces for multiline note content.
+* note= as last entry, with explanation for relevance to the topic at hand.
+   Linebreak at the end of each note sentence, and
+   before 80 characters after end of semantic sentence unit.
+   Prefer Unicode characters to TeX escape sequences.
+* Don't make up data. If you don't have the data, leave the corresponding entry empty
+
+
+
 @preamble{
 }
 
@@ -64,6 +87,29 @@
   }
 }
 
+% See comments in https://www.pls-lab.org/en/Theta_combinator
+@article{Turing1937,
+  title={The 𝔭-function in λ-K-conversion},
+  author={A. M. Turing},
+  volume={2},
+  number={4},
+  journal={Journal of Symbolic Logic},
+  year={1937},
+  pages={164–164},
+  doi={10.2307/2268281},
+  url={https://sci-hub.ru/https://www.jstor.org/stable/2268281},
+  note={
+    In this 1-page banger, Turing casually introduces
+    the first ever version of a fixpoint operator,
+    as a λ-term that in my notation would be written
+    Θ ≜ ((λ (v u) (u (v v u))) (λ (v u) (u (v v u)))),
+    to solve a simple problem of recursive linear search of
+    the smallest integer nullifying a formula T (with Church numerals).
+    The first Y combinator, just named “Θ formula”.
+    Please update your documentation.
+  }
+}
+
 %% 1947
 @book{levi1947,
   author={Primo Levi},
@@ -75,6 +121,31 @@
     and the words “Hier ist kein ‘Warum’!” (Here there is no ‘Why’!) still haunt me.
     A 1959 translation to English by Stuart Woolf was published as “If this is a man”,
     or in later editions “Survival in Auschwitz”.
+  }
+}
+
+%% 1958
+
+@Book{Curry1958,
+  author={Haskell B Curry and Robert Feys},
+  title={Combinatory Logic},
+  volume={I},
+  publisher={North-Holland},
+  year={1958},
+  url={https://archive.org/details/combinatorylogic0000curr},
+  note={
+    This great classic explains how you can do all the things that the λ-calculus
+    without ever using λ, just with application of basic combinators.
+    The most famous complete base of combinators is S K I with
+    I = λ x . x, K = λ x y . x, S = λ x y z . x z (y z),
+    with a straightforward syntactic translation from λ-terms to combinations.
+    Also, I = S K K so S K is a base.
+    (Another famous base is X = λ f . f (λ x y z . x z (y z)) (λ x y z . x),
+    discovered by Fokker in 1989; see also Tromp’s work on minimal such operators).
+    Section 7 fixed-point operators p. 155 discusses the usual (lazy) Y combinator,
+    and its relationship to Turing 1937’s Θ: Θ = Y (S I).
+    Curry also tried to do logic with (for mathematical reasoning), which he called
+    “illative combinatory logic”, though he had a completely satisfying (to himself) variant.
   }
 }
 
@@ -139,6 +210,25 @@
   numpages={18},
   location={Detroit, Michigan},
   series={AFIPS '63 (Spring)},
+  note={.
+    This landmark paper describes Sketchpad, Sutherland's MIT PhD thesis work,
+    the first interactive graphical program using a light pen on the TX-2 computer.
+    It introduces concepts like hierarchical object structures,
+    master drawings and instances,
+    rubber-banding, geometric constraints, zooming, and
+    dynamic manipulation—pioneering HCI and computer graphics.
+    One of the most influential papers in computing history, it is seminal
+    in graphical interfaces, object-oriented design patterns,
+    constraint-based modeling, and interactive systems.
+    Written in assembly, its master and instance mechanism effectively implement
+    an early Prototype OO system as a fourth-class design pattern,
+    wherein each instance can have one master,
+    and “instance expansion” implements single inheritance of code as well as data.
+    Code was in the form of function pointers taking the instance as first argument.
+    Changes to a master propagated immediately to every instance (dynamic binding),
+    since the masters were shared and the properties recomputed,
+    instead of being eagerly copied at instance creation. Awesome.
+  }
 }
 
 %% 1965
@@ -1008,6 +1098,24 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
+@Book{Goldberg1983,
+  author={Adele Goldberg and David Robson},
+  title={Smalltalk-80: The Language and its Implementation},
+  publisher={Addison-Wesley},
+  address={Reading, Massachusetts},
+  year={1983},
+  isbn={0201113716},
+  url={http://stephane.ducasse.free.fr/FreeBooks/BlueBook/Bluebook.pdf},
+  note={.
+    This seminal book (often called the “Blue Book”) provides
+    the definitive description of the Smalltalk-80 language,
+    including syntax, object model, classes/instances, metaclasses, protocols,
+    and the standard library classes.
+    Single inheritance only.
+    Among many other things, introduces the words of abstract and concrete classes.
+  }
+}
+
 % Borning & Ingalls 1982 cite an early 1982 version of this paper
 % TODO: confirm no generic function, see what they call "messages"?
 @book{Bobrow1983Loops,
@@ -1073,6 +1181,30 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     Both a historically seminal paper and a complete intellectual travesty.
   }
 }
+
+@Article{Krogdahl1985,
+  author={Stein Krogdahl},
+  title={Multiple Inheritance in Simula-like Languages},
+  journal={BIT Numerical Mathematics},
+  volume={25},
+  number={2},
+  pages={318--326},
+  year={1985},
+  month={June},
+  doi={10.1007/BF01934377},
+  url={https://link.springer.com/article/10.1007/BF01934377},
+  note={.
+    Krogdahl extends Simula's single-inheritance “prefix” mechanism
+    to support multiple prefixes... but only for tree-shaped ancestries.
+    Quite lame, especially he cites both Borning and Cannon
+    who did much better years earlier. He’s not even trying.
+    But at least he doesn’t try to explode DAGs into trees like C++ and Ada.
+    This 1985 extension is obviously not part of Simula67;
+    it was not included in the 1986 Simula Standard, either,
+    that retained single inheritance.
+  }
+}
+
 
 %% 1986
 
@@ -1538,9 +1670,10 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   doi={10.1145/44501.45065}
 }
 
-% Introduces abstract classes and concrete classes, according to Grok
+% Introduces abstract classes and concrete classes, according to Grok,
+% but cites
 % https://www.cse.msu.edu/~cse870/Input/SS2002/MiniProject/Sources/DRC.pdf
-@article{johnson1988designing,
+@Article{Johnson1988,
   title={Designing reusable classes},
   author={Johnson, Ralph E and Foote, Brian},
   journal={Journal of object-oriented programming},
@@ -1553,19 +1686,40 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 1989
 
-% Unless a base class is "virtual", multiple copies are inherited.
-% Conflict resolution is manual; you can explicitly call a superclass method,
-% but there is no linearization mechanism to preserve method linearity
-% in case of "ambiguities" (paper does not say "diamonds")
+% no DOI
 @article{Stroustrup1989Multiple,
   title={Multiple inheritance for C++},
-  author={Stroustrup, Bjarne},
+  author={Bjarne Stroustrup},
   journal={Computing Systems},
   volume={2},
   number={4},
   pages={367--395},
   year={1989},
-  url={https://www.usenix.org/legacy/publications/compsystems/1989/fall_stroustrup.pdf}
+  url={https://www.usenix.org/legacy/publications/compsystems/1989/fall_stroustrup.pdf},
+  note={.
+    This paper details the design choices, semantics
+    (including virtual base classes and ambiguity handling),
+    and implementation techniques for multiple inheritance
+    as added to C++ in Release 2.0 (1989).
+    Notably, “virtual” members correspond to actual OO, with dynamic dispatch
+    over shared items, using the flavorless conflict view of multiple inheritance
+    in case of “ambiguities”.
+    the non-“virtual” members are duplicated (potentially exponentially),
+    making their inheritance a tree rather than a DAG like in Snyder 1986
+    (not cited—some bad ideas are easy to come by).
+    Lisp is cited via the Chinual (a reference manual, not an explanation,
+    even though better papers existed), and unsurprisingly misunderstood,
+    and considered “not sufficiently simple, general, and efficient enough”,
+    (a riot considering Flavors as cited from a 1981 did in under 1,500 lines of code
+    so much more than C++ did in 100,000 in 1989; meanwhile,
+    CLOS existed in 1988 and did even more and better in a few thousand lines of code).
+    The only other non-C++ citation is a 1984 techreport by Krogdahl
+    on multiple inheritance in Simula; I couldn’t find that report,
+    but Krogdahl 1985 just plainly disallows inheritance DAGs that are not trees—lame.
+    I laud the attention to performance, but performance at doing the wrong thing
+    is still infinite non-performance compared to a naive way of doing the right thing;
+    so in the end Stroustrup not doing basic bibliographical research is just malpractice.
+  }
 }
 
 % Authors of EuLisp don't like multiple inheritance, want mixin inheritance
@@ -1710,7 +1864,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % https://www.research.ed.ac.uk/en/publications/how-to-make-ad-hoc-polymorphism-less-ad-hoc
 @InProceedings{typeclasses,
   title="How to make ad-hoc polymorphism less ad hoc",
-  abstract="This paper presents type classes, a new approach to ad-hoc polymorphism. Type classes permit overloading of arithmetic operators such as multiplication, and generalise the {"}eqtype variables{"} of Standard ML. Type classes extend the Hindley/Milner polymorphic type system, and provide a new approach to issues that arise in object-oriented programming, bounded type quantification, and abstract data types. This paper provides an informal introduction to type classes, and defines them formally by means of type inference rules. ",
+  abstract={This paper presents type classes, a new approach to ad-hoc polymorphism. Type classes permit overloading of arithmetic operators such as multiplication, and generalise the "eqtype variables" of Standard ML. Type classes extend the Hindley/Milner polymorphic type system, and provide a new approach to issues that arise in object-oriented programming, bounded type quantification, and abstract data types. This paper provides an informal introduction to type classes, and defines them formally by means of type inference rules.},
   author="P. Wadler and S. Blott",
   year="1989",
   doi="10.1145/75277.75283",
@@ -1739,7 +1893,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 @TechReport{PCLSRing,
   author={Alan Bawden},
-  title={{PCLSR}ing: {K}eeping {P}rocess {S}tate {M}odular},
+  title={PCLSRing: Keeping Process State Modular},
   institution={MIT},
   year="1989",
   url={http://fare.tunes.org/tmp/emergent/pclsr.htm},
@@ -1881,7 +2035,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % Original DEFSYSTEM is a 1990 paper, but hard to find independently from the others.
 @TechReport{kantrowitz1991,
   author={Mark Kantrowitz},
-  title={Portable Utilities for {C}ommon {L}isp},
+  title={Portable Utilities for Common Lisp},
   institution={School of Computer Science, Carnegie-Mellon University},
   number={CMU-CS-91-143},
   year=1991,
@@ -1906,7 +2060,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 @Book{amop,
-  Title={The {A}rt of the {M}eta-{O}bject {P}rotocol},
+  Title={The Art of the Meta-Object Protocol},
   Author={Kiczales, Gregor and Des Rivières, Jim and Bobrow, Daniel Gureasko},
   Year={1991},
   Publisher={MIT Press},
@@ -2462,7 +2616,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   note={.
     Fisher extends the simply typed λ-calculus (STLC, terminating)
     with simple objects and a typesystem, wherein you can add or override messages
-    (the difference between the two being meaningful because of the type system).
+    (the difference between the two being meaningful because of the type system),
+    with a toy calculus that uses a U-encoding similar to T (that she cites).
     She proves the typesystem sound with lots of formalism.
     Then she explores how objects actually added recursion to the STLC,
     and made it non-terminating.
@@ -3191,6 +3346,40 @@ and Fiech, Adrian",
 
 %% 2001
 
+@Webpage{Armstrong2001,
+  author={Joe Armstrong},
+  title={Why OO Sucks},
+  year={2001},
+  url={https://web.archive.org/web/20010429235709/http://www.bluetail.com/~joe/vol1/v1_oo.html},
+  howpublished={Personal web page at Bluetail (archived)},
+  lastchecked={2026-02-10},
+  note={.
+    Joe Armstrong, co-inventor of Erlang, argues against OO in this widely cited opinion essay,
+    as archived from his personal page at bluetail. In summary:
+    1. Functions and data are different, don’t belong together.
+    2. Trying to make data into objects only increases complexity compared to simple types.
+    3. OO explodes definitions all over the place.
+    4. Hidden private state in OO makes it hardest to address the nuisance that state is.
+    Yet OO was popular for bad reasons
+    (wrong: easy to learn, makes reuse easier; hype, sells solutions to its own problems).
+    This essay is fantastic in how much good and bad arguments it packs in so few words.
+    Let’s just say that Erlang does everything be blames OO for, just
+    at the different granularity of processes—which does make a difference,
+    that could be argued is for the better, but isn’t in that essay.
+    The second and fourth point are quite true for mainstream mutable Class OO languages
+    (C++, Java, C#, etc.) but actually are not features of OO, only of those languages.
+    The “explosion” of definitions is a real issue in OO in general, though,
+    as having a principled way to split a large definition into lots of partial definitions is
+    the very point of OO. Happily, good OO development systems have code browsers
+    to assist with locating and understanding the many prototypes and methods
+    that contribute to some effective definition.
+    As for the bad reasons for the popularity of OO, they are well identified;
+    but there are also good reasons that he doesn’t try to identify (see chapters 3, 4).
+    I love Joe, and it is very fun to disagree with him.
+    If anything, analyzing rants like this helps sharpen one’s critical mind.
+  }
+}
+
 @webpage{Graham2001avg,
   title={Beating the Averages},
   author={Graham, Paul},
@@ -3411,7 +3600,25 @@ and Fiech, Adrian",
   booktitle={ECOOP},
   year={2005},
   abstract="Two object-oriented programming language paradigms---dynamic, prototype-based languages and multi-method languages---provide orthogonal benefits to software engineers. These two paradigms appear to be in conflict, however, preventing engineers from realizing the benefits of both technologies in one system. This paper introduces a novel object model, prototypes with multiple dispatch (PMD), which seamlessly unifies these two approaches. We give formal semantics for PMD, and discuss implementation and experience with PMD in the dynamically typed programming language Slate.",
-  url={https://www.cs.cmu.edu/~aldrich/papers/ecoop05pmd.pdf}
+  url={https://www.cs.cmu.edu/~aldrich/papers/ecoop05pmd.pdf},
+  doi={10.1007/11531142_14},
+  note={.
+    For the Slate language, Lee implemented Prototypes with Multiple Dispatch (PMD),
+    combining Prototype OO, multiple dispatch, and “dynamic inheritance” (mutable ancestry).
+    Multi-methods are internalized as objects (as in the CLOS MOP),
+    allowing more flexibility than an second-class dispatch mechanism across a static ancestry.
+    In an invocation, each argument, an object, plays a role, that correspond to its argument position.
+    Applicable methods are sorted in the total order of a depth-first by
+    argument position, time of method creation (for overrides), and method specificity;
+    the ordering is a bit like linearization in CLOS, but
+    happens dynamically due to dynamic inheritance.
+    Some optimizations on traversing the applicable methods ensure that the usual case
+    of single-dispatch is efficiently implemented as part of the regular multiple dispatch algorithm.
+    There is even support for subjective dispatch, with
+    a global implicit additional argument on which to dispatch in zeroth position.
+    All in all quite an interesting innovative design for method dispatch,
+    maybe the most advanced and dynamic ever.
+  }
 }
 
 @InProceedings{scalableComponentAbstractions2005,
@@ -3424,7 +3631,6 @@ and Fiech, Adrian",
   volume={40},
   number={10},
   issn={0362-1340},
-  %url={https://doi.org/10.1145/1103845.1094815},
   url={http://lampwww.epfl.ch/~odersky/papers/ScalableComponent.pdf},
   doi={10.1145/1103845.1094815},
   abstract={We identify three programming language abstractions for the construction of reusable components: abstract type members, explicit selftypes, and modular mixin composition. Together, these abstractions enable us to transform an arbitrary assembly of static program parts with hard references between them into a system of reusable components. The transformation maintains the structure of the original system. We demonstrate this approach in two case studies, a subject/observer framework and a compiler front-end.},
@@ -3679,7 +3885,7 @@ and Fiech, Adrian",
 
 @webpage{Minsky2008,
   author={Yaron Minsky},
-  title={The {ML} sweet spot},
+  title={The ML sweet spot},
   year=2008,
   month=April,
   url={https://blog.janestreet.com/the-ml-sweet-spot/},
@@ -3720,6 +3926,7 @@ and Fiech, Adrian",
     which certainly works, but to me feels like putting the cart before the ox.
     Great stuff outside OO, and even the OO is decent,
     but in the end, like many academics, SK doesn’t grok OO.
+    (The third edition has some improvements, but is still not there.)
   }
 }
 
@@ -4832,3 +5039,21 @@ series={POPL '75}
 % The NIMBLE Project - Real-time common LISP for embedded expert systems applications
 % Henry Baker
 % https://doi.org/10.2514/6.1989-3140
+
+
+@InProceedings{Mogensen1988SelfApplicable,
+  author={Torben Ægidius Mogensen},
+  title={Self-Applicable Partial Evaluation},
+  booktitle={1995 ACM SIGPLAN Symposium on Partial Evaluation and Semantics-Based Program Manipulation},
+  journal={Lecture Notes in Computer Science},
+  pages={39-44},
+  year={1995},
+  doi={10.1145/215465.215469},
+  note={
+    M encodes of the λ-calculus in itself using higher-order syntax,
+    has interpreters, reducers and partial evaluators for the encoding,
+    and Futamura projections for those partial evaluators, and
+    interactions with the Y combinator. Very cool stuff.
+    Not directly related to OO, though.
+  }
+}

@@ -539,7 +539,7 @@ by opposition to an instantiatable flavor;
 however, the nomenclature only stuck in the Lisp community
 (and even there, flavors yielded to classes though the term mixin stayed).
 In other communities, the decade-later terms of art are
-@emph{abstract classes} and @emph{concrete classes}@~cite{johnson1988designing}:
+@emph{abstract classes} and @emph{concrete classes}@~cite{Goldberg1983 Johnson1988}:
 an abstract class is one that is only used for its specification—to inherit from it;
 a concrete class is one that is only used for its target type—to use its methods
 to create and process class instances.
@@ -1928,11 +1928,13 @@ because it is incompatible with some of their self-inflicted assumptions or cons
 @; TODO Cook 1987 A self-ish model of inheritance ?
 @; @citet{Cook1989} ? @citet{Cook1989Denotational} ?
 
-Now there are papers that successfully type OO, but take the bad approach of starting with
+Now there are papers that successfully type OO, and should be praised for it
+and for their other innovations—yet take the bad approach of starting with
 a toy calculus, which cannot generalize to anything useful in practice,
 often with much complexity and many restrictions
 so as to maintain conflation of specification and target.
-I want to tell the authors: look, not a single soul cares one damn
+I am impressed but I want to tell the authors:
+look, not a single soul cares one damn
 about your toy object system—not even yourself, obviously,
 since not even you care to use it to build any real software with it.
 And your approach cannot possibly scale to a real object system.

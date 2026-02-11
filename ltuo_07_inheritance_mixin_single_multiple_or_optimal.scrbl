@@ -308,9 +308,9 @@ which would result in an error, at compile-time in the more static systems.
 Flavors @~cite{Cannon1979} identified the correct solution,
 that involves cooperation and harmony rather than conflict and chaos.
 Failing to learn from Flavors, C++ @~cite{Stroustrup1989Multiple}
-and after it Ada not only issue an error like older systems,
-they also try to force the ancestry DAG into a tree
-like CommonObjects @~cite{Snyder1986Encapsulation}.
+and after it Ada not only adopt he conflict view of Smalltalk,
+they also, like Simula @~cite{Krogdahl1985} or CommonObjects @~cite{Snyder1986Encapsulation},
+try to force the ancestry DAG into a tree!
 Self initially tried a weird resolution method along a “sender path”
 that each time dived into the first available branch of the inheritance DAG
 without backtracking @~cite{parentsSharedParts1991},

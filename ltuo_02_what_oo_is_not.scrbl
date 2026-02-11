@@ -781,11 +781,12 @@ you can actually use OO as you do it.
     but actually, much more broadly, apply unchanged to software development in general.
   (This is notably harder than the previous exercise!)@xnote[""]{
     As a hint, you may consider the criticism from @citet{Graham2001noop},
-    and the reply by Rees.
+    and the reply by Rees; or @citet{Armstrong2001}.
     Which of the points actually pertain to OO and which don’t?
     You don’t have to have perfect answers, especially before I even explained what OO is.
     The point of the exercise is to engage critically with what OO is or isn’t,
     and what its costs and benefits may be.
+    You can revisit this exercise after you’re done reading the book.
   }
 }
 
