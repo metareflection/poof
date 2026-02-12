@@ -178,7 +178,7 @@ ASDF@~cite{ASDF2 ASDF3}
 made it simple to configure, to extend, and
 to refactor to use algorithms in @emph{O(n)} rather than @emph{O(n³)} or worse,
 all without any of the clients having to change their code.
-This makes it arguably more modular than its predecessor MK-DEFSYSTEM@~cite{kantrowitz1991}
+This makes it arguably more modular than its predecessor MK-DEFSYSTEM@~cite{Kantrowitz1991}
 that shunned the use of objects (possibly for portability reasons at the time),
 was notably hard to configure, and resisted several attempts to extend or refactor it.
 

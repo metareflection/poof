@@ -432,7 +432,7 @@ before the modern concept of OO was fully formed (in 1976)@xnote[","]{
   However, for the same reason, while Kay’s personal use of the term dates back to 1967,
   we should still only credit the invention at the date that the concept became fully formed,
   which is with Kay’s Smalltalk-76 and Bobrow’s KRL-0, both in 1976,
-  because of each other (they were colleagues at PARC and cite each other).
+  because of each other (they were across-the-hall colleagues at PARC and cite each other).
 }
 notably explained@~cite{Kay2020} that he originally meant
 a metaphor of computation through independent (concurrent, isolated) processes

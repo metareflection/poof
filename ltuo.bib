@@ -1281,13 +1281,14 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   numpages={8},
   note={.
     According to Gabriel 2012, this was the first academic publication about Flavors,
-    outside of Cannon’s 1979 report (this paper cites a 1982 copy), that was not seen
-    outside MIT and related Lisp circles (however, the Lisp Machine Manual from 1981 on
-    includes a chapter on Flavors). This paper describes the New Flavors system from
-    Symbolics, after it acquired the new “generic function” syntax, respect for
-    local precedence order, and other niceties. Moon rightfully insists on the modularity
-    advantage of Flavors (already mentions by Cannon). This is a fantastic explanation
-    on how to do multiple inheritance right, only way too short.
+    whereas Cannon’s 1979 report (this paper cites a 1982 copy) was privately circulated,
+    mostly in Lisp circles at MIT and beyond
+    (however, the Lisp Machine Manual from 1981 on includes a chapter on Flavors).
+    This paper describes the New Flavors system from Symbolics,
+    after it acquired the new “generic function” syntax,
+    respect for local precedence order, and other niceties.
+    Moon rightfully insists on the modularity advantage of Flavors (already mentionned by Cannon).
+    This is a fantastic explanation on how to do multiple inheritance right, only way too short.
   }
 }
 
@@ -1667,11 +1668,17 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   pages={470--502},
   year={1988},
   publisher={ACM New York, NY, USA},
-  doi={10.1145/44501.45065}
+  doi={10.1145/44501.45065},
+  url={https://homepages.inf.ed.ac.uk/gdp/publications/Abstract_existential.pdf},
+  note={.
+    The title of this key paper captures the core contribution:
+    you should think of abstract types for data and functions that operate on them (i.e. modules),
+    as hiding the actual underlying type behind an existential quantifier.
+    This enables reasoning about modules as first-class values in second-order logic.
+  }
 }
 
-% Introduces abstract classes and concrete classes, according to Grok,
-% but cites
+% TODO read deeper, make better analysis
 % https://www.cse.msu.edu/~cse870/Input/SS2002/MiniProject/Sources/DRC.pdf
 @Article{Johnson1988,
   title={Designing reusable classes},
@@ -1681,7 +1688,16 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   number={2},
   pages={22--35},
   year={1988},
-  url={http://laputan.org/drc/drc.html}
+  url={http://laputan.org/drc/drc.html},
+  note={.
+    Very interesting paper on how to (and not to) write reusable software in an OO language,
+    with a focus on Smalltalk. Discusses not just static software, but
+    maintenance and evolution of software across time, toolkits,
+    white-box frameworks (extensible with inheritance) vs
+    black-box frameworks (rigid with just subtyping), methodology,
+    general design rules, etc.
+    Not software as dead code, but softwaring as live teams.
+  }
 }
 
 %% 1989
@@ -1851,13 +1867,25 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-% Not obviously worth citing in this context?
+% Also appeared in BIGRE Bulletin 65, July 1989
 @TechReport{Lawall89SelfInScheme,
   Author={Julia L. Lawall and Daniel P. Friedman},
   Title={Embedding the Self Language in Scheme},
-  url="https://legacy.cs.indiana.edu/ftp/techreports/TR276.pdf",
+  url={https://scholarworks.iu.edu/dspace/items/73ab556f-b16e-42df-859d-da17f3ddcef6},
   Institution={Computer Science Department, Indiana University},
-  Year={1989}
+  number={TR-276},
+  Year={1989},
+  note={.
+    This paper re-implements the prototype object system of Self in Scheme,
+    thereby making its semantics more understandable.
+    This notably includes mutable slots, cloning, mutable inheritance,
+    method resolution depth first without backtracking along the what Ungar calls the “sender path”.
+    If the result doesn't look quite so simple after all,
+    it is because Self isn’t as simple conceptually as it aims to be;
+    authors confuse length of low-level code for ease of reasoning at a high-level.
+    A prototype object system in Scheme can be vastly simpler to implement as well as reason about
+    (see T and YASOS, or the code in this book).
+  }
 }
 
 % Introduction of Typeclasses
@@ -2029,18 +2057,39 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   numpages={21},
   location={Cambridge, Massachusetts, USA},
   doi={10.1007/3540543961_7},
-  url={https://research.utwente.nl/en/publications/functional-programming-with-bananas-lenses-envelopes-and-barbed-w/}
+  url={https://research.utwente.nl/en/publications/functional-programming-with-bananas-lenses-envelopes-and-barbed-w/},
+  note={.
+    This influential paper presents a collection of
+    pure (lazy) functional programming design patterns, many inspired by category theory
+    expressed as functions and the logical laws that interrelated them.
+    The patterns and functions are given recognizable names and
+    a vocabulary is thus created for functional programmers to share and use.
+    The paper notably popularized recursion schemes,
+    that are also interestingly the most basic concept to model OO (modular definitions).
+  }
 }
 
 % Original DEFSYSTEM is a 1990 paper, but hard to find independently from the others.
-@TechReport{kantrowitz1991,
+@TechReport{Kantrowitz1991,
   author={Mark Kantrowitz},
   title={Portable Utilities for Common Lisp},
   institution={School of Computer Science, Carnegie-Mellon University},
   number={CMU-CS-91-143},
   year=1991,
   month=May,
-  url={https://cl-pdx.com/static/CMU-CS-91-143.pdf}
+  url={https://cl-pdx.com/static/CMU-CS-91-143.pdf},
+  note={
+    A collection of portable free software utilities in Common Lisp, among which
+    the first non-proprietary reimplementation of DEFSYSTEM
+    (later known as MK-DEFSYSTEM to distinguish it from others), the only one until ASDF.
+    Making the code portable across platforms that are not very well-defined with respect
+    to files and processes, without a well-compartmentalized portability layer,
+    makes for a lot of bad corner cases, and is difficult to refactor after the live
+    knowledge of what exactly the code is supposed to mean is gone.
+    So after Mark stopped maintaining, it was hard for maintainer to handle the bitrot,
+    leading to a reimplementation from scratch, ASDF
+    (for which I seperated and documented a well-defined portability layer).
+  }
 }
 
 @Article{gabriel1991clos,
@@ -2059,12 +2108,19 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-@Book{amop,
+@Book{AMOP,
   Title={The Art of the Meta-Object Protocol},
   Author={Kiczales, Gregor and Des Rivières, Jim and Bobrow, Daniel Gureasko},
   Year={1991},
   Publisher={MIT Press},
-  url={https://direct.mit.edu/books/book/2607/The-Art-of-the-Metaobject-Protocol}
+  url={https://direct.mit.edu/books/book/2607/The-Art-of-the-Metaobject-Protocol},
+  note={.
+    This classic book describes how the implementation of an OO system
+    can itself use OO, making it extensible using itself,
+    with a few manually tied loops to bootstrap the system.
+    Beautiful.
+    Many Common Lisp implementations have adopted some variant of this design.
+  }
 }
 
 @InProceedings{Ungar91organizingprograms,
@@ -3049,7 +3105,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     We already knew such feat was possible, since rewrite logic is a universal subtratum.
     Instead, the important semantic details worth discussing and arguing
     get lost in the details of a tedious construction.
-    So nobody learns anything.}
+    So nobody learns anything.
+  }
 }
 
 @Book{SICP2,
@@ -3107,8 +3164,9 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     by reading this document. But you can read tutorials,
     look at plenty of working examples in free software libraries,
     and then make sense of the finer details by reading the CLHS.
-    Practical Common Lisp, the Common Lisp Cookbook, (or I’m told the OOP in CL by Keene)
-    might be better to start learning, or CLtL2, AMOP.
+    Graham’s ANSI Common Lisp, Seibel’s Practical Common Lisp,
+    the Common Lisp Cookbook, (or I’m told the OOP in CL by Keene)
+    might be better to start learning; and CLtL2 or AMOP once you’re more advanced.
   }
 }
 
@@ -3190,13 +3248,13 @@ and Fiech, Adrian",
 
 %% 1998
 
-@phdthesis{Russo1998,
+@PhdThesis{Russo1998,
   author={Russo, Claudio V.},
   title={Types for Modules},
   school={University of Edinburgh},
   year={1998},
   month=jul,
-  note={LFCS Thesis ECS-LFCS-98-389},
+  number={LFCS Thesis ECS-LFCS-98-389},
   url={https://era.ed.ac.uk/handle/1842/385},
   note={.
     Russo adds first-class modules to ML, that only had second-class modules up until then.
@@ -3545,13 +3603,17 @@ and Fiech, Adrian",
 
 %% 2003
 
-@Misc{Kay2003,
+@Webpage{Kay2003,
   Author={Alan Kay},
   Title={Clarification of "object-oriented" (email)},
   URL={https://www.purl.org/stefan_ram/pub/doc_kay_oop_en},
   Year={2003},
   Month={07},
-  Day={23}
+  Day={23},
+  lastchecked={2026-02-11},
+  note={.
+    Alan Kay recollects the influences that led him to invent Object-Oriented Programming.
+  }
 }
 
 % https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=693f61d2515ac9b032801dd7a603c34f1b725071
@@ -3622,7 +3684,7 @@ and Fiech, Adrian",
 }
 
 @InProceedings{scalableComponentAbstractions2005,
-  author={Odersky, Martin and Zenger, Matthias},
+  author={Martin Odersky and Matthias Zenger},
   title={Scalable component abstractions},
   year={2005},
   issue_date={October 2005},
@@ -3642,7 +3704,15 @@ and Fiech, Adrian",
   isbn={1595930310},
   booktitle={20th Annual ACM SIGPLAN Conference on Object-Oriented Programming, Systems, Languages, and Applications},
   location={San Diego, CA, USA},
-  series={OOPSLA '05}
+  series={OOPSLA '05},
+  note={.
+    This paper describes the OO and FP model of Scala 2 (then being developed),
+    its flavorful multiple inheritance and its typesystem,
+    with self-types and recursive type constraints.
+    Imperfect as it may be
+    (e.g. lack of C3, proper tail calls, and compromises to fit Java and the JVM),
+    Scala has by far the best integration of OO, FP and types.
+  }
 }
 
 % https://github.com/nkaretnikov/OOHaskell
@@ -3751,7 +3821,8 @@ and Fiech, Adrian",
   doi={10.1093/philmat/nkn013},
   publisher={American Mathematical Society},
   note={.
-    This edition includes a nice Foreword by Freeman Dyson.
+    This collection of writings about mathematics
+    includes a nice Foreword by Freeman Dyson.
   }
 }
 
@@ -4028,7 +4099,25 @@ and Fiech, Adrian",
   title={Evolving ASDF: More Cooperation, Less Coordination},
   year={2010},
   booktitle={International Lisp Conference},
-  url={http://common-lisp.net/project/asdf/doc/ilc2010draft.pdf}
+  url={http://common-lisp.net/project/asdf/doc/ilc2010draft.pdf},
+  doi={10.1145/1869643.1869648},
+  note={
+    In this report, I (then maintainer) and Robert (now maintainer) explain
+    how we took over ASDF, the de facto standard build system for Common Lisp
+    (successor to DEFSYSTEM, vaguely analogous to Make in C),
+    and turned it into ASDF 2, making it vastly more usable:
+    robust, portable (especially wrt pathnames), easy to configure,
+    with support for caching fasls (output files) separately per implementation.
+    A crucial technique that unlocked the social acceptability of new features was
+    the ability to upgrade ASDF after installation: before that,
+    users were locked with the vendor-provided version
+    so had incentive to always support the worst version of ASDF,
+    which means vendors had no incentive to upgrade.
+    Dynamic upgradability reversed the incentives,
+    illustrating the feedback between technology and social dynamics.
+    In general, ASDF was made to better fulfill its role of supporting modularity,
+    as characterized by the subtitle: more cooperation, less coordination.
+  }
 }
 
 % Meh, not that much worth listening to.
@@ -4122,7 +4211,19 @@ and Fiech, Adrian",
   title={LIL: CLOS Reaches Higher-Order, Sheds Identity and has a Transformative Experience},
   url="http://github.com/fare/lil-ilc2012/",
   booktitle={International Lisp Conference},
-  year=2012
+  year=2012,
+  note={.
+    I show how to achieve parametric polymorphism in Common Lisp,
+    by passing around “interfaces”, objects that describe some API.
+    Interfaces are analogous to the “dictionaries” with which typeclasses are implemented in Haskell,
+    or to first-class ML modules, except they integrate very well with the OO capabilities of CLOS.
+    I then show not only how to write either “pure” or “stateful” variants of such interfaces,
+    but how the two are equivalent, and can be automatically transformed into one another with macros.
+    Similarly, macros can automatically transform between these “pure” or “stateful” interface
+    in typeclass styles and respective “posh” or “classy” classes in traditional OO style.
+    Typeclass vs class, pure vs stateful are then just a matter of expression style
+    rather than of fundamentally different computing paradigms.
+  }
 }
 
 % My replies: https://twitter.com/Ngnghm/status/1791988260266234028
@@ -4421,7 +4522,13 @@ and Fiech, Adrian",
   title={Build Systems and Modularity},
   year=2016,
   url={https://ngnghm.github.io/blog/2016/04/26/chapter-9-build-systems-and-modularity/},
-  lastchecked={2023-11-29}
+  lastchecked={2023-11-29},
+  note={.
+    I once wrote a blog “Houyhnhnm Computing” (pronounced “Hunam”), wherein a Houyhnhnm
+    (sentient equine creature such as the ones once visited by Gulliver in his travels)
+    challenges mainstream human views on “Computer Science” from his alien point of view.
+    That chapter was focused on build systems, and software support for modularity in general.
+  }
 }
 
 
@@ -4455,7 +4562,7 @@ and Fiech, Adrian",
 % More co-authors
 @InProceedings{Amin2016DependentOT,
   title={Dependent Object Types},
-  author={Nada Amin, Adriaan Moors, Martin Odersky},
+  author={Nada Amin and Adriaan Moors and Martin Odersky},
   year={2016},
   url={https://api.semanticscholar.org/CorpusID:265751928},
   note={.
@@ -4465,7 +4572,7 @@ and Fiech, Adrian",
 }
 
 @InProceedings{Amin2016Unsound,
-  author={Amin, Nada and Tate, Ross},
+  author={Nada Amin and Ross Tate},
   title={Java and scala's type systems are unsound: the existential crisis of null pointers},
   year={2016},
   isbn={9781450344449},
@@ -4566,7 +4673,11 @@ and Fiech, Adrian",
   publisher={Aspect-Oriented Software Association (AOSA)},
   author={Pickering, Matthew and Gibbons, Jeremy and Wu, Nicolas},
   year={2017},
-  month={Apr}
+  month={Apr},
+  note={.
+    The paper generalizes lenses, prisms, traversals and other kinds of “functional optics”
+    in terms of profunctors.
+  }
 }
 
 % https://lmcs.episciences.org/4319
@@ -4675,7 +4786,11 @@ and Fiech, Adrian",
   author={Alan Kay},
   year={2020},
   url={https://www.quora.com/What-thought-process-would-lead-one-to-invent-object-oriented-programming/answer/Alan-Kay-11},
-  lastchecked={2026-01-18}
+  lastchecked={2026-01-18},
+  note={.
+    Kay answered lots of questions on Quora. This is one of his many answers.
+    You can explore more. Very interesting from a historical point of view.
+  }
 }
 
 %% 2021
@@ -4714,6 +4829,11 @@ and Fiech, Adrian",
   year={2021},
   booktitle={Scheme and Functional Programming Workshop},
   url={https://github.com/metareflection/poof},
+  note={.
+    The original paper in which I describe my reconstruction of a minimal model of
+    Prototype OO with mixin inheritance in the style of Jsonnet and Nix, and in which
+    appears the very first full-throated conceptualization of conflation in OO.
+  }
 }
 
 % Adding POP to Nixpkgs:
@@ -4724,7 +4844,10 @@ and Fiech, Adrian",
   author={François-René Rideau},
   title={Pure Object Prototypes},
   url={https://github.com/divnix/POP},
-  year={2021}
+  year={2021},
+  note={.
+    My implementation in Nix of a prototype object system with multiple inheritance.
+  }
 }
 
 @article{Prykhodko2021DIT,
