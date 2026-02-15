@@ -874,7 +874,8 @@ and the computation remains overall pure (deterministic, referentially transpare
 though not definable in terms of the pure applicative λ-calculus.
 Note however how in the definition below, @c{p} still needs be a function,
 and one must η-convert it into the equivalent but protected @c{(η p) = (λ (y) (p y))}
-(a syntactic definition, not a runtime function which would defeat the purpose),
+(a syntactic definition that delays the evaluation of @c{p},
+not a function call with the value of @c{p}, which would defeat the purpose),
 before passing it to @c{f}, to prevent access to the variable @c{p} before its initialization
 (and @c{f} must also be careful not to invoke this protected @c{p} before returning).
 Here is the Y combinator, eager, stateful:

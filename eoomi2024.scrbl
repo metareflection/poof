@@ -480,94 +480,11 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLOH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 @(noindent) @image[#:scale 0.67]{C3_linearization_example.eps}
 
-In this example lifted from Wikipedia @~cite{WikiC3},
-we define a base class @code{O},
-classes @code{A B C D E} that each inherit only from @code{O},
-classes @code{K1} with direct superclasses @code{A B C},
-@code{K2} with @code{D B E},
-@code{K3} with @code{D A}, and @code{Z} with @code{K1 K2 K3}.
-Using the C3 or C4 algorithm, we get the precedence list @code{Z K1 K2 K3 D A B C E O},
-with each subclass having its subset of superclasses in the same order
-in its own precedence list.
-
-If, using the C4 algorithm, @code{C} were declared a struct, then
-the suffix @code{C O} must be preserved,
-and the precedence list would be changed to @code{Z K1 K2 K3 D A B E C O}.
-If both @code{C} and @code{E} were declared structs, then there would be a conflict
-between the suffixes @code{C O} and @code{E O}, and
-the definition of @code{Z} would fail with an error.
-
-In this class hierarchy, only @code{O}, one of @code{C E}, and/or @code{Z}
-may be declared struct without causing an error
-due to violation of the local precedence order.
-Indeed, a class may not be declared a struct if it appears in a direct superclass list
-before a class that is not one of its superclasses.
-However, this criterion is not necessary to prohibit struct-ability,
-and @code{K3} cannot be a struct either,
-because its superclass @code{D} appears before @code{B E} among the direct superclasses of @code{K2},
-which would break the struct suffix of @code{K3} when @code{Z} inherits from both @code{K2} and @code{K3}.
 
 @subsection{Example 2}
 
 @(noindent) @image[#:scale 0.066]{C3_linearization_example_2.png}
-@;{
-https://www.mermaidchart.com/app/projects/0d7dd2c2-0762-428e-a4be-2063fd491789/diagrams/26327f0d-1e07-4b9a-ba0e-94557d2ceac1/version/v0.1/edit
----
-config:
-  theme: mc
-  look: classic
----
-flowchart BT
-    B("Boat")
-    C("DayBoat")
-    D("WheelBoat")
-    E("EngineLess")
-    F("SmallMultiHull")
-    G("PedalWheelBoat")
-    H("SmallCatamaran")
-    I("Pedalo")
-    I --> G --> E --> C --> B
-    I --> H --> F --> C
-    G --> D --> B
-}
 
-In this example from Ducournau et al. @~cite{ProposalMonotonicMultipleInheritance1994},
-we have the class and direct superclass lists:
-@code{Boat},
-@code{DayBoat Boat},
-@code{DayBoat WheelBoat},
-@code{EngineLess DayBoat},
-@code{PedalWheelBoat EngineLess WheelBoat},
-@code{SmallMultihull DayBoat},
-@code{SmallCatamaran SmallMultihull},
-@code{Pedalo PedalWheelBoat SmallCatamaran}.
-
-The C3 and C4 algorithms both compute the following precedence list for this class hierarchy:
-
-@code{Pedalo PedalWheelBoat EngineLess SmallCatamaran SmallMultihull DayBoat WheelBoat Boat}.
-
-Due to precedence constraints, any of @code{Pedalo Boat}, and
-at most one of @code{WheelBoat DayBoat} could be declared a struct,
-with @code{DayBoat} being the only one to change the precedence list, to:
-
-@code{Pedalo PedalWheelBoat EngineLess SmallCatamaran SmallMultihull WheelBoat DayBoat Boat}.
-
-Interestingly, either @code{WheelBoat} or @code{DayBoat} can be made a struct,
-because they don’t appear directly in a same class’s direct-superclass list,
-so there is no local precedence order constraint between the two.
-
-If there were no @code{EngineLess} between @code{PedalWheelBoat} and @code{DayBoat},
-then @code{DayBoat} appearing before @code{WheelBoat} would prevent the former
-from being made a struct, with the definition of @code{PedalWheelBoat} triggering an error.
-
-A general solution that can be used to ensure @code{DayBoat} is a struct
-would be to swap the order of superclasses in the conflicting definition;
-when the methods defined or overridden by the swapped superclasses are disjoint,
-the swap will not otherwise change the semantics;
-otherwise, the subclass can suitably override methods to compensate for the change.
-And the other general solution in last resort is to introduce a do-nothing wrapper class
-to shield a superclass from a local local precedence order constraint,
-just like the @code{EngineLess} shields @code{DayBoat}.
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLUH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 

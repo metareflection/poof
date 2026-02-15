@@ -370,7 +370,7 @@ only to the half-resolved specification@xnote["."]{
   as using @c{half} rather than @c{self} as the name of the first variable,
   essentially, you have @c{self = (half half)} and @c{super = (hyper half)}.
   Most implementations traditionally switch the order of arguments between
-  that @c{half} and @c{method-id} but that is immaterial to the semantics.
+  that @c{half} and @c{method-id} but that is semantically an isomorphism.
 }
 
 In T and after it YASOS, an @c{operation} can abstract over the calling convention
@@ -1637,6 +1637,11 @@ that each take the module context type @c{self} as parameter@xnote[":"]{
 }
 @Code{
 type ModExt required inherited provided =
+  required self → inherited self → provided self
+}
+
+@Code{
+type SModExt required inherited provided =
   ∀ self, super : Type
     self ⊂ required self, super ⊂ inherited self ⇒
         self → super → (provided self) ∩ super

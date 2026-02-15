@@ -34,13 +34,17 @@ one type constructor @c{ModExt} and two functions @c{fix} and @c{mix},
 repeated here more concisely from the previous chapter:
 @Code{
 type ModExt r i p = ∀ s, t : Type . s ⊂ r s, t ⊂ i s ⇒ s → t → (p s)∩t
-fixt : ∀ r i p : Type → Type, ∀ s, t : Type .
+fix : ∀ r i p : Type → Type, ∀ s, t : Type .
        s = i s ∩ p s, s ⊂ r s, t ⊂ i s ⇒
        t → ModExt r i p → s
 mix : ModExt r1 i1∩p2 p1 → ModExt r2 i2 p2 → ModExt r1∩r2 i1∩i2 p1∩p2
 
-(def (fixt m) (Y (λ (s) (m s top))))
+(def (fix t m) (Y (λ (s) (m s t))))
 (def (mix c p s) (compose (c s) (p s)))}
+
+@; TODO present types for non-strict extensions.
+@; These types work better for the multiple inheritance case.
+
 
 @section[#:tag "SI"]{Single Inheritance}
 
@@ -282,6 +286,51 @@ and Common Lisp, Ruby and Scala have both single and multiple inheritance.
 Users can selectively use single inheritance when they want more performance
 across all the subclasses of a given class.
 
+@exercise[#:difficulty "Easy"]{
+  Using the @c{extendModDef} function from this section,
+  build a single-inheritance hierarchy with three levels: @c{Animal} → @c{Mammal} → @c{Dog}.
+  Each should add one method, and override one (if there is one to override).
+  Verify that a @c{Dog} instance has all three methods.
+}
+
+@exercise[#:difficulty "Easy"]{
+  Identify a language with builtin mixin inheritance and first-class functions,
+  but doesn’t provide builtin single inheritance.
+  Implement single inheritance on top of mixin inheritance,
+  and test it with simple inheritance hierarchies@xnote["."]{
+    Jsonnet is an obvious choice. I admit I don’t know any other language.
+    Alternatively, you could define mixin inheritance the usual way in Nix or Scheme,
+    and define single inheritance on top.
+  }
+}
+
+@exercise[#:difficulty "Medium"]{
+  Identify a language with single inheritance only,
+  but either first-class OO and higher-order functions,
+  or second-class OO yet function-like entities at the type-level.
+  Implement mixin inheritance on top of it@xnote["."]{
+    For an easy time, pick JavaScript or Lua as a language with first-class OO and FP.
+    For a somewhat harder time, pick C++ or Nim as a language
+    with second-class OO but powerful enough “templates”.
+  }
+}
+
+@exercise[#:difficulty "Medium"]{
+  Demonstrate the modularity limitation of single inheritance:
+  Define a specification @c{Point} for a type with fields @c{x} and @c{y}.
+  Define specifications @c{Colored} (adds field @c{color})
+  and @c{Weighted} (adds field @c{weight}).
+  Now try to define @c{ColoredWeightedPoint} that has both.
+  With single inheritance, you must duplicate one of them.
+  Show the duplication, then show how mixin inheritance avoids it.
+}
+
+@exercise[#:difficulty "Hard"]{
+  Implement the optimization that makes single inheritance fast:
+  assign fixed numeric indices to methods as they are declared,
+  and implement method lookup as array access rather than hash-table lookup.t3
+  Benchmark the difference on a hierarchy with 10 levels and 100 method calls.
+}
 
 @section[#:tag "MI"]{Multiple Inheritance}
 
@@ -308,9 +357,9 @@ which would result in an error, at compile-time in the more static systems.
 Flavors @~cite{Cannon1979} identified the correct solution,
 that involves cooperation and harmony rather than conflict and chaos.
 Failing to learn from Flavors, C++ @~cite{Stroustrup1989Multiple}
-and after it Ada not only adopt he conflict view of Smalltalk,
-they also, like Simula @~cite{Krogdahl1985} or CommonObjects @~cite{Snyder1986Encapsulation},
-try to force the ancestry DAG into a tree!
+(and after it Ada) not only adopts the conflict view of Smalltalk,
+it also, like Simula @~cite{Krogdahl1985} or CommonObjects @~cite{Snyder1986Encapsulation},
+tries to force the ancestry DAG into a tree!
 Self initially tried a weird resolution method along a “sender path”
 that each time dived into the first available branch of the inheritance DAG
 without backtracking @~cite{parentsSharedParts1991},
@@ -736,7 +785,7 @@ CommonLoops @~cite{Bobrow1986CommonLoops} adopted it as
 “local precedence”, “local ordering”, and “local precedence list”.
 CLOS @~cite{Bobrow1988CLOS CLtL2} adopts it as “local precedence order”.
 Ducournau et al. speak of “local ordering” or “local precedence order”
-@~cite{Ducournau1992Monotonic Ducournau1994Monotonic}.
+@~cite{Ducournau1992 Ducournau1994}.
 C3 says “local precedence order”.
 It is the second of the three eponymous constraints of C3 @~cite{Barrett1996C3}.
 Among popular “flavorful” languages,
@@ -770,11 +819,11 @@ or security vulnerabilities instead of deadlocks.
 By contrast, with this consistency property, developers may not even have to care
 what kind of resources their parents may be allocating, if any, much less in what order.
 
-This property was described but not specifically named
-in corollary 2 of theorem 1 of @citet{Baker1991CLOStrophobia}, when discussing
+This property was described but not specifically named by @citet{Baker1991CLOStrophobia}
+in corollary 2 of theorem 1, when discussing
 the consistency properties of linearization in CLOS (or in this case, the lack thereof).
-This property was first explicitly described by @citet{Ducournau1992Monotonic}
-then implemented by @citet{Ducournau1994Monotonic},
+This property was first explicitly described by @citet{Ducournau1992}
+then implemented by @citet{Ducournau1994},
 and is the third of the three eponymous constraints of C3 @~cite{Barrett1996C3}.
 Among popular “flavorful” languages, Python, Perl and Solidity respect this constraint,
 but Ruby, Scala and Lisp fail to.
@@ -801,7 +850,7 @@ that have been assembled together into a closed one, with a shared ancestry.
 Thanks to Shape Determinism, changes made while debugging won’t suddenly hide bad behavior, and
 changes made while refactoring or adding features won’t introduce unrelated bad or unexpected behavior.
 
-This property was first described @~cite{Ducournau1992Monotonic}
+This property was first described @~cite{Ducournau1992}
 under the nondescript name “acceptability”.
 It received little attention, maybe because most (all?) popular OO systems
 already respect it implicitly. The C3 algorithm respects it,
@@ -813,12 +862,12 @@ it purports to implement @~cite{Barrett1996C3}@xnote["."]{
 }
 
 As an alternative to Shape Determinism, you could establish a global ordering of
-all defined classes across a program,
+all defined specifications across a program,
 e.g. lexicographically by their name or full path,
 or by assigning a number in some traversal order,
 or from a hash of their names or definitions, etc.
 This ordering could then be used by a linearization algorithm
-as a tie-breaking heuristic to choose which superclass to pick next
+as a tie-breaking heuristic to choose which ancestor to pick next
 while computing a precedence list,
 whenever the constraints otherwise allow multiple solutions.
 But the instability of such a heuristic when the code changes
@@ -827,16 +876,17 @@ would lead to many @emph{heisenbugs}.
 @Paragraph{Global Precedence: Consistency across All Ancestries}
 
 @citet{Baker1991CLOStrophobia} introduces the property that there should exist
-a global precedence list, i.e. a total ordering of classes
-compatible with every class’s precedence list.
-Unlike Shape Determinism, this is not a local property of every class,
+a global precedence list, i.e. a total ordering of specifications
+compatible with every specification’s precedence list.
+Unlike Shape Determinism, this is not a local property of every specification,
 but a global property of the program, that enables
 global optimization techniques and correctness enforcement.
-For instance, a global ordering of ensures no deadlock from using class-associated locks.
-Also, subclass checking can be done by consulting a bitmap with global indexes,
+For instance, a global ordering of all specifications
+ensures no deadlock from using specification-associated locks.
+Also, ancestor checking can be done by consulting a bitmap with global indexes,
 the number of static method combinations could be minimized, etc.
 
-Baker suggests that the order could be based on class definition order,
+Baker suggests that the order could be based on specification definition order,
 where forward references are prohibited and local order must match previous load order.
 Unlike the proposed alternative to Shape Determinism above,
 this order would be authoritative as the actual linearization order,
@@ -845,13 +895,13 @@ Baker’s solution is great for statically compiling code,
 as long as the load order is guaranteed to be consistent
 in presence of separate compilation and incremental source code modifications.
 Dynamic code update, e.g. in an interactive environment, make this property harder to enforce;
-some mechanism may trigger recompilation or reconfiguration of all subsequent classes
-after a change to any given class.
+some mechanism may trigger recompilation or reconfiguration of all subsequent specifications
+after a change to any given specification.
 
 A dummy mother-of-all precedence list can be produced at the end of static compilation
 to check global consistency, with an error issued if incompatibilities are detected
 (and if possible actionable error messages).
-At the very least, an order can be enforced on lock-issuing classes.
+At the very least, an order can be enforced on lock-issuing specifications.
 
 @subsection{Computing the Precedence List}
 
@@ -890,7 +940,7 @@ preserves neither Local Order nor Monotonicity.
 The somewhat more careful algorithm used by CommonLoops @~cite{Bobrow1986CommonLoops}
 and after it by CLOS (with minor changes) @; TODO check what those changes are
 preserves Local Order, but not monotonicity.
-The slightly complex algorithm by Ducournau et al. @~cite{Ducournau1994Monotonic},
+The slightly complex algorithm by Ducournau et al. @~cite{Ducournau1994},
 and the latter somewhat simpler C3 algorithm @~cite{Barrett1996C3 WikiC3},
 synthesize the precedence list while preserving all desired properties.
 C3 was notably adopted by OpenDylan, Python, Raku (Perl), Parrot, Solidity, PGF/TikZ.
@@ -1102,7 +1152,7 @@ you’d export @c{B1precomposed = (mix B1 A)} instead of @c{B1},
 and that’s what your users would use.
 Unhappily, that means that if another module @c{B2} also depends on @c{A}
 and exports @c{B2precomposed = (mix B2 A)},
-then users who want to define a class @c{C} that uses both @c{B1} and @c{B2},
+then users who want to define a specification @c{C} that uses both @c{B1} and @c{B2},
 will experience the very same diamond problem as when trying to synthesize
 a modular definition from an attribute grammar view of of multiple inheritance in @secref{DMRMI}:
 the pre-composed dependencies (@c{A} in this case) would be duplicated in the mix of
@@ -1222,7 +1272,8 @@ because most OO hierarchies are shallow@xnote["."]{
   including the base class @c{Object}. But that is a language with single inheritance.
   A survey I ran on all Common Lisp classes defined by all projects in Quicklisp 2025-06-22
   (minus a few that couldn’t be loaded with the rest) using @c{ql-test/did}
-  shows that the 82% of the 18939 classes have only 1 parent, 99% have 3 or fewer,
+  shows that the 82% of the 18939 classes (including structs) have only 1 parent,
+  99% have 3 or fewer,
   the most has 61, @c{MNAS-GRAPH::<GRAPH-ATTRIBUTES>};
   90% have 5 or fewer non-trivial ancestors,
   99% have 16 or fewer, the most has 63, @c{DREI:DREI-GADGET-PANE}.
@@ -1250,6 +1301,42 @@ even when successful at avoiding the full cost of the general case,
 while not eliminating the much slower behavior in case of cache miss.
 For all these reasons, many performance-conscious programmers
 prefer to use or implement single inheritance when offered the choice.
+
+@exercise[#:difficulty "Easy"]{
+  Draw the inheritance DAG for the following specifications:
+  @c{A} has no parents; @c{B} and @c{C} both have parent @c{A};
+  @c{D} has parents @c{B} and @c{C} in this (local precedence) order.
+  This is the classic “diamond”. Label each edge with the parent-child relationship.
+}
+
+@exercise[#:difficulty "Easy"]{
+  Using the diamond from the previous exercise, manually compute the precedence list
+  for @c{D} using depth-first left-to-right traversal
+  (the algorithm from the original Flavors, or Ruby).
+  Then compute it respecting the constraints of C3.
+  Are they the same? If not, what constraint does depth-first violate?
+}
+
+@exercise[#:difficulty "Medium"]{
+  Using the @c{base-bill-of-parts} specification that tracks parts as a base,
+  have a specification @c{A} that adds a chassis,
+  @c{B} and @c{C} each inheriting from @c{A} that add respectively
+  “wheels” and an “engine”, and @c{D} that inherits from both @c{B} and @c{C},
+  that adds a “body” and completes the toy car.
+  Show that naively combining @c{B}’s and @c{C}’s modular definitions
+  would overwrite away either the wheels or the engine.
+  Show that combining their “precomposed” mixins @c{B A} and @c{C A} into @c{B A C A}
+  would duplicate the effects of @c{A}, which is incorrect.
+  Show that the “conflict” semantics, the parts list is wrong
+  whichever way you “resolve” the conflict, whether in favor of @c{B} or @c{C}.
+  Show that with proper linearization, each part appears exactly once and only once.
+}
+
+@exercise[#:difficulty "Medium"]{
+  Implement a simple depth-first linearization algorithm.
+  Which of the properties I listed does it preserve? Which does it fail to preserve?
+  Can you exhibit a short counter-example for each case of property not preserved?
+}
 
 @exercise[#:difficulty "Hard"]{
   With the help of an AI if needed, implement then use flavorful multiple inheritance
@@ -1352,7 +1439,7 @@ and to the optimal inheritance that I propose below
 (Ruby did so about 10 years earlier than Scala 2,
 but without an academic publication to cite, though also without static types).
 However, Ruby uses a variant of the Flavors algorithm
-(depth first traversal),
+(depth-first traversal),
 and Scala a variant of the LOOPS algorithm
 (concatenation of precedence lists then removal of duplicates),
 and neither respects Local Order nor Monotonicity,
@@ -1524,7 +1611,7 @@ It is the first and so far only implementation of @emph{optimal inheritance}@xno
 @subsection[#:tag "C4"]{C4, or C3 Extended}
 
 The authors of C3 @~cite{Barrett1996C3 WikiC3},
-after Ducournau et al. @~cite{Ducournau1992Monotonic Ducournau1994Monotonic},
+after Ducournau et al. @~cite{Ducournau1992 Ducournau1994},
 crucially frame the problem of ancestry linearization in terms of
 constraints between the precedence list of a specification and those of its ancestors:
 notably, the “monotonicity” constraint states that
@@ -1684,7 +1771,7 @@ suffix hierarchies usually remain shallow@xnote[","]{
 }
 so it’s a bit moot what to optimize for.
 
-@subsection{C3 Tie-Breaking Heuristic}
+@subsection[#:tag "CTBH"]{C3 Tie-Breaking Heuristic}
 
 The constraints of C3 or C4 do not in general suffice
 to uniquely determine how to merge precedence lists:
@@ -1731,4 +1818,173 @@ that should probably be formalized and added to the constraints of C4@xnote["."]
   are sufficient to fully determine the tie-break heuristic of C3,
   or of a better variant that would also respect the hard constraints of C3.
   I also leave that problem as an exercise to the reader.
+}
+
+@exercise[#:difficulty "Easy"]{
+  Explain in your own words why the “suffix property” enables single-inheritance
+  optimizations even in a multiple-inheritance system.
+  What would break if a struct’s precedence list were @emph{not} a suffix
+  of its descendant’s precedence list?
+  Show an example of inheritance hierarchy for which the single-inheritance optimization
+  do not apply.
+}
+
+@exercise[#:difficulty "Medium"]{
+  Consider this example lifted from Wikipedia @~cite{WikiC3},
+  with a base specification @code{O},
+  specifications @c{A B C D E} that each inherit only from @c{O},
+  specifications @c{K1 K2 K3} with respective parents (in total local order)
+  @c{A B C}, @c{D B E} and @c{D A},
+  and specification @c{Z} with parents @c{K1 K2 K3}.
+  What are respective precedence lists of all these specifications with the C3 algorithm,
+  all of them being assumed to be infix specifications?
+}
+@;{
+Using the C3 or C4 algorithm, we get the precedence list @code{Z K1 K2 K3 D A B C E O},
+with each subclass having its subset of ancestors in the same order
+in its own precedence list.
+}
+
+
+@(if (render-html?)
+  @image[#:scale 0.7]{C3_linearization_example.png}
+  @image[#:scale 0.55]{C3_linearization_example.eps})
+
+@;{
+If, using the C4 algorithm, @code{C} were declared a suffix specification, then
+the suffix @code{C O} must be preserved,
+and the precedence list would be changed to @code{Z K1 K2 K3 D A B E C O}.
+If both @code{C} and @code{E} were declared suffix specifications,
+then there would be a conflict between the suffixes @code{C O} and @code{E O}, and
+the definition of @code{Z} would fail with an error.
+
+In this class hierarchy, only @code{O}, one of @code{C E}, and/or @code{Z}
+may be declared a suffix specification without causing an error
+due to violation of the local precedence order.
+Indeed, a class may not be declared a struct if it appears in a direct superclass list
+before a class that is not one of its superclasses.
+However, this criterion is not necessary to prohibit struct-ability,
+and @code{K3} cannot be a struct either,
+because its superclass @code{D} appears before @code{B E} among the direct superclasses of @code{K2},
+which would break the struct suffix of @code{K3}
+when @code{Z} inherits from both @code{K2} and @code{K3}.
+}
+
+@exercise[#:difficulty "Medium"]{
+  In the previous example, which specifications could be declared as suffix
+  without changing any precedence list?
+  Which could be declared as suffix in a way that would change some precedence list
+  but would still the entire ancestry valid?
+  Which would cause C4 to issue an error trying to compute a precedence list for @c{Z}
+  if declared suffix?
+}
+
+@exercise[#:difficulty "Medium"]{
+  Same questions with this example from @~cite{Ducournau1994},
+  with the following lists of specification and its parents in local order:
+  @c{Boat},
+  @c{DayBoat Boat},
+  @c{DayBoat WheelBoat},
+  @c{EngineLess DayBoat},
+  @c{PedalWheelBoat EngineLess WheelBoat},
+  @c{SmallMultihull DayBoat},
+  @c{SmallCatamaran SmallMultihull},
+  @c{Pedalo PedalWheelBoat SmallCatamaran}.
+}
+
+@(if (render-html?) ;; 0.16, 0.10
+  @image[#:scale 0.14]{C3_linearization_example_2.png}
+  @image[#:scale 0.10]{C3_linearization_example_2.png})
+
+@;{
+The precedence list is:
+@c{Pedalo PedalWheelBoat EngineLess SmallCatamaran SmallMultihull DayBoat WheelBoat Boat}.
+
+Due to precedence constraints, any of @c{Pedalo Boat}, and
+at most one of @c{WheelBoat DayBoat} could be declared a suffix specification,
+with @c{DayBoat} being the only one to change the precedence list, to:
+@c{Pedalo PedalWheelBoat EngineLess SmallCatamaran SmallMultihull WheelBoat DayBoat Boat}.
+
+Interestingly, either @c{WheelBoat} or @c{DayBoat} can be made a suffix,
+because they don’t simultaneously appear in any given class’s parent list,
+so there is no local precedence order constraint between the two.
+
+If there were no @c{EngineLess} between @c{PedalWheelBoat} and @c{DayBoat},
+then @c{DayBoat} appearing before @c{WheelBoat} would prevent the former
+from being made a suffix specification,
+with the definition of @c{PedalWheelBoat} triggering an error.
+
+A general solution that can be used to ensure @c{DayBoat} is a suffix specification
+would be to swap the order of superclasses in the conflicting definition;
+when the methods defined or overridden by the swapped superclasses are disjoint,
+the swap will not otherwise change the semantics;
+otherwise, the subclass can suitably override methods to compensate for the change.
+And the other general solution in last resort is to introduce a do-nothing wrapper class
+to shield a superclass from a local local precedence order constraint,
+just like the @c{EngineLess} shields @c{DayBoat}.
+}
+
+@;{
+https://www.mermaidchart.com/app/projects/0d7dd2c2-0762-428e-a4be-2063fd491789/diagrams/26327f0d-1e07-4b9a-ba0e-94557d2ceac1/version/v0.1/edit
+---
+config:
+  theme: mc
+  look: classic
+---
+flowchart BT
+    B("Boat")
+    C("DayBoat")
+    D("WheelBoat")
+    E("EngineLess")
+    F("SmallMultiHull")
+    G("PedalWheelBoat")
+    H("SmallCatamaran")
+    I("Pedalo")
+    I --> G --> E --> C --> B
+    I --> H --> F --> C
+    G --> D --> B
+}
+
+@exercise[#:difficulty "Medium, Recommended"]{
+  If you did exercise @exercise-ref{06to07}, compare your previous sketches
+  of single and multiple inheritance with the treatment in this chapter.
+  What did you get right? What surprised you?
+  Did you anticipate the importance of linearization and the suffix property?
+}
+
+@exercise[#:difficulty "Hard" #:tag "07to08"]{
+  Now that you have a simple model for all the usual OO semantics as seen in non-Lisp languages,
+  can you extend this model to cover advanced techniques from Lisp languages, including
+  method combination and multiple dispatch (multi-methods)?
+  Can you keep your model of multiple dispatch purely functional,
+  solving the Haskell “orphan typeclass” issue?
+  Can you model dynamic dispatch as well as static dispatch?
+  Make an honest attempt, then keep your notes for after you read the next chapter.
+}
+
+@exercise[#:difficulty "Hard"]{
+  With the help of AI if needed, implement the C4 algorithm as described above,
+  in your favorite programming language.
+  Or else, translate the version from Gerbil Scheme into it.
+  Also port the Gerbil test suite to check that your implementation works correctly.
+  To make it harder, make sure your algorithm is in O(nd),
+  that sub-suffix checking is O(1), @emph{and} that a fast linear search
+  rather than hash-table search is used if the tables are small enough.
+  To make it a research-level project, get your favorite programming language
+  to accept flavorful multiple inheritance with C4 linearization as its OO inheritance mechanism.
+}
+
+@exercise[#:difficulty "Research"]{
+  Implement a two-level inheritance mechanism wherein
+  each specification is an element of a specification-sort,
+  the specification-sorts are themselves in a partial order to be linearized,
+  and every specification comes after (respectively before)
+  every specification of a higher-priority (respectively lower-priority) specification-sort.
+  An actionable error is issued if there is no solution.
+}
+
+@exercise[#:difficulty "Research"]{
+   See if there are other interesting properties or better heuristics for linearization,
+   or prove that there aren’t.
+   Prove or disprove the conjectures I haven’t proved about heuristics for C4 in @secref{CTBH}.
 }

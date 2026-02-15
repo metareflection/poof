@@ -20,9 +20,9 @@ More details, and justifications, will follow in subsequent chapters.
 @epigraph{Say what you mean and mean what you say.
   @|#:- "Lewis Carroll"|
 }
-Object Orientation (“OO”) is a technique that enables the specification of programs
+@principle{Object Orientation (“OO”) is a technique that enables the specification of programs
 through extensible and modular @emph{partial} specifications,
-embodied as entities @emph{within} a programming language
+embodied as entities @emph{within} a programming language}
 (see @secref{OOaIEM}, @secref{MOO}).
 
 @subsection{Partial specifications}
@@ -544,7 +544,7 @@ Since then, many languages including Ruby, Perl, Python and Scala
 correctly adopted the basic design of Flavors (though none of its more advanced features)—I
 will call them @emph{flavorful}@xnote["."]{
   To be fair, these languages all include the capability for a method to call a super-method,
-  that was not directly possible in Flavors (1979) without writing your own method-combination,
+  that was not @emph{directly} possible in Flavors (1979) without writing your own method-combination,
   but only introduced by CommonLoops (1986) with its run-super function,
   known as call-next-method in CLOS (1988).
 }
