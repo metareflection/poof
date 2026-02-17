@@ -890,7 +890,3 @@ I will define those terms precisely in
   Hardest of all: let apparent enemies help you identify
   where you yourself are being bamboozled right now.
 }
-
-@; TODO: Describe Appendices
-
-@; TODO for submission, move to appendix?

@@ -723,7 +723,7 @@ the same pattern used for methods, now lifted to slot initialization.Claude is A
 
 @subsection{Win-Win}
 
-Another fantastic contribution by Flavors @~cite{Cannon1979} is Method Combinations:
+Another fantastic contribution from Flavors @~cite{Cannon1979} is Method Combinations:
 the idea that the many methods declared in partial specifications
 are each to contribute partial information that will be harmoniously combined (mixed in),
 rather than complete information that have to compete with other conflicting methods
@@ -740,12 +740,17 @@ the usual composition of modular extensions,
 wherein each extension can refer to its super argument
 along a multiple inheritance specification’s precedence list,
 as discussed in @secref{MI}.
-But we can do better.
+But we can do better, as an API on top of this foundation.
 
-@subsection{Effective Methods and Generic Functions}
+@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
 
-With method combinations, a target method is called the effective method,
-and computed based on tagged methods declared by each specification along the way.
+@subsection{Effective Methods and Method Qualifiers}
+
+With method combinations, a target method is called the @emph{effective method}.
+It is computed based on individual methods declared by each specification along the way,
+that I will call @emph{method specifications}.
+
+
 Method tags, known as @emph{method qualifiers}, are some kind of symbols,
 though, in many Lisp or Scheme dialects, a “keyword” may be used that is somehow
 distinct from regular symbols, often with a syntax involving a colon@xnote["."]{
@@ -816,32 +821,34 @@ in a few hundred lines of code@xnote["."]{
   Claude Code in a few minutes created and debugged a working implementation
   of flavorless inheritance,
   in under 800 lines of code and 200 of tests, for SBCL and CCL, using the CLOS MOP.
-  Yet, the fact that, in over 46 years,
-  no human seems to have ever bothered to implement this mechanism
-  on top of method combinations, much less use it,
+  Yet, the fact that, in over 46 years that both kinds of multiple inheritance existed,
+  and that it was relatively easy to implement flavorless inheritance
+  on top of flavorful inheritance using method combinations,
+  no human seems to have ever bothered to implement this mechanism, much less use it,
   is a strong symptom that in fact it is a silly thing to do.
-  Claude comments:
+  The Claude AI assistant comments:
   “once you’ve grasped that methods can @emph{combine} rather than @emph{collide},
   deliberately implementing collision semantics would feel like building
   a car that refuses to start if you have both a driver and a passenger.”
 }
 
+@subsection{Generic Functions}
+
 The original Flavors adopted the “message passing” paradigm,
-and associated method combinations to messages.
+and associated method combinations to messages:
+to pass a message @c{m} to object @c{x}, you invoke @c{(x m args ...)}.
 But its successor New Flavors @~cite{Moon1986Flavors},
 introduced the notion of a @emph{generic function},
 that preserves the usual syntax and semantics of a function,
 and encapsulates the same notion of an identified entity you invoke with arguments,
-the behavior of which can be specified in modular extensible ways.
-To pass a message @c{m} to object @c{x}, you invoke @c{(x m args ...)}
-whereas to call a generic function @c{m} on object @c{x}, you invoke @c{(g x args ...)}:
-@c{x} is now an argument.
-Method combination information is then associated to such generic functions. @;{
-adopted by CommonLOOPS @~cite{Bobrow1986CommonLoops}, CLOS, Cecil, Fortress, etc.
-}
-@; TODO quickly mention multi-methods with secref
+the behavior of which can be specified in modular extensible ways:
+to call a generic function @c{g} on object @c{x}, you invoke @c{(g x args ...)}.
+The object @c{x} is now an argument instead of the function.
+Method combination information is then associated to this generic functions.
+The notion of generic function was thereafter adopted by
+CommonLOOPS, CLOS, Cecil, Fortress, etc. @; TODO @~cite{Bobrow1986CommonLoops}
 
-@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+@; TODO quickly mention multi-methods with secref
 
 @subsection{Implementing Method Combination}
 

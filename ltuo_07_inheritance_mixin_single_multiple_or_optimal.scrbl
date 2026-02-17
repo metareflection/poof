@@ -1952,7 +1952,7 @@ flowchart BT
   Did you anticipate the importance of linearization and the suffix property?
 }
 
-@exercise[#:difficulty "Hard" #:tag "07to08"]{
+@exercise[#:difficulty "Hard, Recommended" #:tag "07to08"]{
   Now that you have a simple model for all the usual OO semantics as seen in non-Lisp languages,
   can you extend this model to cover advanced techniques from Lisp languages, including
   method combination and multiple dispatch (multi-methods)?

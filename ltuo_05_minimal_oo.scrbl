@@ -1061,7 +1061,7 @@ and return to rebuilding OO from first principles.
 
 @section[#:tag "MFCME"]{Minimal First-Class Modular Extensibility}
 
-@subsection{Modular Extensions}
+@subsection[#:tag "ME"]{Modular Extensions}
 
 One can combine the above extensibility and modularity in a minimal meaningful way,
 as modular extensibility.

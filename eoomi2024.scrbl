@@ -931,3 +931,22 @@ before a well-known general-purpose fixpoint.
 
   Once you forsake the NNOOTT, you stop trying to force subclass pegs into subtype holes,
   and all these problems evaporate.
+
+
+More OO as paradigm of live programming. Patterns. etc. vs programming language paradigm.
+
+TODO: move types to their own chapter 8.
+TODO: Switch ch 2 and ch 3 ?
+TOOD: Cite Okasaki vs incremental
+
+
+CUP https://docs.google.com/document/d/1p1jnxnPeXOWSeZM5WxB2Fgkag9o2vSLT/edit
+MITP https://docs.google.com/document/d/1-F5CGlR86CHDcAp8-GnPWd9SJmyvneIkcAWJreaXLww/edit?tab=t.0
+
+
+
+Type intersection vs function overloading, with static or dynamic dispatch
+based on static or dynamic type information associated with the object.
+If no such type information available (e.g. from Haskell typeclass Data.Dynamic),
+actual same code must. Ad hoc vs parametric polymorphism. XXXX
+

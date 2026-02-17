@@ -1206,8 +1206,8 @@ programmers writing extensible modular definitions should be able to specify typ
 for the entities they provide (an extension to) and require (a complete version of),
 without having to know anything about the types of the many other entities
 they neither provide nor require:
-indeed, these other entities may not have been written yet, and by other people,
-yet will be linked together with his modules into a complete program.
+indeed, these other entities will be linked together with their modules into a complete program,
+but may not have been written yet, and when they are, by other people.
 
 Now, with only modularity, or only extensibility, what’s more second-class only,
 you could contrive a way for the typechecker to always exactly know all the types required,
@@ -1234,34 +1234,107 @@ will match the future actual module constraint, that may satisfy many more const
 meanwhile, the “positive” constraints about types for the identifiers being provided
 may satisfy many more constraints than those actually required from other modules using it.
 
-@subsection[#:tag "NNOOTT"]{The NNOOTT: Naive Non-recursive OO Type Theory}
+@subsection[#:tag "STfOO"]{Simple Types for OO}
 
-The simplest and most obvious theory for typing OO,
-that I will dub the Naive Non-recursive Object-Oriented Type Theory (NNOOTT),
-consists in considering subclassing (a relation between specifications)
-as the same as subtyping (a relation between targets).
-Thus, in this theory, a subclass, that extends a class with new fields,
-is (supposedly) a subtype of the parent “superclass” being extended.
-@;{ XXX Eiffel, Java, C#, Smalltalk,
-  The theory is implicit in the names of the @c{is} operator in C#.
-}
-
-To demonstrate an advanced variant of the NNOOTT,
-consider extending the Simply Typed Lambda-Calculus (STLC),
-or some more elaborate but still well-understood variant of the λ-calculus,
-with primitives for the language’s builtin constructs and standard libraries,
-and (if not already available) a minimal set of features for OO:
-indexed products for records, subtyping (@c{⊂} or @c{≤} or in ASCII @c{<:})
-and type intersections (@c{∩}).
-In this NNOOTT variant, a NNOOTT Modular Extension could have a type of the form
+Given any typesystem that has functions,
+the simplest way to type OO is with these types for Simple Modular Extensions:
 @Code{
-type NModExt required inherited provided =
-  required → inherited → (inherited ∩ provided)
+type SModExt required inherited provided =
+  required → inherited → provided
+mix : SModExt r j p → SModExt r i j →
+        SimpleModeExt r i p
+fix : top → SModExt target top target → target
 }
-A @c{NModExt} is a type with three parameters,
+
+Indeed this type is just the @c{C → V → W} from @secref{ME},
+with more explicit names for the variables,
+making their role in inheritance more explicit.
+
+However, those types are somewhat burdensome, and not modular:
+all modular extensions must agree on the type
+@c{required} or @c{target} of the module context.
+This means there can be no separate compilation of modular extensions,
+or typing of them before the entire program is written.
+In some languages with simple and rigid enough types, this means
+details of the target type may have to be wired in every extension,
+that are then not reusable with a different target type.
+
+Also, the user must provide a top value for that target type as initial seed for the fixpoint.
+This works well enough when the target is a record of fields
+that each have a null, empty or zero value that can be used as a top value;
+the downside being that the type is then “nullable”, and
+either do not distinguish “uninitialized” from “initialized to the default value”,
+or does distinguish them but then allows “uninitialized” at runtime after the fixpoint is computed.
+Either way, using simple types like this does not allow for richly constrained types
+wherein the tight constraints are only satisfied during the extension process itself.
+
+Still, those simple types provide a template for better types,
+that will typically some variant of the simple types,
+restriction of them, finite or infinite intersection of them.
+
+@subsection[#:tag "SfSS"]{Strict Specification Subtypes for Modular Single Inheritance}
+
+To achieve modular types for OO, you need some notion of subtyping,
+and/or intersection of types.
+A subtype constraint @c{x ⊂ y}
+(sometimes written @c{x ≤ y} or in ASCII @c{x <: y}
+in the literature and in various languages) signifies that @c{x} is a subtype of @c{y},
+that every element of @c{x} is also an element of @c{y}.
+An intersection type @c{x ∩ y} is the largest type @c{z} such that
+every element of @c{z} is also an element of @c{x} and an element of @c{y}.
+We always have @c{(x ∩ y) ⊂ x} and @c{(x ∩ y) ⊂ y}.
+
+Furthermore, usual OO with records as targets requires those features
+to properly apply to indexed products for records,
+such that a record type with extra fields is a subtype of the record type with given fields,
+and a record type whose field types are subtypes or those of another is also a subtype.
+And for modular types that can type extensions separately,
+the typesystem also needs to be able to abstract over sets of extra fields
+to be specified in a later module, using what is known as “row polymorphism”.
+
+Then, we can define a type for Simple Strict Modular Extensions,
+either in subtype-style or intersection-style,
+where @c{c ⇒ t} indicates a type @c{t} under a constraint @c{c}:
+@Code{
+type SSModExt_subtype required inherited extended =
+  provided ⊂ inherited ⇒
+  required → inherited → extended
+
+type SSModExt_intersection required inherited provided =
+  required → inherited → (provided ∩ inherited)
+}
+In subtype style, the strictness is expressed by the variable @c{provided} being constrained
+to be a subtype of @c{inherited}.
+In intersection style, the strictness is expressed by the result type
+being the intersection of the @c{provided} type and the @c{inherited} type,
+thus a subtype of @c{inherited}.
+Whereas in subtype style, @c{provided} covers all the information being returned,
+in intersection style, @c{newlyProvided} only covers the new information.
+In this book, I will use a mix of intersection style and subtype style. We then have:
+@Code{
+type SSModExt required inherited provided =
+  required → inherited → (provided ∩ inherited)
+mix : SSModExt s i∩p i∩p∩q → SModExt r i i∩p →
+        SSModeExt r∩s i i∩p∩q
+fix : top → SSModExt top∩target top top∩target → top∩target
+}
+
+@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+
+These types make for modular composition of modular extensions.
+(Note that the type @c{top} is usually chosen such that @c{top∩target = target}
+In this NNOOTT variant, a NNOOTT Modular Extension could have a type of the form
+A @c{SrModExt} is a type with three parameters,
 the type @c{required} of the information required by the modular extension from the module context,
 the type @c{inherited} of the information inherited and to be extended,
-and the type @c{provided} of the information provided to extend what is inherited.
+and the type @c{provided} of the information provided.
+Often, the additional constraint @c{provided ⊂ inherited} is added,
+to ensure that the information provided strictly extends what is inherited.
+Equivalently, the return type of the function can be @c{inherited ∩ provided}
+instead of @c{provided}, so that the @c{provided} variable refers
+to the additional information contributed by the modular extension,
+rather than to the complete information available after extension.
+
 Note that this type refines the @c{C → V → V} from @secref{MOI}:
 @c{inherited} and @c{provided} each separately refine the value @c{V} being specified;
 that value can be anything: it need not be a record at all, and if it is,
@@ -1285,11 +1358,7 @@ and starting with the top value as a seed, and returns the target fixpoint.
 The @c{mix} operator chains two mixins, with the asymmetry that
 information provided by the parent (parameter @c{p2} for the second argument)
 can be used by the child (first argument), but not the other way around.
-@Code{
-fix : top → NModExt target top target → target
-mix : NModExt r1 i1∩p2 p1 → NModExt r2 i2 p2 →
-        NModExt r1∩r2 i1∩i2 p1∩p2
-}
+
 
 This model is simple and intuitive, and
 has good didactic value to explain how inheritance works:
@@ -1299,6 +1368,10 @@ required from either child or parent;
 the inherited information must contain all information expected by the parent,
 and all information expected by the child that isn’t provided by the parent;
 the provided information contains all information provided by either child or parent.
+
+
+
+To demonstrate an advanced variant of the NNOOTT,
 
 However, this “Naive Non-recursive OO Type Theory”, as the name indicates,
 is a bit naive indeed, and only works in simple non-recursive cases.
@@ -1629,7 +1702,7 @@ where @c{Y} is the fixpoint operator for types@xnote["."]{
 A more precise view of a modular extension is thus as
 an entity parameterized by the varying type @c{self} of the module context
 (that Bruce calls @c{MyType} @~cite{bruce1996typing SubtypingMatch1997}). @; TODO cite further
-As compared to the previous parametric type @c{NModExt} that is parametrized by types @c{r i p},
+As compared to the previous parametric type @c{SrModExt} that is parametrized by types @c{r i p},
 this parametric type @c{ModExt} is itself parametrized by parametric types @c{r i p}
 that each take the module context type @c{self} as parameter@xnote[":"]{
   The letters @c{r i p}, by contrast to the @c{s t a b} commonly used for generalized lenses,
@@ -1654,11 +1727,7 @@ is constrained by @c{super ⊂ inherited self},
 and the returning a value is of type @c{provided self ∩ super},
 and there is no direct recursion there
 (but there can be indirectly if the focus is itself referenced via self somehow).
-Those familiar with universal quantifiers may also notice how
-the quantification of @c{self} and @c{super},
-in absence of reflective capabilities, pretty much forces those functions
-to be well-behaved with respect to gracefully passing through
-any call to a method they do not define, override or otherwise handle.
+
 Finally, notice how, as with the simpler NNOOTT variant above,
 the types @c{self} and @c{referenced self} refer to the module context,
 whereas the types @c{super} and @c{provided self} refer to some value in focus,
@@ -1681,10 +1750,10 @@ I could instead make the last constraint a definition
 @c{self = Y (inherited ∩ provided)}
 and check the two subtyping constraints about @c{top} and @c{referenced}.
 As for the type of @c{mix}, though it looks identical with @c{ModExt}
-as the NNOOTT type previously defined with @c{NModExt},
+as the NNOOTT type previously defined with @c{SrModExt},
 there is an important but subtle difference:
 with @c{ModExt}, the arguments being intersected
-are not of kind @c{Type} as with @c{NModExt},
+are not of kind @c{Type} as with @c{SrModExt},
 but @c{Type → Type}, where
 given two parametric types @c{f} and @c{g},
 the intersection @c{f∩g} is defined by @c{(f∩g)(x) = f(x)∩g(x)}.

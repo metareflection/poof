@@ -137,7 +137,7 @@ Instructions for bibliography assistant:
     This great classic explains how you can do all the things that the λ-calculus
     without ever using λ, just with application of basic combinators.
     The most famous complete base of combinators is S K I with
-    I = λ x . x, K = λ x y . x, S = λ x y z . x z (y z),
+    S = λ x y z . x z (y z), K = λ x y . x, I = λ x . x,
     with a straightforward syntactic translation from λ-terms to combinations.
     Also, I = S K K so S K is a base.
     (Another famous base is X = λ f . f (λ x y z . x z (y z)) (λ x y z . x),
@@ -145,7 +145,8 @@ Instructions for bibliography assistant:
     Section 7 fixed-point operators p. 155 discusses the usual (lazy) Y combinator,
     and its relationship to Turing 1937’s Θ: Θ = Y (S I).
     Curry also tried to do logic with (for mathematical reasoning), which he called
-    “illative combinatory logic”, though he had a completely satisfying (to himself) variant.
+    “illative combinatory logic”, though he didn’t find
+    a completely satisfying (to himself) variant.
   }
 }
 
@@ -4460,16 +4461,14 @@ and Fiech, Adrian",
 }
 
 @Book{EcmaScript2015,
-  added-at={2015-08-28T15:36:26.000+0200},
-  address={Geneva},
-  author={{Ecma International}},
-  biburl={https://www.bibsonomy.org/bibtex/28d67e2ebf933f3b6f684fcfb1f53b020/gron},
+  title={ECMAScript 2015 Language Specification},
+  author={ECMA-262},
+  year=2015,
+  month={June},
   edition={6th},
   keywords={JavaScript spec specification},
-  month={June},
-  title={{ECMAScript 2015 Language Specification}},
   url={http://www.ecma-international.org/ecma-262/6.0/ECMA-262.pdf},
-  year=2015,
+  address={Geneva},
   note={.
     ECMAScript is the official name of the standard everyone more or less follows for JavaScript.
     This 2015 version introduces ECMAScript 6, that includes

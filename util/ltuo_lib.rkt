@@ -2,7 +2,9 @@
 ; -*- Scheme -*-
 
 (require
-  (only-in scribble/base ~ bold emph nested elem section subsection seclink verbatim linebreak image)
+  (only-in scribble/base
+    ~ bold emph nested elem section subsection subsubsection
+    seclink verbatim linebreak image)
   scriblib/bibtex
   (only-in scribble/core make-style)
   (only-in scribble/manual racket racketblock code codeblock litchar itemize item)
@@ -73,7 +75,7 @@
 (define self 'self)
 (define (XXXX . x)
    (list
-     (section #:style 'unnumbered "XXX EDIT HERE XXX")
+     (subsection #:style 'unnumbered "XXX EDIT HERE XXX")
      (tex "\\noindent")
      (bold "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")))
 
