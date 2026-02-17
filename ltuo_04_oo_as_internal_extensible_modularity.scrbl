@@ -2,6 +2,7 @@
 @; -*- Scheme -*-
 @(require "util/ltuo_lib.rkt")
 @(set-chapter-number 4)
+@title[#:tag "OOaIEM"]{OO as Internal Extensible Modularity}
 @epigraph{The benefits expected of modular programming are:
 (1) managerial—development time should be shortened because separate groups
 would work on each module with little need for communication;
@@ -39,9 +40,6 @@ And industry or academic pundits who are satisfied with the appearance of OO,
 with the mere presence of some or all of its usual trappings,
 without understanding its purpose, what it is supposed to do or not do for programmers, are complicit:
 they mislead those who listen to them into being victims of the fraud.
-
-
-@title[#:tag "OOaIEM"]{OO as Internal Extensible Modularity}
 
 @section[#:tag "M"]{Modularity}
 @subsection{Division of Labor}

@@ -1,7 +1,7 @@
 #lang scribble/base
 @; -*- Scheme -*-
 @(require "util/ltuo_lib.rkt")
-@(set-chapter-number 3)
+@(set-chapter-number 2)
 
 @title[#:tag "WOOiIO"]{What Object Orientation @emph{is} — Informal Overview}
 @epigraph{Ce qui se conçoit bien s'énonce clairement, @linebreak[]
@@ -58,6 +58,10 @@ are entities @emph{inside} the language,
 as opposed to merely files edited, preprocessed or generated @emph{outside} the language itself,
 which can be done for any language.
 
+Note that Modularity and Extensibility are properties of the process of writing software,
+rather so than of the software itself.
+Internality crucially embeds part of this process inside the software.
+But the software development process remains larger than the software itself.
 
 @; TODO: examples, secref, etc.
 @section[#:tag "P&C"]{Prototypes and Classes}
@@ -1103,18 +1107,18 @@ a strong thing changes the meaning of a name.}
 }
 
 @exercise[#:difficulty "Medium, Recommended"]{
-  If you did exercise @exercise-ref{02to03}, compare your previous answers to mine.
+  If you did exercise @exercise-ref{01to02},
+  compare your previous answers to mine.
   See what surprised you—what you agreed and disagreed with before you read this chapter,
   and how your understanding has evolved already.
 }
 
-@exercise[#:difficulty "Hard, Recommended" #:tag "03to04"]{
-  Based on this informal overview, and before you read the next chapter,
-  try to write down your own short theory of what the main concepts like “modularity”,
-  “extensibility” and “internality” might mean, and what formalizing them might look like.
-  Bonus if you can then explain how the three together
-  can mean something more than the same three apart.
-  Save your answer to compare with the treatment in @secref{OOaIEM}.
+@exercise[#:difficulty "Hard, Recommended" #:tag "02to03"]{
+  If you are familiar with propaganda about OO, then,
+  in advance of reading the next chapter,
+  try to make a list of things many people claim are OO, but that aren’t really,
+  at least not what programmers mean when they think of an OO language.
+  You can later compare your list to mine after reading @secref{WOOin}.
 }
 
 @exercise[#:difficulty "Hard"]{

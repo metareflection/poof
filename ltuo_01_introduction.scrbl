@@ -621,12 +621,7 @@ a better inheritance algorithm with which to improve your existing (or future) l
 In @seclink["Intro"]{chapter 1}, which you are presently reading, I introduce the book itself.
 The remaining chapters focus on OO as such, until the conclusion, where I again take a step back.
 
-In @seclink["WOOin"]{chapter 2}, I dispel
-common misconceptions about OO,
-to ensure that my theory isn’t met with misunderstanding
-due to these misconceptions or to disagreements about what is or isn’t being theorized.
-
-In @seclink["WOOiIO"]{chapter 3}, I provide
+In @seclink["WOOiIO"]{chapter 2}, I provide
 a quick overview of Object Orientation,
 and the three variants of inheritance in common use.
 This chapter serves as a map of the concepts and of the words I use to describe them,
@@ -635,6 +630,11 @@ no unambiguous shared vocabulary to name what common concepts there are.
 Importantly, I introduce the essential yet oft-ignored notion of
 Conflation between Specification and Target value.
 I then describe the relationship between Specifications, Prototypes, Classes and Objects.
+
+In @seclink["WOOin"]{chapter 3}, I dispel
+common misconceptions about OO,
+to ensure that my theory isn’t met with misunderstanding
+due to these misconceptions or to disagreements about what is or isn’t being theorized.
 
 In @seclink["OOaIEM"]{chapter 4}, I explain
 what I mean by Internal Extensible Modularity,
@@ -653,9 +653,8 @@ only specifications and targets.
 In @seclink["ROOfiMC"]{chapter 6}, I rebuild
 all the mainstream features and appurtenances of popular OO systems
 as additions or modifications to the minimal system from chapter 5:
-prototypes, classes, types, mutation, etc.
-I notably clarify the all-too-common confusion between subtyping and subclassing,
-and discuss the actual relationship between OO and imperative programming,
+prototypes, classes, mutation, etc.
+I notably discuss the actual relationship between OO and imperative programming,
 when the natural framework for OO is actually pure lazy functional programming.
 
 In @seclink["IMSMO"]{chapter 7}, I discuss in detail the main forms of inheritance:
@@ -671,18 +670,27 @@ that satisfies all the constraints of C3 plus
 those for combining single and multiple inheritance.
 I explain why the residual heuristic I also adopt from C3 is arguably the best one.
 
-In @seclink["EtSoO"]{chapter 8}, I discuss
+In @seclink["TfOO"]{chapter 8}, I study the kind of types and typesystems
+that are suitable to reason about OO.
+I notably clarify the all-too-common confusion between subtyping and subclassing.
+This chapter is somewhat less constructive than the others, as
+I do not actually implement a typesystem.
+
+In @seclink["EtSoO"]{chapter 9}, I discuss
 more advanced topics including
 Focused Modular Extensions, Method Combination, Multiple Dispatch (Multimethods),
 Monotonicity, Orphan Typeclasses, and Global Fixpoints.
 
-In @seclink["EOI"]{chapter 9}, I discuss object representation and meta-object protocols.
+In @seclink["EOI"]{chapter 10}, I discuss object representation and meta-object protocols.
 
-Finally, in @seclink["Conclusion"]{chapter 10},
+Finally, in @seclink["Conclusion"]{chapter 11},
 I conclude by recapitulating my original findings.
 If you want to check whether there’s anything new for you in this book,
 or are a future researcher interested in when now-well-known ideas were introduced,
 you may peek there first.
+
+Follows an @seclink["AB"]{Annotated Bibliography},
+with notes about each of the works cited to explain what makes them relevant.
 
 @subsection{Stop and Go}
 @epigraph{Begin at the beginning and go on till you come to the end: then stop.
@@ -868,11 +876,14 @@ I will define those terms precisely in
   with the same technique.
 }
 
-@exercise[#:difficulty "Hard" #:tag "01to02"]{
-  If you are familiar with OO, then, in advance of reading the next chapter,
-  try to make a list of things many people claim are OO, but that aren’t really,
-  at least not what programmers mean when they think of an OO language.
-  You can later compare your list to mine after reading @secref{WOOin}.
+@exercise[#:difficulty "Hard, Recommended" #:tag "01to02"]{
+  After reading this chapter, but before you read the next,
+  try to characterize what you think OO @emph{is} about in the end.
+  Can you make a mind map, a list of concepts that matter,
+  how they are defined, how they relate to each other?
+  Choose your level of precision, but try to cover all you know about OO.
+  While this exercise is somewhat hard, it will make next chapter more enlightening,
+  so save your answers to compare them to the treatment in @secref{WOOiIO}.
 }
 
 @exercise[#:difficulty "Research"]{

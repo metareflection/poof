@@ -935,8 +935,7 @@ before a well-known general-purpose fixpoint.
 
 More OO as paradigm of live programming. Patterns. etc. vs programming language paradigm.
 
-TODO: move types to their own chapter 8.
-TODO: Switch ch 2 and ch 3 ?
+TODO: ch 03: OO is not a property of a finished program, but of a software development process
 TOOD: Cite Okasaki vs incremental
 
 
@@ -949,4 +948,5 @@ Type intersection vs function overloading, with static or dynamic dispatch
 based on static or dynamic type information associated with the object.
 If no such type information available (e.g. from Haskell typeclass Data.Dynamic),
 actual same code must. Ad hoc vs parametric polymorphism. XXXX
+
 

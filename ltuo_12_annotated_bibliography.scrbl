@@ -3,7 +3,7 @@
 @(require "util/ltuo_lib.rkt")
 @(set-chapter-number 11)
 
-@title[#:style 'unnumbered]{Annotated Bibliography}
+@title[#:tag "AB" #:style 'unnumbered]{Annotated Bibliography}
 @epigraph{If we knew what it was we were doing, it would not be called research, would it?
   @|#:- "Albert Einstein"|
 }

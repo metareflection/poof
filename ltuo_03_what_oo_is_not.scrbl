@@ -1,7 +1,7 @@
 #lang scribble/base
 @; -*- Scheme -*-
 @(require "util/ltuo_lib.rkt")
-@(set-chapter-number 2)
+@(set-chapter-number 3)
 
 @title[#:tag "WOOin"]{What Object Orientation is @emph{not}}
 @epigraph{
@@ -791,17 +791,18 @@ you can actually use OO as you do it.
 }
 
 @exercise[#:difficulty "Medium, Recommended"]{
-  If you did exercise @exercise-ref{01to02},
+  If you did exercise @exercise-ref{02to03},
   compare your previous answers to mine.
   See what surprised you, and how your understanding evolved.
 }
 
-@exercise[#:difficulty "Hard, Recommended" #:tag "02to03"]{
-  After reading this chapter, but before you read the next,
-  try to characterize what you think OO @emph{is} about in the end,
-  or at least my definition of it, that isn’t any of the things I denounced.
-  While this exercise is somewhat hard, it will make next chapter more enlightening,
-  so save your answers to compare them to the treatment in @secref{WOOiIO}.
+@exercise[#:difficulty "Hard, Recommended" #:tag "03to04"]{
+  Based on this informal overview, and before you read the next chapter,
+  try to write down your own short theory of what the main concepts like “modularity”,
+  “extensibility” and “internality” might mean, and what formalizing them might look like.
+  Bonus if you can then explain how the three together
+  can mean something more than the same three apart.
+  Save your answer to compare with the treatment in @secref{OOaIEM}.
 }
 
 @exercise[#:difficulty "Research"]{

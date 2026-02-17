@@ -1953,13 +1953,10 @@ flowchart BT
 }
 
 @exercise[#:difficulty "Hard, Recommended" #:tag "07to08"]{
-  Now that you have a simple model for all the usual OO semantics as seen in non-Lisp languages,
-  can you extend this model to cover advanced techniques from Lisp languages, including
-  method combination and multiple dispatch (multi-methods)?
-  Can you keep your model of multiple dispatch purely functional,
-  solving the Haskell “orphan typeclass” issue?
-  Can you model dynamic dispatch as well as static dispatch?
-  Make an honest attempt, then keep your notes for after you read the next chapter.
+  Based on my model of OO as modular extensibility,
+  and on the informal explanations in @secref{WOOiIO},
+  sketch how you would assign Types to OO.
+  Save your answer to compare with the treatment in @secref{TfOO}.
 }
 
 @exercise[#:difficulty "Hard"]{
