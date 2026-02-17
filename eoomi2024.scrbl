@@ -937,7 +937,7 @@ More OO as paradigm of live programming. Patterns. etc. vs programming language 
 
 TODO: ch 03: OO is not a property of a finished program, but of a software development process
 TOOD: Cite Okasaki vs incremental
-
+TODO: rename Spec to Update ?
 
 CUP https://docs.google.com/document/d/1p1jnxnPeXOWSeZM5WxB2Fgkag9o2vSLT/edit
 MITP https://docs.google.com/document/d/1-F5CGlR86CHDcAp8-GnPWd9SJmyvneIkcAWJreaXLww/edit?tab=t.0

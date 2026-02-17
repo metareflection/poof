@@ -32,8 +32,9 @@ Yet my “object system” so far has no classes, and indeed no objects at all!
 I defined my system in two lines of code.
 An equivalent OO system can be similarly defined
 in any language that has higher-order functions,
-even a pure functional language without mutation;
-and indeed Nix defines its “extension” system similarly@~cite{nix2015}.
+even a pure functional language without mutation.
+Indeed Nix defines its “extension” system
+with essentially the same two-function kernel @~cite{nix2015}.
 But there is indeed one extra thing Nix does that my model so far doesn’t,
 wherein Nix has prototype objects and I don’t: conflation.
 

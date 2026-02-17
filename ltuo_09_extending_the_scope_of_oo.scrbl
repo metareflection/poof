@@ -1,7 +1,7 @@
 #lang scribble/base
 @; -*- Scheme -*-
 @(require "util/ltuo_lib.rkt")
-@(set-chapter-number 8)
+@(set-chapter-number 9)
 
 @title[#:tag "EtSoO"]{Extending the Scope of OO}
 @epigraph{
@@ -128,7 +128,7 @@ type PolyLens s t a b = SkewLens a a b s s t
 }
 
 @Paragraph{View and Update}
-We can also give separate types fo View and Update:
+I can also give separate types fo View and Update:
 @Code{
 type View r s = s → r
 type Update i p j q = (i → p) → j → q
@@ -157,7 +157,7 @@ one getter for the view, another getter and a setter for the update;
 the two getters needn’t match, but the second getter and the setter must.
 
 @Paragraph{Composing Lenses}
-We can compose view, update and lenses as follows,
+I can compose view, update and lenses as follows,
 with the obvious identity lens:
 @Code{
 composeView : View s t → View r s → View r t
@@ -250,7 +250,7 @@ skewExt : SkewLens r i p s j q → ModExt r i p → ModExt s j q
 }
 
 Thus with a @c{SkewLens r i p s j q},
-we can change the continuation for a modular extension
+I can change the continuation for a modular extension
 from expecting @c{s j q} (pronounced “sick”)
 to expecting @c{r i p} (pronounced “rip”).
 
@@ -347,7 +347,7 @@ If you considered only closed specifications, you would only consider monomorphi
 (or maybe polymorphic lenses when you specifically want to distinguish types
 for the ecosystem before and after extension).
 But then, you wouldn’t be able to formalize the advanced notions
-we are going to discuss in the rest of this chapter.
+I am going to discuss in the rest of this chapter.
 
 @Paragraph{Adjusting the Extension Focus}
 Given a focus on a specification
@@ -543,7 +543,7 @@ However, the underlying modular extension machinery sees @c{self}, i.e. the clas
 and @c{super}, the modular definition for the method so far,
 as inherited from the tail of class precedence list, i.e. ancestors behind the current class
 in the precedence list of the type of the original instance used as first argument.
-We need a wrapper to bridge these two views, and at this point,
+I need a wrapper to bridge these two views, and at this point,
 a formal definition is simpler than the words that describe it:
 @Code{
 (def (instance-method-spec method-id method-body)
@@ -586,7 +586,7 @@ with the following definition:
 }
 The area method does not need a @c{call-next-method},
 since it computes @c{area} directly,
-so we use a simpler @c{base-instance-method-spec} that wholly omits that argument.
+so I use a simpler @c{base-instance-method-spec} that wholly omits that argument.
 
 A @c{BorderedRectangle} that inherits from @c{Rectangle} might add border thickness with:
 @Code{
@@ -633,7 +633,7 @@ by specifying individual field descriptors under a @c{instanceFieldLens}:
 A simple field descriptor would be a record of an @c{init} modular extension to initialize it,
 and other information such as whether the slot is mutable (in a language with side-effects),
 type information (that could be static if the class is second-class, but will be dynamic here), etc.
-We will stick to just the @c{init} protocol for now:
+I will stick to just the @c{init} protocol for now:
 @Code{
 (def (simpleInstanceFieldSpec field-id initModExt)
   (skewExt (instanceFieldLens field-id)
@@ -740,19 +740,18 @@ the usual composition of modular extensions,
 wherein each extension can refer to its super argument
 along a multiple inheritance specification’s precedence list,
 as discussed in @secref{MI}.
-But we can do better, as an API on top of this foundation.
-
-@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+But I can do better, as an API on top of this foundation.
 
 @subsection{Effective Methods and Method Qualifiers}
 
 With method combinations, a target method is called the @emph{effective method}.
-It is computed based on individual methods declared by each specification along the way,
-that I will call @emph{method specifications}.
+It is computed based on individual @emph{method specifications}
+declared by each specification along the way.
 
-
-Method tags, known as @emph{method qualifiers}, are some kind of symbols,
-though, in many Lisp or Scheme dialects, a “keyword” may be used that is somehow
+In CLOS@~cite{CLtL2 CLHS AMOP} after Flavors,
+a method can tagged with a @emph{method qualifier},
+usually some kind of symbols, though, in many Lisp or Scheme dialects,
+a “keyword” may be used that is somehow
 distinct from regular symbols, often with a syntax involving a colon@xnote["."]{
   Depending on the language or dialect, keywords are typically written with a some variant of
   a colon @c{:before} (in Common Lisp, where they are self-evaluating subset of symbols),
@@ -764,28 +763,76 @@ distinct from regular symbols, often with a syntax involving a colon@xnote["."]{
   Compare also to @c{~labels} or polymorphic @c{`Variants} in OCaml,
   or a choice of named arguments in many languages.
 }
-In this book, we will use the colon @c{:before} convention of CLOS for method qualifiers,
-to minimize confusion if you look into CLOS documentation
-for detailed semantic specification @~cite{CLtL2 CLHS AMOP}.
-In our source code, we will quote them, since most Scheme dialects will not consider
+In this book, I will use regular symbols like @c{before} for method qualifiers,
+In our source code, I will quote them, since most Scheme dialects will not consider
 that special syntax for self-evaluating keywords as in Common Lisp.
 
 A regular method that is not explicitly tagged by the user
 is implicitly qualified as a @emph{primary method} by the system.
-We will use the @c{:primary} keyword for that in our implementation@xnote["."]{
+I will use the @c{:primary} keyword for that in our implementation@xnote["."]{
   In Common Lisp, primary method are tagged with the unit value @c{NIL}
   that is also a magic self-evaluating constant symbol, a boolean,
   the conventional end-of-list marker, and general-purpose
   null value, default value and unit value.
-  We could similarly have used the less-overloaded but still commonly used
+  I could similarly have used the less-overloaded but still commonly used
   boolean false value @c{#f} for the same purpose.
   Each adaptation of CLOS to a different language will choose its own.
 }
-But beside @c{:primary} methods,
+But beside @c{primary} methods,
 the @emph{standard method combination}, used by default,
-supports @c{:before} methods that will be executed before the primary methods, and
-@c{:after} methods that will be executed after them, and
-@c{:around} methods that will wrap around the execution of each super method.
+supports @c{before} methods that will be executed before the primary methods, and
+@c{after} methods that will be executed after them, and
+@c{around} methods that will wrap around the execution of each super method.
+
+I will call @emph{sub-method} the group of methods with a given qualifier,
+e.g. the @c{primary} sub-method, the @c{before} sub-method, etc.
+
+@subsection{Representing sub-methods}
+
+The best way to store sub-methods would be if there were “funcallable instances”
+(to use CLOS terminology, but like instances in T in general)
+that conflate a function and a record in a single entity.
+Obviously, the interface for extracting a value from a record cannot then be
+applying the record as a function to a symbol, or the function wouldn’t be available
+(unless symbols are excluded from the function’s co-domain, but that’s ugly).
+Since getting a record value isn’t a function call, you also cannot directly use
+the Y combinator on a record (see @secref{RaR}).
+Then the submethods would be stored in the “record” part of the method,
+and the method would still be its “function” part.
+
+Lacking such funcallable instances, we can store submethod information
+in a record submethods next to the methods being combined.
+For the sake of generality, a methodSpec can be any kind of specification
+(modular extension, multiple or optimal inheritance specification, etc.),
+and the @c{methodCons} says how to combine it with the specification data so far;
+it could be an actual @c{mix} of modular extensions, or
+just something that @c{cons}es the new specification into a list
+to be folded or otherwise processed later
+(e.g. for conflict resolution in flavorless multiple inheritance):
+@Code{
+(def (subMethodLens method tag)
+  (composeLens (fieldLens 'subMethods) (fieldLens method) (fieldLens tag)))
+(def (subMethodSpec method-id tag methodCons methodSpec)
+  (lensUpdate (subMethodLens method tag)
+    (λ (methodSpecs) (methodCons methodSpec methodSpecs))))
+}
+
+@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+
+@subsection{Standard Method Combination}
+
+@Code{
+(def (standard-compute-effective-method method specification)
+  (let* ((around (compute-effective-around-method method specification))
+         (before (compute-effective-before-method method specification))
+         (primary (compute-effective-primary-method method specification))
+         (after (compute-effective-primary-method method specification)))
+    (around
+      (lambda () (before) (let ((result (primary))) (after)) result))))
+
+
+}
+
 These methods can then enact any kind of setup or cleanup,
 resource allocation and deallocation, locking, error handling, access control,
 argument normalization, etc.,

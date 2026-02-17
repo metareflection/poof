@@ -1,7 +1,7 @@
 #lang scribble/base
 @; -*- Scheme -*-
 @(require "util/ltuo_lib.rkt")
-@(set-chapter-number 9)
+@(set-chapter-number 10)
 
 @title[#:tag "EOI"]{Efficient Object Implementation}
 @epigraph{
@@ -12,7 +12,7 @@
 
 @section{Representing Records}
 
-@subsection{Records as Records}
+@subsection[#:tag "RaR"]{Records as Records}
 
 So far we encoded Records as opaque functions
 with some kind of identifier as input argument,
