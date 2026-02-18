@@ -33,17 +33,11 @@ that mixin inheritance involves just
 one type constructor @c{ModExt} and two functions @c{fix} and @c{mix},
 repeated here more concisely from the previous chapter:
 @Code{
-type ModExt r i p = ∀ s, t : Type . s ⊂ r s, t ⊂ i s ⇒ s → t → (p s)∩t
-fix : ∀ r i p : Type → Type, ∀ s, t : Type .
-       s = i s ∩ p s, s ⊂ r s, t ⊂ i s ⇒
-       t → ModExt r i p → s
-mix : ModExt r1 i1∩p2 p1 → ModExt r2 i2 p2 → ModExt r1∩r2 i1∩i2 p1∩p2
+mix : (t → s → u) → (u → s → v) → t → s → v
+fix : t → (t → s → s) → s
 
-(def (fix t m) (Y (λ (s) (m s t))))
-(def (mix c p s) (compose (c s) (p s)))}
-
-@; TODO present types for non-strict extensions.
-@; These types work better for the multiple inheritance case.
+(def (mix p c t s) (c (p t s) s))
+(def (fix t m) (Y (m t)))}
 
 
 @section[#:tag "SI"]{Single Inheritance}
@@ -80,22 +74,15 @@ not an open choice to make in the future; it is baked into the modular definitio
 The semantics can then be reduced to the following types and functions:
 @; TODO CITE Cook
 @Code{
-type ModDef r p = ∀ s : Type . s ⊂ r s ⇒ s → p s
-fixModDef : ModDef p p → Y p
-extendModDef : ModExt r1 p2 p1 → ModDef r2 p2 →
-    ModDef r1∩r2 p1∩p2
-baseModDef : ModDef (λ (_) Top) (λ (_) Top)
+fixModDef : (s → s) → s
+extendModDef : s ⊂ t ⇒ (t → s → s) → (t → t) → s → s
+baseModDef : s → top
 
 (def fixModDef Y)
 (def (extendModDef mext parent self)
-  (mext self (parent self)))
+  (mext (parent self) self))
 (def (baseModDef _) top)
 }
-
-Note how the type for an open modular definition has two parameters @c{r} (required)
-and @c{p} (provided), but a closed modular definition
-has the same value for those two parameters.
-There is no parameter @c{i} (inherited), just like there was no argument @c{super}.
 
 I already showed how the instantiation function for a closed modular definition was simply
 the fixpoint combinator @c{Y}.
@@ -104,7 +91,7 @@ First, I will simply remark that
 since extending works on open modular definitions, not just on closed ones like instantiating,
 the value under focus needs not be the same as the module context.
 But more remarkably, extension in single inheritance requires
-you use a modular @emph{extension} in addition to an existing modular definition.
+you use a modular @emph{extension} in addition to an existing modular @emph{definition}.
 
 When building a modular definition through successive extensions,
 an initial known existing modular definition is needed as a base case to those extensions;
@@ -681,7 +668,10 @@ i.e. a total (“linear”) order that has the partial order of the DAG as a sub
   Still the same word has very different meanings in the two contexts.
 }
 Since CommonLoops @~cite{Bobrow1986CommonLoops}, it has been customary to call this order
-the @emph{precedence list} of the class, prototype or specification, a term I will use@xnote["."]{
+the @emph{precedence list} of the class, prototype or specification, a term I will use,
+and to keep it in most-specific-first order:
+descendents to the left, ancestors to the right,
+the opposite of the order used by my @c{mix} and @c{mix*} functions@xnote["."]{
   The Simula manual has a “prefix sequence” but it only involves single inheritance
   (that it calls concatenation semantics).
   The original Flavors paper just mentions that
@@ -689,6 +679,9 @@ the @emph{precedence list} of the class, prototype or specification, a term I wi
   and the original source code caches the list in a field called @c{FLAVOR-DEPENDS-ON-ALL}.
   The New Flavors paper speaks of “ordering flavor components”.
   The LOOPS manual talks of precedence, but not yet of precedence list.
+  CommonLoops and CLOS have a precedence list.
+  Whatever name they use, they all happen to keep their precedence lists
+  in most-specific-first order.
 }
 
 Thanks to this property, methods that marshal (“serialize”) and unmarshal (“deserialize”)

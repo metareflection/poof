@@ -214,6 +214,8 @@ I built a solid coherent Theory of OO that I hope you’ll agree is compelling.
 }
 AIs are not as limited as humans in terms of mental context.
 They do not experience the same pressure towards reusable code as humans do.
+They have redefined as “programming in the small” a lot of problems
+that were previously “programming in the large” @~cite{DeRemerKron1975}.
 And so in many cases, AIs may prefer to deal directly with a lot of low-level details at once,
 tangle many aspects of a problem, and embrace the complexity of it all,
 so as to achieve more efficient results.
@@ -274,7 +276,7 @@ and even orders of magnitude more context will only give AIs
 a few layers of complexity more than humans before they too need to actively seek simplicity.
 If anything, at least some AIs in some contexts may be more adamant than humans about
 software security (a more direct matter of life and death, for them),
-and thus about reasoning about software, and thus about simplicity.
+and thus about reasoning about software, and thus about simplicity of software design.
 
 @subsection{Not your grandfather’s OO}
 @epigraph{It is difficult to make predictions, especially about the future.
@@ -286,23 +288,41 @@ It is very unlikely that the OO languages, programs and libraries that are popul
 will survive very long in the future—although paradoxically, in the short term,
 increased AI capabilities also means increased ability to survive the nonsense of it all.
 
-But my safe bet is that in the future not only there will still be OO, but much more OO than today,
-because OO is useful to grow @emph{reasonable} ecosystems,
-for which the demand will only increase.
-However, I also bet that OO style will end up covering
+However, I bet that OO style will end up covering
 a smaller overall share of the software than it does today,
 because AIs can manage a level complexity that reduces the relative demand
 for modularity and extensibility within a programming language.
-Moreover, I will also bet that today’s popular forms of OO
+Moreover, I bet that today’s popular forms of OO
 will keep decreasing in relative popularity:
 mutable eager programs, specified using second-class Class OO
 with single inheritance or flavorless multiple inheritance,
 are just too unreasonable.
 
-Now if my book has any influence, and quite possibly even if it has none,
+Yet, I also bet that, in the future, not only there will still be OO,
+but vastly much more OO than today in absolute size,
+because OO is necessary to grow @emph{reasonable} ecosystems,
+for which the demand will only increase,
+since reasonability is essential to security, a matter of life and death for AI.
+And I bet that OO will matter especially for those libraries and code kernels
+that are shared between a lot of programs among lots machines,
+because it can keep the overall footprint of that shared knowledge much smaller,
+which enables them to do more with less, and leaves more resources for AIs
+to focus on each of their specific personal tasks.
+However expanded, resources are always constrained, and
+increased complexity requires exponentially more resources,
+so that solutions that bring simplicity, like OO, are always valued.
+
+In a sense, my bet is just that AIs will accelerate and amplify
+trends I was already predicting before the advent of AI programmers.
+
+Now if my book has any influence, and quite possibly even if it has none@xnote[","]{
+  Channelling McCarthy’s extreme optimism.
+}
 a better form of OO will increase in relative popularity:
 pure functional lazy OO, either dynamically typed or with recursively constrained subtyping,
 in typeclass-style more so than in class-style,
-with flavorful optimal inheritance, method combinations and multiple dispatch.
+with flavorful optimal inheritance,
+skew lenses for open modular extensions,
+method combinations, multiple dispatch and meta-objects.
 
 May you live free, and enjoy software written with Object Orientation!

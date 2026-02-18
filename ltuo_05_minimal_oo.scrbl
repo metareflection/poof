@@ -1065,16 +1065,16 @@ and return to rebuilding OO from first principles.
 
 One can combine the above extensibility and modularity in a minimal meaningful way,
 as modular extensibility.
-I will call “modular extension” a modular definition for an extension.
+I will call “modular extension” an extension to a modular definition.
 Thus, given a module context of type @c{C} (typically a record with @c{C = ∏R}),
 a type @c{V} for the “inherited” value being extended
 and @c{W} for the extended value being “provided”,
-an (open) modular extension is a function of type @c{C → V → W}.
+an (open) modular extension is a function of type @c{V → C → W}.
 When @c{W} is the same as @c{V}, or a subtype thereof, I will call it
 a strict (open) modular extension.
 When @c{W = V = ∏P} for some record type @c{∏P},
 I will call it a modular module extension.
-When @c{C = V = W}, I will call it a closed modular extension,
+When @c{V = C = W}, I will call it a closed modular extension,
 which as I will show can be used as a specification for a value of that type.
 
 @subsection{Composing Modular Extensions}
@@ -1083,38 +1083,21 @@ While you could conceivably merge such modular extensions,
 the more interesting operation is to compose them, or more precisely,
 to compose each extension under the module context and bound identifier,
 an operation that for reasons that will soon become obvious,
-I will call Mixin Inheritance (for modular extensions):
+I will call mixin inheritance (of modular extensions):
 @Code{
-(def (mix c p s t)
-  (c s (p s t)))
+(def (mix p c t s)
+  (c (p t s) s))
 }
-The variables @c{c} and @c{p} stand for “child” and “parent” specifications,
-wherein the value “inherited” by the composed function
-will be extended (right to left, with the usual function-as-prefix syntax)
-first by @c{(p s)} then by @c{(c s)},
-where @c{s} is the module context
-(also called @c{self} in many contexts, for reasons that will become obvious@xnote[")"]{
-  The @c{self} argument is the one involved in open recursion or “late binding”;
-  it embodies the @emph{modular} side of OO.
-  It is called @c{self} because it is destined to be bound as the fixpoint variable
-  of a fixpoint operator, wherein it refers to the very entity being defined.
-  The name @c{self} is used in Smalltalk, Scheme, Self, Python, Jsonnet, Nix,
-  many more languages, and in a lot of the literature about OO semantics.
-  In Simula, and after it, in C++, Java, JavaScript or Scala, the @c{this} keyword is used instead.
-  Note however, that I am currently discussing a variant of Prototype OO,
-  as in Self, Jsonnet, Nix, JavaScript, where the @c{self} or @c{this}
-  is indeed the open recursion variable.
-  In Class OO language, the definition being one of a type descriptor, not of a record,
-  the open recursion variable would instead be something like @c{Self}, @c{MyType} or @c{this.type},
-  though there is even less standardization in this area.
-  See below the discussion of the meaning of “object” in Prototype OO vs Class OO.
-  @; TODO secref Classes
-}
-and @c{t} is the inherited value
-(also called @c{super} in the same contexts, for the same reasons@xnote[")."]{
+The variables @c{p} and @c{c} stand for “parent” and “child” specifications,
+wherein the target value @c{t} “inherited” by the composed function
+will be extended first by @c{p} then by @c{c},
+each time within the module context @c{s}.
+
+The variable @c{t} is also called @c{super} in many contexts,
+for reasons that will become obvious@xnote[";"]{
   The @c{super} argument refers to the partial value computed so far
-  from @emph{parent} specifications (composed to the right, with the usual composition order);
-  the rightmost seed value of @c{super} when computing the fixed point is a “base” or “top” value,
+  from @emph{parent} specifications;
+  the initial seed value of @c{super} when computing the fixed point is a “base” or “top” value,
   typically an empty record, possibly enriched with metadata or ancillary fields for runtime support.
   @c{super} embodies the @emph{extensible} side of OO,
   enabling a specification to build on values @emph{inherited} from parent specifications,
@@ -1133,40 +1116,61 @@ and @c{t} is the inherited value
   and manually reimplement mixin inheritance @~cite{Smaragdakis2000Mixin},
   or if you’re adventurous, multiple inheritance, on top of C++.
 }
-The function can also be written with @c{compose}, eliding the “super” variable @c{t}:
-@Code{
-(def (mix c p s)
-  (compose (c s) (p s)))
+and the variable @c{s} is also called @c{self} in the same contexts,
+for the same reasons@xnote["."]{
+  The @c{self} argument is the one involved in open recursion or “late binding”;
+  it embodies the @emph{modular} side of OO.
+  It is called @c{self} because it is destined to be bound as the fixpoint variable
+  of a fixpoint operator, wherein it refers to the very entity being defined.
+  The name @c{self} is used in Smalltalk, Scheme, Self, Python, Jsonnet, Nix,
+  many more languages, and in a lot of the literature about OO semantics.
+  In Simula, and after it, in C++, Java, JavaScript or Scala, the @c{this} keyword is used instead.
+  Note however, that I am currently discussing a variant of Prototype OO,
+  as in Self, Jsonnet, Nix, JavaScript, where the @c{self} or @c{this}
+  is indeed the open recursion variable.
+  In Class OO language, the definition being one of a type descriptor, not of a record,
+  the open recursion variable would instead be something like @c{Self}, @c{MyType} or @c{this.type},
+  though there is even less standardization in this area.
+  See below the discussion of the meaning of “object” in Prototype OO vs Class OO.
+  @; TODO secref Classes
 }
 Modular extensions and their composition have nice algebraic properties.
 Indeed, modular extensions for a given context form a category,
 wherein the operation is composition with the @c{mix} function,
 and the neutral element @c{idModExt} is the specification that “extends”
 any and every value by returning it unchanged, as follows@xnote[":"]{
-  As usual, a change of representation from @c{p} to @c{mp = mix p},
-  with inverse transformation @c{p = mp idModExt},
+  As usual, a change of representation from @c{m} to @c{mm = (λ (p) (mix p m))},
+  with inverse transformation @c{m = mm idModExt},
   would enable use of the regular @c{compose} function
-  for composition of specifications.
+  for composition of specifications (with information flow left-to-right).
   Haskellers and developers using similar composition-friendly languages
   might prefer this kind of representation,
   the way they like van Laarhoven lenses @~cite{oconnor2012lenses};
   yet, Oliveira @~cite{MonadsMixins} or
   the @c{Control.Mixin.Mixin} library (part of the @c{monadiccp} package),
-  instead both use a slightly different representation that compared to mine
-  swaps the order of arguments of the @c{self} and @c{super} arguments.
-  I will stick with my representation, also shared by the Nix standard library, as it makes
-  my explanations, and, in later sections, the types of specifications, slightly simpler.
+  instead both use the same representation as mine, with @c{super} before @c{self}.
+  Meanwhile, the Nix standard library, or the original paper @~cite{Bracha1990Mixin}
+  use the opposite order with @c{self} before @c{super}.
+  The approaches are all equivalent semantically, but readers must be wary
+  to properly translate between calling conventions when consulting different sources.
 }
 @Code{
-(def (idModExt _s t)
+(def (idModExt t _s)
   t)
 }
+Note that since I decided to put the parent before the child as argument,
+this “mix” is contravariant with the composition of functions of @c{c} and @c{p},
+and the flow of information in this syntax goes left-to-right.
+The opposite call convention is also possible, with various minor tradeoffs.
+or you could have @c{c p t s} or @c{p c s t} with contravariant order between
+the specification arguments during mixing and the target arguments during fixing.
+ultimately, the order of arguments is immaterial, up to a simple isomorphism.
 
 @subsection{Closing Modular Extensions}
 
 A closed modular extension is
 a function of type @c{C → C → C},
-i.e. a modular extensible module specification where @c{C = V = W}.
+i.e. a modular extensible module specification where @c{V = C = W}.
 In the common case that @c{C} is a record, this means that
 an extension is provided for every identifier required.
 
@@ -1183,12 +1187,13 @@ then you have reduced your problem to a regular modular module definition
 I will call this operation instantiation for modular extensions:
 @Code{
 (def (fix t m)
-  (Y (λ (s) (m s t))))
+  (Y (m t)))
 }
 In this expression,
 @c{t} is the top value for the type being specified (typically the empty record, for records),
 @c{m} is the modular extension, and
-@c{s} is the fixpoint variable for the module context being computed.
+the fixpoint variable for the module context being computed
+is the argument to which @c{(m t)} is applied when @c{Y} calls it.
 
 @subsection{Default and non-default Top Type}
 Assuming some common top type @c{Top} and default value @c{top} in that type
@@ -1196,33 +1201,32 @@ Assuming some common top type @c{Top} and default value @c{top} in that type
 I will define the common instantiation operation for modular extensions:
 @Code{(def fixt (fix top))}
 or to inline @c{fix} in its definition:
-@Code{(def (fixt m) (Y (λ (s) (m s top))))}
+@Code{(def (fixt m) (Y (m top)))}
 Note that if the language-wide top type is too wide in some context:
 for instance I chose @c{Any} as my top type in Scheme, with @c{#f} as my top value; but
 you may want to choose the narrower @c{Record} as your top type,
 so as to be able define individual methods,
 with a @c{empty-record} as default value.
 
-Then you can compose your modular extension with a modular extension as follows to the right,
-that throws away the previous value or computation (ignores its @c{super} argument)
+Then you can mix to the left of your modular extension,
+a modular extension that precedes to it, and that throws away
+any the previous value or computation (i.e. ignores its @c{super} argument)
 and returns the new default value regardless of context (ignores its @c{self} argument;
 unless that default is extracted from the context):
 @Code{
-(def (record-spec _self _super)
+(def (record-spec _super _self)
   empty-record)
 }
 I could then equivalently define a variant of @c{fix}
 specialized for records in any of the following ways:
 @Code{
 (def fix-record (fix empty-record))
-(def fix-record (λ (m)
-  (Y (λ (s) (m s empty-record)))))
-(def (fix-record m)
-  (fixt (mix m record-spec)))
+(def fix-record (λ (m) (Y (m empty-record))))
+(def (fix-record m) (fixt (mix record-spec m)))
 }
 Note that because it ignores its @c{super} argument and thus throws away any inherited value,
-the @c{record-spec} modular extension must appear last, or at least
-after any modular extension the result of which isn’t to be ignored.
+the @c{record-spec} modular extension must appear first (as parent), or at least
+before any modular extension the result of which isn’t to be ignored.
 Why not make @c{empty-record} the language-wide default?
 Because the language-wide default will apply not just to the specification of records,
 but also to the specification of individual fields of each record,
@@ -1233,7 +1237,7 @@ in the most expensive resource, human-time.
 @subsection[#:tag "MOI"]{Minimal OO Indeed}
 
 The above functions @c{mix} and @c{fix} are indeed isomorphic
-to the theoretical model of OO from Bracha and Cook @~cite{bracha1990mixin}
+to the theoretical model of OO from Bracha and Cook @~cite{Bracha1990Mixin}
 and to the actual implementation of “extensions” in nixpkgs @~cite{nix2015}@xnote["."]{
   My presentation of mixin inheritance is actually slightly more general than what
   Bracha, Cook or Simons did define, in that my definition is not specialized for records.
@@ -1271,13 +1275,13 @@ and the two functions, that can easily be ported to any language with first-clas
 are enough to implement a complete object system.
 
 How does one use these inheritance and instantiation functions?
-By defining, composing and closing modular extensions of type @c{C → V → V} where
-@c{C} is the type of the module context,
-and @c{V} that of the value under focus being extended:
+By defining, composing and closing modular extensions of type @c{V → C → V} where
+@c{V} is the type of the value under focus being extended,
+and @c{C} is the type of the module context:
 @Code{
-(def (my-spec self super) body ...)}
-where @c{self} is the module context,
-@c{super} is the inherited value to be extended,
+(def (my-spec super self) body ...)}
+where @c{super} is the inherited value to be extended,
+@c{self} is the module context,
 and @c{body ...} is the body of the function, returning the extended value.
 
 In the common case that @c{V = ∏P},
@@ -1285,7 +1289,7 @@ and with my trivial representation of such records as @c{∏P = I → P}
 where @c{I} is the type of identifiers,
 a typical modular module extension will look like:
 @Code{
-(def (my-spec self super method-id) body ...)}
+(def (my-spec super self method-id) body ...)}
 where @c{method-id} is the identifier for the method to be looked up,
 and the body uses @c{(super method-id)} as a default when no overriding behavior is specified.
 
@@ -1293,20 +1297,21 @@ Alternatively, this can be abstracted in terms of using a mix of one or multiple
 calls to this method-defining specification, that specifies a single method
 with a given @c{key} as name for a recognized value of @c{method-id},
 and a given open modular extension function @c{compute-value}
-that takes the @c{self} context and the @c{inherited} value @c{(super method-id)} as arguments
+that takes the @c{inherited} value @c{(super method-id)} and the @c{self} context as arguments
 and returns an extended value for the method at @c{key}:
 @Code{
-(def (field-spec key compute-value self super method-id)
+(def (field-spec key compute-value super self method-id)
   (let ((inherited (super method-id)))
     (if (equal? key method-id)
-        (compute-value self inherited)
+        (compute-value inherited self)
         inherited)))
 }
 Note how @c{field-spec} turns an open modular extension for a value
 into an open modular extension for a record (that has this value under some key).
 In this case, the module context @c{self} is the same,
 whereas the @c{super} value for the inner function @c{compute-value}
-is the specialized @c{(super method-id)} value extracted from the record.
+is the specialized @c{(super method-id)} value extracted from the record,
+passed as the first (inherited) argument.
 That’s an example of how open modular extensions themselves have a rich algebraic structure,
 wherein you can combine, compose, decompose, extract, and otherwise
 operate on open modular extensions to get richer open modular extensions,
@@ -1341,7 +1346,7 @@ Also, in a more practical implementation,
 the inherited value in the @c{field-spec} would be made lazy,
 or would be wrapped in a thunk, to avoid unneeded computations (that might not even terminate);
 or for more power, the @c{compute-value} function
-would directly take @c{super} as its second argument,
+would directly take @c{super} as its first argument,
 and @c{(super method-id)} would only be computed in the second branch.
 In a lazy context, @c{lazy-field-spec} could also directly use @c{extend-lazy-record}
 @; TODO secref to future definition of lazy variants?
@@ -1364,8 +1369,8 @@ I will demonstrate the classic “colored point” example in my Minimal Object 
 I can define a modular extension for a point’s coordinates as follows:
 @Code{
 (def coord-spec
-  (mix (field-spec 'x (λ (_self _inherited) 2))
-       (field-spec 'y (λ (_self _inherited) 4))))
+  (mix (field-spec 'x (λ (_inherited _self) 2))
+       (field-spec 'y (λ (_inherited _self) 4))))
 }
 The modular extension defines two methods @c{x} and @c{y},
 that respectively return the constant numbers @c{2} and @c{4}.
@@ -1373,25 +1378,26 @@ that respectively return the constant numbers @c{2} and @c{4}.
 I can similarly define a modular extension for a record’s @c{color} field as follows:
 @Code{
 (def color-spec
-  (field-spec 'color (λ (_self _inherited) "blue")))
+  (field-spec 'color (λ (_inherited _self) "blue")))
 }
 Indeed, I will check that one can instantiate a point specified by combining
 the color and coordinate modular extensions above, and that the values
 for @c{x} and @c{color} are then as expected:
 @Code{
-(def point-ac (fix-record (mix color-spec coord-spec)))
+(def point-ac (fix-record (mix coord-spec color-spec)))
 (point-ac 'x) ;⇒ 2
 (point-ac 'color) ;⇒ "blue"}
 Consider how @c{x} is computed.
-@c{fix-record} provides the @c{empty-record} as the top value for mixin composition.
-Then, mixins are applied under call-by-value evaluation,
-with right-to-left flow of information across function calls,
+@c{fix-record} provides the @c{empty-record} as the top value for composition of modular extensions.
+Then, modular extensions are applied under call-by-value evaluation,
+with left-to-right flow of information from parent to child.
 When querying the composed modular extension for method @c{x},
-the rightmost modular extension, @c{coord-spec}, is applied first, and matches the key @c{x};
+the parent specification @c{coord-spec} is applied first (as it has the leftmost position),
+and matches the key @c{x};
 it is then passed the top value @c{#f} extracted as a fallback default
 when trying to read a missing field from @c{empty-record};
 it proceeds to ignore that value, and return @c{2};
-that value is then returned unchanged by @c{color-spec},
+that value is then returned unchanged by @c{color-spec} (the child, right position),
 since @c{x} does not match its key @c{color}.
 Similarly, the query for method @c{color} returns the string @c{"blue"}.
 
@@ -1403,7 +1409,7 @@ and exercise neither modularity nor extensibility:
 their value-computing functions make no use of their @c{self} or @c{super} arguments.
 They could have been defined with constant field helpers:
 @Code{
-(def (constant-spec value _self _super)
+(def (constant-spec value _super _self)
   value)
 (def (constant-field-spec key value)
   (field-spec key (constant-spec value)))
@@ -1417,7 +1423,7 @@ accepts an argument @c{dx}, and returns a modular extension that
 overrides method @c{x} with a new value that adds @c{dx} to the @c{inherited} value:
 @Code{
 (def (add-x-spec dx)
-  (field-spec 'x (λ (_self inherited) (+ dx inherited))))
+  (field-spec 'x (λ (inherited _self) (+ dx inherited))))
 }
 Now I will illustrate modularity with another example wherein @c{rho-spec}
 specifies a new field @c{rho} bound to the Euclidean distance
@@ -1430,19 +1436,19 @@ and these coordinates are not provided by @c{rho-spec},
 but have to be provided by other modular extensions to be composed with it using @c{mix}:
 @Code{
 (def rho-spec
-  (field-spec 'rho (λ (self _inherited)
+  (field-spec 'rho (λ (_inherited self)
     (sqrt (+ (sqr (self 'x)) (sqr (self 'y)))))))
 }
 I can check that the above definitions work,
 by instantiating the composed modular extensions
-@c{(add-x-spec 1)}, @c{coord-spec} and @c{rho-spec},
+@c{rho-spec}, @c{coord-spec} and @c{(add-x-spec 1)},
 and verifying that the @c{x} value is indeed @c{3}:
-i.e., first (right-to-left) specified to be @c{2} by @c{coord-spec},
+i.e., first (parent-to-child, left-to-right) specified to be @c{2} by @c{coord-spec},
 then incremented by @c{1} by @c{(add-x-spec 1)}.
 Meanwhile @c{rho} is @c{5}, as computed by @c{rho-spec} from the @c{x} and @c{y} coordinates:
 @Code{
 (def point-r
-  (fix-record (mix (add-x-spec 1) (mix coord-spec rho-spec))))
+  (fix-record (mix rho-spec (mix coord-spec (add-x-spec 1)))))
 (point-r 'x) ;⇒ 3
 (point-r 'rho) ;⇒ 5
 }
@@ -1456,6 +1462,8 @@ I will instead use a n-ary @c{mix*} that can defined as follows
 (define (uncurry2 f) (lambda (x y) ((f x) y)))
 (define (mix* . l) (foldl (uncurry2 mix) idModExt l))
 }
+With this @c{mix*}, the leftmost argument is the least specific ancestor,
+and the rightmost argument is the most specific descendent (overriding previous ones).
 Now, note how trying to instantiate @c{(add-x-spec 1)} or @c{rho-spec} alone would fail:
 the former relies on the @c{super} record to provide a useful inherited value to extend,
 whereas the latter relies on the @c{self} context to modularly provide @c{x} and @c{y} values.
@@ -1544,7 +1552,7 @@ and it is otherwise pass-through for other methods.
 The @c{part-count} method crucially accesses the final value of the @c{parts} method
 through the module context @c{self}, and not the currently available initial empty value:
 @Code{
-(def (base-bill-of-parts self super method-id)
+(def (base-bill-of-parts super self method-id)
   (case method-id
     ((parts) '())
     ((part-count) (length (self 'parts)))

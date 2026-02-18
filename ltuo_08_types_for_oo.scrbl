@@ -111,19 +111,19 @@ may satisfy many more constraints than those actually required from other module
 
 Given any typesystem that has functions,
 the simplest way to type OO is with these types for Trivial Modular Extensions,
-which are just a packaging of the @c{C → V → W} from @secref{ME},
+which are just a packaging of the @c{V → C → W} from @secref{ME},
 with more explicit names for the variables,
 making their role in inheritance more explicit:
 @Code{
-type TModExt required inherited provided =
-  required → inherited → provided
-mix : TModExt r j p → TModExt r i j → TModeExt r i p
-fix : top → TModExt target top target → target
+type TModExt inherited required provided =
+  inherited → required → provided
+mix : TModExt i r j → TModExt j r p → TModExt i r p
+fix : top → TModExt top target target → target
 }
 
-The @c{mix} operator chains two modular extensions, with the asymmetry that
-information provided by the parent (parameter @c{j} for the second argument)
-can be used by the child (first argument), but not the other way around.
+The @c{mix} operator chains two modular extensions,
+wherein the information (parameter @c{j}) provided by the parent (first argument)
+is the information inherited by the child (second argument).
 The @c{fix} operator, first takes a top value as a seed,
 then second takes a specification for a target with the target itself as module context
 and starting with the top value as a seed, and returns the target fixpoint.
@@ -159,7 +159,7 @@ Now, these types are somewhat burdensome, and not modular:
 
 Still, those simple types provide a template for better types,
 that will typically some variant of the simple types,
-restriction of them, finite or infinite intersection of them.
+restriction of them, abstraction of them, finite or infinite intersection of them.
 
 @subsection[#:tag "SSfMSI"]{Strict Subtypes for Modular Single Inheritance}
 
@@ -189,12 +189,12 @@ Then, I can define a type for Simple Strict Modular Extensions,
 either in subtype-style or intersection-style,
 where @c{c ⇒ t} indicates a type @c{t} under a constraint @c{c}:
 @Code{
-type SSModExt_subtype required inherited extended =
+type SSModExt_subtype inherited required extended =
   provided ⊂ inherited ⇒
-  required → inherited → extended
+  inherited → required → extended
 
-type SSModExt_intersection required inherited provided =
-  required → inherited → (provided ∩ inherited)
+type SSModExt_intersection inherited required provided =
+  inherited → required → (provided ∩ inherited)
 }
 In subtype style, the strictness is expressed by the variable @c{provided} being constrained
 to be a subtype of @c{inherited}.
@@ -207,14 +207,13 @@ Note that the type @c{top} used with @c{fix} is usually chosen in practice at in
 such that @c{top∩target = target}.
 In this book, I will use a mix of intersection style and subtype style. I then have:
 @Code{
-type SSModExt required inherited provided =
-  required → inherited → (provided ∩ inherited)
-mix : SSModExt s i∩p q → SSModExt r i p →
-        SSModeExt r∩s i p∩q
-fix : top → SSModExt top∩target top target → top∩target
+type SSModExt inherited required provided =
+  inherited → required → (inherited∩provided)
+mix : SSModExt i r p → SSModExt i∩p s q → SSModExt i r∩s p∩q
+fix : top → SSModExt top top∩target target → top∩target
 }
 
-These types refine the @c{C → V → V} from @secref{MOI}:
+These types refine the @c{V → C → V} from @secref{MOI}:
 @c{inherited} and @c{provided} each separately refine the value @c{V} being specified;
 that value can be anything: it need not be a record at all, and if it is,
 it can have any shape or type, and need not have the same as the module context.
@@ -227,7 +226,7 @@ the @c{inherited} type parameter must encode all the information mixed “to the
 of the current modular extension, and that information is only available
 when following the discipline of single inheritance.
 
-@subsection[#:tag "SSfMMI"]{Stricter Subtypes for Modular Mixin Inheritance}
+@subsection[#:tag "SrSfMMI"]{Stricter Subtypes for Modular Mixin Inheritance}
 
 I can generalize the previous types to work with mixin inheritance,
 by abstracting away (1) the type @c{super} of the @emph{effective} inherited value
@@ -236,21 +235,21 @@ by contrast with the type @c{inherited} of the information used from that value,
 (2) similarly the type @c{self} of @emph{effective} module context at the time of instantiation,
 by contrast with the type @c{required} of the information used from that module context:
 @Code{
-type SrModExt required inherited provided =
-  ∀ self, super : Type
+type SrModExt inherited required provided =
+  ∀ super, self : Type
     self ⊂ required, super ⊂ inherited ⇒
-    self → super → (provided ∩ super)
+    super → self → (super∩provided)
 
-mix : SrModExt r1 (i1∩p2) p1 → SrModExt r2 i2 p2 →
-  SrModExt (r1∩r2) (i1∩i2) (p1∩p2)
-fix : top → SrModExt (target∩top) top target → (target∩top)
+mix : SrModExt i1 r1 p1 → SrModExt (i2∩p1) r2 p2 →
+  SrModExt (i1∩i2) (r1∩r2) (p1∩p2)
+fix : top → SrModExt top (top∩target) target → (top∩target)
 }
 
 Note how the parameters @c{i1} and @c{i2} can be used somewhat independently,
 when they had to be combined into the single parameter @c{i} in @c{SSModExt};
 that’s an expression of modularity at the type-level.
 Furthermore, the universal quantification (@c{∀}, forall)
-of @c{self} and @c{super} ensure that the modular extension
+of @c{super} and @c{self} ensure that the modular extension
 can be defined once, and later be used in any way that satisfies the type dependencies.
 Mixin inheritance, not merely single inheritance, is now expressible.
 
@@ -265,6 +264,16 @@ on records and their available identifiers,
 which is usually the case in languages with Static Types
 (absent, say, a constraint on the typeclass @c{Data.Dynamic} in Haskell,
 that enabes such runtime reflection).
+
+@subsection[#:tag "StSfMuI"]{Strictest Subtypes for Multiple Inheritance}
+
+I admit I am not sure how exactly to write types for specifications
+in multiple inheritance and optimal inheritance: there are type-level
+constraints on the local precedence order and the precedence list
+that require encoding the linearizarion algorithm (C4 or otherwise) into the type language.
+As for the modular extensions themselves, they resemble those of mixin inheritance,
+with the intersection of everything in the precedence list for the
+inherited, required and provided parameters, respectively.
 
 @section[#:tag "NNOOTT"]{The NNOOTT: Naive Non-recursive OO Type Theory}
 
@@ -627,17 +636,18 @@ where @c{Y} is the fixpoint operator for types@xnote["."]{
 A more precise view of a modular extension is thus as
 an entity parameterized by the varying type @c{self} of the module context
 (that Bruce calls @c{MyType} @~cite{bruce1996typing SubtypingMatch1997}). @; TODO cite further
-As compared to the previous parametric type @c{SrModExt} that is parametrized by types @c{r i p},
-this parametric type @c{ModExt} is itself parametrized by parametric types @c{r i p}
+As compared to the previous parametric type @c{SrModExt} that is parametrized by types @c{i r p},
+this parametric type @c{ModExt} is itself parametrized by parametric types @c{i r p}
 that each take the module context type @c{self} as parameter@xnote[":"]{
-  The letters @c{r i p}, by contrast to the @c{s t a b} commonly used for generalized lenses,
+  The letters @c{r i p}, especially if reordered,
+  by contrast to the @c{s t a b} commonly used for generalized lenses,
   suggest the mnemonic slogan: “Generalized lenses can stab, but modular extensions can rip!”
 }
 @Code{
-type ModExt required inherited provided =
-  ∀ self, super : Type
+type ModExt inherited required provided =
+  ∀ super, self : Type
     self ⊂ required self, super ⊂ inherited self ⇒
-        self → super → (provided self) ∩ super
+        super → self → super∩(provided self)
 }
 
 Notice how the type @c{self} of the module context
@@ -656,12 +666,12 @@ for open modular extensions in general.
 
 My two OO primitives then have the following type:
 @Code{
-fix : ∀ required, inherited, provided : Type → Type, ∀ self, top : Type,
+fix : ∀ inherited, required, provided : Type → Type, ∀ self, top : Type,
       self = inherited self ∩ provided self,
       self ⊂ required self,
       top ⊂ inherited self ⇒
-        top → ModExt required inherited provided → self
-mix : ModExt r1 i1∩p2 p1 → ModExt r2 i2 p2 → ModExt r1∩r2 i1∩i2 p1∩p2
+        top → ModExt inherited required provided → self
+mix : ModExt i1 r1 p1 → ModExt i2∩p1 r2 p2 → ModExt i1∩i2 r1∩r2 p1∩p2
 }
 
 In the @c{fix} function, I implicitly define a fixpoint @c{self}
@@ -869,7 +879,7 @@ By decoupling modularity and extensibility, I can type not just closed specifica
 but also open specifications, which makes everything so much simpler,
 more composable and decomposable.
 Individual class, object, method, sub-method specifications, etc.,
-can be typed with some variant of the @c{C → V → V} pattern,
+can be typed with some variant of the @c{V → C → V} pattern,
 composed, assembled in products or co-products, etc.,
 with no coupling making the unit of specification the same as the unit of fixpointing.
 

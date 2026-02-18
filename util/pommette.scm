@@ -232,7 +232,13 @@ With Racket: racket pommette.rkt
 
 ;; eta-conversion of a function
 ;; Often used to protect it from over-eager evaluation, in applicative context.
+;; A macro, not a function, precisely to protect against overly eager evaluation of f.
 (define-syntax η (syntax-rules () ((_ f) (λ (x) (f x)))))
+
+;; As a warm up, S K I combinators (that can also be useful later)
+(def (S x y z) (x z (y z)))
+(def (K x y) x)
+(def (I x) x)
 
 ;; B combinator, composition
 ;; a.k.a. Z for Schönfinkel (Zusammensetzungsfunktion) (compoZition function)
@@ -248,7 +254,7 @@ With Racket: racket pommette.rkt
 ;; same as (def (Ue x) (eta (x x)))
 ;; : µX.(X→A)→A
 (def (Ue x y)
-  ((x x) y))
+  (x x y))
 
 ;; Y, eager -- fixpoint combinator
 ;; a.k.a. Z https://en.wikipedia.org/wiki/Fixed-point_combinator#Z_combinator
@@ -270,7 +276,7 @@ let Y = f: (x: x x) (x: f (x x));
 |#
 
 ;; Y, eager, stateful -- the statefulness is hidden in letrec.
-;; Note: (eta p) = (λ (x) (p x))
+;; Reminder: (η p) = (λ (x) (p x))
 (def (Yes f) (letrec ((p (f (η p)))) p))
 
 (def Y Yes)
@@ -380,15 +386,15 @@ let Y = f: (x: x x) (x: f (x x));
 
 
 ;;; 5.3.2 Composing Modular Extensions
-(def (mix c p s t) ;;  child parent self super
-  (c s (p s t)))
+(def (mix p c t s) ;;  parent child super self
+  (c (p t s) s))
 
-(def (idModExt _s) ;; _self super, ignore self return super
-  identity) ;; neutral element for mix
+(def (idModExt t _s) ;; super self, ignore self return super
+  t) ;; neutral element for mix
 
 ;;; 5.3.3 Closing Modular Extensions
 (def (fix t m)
-  (Y (λ (s) (m s t))))
+  (Y (m t)))
 
 ;; Generalizing compose*
 ;; Take a monoid two-argument operation op2, return the n-ary variant.
@@ -407,22 +413,22 @@ let Y = f: (x: x x) (x: f (x x));
 (define mix* (op*←op1.1 mix idModExt))
 
 ;; Specification that calls a unary operation on the super value
-(def (op-super-spec op self super)
+(def (op-super-spec op super _self)
   (op super))
 
 (expect
   (fix 4 (mix*)) => 4
   (fix 4 (mix* (op-super-spec add1) (op-super-spec add1))) => 6
-  (fix 4 (apply mix* (map op-super-spec (list mul10 add1 add1)))) => 60
-  (fix 4 (apply mix* (map op-super-spec (list add1 mul10 add1 add1)))) => 61)
+  (fix 4 (apply mix* (map op-super-spec (list add1 add1 mul10)))) => 60
+  (fix 4 (apply mix* (map op-super-spec (list add1 add1 mul10 add1)))) => 61)
 
 ;;; 5.3.4 Default and non-default Top Type
 (def fixt (fix top))
 
 (def (fixt/inlined m)
-  (Y (λ (s) (m s top))))
+  (Y (m top)))
 
-(def (record-spec _self _super)
+(def (record-spec _super _self)
   empty-record)
 
 ;; With single inheritance, you inherit from record-spec.
@@ -434,60 +440,60 @@ let Y = f: (x: x x) (x: f (x x));
 ;; Or have a universal null? test for the default top object?
 ;; With multiple inheritance, you can instead depend on record-spec;
 ;; with optimal inheritance, it can further be a suffix specification.
-(def (record!-spec _self super)
+(def (record!-spec super _self)
   (or super empty-record))
 
 (def fix-record (fix empty-record))
 (def (fix-record/inlined m)
-  (Y (λ (s) (m s empty-record))))
+  (Y (m empty-record)))
 (def (fix-record/fixt m)
-  (fixt (mix m record-spec)))
+  (fixt (mix record-spec m)))
 
 ;;; 5.3.5 Minimal OO Indeed
-(def (field-spec key compute-value self super method-id)
+(def (field-spec key compute-value super self method-id)
   (let ((inherited (super method-id)))
     (if (equal? key method-id)
-        (compute-value self inherited)
+        (compute-value inherited self)
         inherited)))
 
 ;;; 5.3.6 Minimal Colored Point
 (def coord-spec
-  (mix* (field-spec 'x (λ (_self _inherited) 2))
-        (field-spec 'y (λ (_self _inherited) 4))))
+  (mix* (field-spec 'x (λ (_inherited _self) 2))
+        (field-spec 'y (λ (_inherited _self) 4))))
 
 (def color-spec
-  (field-spec 'color (λ (_self _inherited) "blue")))
+  (field-spec 'color (λ (_inherited _self) "blue")))
 
-(def point-p (fix-record (mix* color-spec coord-spec)))
+(def point-p (fix-record (mix* coord-spec color-spec)))
 
 (expect (point-p 'x) => 2
         (point-p 'color) => "blue"
         (map point-p '(x y z color)) => '(2 4 #f "blue")
-        (map (fix-record/inlined ((mix color-spec) coord-spec)) '(x y z color)) => '(2 4 #f "blue")
-        (map (fix-record/fixt ((mix color-spec) coord-spec)) '(x y z color)) => '(2 4 #f "blue"))
+        (map (fix-record/inlined (mix coord-spec color-spec)) '(x y z color)) => '(2 4 #f "blue")
+        (map (fix-record/fixt (mix coord-spec color-spec)) '(x y z color)) => '(2 4 #f "blue"))
 
-(def (constant-spec value _self _super)
+(def (constant-spec value _super _self)
   value)
 (def (constant-field-spec key value)
   (field-spec key (constant-spec value)))
 
 ;;; 5.3.7 Minimal Extensibility and Modularity Examples
 (def (add-x-spec dx)
-  (field-spec 'x (λ (_self inherited) (+ dx inherited))))
+  (field-spec 'x (λ (inherited _self) (+ dx inherited))))
 
 (def (sqr x)
   (* x x))
 
 (def area-spec
-  (field-spec 'area (λ (self _inherited)
+  (field-spec 'area (λ (_inherited self)
     (* (self 'x) (self 'y)))))
 
 (def rho-spec
-  (field-spec 'rho (λ (self _inherited)
+  (field-spec 'rho (λ (_inherited self)
     (sqrt (+ (sqr (self 'x)) (sqr (self 'y)))))))
 
 (def point-r
-  (fix-record (mix* (add-x-spec 1) coord-spec rho-spec)))
+  (fix-record (mix* rho-spec coord-spec (add-x-spec 1))))
 
 (expect (point-r 'x) => 3
         (point-r 'rho) => 5
@@ -510,7 +516,7 @@ let Y = f: (x: x x) (x: f (x x));
   (constant-field-spec 'contents my-saying))
 
 (def my-contents
-  (Yes (λ (self) (my-contents-spec self (my-modular-def self)))))
+  (Yes (λ (self) (my-contents-spec (my-modular-def self) self))))
 
 (expect (my-contents 'contents) => my-saying
         (my-contents 'length my-saying) => 20
@@ -528,27 +534,27 @@ let Y = f: (x: x x) (x: f (x x));
           (else #f))))))
 
 (def my-contents-2
-  (Yes (λ (self) (my-contents-spec self (my-modular-def-without-global-recursion self)))))
+  (Yes (λ (self) (my-contents-spec (my-modular-def-without-global-recursion self) self))))
 
 (expect (my-contents-2 'contents) => my-saying
         (my-contents-2 'length my-saying) => 20
         (my-contents-2 'size) => 15)
 
-(def (base-bill-of-parts self super method-id)
+(def (base-bill-of-parts super self method-id)
   (case method-id
     ((parts) '())
     ((part-count) (length (self 'parts)))
     (else (super method-id))))
 
 (def (part-spec part)
-  (field-spec 'parts (λ (_self inherited) (cons part inherited))))
+  (field-spec 'parts (λ (inherited _self) (cons part inherited))))
 
 (def torso-spec (part-spec 'torso))
 (def head-spec (part-spec 'head))
 (def arms-spec (part-spec 'arms))
 (def legs-spec (part-spec 'legs))
 
-(def body-rec (fix-record (mix* head-spec arms-spec legs-spec torso-spec base-bill-of-parts)))
+(def body-rec (fix-record (mix* base-bill-of-parts torso-spec legs-spec arms-spec head-spec)))
 
 (expect (map body-rec '(parts part-count)) => '((head arms legs torso) 4))
 
@@ -562,8 +568,8 @@ let Y = f: (x: x x) (x: f (x x));
 (def (target←pproto pproto)
   (force (cdr pproto)))
 (def pproto-id (pproto←spec idModExt))
-(def (pproto-mix child parent)
-  (pproto←spec (mix (spec←pproto child) (spec←pproto parent))))
+(def (pproto-mix parent child)
+  (pproto←spec (mix (spec←pproto parent) (spec←pproto child))))
 ;;(define (pproto-mix* . l) (foldl (uncurry2 pproto-mix) pproto-id l))
 (define pproto-mix* (op*←op1.1 pproto-mix pproto-id))
 
@@ -579,8 +585,8 @@ let Y = f: (x: x x) (x: f (x x));
   (pproto←spec (add-x-spec dx)))
 (def rho-pproto (pproto←spec rho-spec))
 
-(def point-r-pproto (pproto-mix* (add-x-pproto 1) coord-pproto rho-pproto))
-(def point-rc-pproto (pproto-mix* color-pproto point-r-pproto))
+(def point-r-pproto (pproto-mix* rho-pproto coord-pproto (add-x-pproto 1)))
+(def point-rc-pproto (pproto-mix* point-r-pproto color-pproto))
 
 (expect (map (target←pproto point-r-pproto) '(x y rho color)) => '(3 4 5 #f)
         (map (target←pproto point-rc-pproto) '(x y rho color)) => '(3 4 5 "blue"))
@@ -606,30 +612,30 @@ let Y = f: (x: x x) (x: f (x x));
 |#
 
 ;;;; 6.1.3 Recursive Conflation
-(def (qproto-wrapper spec _self super)
+(def (qproto-wrapper spec super _self)
   (cons spec super))
 (def (qproto←spec spec)
-  (delay (fix-record (mix (qproto-wrapper spec) spec))))
+  (delay (fix-record (mix spec (qproto-wrapper spec)))))
 (def spec←qproto car)
 (def (target←qproto qproto)
   (force (cdr qproto)))
-(def (qproto-mix child parent)
-  (qproto←spec (mix (spec←qproto child) (spec←qproto parent))))
+(def (qproto-mix parent child)
+  (qproto←spec (mix (spec←qproto parent) (spec←qproto child))))
 (define (qproto-mix* . l) (foldl (uncurry2 qproto-mix) pproto-id l))
 
 
 ;;;; 6.1.4 Conflation for Records
 
-(def (rproto-wrapper spec self super method-id)
+(def (rproto-wrapper spec super self method-id)
   (if method-id (super method-id) spec))
 (def (rproto←spec spec)
-  (fix-record (mix (rproto-wrapper spec) spec)))
+  (fix-record (mix spec (rproto-wrapper spec))))
 (def rproto-id (rproto←spec idModExt))
 (def (spec←rproto rproto)
   (rproto #f))
 (def target←rproto identity)
-(def (rproto-mix child parent)
-  (rproto←spec (mix (spec←rproto child) (spec←rproto parent))))
+(def (rproto-mix parent child)
+  (rproto←spec (mix (spec←rproto parent) (spec←rproto child))))
 (define rproto-mix* (op*←op1.1 rproto-mix rproto-id))
 (def (rproto←record r)
   (rproto←spec (constant-spec r)))
@@ -646,8 +652,8 @@ let Y = f: (x: x x) (x: f (x x));
   (rproto←spec (add-x-spec dx)))
 (def rho-rproto (rproto←spec rho-spec))
 
-(def point-r-rproto (rproto-mix* (add-x-rproto 1) coord-rproto rho-rproto))
-(def point-rc-rproto (rproto-mix* color-rproto point-r-rproto))
+(def point-r-rproto (rproto-mix* rho-rproto coord-rproto (add-x-rproto 1)))
+(def point-rc-rproto (rproto-mix* point-r-rproto color-rproto))
 
 (expect (map (target←rproto point-r-rproto) '(x y rho color)) => '(3 4 5 #f)
         (map (target←rproto point-rc-rproto) '(x y rho color)) => '(3 4 5 "blue"))
@@ -683,7 +689,7 @@ let Y = f: (x: x x) (x: f (x x));
 
 (def fixModDef Y)
 (def (extendModDef mext parent self)
-  (mext self (parent self)))
+  (mext (parent self) self))
 (def (baseModDef _) top)
 
 ;;;; 7.3.7 Mixin Inheritance plus Precedence List
@@ -708,69 +714,69 @@ let Y = f: (x: x x) (x: f (x x));
 ;; type SkewLens r i p s j q = { view : View r s ; update : Update i p j q }
 
 ;;; Composing Lenses
-;; composeView : View s t → View r s → View r t
-(def (composeView v w)
+;; compose-view : View s t → View r s → View r t
+(def (compose-view v w)
   (compose w v))
 
-;; composeUpdate : Update i p j q → Update j q k r → Update i p k r
-(def (composeUpdate f g)
+;; compose-update : Update i p j q → Update j q k r → Update i p k r
+(def (compose-update f g)
   (compose f g))
 
-;; makeLens : View r s → Update i p j q → SkewLens r i p s j q
-(def (makeLens v u)
+;; make-lens : View r s → Update i p j q → SkewLens r i p s j q
+(def (make-lens v u)
   (extend-record 'view v
     (extend-record 'update u
       empty-record)))
 
-;; composeLens : SkewLens s j q ss jj qq → SkewLens r i p s j q →
+;; compose-lens : SkewLens s j q ss jj qq → SkewLens r i p s j q →
 ;;                SkewLens r i p ss jj qq
-(def (composeLens l k)
-  (makeLens
-    (composeView (l 'view) (k 'view))
-    (composeUpdate (l 'update) (k 'update))))
+(def (compose-lens l k)
+  (make-lens
+    (compose-view (l 'view) (k 'view))
+    (compose-update (l 'update) (k 'update))))
 
-;; idLens : SkewLens r i p r i p
-(def idLens
-  (makeLens identity identity))
+;; id-lens : SkewLens r i p r i p
+(def id-lens
+  (make-lens identity identity))
 
-(define composeLens* (op*←op1.1 composeLens idLens))
+(define compose-lens* (op*←op1.1 compose-lens id-lens))
 
-;;; Getter and Setter (moved after makeLens)
-(def (lensOfGetterSetter get set)
-  (makeLens get (λ (f s) (set (f (get s)) s))))
-(def (setterOfLens l)
-  (λ (b) (@ l 'update (λ (_a) b))))
+;;; Getter and Setter (moved after make-lens)
+(def (lens←getter*setter get set)
+  (make-lens get (λ (f s) (set (f (get s)) s))))
+(def (setter←lens l)
+  (λ (b) (l 'update (λ (_a) b))))
 
 ;;; Field Lens
-(def (fieldView key r)
+(def (field-view key r)
   (r key))
-(def (fieldUpdate key f r)
+(def (field-update key f r)
   (extend-record key (f (r key)) r))
-(def (fieldLens key)
-  (makeLens (fieldView key) (fieldUpdate key)))
+(def (field-lens key)
+  (make-lens (field-view key) (field-update key)))
 
-(define (fieldLens* . keys)
-  (apply composeLens* (map fieldLens keys)))
+(define (field-lens* . keys)
+  (apply compose-lens* (map field-lens keys)))
 
 (def test-rec (record (a (record (b (record (c 42)))))))
 (def test-point (record (x 10) (y 20)))
-(def x-lens (fieldLens 'x))
-(def set-x (setterOfLens x-lens))
-(def x-lens-2 (lensOfGetterSetter (fieldView 'x) (extend-record 'x)))
+(def x-lens (field-lens 'x))
+(def set-x (setter←lens x-lens))
+(def x-lens-2 (lens←getter*setter (field-view 'x) (extend-record 'x)))
 (expect
-  (@ (composeLens*) 'view test-rec) => test-rec
-  (@ (fieldLens* 'a 'b 'c) 'view test-rec) => 42
-  (@ (fieldLens*) 'view test-rec) => test-rec
-  (fieldView 'x test-point) => 10
-  (fieldView 'y test-point) => 20
-  (fieldLens 'x 'view test-point) => 10
-  (fieldLens 'y 'view test-point) => 20
-  (fieldLens 'x 'update add1 test-point 'x) => 11
-  (fieldLens 'x 'update mul10 test-point 'x) => 100
-  (fieldLens 'x 'update mul10 test-point 'y) => 20  ;; y unchanged
-  (idLens 'view test-point) => test-point
-  (idLens 'update add1 5) => 6
-  (composeLens (fieldLens 'a) (fieldLens 'b) 'view
+  (@ (compose-lens*) 'view test-rec) => test-rec
+  (@ (field-lens* 'a 'b 'c) 'view test-rec) => 42
+  (@ (field-lens*) 'view test-rec) => test-rec
+  (field-view 'x test-point) => 10
+  (field-view 'y test-point) => 20
+  (field-lens 'x 'view test-point) => 10
+  (field-lens 'y 'view test-point) => 20
+  (field-lens 'x 'update add1 test-point 'x) => 11
+  (field-lens 'x 'update mul10 test-point 'x) => 100
+  (field-lens 'x 'update mul10 test-point 'y) => 20  ;; y unchanged
+  (id-lens 'view test-point) => test-point
+  (id-lens 'update add1 5) => 6
+  (compose-lens (field-lens 'a) (field-lens 'b) 'view
     (record (a (record (b 99))))) => 99
   (set-x 999 test-point 'x) => 999
   (set-x 999 test-point 'y) => 20
@@ -779,43 +785,43 @@ let Y = f: (x: x x) (x: f (x x));
 
 ;;;; 8.1.3 Focusing a Modular Extension
 ;;; From Sick to Ripped
-;; skewExt : SkewLens r i p s j q → ModExt r i p → ModExt s j q
-(def (skewExt l m)
-  (compose* (l 'update) m (l 'view)))
+;; skew-ext : SkewLens i r p j s q → ModExt i r p → ModExt j s q
+(def (skew-ext l m super self)
+  (l 'update (λ (inner-super) (m inner-super (l 'view self))) super))
 
 ;;;; 8.1.4 Adjusting Context and Focus
 ;;; Adjusting the Extension Focus
-;; updateOnlyLens : Update i p j q → SkewLens r i p r j q
-(def (updateOnlyLens u)
-  (makeLens identity u))
+;; update-only-lens : Update i p j q → SkewLens r i p r j q
+(def (update-only-lens u)
+  (make-lens identity u))
 
-;; updateLens : SkewLens r i p s j q → Update j q jj qq → SkewLens r i p r jj qq
-(def (updateLens l u)
-  (makeLens (l 'view) (compose (l 'update) u)))
+;; update-lens : SkewLens r i p s j q → Update j q jj qq → SkewLens r i p r jj qq
+(def (update-lens l u)
+  (make-lens (l 'view) (compose (l 'update) u)))
 
 (def outer-rec (record (inner (record (val 5)))))
-(def inner-val-lens (fieldLens* 'inner 'val))
-(def (double-ext _self super) (* 2 super))
-(def focused-ext (skewExt (updateOnlyLens (inner-val-lens 'update)) double-ext))
+(def inner-val-lens (field-lens* 'inner 'val))
+(def (double-ext super _self) (* 2 super))
+(def focused-ext (skew-ext (update-only-lens (inner-val-lens 'update)) double-ext))
 (expect
   (fix outer-rec focused-ext 'inner 'val) => 10)
 (expect
-  ;; updateOnlyLens: view is identity, update applies transformation
-  (updateOnlyLens (compose mul10) 'view 7) => 7
-  (updateOnlyLens (compose mul10) 'update add1 7) => 80)  ;; mul10 (add1 7)
+  ;; update-only-lens: view is identity, update applies transformation
+  (update-only-lens (compose mul10) 'view 7) => 7
+  (update-only-lens (compose mul10) 'update add1 7) => 80)  ;; mul10 (add1 7)
 
 ;;; Broadening the Focus
-;; reverseView : s → MonoLens s a → View a s
-;; reverseUpdate : s → MonoLens s a → Update a s a s
-;; reverseLens : s → MonoLens s a → MonoLens a s
-(def (reverseView s l a)
-  (setterOfLens l a s))
-(def (reverseUpdate s l f a)
-  (l 'view (f (reverseView s l a))))
-(def (reverseLens s l)
-  (makeLens (reverseView s l) (reverseUpdate s l)))
+;; reverse-view : s → MonoLens s a → View a s
+;; reverse-update : s → MonoLens s a → Update a s a s
+;; reverse-lens : s → MonoLens s a → MonoLens a s
+(def (reverse-view s l a)
+  (setter←lens l a s))
+(def (reverse-update s l f a)
+  (l 'view (f (reverse-view s l a))))
+(def (reverse-lens s l)
+  (make-lens (reverse-view s l) (reverse-update s l)))
 
-(def rev-x (reverseLens test-point x-lens))
+(def rev-x (reverse-lens test-point x-lens))
 
 (expect
   (x-lens 'view test-point) => 10
@@ -823,22 +829,22 @@ let Y = f: (x: x x) (x: f (x x));
   (rev-x 'view 42 'y) => 20 ;; y unchanged from test-point
 
   ;; update transforms the record, then extracts the value
-  (rev-x 'update (fieldLens 'x 'update mul10) 10) => 100
-  (rev-x 'update (fieldLens 'y 'update mul10) 10) => 10) ;; y unchanged from test-point
+  (rev-x 'update (field-lens 'x 'update mul10) 10) => 100
+  (rev-x 'update (field-lens 'y 'update mul10) 10) => 10) ;; y unchanged from test-point
 
 ;;; Adjusting the Context
-;; viewOnlyLens : View r s → SkewLens r i p s i p
-(def (viewOnlyLens v)
-  (makeLens v identity))
+;; view-only-lens : View r s → SkewLens r i p s i p
+(def (view-only-lens v)
+  (make-lens v identity))
 
-;; viewLens : SkewLens r i p s j q → View rr r → SkewLens rr i p r j q
-(def (viewLens l v)
-  (makeLens (composeView (l 'view) v) (l 'update)))
+;; view-lens : SkewLens r i p s j q → View rr r → SkewLens rr i p r j q
+(def (view-lens l v)
+  (make-lens (compose-view (l 'view) v) (l 'update)))
 
 (expect
-   ;; viewOnlyLens: view transforms, update is identity
-  (viewOnlyLens mul10 'view 7) => 70
-  (viewOnlyLens mul10 'update add1 7) => 8)
+   ;; view-only-lens: view transforms, update is identity
+  (view-only-lens mul10 'view 7) => 70
+  (view-only-lens mul10 'update add1 7) => 8)
 
 ;;;; 8.1.5 Optics for Specifications, Prototypes and Classes
 
@@ -846,17 +852,17 @@ let Y = f: (x: x x) (x: f (x x));
 (def widget-shop
   (record (widgets (record (foo (record (x-pos 100) (y-pos 500)))))))
 (expect
- (skewExt
-  (updateLens (fieldLens* 'widgets 'foo) (fieldUpdate 'x-pos))
-  (λ (_self super) (+ super 50))
+ (skew-ext
+  (update-lens (field-lens* 'widgets 'foo) (field-update 'x-pos))
+  (λ (super _self) (+ super 50))
   widget-shop
   widget-shop
   'widgets 'foo 'x-pos) => 150)
 
 ;;; Prototype Specification
-(def rprotoSpecView spec←rproto)
-(def rprotoSpecSetter rproto←spec)
-(def rprotoSpecLens (lensOfGetterSetter rprotoSpecView rprotoSpecSetter))
+(def rproto-spec-view spec←rproto)
+(def rproto-spec-setter rproto←spec)
+(def rproto-spec-lens (lens←getter*setter rproto-spec-view rproto-spec-setter))
 
 
 ;;; HPROTO encoding
@@ -916,7 +922,7 @@ let Y = f: (x: x x) (x: f (x x));
 
 
 ;; TODO: write and test wrapper to Y-style spec from a U-style hspec, and back
-(def (hspec→spec hspec self super)
+(def (hspec→spec hspec super self)
    (letrec ((half (λ (_) (hspec (λ (_) super) half))))
      (half #f)))
 (expect (map (fix-record (hspec→spec (hspec-rmix* coord-hspec color-hspec (add-x-hspec 1) area-hspec)))
@@ -927,9 +933,9 @@ let Y = f: (x: x x) (x: f (x x));
   ;; eta-conversions necessary in eager context
   (letrec ((self (λ (x) (half half x))) ;; (η (half half))
            (super (λ (x) (hyper half x)))) ;; (η (hyper half))
-    (spec self super)))
+    (spec super self)))
 
-(define u-comp (spec→hspec (mix* color-spec (add-x-spec 1) area-spec coord-spec)))
+(define u-comp (spec→hspec (mix* coord-spec area-spec (add-x-spec 1) color-spec)))
 
 (expect (map (half-ref (hspec-half-record u-comp)) '(x y z color area)) => '(3 4 #f "blue" 12))
 

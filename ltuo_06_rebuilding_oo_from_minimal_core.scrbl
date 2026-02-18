@@ -94,13 +94,13 @@ so you may call methods on it:
 
 @Code{
 (def (pproto←spec spec)
-  (cons spec (fix-record spec)))
+  (cons spec (delay (fix-record spec))))
 (def spec←pproto car)
 (def (target←pproto pproto)
-  (cdr pproto))
+  (force (cdr pproto)))
 (def pproto-id (pproto←spec idModExt))
-(def (pproto-mix child parent)
-  (pproto←spec (mix (spec←pproto child) (spec←pproto parent))))
+(def (pproto-mix parent child)
+  (pproto←spec (mix (spec←pproto parent) (spec←pproto child))))
 (define (pproto-mix* . l) (foldl (uncurry2 pproto-mix) pproto-id l))
 }
 
@@ -128,13 +128,15 @@ though the type may be empty, and trying to use it may result in static or dynam
 Execution in a latter stage of computation (runtime vs compile-time)
 can be seen as the ultimate form of delayed evaluation.
 
-Note how in our representation of records as function so far,
-we already delay the potentially non-terminating or error-throwing behavior,
-until the time that the function is invoked.
-The function definition itself is guaranteed to terminate early on.
-The actual computations within are protected by λ-abstractions.
-Thus, delay and force are not necessary to prevent an invalid target from
+Note how in our representation of records as functions,
+we already delay the potentially non-terminating or error-throwing behavior
+until the time the function is invoked.
+The function definition itself is guaranteed to terminate early on,
+since the actual computations within are protected by λ-abstractions.
+Thus, @c{delay} and @c{force} are not strictly necessary to prevent an invalid target from
 causing an error when computing the product.
+However, we use @c{delay} anyway for uniformity with the recursive conflation variant @c{qproto}
+presented next, where @c{delay} is required for correctness.
 
 @Paragraph{Second Issue: Recursion}
 
@@ -194,18 +196,18 @@ an implicit conflation pair of the specification and the target@xnote["."]{
 Here is an implementation of that idea, wherein I prefix function names with @c{qproto}:
 
 @Code{
-(def (qproto-wrapper spec _self super)
+(def (qproto-wrapper spec super _self)
   (cons spec super))
 (def (qproto←spec spec)
-  (delay (fix-record (mix (qproto-wrapper spec) spec))))
+  (delay (fix-record (mix spec (qproto-wrapper spec)))))
 }
 Note how the following functions are essentially unchanged compared to @c{pproto}:
 @Code{
 (def spec←qproto car)
 (def (target←qproto qproto)
   (force (cdr qproto)))
-(def (qproto-mix child parent)
-  (qproto←spec (mix (spec←qproto child) (spec←qproto parent))))
+(def (qproto-mix parent child)
+  (qproto←spec (mix (spec←qproto parent) (spec←qproto child))))
 (define (qproto-mix* . l) (foldl (uncurry2 qproto-mix) pproto-id l))
 }
 What changed from the previous @c{pproto} variant was that the
@@ -323,16 +325,16 @@ The function @c{target←rproto} extracts the target from a prototype,
 so you may call methods on it—it is the identity function, and
 you can often inline it away.
 @Code{
-(def (rproto-wrapper spec self super method-id)
+(def (rproto-wrapper spec super self method-id)
   (if method-id (super method-id) spec))
 (def (rproto←spec spec)
-  (fix-record (mix (rproto-wrapper spec) spec)))
+  (fix-record (mix spec (rproto-wrapper spec))))
 (def rproto-id (rproto←spec idModExt))
 (def (spec←rproto rproto)
   (rproto #f))
 (def target←rproto identity)
-(def (rproto-mix child parent)
-  (rproto←spec (mix (spec←rproto child) (spec←rproto parent))))
+(def (rproto-mix parent child)
+  (rproto←spec (mix (spec←rproto parent) (spec←rproto child))))
 (define (rproto-mix* . l) (foldl (uncurry2 rproto-mix) rproto-id l))
 }
 Once again, some special extension is used in front, that is not strict,
@@ -607,7 +609,7 @@ yet no one seems to have been able to fully tease apart the concepts up until re
   to read and write configurations of some kind.
   Then use prototype OO to import an existing useful configuration
   and extend it into a new one without modifying the original.
-  For instance, use Nix extensions or customizations or functions of self and super
+  For instance, use Nix extensions or customizations or functions of super and self
   of some kind to change the version of a library or compiler used by other packages.
   Can you identify a case where you enjoy such extension not just globally,
   but only for a small subset of packages?

@@ -113,7 +113,7 @@ type MonoLens s a = PolyLens s s a a
 }
 
 @Paragraph{Skew Lens}
-A skew lens (or “ripsjq” lens, pronounced “rip sick”), yet generalized the above:
+A skew lens (or “irpjsq” lens, pronounced “earp jusq”), further generalizes the above:
 now the types for the update are not required to be the same as those for the view,
 so you don’t have to be looking exactly at the change you’re experiencing.
 The view @c{s → r} goes from an outer context @c{s} to an inner context @c{r}
@@ -122,13 +122,13 @@ and the update goes from an extension @c{i → p} to @c{j → q}
 (where “i” is for inherited, “p” is for provided, and “j” and “q” are just the next letters).
 Polymorphic lenses are a special case of skew lenses.
 @Code{
-type SkewLens r i p s j q =
+type SkewLens i r p j s q =
        { view : s → r ; update : (i → p) → j → q }
 type PolyLens s t a b = SkewLens a a b s s t
 }
 
 @Paragraph{View and Update}
-I can also give separate types fo View and Update:
+I can also give separate types for View and Update:
 @Code{
 type View r s = s → r
 type Update i p j q = (i → p) → j → q
@@ -147,9 +147,9 @@ lens←getter*setter : View a s → Setter s t b → PolyLens s t a b
 setter←lens : PolyLens s t a b → Setter s t b
 
 (def (lens←getter*setter get set)
-  (make-lens get (λ (f s) (set (f (get s))))))
+  (make-lens get (λ (f s) (set (f (get s)) s))))
 (def (setter←lens l)
-  (λ (b s) (l 'update (λ (_a) b))))
+  (λ (b) (l 'update (λ (_a) b))))
 }
 Note how you need a matching getter and setter to achieve a polymorphic lens.
 To achieve a skew lens, you would need two getters and a setter:
@@ -189,9 +189,9 @@ id-lens : SkewLens r i p r i p
 
 You’ll notice that @c{compose-view} is just @c{compose} with flipped arguments,
 and @c{compose-update} is just @c{compose}.
-@c{composeLens} just composes each component with the proper function@xnote["."]{
+@c{compose-lens} just composes each component with the proper function@xnote["."]{
   As usual, you can represent your lenses such that you can compose them with the
-  regular @c{compose} function, by pre-applying the @c{composeLens} function to them.
+  regular @c{compose} function, by pre-applying the @c{compose-lens} function to them.
   Haskellers use a further condensed representation as a single composable function
   that some claim is more efficient, “van Laarhoven” lenses,
   but I will avoid it for the sake of clarity.
@@ -211,7 +211,7 @@ as functions from identifiers to value, where @c{r.k = (r 'k)}:
 (def (field-view key s)
   (s key))
 (def (field-update key f s)
-  (extend-record s key (f (s key))))
+  (extend-record key (f (s key)) s))
 (def (field-lens key)
   (make-lens (field-view key) (field-update key)))
 
@@ -235,24 +235,20 @@ but the two need not be the same, and the modification need not preserve types.
 
 @subsection{Focusing a Modular Extension}
 
-@Paragraph{From Sick to Ripped}
+@Paragraph{Skewing a Modular Extension}
 
 You may have notice that I used the same letters @c{r i p}
 to parameterize a @c{SkewLens} (plus their successors)
 as to parameterize a @c{ModExt}. This is not a coincidence.
 You can focus a modular extension by looking at it through a matching skew lens:
 @Code{
-skew-ext : SkewLens r i p s j q → ModExt r i p → ModExt s j q
-(def (skew-ext l m)
-  (compose* (l 'update) m (l 'view)))
-
-(define (compose* . l) (foldl (uncurry2 compose) identity l))
+skew-ext : SkewLens i r p j s q → ModExt i r p → ModExt j s q
+(def (skew-ext l m super self)
+  (l 'update (λ (inner-super) (m inner-super (l 'view self))) super))
 }
 
-Thus with a @c{SkewLens r i p s j q},
-I can change the continuation for a modular extension
-from expecting @c{s j q} (pronounced “sick”)
-to expecting @c{r i p} (pronounced “rip”).
+Thus with a @c{SkewLens i r p j s q},
+I can change a modular extension from parameters @c{i r p} to @c{j s q}.
 
 @Paragraph{Metaphors for Modular Extensions and Skew Lenses}
 
@@ -281,7 +277,7 @@ It is a common case that the actuator is within the frame of the sensor,
 such that the sensactor may observe not only what they are modifying, but also a wider context.
 In formal words, there are two polymorphic lenses @c{l} and @c{k}
 such that the skew lens view is @c{(l 'view)}, and the skew lens update is
-@c{((compose-lens k l) 'update)}, further specializing the previous view.
+@c{(compose-lens k l 'update)}, further specializing the previous view.
 But that is not necessary in the general case.
 Just like competent painters can put paint on canvas while looking at their model,
 not at their hand, the “skew lens” does not imply that the hand is seen by the eye,
@@ -337,7 +333,7 @@ A monomorphic lens, or simple lens, can refocus a closed specification focus
 into another closed specification focus, such that a local closed specification
 @c{ClosedSpec a} can be turned into a global closed specification for the complete ecosystem,
 @c{ClosedSpec ES}. Thus, when specifying a value @c{foo.bar} in the ecosystem,
-you will use @c{(composeLens (field-lens 'Foo) (field-lens 'Bar))} as your @c{SpecFocus}.
+you will use @c{(compose-lens (field-lens 'foo) (field-lens 'bar))} as your @c{SpecFocus}.
 
 As is a theme in this book, though,
 and which was never discussed before in the OO literature,
@@ -354,7 +350,7 @@ Given a focus on a specification
 one can focus on a specific method of that specification
 by further adjusting the extension focus using @c{u = (field-update key)}
 where @c{key} is the identifier for the method.
-Thus, @c{(composeLens (field-lens* 'foo 'bar) (updateOnlyLens (field-update 'baz)))}
+Thus, @c{(compose-lens (field-lens* 'foo 'bar) (update-only-lens (field-update 'baz)))}
 or equivalently @c{(update-lens (field-lens* 'foo 'bar) (field-update 'baz))}
 will let you specify a method @c{baz}
 for the specification under @c{foo.bar} in the ecosystem, where:
@@ -371,7 +367,7 @@ update-lens : SkewLens r i p s j q → Update j q jj qq →
 
 More generally, given a lens @c{l} to focus on the specification,
 and a lens update @c{u} to refocus on just the extension focus,
-the lens @c{(composeLens l (updateOnlyLens u))} will up focus on the method at @c{u}
+the lens @c{(compose-lens l (update-only-lens u))} will up focus on the method at @c{u}
 of the specification at @c{l}.
 This is a common case when specifying
 a sub-method in a methods (more on that coming),
@@ -402,10 +398,10 @@ reverse-view : s → MonoLens s a → View a s
 reverse-update : s → MonoLens s a → Update a s a s
 reverse-lens : s → MonoLens s a → MonoLens a s
 
-(def (reverse-view s l)
-  (setter←lens l s))
-(def (reverse-update s l a f)
-  (l 'view (f (reverse-view s l) a)))
+(def (reverse-view s l a)
+  (setter←lens l a s))
+(def (reverse-update s l f a)
+  (l 'view (f (reverse-view s l a))))
 (def (reverse-lens s l)
   (make-lens (reverse-view s l) (reverse-update s l)))
 }
@@ -458,7 +454,7 @@ you might use:
 @Code{
 (skew-ext (update-lens (field-lens* 'widgets 'foo)
                      (field-update 'x-pos))
-         (λ (_self super) (+ super 50)))
+         (λ (super _self) (+ super 50)))
 }
 Helper functions might provide terser syntax for common cases,
 but what matters for the purpose of this book is that
@@ -548,7 +544,7 @@ a formal definition is simpler than the words that describe it:
 @Code{
 (def (instance-method-spec method-id method-body)
   (skew-ext (instance-method-lens method-id)
-    (λ (_self inherited-method element)
+    (λ (inherited-method _self element)
       (λ args
         (method-body element
           (make-call-next-method
@@ -635,9 +631,9 @@ and other information such as whether the slot is mutable (in a language with si
 type information (that could be static if the class is second-class, but will be dynamic here), etc.
 I will stick to just the @c{init} protocol for now:
 @Code{
-(def (simple-instance-field-spec field-id initModExt)
+(def (simple-instance-field-spec field-id init-mod-ext)
   (skew-ext (instance-field-lens field-id)
-    (rproto←record (record (init initModExt)))))
+    (rproto←record (record (init init-mod-ext)))))
 }
 To initialize a field @c{parts} that is a list of parts,
 defaulting to an empty list, you would use something like:
@@ -648,19 +644,19 @@ To initialize a field @c{price} that defaults as a baseline
 to the sum of the prices of the parts times the contents of the field @c{markup},
 you would use:
 @Code{
-(simple-instance-field-spec 'parts (λ (self _inherited)
+(simple-instance-field-spec 'parts (λ (_inherited self)
   (* (self 'markup)
      (foldl + 0 (λ (part) (part 'price)) (self 'parts)))))
 }
 A field @c{markup} that has no default initializer must be provided by users could be defined as:
 @Code{
-(simple-instance-field-spec 'parts (λ (_self _inherited)
+(simple-instance-field-spec 'parts (λ (_inherited _self)
   (abort "missing field markup")))
 }
 A class could then define a default prototype for new instances as:
 @Code{
 (skew-ext (update-lens rproto-spec-lens (field-update 'new-instance-prototype))
-  (λ (self _inherited)
+  (λ (_inherited self)
     (rproto-mix*
       (apply mix*
         (map (λ (slot)
@@ -674,6 +670,25 @@ A class descriptor holds a list of slot descriptors
 and builds the instance prototype by focusing and mixing:
 @Code{
 (def (class-proto slots)
+  (rproto←spec
+    (mix*
+      (map (lambda (slot)
+             (compose (field-update (slot 'name))
+                      (slot 'init-spec)))
+           slots))))
+
+(def (default-slot name value)
+  (record (name name)
+          (init-spec (constant-spec value))))
+
+(def (computed-slot name thunk)
+  (record (name name)
+          (init-spec (λ (super self) (thunk self)))))
+
+(def (required-slot name)
+  (record (name name)
+          (init-spec (λ (super self)
+                       (error "Missing required slot" name)))))
 }
 
 Each slot's @c{init-spec} is focused onto its field
@@ -732,7 +747,7 @@ Win-win interactions rather win-lose, that was a revolution
 that made multiple inheritance sensible when it otherwise wasn’t.
 
 I will present the more refined generalization of this principle as the
-method combinations from CLOS @~cite{CLtL2 clhs},
+method combinations from CLOS @~cite{CLtL2 clhs Verna2023},
 rather than the more limited method combinations of the original Flavors.
 
 The simplest case of method combination is actually
@@ -811,25 +826,26 @@ to be folded or otherwise processed later
 (e.g. for conflict resolution in flavorless multiple inheritance):
 @Code{
 (def (sub-method-lens method-id tag)
-  (composeLens* (field-lens 'sub-methods)
-                (field-lens method-id)
-                (field-lens tag)))
+  (compose-lens* (field-lens 'sub-methods)
+                 (field-lens method-id)
+                 (field-lens tag)))
 (def (sub-method-spec method-id tag method-cons method-spec)
-  (sub-method-lens method tag 'update
+  (sub-method-lens method-id tag 'update
     (λ (method-specs) (method-cons method-spec method-specs))))
 (def (standard-method-cons spec specs)
   (cons spec specs))
 (def (sub-methods-support-spec)
   (field-spec 'sub-methods record-spec))
-(def (method-combination-init-spec method-id method-combination-init)
-  (field-spec 'sub-methods (constant-field-spec 'method method-combination-init)))
-(def primary-method-combination-init
-  (extend-record 'primary '() empty-record))
+(def (method-combination-init-spec
+       method-id method-combination-init)
+  (field-spec 'sub-methods
+    (constant-field-spec 'method method-combination-init)))
+(def simple-method-combination-init
+  (record (around '()) (primary '())))
 (def standard-method-combination-init
-  (extend-record 'around '()
    (extend-record 'before '()
     (extend-record 'after '()
-     primary-method-combination-init))))
+     simple-method-combination-init)))
 }
 
 Then there is the question of who is responsible for initializing
@@ -865,35 +881,72 @@ but it is more explicit and thus hopefully more didactic.
 
 @subsection{Standard Method Combination}
 
-@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+We can then implement the standard method combination as follows:
+running the @c{around} methods, then the @c{before} methods,
+then the @c{primary} methods, and finally the @c{after} methods in reverse order.
 
 @Code{
-(def (compute-effective-around-method method specification)
-  (compute-effective-sub-method
-   method 'around specification
-   ))
-(def (compute-effective-before-method method specification)
-  (compute-effective-sub-method method 'around specification))
+(def (call-chain methods on-exhausted)
+  (foldr
+    (lambda (m next)
+      (λ (self . args)
+        (apply m (make-call-next-method next self args) self args)))
+    on-exhausted
+    methods))
 
-(def (standard-compute-effective-method method specification)
-  (let* ((around
-          (compute-effective-around-method method specification))
-         (before
-          (compute-effective-before-method method specification))
-         (primary
-          (compute-effective-primary-method method specification))
-         (after
-          (compute-effective-after-method method specification)))
-    (around
-      (lambda ()
-        (before)
-        (let ((result (primary)))
-          (after)
-          result)))))
+(def (progn-methods-most-specific-first methods self args)
+  (foldl (lambda (m _) (apply m abort self args)) #f methods))
 
+(def (progn-methods-most-specific-last methods self args)
+  (foldr (lambda (m _) (apply m abort self args)) #f methods))
+
+(def (standard-no-applicable-method method-id . self-args)
+  (error "no applicable method" method-id self-args))
+
+(def no-applicable-method standard-no-applicable-method)
+
+(def (standard-compute-effective-method method-id sub-methods)
+  (call-chain (sub-methods 'around)
+    (λ (self . args)
+      (progn-methods-most-specific-first (sub-methods 'before) self args)
+      (let ((result
+              (apply (call-chain (sub-methods 'primary)
+                       (λ (self . args)
+                         (apply no-applicable-method method-id self . args)))
+                       self args)))
+          (progn-methods-most-specific-last (sub-methods 'after) self args)
+          result))))
 }
 
 @subsection{Simple Method Combination}
+
+Simple method combinations are then as follows:
+
+@Code{
+(def (simple-compute-effective-method op identity order sub-methods)
+  (let* ((arounds (sub-methods 'around))
+         (primaries (sub-methods 'primary))
+         (ordered (case order
+                    ((most-specific-first) primaries)
+                    ((most-specific-last) (reverse primaries)))))
+   (call-chain arounds
+    (λ (self . args)
+      (foldr
+        (λ (m acc) (op (apply m self args) acc))
+          identity
+          ordered)))))
+
+(def (compute-effective-method/+ sub-methods)
+  (simple-compute-effective-method + 0 'most-specific-first sub-methods))
+
+(def (compute-effective-method/* sub-methods)
+  (simple-compute-effective-method * 1 'most-specific-first sub-methods))
+
+(def (compute-effective-method/list sub-methods)
+  (simple-compute-effective-method cons '() 'most-specific-first sub-methods))
+}
+
+@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
 
 @subsection{User-defined Method Combinations}
 
@@ -1002,3 +1055,16 @@ Kin vs type. @~cite{Allen2011Type}
 Also works in typeclass-style vs class-style.
 
 How that interacts with multiple dispatch tables, global or local.
+
+
+@exercise[#:difficulty "easy"]{
+  Define the missing simple CLOS method combinations in an efficient way, for
+  @c{+ * max min progn list append nconc or and}
+}
+
+@exercise[#:difficulty "Medium"]{
+  If you did exercise @exercise-ref{08to09}, compare
+  your attempt at explaining these advanced topics OO with how I did.
+  What aspects did you anticipate? What surprised you?
+  What did you do better or worse?
+}
