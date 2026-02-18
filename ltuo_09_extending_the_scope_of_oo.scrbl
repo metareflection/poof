@@ -143,12 +143,12 @@ The getter and the view are the same thing, so that’s easy.
 On the other hand, the setter and the update are slightly harder.
 @Code{
 type Setter s t b = b → s → t
-lensOfGetterSetter : View a s → Setter s t b → PolyLens s t a b
-setterOfLens : PolyLens s t a b → Setter s t b
+lens←getter*setter : View a s → Setter s t b → PolyLens s t a b
+setter←lens : PolyLens s t a b → Setter s t b
 
-(def (lensOfGetterSetter get set)
-  (makeLens get (λ (f s) (set (f (get s))))))
-(def (setterOfLens l)
+(def (lens←getter*setter get set)
+  (make-lens get (λ (f s) (set (f (get s))))))
+(def (setter←lens l)
   (λ (b s) (l 'update (λ (_a) b))))
 }
 Note how you need a matching getter and setter to achieve a polymorphic lens.
@@ -160,35 +160,35 @@ the two getters needn’t match, but the second getter and the setter must.
 I can compose view, update and lenses as follows,
 with the obvious identity lens:
 @Code{
-composeView : View s t → View r s → View r t
-(def (composeView v w)
+compose-view : View s t → View r s → View r t
+(def (compose-view v w)
   (compose w v))
 
-composeUpdate : Update i p j q → Update j q k r → Update i p k r
-(def composeUpdate compose)
+compose-update : Update i p j q → Update j q k r → Update i p k r
+(def compose-update compose)
 
-makeLens : View r s → Update i p j q → SkewLens r i p s j q
-(def (makeLens v u)
+make-lens : View r s → Update i p j q → SkewLens r i p s j q
+(def (make-lens v u)
   (extend-record 'view v
     (extend-record 'update u
       empty-record)))
 
-composeLens : SkewLens s j q ss jj qq → SkewLens r i p s j q →
-                SkewLens r i p ss jj qq
-(def (composeLens l k)
-  (makeLens
-    (composeView (l 'view) (k 'view))
-    (composeUpdate (l 'update) (k 'update))))
+compose-lens : SkewLens s j q ss jj qq → SkewLens r i p s j q →
+                 SkewLens r i p ss jj qq
+(def (compose-lens l k)
+  (make-lens
+    (compose-view (l 'view) (k 'view))
+    (compose-update (l 'update) (k 'update))))
 
-idLens : SkewLens r i p r i p
-(def idLens
-  (makeLens identity identity))
+id-lens : SkewLens r i p r i p
+(def id-lens
+  (make-lens identity identity))
 
-(define composeLens* (op*←op1.1 composeLens idLens))
+(define compose-lens* (op*←op1.1 compose-lens id-lens))
 }
 
-You’ll notice that @c{composeView} is just @c{compose} with flipped arguments,
-and @c{composeUpdate} is just @c{compose}.
+You’ll notice that @c{compose-view} is just @c{compose} with flipped arguments,
+and @c{compose-update} is just @c{compose}.
 @c{composeLens} just composes each component with the proper function@xnote["."]{
   As usual, you can represent your lenses such that you can compose them with the
   regular @c{compose} function, by pre-applying the @c{composeLens} function to them.
@@ -208,25 +208,25 @@ More sophisticated representations will have more sophisticated lenses,
 but here is what it looks like in my trivial representation of records
 as functions from identifiers to value, where @c{r.k = (r 'k)}:
 @Code{
-(def (fieldView key s)
+(def (field-view key s)
   (s key))
-(def (fieldUpdate key f s)
+(def (field-update key f s)
   (extend-record s key (f (s key))))
-(def (fieldLens key)
-  (makeLens (fieldView key) (fieldUpdate key)))
+(def (field-lens key)
+  (make-lens (field-view key) (field-update key)))
 
-(define (fieldLens* . keys)
-  (apply composeLens* (map fieldLens keys)))
+(define (field-lens* . keys)
+  (apply compose-lens* (map field-lens keys)))
 }
 
 To access the subfield @c{bar} of the field @c{foo} of an object @c{x},
-you can apply @c{(fieldLens* 'foo 'bar)} to @c{x}.
-Note that the order of lenses in @c{fieldLens*} is covariant with
+you can apply @c{(field-lens* 'foo 'bar)} to @c{x}.
+Note that the order of lenses in @c{field-lens*} is covariant with
 the usual notation @c{x.foo.bar}.
 Some syntactic sugar could help you achieve a similar notation, too,
 but that would require implementation-dependent extensions to Scheme.
 
-A @c{(fieldLens key)} can be a simple lens of type @c{MonoLens s a}
+A @c{(field-lens key)} can be a simple lens of type @c{MonoLens s a}
 when applied to a record of type @c{s} that has a field @c{key} of type @c{a}.
 But it can also be used as a polymorphic lens or skew lens,
 where you view the field @c{key} of your context and
@@ -242,8 +242,8 @@ to parameterize a @c{SkewLens} (plus their successors)
 as to parameterize a @c{ModExt}. This is not a coincidence.
 You can focus a modular extension by looking at it through a matching skew lens:
 @Code{
-skewExt : SkewLens r i p s j q → ModExt r i p → ModExt s j q
-(def (skewExt l m)
+skew-ext : SkewLens r i p s j q → ModExt r i p → ModExt s j q
+(def (skew-ext l m)
   (compose* (l 'update) m (l 'view)))
 
 (define (compose* . l) (foldl (uncurry2 compose) identity l))
@@ -281,7 +281,7 @@ It is a common case that the actuator is within the frame of the sensor,
 such that the sensactor may observe not only what they are modifying, but also a wider context.
 In formal words, there are two polymorphic lenses @c{l} and @c{k}
 such that the skew lens view is @c{(l 'view)}, and the skew lens update is
-@c{((composeLens k l) 'update)}, further specializing the previous view.
+@c{((compose-lens k l) 'update)}, further specializing the previous view.
 But that is not necessary in the general case.
 Just like competent painters can put paint on canvas while looking at their model,
 not at their hand, the “skew lens” does not imply that the hand is seen by the eye,
@@ -337,7 +337,7 @@ A monomorphic lens, or simple lens, can refocus a closed specification focus
 into another closed specification focus, such that a local closed specification
 @c{ClosedSpec a} can be turned into a global closed specification for the complete ecosystem,
 @c{ClosedSpec ES}. Thus, when specifying a value @c{foo.bar} in the ecosystem,
-you will use @c{(composeLens (fieldLens 'Foo) (fieldLens 'Bar))} as your @c{SpecFocus}.
+you will use @c{(composeLens (field-lens 'Foo) (field-lens 'Bar))} as your @c{SpecFocus}.
 
 As is a theme in this book, though,
 and which was never discussed before in the OO literature,
@@ -352,21 +352,21 @@ I am going to discuss in the rest of this chapter.
 @Paragraph{Adjusting the Extension Focus}
 Given a focus on a specification
 one can focus on a specific method of that specification
-by further adjusting the extension focus using @c{u = (fieldUpdate key)}
+by further adjusting the extension focus using @c{u = (field-update key)}
 where @c{key} is the identifier for the method.
-Thus, @c{(composeLens (fieldLens* 'foo 'bar) (updateOnlyLens (fieldUpdate 'baz)))}
-or equivalently @c{(updateLens (fieldLens* 'foo 'bar) (fieldUpdate 'baz))}
+Thus, @c{(composeLens (field-lens* 'foo 'bar) (updateOnlyLens (field-update 'baz)))}
+or equivalently @c{(update-lens (field-lens* 'foo 'bar) (field-update 'baz))}
 will let you specify a method @c{baz}
 for the specification under @c{foo.bar} in the ecosystem, where:
 @Code{
-updateOnlyLens : Update i p j q → SkewLens r i p r j q
-(def (updateOnlyLens u)
-  (makeLens identity u))
+update-only-lens : Update i p j q → SkewLens r i p r j q
+(def (update-only-lens u)
+  (make-lens identity u))
 
-updateLens : SkewLens r i p s j q → Update j q jj qq →
+update-lens : SkewLens r i p s j q → Update j q jj qq →
      SkewLens r i p r jj qq
-(def (updateLens l u)
-  (makeLens (l 'view) (compose (l 'update) u)))
+(def (update-lens l u)
+  (make-lens (l 'view) (compose (l 'update) u)))
 }
 
 More generally, given a lens @c{l} to focus on the specification,
@@ -398,16 +398,16 @@ completed with data from the same non updated context.
 If you want to update the context each time, you have to reverse the lens
 with the updated context every time.
 @Code{
-reverseView : s → MonoLens s a → View a s
-reverseUpdate : s → MonoLens s a → Update a s a s
-reverseLens : s → MonoLens s a → MonoLens a s
+reverse-view : s → MonoLens s a → View a s
+reverse-update : s → MonoLens s a → Update a s a s
+reverse-lens : s → MonoLens s a → MonoLens a s
 
-(def (reverseView s l)
-  (setterOfLens l s))
-(def (reverseUpdate s l a f)
-  (l 'view (f (reverseView s l) a)))
-(def (reverseLens s l)
-  (makeLens (reverseView s l) (reverseUpdate s l)))
+(def (reverse-view s l)
+  (setter←lens l s))
+(def (reverse-update s l a f)
+  (l 'view (f (reverse-view s l) a)))
+(def (reverse-lens s l)
+  (make-lens (reverse-view s l) (reverse-update s l)))
 }
 
 @Paragraph{Adjusting the Context}
@@ -429,14 +429,14 @@ or logs its history, backs up or persists its data, does resource accounting, et
 
 To adjust the context without adjusting the extension focus, use:
 @Code{
-viewOnlyLens : View r s → SkewLens r i p s i p
-(def (viewOnlyLens v)
-  (makeLens v identity))
+view-only-lens : View r s → SkewLens r i p s i p
+(def (view-only-lens v)
+  (make-lens v identity))
 
-viewLens : SkewLens r i p s j q → View rr r →
+view-lens : SkewLens r i p s j q → View rr r →
     SkewLens rr i p r j q
-(def (viewLens l v)
-  (makeLens (composeView (l 'view) v) (l 'update)))
+(def (view-lens l v)
+  (make-lens (compose-view (l 'view) v) (l 'update)))
 }
 
 @subsection{Optics for Specifications and Prototypes}
@@ -451,13 +451,13 @@ given a Lens @c{l} to focus on a specification from the environment,
 and an Update @c{u} to focus the extension on a method or submethod within that specification,
 one can extend that method of that specification with a modular extension @c{m}, with:
 @Code{
-(skewExt (updateLens l u) m)
+(skew-ext (update-lens l u) m)
 }
 For instance, to move 50 pixels to the right a widget registered under the name “foo”,
 you might use:
 @Code{
-(skewExt (updateLens (fieldLens* 'widgets 'foo)
-                     (fieldUpdate 'x-pos))
+(skew-ext (update-lens (field-lens* 'widgets 'foo)
+                     (field-update 'x-pos))
          (λ (_self super) (+ super 50)))
 }
 Helper functions might provide terser syntax for common cases,
@@ -478,10 +478,10 @@ you may further focus on the prototype’s specification by further composing @c
 with the following lens, after which you can further use lenses
 to modularly extend the specification methods as above:
 @Code{
-(def rprotoSpecView spec←rproto)
-(def rprotoSpecSetter rproto←spec)
-(def rprotoSpecLens
-  (lensOfGetterSetter rprotoSpecView rprotoSpecSetter))}
+(def rproto-spec-view spec←rproto)
+(def rproto-spec-setter rproto←spec)
+(def rproto-spec-lens
+  (lens←getter*setter rproto-spec-view rproto-spec-setter))}
 
 The entire point of @c{rproto} is that the target view is @c{identity}.
 However, what the target update should be is an interesting question.
@@ -504,13 +504,13 @@ and so the error behavior is probably the safest one to use by default:
     and you won’t have to debug very hard surprises later.}]
 To a first approximation, this corresponds to using variants of these Update functions:
 @Code{
-(def rprotoTargetUpdate/OutOfSync
+(def rproto-target-update/OutOfSync
   identity)
-(def rprotoTargetUpdate/OverwriteSpec
+(def rproto-target-update/OverwriteSpec
   rproto←record)
-(def rprotoTargetUpdate/NoMoreSpec
+(def rproto-target-update/NoMoreSpec
   (extend-record #f #f))
-(define rprotoTargetUpdate/Error
+(define rproto-target-update/Error
   abort)
 }
 
@@ -526,13 +526,13 @@ that it then invoked with @c{'instance-methods}, the @c{method-id}, and the elem
 
 To modularly extend it a class instance method, one needs first
 focus on it, by composing a lens focusing on a prototype for a type descriptor
-with an @c{instanceMethodLens} below, to obtain
+with an @c{instance-method-lens} below, to obtain
 a skew lens for a specific instance method:
 @Code{
-(def (instanceMethodLens method-id)
-  (updateLens rprotoSpecLens
-    (composeUpdate (fieldUpdate 'instance-methods)
-                   (fieldUpdate method-id))))
+(def (instance-method-lens method-id)
+  (update-lens rproto-spec-lens
+    (compose-update (field-update 'instance-methods)
+                   (field-update method-id))))
 }
 
 Now, when specifying a class instance method, the programmer thinks in terms of
@@ -547,7 +547,7 @@ I need a wrapper to bridge these two views, and at this point,
 a formal definition is simpler than the words that describe it:
 @Code{
 (def (instance-method-spec method-id method-body)
-  (skewExt (instanceMethodLEns method-id)
+  (skew-ext (instance-method-lens method-id)
     (λ (_self inherited-method element)
       (λ args
         (method-body element
@@ -623,48 +623,48 @@ in writing these specifications.
 @subsubsection{Simple Class Initialization}
 
 One may specify the fields of a class instance,
-by specifying individual field descriptors under a @c{instanceFieldLens}:
+by specifying individual field descriptors under a @c{instance-field-lens}:
 @Code{
-(def (instanceFieldLens field-id)
-  (updateLens rprotoSpecLens
-    (composeUpdate (fieldUpdate 'instance-fields)
-                   (fieldUpdate field-id))))
+(def (instance-field-lens field-id)
+  (update-lens rproto-spec-lens
+    (compose-update (field-update 'instance-fields)
+                   (field-update field-id))))
 }
 A simple field descriptor would be a record of an @c{init} modular extension to initialize it,
 and other information such as whether the slot is mutable (in a language with side-effects),
 type information (that could be static if the class is second-class, but will be dynamic here), etc.
 I will stick to just the @c{init} protocol for now:
 @Code{
-(def (simpleInstanceFieldSpec field-id initModExt)
-  (skewExt (instanceFieldLens field-id)
+(def (simple-instance-field-spec field-id initModExt)
+  (skew-ext (instance-field-lens field-id)
     (rproto←record (record (init initModExt)))))
 }
 To initialize a field @c{parts} that is a list of parts,
 defaulting to an empty list, you would use something like:
 @Code{
-(simpleInstanceFieldSpec 'parts (constant-spec '()))
+(simple-instance-field-spec 'parts (constant-spec '()))
 }
 To initialize a field @c{price} that defaults as a baseline
 to the sum of the prices of the parts times the contents of the field @c{markup},
 you would use:
 @Code{
-(simpleInstanceFieldSpec 'parts (λ (self _inherited)
+(simple-instance-field-spec 'parts (λ (self _inherited)
   (* (self 'markup)
      (foldl + 0 (λ (part) (part 'price)) (self 'parts)))))
 }
 A field @c{markup} that has no default initializer must be provided by users could be defined as:
 @Code{
-(simpleInstanceFieldSpec 'parts (λ (_self _inherited)
+(simple-instance-field-spec 'parts (λ (_self _inherited)
   (abort "missing field markup")))
 }
 A class could then define a default prototype for new instances as:
 @Code{
-(skewExt (updateLens rprotoSpecLens (fieldUpdate 'new-instance-prototype))
+(skew-ext (update-lens rproto-spec-lens (field-update 'new-instance-prototype))
   (λ (self _inherited)
     (rproto-mix*
       (apply mix*
         (map (λ (slot)
-             (compose (fieldUpdate (slot 'name))
+             (compose (field-update (slot 'name))
                       (slot 'init-spec)))
            slots)))))
 }
@@ -677,7 +677,7 @@ and builds the instance prototype by focusing and mixing:
 }
 
 Each slot's @c{init-spec} is focused onto its field
-by composing with @c{fieldUpdate},
+by composing with @c{field-update},
 then all are mixed together.
 The @c{fix-record} closes the recursion,
 yielding a prototype where each slot is initialized
@@ -802,36 +802,103 @@ and the method would still be its “function” part.
 
 Lacking such funcallable instances, we can store submethod information
 in a record submethods next to the methods being combined.
-For the sake of generality, a methodSpec can be any kind of specification
+For the sake of generality, a method-spec can be any kind of specification
 (modular extension, multiple or optimal inheritance specification, etc.),
-and the @c{methodCons} says how to combine it with the specification data so far;
+and the @c{method-cons} says how to combine it with the specification data so far;
 it could be an actual @c{mix} of modular extensions, or
 just something that @c{cons}es the new specification into a list
 to be folded or otherwise processed later
 (e.g. for conflict resolution in flavorless multiple inheritance):
 @Code{
-(def (subMethodLens method tag)
-  (composeLens (fieldLens 'subMethods) (fieldLens method) (fieldLens tag)))
-(def (subMethodSpec method-id tag methodCons methodSpec)
-  (lensUpdate (subMethodLens method tag)
-    (λ (methodSpecs) (methodCons methodSpec methodSpecs))))
+(def (sub-method-lens method-id tag)
+  (composeLens* (field-lens 'sub-methods)
+                (field-lens method-id)
+                (field-lens tag)))
+(def (sub-method-spec method-id tag method-cons method-spec)
+  (sub-method-lens method tag 'update
+    (λ (method-specs) (method-cons method-spec method-specs))))
+(def (standard-method-cons spec specs)
+  (cons spec specs))
+(def (sub-methods-support-spec)
+  (field-spec 'sub-methods record-spec))
+(def (method-combination-init-spec method-id method-combination-init)
+  (field-spec 'sub-methods (constant-field-spec 'method method-combination-init)))
+(def primary-method-combination-init
+  (extend-record 'primary '() empty-record))
+(def standard-method-combination-init
+  (extend-record 'around '()
+   (extend-record 'before '()
+    (extend-record 'after '()
+     primary-method-combination-init))))
 }
 
-@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+Then there is the question of who is responsible for initializing
+the submethods record and each of the submethods, what the default value should be, etc.
+The simplest, “dynamic”, answer would be that the field lens treat an absent field as
+a field yielding the top value @c{#f}, and
+would treat @c{#f} as an empty record when extending it;
+and finally @c{method-cons} would recognize @c{#f} and treat it specially.
+
+A more “static” answer would require the object to inherit
+from a “protocol” specification that initializes sub-methods
+for the methods that are part of the protocol;
+and each such “protocol” specification itself inherits from a “protocol support” specification
+that initializes the submethods record, that in turn inherits from a “record” specification
+that initializes the record being specified.
+No dynamic handling of uninitialized values, instead strict discipline in specifications.
+This discipline works best with types, or at least with multiple (or optimal) inheritance,
+so that programmers do not have to manually chain the many modular extensions involved
+in the correct dependency order without feedback beyond a runtime type mismatch.
+
+A yet more sophisticated answer would have meta-objects automatically handle
+the initialization of specifications and targets, prototypes, and classes.
+Those meta-objects must be instantiated (and thus specified)
+before the base object even starts being specified,
+which introduces interesting staging and bootstrap issues.
+See @secref{MOP} for a discussion of meta-objects.
+
+For this chapter, I will adopt the “static” approach
+while manually maintaining the initialization discipline
+without the help from either types or multiple inheritance.
+The approach is somewhat more verbose and harder to get right than the others,
+but it is more explicit and thus hopefully more didactic.
 
 @subsection{Standard Method Combination}
 
-@Code{
-(def (standard-compute-effective-method method specification)
-  (let* ((around (compute-effective-around-method method specification))
-         (before (compute-effective-before-method method specification))
-         (primary (compute-effective-primary-method method specification))
-         (after (compute-effective-primary-method method specification)))
-    (around
-      (lambda () (before) (let ((result (primary))) (after)) result))))
+@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
 
+@Code{
+(def (compute-effective-around-method method specification)
+  (compute-effective-sub-method
+   method 'around specification
+   ))
+(def (compute-effective-before-method method specification)
+  (compute-effective-sub-method method 'around specification))
+
+(def (standard-compute-effective-method method specification)
+  (let* ((around
+          (compute-effective-around-method method specification))
+         (before
+          (compute-effective-before-method method specification))
+         (primary
+          (compute-effective-primary-method method specification))
+         (after
+          (compute-effective-after-method method specification)))
+    (around
+      (lambda ()
+        (before)
+        (let ((result (primary)))
+          (after)
+          result)))))
 
 }
+
+@subsection{Simple Method Combination}
+
+@subsection{User-defined Method Combinations}
+
+
+
 
 These methods can then enact any kind of setup or cleanup,
 resource allocation and deallocation, locking, error handling, access control,
@@ -896,6 +963,11 @@ The notion of generic function was thereafter adopted by
 CommonLOOPS, CLOS, Cecil, Fortress, etc. @; TODO @~cite{Bobrow1986CommonLoops}
 
 @; TODO quickly mention multi-methods with secref
+
+Note how program information is stored in two independent set of entities:
+one the one hand the specifications, and the generic functions
+(or the generic functions grouped into “protocols”).
+
 
 @subsection{Implementing Method Combination}
 

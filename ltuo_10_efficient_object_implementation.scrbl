@@ -39,7 +39,7 @@ Records as records? Now we’re talking.
 
 
 
-@section{Meta-Object Protocols}
+@section[#:tag "MOP"]{Meta-Object Protocols}
 
 @exercise[#:difficulty "Medium"]{
   Read about the Meta-Object Protocol in CLOS @~cite{amop},

@@ -32,7 +32,19 @@ metaprogramming, long-lived interactive systems,
 dynamic code and data schema evolution at runtime, etc.,
 can be and have been written in dynamically typed systems
 that could not have been written in existing statically typed languages,
-or would have required reverting to unitypes with extra verbosity.
+or would have required reverting to unitypes with extra verbosity@xnote["."]{
+  Bob Harper famously quipped:
+  “A dynamically typed language is a statically typed language with
+  only one static type.”
+  To which I respond:
+  “A statically typed language is a dynamically typed language with
+  only one static typesystem.”
+  And if that typesystem prevents you from expressing your program,
+  it’s a vast hindrance rather than a help.
+  Sadly, that is the case of typesystems proposed by the likes of Bob Harper,
+  when it comes to writing modular extensible programs.
+  The only popular language with a decent typesystem when it comes to OO is Scala.
+}
 
 @subsection{Static Typing}
 
@@ -622,7 +634,7 @@ that each take the module context type @c{self} as parameter@xnote[":"]{
   suggest the mnemonic slogan: “Generalized lenses can stab, but modular extensions can rip!”
 }
 @Code{
-type SModExt required inherited provided =
+type ModExt required inherited provided =
   ∀ self, super : Type
     self ⊂ required self, super ⊂ inherited self ⇒
         self → super → (provided self) ∩ super
@@ -649,7 +661,7 @@ fix : ∀ required, inherited, provided : Type → Type, ∀ self, top : Type,
       self ⊂ required self,
       top ⊂ inherited self ⇒
         top → ModExt required inherited provided → self
-mix : ModExt r1 i1∩d2 p1 → ModExt r2 i2 p2 → ModExt r1∩r2 i1∩i2 p1∩p2
+mix : ModExt r1 i1∩p2 p1 → ModExt r2 i2 p2 → ModExt r1∩r2 i1∩i2 p1∩p2
 }
 
 In the @c{fix} function, I implicitly define a fixpoint @c{self}
