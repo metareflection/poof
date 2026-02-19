@@ -1,98 +1,193 @@
 #pragma once
 
 // C4: Flavorful Multiple Inheritance in C++
+// Reference: Smaragdakis & Batory, "Mixin-Based Programming in C++" (2000)
 //
-// This is the main header file that provides the complete C4 implementation.
-// Include this file to use the C4 linearization algorithm and optimal inheritance.
+// This is the only header users need to include.
 
-// ============================================================================
-// Core Components
-// ============================================================================
-
-#include "core/mixin.hpp"
-#include "core/spec_list.hpp"
-#include "core/spec.hpp"
+#include <type_traits>
+#include <cstddef>
+#include <vector>
+#include <string>
 
 // ============================================================================
 // Metaprogramming Infrastructure
 // ============================================================================
 
-#include "meta/type_list.hpp"
-#include "meta/type_map.hpp"
-#include "meta/utils.hpp"
-#include "meta/dag.hpp"
-
-// ============================================================================
-// C4 Algorithm
-// ============================================================================
-
-#include "algorithm/c4_linearize.hpp"
-#include "algorithm/c3_merge.hpp"
-#include "algorithm/merge_suffix.hpp"
-
-// ============================================================================
-// Validation and Error Detection
-// ============================================================================
-
-#include "validation.hpp"
+#include "type_list.hpp"
+#include "type_map.hpp"
+#include "dag.hpp"
 
 namespace c4 {
 
-// Re-export key types and functions for convenience
-using meta::TypeList;
-using algorithm::C4Linearize;
-using algorithm::C4Linearize_t;
-using algorithm::GetPrecedenceList_t;
-using algorithm::GetMRO_t;
+// ============================================================================
+// Mixin - Bottom of every composition chain
+// ============================================================================
+// Every composed object ultimately derives from Mixin through the chained
+// mixin hierarchy.  The virtual interface here is the c4 protocol that
+// traversal / introspection code can rely on.
+
+struct Mixin {
+    Mixin() = default;
+    virtual ~Mixin() = default;
+
+    // Protocol method: collect mixin names in MRO order.
+    // Each mixin layer overrides this, appends its own name, then calls
+    // Super::__c4__collectNames to continue up the chain.
+    virtual void __c4__collectNames(std::vector<std::string>& names) const { }
+};
+
+// ============================================================================
+// SpecList - Declare a spec's parents
+// ============================================================================
+
+template <template<typename> class... Specs>
+struct SpecList {
+    static constexpr size_t size = sizeof...(Specs);
+};
+
+template <typename SL>
+struct IsSpecListEmpty : std::false_type {};
+
+template <>
+struct IsSpecListEmpty<SpecList<>> : std::true_type {};
+
+template <typename SL>
+inline constexpr bool IsSpecListEmpty_v = IsSpecListEmpty<SL>::value;
+
+// ============================================================================
+// SpecificationInternal - Internal metadata wrapper
+// ============================================================================
+// Used internally by the C4 algorithm; users do not interact with this type
+// directly.  SpecificationInternal is a subclass of Mixin so that any internal
+// spec is-a Mixin at the type level.
+
+template <template<typename> class Spec, typename ParentsTypeList, bool IsSuffix, size_t UniqueId>
+struct SpecificationInternal : public Mixin {
+    template <typename Base>
+    using __c4__apply_mixin = Spec<Base>;
+
+    using __c4__parents_type = ParentsTypeList;
+    static constexpr bool __c4__is_suffix = IsSuffix;
+    static constexpr size_t __c4__id = UniqueId;
+};
+
+// ============================================================================
+// SpecList -> TypeList of SpecificationInternal
+// ============================================================================
+
+template <template<typename> class Spec>
+struct MakeSpecInternal;
+
+template <typename SL>
+struct SpecListToTypeList;
+
+template <>
+struct SpecListToTypeList<SpecList<>> {
+    using type = meta::TypeList<>;
+};
+
+template <template<typename> class S, template<typename> class... Rest>
+struct SpecListToTypeList<SpecList<S, Rest...>> {
+    using type = typename meta::Cons<
+        typename MakeSpecInternal<S>::type,
+        typename SpecListToTypeList<SpecList<Rest...>>::type
+    >::type;
+};
+
+template <typename SL>
+using SpecListToTypeList_t = typename SpecListToTypeList<SL>::type;
+
+template <template<typename> class Spec>
+struct MakeSpecInternal {
+private:
+    using Instance = Spec<Mixin>;
+    using ParentsList = typename Instance::__c4__parents;
+    using ParentsTypeList = SpecListToTypeList_t<ParentsList>;
+    static constexpr bool IsSuffix = Instance::__c4__is_suffix;
+public:
+    using type = SpecificationInternal<Spec, ParentsTypeList, IsSuffix, __COUNTER__>;
+};
+
+template <template<typename> class Spec>
+using MakeSpecInternal_t = typename MakeSpecInternal<Spec>::type;
+
+// ============================================================================
+// Spec Queries
+// ============================================================================
+
+// Check if a user spec is a suffix spec
+template <template<typename> class Spec>
+struct IsSuffixSpec {
+    static constexpr bool value = Spec<Mixin>::__c4__is_suffix;
+};
+
+template <template<typename> class Spec>
+inline constexpr bool IsSuffixSpec_v = IsSuffixSpec<Spec>::value;
+
+// Check if an internal spec is a suffix spec
+template <typename Spec>
+struct IsInternalSuffixSpec : std::false_type {};
+
+template <template<typename> class M, typename P, size_t Id>
+struct IsInternalSuffixSpec<SpecificationInternal<M, P, true, Id>> : std::true_type {};
+
+template <typename Spec>
+inline constexpr bool IsInternalSuffixSpec_v = IsInternalSuffixSpec<Spec>::value;
+
+// Get the SpecList of parents of a user spec
+template <template<typename> class Spec>
+struct GetParents {
+    using type = typename Spec<Mixin>::__c4__parents;
+};
+
+template <template<typename> class Spec>
+using GetParents_t = typename GetParents<Spec>::type;
+
+} // namespace c4
+
+// ============================================================================
+// Algorithm
+// ============================================================================
+
+#include "c4_linearize.hpp"
+
+namespace c4 {
 
 // ============================================================================
 // High-Level Composition API
 // ============================================================================
 
-// Helper: Chain mixins from most general to most specific
-// MRO is [MostSpecific, ..., MostGeneral]
-// We want to build: MostSpecific<...<MostGeneral<EmptyBase>>>
-// So we reverse and fold from the right
+// Chain mixins from most general to most specific.
+// The MRO is [MostSpecific, ..., MostGeneral]; we reverse it and fold from
+// the right so the resulting class is MostSpecific<...<MostGeneral<Mixin>>>.
+
 template <typename ReversedMRO, typename Base>
 struct ChainMixins;
 
 template <typename Base>
-struct ChainMixins<TypeList<>, Base> {
+struct ChainMixins<meta::TypeList<>, Base> {
     using type = Base;
 };
 
 template <typename S, typename... Rest, typename Base>
-struct ChainMixins<TypeList<S, Rest...>, Base> {
+struct ChainMixins<meta::TypeList<S, Rest...>, Base> {
 private:
-    // Apply this spec's mixin to the base
-    using ThisLevel = typename S::template apply_mixin<Base>;
-
-    // Continue with the rest
-    using RestResult = typename ChainMixins<TypeList<Rest...>, ThisLevel>::type;
-
+    using ThisLevel = typename S::template __c4__apply_mixin<Base>;
+    using RestResult = typename ChainMixins<meta::TypeList<Rest...>, ThisLevel>::type;
 public:
     using type = RestResult;
 };
 
-// Compose - Main entry point for composing a spec into a final class
-// Takes a spec template and returns the composed class following C4 linearization
+// Compose - transform a user spec template into its composed concrete class.
 template <template<typename> class Spec>
 struct Compose {
 private:
-    // Convert to internal specification
     using SpecInternal = MakeSpecInternal_t<Spec>;
-
-    // Get the precedence list (most specific to most general)
     using PrecedenceList = GetPrecedenceList_t<SpecInternal>;
-
-    // Reverse to get most general to most specific
     using ReversedMRO = meta::Reverse_t<PrecedenceList>;
-
 public:
-    // Chain the mixins together
-    using type = typename ChainMixins<ReversedMRO, EmptyBase>::type;
-
-    // Also expose the precedence list for introspection
+    using type = typename ChainMixins<ReversedMRO, Mixin>::type;
     using precedence_list = PrecedenceList;
     using mro = PrecedenceList;
 };
@@ -104,85 +199,20 @@ using Compose_t = typename Compose<Spec>::type;
 // MRO Membership Checking
 // ============================================================================
 
-// Check if Target spec is in the MRO of Derived spec (compile-time)
+// IsInMRO_v<Derived, Target> - check at compile time whether Target is in
+// the MRO of Derived.
 template <template<typename> class Derived, template<typename> class Target>
 struct IsInMRO {
 private:
     using DerivedSpec = MakeSpecInternal_t<Derived>;
-    using TargetSpec = MakeSpecInternal_t<Target>;
+    using TargetSpec  = MakeSpecInternal_t<Target>;
     using MRO = GetPrecedenceList_t<DerivedSpec>;
-
 public:
     static constexpr bool value = meta::Contains_v<MRO, TargetSpec>;
 };
 
 template <template<typename> class Derived, template<typename> class Target>
 inline constexpr bool IsInMRO_v = IsInMRO<Derived, Target>::value;
-
-// ============================================================================
-// Casting Notes
-// ============================================================================
-
-// Note: The composed type creates a linear inheritance chain:
-//   MostSpecific<...Parent<...Base<EmptyBase>>>
-//
-// Standard C++ upcasts work automatically because each spec inherits from
-// the next in the chain.
-//
-// For dynamic downcasts, use dynamic_cast as usual.
-//
-// The linear chain ensures that all specs in the MRO are direct or indirect
-// base classes, making casts safe when the spec is in the MRO (check with
-// IsInMRO_v first).
-
-// ============================================================================
-// Convenience Functions for Debugging/Introspection
-// ============================================================================
-
-// PrintMRO - Helper to print MRO at compile time (shows in error messages)
-template <template<typename> class Spec>
-struct PrintMRO {
-private:
-    using SpecInternal = MakeSpecInternal_t<Spec>;
-public:
-    using mro = GetMRO_t<SpecInternal>;
-    static_assert(sizeof(SpecInternal) == 0, "MRO printed above in error message");
-};
-
-// MROSize - Get the size of the MRO
-template <template<typename> class Spec>
-struct MROSize {
-private:
-    using SpecInternal = MakeSpecInternal_t<Spec>;
-public:
-    static constexpr size_t value = GetMRO_t<SpecInternal>::size;
-};
-
-template <template<typename> class Spec>
-inline constexpr size_t MROSize_v = MROSize<Spec>::value;
-
-// ============================================================================
-// Validation Helpers
-// ============================================================================
-
-// ValidateHierarchy - Validate a spec hierarchy
-template <template<typename> class Spec>
-struct ValidateHierarchy {
-private:
-    using SpecInternal = MakeSpecInternal_t<Spec>;
-public:
-    // Check for cycles
-    static_assert(!meta::HasCycle_v<SpecInternal>,
-        "Circular dependency detected");
-
-    // Compute MRO (will fail if C4 constraints violated)
-    using mro = GetMRO_t<SpecInternal>;
-
-    static constexpr bool value = true;
-};
-
-template <template<typename> class Spec>
-inline constexpr bool ValidateHierarchy_v = ValidateHierarchy<Spec>::value;
 
 } // namespace c4
 

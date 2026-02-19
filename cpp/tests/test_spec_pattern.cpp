@@ -15,51 +15,51 @@ using namespace c4;
 // Base spec - no parents
 template <typename Super>
 struct O : public Super {
-    using parents = SpecList<>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("O");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 // A inherits from O
 template <typename Super>
 struct A : public Super {
-    using parents = SpecList<O>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<O>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("A");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 // B inherits from O
 template <typename Super>
 struct B : public Super {
-    using parents = SpecList<O>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<O>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("B");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 // Diamond inherits from A and B
 template <typename Super>
 struct Diamond : public Super {
-    using parents = SpecList<A, B>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<A, B>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("Diamond");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 
-    int getValue() const { return 42; }
+    virtual int getValue() const { return 42; }
 };
 
 // =============================================================================
@@ -68,27 +68,27 @@ struct Diamond : public Super {
 
 template <typename Super>
 struct Point : public Super {
-    using parents = SpecList<>;
-    static constexpr bool is_suffix = true;  // Suffix spec!
+    using __c4__parents = SpecList<>;
+    static constexpr bool __c4__is_suffix = true;  // Suffix spec!
 
     double x = 0.0, y = 0.0;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("Point");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct ColoredPoint : public Super {
-    using parents = SpecList<Point>;
-    static constexpr bool is_suffix = false;  // Infix, but parent is suffix
+    using __c4__parents = SpecList<Point>;
+    static constexpr bool __c4__is_suffix = false;  // Infix, but parent is suffix
 
     std::string color = "black";
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("ColoredPoint");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
@@ -105,7 +105,7 @@ int main() {
 
     Diamond_Class d;
     std::vector<std::string> names;
-    d.collectNames(names);
+    d.__c4__collectNames(names);
 
     std::cout << "Diamond hierarchy MRO: ";
     for (const auto& name : names) {
@@ -127,7 +127,7 @@ int main() {
 
     CP_Class cp;
     std::vector<std::string> cp_names;
-    cp.collectNames(cp_names);
+    cp.__c4__collectNames(cp_names);
 
     std::cout << "ColoredPoint MRO: ";
     for (const auto& name : cp_names) {

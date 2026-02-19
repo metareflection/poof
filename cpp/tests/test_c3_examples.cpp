@@ -1,6 +1,6 @@
 // Test cases ported from gerbil/src/gerbil/test/c3-test.ss
 // These test the C3 linearization algorithm with various hierarchies
-// All mixins are templates that chain properly and implement collectNames
+// All mixins are templates that chain properly and implement __c4__collectNames
 
 #include <c4/c4.hpp>
 #include <type_traits>
@@ -11,7 +11,6 @@
 
 using namespace c4;
 using namespace c4::meta;
-using namespace c4::algorithm;
 
 // =============================================================================
 // Test Helpers
@@ -75,111 +74,111 @@ namespace wiki2021 {
 // Unified spec pattern: spec IS the mixin
 template <typename Super>
 struct O : public Super {
-    using parents = SpecList<>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("O");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct A : public Super {
-    using parents = SpecList<O>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<O>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("A");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct B : public Super {
-    using parents = SpecList<O>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<O>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("B");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct C : public Super {
-    using parents = SpecList<O>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<O>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("C");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct D : public Super {
-    using parents = SpecList<O>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<O>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("D");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct E : public Super {
-    using parents = SpecList<O>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<O>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("E");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct K1 : public Super {
-    using parents = SpecList<A, B, C>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<A, B, C>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("K1");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct K2 : public Super {
-    using parents = SpecList<D, B, E>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<D, B, E>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("K2");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct K3 : public Super {
-    using parents = SpecList<D, A>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<D, A>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("K3");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct Z : public Super {
-    using parents = SpecList<K1, K2, K3>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<K1, K2, K3>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("Z");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
@@ -190,7 +189,7 @@ using Z_Class = Compose_t<Z>;
 bool runRuntimeTests() {
     Z_Class z;
     std::vector<std::string> names;
-    z.collectNames(names);
+    z.__c4__collectNames(names);
 
     std::vector<std::string> expected = {
         "Z", "K1", "K2", "K3", "D", "A", "B", "C", "E", "O"
@@ -210,78 +209,78 @@ namespace wiki2023 {
 
 template <typename Super>
 struct O : public Super {
-    using parents = SpecList<>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("O");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct A : public Super {
-    using parents = SpecList<O>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<O>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("A");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct B : public Super {
-    using parents = SpecList<O>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<O>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("B");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct J1 : public Super {
-    using parents = SpecList<A>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<A>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("J1");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct J2 : public Super {
-    using parents = SpecList<A, B>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<A, B>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("J2");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct J3 : public Super {
-    using parents = SpecList<B>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<B>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("J3");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct Y : public Super {
-    using parents = SpecList<J1, J2, J3>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<J1, J2, J3>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("Y");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
@@ -291,7 +290,7 @@ using Y_Class = Compose_t<Y>;
 bool runRuntimeTests() {
     Y_Class y;
     std::vector<std::string> names;
-    y.collectNames(names);
+    y.__c4__collectNames(names);
 
     std::vector<std::string> expected = {
         "Y", "J1", "J2", "A", "J3", "B", "O"
@@ -310,78 +309,78 @@ namespace boat {
 
 template <typename Super>
 struct DB : public Super {  // DayBoat
-    using parents = SpecList<>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("DB");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct WB : public Super {  // WheelBoat
-    using parents = SpecList<>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("WB");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct EL : public Super {  // EngineLess
-    using parents = SpecList<DB>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<DB>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("EL");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct SM : public Super {  // SmallMultihull
-    using parents = SpecList<DB>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<DB>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("SM");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct PWB : public Super {  // PowerWheelBoat
-    using parents = SpecList<WB>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<WB>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("PWB");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct SC : public Super {  // SmallCatamaran
-    using parents = SpecList<SM>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<SM>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("SC");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct P : public Super {  // Pedalo
-    using parents = SpecList<EL, PWB, SC>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<EL, PWB, SC>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("P");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
@@ -391,7 +390,7 @@ using P_Class = Compose_t<P>;
 bool runRuntimeTests() {
     P_Class p;
     std::vector<std::string> names;
-    p.collectNames(names);
+    p.__c4__collectNames(names);
 
     std::vector<std::string> expected = {
         "P", "EL", "PWB", "WB", "SC", "SM", "DB"
@@ -410,100 +409,100 @@ namespace stackoverflow {
 
 template <typename Super>
 struct HH : public Super {
-    using parents = SpecList<>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("HH");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct GG : public Super {
-    using parents = SpecList<>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("GG");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct II : public Super {
-    using parents = SpecList<HH>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<HH>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("II");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct FF : public Super {
-    using parents = SpecList<HH, GG>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<HH, GG>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("FF");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct EE : public Super {
-    using parents = SpecList<II, FF>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<II, FF>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("EE");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct DD : public Super {
-    using parents = SpecList<FF>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<FF>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("DD");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct CC : public Super {
-    using parents = SpecList<EE, DD>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<EE, DD>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("CC");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct BB : public Super {
-    using parents = SpecList<EE>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<EE>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("BB");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct AA : public Super {
-    using parents = SpecList<CC, BB>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<CC, BB>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("AA");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
@@ -513,7 +512,7 @@ using AA_Class = Compose_t<AA>;
 bool runRuntimeTests() {
     AA_Class aa;
     std::vector<std::string> names;
-    aa.collectNames(names);
+    aa.__c4__collectNames(names);
 
     std::vector<std::string> expected = {
         "AA", "CC", "BB", "EE", "II", "DD", "FF", "HH", "GG"

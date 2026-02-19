@@ -2,39 +2,36 @@
 // Verifies that error detection logic works correctly at compile-time
 
 #include <c4/c4.hpp>
-#include <c4/validation.hpp>
 #include <iostream>
 #include <vector>
 #include <string>
 
 using namespace c4;
-using namespace c4::validation;
+using namespace c4::meta;
+
+// Local helper: a spec is composable iff its internal graph has no cycle.
+template <template<typename> class Spec>
+inline constexpr bool CanCompose_v = !HasCycle_v<MakeSpecInternal_t<Spec>>;
 
 // =============================================================================
 // Test 1: Circular Dependency Detection
 // =============================================================================
-// Note: Circular dependencies in C++ templates cause infinite instantiation,
-// which is itself a compile-time error. This is the detection mechanism!
+// Circular dependencies in C++ templates cause infinite instantiation,
+// which is itself a compile-time error — no extra mechanism needed.
 
 namespace test_circular {
 
 void test() {
     std::cout << "Test 1: Circular Dependency Detection\n";
     std::cout << "---------------------------------------\n";
-    std::cout << "  Note: Circular dependencies in C++ template hierarchies\n";
-    std::cout << "        cause infinite template instantiation, which is\n";
-    std::cout << "        caught by the compiler automatically.\n";
-    std::cout << "  \n";
+    std::cout << "  Circular dependencies in C++ template hierarchies\n";
+    std::cout << "  cause infinite template instantiation, caught by the\n";
+    std::cout << "  compiler automatically.\n\n";
     std::cout << "  If we tried:\n";
-    std::cout << "    struct A : SpecList<C>\n";
-    std::cout << "    struct B : SpecList<A>\n";
-    std::cout << "    struct C : SpecList<B>  // Creates cycle\n";
-    std::cout << "  \n";
-    std::cout << "  Expected error: \"recursive instantiation\" or\n";
-    std::cout << "                   \"infinite template recursion\"\n";
-    std::cout << "  \n";
-    std::cout << "  This is EXPECTED behavior - C++ itself prevents\n";
-    std::cout << "  circular dependencies at compile-time.\n";
+    std::cout << "    struct A : __c4__parents<C>\n";
+    std::cout << "    struct B : __c4__parents<A>\n";
+    std::cout << "    struct C : __c4__parents<B>  // cycle\n\n";
+    std::cout << "  Expected: \"recursive instantiation\" / infinite template recursion\n";
     std::cout << "  ✓ Circular dependency prevention verified (C++ compiler)\n\n";
 }
 
@@ -43,77 +40,66 @@ void test() {
 // =============================================================================
 // Test 2: Confused Grid (C3 Merge Failure)
 // =============================================================================
-// Note: We can't detect C3 merge failures without actually attempting the merge
-// (which would trigger static_assert). This test documents the expected error.
+// C3 merge failures are caught by the static_assert inside SelectNext.
+// We can't compose the bad hierarchy here without triggering it; we document
+// the expected error instead.
 
 namespace test_confused_grid {
 
 template <typename Super>
 struct HG : public Super {  // Horizontal guide
-    using parents = SpecList<>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("HG");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct VG : public Super {  // Vertical guide
-    using parents = SpecList<>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("VG");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct HVG : public Super {  // Horizontal-then-vertical
-    using parents = SpecList<HG, VG>;  // HG before VG
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<HG, VG>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("HVG");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
-struct VHG : public Super {  // Vertical-then-horizontal
-    using parents = SpecList<VG, HG>;  // VG before HG (conflict!)
-    static constexpr bool is_suffix = false;
+struct VHG : public Super {  // Vertical-then-horizontal (conflict with HVG!)
+    using __c4__parents = SpecList<VG, HG>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("VHG");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
-// This WOULD create a confused grid, but we can't test it without triggering
-// the static_assert in C3Merge. Commented out:
-/*
-template <typename Super>
-struct CG : public Super {  // Confused grid
-    using parents = SpecList<HVG, VHG>;
-    static constexpr bool is_suffix = false;
-};
-*/
+// Composing struct CG : __c4__parents<HVG, VHG> would trigger:
+//   static_assert: "C3 merge failed: No valid candidate found"
 
 void test() {
     std::cout << "Test 2: Confused Grid (C3 Merge Failure)\n";
     std::cout << "-----------------------------------------\n";
-    std::cout << "  Note: C3 merge failures cannot be detected without\n";
-    std::cout << "        attempting composition (which triggers static_assert)\n";
-    std::cout << "  \n";
-    std::cout << "  If we tried: struct CG : SpecList<HVG, VHG>\n";
-    std::cout << "  Expected error: \"C3 merge failed: No valid candidate found\"\n";
-    std::cout << "  \n";
-    std::cout << "  This is EXPECTED behavior - the static_assert catches\n";
-    std::cout << "  the error at compile-time with a clear message.\n";
-    std::cout << "  ✓ Error detection mechanism validated (see merge_suffix.hpp:109)\n\n";
+    std::cout << "  C3 merge failures are caught by static_assert in SelectNext.\n";
+    std::cout << "  Composing CG : parents<HVG, VHG> would give:\n";
+    std::cout << "    error: \"C3 merge failed: No valid candidate found\"\n";
+    std::cout << "  ✓ Error detection mechanism validated (static_assert in SelectNext)\n\n";
 }
 
 } // namespace test_confused_grid
@@ -126,100 +112,86 @@ namespace test_valid {
 
 template <typename Super>
 struct ValidBase : public Super {
-    using parents = SpecList<>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("ValidBase");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct ValidDerived : public Super {
-    using parents = SpecList<ValidBase>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<ValidBase>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("ValidDerived");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
 
 template <typename Super>
 struct ValidDiamond : public Super {
-    using parents = SpecList<ValidDerived, ValidBase>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<ValidDerived, ValidBase>;
+    static constexpr bool __c4__is_suffix = false;
 
-    void collectNames(std::vector<std::string>& names) const override {
+    void __c4__collectNames(std::vector<std::string>& names) const override {
         names.push_back("ValidDiamond");
-        Super::collectNames(names);
+        Super::__c4__collectNames(names);
     }
 };
+
+static_assert(CanCompose_v<ValidBase>,    "ValidBase should compose");
+static_assert(CanCompose_v<ValidDerived>, "ValidDerived should compose");
+static_assert(CanCompose_v<ValidDiamond>, "ValidDiamond should compose");
 
 void test() {
     std::cout << "Test 3: Valid Specifications\n";
     std::cout << "-----------------------------\n";
 
-    // Check that valid specs pass all checks
-    std::cout << "  CanCompose<ValidBase>: " << CanCompose_v<ValidBase> << "\n";
-    std::cout << "  CanCompose<ValidDerived>: " << CanCompose_v<ValidDerived> << "\n";
-    std::cout << "  CanCompose<ValidDiamond>: " << CanCompose_v<ValidDiamond> << "\n";
+    std::cout << "  CanCompose_v<ValidBase>: "    << CanCompose_v<ValidBase>    << "\n";
+    std::cout << "  CanCompose_v<ValidDerived>: " << CanCompose_v<ValidDerived> << "\n";
+    std::cout << "  CanCompose_v<ValidDiamond>: " << CanCompose_v<ValidDiamond> << "\n";
 
-    // Verify at compile-time
-    static_assert(CanCompose_v<ValidBase>, "ValidBase should compose");
-    static_assert(CanCompose_v<ValidDerived>, "ValidDerived should compose");
-    static_assert(CanCompose_v<ValidDiamond>, "ValidDiamond should compose");
-
-    // Actually compose them to verify
-    using ValidBaseClass = Compose_t<ValidBase>;
-    using ValidDerivedClass = Compose_t<ValidDerived>;
     using ValidDiamondClass = Compose_t<ValidDiamond>;
-
     ValidDiamondClass obj;
     std::vector<std::string> names;
-    obj.collectNames(names);
+    obj.__c4__collectNames(names);
 
-    std::cout << "  Composed ValidDiamond MRO: ";
+    std::cout << "  ValidDiamond MRO: ";
     for (const auto& name : names) {
         std::cout << name << " ";
     }
-    std::cout << "\n";
-
-    std::cout << "  ✓ Valid specifications compose correctly\n\n";
+    std::cout << "\n  ✓ Valid specifications compose correctly\n\n";
 }
 
 } // namespace test_valid
 
 // =============================================================================
-// Test 4: Validation API
+// Test 4: Cycle detection on a simple valid spec
 // =============================================================================
 
-namespace test_validation_api {
+namespace test_cycle_check {
 
-// Simple valid spec
 template <typename Super>
 struct GoodSpec : public Super {
-    using parents = SpecList<>;
-    static constexpr bool is_suffix = false;
+    using __c4__parents = SpecList<>;
+    static constexpr bool __c4__is_suffix = false;
 };
 
+static_assert(!HasCycle_v<MakeSpecInternal_t<GoodSpec>>, "GoodSpec should not have a cycle");
+
 void test() {
-    std::cout << "Test 4: Validation API\n";
-    std::cout << "-----------------------\n";
-
-    // Test ValidateSpec helper
-    std::cout << "  ValidateSpec<GoodSpec>::is_valid: "
-              << ValidateSpec<GoodSpec>::is_valid << "\n";
-    std::cout << "  ValidateSpec<GoodSpec>::has_circular_dependency: "
-              << ValidateSpec<GoodSpec>::has_circular_dependency << "\n";
-
-    static_assert(ValidateSpec_v<GoodSpec>, "GoodSpec should validate");
-
-    std::cout << "  ✓ Validation API works correctly\n\n";
+    std::cout << "Test 4: Cycle detection on valid spec\n";
+    std::cout << "--------------------------------------\n";
+    std::cout << "  HasCycle_v<GoodSpec>: "
+              << HasCycle_v<MakeSpecInternal_t<GoodSpec>> << "\n";
+    std::cout << "  ✓ Cycle detection works correctly\n\n";
 }
 
-} // namespace test_validation_api
+} // namespace test_cycle_check
 
 // =============================================================================
 // Main Test Runner
@@ -232,14 +204,13 @@ int main() {
     test_circular::test();
     test_confused_grid::test();
     test_valid::test();
-    test_validation_api::test();
+    test_cycle_check::test();
 
     std::cout << "Summary\n";
     std::cout << "-------\n";
-    std::cout << "✓ Circular dependency detection works at compile-time\n";
-    std::cout << "✓ Valid specifications pass all checks\n";
-    std::cout << "✓ Validation API provides clear error information\n";
-    std::cout << "✓ C3 and suffix error detection via static_assert (existing code)\n";
+    std::cout << "✓ Circular dependency detection via C++ infinite-instantiation\n";
+    std::cout << "✓ C3 and suffix errors via static_assert in core algorithm\n";
+    std::cout << "✓ Valid specifications compose without errors\n";
     std::cout << "\n✓ All error detection tests passed!\n";
 
     return 0;
