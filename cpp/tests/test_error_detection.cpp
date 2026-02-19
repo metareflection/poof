@@ -2,12 +2,14 @@
 // Verifies that error detection logic works correctly at compile-time
 
 #include <c4/c4.hpp>
+#include "../examples/mixin_names.hpp"
 #include <iostream>
 #include <vector>
 #include <string>
 
 using namespace c4;
 using namespace c4::meta;
+using c4::examples::C4N;
 
 // Local helper: a spec is composable iff its internal graph has no cycle.
 template <template<typename> class Spec>
@@ -48,45 +50,45 @@ namespace test_confused_grid {
 
 template <typename Super>
 struct HG : public Super {  // Horizontal guide
-    using __c4__parents = SpecList<>;
+    using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = false;
 
-    void __c4__collectNames(std::vector<std::string>& names) const override {
+    void collectNames(std::vector<std::string>& names) const {
         names.push_back("HG");
-        Super::__c4__collectNames(names);
+        Super::collectNames(names);
     }
 };
 
 template <typename Super>
 struct VG : public Super {  // Vertical guide
-    using __c4__parents = SpecList<>;
+    using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = false;
 
-    void __c4__collectNames(std::vector<std::string>& names) const override {
+    void collectNames(std::vector<std::string>& names) const {
         names.push_back("VG");
-        Super::__c4__collectNames(names);
+        Super::collectNames(names);
     }
 };
 
 template <typename Super>
 struct HVG : public Super {  // Horizontal-then-vertical
-    using __c4__parents = SpecList<HG, VG>;
+    using __c4__parents = TypeList<SpecList<HG, VG>>;
     static constexpr bool __c4__is_suffix = false;
 
-    void __c4__collectNames(std::vector<std::string>& names) const override {
+    void collectNames(std::vector<std::string>& names) const {
         names.push_back("HVG");
-        Super::__c4__collectNames(names);
+        Super::collectNames(names);
     }
 };
 
 template <typename Super>
 struct VHG : public Super {  // Vertical-then-horizontal (conflict with HVG!)
-    using __c4__parents = SpecList<VG, HG>;
+    using __c4__parents = TypeList<SpecList<VG, HG>>;
     static constexpr bool __c4__is_suffix = false;
 
-    void __c4__collectNames(std::vector<std::string>& names) const override {
+    void collectNames(std::vector<std::string>& names) const {
         names.push_back("VHG");
-        Super::__c4__collectNames(names);
+        Super::collectNames(names);
     }
 };
 
@@ -112,34 +114,34 @@ namespace test_valid {
 
 template <typename Super>
 struct ValidBase : public Super {
-    using __c4__parents = SpecList<>;
+    using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = false;
 
-    void __c4__collectNames(std::vector<std::string>& names) const override {
+    void collectNames(std::vector<std::string>& names) const {
         names.push_back("ValidBase");
-        Super::__c4__collectNames(names);
+        Super::collectNames(names);
     }
 };
 
 template <typename Super>
 struct ValidDerived : public Super {
-    using __c4__parents = SpecList<ValidBase>;
+    using __c4__parents = TypeList<SpecList<ValidBase>>;
     static constexpr bool __c4__is_suffix = false;
 
-    void __c4__collectNames(std::vector<std::string>& names) const override {
+    void collectNames(std::vector<std::string>& names) const {
         names.push_back("ValidDerived");
-        Super::__c4__collectNames(names);
+        Super::collectNames(names);
     }
 };
 
 template <typename Super>
 struct ValidDiamond : public Super {
-    using __c4__parents = SpecList<ValidDerived, ValidBase>;
+    using __c4__parents = TypeList<SpecList<ValidDerived, ValidBase>>;
     static constexpr bool __c4__is_suffix = false;
 
-    void __c4__collectNames(std::vector<std::string>& names) const override {
+    void collectNames(std::vector<std::string>& names) const {
         names.push_back("ValidDiamond");
-        Super::__c4__collectNames(names);
+        Super::collectNames(names);
     }
 };
 
@@ -155,10 +157,10 @@ void test() {
     std::cout << "  CanCompose_v<ValidDerived>: " << CanCompose_v<ValidDerived> << "\n";
     std::cout << "  CanCompose_v<ValidDiamond>: " << CanCompose_v<ValidDiamond> << "\n";
 
-    using ValidDiamondClass = Compose_t<ValidDiamond>;
+    using ValidDiamondClass = C4N<ValidDiamond>;
     ValidDiamondClass obj;
     std::vector<std::string> names;
-    obj.__c4__collectNames(names);
+    obj.collectNames(names);
 
     std::cout << "  ValidDiamond MRO: ";
     for (const auto& name : names) {
@@ -177,7 +179,7 @@ namespace test_cycle_check {
 
 template <typename Super>
 struct GoodSpec : public Super {
-    using __c4__parents = SpecList<>;
+    using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = false;
 };
 

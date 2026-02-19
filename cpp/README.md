@@ -1,144 +1,152 @@
-# C4: Flavorful Multiple Inheritance in C++
+# C4: Optimal Inheritance in C++
 
-A C++20 implementation of the C4 linearization algorithm, enabling "optimal inheritance" - combining the expressiveness of multiple inheritance with the performance of single inheritance.
+A C++20 implementation of the C4 linearization algorithm, enabling "optimal inheritance" —
+combining the expressiveness of flavorful multiple inheritance
+with the performance of single inheritance.
 
 ## Overview
 
-This project implements **flavorful multiple inheritance** using C++ template metaprogramming, based on:
+This project implements **Optimal Inheritance** using C++ template metaprogramming, based on:
 
-1. **Mixin-based programming** patterns from Smaragdakis & Batory (2000)
-2. **C4 linearization algorithm** - an extension of C3 with suffix property support
-3. **Compile-time DAG resolution** - zero runtime overhead
-
-### Key Innovation
-
-C4 allows mixing **suffix specifications** (like Lisp structs) with **infix specifications** in the same inheritance hierarchy:
-
-- **Suffix specs** get single-inheritance performance (fixed-offset field access, 10-100x faster)
-- **Infix specs** provide full multiple-inheritance flexibility
-- **Both** can inherit from each other in the same DAG
+1. **Flavorful Multiple Inheritance**:
+   Multiple parent methods are not lose-lose conflict, but win-win cooperation.
+   They can each call the next along a linearized class precedence list. No information loss.
+2. **Performance of Single Inheritance**:
+   Classes that declare "static constexpr bool __c4__is_suffix = true;" are *suffix classes*,
+   whose class precedence list is guaranteed to be the suffix of that of any descendent,
+   enabling all the usual optimizations of single inheritance (e.g. fixed-offset fields, etc.)
+3. **Linearization Consistency**: respect user-provided local precedence order
+   (a DAG specified as zero, one or more lists of mixins),
+   monotonicity of precedence lists, ensuring consistency of behavior across methods and across
+   subclasses, so that, e.g. you could have multiple-inheritance methods handle locking
+   or memory allocation for you without risking deadlocks or use-after-free.
+4. **Compile-time resolution of inheritance**:
+   using C++ templates, we ensure that all inheritance computations happen at compile-time;
+   there is zero runtime overhead to using this library.
 
 ## Project Status
 
-✅ **Phase 1 Complete** - Foundation implemented and tested
-- Type-level infrastructure (TypeList, TypeMap, utils)
-- Specification representation
-- Basic mixin patterns
-- All infrastructure tests passing
+It works. Tests pass. We're still working on making it simpler, better and more usable.
 
-🚧 **Phase 2 In Progress** - DAG and ancestry computation
-- Implementing transitive closure computation
-- Cycle detection
-- Precedence list infrastructure
-
-📋 **Remaining**:
-- Phase 3: C3 merge algorithm
-- Phase 4: C4 extensions (suffix support)
-- Phase 5: High-level API and examples
+TODO:
+* [ ] The Gerbil Scheme source for c4 with multiple lists of parents is in
+      src/gerbil/runtime/c3.ss in branch c3-doc of gerbil (at /workspace/gerbil/c4/)
+      Update the C++ variant so it accepts either zero, one or many lists. Document examples.
+      Probably cases without __c4__parent, with __c4__parent = SpecList<A,B,C> or with
+      __c4__parent = TypeList<SpecList<A,B,C>,SpecList<D,B,E>,SpecList<F>>
+* [ ] For subtyping purposes, we want C4<X> is a subtype of Y<?> for any ancestor Y,
+      but also a subtype of C4<Z> for any suffix ancestor Z.
 
 ## Building and Testing
 
 ```bash
 cd /workspace/poof/cpp
-g++ -std=c++20 -I. tests/test_basic_infrastructure.cpp -o tests/test_infrastructure
-./tests/test_infrastructure
+g++ -std=c++20 -Iinclude tests/test_spec_pattern.cpp   -o build/test_spec_pattern   && build/test_spec_pattern
+g++ -std=c++20 -Iinclude tests/test_c3_examples.cpp    -o build/test_c3_examples    && build/test_c3_examples
+g++ -std=c++20 -Iinclude tests/test_c4_suffix.cpp      -o build/test_c4_suffix      && build/test_c4_suffix
+g++ -std=c++20 -Iinclude tests/test_error_detection.cpp -o build/test_error_detection && build/test_error_detection
 ```
 
-Expected output:
-```
-=== C4 Infrastructure Tests ===
+## Example Usage
 
-Testing TypeList operations...
-  ✓ All TypeList tests passed!
-Testing TypeMap operations...
-  ✓ All TypeMap tests passed!
-Testing Specification...
-  ✓ All Specification tests passed!
-Testing basic mixin usage...
-  ✓ Basic mixin usage tests passed!
+The full runnable version of this example lives in `examples/diamond.cpp`.
 
-=== All Infrastructure Tests Passed! ===
+`collectNames` is not part of the core library — it lives in `examples/mixin_names.hpp`,
+which provides `MixinNames` (a base with the `collectNames` protocol) and `C4N<Spec>`
+(shorthand for `C4<Spec, MixinNames>`).
+
+```cpp
+#include "mixin_names.hpp"   // provides MixinNames, C4N
+using namespace c4;
+using c4::examples::C4N;
+
+// Base spec - no parents
+template <typename Super>
+struct O : public Super {
+    using __c4__parents = TypeList<>;
+    static constexpr bool __c4__is_suffix = false;
+    void collectNames(std::vector<std::string>& names) const {
+        names.push_back("O"); Super::collectNames(names);
+    }
+};
+
+// A and B each inherit from O
+template <typename Super>
+struct A : public Super {
+    using __c4__parents = TypeList<SpecList<O>>;
+    static constexpr bool __c4__is_suffix = false;
+    void collectNames(std::vector<std::string>& names) const {
+        names.push_back("A"); Super::collectNames(names);
+    }
+};
+
+template <typename Super>
+struct B : public Super {
+    using __c4__parents = TypeList<SpecList<O>>;
+    static constexpr bool __c4__is_suffix = false;
+    void collectNames(std::vector<std::string>& names) const {
+        names.push_back("B"); Super::collectNames(names);
+    }
+};
+
+// Diamond inherits from both A and B
+template <typename Super>
+struct Diamond : public Super {
+    using __c4__parents = TypeList<SpecList<A, B>>;
+    static constexpr bool __c4__is_suffix = false;
+    void collectNames(std::vector<std::string>& names) const {
+        names.push_back("Diamond"); Super::collectNames(names);
+    }
+};
+
+// Compose Diamond; MRO computed at compile time: [Diamond, A, B, O]
+using Diamond_Class = C4N<Diamond>;
+
+// Compile-time MRO membership checks (no collectNames needed)
+static_assert(IsInMRO_v<Diamond, A>);
+static_assert(IsInMRO_v<Diamond, B>);
+static_assert(IsInMRO_v<Diamond, O>);
+
+int main() {
+    Diamond_Class d;
+    std::vector<std::string> names;
+    d.collectNames(names);
+    // names == {"Diamond", "A", "B", "O"}
+    // O appears once despite being a shared ancestor — C4 handles it.
+}
 ```
+
+Suffix specs (marked `__c4__is_suffix = true`) are always placed at the end of the MRO
+and form a total order across the whole hierarchy, enabling fixed-offset field access.
 
 ## Architecture
 
-### Core Components
-
 ```
 include/c4/
-├── meta/                    # Compile-time metaprogramming
-│   ├── type_list.hpp       # Fundamental type-level list operations
-│   ├── type_map.hpp        # Type-to-value associative map
-│   └── utils.hpp           # Utility metafunctions
-├── core/                    # Core abstractions
-│   ├── specification.hpp   # Specification template
-│   └── mixin.hpp           # Basic mixin patterns
-└── algorithm/               # C4 linearization (coming soon)
-    ├── c4_linearize.hpp    # Main C4 algorithm
-    ├── c3_merge.hpp        # C3 merge with O(dn) optimization
-    └── merge_suffix.hpp    # Suffix merging logic
+├── c4.hpp            # Main header (include this)
+├── type_list.hpp     # Compile-time list operations
+├── type_map.hpp      # Compile-time associative map (ancestor counting)
+├── dag.hpp           # Cycle detection
+└── c4_linearize.hpp  # C4 algorithm (included by c4.hpp)
 ```
 
 ### Type-Level Infrastructure
 
 **TypeList** - Compile-time list with operations:
 - Basic: Head, Tail, Cons, Append, Concat
-- Transform: Map, Filter, Reverse
-- Query: Contains, IndexOf, At
-- Special: RemoveNulls, AppendReverseUntil (for C4)
+- Transform: Map, Reverse
+- Query: Contains
+- Special: RemoveNulls, AppendReverseUntil (for C4), FoldLeft
 
 **TypeMap** - Compile-time associative map:
 - Get, Insert, Increment, Decrement
 - Used for O(dn) ancestor counting in C3/C4
 
-**Specification** - Represents a class in the inheritance DAG:
+**SpecHelper** - Internal wrapper for a spec in the inheritance DAG:
 ```cpp
-template <typename Mixin, typename Parents, bool IsSuffix, size_t UniqueId>
-struct Specification { /* ... */ };
-
-// Convenience aliases
-template <typename M, typename P>
-using SuffixSpec = Specification<M, P, true, __COUNTER__>;
-
-template <typename M, typename P>
-using InfixSpec = Specification<M, P, false, __COUNTER__>;
-```
-
-## Example Usage (Planned)
-
-```cpp
-#include <c4/c4.hpp>
-
-// Define base
-struct Point {
-    double x, y;
-};
-
-// Define mixins
-template <typename Super>
-struct Colored : public Super {
-    std::string color;
-};
-
-template <typename Super>
-struct Named : public Super {
-    std::string name;
-};
-
-// Create specifications
-using PointSpec = c4::SuffixSpec<Point, c4::TypeList<>>;
-using ColoredPointSpec = c4::InfixSpec<Colored, c4::TypeList<PointSpec>>;
-using NamedColoredPointSpec = c4::InfixSpec<Named, c4::TypeList<ColoredPointSpec>>;
-
-// Compose with automatic C4 linearization
-using MyPoint = c4::Compose<NamedColoredPointSpec>;
-
-// Use
-MyPoint p;
-p.x = 1.0;          // Fast fixed-offset access (suffix property)
-p.y = 2.0;          // Fast fixed-offset access (suffix property)
-p.color = "red";    // Color from infix mixin
-p.name = "origin";  // Name from infix mixin
+template <template<typename> class Spec, typename ParentsTypeList,
+          bool IsSuffix, size_t UniqueId>
+struct SpecHelper { /* ... */ };
 ```
 
 ## The C4 Algorithm
@@ -149,72 +157,25 @@ C4 extends C3 with support for **suffix specifications**. It enforces five const
 2. **Local Order**: Parent order in definitions preserved in precedence list
 3. **Monotonicity**: Parent's precedence list is subsequence of child's
 4. **Shape Determinism**: Isomorphic DAGs yield isomorphic precedence lists
-5. **Suffix Property** (C4): Suffix spec's precedence list is suffix of all descendants
-
-### Algorithm Steps
-
-1. Extract parent precedence lists
-2. **Split** each into prefix (infix specs) and suffix (suffix specs)
-3. **Merge** suffix lists (must form total order)
-4. Append local order to candidate lists
-5. **Clean** redundant suffix elements
-6. **C3 merge** on cleaned prefixes (O(dn) with ancestor counting)
-7. **Join** prefix and suffix
+5. **Suffix Property** (C4): Suffix spec's precedence list is suffix of all descendants' precedence lists.
 
 ### Complexity
 
-- **Naive C3**: O(d²n²) where d = parents, n = ancestors
 - **Optimized C4**: O(dn) using hash-table ancestor counting
-
-## References
-
-1. **Smaragdakis & Batory (2000)**: "Mixin-Based Programming in C++"
-   - `/workspace/2000__Smaragdakis_Batory__Mixin-based_programming_in_C++.pdf`
-
-2. **C4 Algorithm Description**: `/workspace/poof/ltuo_07_inheritance_mixin_single_multiple_or_optimal.scrbl`
-   - Section 7.4: C4 algorithm (lines 1445-1656)
-
-3. **Reference Implementation**: `/workspace/gerbil/src/gerbil/runtime/c3.ss`
-   - Working C4 in Scheme (256 lines)
-
-4. **Test Cases**: `/workspace/gerbil/src/gerbil/test/c3-test.ss`
-   - Comprehensive test hierarchies
-
-## Implementation Plan
-
-Full implementation plan available at: `/workspace/.claude/plans/pure-greeting-micali.md`
-
-**Timeline**: 12 days (estimated)
-**Lines of Code**: ~3700 total
-- Core implementation: ~1500 lines
-- Tests: ~800 lines
-- Examples: ~400 lines
-- Documentation: ~1000 lines
-
-## Current Files
-
-### Implemented (Phase 1 ✅)
-- `include/c4/meta/type_list.hpp` (400+ lines)
-- `include/c4/meta/type_map.hpp` (200+ lines)
-- `include/c4/meta/utils.hpp` (100+ lines)
-- `include/c4/core/specification.hpp` (140+ lines)
-- `include/c4/core/mixin.hpp` (120+ lines)
-- `tests/test_basic_infrastructure.cpp` (170+ lines)
-
-### In Progress (Phase 2 🚧)
-- `include/c4/meta/dag.hpp` - Next up
-
-### Planned (Phases 3-5 📋)
-- C3/C4 algorithm implementation
-- Test suite (Wikipedia, boat, grid examples)
-- High-level Compose API
-- Comprehensive examples
-- API documentation
-
-## License
-
-Part of the Proof of Optimal Ownership Foundation (poof) project.
+  (modulo our map implementation not being a hash-table but an linear map,
+  which compounds a factor n in practice).
 
 ## Contributors
 
-Implementation following the plan by Claude (Anthropic).
+Code largely coded by Claude Opus 4.5 (Anthropic) as guided by François-René Rideau.
+
+## Bibliography
+
+**Yannis Smaragdakis and Don Batory**. "Mixin-based programming in C++". 2000. In Proc. International Symposium on Generative and Component-Based Software Engineering, pp. 164–178. doi:10.1007/3-540-44815-2_12 . Explains the basic approach to implementing Mixin inheritance on top of C++ templates.
+
+**François-René Rideau**. "Lambda, the Ultimate Object". 2026. (Not yet published) http://fare.tunes.org/files/cs/poof/ltuo.html . Includes a complete theory of OO. The C4 algorithm is explained in chapter 7.
+
+**François-René Rideau**. "Gerbil Scheme C4 implementation". 2025.
+Latest copy in branch c3-doc. Source files src/gerbil/runtime/c3.ss,
+tests in src/gerbil/test/c3-test.ss.
+Local cache of the branch: /workspace/gerbil/c4/

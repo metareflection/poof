@@ -2,11 +2,13 @@
 // Shows the clean API where specs are defined directly as template mixins
 
 #include <c4/c4.hpp>
+#include "../examples/mixin_names.hpp"
 #include <iostream>
 #include <vector>
 #include <string>
 
 using namespace c4;
+using c4::examples::C4N;
 
 // =============================================================================
 // Define specs directly - they ARE the mixins
@@ -15,48 +17,48 @@ using namespace c4;
 // Base spec - no parents
 template <typename Super>
 struct O : public Super {
-    using __c4__parents = SpecList<>;
+    using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = false;
 
-    void __c4__collectNames(std::vector<std::string>& names) const override {
+    void collectNames(std::vector<std::string>& names) const {
         names.push_back("O");
-        Super::__c4__collectNames(names);
+        Super::collectNames(names);
     }
 };
 
 // A inherits from O
 template <typename Super>
 struct A : public Super {
-    using __c4__parents = SpecList<O>;
+    using __c4__parents = TypeList<SpecList<O>>;
     static constexpr bool __c4__is_suffix = false;
 
-    void __c4__collectNames(std::vector<std::string>& names) const override {
+    void collectNames(std::vector<std::string>& names) const {
         names.push_back("A");
-        Super::__c4__collectNames(names);
+        Super::collectNames(names);
     }
 };
 
 // B inherits from O
 template <typename Super>
 struct B : public Super {
-    using __c4__parents = SpecList<O>;
+    using __c4__parents = TypeList<SpecList<O>>;
     static constexpr bool __c4__is_suffix = false;
 
-    void __c4__collectNames(std::vector<std::string>& names) const override {
+    void collectNames(std::vector<std::string>& names) const {
         names.push_back("B");
-        Super::__c4__collectNames(names);
+        Super::collectNames(names);
     }
 };
 
 // Diamond inherits from A and B
 template <typename Super>
 struct Diamond : public Super {
-    using __c4__parents = SpecList<A, B>;
+    using __c4__parents = TypeList<SpecList<A, B>>;
     static constexpr bool __c4__is_suffix = false;
 
-    void __c4__collectNames(std::vector<std::string>& names) const override {
+    void collectNames(std::vector<std::string>& names) const {
         names.push_back("Diamond");
-        Super::__c4__collectNames(names);
+        Super::collectNames(names);
     }
 
     virtual int getValue() const { return 42; }
@@ -68,27 +70,27 @@ struct Diamond : public Super {
 
 template <typename Super>
 struct Point : public Super {
-    using __c4__parents = SpecList<>;
+    using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = true;  // Suffix spec!
 
     double x = 0.0, y = 0.0;
 
-    void __c4__collectNames(std::vector<std::string>& names) const override {
+    void collectNames(std::vector<std::string>& names) const {
         names.push_back("Point");
-        Super::__c4__collectNames(names);
+        Super::collectNames(names);
     }
 };
 
 template <typename Super>
 struct ColoredPoint : public Super {
-    using __c4__parents = SpecList<Point>;
+    using __c4__parents = TypeList<SpecList<Point>>;
     static constexpr bool __c4__is_suffix = false;  // Infix, but parent is suffix
 
     std::string color = "black";
 
-    void __c4__collectNames(std::vector<std::string>& names) const override {
+    void collectNames(std::vector<std::string>& names) const {
         names.push_back("ColoredPoint");
-        Super::__c4__collectNames(names);
+        Super::collectNames(names);
     }
 };
 
@@ -101,11 +103,11 @@ int main() {
     std::cout << "====================\n\n";
 
     // Compose Diamond from the spec
-    using Diamond_Class = Compose_t<Diamond>;
+    using Diamond_Class = C4N<Diamond>;
 
     Diamond_Class d;
     std::vector<std::string> names;
-    d.__c4__collectNames(names);
+    d.collectNames(names);
 
     std::cout << "Diamond hierarchy MRO: ";
     for (const auto& name : names) {
@@ -123,11 +125,11 @@ int main() {
     std::cout << "  IsInMRO<Diamond, Point>: " << (IsInMRO_v<Diamond, Point> ? "true" : "false") << "\n\n";
 
     // Test suffix spec
-    using CP_Class = Compose_t<ColoredPoint>;
+    using CP_Class = C4N<ColoredPoint>;
 
     CP_Class cp;
     std::vector<std::string> cp_names;
-    cp.__c4__collectNames(cp_names);
+    cp.collectNames(cp_names);
 
     std::cout << "ColoredPoint MRO: ";
     for (const auto& name : cp_names) {

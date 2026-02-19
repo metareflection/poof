@@ -10,7 +10,7 @@
 // All of these are implementation details of each other and are not
 // intended to be used independently.
 //
-// Spec types (Mixin, SpecificationInternal, etc.) are defined in c4.hpp
+// Spec types (Mixin, SpecHelper, etc.) are defined in c4.hpp
 // before this file is included.
 
 #include "type_list.hpp"
@@ -523,7 +523,8 @@ private:
     using ParentPLs = Map_t<GetPL, Parents>;
     using Splits = SplitAllLists<ParentPLs>;
     using MergedSuffix = MergeSuffixLists_t<typename Splits::suffixes>;
-    using CandidatesWithLocal = Append_t<typename Splits::prefixes, Parents>;
+    using ParentGroups = typename Spec::__c4__parent_groups;
+    using CandidatesWithLocal = Concat_t<typename Splits::prefixes, ParentGroups>;
     using CleanedCandidates = RemoveSuffixRedundancy_t<CandidatesWithLocal, MergedSuffix>;
     using MergedPrefix = C3Merge_t<CleanedCandidates>;
     using Joined = Concat_t<MergedPrefix, MergedSuffix>;

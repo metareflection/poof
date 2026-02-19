@@ -114,44 +114,6 @@ struct Contains<TypeList<U, Rest...>, T> : Contains<TypeList<Rest...>, T> {};
 template <typename List, typename T>
 inline constexpr bool Contains_v = Contains<List, T>::value;
 
-// IndexOf - Find index of type in list (-1 if not found)
-template <typename List, typename T, size_t Index = 0>
-struct IndexOf;
-
-template <typename T, size_t Index>
-struct IndexOf<TypeList<>, T, Index> {
-    static constexpr int value = -1;
-};
-
-template <typename T, typename... Rest, size_t Index>
-struct IndexOf<TypeList<T, Rest...>, T, Index> {
-    static constexpr int value = Index;
-};
-
-template <typename T, typename U, typename... Rest, size_t Index>
-struct IndexOf<TypeList<U, Rest...>, T, Index>
-    : IndexOf<TypeList<Rest...>, T, Index + 1> {};
-
-template <typename List, typename T>
-inline constexpr int IndexOf_v = IndexOf<List, T>::value;
-
-// At - Get element at index
-template <typename List, size_t Index>
-struct At;
-
-template <typename T, typename... Rest>
-struct At<TypeList<T, Rest...>, 0> {
-    using type = T;
-};
-
-template <typename T, typename... Rest, size_t Index>
-struct At<TypeList<T, Rest...>, Index> {
-    using type = typename At<TypeList<Rest...>, Index - 1>::type;
-};
-
-template <typename List, size_t Index>
-using At_t = typename At<List, Index>::type;
-
 // ============================================================================
 // Transform Operations
 // ============================================================================
@@ -189,54 +151,6 @@ struct Map<F, TypeList<T, Rest...>> {
 
 template <template<typename> class F, typename List>
 using Map_t = typename Map<F, List>::type;
-
-// Filter - Keep elements matching predicate
-template <template<typename> class Pred, typename List>
-struct Filter;
-
-template <template<typename> class Pred>
-struct Filter<Pred, TypeList<>> {
-    using type = TypeList<>;
-};
-
-template <template<typename> class Pred, typename T, typename... Rest>
-struct Filter<Pred, TypeList<T, Rest...>> {
-private:
-    using rest_filtered = typename Filter<Pred, TypeList<Rest...>>::type;
-public:
-    using type = std::conditional_t<
-        Pred<T>::value,
-        Cons_t<T, rest_filtered>,
-        rest_filtered
-    >;
-};
-
-template <template<typename> class Pred, typename List>
-using Filter_t = typename Filter<Pred, List>::type;
-
-// RemoveDuplicates - Remove duplicate types from list
-template <typename List, typename Seen = TypeList<>>
-struct RemoveDuplicates;
-
-template <typename Seen>
-struct RemoveDuplicates<TypeList<>, Seen> {
-    using type = TypeList<>;
-};
-
-template <typename T, typename... Rest, typename Seen>
-struct RemoveDuplicates<TypeList<T, Rest...>, Seen> {
-private:
-    using rest_deduped = typename RemoveDuplicates<TypeList<Rest...>, Cons_t<T, Seen>>::type;
-public:
-    using type = std::conditional_t<
-        Contains_v<Seen, T>,
-        rest_deduped,
-        Cons_t<T, rest_deduped>
-    >;
-};
-
-template <typename List>
-using RemoveDuplicates_t = typename RemoveDuplicates<List>::type;
 
 // ============================================================================
 // Special Operations (needed by C4 algorithm)
@@ -308,37 +222,6 @@ struct FoldLeft<F, Init, TypeList<T, Rest...>> {
 
 template <template<typename, typename> class F, typename Init, typename List>
 using FoldLeft_t = typename FoldLeft<F, Init, List>::type;
-
-// FoldRight - Right fold over list
-template <template<typename, typename> class F, typename Init, typename List>
-struct FoldRight;
-
-template <template<typename, typename> class F, typename Init>
-struct FoldRight<F, Init, TypeList<>> {
-    using type = Init;
-};
-
-template <template<typename, typename> class F, typename Init, typename T, typename... Rest>
-struct FoldRight<F, Init, TypeList<T, Rest...>> {
-    using type = typename F<T, typename FoldRight<F, Init, TypeList<Rest...>>::type>::type;
-};
-
-template <template<typename, typename> class F, typename Init, typename List>
-using FoldRight_t = typename FoldRight<F, Init, List>::type;
-
-// ============================================================================
-// Utilities
-// ============================================================================
-
-// IsSame - Check if two lists contain same types in same order
-template <typename List1, typename List2>
-struct IsSame : std::false_type {};
-
-template <typename... Types>
-struct IsSame<TypeList<Types...>, TypeList<Types...>> : std::true_type {};
-
-template <typename List1, typename List2>
-inline constexpr bool IsSame_v = IsSame<List1, List2>::value;
 
 } // namespace meta
 } // namespace c4

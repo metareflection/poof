@@ -53,26 +53,6 @@ template <typename Map, typename Key, auto Default = 0>
 inline constexpr auto Get_v = Get<Map, Key, Default>::value;
 
 // ============================================================================
-// Contains - Check if key exists in map
-// ============================================================================
-
-template <typename Map, typename Key>
-struct MapContains;
-
-template <typename Key>
-struct MapContains<TypeMap<>, Key> : std::false_type {};
-
-template <typename Key, auto Value, typename... Rest>
-struct MapContains<TypeMap<Pair<Key, Value>, Rest...>, Key> : std::true_type {};
-
-template <typename Key, typename OtherKey, auto OtherValue, typename... Rest>
-struct MapContains<TypeMap<Pair<OtherKey, OtherValue>, Rest...>, Key>
-    : MapContains<TypeMap<Rest...>, Key> {};
-
-template <typename Map, typename Key>
-inline constexpr bool MapContains_v = MapContains<Map, Key>::value;
-
-// ============================================================================
 // Insert - Add or update key-value pair
 // ============================================================================
 
@@ -140,92 +120,6 @@ public:
 
 template <typename Map, typename Key, auto Delta = 1>
 using Decrement_t = typename Decrement<Map, Key, Delta>::type;
-
-// ============================================================================
-// BuildFromList - Build map from list of keys with initial value
-// ============================================================================
-
-template <typename KeyList, auto InitialValue = 0>
-struct BuildFromList;
-
-template <auto InitialValue>
-struct BuildFromList<TypeList<>, InitialValue> {
-    using type = TypeMap<>;
-};
-
-template <typename Key, typename... Rest, auto InitialValue>
-struct BuildFromList<TypeList<Key, Rest...>, InitialValue> {
-    using type = Insert_t<
-        typename BuildFromList<TypeList<Rest...>, InitialValue>::type,
-        Key,
-        InitialValue
-    >;
-};
-
-template <typename KeyList, auto InitialValue = 0>
-using BuildFromList_t = typename BuildFromList<KeyList, InitialValue>::type;
-
-// ============================================================================
-// IncrementAll - Increment all keys in a list
-// ============================================================================
-
-template <typename Map, typename KeyList, auto Delta = 1>
-struct IncrementAll;
-
-template <typename Map, auto Delta>
-struct IncrementAll<Map, TypeList<>, Delta> {
-    using type = Map;
-};
-
-template <typename Map, typename Key, typename... Rest, auto Delta>
-struct IncrementAll<Map, TypeList<Key, Rest...>, Delta> {
-    using type = typename IncrementAll<
-        Increment_t<Map, Key, Delta>,
-        TypeList<Rest...>,
-        Delta
-    >::type;
-};
-
-template <typename Map, typename KeyList, auto Delta = 1>
-using IncrementAll_t = typename IncrementAll<Map, KeyList, Delta>::type;
-
-// ============================================================================
-// Keys - Extract all keys from map as TypeList
-// ============================================================================
-
-template <typename Map>
-struct Keys;
-
-template <>
-struct Keys<TypeMap<>> {
-    using type = TypeList<>;
-};
-
-template <typename Key, auto Value, typename... Rest>
-struct Keys<TypeMap<Pair<Key, Value>, Rest...>> {
-    using type = Cons_t<Key, typename Keys<TypeMap<Rest...>>::type>;
-};
-
-template <typename Map>
-using Keys_t = typename Keys<Map>::type;
-
-// ============================================================================
-// Values - Extract all values from map as integer sequence
-// (Useful for debugging/validation)
-// ============================================================================
-
-template <typename Map>
-struct Values;
-
-template <>
-struct Values<TypeMap<>> {
-    template <typename T>
-    struct Wrapper {};
-    using type = Wrapper<void>; // Placeholder since we can't directly store values
-};
-
-// Note: In a real implementation, you might use std::integer_sequence
-// but for our purposes, we mainly need Keys
 
 } // namespace meta
 } // namespace c4

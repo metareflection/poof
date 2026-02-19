@@ -5,11 +5,10 @@
 //
 // Usage:
 //   #include <c4/c4.hpp>
-//   #include <c4/examples/counting.hpp>
+//   #include "counting.hpp"
 //   using MyClass = c4::examples::Counting<c4::Mixin>;
 
-#include <c4/core/mixin.hpp>
-#include <c4/core/spec_list.hpp>
+#include <c4/c4.hpp>
 
 namespace c4 {
 namespace examples {
@@ -20,29 +19,26 @@ class Counting : public Super {
     int edges_visited = 0;
 
 public:
-    using __c4__parents = SpecList<>;
+    using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = false;
 
     template <typename... Args>
     Counting(Args&&... args) : Super(std::forward<Args>(args)...) {}
 
-    // Getters
     virtual int get_nodes_visited() const { return nodes_visited; }
     virtual int get_edges_visited() const { return edges_visited; }
 
-    // Increment counters
     virtual void count_node() { ++nodes_visited; }
     virtual void count_edge() { ++edges_visited; }
 
-    // Reset
     virtual void reset_counts() {
         nodes_visited = 0;
         edges_visited = 0;
     }
 
-    void __c4__collectNames(std::vector<std::string>& names) const override {
+    void collectNames(std::vector<std::string>& names) const {
         names.push_back("Counting");
-        Super::__c4__collectNames(names);
+        Super::collectNames(names);
     }
 };
 
