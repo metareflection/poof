@@ -123,7 +123,7 @@ in their chapter about OO, barely even mention any other kind of OO if at all,
 much less study it.
 
 Yet KRL@~cite{Bobrow1976},
-the very first system@xnote[""]{
+the very first system@Note{
   KRL, though its name stands for “Knowledge Representation Language”,
   was arguably not a @emph{programming} language in most people’s understanding,
   though it was one in the then understanding of Lispers:
@@ -340,7 +340,7 @@ decades before anyone had the idea to fantasize a conflict between the two.
 
 The argument of Composition vs Inheritance is actually a distortion
 of a legitimate question of OO design, @; TODO cite
-wherein one has to decide whether some aspect of a class@xnote[""]{
+wherein one has to decide whether some aspect of a class@Note{
   My counter-argument also works for prototypes or arbitrary OO specifications,
   but since the argument is usually given for classes, I will use classes in this section.
 }
@@ -674,7 +674,7 @@ or of anything that has the precision required to specify code
 that can actually run and be reasoned about.
 But specifying code is exactly where the conceptual difficulties and gains of OO
 are both to be found with respect to software construction.
-In fact, these handwaving methodologies@xnote[""]{
+In fact, these handwaving methodologies@Note{
   @; TODO: maybe give Goguen his own section?
   Not all uses of Category Theory in “OO” are handwaving.
   Goguen, who invokes Category Theory in his papers,
@@ -779,7 +779,7 @@ you can actually use OO as you do it.
     but for which this aspect of the system is irrelevant,
   (3) criticism of mistakes that do apply to OO,
     but actually, much more broadly, apply unchanged to software development in general.
-  (This is notably harder than the previous exercise!)@xnote[""]{
+  (This is notably harder than the previous exercise!)@Note{
     As a hint, you may consider the criticism from @citet{Graham2001noop},
     and the reply by Rees; or @citet{Armstrong2001}.
     Which of the points actually pertain to OO and which don’t?

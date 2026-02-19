@@ -85,8 +85,11 @@ Now in the mid 2020s it is on its way to become forgotten, at least among the Co
 Yet, one thing OO never was, was understood.
 Until now.
 
-As a USENET wiseman wrote: “Every technique is first developed, then used,
-important, obsolete, normalized, and finally understood.”
+As a USENET wiseman once wrote: “Every technique is first developed, then used,
+important, obsolete, normalized, and finally understood.”@Note{
+  “Toute technique est mise au point, utilisée, importante,
+  obsolète, normalisée puis comprise.” — Roland Trique, fr.sci.jargon, 1999
+}
 This book then is here to bring the final nail on the coffin of OO: understanding it.
 Too bad no one reads books anymore, except AIs.
 If that book, and most importantly its understanding, had come a few decades earlier,

@@ -1043,7 +1043,7 @@ still I declare:
       https://xach.livejournal.com/170311.html
       https://www.xach.com/img/doing-it-wrong.jpg
   }
-@principle{Programming: You're Doing It Completely Wrong.}@xnote[""]{
+@principle{Programming: You're Doing It Completely Wrong.}@Note{
   Zach Beane famously made a funny meme of John McCarthy, inventor of Lisp,
   ostensibly uttering that condemnation.
   The actual McCarthy, of course, was not the kind who would say anything like that,

@@ -812,11 +812,11 @@ applying the record as a function to a symbol, or the function wouldn’t be ava
 (unless symbols are excluded from the function’s co-domain, but that’s ugly).
 Since getting a record value isn’t a function call, you also cannot directly use
 the Y combinator on a record (see @secref{RaR}).
-Then the submethods would be stored in the “record” part of the method,
+Then the sub-methods would be stored in the “record” part of the method,
 and the method would still be its “function” part.
 
 Lacking such funcallable instances, we can store submethod information
-in a record submethods next to the methods being combined.
+in a record sub-methods next to the methods being combined.
 For the sake of generality, a method-spec can be any kind of specification
 (modular extension, multiple or optimal inheritance specification, etc.),
 and the @c{method-cons} says how to combine it with the specification data so far;
@@ -849,7 +849,7 @@ to be folded or otherwise processed later
 }
 
 Then there is the question of who is responsible for initializing
-the submethods record and each of the submethods, what the default value should be, etc.
+the sub-methods record and each of the sub-methods, what the default value should be, etc.
 The simplest, “dynamic”, answer would be that the field lens treat an absent field as
 a field yielding the top value @c{#f}, and
 would treat @c{#f} as an empty record when extending it;
@@ -859,7 +859,7 @@ A more “static” answer would require the object to inherit
 from a “protocol” specification that initializes sub-methods
 for the methods that are part of the protocol;
 and each such “protocol” specification itself inherits from a “protocol support” specification
-that initializes the submethods record, that in turn inherits from a “record” specification
+that initializes the sub-methods record, that in turn inherits from a “record” specification
 that initializes the record being specified.
 No dynamic handling of uninitialized values, instead strict discipline in specifications.
 This discipline works best with types, or at least with multiple (or optimal) inheritance,
@@ -1020,6 +1020,17 @@ CommonLOOPS, CLOS, Cecil, Fortress, etc. @; TODO @~cite{Bobrow1986CommonLoops}
 Note how program information is stored in two independent set of entities:
 one the one hand the specifications, and the generic functions
 (or the generic functions grouped into “protocols”).
+
+Putting method metadata (sub-methods, specification composition,
+method combination, multiple dispatch signature, inheritance style,
+behavior on no-applicable-method, etc.)
+behavior in a gf is much more modular
+than putting method metadata in a superclass,
+because it enables independent extension of a data type with new functionality
+(see the “expression problem”)
+without having to predict in advance all the future interfaces you’ll want to implement
+(as in Java), or changing the ancestry after the fact (with ugly side effects,
+or in a pure contagious way that would really require a fixpoint you don't have access to).
 
 
 @subsection{Implementing Method Combination}

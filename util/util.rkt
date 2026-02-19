@@ -60,10 +60,11 @@
 
 (define (xnote x . y)
   (list (elem #:style (footnote-style) x)
-        (
-        ;;note #:number 'next
-        my-note
+        (my-note
            (list y (html-elem (list (linebreak) (linebreak) (linebreak)))))))
+
+(define (Note . x)
+  (apply xnote "" x))
 
 (define epigraph-style
   (make-style

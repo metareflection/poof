@@ -1136,7 +1136,7 @@ i.e. putting the cart before the horse.
   yet clearly a Square is a subtype of Rectangle.
   The two classes should both inherit from a common superclass @c{Shape}
   with a method @c{area} that the @c{Square} and @c{Rectangle} classes should appropriately override.
-  Can you figure out and implement the correct solution without reading the footnote?@xnote[""]{
+  Can you figure out and implement the correct solution without reading the footnote?@Note{
     The actual solution is of course that should distinguish a
     @c{RectangleInterface} that has @emph{getter methods} @c{width} and @c{height},
     from @c{RectangleImplementation} that has @emph{fields} @c{%width} and @c{%height},

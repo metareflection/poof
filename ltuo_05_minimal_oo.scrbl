@@ -319,7 +319,7 @@ Thus, as far as one cares about extensibility:
   applying an extension to a top value and using the Y combinator on the extension.
   Show a case where they produce different behaviors.
   Is the difference merely a matter of performance, or one of semantics?
-  In your example, which best corresponds to the notion of extending a specification?@xnote[""]{
+  In your example, which best corresponds to the notion of extending a specification?@Note{
     Hint: you may define a lazy stream extension: @c{(λ (x) (lazy-cons 1 x))}.
     Apply it to @c{top = (lazy ⊥)} and compare the behavior to that of @c{(Y f)}.
     What happens when you force the first few elements?
@@ -777,7 +777,7 @@ and the pure applicative Y combinator you could write in Scheme’s
 pure subset of the λ-calculus is actually quite bad in practice.
 Here is the applicative Y combinator, that I will call Ye (for Y, eager)
 expressed in terms of the composition combinator B and
-the self-application combinator U (called Ue for U, eager)@xnote[""]{
+the self-application combinator U (called Ue for U, eager)@Note{
   A simple way to test the applicative/eager @c{Ye} combinator,
   or the subsequent variants @c{Yex} and @c{Yes}
   is to use it to define the factorial function:
@@ -786,7 +786,7 @@ the self-application combinator U (called Ue for U, eager)@xnote[""]{
   then you can define factorial as
   @c{(def fact (Ye eager-pre-fact))}
   and you can then test that e.g. @c{(fact 6)} returns @c{720}.
-}@xnote[""]{
+}@Note{
   Also note that the self-application combinator U @~cite{Kiselyov2024Y},
   sometimes called the duplication combinator Δ, or ω
   (because @c{Ω = (ω ω)} is the canonical λ-term that never terminates),
