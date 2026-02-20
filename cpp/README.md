@@ -170,8 +170,8 @@ C4 extends C3 with support for **suffix specifications**. It enforces five const
 ### Complexity
 
 - **Optimized C4**: O(dn) using hash-table ancestor counting
-  (modulo our map implementation not being a hash-table but an linear map in C++,
-  which in practice makes it O(dn²)).
+  (modulo our map implementation not being a hash-table but a linear map in C++,
+  which in practice makes it O(dn²)). Contrast with the original C3 being O(d²n²).
 
 ## Contributors
 
