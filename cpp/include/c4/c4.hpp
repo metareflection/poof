@@ -176,10 +176,10 @@ namespace c4 {
 // ============================================================================
 
 // Chain mixins from most general to most specific.
-// The MRO is [MostSpecific, ..., MostGeneral]; we reverse it and fold from
+// The CPL is [MostSpecific, ..., MostGeneral]; we reverse it and fold from
 // the right so the resulting class is MostSpecific<...<MostGeneral<Mixin>>>.
 
-template <typename ReversedMRO, typename Base>
+template <typename ReversedCPL, typename Base>
 struct ChainMixins;
 
 template <typename Base>
@@ -205,11 +205,11 @@ struct ComposeImpl {
 private:
     using SpecInternal = MakeSpecInternal_t<Spec>;
     using PrecedenceList = GetPrecedenceList_t<SpecInternal>;
-    using ReversedMRO = meta::Reverse_t<PrecedenceList>;
+    using ReversedCPL = meta::Reverse_t<PrecedenceList>;
 public:
-    using type = typename ChainMixins<ReversedMRO, Base>::type;
+    using type = typename ChainMixins<ReversedCPL, Base>::type;
     using precedence_list = PrecedenceList;
-    using mro = PrecedenceList;
+    using cpl = PrecedenceList;
 };
 
 // C4<Spec[, Base]> - compose a spec into a concrete class.
@@ -218,23 +218,23 @@ template <template<typename> class Spec, typename Base = Mixin>
 using C4 = typename ComposeImpl<Spec, Base>::type;
 
 // ============================================================================
-// MRO Membership Checking
+// CPL Membership Checking
 // ============================================================================
 
-// IsInMRO_v<Derived, Target> - check at compile time whether Target is in
-// the MRO of Derived.
+// IsInCPL_v<Derived, Target> - check at compile time whether Target is in
+// the class precedence list of Derived.
 template <template<typename> class Derived, template<typename> class Target>
-struct IsInMRO {
+struct IsInCPL {
 private:
     using DerivedSpec = MakeSpecInternal_t<Derived>;
     using TargetSpec  = MakeSpecInternal_t<Target>;
-    using MRO = GetPrecedenceList_t<DerivedSpec>;
+    using CPL = GetPrecedenceList_t<DerivedSpec>;
 public:
-    static constexpr bool value = meta::Contains_v<MRO, TargetSpec>;
+    static constexpr bool value = meta::Contains_v<CPL, TargetSpec>;
 };
 
 template <template<typename> class Derived, template<typename> class Target>
-inline constexpr bool IsInMRO_v = IsInMRO<Derived, Target>::value;
+inline constexpr bool IsInCPL_v = IsInCPL<Derived, Target>::value;
 
 } // namespace c4
 

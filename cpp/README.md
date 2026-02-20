@@ -28,15 +28,6 @@ This project implements **Optimal Inheritance** using C++ template metaprogrammi
 
 It works. Tests pass. We're still working on making it simpler, better and more usable.
 
-TODO:
-* [ ] The Gerbil Scheme source for c4 with multiple lists of parents is in
-      src/gerbil/runtime/c3.ss in branch c3-doc of gerbil (at /workspace/gerbil/c4/)
-      Update the C++ variant so it accepts either zero, one or many lists. Document examples.
-      Probably cases without __c4__parent, with __c4__parent = SpecList<A,B,C> or with
-      __c4__parent = TypeList<SpecList<A,B,C>,SpecList<D,B,E>,SpecList<F>>
-* [ ] For subtyping purposes, we want C4<X> is a subtype of Y<?> for any ancestor Y,
-      but also a subtype of C4<Z> for any suffix ancestor Z.
-
 ## Building and Testing
 
 ```bash
@@ -48,8 +39,6 @@ g++ -std=c++20 -Iinclude tests/test_error_detection.cpp -o build/test_error_dete
 ```
 
 ## Example Usage
-
-The full runnable version of this example lives in `examples/diamond.cpp`.
 
 `collectNames` is not part of the core library — it lives in `examples/mixin_names.hpp`,
 which provides `MixinNames` (a base with the `collectNames` protocol) and `C4N<Spec>`
@@ -99,13 +88,13 @@ struct Diamond : public Super {
     }
 };
 
-// Compose Diamond; MRO computed at compile time: [Diamond, A, B, O]
+// Compose Diamond; CPL computed at compile time: [Diamond, A, B, O]
 using Diamond_Class = C4N<Diamond>;
 
-// Compile-time MRO membership checks (no collectNames needed)
-static_assert(IsInMRO_v<Diamond, A>);
-static_assert(IsInMRO_v<Diamond, B>);
-static_assert(IsInMRO_v<Diamond, O>);
+// Compile-time CPL membership checks (no collectNames needed)
+static_assert(IsInCPL_v<Diamond, A>);
+static_assert(IsInCPL_v<Diamond, B>);
+static_assert(IsInCPL_v<Diamond, O>);
 
 int main() {
     Diamond_Class d;
@@ -116,8 +105,27 @@ int main() {
 }
 ```
 
-Suffix specs (marked `__c4__is_suffix = true`) are always placed at the end of the MRO
-and form a total order across the whole hierarchy, enabling fixed-offset field access.
+“Suffix property”: suffix specs (marked `__c4__is_suffix = true`) are guaranteed to have
+their class precedence list as the suffix of any descendent’s class precedence list,
+enabling fixed-offset field access. Suffix specs in a given class’s ancestry
+are always in a total order, though some classes in between them might not.
+
+## Examples
+
+All runnable examples live in `examples/` and build with:
+
+```bash
+cd /workspace/poof/cpp
+g++ -std=c++20 -Iinclude examples/<name>.cpp -o build/<name> && build/<name>
+```
+
+| File | Demonstrates |
+|------|-------------|
+| `examples/diamond.cpp` | Basic diamond inheritance; canonical C4 usage with `C4N<>` |
+| `examples/suffix.cpp` | Suffix specs (`__c4__is_suffix = true`), fixed-tail CPL placement, and suffix subtyping: `C4<X>` is-a `C4<Y>` for every suffix ancestor `Y` |
+| `examples/multiple_parent_lists.cpp` | Multiple independent parent lists: `TypeList<SpecList<A,B>, SpecList<C>>` |
+| `examples/mixin_names.hpp` | `MixinNames` base and `C4N<Spec>` alias — used by examples and tests that need `collectNames` |
+| `examples/counting.hpp` | `Counting` mixin tracking nodes/edges visited; illustrates stateful mixins |
 
 ## Architecture
 
@@ -157,13 +165,13 @@ C4 extends C3 with support for **suffix specifications**. It enforces five const
 2. **Local Order**: Parent order in definitions preserved in precedence list
 3. **Monotonicity**: Parent's precedence list is subsequence of child's
 4. **Shape Determinism**: Isomorphic DAGs yield isomorphic precedence lists
-5. **Suffix Property** (C4): Suffix spec's precedence list is suffix of all descendants' precedence lists.
+5. **Suffix Property** (C4): Suffix spec's precedence list is suffix to all descendents' precedence lists.
 
 ### Complexity
 
 - **Optimized C4**: O(dn) using hash-table ancestor counting
-  (modulo our map implementation not being a hash-table but an linear map,
-  which compounds a factor n in practice).
+  (modulo our map implementation not being a hash-table but an linear map in C++,
+  which in practice makes it O(dn²)).
 
 ## Contributors
 
@@ -179,3 +187,4 @@ Code largely coded by Claude Opus 4.5 (Anthropic) as guided by François-René R
 Latest copy in branch c3-doc. Source files src/gerbil/runtime/c3.ss,
 tests in src/gerbil/test/c3-test.ss.
 Local cache of the branch: /workspace/gerbil/c4/
+

@@ -5,7 +5,7 @@
 // This file merges all algorithm components:
 //   - C3 merge with O(dn) ancestor-counting optimization
 //   - C4 suffix specification support (split, merge, redundancy removal)
-//   - C4Linearize: main entry point computing the precedence list (MRO)
+//   - C4Linearize: main entry point computing the class precedence list (CPL)
 //
 // All of these are implementation details of each other and are not
 // intended to be used independently.
@@ -461,7 +461,7 @@ using RemoveSuffixRedundancy_t = typename RemoveSuffixRedundancy<CandidateLists,
 // C4 Linearization Algorithm
 // ============================================================================
 //
-// Computes the precedence list (MRO) for a specification, extending C3 with
+// Computes the class precedence list (CPL) for a specification, extending C3 with
 // suffix specification support.
 //
 // For each specification, based on number of parents:
@@ -573,8 +573,8 @@ public:
 template <typename Spec>
 using GetPrecedenceList_t = typename C4Linearize<Spec>::precedence_list;
 
-// Alias: MRO == precedence list
+// Alias: CPL == precedence list
 template <typename Spec>
-using GetMRO_t = GetPrecedenceList_t<Spec>;
+using GetCPL_t = GetPrecedenceList_t<Spec>;
 
 } // namespace c4

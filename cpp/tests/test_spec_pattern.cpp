@@ -109,7 +109,7 @@ int main() {
     std::vector<std::string> names;
     d.collectNames(names);
 
-    std::cout << "Diamond hierarchy MRO: ";
+    std::cout << "Diamond hierarchy CPL: ";
     for (const auto& name : names) {
         std::cout << name << " ";
     }
@@ -118,11 +118,11 @@ int main() {
 
     std::cout << "getValue() = " << d.getValue() << "\n\n";
 
-    // Test MRO queries
-    std::cout << "Testing MRO membership:\n";
-    std::cout << "  IsInMRO<Diamond, A>: " << (IsInMRO_v<Diamond, A> ? "true" : "false") << "\n";
-    std::cout << "  IsInMRO<Diamond, O>: " << (IsInMRO_v<Diamond, O> ? "true" : "false") << "\n";
-    std::cout << "  IsInMRO<Diamond, Point>: " << (IsInMRO_v<Diamond, Point> ? "true" : "false") << "\n\n";
+    // Test CPL queries
+    std::cout << "Testing CPL membership:\n";
+    std::cout << "  IsInCPL<Diamond, A>: " << (IsInCPL_v<Diamond, A> ? "true" : "false") << "\n";
+    std::cout << "  IsInCPL<Diamond, O>: " << (IsInCPL_v<Diamond, O> ? "true" : "false") << "\n";
+    std::cout << "  IsInCPL<Diamond, Point>: " << (IsInCPL_v<Diamond, Point> ? "true" : "false") << "\n\n";
 
     // Test suffix spec
     using CP_Class = C4N<ColoredPoint>;
@@ -131,7 +131,7 @@ int main() {
     std::vector<std::string> cp_names;
     cp.collectNames(cp_names);
 
-    std::cout << "ColoredPoint MRO: ";
+    std::cout << "ColoredPoint CPL: ";
     for (const auto& name : cp_names) {
         std::cout << name << " ";
     }
@@ -141,12 +141,12 @@ int main() {
     std::cout << "Point fields accessible: x=" << cp.x << ", y=" << cp.y << "\n";
     std::cout << "Color field: " << cp.color << "\n\n";
 
-    // Test MRO for ColoredPoint
-    std::cout << "Testing MRO for ColoredPoint:\n";
-    std::cout << "  IsInMRO<ColoredPoint, Point>: " << (IsInMRO_v<ColoredPoint, Point> ? "true" : "false") << "\n";
+    // Test CPL for ColoredPoint
+    std::cout << "Testing CPL for ColoredPoint:\n";
+    std::cout << "  IsInCPL<ColoredPoint, Point>: " << (IsInCPL_v<ColoredPoint, Point> ? "true" : "false") << "\n";
 
     std::cout << "\n✓ C4 spec pattern works!\n";
-    std::cout << "✓ MRO queries work!\n";
+    std::cout << "✓ CPL queries work!\n";
 
     return 0;
 }

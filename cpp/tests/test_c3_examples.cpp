@@ -25,17 +25,17 @@ struct AssertSame {
     static constexpr bool value = true;
 };
 
-#define CHECK_MRO(Spec, ...) \
+#define CHECK_CPL(Spec, ...) \
     static_assert(AssertSame< \
         GetPrecedenceList_t<Spec>, \
         TypeList<__VA_ARGS__> \
-    >::value, "MRO check failed for " #Spec)
+    >::value, "CPL check failed for " #Spec)
 
-// Helper to verify runtime MRO matches expected
-bool verifyMRO(const std::vector<std::string>& actual,
+// Helper to verify runtime CPL matches expected
+bool verifyCPL(const std::vector<std::string>& actual,
                const std::vector<std::string>& expected,
                const std::string& testName) {
-    // Always print actual MRO for debugging
+    // Always print actual CPL for debugging
     std::cout << testName << ":\n";
     std::cout << "  Actual:   ";
     for (const auto& name : actual) {
@@ -197,7 +197,7 @@ bool runRuntimeTests() {
         "Z", "K1", "K2", "K3", "D", "A", "B", "C", "E", "O"
     };
 
-    return verifyMRO(names, expected, "Wikipedia 2021 (Z hierarchy)");
+    return verifyCPL(names, expected, "Wikipedia 2021 (Z hierarchy)");
 }
 
 } // namespace wiki2021
@@ -298,7 +298,7 @@ bool runRuntimeTests() {
         "Y", "J1", "J2", "A", "J3", "B", "O"
     };
 
-    return verifyMRO(names, expected, "Wikipedia 2023 (Y hierarchy)");
+    return verifyCPL(names, expected, "Wikipedia 2023 (Y hierarchy)");
 }
 
 } // namespace wiki2023
@@ -398,7 +398,7 @@ bool runRuntimeTests() {
         "P", "EL", "PWB", "WB", "SC", "SM", "DB"
     };
 
-    return verifyMRO(names, expected, "Boat (Pedalo hierarchy)");
+    return verifyCPL(names, expected, "Boat (Pedalo hierarchy)");
 }
 
 } // namespace boat
@@ -520,7 +520,7 @@ bool runRuntimeTests() {
         "AA", "CC", "BB", "EE", "II", "DD", "FF", "HH", "GG"
     };
 
-    return verifyMRO(names, expected, "StackOverflow (AA hierarchy)");
+    return verifyCPL(names, expected, "StackOverflow (AA hierarchy)");
 }
 
 } // namespace stackoverflow

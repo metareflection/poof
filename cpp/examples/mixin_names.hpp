@@ -3,7 +3,7 @@
 // MixinNames: a base that provides the collectNames traversal protocol.
 //
 // Use C4N<Spec> instead of C4<Spec> when your specs implement collectNames
-// for runtime MRO introspection.  This keeps the collectNames protocol
+// for runtime CPL introspection.  This keeps the collectNames protocol
 // entirely out of the core library.
 
 #include <c4/c4.hpp>

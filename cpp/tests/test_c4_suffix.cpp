@@ -17,7 +17,7 @@ using c4::examples::C4N;
 // Test Helpers
 // =============================================================================
 
-bool verifyMRO(const std::vector<std::string>& actual,
+bool verifyCPL(const std::vector<std::string>& actual,
                const std::vector<std::string>& expected,
                const std::string& testName) {
     std::cout << testName << ":\n";
@@ -121,7 +121,7 @@ bool runTests() {
     sbc.collectNames(names);
 
     std::vector<std::string> expected = {"SBC", "SBS", "SBA", "SBB"};
-    return verifyMRO(names, expected, "Compatible suffix specs (SBC)");
+    return verifyCPL(names, expected, "Compatible suffix specs (SBC)");
 }
 
 } // namespace suffix_compatible
@@ -156,7 +156,7 @@ struct A : public Super {
     }
 };
 
-// B is infix, inherits from infix A (which has suffix O in MRO)
+// B is infix, inherits from infix A (which has suffix O in CPL)
 template <typename Super>
 struct B : public Super {
     using __c4__parents = TypeList<SpecList<A>>;
@@ -177,7 +177,7 @@ bool runTests() {
     b.collectNames(names);
 
     std::vector<std::string> expected = {"B", "A", "O"};
-    return verifyMRO(names, expected, "Mixed infix/suffix (B)");
+    return verifyCPL(names, expected, "Mixed infix/suffix (B)");
 }
 
 } // namespace mixed_infix_suffix
@@ -256,13 +256,13 @@ bool runTests() {
     std::vector<std::string> s4_names;
     s4.collectNames(s4_names);
     std::vector<std::string> s4_expected = {"S4", "S3", "S2", "S1"};
-    passed &= verifyMRO(s4_names, s4_expected, "Suffix chain (S4)");
+    passed &= verifyCPL(s4_names, s4_expected, "Suffix chain (S4)");
 
     I_Class i;
     std::vector<std::string> i_names;
     i.collectNames(i_names);
     std::vector<std::string> i_expected = {"I", "S2", "S1"};
-    passed &= verifyMRO(i_names, i_expected, "Infix from middle of chain (I)");
+    passed &= verifyCPL(i_names, i_expected, "Infix from middle of chain (I)");
 
     return passed;
 }
@@ -275,10 +275,10 @@ bool runTests() {
 // Demonstrates TypeList<SpecList<A,B>, SpecList<C>> — two independent ordering
 // groups.  Relative ordering between C and {A,B} is not locally constrained,
 // so C3 may place C anywhere after its own parents are satisfied.
-// The expected MRO here matches TypeList<SpecList<A,B,C>> because the only
+// The expected CPL here matches TypeList<SpecList<A,B,C>> because the only
 // valid C3 linearisation of the three groups is A B C O.
 
-namespace multiple_groups {
+namespace multiple_parent_lists {
 
 template <typename Super>
 struct O : public Super {
@@ -328,37 +328,54 @@ struct C : public Super {
 // Equivalent semantics to TypeList<SpecList<A, B, C>> for this hierarchy,
 // but the relative ordering between C and {A,B} is not locally constrained.
 template <typename Super>
-struct MultiGroup : public Super {
+struct MultiParentList : public Super {
     using __c4__parents = TypeList<SpecList<A, B>, SpecList<C>>;
     static constexpr bool __c4__is_suffix = false;
 
     void collectNames(std::vector<std::string>& names) const {
-        names.push_back("MultiGroup");
+        names.push_back("MultiParentList");
         Super::collectNames(names);
     }
 };
 
-using MultiGroup_Class = C4N<MultiGroup>;
+using MultiParentList_Class = C4N<MultiParentList>;
 
 bool runTests() {
-    MultiGroup_Class mg;
+    MultiParentList_Class mg;
     std::vector<std::string> names;
     mg.collectNames(names);
 
     // C3 merge of [A,B,O], [C,O], [A,B], [C] yields A B C O
-    std::vector<std::string> expected = {"MultiGroup", "A", "B", "C", "O"};
-    return verifyMRO(names, expected, "Multiple parent groups (MultiGroup)");
+    std::vector<std::string> expected = {"MultiParentList", "A", "B", "C", "O"};
+    return verifyCPL(names, expected, "Multiple parent lists (MultiParentList)");
 }
 
-} // namespace multiple_groups
+} // namespace multiple_parent_lists
 
 // =============================================================================
 // Suffix Subtyping Property Test
 // =============================================================================
 // Demonstrates that C4<X> is a C++ subtype of C4<Z> whenever Z is a suffix
-// ancestor of X.  This holds by construction: the mixin chain places suffix
-// specs at the tail so every suffix ancestor becomes a literal base class of
-// the composed type.
+// ancestor of X.
+//
+// This is an *emergent* property, not an explicitly engineered one:
+//
+//   C4Linearize guarantees (via MergeSuffixLists + MergeTwoSuffixes) that the
+//   suffix tail of X's CPL is exactly the full CPL of the most-specific suffix
+//   ancestor — call it Z1.  ChainMixins then folds the reversed CPL starting
+//   from Base (e.g. Mixin), so it builds:
+//
+//     X< ... <Z1<Z2<...<Zk<Mixin>>...>>>
+//
+//   Independently, C4<Z1> = ChainMixins([Zk,...,Z1], Mixin) = Z1<Z2<...<Zk<Mixin>>>.
+//   Because ChainMixins applies the same suffix subsequence in the same order in
+//   both cases, C4<Z1> appears *literally* as a C++ base class inside C4<X>.
+//   C++ base-class transitivity then gives C4<X> is-a C4<Z> for every suffix
+//   ancestor Z.
+//
+//   Note: C4Linearize does compute `most_specific_suffix` in every case, but
+//   ComposeImpl does not use it — the subtyping guarantee falls out of the
+//   algorithm structure rather than being wired in explicitly.
 
 namespace suffix_subtyping {
 
@@ -383,9 +400,8 @@ struct InfixM : public Super {
     static constexpr bool __c4__is_suffix = false;
 };
 
-// Compile-time subtyping checks:
-// C4<InfixM> is composed as InfixM<SChild<SBase<Mixin>>>, so C4<SChild> and
-// C4<SBase> are literal base classes of C4<InfixM>.
+// C4<InfixM> = InfixM<SChild<SBase<Mixin>>>, so C4<SChild> and C4<SBase> are
+// literal base classes — verified here both statically and at runtime.
 static_assert(std::is_base_of_v<C4<SBase>,  C4<InfixM>>, "C4<InfixM> should be subtype of C4<SBase>");
 static_assert(std::is_base_of_v<C4<SChild>, C4<InfixM>>, "C4<InfixM> should be subtype of C4<SChild>");
 
@@ -416,7 +432,7 @@ int main() {
     all_passed &= suffix_compatible::runTests();
     all_passed &= mixed_infix_suffix::runTests();
     all_passed &= complex_suffix::runTests();
-    all_passed &= multiple_groups::runTests();
+    all_passed &= multiple_parent_lists::runTests();
 
     all_passed &= suffix_subtyping::test_suffix_subtyping();
     std::cout << "Suffix subtyping: passed\n\n";

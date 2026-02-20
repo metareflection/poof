@@ -162,7 +162,7 @@ void test() {
     std::vector<std::string> names;
     obj.collectNames(names);
 
-    std::cout << "  ValidDiamond MRO: ";
+    std::cout << "  ValidDiamond CPL: ";
     for (const auto& name : names) {
         std::cout << name << " ";
     }

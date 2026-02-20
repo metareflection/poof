@@ -57,13 +57,13 @@ struct Diamond : public Super {
 };
 
 // Compose Diamond into a concrete class using C4 linearization.
-// MRO is computed at compile time: [Diamond, A, B, O]
+// CPL is computed at compile time: [Diamond, A, B, O]
 using Diamond_Class = C4N<Diamond>;
 
-// Compile-time MRO membership checks
-static_assert(IsInMRO_v<Diamond, A>);    // A is an ancestor
-static_assert(IsInMRO_v<Diamond, B>);    // B is an ancestor
-static_assert(IsInMRO_v<Diamond, O>);    // O is an ancestor (shared base)
+// Compile-time CPL membership checks
+static_assert(IsInCPL_v<Diamond, A>);    // A is an ancestor
+static_assert(IsInCPL_v<Diamond, B>);    // B is an ancestor
+static_assert(IsInCPL_v<Diamond, O>);    // O is an ancestor (shared base)
 
 int main() {
     Diamond_Class d;
@@ -71,10 +71,10 @@ int main() {
     std::vector<std::string> names;
     d.collectNames(names);
 
-    std::cout << "MRO: ";
+    std::cout << "CPL: ";
     for (const auto& n : names) std::cout << n << " ";
     std::cout << "\n";
-    // Output: MRO: Diamond A B O
+    // Output: CPL: Diamond A B O
     // O appears once despite being a shared ancestor — C4 linearization handles it.
 
     return 0;
