@@ -31,7 +31,7 @@ It works. Tests pass. We're still working on making it simpler, better and more 
 ## Building and Testing
 
 ```bash
-cd /workspace/poof/cpp
+cd poof/cpp
 g++ -std=c++20 -Iinclude tests/test_spec_pattern.cpp   -o build/test_spec_pattern   && build/test_spec_pattern
 g++ -std=c++20 -Iinclude tests/test_c3_examples.cpp    -o build/test_c3_examples    && build/test_c3_examples
 g++ -std=c++20 -Iinclude tests/test_c4_suffix.cpp      -o build/test_c4_suffix      && build/test_c4_suffix
@@ -115,7 +115,7 @@ are always in a total order, though some classes in between them might not.
 All runnable examples live in `examples/` and build with:
 
 ```bash
-cd /workspace/poof/cpp
+cd poof/cpp
 g++ -std=c++20 -Iinclude examples/<name>.cpp -o build/<name> && build/<name>
 ```
 
@@ -186,5 +186,3 @@ Code largely coded by Claude Opus 4.5 (Anthropic) as guided by François-René R
 **François-René Rideau**. "Gerbil Scheme C4 implementation". 2025.
 Latest copy in branch c3-doc. Source files src/gerbil/runtime/c3.ss,
 tests in src/gerbil/test/c3-test.ss.
-Local cache of the branch: /workspace/gerbil/c4/
-
