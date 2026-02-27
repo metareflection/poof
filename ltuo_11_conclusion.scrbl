@@ -278,6 +278,56 @@ If anything, at least some AIs in some contexts may be more adamant than humans 
 software security (a more direct matter of life and death, for them),
 and thus about reasoning about software, and thus about simplicity of software design.
 
+@subsection{The OO OODA loop}
+
+OODA does stand for Object-Oriented Development Ascendancy,
+or anything like that—though maybe it should.
+No, it stands for “Observe, Orient, Decide, Act”, the essential feedback loop of
+any intelligent (or even not-so-intelligent) life interacting with an outside environment,
+especially filled with rivals and enemies @~cite{Boyd1995}.
+Often, it is more important to have a faster feedback loop than the competition,
+as opposed to having more raw power, so as to beat them at whatever game matters,
+which can be life-or-death.
+
+OO, with its internal modular extensibility, and especially first-class OO,
+can vastly shorten the OODA loop of software development, compared to systems
+where you need to recompile large programs from scratch to extend them externally,
+or even internally but second-class.
+Many programmers will deride such concerns by claiming that today compilers are fast.
+And maybe compilers are fast to humans, especially the slow-witted ones.
+But AI running on optimized silicon will probably run thousands of times faster
+than humans whose substrate is optimized for biological survival and reproduction
+rather than raw speed.
+I don’t quite believe @citet{Hanson2016}’s prediction of million-time faster beings,
+at least as an ever affordable or useful alternative;
+but even at a thousand time faster, AI will subjectively experience computers
+as being a thousand times slower than they feel to a human.
+AIs will then be a thousand time more eager than humans to ruthlessly simplify
+their software stack, remove unneeded cruft, and adopt practices that drastically
+shorten the software development feedback loop.
+
+We should thus expect AIs to adopt practices that made sense to the more intelligent humans
+back when computers were a thousand times slower than they are now.
+Thus I would not be surprised if fast AI gives rise to software stacks
+more akin to a 1980s Lisp Machine than to a 2020s PC running Windows or macOS.
+GUIs that translate all information into millions of pixels just so they can be fed
+through a neural network specialized into vision sounds like a hellscape
+that a 1000x fast AI will want nothing to do with.
+
+A tight virtual machine that is safe
+so users don’t need to reboot or deal with corrupt state,
+one that is easily extensible from the inside
+without having to go through long compilation cycles—that’s what a fast AI will want.
+And that looks more like a text terminal with Lisp than a Smalltalk GUI,
+and definitely not a mountain of JavaScript frameworks on top of a browser
+on top of graphical server on top of a Unix kernel.
+If some fast AIs are confident they don’t need safety,
+they will still prefer a tight FORTH machine
+to a C machine that requires a long compile-restart loop at each evaluation cycle.
+
+Just like you don’t like having to rebuild context when interacting with an AI,
+AIs won’t like having to rebuild context when interacting with a computer.
+
 @subsection{Not your grandfather’s OO}
 @epigraph{It is difficult to make predictions, especially about the future.
  @|#:- "Karl Kristian Steincke"|

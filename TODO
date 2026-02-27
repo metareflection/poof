@@ -237,3 +237,15 @@ https://european-lisp-symposium.org/2026/ Krakow. May 11-12. Submission deadline
 @exercise[#:difficulty "Research"]{
 }
 
+
+LtUP: Lambda the Ultimate Paradigm
+Lessons from Lisp in the wars
+between OOP, FP, databases, AI, etc.
+
+
+A lambda embodies Perlis's aphorism "One man's constant is another man's variable": outside the lambda, its argument is a variable, but once inside its body, it becomes a constant. A lambda transforms one into the other—and then you start looking for opportunities either way.
+What do some people consider constant, that should be varied?
+What do some people consider variable, and what if you fix it one way or the other?
+Maybe slightly more generally, it can turn something that is
+"locally constant, under second-class control" into something that is
+"locally variable, under first-class control".

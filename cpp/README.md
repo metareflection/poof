@@ -16,13 +16,16 @@ This project implements **Optimal Inheritance** using C++ template metaprogrammi
    whose class precedence list is guaranteed to be the suffix of that of any descendent,
    enabling all the usual optimizations of single inheritance (e.g. fixed-offset fields, etc.)
 3. **Linearization Consistency**: respect user-provided local precedence order
-   (a DAG specified as zero, one or more lists of mixins),
-   monotonicity of precedence lists, ensuring consistency of behavior across methods and across
+   (a DAG specified as zero, one or more lists of mixins), monotonicity of precedence lists,
+   and preference of a specification and its exclusive ancestors over another,
+   ensuring consistency of behavior across methods and across
    subclasses, so that, e.g. you could have multiple-inheritance methods handle locking
    or memory allocation for you without risking deadlocks or use-after-free.
 4. **Compile-time resolution of inheritance**:
    using C++ templates, we ensure that all inheritance computations happen at compile-time;
    there is zero runtime overhead to using this library.
+
+Sounds confusing? Read my book in the bibliography.
 
 ## Project Status
 
@@ -165,7 +168,7 @@ C4 extends C3 with support for **suffix specifications**. It enforces five const
 2. **Local Order**: Parent order in definitions preserved in precedence list
 3. **Monotonicity**: Parent's precedence list is subsequence of child's
 4. **Shape Determinism**: Isomorphic DAGs yield isomorphic precedence lists
-5. **Suffix Property** (C4): Suffix spec's precedence list is suffix to all descendents' precedence lists.
+5. **Suffix Property** (C4): Suffix spec's precedence list is suffix to any of its descendents'.
 
 ### Complexity
 
@@ -176,13 +179,21 @@ C4 extends C3 with support for **suffix specifications**. It enforces five const
 ## Contributors
 
 Code largely coded by Claude Opus 4.5 (Anthropic) as guided by François-René Rideau.
+Claude one-shotted a working but sloppy solution from specification, and then I had
+it rewrite and simplify it into half as much code with a nicer and more powerful API.
 
 ## Bibliography
 
-**Yannis Smaragdakis and Don Batory**. "Mixin-based programming in C++". 2000. In Proc. International Symposium on Generative and Component-Based Software Engineering, pp. 164–178. doi:10.1007/3-540-44815-2_12 . Explains the basic approach to implementing Mixin inheritance on top of C++ templates.
-
-**François-René Rideau**. "Lambda, the Ultimate Object". 2026. (Not yet published) http://fare.tunes.org/files/cs/poof/ltuo.html . Includes a complete theory of OO. The C4 algorithm is explained in chapter 7.
-
 **François-René Rideau**. "Gerbil Scheme C4 implementation". 2025.
+http://github.com/mighty-gerbils/gerbil .
 Latest copy in branch c3-doc. Source files src/gerbil/runtime/c3.ss,
-tests in src/gerbil/test/c3-test.ss.
+tests in src/gerbil/test/c3-test.ss, docs in doc/reference/gerbil/runtime/c3.md.
+
+**François-René Rideau**. "Lambda, the Ultimate Object". 2026. (Not yet published)
+http://fare.tunes.org/files/cs/poof/ltuo.html .
+Includes a complete theory of OO. The C4 algorithm is explained in chapter 7.
+
+**Yannis Smaragdakis and Don Batory**. "Mixin-based programming in C++". 2000.
+In Proc. International Symposium on Generative and Component-Based Software Engineering,
+pp. 164–178. doi:10.1007/3-540-44815-2_12 .
+Explains the basic approach to implementing Mixin inheritance on top of C++ templates.

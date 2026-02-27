@@ -746,16 +746,59 @@ that contradict it, the winners erasing the losers.
 Win-win interactions rather win-lose, that was a revolution
 that made multiple inheritance sensible when it otherwise wasn’t.
 
-I will present the more refined generalization of this principle as the
-method combinations from CLOS @~cite{CLtL2 clhs Verna2023},
-rather than the more limited method combinations of the original Flavors.
+Flavors notably allowed regular or “primary” methods to be extended in subclasses with
+“before” and “after” methods, respectively called before and after the primary method@xnote[","]{
+  The semantics of before and after methods is quite similar to the concatenation semantics
+  of Simula and Beta, except that the most-specific-first order of before methods
+  and most-specific-last order of after methods is the opposite of the concatenation semantics
+  of Simula. Of course, one could easily define a new method combination
+  that uses the order of Simula, opposite of this default order for before and after methods.
+  Note how the default order used by Lisp works better with the normal OO extension protocol
+  adopted by everyone after Smalltalk.
+}
+that could setup and tear down resources, do logging or permission checking or resource accounting,
+hold and release locks, etc.
+Because these extension points are standard, both subclasses and clients can enjoy them
+without the author of the original method of the original class having to foresee,
+implement and advertise such an extension protocol, making the design modular.
+But that was just the default “method combination”.
+
+Flavors also allowed you to define methods using a “simple method combination”
+that used an operator like @c{progn} (sequential execution), @c{and} or @c{or}
+(logical conjunction or disjunction, with short-circuits)
+to combine the results of each method, as evaluated either in
+most-specific-first or most-specific-last order, as specified by the programmer.
+Typical other operators included @c{+ * max min progn list append nconc}@xnote["."]{
+  @c{nconc} is a variant of @c{append} that involves side-effects.
+}
 
 The simplest case of method combination is actually
 the usual composition of modular extensions,
-wherein each extension can refer to its super argument
+wherein each extension can refer to its @c{super} argument
 along a multiple inheritance specification’s precedence list,
 as discussed in @secref{MI}.
-But I can do better, as an API on top of this foundation.
+But I can do better, show how to implement method combinations in general
+on top of this foundation@xnote["."]{
+  Ironically, that’s the one kind of method combination @emph{not} present as a builtin
+  in the original Flavors, while the more elaborate kind were already provided:
+  in the default “daemon” method combination,
+  only one primary method (from the most specific class) would be called,
+  but @c{before} and @c{after} methods were also supported
+  in the style of ADVISE @~cite{teitelman1966};
+  @c{around} methods were only added in CLOS @~cite{Bobrow1988CLOS}.
+  The simple method combinations were supported, again without @c{around} methods.
+  But you could define arbitrary method combinations by providing a @c{wrapper} macro
+  that computed the effective method from the ordered list of individual methods.
+  And chaining methods through a @c{call-next-method} first argument would definitely
+  have been possible.
+  Still such a protocol was not provided in Flavors or its successors until
+  it appeared in CommonLoops @~cite{Bobrow1986CommonLoops}.
+}
+
+Now, while the original method combinations of Flavors were quite capable,
+method combinations were further refined by New Flavors, CommonLoops, and
+most notably by CLOS @~cite{CLtL2 clhs Verna2023}.
+My presentation will therefore be more directly inspired by CLOS than by Flavors.
 
 @subsection{Effective Methods and Method Qualifiers}
 
@@ -1070,7 +1113,11 @@ How that interacts with multiple dispatch tables, global or local.
 
 @exercise[#:difficulty "easy"]{
   Define the missing simple CLOS method combinations in an efficient way, for
-  @c{+ * max min progn list append nconc or and}
+  @c{+ * max min progn list append nconc or and}.
+  Hints: @c{progn} is just the Lisp operator for sequential evaluation of expressions,
+  returning the value of the last one. @c{nconc} is a variant of @c{append} that uses side-effects;
+  and @c{append} and @c{nconc} done wrong will be quadratic rather than linear so be careful.
+  Also note the existence of IEEE floating point number @c{+inf.0} and @c{-inf.0}.
 }
 
 @exercise[#:difficulty "Medium"]{

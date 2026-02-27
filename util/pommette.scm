@@ -237,7 +237,7 @@ With Racket: racket pommette.rkt
 
 ;; As a warm up, S K I combinators (that can also be useful later)
 (def (S x y z) (x z (y z)))
-(def (K x y) x)
+(def (K x _y) x)
 (def (I x) x)
 
 ;; B combinator, composition

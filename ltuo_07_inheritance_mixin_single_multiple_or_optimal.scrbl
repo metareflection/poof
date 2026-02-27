@@ -385,9 +385,9 @@ of which the specification is the most specific element.
 Note that in this book, I will reserve the word “parent” for a specification
 another “child” specification depends on, and the word “super” to the partial target,
 the value that is inherited as argument passed to the child’s modular extension.
-This is consistent with my naming the second argument to my modular extensions @c{super}
-(sometimes shortened to @c{t}, since @c{s} is taken for the first @c{self} argument)
-and the second argument to my @c{mix} function @c{parent} (sometimes shortened to @c{p}).
+This is consistent with my naming the first argument to my modular extensions @c{super}
+(sometimes shortened to @c{t}, since @c{s} is taken for the @c{self} argument)
+and the first argument to my @c{mix} function @c{parent} (sometimes shortened to @c{p}).
 Extant literature tends to confuse specification and target
 as the same entity “class” or “prototype” without being aware of a conflation,
 and so confusing “parent” and “super” is par for the course in that literature.
@@ -433,9 +433,39 @@ If the language lacks any of the above features, then users can still implement 
 by manually providing unique names for specifications; but maintaining those unique names
 is a burden on users that decreases the modularity of the object system, and
 can become particularly troublesome in nested and computed specifications.
-Interestingly, the λ-calculus itself crucially lacks the features needed
-for DAG node identity; a tag must be externally provided,
-or side-effects (or a monad encoding) are required for a counter.
+
+Interestingly,
+@emph{the λ-calculus itself crucially lacks the features needed for DAG node identity}:
+an externally provided tag, or some other side-effect are required for a counter,
+possibly via a monad encoding (with a state monad for the counter).
+The inability of the plain λ-calculus to @emph{directly} manipulate graphs,
+when its very semantic is itself about graph reduction, suggests that
+@principle{to describe the reduction-level semantics of computing systems in general,
+the λ-calculus must be extended with some primitives for the manipulation of graph data},
+that indeed would include identity tagging and comparison.
+Note however, there are plenty of “reflective” extensions of the λ-calculus
+that do not need such detailed view of graph,
+and instead happily abstract over it@~cite{Mogensen1995}.
+So the lack of a builtin graph support is is actually a feature in other contexts@xnote["."]{
+  In any case, functional programming isn’t so much about
+  using the λ-calculus without any extensions or monads,
+  as it is about making it explicit what minimal set of extensions or monads
+  you need to express your semantics.
+  A stricter view of functional programming might insist on purity and equational reasoning,
+  which interestingly is not preserved by making a state monad implicit in general
+  but @emph{is} preserved when making an opaque tag generator generator implicit,
+  wherein tags can only be observed through equality checks.
+  Such an extended such λ-calculus is still congruent, and still allows for substitution
+  of equivalent expressions.
+  But many expressions that are equivalent in the base λ-calculus become distinguished
+  in this extension: in the base calculus, the expressions @c{(f E E)} (external duplication)
+  and @c{((λ (x) (f x x)) E)} (internal duplication) are always equivalent, but no more,
+  since the internal duplication causes sharing and tag equalities
+  while the external one doesn’t.
+  This may confuse people touting the ill-defined notion of “referential transparency”
+  or abusing it to mean that external equivalence of expressions should imply
+  internal equality checks to return true even in externally duplicated contexts.
+}
 
 The type for a multiple inheritance specification would thus look like the following,
 where @c{Nat} is the type of natural numbers,
@@ -702,7 +732,6 @@ This property was also one of the major innovations of Flavors @~cite{Cannon1979
 As I will show, it implies that the semantics of multiple inheritance
 can be reduced to those of mixin inheritance
 (though mixin inheritance would only be formalized a decade later).
-It is the first of three eponymous constraints of C3 @~cite{Barrett1996C3}.
 Inheritance order and linearity together imply linearization,
 especially since some methods involve sequential computations,
 and a uniform behavior is mandated over all methods.
@@ -778,11 +807,19 @@ CommonLoops @~cite{Bobrow1986CommonLoops} adopted it as
 “local precedence”, “local ordering”, and “local precedence list”.
 CLOS @~cite{Bobrow1988CLOS CLtL2} adopts it as “local precedence order”.
 Ducournau et al. speak of “local ordering” or “local precedence order”
-@~cite{Ducournau1992 Ducournau1994}.
-C3 says “local precedence order”.
-It is the second of the three eponymous constraints of C3 @~cite{Barrett1996C3}.
+@~cite{Ducournau1992 Ducournau1994}@xnote["."]{
+  @citet{Barrett1996C3} notes that the algorithm in @citet{Ducournau1994}
+  fails to preserve the local precedence order in corner cases where
+  a parent is also the ancestor of a previous parent. As an example,
+  they exhibit the ancestry
+  @c{(choice-widget) (menu choice-widget) (popup-mixin)
+     (new-popup-menu menu popup-mixin choice-widget)}.
+}
+It is the second of the three eponymous constraints of C3 @~cite{Barrett1996C3},
+that calls it “local precedence order”.
+
 Among popular “flavorful” languages,
-Python, Perl, Lisp and Solidity notably respect this constraint,
+Common Lisp, Python, Perl, and Solidity notably respect this constraint,
 but Ruby and Scala fail to.
 
 For even more user control, and thus more expressiveness, some systems might accept
@@ -790,12 +827,30 @@ specification of more precise ordering constraints between its parents and ances
 (I will later propose an algorithm that does just that):
 instead of one totally ordered list of parents,
 they might accept a partial order between parents,
-to be specified e.g. as a list of totally ordered lists of parents instead of a single one.
+to be specified as (the transitive closure of)
+a list of totally ordered lists of parents instead of a single one.
 If the list is itself a singleton, then it is the same as if a total order was specified.
 If the list is made of singletons, then it is the same as if
 there were no specified local order constraint between parents.
 Every partial order can be expressed that way,
 even if only with a list of lists of two elements, one list for each pair of comparable elements.
+
+@Paragraph{Extended Precedence: Consistency in Preferences}
+If a specification @c{X} is chosen to appear before a specification @c{Y} in the linearization,
+then all the ancestors of @c{X} that aren’t ancestors of @c{Y} will also appear before @c{Y}
+in the linearization.
+
+This property was introduced by @citet{Ducournau1992} as “extended order”,
+and first enforced by the algorithm in @citet{Ducournau1994}.
+It is the first of the three eponymous constraints of C3 @~cite{Barrett1996C3}.
+
+Ducournau explain the property in terms of the linearization being a subset of
+an “extended precedence graph”,
+total preorder that extends the local order such that if a parent comes before another,
+all its ancestors that aren’t before the other’s also come before.
+But I prefer the presentation in terms of the linearization outcome,
+not only because it is simpler, but because it directly makes sense
+when I extend the local order to be an arbitrary DAG rather than a total order.
 
 @Paragraph{Monotonicity: Consistency across Ancestry}
 The “method resolution order” for a child specification should be consistent
@@ -895,6 +950,11 @@ A dummy mother-of-all precedence list can be produced at the end of static compi
 to check global consistency, with an error issued if incompatibilities are detected
 (and if possible actionable error messages).
 At the very least, an order can be enforced on lock-issuing specifications.
+
+Maintenance of a global order across a large codebase can be difficult,
+but some automation can help: @citet{Hivert2024} uses an “instrumented C3 algorithm”
+to generate minimal local orders that will ensure a new class’s precedence list
+will match a desired global order.
 
 @subsection{Computing the Precedence List}
 
@@ -1962,6 +2022,17 @@ flowchart BT
   rather than hash-table search is used if the tables are small enough.
   To make it a research-level project, get your favorite programming language
   to accept flavorful multiple inheritance with C4 linearization as its OO inheritance mechanism.
+}
+
+@exercise[#:difficulty "Research"]{
+  Do the above exercise for some Common Lisp implementation (suggestion: SBCL or CCL),
+  then modify the implementation so C4 becomes the default,
+  then figure out how many of the classes in Quicklisp (if any) are incompatible with C4.
+  Fix them, and see if you can make C4 the new default, at least optionally.
+  See if you can get buy in from other implementations.
+  If needed, argue with Lispers that the inability to mix classes and structs
+  makes CLOS inferior in one way to Ruby and Scala, and lack of monotonicity
+  makes it inferior in one way to Python or Perl. Use their pride against (and for) them.
 }
 
 @exercise[#:difficulty "Research"]{

@@ -1090,8 +1090,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   pages={170–177},
   numpages={8},
   note={.
-    Earliest find of “single inheritance” by Google Scholar... when describing Smalltalk as having a
-    “single inheritance hierarchy” (i.e. only one “inheritance hierarchy”).
     GLISP is an impressive Lisp dialect with a compiler to Lisp implemented in Lisp
     (ported to Interlisp, Maclisp, Franz Lisp, UCI Lisp, Elisp, Portable Standard Lisp),
     with type inference, and a message-passing object system with multiple inheritance;
@@ -1317,16 +1315,18 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   note={.
     Excellent paper.
     This reprint of a 1985 report presents CommonLoops, an evolution from LOOPS
-    that integrates lessons from New Flavors, from which it takes linearization and generic functions,
-    that it extends to support multimethods. As in LOOPS, there are metaclasses
+    that integrates lessons from New Flavors, from which it takes
+    linearization, method combinations and generic functions,
+    that it further extends to support multimethods. As in LOOPS, there are metaclasses
     (that control single or multiple inheritance, slot accessors).
-    It has a form of call-next-method named run-super.
+    It introduces what will later be known as call-next-method, then named run-super.
     Method calls are compiled with various optimizations including local and global method caches.
     Introduces class variables, init-forms in slot descriptions
     instead of access-time default values as in LOOPS, slot properties,
     “active values” (kind of method combination for slot accessors?).
     More nice design discussions and comparisons.
-    Symbols are all lowercase.
+    Symbols are all lowercase, names are shortened (e.g. defmeth, not defmethod).
+    A direct predecessor to CLOS.
   }
 }
 
@@ -2774,6 +2774,49 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % A behavioral notion of subtyping
 
 %% 1995
+
+@TechReport{Boyd1995,
+  author={John R. Boyd},
+  title={The Essence of Winning and Losing},
+  year={1995},
+  month=jun,
+  type={Briefing slides},
+  url={https://slightlyeastofnew.com/wp-content/uploads/2010/03/essence_of_winning_losing.pdf},
+  note={.
+    In this 5-slide summary from 1996, Boyd draws a detailed OODA diagram,
+    introduced in his earlier 193-slide 1986 briefing, itself evolved from
+    his 1976 essay “Destruction and Creation”.
+    “Observe, Orient, Decide, Act” is the essential feedback loop of
+    all intelligent life (at any level of intelligence) embedded in wider universe it interacts with.
+    And often, it is more important to have a faster feedback loop than the competition
+    to beat them, than to have more raw power.
+    While Boyd initially developed his theory in the context of dogfights between jetplanes,
+    it is important not just for the military, but for any human or AI endeavor,
+    even without rival beside one’s own potential other selves.
+    In the end, it’s always about life, and death, and OODA loops always matter.
+  }
+}
+
+@InProceedings{Mogensen1995,
+  author={Torben Ægidius Mogensen},
+  title={Self-Applicable Online Partial Evaluation of the Pure Lambda-Calculus},
+  booktitle={1995 ACM SIGPLAN Symposium on Partial Evaluation and Semantics-Based Program Manipulation},
+  journal={Lecture Notes in Computer Science},
+  pages={39-44},
+  year={1995},
+  doi={10.1145/215465.215469},
+  note={
+    M encodes of the λ-calculus in itself using higher-order syntax,
+    then has interpreters, reducers and partial evaluators for the encoding,
+    and Futamura projections for those partial evaluators, and
+    interactions with the Y combinator. Very cool stuff.
+    Not directly related to OO, though.
+    Also the representation choosen deliberately does not expose the sharing or non-sharing
+    of nodes during graph reduction and evaluation; it is a “shallow” encoding in this way,
+    which is actually great for many applications (where these details are a bore), and
+    terrible for other applications (where these details are crucial).
+  }
+}
 
 % https://pl.cs.jhu.edu/projects/type-constraints/papers/type-inference-for-recursively-constrained-types-and-its-application-to-oop-longer-version.pdf
 @article{isoop1995,
@@ -4543,6 +4586,28 @@ and Fiech, Adrian",
 
 %% 2016
 
+% DOI for online edition: 10.1093/oso/9780198754626.001.0001
+@book{hanson2016,
+  author={Hanson, Robin},
+  title={The Age of Em: Work, Love, and Life when Robots Rule the Earth},
+  year={2016},
+  publisher={Oxford University Press},
+  address={Oxford},
+  isbn={978-0-19-875462-6},
+  url={https://doi.org/10.1093/oso/9780198754626.001.0001},
+  note={.
+    Hanson imagines what how societies of emulated beings with silicon substrate,
+    that could react up to a million times faster than humans, would organize and
+    interact with the comparatively slow humans. He anticipates that these beings
+    would start as emulated human brains (hence Em) rather than as synthetic AIs,
+    but this hypothesis is only important for a small part of the discussion.
+    More interesting aspects are the societies being made of nested “forks” of
+    some initial being, some long term, some short term. Also the cost of speed,
+    versus the cost of duration, the impedance mismatch when communicating with
+    beings running at different speeds, etc.
+  }
+}
+
 @webpage{ngnghm9,
   author={François-René Rideau},
   title={Build Systems and Modularity},
@@ -5173,20 +5238,20 @@ and Fiech, Adrian",
 % seems assumed, no mechanism or example of such definition is provided,
 % and in particular, no discussion about the extensibility of such definition
 @inproceedings{10.1145/512976.512997,
-author={Goodenough, John B.},
-title={Structured exception handling},
-year={1975},
-isbn={9781450373517},
-publisher={Association for Computing Machinery},
-address={New York, NY, USA},
-url={https://doi.org/10.1145/512976.512997},
-doi={10.1145/512976.512997},
-abstract={In this paper, we define what exception conditions are, discuss the requirements exception handling language features must satisfy, survey and analyze existing approaches to exception handling, and propose some new language features for dealing with exceptions in an orderly and reliable way. Our objective is not solely to put forward a language proposal. It is also to analyze exception handling issues and principles in detail. The proposed language features serve to highlight exception handling issues by showing how deficiencies in current approaches could be remedied in a coherent and orderly way.},
-booktitle={Proceedings of the 2nd ACM SIGACT-SIGPLAN Symposium on Principles of Programming Languages},
-pages={204–224},
-numpages={21},
-location={Palo Alto, California},
-series={POPL '75}
+  author={Goodenough, John B.},
+  title={Structured exception handling},
+  year={1975},
+  isbn={9781450373517},
+  publisher={Association for Computing Machinery},
+  address={New York, NY, USA},
+  url={https://doi.org/10.1145/512976.512997},
+  doi={10.1145/512976.512997},
+  abstract={In this paper, we define what exception conditions are, discuss the requirements exception handling language features must satisfy, survey and analyze existing approaches to exception handling, and propose some new language features for dealing with exceptions in an orderly and reliable way. Our objective is not solely to put forward a language proposal. It is also to analyze exception handling issues and principles in detail. The proposed language features serve to highlight exception handling issues by showing how deficiencies in current approaches could be remedied in a coherent and orderly way.},
+  booktitle={2nd ACM SIGACT-SIGPLAN Symposium on Principles of Programming Languages},
+  pages={204–224},
+  numpages={21},
+  location={Palo Alto, California},
+  series={POPL '75}
 }
 
 % Tribute to Daniel Bobrow by his brother. Weak on technical content.
@@ -5207,20 +5272,67 @@ series={POPL '75}
 % Henry Baker
 % https://doi.org/10.2514/6.1989-3140
 
+% Comb inheritance
+% https://thenewobjective.com/types-and-programming-languages/comb-inheritance/
 
-@InProceedings{Mogensen1988SelfApplicable,
-  author={Torben Ægidius Mogensen},
-  title={Self-Applicable Partial Evaluation},
-  booktitle={1995 ACM SIGPLAN Symposium on Partial Evaluation and Semantics-Based Program Manipulation},
-  journal={Lecture Notes in Computer Science},
-  pages={39-44},
-  year={1995},
-  doi={10.1145/215465.215469},
-  note={
-    M encodes of the λ-calculus in itself using higher-order syntax,
-    has interpreters, reducers and partial evaluators for the encoding,
-    and Futamura projections for those partial evaluators, and
-    interactions with the Y combinator. Very cool stuff.
-    Not directly related to OO, though.
+@InProceedings{10.5555/1623050.1623105,
+  author={Stefik, Mark},
+  title={An examination of a frame-structured representation system},
+  year={1979},
+  isbn={0934613478},
+  publisher={Morgan Kaufmann Publishers Inc.},
+  address={San Francisco, CA, USA},
+  abstract={The Unit Package is an interactive knowledge representation system with representations for individuals, classes, indefinite individuals, and abstractions. Links between the nodes are structured with explicit definitional roles, types of inheritance, defaults, and various data formats. This paper presents the general ideas of the Unit Package and compares it with other current knowledge representation languages. The Unit Package was created for a hierarchical planning application, and is now in use by several AI projects.},
+  booktitle={Proceedings of the 6th International Joint Conference on Artificial Intelligence - Volume 2},
+  pages={845–852},
+  numpages={8},
+  location={Tokyo, Japan},
+  series={IJCAI'79},
+  url={https://purl.stanford.edu/sx979cd9891},
+  doi={10.5555/1623050.1623105},
+  note={.
+    A successor to KRL.
   }
+}
+% Traces the origin of "inheritance of properties" to Quillian's "Semantic Memory" (1966/1968),
+% but that paper doesn't use "inherit" or "inheritance".
+
+
+@article{Hivert2024,
+  title={Controlling the C3 Super Class Linearization Algorithm for Large Hierarchies of Classes},
+  author={Florent Hivert and Nicolas M. Thiéry},
+  journal={Order},
+  volume={41},
+  number={1},
+  pages={83--98},
+  year={2024},
+  publisher={Springer},
+  url={https://arxiv.org/abs/2401.12740},
+  note={.
+    The authors describe how they have automated the maintenance of C3 consistency properties
+    for the SageMath abstract algebra system since 2013, their system being large enough that
+    manual consistency maintenance doesn’t scale.
+    They notably use a clever instrumented C3 algorithm to output
+    minimal local order specifications that will force for some new class
+    a precedence list compatible with the desired global order between classes.
+    The paper has a few minor technical defects (inaccurate propositions 1 and 2,
+    artificial implicit constraint on their problem 1), but they are of little consequence.
+    and pale before the major practical achievement of getting such a large system to work.
+  }
+}
+% Their propositions 1 and 2 are inaccurate: the Result 2 from Ducournau 1992 they cite
+% has a hypothesis that doesn’t hold in general about the extended precedence graph
+% being an order rather than merely a preorder.
+% Their problem seems to have the implicit constraint of the local order only having “minimal”
+% parents not being ancestors via other parents; but it is self-imposed and artificial.
+% Though the problem is a bit artificial, the way they find a solution is very cool.
+
+@website{Simionato2003,
+  title={The Python 2.3 method resolution order},
+  author={Michele Simionato},
+  year={2003},
+  lastchecked={2026-02-26},
+  url={https://www.python.org/download/releases/2.3/mro/},
+  note={.
+    The C3 method itself has nothing to do with Python, since it was invented by people working on Dylan and it is described in a paper intended for lispers},
 }
