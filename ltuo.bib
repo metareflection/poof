@@ -446,6 +446,30 @@ Instructions for bibliography assistant:
 
 %% 1975
 
+% POPL 1975 Plex
+% say "object-oriented" exceptions
+% A good predecessor to Lisp exceptions
+% paper is extremely verbose; while exception handling is well-described,
+% and the ability for users to define exceptions in addition to those provided to the system
+% seems assumed, no mechanism or example of such definition is provided,
+% and in particular, no discussion about the extensibility of such definition
+@inproceedings{10.1145/512976.512997,
+  author={Goodenough, John B.},
+  title={Structured exception handling},
+  year={1975},
+  isbn={9781450373517},
+  publisher={Association for Computing Machinery},
+  address={New York, NY, USA},
+  url={https://doi.org/10.1145/512976.512997},
+  doi={10.1145/512976.512997},
+  abstract={In this paper, we define what exception conditions are, discuss the requirements exception handling language features must satisfy, survey and analyze existing approaches to exception handling, and propose some new language features for dealing with exceptions in an orderly and reliable way. Our objective is not solely to put forward a language proposal. It is also to analyze exception handling issues and principles in detail. The proposed language features serve to highlight exception handling issues by showing how deficiencies in current approaches could be remedied in a coherent and orderly way.},
+  booktitle={2nd ACM SIGACT-SIGPLAN Symposium on Principles of Programming Languages},
+  pages={204–224},
+  numpages={21},
+  location={Palo Alto, California},
+  series={POPL '75}
+}
+
 % TODO 1975 Hewitt Stereotypes -- uses the word "inherit" a lot, especially with frames.
 % p.101 “The "frame" problem of McCarthy for assertional frames corresponds closely to
 % the problems of "inheritance of attributes" and "default values" for object frames.
@@ -800,6 +824,29 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 %% 1979
+
+@InProceedings{10.5555/1623050.1623105,
+  author={Mark Stefik},
+  title={An examination of a frame-structured representation system},
+  year={1979},
+  isbn={0934613478},
+  publisher={Morgan Kaufmann Publishers Inc.},
+  address={San Francisco, CA, USA},
+  abstract={The Unit Package is an interactive knowledge representation system with representations for individuals, classes, indefinite individuals, and abstractions. Links between the nodes are structured with explicit definitional roles, types of inheritance, defaults, and various data formats. This paper presents the general ideas of the Unit Package and compares it with other current knowledge representation languages. The Unit Package was created for a hierarchical planning application, and is now in use by several AI projects.},
+  booktitle={Proceedings of the 6th International Joint Conference on Artificial Intelligence - Volume 2},
+  pages={845–852},
+  numpages={8},
+  location={Tokyo, Japan},
+  series={IJCAI'79},
+  url={https://purl.stanford.edu/sx979cd9891},
+  doi={10.5555/1623050.1623105},
+  note={.
+    A simplified successor to KRL.
+    Not particularly interesting or original with respect to the OO aspects.
+  }
+}
+% Traces the origin of "inheritance of properties" to Quillian's "Semantic Memory" (1966/1968),
+% but that paper doesn't use "inherit" or "inheritance".
 
 @TechReport{Hewitt1979Security,
   title={Security and Modularity in Message Passing},
@@ -3244,6 +3291,25 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 1997
 
+@InProceedings{Kiczales1997,
+  author={Gregor Kiczales and John Lamping and Anurag Mendhekar and Chris Maeda and Cristina Videira Lopes and Jean-Marc Loingtier and John Irwin},
+  title={Aspect-Oriented Programming},
+  booktitle={ECOOP'97 — Object-Oriented Programming, 11th European Conference, Jyväskylä, Finland, June 9-13, 1997},
+  series={Lecture Notes in Computer Science},
+  volume={1241},
+  pages={220--242},
+  publisher={Springer},
+  year={1997},
+  month=jun,
+  doi={10.1007/BFb0053381},
+  url={https://www.cs.ubc.ca/~gregor/papers/kiczales-ECOOP1997-AOP.pdf},
+  note={.
+    This is the original, defining paper for Aspect-Oriented Programming (AOP).
+    It introduced the key ideas of cross-cutting concerns, aspects, join points, advice,
+    and aspect weaving.
+  }
+}
+
 @inproceedings{Foote1997BBoM,
   title={Big Ball of Mud},
   author={Brian Foote and Joseph W. Yoder},
@@ -3307,14 +3373,6 @@ and Fiech, Adrian",
     of subtyping (for specifications).
     Matching implies subtyping when MyType only appears in positive positions in method types.
   }
-}
-
-@InProceedings{aop97,
-  author={Kiczales, G. and Lamping, J. and Mendhekar, A. and Maeda, C. and Lopes, C. and Loingtier, J. M. and Irwin, J.},
-  title={Aspect-oriented programming},
-  booktitle={ECOOP},
-  pages={220--242},
-  year={1997}
 }
 
 %% 1998
@@ -3474,6 +3532,23 @@ and Fiech, Adrian",
 }
 
 %% 2001
+
+@InProceedings{Kiczales2001,
+  author={Gregor Kiczales and Erik Hilsdale and Jim Hugunin and Mik Kersten and Jeffrey Palm and William G. Griswold},
+  title={An Overview of AspectJ},
+  booktitle={ECOOP 2001 — Object-Oriented Programming, 15th European Conference, Budapest, Hungary, June 18-22, 2001, Proceedings},
+  series={Lecture Notes in Computer Science},
+  volume={2072},
+  pages={327--353},
+  publisher={Springer},
+  year={2001},
+  doi={10.1007/3-540-45337-7_18},
+  url={http://www.ccs.neu.edu/home/lieber/com3362/w02/lectures/working-lectures/ECOOP2001-Overview.pdf},
+  note={.
+    The canonical reference for AspectJ, the most widely adopted AOP system/extension to Java. Often cited alongside the 1997 paper when discussing practical AOP implementations.
+  }
+}
+
 
 @Webpage{Armstrong2001,
   author={Joe Armstrong},
@@ -3673,6 +3748,19 @@ and Fiech, Adrian",
 }
 
 %% 2003
+
+@Webpage{Simionato2003,
+  title={The Python 2.3 method resolution order},
+  author={Michele Simionato},
+  year={2003},
+  lastchecked={2026-02-26},
+  url={https://www.python.org/download/releases/2.3/mro/},
+  note={.
+    This part of the Python documentations has plenty of examples for how the precedence list
+    (that they call Method Resolution Order (MRO)) is computed using C3, though there are not
+    that many explanations.
+  }
+}
 
 @Webpage{Kay2003,
   Author={Alan Kay},
@@ -5020,6 +5108,35 @@ and Fiech, Adrian",
   }
 }
 
+@article{Hivert2024,
+  title={Controlling the C3 Super Class Linearization Algorithm for Large Hierarchies of Classes},
+  author={Florent Hivert and Nicolas M. Thiéry},
+  journal={Order},
+  volume={41},
+  number={1},
+  pages={83--98},
+  year={2024},
+  publisher={Springer},
+  url={https://arxiv.org/abs/2401.12740},
+  note={.
+    The authors describe how they have automated the maintenance of C3 consistency properties
+    for the SageMath abstract algebra system since 2013, their system being large enough that
+    manual consistency maintenance doesn’t scale.
+    They notably use a clever instrumented C3 algorithm to output
+    minimal local order specifications that will force for some new class
+    a precedence list compatible with the desired global order between classes.
+    The paper has a few minor technical defects (inaccurate propositions 1 and 2,
+    artificial implicit constraint on their problem 1), but they are of little consequence.
+    and pale before the major practical achievement of getting such a large system to work.
+  }
+}
+% Their propositions 1 and 2 are inaccurate: the Result 2 from Ducournau 1992 they cite
+% has a hypothesis that doesn’t hold in general about the extended precedence graph
+% being an order rather than merely a preorder.
+% Their problem seems to have the implicit constraint of the local order only having “minimal”
+% parents not being ancestors via other parents; but it is self-imposed and artificial.
+% Though the problem is a bit artificial, the way they find a solution is very cool.
+
 %% 2025
 
 @Webpage{WikiProto,
@@ -5230,30 +5347,6 @@ and Fiech, Adrian",
 % https://ootips.org/history.html
 % https://news.ycombinator.com/item?id=36826762
 
-% POPL 1975 Plex
-% say "object-oriented" exceptions
-% A good predecessor to Lisp exceptions
-% paper is extremely verbose; while exception handling is well-described,
-% and the ability for users to define exceptions in addition to those provided to the system
-% seems assumed, no mechanism or example of such definition is provided,
-% and in particular, no discussion about the extensibility of such definition
-@inproceedings{10.1145/512976.512997,
-  author={Goodenough, John B.},
-  title={Structured exception handling},
-  year={1975},
-  isbn={9781450373517},
-  publisher={Association for Computing Machinery},
-  address={New York, NY, USA},
-  url={https://doi.org/10.1145/512976.512997},
-  doi={10.1145/512976.512997},
-  abstract={In this paper, we define what exception conditions are, discuss the requirements exception handling language features must satisfy, survey and analyze existing approaches to exception handling, and propose some new language features for dealing with exceptions in an orderly and reliable way. Our objective is not solely to put forward a language proposal. It is also to analyze exception handling issues and principles in detail. The proposed language features serve to highlight exception handling issues by showing how deficiencies in current approaches could be remedied in a coherent and orderly way.},
-  booktitle={2nd ACM SIGACT-SIGPLAN Symposium on Principles of Programming Languages},
-  pages={204–224},
-  numpages={21},
-  location={Palo Alto, California},
-  series={POPL '75}
-}
-
 % Tribute to Daniel Bobrow by his brother. Weak on technical content.
 % https://ojs.aaai.org/aimagazine/index.php/aimagazine/article/view/2770
 % DOI: https://doi.org/10.1609/aimag.v38i4.2770
@@ -5274,65 +5367,3 @@ and Fiech, Adrian",
 
 % Comb inheritance
 % https://thenewobjective.com/types-and-programming-languages/comb-inheritance/
-
-@InProceedings{10.5555/1623050.1623105,
-  author={Stefik, Mark},
-  title={An examination of a frame-structured representation system},
-  year={1979},
-  isbn={0934613478},
-  publisher={Morgan Kaufmann Publishers Inc.},
-  address={San Francisco, CA, USA},
-  abstract={The Unit Package is an interactive knowledge representation system with representations for individuals, classes, indefinite individuals, and abstractions. Links between the nodes are structured with explicit definitional roles, types of inheritance, defaults, and various data formats. This paper presents the general ideas of the Unit Package and compares it with other current knowledge representation languages. The Unit Package was created for a hierarchical planning application, and is now in use by several AI projects.},
-  booktitle={Proceedings of the 6th International Joint Conference on Artificial Intelligence - Volume 2},
-  pages={845–852},
-  numpages={8},
-  location={Tokyo, Japan},
-  series={IJCAI'79},
-  url={https://purl.stanford.edu/sx979cd9891},
-  doi={10.5555/1623050.1623105},
-  note={.
-    A successor to KRL.
-  }
-}
-% Traces the origin of "inheritance of properties" to Quillian's "Semantic Memory" (1966/1968),
-% but that paper doesn't use "inherit" or "inheritance".
-
-
-@article{Hivert2024,
-  title={Controlling the C3 Super Class Linearization Algorithm for Large Hierarchies of Classes},
-  author={Florent Hivert and Nicolas M. Thiéry},
-  journal={Order},
-  volume={41},
-  number={1},
-  pages={83--98},
-  year={2024},
-  publisher={Springer},
-  url={https://arxiv.org/abs/2401.12740},
-  note={.
-    The authors describe how they have automated the maintenance of C3 consistency properties
-    for the SageMath abstract algebra system since 2013, their system being large enough that
-    manual consistency maintenance doesn’t scale.
-    They notably use a clever instrumented C3 algorithm to output
-    minimal local order specifications that will force for some new class
-    a precedence list compatible with the desired global order between classes.
-    The paper has a few minor technical defects (inaccurate propositions 1 and 2,
-    artificial implicit constraint on their problem 1), but they are of little consequence.
-    and pale before the major practical achievement of getting such a large system to work.
-  }
-}
-% Their propositions 1 and 2 are inaccurate: the Result 2 from Ducournau 1992 they cite
-% has a hypothesis that doesn’t hold in general about the extended precedence graph
-% being an order rather than merely a preorder.
-% Their problem seems to have the implicit constraint of the local order only having “minimal”
-% parents not being ancestors via other parents; but it is self-imposed and artificial.
-% Though the problem is a bit artificial, the way they find a solution is very cool.
-
-@website{Simionato2003,
-  title={The Python 2.3 method resolution order},
-  author={Michele Simionato},
-  year={2003},
-  lastchecked={2026-02-26},
-  url={https://www.python.org/download/releases/2.3/mro/},
-  note={.
-    The C3 method itself has nothing to do with Python, since it was invented by people working on Dylan and it is described in a paper intended for lispers},
-}

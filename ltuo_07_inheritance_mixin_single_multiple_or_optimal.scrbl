@@ -676,7 +676,7 @@ and sadly, also over most of its successors.
 Any sequential effects from the ancestor’s modular extension should be run
 in a consistent “Method Resolution Order@xnote["”"]{
    The term and its abbreviation MRO were introduced by Python 2.3 circa 2003,
-   @; TODO cite Michele Simionato https://docs.python.org/3/howto/mro.html
+   @~cite{Simionato2003}
    and subsequently adopted by various popular languages including Perl 5.10 circa 2007.
 }
 across all methods of a given specification that may have such effects.
@@ -838,19 +838,27 @@ even if only with a list of lists of two elements, one list for each pair of com
 @Paragraph{Extended Precedence: Consistency in Preferences}
 If a specification @c{X} is chosen to appear before a specification @c{Y} in the linearization,
 then all the ancestors of @c{X} that aren’t ancestors of @c{Y} will also appear before @c{Y}
-in the linearization.
+in the linearization (and therefore also before any of @c{Y}’s ancestors,
+that may or may not be shared with @c{X}).
+Thus, even though @c{X} might itself be specified by composing many small specifications,
+the series of these specifications will not be interrupted in the middle, or otherwise
+interspersed with potentially contradictory specifications from @c{Y}.
+Preference in specifications is consistent and predictable.
 
 This property was introduced by @citet{Ducournau1992} as “extended order”,
 and first enforced by the algorithm in @citet{Ducournau1994}.
 It is the first of the three eponymous constraints of C3 @~cite{Barrett1996C3}.
 
-Ducournau explain the property in terms of the linearization being a subset of
+Ducournau try to formalize the property in terms of the linearization being a subset of
 an “extended precedence graph”,
 total preorder that extends the local order such that if a parent comes before another,
 all its ancestors that aren’t before the other’s also come before.
-But I prefer the presentation in terms of the linearization outcome,
-not only because it is simpler, but because it directly makes sense
-when I extend the local order to be an arbitrary DAG rather than a total order.
+But their formalization is complex yet cannot be easily adapted to my extension
+of the local order being an arbitrary DAG rather than a total order.
+Thus I much prefer the informal explanation
+(that in turn could be formalized, just not the exact same way as Ducournau)
+in terms of consistent preference for a preferred specification’s ancestors
+over its dispreferred alternative.
 
 @Paragraph{Monotonicity: Consistency across Ancestry}
 The “method resolution order” for a child specification should be consistent

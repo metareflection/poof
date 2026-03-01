@@ -88,11 +88,13 @@ eoomi: build/eoomi2024.pdf
 	$(PDFVIEWER) $< $P
 
 # Side paper: LTUO
-build/ltuo.pdf: ltuo.scrbl ltuo.bib header.tex util/util.rkt util/ltuo_lib.rkt build/resources $(wildcard ltuo_*.scrbl) resources/pic/cube.pdf
-        # --style header.tex ==> causes my chapters to become 0.x !!!
+# NB: trying to use --style header.tex causes my chapters to become 0.x !!!
+build/ltuo.pdf: ltuo.scrbl ltuo.bib util/util.rkt util/ltuo_lib.rkt build/resources $(wildcard ltuo_*.scrbl) resources/pic/cube.pdf
 	RENDER_MODE=latex scribble --dest build --pdf ltuo.scrbl
 build/ltuo.html: ltuo.scrbl ltuo.bib util/util.rkt util/ltuo_lib.rkt build/resources $(wildcard ltuo_*.scrbl)
 	RENDER_MODE=html scribble --dest build --html ltuo.scrbl
+build/ltuo.tex: ltuo.scrbl ltuo.bib util/util.rkt util/ltuo_lib.rkt $(wildcard ltuo_*.scrbl)
+	RENDER_MODE=latex scribble --dest build --latex ltuo.scrbl
 resources/pic/cube.pdf: resources/pic/cube.svg
 	inkscape resources/pic/cube.svg --export-type=pdf \
 	--export-width=640 --export-height=640 \
@@ -115,3 +117,6 @@ check-pommette-chez: util/pommette-chez.scm util/pommette.scm
 
 check-pommette-racket: util/pommette.rkt util/pommette.scm
 	racket util/pommette.rkt
+
+count-ltuo-citations: build/ltuo.tex
+	grep Autobibtarget build/ltuo.tex | wc -l

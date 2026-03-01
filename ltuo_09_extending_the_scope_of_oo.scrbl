@@ -453,7 +453,7 @@ For instance, to move 50 pixels to the right a widget registered under the name 
 you might use:
 @Code{
 (skew-ext (update-lens (field-lens* 'widgets 'foo)
-                     (field-update 'x-pos))
+                       (field-update 'x-pos))
          (λ (super _self) (+ super 50)))
 }
 Helper functions might provide terser syntax for common cases,
@@ -528,7 +528,7 @@ a skew lens for a specific instance method:
 (def (instance-method-lens method-id)
   (update-lens rproto-spec-lens
     (compose-update (field-update 'instance-methods)
-                   (field-update method-id))))
+                    (field-update method-id))))
 }
 
 Now, when specifying a class instance method, the programmer thinks in terms of
@@ -665,14 +665,13 @@ A class could then define a default prototype for new instances as:
            slots)))))
 }
 
-
 A class descriptor holds a list of slot descriptors
 and builds the instance prototype by focusing and mixing:
 @Code{
 (def (class-proto slots)
   (rproto←spec
     (mix*
-      (map (lambda (slot)
+      (map (λ (slot)
              (compose (field-update (slot 'name))
                       (slot 'init-spec)))
            slots))))
@@ -765,11 +764,17 @@ But that was just the default “method combination”.
 
 Flavors also allowed you to define methods using a “simple method combination”
 that used an operator like @c{progn} (sequential execution), @c{and} or @c{or}
-(logical conjunction or disjunction, with short-circuits)
-to combine the results of each method, as evaluated either in
+(logical conjunction or disjunction, with short-circuit evaluation)
+to combine the results of each method, evaluated either in
 most-specific-first or most-specific-last order, as specified by the programmer.
 Typical other operators included @c{+ * max min progn list append nconc}@xnote["."]{
-  @c{nconc} is a variant of @c{append} that involves side-effects.
+  @c{nconc} is a historical variant of @c{append} that uses side-effects
+  to modify in place each non-empty list but the last, to link to the next one.
+  It made sense in the slow and memory-constrained machines of the 1960s to 1980s,
+  especially so before modern garbage-collection.
+  But @c{nconc} rarely makes sense in modern days,
+  where either the simpler and safer @c{append} is good enough,
+  or optimization is better sought from a more sophisticated data representation than linked lists.
 }
 
 The simplest case of method combination is actually
@@ -777,7 +782,7 @@ the usual composition of modular extensions,
 wherein each extension can refer to its @c{super} argument
 along a multiple inheritance specification’s precedence list,
 as discussed in @secref{MI}.
-But I can do better, show how to implement method combinations in general
+But I can do better, show how to implement all other method combinations
 on top of this foundation@xnote["."]{
   Ironically, that’s the one kind of method combination @emph{not} present as a builtin
   in the original Flavors, while the more elaborate kind were already provided:
@@ -797,8 +802,67 @@ on top of this foundation@xnote["."]{
 
 Now, while the original method combinations of Flavors were quite capable,
 method combinations were further refined by New Flavors, CommonLoops, and
-most notably by CLOS @~cite{CLtL2 clhs Verna2023}.
+most notably by CLOS @~cite{CLtL2 clhs AMOP Verna2023}.
 My presentation will therefore be more directly inspired by CLOS than by Flavors.
+
+@subsection{Uses of Method Combinations}
+
+It would take a lot of space to reproduce and explain @emph{in extenso}
+some real-world examples that motivate the use of method combinations:
+they would probably have to be in Common Lisp (the only language that fully supports them),
+with a quick introduction to the language, its I/O facilities,
+and some existing development framework for network client/server or GUI programming.
+A full introduction would then require programs large enough
+that the advantage of OO in general and method combinations in particular justify
+use of the feature instead of “just” inlining it away.
+
+Still, I can point to ASDF @~cite{ASDF2 ASDF3}, the Common Lisp build system,
+as a program that uses method combinations, the source code of which is freely available,
+and well-documented. I know ASDF because I was once its maintainer and
+completely re-wrote it several times.
+CLIM, the Common Lisp Interface Manager,
+a large GUI library descended from that of the Lisp Machines,
+is also heavily object-oriented, with plenty of use of method combinations;
+but I am not as familiar with it.
+Plenty of other examples abound in Quicklisp.
+
+ASDF will define some general abstract classes that correspond to some protocol
+(such as @c{component} and @c{operation}) that are gradually specialized
+into subclasses and mixins (such as @c{source-file} and @c{downward-operation})
+until concrete classes are defined (such as @c{cl-source-file} and @c{load-op}).
+To each class (or pair of component and operation classes, see @secref{MD} below)
+is associated one or two methods, sometimes more, that extend the inherited behavior.
+Thus, ASDF defines @c{:before} methods to validate invariants and issue errors
+before the primary methods are called,
+automatically setup some preconditions (like creating destination directories for output files),
+or detect and record dependencies between actions.
+ASDF defines @c{:after} methods to track down actions that were successfully completed
+so they do not have to be taken again, or complete system-provided behavior
+and check invariants after (re)initialization of some objects.
+And ASDF defines @c{:around} used to fixup the results of special cases,
+setup or use caches around computations, adjust dynamic bindings around computations,
+or detect circular dependencies between actions.
+Finally, for historical then backward-compatibility reasons, the ASDF methods
+@c{component-depends-on}, @c{input-files} and @c{output-files}
+use the standard method combination and manually append
+the contents of @c{call-next-method} to their results;
+but they would have better been written with the @c{append} method-combination,
+which would have automated what is manually done through tedious convention.
+
+These methods allow ASDF to be written in a very modular and extensible style, and
+achieve in a few thousand lines of code (and a few more for Quicklisp)
+what takes ten times more code in other languages,
+all the while exposing an extension interface actually used by many extensions:
+support for compiling and linking C, FORTRAN or Python code,
+for automatic dependency detection, for character encodings beside UTF-8,
+for deferred code in Lisp files, for file-local variables,
+for conditional autoloading of systems, for parallel compilation, etc.
+
+Other common uses of method combinations include logging or permission checks.
+One of the authors of method combinations went on to invent
+Aspect Oriented Programming (AOP) @~cite{Kiczales1997 Kiczales2001},
+that applies the ideas of Teitelman’s advice and method combinations
+to more languages.
 
 @subsection{Effective Methods and Method Qualifiers}
 
@@ -806,8 +870,7 @@ With method combinations, a target method is called the @emph{effective method}.
 It is computed based on individual @emph{method specifications}
 declared by each specification along the way.
 
-In CLOS@~cite{CLtL2 CLHS AMOP} after Flavors,
-a method can tagged with a @emph{method qualifier},
+In CLOS after Flavors, a method specification can be tagged with a @emph{method qualifier},
 usually some kind of symbols, though, in many Lisp or Scheme dialects,
 a “keyword” may be used that is somehow
 distinct from regular symbols, often with a syntax involving a colon@xnote["."]{
@@ -822,12 +885,12 @@ distinct from regular symbols, often with a syntax involving a colon@xnote["."]{
   or a choice of named arguments in many languages.
 }
 In this book, I will use regular symbols like @c{before} for method qualifiers,
-In our source code, I will quote them, since most Scheme dialects will not consider
+In my source code, I will quote them, since most Scheme dialects will not consider
 that special syntax for self-evaluating keywords as in Common Lisp.
 
 A regular method that is not explicitly tagged by the user
 is implicitly qualified as a @emph{primary method} by the system.
-I will use the @c{:primary} keyword for that in our implementation@xnote["."]{
+I will use the symbol @c{primary} for that in my implementation@xnote["."]{
   In Common Lisp, primary method are tagged with the unit value @c{NIL}
   that is also a magic self-evaluating constant symbol, a boolean,
   the conventional end-of-list marker, and general-purpose
@@ -842,8 +905,25 @@ supports @c{before} methods that will be executed before the primary methods, an
 @c{after} methods that will be executed after them, and
 @c{around} methods that will wrap around the execution of each super method.
 
-I will call @emph{sub-method} the group of methods with a given qualifier,
+I will call @emph{sub-method} the group of method specifications with a given qualifier,
+and @emph{effective sub-method} the code that will run when invoking those method specifications:
 e.g. the @c{primary} sub-method, the @c{before} sub-method, etc.
+
+Certainly, the effect of method combinations could be achieved manually,
+by having some master method calling one method for each of the sub-methods,
+orchestrated according to a known design pattern for each method combination.
+But doing things by hand is less modular precisely because it is a design pattern.
+It means programmers have to insert a lot of boilerplate, correctly, and maintain it.
+The boilerplate is costly, and must be inserted by the author of the first method,
+before it is extended, even though that author doesn’t need it.
+Those who would later like to extend the code are interested in the boilerplate,
+but if they are not part of the same development team,
+may have to fork the original code to insert that boilerplate.
+All this friction is eliminated when all methods
+use the standard method combination by default.
+And when using a different method combinations,
+other kinds of boilerplate are also avoided as convention is replaced by automation.
+
 
 @subsection{Representing sub-methods}
 
@@ -1085,7 +1165,7 @@ calling effective-method resolution on the method-specification.
 overriding a method now composes a modular extension on a field of the method-specification object:
 the primary field, before field, etc.
 
-@section{Multiple Dispatch}
+@section[#:tag "MD"]{Multiple Dispatch}
 
 Together with multiple dispatch, requires some shared (and usually global)
 dispatch table.
