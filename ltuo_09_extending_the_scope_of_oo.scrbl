@@ -817,12 +817,12 @@ that the advantage of OO in general and method combinations in particular justif
 use of the feature instead of “just” inlining it away.
 
 Still, I can point to ASDF @~cite{ASDF2 ASDF3}, the Common Lisp build system,
-as a program that uses method combinations, the source code of which is freely available,
-and well-documented. I know ASDF because I was once its maintainer and
-completely re-wrote it several times.
+as a program that makes good use of method combinations,
+and the source code of which is freely available, and well-documented.
+I know ASDF because I was once its maintainer and completely re-wrote it several times.
 CLIM, the Common Lisp Interface Manager,
 a large GUI library descended from that of the Lisp Machines,
-is also heavily object-oriented, with plenty of use of method combinations;
+is also heavily object-oriented, with plenty of uses of method combinations;
 but I am not as familiar with it.
 Plenty of other examples abound in Quicklisp.
 
@@ -832,6 +832,9 @@ into subclasses and mixins (such as @c{source-file} and @c{downward-operation})
 until concrete classes are defined (such as @c{cl-source-file} and @c{load-op}).
 To each class (or pair of component and operation classes, see @secref{MD} below)
 is associated one or two methods, sometimes more, that extend the inherited behavior.
+In the end, each method call may combine the effects of half a dozen individual inherited methods,
+depending on the classes of the arguments.
+
 Thus, ASDF defines @c{:before} methods to validate invariants and issue errors
 before the primary methods are called,
 automatically setup some preconditions (like creating destination directories for output files),
@@ -839,9 +842,13 @@ or detect and record dependencies between actions.
 ASDF defines @c{:after} methods to track down actions that were successfully completed
 so they do not have to be taken again, or complete system-provided behavior
 and check invariants after (re)initialization of some objects.
-And ASDF defines @c{:around} used to fixup the results of special cases,
+And ASDF defines @c{:around} methods to fixup the results of special cases,
 setup or use caches around computations, adjust dynamic bindings around computations,
 or detect circular dependencies between actions.
+Other common uses of the standard method combination not present in ASDF include
+logging (before, after or around) and permission checks
+(usually before, sometimes around to check results are authorized).
+
 Finally, for historical then backward-compatibility reasons, the ASDF methods
 @c{component-depends-on}, @c{input-files} and @c{output-files}
 use the standard method combination and manually append
@@ -858,11 +865,28 @@ for automatic dependency detection, for character encodings beside UTF-8,
 for deferred code in Lisp files, for file-local variables,
 for conditional autoloading of systems, for parallel compilation, etc.
 
-Other common uses of method combinations include logging or permission checks.
 One of the authors of method combinations went on to invent
 Aspect Oriented Programming (AOP) @~cite{Kiczales1997 Kiczales2001},
-that applies the ideas of Teitelman’s advice and method combinations
+that applies the ideas of Teitelman’s advice and Cannon’s method combinations
 to more languages.
+
+Certainly, for each use method combinations,
+equivalent effects could be achieved manually without method combinations,
+by having some master method calling one method for each of the sub-methods,
+orchestrated according to a known design pattern for each method combination.
+But doing things by hand is less modular precisely because
+it constitutes a fourth-class design pattern,
+whereas builtin method combinations are second-class, and user-defined ones first-class.
+A design pattern means programmers have to insert a lot of boilerplate, correctly, and maintain it.
+The boilerplate is costly, and must be inserted by the original author of the protocol,
+before it is extended, even though that author doesn’t need it.
+Those who would later like to extend the code are interested in the boilerplate,
+but if they are not part of the same development team,
+they may have to fork the original code to insert that boilerplate.
+All this friction is eliminated when all methods
+use the standard method combination by default.
+And when using a different method combination,
+other kinds of boilerplate are also avoided as convention is replaced by automation.
 
 @subsection{Effective Methods and Method Qualifiers}
 
@@ -871,7 +895,7 @@ It is computed based on individual @emph{method specifications}
 declared by each specification along the way.
 
 In CLOS after Flavors, a method specification can be tagged with a @emph{method qualifier},
-usually some kind of symbols, though, in many Lisp or Scheme dialects,
+usually some kind of symbol, though, in many Lisp or Scheme dialects,
 a “keyword” may be used that is somehow
 distinct from regular symbols, often with a syntax involving a colon@xnote["."]{
   Depending on the language or dialect, keywords are typically written with a some variant of
@@ -885,8 +909,7 @@ distinct from regular symbols, often with a syntax involving a colon@xnote["."]{
   or a choice of named arguments in many languages.
 }
 In this book, I will use regular symbols like @c{before} for method qualifiers,
-In my source code, I will quote them, since most Scheme dialects will not consider
-that special syntax for self-evaluating keywords as in Common Lisp.
+for portability, that I will quote to prevent evaluation.
 
 A regular method that is not explicitly tagged by the user
 is implicitly qualified as a @emph{primary method} by the system.
@@ -905,41 +928,33 @@ supports @c{before} methods that will be executed before the primary methods, an
 @c{after} methods that will be executed after them, and
 @c{around} methods that will wrap around the execution of each super method.
 
+Simple method combinations accept methods with a method qualifier with the same symbol
+as the simple method combination (e.g. @c{+} for adding the results of the methods),
+and also and with the @c{around} method qualifier.
+User-defined method combinations may accept methods with any kind of method qualifier.
+
 I will call @emph{sub-method} the group of method specifications with a given qualifier,
 and @emph{effective sub-method} the code that will run when invoking those method specifications:
 e.g. the @c{primary} sub-method, the @c{before} sub-method, etc.
-
-Certainly, the effect of method combinations could be achieved manually,
-by having some master method calling one method for each of the sub-methods,
-orchestrated according to a known design pattern for each method combination.
-But doing things by hand is less modular precisely because it is a design pattern.
-It means programmers have to insert a lot of boilerplate, correctly, and maintain it.
-The boilerplate is costly, and must be inserted by the author of the first method,
-before it is extended, even though that author doesn’t need it.
-Those who would later like to extend the code are interested in the boilerplate,
-but if they are not part of the same development team,
-may have to fork the original code to insert that boilerplate.
-All this friction is eliminated when all methods
-use the standard method combination by default.
-And when using a different method combinations,
-other kinds of boilerplate are also avoided as convention is replaced by automation.
-
+Indeed, when manually expressing method combinations as a design pattern,
+those each sub-method would be expanded into a separate method.
 
 @subsection{Representing sub-methods}
 
 The best way to store sub-methods would be if there were “funcallable instances”
-(to use CLOS terminology, but like instances in T in general)
+(to use CLOS terminology; like instances in T in general)
 that conflate a function and a record in a single entity.
-Obviously, the interface for extracting a value from a record cannot then be
-applying the record as a function to a symbol, or the function wouldn’t be available
-(unless symbols are excluded from the function’s co-domain, but that’s ugly).
-Since getting a record value isn’t a function call, you also cannot directly use
-the Y combinator on a record (see @secref{RaR}).
 Then the sub-methods would be stored in the “record” part of the method,
 and the method would still be its “function” part.
+However, the interface for extracting a value from a record cannot then be
+applying the record as a function to a symbol, or the function wouldn’t be available
+(unless symbols are excluded from the function’s co-domain, but that’s ugly).
+And since getting a record value isn’t a function call, you also cannot directly use
+the Y combinator on a record the way we did previously (see @secref{MFCM}),
+but must instead use a slightly different strategy (see @secref{RaR}).
 
-Lacking such funcallable instances, we can store submethod information
-in a record sub-methods next to the methods being combined.
+Lacking such funcallable instances, we can store sub-method information
+in a record @c{sub-methods} next to the methods being combined.
 For the sake of generality, a method-spec can be any kind of specification
 (modular extension, multiple or optimal inheritance specification, etc.),
 and the @c{method-cons} says how to combine it with the specification data so far;
@@ -952,23 +967,27 @@ to be folded or otherwise processed later
   (compose-lens* (field-lens 'sub-methods)
                  (field-lens method-id)
                  (field-lens tag)))
-(def (sub-method-spec method-id tag method-cons method-spec)
+(def (sub-method-spec method-cons tag method-id method-spec)
   (sub-method-lens method-id tag 'update
     (λ (method-specs) (method-cons method-spec method-specs))))
 (def (standard-method-cons spec specs)
   (cons spec specs))
+(def standard-sub-method-spec
+  (sub-method-spec standard-method-cons))
 (def (sub-methods-support-spec)
   (field-spec 'sub-methods record-spec))
 (def (method-combination-init-spec
        method-id method-combination-init)
   (field-spec 'sub-methods
-    (constant-field-spec 'method method-combination-init)))
-(def simple-method-combination-init
-  (record (around '()) (primary '())))
+    (constant-field-spec method-id method-combination-init)))
+(def (simple-method-combination-init name)
+  (extend-record 'around '()
+   (extend-record name '()
+    empty-record)))
 (def standard-method-combination-init
    (extend-record 'before '()
     (extend-record 'after '()
-     simple-method-combination-init)))
+     (simple-method-combination-init 'primary))))
 }
 
 Then there is the question of who is responsible for initializing
@@ -1007,6 +1026,14 @@ but it is more explicit and thus hopefully more didactic.
 We can then implement the standard method combination as follows:
 running the @c{around} methods, then the @c{before} methods,
 then the @c{primary} methods, and finally the @c{after} methods in reverse order.
+The @c{call-chain} function chains methods through an inherited @c{call-next-method}
+argument that, if called with no argument, calls the next method with the same arguments,
+but, if called with arguments, passes them to to the subsequent methods.
+The @c{progn-method-most-specific-} methods chain the execution of methods
+for @c{before} and @c{after} methods.
+The @c{standard-no-applicable-method} is a good default when no method is defined.
+And @c{standard-compute-effective-method} finally
+computes the effective method from the sub-methods.
 
 @Code{
 (def (call-chain methods on-exhausted)
@@ -1031,96 +1058,161 @@ then the @c{primary} methods, and finally the @c{after} methods in reverse order
 (def (standard-compute-effective-method method-id sub-methods)
   (call-chain (sub-methods 'around)
     (λ (self . args)
-      (progn-methods-most-specific-first (sub-methods 'before) self args)
+      (progn-methods-most-specific-first
+        (sub-methods 'before) self args)
       (let ((result
               (apply (call-chain (sub-methods 'primary)
                        (λ (self . args)
-                         (apply no-applicable-method method-id self . args)))
+                         (apply no-applicable-method
+                           method-id self . args)))
                        self args)))
-          (progn-methods-most-specific-last (sub-methods 'after) self args)
+          (progn-methods-most-specific-last
+            (sub-methods 'after) self args)
           result))))
+}
+You can then initialize a method to use the standard method combination by calling this function:
+@Code{
+(def (standard-method-init-spec method-id)
+  (mix
+    (method-spec method-id
+       (λ (_super self)
+          (standard-compute-effective-method method-id (self sub-methods))))
+    (method-combination-init-spec
+       method-id standard-method-combination-init)))
+}
+And you can define sub-methods by using these specifications
+with arguments @c{method-id method-spec}:
+@Code{
+(def primary-method-spec (standard-sub-method-spec 'primary))
+(def before-method-spec (standard-sub-method-spec 'before))
+(def after-method-spec (standard-sub-method-spec 'after))
+(def around-method-spec (standard-sub-method-spec 'around))
 }
 
 @subsection{Simple Method Combination}
 
-Simple method combinations are then as follows:
+CLOS allows users to define and use simple method combinations
+that compose the results of methods according to some n-ary associative
+(and sometimes also commutative) operator.
+Predefined such simple method combinations use the operators
+@c{progn} (sequential execution of side-effects),
+@c{and} (boolean short-circuiting logical and),
+@c{or} (boolean short-circuiting logical and),
+or the commutative functions
+@c{+}, @c{*}, @c{min}, @c{max},
+or the @c{list} or @c{append} functions.
+
+Users can also define their own simple method combinations as follows,
+where @c{name} is the name of the sub-method
+(and also conventionally that of the method combination),
+@c{stop?} a predicate on whether to short circuit evaluation,
+@c{op0} a thunk to evaluate if there are no methods (takes one dummy argument),
+@c{op1} an unary operator to run on the first method result to make it into a return value,
+@c{op2} the binary operator with which to combine
+the result from the next method and the return value from previous computations
+into a new return value,
+@c{order} one of the two symbols @c{most-specific-first} or @c{most-specific-last}
+telling in which order to run the methods,
+and @c{sub-methods} a record of the sub-methods:
 
 @Code{
-(def (simple-compute-effective-method op identity order sub-methods)
+(def (simple-compute-effective-method
+       name stop? op0 op1 op2 order sub-methods)
   (let* ((arounds (sub-methods 'around))
-         (primaries (sub-methods 'primary))
+         (methods (sub-methods name))
          (ordered (case order
-                    ((most-specific-first) primaries)
-                    ((most-specific-last) (reverse primaries)))))
+                    ((most-specific-first) methods)
+                    ((most-specific-last) (reverse methods)))))
    (call-chain arounds
     (λ (self . args)
-      (foldr
-        (λ (m acc) (op (apply m self args) acc))
-          identity
-          ordered)))))
+      (letrec ((run (λ (m) (apply m abort self args)))
+               (f (λ (acc lst)
+                    (if (and (not (stop? acc)) (pair? lst))
+                      (let ((v (op2 (run (car lst)) acc)))
+                        (if (stop? v) v (f v (cdr lst))))
+                      acc))))
+        (if (pair? ordered)
+          (f (op1 (run (car ordered))) (cdr ordered))
+          (op0 #f)))))))
+
+(def (compute-effective-method/progn sub-methods)
+  (simple-compute-effective-method
+    'progn (λ (_) #f) (λ (_ r) r) (λ (x) x) (λ (_) #f)
+    'most-specific-first sub-methods))
+
+(def (compute-effective-method/and sub-methods)
+  (simple-compute-effective-method
+    'and not (λ (_ r) r) (λ (x) x) (λ (_) #t)
+    'most-specific-first sub-methods))
 
 (def (compute-effective-method/+ sub-methods)
-  (simple-compute-effective-method + 0 'most-specific-first sub-methods))
+  (simple-compute-effective-method
+    '+ (λ (_) #f) + (λ (x) x) (λ (_) 0)
+    'most-specific-first sub-methods))
 
 (def (compute-effective-method/* sub-methods)
-  (simple-compute-effective-method * 1 'most-specific-first sub-methods))
+  (simple-compute-effective-method
+    '* (λ (_) #f) * (λ (x) x) (λ (_) 1)
+    'most-specific-first sub-methods))
 
 (def (compute-effective-method/list sub-methods)
-  (simple-compute-effective-method cons '() 'most-specific-first sub-methods))
+  (simple-compute-effective-method
+    'list (λ (_) #f) cons list (λ (_) '())
+    'most-specific-last sub-methods))
 }
-
-@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+You can define then initialize a function with specifications like this one:
+@Code{
+(def (list-method-init-spec method-id)
+  (mix
+    (method-spec method-id
+       (λ (_super self)
+          (compute-effective-method/list (self sub-methods))))
+    (method-combination-init-spec
+       method-id (simple-method-combination-init 'list))))
+}
+And you can define sub-methods by using specifications like this one,
+and/or the @c{around-method-spec} above, with arguments @c{method-id method-spec}:
+@Code{
+(def list-method-spec (standard-sub-method-spec 'list))
+}
 
 @subsection{User-defined Method Combinations}
 
-
-
-
-These methods can then enact any kind of setup or cleanup,
-resource allocation and deallocation, locking, error handling, access control,
-argument normalization, etc.,
-that the primary methods can safely rely on.
-Of course, methods thus named only make sense in the context of side-effects;
-but in a pure functional language, they may still be useful,
-just translated into monadic functions that provide equivalent functionality
-in the user’s favorite monad.
-
-But that is not all. CLOS, after Flavors, allows users to select different
-method combinations from the @emph{standard method combination} that is the default.
-With the @c{list} combination, each defined method provides a single answer,
-and the effective method will collect those answers into a list.
-With the @c{append} combination, each defined method may provide a list of answers,
-and the effective method will append those lists into a single one.
-Similar method combinations are available for other monoidal operations:
-@c{+}, @c{*}, @c{min}, @c{max}, @c{and} (boolean short-circuiting logical and),
-@c{or} (boolean short-circuiting logical and), @c{progn} (sequential execution of side-effects).
-Users can define their own simple method combinations with their own monoidal operation,
-that can chain methods defined along the precedence list
-from @c{:most-specific-first} to least specific,
-or @c{:least-specific-first} to most specific.
-
-And users are not limited to predefined method combinations:
-they can also define their own,
-that will compute an @emph{effective method} in whichever arbitrary way they want,
-from whichever methods were declared with whatever qualifiers they want to support,
+And users are not limited to predefined method combinations.
+In the most general case, users may define their own method combination,
+that support methods declared with whichever qualifiers they want to support,
 ordered whichever way they prefer.
-A method combination can trivially implement
-Simula- and Beta-style “prefix” inheritance in seven lines of code;
-and flavorless conflict-style multiple inheritance could be implemented
-in a few hundred lines of code@xnote["."]{
-  Claude Code in a few minutes created and debugged a working implementation
-  of flavorless inheritance,
-  in under 800 lines of code and 200 of tests, for SBCL and CCL, using the CLOS MOP.
-  Yet, the fact that, in over 46 years that both kinds of multiple inheritance existed,
-  and that it was relatively easy to implement flavorless inheritance
-  on top of flavorful inheritance using method combinations,
-  no human seems to have ever bothered to implement this mechanism, much less use it,
-  is a strong symptom that in fact it is a silly thing to do.
-  The Claude AI assistant comments:
-  “once you’ve grasped that methods can @emph{combine} rather than @emph{collide},
-  deliberately implementing collision semantics would feel like building
-  a car that refuses to start if you have both a driver and a passenger.”
-}
+Thus for instance, they may define and use method combinations for the following purposes:
+
+@itemize[
+  @item{They may reimplement the inheritance semantics of Simula, of C++,
+        or of whichever their favorite programming language is.}
+  @item{They may define additional layers of @c{around}, @c{before} and @c{after} methods,
+        with the same order as usual, or the opposite order.}
+  @item{They may write pure functional monadic variants of the standard method combination,
+        lazy or eager, with a constant monad or one given as an argument or a dynamic variable, etc.}
+  @item{They may develop interactions wherein tagged methods correspond to actions
+        by two (or more) participants.}
+  @item{They may define method variants that apply at different phases, with different capabilities:
+        compile-time vs runtime vs some more refined discipline that includes
+        typechecking time, static resource allocation time, error handling time,
+        access control checking time, etc.}]
+
+To that effect, they would develop some kind of @c{foo-method-init-spec}
+to suitably initialize the method and its sub-methods,
+based on a @c{compute-effective-foo-method} function, and a @c{foo-method-combination-init} record;
+they would also define @c{foo-method-spec} or such for each sub-method,
+either using @c{standard-sub-method-spec}, or
+@c{sub-method-spec} with an appropriate a specialized @c{method-cons} argument
+to pre-compose the sub-method specifications in advance of @c{compute-effective-foo-method}.
+
+Suitably tagged methods can then be used in a structured way to enact any kind of
+environment setup or cleanup, argument validation, argument normalization,
+resource allocation and deallocation, locking, logging, error handling, access control,
+detail accumulation, etc.,
+that the primary methods can safely rely on.
+
+@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
 
 @subsection{Generic Functions}
 
@@ -1140,6 +1232,7 @@ CommonLOOPS, CLOS, Cecil, Fortress, etc. @; TODO @~cite{Bobrow1986CommonLoops}
 
 @; TODO quickly mention multi-methods with secref
 
+
 Note how program information is stored in two independent set of entities:
 one the one hand the specifications, and the generic functions
 (or the generic functions grouped into “protocols”).
@@ -1154,16 +1247,6 @@ because it enables independent extension of a data type with new functionality
 without having to predict in advance all the future interfaces you’ll want to implement
 (as in Java), or changing the ancestry after the fact (with ugly side effects,
 or in a pure contagious way that would really require a fixpoint you don't have access to).
-
-
-@subsection{Implementing Method Combination}
-
-Define a method-specification as a derived field next to the effective method
-(or maybe inside it, if conflation or function and object is allowed),
-and the effective method as “just”
-calling effective-method resolution on the method-specification.
-overriding a method now composes a modular extension on a field of the method-specification object:
-the primary field, before field, etc.
 
 @section[#:tag "MD"]{Multiple Dispatch}
 
@@ -1199,6 +1282,19 @@ How that interacts with multiple dispatch tables, global or local.
   and @c{append} and @c{nconc} done wrong will be quadratic rather than linear so be careful.
   Also note the existence of IEEE floating point number @c{+inf.0} and @c{-inf.0}.
 }
+
+@exercise[#:difficulty "medium"]{
+  In a few lines of code, define a method combination that implements
+  the concatenation semantics of Simula, and its “inner” keyword.
+  Implement it purely with functions, and optionally use macros so the syntax
+  is closer to the original.
+  Optionally, implement the semantics of Beta instead of that of Simula,
+  or in addition to it@xnote["."]{
+    Note that in the case of Beta, much of the difficulty is in
+    understanding its semantics to begin with, based on the available documentation.
+    See my notes on @citet{Kristensen1987Beta}, or
+    ask AI for help understanding the Beta documentation.
+}}
 
 @exercise[#:difficulty "Medium"]{
   If you did exercise @exercise-ref{08to09}, compare

@@ -1412,8 +1412,20 @@ prefer to use or implement single inheritance when offered the choice.
   from @secref{IMSMO} on top of CLOS.
   You will thereby both prove that CLOS can implement the same multiple inheritance
   patterns as C++, ADA, Smalltalk do—but also how much effort that takes,
-  and how uncolloquial the resulting style is.
-}
+  and how uncolloquial the resulting style is@xnote["."]{
+    I used Claude Code (Opus 4.5) to create and debug in a few minutes
+    a working implementation of flavorless inheritance on SBCL and CCL, using the CLOS MOP.
+    The result was under 800 lines of code and 200 of tests.
+    Yet, the fact that, in over 46 years that both kinds of multiple inheritance existed,
+    and that it was relatively easy to implement flavorless inheritance
+    on top of flavorful inheritance using method combinations,
+    no human seems to have ever bothered to implement this mechanism, much less use it,
+    is a strong symptom that in fact it is a silly thing to do.
+    The Claude AI assistant comments:
+    “once you’ve grasped that methods can @emph{combine} rather than @emph{collide},
+    deliberately implementing collision semantics would feel like building
+    a car that refuses to start if you have both a driver and a passenger.”
+}}
 
 @section[#:tag "OISMIT"]{Optimal Inheritance: Single and Multiple Inheritance Together}
 

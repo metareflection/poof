@@ -949,3 +949,9 @@ Type intersection vs function overloading, with static or dynamic dispatch
 based on static or dynamic type information associated with the object.
 If no such type information available (e.g. from Haskell typeclass Data.Dynamic),
 actual same code must. Ad hoc vs parametric polymorphism. XXXX
+
+
+https://github.com/marcoheisig/fast-generic-functions
+
+CLIM presentation types implemented using the MOP
+https://www.jucs.org/jucs_14_20/an_implementation_of_clim/jucs_14_20_3358_3369_moore.pdf
