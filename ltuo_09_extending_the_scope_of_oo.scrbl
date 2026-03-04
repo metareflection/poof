@@ -1188,7 +1188,15 @@ Thus for instance, they may define and use method combinations for the following
   @item{They may reimplement the inheritance semantics of Simula, of C++,
         or of whichever their favorite programming language is.}
   @item{They may define additional layers of @c{around}, @c{before} and @c{after} methods,
-        with the same order as usual, or the opposite order.}
+        with the same order as usual, or the opposite order@xnote["."]{
+           Interestingly, at some point, ASDF 1 defined a method combination just
+           for the purpose of another layer of around methods.
+           But ASDF 2, vying for portability even on some implementations that didn’t support it,
+           removed it, and instead achieved the same effect manually for the only method
+           that used it, by introducing a new wrapping method that calls the regular one.
+           Even without the portability issue, a method combination usually only makes sense
+           when it is actively used by more than one method.
+        }}
   @item{They may write pure functional monadic variants of the standard method combination,
         lazy or eager, with a constant monad or one given as an argument or a dynamic variable, etc.}
   @item{They may develop interactions wherein tagged methods correspond to actions
@@ -1211,44 +1219,139 @@ environment setup or cleanup, argument validation, argument normalization,
 resource allocation and deallocation, locking, logging, error handling, access control,
 detail accumulation, etc.,
 that the primary methods can safely rely on.
+Method combinations promote modularity thanks to better factoring of code,
+that allows for the extensibility of code along more independent axes.
 
-@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+@subsection{Inherited Interfaces vs Orthogonal Protocols}
+
+In the above design, all specifications that use a method must inherit
+from the same @c{foo-method-init-spec method-id} ancestor, or else
+they will end up using incompatible method specifications.
+Not only is such requirement for a common ancestor onerous,
+it prevents modularity in many ways:
+First, redundant specifications that must be manually maintained identical
+is the very definition of not modular.
+Second, and just as importantly, by requiring specifications (and prototypes and classes)
+to inherit from a common ancestor to be able to define a method,
+means that you cannot add new methods to specifications after the fact.
+
+Java and C# are two languages known for their terrible design requiring
+a class to explicit inherit from an interface at the moment it is created
+so it may expose methods that satisfy that interface.
+This design is terrible, because it requires omniscience from
+a class author about all the interfaces that the users of the class may ever want to satisfy,
+including, impossibly, about interfaces that do not exist yet,
+in other systems that haven’t been written yet.
+Alternatives for users would include to reimplement the class from scratch,
+or write an onerous wrapper around the existing class,
+or a subclass of it. But all these alternatives introduce
+subtle and unsubtle incompatibilities, impedance mismatch,
+wrappings and unwrappings all over the place, and yet
+in the end still have the same problem with respect to yet future interfaces,
+then requiring another layer of wrapping all over again
+for each team that wants to extend the capabilities of a class.
+
+By contrast, CLOS generic functions, Clojure protocols, Haskell typeclasses, Rust traits, etc.,
+enable programmers to define methods for a class (or typeclass) @emph{after the fact},
+without wrappings and unwrappings, reimplementations, etc.
+This vastly increasing modularity.
+I will call this design @emph{orthogonal protocol} to contrast it with the
+@emph{inherited interface} of Java and C#.
+The key feature is some notion of “protocol”, i.e. a set of related functions,
+that can have different implementations for various types, classes, specifications, etc.,
+while being defined independently (that’s what “orthogonal” means).
+Protocol implementations are modular entities, that are also first-class and extensible
+in CLOS or Clojure, but sadly only second-class and not extensible in Haskell or Rust.
 
 @subsection{Generic Functions}
 
-The original Flavors adopted the “message passing” paradigm,
-and associated method combinations to messages:
-to pass a message @c{m} to object @c{x}, you invoke @c{(x m args ...)}.
-But its successor New Flavors @~cite{Moon1986Flavors},
-introduced the notion of a @emph{generic function},
-that preserves the usual syntax and semantics of a function,
-and encapsulates the same notion of an identified entity you invoke with arguments,
-the behavior of which can be specified in modular extensible ways:
-to call a generic function @c{g} on object @c{x}, you invoke @c{(g x args ...)}.
-The object @c{x} is now an argument instead of the function.
-Method combination information is then associated to this generic functions.
-The notion of generic function was thereafter adopted by
-CommonLOOPS, CLOS, Cecil, Fortress, etc. @; TODO @~cite{Bobrow1986CommonLoops}
+In CLOS as opposed to Clojure, protocols are informal (external, fourth-class) groupings
+of @emph{generic functions}, that are the only formal (internal, first-class) entities.
+A generic function (gf) embodies all the “meta” information about a method:
+its signature, its inheritance style and method combination,
+its default behavior when no method is defined, etc.
 
-@; TODO quickly mention multi-methods with secref
+This way of storing information is in sharp contrast with
+letting the same information be provided by a specification via
+inheriting from an interface specification as in Java,
+wherein different classes could inherit from opposite information
+about same-named methods, and more importantly you have
+the previously discussed issue with lack of modularity.
+Protocols as independent entities also can avoid the complexity of mutable inheritance,
+wherein you’d modify a specification after the fact so it would inherit from a new interface.
 
+Generic functions were introduced as “generic operations” by T @~cite{Rees1982T},
+and reprised as “generic functions” by New Flavors, LOOPS, CommonLoops, CLOS,
+but also beyond Lisp by Cecil @~cite{CecilMultimethods} and Fortress @~cite{Allen2011Type}.
 
-Note how program information is stored in two independent set of entities:
-one the one hand the specifications, and the generic functions
-(or the generic functions grouped into “protocols”).
+In the “message passing” paradigm adopted by the original Flavors after Smalltalk and Actors,
+objects receive and handle messages.
+Method combinations are was attached to “messages”, i.e. method names.
+Method invocations look like @c{(send object method-id args ...)}.
 
-Putting method metadata (sub-methods, specification composition,
-method combination, multiple dispatch signature, inheritance style,
-behavior on no-applicable-method, etc.)
-behavior in a gf is much more modular
-than putting method metadata in a superclass,
-because it enables independent extension of a data type with new functionality
-(see the “expression problem”)
-without having to predict in advance all the future interfaces you’ll want to implement
-(as in Java), or changing the ancestry after the fact (with ugly side effects,
-or in a pure contagious way that would really require a fixpoint you don't have access to).
+My “record target” paradigm so far is actually isomorphic to that, in that
+an @c{object} is a message-handling function, to which I pass a @c{method-id}
+(a Scheme symbol) as message argument, returning the method function to which
+I keep passing further curried arguments.
+Method invocations look like @c{(object method-id args ...)}.
+(In functional style, entities are functions and “sending” is just calling.)
+
+Now in the “generic function” paradigm, the gf (generic function),
+identified by @c{method-id}, is the functional entity, and
+the @c{object} is its first argument, that I can complement with further arguments.
+Method invocations look like
+@c{(method-id object args ...)}.
+
+The three syntactic representations are semantically equivalent,
+but the generic function representation makes it obvious that
+instead of being associated to objects and their inheritance,
+the base information about methods is associated to the gf,
+an entity well-integrated with regular functions.
+
+Interestingly, that means that individual method specifications
+are no longer to be considered as attached to one single entity,
+the record specification, prototype or class;
+instead, individual method specifications are to be considered as
+attached to a pair of two entities: the gf on the one hand,
+and the specification, prototype or class on the other hand.
+You can think of it as being in a relational data table indexed by two fields,
+the gf and the specification, or hash-table indexed by the pair.
+
+Generic function in the context of higher-order FP introduces some extra complexity.
+Since methods don’t have a single owner but two,
+method lifetime management can become tricky:
+if either the generic function or the specification becomes unreachable,
+then the method can be deleted.
+When defining a specification or gf in a nested scope, and it doesn’t escape,
+then associated methods can be statically deleted at the scope exit;
+if it escapes or may escape, then garbage collection is required, and may involve
+a weak hash-table indexed by weak pairs (i.e. the pair becomes unreachable
+when either side becomes unreachable, at which point so do indexed entries).
+
+Then again, in CLOS, generic functions and classes are considered
+second-class global objects for regular programs, so the problem is avoided
+(though reflection through the MOP make them first-class
+for the sake of metaprograms and infrastructure, at which point
+programmers are supposed to solve the problem manually if it arises).
+More second-class concepts built into the language do increase complexity somewhat though.
+And in a very dynamic language with first-class prototypes and generic functions
+that get defined locally, avoiding space leaks will involve extra complexity
+for garbage collection.
+
+At some point, you may realize that generic functions bring extra complexity
+for the same reason they bring extra modularity:
+because they associate method specifications to a pair of independent entities,
+rather than to a single entity or sub-entity thereof.
+Since the entities are independent, new ones can be modularly defined
+without modifying existing ones, the behavior of which is extended in incremental ways.
+This is the essence of any real solution to the “expression problem” @~cite{Wadler1998}.
+And then you may further realize that you could gain even more modularity
+by associating methods not to a pair of entities, but to arbitrary large tuples of entities.
+Which leads us to the invention of multiple dispatch.
 
 @section[#:tag "MD"]{Multiple Dispatch}
+
+@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
 
 Together with multiple dispatch, requires some shared (and usually global)
 dispatch table.
@@ -1267,7 +1370,7 @@ Now if you have first-class OO, then you necessarily have dynamic dispatch.
 
 But you could have second-class OO without dynamic dispatch: C++ without "virtual" methods; Java with only static methods; Interface passing style with constant interfaces; etc.
 
-Kin vs type. @~cite{Allen2011Type}
+Kin vs type. @~cite{Allen2011Type}.
 
 Also works in typeclass-style vs class-style.
 

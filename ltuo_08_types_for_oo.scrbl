@@ -962,6 +962,16 @@ they can’t let go even after these assumptions have been debunked:
 @citet{Abadi1996Primitive AbadiCardelli1996ToO},
 @citet{Cartwright2013Inheritance}, @citet{abdelgawad2014domain}.
 
+PS: Static analyses are at some level equivalent to abstract interpretations,
+that are also equivalent to typesystems. It’s just that they are not designed
+for human consumption and meant to be stable across regular program extension;
+they are only meant for compiler consumption under the assumption of
+a fixed program that won’t be extended during execution
+(at least not without invalidating the compiled code).
+A relevant and interesting paper that comes to mind in the context
+of modelling OOP in terms of FP is @citet{Might2010}.
+I am sure there are many others, but once again this is not my specialty.
+
 @subsection[#:tag "OOTP"]{OO Type Practice}
 
 I shook my head at theorists who put types on top of toy object systems rather than underneath;

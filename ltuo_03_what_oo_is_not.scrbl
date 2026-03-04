@@ -486,7 +486,8 @@ that Alan Kay also once mentioned was essential for OO@xnote["."]{
   In the end, the essence of OO, which is Prototype OO,
   directly fits in the pure lazy functional paradigm,
   but only fits indirectly in other paradigms,
-  including the pure applicative functional paradigm.
+  including the pure applicative functional paradigm of Erlang in-process,
+  or the process-oriented paradigm of Erlang between-processes.
 }
 
 Most OO languages have no support whatsoever for concurrency,
@@ -817,3 +818,11 @@ If you have trouble with this question, you may consider digging on the etymolog
 and early history of the word “ideology” itself.
 But it’s much better if you manage to find your own example of such hostile take-over of a word.
 }}
+
+@;{
+  TODO: put everything in a @section{Things OO isn’t (that people claim it is)}
+  Break down OO isn't a model of the world with a section for UML/...
+  and another just for Goguen's works
+  then move Epistemological Digression as a section here.
+  maybe the false dichotomy between inheritance and delegation? Or, make it a bridge to ch. 3.
+}
