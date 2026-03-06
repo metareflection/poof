@@ -102,12 +102,12 @@ resources/pic/cube.pdf: resources/pic/cube.svg
 	--export-filename=resources/pic/cube.pdf
 ltuopdf: build/ltuo.pdf
 ltuo: build/ltuo.html build/ltuo.pdf
-	$(PDFVIEWER) build/ltuo.pdf $P
+	$(PDFVIEWER) build/ltuo.pdf :$(P)
 ltuo2: build/ltuo.html build/ltuo.pdf
 	rsync -av $^ ~fare/files/cs/poof/
 	rsync -av $^ bespin:files/cs/poof/
 	wc ltuo*.scrbl ltuo.bib eoomi2024.scrbl
-	$(PDFVIEWER) build/ltuo.pdf $P
+	$(PDFVIEWER) build/ltuo.pdf :$(P)
 
 check-pommette-gerbil: util/pommette-chez.scm util/pommette.scm
 	gxi util/pommette.scm

@@ -132,7 +132,10 @@ As distributed systems became widespread, FP proved more practical
 than imperative programming for managing state and avoiding the problematic interactions
 that make concurrent programs slow and buggy.
 Because OO had been sold in a package deal with imperative programming,
-it fell out of fashion alongside it.
+it fell out of fashion alongside it@xnote["."]{
+  To make things worse, FP was also sold
+  in a package deal with typesystems incapable of supporting OO.
+}
 
 Grumpy old Lispers like me yell at the clouds that
 there was never an opposition between OO and FP—that

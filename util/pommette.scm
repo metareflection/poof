@@ -386,15 +386,15 @@ let Y = f: (x: x x) (x: f (x x));
 
 
 ;;; 5.3.2 Composing Modular Extensions
-(def (mix p c t s) ;;  parent child super self
-  (c (p t s) s))
+(def (mix p c t s) ;; parent child super self
+  (c (p t s) s)) ;; chain p into c for their super argument, use the same self for both.
 
 (def (idModExt t _s) ;; super self, ignore self return super
   t) ;; neutral element for mix
 
 ;;; 5.3.3 Closing Modular Extensions
-(def (fix t m)
-  (Y (m t)))
+(def (fix t m) ;; top (supermost) element, and modular extension
+  (Y (m t))) ;; Apply m to t, take the fixpoint for the self argument
 
 ;; Generalizing compose*
 ;; Take a monoid two-argument operation op2, return the n-ary variant.

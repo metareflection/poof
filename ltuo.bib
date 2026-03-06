@@ -22,7 +22,8 @@ Instructions for bibliography assistant:
    Prefer Unicode characters to TeX escape sequences.
 * Don't make up data. If you don't have the data, leave the corresponding entry empty
 
-
+If the PDF or PS isn't available from the DOI, it may be available from a search,
+on the author’s page, sci-hub.ru, archive.org, z-library.sk, github.com, etc.
 
 @preamble{
 }
@@ -526,7 +527,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     the way he had done in previous desktop publishing projects).
     Informal but practical definition was clearly there by 1977 or 1978, and
     more formal theoretical definitions around 1990 with e.g. Cook & Bracha,
-    refining their immediate predecessors like Kamin, Reddy, Cook.
+    refining their immediate predecessors like Kamin 1988, Reddy 1988, Cook 1989.
 }}
 
 % https://link.springer.com/chapter/10.1007/3-540-07168-7_77
@@ -1281,6 +1282,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   pages={214--223},
   year={1986},
   url={https://web.media.mit.edu/~lieber/Lieberary/OOP/Delegation/Delegation.html},
+  doi={10.1145/28697.28718},
   note={.
     This is a rightfully influential paper about Prototype OO, as compared to Class OO,
     which he unhelpfully identifies with the respective underlying “delegation” and “inheritance”
@@ -1660,7 +1662,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 % https://core.ac.uk/download/pdf/42828491.pdf
 @InProceedings{ObjectsAsClosures,
-  author={Reddy, Uday},
+  author={Uday Reddy},
   title={Objects as Closures - Abstract Semantics of Object Oriented Languages},
   booktitle={ACM Symposium on LISP and Functional Programming},
   month={02},
@@ -3208,7 +3210,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     that the two need to be solved separately before they can be joined.
     Their “Generator Semantics” is on the right track, and A&C can almost articulate
     the distinction of target (“record”) and specification (“generator”),
-    but once again find the solution problematic (they are missing our “recursive conflation”).
+    but once again find the solution problematic (they are missing my “recursive conflation”).
     Then they go in and out of some Pierce “split-self” semantics (see Pierce and Turner 1993)
     and note that it works well for Class OO but move on rather than dig into
     the interesting fine reasons why.
@@ -5438,3 +5440,6 @@ series = {PLDI '10}
 
 % Comb inheritance
 % https://thenewobjective.com/types-and-programming-languages/comb-inheritance/
+
+% Bjarne Stroustrup - Object Oriented Programming without Inheritance - ECOOP 2015
+% https://www.reddit.com/r/cpp/comments/3hkfxr/bjarne_stroustrup_object_oriented_programming/

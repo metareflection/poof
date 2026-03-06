@@ -733,7 +733,7 @@ the same pattern used for methods, now lifted to slot initialization.Claude is A
 
 @; TODO section on multiple and optimal inheritance in this context
 
-@section{Method Combinations}
+@section[#:tag "MC"]{Method Combinations}
 
 @subsection{Win-Win}
 
@@ -742,7 +742,7 @@ the idea that the many methods declared in partial specifications
 are each to contribute partial information that will be harmoniously combined (mixed in),
 rather than complete information that have to compete with other conflicting methods
 that contradict it, the winners erasing the losers.
-Win-win interactions rather win-lose, that was a revolution
+Win-win interactions rather than win-lose, that was a revolution
 that made multiple inheritance sensible when it otherwise wasn’t.
 
 Flavors notably allowed regular or “primary” methods to be extended in subclasses with
@@ -807,7 +807,7 @@ My presentation will therefore be more directly inspired by CLOS than by Flavors
 
 @subsection{Uses of Method Combinations}
 
-It would take a lot of space to reproduce and explain @emph{in extenso}
+It would take a lot of space to reproduce and explain @italic{in extenso}
 some real-world examples that motivate the use of method combinations:
 they would probably have to be in Common Lisp (the only language that fully supports them),
 with a quick introduction to the language, its I/O facilities,
@@ -911,10 +911,10 @@ distinct from regular symbols, often with a syntax involving a colon@xnote["."]{
 In this book, I will use regular symbols like @c{before} for method qualifiers,
 for portability, that I will quote to prevent evaluation.
 
-A regular method that is not explicitly tagged by the user
-is implicitly qualified as a @emph{primary method} by the system.
+A regular method specification that is not explicitly tagged by the user
+is implicitly qualified as a @emph{primary} method specification by the system.
 I will use the symbol @c{primary} for that in my implementation@xnote["."]{
-  In Common Lisp, primary method are tagged with the unit value @c{NIL}
+  In Common Lisp, primary method specifications are tagged with the unit value @c{NIL}
   that is also a magic self-evaluating constant symbol, a boolean,
   the conventional end-of-list marker, and general-purpose
   null value, default value and unit value.
@@ -930,26 +930,27 @@ supports @c{before} methods that will be executed before the primary methods, an
 
 Simple method combinations accept methods with a method qualifier with the same symbol
 as the simple method combination (e.g. @c{+} for adding the results of the methods),
-and also and with the @c{around} method qualifier.
+and also with the @c{around} method qualifier.
 User-defined method combinations may accept methods with any kind of method qualifier.
 
 I will call @emph{sub-method} the group of method specifications with a given qualifier,
 and @emph{effective sub-method} the code that will run when invoking those method specifications:
 e.g. the @c{primary} sub-method, the @c{before} sub-method, etc.
 Indeed, when manually expressing method combinations as a design pattern,
-those each sub-method would be expanded into a separate method.
+each sub-method would be expanded into a separate method.
 
 @subsection{Representing sub-methods}
 
 The best way to store sub-methods would be if there were “funcallable instances”
-(to use CLOS terminology; like instances in T in general)
+(to use CLOS terminology; like instances in T, that are funcallable in general)
 that conflate a function and a record in a single entity.
 Then the sub-methods would be stored in the “record” part of the method,
 and the method would still be its “function” part.
-However, the interface for extracting a value from a record cannot then be
-applying the record as a function to a symbol, or the function wouldn’t be available
+However, if records are already applied as functions to symbols to extract values,
+as I implemented them so far, then funcallable instances wouldn’t work—the function
+call interface is already used for field access
 (unless symbols are excluded from the function’s co-domain, but that’s ugly).
-And since getting a record value isn’t a function call, you also cannot directly use
+And since getting a record value cannot be a function call, you also cannot directly use
 the Y combinator on a record the way we did previously (see @secref{MFCM}),
 but must instead use a slightly different strategy (see @secref{RaR}).
 
@@ -1024,16 +1025,18 @@ but it is more explicit and thus hopefully more didactic.
 @subsection{Standard Method Combination}
 
 We can then implement the standard method combination as follows:
-running the @c{around} methods, then the @c{before} methods,
+running the @c{around} methods, and wrapped inside them the @c{before} methods,
 then the @c{primary} methods, and finally the @c{after} methods in reverse order.
 The @c{call-chain} function chains methods through an inherited @c{call-next-method}
 argument that, if called with no argument, calls the next method with the same arguments,
-but, if called with arguments, passes them to to the subsequent methods.
-The @c{progn-method-most-specific-} methods chain the execution of methods
-for @c{before} and @c{after} methods.
+but, if called with arguments, passes them to the subsequent methods.
+The @c{progn-method-most-specific-} (-first and -last) methods chain the execution of methods
+for @c{before} and @c{after} methods respectively.
 The @c{standard-no-applicable-method} is a good default when no method is defined.
 And @c{standard-compute-effective-method} finally
 computes the effective method from the sub-methods.
+The @c{abort} are a poor man’s error mechanism in case the @c{before} or @c{after}
+methods try to invoke their @c{super} argument as a @c{call-next-method}.
 
 @Code{
 (def (call-chain methods on-exhausted)
@@ -1064,7 +1067,7 @@ computes the effective method from the sub-methods.
               (apply (call-chain (sub-methods 'primary)
                        (λ (self . args)
                          (apply no-applicable-method
-                           method-id self . args)))
+                           method-id self args)))
                        self args)))
           (progn-methods-most-specific-last
             (sub-methods 'after) self args)
@@ -1076,7 +1079,7 @@ You can then initialize a method to use the standard method combination by calli
   (mix
     (method-spec method-id
        (λ (_super self)
-          (standard-compute-effective-method method-id (self sub-methods))))
+          (standard-compute-effective-method method-id (self 'sub-methods))))
     (method-combination-init-spec
        method-id standard-method-combination-init)))
 }
@@ -1097,7 +1100,7 @@ that compose the results of methods according to some n-ary associative
 Predefined such simple method combinations use the operators
 @c{progn} (sequential execution of side-effects),
 @c{and} (boolean short-circuiting logical and),
-@c{or} (boolean short-circuiting logical and),
+@c{or} (boolean short-circuiting logical or),
 or the commutative functions
 @c{+}, @c{*}, @c{min}, @c{max},
 or the @c{list} or @c{append} functions.
@@ -1105,15 +1108,17 @@ or the @c{list} or @c{append} functions.
 Users can also define their own simple method combinations as follows,
 where @c{name} is the name of the sub-method
 (and also conventionally that of the method combination),
-@c{stop?} a predicate on whether to short circuit evaluation,
+@c{stop?} a predicate on a result value saying whether to short circuit evaluation,
 @c{op0} a thunk to evaluate if there are no methods (takes one dummy argument),
 @c{op1} an unary operator to run on the first method result to make it into a return value,
-@c{op2} the binary operator with which to combine
+@c{op2} the (curried) binary operator with which to combine
 the result from the next method and the return value from previous computations
 into a new return value,
 @c{order} one of the two symbols @c{most-specific-first} or @c{most-specific-last}
 telling in which order to run the methods,
-and @c{sub-methods} a record of the sub-methods:
+and @c{sub-methods} a record of the sub-methods.
+Again, the @c{abort} are a poor man’s error mechanism in case the regular methods
+try to invoke their @c{super} argument as a @c{call-next-method}.
 
 @Code{
 (def (simple-compute-effective-method
@@ -1137,27 +1142,27 @@ and @c{sub-methods} a record of the sub-methods:
 
 (def (compute-effective-method/progn sub-methods)
   (simple-compute-effective-method
-    'progn (λ (_) #f) (λ (_ r) r) (λ (x) x) (λ (_) #f)
+    'progn (λ (_) #f) (λ (_) #f) (λ (x) x) (λ (r _) r)
     'most-specific-first sub-methods))
 
 (def (compute-effective-method/and sub-methods)
   (simple-compute-effective-method
-    'and not (λ (_ r) r) (λ (x) x) (λ (_) #t)
+    'and not (λ (_) #t) (λ (x) x) (λ (r _) r)
     'most-specific-first sub-methods))
 
 (def (compute-effective-method/+ sub-methods)
   (simple-compute-effective-method
-    '+ (λ (_) #f) + (λ (x) x) (λ (_) 0)
+    '+ (λ (_) #f) (λ (_) 0) (λ (x) x) +
     'most-specific-first sub-methods))
 
 (def (compute-effective-method/* sub-methods)
   (simple-compute-effective-method
-    '* (λ (_) #f) * (λ (x) x) (λ (_) 1)
+    '* (λ (_) #f) (λ (_) 1) (λ (x) x) *
     'most-specific-first sub-methods))
 
 (def (compute-effective-method/list sub-methods)
   (simple-compute-effective-method
-    'list (λ (_) #f) cons list (λ (_) '())
+    'list (λ (_) #f) (λ (_) '()) list cons
     'most-specific-last sub-methods))
 }
 You can define then initialize a function with specifications like this one:
@@ -1166,7 +1171,7 @@ You can define then initialize a function with specifications like this one:
   (mix
     (method-spec method-id
        (λ (_super self)
-          (compute-effective-method/list (self sub-methods))))
+          (compute-effective-method/list (self 'sub-methods))))
     (method-combination-init-spec
        method-id (simple-method-combination-init 'list))))
 }
@@ -1199,7 +1204,7 @@ Thus for instance, they may define and use method combinations for the following
         }}
   @item{They may write pure functional monadic variants of the standard method combination,
         lazy or eager, with a constant monad or one given as an argument or a dynamic variable, etc.}
-  @item{They may develop interactions wherein tagged methods correspond to actions
+  @item{They may develop interactions wherein tagged method specifications correspond to actions
         by two (or more) participants.}
   @item{They may define method variants that apply at different phases, with different capabilities:
         compile-time vs runtime vs some more refined discipline that includes
@@ -1214,7 +1219,7 @@ either using @c{standard-sub-method-spec}, or
 @c{sub-method-spec} with an appropriate a specialized @c{method-cons} argument
 to pre-compose the sub-method specifications in advance of @c{compute-effective-foo-method}.
 
-Suitably tagged methods can then be used in a structured way to enact any kind of
+Suitably tagged method specifications can then be used in a structured way to enact any kind of
 environment setup or cleanup, argument validation, argument normalization,
 resource allocation and deallocation, locking, logging, error handling, access control,
 detail accumulation, etc.,
@@ -1236,7 +1241,7 @@ to inherit from a common ancestor to be able to define a method,
 means that you cannot add new methods to specifications after the fact.
 
 Java and C# are two languages known for their terrible design requiring
-a class to explicit inherit from an interface at the moment it is created
+a class to explicitly inherit from an interface at the moment it is created
 so it may expose methods that satisfy that interface.
 This design is terrible, because it requires omniscience from
 a class author about all the interfaces that the users of the class may ever want to satisfy,
@@ -1254,7 +1259,7 @@ for each team that wants to extend the capabilities of a class.
 By contrast, CLOS generic functions, Clojure protocols, Haskell typeclasses, Rust traits, etc.,
 enable programmers to define methods for a class (or typeclass) @emph{after the fact},
 without wrappings and unwrappings, reimplementations, etc.
-This vastly increasing modularity.
+This vastly increases modularity.
 I will call this design @emph{orthogonal protocol} to contrast it with the
 @emph{inherited interface} of Java and C#.
 The key feature is some notion of “protocol”, i.e. a set of related functions,
@@ -1286,8 +1291,21 @@ but also beyond Lisp by Cecil @~cite{CecilMultimethods} and Fortress @~cite{Alle
 
 In the “message passing” paradigm adopted by the original Flavors after Smalltalk and Actors,
 objects receive and handle messages.
-Method combinations are was attached to “messages”, i.e. method names.
-Method invocations look like @c{(send object method-id args ...)}.
+Method combinations are attached to “messages”, i.e. method names.
+Method invocations look like @c{(send object method-id args ...)}
+where @c{send} is the Flavors function to send a message to an object@xnote["."]{
+  Actually, later versions of Flavors called that function @c{send},
+  but early versions of Flavors used @c{funcall}, the Lisp function calling function:
+  Flavors was indeed using funcallable instances;
+  but the original LISP, and its successors MACLISP and Common Lisp, are “Lisp-2’s”,
+  i.e. they specially treat the first position in a SEXP as a different kind of non-terminal,
+  and distinguish function (or macro) and variable (or symbol-macro) namespaces;
+  thus, to use a variable or expression as a function,
+  you can’t just put it in first position but have to use @c{funcall} in first position.
+  This is still true in Common Lisp—as opposed to Scheme and its dialects,
+  that are “Lisp-1’s”, with only one non-terminal in the language grammar,
+  more in line with FP.
+}
 
 My “record target” paradigm so far is actually isomorphic to that, in that
 an @c{object} is a message-handling function, to which I pass a @c{method-id}
@@ -1351,14 +1369,98 @@ Which leads us to the invention of multiple dispatch.
 
 @section[#:tag "MD"]{Multiple Dispatch}
 
+@subsection{Multimethods}
+
+So far, the choice of what (effective) method to evaluate when calling a generic function
+only depended on its first argument, “the” object on which the function was invoked.
+And as long as OO was stuck in the “message passing” metaphor in which it was born,
+this seemed like the only option: you have an object, you send @emph{it} a message,
+you call @emph{its} method, etc. There is one entity, of which you select one sub-entity.
+But once you invented method combinations, and the concept of generic function followed,
+then it becomes natural to wonder why effective method selection should only depend on
+one argument, especially when there are plenty of “binary methods”
+that in fact go through great lengths to work around this limitation:
+comparison functions, algebraic operators (addition, multiplication, etc.), and more.
+
+Thus, with multiple dispatch, a method can be specialized based
+not just on one argument, but multiple arguments.
+A method specializing on multiple arguments is called a @emph{multimethod},
+and a language supporting multiple dispatch is the same as a language supporting multimethods.
+And the previous behavior of only specializing methods on a single object argument
+is renamed “single dispatch”.
+
+With multimethods, the notional table of method specifications,
+instead of being indexed by a pair of a generic function and a specification, is indexed by
+an arbitrary tuple of a generic function and any number of specifications—though
+the same number for every method within a given generic function,
+the “generic arity” of the function (e.g. 2 for binary methods).
+
+Also, a protocol (sets of related generic functions)
+supporting dispatch on multiple arguments
+is akin to a typeclass that depends on multiple typeclass constraints.
+And indeed, you can desugar the latter into the former:
+a typeclass function with @c{n} typeclass constraints is like a generic function
+dispatching on @c{n} elements, being the “dictionaries” for each of those @c{n} constraints.
+The difference being that Haskell typeclasses do not support inheritance,
+but CLOS protocols do @~cite{LIL2012}.
+
+Multimethods notably simplify away “binary methods”, “double dispatch”,
+and the “visitor pattern”.
+They offer a modular alternative to these often nightmarish “design patterns”,
+and supporting actual win-win inheritance when they typically only support conflict inheritance.
+
+@subsection{Binary Methods Done Right}
+
+For decades, developers of object-oriented protocols have stumbled upon problems
+regarding “binary methods”, the behavior of which depends not just on one object,
+but also on a second object:
+comparing objects of various types for equality or for (total or partial) order;
+adding two numbers involves different operations whether you try to add two integers,
+or two floating-point numbers, or an integer and a floating-point number,
+or two strings, or two matrices of the same shape, etc.;
+displaying an object on some graphical or text terminal;
+inserting an entry into some collection;
+planning or performing a build operation on a code component;
+etc.
+
+In languages that only have single dispatch, writing such methods is problematic,
+and not only due to the contravariance issues we discussed relative to typing (@secref{LotN}):
+how do you write such code, and how do you keep it modular and extensible?
+You can dispatch on the first object, and have method in each case; fine.
+But what about the second object?
+A simple “solution” is to do a runtime typecheck for the second object,
+and handle each case in a list of known possibilities.
+Problem is, you must know in advance all the possible types you will ever want to use
+fro the second argument, and the result is not extensible.
+A more complex solution is to create a separate method
+for each possible specification for the first argument,
+then call that method on the second argument:
+thus the method @c{add} on an integer calls the method @c{add-to-integer} on the second argument.
+
+This approach, known as “double dispatch” works, but is awkward and limited in many ways:
+since languages that need this do not have generic functions or multiple dispatch,
+you need to include the specialized method in the class definition itself,
+which once again means that all possible classes for the first argument must be known in advance
+when defining the class for the second argument,
+so this fourth-class design pattern is only extensible for the second argument.
+also, there is no good way to “call the next method” and compose multiple inherited behavior.
+
 @XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+
+@subsection{Extending Multiple Inheritance}
+
+Even when specifications themselves use single inheritance wherein ancestries are totally ordered,
+pointwise comparison with each of the many specifications of a tuple
+will lead to a partial order between tuples of specifications.
+
+
 
 Together with multiple dispatch, requires some shared (and usually global)
 dispatch table.
 Can still be pure, with global modular extension.
 How does that work for classes defined or extended in a narrow scope?
 
-@section{Dynamic Dispatch}
+@section[#:tag "DD"]{Dynamic Dispatch}
 
 First-class modularity vs second-class.
 Note that in most second-class OO languages, you often also have this as first-class modularity
@@ -1376,6 +1478,10 @@ Also works in typeclass-style vs class-style.
 
 How that interacts with multiple dispatch tables, global or local.
 
+Subjective dispatch: dynamically bound implicit first argument to all methods
+(higher priority than other arguments, can majorly redefine the meaning of programs).
+Objective dispatch: dynamically bound implicit last argument to all methods
+(lower priority than other arguments, can minorly adjust the meaning of all programs).
 
 @exercise[#:difficulty "easy"]{
   Define the missing simple CLOS method combinations in an efficient way, for

@@ -312,7 +312,7 @@ both for the simple cases it is good enough to cover,
 and for its failure modes that tripped so many good programmers
 into wrongfully trying to equate inheritance and subtyping.
 
-@subsection{Limits of the NNOOTT}
+@subsection[#:tag "LotN"]{Limits of the NNOOTT}
 
 The NNOOTT works well in the non-recursive case, i.e.
 when the types of fields do not depend on the type of the module context;
