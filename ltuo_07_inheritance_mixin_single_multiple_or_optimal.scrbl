@@ -405,7 +405,7 @@ that since it is associative can also be viewed flattened as a list,
 and the overall hierarchy is a multitree… except that an ancestor specification
 (and its own ancestors) can appear multiple times in a specification’s tree.
 
-@subsection{Representing Specifications as DAG Nodes}
+@subsection[#:tag "RSaDN"]{Representing Specifications as DAG Nodes}
 
 To represent a specification in multiple inheritance,
 one will need not just a modular extension, but a record of:
@@ -442,7 +442,9 @@ The inability of the plain λ-calculus to @emph{directly} manipulate graphs,
 when its very semantic is itself about graph reduction, suggests that
 @principle{to describe the reduction-level semantics of computing systems in general,
 the λ-calculus must be extended with some primitives for the manipulation of graph data},
-that indeed would include identity tagging and comparison.
+that indeed would include identity tagging and comparison—and, for the sake of performance,
+some kind of efficient association tables based on these tags
+(or these association tables would have to be done via linear search).
 Note however, there are plenty of “reflective” extensions of the λ-calculus
 that do not need such detailed view of graph,
 and instead happily abstract over it@~cite{Mogensen1995}.

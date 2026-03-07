@@ -244,7 +244,8 @@ You can focus a modular extension by looking at it through a matching skew lens:
 @Code{
 skew-ext : SkewLens i r p j s q → ModExt i r p → ModExt j s q
 (def (skew-ext l m super self)
-  (l 'update (λ (inner-super) (m inner-super (l 'view self))) super))
+  (l 'update (λ (inner-super) (m inner-super (l 'view self)))
+             super))
 }
 
 Thus with a @c{SkewLens i r p j s q},
@@ -454,7 +455,7 @@ you might use:
 @Code{
 (skew-ext (update-lens (field-lens* 'widgets 'foo)
                        (field-update 'x-pos))
-         (λ (super _self) (+ super 50)))
+          (λ (super _self) (+ super 50)))
 }
 Helper functions might provide terser syntax for common cases,
 but what matters for the purpose of this book is that
@@ -1295,7 +1296,7 @@ Method combinations are attached to “messages”, i.e. method names.
 Method invocations look like @c{(send object method-id args ...)}
 where @c{send} is the Flavors function to send a message to an object@xnote["."]{
   Actually, later versions of Flavors called that function @c{send},
-  but early versions of Flavors used @c{funcall}, the Lisp function calling function:
+  but early versions of Flavors just used @c{funcall}, the Lisp function calling function:
   Flavors was indeed using funcallable instances;
   but the original LISP, and its successors MACLISP and Common Lisp, are “Lisp-2’s”,
   i.e. they specially treat the first position in a SEXP as a different kind of non-terminal,
@@ -1435,30 +1436,115 @@ fro the second argument, and the result is not extensible.
 A more complex solution is to create a separate method
 for each possible specification for the first argument,
 then call that method on the second argument:
-thus the method @c{add} on an integer calls the method @c{add-to-integer} on the second argument.
+thus the method @c{add} on an integer calls the method @c{add-to-integer} on the second argument,
+with the first object as first argument—exchanging the roles of dispatch object
+and first non-dispatch argument, but after having specialized the method.
+This approach is known as the “double dispatch” design pattern,
+and can be generalized to triple dispatch, or any kind of n-uple dispatch.
 
-This approach, known as “double dispatch” works, but is awkward and limited in many ways:
+But double dispatch is awkward and limited in many ways:
 since languages that need this do not have generic functions or multiple dispatch,
-you need to include the specialized method in the class definition itself,
-which once again means that all possible classes for the first argument must be known in advance
-when defining the class for the second argument,
+you need to include the specialized method in the specification itself,
+which once again means that all possible specifications for the first argument
+must be known in advance when defining the specification for the second argument,
 so this fourth-class design pattern is only extensible for the second argument.
-also, there is no good way to “call the next method” and compose multiple inherited behavior.
+Also, in languages with visibility limitations on an object’s internal state,
+the refined method might not be able to see the state of the object,
+or that state may have to be shared more broadly than desired.
+Finally, there is no good way to “call the next method” and compose multiple inherited behavior,
+and every programmer of every part of the protocol would have to cooperate with the pattern,
+which is hard to enforce.
+
+A more sophisticated approach known as the “visitor pattern” @~cite{GoF1994},
+is both a special case of double dispatch and a generalization of it.
+A general-purpose method @c{accept} or @c{visit} takes a “visitor” object as argument,
+and each class @c{Foo} calls the special-purpose method @c{visitFoo} on the visitor,
+with the current object (of class @c{Foo} indeed) as parameter.
+The visitor pattern is thus an instance of double dispatch,
+that essentially provides a translation from the class namespace to the method namespace.
+Each visitor can then provide a method for each the specifications it wants to support;
+and visitors can themselves be extended with further methods to support further specifications,
+making them more extensible than e.g. pattern-matching on argument classes.
+By having the visitor object abstract over both the specific operation
+and the further arguments, you can use chains of visitors to implement all kinds of operations.
+Compared to regular double dispatch, the visitor pattern is more general, and
+crucially allows for operations being defined after the class is defined.
+But the visitor pattern also involves more boilerplate,
+having to define visitor classes with all the required information.
+Importantly, the visitor pattern also requires all state to be public,
+or otherwise shared will all possible present and future visitors.
+Finally, while there is still no good way to support “call-next-method”
+with the visitor pattern, at least the problem is factored in a way that
+the support could conceivably be implemented once and then shared with many visitors.
+
+Now, if the object system itself has builtin support multiple dispatch, then
+double dispatch as a design pattern, and its generalizations to triple and n-uple dispatch,
+or to the visitor pattern, disappear completely
+as complex yet insufficiently helpful design patterns.
+They are replaced by “just use the system-provided multiple dispatch”.
+Suddenly, these methods become simple to write, extensible for both arguments,
+without visibility issues (any method can see the state of any argument it matches),
+and with full win-win composability of the methods.
+
+@subsection{Multiple Multiple Inheritance}
+
+The set of multimethods that match a given tuple of arguments is necessarily a partial order:
+by separately specializing one argument or the other,
+you can easily define mutually incomparable method signatures
+that match the tuple of arguments, even if each argument’s ancestry are a total order.
+Multimethods will thus naturally leverage and extend the techniques used for multiple inheritance:
+linearizing the order of methods,
+method combination based on the resulting precedence list, etc.
+Typically, linearization happens via lexicographical order of per-argument linearization:
+this linearization corresponds to the same behavior as the double dispatch and the visitor pattern
+in the degenerate case that only the first found method is called;
+it has a clear precedence based on the first argument,
+and it nicely extends the order of a single dispatch order on the first argument,
+in that methods specialized on the first argument
+will be placed relatively to each other the same as if dispatching on just that argument.
+
+Like the multiple inheritance that it extends (see @secref{RSaDN}),
+multiple dispatch relies on the ability to reify the graph nature of computations
+through the generation and equality checking of unique tags,
+which programming languages typically implement by exposing pointer equality
+(@c{eq?} in Scheme, @c{===} in JavaScript, etc.), and,
+for the sake of efficiency, some kind of (hash) tables based on it.
+Indeed, to be able to walk through each inheritance DAG’s node once and only once,
+one needs to be able to identify and distinguish them; and with multiple dispatch,
+one will also want to identify generic functions, their method signatures
+(tuples of a generic function and specifications being specialized on),
+and partial method signatures (prefixes of the previous tuples).
+
+A simple implementation of multiple dispatch involves a global table of defined multimethods,
+which would constrain all specifications to pass around the global context
+for the sake of specifying multimethods, though they may narrow it down with (skew) lenses
+after extracting a (lens for) the global table.
+A more elaborate implementation may involve a multimethod table per generic function,
+local to said generic function, so now the context of multimethod specifications
+only needs be broad enough to encompass the generic function and the specifications in the signature.
+By using a double-dispatch-like series of tables and subtables indexed by partial method signature,
+stored locally in each prototype target, one may specify multimethods
+with just the gf tag and update access to the specifications, without needing to update the gf;
+the main advantage is then that the representation is backward compatible with
+the previous representation for single dispatch only,
+so that code that previously worked with a narrow context can still work essentially unchanged.
+
+In any case, the specification context for multimethods is usually wider than the specification
+context of a single-dispatch method, that needs only contain the prototype or class being specified.
+That is a retrospectively obvious necessity when defining multimethods—but,
+one may note that while each single method can do with a narrower context,
+duplicating the effect of multimethods requires the very same wider context
+even without system support for multiple dispatch, and
+manually using double-dispatch as a design pattern:
+in all cases, you will need to modify all the specifications at stake,
+and many additional ones, too (“visitors”).
+This is an important point: multiple dispatch invites you to broaden the context
+of your fixpoints, from a single specification, to, in the limit, the entire OO ecosystem.
 
 @XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
 
-@subsection{Extending Multiple Inheritance}
+@;TODO implementation
 
-Even when specifications themselves use single inheritance wherein ancestries are totally ordered,
-pointwise comparison with each of the many specifications of a tuple
-will lead to a partial order between tuples of specifications.
-
-
-
-Together with multiple dispatch, requires some shared (and usually global)
-dispatch table.
-Can still be pure, with global modular extension.
-How does that work for classes defined or extended in a narrow scope?
 
 @section[#:tag "DD"]{Dynamic Dispatch}
 
