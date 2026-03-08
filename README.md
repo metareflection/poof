@@ -3,7 +3,7 @@
 This directory contains the source for our paper
 “Prototypes: Object Orientation, Functionally”.
 View the [precompiled PDF](http://fare.tunes.org/files/cs/poof.pdf).
-The same [Racket Scribble source](poof.scrbl) can produces
+The same [Racket Scribble source](poof.scrbl) can produce
 simultaneously a printable document and a runnable library.
 
 One version of this paper was published and presented at the
