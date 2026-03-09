@@ -64,7 +64,8 @@ With Racket: racket pommette.rkt
     ((_ v . body)
      (begin
        ;; Allow autocurrying self-reference in the definition body
-       (define-syntax @tmp (syntax-rules () ((_ . a) (@ tmp . a))))
+       ;; (name) with 0 args calls tmp; (name a ...) curries via @
+       (define-syntax @tmp (syntax-rules () ((_) (tmp)) ((_ . a) (@ tmp . a))))
        (define tmp (let () . body))
        (define-identifier-macro v tmp @tmp)))))
 
@@ -522,7 +523,6 @@ let Y = f: (x: x x) (x: f (x x));
         (my-contents 'length my-saying) => 20
         (my-contents 'size) => 15)
 
-;; TODO: don't use _ here
 (def my-modular-def-without-global-recursion
   (let ((start% 5))
     (letrec ((length% (λ (l) (if (null? l) 0 (+ 1 (length% (cdr l)))))))
@@ -705,9 +705,9 @@ let Y = f: (x: x x) (x: f (x x));
   (fix top (effectiveModExt mispec)))
 |#
 
-;;;;; 8 Extending the Scope of OO
+;;;;; 9 Extending the Scope of OO
 
-;;;; 8.1.2 Short Recap on Lenses
+;;;; 9.1.2 Short Recap on Lenses
 
 ;; type View r s = s → r
 ;; type Update i p j q = (i → p) → j → q
@@ -783,13 +783,13 @@ let Y = f: (x: x x) (x: f (x x));
   (x-lens-2 'view test-point) => 10
   (x-lens-2 'update add1 test-point 'x) => 11)
 
-;;;; 8.1.3 Focusing a Modular Extension
+;;;; 9.1.3 Focusing a Modular Extension
 ;;; From Sick to Ripped
 ;; skew-ext : SkewLens i r p j s q → ModExt i r p → ModExt j s q
 (def (skew-ext l m super self)
   (l 'update (λ (inner-super) (m inner-super (l 'view self))) super))
 
-;;;; 8.1.4 Adjusting Context and Focus
+;;;; 9.1.4 Adjusting Context and Focus
 ;;; Adjusting the Extension Focus
 ;; update-only-lens : Update i p j q → SkewLens r i p r j q
 (def (update-only-lens u)
@@ -846,7 +846,7 @@ let Y = f: (x: x x) (x: f (x x));
   (view-only-lens mul10 'view 7) => 70
   (view-only-lens mul10 'update add1 7) => 8)
 
-;;;; 8.1.5 Optics for Specifications, Prototypes and Classes
+;;;; 9.1.5 Optics for Specifications, Prototypes and Classes
 
 ;;; Specification Methods
 (def widget-shop
@@ -864,6 +864,99 @@ let Y = f: (x: x x) (x: f (x x));
 (def rproto-spec-setter rproto←spec)
 (def rproto-spec-lens (lens←getter*setter rproto-spec-view rproto-spec-setter))
 
+;;; Prototype Target Update options (what to do when updating the target of an rproto)
+(def rproto-target-update/OutOfSync     ;; just update fields, spec no longer matches
+  identity)
+(def rproto-target-update/OverwriteSpec ;; replace spec with constant-spec of current state
+  rproto←record)
+(def rproto-target-update/NoMoreSpec    ;; erase the magic spec field, no longer extensible
+  (extend-record #f #f))
+(define rproto-target-update/Error      ;; signal an error — safest default
+  abort)
+
+;;;; 9.1.6 Optics for Class Instance Methods
+
+;; instance-method-lens : MethodId → SkewLens for a class instance method
+(def (instance-method-lens method-id)
+  (update-lens rproto-spec-lens
+    (compose-update (field-update 'instance-methods)
+                    (field-update method-id))))
+
+;; make-call-next-method : inherited-method → element → args → call-next-method-fn
+(def (make-call-next-method inherited-method element args)
+  (case-lambda
+    (()              (apply (inherited-method element) args))
+    ((new-element . new-args) (apply (inherited-method new-element) new-args))))
+
+;; instance-method-spec : MethodId → (element → call-next-method → result) → ModExt
+(def (instance-method-spec method-id method-body)
+  (skew-ext (instance-method-lens method-id)
+    (λ (inherited-method _self element)
+      (λ args
+        (method-body element
+          (make-call-next-method inherited-method element args))))))
+
+;; base-instance-method-spec : omits call-next-method for leaf methods
+(def (base-instance-method-spec method-id method-body)
+  (instance-method-spec method-id
+    (λ (element _call-next-method) (method-body element))))
+
+;; instance-field-lens : FieldId → SkewLens for a class instance field descriptor
+(def (instance-field-lens field-id)
+  (update-lens rproto-spec-lens
+    (compose-update (field-update 'instance-fields)
+                    (field-update field-id))))
+
+;; simple-instance-field-spec : FieldId → ModExt → ModExt
+(def (simple-instance-field-spec field-id init-mod-ext)
+  (skew-ext (instance-field-lens field-id)
+    (rproto←record (record (init init-mod-ext)))))
+
+;;;; 9.1.7 Simple Class Initialization
+
+;; class-proto : List(SlotDescriptor) → rproto
+;; A slot descriptor is a record with 'name and 'init-spec fields.
+;; Each init-spec is a modular extension: (inherited self) → value
+(def (class-proto slots)
+  (rproto←spec
+    (apply mix*
+      (map (λ (slot) (field-spec (slot 'name) (slot 'init-spec))) slots))))
+
+(def (constant-slot name value)
+  (record (name name)
+          (init-spec (constant-spec value))))
+
+(def (computed-slot name thunk)
+  (record (name name)
+          (init-spec (λ (_super self) (thunk self)))))
+
+(def (required-slot name)
+  (record (name name)
+          (init-spec (λ (_super _self)
+                       (error "Missing required slot" name)))))
+
+;; Tests for class-proto
+(def rectangle-slots
+  (list
+    (constant-slot 'width 10)
+    (constant-slot 'height 20)
+    (computed-slot 'area (λ (self) (* (self 'width) (self 'height))))))
+
+(def rectangle-proto (class-proto rectangle-slots))
+
+(expect
+  (rectangle-proto 'width) => 10
+  (rectangle-proto 'height) => 20
+  (rectangle-proto 'area) => 200)
+
+(def colored-rectangle-slots
+  (cons (constant-slot 'color "black") rectangle-slots))
+
+(def colored-rectangle-proto (class-proto colored-rectangle-slots))
+
+(expect
+  (colored-rectangle-proto 'color) => "black"
+  (colored-rectangle-proto 'area) => 200)
 
 ;;; HPROTO encoding
 ;;; (pass half before method-id, not after as in YASOS
@@ -940,6 +1033,283 @@ let Y = f: (x: x x) (x: f (x x));
 (expect (map (half-ref (hspec-half-record u-comp)) '(x y z color area)) => '(3 4 #f "blue" 12))
 
 
+
+;;;;; 9.2 Method Combinations
+
+;;;; 9.2.1 Representing Sub-Methods
+
+;; standard-method-cons : MethodFn → List(MethodFn) → List(MethodFn)
+;; Prepends a method fn to the existing list (standard cons).
+(def (standard-method-cons spec specs)
+  (cons spec specs))
+
+;; sub-method-spec : MethodCons → Tag → MethodId → MethodFn → ModExt
+;;   MethodCons = MethodFn → List(MethodFn) → List(MethodFn)
+;;   Tag        = Symbol  (qualifier: 'primary 'before 'after 'around, or simple-comb name)
+;;   MethodId   = Symbol  (method name in the record, e.g. 'compute 'greet)
+;;   MethodFn   = ? → ? → ?  (see MethodFn below; TODO: refine types)
+;;   ModExt     = ? → ? → ?  (modular extension; see field-spec)
+;;
+;; Creates a ModExt that prepends method-fn to sub-methods[method-id][tag].
+(def (sub-method-spec method-cons tag method-id method-fn)
+  (field-spec 'sub-methods
+    (λ (inherited _self)
+      (let* ((subs       (or inherited empty-record))
+             (per-method (or (subs method-id) empty-record))
+             (tag-list   (or (per-method tag) '())))
+        (extend-record method-id
+          (extend-record tag (method-cons method-fn tag-list) per-method)
+          subs)))))
+
+;; standard-sub-method-spec : Tag → MethodId → MethodFn → ModExt
+;;   (sub-method-spec with standard-method-cons; 1st arg is Tag, 2nd is MethodId)
+(def standard-sub-method-spec (sub-method-spec standard-method-cons))
+
+;; sub-method-lens : MethodId → Tag → SkewLens into the sub-methods record
+;; (Useful for rproto encoding; in Y encoding prefer sub-method-spec directly.)
+(def (sub-method-lens method-id tag)
+  (compose-lens* (field-lens 'sub-methods)
+                 (field-lens method-id)
+                 (field-lens tag)))
+
+;; method-combination-init-spec : MethodId → InitRecord → ModExt
+;;   InitRecord = record {tag: List(MethodFn), ...}
+;; Initializes sub-methods[method-id] with init-record if not already present.
+(def (method-combination-init-spec method-id method-combination-init)
+  (field-spec 'sub-methods
+    (λ (inherited _self)
+      (let ((subs (or inherited empty-record)))
+        (if (subs method-id)
+          subs
+          (extend-record method-id method-combination-init subs))))))
+
+;; simple-method-combination-init : Name → InitRecord  {around: (), name: ()}
+(def (simple-method-combination-init name)
+  (extend-record 'around '()
+   (extend-record name '()
+    empty-record)))
+
+;; standard-method-combination-init : InitRecord  {before:() after:() around:() primary:()}
+(def standard-method-combination-init
+  (extend-record 'before '()
+   (extend-record 'after '()
+    (simple-method-combination-init 'primary))))
+
+;;;; 9.2.2 Standard Method Combination
+
+;; MethodFn = a function (call-next-method self arg ...) → result
+;;   where call-next-method : (() | new-arg ...) → result
+;;         self : the current object (the fixpoint record)
+;;         arg ...: the method's own arguments
+;;
+;; TODO: refine to ModExt-like triple ? → ? → ?
+;;   Inherited ≈ CallNextMethod (the value from the super chain)
+;;   Required  ≈ Self (the whole record, for reading)
+;;   Provided  ≈ result
+
+;; make-call-next-method : Next → Args → CallNextMethod
+;;   Next = ...Args → Result  (the remaining chain)
+;; When called with no args, forwards the original args to next.
+;; When called with new-args, forwards them instead.
+(def (make-call-next-method next args)
+  (case-lambda
+    (()       (apply next args))
+    (new-args (apply next new-args))))
+
+;; call-chain : List(MethodFn) → OnExhausted → Self → EffectiveMethod
+;;   EffectiveMethod = ...Args → Result   (self already captured via closure)
+;;   Each MethodFn m is called as (m call-next-method self arg ...).
+(def (call-chain methods on-exhausted self)
+  (foldr
+    (lambda (m next)
+      (λ args
+        (apply ((m (make-call-next-method next args)) self) args)))
+    on-exhausted
+    methods))
+
+;; progn-methods-most-specific-first : List(MethodFn) → Self → Args → #f
+;; Runs each method in order for side-effects; call-next-method = abort.
+(def (progn-methods-most-specific-first methods self args)
+  (foldl (lambda (m _) (apply ((m abort) self) args)) #f methods))
+
+;; progn-methods-most-specific-last : List(MethodFn) → Self → Args → #f
+(def (progn-methods-most-specific-last methods self args)
+  (foldr (lambda (m _) (apply ((m abort) self) args)) #f methods))
+
+;; standard-no-applicable-method : MethodId → ...Args → Error
+(define (standard-no-applicable-method method-id . args)
+  (error "no applicable method" method-id args))
+
+(define no-applicable-method standard-no-applicable-method)
+
+;; standard-compute-effective-method : MethodId → PerMethodSubs → Self → EffectiveMethod
+;;   PerMethodSubs = record {before: List(MethodFn), after: ..., around: ..., primary: ...}
+(def (standard-compute-effective-method method-id per-method-subs self)
+  (call-chain (per-method-subs 'around)
+    (λ args
+      (progn-methods-most-specific-first (per-method-subs 'before) self args)
+      (let ((result
+              (apply (call-chain (per-method-subs 'primary)
+                       (λ args (apply no-applicable-method method-id args))
+                       self)
+                     args)))
+        (progn-methods-most-specific-last (per-method-subs 'after) self args)
+        result))
+    self))
+
+;; standard-method-init-spec : MethodId → ModExt
+;; Initializes method-id to use the standard method combination.
+;; The stored value is an EffectiveMethod; self is captured from the field-spec closure.
+(def (standard-method-init-spec method-id)
+  (mix
+    (field-spec method-id
+       (λ (_inherited self)
+          (let ((subs (self 'sub-methods)))
+            (standard-compute-effective-method method-id (subs method-id) self))))
+    (method-combination-init-spec method-id standard-method-combination-init)))
+
+;; Convenience specs for each standard qualifier (Tag → MethodId → MethodFn → ModExt)
+(def primary-method-spec (standard-sub-method-spec 'primary))
+(def before-method-spec  (standard-sub-method-spec 'before))
+(def after-method-spec   (standard-sub-method-spec 'after))
+(def around-method-spec  (standard-sub-method-spec 'around))
+
+;; Tests for standard method combination
+
+;; Single primary method: (obj 'compute x) → (f x)
+(def smc-obj-mul10
+  (fix-record
+    (mix*
+      (standard-method-init-spec 'compute)
+      (primary-method-spec 'compute (λ (_call-next-method _self x) (* x 10))))))
+
+(expect
+  (smc-obj-mul10 'compute 3) => 30
+  (smc-obj-mul10 'compute 5) => 50)
+
+;; Around method wraps primary; (call-next-method) invokes primary with original args
+(def smc-obj-around
+  (fix-record
+    (mix*
+      (standard-method-init-spec 'compute)
+      (primary-method-spec 'compute (constant-spec (λ (x) (* x 10))))
+      (around-method-spec 'compute (λ (call-next-method _self _x) (+ (call-next-method) 1))))))
+
+(expect (smc-obj-around 'compute 3) => 31) ;; (* 3 10) = 30; around adds 1
+
+;; Before/after run for side-effects; call-next-method = abort (must not be called)
+(define smc-log '())
+(def smc-obj-logged
+  (fix-record
+    (mix*
+      (standard-method-init-spec 'op)
+      (primary-method-spec 'op (constant-spec (λ (x) (* x x))))
+      (before-method-spec  'op (constant-spec (λ (x)
+                                 (set! smc-log (cons (list 'before x) smc-log)))))
+      (after-method-spec   'op (constant-spec (λ (x)
+                                 (set! smc-log (cons (list 'after x) smc-log))))))))
+
+(expect (smc-obj-logged 'op 4) => 16)
+(expect smc-log => '((after 4) (before 4)))
+
+;;;; 9.2.3 Simple Method Combination
+
+;; simple-compute-effective-method :
+;;   Name → Stop? → Op0 → Op1 → Op2 → Order → PerMethodSubs → Self → EffectiveMethod
+;;   Name  = Symbol  (tag for the sub-method list)
+;;   Stop? = Result → Bool    (short-circuit: stop folding when true)
+;;   Op0   = #f → Result      (result when no methods; takes dummy arg)
+;;   Op1   = Result → Acc     (transforms first method result into initial accumulator)
+;;   Op2   = Result → Acc → Acc  (fold step: combine next result with accumulator)
+;;   Order = 'most-specific-first | 'most-specific-last
+(def (simple-compute-effective-method
+       name stop? op0 op1 op2 order per-method-subs self)
+  (let* ((arounds (per-method-subs 'around))
+         (methods (per-method-subs name))
+         (ordered (case order
+                    ((most-specific-first) methods)
+                    ((most-specific-last) (reverse methods)))))
+   (call-chain arounds
+    (λ args
+      (letrec ((run (λ (m) (m abort self)))
+               (f   (lambda (acc lst)
+                      (if (and (not (stop? acc)) (pair? lst))
+                        (let ((v (op2 (run (car lst)) acc)))
+                          (if (stop? v) v (f v (cdr lst))))
+                        acc))))
+        (if (pair? ordered)
+          (f (op1 (run (car ordered))) (cdr ordered))
+          (op0 #f))))
+    self)))
+
+(def (compute-effective-method/progn per-method-subs self)
+  (simple-compute-effective-method
+    'progn (λ (_) #f) (λ (_) #f) (λ (x) x) (λ (r _) r)
+    'most-specific-first per-method-subs self))
+
+(def (compute-effective-method/and per-method-subs self)
+  (simple-compute-effective-method
+    'and not (λ (_) #t) (λ (x) x) (λ (r _) r)
+    'most-specific-first per-method-subs self))
+
+(def (compute-effective-method/+ per-method-subs self)
+  (simple-compute-effective-method
+    '+ (λ (_) #f) (λ (_) 0) (λ (x) x) (λ (x y) (+ x y))
+    'most-specific-first per-method-subs self))
+
+(def (compute-effective-method/* per-method-subs self)
+  (simple-compute-effective-method
+    '* (λ (_) #f) (λ (_) 1) (λ (x) x) (λ (x y) (* x y))
+    'most-specific-first per-method-subs self))
+
+(def (compute-effective-method/list per-method-subs self)
+  (simple-compute-effective-method
+    'list (λ (_) #f) (λ (_) '()) (λ (x) (list x)) (λ (x y) (cons x y))
+    'most-specific-last per-method-subs self))
+
+;; list-method-init-spec : MethodId → ModExt
+;; Initializes method-id to collect contributions from all methods into a list.
+;; Most-specific method's contribution appears first in the result list.
+(def (list-method-init-spec method-id)
+  (mix
+    (field-spec method-id
+       (λ (_inherited self)
+          (let ((subs (self 'sub-methods)))
+            (compute-effective-method/list (subs method-id) self))))
+    (method-combination-init-spec method-id (simple-method-combination-init 'list))))
+
+;; list-method-spec : MethodId → MethodFn → ModExt  (tag = 'list)
+(def list-method-spec (standard-sub-method-spec 'list))
+
+;; Tests for simple method combination (list)
+;; Methods taking no user args use (constant-spec value) as MethodFn
+;; ((constant-spec v) call-next-method self) = v
+(def list-parts-obj
+  (fix-record
+    (mix*
+      (list-method-init-spec 'parts)
+      (list-method-spec 'parts (constant-spec 'wheel))
+      (list-method-spec 'parts (constant-spec 'engine)))))
+
+;; most-specific-last evaluation, most-specific-first in result list
+;; engine was added last (most specific) → appears first in result
+(expect ((list-parts-obj 'parts)) => '(engine wheel))
+
+;; Tests for + combination
+(def sum-obj
+  (fix-record
+    (mix*
+      (mix
+        (field-spec 'total
+          (λ (_inherited self)
+            (let ((subs (self 'sub-methods)))
+              (compute-effective-method/+ (subs 'total) self))))
+        (method-combination-init-spec 'total (simple-method-combination-init '+)))
+      (standard-sub-method-spec '+ 'total (constant-spec 3))
+      (standard-sub-method-spec '+ 'total (constant-spec 4)))))
+
+(expect ((sum-obj 'total)) => 7)
+
 #||#
 #|
 The End. (For Now)
@@ -951,3 +1321,6 @@ p2 = { b: String, ... }
 p1∩p2 = {a : Int, b : String , ... }
 |#
 
+;; TODO: AVL trees as example OO for 5.x ? Also versions without OO for it and other trees (plain binary, randomized binary, 2-3 tree, etc.)
+;; TODO: double dispatch example for 9.3.2
+;; TODO: visitor pattern example for 9.3.2
