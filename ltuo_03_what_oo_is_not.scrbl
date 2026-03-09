@@ -47,7 +47,7 @@ Yet, while C++ supports single inheritance well,
 what it calls “multiple inheritance” @~cite{Stroustrup1989Multiple}
 is not at all the same as what almost everyone else calls “multiple inheritance”@xnote[":"]{
   Interestingly, the design of C++ non-virtual classes is very similar
-  to the solution from Snyder’s CommonObjects @~cite{Snyder1986Encapsulation},
+  to the solution from Snyder’s CommonObjects @~cite{Snyder1986},
   even though Stroustrup does not cite Snyder:
   redefine the problem to be whatever the desired “solution” does—a Tree instead of a DAG—and
   hope the users won’t notice the difference.

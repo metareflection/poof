@@ -444,7 +444,7 @@ in order from least specific superclass to most specific@xnote["."]{
   is the “inner” part between this prefix and suffix,
   marked by the @c{inner} keyword as a placeholder.
   Lack of explicit @c{inner} keyword is same as before, as if the keyword was at the end.
-  This approach by Simula and its successor Beta @~cite{kristensen1987beta}
+  This approach by Simula and its successor Beta @~cite{Kristensen1987Beta}
   (that generalized classes to “patterns” that also covered method definitions the same way;
   except that lack of “inner” means the “do” block cannot be extended anymore,
   like “final” in Java or C++),
@@ -491,7 +491,9 @@ in order from least specific superclass to most specific@xnote["."]{
   either way, not the real, fully-formed concept.
   Dahl and Nygaard never invented, implemented, used or studied OO as most of us know it:
   not then with Simula, not later with Beta, and never later in their life either.
-  Just like Columbus never set foot on the continent of America.
+  Rather it was discovered and identified 9 years later by Bobrow and Winograd.
+  Just like Columbus never set foot on the continent of America,
+  which was rather discovered and identified 9 years later by Amerigo Vespucci.
   Yet they made the single key contribution thanks to which
   the later greater discovery of OO became not just possible, but necessary.
   They rightfully deserve to be gently mocked for getting so close to a vast continent they sought
@@ -502,7 +504,7 @@ in order from least specific superclass to most specific@xnote["."]{
 }
 In modern terms, most authors call the prefix a superclass in general,
 or direct superclass when it is syntactically specified as a superclass by the user.
-I will be more precise, and after @citet{Snyder1986Encapsulation},
+I will be more precise, and after @citet{Snyder1986},
 I will speak of a parent for what users explicitly specify,
 or, when considering transitively reachable parents of parents, an ancestor;
 and in the other direction, I will speak of child and descendant.

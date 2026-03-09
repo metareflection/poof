@@ -629,18 +629,21 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 1976
 
+% Also https://exhibits.stanford.edu/stanford-pubs/catalog/pf235fy3176
 @TechReport{Bobrow1976,
   author={Daniel G. Bobrow and Terry Winograd},
   title={An Overview of KRL, A Knowledge Representation Language},
   year={1976},
-  month={November},
-  institution={Stanford Artificial Intelligence Laboratory},
-  number={AIM-293},
-  url={https://exhibits.stanford.edu/stanford-pubs/catalog/pf235fy3176},
+  month={July},
+  day={4},
+  institution={Xerox PARC},
+  number={CSL-76-4},
+  url={https://bitsavers.trailing-edge.com/pdf/xerox/parc/techReports/CSL-76-4_An_Overview_of_KRL_-_A_Knowledge_Representation_Language_19760704.pdf},
   doi={10.1207/s15516709cog0101_2},
   note={.
-    Stanford Artificial Intelligence Laboratory Memo AIM-293,
-    later published in Cognitive Science, V. 1, No. 1, 1977.
+    Published by PARC on July 4th 1976, exactly 200 years after the Declaration of Independence,
+    but also as Stanford Artificial Intelligence Laboratory Memo AIM-293 (November 1976),
+    and later included in Cognitive Science, V. 1, No. 1, 1977.
     This watershed paper is AFAICT the first in a formal publication that uses the words
     “object-oriented”, “inheritance”, “prototype”, “class” in their modern meaning.
     The paper describes KRL-0, a first iteration of the design of KRL, written in Lisp,
@@ -665,8 +668,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     The paper demonstrates the birth of OO as an interaction between Bobrow and Kay:
     “inheritance of properties” is used definitionally when Winograd 1975 used it descriptively,
     and “object-oriented” is used three times, though Kay is only cited indirectly through
-    a paper of his Learning Research Group that doesn’t use the expression
-    (multi-process oriented is also used three times, but with slightly different words each time).
+    a paper of his Learning Research Group that doesn’t use the expression.
+    (multi-process oriented is also used three times, but with slightly different words each time.)
   }
 }
 
@@ -1380,7 +1383,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 % NB: Much updated 1987 version at https://archive.org/details/researchdirectio00shri/page/164/mode/2up
-@InProceedings{Snyder1986Encapsulation,
+@InProceedings{Snyder1986,
   author={Snyder, Alan},
   title={Encapsulation and Inheritance in Object-Oriented Programming Languages},
   year={1986},
@@ -1399,7 +1402,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     This very well-informed, very interesting paper, and its extended version in
     Research Directions in Object-Oriented Programming (1987),
     gets a whole lot right about inheritance, yet enough crucially wrong.
-    It brilliantly introduces parent, ancestor, child, descendant, instead of the
+    Sadly, it is often cited for the wrong parts rather than the right parts.
+    Snyder brilliantly introduces parent, ancestor, child, descendant, instead of the
     awkward direct-superclass, superclass, direct-subclass, subclass.
     He identifies the importance of modularity, but instead of that word,
     somehow divides it in two separate properties “encapsulation” and “data abstraction”.
@@ -4597,6 +4601,19 @@ series = {PLDI '10}
   }
 }
 
+@article{Bezanson2014,
+  author={Bezanson, Jeff and Edelman, Alan and Karpinski, Stefan and Shah, Viral B.},
+  title={Julia: A Fresh Approach to Numerical Computing},
+  year={2014},
+  journal={2017 version published in SIAM},
+  doi={10.48550/arXiv.1411.1607},
+  url={https://arxiv.org/abs/1411.1607},
+  note={.
+    The foundational description of Julia.
+    Julia still only has single inheritance in 2026, but does have multiple dispatch.
+  }
+}
+
 @InProceedings{ASDF3,
   author={François-René Rideau},
   title={ASDF 3, or Why Lisp is Now an Acceptable Scripting Language},
@@ -5061,13 +5078,14 @@ series = {PLDI '10}
   lastchecked={2021-03-14}
 }
 
-% https://web.archive.org/web/20250505211156/https://en.wikipedia.org/wiki/C3_linearization
+% https://en.wikipedia.org/wiki/C3_linearization
 @Webpage{WikiC3,
   title="C3 linearization",
   author="Wikipedia",
   year=2021,
   lastchecked={2021-04-15},
-  url={https://en.wikipedia.org/wiki/C3_linearization},
+  origurl={https://en.wikipedia.org/wiki/C3_linearization},
+  url={https://web.archive.org/web/20250328113618/https://en.wikipedia.org/wiki/C3_linearization},
   note={.
     This sadly defunct page (deleted in May 2025) used to describe C3 linearization,
     with a good explanation, examples, and citations.

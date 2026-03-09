@@ -345,7 +345,7 @@ Flavors @~cite{Cannon1979} identified the correct solution,
 that involves cooperation and harmony rather than conflict and chaos.
 Failing to learn from Flavors, C++ @~cite{Stroustrup1989Multiple}
 (and after it Ada) not only adopts the conflict view of Smalltalk,
-it also, like Simula @~cite{Krogdahl1985} or CommonObjects @~cite{Snyder1986Encapsulation},
+it also, like Simula @~cite{Krogdahl1985} or CommonObjects @~cite{Snyder1986},
 tries to force the ancestry DAG into a tree!
 Self initially tried a weird resolution method along a “sender path”
 that each time dived into the first available branch of the inheritance DAG
@@ -763,7 +763,7 @@ Now, a @emph{valid} concern about linearization is
 that when two extensions ignore their super argument,
 and the system puts one in front of the other, the second and everything after the first one
 is actually ignored, and it might not be obvious which,
-and there probably should be at least some warning@~cite{Snyder1986Encapsulation},
+and there probably should be at least some warning@~cite{Snyder1986},
 if not an outright error.
 However, if that were actually a problem practically worth addressing,
 then you could have a solution similar to that of languages like Java or C++
@@ -847,6 +847,12 @@ the series of these specifications will not be interrupted in the middle, or oth
 interspersed with potentially contradictory specifications from @c{Y}.
 Preference in specifications is consistent and predictable.
 
+Said otherwise, you can answer the question “which of these two behaviors win?” simply:
+1. Does one explicitly override the other? If so, it wins.
+2. If not, which behavior first appears in a parents? It wins.
+ (If the local precedence list is not totally ordered, linearize it first;
+ prefer the ancestors that appear first in any tie break).
+
 This property was introduced by @citet{Ducournau1992} as “extended order”,
 and first enforced by the algorithm in @citet{Ducournau1994}.
 It is the first of the three eponymous constraints of C3 @~cite{Barrett1996C3}.
@@ -861,6 +867,7 @@ Thus I much prefer the informal explanation
 (that in turn could be formalized, just not the exact same way as Ducournau)
 in terms of consistent preference for a preferred specification’s ancestors
 over its dispreferred alternative.
+
 
 @Paragraph{Monotonicity: Consistency across Ancestry}
 The “method resolution order” for a child specification should be consistent
@@ -1694,7 +1701,8 @@ the precedence list of an ancestor must be an ordered subset
 of that of the specification, though its elements need not be consecutive.
 I define my own algorithm C4 as an extension of C3,
 that in addition to the constraints of C3, also respects the @emph{suffix property}
-for specifications that are declared as suffixes.
+for specifications that are declared as suffixes, and otherwise
+exempts suffix specifications and their ancestors from the extended precedence constraint.
 This means that an optimal inheritance specification, or @c{OISpec}
 by extending the @c{MISpec} of multiple inheritance
 with a new field @c{suffix?} of type @c{Boolean},
@@ -1745,8 +1753,8 @@ where the steps tagged with (C4) are those added to the C3 algorithm
   @item{@bold{Local Order Support Step}:
      append the local order (list of lists of parents) to the end of the list of prefixes;
      (if the prefix lists are kept reversed, also reverse each local order list for consistency;)
-     call the elements of those lists candidates, the list candidate lists,
-     and this list the candidate list list.}
+     call the elements of those lists “candidates”, the lists “candidate lists”,
+     and this list the “candidate list list”.}
   @item{@bold{Cleanup Step}:
      @itemlist[
        @item{Build a hash-table mapping elements of the merged suffix list
@@ -1848,34 +1856,35 @@ so it’s a bit moot what to optimize for.
 
 @subsection[#:tag "CTBH"]{C3 Tie-Breaking Heuristic}
 
-The constraints of C3 or C4 do not in general suffice
-to uniquely determine how to merge precedence lists:
-there are cases with multiple solutions satisfying all the constraints.
-This is actually a feature, one that allows for additional constraints to be added@xnote["."]{
+The constraints of C3 or C4 uniquely determine how to merge precedence lists:
+the inheritance order, local order, monotonicity and suffix property constraints
+provide a partial order, and the extended precedence constraint
+requires the selection of the first possible candidate at each time.
+New variants may add their own set of extra constraints on the partial order,
+that will all be higher priority than the extended precedence constraint@xnote["."]{
   For instance, some classes could be tagged as “base” classes for their respective aspects
   (like our @c{base-bill-of-parts} in @seclink{IME}), and we could require base classes
   to be treated before others. This could be generalized as assigning
   some “higher” partial order among groups of classes (metaclasses),
   that has higher priority than the regular order, or then again “lower” orders, etc.
 }
-at which point the linearization algorithm must use some heuristic
-to pick which candidate linearization to use.
 
-The C3 algorithm (and after it C4) adopts the heuristics that,
-when faced with a choice,
-it will pick for next leftmost element the candidate that appears leftmost
-in the concatenation of precedence lists.
-I believe (but haven’t proved) that this is also equivalent to
-picking for next rightmost element the candidate
-that appears rightmost in that concatenation@xnote["."]{
-  Exercise: prove or disprove this equivalence.
-}
-Importantly, I also believe (but again, haven’t proved) this heuristic maximizes
-the opportunity for a specification’s precedence list to share a longer suffix with its parents,
-thereby maximally enabling in practice the optimizations of single inheritance
-even when specifications are not explicitly declared “suffix”.
+This is interesting, because this distinguishes the constraints into two sets:
+those that define a list of total orders,
+and this extended precedence that forces the selection algorithm based on that partial order.
 
-One interesting property of the C3 heuristic is that,
+Conjectures, for you to prove or disprove as an exercise:
+@itemize[
+  @item{The C3 algorithm picks the leftmost candidate to appear leftmost
+        in the concatenation of precedence lists.
+        I believe (but haven’t proved) that this is also equivalent to
+        picking for next rightmost element the candidate to appear rightmost.}
+  @item{This algorithm maximizes the opportunity for a specification’s precedence list
+        to share a longer suffix with its parents,
+        thereby maximally enabling in practice the optimizations of single inheritance
+        even when specifications are not explicitly declared “suffix”.}]
+
+One interesting property of the extended precedence heuristic is that,
 even if the language does not explicitly support suffix specifications,
 by following the same discipline that Scala 2 forces upon you,
 of always placing the most-specific suffix specification last in each specification’s
@@ -1888,7 +1897,7 @@ if the implementation were clever enough to opportunistically take advantage of 
 This is interestingly a property shared by the Ruby and Scala algorithm,
 but not by the original LOOPS algorithm that Scala tweaked.
 This seems to be an important property for a tie-break heuristic,
-that should probably be formalized and added to the constraints of C4@xnote["."]{
+that should probably be formalized and added to the constraints of C4.@xnote["."]{
   I haven’t thought hard enough to say what other interesting properties, if any,
   are sufficient to fully determine the tie-break heuristic of C3,
   or of a better variant that would also respect the hard constraints of C3.

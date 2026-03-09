@@ -1374,17 +1374,17 @@ Which leads us to the invention of multiple dispatch.
 
 So far, the choice of what (effective) method to evaluate when calling a generic function
 only depended on its first argument, “the” object on which the function was invoked.
-And as long as OO was stuck in the “message passing” metaphor in which it was born,
+As long as OO was stuck in the “message passing” metaphor in which it was born,
 this seemed like the only option: you have an object, you send @emph{it} a message,
 you call @emph{its} method, etc. There is one entity, of which you select one sub-entity.
-But once you invented method combinations, and the concept of generic function followed,
-then it becomes natural to wonder why effective method selection should only depend on
+But once Cannon invented method combinations, and the concept of generic function followed,
+then it became natural to wonder why effective method selection should only depend on
 one argument, especially when there are plenty of “binary methods”
 that in fact go through great lengths to work around this limitation:
 comparison functions, algebraic operators (addition, multiplication, etc.), and more.
 
 Thus, with multiple dispatch, a method can be specialized based
-not just on one argument, but multiple arguments.
+not just on one argument, but on multiple arguments.
 A method specializing on multiple arguments is called a @emph{multimethod},
 and a language supporting multiple dispatch is the same as a language supporting multimethods.
 And the previous behavior of only specializing methods on a single object argument
@@ -1431,8 +1431,8 @@ You can dispatch on the first object, and have method in each case; fine.
 But what about the second object?
 A simple “solution” is to do a runtime typecheck for the second object,
 and handle each case in a list of known possibilities.
-Problem is, you must know in advance all the possible types you will ever want to use
-fro the second argument, and the result is not extensible.
+Problem is, you must know in advance all the possible specifications you will ever want to use
+for the second argument, and the result is not extensible.
 A more complex solution is to create a separate method
 for each possible specification for the first argument,
 then call that method on the second argument:
@@ -1457,7 +1457,7 @@ which is hard to enforce.
 
 A more sophisticated approach known as the “visitor pattern” @~cite{GoF1994},
 is both a special case of double dispatch and a generalization of it.
-A general-purpose method @c{accept} or @c{visit} takes a “visitor” object as argument,
+A general-purpose method traditionally called @c{accept} takes a “visitor” object as argument,
 and each class @c{Foo} calls the special-purpose method @c{visitFoo} on the visitor,
 with the current object (of class @c{Foo} indeed) as parameter.
 The visitor pattern is thus an instance of double dispatch,
@@ -1472,7 +1472,7 @@ crucially allows for operations being defined after the class is defined.
 But the visitor pattern also involves more boilerplate,
 having to define visitor classes with all the required information.
 Importantly, the visitor pattern also requires all state to be public,
-or otherwise shared will all possible present and future visitors.
+or otherwise shared with all possible present and future visitors.
 Finally, while there is still no good way to support “call-next-method”
 with the visitor pattern, at least the problem is factored in a way that
 the support could conceivably be implemented once and then shared with many visitors.
@@ -1486,22 +1486,36 @@ Suddenly, these methods become simple to write, extensible for both arguments,
 without visibility issues (any method can see the state of any argument it matches),
 and with full win-win composability of the methods.
 
+@; TODO: footnote explaining that pommette.scm contains examples.
+
 @subsection{Multiple Multiple Inheritance}
 
 The set of multimethods that match a given tuple of arguments is necessarily a partial order:
 by separately specializing one argument or the other,
 you can easily define mutually incomparable method signatures
-that match the tuple of arguments, even if each argument’s ancestry are a total order.
+that match the tuple of arguments,
+even if each argument’s ancestry is a total order—as
+with Julia’s single inheritance @~cite{Bezanson2014}.
 Multimethods will thus naturally leverage and extend the techniques used for multiple inheritance:
 linearizing the order of methods,
 method combination based on the resulting precedence list, etc.
-Typically, linearization happens via lexicographical order of per-argument linearization:
-this linearization corresponds to the same behavior as the double dispatch and the visitor pattern
-in the degenerate case that only the first found method is called;
+
+Typically, linearization happens via the lexicographical order of per-argument linearizations:
+this linearization follows the same behavior as the double dispatch and the visitor pattern
+in the degenerate case that only the most specific method is called;
 it has a clear precedence based on the first argument,
-and it nicely extends the order of a single dispatch order on the first argument,
+and it nicely extends single dispatch on the first argument,
 in that methods specialized on the first argument
 will be placed relatively to each other the same as if dispatching on just that argument.
+The linearization necessarily induces an asymmetry between arguments,
+and it is important to choose the correct order of arguments when designing a multimethod protocol:
+the argument that most crucially affects the behavior of the method
+should appear first in the signature.
+For instance, the ASDF API is correct in dispatching on operation first, and component second,
+since the behavior varies more with the first (compile some code, or load it, link it, etc.)
+than with the second (was the source file plain lisp, or C FFI code, code transpiled to lisp, etc.).
+Of course, if the operation is commutative (e.g. addition)
+then the order of arguments does not matter, but this is the exception, not the rule.
 
 Like the multiple inheritance that it extends (see @secref{RSaDN}),
 multiple dispatch relies on the ability to reify the graph nature of computations
@@ -1543,8 +1557,16 @@ of your fixpoints, from a single specification, to, in the limit, the entire OO 
 
 @XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
 
+@subsection{Implementing Multiple Dispatch}
+
+I will implement multiple dispatch by automating the double dispatch pattern,
+storing partial method tables locally in each specification,
+so that the representation remains backward compatible with single dispatch.
+
+
 @;TODO implementation
 
+@; TODO predicate dispatch, as in Cecil, some SBCL extensions?
 
 @section[#:tag "DD"]{Dynamic Dispatch}
 
