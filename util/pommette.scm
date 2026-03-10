@@ -1950,6 +1950,241 @@ let Y = f: (x: x x) (x: f (x x));
    (my-c4* '((C B) (C A)))    => '(C B A O)   ;; C before both, B before A
    (my-c4* '((A B) (B C) (C A))) =>fail!))    ;; cycle: A<B<C<A
 
+;;;;; 7.4 Optimal Inheritance Specification (OISpec)
+
+;; An OISpec is a record-as-closure responding to:
+;;   'mod-ext         -> ModExt             -- this spec's own modular extension
+;;   'parents         -> List(List(OISpec)) -- local precedence chains of direct parents
+;;   'suffix?         -> Bool               -- requires the suffix property (single-inh chain)
+;;   'precedence-list -> List(OISpec)       -- linearized ancestors, most-specific first (lazy)
+;;
+;; parents is a list of totally-ordered chains, the same format as c4-linearize's parents:
+;;   e.g. (list (list A B C)) for a single chain, (list (list A B) (list C A)) for a DAG.
+
+(define (make-oisp mod-ext parents suffix?)
+  (let ((pl #f))  ;; memoized precedence list
+    (define (self msg)
+      (case msg
+        ((mod-ext)         mod-ext)
+        ((parents)         parents)
+        ((suffix?)         suffix?)
+        ((precedence-list)
+         (unless pl
+           (let-values (((result _ss)
+                         (c4-linearize
+                          (list self)
+                          parents
+                          (lambda (x) (x 'precedence-list))
+                          (lambda (x) (x 'suffix?))
+                          eq?)))
+             (set! pl result)))
+         pl)
+        (else #f)))
+    self))
+
+;; oisp-effective-mod-ext : OISpec -> ModExt
+;; Combine ModExts from all ancestors in the precedence list.
+;; The least-specific ancestor contributes first (as the outermost super),
+;; the most-specific last.  mix* processes left-to-right with the last arg most specific,
+;; so we reverse the PL (most-specific-first) before applying mix*.
+(define (oisp-effective-mod-ext oisp)
+  (apply mix* (map (lambda (s) (s 'mod-ext))
+                   (reverse (oisp 'precedence-list)))))
+
+;; fix-oisp : OISpec -> Target
+;; Instantiate an OISpec: compute the effective ModExt and fix it with empty-record.
+(define (fix-oisp oisp)
+  (fix-record (oisp-effective-mod-ext oisp)))
+
+;;;; Tests for OISpec
+
+;; Simple diamond: O <- A, O <- B, {A,B} <- Z
+;; Note: compute-value lambdas must use pommette's λ (auto-curried), not plain lambda,
+;; because def-bound parameters become identifier macros that expand
+;; (compute-value inherited self) to ((compute-value inherited) self).
+(let ()
+  (define O-oisp (make-oisp idModExt '() #f))
+  (define A-oisp (make-oisp (field-spec 'a (λ (_inh _self) 1))
+                             (list (list O-oisp)) #f))
+  (define B-oisp (make-oisp (field-spec 'b (λ (_inh _self) 2))
+                             (list (list O-oisp)) #f))
+  (define Z-oisp (make-oisp (field-spec 'z (λ (_inh _self) 3))
+                             (list (list A-oisp B-oisp)) #f))
+
+  ;; Precedence lists
+  (expect
+   (Z-oisp 'precedence-list) => (list Z-oisp A-oisp B-oisp O-oisp)
+   ;; O appears exactly once (diamond sharing)
+   (length (filter (lambda (s) (eq? s O-oisp)) (Z-oisp 'precedence-list))) => 1)
+
+  ;; Instantiate: all fields accessible, each ancestor contributes once
+  (let ((z-inst (fix-oisp Z-oisp)))
+    (expect
+     (z-inst 'z) => 3
+     (z-inst 'a) => 1
+     (z-inst 'b) => 2
+     (z-inst 'x) => #f)))   ;; absent field returns #f (from empty-record top)
+
+;; Suffix (single-inheritance) chain: s <- C  where s is a suffix spec
+(let ()
+  (define s-oisp (make-oisp (field-spec 's-val (λ (_inh _self) 0))
+                             '() #t))   ;; suffix? = #t
+  (define C-oisp (make-oisp (field-spec 'c-val (λ (_inh _self) 99))
+                             (list (list s-oisp)) #f))
+
+  ;; s-oisp is the last (least-specific) in C's PL, as required by the suffix property
+  (expect
+   (C-oisp 'precedence-list) => (list C-oisp s-oisp))
+
+  (let ((c-inst (fix-oisp C-oisp)))
+    (expect
+     (c-inst 'c-val) => 99
+     (c-inst 's-val) => 0)))
+
+;; Overriding: child adds 10 to parent's field
+(let ()
+  (define base-oisp (make-oisp (field-spec 'val (λ (_inh _self) 5))
+                                '() #f))
+  (define child-oisp (make-oisp (field-spec 'val (λ (inh _self) (+ inh 10)))
+                                 (list (list base-oisp)) #f))
+  (expect
+   ((fix-oisp base-oisp)  'val) => 5
+   ((fix-oisp child-oisp) 'val) => 15))   ;; child's +10 applied on top of base's 5
+
+;;;; OISpec C4 hierarchy examples
+;; The following tests replicate each major C4/C3 example hierarchy
+;; but using OISpec instances instead of symbols.
+;; We verify: (1) the precedence-list order matches the C4 expected result,
+;;            (2) diamond ancestors appear exactly once,
+;;            (3) for suffix hierarchies, the suffix property holds.
+
+;; --- Wikipedia 2021: Z hierarchy ---
+;; Classes: O, A B C D E O, K1=(A B C), K2=(D B E), K3=(D A), Z=(K1 K2 K3)
+;; Expected PL: Z K1 K2 K3 D A B C E O
+(let ()
+  (define O-sp  (make-oisp idModExt '() #f))
+  (define A-sp  (make-oisp idModExt (list (list O-sp)) #f))
+  (define B-sp  (make-oisp idModExt (list (list O-sp)) #f))
+  (define C-sp  (make-oisp idModExt (list (list O-sp)) #f))
+  (define D-sp  (make-oisp idModExt (list (list O-sp)) #f))
+  (define E-sp  (make-oisp idModExt (list (list O-sp)) #f))
+  (define K1-sp (make-oisp idModExt (list (list A-sp B-sp C-sp)) #f))
+  (define K2-sp (make-oisp idModExt (list (list D-sp B-sp E-sp)) #f))
+  (define K3-sp (make-oisp idModExt (list (list D-sp A-sp)) #f))
+  (define Z-sp  (make-oisp idModExt (list (list K1-sp K2-sp K3-sp)) #f))
+  (expect
+   (Z-sp 'precedence-list)
+   => (list Z-sp K1-sp K2-sp K3-sp D-sp A-sp B-sp C-sp E-sp O-sp)
+   (K1-sp 'precedence-list) => (list K1-sp A-sp B-sp C-sp O-sp)
+   (K2-sp 'precedence-list) => (list K2-sp D-sp B-sp E-sp O-sp)
+   (K3-sp 'precedence-list) => (list K3-sp D-sp A-sp O-sp)
+   ;; Diamond: O appears exactly once in Z's PL
+   (length (filter (lambda (s) (eq? s O-sp)) (Z-sp 'precedence-list))) => 1))
+
+;; --- Wikipedia 2023: Y hierarchy ---
+;; J1=(C A B), J2=(B D E), J3=(A D), Y=(J1 J3 J2)
+;; Expected PL: Y J1 C J3 A J2 B D E O
+(let ()
+  (define O-sp  (make-oisp idModExt '() #f))
+  (define A-sp  (make-oisp idModExt (list (list O-sp)) #f))
+  (define B-sp  (make-oisp idModExt (list (list O-sp)) #f))
+  (define C-sp  (make-oisp idModExt (list (list O-sp)) #f))
+  (define D-sp  (make-oisp idModExt (list (list O-sp)) #f))
+  (define E-sp  (make-oisp idModExt (list (list O-sp)) #f))
+  (define J1-sp (make-oisp idModExt (list (list C-sp A-sp B-sp)) #f))
+  (define J2-sp (make-oisp idModExt (list (list B-sp D-sp E-sp)) #f))
+  (define J3-sp (make-oisp idModExt (list (list A-sp D-sp)) #f))
+  (define Y-sp  (make-oisp idModExt (list (list J1-sp J3-sp J2-sp)) #f))
+  (expect
+   (Y-sp 'precedence-list)
+   => (list Y-sp J1-sp C-sp J3-sp A-sp J2-sp B-sp D-sp E-sp O-sp)))
+
+;; --- C3 paper: Boat hierarchy ---
+;; boat(B), day-boat(DB=B), wheel-boat(WB=B), engine-less(EL=DB),
+;; small-multihull(SM=DB), pedal-wheel-boat(PWB=EL WB),
+;; small-catamaran(SC=SM), pedalo(P=PWB SC)
+;; Expected PL: P PWB EL SC SM DB WB B O
+(let ()
+  (define O-sp   (make-oisp idModExt '() #f))
+  (define B-sp   (make-oisp idModExt (list (list O-sp)) #f))
+  (define DB-sp  (make-oisp idModExt (list (list B-sp)) #f))
+  (define WB-sp  (make-oisp idModExt (list (list B-sp)) #f))
+  (define EL-sp  (make-oisp idModExt (list (list DB-sp)) #f))
+  (define SM-sp  (make-oisp idModExt (list (list DB-sp)) #f))
+  (define PWB-sp (make-oisp idModExt (list (list EL-sp WB-sp)) #f))
+  (define SC-sp  (make-oisp idModExt (list (list SM-sp)) #f))
+  (define P-sp   (make-oisp idModExt (list (list PWB-sp SC-sp)) #f))
+  (expect
+   (P-sp 'precedence-list)
+   => (list P-sp PWB-sp EL-sp SC-sp SM-sp DB-sp WB-sp B-sp O-sp)
+   ;; B (boat) appears exactly once despite being ancestor of both DB and WB
+   (length (filter (lambda (s) (eq? s B-sp)) (P-sp 'precedence-list))) => 1))
+
+;; --- C4 suffix hierarchy: lowercase = suffix (single-inheritance chain) ---
+;; O, o=(O suffix), a=(o), b=(a), c=(b o), d=(D c) where D is a class
+;; Expected PLs: o→(o O), a→(a o O), b→(b a o O), c→(c b a o O), d→(d D c b a o O)
+(let ()
+  (define O-sp (make-oisp idModExt '() #f))
+  (define D-sp (make-oisp idModExt (list (list O-sp)) #f))
+  (define o-sp (make-oisp idModExt (list (list O-sp)) #t))  ;; suffix
+  (define a-sp (make-oisp idModExt (list (list o-sp)) #t))  ;; suffix
+  (define b-sp (make-oisp idModExt (list (list a-sp)) #t))  ;; suffix
+  (define c-sp (make-oisp idModExt (list (list b-sp o-sp)) #t)) ;; suffix, two parents
+  (define d-sp (make-oisp idModExt (list (list D-sp c-sp)) #f)) ;; class
+  (expect
+   (o-sp 'precedence-list) => (list o-sp O-sp)
+   (a-sp 'precedence-list) => (list a-sp o-sp O-sp)
+   (b-sp 'precedence-list) => (list b-sp a-sp o-sp O-sp)
+   (c-sp 'precedence-list) => (list c-sp b-sp a-sp o-sp O-sp)
+   (d-sp 'precedence-list) => (list d-sp D-sp c-sp b-sp a-sp o-sp O-sp)))
+
+;; --- C4 regression: x5=(x4 x1) where x4=(x3), x3=(x2), x2=(x1), x1 base ---
+;; Expected PL: x5 x4 x3 x2 x1
+(let ()
+  (define x1-sp (make-oisp idModExt '() #f))
+  (define x2-sp (make-oisp idModExt (list (list x1-sp)) #f))
+  (define x3-sp (make-oisp idModExt (list (list x2-sp)) #f))
+  (define x4-sp (make-oisp idModExt (list (list x3-sp)) #f))
+  (define x5-sp (make-oisp idModExt (list (list x4-sp x1-sp)) #f))
+  (expect
+   (x5-sp 'precedence-list) => (list x5-sp x4-sp x3-sp x2-sp x1-sp)))
+
+;; --- Instantiation with C4 merged fields across the Z hierarchy ---
+;; Each class contributes a unique field; Z's instance can access all of them.
+(let ()
+  (define O-sp  (make-oisp (field-spec 'o-field (λ (_inh _self) 'from-O)) '() #f))
+  (define A-sp  (make-oisp (field-spec 'a-field (λ (_inh _self) 'from-A))
+                            (list (list O-sp)) #f))
+  (define B-sp  (make-oisp (field-spec 'b-field (λ (_inh _self) 'from-B))
+                            (list (list O-sp)) #f))
+  (define C-sp  (make-oisp (field-spec 'c-field (λ (_inh _self) 'from-C))
+                            (list (list O-sp)) #f))
+  (define D-sp  (make-oisp (field-spec 'd-field (λ (_inh _self) 'from-D))
+                            (list (list O-sp)) #f))
+  (define E-sp  (make-oisp (field-spec 'e-field (λ (_inh _self) 'from-E))
+                            (list (list O-sp)) #f))
+  (define K1-sp (make-oisp (field-spec 'k1-field (λ (_inh _self) 'from-K1))
+                            (list (list A-sp B-sp C-sp)) #f))
+  (define K2-sp (make-oisp (field-spec 'k2-field (λ (_inh _self) 'from-K2))
+                            (list (list D-sp B-sp E-sp)) #f))
+  (define K3-sp (make-oisp (field-spec 'k3-field (λ (_inh _self) 'from-K3))
+                            (list (list D-sp A-sp)) #f))
+  (define Z-sp  (make-oisp (field-spec 'z-field (λ (_inh _self) 'from-Z))
+                            (list (list K1-sp K2-sp K3-sp)) #f))
+  (let ((z-inst (fix-oisp Z-sp)))
+    (expect
+     (z-inst 'z-field)  => 'from-Z
+     (z-inst 'k1-field) => 'from-K1
+     (z-inst 'k2-field) => 'from-K2
+     (z-inst 'k3-field) => 'from-K3
+     (z-inst 'a-field)  => 'from-A
+     (z-inst 'b-field)  => 'from-B
+     (z-inst 'c-field)  => 'from-C
+     (z-inst 'd-field)  => 'from-D
+     (z-inst 'e-field)  => 'from-E
+     (z-inst 'o-field)  => 'from-O
+     (z-inst 'missing)  => #f)))
+
 #||#
 #|
 The End. (For Now)
@@ -1961,5 +2196,6 @@ p2 = { b: String, ... }
 p1∩p2 = {a : Int, b : String , ... }
 |#
 
+;; TODO: add compute-once where appropriate in method-combinations?
 ;; TODO: double dispatch example for 9.3.2
 ;; TODO: visitor pattern example for 9.3.2
