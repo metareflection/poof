@@ -558,6 +558,247 @@ let Y = f: (x: x x) (x: f (x x));
 
 (expect (map body-rec '(parts part-count)) => '((head arms legs torso) 4))
 
+;;;;; 5.x Order, Binary Tree Map, AVL Tree Map, Alist+AVL Hybrid Map
+
+;;;; 5.x.1 Orderings
+
+;; compare<-order-spec : derives 'compare from '<, '=, '> methods.
+(def (compare<-order-spec super self method-id)
+  (case method-id
+    ((compare)
+     (λ (x y)
+       (cond ((self '< x y) '<)
+             ((self '> x y) '>)
+             ((self '= x y) '=)
+             (else (error "incomparable" x y)))))
+    (else (super method-id))))
+
+;; number-order-spec : '<, '=, '> for numbers.
+(def (number-order-spec super _self method-id)
+  (case method-id
+    ((<) (λ (x y) (< x y)))
+    ((=) (λ (x y) (= x y)))
+    ((>) (λ (x y) (> x y)))
+    (else (super method-id))))
+
+;; string-order-spec : '<, '=, '> for strings.
+(def (string-order-spec super _self method-id)
+  (case method-id
+    ((<) (λ (x y) (string<? x y)))
+    ((=) (λ (x y) (string=? x y)))
+    ((>) (λ (x y) (string>? x y)))
+    (else (super method-id))))
+
+(def number-order (fix-record (mix* compare<-order-spec number-order-spec)))
+(def string-order (fix-record (mix* compare<-order-spec string-order-spec)))
+
+;; symbol-order-spec : delegates '<, '=, '>, 'compare to string-order on symbol->string.
+(def (symbol-order-spec super _self method-id)
+  (case method-id
+    ((< = > compare)
+     (λ (x y) (string-order method-id (symbol->string x) (symbol->string y))))
+    (else (super method-id))))
+
+(def symbol-order (fix-record symbol-order-spec))
+
+(expect
+  (number-order '< 23 42) => #t
+  (number-order 'compare 8 4) => '>
+  (string-order '< "Hello" "World") => #t
+  (string-order 'compare "Foo" "FOO") => '>
+  (string-order 'compare "42" "42") => '=
+  (symbol-order '< 'aardvark 'aaron) => #t
+  (symbol-order '= 'zzz 'zzz) => #t
+  (symbol-order '> 'aa 'a) => #t
+  (symbol-order 'compare 'alice 'bob) => '<
+  (symbol-order 'compare 'b 'c) => '<
+  (symbol-order 'compare 'c 'a) => '>)
+
+;;;; 5.x.2 Binary Tree Map
+
+;; binary-tree-map-spec : a sorted associative map over (self 'Key).
+;; Representation:
+;;   empty = '()
+;;   node  = (left-subtree ((k . v)) right-subtree)
+;; Methods: 'empty, 'empty?, 'node, 'singleton, 'acons, 'ref, 'afoldr.
+(def (binary-tree-map-spec super self method-id)
+  (case method-id
+    ((empty)  '())
+    ((empty?) null?)
+    ((node)   (λ (l kv r) (list l (list kv) r)))
+    ((singleton) (λ (k v) (self 'node '() (cons k v) '())))
+    ((acons)
+     (λ (k v t)
+       (if (self 'empty? t) (self 'singleton k v)
+         (let* ((tl (car t)) (tkv (caadr t)) (tk (car tkv)) (tr (caddr t)))
+           (case (self 'Key 'compare k tk)
+             ((=) (self 'node tl (cons k v) tr))
+             ((<) (self 'node (self 'acons k v tl) tkv tr))
+             ((>) (self 'node tl tkv (self 'acons k v tr))))))))
+    ((ref)
+     (λ (t k e)
+       (if (self 'empty? t) (e)
+         (let ((tl (car t)) (tk (caaadr t)) (tv (cdaadr t)) (tr (caddr t)))
+           (case (self 'Key 'compare k tk)
+             ((=) tv)
+             ((<) (self 'ref tl k e))
+             ((>) (self 'ref tr k e)))))))
+    ((afoldr)
+     (λ (f acc t)
+       (if (self 'empty? t) acc
+         (let ((tl (car t)) (tk (caaadr t)) (tv (cdaadr t)) (tr (caddr t)))
+           (self 'afoldr f (f tk tv (self 'afoldr f acc tl)) tr)))))
+    (else (super method-id))))
+
+(def symbol-tree-map
+  (fix-record (mix* (constant-field-spec 'Key symbol-order)
+                    binary-tree-map-spec)))
+
+(define my-binary-dict
+  (foldl (lambda (kv t) (symbol-tree-map 'acons (car kv) (cdr kv) t))
+         (symbol-tree-map 'empty)
+         '((a . "I") (b . "II") (c . "III") (d . "IV") (e . "V"))))
+
+(expect
+  my-binary-dict =>
+  '(() ((a . "I")) (() ((b . "II")) (() ((c . "III")) (() ((d . "IV")) (() ((e . "V")) ())))))
+  (map (lambda (k) (symbol-tree-map 'ref my-binary-dict k (lambda () #f)))
+       '(a b c d e z))
+  => '("I" "II" "III" "IV" "V" #f))
+
+;;;; 5.x.3 AVL Tree Map
+
+;; avl-tree-rebalance-spec : overrides 'node to rebalance after insertion.
+;; AVL node representation:
+;;   node = (left-subtree ((k . v) . height) right-subtree)
+;; Height is stored alongside the kv pair for O(1) balance-factor checks.
+(def (avl-tree-rebalance-spec super _self method-id)
+  (define (left t)    (car t))
+  (define (kv t)      (caadr t))
+  (define (height t)  (if (null? t) 0 (cdadr t)))
+  (define (right t)   (caddr t))
+  (define (balance t) (if (null? t) 0 (- (height (right t)) (height (left t)))))
+  (define (mk l ckv r)
+    (let ((lh (height l)) (rh (height r)))
+      (or (member (- rh lh) '(-1 0 1)) (error "tree unbalanced!"))
+      (list l (cons ckv (+ 1 (max lh rh))) r)))
+  (def (node l ckv r)
+    (case (- (height r) (height l))
+      ((-1 0 1) (mk l ckv r))
+      ((-2) (case (balance l)
+              ((-1 0) (mk (left l) (kv l) (mk (right l) ckv r)))         ;; LL
+              ((1)    (mk (mk (left l) (kv l) (left (right l)))           ;; LR
+                          (kv (right l)) (mk (right (right l)) ckv r)))))
+      ((2)  (case (balance r)
+              ((-1)   (mk (mk l ckv (left (left r)))                      ;; RL
+                          (kv (left r)) (mk (right (left r)) (kv r) (right r))))
+              ((0 1)  (mk (mk l ckv (left r)) (kv r) (right r)))))))      ;; RR
+  (case method-id
+    ((node) node)
+    (else (super method-id))))
+
+;; Dict : AVL tree map with symbol keys.
+(def Dict
+  (fix-record (mix* (constant-field-spec 'Key symbol-order)
+                    binary-tree-map-spec
+                    avl-tree-rebalance-spec)))
+
+(define my-avl-dict
+  (foldl (lambda (kv t) (Dict 'acons (car kv) (cdr kv) t))
+         (Dict 'empty)
+         '((a . "I") (b . "II") (c . "III") (d . "IV") (e . "V"))))
+
+(expect
+  my-avl-dict =>
+  '((() ((a . "I") . 1) ()) ((b . "II") . 3)
+    ((() ((c . "III") . 1) ()) ((d . "IV") . 2) (() ((e . "V") . 1) ())))
+  (map (lambda (k) (Dict 'ref my-avl-dict k (lambda () #f)))
+       '(a b c d e z))
+  => '("I" "II" "III" "IV" "V" #f))
+
+;;;; 5.x.4 Alist+AVL Hybrid Map
+
+;; alist+avl-map-spec : keeps the (self 'threshold) most-recently-added entries in an
+;; alist for O(1) insertion and fast sequential access; older entries go to a Dict.
+;;
+;; Representation: (pair alist avl)
+;;   alist = ((k . v)...) most-recently-added first, at most threshold entries
+;;   avl   = AVL tree (Dict format) for older/evicted entries (symbol keys)
+;;
+;; On 'acons k v: remove k from alist (update), prepend (k . v); if |alist| > threshold,
+;;   evict the oldest (last) alist entry into the AVL tree.
+;; On 'ref t k e: scan alist first, then AVL tree.
+;; On 'afoldr f acc t: fold AVL (skipping alist keys), then fold alist right-to-left;
+;;   each key appears once, alist value shadows any stale AVL entry.
+(def (alist+avl-map-spec super self method-id)
+  (case method-id
+    ((threshold) 8)
+    ((empty)     (cons '() '()))
+    ((empty?)    (λ (t) (and (null? (car t)) (null? (cdr t)))))
+    ((singleton) (λ (k v) (cons (list (cons k v)) '())))
+    ((acons)
+     (λ (k v t)
+       (let* ((al  (car t))
+              (avl (cdr t))
+              ;; Remove any existing entry for k from the alist (update semantics)
+              (al2 (let lp ((a al))
+                     (cond ((null? a) a)
+                           ((equal? (caar a) k) (cdr a))
+                           (else (cons (car a) (lp (cdr a)))))))
+              ;; Prepend new entry at the front (most recently added)
+              (al3 (cons (cons k v) al2)))
+         (if (> (length al3) (self 'threshold))
+           ;; Evict the oldest (last) alist entry into the AVL tree
+           (let* ((rl    (reverse al3))
+                  (evict (car rl))
+                  (al4   (reverse (cdr rl)))
+                  (avl2  (Dict 'acons (car evict) (cdr evict) avl)))
+             (cons al4 avl2))
+           (cons al3 avl)))))
+    ((ref)
+     (λ (t k e)
+       (let ((found (assoc k (car t))))
+         (if found (cdr found)
+           (Dict 'ref (cdr t) k e)))))
+    ((afoldr)
+     (λ (f acc t)
+       (let* ((al  (car t))
+              (avl (cdr t))
+              ;; Fold AVL tree, skipping keys already in the alist cache
+              (acc1 (Dict 'afoldr
+                       (λ (k v a) (if (assoc k al) a (f k v a)))
+                       acc avl))
+              ;; Fold alist right-to-left: oldest processed first, most-recent last
+              (acc2 (foldr (lambda (kv a) (f (car kv) (cdr kv) a)) acc1 al)))
+         acc2)))
+    (else (super method-id))))
+
+(def alist+avl-map (fix-record alist+avl-map-spec))
+
+;; Tests: build a map with 10 entries (threshold=8).
+;; After inserting a..j in order: a and b (oldest) are evicted to AVL;
+;; c..j (8 entries, most-recent-first) remain in the alist.
+(define my-hybrid-dict
+  (foldl (lambda (kv t) (alist+avl-map 'acons (car kv) (cdr kv) t))
+         (alist+avl-map 'empty)
+         '((a . 1) (b . 2) (c . 3) (d . 4) (e . 5)
+           (f . 6) (g . 7) (h . 8) (i . 9) (j . 10))))
+
+(expect
+  (alist+avl-map 'ref my-hybrid-dict 'a (lambda () #f)) => 1   ;; in AVL part
+  (alist+avl-map 'ref my-hybrid-dict 'j (lambda () #f)) => 10  ;; in alist
+  (alist+avl-map 'ref my-hybrid-dict 'z (lambda () #f)) => #f) ;; absent
+
+;; afoldr collects all 10 entries; alist values shadow any stale AVL entries.
+(define my-hybrid-alist
+  (alist+avl-map 'afoldr (λ (k v acc) (cons (cons k v) acc))
+                 '() my-hybrid-dict))
+
+(expect
+  (length my-hybrid-alist)   => 10
+  (assoc 'a my-hybrid-alist) => '(a . 1)
+  (assoc 'j my-hybrid-alist) => '(j . 10))
+
 ;;;;; 6 Rebuilding OO from its Minimal Core
 
 ;;;; 6.1.2 Conflation: Crouching Typecast, Hidden Product
@@ -1047,7 +1288,7 @@ let Y = f: (x: x x) (x: f (x x));
 ;;   MethodCons = MethodFn → List(MethodFn) → List(MethodFn)
 ;;   Tag        = Symbol  (qualifier: 'primary 'before 'after 'around, or simple-comb name)
 ;;   MethodId   = Symbol  (method name in the record, e.g. 'compute 'greet)
-;;   MethodFn   = ? → ? → ?  (see MethodFn below; TODO: refine types)
+;;   MethodFn   = CallNextMethod → Self → (Arg... → Result)  (see 9.2.2 for details)
 ;;   ModExt     = ? → ? → ?  (modular extension; see field-spec)
 ;;
 ;; Creates a ModExt that prepends method-fn to sub-methods[method-id][tag].
@@ -1097,15 +1338,19 @@ let Y = f: (x: x x) (x: f (x x));
 
 ;;;; 9.2.2 Standard Method Combination
 
-;; MethodFn = a function (call-next-method self arg ...) → result
-;;   where call-next-method : (() | new-arg ...) → result
-;;         self : the current object (the fixpoint record)
-;;         arg ...: the method's own arguments
+;; MethodFn = CallNextMethod → Self → (Arg... → Result)   (curried)
+;;   CallNextMethod = case-lambda: () → Result | new-arg... → Result
+;;     calling with no args forwards the original args to the next method;
+;;     calling with new-args uses those instead.
+;;   Self   = the current object (the fixpoint record)
+;;   Arg... = the method's own user arguments (applied after Self)
 ;;
-;; TODO: refine to ModExt-like triple ? → ? → ?
-;;   Inherited ≈ CallNextMethod (the value from the super chain)
-;;   Required  ≈ Self (the whole record, for reading)
-;;   Provided  ≈ result
+;; This mirrors the ModExt triple: CallNextMethod ≈ Inherited, Self ≈ Required.
+;; Methods that ignore CallNextMethod and Self may use (constant-spec f)
+;;   where f is a function of Arg... only.
+;;
+;; call-chain invokes m as: first (m cnm) → fn-of-self,
+;;   then (fn-of-self self) → fn-of-args, then (apply fn-of-args args).
 
 ;; make-call-next-method : Next → Args → CallNextMethod
 ;;   Next = ...Args → Result  (the remaining chain)
@@ -1117,8 +1362,9 @@ let Y = f: (x: x x) (x: f (x x));
     (new-args (apply next new-args))))
 
 ;; call-chain : List(MethodFn) → OnExhausted → Self → EffectiveMethod
-;;   EffectiveMethod = ...Args → Result   (self already captured via closure)
-;;   Each MethodFn m is called as (m call-next-method self arg ...).
+;;   EffectiveMethod = Arg... → Result   (self already captured via closure)
+;;   Each MethodFn m is invoked curried: (m cnm) → fn-of-self,
+;;   then (fn-of-self self) → fn-of-args, then (apply fn-of-args args).
 (def (call-chain methods on-exhausted self)
   (foldr
     (lambda (m next)
@@ -1142,18 +1388,18 @@ let Y = f: (x: x x) (x: f (x x));
 
 (define no-applicable-method standard-no-applicable-method)
 
-;; standard-compute-effective-method : MethodId → PerMethodSubs → Self → EffectiveMethod
-;;   PerMethodSubs = record {before: List(MethodFn), after: ..., around: ..., primary: ...}
-(def (standard-compute-effective-method method-id per-method-subs self)
-  (call-chain (per-method-subs 'around)
+;; standard-compute-effective-method : MethodId → SubMethods → Self → EffectiveMethod
+;;   SubMethods = record {before: List(MethodFn), after: ..., around: ..., primary: ...}
+(def (standard-compute-effective-method method-id sub-methods self)
+  (call-chain (sub-methods 'around)
     (λ args
-      (progn-methods-most-specific-first (per-method-subs 'before) self args)
+      (progn-methods-most-specific-first (sub-methods 'before) self args)
       (let ((result
-              (apply (call-chain (per-method-subs 'primary)
+              (apply (call-chain (sub-methods 'primary)
                        (λ args (apply no-applicable-method method-id args))
                        self)
                      args)))
-        (progn-methods-most-specific-last (per-method-subs 'after) self args)
+        (progn-methods-most-specific-last (sub-methods 'after) self args)
         result))
     self))
 
@@ -1164,8 +1410,7 @@ let Y = f: (x: x x) (x: f (x x));
   (mix
     (field-spec method-id
        (λ (_inherited self)
-          (let ((subs (self 'sub-methods)))
-            (standard-compute-effective-method method-id (subs method-id) self))))
+         (standard-compute-effective-method method-id (self 'sub-methods method-id) self)))
     (method-combination-init-spec method-id standard-method-combination-init)))
 
 ;; Convenience specs for each standard qualifier (Tag → MethodId → MethodFn → ModExt)
@@ -1215,17 +1460,23 @@ let Y = f: (x: x x) (x: f (x x));
 ;;;; 9.2.3 Simple Method Combination
 
 ;; simple-compute-effective-method :
-;;   Name → Stop? → Op0 → Op1 → Op2 → Order → PerMethodSubs → Self → EffectiveMethod
+;;   Name → Stop? → Op0 → Op1 → Op2 → Order → SubMethods → Self → EffectiveMethod
 ;;   Name  = Symbol  (tag for the sub-method list)
-;;   Stop? = Result → Bool    (short-circuit: stop folding when true)
-;;   Op0   = #f → Result      (result when no methods; takes dummy arg)
-;;   Op1   = Result → Acc     (transforms first method result into initial accumulator)
-;;   Op2   = Result → Acc → Acc  (fold step: combine next result with accumulator)
+;;   Stop? = Result → Bool        (short-circuit: stop folding when true)
+;;   Op0   = #f → Result          (result when no methods; takes dummy arg)
+;;   Op1   = Result → Acc         (transforms first method result into initial accumulator)
+;;   Op2   = Result → Acc → Acc   (fold step; must be curried)
 ;;   Order = 'most-specific-first | 'most-specific-last
+;;
+;; Simple MethodFn = CallNextMethod → Self → Result  (no user args; result is
+;;   the method's direct contribution, folded by Op1/Op2 across all methods).
+;; Each simple method m is called as ((m abort) self) with abort as cnm
+;;   (call-next-method must not be invoked in simple methods).
+;; Use (constant-spec v) for a method that contributes the constant value v.
 (def (simple-compute-effective-method
-       name stop? op0 op1 op2 order per-method-subs self)
-  (let* ((arounds (per-method-subs 'around))
-         (methods (per-method-subs name))
+       name stop? op0 op1 op2 order sub-methods self)
+  (let* ((arounds (sub-methods 'around))
+         (methods (sub-methods name))
          (ordered (case order
                     ((most-specific-first) methods)
                     ((most-specific-last) (reverse methods)))))
@@ -1242,30 +1493,30 @@ let Y = f: (x: x x) (x: f (x x));
           (op0 #f))))
     self)))
 
-(def (compute-effective-method/progn per-method-subs self)
+(def (compute-effective-method/progn)
   (simple-compute-effective-method
     'progn (λ (_) #f) (λ (_) #f) (λ (x) x) (λ (r _) r)
-    'most-specific-first per-method-subs self))
+    'most-specific-first))
 
-(def (compute-effective-method/and per-method-subs self)
+(def (compute-effective-method/and)
   (simple-compute-effective-method
     'and not (λ (_) #t) (λ (x) x) (λ (r _) r)
-    'most-specific-first per-method-subs self))
+    'most-specific-first))
 
-(def (compute-effective-method/+ per-method-subs self)
+(def (compute-effective-method/+)
   (simple-compute-effective-method
     '+ (λ (_) #f) (λ (_) 0) (λ (x) x) (λ (x y) (+ x y))
-    'most-specific-first per-method-subs self))
+    'most-specific-first))
 
-(def (compute-effective-method/* per-method-subs self)
+(def (compute-effective-method/*)
   (simple-compute-effective-method
     '* (λ (_) #f) (λ (_) 1) (λ (x) x) (λ (x y) (* x y))
-    'most-specific-first per-method-subs self))
+    'most-specific-first))
 
-(def (compute-effective-method/list per-method-subs self)
+(def (compute-effective-method/list)
   (simple-compute-effective-method
     'list (λ (_) #f) (λ (_) '()) (λ (x) (list x)) (λ (x y) (cons x y))
-    'most-specific-last per-method-subs self))
+    'most-specific-last))
 
 ;; list-method-init-spec : MethodId → ModExt
 ;; Initializes method-id to collect contributions from all methods into a list.
@@ -1274,8 +1525,7 @@ let Y = f: (x: x x) (x: f (x x));
   (mix
     (field-spec method-id
        (λ (_inherited self)
-          (let ((subs (self 'sub-methods)))
-            (compute-effective-method/list (subs method-id) self))))
+         (compute-effective-method/list (self 'sub-methods method-id) self)))
     (method-combination-init-spec method-id (simple-method-combination-init 'list))))
 
 ;; list-method-spec : MethodId → MethodFn → ModExt  (tag = 'list)
@@ -1302,8 +1552,7 @@ let Y = f: (x: x x) (x: f (x x));
       (mix
         (field-spec 'total
           (λ (_inherited self)
-            (let ((subs (self 'sub-methods)))
-              (compute-effective-method/+ (subs 'total) self))))
+            (compute-effective-method/+ (self 'sub-methods 'total) self)))
         (method-combination-init-spec 'total (simple-method-combination-init '+)))
       (standard-sub-method-spec '+ 'total (constant-spec 3))
       (standard-sub-method-spec '+ 'total (constant-spec 4)))))

@@ -1040,47 +1040,46 @@ The @c{abort} are a poor man’s error mechanism in case the @c{before} or @c{af
 methods try to invoke their @c{super} argument as a @c{call-next-method}.
 
 @Code{
-(def (call-chain methods on-exhausted)
+(def (call-chain methods on-exhausted self)
   (foldr
     (lambda (m next)
-      (λ (self . args)
-        (apply m (make-call-next-method next self args) self args)))
+      (λ args
+        (apply ((m (make-call-next-method next args)) self) args)))
     on-exhausted
     methods))
 
 (def (progn-methods-most-specific-first methods self args)
-  (foldl (lambda (m _) (apply m abort self args)) #f methods))
+  (foldl (lambda (m _) (apply ((m abort) self) args)) #f methods))
 
 (def (progn-methods-most-specific-last methods self args)
-  (foldr (lambda (m _) (apply m abort self args)) #f methods))
+  (foldr (lambda (m _) (apply ((m abort) self) args)) #f methods))
 
-(def (standard-no-applicable-method method-id . self-args)
-  (error "no applicable method" method-id self-args))
+(define (standard-no-applicable-method method-id . args)
+  (error "no applicable method" method-id args))
 
-(def no-applicable-method standard-no-applicable-method)
+(define no-applicable-method standard-no-applicable-method)
 
-(def (standard-compute-effective-method method-id sub-methods)
+(def (standard-compute-effective-method method-id sub-methods self)
   (call-chain (sub-methods 'around)
-    (λ (self . args)
-      (progn-methods-most-specific-first
-        (sub-methods 'before) self args)
+    (λ args
+      (progn-methods-most-specific-first (sub-methods 'before) self args)
       (let ((result
               (apply (call-chain (sub-methods 'primary)
-                       (λ (self . args)
-                         (apply no-applicable-method
-                           method-id self args)))
-                       self args)))
-          (progn-methods-most-specific-last
-            (sub-methods 'after) self args)
-          result))))
+                       (λ args (apply no-applicable-method method-id args))
+                       self)
+                     args)))
+        (progn-methods-most-specific-last (sub-methods 'after) self args)
+        result))
+    self))
 }
 You can then initialize a method to use the standard method combination by calling this function:
 @Code{
 (def (standard-method-init-spec method-id)
   (mix
-    (method-spec method-id
-       (λ (_super self)
-          (standard-compute-effective-method method-id (self 'sub-methods))))
+    (field-spec method-id
+       (λ (_inherited self)
+          (standard-compute-effective-method
+            method-id (self 'sub-methods method-id) self)))
     (method-combination-init-spec
        method-id standard-method-combination-init)))
 }
@@ -1123,56 +1122,57 @@ try to invoke their @c{super} argument as a @c{call-next-method}.
 
 @Code{
 (def (simple-compute-effective-method
-       name stop? op0 op1 op2 order sub-methods)
+       name stop? op0 op1 op2 order sub-methods self)
   (let* ((arounds (sub-methods 'around))
          (methods (sub-methods name))
          (ordered (case order
                     ((most-specific-first) methods)
                     ((most-specific-last) (reverse methods)))))
    (call-chain arounds
-    (λ (self . args)
-      (letrec ((run (λ (m) (apply m abort self args)))
-               (f (λ (acc lst)
-                    (if (and (not (stop? acc)) (pair? lst))
-                      (let ((v (op2 (run (car lst)) acc)))
-                        (if (stop? v) v (f v (cdr lst))))
-                      acc))))
+    (λ args
+      (letrec ((run (λ (m) (m abort self)))
+               (f   (lambda (acc lst)
+                      (if (and (not (stop? acc)) (pair? lst))
+                        (let ((v (op2 (run (car lst)) acc)))
+                          (if (stop? v) v (f v (cdr lst))))
+                        acc))))
         (if (pair? ordered)
           (f (op1 (run (car ordered))) (cdr ordered))
-          (op0 #f)))))))
+          (op0 #f))))
+    self)))
 
-(def (compute-effective-method/progn sub-methods)
+(def compute-effective-method/progn
   (simple-compute-effective-method
     'progn (λ (_) #f) (λ (_) #f) (λ (x) x) (λ (r _) r)
-    'most-specific-first sub-methods))
+    'most-specific-first))
 
-(def (compute-effective-method/and sub-methods)
+(def compute-effective-method/and
   (simple-compute-effective-method
     'and not (λ (_) #t) (λ (x) x) (λ (r _) r)
-    'most-specific-first sub-methods))
+    'most-specific-first))
 
-(def (compute-effective-method/+ sub-methods)
+(def compute-effective-method/+
   (simple-compute-effective-method
-    '+ (λ (_) #f) (λ (_) 0) (λ (x) x) +
-    'most-specific-first sub-methods))
+    '+ (λ (_) #f) (λ (_) 0) (λ (x) x) (λ (x y) (+ x y))
+    'most-specific-first))
 
-(def (compute-effective-method/* sub-methods)
+(def compute-effective-method/*
   (simple-compute-effective-method
-    '* (λ (_) #f) (λ (_) 1) (λ (x) x) *
-    'most-specific-first sub-methods))
+    '* (λ (_) #f) (λ (_) 1) (λ (x) x) (λ (x y) (* x y))
+    'most-specific-first))
 
-(def (compute-effective-method/list sub-methods)
+(def compute-effective-method/list
   (simple-compute-effective-method
-    'list (λ (_) #f) (λ (_) '()) list cons
-    'most-specific-last sub-methods))
+    'list (λ (_) #f) (λ (_) '()) (λ (x) (list x)) (λ (x y) (cons x y))
+    'most-specific-last))
 }
 You can define then initialize a function with specifications like this one:
 @Code{
 (def (list-method-init-spec method-id)
   (mix
-    (method-spec method-id
-       (λ (_super self)
-          (compute-effective-method/list (self 'sub-methods))))
+    (field-spec method-id
+       (λ (_inherited self)
+          (compute-effective-method/list (self 'sub-methods method-id) self)))
     (method-combination-init-spec
        method-id (simple-method-combination-init 'list))))
 }

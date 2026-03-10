@@ -171,3 +171,25 @@ Vau calculus, proper separation of metalevels / phases for procedural macros (Ra
 
 Symmathesy
 
+Lisp is more than a programming language: it is a computing system.
+
+Lisp rejects the “command and control” paradigm of an omniscient programmer above the machine slavishly doing his bidding, and embraces the “interaction” paradigm of humans and machines cooperating with each other based on comparative advantage.
+
+See Gabriel’s 2012 “The Structure of a Programming Language Revolution” for how people completely misconstrue Lisp or OO based on trying to make sense of them with the blinders of the extremely poor paradigm of “programming language”.
+
+
+Patterns mean “I have run out of language.” — Rich Hickey
+
+A design pattern is when programmers become manual compilers for some feature not supported by the language, and must follow a recipe by hand, ensure its consistency, and maintain that consistency manually as the program inevitably evolves.
+
+“I object to doing things that computers can do.” — Olin Shivers
+
+A good language has only one single design pattern: use, extend and evolve the language and its libraries.
+
+Any language without macros is a bad language, because you can't extend it, and thus need design patterns beyond the One Design Pattern.
+
+
+Macros 1963
+The original macro paper... has bugs! https://dspace.mit.edu/handle/1721.1/6111
+A transcription and bug report:
+https://github.com/acarrico/ai-memo/blob/master/AIM-057.txt
