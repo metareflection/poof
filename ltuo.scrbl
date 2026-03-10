@@ -18,8 +18,8 @@
 @italic{This book is still a work in progress, though it is well advanced already.
 Please send feedback to fahree at gmail.}@xnote[""]{
   For your convenience, a current draft is available
-  in PDF at @url{http://fare.tunes.org/files/cs/poof/ltuo.pdf}
-  and in HTML at @url{http://fare.tunes.org/files/cs/poof/ltuo.html}.
+  in PDF at @url{https://fare.tunes.org/files/cs/poof/ltuo.pdf}
+  and in HTML at @url{https://fare.tunes.org/files/cs/poof/ltuo.html}.
   The source code is at @url{https://github.com/metareflection/poof}.
 }
 @linebreak[]@tex{\\{}}

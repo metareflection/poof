@@ -2,7 +2,7 @@
 
 This directory contains the source for our paper
 “Prototypes: Object Orientation, Functionally”.
-View the [precompiled PDF](http://fare.tunes.org/files/cs/poof.pdf).
+View the [precompiled PDF](https://fare.tunes.org/files/cs/poof.pdf).
 The same [Racket Scribble source](poof.scrbl) can produces
 simultaneously a printable document and a runnable library.
 
@@ -19,9 +19,10 @@ After giving up on getting a paper published on my broader ideas about OO,
 I (Faré) am instead am preparing a book, titled “Lambda: the Ultimate Object”,
 (subtitle “Object-Orientation Elucidated”), see its
 [Scribble source](ltuo.scrbl) and [annotated bibliography](ltuo.bib).
-It is still a Work-In-Progress, but I regularly update some precompiled draft
-[PDF](http://fare.tunes.org/files/cs/ltuo.pdf) and
-[HTML](http://fare.tunes.org/files/cs/ltuo.html).
+It is still a Work-In-Progress, but well advanced already.
+I regularly update some precompiled draft
+[PDF](https://fare.tunes.org/files/cs/ltuo.pdf) and
+[HTML](https://fare.tunes.org/files/cs/ltuo.html).
 Please send me feedback if you proofread.
 
 ## Abstract

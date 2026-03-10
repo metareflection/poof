@@ -838,30 +838,34 @@ Every partial order can be expressed that way,
 even if only with a list of lists of two elements, one list for each pair of comparable elements.
 
 @Paragraph{Extended Precedence: Consistency in Preferences}
-If a specification @c{X} is chosen to appear before a specification @c{Y} in the linearization,
-then all the ancestors of @c{X} that aren’t ancestors of @c{Y} will also appear before @c{Y}
-in the linearization (and therefore also before any of @c{Y}’s ancestors,
+If a parent specification @c{X} is chosen to appear before a parent specification @c{Y}
+in the linearization, then all the ancestors of @c{X} that aren’t ancestors of @c{Y}
+will also appear before @c{Y} in the linearization
+(and therefore also before any of @c{Y}’s ancestors,
 that may or may not be shared with @c{X}).
 Thus, even though @c{X} might itself be specified by composing many small specifications,
 the series of these specifications will not be interrupted in the middle, or otherwise
-interspersed with potentially contradictory specifications from @c{Y}.
+interspersed with potentially contradictory specifications from @c{Y},
+except where strictly necessary.
 Preference in specifications is consistent and predictable.
 
 Said otherwise, you can answer the question “which of these two behaviors win?” simply:
 1. Does one explicitly override the other? If so, it wins.
-2. If not, which behavior first appears in a parents? It wins.
- (If the local precedence list is not totally ordered, linearize it first;
+2. If not, which behavior first appears in a parent? It wins.
+ (If the local precedence list is not totally ordered, linearize it first
+ according to the same rules with appearance left-to-right in the parent lists;
  prefer the ancestors that appear first in any tie break).
 
 This property was introduced by @citet{Ducournau1992} as “extended order”,
 and first enforced by the algorithm in @citet{Ducournau1994}.
 It is the first of the three eponymous constraints of C3 @~cite{Barrett1996C3}.
 
-Ducournau try to formalize the property in terms of the linearization being a subset of
-an “extended precedence graph”,
+Ducournau try to formalize the property in terms of the linearization being a @emph{subset}
+(rather than superset—bounding the linearization from the other side)
+of an “extended precedence graph”,
 total preorder that extends the local order such that if a parent comes before another,
 all its ancestors that aren’t before the other’s also come before.
-But their formalization is complex yet cannot be easily adapted to my extension
+But their formalization is complex yet is not easily adapted to my extension
 of the local order being an arbitrary DAG rather than a total order.
 Thus I much prefer the informal explanation
 (that in turn could be formalized, just not the exact same way as Ducournau)

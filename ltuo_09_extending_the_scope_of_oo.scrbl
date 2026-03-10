@@ -1570,6 +1570,15 @@ so that the representation remains backward compatible with single dispatch.
 
 @section[#:tag "DD"]{Dynamic Dispatch}
 
+@subsection{First-class modularity}
+
+Dynamic dispatch is the mechanism whereby the behavior of a program depends on looking up
+runtime values of first-class entities:
+an object in Smalltalk or Lisp, a first-class module in ML,
+an existentially quantified values with typeclass constraints in Haskell (usually using GADT syntax),
+or plain old structs of functions pointers and data to close over in C.
+
+
 First-class modularity vs second-class.
 Note that in most second-class OO languages, you often also have this as first-class modularity
 yet without first-class modular extensibility. (Subtle distinction.)

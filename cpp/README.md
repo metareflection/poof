@@ -162,13 +162,14 @@ struct SpecHelper { /* ... */ };
 
 ## The C4 Algorithm
 
-C4 extends C3 with support for **suffix specifications**. It enforces five constraints:
+C4 extends C3 with support for **suffix specifications**. It enforces six constraints:
 
 1. **Linearization**: Total order extending the DAG partial order
-2. **Local Order**: Parent order in definitions preserved in precedence list
+2. **Local Precedence**: Parent order in definitions preserved in precedence list
 3. **Monotonicity**: Parent's precedence list is subsequence of child's
 4. **Shape Determinism**: Isomorphic DAGs yield isomorphic precedence lists
-5. **Suffix Property** (C4): Suffix spec's precedence list is suffix to any of its descendents'.
+5. **Extended Precedence**: Within the other constraints, prioritize as per depth-first search
+6. **Suffix Property** (C4): Suffix spec's precedence list is suffix to any of its descendents'.
 
 ### Complexity
 
@@ -185,12 +186,12 @@ it rewrite and simplify it into half as much code with a nicer and more powerful
 ## Bibliography
 
 **François-René Rideau**. "Gerbil Scheme C4 implementation". 2025.
-http://github.com/mighty-gerbils/gerbil .
+https://github.com/mighty-gerbils/gerbil .
 Latest copy in branch c3-doc. Source files src/gerbil/runtime/c3.ss,
 tests in src/gerbil/test/c3-test.ss, docs in doc/reference/gerbil/runtime/c3.md.
 
 **François-René Rideau**. "Lambda, the Ultimate Object". 2026. (Not yet published)
-http://fare.tunes.org/files/cs/poof/ltuo.html .
+https://fare.tunes.org/files/cs/poof/ltuo.html .
 Includes a complete theory of OO. The C4 algorithm is explained in chapter 7.
 
 **Yannis Smaragdakis and Don Batory**. "Mixin-based programming in C++". 2000.
