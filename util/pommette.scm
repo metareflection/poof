@@ -1559,6 +1559,397 @@ let Y = f: (x: x x) (x: f (x x));
 
 (expect ((sum-obj 'total)) => 7)
 
+;;;;; C4 Linearization: Multiple Inheritance with Suffix Support
+;;;; Ported from gerbil/src/gerbil/runtime/c3.ss
+;;;; See gerbil/doc/reference/gerbil/runtime/c3.md for the theory.
+;;;; See gerbil/src/gerbil/test/c3-test.ss for the tests.
+
+;;;; Portable hash tables (using eq? as the key equality predicate)
+
+(define (make-ht)
+  (cond-expand
+    (gerbil     (make-table test: eq?))
+    (racket     (make-hasheq))
+    (chezscheme (make-eq-hashtable))
+    (else       (make-hash-table equal?))))
+
+(define (ht-ref t k default)
+  (cond-expand
+    (gerbil     (table-ref t k default))
+    (racket     (hash-ref t k default))
+    (chezscheme (hashtable-ref t k default))
+    (else       (hash-table-ref/default t k default))))
+
+(define (ht-set! t k v)
+  (cond-expand
+    (gerbil     (table-set! t k v))
+    (racket     (hash-set! t k v))
+    (chezscheme (hashtable-set! t k v))
+    (else       (hash-table-set! t k v))))
+
+;;;; List utilities needed by C4
+
+;; Reverse lst and prepend to tail.
+(define (append-reverse lst tail)
+  (let loop ((l lst) (t tail))
+    (if (null? l) t (loop (cdr l) (cons (car l) t)))))
+
+;; Walk rhead left-to-right, reverse-prepending elements onto tail,
+;; until (pred elem) is true.  Returns (values remaining new-tail).
+(define (append-reverse-until pred rhead tail)
+  (let loop ((rhead rhead) (tail tail))
+    (cond
+      ((null? rhead) (values '() tail))
+      ((pred (car rhead)) (values rhead tail))
+      (else (loop (cdr rhead) (cons (car rhead) tail))))))
+
+;; Destructively append x at the end of lst; return the (possibly new) list.
+(define (append1! lst x)
+  (let ((cell (list x)))
+    (if (null? lst)
+        cell
+        (begin
+          (let lp ((l lst))
+            (if (null? (cdr l)) (set-cdr! l cell) (lp (cdr l))))
+          lst))))
+
+;; Destructively remove empty sublists from a list of lists; return modified list.
+(define (remove-nulls! lists)
+  (define (fix! prev rest)
+    (cond
+      ((null? rest) (if #f #f))
+      ((null? (car rest))
+       (set-cdr! prev (remove-nulls! (cdr rest))))
+      (else (fix! rest (cdr rest)))))
+  (cond
+    ((null? lists) '())
+    ((null? (car lists)) (remove-nulls! (cdr lists)))
+    (else (fix! lists (cdr lists)) lists)))
+
+;; Return the first element of lst satisfying pred, or #f.
+(define (find pred lst)
+  (let loop ((l lst))
+    (cond ((null? l) #f)
+          ((pred (car l)) (car l))
+          (else (loop (cdr l))))))
+
+;;;; The C4 Linearization Algorithm
+
+;; filter-map: map f over lst, keeping only truthy results (not in R7RS-small).
+(define (filter-map f lst)
+  (let loop ((l lst) (acc '()))
+    (if (null? l)
+        (reverse acc)
+        (let ((r (f (car l))))
+          (loop (cdr l) (if r (cons r acc) acc))))))
+
+;; c4-linearize head parents get-precedence-list suffix? [eq [get-name]]
+;;   -> (values precedence-list super-suffix-or-#f)
+;;
+;; Compute the precedence list for a specification.
+;;   head               - prefix list to prepend (typically (list x) or '())
+;;   parents            - list of totally-ordered parent chains (each chain is a list);
+;;                        supports an arbitrary DAG for the local precedence order,
+;;                        e.g. '((A B C)) for a single chain, or '((A B) (C A)) for a DAG.
+;;   get-precedence-list - procedure: x -> its full precedence list (incl. x at front)
+;;   suffix?            - predicate: is x a "suffix" (single-inh struct)?
+;;   eq                 - equality on specs (optional, default: equal?)
+;;   get-name           - name extractor for error messages (optional, default: identity)
+;;
+;; Returns two values:
+;;   - the linearized precedence list (most specific first)
+;;   - the most specific suffix ancestor, or #f
+(define (c4-linearize head parents get-precedence-list suffix? . opts)
+  (let* ((eq       (if (pair? opts) (car opts) eq?))
+         (get-name (if (and (pair? opts) (pair? (cdr opts)))
+                       (cadr opts) (lambda (x) x)))
+         (super-suffix
+          (lambda (x)
+            (find suffix? (cdr (get-precedence-list x))))))
+    (set! parents (remove-nulls! parents))
+    (cond
+      ;; 0 non-empty parent-lists: base class
+      ((null? parents)
+       (values head #f))
+
+      ;; 1 parent-list with 1 parent: single inheritance
+      ((and (null? (cdr parents)) (null? (cdar parents)))
+       (let* ((parent (caar parents))
+              (pl (get-precedence-list parent)))
+         (values (append head pl)
+                 (if (suffix? parent) parent (super-suffix parent)))))
+
+      ;; Multiple inheritance
+      (else
+       (let ((rcandidates '())  ;; reversed candidate lists accumulated during scan
+             (ss  #f)           ;; most specific suffix ancestor found so far
+             (ss-tail '()))     ;; PL of ss (suffix-tail), or '() if none
+
+         (define (get-names lst) (map get-name lst))
+         (define (err . args)
+           (apply error "Inconsistent precedence graph"
+                  `(head: ,(get-names head)
+                    common-suffix-tail: ,(get-names ss-tail)
+                    rcandidates: ,(map get-names rcandidates)
+                    ,@args)))
+
+         ;; Is s2 reachable via super-suffix chain from s1?
+         (define (super-suffix? s1 s2)
+           (or (not s2)
+               (let loop ((s s1))
+                 (and s (or (eq s s2) (loop (super-suffix s)))))))
+
+         ;; Merge two suffix specs; return the more specific one, or error.
+         (define (merge-suffix s1 s2)
+           (cond
+             ((not s2) s1)
+             ((not s1) s2)
+             (else
+              (let loop ((t1 s1) (t2 s2))
+                (cond
+                  ((eq t1 s2) s1)
+                  ((eq t2 s1) s2)
+                  ((not t1) (if (super-suffix? t2 s1) s2
+                                (err 'suffix-incompatibility: (list (get-name s1) (get-name s2)))))
+                  ((not t2) (if (super-suffix? t1 s2) s1
+                                (err 'suffix-incompatibility: (list (get-name s1) (get-name s2)))))
+                  (else (loop (super-suffix t1) (super-suffix t2))))))))
+
+         ;; Ancestor counts: tracks non-head appearances across all candidate lists.
+         ;; Also used for deduplication: get-count=0 means "not yet processed".
+         (define ancestor-counts (make-ht))
+         (define (get-count c) (ht-ref ancestor-counts c 0))
+         (define (inc-count! c) (ht-set! ancestor-counts c (+ 1 (get-count c))))
+         (define (dec-count! c) (ht-set! ancestor-counts c (- (get-count c) 1)))
+
+         ;; Initial scan: for each parent-list, for each parent, walk its PL.
+         ;; get-count=0 detects parents not yet processed (deduplication across chains).
+         (for-each
+          (lambda (parent-list)
+            (for-each
+             (lambda (parent)
+               (when (zero? (get-count parent))
+                 ;; New parent: walk its PL until we hit a suffix ancestor.
+                 (let loop ((al (get-precedence-list parent)) (r '()))
+                   (cond
+                     ((null? al)
+                      ;; No suffix found; add reversed non-suffix prefix to candidates.
+                      (unless (null? r)
+                        (set! rcandidates (cons r rcandidates))))
+                     ((suffix? (car al))
+                      ;; Found suffix; try to merge with current ss.
+                      (let ((ms (merge-suffix (car al) ss)))
+                        (unless (eq ms ss)
+                          ;; New longer suffix: count new suffix-tail elements.
+                          ;; (stops at the old ss, which was already counted)
+                          (let count-loop ((tl al))
+                            (unless (null? tl)
+                              (unless (eq (car tl) ss)
+                                (inc-count! (car tl))
+                                (count-loop (cdr tl)))))
+                          (set! ss ms)
+                          (set! ss-tail al))
+                        ;; Done with this PL; add the reversed non-suffix prefix.
+                        (unless (null? r)
+                          (set! rcandidates (cons r rcandidates)))))
+                     (else
+                      (inc-count! (car al))
+                      (loop (cdr al) (cons (car al) r)))))))
+             parent-list))
+          parents)
+
+         ;; Build suffix-tail-index: element -> position.
+         ;; Most specific element gets highest index (= length of suffix-tail),
+         ;; least specific gets index 1.
+         (define suffix-tail-index (make-ht))
+         (let loop ((i (length ss-tail)) (t ss-tail))
+           (unless (null? t)
+             (ht-set! suffix-tail-index (car t) i)
+             (loop (- i 1) (cdr t))))
+
+         ;; Build r-local-order: reverse of each non-singleton parent-list.
+         ;; These enforce the local precedence order constraints.
+         (define r-local-order
+           (filter-map (lambda (pl) (and (pair? (cdr pl)) (reverse pl)))
+                       parents))
+         (for-each (lambda (cl) (for-each inc-count! cl)) r-local-order)
+         (set! rcandidates (append r-local-order rcandidates))
+
+         ;; Re-reverse each reversed candidate list, removing suffix-tail elements.
+         ;; Suffix-tail elements are skipped; they must appear in increasing index order
+         ;; (highest = most specific first, as we traverse the reversed list from
+         ;; less-specific to more-specific).
+         (define (remove-suffix-tail-and-reverse rcl)
+           (let u ((cl-rhead rcl) (suffix-pos -1))
+             (cond
+               ((null? cl-rhead) '())
+               (else
+                (let* ((c    (car cl-rhead))
+                       (clrh (cdr cl-rhead))
+                       (p    (ht-ref suffix-tail-index c #f)))
+                  (cond
+                    ((not p)
+                     ;; c not in suffix-tail: collect consecutive non-suffix-tail elements.
+                     (let-values (((clrh2 h)
+                                   (append-reverse-until
+                                    (lambda (x) (ht-ref suffix-tail-index x #f))
+                                    clrh (list c))))
+                       (if (null? clrh2)
+                           h
+                           (err 'precedence-list-head: (get-names (reverse clrh2))
+                                'ancestor-out-of-order-vs-suffix-tail: (get-name (car clrh2))))))
+                    ((> p suffix-pos)
+                     ;; c in suffix-tail, in correct order; skip it.
+                     (u clrh p))
+                    (else
+                     ;; c in suffix-tail, out of order.
+                     (err 'ancestor-out-of-order-vs-suffix-tail: (get-name c)
+                          'suffix-pos: suffix-pos))))))))
+
+         ;; Build candidate lists (suffix-tail removed, in proper PL order).
+         (define candidates
+           (reverse (remove-nulls! (map remove-suffix-tail-and-reverse rcandidates))))
+
+         ;; Promote heads: decrement count for head of each candidate list.
+         ;; A head with count=0 is a valid next element for the precedence list.
+         (for-each (lambda (cl) (dec-count! (car cl))) candidates)
+
+         ;; c3-select-next: find first candidate-list head with count=0.
+         (define (c3-select-next tails)
+           (let loop ((ts tails))
+             (cond
+               ((null? ts) (err 'c3-select-next: 'fail))
+               ((zero? (get-count (caar ts))) (caar ts))
+               (else (loop (cdr ts))))))
+
+         ;; remove-next!: remove chosen element from all candidate lists.
+         ;; Decrement the count of each newly exposed head.
+         (define (remove-next! next tails)
+           (let loop ((t tails))
+             (unless (null? t)
+               (when (and (pair? (car t)) (eq (caar t) next))
+                 (let ((tl (cdar t)))
+                   (when (pair? tl)
+                     (dec-count! (car tl)))
+                   (set-car! t tl)))
+               (loop (cdr t))))
+           tails)
+
+         ;; Main C3 merge loop: repeatedly select and remove the next element.
+         (define precedence-list
+           (let c3loop ((rhead (append-reverse head '())) (tails candidates))
+             (cond
+               ((null? tails)
+                (append-reverse rhead ss-tail))
+               ((null? (cdr tails))
+                (append-reverse rhead (append (car tails) ss-tail)))
+               (else
+                (let ((next (c3-select-next tails)))
+                  (c3loop (cons next rhead)
+                          (remove-nulls! (remove-next! next tails))))))))
+
+         (values precedence-list ss))))))
+
+;;;; Tests for C4 Linearization
+
+;; Names starting with a lowercase letter are "suffix" specs (like Gerbil structs).
+(define (test-struct? sym)
+  (char-lower-case? (string-ref (symbol->string sym) 0)))
+
+;; Test hierarchy (same as gerbil/c4/src/gerbil/test/c3-test.ss)
+(define test-supers
+  '((O)
+    (A O) (B O) (C O) (D O) (E O)
+    (K1 A B C) (K2 D B E) (K3 D A) (Z K1 K2 K3)
+    (J1 C A B) (J2 B D E) (J3 A D) (Y J1 J3 J2)
+    (DB B) (WB B) (EL DB) (SM DB) (PWB EL WB) (SC SM) (P PWB SC)
+    (GL O) (HG GL) (VG GL) (HVG HG VG) (VHG VG HG)
+    (HH) (GG HH) (II GG) (FF HH) (EE HH) (DD FF)
+    (CC EE FF GG) (BB) (AA BB CC DD)
+    (o O) (a o) (b a) (c b o) (d D c) (M A B b a) (N C c) (L M N) (k D L) (j E k A) (I N M)
+    (x1) (x2 x1) (x3 x2) (x4 x3) (x5 x4 x1)
+    (SBA) (SBB) (SBS SBA) (sBs SBA) (SBC SBS SBB)))
+
+(define (test-get-supers x)
+  (let ((p (assq x test-supers))) (if p (cdr p) '())))
+
+;; Memoized precedence-list computation
+(define pl-cache (make-ht))
+(define (compute-pl x)
+  (let ((cached (ht-ref pl-cache x #f)))
+    (or cached
+        (let-values (((pl _ss)
+                      (c4-linearize (list x) (list (test-get-supers x))
+                                    compute-pl test-struct? eq?)))
+          (ht-set! pl-cache x pl)
+          pl))))
+
+(define test-objects
+  '(O A B C D E K1 K2 K3 Z J1 J2 J3 Y DB WB EL SM PWB SC P
+    GL HG VG HVG VHG HH GG II FF EE DD CC BB AA
+    o a b c d M N L k j I x1 x2 x3 x4 x5 SBA SBB SBS sBs SBC))
+
+(define expected-pls
+  '((O) (A O) (B O) (C O) (D O) (E O)
+    (K1 A B C O) (K2 D B E O) (K3 D A O) (Z K1 K2 K3 D A B C E O)
+    (J1 C A B O) (J2 B D E O) (J3 A D O) (Y J1 C J3 A J2 B D E O)
+    (DB B O) (WB B O) (EL DB B O) (SM DB B O) (PWB EL DB WB B O) (SC SM DB B O)
+    (P PWB EL SC SM DB WB B O)
+    (GL O) (HG GL O) (VG GL O) (HVG HG VG GL O) (VHG VG HG GL O)
+    (HH) (GG HH) (II GG HH) (FF HH) (EE HH) (DD FF HH)
+    (CC EE FF GG HH) (BB) (AA BB CC EE DD FF GG HH)
+    (o O) (a o O) (b a o O) (c b a o O) (d D c b a o O) (M A B b a o O)
+    (N C c b a o O) (L M A B N C c b a o O) (k D L M A B N C c b a o O)
+    (j E k D L M A B N C c b a o O) (I N C M A B c b a o O)
+    (x1) (x2 x1) (x3 x2 x1) (x4 x3 x2 x1) (x5 x4 x3 x2 x1)
+    (SBA) (SBB) (SBS SBA) (sBs SBA) (SBC SBS SBA SBB)))
+
+(expect (map compute-pl test-objects) => expected-pls)
+
+;; Spot-checks from c3-test.ss
+(expect (compute-pl 'Z)  => '(Z K1 K2 K3 D A B C E O)
+        (compute-pl 'Y)  => '(Y J1 C J3 A J2 B D E O)
+        (compute-pl 'P)  => '(P PWB EL SC SM DB WB B O)
+        (compute-pl 'AA) => '(AA BB CC EE DD FF GG HH)
+        (compute-pl 'a)  => '(a o O))
+
+;; CG has inconsistent inheritance (HVG and VHG contradict each other).
+(let ()
+  (define cg-supers
+    (lambda (x) (if (eq? x 'CG) '(HVG VHG) (test-get-supers x))))
+  (define cg-cache (make-ht))
+  (define (cg-pl x)
+    (let ((cached (ht-ref cg-cache x #f)))
+      (or cached
+          (let-values (((pl _) (c4-linearize (list x) (list (cg-supers x)) cg-pl test-struct? eq?)))
+            (ht-set! cg-cache x pl) pl))))
+  (expect (cg-pl 'CG) =>fail!))
+
+;; SBc has incompatible suffix parents (suffix constraint violation).
+(let ()
+  (define sbc-supers
+    (lambda (x) (if (eq? x 'SBc) '(sBs SBB) (test-get-supers x))))
+  (define sbc-cache (make-ht))
+  (define (sbc-pl x)
+    (let ((cached (ht-ref sbc-cache x #f)))
+      (or cached
+          (let-values (((pl _) (c4-linearize (list x) (list (sbc-supers x)) sbc-pl test-struct? eq?)))
+            (ht-set! sbc-cache x pl) pl))))
+  (expect (sbc-pl 'SBc) =>fail!))
+
+;; Test c4-linearize* with DAG local precedence order (list-of-lists parents).
+;; Each sub-list is a totally-ordered chain; together they express a partial order DAG.
+(let ()
+  (define (my-c4* local-order)
+    (let-values (((pl _) (c4-linearize '() local-order compute-pl test-struct? eq?)))
+      pl))
+  (expect
+   (my-c4* '((A) (B) (C)))    => '(A B C O)   ;; three unordered singletons
+   (my-c4* '((A B) (C A)))    => '(C A B O)   ;; C before A, A before B
+   (my-c4* '((C A) (C B)))    => '(C A B O)   ;; C before both A and B
+   (my-c4* '((C B) (C A)))    => '(C B A O)   ;; C before both, B before A
+   (my-c4* '((A B) (B C) (C A))) =>fail!))    ;; cycle: A<B<C<A
+
 #||#
 #|
 The End. (For Now)
@@ -1570,6 +1961,5 @@ p2 = { b: String, ... }
 p1∩p2 = {a : Int, b : String , ... }
 |#
 
-;; TODO: AVL trees as example OO for 5.x ? Also versions without OO for it and other trees (plain binary, randomized binary, 2-3 tree, etc.)
 ;; TODO: double dispatch example for 9.3.2
 ;; TODO: visitor pattern example for 9.3.2
