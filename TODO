@@ -249,3 +249,11 @@ What do some people consider variable, and what if you fix it one way or the oth
 Maybe slightly more generally, it can turn something that is
 "locally constant, under second-class control" into something that is
 "locally variable, under first-class control".
+
+
+In cpp/c4, make the templates Mixin<Self,Super> so you can have meaningful
+subclasses of SuperMixin<Self,?> No that doesn't quite work, though you can
+have Mixin<Self,Super> inherit from virtual InterfaceA<Self> that can inherit from
+virtual InterfaceB<Self>... painful, but works.
+
+

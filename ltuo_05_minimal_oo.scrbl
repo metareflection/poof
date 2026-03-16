@@ -1562,9 +1562,8 @@ You cannot inline the empty list in the call to @c{(self 'parts)}
 because the method @c{parts} can be extended, and indeed
 such is the very intent and entire point of this @c{base-bill-of-parts} specification!
 Even future extensions cannot inline the value they reach,
-unless they are guaranteed that no further extension will extend the list of parts
-(a declaration known as “sealing”, after Dylan).
-@;{CITE Andrew Shalit, The Dylan Reference Manual: The Definitive Guide to the New Object-Oriented Dynamic Language 1996}
+unless they are guaranteed that no further extension will extend the list of parts,
+through a declaration known as “sealing”, after Dylan @~cite{Shalit1996}.
 
 The interaction between modularity and extensibility therefore
 expands the scope of useful opportunities for modularity,

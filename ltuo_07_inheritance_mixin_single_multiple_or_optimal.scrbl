@@ -1713,8 +1713,8 @@ with a new field @c{suffix?} of type @c{Boolean},
 that tells whether or not the specification requires all its descendants
 to have its precedence list as a suffix of theirs.
 (In a practical implementation, you could add more flags, for instance
-to determine if the specification is sealed, i.e. allows no further extensions.)
-@;{TODO also cite Dylan for that, and Scala}
+to determine if the specification is sealed,
+i.e. allows no further extensions @~cite{Shalit1996}.) @;{TODO cite Scala 2.9 ?}
 
 I give a complete Scheme implementation of C4 in the appendix,
 but informally, the algorithm is as follows,

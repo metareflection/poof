@@ -1,11 +1,11 @@
 #lang at-exp racket @; -*- Scheme -*-
 #|
-Lambda: the Ultimate Paradigm
+Lambda, the Ultimate Paradigm
 
 Slides for presentation at the European Lisp Symposium, 2026-05-11
 
 To compile it, use:
-  racket slides-2025-lambdaconf.rkt > build/slides-2025-lambdaconf.html
+  racket slides-2026-els.rkt > build/slides-2026-els.html
 
 To test interactively, try:
   racket -i -l scribble/reader -e "(use-at-readtable)" -l racket
@@ -13,6 +13,29 @@ To test interactively, try:
 
 This document is available under the bugroff license.
   http://www.oocities.org/soho/cafe/5947/bugroff.html
+
+Abstract:
+
+From its discovery in 1958, Lisp has been at the forefront of innovation in topics as diverse as
+Artificial Intelligence, Memory Management, Object-Oriented Programming,
+Control Structures, Human Computer Interaction—and much more.
+Then, in the 1990s, progress largely stopped in Lisp, to happen in other ecosystems.
+Some Lisp technology was abandoned and forgotten;
+and while there remains a niche community of Lisp hackers who keep producing wonderful innovation,
+it is largely not at the forefront of technological progress anymore.
+What happened? What made and makes Lisp such a good platform for creation?
+What advantages does Lisp still have? How can they be further amplified?
+What advantages did it lose? How can the effect be reduced or reversed?
+And what does the recent advent of Artificial Intelligence that can write software
+mean for the future of Lisp?
+Back in the day, Lispers used the slogan “Lambda the Ultimate <something>” to
+boast about how Lisp could get to the very essence of so many issues that others barely understood.
+While some Functional Programmers have tried to claim the “Lambda” slogan for themselves,
+I’ll argue why indeed Lisp has the “Lambda Nature” in ways that
+no other programming language does—precisely because Lisp is more than a programming language.
+
+Bio:
+Once maintainer and rewriter of Common Lisp’s build system ASDF, and current co-maintainer of Gerbil Scheme, François-René Rideau also recently wrote the book “Lambda the Ultimate Object: Object-Orientation Elucidated”. While active as a developer in the software industry, he has always kept a foot in research, and has written on topics including Free Software, Reflection, Semantics, Object Orientation, Programming Language Design, Security, Interactive Protocols, Software Evolution, and Orthogonal Persistence.
 |#
 
 (require scribble/html
@@ -126,6 +149,9 @@ This document is available under the bugroff license.
 (reveal-doc doc)
 
 
+
+
+
 1950s:
 Symbolic Processing, “Artificial Intelligence”, Conditional Expressions,
 Functional Programming, Recursion, Dynamic Typing, Garbage Collection,
@@ -193,3 +219,14 @@ Macros 1963
 The original macro paper... has bugs! https://dspace.mit.edu/handle/1721.1/6111
 A transcription and bug report:
 https://github.com/acarrico/ai-memo/blob/master/AIM-057.txt
+
+The "programming language" paradigm demands no developer interaction after the program starts—of course it cannot deal with evolution, by definition.
+
+The "system" paradigm supports evolution after the program starts—of course it allows developer interaction after program start.
+
+Once in a while, I complain about developers so intelligent they deal with a lot of software complexity, yet not so intelligent that they know to ruthlessly simplify that complexity away. And not just the infamous three-star or three-comma programmers.
+LLMs only amplify that.
+
+Homoiconic vs bicameral
+
+If factories were managed according to the Programming Language paradigm, each time you had to adjust a tolerance on a component, you'd nuke the factory from orbit, killing all the workers and destroying the inventory, then start a new factory from scratch with brand new hires.

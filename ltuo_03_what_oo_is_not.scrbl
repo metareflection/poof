@@ -46,7 +46,7 @@ when thinking of multiple inheritance, think of what C++ offers.
 Yet, while C++ supports single inheritance well,
 what it calls “multiple inheritance” @~cite{Stroustrup1989Multiple}
 is not at all the same as what almost everyone else calls “multiple inheritance”@xnote[":"]{
-  Interestingly, the design of C++ non-virtual classes is very similar
+  Interestingly, the design of C++ non-virtual superclasses is very similar
   to the solution from Snyder’s CommonObjects @~cite{Snyder1986},
   even though Stroustrup does not cite Snyder:
   redefine the problem to be whatever the desired “solution” does—a Tree instead of a DAG—and
@@ -60,8 +60,8 @@ is not at all the same as what almost everyone else calls “multiple inheritanc
 }
 It is actually a modified kind of mixin inheritance
 with some kind of “duplication” of superclasses
-(for non-@c{virtual} classes, with members renamed along the inheritance tree),
-and a subset of multiple inheritance (for @c{virtual} classes and members,
+(for non-@c{virtual} superclasses, with members copied/renamed along the inheritance tree),
+and a subset of multiple inheritance (for @c{virtual} superclasses and member functions,
 with restriction from a “conflict” view of inheritance, see @secref{DMRMI}).
 Notably, C++ lacks the proper method resolution that enables a lot of
 the modularity of multiple inheritance in other languages.
@@ -91,7 +91,7 @@ But this technique is quite uncolloquial, syntactically heavy, slower than the c
 and programmers have to rigorously follow, enforce and maintain some complex design patterns.
 
 Finally, and at the very least, consider that
-unless you explicitly tag your classes and their members @c{virtual},
+unless you explicitly tag your superclasses and their member functions @c{virtual},
 C++ will deliberately eschew the “dynamic dispatch” of OO
 and use “static dispatch” instead for the sake of performance (at doing the wrong thing).
 In the end, C++ is many great and not-so-great things, but only few of those things are OO,
@@ -161,7 +161,7 @@ ThingLab @~cite{Borning1977 Borning1979 Borning1981}@xnote["."]{
   ThingLab was built on top of Smalltalk by members of the same team at PARC,
   and oscillated between having or not having classes in addition to prototypes.}
 Plenty more Prototype OO or “class-less” OO languages followed
-@~cite{Hewitt1979Security Rees1982T Adams1988OOPScheme Ungar1987 Chambers1989 Lawall89SelfInScheme Salzman2005PrototypesMultipleDispatch jsonnet nix2015 poof2021}.
+@~cite{Hewitt1979Security Rees1982T Adams1988OOPScheme Ungar1987 Chambers1989 Lawall89SelfInScheme Salzman2005 jsonnet nix2015 poof2021}.
 There are a lot more Prototype OO languages than I could have time to review @~cite{WikiProto},
 but prominent among them is JavaScript @~cite{Eich1996JavaScript},
 one of the most used programming languages in the world @~cite{TopPL2022},

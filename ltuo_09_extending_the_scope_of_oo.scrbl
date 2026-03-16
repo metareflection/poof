@@ -1496,11 +1496,18 @@ you can easily define mutually incomparable method signatures
 that match the tuple of arguments,
 even if each argument’s ancestry is a total order—as
 with Julia’s single inheritance @~cite{Bezanson2014}.
-Multimethods will thus naturally leverage and extend the techniques used for multiple inheritance:
+Multimethods can thus naturally leverage and extend the techniques used for multiple inheritance:
 linearizing the order of methods,
-method combination based on the resulting precedence list, etc.
+method combination based on the resulting precedence list, etc.,
+as done by CLOS @~cite{Bobrow1988CLOS}.
+Still, some languages like Dylan @~cite{Shalit1996} apply linearization to each argument,
+and can linearize tuples of arguments still, yet apply the “conflict” view of inheritance
+in case of multiple incomparable tuples of arguments for the next method.
+And other languages sadly just adopt conflict all the way
+@~cite{CecilMultimethods Salzman2005}.
 
-Typically, linearization happens via the lexicographical order of per-argument linearizations:
+Linearization of tuples typically happens via
+the lexicographical order of per-argument linearizations:
 this linearization follows the same behavior as the double dispatch and the visitor pattern
 in the degenerate case that only the most specific method is called;
 it has a clear precedence based on the first argument,
@@ -1568,37 +1575,170 @@ so that the representation remains backward compatible with single dispatch.
 
 @; TODO predicate dispatch, as in Cecil, some SBCL extensions?
 
-@section[#:tag "DD"]{Dynamic Dispatch}
+@subsection{Subjective and Objective Dispatch}
 
-@subsection{First-class modularity}
+Some object systems with multiple dispatch offer one or both of the following extensions:
+With “subjective dispatch” @~cite{Salzman2005} or “subjective multimethods”, @; TODO Gonzalez2007
+some context (usually dynamically bound) provides an implicit first argument to all methods,
+before all explicit arguments.
+With the dual “objective dispatch”, or “objective multimethods”,
+some object at the end of the argument list
+(for instance, in Cecil, Dylan, the @c{obj.method(arg)} syntax thus treats the object @c{obj}).
 
-Dynamic dispatch is the mechanism whereby the behavior of a program depends on looking up
-runtime values of first-class entities:
-an object in Smalltalk or Lisp, a first-class module in ML,
-an existentially quantified values with typeclass constraints in Haskell (usually using GADT syntax),
-or plain old structs of functions pointers and data to close over in C.
+If using “conflict” for incomparable tuples of specifications,
+
+Being the first argument, the “subject” has higher-priority than any other argument
+in the dispatch process when using flavorful multiple inheritance;
+context-dependent methods can then completely redefine the meaning of programs
+in arbitrary ways, overriding any other method.
 
 
-First-class modularity vs second-class.
-Note that in most second-class OO languages, you often also have this as first-class modularity
-yet without first-class modular extensibility. (Subtle distinction.)
-
-Dynamic dispatch as such is not OO: it is first-class modularity, that can happen with or without OO (which is first-class or second-class modular extensibility). Proof: Microsoft COM, first-class modules in ML, "objects" without inheritance in SICP, etc.
-
-Now if you have first-class OO, then you necessarily have dynamic dispatch.
-
-But you could have second-class OO without dynamic dispatch: C++ without "virtual" methods; Java with only static methods; Interface passing style with constant interfaces; etc.
-
-Kin vs type. @~cite{Allen2011Type}.
-
-Also works in typeclass-style vs class-style.
-
-How that interacts with multiple dispatch tables, global or local.
-
-Subjective dispatch: dynamically bound implicit first argument to all methods
+Subjective dispatch: dynamically bound implicit first argument to
+ XXXX
 (higher priority than other arguments, can majorly redefine the meaning of programs).
 Objective dispatch: dynamically bound implicit last argument to all methods
 (lower priority than other arguments, can minorly adjust the meaning of all programs).
+
+
+@section[#:tag "DD"]{Dynamic Dispatch}
+
+@subsection{Dynamic vs Static Dispatch}
+
+When describing the semantics Class OO in @secref{SFCTD},
+I used the semantics commonly adopted by all Class OO languages,
+where calling method on an object will consult a type descriptor associated to the object,
+then extracting a function associated to the method-id from that type descriptor,
+and calling that function with the object as first argument, followed by any remaining argument.
+
+This semantics is called @emph{dynamic dispatch},
+and though every Class OO language supports it,
+it is actually not the default in Simula, C++, C#, Kotlin,
+that instead favor @emph{static dispatch} by default:
+programs include type declarations, and the type descriptors from which functions are extracted
+are “statically” based on those declarations at compile-time,
+rather than on object values at runtime.
+
+Still, the usual dynamic dispatch of OO is available for these languages
+by specifying methods as “virtual” (or “open” in Kotlin);
+and many Class OO languages also have static dispatch, if only for “static” methods
+that do not take any implicit object argument (as in C++, Java, C#, etc.).
+
+The existence of these two kinds of dispatch raises interesting questions:
+What is the relationship between dispatch strategy and OO?
+Does OO as such mandate either dispatch strategy?
+Either way, what does that tell us about OO?
+
+@subsection{First-class modularity}
+
+@principle{Dynamic dispatch embodies first-class modularity},
+wherein a first-class entity, the object, or its “virtual dispatch table”,
+serves as a module that specifies at runtime what code to run.
+
+In Prototype OO, every prototype’s target is a first-class record
+that exists at runtime, the fields of which are looked up to determine the behavior of a program.
+Indeed, Prototype OO embodies first-class modular extensibility,
+which implies first-class modularity.
+Of course, Prototype OO can also be used to generate algorithms that subsequently
+manipulate data without consulting the data’s type to determine behavior,
+just checking or plainly assuming that data has the expected type;
+in that case, using Prototype OO to generate some algorithm
+involves first-class modular extensibility, whereas using the algorithm afterwards
+might not use it. But the two are not separated by formal execution “stages”.
+
+On the other hand, Class OO embodies second-class modular extensibility,
+and indeed introduces a formal separation between a compile-time execution stage
+during which classes are defined, and a runtime execution stage during which they are used
+(though some languages such as Smalltalk and Lisp offer reflection facilities through which
+the two stages can be interleaved or blurred, though even then that is the exception
+rather than the rule).
+And second-class modular extensibility does not imply first-class modularity.
+
+You could very well have Class OO without first-class modularity,
+and indeed that is what happens when you stick to static dispatch in C++ or Java, etc.:
+the behavior of the program is completely determined at compile-time,
+code paths not depending on runtime lookup of object type descriptors.
+On the other hand, static dispatch requires a typesystem
+that associates compile-time “types” to objects,
+which involves either a lot of programmer annotations,
+or a lot of complex inference infrastructure that both human and machine understand and agree upon,
+when developing programs.
+Static dispatch is thus intrinsically more complex and costlier than dynamic dispatch;
+but it can also enable generation of more efficient code.
+
+Dynamic dispatch by contrast is simpler to implement, understand and agree upon,
+and requires less mental and software scaffolding to achieve and use.
+It is therefore more “natural” for OO languages to adopt,
+whose users and implementers do not want to invest upfront in such expensive scaffolding.
+It is easy to write a dynamic language that uses dynamic dispatch;
+but it necessarily adds overhead at runtime to each method call that uses it—unless
+it can be reduced to static dispatch, by marking classes as final or sealed.
+
+@subsection{Choosing between Static and Dynamic Dispatch}
+
+Dynamic dispatch is easy to implement in a few lines of code (again, as in @secref{SFCTD}),
+and readily available to all programming languages,
+whether they are statically typed or not.
+It offers a semantics that all OO languages can agree on, which static dispatch cannot.
+That is why all OO languages offer dynamic dispatch at least as an option,
+and it alone can be universally adopted among Class OO languages.
+
+The dynamic approach also allows for much more experimentation,
+and amplification of successes and correction of failures,
+than the much more rigid static approach.
+And there is now plenty of precedent for layering a typesystem on top of a dynamic language,
+as TypeScript showed could be done for JavaScript, bringing
+much of the safety and performance of static systems on top of dynamic systems,
+though also much of their complexity.
+
+But static dispatch allows for more safety and performance than the looser dynamic dispatch—and,
+importantly, it makes that safety and performance predictable.
+This safety, performance and predictability are paramount for some applications
+and for “system programming”; they also satisfy the mindset of many programmers.
+Certainly, it is hard to write a static language, what more a @emph{good} static language,
+one with a typesystem coherent enough to make sense from the computing point of view,
+expressive enough not to be but a burden to humans, yet
+not so complex that it boggles the mind.
+
+Historically, the first language with classes, Simula,
+was based on the statically typed Algol,
+and offered both static and dynamic dispatch—years before OO was even conceptualized.
+C++, partly inspired by Simula, and interested in system programming,
+leaned heavily into the static dispatch approach.
+C#, inspired by both C++ and Java, followed.
+These languages have evolved over many decades to eventually acquire
+many features and typesystems that make them bearable and are as of late
+even capable of expressing functional programming.
+This also raises the bar quite high for new languages that would try to rival and surpass them
+at this game of statically typed object oriented languages.
+
+Nevertheless, whichever dispatch strategy or strategies you choose for your Class OO language,
+be mindful that the OO as such still happens as second-class computations at compile-time only.
+The static or dynamic dispatch strategy describes how the runtime system
+uses the structures and algorithms built with compile-time OO.
+They are features that complement OO as such, rather than alter it.
+And these two dispatch strategies also apply to
+non-OO ways to build data structures and algorithms:
+second-class vs first-class modules in ML dialects;
+or second-class typeclasses vs existentially quantified first-class values
+with typeclass constraints in Haskell (usually using GADT syntax);
+or even second-class libraries of functions vs structs containing functions pointers in C
+(that could even be used with COM or DCOM);
+Scheme libraries vs object-as-closures without inheritance as in SICP @~cite{SICP2},
+etc.
+
+@subsection{Kins and Types}
+
+@citet{Allen2011Type} cleverly introduces the distinction between
+Kin (runtime object type, used for dynamic dispatch),
+and Type (compile-time object type, used for static dispatch and optimizations).
+In a consistent typesystem, a Type would also embody a set of possible Kins
+that an object may actually have at runtime, such that the static type analysis
+gives you useful information on how to optimize away part or all
+of the dynamic dispatch logic and turn it into static dispatch whenever possible.
+
+@subsection{Blah blah dynamic dispatch}
+
+How that interacts with multiple dispatch tables, global or local, scoped, etc.
 
 @exercise[#:difficulty "easy"]{
   Define the missing simple CLOS method combinations in an efficient way, for
