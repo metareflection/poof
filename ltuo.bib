@@ -2990,16 +2990,17 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   doi={10.5555/236379},
   note={.
     Dylan was an OO dynamic language developed at Apple for the Newton.
-    But it wasn’t completed on time for the initial Newton release,
+    But it wasn’t completed on time to write the Newton OS on,
     and Dylan was eventually cancelled.
     Dylan was built by Lisp hackers from MIT and Symbolics,
-    with much experience with Common Lisp and Lisp Machine Lisp,
-    but had a more familiar infix syntax, and its semantics were streamlined and simplified
-    with a view on allowing delivery of compact, efficient executables.
+    and you can feel the influence of Common Lisp and Lisp Machine Lisp,
+    but with a more familiar infix syntax, semantics that were streamlined and simplified,
+    and a view on allowing delivery of compact, efficient executables.
     It had flavorful multiple inheritance with class linearization,
     but reintroduced conflict for multiple dispatch.
     It also introduced sealing, as a technique whereby users can specify that
-    a set of classes could not be extended beyond the current file,
+    a set of classes could not be extended beyond the current file
+    (more general and flexible than the final annotation of many OO languages).
     enabling various optimizations.
   }
 }
@@ -3797,6 +3798,18 @@ and Fiech, Adrian",
     in the type or contract signature (received by the function as arguments),
     thus establishing clear blame in case of contract failure.
     Contracts can be enforced by wrapping functions in a way that follows the shape of the contract.
+  }
+}
+
+@WebPage{Gabriel2002,
+  title={Essays},
+  author={Richard P. Gabriel},
+  year={2002},
+  url={https://www.dreamsongs.com/Essays.html},
+  note={.
+    Many great essays are listed on rpg’s webpage, but for the sake of criticizing OO,
+    his OOSPLA 2002 debate where he and Brian Foote took the position “Objects Have Failed”
+    against Guy Steele and James Noble, is relevant to the critique of OO.
   }
 }
 
@@ -4942,6 +4955,28 @@ series = {PLDI '10}
 
 %% 2017
 
+@article{Petricek2017,
+  author={Tomas Petricek},
+  title={Miscomputation in software: Learning to live with errors},
+  journal={The Art, Science, and Engineering of Programming},
+  volume={1},
+  number={2},
+  xxpages={14:1--14:24},
+  year={2017},
+  doi={10.22152/programming-journal.org/2017/1/14},
+  url={https://doi.org/10.22152/programming-journal.org/2017/1/14},
+  xxurl={https://arxiv.org/abs/1703.10863},
+  abstract={Computer programs do not always work as expected... We look at the 60 years history of programming and at the different practical methods that software community developed to live with programming errors.},
+  note={.
+    The author has a fascinating discussion on how programmers tend to each fall into
+    one of a few very distinctive mindsets about programming,
+    that lead to very different software development practices, and
+    very different software artefacts,
+    very different explanations about what software is, what it is for,
+    and how to implement and use it.
+  }
+}
+
 @InProceedings{Grigore2017,
   author={Radu Grigore},
   title={Java Generics are Turing Complete},
@@ -5309,6 +5344,8 @@ series = {PLDI '10}
 % Bracha and Lindstrom 1992 Modularity meets inheritance
 
 % 2000 Oleg Kiselyov USENET post on okmij.org on the possibility of a pure variant of YASOS ?
+
+% https://okmij.org/ftp/Haskell/extensible/more.pdf
 
 % http://okmij.org/ftp/Computation/Subtyping/
 

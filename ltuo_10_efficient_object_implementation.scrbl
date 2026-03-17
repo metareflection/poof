@@ -41,6 +41,17 @@ Records as records? Now we’re talking.
 
 @section[#:tag "MOP"]{Meta-Object Protocols}
 
+@subsection{Introspection and Intercession}
+
+@subsection{Tower of Implementation}
+
+@citet{Chiba2000MetaHelix}.
+
+Add serialization, persistence, to a meta-object, NOT to the object.
+
+Different capabilities for objects and their meta-objects => more security.
+
+
 @exercise[#:difficulty "Medium"]{
   Read about the Meta-Object Protocol in CLOS @~cite{amop},
   particularly the protocols for class redefinition and instance update.
