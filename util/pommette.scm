@@ -1677,7 +1677,7 @@ let Y = f: (x: x x) (x: f (x x));
 
 ;; Destructively remove empty sublists from a list of lists; return modified list.
 (define (remove-nulls lists)
-  (filter (lambda (x) (not (null? x))) lists))
+  (filter pair? lists))
 
 ;; Return the first element of lst satisfying pred, or #f.
 (define (find pred lst)
@@ -1777,6 +1777,7 @@ let Y = f: (x: x x) (x: f (x x));
 
          ;; Initial scan: for each parent-list, for each parent, walk its PL.
          ;; get-count=0 detects parents not yet processed (deduplication across chains).
+         (define ___init__rcandidates__ss__ss-tail__ancestor-counts ; make Chez happy
          (for-each
           (lambda (parent-list)
             (for-each
@@ -1809,24 +1810,26 @@ let Y = f: (x: x x) (x: f (x x));
                       (inc-count! (car al))
                       (loop (cdr al) (cons (car al) r)))))))
              parent-list))
-          parents)
+          parents))
 
          ;; Build suffix-tail-index: element -> position.
          ;; Most specific element gets highest index (= length of suffix-tail),
          ;; least specific gets index 1.
          (define suffix-tail-index (make-eqht))
+         (define __init_suffix-tail-index ; make Chez happy
          (let loop ((i (length ss-tail)) (t ss-tail))
            (unless (null? t)
              (eqht-set! suffix-tail-index (car t) i)
-             (loop (- i 1) (cdr t))))
+             (loop (- i 1) (cdr t)))))
 
          ;; Build r-local-order: reverse of each non-singleton parent-list.
          ;; These enforce the local precedence order constraints.
          (define r-local-order
            (filter-map (lambda (pl) (and (pair? (cdr pl)) (reverse pl)))
                        parents))
+         (define ___init_r-local-order__and_update__rcandidates (begin ; make Chez happy
          (for-each (lambda (cl) (for-each inc-count! cl)) r-local-order)
-         (set! rcandidates (append r-local-order rcandidates))
+         (set! rcandidates (append r-local-order rcandidates))))
 
          ;; Re-reverse each reversed candidate list, removing suffix-tail elements.
          ;; Suffix-tail elements are skipped; they must appear in increasing index order
@@ -1865,7 +1868,8 @@ let Y = f: (x: x x) (x: f (x x));
 
          ;; Promote heads: decrement count for head of each candidate list.
          ;; A head with count=0 is a valid next element for the precedence list.
-         (for-each (lambda (cl) (dec-count! (car cl))) candidates)
+         (define ___adjust_counts ; make Chez happy
+         (for-each (lambda (cl) (dec-count! (car cl))) candidates))
 
          ;; c3-select-next: find first candidate-list head with count=0.
          (define (c3-select-next tails)
@@ -2228,6 +2232,11 @@ let Y = f: (x: x x) (x: f (x x));
     (let ((p (assq sym sym-poi-alist)))
       (if p (cdr p) (error "POI not found for symbol" sym))))
 
+  ;; Reverse-lookup: OISpec -> symbol (for comparing PLs with expected-pls)
+  (define (poi->sym poi)
+    (let ((p (find (lambda (pair) (eq? (cdr pair) poi)) sym-poi-alist)))
+      (if p (car p) (error "No symbol for POI" poi))))
+
   ;; Create one OISpec per test object
   (for-each
    (lambda (sym)
@@ -2237,11 +2246,6 @@ let Y = f: (x: x x) (x: f (x x));
             (poi     (make-poi idModExt (test-struct? sym) parents)))
        (set! sym-poi-alist (cons (cons sym poi) sym-poi-alist))))
    test-objects)
-
-  ;; Reverse-lookup: OISpec -> symbol (for comparing PLs with expected-pls)
-  (define (poi->sym poi)
-    (let ((p (find (lambda (pair) (eq? (cdr pair) poi)) sym-poi-alist)))
-      (if p (car p) (error "No symbol for POI" poi))))
 
   ;; Check every object's precedence-list matches the expected one
   (expect
@@ -2351,10 +2355,10 @@ let Y = f: (x: x x) (x: f (x x));
         (λ (x) (loop (- n 1) (cons x r))))))
 
 (expect
- (uncurry/list 0 vector) => #(())
- (uncurry/list 1 vector 'a) => #((a))
- (uncurry/list 2 vector 'a 'b) => #((a b))
- (uncurry/list 3 vector 'a 'b 'c) => #((a b c)))
+ (uncurry/list 0 vector) => '#(())
+ (uncurry/list 1 vector 'a) => '#((a))
+ (uncurry/list 2 vector 'a 'b) => '#((a b))
+ (uncurry/list 3 vector 'a 'b 'c) => '#((a b c)))
 
 (define (register-multimethod multimethods method-tag specializers method-fn)
   (@ (apply field-update~* method-tag specializers) (K method-fn) multimethods))
