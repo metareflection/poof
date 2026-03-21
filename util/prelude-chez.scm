@@ -1,4 +1,5 @@
 (import (srfi :0 cond-expand)
         (rnrs base)
+        (rnrs hashtables (6))
         (rnrs lists (6)))
 (define foldl fold-left)

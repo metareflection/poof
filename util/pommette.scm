@@ -78,8 +78,8 @@ With Racket: racket pommette.rkt
              (begin (display "Checked that ") (write check-expr)
                     (display " and ") (write good-expr)
                     (display " both evaluated to ") (write actual) (newline)))
-        (error "Expected " check-expr " to evaluate to " good-expr
-               " but instead got " actual " instead of " expected))))
+        (error "expectation failure" " expected " check-expr " to evaluate the same as " good-expr
+               " but got " actual " instead of " expected))))
 (define (check-failure expr thunk msg)
   (let ((failed?
          (cond-expand
@@ -457,6 +457,12 @@ let Y = f: (x: x x) (x: f (x x));
         (compute-value inherited self)
         inherited)))
 
+;;; field-spec~ : like field-spec, but treats #f super as empty-record.
+;;; Useful when the top is #f and we are not sure whether a sub-record was initialized yet.
+(def (field-spec~ key compute-value super self method-id)
+  (field-spec key compute-value (or super empty-record) self method-id))
+
+
 ;;; 5.3.6 Minimal Colored Point
 (def coord-spec
   (mix* (field-spec 'x (λ (_inherited _self) 2))
@@ -557,6 +563,33 @@ let Y = f: (x: x x) (x: f (x x));
 (def body-rec (fix-record (mix* base-bill-of-parts torso-spec legs-spec arms-spec head-spec)))
 
 (expect (map body-rec '(parts part-count)) => '((head arms legs torso) 4))
+
+;;;;; 5.x Finalization
+
+(def (finalize-spec super self)
+  (let ((finalizer ((field-view~* #f '__finalizer) super)))
+    (if finalizer (finalizer super self) super)))
+
+(def (fix-record* m)
+  (fix-record (mix* finalize-spec m)))
+
+(def (register-finalizer-spec finalizer super _self)
+  ((field-update~* #f '__finalizer)
+    (λ (previous)
+      (if previous (mix* finalizer previous) finalizer))
+    super))
+
+;; generate-tag: ... → Tag
+(define generate-tag
+  (let ((counter 101)) ;; start high enough that a tag is obvious while debugging.
+    (lambda _ (begin0 counter (set! counter (+ 1 counter))))))
+
+(def (sub-record-spec key spec)
+  (mix*
+    (constant-field-spec key empty-record)
+    (skew-ext (field-lens key) spec)
+    (register-finalizer-spec
+      (skew-ext (field-lens key) finalize-spec))))
 
 ;;;;; 5.x Order, Binary Tree Map, AVL Tree Map, Alist+AVL Hybrid Map
 
@@ -999,6 +1032,31 @@ let Y = f: (x: x x) (x: f (x x));
 (define (field-lens* . keys)
   (apply compose-lens* (map field-lens keys)))
 
+;; Same but #f interpreted as empty-record
+;; field-view~ : Key → Record → Value
+(def (field-view~ key r)
+  (and r (r key)))
+;; field-update~ : Key → (Value → Value) → Record → Record
+(def (field-update~ key f rec)
+  (field-update key f (or rec empty-record)))
+;; field-lens~ : Key → Lens
+(def (field-lens~ key)
+  (make-lens (field-view~ key) (field-update~ key)))
+
+(define (field-view~* . keys)
+  (apply compose* (map field-view~ (reverse keys))))
+
+;; field-lens~* : Key... → Lens
+;; Like field-lens* but each intermediate node is initialized to empty-record if #f.
+(define (field-lens~* . keys)
+  (apply compose-lens* (map field-lens~ keys)))
+
+;; field-update~* : Key... → (Value → Value) → Record → Record
+;; Like field-update~ but nested over multiple keys.
+(define (field-update~* . keys)
+  (apply compose* (map field-update~ keys)))
+
+
 (def test-rec (record (a (record (b (record (c 42)))))))
 (def test-point (record (x 10) (y 20)))
 (def x-lens (field-lens 'x))
@@ -1102,7 +1160,7 @@ let Y = f: (x: x x) (x: f (x x));
 
 ;;; Prototype Specification
 (def rproto-spec-view spec←rproto)
-(def rproto-spec-setter rproto←spec)
+(def (rproto-spec-setter new-spec _old-rproto) (rproto←spec new-spec))
 (def rproto-spec-lens (lens←getter*setter rproto-spec-view rproto-spec-setter))
 
 ;;; Prototype Target Update options (what to do when updating the target of an rproto)
@@ -1356,7 +1414,7 @@ let Y = f: (x: x x) (x: f (x x));
 ;;   Next = ...Args → Result  (the remaining chain)
 ;; When called with no args, forwards the original args to next.
 ;; When called with new-args, forwards them instead.
-(def (make-call-next-method next args)
+(def (make-call-next-combined-method next args)
   (case-lambda
     (()       (apply next args))
     (new-args (apply next new-args))))
@@ -1369,7 +1427,7 @@ let Y = f: (x: x x) (x: f (x x));
   (foldr
     (lambda (m next)
       (λ args
-        (apply ((m (make-call-next-method next args)) self) args)))
+        (apply ((m (make-call-next-combined-method next args)) self) args)))
     on-exhausted
     methods))
 
@@ -1566,26 +1624,40 @@ let Y = f: (x: x x) (x: f (x x));
 
 ;;;; Portable hash tables (using eq? as the key equality predicate)
 
-(define (make-ht)
-  (cond-expand
-    (gerbil     (make-table test: eq?))
-    (racket     (make-hasheq))
-    (chezscheme (make-eq-hashtable))
-    (else       (make-hash-table equal?))))
+(cond-expand
+  (gerbil
+   (begin
+     (import :std/debug/DBG)
+     (define (make-eqht) (make-table test: eq?))
+     (define (eqht-ref t k default) (table-ref t k default))
+     (define (eqht-set! t k v) (table-set! t k v))))
+  (racket
+   (begin
+     (define (make-eqht) (make-hasheq))
+     (define (eqht-ref t k default) (hash-ref t k default))
+     (define (eqht-set! t k v) (hash-set! t k v))))
+  (chezscheme
+   (begin
+     (define (make-eqht) (make-eq-hashtable))
+     (define (eqht-ref t k default) (hashtable-ref t k default))
+     (define (eqht-set! t k v) (hashtable-set! t k v))))
+  (else
+   (begin
+     (define (make-eqht) (make-hash-table equal?)))
+     (define (eqht-ref t k default) (hash-table-ref/default t k default))
+     (define (eqht-set! t k v) (hash-table-set! t k v))))
 
-(define (ht-ref t k default)
-  (cond-expand
-    (gerbil     (table-ref t k default))
-    (racket     (hash-ref t k default))
-    (chezscheme (hashtable-ref t k default))
-    (else       (hash-table-ref/default t k default))))
-
-(define (ht-set! t k v)
-  (cond-expand
-    (gerbil     (table-set! t k v))
-    (racket     (hash-set! t k v))
-    (chezscheme (hashtable-set! t k v))
-    (else       (hash-table-set! t k v))))
+(def (memo f)
+  (let ((t (make-eqht)))
+    (lambda (x)
+      (let ((y (eqht-ref t x t)))
+        (if (eq? y t)
+            (let* ((z (f x))
+                   (y2 (eqht-ref t x t))) ;; second check in case non-local exits did something funky
+              (if (eq? y2 t)
+                  (begin (eqht-set! t x z) z)
+                  y2))
+            y)))))
 
 ;;;; List utilities needed by C4
 
@@ -1603,28 +1675,9 @@ let Y = f: (x: x x) (x: f (x x));
       ((pred (car rhead)) (values rhead tail))
       (else (loop (cdr rhead) (cons (car rhead) tail))))))
 
-;; Destructively append x at the end of lst; return the (possibly new) list.
-(define (append1! lst x)
-  (let ((cell (list x)))
-    (if (null? lst)
-        cell
-        (begin
-          (let lp ((l lst))
-            (if (null? (cdr l)) (set-cdr! l cell) (lp (cdr l))))
-          lst))))
-
 ;; Destructively remove empty sublists from a list of lists; return modified list.
-(define (remove-nulls! lists)
-  (define (fix! prev rest)
-    (cond
-      ((null? rest) (if #f #f))
-      ((null? (car rest))
-       (set-cdr! prev (remove-nulls! (cdr rest))))
-      (else (fix! rest (cdr rest)))))
-  (cond
-    ((null? lists) '())
-    ((null? (car lists)) (remove-nulls! (cdr lists)))
-    (else (fix! lists (cdr lists)) lists)))
+(define (remove-nulls lists)
+  (filter (lambda (x) (not (null? x))) lists))
 
 ;; Return the first element of lst satisfying pred, or #f.
 (define (find pred lst)
@@ -1666,7 +1719,7 @@ let Y = f: (x: x x) (x: f (x x));
          (super-suffix
           (lambda (x)
             (find suffix? (cdr (get-precedence-list x))))))
-    (set! parents (remove-nulls! parents))
+    (set! parents (remove-nulls parents))
     (cond
       ;; 0 non-empty parent-lists: base class
       ((null? parents)
@@ -1717,10 +1770,10 @@ let Y = f: (x: x x) (x: f (x x));
 
          ;; Ancestor counts: tracks non-head appearances across all candidate lists.
          ;; Also used for deduplication: get-count=0 means "not yet processed".
-         (define ancestor-counts (make-ht))
-         (define (get-count c) (ht-ref ancestor-counts c 0))
-         (define (inc-count! c) (ht-set! ancestor-counts c (+ 1 (get-count c))))
-         (define (dec-count! c) (ht-set! ancestor-counts c (- (get-count c) 1)))
+         (define ancestor-counts (make-eqht))
+         (define (get-count c) (eqht-ref ancestor-counts c 0))
+         (define (inc-count! c) (eqht-set! ancestor-counts c (+ 1 (get-count c))))
+         (define (dec-count! c) (eqht-set! ancestor-counts c (- (get-count c) 1)))
 
          ;; Initial scan: for each parent-list, for each parent, walk its PL.
          ;; get-count=0 detects parents not yet processed (deduplication across chains).
@@ -1761,10 +1814,10 @@ let Y = f: (x: x x) (x: f (x x));
          ;; Build suffix-tail-index: element -> position.
          ;; Most specific element gets highest index (= length of suffix-tail),
          ;; least specific gets index 1.
-         (define suffix-tail-index (make-ht))
+         (define suffix-tail-index (make-eqht))
          (let loop ((i (length ss-tail)) (t ss-tail))
            (unless (null? t)
-             (ht-set! suffix-tail-index (car t) i)
+             (eqht-set! suffix-tail-index (car t) i)
              (loop (- i 1) (cdr t))))
 
          ;; Build r-local-order: reverse of each non-singleton parent-list.
@@ -1786,13 +1839,13 @@ let Y = f: (x: x x) (x: f (x x));
                (else
                 (let* ((c    (car cl-rhead))
                        (clrh (cdr cl-rhead))
-                       (p    (ht-ref suffix-tail-index c #f)))
+                       (p    (eqht-ref suffix-tail-index c #f)))
                   (cond
                     ((not p)
                      ;; c not in suffix-tail: collect consecutive non-suffix-tail elements.
                      (let-values (((clrh2 h)
                                    (append-reverse-until
-                                    (lambda (x) (ht-ref suffix-tail-index x #f))
+                                    (lambda (x) (eqht-ref suffix-tail-index x #f))
                                     clrh (list c))))
                        (if (null? clrh2)
                            h
@@ -1808,7 +1861,7 @@ let Y = f: (x: x x) (x: f (x x));
 
          ;; Build candidate lists (suffix-tail removed, in proper PL order).
          (define candidates
-           (reverse (remove-nulls! (map remove-suffix-tail-and-reverse rcandidates))))
+           (reverse (remove-nulls (map remove-suffix-tail-and-reverse rcandidates))))
 
          ;; Promote heads: decrement count for head of each candidate list.
          ;; A head with count=0 is a valid next element for the precedence list.
@@ -1822,18 +1875,18 @@ let Y = f: (x: x x) (x: f (x x));
                ((zero? (get-count (caar ts))) (caar ts))
                (else (loop (cdr ts))))))
 
-         ;; remove-next!: remove chosen element from all candidate lists.
+         ;; remove-next: remove chosen element from all candidate lists.
          ;; Decrement the count of each newly exposed head.
-         (define (remove-next! next tails)
-           (let loop ((t tails))
-             (unless (null? t)
-               (when (and (pair? (car t)) (eq (caar t) next))
-                 (let ((tl (cdar t)))
-                   (when (pair? tl)
-                     (dec-count! (car tl)))
-                   (set-car! t tl)))
-               (loop (cdr t))))
-           tails)
+         (define (remove-next next tails)
+           (map (lambda (tail)
+                  (cond
+                   ((eq (car tail) next)
+                    (and (pair? (cdr tail))
+                         (dec-count! (cadr tail)))
+                    (cdr tail))
+                   (else
+                    tail)))
+                tails))
 
          ;; Main C3 merge loop: repeatedly select and remove the next element.
          (define precedence-list
@@ -1846,7 +1899,7 @@ let Y = f: (x: x x) (x: f (x x));
                (else
                 (let ((next (c3-select-next tails)))
                   (c3loop (cons next rhead)
-                          (remove-nulls! (remove-next! next tails))))))))
+                          (remove-nulls (remove-next next tails))))))))
 
          (values precedence-list ss))))))
 
@@ -1874,14 +1927,14 @@ let Y = f: (x: x x) (x: f (x x));
   (let ((p (assq x test-supers))) (if p (cdr p) '())))
 
 ;; Memoized precedence-list computation
-(define pl-cache (make-ht))
+(define pl-cache (make-eqht))
 (define (compute-pl x)
-  (let ((cached (ht-ref pl-cache x #f)))
+  (let ((cached (eqht-ref pl-cache x #f)))
     (or cached
         (let-values (((pl _ss)
                       (c4-linearize (list x) (list (test-get-supers x))
                                     compute-pl test-struct? eq?)))
-          (ht-set! pl-cache x pl)
+          (eqht-set! pl-cache x pl)
           pl))))
 
 (define test-objects
@@ -1917,24 +1970,24 @@ let Y = f: (x: x x) (x: f (x x));
 (let ()
   (define cg-supers
     (lambda (x) (if (eq? x 'CG) '(HVG VHG) (test-get-supers x))))
-  (define cg-cache (make-ht))
+  (define cg-cache (make-eqht))
   (define (cg-pl x)
-    (let ((cached (ht-ref cg-cache x #f)))
+    (let ((cached (eqht-ref cg-cache x #f)))
       (or cached
           (let-values (((pl _) (c4-linearize (list x) (list (cg-supers x)) cg-pl test-struct? eq?)))
-            (ht-set! cg-cache x pl) pl))))
+            (eqht-set! cg-cache x pl) pl))))
   (expect (cg-pl 'CG) =>fail!))
 
 ;; SBc has incompatible suffix parents (suffix constraint violation).
 (let ()
   (define sbc-supers
     (lambda (x) (if (eq? x 'SBc) '(sBs SBB) (test-get-supers x))))
-  (define sbc-cache (make-ht))
+  (define sbc-cache (make-eqht))
   (define (sbc-pl x)
-    (let ((cached (ht-ref sbc-cache x #f)))
+    (let ((cached (eqht-ref sbc-cache x #f)))
       (or cached
           (let-values (((pl _) (c4-linearize (list x) (list (sbc-supers x)) sbc-pl test-struct? eq?)))
-            (ht-set! sbc-cache x pl) pl))))
+            (eqht-set! sbc-cache x pl) pl))))
   (expect (sbc-pl 'SBc) =>fail!))
 
 ;; Test c4-linearize* with DAG local precedence order (list-of-lists parents).
@@ -1950,106 +2003,105 @@ let Y = f: (x: x x) (x: f (x x));
    (my-c4* '((C B) (C A)))    => '(C B A O)   ;; C before both, B before A
    (my-c4* '((A B) (B C) (C A))) =>fail!))    ;; cycle: A<B<C<A
 
-;;;;; 7.4 Optimal Inheritance Specification (OISpec)
+;;;;; 7.4 Prototype with Optimal Inheritance (POI)
 
-;; An OISpec is a record-as-closure responding to:
+;; POI is a prototype in the style of rproto, the spec accessible via #f
 ;;   'mod-ext         -> ModExt             -- this spec's own modular extension
-;;   'parents         -> List(List(OISpec)) -- local precedence chains of direct parents
+;;   'parents         -> List(List(POI))    -- local precedence chains of direct parents
 ;;   'suffix?         -> Bool               -- requires the suffix property (single-inh chain)
-;;   'precedence-list -> List(OISpec)       -- linearized ancestors, most-specific first (lazy)
+;;   'precedence-list -> List(POI)          -- linearized ancestors, most-specific first (lazy)
 ;;
 ;; parents is a list of totally-ordered chains, the same format as c4-linearize's parents:
 ;;   e.g. (list (list A B C)) for a single chain, (list (list A B) (list C A)) for a DAG.
 
-(define (make-oisp mod-ext parents suffix?)
-  (let ((pl #f))  ;; memoized precedence list
-    (define (self msg)
-      (case msg
-        ((mod-ext)         mod-ext)
-        ((parents)         parents)
-        ((suffix?)         suffix?)
-        ((precedence-list)
-         (unless pl
-           (let-values (((result _ss)
-                         (c4-linearize
-                          (list self)
-                          parents
-                          (lambda (x) (x 'precedence-list))
-                          (lambda (x) (x 'suffix?))
-                          eq?)))
-             (set! pl result)))
-         pl)
-        (else #f)))
+(def (poi-spec poi) (poi #f))
+(def (poi-target poi) poi)
+(def (poi-id poi) (poi #f 'id))
+(def (poi-precedence-list poi) (cons poi (poi #f 'precedence-list)))
+(def (poi-suffix poi) (poi #f 'suffix))
+(def (poi-mod-ext poi) (poi #f 'mod-ext))
+(def (poi-suffix? poi) (poi #f 'suffix?))
+(def (poi-parents poi) (poi #f 'parents))
+
+(define (make-poi mod-ext suffix? parents)
+  (letrec
+      ((id (generate-tag))
+       (precedence-list-and-suffix
+        (compute-once (lambda () (call-with-values (lambda ()
+          (c4-linearize '() parents poi-precedence-list poi-suffix? eq? poi-id)) cons))))
+       (precedence-list (lambda () (car (precedence-list-and-suffix))))
+       (suffix (lambda () (cdr (precedence-list-and-suffix))))
+       (self (η (fix (record (#f spec))
+                     (apply mix* finalize-spec
+                            (reverse (cons mod-ext (map poi-mod-ext (precedence-list))))))))
+       (spec
+        (lambda (msg)
+          (case msg
+            ((target)          self)
+            ((precedence-list) (precedence-list))
+            ((suffix)          (suffix))
+            ((id)              id)
+            ((mod-ext)         mod-ext)
+            ((suffix?)         suffix?)
+            ((parents)         parents)
+            (else #f)))))
     self))
 
-;; oisp-effective-mod-ext : OISpec -> ModExt
-;; Combine ModExts from all ancestors in the precedence list.
-;; The least-specific ancestor contributes first (as the outermost super),
-;; the most-specific last.  mix* processes left-to-right with the last arg most specific,
-;; so we reverse the PL (most-specific-first) before applying mix*.
-(define (oisp-effective-mod-ext oisp)
-  (apply mix* (map (lambda (s) (s 'mod-ext))
-                   (reverse (oisp 'precedence-list)))))
+(define-syntax poi
+  (syntax-rules ()
+    ((_ args ...) (poi-internal (args ...) idModExt #f '()))))
+(define-syntax poi-internal
+  (syntax-rules (:e :s :p :pp :p*)
+    ((_ () mod-ext suffix? parents) (make-poi mod-ext suffix? parents))
+    ((_ (:e e args ...) _ s p) (poi-internal (args ...) e s p))
+    ((_ (:s s args ...) e _ p) (poi-internal (args ...) e s p))
+    ((_ (:p p ...) e s _) (poi-internal () e s (list (list p ...))))
+    ((_ (:pp pp ...) e s _) (poi-internal () e s (list pp ...)))
+    ((_ (:p* p* args ...) e s _) (poi-internal (args ...) e s p*))))
 
-;; fix-oisp : OISpec -> Target
-;; Instantiate an OISpec: compute the effective ModExt and fix it with empty-record.
-(define (fix-oisp oisp)
-  (fix-record (oisp-effective-mod-ext oisp)))
+;; memo-poi: poi that memoizes all method accesses
+;; It is a suffix poi, because memoization must happen in the very beginning,
+;; and thus the finalizer must be registered at the very end.
+(def memo-poi
+     (poi :e (register-finalizer-spec (λ (super _self) (memo super)))
+          :s #t))
 
-;;;; Tests for OISpec
+;;;; Tests for POI
 
 ;; Simple diamond: O <- A, O <- B, {A,B} <- Z
 ;; Note: compute-value lambdas must use pommette's λ (auto-curried), not plain lambda,
 ;; because def-bound parameters become identifier macros that expand
 ;; (compute-value inherited self) to ((compute-value inherited) self).
 (let ()
-  (define O-oisp (make-oisp idModExt '() #f))
-  (define A-oisp (make-oisp (field-spec 'a (λ (_inh _self) 1))
-                             (list (list O-oisp)) #f))
-  (define B-oisp (make-oisp (field-spec 'b (λ (_inh _self) 2))
-                             (list (list O-oisp)) #f))
-  (define Z-oisp (make-oisp (field-spec 'z (λ (_inh _self) 3))
-                             (list (list A-oisp B-oisp)) #f))
+  (define O (poi))
+  (define A (poi :e (constant-field-spec 'a 1) :p O))
+  (define B (poi :e (constant-field-spec 'b 2) :p O))
+  (define Z (poi :e (constant-field-spec 'z 3) :p A B))
 
   ;; Precedence lists
   (expect
-   (Z-oisp 'precedence-list) => (list Z-oisp A-oisp B-oisp O-oisp)
-   ;; O appears exactly once (diamond sharing)
-   (length (filter (lambda (s) (eq? s O-oisp)) (Z-oisp 'precedence-list))) => 1)
-
-  ;; Instantiate: all fields accessible, each ancestor contributes once
-  (let ((z-inst (fix-oisp Z-oisp)))
-    (expect
-     (z-inst 'z) => 3
-     (z-inst 'a) => 1
-     (z-inst 'b) => 2
-     (z-inst 'x) => #f)))   ;; absent field returns #f (from empty-record top)
+   (poi-precedence-list Z) => (list Z A B O)
+   ;; Instantiate: all fields accessible, each ancestor contributes once
+   (map Z '(z b a o)) => '(3 2 1 #f)))
 
 ;; Suffix (single-inheritance) chain: s <- C  where s is a suffix spec
 (let ()
-  (define s-oisp (make-oisp (field-spec 's-val (λ (_inh _self) 0))
-                             '() #t))   ;; suffix? = #t
-  (define C-oisp (make-oisp (field-spec 'c-val (λ (_inh _self) 99))
-                             (list (list s-oisp)) #f))
+  (define s (poi :e (constant-field-spec 's 0) :s #t))
+  (define C (poi :e (constant-field-spec 'C 99) :p s))
 
   ;; s-oisp is the last (least-specific) in C's PL, as required by the suffix property
   (expect
-   (C-oisp 'precedence-list) => (list C-oisp s-oisp))
-
-  (let ((c-inst (fix-oisp C-oisp)))
-    (expect
-     (c-inst 'c-val) => 99
-     (c-inst 's-val) => 0)))
+   (poi-precedence-list C) => (list C s)
+   (C 'C) => 99
+   (C 's) => 0))
 
 ;; Overriding: child adds 10 to parent's field
 (let ()
-  (define base-oisp (make-oisp (field-spec 'val (λ (_inh _self) 5))
-                                '() #f))
-  (define child-oisp (make-oisp (field-spec 'val (λ (inh _self) (+ inh 10)))
-                                 (list (list base-oisp)) #f))
+  (define base (poi :e (constant-field-spec 'val 5)))
+  (define child (poi :e (field-spec 'val (λ (inh _self) (+ inh 10))) :p base))
   (expect
-   ((fix-oisp base-oisp)  'val) => 5
-   ((fix-oisp child-oisp) 'val) => 15))   ;; child's +10 applied on top of base's 5
+   (base 'val) => 5
+   (child 'val) => 15))   ;; child's +10 applied on top of base's 5
 
 ;;;; OISpec C4 hierarchy examples
 ;; The following tests replicate each major C4/C3 example hierarchy
@@ -2062,42 +2114,39 @@ let Y = f: (x: x x) (x: f (x x));
 ;; Classes: O, A B C D E O, K1=(A B C), K2=(D B E), K3=(D A), Z=(K1 K2 K3)
 ;; Expected PL: Z K1 K2 K3 D A B C E O
 (let ()
-  (define O-sp  (make-oisp idModExt '() #f))
-  (define A-sp  (make-oisp idModExt (list (list O-sp)) #f))
-  (define B-sp  (make-oisp idModExt (list (list O-sp)) #f))
-  (define C-sp  (make-oisp idModExt (list (list O-sp)) #f))
-  (define D-sp  (make-oisp idModExt (list (list O-sp)) #f))
-  (define E-sp  (make-oisp idModExt (list (list O-sp)) #f))
-  (define K1-sp (make-oisp idModExt (list (list A-sp B-sp C-sp)) #f))
-  (define K2-sp (make-oisp idModExt (list (list D-sp B-sp E-sp)) #f))
-  (define K3-sp (make-oisp idModExt (list (list D-sp A-sp)) #f))
-  (define Z-sp  (make-oisp idModExt (list (list K1-sp K2-sp K3-sp)) #f))
+  (define-syntax m (syntax-rules () ((_ . p) (poi :p . p))))
+  (define O  (m))
+  (define A  (m O))
+  (define B  (m O))
+  (define C  (m O))
+  (define D  (m O))
+  (define E  (m O))
+  (define K1 (m A B C))
+  (define K2 (m D B E))
+  (define K3 (m D A))
+  (define Z  (m K1 K2 K3))
   (expect
-   (Z-sp 'precedence-list)
-   => (list Z-sp K1-sp K2-sp K3-sp D-sp A-sp B-sp C-sp E-sp O-sp)
-   (K1-sp 'precedence-list) => (list K1-sp A-sp B-sp C-sp O-sp)
-   (K2-sp 'precedence-list) => (list K2-sp D-sp B-sp E-sp O-sp)
-   (K3-sp 'precedence-list) => (list K3-sp D-sp A-sp O-sp)
-   ;; Diamond: O appears exactly once in Z's PL
-   (length (filter (lambda (s) (eq? s O-sp)) (Z-sp 'precedence-list))) => 1))
+   (poi-precedence-list Z) => (list Z K1 K2 K3 D A B C E O)
+   (poi-precedence-list K1) => (list K1 A B C O)
+   (poi-precedence-list K2) => (list K2 D B E O)
+   (poi-precedence-list K3) => (list K3 D A O)))
 
 ;; --- Wikipedia 2023: Y hierarchy ---
 ;; J1=(C A B), J2=(B D E), J3=(A D), Y=(J1 J3 J2)
 ;; Expected PL: Y J1 C J3 A J2 B D E O
 (let ()
-  (define O-sp  (make-oisp idModExt '() #f))
-  (define A-sp  (make-oisp idModExt (list (list O-sp)) #f))
-  (define B-sp  (make-oisp idModExt (list (list O-sp)) #f))
-  (define C-sp  (make-oisp idModExt (list (list O-sp)) #f))
-  (define D-sp  (make-oisp idModExt (list (list O-sp)) #f))
-  (define E-sp  (make-oisp idModExt (list (list O-sp)) #f))
-  (define J1-sp (make-oisp idModExt (list (list C-sp A-sp B-sp)) #f))
-  (define J2-sp (make-oisp idModExt (list (list B-sp D-sp E-sp)) #f))
-  (define J3-sp (make-oisp idModExt (list (list A-sp D-sp)) #f))
-  (define Y-sp  (make-oisp idModExt (list (list J1-sp J3-sp J2-sp)) #f))
-  (expect
-   (Y-sp 'precedence-list)
-   => (list Y-sp J1-sp C-sp J3-sp A-sp J2-sp B-sp D-sp E-sp O-sp)))
+  (define-syntax m (syntax-rules () ((_ . p) (poi :p . p))))
+  (define O  (m))
+  (define A  (m O))
+  (define B  (m O))
+  (define C  (m O))
+  (define D  (m O))
+  (define E  (m O))
+  (define J1 (m C A B))
+  (define J2 (m B D E))
+  (define J3 (m A D))
+  (define Y (m J1 J3 J2))
+  (expect (poi-precedence-list Y) => (list Y J1 C J3 A J2 B D E O)))
 
 ;; --- C3 paper: Boat hierarchy ---
 ;; boat(B), day-boat(DB=B), wheel-boat(WB=B), engine-less(EL=DB),
@@ -2105,85 +2154,308 @@ let Y = f: (x: x x) (x: f (x x));
 ;; small-catamaran(SC=SM), pedalo(P=PWB SC)
 ;; Expected PL: P PWB EL SC SM DB WB B O
 (let ()
-  (define O-sp   (make-oisp idModExt '() #f))
-  (define B-sp   (make-oisp idModExt (list (list O-sp)) #f))
-  (define DB-sp  (make-oisp idModExt (list (list B-sp)) #f))
-  (define WB-sp  (make-oisp idModExt (list (list B-sp)) #f))
-  (define EL-sp  (make-oisp idModExt (list (list DB-sp)) #f))
-  (define SM-sp  (make-oisp idModExt (list (list DB-sp)) #f))
-  (define PWB-sp (make-oisp idModExt (list (list EL-sp WB-sp)) #f))
-  (define SC-sp  (make-oisp idModExt (list (list SM-sp)) #f))
-  (define P-sp   (make-oisp idModExt (list (list PWB-sp SC-sp)) #f))
-  (expect
-   (P-sp 'precedence-list)
-   => (list P-sp PWB-sp EL-sp SC-sp SM-sp DB-sp WB-sp B-sp O-sp)
-   ;; B (boat) appears exactly once despite being ancestor of both DB and WB
-   (length (filter (lambda (s) (eq? s B-sp)) (P-sp 'precedence-list))) => 1))
+  (define-syntax m (syntax-rules () ((_ . p) (poi :p . p))))
+  (define O   (m))
+  (define B   (m O))
+  (define DB  (m B))
+  (define WB  (m B))
+  (define EL  (m DB))
+  (define SM  (m DB))
+  (define PWB (m EL WB))
+  (define SC  (m SM))
+  (define P   (m PWB SC))
+  (expect (poi-precedence-list P) => (list P PWB EL SC SM DB WB B O)))
 
 ;; --- C4 suffix hierarchy: lowercase = suffix (single-inheritance chain) ---
 ;; O, o=(O suffix), a=(o), b=(a), c=(b o), d=(D c) where D is a class
 ;; Expected PLs: o→(o O), a→(a o O), b→(b a o O), c→(c b a o O), d→(d D c b a o O)
 (let ()
-  (define O-sp (make-oisp idModExt '() #f))
-  (define D-sp (make-oisp idModExt (list (list O-sp)) #f))
-  (define o-sp (make-oisp idModExt (list (list O-sp)) #t))  ;; suffix
-  (define a-sp (make-oisp idModExt (list (list o-sp)) #t))  ;; suffix
-  (define b-sp (make-oisp idModExt (list (list a-sp)) #t))  ;; suffix
-  (define c-sp (make-oisp idModExt (list (list b-sp o-sp)) #t)) ;; suffix, two parents
-  (define d-sp (make-oisp idModExt (list (list D-sp c-sp)) #f)) ;; class
+  (define-syntax m (syntax-rules () ((_ . p) (poi :p . p))))
+  (define-syntax s (syntax-rules () ((_ . p) (poi :s #t :p . p))))
+  (define O (m))
+  (define D (m O))
+  (define o (s O))
+  (define a (s o))
+  (define b (s a))
+  (define c (s b o))
+  (define d (s D c))
   (expect
-   (o-sp 'precedence-list) => (list o-sp O-sp)
-   (a-sp 'precedence-list) => (list a-sp o-sp O-sp)
-   (b-sp 'precedence-list) => (list b-sp a-sp o-sp O-sp)
-   (c-sp 'precedence-list) => (list c-sp b-sp a-sp o-sp O-sp)
-   (d-sp 'precedence-list) => (list d-sp D-sp c-sp b-sp a-sp o-sp O-sp)))
+   (poi-precedence-list o) => (list o O)
+   (poi-precedence-list a) => (list a o O)
+   (poi-precedence-list b) => (list b a o O)
+   (poi-precedence-list c) => (list c b a o O)
+   (poi-precedence-list d) => (list d D c b a o O)))
 
 ;; --- C4 regression: x5=(x4 x1) where x4=(x3), x3=(x2), x2=(x1), x1 base ---
 ;; Expected PL: x5 x4 x3 x2 x1
 (let ()
-  (define x1-sp (make-oisp idModExt '() #f))
-  (define x2-sp (make-oisp idModExt (list (list x1-sp)) #f))
-  (define x3-sp (make-oisp idModExt (list (list x2-sp)) #f))
-  (define x4-sp (make-oisp idModExt (list (list x3-sp)) #f))
-  (define x5-sp (make-oisp idModExt (list (list x4-sp x1-sp)) #f))
+  (define-syntax s (syntax-rules () ((_ . p) (poi :s #t :p . p))))
+  (define x1 (s))
+  (define x2 (s x1))
+  (define x3 (s x2))
+  (define x4 (s x3))
+  (define x5 (s x4 x1))
   (expect
-   (x5-sp 'precedence-list) => (list x5-sp x4-sp x3-sp x2-sp x1-sp)))
+   (poi-precedence-list x5) => (list x5 x4 x3 x2 x1)))
 
 ;; --- Instantiation with C4 merged fields across the Z hierarchy ---
 ;; Each class contributes a unique field; Z's instance can access all of them.
 (let ()
-  (define O-sp  (make-oisp (field-spec 'o-field (λ (_inh _self) 'from-O)) '() #f))
-  (define A-sp  (make-oisp (field-spec 'a-field (λ (_inh _self) 'from-A))
-                            (list (list O-sp)) #f))
-  (define B-sp  (make-oisp (field-spec 'b-field (λ (_inh _self) 'from-B))
-                            (list (list O-sp)) #f))
-  (define C-sp  (make-oisp (field-spec 'c-field (λ (_inh _self) 'from-C))
-                            (list (list O-sp)) #f))
-  (define D-sp  (make-oisp (field-spec 'd-field (λ (_inh _self) 'from-D))
-                            (list (list O-sp)) #f))
-  (define E-sp  (make-oisp (field-spec 'e-field (λ (_inh _self) 'from-E))
-                            (list (list O-sp)) #f))
-  (define K1-sp (make-oisp (field-spec 'k1-field (λ (_inh _self) 'from-K1))
-                            (list (list A-sp B-sp C-sp)) #f))
-  (define K2-sp (make-oisp (field-spec 'k2-field (λ (_inh _self) 'from-K2))
-                            (list (list D-sp B-sp E-sp)) #f))
-  (define K3-sp (make-oisp (field-spec 'k3-field (λ (_inh _self) 'from-K3))
-                            (list (list D-sp A-sp)) #f))
-  (define Z-sp  (make-oisp (field-spec 'z-field (λ (_inh _self) 'from-Z))
-                            (list (list K1-sp K2-sp K3-sp)) #f))
-  (let ((z-inst (fix-oisp Z-sp)))
+  (define-syntax x
+    (syntax-rules ()
+      ((x name . p) (define name (poi :e (constant-field-spec 'name 'name) :p . p)))))
+  (x O)
+  (x A O)
+  (x B O)
+  (x C O)
+  (x D O)
+  (x E O)
+  (x K1 A B C)
+  (x K2 D B E)
+  (x K3 D A)
+  (x Z K1 K2 K3)
+  (expect
+   (map Z '(Z K1 K2 K3 A B C D E O missing)) => '(Z K1 K2 K3 A B C D E O #f)))
+
+;; --- Full test-objects/test-supers/expected-pls coverage ---
+;; Build POI instances for all test objects using the same test vectors
+;; already validated for c4-linearize directly.  test-objects is in topological
+;; order (each object's supers appear earlier in the list), so parents always
+;; exist in the alist when we create a child.
+(let ()
+  (define sym-poi-alist '())  ;; (sym . oisp) pairs, most-recently-added first
+  (define (sym->poi sym)
+    (let ((p (assq sym sym-poi-alist)))
+      (if p (cdr p) (error "POI not found for symbol" sym))))
+
+  ;; Create one OISpec per test object
+  (for-each
+   (lambda (sym)
+     (let* ((supers  (test-get-supers sym))
+            ;; Single chain of direct parents (same as c4-linearize call-site above)
+            (parents (if (null? supers) '() (list (map sym->poi supers))))
+            (poi     (make-poi idModExt (test-struct? sym) parents)))
+       (set! sym-poi-alist (cons (cons sym poi) sym-poi-alist))))
+   test-objects)
+
+  ;; Reverse-lookup: OISpec -> symbol (for comparing PLs with expected-pls)
+  (define (poi->sym poi)
+    (let ((p (find (lambda (pair) (eq? (cdr pair) poi)) sym-poi-alist)))
+      (if p (car p) (error "No symbol for POI" poi))))
+
+  ;; Check every object's precedence-list matches the expected one
+  (expect
+   (map (lambda (sym) (map poi->sym (poi-precedence-list (sym->poi sym))))
+        test-objects)
+   => expected-pls))
+
+;;;;; 9.3.2 Double Dispatch and Visitor Pattern
+
+;;; Manual double dispatch (design pattern):
+;;   shape1's collide! dispatches a type-specialized callback on shape2,
+;;   passing shape1 as argument. Extensible only for the second argument—
+;;   every spec for the first argument must be enumerated in the second's spec.
+
+(let ()
+  (def circle-dd
+    (mix*
+      (constant-field-spec 'radius 5)
+      ;; First dispatch: call type-specialized method on second arg, passing self
+      (field-spec 'collide! (λ (_inh self other)
+                               (other 'collide-with-circle! self)))
+      ;; Second-dispatch receivers: what to return when I am the second argument
+      (field-spec 'collide-with-circle! (constant-spec (K 'circle-circle)))
+      (field-spec 'collide-with-square! (constant-spec (K 'square-circle)))))
+
+  (def square-dd
+    (mix*
+      (constant-field-spec 'side 4)
+      (field-spec 'collide! (λ (_inh self other)
+                               (other 'collide-with-square! self)))
+      (field-spec 'collide-with-circle! (constant-spec (K 'circle-square)))
+      (field-spec 'collide-with-square! (constant-spec (K 'square-square)))))
+
+  (let ()
+    (def c (fix-record circle-dd))
+    (def s (fix-record square-dd))
     (expect
-     (z-inst 'z-field)  => 'from-Z
-     (z-inst 'k1-field) => 'from-K1
-     (z-inst 'k2-field) => 'from-K2
-     (z-inst 'k3-field) => 'from-K3
-     (z-inst 'a-field)  => 'from-A
-     (z-inst 'b-field)  => 'from-B
-     (z-inst 'c-field)  => 'from-C
-     (z-inst 'd-field)  => 'from-D
-     (z-inst 'e-field)  => 'from-E
-     (z-inst 'o-field)  => 'from-O
-     (z-inst 'missing)  => #f)))
+     (c 'collide! c) => 'circle-circle
+     (c 'collide! s) => 'circle-square
+     (s 'collide! c) => 'square-circle
+     (s 'collide! s) => 'square-square)))
+
+;;; Visitor pattern:
+;;   Each shape acts both as an element (accept! dispatches to visitor's visit-MYTYPE!)
+;;   and as a visitor (visit-X! handles what to do when colliding with a shape of type X).
+;;   Advantage: new operations (visitors) can be added without modifying element specs.
+;;   Limitation: still requires knowing all element types when defining each visitor.
+
+(let ()
+  (def circle-vis
+    (mix*
+      ;; As element: route visitor to visit-circle!
+      (field-spec 'accept! (λ (_inh self visitor) (visitor 'visit-circle! self)))
+      ;; As visitor: what to return when I collide with each shape type
+      (field-spec 'visit-circle! (constant-spec (K 'circle-circle)))
+      (field-spec 'visit-square! (constant-spec (K 'circle-square)))
+      ;; collide! = let other accept self as a visitor
+      (field-spec 'collide! (λ (_inh self other) (other 'accept! self)))))
+
+  (def square-vis
+    (mix*
+      (field-spec 'accept! (λ (_inh self visitor) (visitor 'visit-square! self)))
+      (field-spec 'visit-circle! (constant-spec (K 'square-circle)))
+      (field-spec 'visit-square! (constant-spec (K 'square-square)))
+      (field-spec 'collide! (λ (_inh self other) (other 'accept! self)))))
+
+  (let ()
+    (def c (fix-record circle-vis))
+    (def s (fix-record square-vis))
+    (expect
+     (c 'collide! c) => 'circle-circle
+     (c 'collide! s) => 'circle-square
+     (s 'collide! c) => 'square-circle
+     (s 'collide! s) => 'square-square)))
+
+;;;;; 9.3.4 Implementing Multiple Dispatch
+;;
+;; Automate the double dispatch / visitor pattern:
+;; store partial method tables locally in each spec, backward-compatible with single dispatch.
+;;
+;; Table structure (parallel to sub-method-spec):
+;;   sub-methods[gf][s2-tag] = method-fn
+;;
+;; Each spec exposes a 'spec-tag for second-dispatch identification.
+;; method-fn calling convention: (pommette λ (self) → (other) → result)
+;;   i.e. curried — same arity as constant-spec, so (constant-spec v) works for constants.
+;;
+;; Dispatch:   (obj1 'gf obj2)
+;;   1. look up obj2's tag:  (obj2 'spec-tag)
+;;   2. look up method:      (sub-methods[gf])[s2-tag]
+;;   3. apply:               (method obj1 obj2)
+
+(def (curry/list f l)
+  (let loop ((f f) (l l))
+    (if (pair? l)
+        (loop (f (car l)) (cdr l))
+        f)))
+
+(expect
+ (curry/list + '()) => +
+ (curry/list + '(4)) => 4
+ (curry/list (λ (x y z) (+ x y z)) '(5 6 7)) => 18)
+
+(def (uncurry/list arity k)
+  (let loop ((n arity) (r '()))
+    (if (zero? n) (k (reverse r))
+        (λ (x) (loop (- n 1) (cons x r))))))
+
+(expect
+ (uncurry/list 0 vector) => #(())
+ (uncurry/list 1 vector 'a) => #((a))
+ (uncurry/list 2 vector 'a 'b) => #((a b))
+ (uncurry/list 3 vector 'a 'b 'c) => #((a b c)))
+
+(define (register-multimethod multimethods method-tag specializers method-fn)
+  (@ (apply field-update~* method-tag specializers) (K method-fn) multimethods))
+
+(def (register-multimethods new-multimethods multimethods)
+  (foldl (lambda (n m) (apply register-multimethod m n)) multimethods new-multimethods))
+
+(def (multimethods-spec new-multimethods super _self)
+  ((compose* (field-update~* #f 'multimethods)
+             (register-multimethods new-multimethods))
+   super))
+
+(def (apply-generic-function arity compute-effective-method multimethods self)
+  (uncurry/list arity
+    (λ (args)
+      (let* ((pls (map poi-precedence-list args))
+             (sub-methods
+              (λ (method-tag)
+               (map (λ (m cnm) (curry/list (m cnm)))
+                ((let loop ((mm (multimethods method-tag))
+                            (pls pls)
+                            (acc identity))
+                   (cond
+                    ((not mm) acc)
+                    ((null? pls) (compose acc (λ (x) (cons mm x))))
+                    (else
+                     (foldl
+                      (lambda (p acc) (loop (field-view~ p mm) (cdr pls) acc))
+                      acc
+                      (car pls)))))
+                 '())))))
+        ((compute-effective-method self sub-methods args))))))
+
+(def (generic-function-spec arity compute-effective-method multimethods)
+  (λ (super self x)
+    (if (not x)
+        (extend-record 'arity arity
+          (extend-record 'compute-effective-method compute-effective-method
+            (extend-record 'multimethods (register-multimethods multimethods empty-record)
+              (super #f))))
+        (let* ((spec (self #f))
+               (arity (spec 'arity))
+               (compute-effective-method (spec 'compute-effective-method))
+               (multimethods (spec 'multimethods)))
+          (apply-generic-function arity compute-effective-method multimethods self x)))))
+
+(let ()
+  (def shape (poi))
+  (def lozenge (poi :e (constant-field-spec 'type 'lozenge)
+                    :p shape))
+  (def rectangle (poi :e (constant-field-spec 'type 'rectangle)
+                      :p shape))
+  (def square (poi :e (constant-field-spec 'type 'square)
+                   :p rectangle lozenge))
+  (def known-ancestor-pairs
+       (poi :e (generic-function-spec
+                2 (K compute-effective-method/list)
+                `((list (,shape ,shape) ,(constant-spec (K '(shape shape))))
+                  (list (,rectangle ,shape) ,(constant-spec (K '(rectangle shape))))
+                  (list (,shape ,rectangle) ,(constant-spec (K '(shape rectangle))))
+                  (list (,lozenge ,shape) ,(constant-spec (K '(lozenge shape))))
+                  (list (,lozenge ,lozenge) ,(constant-spec (K '(lozenge lozenge))))
+                  (list (,shape ,lozenge) ,(constant-spec (K '(shape lozenge))))
+                  (list (,rectangle ,rectangle) ,(constant-spec (K '(rectangle rectangle))))
+                  (list (,square ,square) ,(constant-spec (K '(square square))))))))
+  (expect
+    (shape 'type) => #f
+    (rectangle 'type) => 'rectangle
+    (lozenge 'type) => 'lozenge
+    (square 'type) => 'square
+
+    (known-ancestor-pairs shape shape)
+    => '((shape shape))
+
+    ;; rectangle x rectangle:
+    (known-ancestor-pairs rectangle rectangle)
+    => '((rectangle rectangle) (rectangle shape) (shape rectangle) (shape shape))
+
+    ;; lozenge x lozenge: lozenge-lozenge + shape-shape
+    (known-ancestor-pairs lozenge lozenge)
+    => '((lozenge lozenge) (lozenge shape) (shape lozenge) (shape shape))
+
+    ;; square x square: square inherits rectangle and lozenge
+    (known-ancestor-pairs square square)
+    => '((square square)
+         (rectangle rectangle) (rectangle shape)
+         (lozenge lozenge) (lozenge shape)
+         (shape rectangle) (shape lozenge) (shape shape))
+
+    ;; rectangle x shape
+    (known-ancestor-pairs rectangle shape)
+    => '((rectangle shape) (shape shape))
+
+    ;; square x rectangle
+    (known-ancestor-pairs square rectangle)
+    => '((rectangle rectangle) (rectangle shape)
+         (lozenge shape) (shape rectangle) (shape shape))
+
+    ;; square x shape: all applicable pairs
+    (known-ancestor-pairs square shape)
+    => '((rectangle shape) (lozenge shape) (shape shape))))
 
 #||#
 #|
@@ -2197,5 +2469,4 @@ p1∩p2 = {a : Int, b : String , ... }
 |#
 
 ;; TODO: add compute-once where appropriate in method-combinations?
-;; TODO: double dispatch example for 9.3.2
-;; TODO: visitor pattern example for 9.3.2
+;; TODO: add call-next-method support to binary-gf-init-spec for composable multimethods
