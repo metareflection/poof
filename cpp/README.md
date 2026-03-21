@@ -198,3 +198,13 @@ Includes a complete theory of OO. The C4 algorithm is explained in chapter 7.
 In Proc. International Symposium on Generative and Component-Based Software Engineering,
 pp. 164–178. doi:10.1007/3-540-44815-2_12 .
 Explains the basic approach to implementing Mixin inheritance on top of C++ templates.
+
+## TODO
+
+* Replace unary templates Mixin<Super> by binary templates Minx<Self,Super> ?
+* Have some template Tail<Self,Super> that yields the Tail of Self's precedence list starting at Super
+* Have some way to statically check that some Mixin is in the ancestors of a C4 Class
+* Have some way to write a template that is parametric over a C4 Class
+  that descents from a given set ancestors?
+* Allow dynamic dispatch over descendents of a C4 Class:
+  the C4 class inherits from some virtual base class that declares the functions?
