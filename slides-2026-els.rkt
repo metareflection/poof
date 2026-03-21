@@ -230,3 +230,8 @@ LLMs only amplify that.
 Homoiconic vs bicameral
 
 If factories were managed according to the Programming Language paradigm, each time you had to adjust a tolerance on a component, you'd nuke the factory from orbit, killing all the workers and destroying the inventory, then start a new factory from scratch with brand new hires.
+
+
+Lisp had OOP, FP, Actors, Logic programming, Graphical User Interfaces, and many more paradigms, all together, already back in the 1970s, before any idiot invented an “opposition” between paradigms.
+
+The “opposition” between paradigms is just the resource limitation of idiots using the “programming language” paradigm and therefore having to allocate their limited resources to only one paradigm. When you adopt the “systems” paradigm of Lisp, you have a system that you extend in many ways, with no opposition between extensions, only complementarity.

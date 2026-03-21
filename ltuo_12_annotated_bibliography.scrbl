@@ -18,7 +18,7 @@ Which of the now-obvious concepts it discusses was then non-obvious innovation?
 What crucial words shifted in meaning since it was written?
 What concepts does it touch that were only fully identified later?
 What does the citing author think of the cited work, and
-how does that differ from the general opinion of said works?
+how does that differ from more common opinions of said works?
 Should I read the paper or not? If not, what should I know of it?
 If yes, what need I know to make the best of the reading?
 
@@ -34,9 +34,8 @@ I invite other authors to do as much.
 
 My notes are opinionated. They skip over aspects of cited works that I didn’t care about,
 at least not for this book.
-They also lay judgement upon some authors.
-My judgements are summary, based on limited information
-about the authors and their works—@emph{strong opinions, weakly held}.
+They also lay summary judgement upon some authors and their works, based on
+what limited information I could gather and make sense of—@emph{strong opinions, weakly held}.
 I’ll be happy to be proven wrong, or to be shown nuances I missed.
 Yet those are the best opinions I could make, and still worth sharing.
 @principle{Always judge a book by its cover}:
@@ -45,7 +44,7 @@ But be ready to revise your judgement after you get more information.
 
 All the publications listed below are available online for free—but
 not always from their DOI (Digital Object Identifier).
-Surely my readers can circumvent “legal” monopoly middlemen to locate free copies.
+Surely my astute readers can circumvent “legal” monopoly middlemen to locate free copies.
 Hint: my source code got URLs.
 
 @(hhr)  @tex{~\\{}\\{}~}

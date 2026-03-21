@@ -1098,7 +1098,7 @@ of programming languages in general and/or OO in particular
 @~cite{AbadiCardelli1996ToO Pierce2002TAPL eopl3 plai}. @TODO{more?}
 The wider academic literature is also lacking in proper treatment of
 types for multiple inheritance, with some notable exceptions like
-@citet{CecilMultimethods} or @citet{Allen2011Type},
+@citet{Chambers1992} or @citet{Allen2011},
 and even then, there has been zero interest whatsoever in flavorful multiple inheritance
 in the programming language part of academia outside of the Lisp community@xnote["."]{
   Interestingly, work on flavorful multiple inheritance was done

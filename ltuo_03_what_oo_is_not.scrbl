@@ -496,7 +496,7 @@ after the language was originally designed,
 and not integrated in any meaningful way with OO message dispatch.
 Moreover, many OO languages generalize and extend their method dispatch mechanism
 from “single dispatch” to “multiple dispatch”@~cite{
-  Bobrow1986CommonLoops Bobrow1988CLOS CecilMultimethods Allen2011Type}.
+  Bobrow1986CommonLoops Bobrow1988CLOS Chambers1992 Allen2011}.
 Their “multimethods” are attached to tuples of prototypes or classes,
 and there is no single prototype, class, or single independent entity of any kind
 capable of either “receiving” or “sending” a message.

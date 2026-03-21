@@ -60,3 +60,11 @@ Different capabilities for objects and their meta-objects => more security.
   What are the costs of that flexibility in terms of
   implementation complexity and reasoning difficulty?
 }
+
+@exercise[#:difficulty "Hard"]{
+  Implement pure functional variants of vectors and hashmaps,
+  in the style of Clojure Seq’s and Associative’s,
+  or Coalton’s Seq and HashMap,
+  or their Haskell equivalent, etc.
+  Then implement a pure functional variant of a MOP on top of that.
+}

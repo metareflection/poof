@@ -1044,9 +1044,9 @@ resolving many modular definitions from many people together into a single progr
 
 Early examples of Modularity and Extensibility together that pre-date fully-formed OO include
 of course classes in Simula 1967 @~cite{Simula1967}, but also precursor breakthroughs like
-the “locator words” of the Burroughs B5000 @~cite{lonergan1961 barton1961}, and
-Ivan Sutherland’s Sketchpad’s “masters and instances” @~cite{sketchpad1963},
-that both inspired Kay, or Warren Teitelman’s Pilot’s ADVISE facility @~cite{teitelman1966},
+the “locator words” of the Burroughs B5000 @~cite{Lonergan1961 Barton1961}, and
+Ivan Sutherland’s Sketchpad’s “masters and instances” @~cite{Sutherland1963},
+that both inspired Kay, or Warren Teitelman’s Pilot’s ADVISE facility @~cite{Teitelman1966},
 that was influential at least in the Lisp community and led to method combination
 in Flavors and CLOS@xnote["."]{
   There were definitely exchanges between the Smalltalk and Interlisp teams at PARC:

@@ -1288,7 +1288,7 @@ wherein you’d modify a specification after the fact so it would inherit from a
 
 Generic functions were introduced as “generic operations” by T @~cite{Rees1982T},
 and reprised as “generic functions” by New Flavors, LOOPS, CommonLoops, CLOS,
-but also beyond Lisp by Cecil @~cite{CecilMultimethods} and Fortress @~cite{Allen2011Type}.
+but also beyond Lisp by Cecil @~cite{Chambers1992} and Fortress @~cite{Allen2011}.
 
 In the “message passing” paradigm adopted by the original Flavors after Smalltalk and Actors,
 objects receive and handle messages.
@@ -1504,7 +1504,7 @@ Still, some languages like Dylan @~cite{Shalit1996} apply linearization to each 
 and can linearize tuples of arguments still, yet apply the “conflict” view of inheritance
 in case of multiple incomparable tuples of arguments for the next method.
 And other languages sadly just adopt conflict all the way
-@~cite{CecilMultimethods Salzman2005}.
+@~cite{Chambers1992 Salzman2005}.
 
 Linearization of tuples typically happens via
 the lexicographical order of per-argument linearizations:
@@ -1587,29 +1587,95 @@ some object at the end of the argument list
 If using “conflict” for incomparable tuples of specifications,
 then argument positions are symmetrical, and “subjective” and “objective” dispatch are isomorphic.
 On the other hand, if using flavorful method linearization for multiple dispatch,
-then argument positions are very much not symmetrical,
-with earlier arguments having higher-priority than latter arguments
-in the dispatch process.
-The “subject” of subjective dispatch then has the highest priority, whereas
+then argument positions are very much not symmetrical.
+Assuming the common strategy as used by CLOS,
+wherein earlier arguments have higher-priority than latter arguments in the dispatch process,
+then the “subject” of subjective dispatch has the highest priority, whereas
 the “object” of objective dispatch has the lowest.
-Subjective dispatch can then enable context-dependent methods to completely redefine
+Subjective dispatch can then enable context-dependent methods to completely override
 the meaning of programs in arbitrary ways, overriding any other method;
 whereas objective dispatch can only minimally alter program behavior,
 making it a weakly expressive mechanism that might not be worth the complexity it brings.
 
-@Paragraph{Dispatch Tables}
+@subsection{Global Dispatch Tables}
 The implementation I offered was minimal in terms of effects and scope:
 the only effect is tagging for identity, which is pure enough
 in a calculus that deals with terms as graphs rather than as trees;
 and the scope of the context necessary to register a method handler is the smallest
 that contains all the specifications at stake.
+
 But there are other possible representations for multiple dispatch:
 you could have a global table of methods, or one table per arity, or one table per gf,
 with a bigger state monad as side-effect, but no scope limitation requiring update to specifications;
 specifications are then emptied of everything but their identity,
 all actual code information being moved to these tables.
+In this global table paradigm, it becomes simpler to think uniformly in terms of an API:
+browsing it, searching it, controlling access to it, iterating over it, transforming it, etc.
 
-@section[#:tag "DD"]{Dynamic vs Static Dispatch}
+Conceptualizing method dispatch through a global table also suggests a change of perspective,
+from extending one specification to extending entire ecosystems @~cite{Ossher1992}:
+Programmers don’t extend just one class, yielding an extended class—they
+extend one class hierarchy, yielding an extended class hierarchy;
+or even one ecosystem, yielding an extended ecosystem.
+This perspective also solves apparent problems like the need for “orphan instances”
+for Haskell typeclasses@xnote[","]{
+  Orphan instances are what happens when some Haskell package defines new kinds of typeclasses
+  (which in OO would be protocols, i.e. sets of generic functions),
+  while another independent package defines new kinds of data structures
+  (which in OO would be classes, or more generally, prototypes),
+  and a third package defines how the latter are “orphaned” instances of the former
+  (which in OO would be methods for the generic functions specialized on prototypes)—orphaned
+  because owned neither by the typeclasses nor by the data structures.
+  Orphaned instances act as compile-time side-effects on the semantics of the language—monkey patching.
+  Yet they are necessary because indeed, neither the typeclass nor the data structure
+  must depend on the other.
+
+  By contrast, not only are Common Lispers not afraid of “orphaned methods”,
+  some invented @c{asdf-system-connections} to automatically load systems with those methods
+  when both the system with the generic functions and the system with classes were loaded.
+  Of course is only actually useful in the context of an @emph{interactive} system
+  where which systems will be loaded depends on interaction with the user.
+  Indeed, in a non-interactive system, the programmer managing the build will have an easier time
+  explicitly specifying the system with the combined methods as a dependency.
+  But the point is that the independent definition of classes, protocols and methods is
+  a huge feature, and not a bug, though it appears wrong if you look at it the wrong way.
+}
+retroactive “friend” classes in C++ or interfaces in Java,
+the “expression problem”, etc. All issues dissolve when one realizes
+the unit of coherent extension was never the individual class or object or function,
+but the entire program or library being modified. Indeed, logical “laws” interrelating
+functions and data structures always prevented the unilateral extension of a single entity
+from ever being valid, except in the simplest and least meaningful of cases.
+
+Extending a specification at a given “location” to declare additional methods
+is essentially “monkey patching”, i.e. modifying code in place,
+even if modelled with pure semantics using lenses:
+the specification at a given location is extended.
+But this equation goes both ways: while some may cast aspersions on multiple dispatch
+by associating it with “dirty” low-level tricks some use to implement features in some languages,
+others will realize that those tricks can be seen as but implementation details
+of legitimate high-level semantics to cleanly and purely extend programs in modular ways.
+
+In the end, this view of extensibility reminds us that
+a name path or location properly identifies
+an extensible “intention” rather than an immutable “extension”,
+a meeting point rather than fixed code.
+That was always the case since code evolves with bug fixes and new features,
+and the entire point of modularity is names always were meeting points
+for changing code the user doesn’t want to look into,
+rather than identifiers for exact code the user wants to look exactly as intended.
+If users wanted the latter, they would be using cryptographic hashes, not names.
+But thanks to OO, i.e. internal modular extensibility,
+this phenomenon of a constant name for changing content
+happens @emph{inside} the language rather than only outside it.
+
+Nota Bene: By using modular extensions as first-class functions,
+we do not need to introduce a hierarchy of complex new syntactic constructs
+each time we generalize modular extensibility from individual method to
+prototypes or classes to hierarchies of prototypes to entire software ecosystems, etc.
+The very same universal notion applies, to types of arbitrary complexity—or simplicity.
+
+@section[#:tag "DvSD"]{Dynamic vs Static Dispatch}
 
 @subsection{Two Different Semantics for Class Method Call}
 
@@ -1617,7 +1683,7 @@ When describing the semantics Class OO in @secref{SFCTD},
 I used the semantics commonly adopted by all Class OO languages,
 where calling method on an object will consult a type descriptor associated to the object,
 then extracting a function associated to the method-id from that type descriptor,
-and calling that function with the object as first argument, followed by any remaining argument.
+and calling that function with the object as first argument, followed by any remaining arguments.
 
 This semantics is called @emph{dynamic dispatch},
 and though every Class OO language supports it,
@@ -1626,7 +1692,8 @@ that instead favor @emph{static dispatch} by default:
 programs include type declarations, and the type descriptors from which functions are extracted
 are “statically” based on those declarations at compile-time,
 rather than on object values at runtime.
-                                                                                                        Still, the usual dynamic dispatch of OO is available for these languages
+
+Still, the usual dynamic dispatch of OO is available for these languages
 by specifying methods as “virtual” (or “open” in Kotlin);
 and many Class OO languages also have static dispatch, if only for “static” methods
 that do not take any implicit object argument (as in C++, Java, C#, etc.).
@@ -1655,12 +1722,12 @@ from second-class type annotations about the object, as e.g.
 
 To further clarify the concepts at stake in a language
 with @emph{both} static types and dynamic dispatch,
-@citet{Allen2011Type} cleverly introduces the word
+@citet{Allen2011} cleverly introduces the word
 @emph{Kin} to denote the runtime object “type” used for dynamic dispatch,
 as contrasted to @emph{Type} as traditionally denoting the compile-time object type
 when doing type analysis and optimization, and in this case also static dispatch.
 Now, in a consistent typesystem, a Type will correctly determine
-what is the a set of possible Kins that an expression of that Type can have at runtime.
+what is the set of possible Kins that an expression of that Type can have at runtime.
 And if a narrow enough set of Kins is determined through the type analysis,
 especially through the use of class sealing or “final” annotations, then
 the method could be determined at compile-time even though the language does dynamic dispatch,
@@ -1683,14 +1750,14 @@ or second-class typeclasses vs existentially quantified first-class values
 with typeclass constraints in Haskell (usually using GADT syntax);
 or even second-class libraries of functions vs structs containing functions pointers in C
 (that could even be used with COM or DCOM);
-Scheme libraries vs object-as-closures without inheritance as in SICP @~cite{SICP2},
+Scheme libraries vs objects-as-closures without inheritance as in SICP @~cite{SICP2},
 etc.
 
 @principle{Dynamic dispatch embodies first-class modularity},
 wherein a first-class entity, the object, or its “virtual dispatch table”,
 serves as a module that specifies at runtime what code to run.
 From this point of view, it is a feature @emph{in addition to}
-the second-class modular extensibility of Class OO.
+the second-class modularity (and modular extensibility) of Class OO.
 By contrast, static dispatch embodies second-class modularity only,
 which is necessarily implied as a subset of
 the second-class modular extensibility of Class OO.
@@ -1757,8 +1824,16 @@ much of the safety and performance of static systems on top of dynamic systems,
 though also much of their complexity.
 
 On the other hand, dynamic dispatch necessarily adds overhead at runtime
-to each method call that uses it—unless it can be reduced to static dispatch,
-by a combination of type analysis and marking classes as final or sealed.
+to each method call that uses it. This overhead can be kept small in the common case,
+thanks to caching and sealing; but it remains irreducible in the worst case,
+especially in an interactively extensible system.
+Marking classes as sealed, final, or prefix, as well as a modicum of
+type declarations or type inference, can reduce dynamic dispatch to static dispatch,
+in many parts of a program where performance matters.
+And even when that is not possible, repetitive usage patterns mean that
+the results of dynamic method dispatch can be cached, so that most of the time,
+one only needs access the same effective method as the last time or one of the last few times,
+which can be quickly checked.
 
 @Paragraph{Static Dispatch}
 
@@ -1781,44 +1856,46 @@ to use and implement.
 Static dispatch is also intimately tied to the specific details of whichever typesystem is used,
 which vary in myriad ways big and small from language to language, and version to version.
 
-Certainly, it is hard to write a static language, what more a @emph{good} static language,
+Certainly, it is hard to write a static language, much less a @emph{good} static language,
 one with a typesystem coherent enough to make sense from the computing point of view,
-expressive enough not to be but a burden to humans, yet
+expressive enough that it is not merely a burden to programmers, yet
 not so complex that it boggles the mind.
 
 @Paragraph{Some Historical Perspective}
 
 Historically, the first language with classes, Simula,
-was based on the statically typed Algol,
+was a language with static types based on Algol,
 and offered both static and dynamic dispatch—years before OO was even conceptualized.
 But the first languages that fully conceptualized OO,
 Smalltalk and KRL (an extension to Lisp),
-were dynamic languages that only offered dynamic dispatch (and KRL had Prototype OO);
-the dynamic aspect was essential to enable the experimentation
-that led to the invention of modern OO.
+were dynamic languages that only offered dynamic dispatch (KRL had Prototype OO);
+the dynamic aspect was instrumental in enabling the experimentation
+that led to the invention of modern OO and a lot of its features.
 
 C++, partly inspired by Simula, and interested in system programming,
 leaned heavily into the static dispatch approach, but kept dynamic dispatch as an option.
-C#, heavily inspired C++ as well as by Java, followed.
+C#, heavily inspired by C++ as well as by Java, followed.
 These languages, with large corporate backing,
-have evolved over many decades to eventually acquire
-many features and typesystems that make them bearable and are as of late
-even capable of expressing functional programming.
-This also raises the bar quite high for any new object oriented language
+evolved over many decades to slowly acquire better features,
+until their typesystems became quite expressive;
+as of late, they are even capable of expressing functional programming,
+which they were not initially.
+These languages also raise the bar quite high for any new object oriented language
 that would try to bet on static dispatch:
 One must stake big antes just to develop a typesystem that can match those of C++ or C#,
-and then one must somehow innovate to become ten times better on some additional dimension
-to surpass them and have a chance of adoption.
+in addition to which one must somehow innovate to become
+ten times better along some meaningful dimension
+to surpass them and have a chance at adoption worth the investment.
 Such requirements mean that there is less experimentation and less diversity
 among languages with static dispatch, and therefore more ecosystem fragility
-when suboptimal decisions are made.
+when suboptimal decisions are made, and when corporate support eventually dries up.
 On the other hand, the power concentration also means that more resources are poured
 (albeit inefficiently) towards improving those few languages with static dispatch
-than any given language with dynamic dispatch only.
+than into any given language with dynamic dispatch only.
 
 It remains to be seen whether AI, by massively lowering the cost of implementing known features,
 will increase inertia in favor of these static-dispatch Class OO incumbents,
-or level the playing field in favor of new languages static or dynamic.
+or will level the playing field in favor of new languages static or dynamic.
 
 @exercise[#:difficulty "easy"]{
   Define the missing simple CLOS method combinations in an efficient way, for

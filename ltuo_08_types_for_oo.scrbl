@@ -919,7 +919,7 @@ then build OO in a couple of simple λ-terms under this type theory.
 A decade or two later come @citet{Kiselyov2005HaskellOOS} and @citet{Hoop}, who
 also have the right attitude of just building OO on top of a general-purpose FP language,
 but choose Haskell as a now-practical substrate instead.
-Also, I love @citet{Allen2011Type} because it shows you can just type
+Also, I love @citet{Allen2011} because it shows you can just type
 multiple dispatch and multiple inheritance, topics that most type theorists
 don’t even try to address when considering OO, even though
 it could have been three even greater papers if things were factored the right way.

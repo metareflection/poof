@@ -488,7 +488,7 @@ I am a proficient user of types, but am no expert at the design, implementation 
 Therefore I will only provide semi-formal designs
 for what better static types for OO should look like.
 And I will refer to the better papers among the many I have read,
-for what I believe are good foundations for typing OO@~cite{isoop1995 iloop1995 Allen2011Type}.
+for what I believe are good foundations for typing OO@~cite{isoop1995 iloop1995 Allen2011}.
 Among other things, good OO types should work not just for Second-Class Classes,
 but also for First-Class Prototypes;
 they require recursive types, subtyping, and some form of existential types.
