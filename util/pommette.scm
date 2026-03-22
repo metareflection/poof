@@ -59,6 +59,8 @@ With Racket: racket pommette.rkt
 
 (define-syntax def
   (syntax-rules ()
+    ((_ (pat) . body)
+     (define pat (λ () . body)))
     ((_ (pat . vars) . body)
      (def pat (λ vars . body)))
     ((_ v . body)
@@ -1551,27 +1553,27 @@ let Y = f: (x: x x) (x: f (x x));
           (op0 #f))))
     self)))
 
-(def (compute-effective-method/progn)
+(def compute-effective-method/progn
   (simple-compute-effective-method
     'progn (λ (_) #f) (λ (_) #f) (λ (x) x) (λ (r _) r)
     'most-specific-first))
 
-(def (compute-effective-method/and)
+(def compute-effective-method/and
   (simple-compute-effective-method
     'and not (λ (_) #t) (λ (x) x) (λ (r _) r)
     'most-specific-first))
 
-(def (compute-effective-method/+)
+(def compute-effective-method/+
   (simple-compute-effective-method
     '+ (λ (_) #f) (λ (_) 0) (λ (x) x) (λ (x y) (+ x y))
     'most-specific-first))
 
-(def (compute-effective-method/*)
+(def compute-effective-method/*
   (simple-compute-effective-method
     '* (λ (_) #f) (λ (_) 1) (λ (x) x) (λ (x y) (* x y))
     'most-specific-first))
 
-(def (compute-effective-method/list)
+(def compute-effective-method/list
   (simple-compute-effective-method
     'list (λ (_) #f) (λ (_) '()) (λ (x) (list x)) (λ (x y) (cons x y))
     'most-specific-last))
@@ -2360,6 +2362,70 @@ let Y = f: (x: x x) (x: f (x x));
  (uncurry/list 2 vector 'a 'b) => '#((a b))
  (uncurry/list 3 vector 'a 'b 'c) => '#((a b c)))
 
+;; uncurried-accepter : mandatory optionals -> accepter function that returns args
+;; mandatory: exact number of required args
+;; optionals: 0 (none), a positive integer (max extra args), or #t (unlimited rest)
+;; Takes a continuation k, calls it with args, a flat list, as single argument when called.
+(def (uncurried-accepter mandatory optionals)
+  (λ (k . args)
+    (let ((n (length args)))
+      (or (>= n mandatory)
+          (error "uncurried-accepter: too few arguments" mandatory args))
+      (or (eq? optionals #t)
+          (<= n (+ mandatory optionals))
+          (error "uncurried-accepter: too many arguments" (+ mandatory optionals) args)))
+    (k args)))
+
+;; opposite of the uncurried-accepter: produce a invoker that takes a function and a list or arguments,
+;; and invokes the function.
+(def (uncurried-invoker mandatory optionals)
+  (λ (f all-args)
+    (let ((n (length all-args)))
+      (or (>= n mandatory)
+          (error "uncurried-invoker: too few arguments" mandatory all-args))
+      (or (eq? optionals #t)
+          (<= n (+ mandatory optionals))
+          (error "uncurried-invoker: too many arguments" (+ mandatory optionals) all-args)))
+    (apply f all-args)))
+
+;; curried-accepter : mandatory optionals optionals-with-last? -> accepter
+;; mandatory: number of curried args collected one at a time
+;; optionals: 0 (none), positive integer (max extra), or #t (unlimited rest)
+;; optionals-with-last?: if #t, optionals bundled with last mandatory arg, otherwise, as extra call.
+;; Takes a continuation k, calls it with all-args, a flat list, as single argument when saturated.
+(def (curried-accepter mandatory optionals optionals-with-last?)
+  (λ (k)
+    (let loop ((remaining mandatory) (acc '()))
+      (cond
+        ((and (zero? remaining) (equal? optionals 0))
+         (k (reverse acc)))
+        ((or (zero? remaining)
+             (and optionals-with-last? (= remaining 1)))
+         (uncurried-accepter
+          remaining optionals
+          (λ (rest) (k (append (reverse acc) rest)))))
+        (else
+         (λ (x) (loop (- remaining 1) (cons x acc))))))))
+
+;; opposite of the accepter: produce a invoker that takes a function and a list or arguments,
+;; and invokes the function.
+(def (curried-invoker mandatory optionals optionals-with-last?)
+  (let* ((last? (and optionals-with-last? (> mandatory 0)))
+         (stop  (if last? (- mandatory 1) mandatory)))
+    (λ (f all-args)
+      (let ((n (length all-args)))
+        (or (>= n mandatory)
+            (error "curried-invoker: too few arguments" mandatory all-args))
+        (or (eq? optionals #t)
+            (<= n (+ mandatory optionals))
+            (error "curried-invoker: too many arguments" (+ mandatory optionals) all-args)))
+      (let* ((curried-args (take all-args stop))
+             (rest-args    (list-tail all-args stop))
+             (f1           (curry/list f curried-args)))
+        (if (equal? optionals 0)
+            f1
+            ((uncurried-invoker (if last? 1 0) optionals) f1 rest-args))))))
+
 (define (register-multimethod multimethods method-tag specializers method-fn)
   (@ (apply field-update~* method-tag specializers) (K method-fn) multimethods))
 
@@ -2371,13 +2437,38 @@ let Y = f: (x: x x) (x: f (x x));
              (register-multimethods new-multimethods))
    super))
 
-(def (apply-generic-function arity compute-effective-method multimethods self)
-  (uncurry/list arity
+(def (make-calling-convention arity accepter invoker)
+  (record (arity arity)
+          (accepter accepter)
+          (invoker invoker)))
+
+(def (uncurried-convention arity extra-mandatory optionals)
+  (let ((mandatory (+ arity extra-mandatory)))
+    (make-calling-convention
+      arity
+      (uncurried-accepter mandatory optionals)
+      (uncurried-invoker (+ mandatory 1) optionals))))  ;; +1 for cnm
+
+(def (curried-convention arity extra-mandatory optionals optionals-with-last?)
+  (let ((mandatory (+ arity extra-mandatory)))
+    (make-calling-convention
+      arity
+      (curried-accepter mandatory optionals optionals-with-last?)
+      (curried-invoker (+ mandatory 1) optionals optionals-with-last?))))  ;; +1 for cnm
+
+(def (default-convention arity)
+  (curried-convention arity 0 0 #f))
+
+(def (poi-precedence-list-with-top poi)
+  (append (poi-precedence-list poi) (list #t)))
+
+(def (apply-generic-function arity accepter invoker compute-effective-method multimethods self)
+  (accepter
     (λ (args)
-      (let* ((pls (map poi-precedence-list args))
+      (let* ((pls (map poi-precedence-list-with-top (take args arity)))
              (sub-methods
               (λ (method-tag)
-               (map (λ (m cnm) (curry/list (m cnm)))
+               (map (λ (m cnm args) (invoker m (cons cnm args)))
                 ((let loop ((mm (multimethods method-tag))
                             (pls pls)
                             (acc identity))
@@ -2392,18 +2483,26 @@ let Y = f: (x: x x) (x: f (x x));
                  '())))))
         ((compute-effective-method self sub-methods args))))))
 
-(def (generic-function-spec arity compute-effective-method multimethods)
-  (λ (super self x)
-    (if (not x)
-        (extend-record 'arity arity
-          (extend-record 'compute-effective-method compute-effective-method
+(def (generic-function-spec calling-convention compute-effective-method multimethods)
+  (let ((calling-convention
+         (if (number? calling-convention)
+             (default-convention calling-convention)
+             calling-convention)))
+    (λ (super self x)
+      (if (not x)
+        (extend-record 'arity (calling-convention 'arity)
+         (extend-record 'accepter (calling-convention 'accepter)
+          (extend-record 'invoker (calling-convention 'invoker)
+           (extend-record 'compute-effective-method compute-effective-method
             (extend-record 'multimethods (register-multimethods multimethods empty-record)
-              (super #f))))
+             (super #f))))))
         (let* ((spec (self #f))
                (arity (spec 'arity))
+               (accepter (spec 'accepter))
+               (invoker (spec 'invoker))
                (compute-effective-method (spec 'compute-effective-method))
                (multimethods (spec 'multimethods)))
-          (apply-generic-function arity compute-effective-method multimethods self x)))))
+          (apply-generic-function arity accepter invoker compute-effective-method multimethods self x))))))
 
 (let ()
   (def shape (poi))
