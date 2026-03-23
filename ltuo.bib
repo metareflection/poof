@@ -1626,6 +1626,20 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 1988
 
+@InProceedings{Felleisen1988,
+  author={Matthias Felleisen},
+  title={The Theory and Practice of First-Class Prompts},
+  booktitle={POPL '88: Proceedings of the 15th ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
+  year={1988},
+  pages={180--190},
+  doi={10.1145/51242.51265},
+  url={https://doi.org/10.1145/51242.51265},
+  note={.
+    Early foundational work on “dynamic” delimited control operators (control / prompt),
+    providing a nicer more fine-grained interface to first-class continuations.
+  }
+}
+
 % https://www.researchgate.net/publication/220178512_Common_Lisp_Object_System_Specification_X2JI3_Document_88-002R
 % https://link.springer.com/content/pdf/10.1007/bf01806962.pdf
 @Article{Bobrow1988CLOS,
@@ -2027,6 +2041,20 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 %% 1990
+
+@Article{Danvy1990,
+  author={Olivier Danvy and Andrzej Filinski},
+  title={Abstracting Control},
+  journal={LFP '90: Proceedings of the 1990 ACM Conference on LISP and Functional Programming},
+  year={1990},
+  pages={151--160},
+  doi={10.1145/91556.99106},
+  url={https://doi.org/10.1145/91556.99106},
+  note={.
+    The seminal paper on shift / reset, the classic “static” operators for partial continuations,
+    as somewhat cleaner variants of Felleisen 1988’s “dynamic” control / prompt.
+  }
+}
 
 @book{CLtL2,
   author={Steele, Guy},
@@ -4036,6 +4064,24 @@ and Fiech, Adrian",
 
 %% 2007
 
+@Article{Dybvig2007,
+  author={R. Kent Dybvig and Simon Peyton Jones and Amr Sabry},
+  title={A Monadic Framework for Delimited Continuations},
+  journal={Journal of Functional Programming},
+  volume={17},
+  number={6},
+  year={2007},
+  pages={687--730},
+  doi={10.1017/S0956796807006257},
+  note={.
+    Very influential paper on how to implement delimited control as monads,
+    as illustrated with a Haskell implementation,
+    with proper types (using GADTs and functional dependencies),
+    and a semantics expressed in terms of standard CPS (Continuation Passing Style),
+    where each continuations can be seen as a sequence of “frames” or “delimited continuations”.
+  }
+}
+
 % Not worth citing in the book; worth remembering why.
 @InProceedings{Smith2007,
   author="Smith, Michael Anthony
@@ -5605,3 +5651,6 @@ series = {PLDI '10}
 % Scheme
 % Rabbit
 % Lambda Papers
+
+% https://dl.acm.org/doi/10.1145/3563835.3568735
+

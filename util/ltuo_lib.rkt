@@ -97,8 +97,9 @@
     (list (tex-addition
             (bytes-append
               #"\\DeclareUnicodeCharacter{3BB}{$\\lambda$}" ;; λ
-              #"\\DeclareUnicodeCharacter{22C2}{$\\cap$}" ;; ⋂
+              #"\\DeclareUnicodeCharacter{207F}{${}^{n}$}" ;; ⁿ
               #"\\DeclareUnicodeCharacter{225C}{$\\triangleq$}" ;; ≜
+              #"\\DeclareUnicodeCharacter{22C2}{$\\cap$}" ;; ⋂
               #"\\DeclareUnicodeCharacter{1D52D}{$\\mathfrak{p}$}"))))) ;; 𝔭
 
 (define (ltuo-style)

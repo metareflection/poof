@@ -2462,6 +2462,7 @@ let Y = f: (x: x x) (x: f (x x));
 (def (poi-precedence-list-with-top poi)
   (append (poi-precedence-list poi) (list #t)))
 
+;; TODO/exercise: handle args redefinition by make-call-next-method
 (def (apply-generic-function arity accepter invoker compute-effective-method multimethods self)
   (accepter
     (λ (args)
@@ -2483,6 +2484,14 @@ let Y = f: (x: x x) (x: f (x x));
                  '())))))
         ((compute-effective-method self sub-methods args))))))
 
+;; Note that for a generic function to be both a function yet extensible with new multimethods,
+;; it has to be both funcallable and modifiable.
+;; The trick here is that the value #f is magically recognized as first argument;
+;; a different value more “hidden” could be used; or the implementation could provide
+;; “funcallable instances” that allow calling of an object without sacrificing one input value.
+;; Or you could make generic functions not extensible, or hardwire a reference
+;; to a separate object that you modify (in a pure context, those two references would mean
+;; separate lenses to access each of the latest function and its the backing object).
 (def (generic-function-spec calling-convention compute-effective-method multimethods)
   (let ((calling-convention
          (if (number? calling-convention)

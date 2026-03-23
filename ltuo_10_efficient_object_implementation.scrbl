@@ -36,12 +36,38 @@ Records as records? Now we’re talking.
 
 @subsection{Lazy Records}
 
-
-
-
 @section[#:tag "MOP"]{Meta-Object Protocols}
 
-@subsection{Introspection and Intercession}
+@subsection{Reflection: Introspection and Intercession}
+
+@subsection{Bootstrapping an Implementation}
+
+@subsection{Side Effects}
+
+I will revert to stateful OO, because I suspect
+that's what my public is interested in, will use, and has in their underlying language.
+But you can do it all with pure functional data structures if you want (see exercises below).
+
+One man’s purity is another man’s side-effects.
+You can have side-effects in the implementation of a pure language,
+or a pure language implementing a stateful one.
+Indeed, the transition can happen many times in a same program:
+(a) some programmer writes a program in a language that for convenience,
+provides stateful side-effects;
+(b) the program is translated into some pure functional semantics in which
+some security and robustness properties can be automatically specified and proven correct;
+(c) the program is then implemented efficiently by translating linearity into side-effects,
+and using dynamic stateful caches to accelerate repetitive computations;
+(d) the execution is interpreted as pure transitions of a low-level virtual machine
+so a zero-knowledge proof of faithful execution can be produced;
+(e) after however many layers of translation, everything happens in term of electronic circuits,
+that you can see either as stateful changes in current levels or pure monadic transitions
+of the machine state.
+
+Purity or statefulness is a matter of the programmer’s point of view,
+not intrinsic properties of the underlying computation.
+What @emph{is} an intrinsic property of computation on the other hand is
+that it can and will be decomposed many layers of implementations.
 
 @subsection{Tower of Implementation}
 

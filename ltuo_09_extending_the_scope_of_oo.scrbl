@@ -1548,31 +1548,185 @@ stored locally in each prototype target, one may specify multimethods
 with just the gf tag and update access to the specifications, without needing to update the gf;
 the main advantage is then that the representation is backward compatible with
 the previous representation for single dispatch only,
-so that code that previously worked with a narrow context can still work essentially unchanged.
+and can leverage the regular inheritance mechanism to recursively handle dispatch
+along the lexicographic combination of the precedence lists of the argument prototypes.
+Thus, code that previously worked with a narrow context can still work essentially unchanged.
 
 In any case, the specification context for multimethods is usually wider than the specification
-context of a single-dispatch method, that needs only contain the prototype or class being specified.
+context of a single-dispatch method, that needs only contain the prototype or class being specified:
+now it needs to view the generic function and each prototype at stake,
+and to update whichever of these entities will hold the method information (or worse, a global table).
 That is a retrospectively obvious necessity when defining multimethods—but,
 one may note that while each single method can do with a narrower context,
-duplicating the effect of multimethods requires the very same wider context
-even without system support for multiple dispatch, and
-manually using double-dispatch as a design pattern:
-in all cases, you will need to modify all the specifications at stake,
+duplicating the desired effect of multimethods without system support for multiple dispatch
+requires the very same wider context, just with much manual expansion of design patterns:
+in all cases, you will need to view or update all the specifications at stake,
 and many additional ones, too (“visitors”).
 This is an important point: multiple dispatch invites you to broaden the context
 of your fixpoints, from a single specification, to, in the limit, the entire OO ecosystem.
 
-@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+@subsection{Base Classes and Specializers}
+
+When using multiple dispatch, it becomes very important to have
+a “base” class, prototype or specification, or “top” type or specializer,
+that matches any argument, and is automatically included at the end of every precedence list,
+even when specifications don’t explicitly inherit from it.
+Users can then easily specify universal or default behavior to use
+when one or several of many arguments are not specific but others might be.
+For instance, in CLOS, the class @c{t} (also the name of the true boolean)
+matches any Lisp value of any type, while @c{standard-object} matches any object created with CLOS.
+
+Even when a language does not provide a base class, prototype or specification,
+users could by convention adopt one class for all their hierarchies.
+But then authors of multiple libraries would have to coordinate to all adopt the same convention.
+At this point, it is better if the language itself offers such a base specification.
+
+Now, when using single dispatch, users might have used a separate defaulting mechanism
+to specify how their method invocations behave in absence of explicit specialized methods.
+For instance, CLOS’s @c{no-applicable-method} generic function, or
+Smalltalk’s @c{doesNotUnderstand:} message, can catch these cases, and more actually.
+But these mechanisms are both more powerful than needed yet not precise enough
+to specify default behavior of a generic function when only some of many arguments
+must be accepted without any specification to match them against.
+When using multiple dispatch, the existence of a base specification is all but necessary;
+it is a really important, useful feature.
+
+Also note how I used the word “specializer” above:
+CLOS and some object systems inspired by it, support the specification of methods
+attached not to a specific class or prototype, but to a more general notion of @emph{specializer}.
+The simplest such kind of specializers in CLOS are @c{eql} specializers,
+that work on a single object or value:
+for instance, the @c{(eql 42)} specializer will only match the number 42.
+The CLOS MOP, not part of the ANSI standard, but largely supported, @; TODO cite
+also allows users to define more specializers, and some have implemented “predicate dispatch”,
+as once made popular by Cecil @~cite{Chambers1992}, wherein
+a specializer can be the conjunction of a class and a predicate (function returning a boolean)
+that filters which objects the specializer applies to.
 
 @subsection{Implementing Multiple Dispatch}
 
-I will implement multiple dispatch by automating the double dispatch pattern,
-storing partial method tables locally in each specification,
-so that the representation remains backward compatible with single dispatch.
+I have implemented multiple dispatch in the code accompanying this book.
+Here are the highlights of this implementation.
 
-@;TODO implementation
+I started from an implementation of Prototypes with Optimal Inheritance (acronym POI),
+mixing the lessons of @secref{ROOfiMC} and @secref{IMSMO}. @; (ch 6 and 7)
+The names of functions related to them start or end with “poi”.
+A poi, being a prototype, conflates target and specification.
+In the style of @c{rproto} @secref{CfR}, it stores specification information and other metadata
+(including a cache of the precedence list) in a special field
+(in this case, using @c{#f} as the access key).
 
-@; TODO predicate dispatch, as in Cecil, some SBCL extensions?
+Then came the issue of where to store method information,
+which was especially important since I chose to stick to a pure functional implementation
+(modulo the ability to compare entities for identity without having to @emph{manually} assign them
+unique identifier).
+Indeed, in a stateful implementation, one can “just” side-effect an entity to add a new multimethod;
+but in a pure implementation, one has to explicitly update “the” entity as identified by a lens,
+@emph{before} one computes the fixpoint of all the entities at stake—and
+then this opens the door to non-termination due to
+bad initialization ordering or circularity, that could often be solved by making everything lazy,
+yet for the sake of simplicity I wanted my code to still work on any eager functional language.
+
+I considered storing method information in the prototypes themselves,
+basically automating the way double-dispatch is manually implemented:
+when defining a multimethod @c{m} on a tuple of arguments with prototypes @c{(p1… pn)},
+define a method on @c{m} for prototype @c{p1},
+that chains into a specialized method @c{m_p1} defined for prototype @c{p2},
+where @c{m_p1} is a fresh method name or identity generated from those of @c{m} and @c{p1}.
+Then if it is more than double dispatch, have a @c{m_p1_p2} generated from @c{m_p1} and @c{p2}
+and defined for @c{p3}, and so on, until a specialized method @c{m_p1_…_pn-1} is defined on @c{pn}
+that contains the user-specified code.
+For the sake of method combinations, each generated method explicitly
+invokes the regular @c{call-next-method} mechanism to accumulate all declared user methods
+in a lexicographically ordered list: each @c{m_...pk} method first recurses
+into dispatching to the next argument, then using per-prototype inheritance
+to recurse into ancestors of the current prototype@xnote["."]{
+  Note that if one only cares for the most specific matching method,
+  one doesn’t need to accumulate methods in lists,
+  and the method listing infrastructure becomes wasteful and inefficient.
+  On the other hand, one might not want to write the code twice,
+  for the case where one only needs one answer vs the case where one needs all of them.
+  Thanks to delimited control @~cite{Felleisen1988 Danvy1990},
+  one can efficiently support both styles while writing the code only once;
+  the same effect can also be achieved monadically @~cite{Dybvig2007}
+  in languages lacking native support for partial continuations.
+  Of course, being able to specify the algorithm once and only once,
+  thereby ensuring consistency and facilitating proofs of correctness,
+  doesn’t mean the runtime implementation should have a single code path:
+  it might indeed be advantageous for a compiler to take that one abstract specification
+  and pick at runtime the best of many specialized variants of it for each task at hand,
+  e.g. based on inlining a suitably limited monad in the monadic specification,
+  as well as specific data representations, then optimizing
+  the hell out of the known specialized context.
+  Note that this approach is valid even without multiple dispatch,
+  or with @c{call-next-method} as the only form of method combination;
+  but the more elaborate forms exacerbate the issue
+  by involving increasingly complex method resolution algorithms.
+}
+However, this strategy requires either modifying the prototypes in place
+with stateful side-effects, or being able to lazily refer to incomplete prototypes
+before, during and after the fixpoint process as further declarations add new methods to prototypes.
+It is not compatible with the pure yet eager approach I chose to illustrate
+how to implement OO in the most portable way.
+
+Therefore, I chose to instead store method information in the generic functions,
+wherein, with a little bit of trickery and minor limitations,
+generic functions can be both callable functions and extensible objects containing
+information about generic arity, available multimethods, etc.
+The method representation is equivalent to the above, but without the charade
+of lots of intermediate methods @c{m_p1...pk} as with manual dispatch above,
+or a combination of reflecting classes @c{c} into methods @c{visit_c} then
+specialized contexts @c{m_p1...pk} into visitor classes of their own, as with the visitor pattern.
+Instead, there is just an index made of nested records, where the @c{p1...pk} correspond
+to a path looking up @c{p1} in the top record, returning a record into which you
+lookup @c{p2}, etc., until @c{pk}; if a record is not found along the way,
+there is no method specialized on those prototypes@xnote["."]{
+  Obviously the index of methods would has to be somewhat more complex when supporting
+  more general specializers than classes or prototypes.
+  For instance, instead of one method per tuple of classes,
+  you might have lists or tables of methods with
+  @c{eql} or predicate specializers that further refine that tuple of classes.
+  I leave that as exercise to the reader.
+}
+
+Now, whichever way you represent and index multimethods,
+the overall search in the worst case is still in @c{O(pⁿ)}
+where @c{p} is the maximum depth of an argument’s precedence list,
+and @c{n} is the number of arguments (saturated set of methods for all tuples of ancestors).
+But if the size of an index record along the way is notably smaller than
+that of the precedence lists for the argument at stake,
+iterating over method entries can be faster than iterating over argument ancestors;
+beware though that you may then have to sort those method entries
+if there was no global linearization order on which to pre-sort them.
+In any case, method lookup can be quite slow, and the results are better cached for efficiency.
+@;{TODO secref ch10}
+
+Another issue with multiple dispatch, that only gets more “interesting”
+when using curried functions for handling arguments, is that the generic function
+must accept all the arguments of each invocation before it may evaluate any individual method:
+this includes non-dispatch mandatory arguments, and, if the language supports them,
+optional positional arguments, rest arguments and keyword arguments.
+Each calling convention, as specified by the programmer, can be summarized into
+an “accepter” function that accepts all these arguments, makes a record of them
+(e.g. in Scheme, a list), and invokes a continuation function on them
+(taken as argument to the accepter).
+Then, the method combination algorithm can use the linearization algorithm
+on the methods of each method tag it supports, based on multiple dispatch with the supported arity;
+and the method combination would invoke these methods in order,
+each with a suitable additional (and in many languages, implicit) @c{call-next-method} argument,
+using an invoker function to pass along the recorded arguments@xnote["."]{
+  For instance, a curried accepter for three arguments, without syntactic shortcuts,
+  would be @c{(λ (f) (λ (x) (λ (y) (λ (z) (f (cons x (cons y (cons z '()))))))))}.
+  And the corresponding curried invoker for three arguments would be
+  @c{(λ (f args) (((f (car args)) (cadr args)) (caddr args)))}
+  where the Lisp functions @c{car}, @c{cadr} and @c{caddr} extract respectively
+  the first, second and third argument of a list.
+}
+Furthermore, to match CLOS, one may have to allow a method to update
+the record of arguments passed along the rest of its call chain
+by optionally specifying them when calling @c{call-next-method}.
+A dynamic language might do all those computations at runtime, whereas
+a static language might inline as much of it as possible at compile-time.
 
 @subsection{Subjective and Objective Dispatch}
 
@@ -1897,7 +2051,9 @@ It remains to be seen whether AI, by massively lowering the cost of implementing
 will increase inertia in favor of these static-dispatch Class OO incumbents,
 or will level the playing field in favor of new languages static or dynamic.
 
-@exercise[#:difficulty "easy"]{
+@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+
+@exercise[#:difficulty "Easy"]{
   Define the missing simple CLOS method combinations in an efficient way, for
   @c{+ * max min progn list append nconc or and}.
   Hints: @c{progn} is just the Lisp operator for sequential evaluation of expressions,
@@ -1906,7 +2062,7 @@ or will level the playing field in favor of new languages static or dynamic.
   Also note the existence of IEEE floating point number @c{+inf.0} and @c{-inf.0}.
 }
 
-@exercise[#:difficulty "medium"]{
+@exercise[#:difficulty "Medium"]{
   In a few lines of code, define a method combination that implements
   the concatenation semantics of Simula, and its “inner” keyword.
   Implement it purely with functions, and optionally use macros so the syntax
@@ -1935,3 +2091,9 @@ or will level the playing field in favor of new languages static or dynamic.
   How do you collect garbage dispatch table entries that are unreachable?
   How do you do it in the representation I offered?
 }
+
+@exercise[#:difficulty "Hard"]{
+  Start from my implementation of multiple dispatch, or one you wrote yourself, and
+  implement @c{eql} specializers and predicate dispatch on top of it.
+}
+
