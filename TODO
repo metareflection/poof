@@ -257,3 +257,5 @@ have Mixin<Self,Super> inherit from virtual InterfaceA<Self> that can inherit fr
 virtual InterfaceB<Self>... painful, but works.
 
 
+Rewrite the book with advice from various authors
+e.g. How to Write a Great Research Paper, SPJ

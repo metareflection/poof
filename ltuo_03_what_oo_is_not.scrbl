@@ -23,6 +23,13 @@ Then please allow me to narrow down what I mean, and make my argument.
 Or don’t and close this book.
 But I hope you’ll give my ideas a fair hearing.
 
+On the other hand, if you are innocent of preconceptions about OO
+and come without having heard commentators explain what they think OO is
+and what they love or hate about it
+(which is unlikely if you’re interested enough about OO to read the present book),
+then you may wholly skip this chapter,
+and only come back after you encounter bad opinions about OO that need to be debunked.
+
 @section{Things OO isn’t (that many claim it is)}
 @epigraph{When words are unfit, speech is unadapted and actions are unsuccessful.
 @|#:- "Confucius"|
@@ -728,9 +735,207 @@ And if you picked an OO-capable language like C++, Java, C# or Scala,
 (or, with manually enforced dynamic types, Lisp, Ruby or Python),
 you can actually use OO as you do it.
 
-@section{More Frequent Misunderstandings about OO}
+@section{OO vs Objects}
+@epigraph{
+  Computer Science is no more about computers than astronomy is about telescopes.
+  @|#:-"E. W. Dijkstra"|
+}
+
+Remarkably, counter-intuitively, and despite the name,
+I found that Object-Orientation is not about objects,
+that you can have OO without objects and objects without OO.
+
+@subsection{An Ambiguous Word}
+First, notice that the word “object” does not even actually have
+a single precise meaning within OO.
+
+In Prototype OO, a prototype,
+conflation of a specification and its target (@secref{PaC}),
+is usually called an “object” or at times an “instance”, especially if the target is a record.
+Note that some form of laziness is essential in computing the target record or its attributes,
+since most specifications, being partial, do not specify
+a complete computation that terminates in finite time without error;
+yet this expected non-termination should not prevent the use
+of the conflated entity to extract and extend its specification
+(see @secref{RPOO}).
+
+In Class OO, a prototype, conflation of a specification and its target,
+is instead called a “class”,
+and the target is specifically a type descriptor
+rather than an arbitrary record, or than a non-record value.
+In Class OO, what is called an “object” or an “instance” is
+an @emph{element} of some target type as described.
+A class being a prototype, its regular prototype fields and methods
+are called “class fields” or “class methods”
+(or “static” fields and methods, after the keyword used in C++ and Java)—but
+be mindful that they only involve the target type, not the specification.
+“Object methods” are semantically regular methods that take one implicit argument in front,
+the object (i.e. element of the target type).
+“Object fields” are regular fields of the object as a record
+(see @secref{RCOO}).
+
+Finally, many languages, systems, databases, articles or books call “object” some or all
+of the regular runtime values they manipulate@xnote[":"]{
+  Alan Kay, in his Turing Award lecture, remarks:
+  “By the way, I should mention that, you know, the name,
+  the term object predates object-oriented programming.
+  Object, in the early 60s, was a general term that was used to describe
+  compound data structures, especially if they had pointers in them.”
+}
+these “objects” may or may not be records, and are in no way part of
+an actual OO system extensible with inheritance.
+The authors will not usually claim that these objects are part
+of an OO framework actual or imagined, but then again sometimes they may@xnote["."]{
+  This situation can be muddled by layers of language:
+  Consider a language without OO itself implemented in an OO language.
+  The word “object” might then be validly denote OO
+  from the point of view of the implementer using the OO meta-language,
+  yet not from the point of view of the user using the non-OO language.
+  Conversely, when an OO language is implemented using a non-OO language,
+  calling some values “objects” may validly denote OO for the user
+  yet not for the implementer.
+}
+For instance, Yale T Scheme has a class-less object system @~cite{Rees1982T Adams1988oopscheme};
+but the authors call “object” any language value,
+and specifically use “instance” to denote the prototypes in their object system.
+
+@subsection[#:tag "OOwoO"]{OO without Objects}
+
+After identifying the foundations of OO (@secref{MFtPaC}),
+I found that not only the word “object”, but also the very concept of object,
+is actually unnecessary to OO:
+the characteristic patterns of OO can exist and be usefully leveraged in a language
+that lacks any notion of object, merely with the notions of specification and target,
+as I will show in @secref{MOO}.
+
+Therefore @principle{the word “object” is worse than useless when discussing OO in general}:
+It is actively misleading.
+It should never be used without a qualifier or outside the context of a specific
+document, program, system, language, ecosystem or at least variant of OO,
+that narrows down the many ambiguities
+around its many possible mutually incompatible meanings@xnote["."]{
+  It’s a bit as if you had to discuss Linear Algebra without being able to talk about lines,
+  or had to discuss Imperative Programming without being able to talk about the Emperor.
+  Ridiculous.
+  Or perhaps just an artifact of etymology.
+}
+Meanwhile, the word “class” is also practically useless
+in most discussions of the foundations of OO,
+since it denotes a rather uninteresting special case of a prototype.
+
+Even the word “prototype”, while meaningful, is uncommon to use when discussing OO in general.
+If discussing inheritance, I will only speak of “specifications”.
+And if discussing instantiation, I will speak of “specification” and “target”.
+Prototypes only arise when specifically discussing conflation.
+To avoid confusion, I will be careful in this book to only speak of
+“specification”, “target”, “prototype”, and (target type) “element”
+and to avoid the words “object” or “class” unless necessary, and then
+only in narrowly defined contexts@xnote["."]{
+  I am, however, under no illusion that my chosen words would remain unambiguous very long
+  if my works were to find any success. They would soon be rallying targets
+  not just for honest people to use, but also for ignoramus, spammers, cranks, and frauds
+  to subvert—and hopefully for pioneers to creatively misuse
+  as they make some unforeseen discovery.
+}
+
+This is all particularly ironic when the field I am studying is called “Object Orientation”,
+in which the most popular variant involves classes.
+But fields of knowledge are usually named as soon as the need is felt
+to distinguish them from other fields,
+long before they are well-understood, and thus based on misunderstandings;
+this misnomer is thus par for the course@xnote["."]{
+  The wider field of study is similarly misnamed.
+  E. W. Dijkstra famously said that Computer Science is not about computers.
+  Hal Abelson completed that it is not a science, either.
+}
+
+On the other hand, this book is rare in trying to study OO in its most general form.
+Most people instead try to @emph{use} OO,
+at which point they soon enough must go from the general to the particular:
+before a programmer may even write any OO code, they have to pick
+a specific OO language or system in which to write their software.
+At that point, the context of the language and its ecosystem
+as wide as it may be, is still narrow enough to disambiguate the meanings of all those words:
+Likely, “object”, and either or both of “prototype” or “class”
+will both be well-defined and very relevant within that context.
+Suddenly, the programmer becomes able to utter their thought and communicate
+with everyone else within that same ecosystem...
+and at the same time becomes more likely to misunderstand programmers from other ecosystems,
+who use the same words with different meanings.
+Hence the tribal turn of many online “debates”.
+
+@subsection[#:tag "OwoOO"]{Objects without OO}
+
+Conversely, the word “object” has many valid uses outside of OO,
+to denote embodiments for first-class modularity without first-class modular extensibility.
+A few early texts use the word “object-oriented” this way @~cite{Bobrow1972 Ross1976 Jones1976},
+to denote entities that can be used in modular ways, though they cannot be extended with inheritance.
+Still, the modern meaning of “object-oriented”, that does imply the presence of inheritance,
+is well established by now.
+
+Alan Kay, who invented the term “object-oriented”,
+strongly implies first-class modularity using the term,
+but does not directly requires extensibility or inheritance @~cite{Kay2003 Kay2020};
+while this requirement could be argued as weakly and indirectly implied
+in his requirement of “extreme late binding of all things”,
+Kay himself does not make the inference.
+
+On the other hand, @citet{Wegner1987},
+offering a nomenclature for the domain of object-oriented languages,
+proposes the word “object-based” to describe languages
+that offer objects without inheritance, while reserving “object-oriented”
+for languages that do also offer inheritance.
+I broadly agree with Wegner’s nomenclature;
+however after further examining Wegner’s definitions,
+I see that he unjustly overlooked prototype object-orientation,
+and is wrong in requiring classes as part of “object-oriented” programming.
+Indeed, as stated earlier, I even object to “objects” being considered necessary for OOP.
+
+Still, it is clearly possible, indeed relatively common, to have “objects”
+without what either I or Wegner or most people recognize as “object-oriented” programming;
+and Wegner’s term “object-based” is fit to describe such cases
+where objects embody first-class modularity without inheritance @~cite{Jones1976 Liskov1987 SICP2}.
+
+@section{Misunderstandings about Inheritance}
+
+@subsection{Absurd Rejection of “Inheritance of Implementation”}
+@epigraph{
+  It is no crime to be ignorant of economics, which is, after all,
+  a specialized discipline and one that most people consider to be a “dismal science”.
+  But it @emph{is} totally irresponsible to have a loud and vociferous opinion on economic subjects
+  while remaining in this state of ignorance.
+  @|#:-"Murray Rothbard"|
+}
+Some pundits praise “inheritance of interface”, “subtyping”, and/or “polymorphism”,
+while disparaging “inheritance of implementation”, “subclassing”, and/or “code reuse”.
+There are many variants of this trope, but it is once again a case of accepting modularity
+yet rejecting modular extensibility, usually due to a misunderstanding of both—or else
+they would be properly named and conceptualized.
+
+Inheritance @emph{is} inheritance of implementation, subclassing and code reuse.
+In some very narrow cases, it may be made to
+match interfaces, subtyping or some form of polymorphism;
+and far too many people desperately try to use it as if the two were the same,
+which I describe in @secref{NNOOTT}.
+But that is actually deeply wrong, because inheritance crucially depends
+on computing a fixpoint after you compose extensions to recursion schemas,
+and involves those nice things (interfaces, subtyping, polymorphism)
+@emph{before} the fixpoint, which does not translate to those same things @emph{after} the fixpoint,
+yet the above pundits fail to understand the difference (see @secref{BtN}).
+
+Interfaces, subtyping and polymorphism are important concepts that absolutely matter a lot.
+But trying to fit inheritance into these concepts, then
+rejecting inheritance because it fails to fit into them, is absurd,
+akin to babies crying when they can’t fit a square peg in a round hole,
+and celebrating when they can.
+It demonstrates a deep misunderstanding of both the nature and purpose
+of both subtyping and inheritance.
 
 @subsection{False dichotomy between Inheritance and Delegation}
+@epigraph{
+  A rose by any other name would smell as sweet.
+  @|#:- "William Shakespeare"|
+}
 Many authors have called “delegation” the mechanism used by Prototype OO
 @; TODO CITE Self, Castagna Cardelli 1996, …
 as distinct from the “inheritance” mechanism of Class OO.

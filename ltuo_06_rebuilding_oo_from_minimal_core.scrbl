@@ -1225,6 +1225,13 @@ Thus, whether fields are mutable or immutable is of precious little concern
 to the compiler fragment that processes OO:
 it’s just a flag passed to the type checker and code generator after OO is processed away.
 
+@;{TODO
+@subsubsection{Autowrapping}
+The relationship between Mutable or Immutable objects with wrapping back and forth;
+linear typing and subtyping.
+@~cite{LIL2012}
+}
+
 @subsection{Mutability of Inheritance as Code Upgrade}
 
 Keeping mutability orthogonal to OO as above works great as long as the fields are mutable,

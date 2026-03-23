@@ -346,22 +346,6 @@ This also makes them hard to type without subtypes.
 Type descriptors are themselves often a monomorphic type that does not require subtyping,
 at least not unless the type system accommodates dependent types, or at least staging.
 
-@subsubsection{Monotonicity}
-Why Subclassing is rarely Subtyping, and other questions of monotonicity,
-    (co-, contra- and in-) variance in Functor Mixins and Fixed-Point Operators.
-
-@subsubsection{Autowrapping}
-The relationship between Mutable or Immutable objects, linear typing and subtyping.
-
-
-@subsubsection{Method Combination, Instance Combination}
-Specializing inheritance with respect to how increments are combined.
-generalizing precedence lists with DAG attribute grammars.
-Metaobject-compatibility.
-
-@; TODO: subsubsection about using the notion of defaults hiding complexity behind a simple interface,
-@; and enabling, e.g. method combination with a primary method and other methods,
-@; with the effective method being more than the plainly named main method.
 
 @subsubsection[#:tag "GOR"]{Global Open Recursion}
 A pure functional solution, already widely used in practice, yet neglected
@@ -735,6 +719,7 @@ Number object inputs being 1, 2, N, 0.
 Big big problem in the naive view of class OO.
 Not at all a problem with prototypes / typeclasses.
 
+
 @subsection{Type Monotonicity}
 Makes no sense at all as a general constraint when you realize anytime there's recursion of any kind,
 your methods won't all be simple methods. Deeply idiotic idea.
@@ -813,11 +798,7 @@ There is a rich
 and, really, anything the programmer may choose to implement
 
 to be  not just to compete
-over which will survive or be delete
-
-
-itself inspired by Teitelman’s ADVISE facility @~cite{Teitelman1966}:
-
+over which will survive or be deleted
 
 Method Combinations kept evolving in New Flavors @~cite{Moon1986Flavors},
 and were adopted by CommonLOOPS @~cite{Bobrow86CommonLoops}, CLOS @~cite{Bobrow88CLOS},
@@ -825,10 +806,6 @@ and a whole lot of object systems, mainly in languages of the Lisp and Scheme fa
 Sadly, the feature seems not to have been adopted in other ecosystems, except that
 a lot of the “advice” part lives in Aspect Oriented Programming @; TODO cite
 frameworks, for Java and C#, and less popularly, for other languages.
-
-The most basic method combination is the one used by default by methods
-when I have been defining them so far: after the list of available methods
-XXXX
 
 Generic functions for declarations. (New Flavors)
 

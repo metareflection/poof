@@ -61,8 +61,8 @@ A lens @~cite{bananas1991 Foster2007CombinatorsFB oconnor2012lenses Pickering201
 is the pure Functional Programming take on what in stateful languages would typically be
 a C pointer, ML reference, Lisp Machine locative, Common Lisp place, etc.:
 a way to pin-point some location to inspect and modify within the wider program’s state.
-A lens is determined by a “view”, function from a “source” to a “focus”;
-and an “update”, function from a change to the focused data to a change
+A lens is determined by a “view”, a function from a “source” to a “focus”;
+and an “update”, a function from a change to the focused data to a change
 of the wider state from “source” to an updated “target”@xnote["."]{
   In more stateful languages, a more popular view is that of
   a pair of a “getter” and a “setter”;
@@ -81,7 +81,7 @@ of the wider state from “source” to an updated “target”@xnote["."]{
   it’s not a great name. We’ll stick to “update”.
 }
 As a function from source to focus and back, it can thus also be seen as generalizing
-paths of fields and accessors, e.g. field @c{bar} of the 3rd element of field @c{foo}
+paths of fields and accessors, e.g. field @c{bar} of the third element of field @c{foo}
 of the entry with key @c{(42, "baz")} within a table.
 
 @Paragraph{Monomorphic Lens}
@@ -1603,6 +1603,11 @@ as once made popular by Cecil @~cite{Chambers1992}, wherein
 a specializer can be the conjunction of a class and a predicate (function returning a boolean)
 that filters which objects the specializer applies to.
 
+@;{ TODO keeping the same implementation for generic functions that apply to prototypes vs classes.
+ Some arguments might dispatch on an object’s class, others on the object itself as prototype;
+ what does that mean though to EQL and predicate specializers?
+}
+
 @subsection{Implementing Multiple Dispatch}
 
 I have implemented multiple dispatch in the code accompanying this book.
@@ -1697,7 +1702,24 @@ But if the size of an index record along the way is notably smaller than
 that of the precedence lists for the argument at stake,
 iterating over method entries can be faster than iterating over argument ancestors;
 beware though that you may then have to sort those method entries
-if there was no global linearization order on which to pre-sort them.
+if there was no global linearization order on which to pre-sort them@xnote["."]{
+  As another performance concern, one should also be careful to not recursively
+  @c{append} and re-@c{append} lists of methods at each level of recursion:
+  @c{append} is an @c{O(l)} operation on usual single-linked lists,
+  where @c{l} is the number of methods found; and this reappending would cost @c{O(lⁿ)}
+  where @c{n} is the number of arguments, instead of @c{O(l)} as should be.
+  Instead, one should adopt a representation of lists that has a constant-time appending operation,
+  even if just to flatten it to the usual single-linked lists at the end.
+  The simplest such representation is by representing list-builders as functions that
+  prepend elements to a list.
+  Composing two such functions is the same as appending the lists of their elements.
+  By applying the final list-prepending function to the empty list,
+  the binary tree of composed element-prependers is indeed flattened.
+  In a stateful language, you could just push elements at the front of a list
+  that you reverse in the end.
+  In a pure language could also locally use a state monad for the same purpose;
+  but the composed list-prependers have the advantage of remaining pure without a monad.
+}
 In any case, method lookup can be quite slow, and the results are better cached for efficiency.
 @;{TODO secref ch10}
 
@@ -1903,7 +1925,7 @@ second-class vs first-class modules in ML dialects;
 or second-class typeclasses vs existentially quantified first-class values
 with typeclass constraints in Haskell (usually using GADT syntax);
 or even second-class libraries of functions vs structs containing functions pointers in C
-(that could even be used with COM or DCOM);
+(that could even be used with COM or DCOM); @; TODO cite
 Scheme libraries vs objects-as-closures without inheritance as in SICP @~cite{SICP2},
 etc.
 
@@ -1973,7 +1995,7 @@ and amplification of successes and correction of failures,
 than the much more rigid static approach.
 Furthermore, there is now plenty of precedent for
 layering a typesystem on top of a dynamic language,
-as TypeScript showed could be done for JavaScript, bringing
+as TypeScript demonstrated for JavaScript, bringing
 much of the safety and performance of static systems on top of dynamic systems,
 though also much of their complexity.
 
@@ -2033,7 +2055,7 @@ These languages, with large corporate backing,
 evolved over many decades to slowly acquire better features,
 until their typesystems became quite expressive;
 as of late, they are even capable of expressing functional programming,
-which they were not initially.
+when they were initially incapable of it.
 These languages also raise the bar quite high for any new object oriented language
 that would try to bet on static dispatch:
 One must stake big antes just to develop a typesystem that can match those of C++ or C#,
@@ -2049,7 +2071,7 @@ than into any given language with dynamic dispatch only.
 
 It remains to be seen whether AI, by massively lowering the cost of implementing known features,
 will increase inertia in favor of these static-dispatch Class OO incumbents,
-or will level the playing field in favor of new languages static or dynamic.
+or will level the playing field in favor of new languages, static or dynamic.
 
 @XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
 

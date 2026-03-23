@@ -548,7 +548,7 @@ is well worth examining.
   @;{ TODO locate study that measures the recursion-ables from the unable. }
 }]
 
-@section{Beyond the NNOOTT}
+@section[#:tag "BtN"]{Beyond the NNOOTT}
 
 @subsection{Self Types}
 

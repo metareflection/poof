@@ -1234,7 +1234,9 @@ and in this more general context, the default value @c{#f} is
 possibly more efficient at runtime, and definitely more colloquial—therefore more efficient
 in the most expensive resource, human-time.
 
-@subsection[#:tag "MOI"]{Minimal OO Indeed}
+@section[#:tag "MOI"]{Minimal OO Indeed}
+
+@subsection[#:tag "MSR"]{Minimally Specifying Records}
 
 The above functions @c{mix} and @c{fix} are indeed isomorphic
 to the theoretical model of OO from Bracha and Cook @~cite{Bracha1990Mixin}
