@@ -385,7 +385,7 @@ Yet remarkably, some programmers explicitly reject it, eminent professors even@x
   @~cite{Cook1989 Cook1989Inheritance cook1989denotational bracha1990mixin Cook1994}
   yet also argued that Inheritance was orthogonal to OO @; Also Cook1989?
   and that OO is about “classes” of “objects” that can only be accessed through “interfaces”
-  @~cite{Cook1991PDAvsADT Cook2009 Cook2012}.
+  @~cite{Cook1991 Cook2009 Cook2012}.
 
   However, coding against an SML module would count as OO by Cook’s criteria,
   and indeed Cook explicitly calls the untyped λ-calculus “the first object-oriented language”,
@@ -810,8 +810,10 @@ while shifting praise or blame or responsibility onto others:
 “we must help that poor widow” (you all must, I’ll take a large cut of the funds).
 
 @subsection{Technical Nomenclature}
-@epigraph{When words are unfit, speech is unadapted and actions are unsuccessful.
-@|#:- "Confucius"|
+@epigraph{
+  The difference between the right word and the almost right word
+  is the difference between lightning and the lightning bug.
+  @|#:-"Mark Twain"|
 }
 As I restate well-known and less-known lore of Object Orientation,
 I will endeavor to precisely define the terms I use.

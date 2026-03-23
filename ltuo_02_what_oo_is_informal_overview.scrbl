@@ -81,11 +81,11 @@ A language offers prototype-based object orientation (“Prototype OO”) if it 
 and class-based object orientation (“Class OO”) if it only has classes.
 
 The first arguably OO language used classes @~cite{Simula1967},
-but the second one used prototypes @~cite{Winograd1975},
-and some provide both @~cite{EcmaScript2015}.
+but the second arguably and first definitely OO language used prototypes @~cite{Bobrow1976};
+and some languages provide both @~cite{Hewitt1979 EcmaScript2015}.
 Class OO is the more popular form of OO,
 but the most popular OO language, JavaScript,
-started with Prototype OO, with Class OO only added on top twenty years later.
+started with just Prototype OO, with Class OO only added on top twenty years later.
 
 @subsection[#:tag "CaPfT"]{Classes as Prototypes for Types}
 @principle{A class is a compile-time prototype for a type descriptor}:
@@ -326,16 +326,19 @@ of an OO framework actual or imagined, but then again sometimes they may@xnote["
   Conversely, when an OO language is implemented using a non-OO language,
   calling some values “objects” may validly denote OO for the user
   yet not for the implementer.
-}.
+}
+For instance, Yale T Scheme has a class-less object system @~cite{Rees1982T Adams1988oopscheme},
+wherein the authors call “object” any language value,
+and “instance” the prototypes in their object system.
 
 @subsection[#:tag "OOwoO"]{OO without Objects}
 
-Furthermore, the fundamental patterns of OO can exist and be usefully leveraged in a language
+After identifying the foundations of OO, I found that
+not only the word “object”, but also the very concept of object,
+is actually unnecessary to OO:
+the characteristic patterns of OO can exist and be usefully leveraged in a language
 that lacks any notion of object, merely with the notions of specification and target,
-as we will show in @secref{MOO}.
-Meanwhile, Yale T Scheme has a class-less object system @~cite{Rees1982T Adams1988oopscheme},
-wherein the authors call “object” any language value,
-and “instance” the prototypes in their object system.
+as I will show in @secref{MOO}.
 
 Therefore @principle{the word “object” is worse than useless when discussing OO in general}.
 It is actively misleading.
@@ -351,8 +354,8 @@ around its many possible mutually incompatible meanings@xnote["."]{
 Meanwhile, the word “class” is also practically useless,
 denoting a rather uninteresting special case of a prototype.
 Even the word “prototype”, while meaningful, is uncommon to use when discussing OO in general.
-If discussing inheritance, one will only speak of “specifications”.
-And if discussing instantiation, one will speak of “specification” and “target”.
+If discussing inheritance, I will only speak of “specifications”.
+And if discussing instantiation, I will speak of “specification” and “target”.
 Prototypes only arise when specifically discussing conflation.
 To avoid confusion, I will be careful in this book to only speak of
 “specification”, “target”, “prototype”, and (target type) “element”
@@ -390,6 +393,37 @@ with everyone else within the same ecosystem...
 and at the same time becomes more likely to misunderstand programmers from
 other ecosystems who use the same words with different meanings.
 Hence the tribal turn of many online “debates”.
+
+@subsection[#:tag "OwoOO"]{Objects without OO}
+
+Conversely, the word “object” has many valid uses outside of OO,
+to denote embodiments for first-class modularity without first-class modular extensibility.
+A few early texts use the word “object-oriented” this way @~cite{Bobrow1972 Ross1976 Jones1976},
+to denote objects without inheritance.
+Still, the modern meaning of “object-oriented” that does imply the presence of inheritance
+is well established by now.
+
+Alan Kay, who invented the term “object-oriented”,
+strongly implies first-class modularity using the term,
+but does not directly requires extensibility or inheritance @~cite{Kay2003 Kay2020};
+while this requirement could be argued as weakly and indirectly implied
+in his requirement of “extreme late binding”,
+Kay himself does not make the inference.
+
+Yet @citet{Wegner1987}, offering a nomenclature for the domain of object-oriented languages,
+proposes the word “object-based” to describe languages
+that offer objects without inheritance, while reserving “object-oriented”
+for languages that do also offer inheritance.
+I agree with Wegner’s classification of languages,
+though after I further examining Wegner’s definitions,
+I see that he unjustly overlooked prototype object-orientation,
+and is wrong in requiring classes as part of “object-oriented” programming.
+Indeed, as stated earlier, I even object to “objects” being considered necessary for OOP.
+
+Still, it is clearly possible, indeed relatively common, to have “objects”
+without what either I or Wegner or most people recognize as “object-oriented” programming;
+and Wegner’s term “object-based” is fit to describe such cases
+where objects embody first-class modularity @~cite{Jones1976 Liskov1987 SICP2}.
 
 
 @section{Inheritance Overview}
@@ -639,402 +673,6 @@ One may also construe the way C++ handles non-“virtual” repeated superclasse
 as a form of mixin inheritance with automatic renaming,
 at which point mixin inheritance is actually very popular, just not well-understood.
 
-@subsection{False dichotomy between Inheritance and Delegation}
-Many authors have called “delegation” the mechanism used by Prototype OO
-@; TODO CITE Self, Castagna Cardelli 1996, …
-as distinct from the “inheritance” mechanism of Class OO.
-This wrongheaded distinction started with @citet{Hewitt1979Security},
-in whose ACT1 language the two concepts were both implemented,
-but through separate implementation paths.
-The distinction was further popularized by @citet{Lieberman1986},
-who contrasts the two joined concepts of prototype-delegation vs class-inheritance.
-
-Yet, identifying inheritance with classes to the exclusion of prototypes
-is historically counterfactual:
-the words “inheritance” and “prototype” were both simultaneously introduced
-by KRL @~cite{Winograd1975 Bobrow1976},
-a system with (multiple) inheritance and prototype OO—from before
-the word Object Oriented was popular.
-Indeed, KRL was instrumental as an inspiration to Smalltalk-76,
-the system that made OO popular.
-
-Opposing inheritance and delegation is also logically counterfactual:
-@citet{Lieberman1986} itself explains how “inheritance” (i.e. classes)
-can be expressed as a special use of “delegation” (i.e. prototypes).
-On the other hand, paper also explains you cannot go the other way around
-and express prototypes in terms of classes:
-prototypes enable dynamic extension of individual “objects” (prototypes) at runtime,
-while classes only allow extension at compile-time, and only
-for an entire type (“class”) of “objects” (elements of the type).
-
-In the end, the inheritance mechanism is indeed the same, and it is very wrong to
-give it two different names depending on whether it is used for prototypes or for classes.
-Even Self, that became the most popular language with “delegation” in academia,
-uses the word “inheritance” in its papers @~cite{Ungar1987 Chambers1989 parentsSharedParts1991}.
-And @citet{Stein1987} argues that delegation and inheritance are the same concept,
-and notes that prototypes map to classes, not class instances
-(though strictly speaking she gets the mathematical direction of the map wrong).
-The real distinction and comparison that should have been made was between the relative
-expressiveness of prototypes and classes, especially if considered as second-class entities
-and in absence of reflection (or refraint from using it).
-But that is the conclusion that none of the authors who wrote on the topic made explicit,
-even though it is implicit in both.
-And so the authors focus on arguing about different ways to name the same concept in two contexts
-while failing to argue on the different contextual concepts that do matter@xnote["."]{
-  If irrelevant changes in the context are a valid excuse to give an existing concept a new name
-  and get a publication with hundreds of citations based on such a great original discovery,
-  I here dub “ainheritance” the concept of “inheritance”
-  when the name of the entity inheriting from others starts with “a”,
-  “binheritance” the concept of “inheritance” when the programmer’s console is blue,
-  “cinheritance” the concept of “inheritance” when the programmer is in China,
-  and “sinheritance” the concept of “inheritance”
-  when the specification is not conflated with its target,
-  therefore neither a class nor a prototype.
-  Also “ninheritance” when there is no actual inheritance, and
-  “tinheritance” when it looks like inheritance, but is not real inheritance,
-  just target extension without open recursion through a module context.
-  I am also reserving the namespace for variants of the name starting
-  with a heretofore unused letter, unicode character, or prefix of any kind,
-  and launching the Interplanetary Xinheritance Foundation to auction the namespace away,
-  as well as the related Intergalactic Zelegation Alliance.
-  I am impatiently awaiting my Turing Award, or at least Dahl Nygaard prize,
-  for all these never discussed before original inventions related to OO.
-
-  The Lieberman paper deserves its thousands of citations because it is a great paper.
-  However, a lot of citers seem to fixate only on the unfortunate choice
-  of concept delineation and naming by Lieberman,
-  who probably did not anticipate that he would set a bad trend with it.
-  The delineation made sense in the historical context of the Actor team
-  separately implementing prototypes and classes with related yet distinct mechanisms
-  in their ACT1 language @~cite{Hewitt1979Security}, way before they or anyone understood
-  how classes were a special case of prototypes.
-  But too many readers took this historical artifact as an essential distinction,
-  and thereafter focused on studying or tweaking low-level “message passing” mechanisms
-  on a wild goose chase for tricks and features,
-  instead of looking at the big picture of the semantics of inheritance,
-  what it actually is or should be and why,
-  what is or isn’t relevant to its semantics.
-  Concept delineation and naming is tremendously important;
-  it can bring clarity, or it can mislead hundreds of researchers into a dead end.
-}
-
-One confounding factor is that of mutable state.
-Early OO, just like early FP, was usually part of systems with ubiquitous mutable state;
-prototype inheritance (or “delegation”) algorithms thus often explicitly allow or cope with
-interaction with such state, including
-mutation and sharing or non-sharing of per-object or per-class variables,
-and especially tricky, mutation and sharing of a prototype’s inheritance structure.
-However, class systems often had all their inheritance semantics resolved at compile-time,
-during which there is no interaction with user-visible side-effects, and
-it doesn’t matter whether the compiler does or doesn’t itself use mutable state:
-from the user point of view it is as if it were pure functional and there is no mutation
-in the inheritance structure or state-sharing structure of classes,
-at least not without using “magic” reflection primitives.
-One may then have been tempted then to see Prototype Delegation as intrinsically stateful,
-and class inheritance as intrinsically pure (though at compile-time).
-
-Yet, recent pure functional Prototype OO systems @~cite{jsonnet nix2015 poof2021}
-prove constructively that prototypes can be pure, and that they use
-the very same inheritance mechanisms as classes,
-indeed with classes as a particular case of prototypes with the usual construction.
-Meanwhile, old reflective Class OO systems like Lisp and Smalltalk
-@~cite{Kahn1976 Kay1993EHoS Gabriel1991CLOS AMOP}
-also support mutable state to modify the inheritance structure at runtime,
-for the sake of dynamic redefinition of classes at runtime,
-in what remains semantically a pure functional model once when the structure is set.
-See how in CLOS you can define methods on generic function
-@c{update-instance-for-redefined-class} to control how data is preserved, dropped or transformed
-when a class is redefined. @;{TODO XXX @~cite{}}
-Mutable state and mutable inheritance structure in particular are therefore
-clearly an independent issue from prototypes vs classes,
-though it might not have been obvious at the time.
-As I introduce formal models of OO,
-I will start with pure functional models (see @secref{MOO}), and
-will only discuss the confounding matter of side-effects much later
-(see @secref{SOO})@xnote["."]{
-  It might be interesting to explain @emph{why} many authors failed so systematically to
-  identify delegation and inheritance, when the similarities are frankly obvious,
-  and the relationship between classes and prototypes is well-known
-  to anyone who implemented classes atop prototypes.
-  But lacking direct access to those authors’ brains, my explanations must remain speculative.
-
-  First, pioneers are eager to conceptualize and present their experiments as original
-  and not just the same concept in a different context.
-  They necessarily have to sell their ideas as historical package deals,
-  before the underlying concepts are clearly identified and separated from each other.
-  They are too close to the matter to tell which of the features they built would be immortalized
-  through the ages as fundamental concepts
-  vs just contingent implementation details soon to be forgotten.
-  In the brief time that publishing about Prototypes was trendy,
-  scientists studying pioneering works may have focused too much
-  on the specifics of Actors, Self, or other successful Prototype language du jour,
-  and failed to properly conceptualize a general notion of Prototype.
-  Unlike the pioneers themselves, they deserve blame for their myopia,
-  and so do the followers who cite and repeat their “findings” without criticism.
-  However this explanation is not specific to the topic at hand,
-  and is valid for every field of knowledge.
-
-  Second, and with more specificity to Prototypes,
-  Computer Scientists following the Programming Language (PL) paradigm@~cite{Gabriel2012}
-  might have been unable to unify Prototypes and Classes
-  when delegation happens at runtime while inheritance happens at compile-time:
-  not only does the machinery look very different to users and somewhat different as implementers,
-  written in different languages with different formalisms,
-  but PL people tend to deeply compartmentalize the two.
-  They may have looked at low-level mutable state
-  (omnipresent in any practical language until the mid-2000s)
-  as essential when happening at runtime,
-  when they could clearly conceptualize it away as an implementation detail
-  when happening at compile-time.
-  Systems paradigm people (including the old Lisp, Smalltalk and Self communities)
-  who freely mix or interleave runtime and compile-time in the very same language,
-  might have had no trouble unifying the two across evaluation times,
-  but they tend not to publish articles about PL semantics,
-  and not to be read by most PL semanticians, or
-  not understood by those that do read the articles.
-
-  Revisiting these topics several decades after they were in vogue,
-  and finding their then-treatment lacking, with errors from the time still uncorrected to this day,
-  makes me wonder about what other false ideas I, like most people, assume are true
-  in all the other topics I haven’t revisited, whether in Computer Science or not,
-  where I just blindly assume the “experts” to be correct due to Gell-Mann amnesia.
-}
-
-As for which words to keep, the word “inheritance” was used first for the general concept,
-in a language with “prototypes”.
-The word “delegation” stems from the Actor message-passing model,
-and is both later and less general,
-from after the words “inheritance” and “prototypes” were better established,
-and is strongly connoted to specific implementations using the message-passing paradigm.
-It also fell out of fashion some time in the 1990s,
-after JavaScript became a worldwide phenomenon, and (correctly) used the term “inheritance”
-rather than delegation (as it isn’t particularly “message passing”, just calling functions).
-@~cite{ecmascript1997}
-
-
-@section{Epistemological Digression}
-@epigraph{
-  Knowledge is something which you can use.
-  Belief is something which uses you.
-  @|#:- "Idries Shah"|
-}
-Many people will inevitably quibble about my definition or characterization of OO.
-Though a treatise of epistemology is beyond the scope of this book, @;{TODO cite}
-I can briefly answer the most frequent epistemological questions as follows.
-
-This section is not essential to the formalization of OO in the chapters that follow,
-and can be skipped.
-I am aware that my answers may shock and turn off some of my readers.
-Nevertheless, I believe this section is very relevant to the debate at hand,
-and worth publishing as is.
-
-If a philosophical disagreement with this section
-will turn you off from reading subsequent technical chapters,
-maybe you should skip this section, or only return to it
-after you read those more technical chapters.
-If so, you should also be careful never to ask about the philosophical opinions of
-authors, inventors, colleagues, etc., in your technical field.
-
-
-@subsection[#:tag "Imdc"]{Is my definition correct?}
-@epigraph{
-  The truth or falsehood of all of man’s conclusions, inferences, thought and knowledge
-  rests on the truth or falsehood of his definitions.
-  @|#:- "Ayn Rand"|
-}
-Yes, my definition is correct:
-it accurately identifies what people usually mean by those words,
-and distinguishes situations where they apply from situations where they do not,
-in the contexts that people care about.
-People using my definition will be able to make good decisions,
-whereas those using other definitions will make bad decisions where their definitions differ.
-
-@subsection{What does it even mean for a definition to be correct?}
-@epigraph{
-  “When I use a word,” Humpty Dumpty said, in rather a scornful tone,
-  “it means just what I choose it to mean—neither more nor less.”
-  @linebreak[]
-  “The question is,” said Alice, “whether you can make words mean so many different things.”
-  @linebreak[]
-  “The question is,” said Humpty Dumpty, “which is to be master—that’s all.”
-  @|#:-"Lewis Carroll"|
-}
-Some people will argue that definitions are “just” arbitrary conventions,
-and that there is therefore no rational criterion of correctness,
-only arbitrary political power of the strong over the weak,
-to determine what the definitions of words are or should be.
-
-But no, such a point of view is worse than wrong—it is outright evil.
-The phenomena that effectively affect people,
-that they care to name, discuss, think about and act on, are not arbitrary.
-Thus the important part of definitions isn’t convention at all:
-it is the structure and understanding of these phenomena, rather than the labels used for them.
-A correct definition precisely identifies the concepts that are relevant to people’s concerns,
-that help them make better decisions that improve their lives,
-whereas an incorrect definition misleads them into counterproductive choices.
-Specifically overriding your reason with power is an act of war against you,
-and generally overriding all reason with power is the very definition of evil.
-
-@subsection{Is there an authority on those words?}
-@epigraph{Those who need leaders aren’t qualified to choose them.
-  @|#:- "Michael Malice"|
-}
-No, there is no authority on software vocabulary, person or committee,
-that can decree different words for others to use,
-or different phenomena for others to care about.
-People care about a phenomenon currently identified under the moniker OO,
-and even if some “authority” manages to change the name for it,
-or to denature the name “OO” not to identify the same phenomenon anymore,
-then people will keep caring about what they now call OO under a different name,
-rather than care about whatever those who corrupt the name may want them to.
-
-@subsection{Shouldn’t I just use the same definition as Alan Kay?}
-@epigraph{OOP to me means only messaging,
-local retention and protection and hiding of state-process,
-and extreme late-binding of all things. @|#:- "Alan Kay"|
-}
-No, that isn’t possible, nor would it be appropriate if it were.
-Alan Kay coined the expression “Object Oriented Programming” in 1967.
-Originalists might say everyone must take it to mean whatever He defined It to mean,
-and sometimes cite him as in the epigraph above.
-
-But neither the above @~cite{Kay2003} nor any of Kay’s pronouncement on OO constitutes
-a precise definition with an objective criteria,
-if a definition at all@xnote["."]{
-  My interpretation is that the first part of this definition (until the last comma)
-  corresponds to modularity, the ability to think about programs in terms of separate
-  “local” entities each with its own “state-process” wherein interactions only happen
-  through well-delimited interfaces (“messaging”).
-  The second part “extreme late-binding of all things” indirectly references
-  the in-language and extensible aspect of modules:
-  extreme late-binding means that the value of those units of modularity may change at runtime,
-  which means not only dynamic dispatch of method invocation
-  depending on the runtime class of an object,
-  but also the ability to dynamically
-  define, incrementally extend, refine or combine those units in the language.
-  Those units may be first-class prototypes, and even when they are only second-class classes,
-  there is a first-class reflection mechanism to define and modify them.
-  When this extensibility is only available at compile-time,
-  as in the object system of many static languages, then
-  the OOP only happens in the meta-language (as in e.g. C++ templates),
-  or the language lacks complete support for OOP.
-
-  Note that Kay didn’t immediately adopt Simula’s inheritance mechanism in Smalltalk-72
-  (it wasn’t called that yet in Simula, either);
-  but he did adopt it eventually in Smalltalk-76,
-  notably under the push of Larry Tesler
-  (who previously used “slot inheritance” on early desktop publishing applications),
-  and this adoption is what launched OO as a phenomenon.
-  Kay stated adopting single inheritance over multiple inheritance
-  was a compromise @~cite{Kay1993EHoS};
-  his team later added multiple inheritance to Smalltalk @~cite{Goldstein1980Extending}, but
-  it is unclear that Kay had much to do with that addition, that never became standard.
-  More broadly, Kay didn’t endorse any specific inheritance mechanism,
-  and never focused on that part of the design. To Kay it was only a means to an end,
-  which is what Kay called “extreme late binding”: the fact that behavior definition
-  happens and takes effect dynamically up to the last moment based on values computed at runtime.
-  Inheritance, the practical means behind the late behavior definition that is late bound,
-  and the precise form it takes, is secondary to Kay;
-  what matters to Kay is the role it plays in enabling dynamic code specialization.
-  But inheritance becomes a primary concern to whoever wants to formalize the concepts behind OO,
-  and must refine the intuitions of a pioneer into codified knowledge after decades of practice.
-  And if other means are found to arguably satisfy Kay’s “extreme late binding”,
-  then they’ll have to be given a name that distinguishes them from what is now called OO.
-}
-And even if he had at some point given a definition,
-one still should remain skeptical of what Kay, and other pioneers, said,
-if only to recursively apply the same semantic attention to the definition of the words
-they used in their definitions.
-Now, one should certainly pay close attention to what pioneers say,
-but one should pay even closer attention to what they @emph{do}.
-The pioneer’s authority lies not in precise words, but in inspiring or insightful ones;
-not in well-rounded neatly-conceptualized theories,
-but in the discovery of successful new practices that are not yet well understood.
-Solid theories arise only after lots of experience, filtering, and reformulation.
-
-@subsection{Shouldn’t I just let others define “OO” however they want?}
-@epigraph{The opinion of 10,000 men is of no value
-  if none of them know anything about the subject. @|#:- "Marcus Aurelius"|
-}
-Not at all.
-Some people are reluctant to fight over the meaning of words,
-and are ready to cave to popular opinion or spurious authorities
-when they define and redefine “OO” or any word to have whatever precise or murky meaning.
-Instead they propose that I should stick to “inheritance”
-when discussing the field characterized by the use of inheritance.
-
-But it is no good to let an ignorant majority “define” the term “Object Orientation”
-to mean what little they know of it—for instance, to pick the most popular elements:
-Class OO only, always mutable records,
-only single inheritance or C++ style flavorless “multiple inheritance”,
-only single dispatch, no method combination, etc.
-Letting those who don’t know and don’t care define technical words
-would be knowledge bowing to ignorance;
-it would be for those who know and care to abdicate their responsibility
-and follow the masses when they should instead lead them;
-it would be ceding terrain to the Enemy—snake oil salesmen, chaosmongers,
-corrupters of language, manipulators, proud spreaders of ignorance, etc.—who if let loose
-would endlessly destroy the value of language and make clear meaning incommunicable.
-Beside, if you retreat to “inheritance” in the hope that at least for that term
-you can get people to agree on a clear unambiguous meaning@xnote[","]{
-  The term “inheritance” is already corrupted,
-  since Goguen uses it at times to mean refinement @~cite{Goguen1992Sheaf}
-  while claiming to do OO,
-  and others use it to mean the (non-modular) extension of database tables or equivalent.
-  Moreover, the term “inheritance”, that originated in KRL,
-  in parallel to the adoption and evolution it saw in the field of OO,
-  also had its evolution in the field of
-  Knowledge Representation, Description Logics, Semantic Web, etc.
-  And there are plenty of further legitimate non-OO uses of the word “inherit”, to
-  mean that some entity derives some property from a historical origin, an enclosing context, etc.
-}
-you’ll find that if you
-have any success defining a useful term that way, the agents of entropy will rush
-to try to defile it in direct proportion to your success;
-you will have given up precious lexical real estate for no gain whatsoever,
-only terrible loss@xnote["."]{
-  Indeed, if you don’t know to stand your ground, you will constantly retreat,
-  and be made to use ever more flowery “politically correct” vocabulary
-  as a humiliation ritual before those who will wantonly take your words away
-  to abuse you and thereby assert their dominance over you.
-}
-
-@subsection{So what phenomena count as OO?}
-@epigraph{The medium is the message.
-  @|#:- "Marshall McLuhan"|
-}
-What defines OO is not the metaphors of those who invent, implement, or comment about it
-as much as the design patterns used by programmers when they write code in an OO language;
-the interactions they have with computers and with each other;
-the decision trees that are enabled or disabled when evolving a program into another—these
-phenomena are what OO is.
-What programmers do, not what programmers say.
-
-And these phenomena are what is captured by
-the intra-linguistic extensible modularity as defined above:
-(a) the ability to “code against an interface” and
-pass any value of any type that satisfies the interface
-(modularity, whether following structural or nominative rules),
-(b) the ability to extend and specialize existing code by creating a new entity
-that “inherits” the properties of existing entities and only needs specify
-additions and overrides in their behavior rather than repeat their specifications,
-wherein each extension can modularly refer to functionality defined
-in other yet-unapplied extensions; and
-(c) the fact that these entities and the primitives to define, use and specialize them
-exist @emph{within} the programming language rather than in an external preprocessing layer.
-
-I contend that the above is what is usually meant by OO,
-that matches the variety of OO languages and systems
-without including systems that are decidedly not OO, like Erlang, SML or UML.
-Whatever clear or murky correspondence between names and concepts others may use,
-this paradigm is what matters, and is what I will call OO—it is what I will discuss in this book,
-and will systematically reduce to elementary concepts.
-
-As to why should this particular meaning of “object-oriented” should win over
-other plausible meanings offered before or after Kay’s and Bobrow’s 1976 invention,
-or other names for the concept, I will conclude with this tweet by Harrison Ainsworth:
-@principle{Naming is two-way: a strong name changes the meaning of a thing, and
-a strong thing changes the meaning of a name.}
 
 @exercise[#:difficulty "Easy"]{
   Identify one to three concepts from this chapter that you were not familiar with.
@@ -1046,13 +684,6 @@ a strong thing changes the meaning of a name.}
   identify a program that illustrates the use of the concept, if you know any.
   If you don’t know any program that illustrates the concept,
   you might know instead a language that offers a builtin construct for it.
-}
-
-@exercise[#:difficulty "Easy"]{
-  Look back at the previous chapter on what OO is not.
-  Explain how the concepts of this chapter justifies the previous judgements.
-  Consider sections of the previous chapter in a random order, so that,
-  if you stop before the end, you don’t just do the first few sections like everyone else.
 }
 
 @exercise[#:difficulty "Easy"]{
