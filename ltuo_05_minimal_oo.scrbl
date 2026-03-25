@@ -791,9 +791,17 @@ the self-application combinator U (called Ue for U, eager)@Note{
   sometimes called the duplication combinator Δ, or ω
   (because @c{Ω = (ω ω)} is the canonical λ-term that never terminates),
   does the heavy lifting of the Y combinator,
-  hence the double use of it in the definition of Y = U (B U).
+  hence the double use of it in the definition of Y f = U (B f U).
+  @; Y = S (K U) (S (S (K B) I) (K U)), where U = S I I
+  @; Y = B U (C B U), where C x y z = x z y
+  @; shortest known SK fixpoint combinator, found by John Tromp:
+  @; SSK(S(K(SS(S(SSK))))K) = WC(SB(C(WC))) where W x y = x y y
   It can be viewed as doing half the job of Y, and is
-  the essence of the object encoding in @secref{CwUAoS}.
+  the essence of the object encoding in @secref{CfUe}.
+  @; TODO Y U NO meme. "U WANT REACH FIXPOINT? | Y U NO APPLY SELF?"
+  @; https://imgflip.com/i/anf0y5 https://imgflip.com/i/anf157 https://imgflip.com/i/anf1cz
+  @; High Expectations Asian Father meme
+  @; https://x.com/mlhaufe/status/2036275549358690557
 }:
 @Code{
 (def (B x y z) ;; composition
@@ -1591,6 +1599,12 @@ therefore when you combine the two, it becomes essential that module contexts
 be not a single global entity, but many local entities.
 This shift from singular and global to plural and local is essential for Class OO,
 and even more so for Prototype OO.
+
+@exercise[#:difficulty "Easy"]{
+  Read and make sense of the code I wrote for this chapter,
+  that you may find e.g. at
+  @url{https://github.com/metareflection/poof/blob/main/util/pommette.scm}
+}
 
 @exercise[#:difficulty "Easy"]{
   Reproduce the examples from the chapter.

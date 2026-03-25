@@ -1269,7 +1269,7 @@ while being defined independently (that’s what “orthogonal” means).
 Protocol implementations are modular entities, that are also first-class and extensible
 in CLOS or Clojure, but sadly only second-class and not extensible in Haskell or Rust.
 
-@subsection{Generic Functions}
+@subsection[#:tag "GF"]{Generic Functions}
 
 In CLOS as opposed to Clojure, protocols are informal (external, fourth-class) groupings
 of @emph{generic functions}, that are the only formal (internal, first-class) entities.
@@ -2073,15 +2073,62 @@ It remains to be seen whether AI, by massively lowering the cost of implementing
 will increase inertia in favor of these static-dispatch Class OO incumbents,
 or will level the playing field in favor of new languages, static or dynamic.
 
-@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+@exercise[#:difficulty "Easy"]{
+  Read and make sense of the code I wrote for this chapter,
+  that you may find e.g. at
+  @url{https://github.com/metareflection/poof/blob/main/util/pommette.scm}
+  Or to make things harder, first try as much of the exercises as possible
+  without reading my code.
+}
+
+@exercise[#:difficulty "Easy"]{
+  Implement the @emph{product} of two (or three, or more) lenses,
+  that allows view and update of a pair (or list) of data each based on it lens.
+  Then, assuming you implemented POI as in @exercise-ref{exPOI},
+  implement views, updates and lenses for POI—first
+  for a tuple (e, s, p) of the extension, suffix flag and parent list list,
+  then for the individual elements of that tuple.
+}
 
 @exercise[#:difficulty "Easy"]{
   Define the missing simple CLOS method combinations in an efficient way, for
   @c{+ * max min progn list append nconc or and}.
   Hints: @c{progn} is just the Lisp operator for sequential evaluation of expressions,
   returning the value of the last one. @c{nconc} is a variant of @c{append} that uses side-effects;
-  and @c{append} and @c{nconc} done wrong will be quadratic rather than linear so be careful.
-  Also note the existence of IEEE floating point number @c{+inf.0} and @c{-inf.0}.
+  and @c{append} and @c{nconc} done wrong
+  will be quadratic rather than linear so be careful@xnote["."]{
+    For @c{min} and @c{max}, note the existence of IEEE floating point number @c{+inf.0} and @c{-inf.0},
+    as plausible values to return when no method is defined, though beware that
+    using them may on some Scheme implementations cause undesired coercion to flonum,
+    and so does not work quite as should with integers.
+    I therefore do not recommend using them implicitly over issuing an error as CLOS does in this case.
+    Users can always explicitly include such a value in as base method
+    if it works for them, e.g. because they are using flonums, anyway.
+    Or they can define their own variant of @c{min} or @c{max}
+    and corresponding method combinations that will avoid coercing the result.
+}}
+
+@exercise[#:difficulty "Easy"]{
+  Implement generic algebra, wherein the objects you manipulate can be integers,
+  rationals, floating point numbers, or vectors or matrices of the same.
+  For each relevant pair of suitably wrapped object, use multiple dispatch to define
+  addition and multiplication.
+  Do the exercise in class style, and again in typeclass style.
+  Which style is more amenable to generating high performance code
+  (assuming enough inlining and optimization in the compiler)?
+}
+
+@exercise[#:difficulty "Medium"]{
+  Traversals are a generalization of lenses that can focus on any number of elements,
+  when a lens focuses on one and only one.
+  Read about traversals, then implement a traversal that focuses
+  on all of a prototype’s ancestors.
+  Bonus: assuming you implemented some reflection on which modular extension implements
+  or overrides which methods (or implementing it),
+  use the traversal to apply a transformation that
+  systematically intercepts all method calls, and maintains a table
+  of which methods of which extensions are effectively called how many times
+  during a program execution.
 }
 
 @exercise[#:difficulty "Medium"]{
@@ -2098,20 +2145,47 @@ or will level the playing field in favor of new languages, static or dynamic.
 }}
 
 @exercise[#:difficulty "Medium"]{
+  Implement method caching for generic functions:
+  the generic function maintains a LRU cache of the last 8 times it was called,
+  on what (tuples of) specifications it was called,
+  what effective method resulted.
+
+  Harder: use macros to instead (or additionally) implement
+  a 4-deep LRU cache of effective methods @emph{per (dynamic) call site}
+  of a generic function.
+}
+
+@exercise[#:difficulty "Medium"]{
+  Discuss how you would use flavorful multiple dispatch to implement
+  an generic protocol to display objects onto a terminal.
+  Which arguments would you have in which order, and why?
+  Consider: the object to display itself, output display port being used
+  that can be of many kind (Window system, text terminal, text file stream, binary stream, etc.),
+  some “descriptor” for the many options with which to interpret or decoded the object encoding
+  (unit for the numbers,language
+}
+
+@exercise[#:difficulty "Medium, Recommended"]{
   If you did exercise @exercise-ref{08to09}, compare
   your attempt at explaining these advanced topics OO with how I did.
   What aspects did you anticipate? What surprised you?
   What did you do better or worse?
 }
 
-@exercise[#:difficulty "Medium"]{
-  Reimplement multiple dispatch with a global table indexed
-  by tuples of generic function and specification arguments,
-  rather than tables local to each specification.
-  What effect and scope are now required for a method declaration?
-  Add support for dynamically defined generic functions and specifications.
-  How do you collect garbage dispatch table entries that are unreachable?
-  How do you do it in the representation I offered?
+@exercise[#:difficulty "Hard, Recommended" #:tag "09to10"]{
+  Think about how to @emph{efficiently} implement objects.
+  Also think about how to implement them in a @emph{flexible} way,
+  so you can offer options to your users as to what semantics they want to use exactly,
+  including as many of the features mentioned in this book as possible (or omitted!).
+  Are efficiency and flexibility in harmony or in conflict?
+  What mechanisms will you need to expose to maximize both expressiveness and performance?
+  Write down your answers before you read the next chapter.
+}
+
+@exercise[#:difficulty "Hard"]{
+  Implement a pure functional monadic variant of the standard method dispatch.
+  How does the object system need be extended (if at all) to support pure monadic operations
+  that can fully replace stateful OO?
 }
 
 @exercise[#:difficulty "Hard"]{
@@ -2119,3 +2193,13 @@ or will level the playing field in favor of new languages, static or dynamic.
   implement @c{eql} specializers and predicate dispatch on top of it.
 }
 
+@exercise[#:difficulty "Hard"]{
+  Can you retroactively add methods to a generic function?
+  In a pure functional way? With eager evaluation? With lazy evaluation?
+}
+
+@exercise[#:difficulty "Research"]{
+  Implement a programming language with static types that supports
+  optimal inheritance, method combinations and multiple dispatch.
+  You may start from @~cite{Allen2011} for the typesystem.
+}

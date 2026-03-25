@@ -121,3 +121,9 @@
         (path->string (build-path (current-directory) "resources/pic/cube.pdf")))
       (exact-chars (string-append "\\includegraphics[width=0.75\\textwidth]{" cube-path "}")))
     (else '())))
+
+;; scribble/report subsubsub*section does not work https://github.com/racket/scribble/issues/540
+#;(define (Paragraph . x)
+  (list (html-elem (elem (bold x) "  "))
+        (tex-elem (elem (tex "\\paragraph{") x (tex "}")))))
+(define Paragraph subsubsection)

@@ -14,11 +14,20 @@
 
 @subsection[#:tag "RaR"]{Records as Records}
 
+@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+
 So far we encoded Records as opaque functions
 with some kind of identifier as input argument,
 and returning a value as output.
 This strategy works, and is portable to any language with Higher-Order Functions.
-But, (1) it is rather inefficient in time, and, (2) it leaks space.
+By demonstrating it, I have provided you with a general recipe to implement OO
+that you can easily adapt to any language or virtual machine past, present or future,
+However, (1) Records-as-Functions is rather inefficient in time, and, (2) it leaks space.
+Therefore, while it can help you get the job done quickly anywhere on a small budget,
+it is not meant as a permanent solution for long-running systems
+where you have the STEAM (Skill Time Energy Attention Money) to do
+a harder but better job for long term benefits.
+
 
 Meanwhile, the name “record” itself, as per @citet{Hoare1965},
 suggests a low-level representation in terms of consecutive words of memory.
@@ -36,7 +45,17 @@ Records as records? Now we’re talking.
 
 @subsection{Lazy Records}
 
+
+
 @section[#:tag "MOP"]{Meta-Object Protocols}
+@epigraph{We can solve any problem by introducing an extra level of indirection.
+@|#:-"Butler Lampson @~cite{WikiFTSE}"|}
+@epigraph{Almost all programming can be viewed as an exercise in caching.
+@|#:-"Terje Mathisen, programming optimization guru"|}
+@epigraph{There are two hard things in computer science:
+  cache invalidation, naming things, and off-by-one errors.
+@|#:-"Leon Bambrick"|} @; http://martinfowler.com/bliki/TwoHardThings.html
+
 
 @subsection{Reflection: Introspection and Intercession}
 
@@ -78,6 +97,12 @@ Add serialization, persistence, to a meta-object, NOT to the object.
 Different capabilities for objects and their meta-objects => more security.
 
 
+@exercise[#:difficulty "Easy"]{
+  Read and make sense of the code I wrote for this chapter,
+  that you may find e.g. at
+  @url{https://github.com/metareflection/poof/blob/main/util/pommette.scm}
+}
+
 @exercise[#:difficulty "Medium"]{
   Read about the Meta-Object Protocol in CLOS @~cite{amop},
   particularly the protocols for class redefinition and instance update.
@@ -85,6 +110,13 @@ Different capabilities for objects and their meta-objects => more security.
   What additional flexibility does the MOP provide?
   What are the costs of that flexibility in terms of
   implementation complexity and reasoning difficulty?
+}
+
+@exercise[#:difficulty "Medium, Recommended"]{
+  If you did exercise @exercise-ref{09to10}, compare
+  your attempt at explaining implementation strategies for OO with mine.
+  What aspects did you anticipate? What surprised you?
+  What did you do better or worse?
 }
 
 @exercise[#:difficulty "Hard"]{

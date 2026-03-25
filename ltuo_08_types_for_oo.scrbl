@@ -1063,6 +1063,12 @@ still I declare:
 }
 
 @exercise[#:difficulty "Easy"]{
+  Read and make sense of the code I wrote for this chapter,
+  that you may find e.g. at
+  @url{https://github.com/metareflection/poof/blob/main/util/pommette.scm}
+}
+
+@exercise[#:difficulty "Easy"]{
   Browse some OO library you wrote, or know, or else the standard library
   of some language you know. Identify at least three classes and three method signatures
   for which the NNOOTT will give a good type, and at least three for which it will give a bad type.
@@ -1088,7 +1094,9 @@ still I declare:
 @exercise[#:difficulty "Medium"]{
   The chapter mentions “binary methods” as a case where NNOOTT fails.
   Implement a specification for @c{Comparable} values with a method
-  @c{compare : Self → Self → Ordering} (where @c{Ordering} is @c{LT | EQ | GT}).
+  @c{compare : Self → Self → Ordering}
+  (where @c{Ordering} is the type for a choice between the symbols @c{< = >},
+  or if your language has limits on identifiers, @c{LT EQ GT} or something).
   Assume a type: @c{Number} is a subclass of @c{Comparable} and has a subclass @c{Integer}.
   Show concretely how assuming @c{Integer ≤ Number} leads to a runtime type error@xnote["."]{
     Actually, there is One Weird Trick™ by which comparison operations

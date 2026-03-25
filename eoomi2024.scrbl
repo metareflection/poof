@@ -456,20 +456,6 @@ that may not actually be essential to OO.
   can appreciate both, and how they nicely complement each other.
 }
 
-
-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLOH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-@section{Inheritance Examples}
-@subsection{Example 1}
-
-@(noindent) @image[#:scale 0.67]{C3_linearization_example.eps}
-
-
-@subsection{Example 2}
-
-@(noindent) @image[#:scale 0.066]{C3_linearization_example_2.png}
-
-
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLUH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 @item{Discuss how purity and laziness make OO more modular,
@@ -494,7 +480,6 @@ Many of the concepts and relationships we tackle have long been part of OO pract
 yet have been largely neglected in scientific literature and formalization attempts.
 
 @@@
-
 
 https://x.com/Ngnghm/status/1976680711345299533
 

@@ -57,8 +57,7 @@ simpler than the modular extensions of mixin inheritance from @secref{MFCME}@xno
   when discussing wrapping references for recursive conflation in @secref{RC};
   and a decade before Cook, Cannon @~cite{Cannon1979} also used a notion of wrapper
   closer to what I use, in Flavor’s predecessor to CLOS @c{:around} methods @~cite{CLtL2},
-  or in the more general case, to CLOS declarative method combinations.
-  @; TODO seclink
+  or in the more general case, to CLOS declarative method combinations (@secref{MC}).
   The term “generator” is also too generic, and could describe many concepts in this book,
   while being overused in other contexts, too.
   I will thus stick with my expressions “modular definition” and “modular extension”
@@ -272,6 +271,12 @@ Thus, Racket’s default object system has both single and mixin inheritance,
 and Common Lisp, Ruby and Scala have both single and multiple inheritance.
 Users can selectively use single inheritance when they want more performance
 across all the subclasses of a given class.
+
+@exercise[#:difficulty "Easy"]{
+  Read and make sense of the code I wrote for this chapter,
+  that you may find e.g. at
+  @url{https://github.com/metareflection/poof/blob/main/util/pommette.scm}
+}
 
 @exercise[#:difficulty "Easy"]{
   Using the @c{extendModDef} function from this section,
@@ -578,7 +583,7 @@ synthesizing a child’s modular definition from its parents’ modular definiti
 
 @; TODO See also Malayeri & Aldrich’s 2009 "CZ: Multiple Inheritance without Diamonds" and its citations 43, 46.
 @; TODO Discuss Snyder’s idiotic "make ancestry a tree" idea reprised by C++ and Ada.
-@; TODO refer to later implementation of conflict on top of method combination.
+@; TODO refer to later implementation of conflict on top of method combination. @secref{MC}
 
 @Paragraph{Cooperation not Conflict}
 To find a better consistent behavior than conflict requires a reassessment
@@ -1104,10 +1109,9 @@ in the programming language part of academia outside of the Lisp community@xnote
   Interestingly, work on flavorful multiple inheritance was done
   mostly by MIT students or graduates who had a career in the industry
   (Flavors itself was written by an undergrad at MIT, and
-  Dylan was made by former MIT hackers after the demise of Symbolics),
-  plus a few academics from France.
-  Plus there is one recent paper by a French mathematician working
-  on a system written in Python. @; TODO SageMath
+  Dylan was made by former MIT hackers after the demise of Symbolics);
+  and then there were crucial improvements by various academics from France.
+  @; TODO cite Ducournau etc. Hivert2024
 }
 @TODO{cite more: Jonathan Aldrich ? Odersky ?}
 Much of the focus of the literature is on subtyping,
@@ -1858,7 +1862,7 @@ suffix hierarchies usually remain shallow@xnote[","]{
 }
 so it’s a bit moot what to optimize for.
 
-@subsection[#:tag "CTBH"]{C3 Tie-Breaking Heuristic}
+@subsection[#:tag "CTBH"]{C3 Tie-Breaking Heuristic: Extended Precedence}
 
 The constraints of C3 or C4 uniquely determine how to merge precedence lists:
 the inheritance order, local order, monotonicity and suffix property constraints
@@ -1962,7 +1966,7 @@ when @code{Z} inherits from both @code{K2} and @code{K3}.
   In the previous example, which specifications could be declared as suffix
   without changing any precedence list?
   Which could be declared as suffix in a way that would change some precedence list
-  but would still the entire ancestry valid?
+  but would still keep the ancestry valid?
   Which would cause C4 to issue an error trying to compute a precedence list for @c{Z}
   if declared suffix?
 }
@@ -2031,6 +2035,32 @@ flowchart BT
     I --> G --> E --> C --> B
     I --> H --> F --> C
     G --> D --> B
+}
+
+@exercise[#:difficulty "Medium" #:tag "exPOI"]{
+  Implement POI, Prototypes with Optimal Inheritance:
+  a function @c{make-poi} accepts a modular extension @c{e},
+  a boolean @c{s} that if true indicates that the specification is a suffix,
+  and a list of totally ordered lists of direct parents @c{p},
+  and returns prototype @c{poi} that conflates specification and target,
+  in the style of @c{rproto} from @secref{CfR}:
+  you can access a prototype target’s field by passing its identifier to the @c{poi} as a function;
+  and you can access the prototype’s specification by instead passing a magic value
+  (perhaps the top value, @c{#f} in Scheme);
+  the specification field contains @c{e}, @c{s} and @c{p},
+  but also a cache of the precedence list and the specification’s most specific suffix ancestor,
+  as well as any other meta data.
+
+  Bonus: assuming you’re using Scheme or another language with Lisp-like macros,
+  implement a simplified syntax wherein @c{(poi :e modext :s suffix? :p parent1 parent2 parent3)}
+  is a POI with given modular extension @c{modext}, boolean suffix status @c{suffix?}
+  and lists of parents @c{((parent1 parent2 parent3))} (only one list of parents).
+  Use @c{:pp} instead of @c{:p} for a variable number of lists instead,
+  and @c{:p*} for a single value that is itself a list of lists of parents.
+  Replace @c{:e} and co. by the keyword syntax in your Lisp implementation.
+
+  NB: I implemented those in pommette. Either don’t look at my solutions,
+  or implement them for a different language or dialect.
 }
 
 @exercise[#:difficulty "Medium, Recommended"]{

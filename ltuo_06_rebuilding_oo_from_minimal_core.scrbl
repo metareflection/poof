@@ -274,7 +274,8 @@ for which all extensions are trivially strict).
 The reference wrapper, pure isomorphism at one level,
 yet effectful non-isomorphism at another
 (requiring access to disk, database, network, credentials, user interface, etc.),
-also illustrates that one man’s purity is another man’s side effect (to channel Alan Perlis).
+also illustrates that
+@principle{one man’s purity is another man’s side effect} (to channel Alan Perlis).
 For instance, with merkleization, a reference uniquely identifies some pure data structure
 with a cryptographically secure hash that you can compute in a pure functional way;
 but dereferencing the hash is only possible if you already know the data
@@ -347,78 +348,215 @@ that just returns the record as a constant:
   (rproto←spec (constant-spec r)))
 }
 
-@subsection[#:tag "CwUAoS"]{Conflation with User Application of Self}
+@subsection[#:tag "CfUe"]{Conflation from U-encoding}
 
-One simple encoding of objects conflates specification and target
-in a way that is subtly different from the previous one.
-It is notable for being used by Yale T Scheme @~cite{Rees1982T Adams1988oopscheme},
-and after it by YASOS @~cite{Dickey1992}, and also for being the essence of
-the JavaScript object system @~cite{Eich1996JavaScript}:
+@Paragraph{Y U NO SELF-APPLY?}
+
+One simple and quite common encoding of objects conflates specification and target
+in a way that is subtly different from the encoding I have been using so far.
+It is notable for being the essence of the barebones object system of
+Yale T Scheme @~cite{Rees1982T Adams1988oopscheme},
+later made portable as YASOS @~cite{Dickey1992},
+and more famously of the JavaScript (JS) object system @~cite{Eich1996JavaScript}:
 a prototype is a record of methods encoded as functions that take
 the record itself as parameter.
-
-The subtle difference is that instead of taking a resolved module context as first argument,
-functions take as first argument an unresolved record of functions
-that themselves take the same unresolved record as first argument.
-Callers, whether from outside the object or recursively from inside,
-must constantly be aware of the calling convention and pass the record as argument
-to all methods after extracting the methods from the record.
-At no point in this encoding is there a handle on a fully resolved target,
-only to the half-resolved specification@xnote["."]{
-  The encoding can be considered as being based on the duplication combinator D
-  rather than on the fixpoint combinator Y.
-  D is sometimes known as the self-application operator U (see @secref{DSF})
-  in the context of computing fixpoints, and can also be viewed as half of Y.
-  That is why I will speak of Y-encoding and U-encoding of recursion schemes,
-  and also why, when comparing the two, I like to write U-encoded specifications
-  as using @c{half} rather than @c{self} as the name of the first variable:
-  Essentially, you have @c{self = (half half)} and @c{super = (hyper half)}.
-  Most implementations traditionally switch the order of arguments between
-  that @c{half} and @c{method-id} but that is semantically an isomorphism.
+However, beyond these object systems exposing their internals,
+it is actually used as an implementation technique for countless programming languages@xnote["."]{
+  This technique can be traced back to Sketchpad @~cite{Sutherland1963},
+  which first documented a version of it:
+  an “instance” (already that word) is a record that includes a pointer
+  to a “generic block” containing pointers to operations
+  that you call with the instance as first argument.
 }
 
-In T and after it YASOS, an @c{operation} can abstract over the calling convention
-providing a regular functional interface to the functionality,
-as well as a locus to define an operation-specific default behavior,
-and potentially more (see also generic functions in CLOS). @; TODO secref ch8
+The difference between the two encodings is subtle but quite interesting:
+@itemize[
+  @item{
+    In the encoding that I have been discussing so far,
+    a specification is a function (or record of functions)
+    that takes a fully resolved module (fixpoint) as first argument,
+    and a target is a fully resolved module (fixpoint),
+    whose fields directly contain the values users care about.
+    Because this representation fully computes a fixpoint
+    using (some variant of) the Y fixpoint combinator,
+    I will call it and its variants @emph{Y-encodings}.}
+  @item{
+    In the YASOS encoding that I am now discussing,
+    instances are functions (or records of functions)
+    that take instances as first argument,
+    and users have to explicitly pass those instances as first argument
+    every time they call a method to obtain the values they care about.
+    These instances are half way between specification and target;
+    they use (some variant of) the self-application combinator U,
+    where @c{U x = x x} (see @secref{DSF}).
+    This is why I call this representation and its variants @emph{U-encodings}.}]
 
-Meanwhile, inheritance is supported by an @c{operate-as} function
-that extracts a method from an ancestor prototype,
-then calls it to the “real” self as first argument:
-single or mixin inheritance are simply about chaining calls to
-the method for the next ancestor.
-T or YASOS themselves do not offer builtin infrastructure to locate the next ancestor,
-but it is trivial to roll your own for single inheritance
-by having each object delegate to the known next ancestor (@secref{SI}).
-Mixin inheritance can be achieved by abstracting over the super object
-(i.e. function that takes it as argument and returns the half-resolved record),
-though it requires a bit of infrastructure to dynamically skip
-over objects that do not handle a message (@secref{MxI}).
-A uniform field in which to store the super object (if any) could help in both cases above.
-Multiple inheritance can be done as a layer above mixin inheritance,
-or else by a change in protocol wherein methods take
-a “method resolution continuation” argument in addition to the “self” argument (@secref{MI}).
+@Paragraph{Y: Double U}
 
-In the end, this specialized object encoding is efficient,
-which is why it has been adopted, in many variants,
-by many implementations of many languages.
-But it comes with significant complexity, both technical and conceptual.
-It also sets objects apart from other kinds of records or values,
-with their own distinct query protocol, when my fixpoint encoding
-allows any value of any type to be the target of a specification,
-after which it follows the same protocol as any other value of that type.
-Also, this encoding giving you conflation for free is both a blessing and a curse.
-A blessing because the object implicitly embodies both target and specification
-without extra effort.
-A curse because this costlessness historically contributed
-to blurring the lines between specification and target,
-and therefore to the ongoing confusion between them,
-making their conceptual conflation harder to untangle.
+Now it is important to understand not just the difference between the two encodings,
+but also the relationship between the two.
 
-Often efficiency is important at runtime, yet simplicity is even more important
-at the conceptual layer, for programmers to understand the software they work with.
-That is why I describe this most common implementation strategy last instead of first,
-and leave its details as an exercise to the reader.
+We have the identity @c{Y f = U (B f U)} or equivalently @c{Y = B U (C B U)}
+where @c{B} is composition @c{B x y z = x (y z)} and
+@c{C} is the flip operator @c{C x y z = x (z y)}@xnote["."]{
+  Haskellers might write @c{Y} as @c{U (. U)} which is my new favorite emoji.}
+Both @c{B} and @c{C} are linear, they just rearrange things without creating information,
+whereas @c{U} is all about duplication, creating new copies of information, and does all the work.
+Therefore it is fair to say that, up to a linear transformation,
+Y crucially uses U twice; equivalently, U does half the work that Y does.
+
+In practice, the entities manipulated in the U-encoding, up to isomorphism,
+are functions @c{h = (f . U)}, where @c{f} is the recursion schema of which you want the fixpoint.
+The fixpoint of @c{f} is @c{self = f self = Y f = U h = h h}.
+Because U-encoding involves a recursion variable that is half-resolved,
+I like to call that variable @c{half} instead of @c{h}, so @principle{@c{self = half half}}.
+Similarly, the semi-resolved inherited value passed around when using the U-encoding,
+I call @c{hyper} rather than @c{super}, and the following equation holds: @c{super = hyper half}.
+
+As regards naming conventions, I find it frankly quite confusing
+when existing object systems using the U-encoding call that variable name @c{self};
+it is a symptom that the authors are themselves confused.
+The situation is only worse when the very same authors study the semantics of objects
+and not only fail to notice the existence of two distinct encodings,
+but also use the very same names for recursion and inheritance variables in both cases,
+sometimes in the very same publication.
+I for one will reserve the variable name @c{self} to the result of the fixpoint,
+the parameter passed to wholly unresolved recursion schemas in Y-encoding;
+and similarly the variable name @c{super} to the inherited value.
+I will consistently use @c{half} and @c{hyper} when referring to
+the half-resolved recursion variable and half-resolved inheritance variable.
+
+In any case, to compute a method @c{method-id},
+with the Y-encoding you use @c{(self method-id)},
+and with the U-encoding you use the equivalent @c{(half half method-id)}.
+Now, most object implementations (including T, YASOS, JS)
+traditionally switch the order of arguments between the @c{half} and @c{method-id},
+so that you instead write @c{(half method-id half)};
+there are good reasons to do that
+from the point of view of low-level representation and efficiency.
+But semantically, that is just a trivial isomorphism.
+
+@Paragraph{For or Against U, Y?}
+
+There are various advantages and disadvantages to U-encoding compared to Y-encodings.
+@itemize[
+  @item{
+    As a tradeoff between the two, with Y-encoding you pay a slightly larger cost, once,
+    to compute the fully resolved target, while with U-encoding, you don’t pay as much up front,
+    but you pay a little bit more every time you use your half-resolved object.}
+  @item{
+    In favor of Y-encoding, the interface for a target is the very same as for
+    a value that was not produced via fixpoint, making fixpoint both universally applicable
+    to any target type and scaffolding that users can forget about when using values.
+    “It does not matter how you produced this value or type.”
+    By contrast, with U-encoding the user must continually be aware of the difference
+    between regular values with regular calling conventions, and
+    “objects” that involve a different calling convention
+    with this ubiquitous instance-passing that is implicit at one level and explicit at another.}
+  @item{
+    In favor of U-encoding, its instances are neither specification nor target,
+    yet are a memory-efficient close approximation of both.
+    By contrast with Y-encoding, you must somehow duplicate some information
+    if you want to handle both the specification and the target.}
+  @item{
+    In favor of Y-encoding, the target is directly available, allowing for inlining
+    and various optimizations when the target is all or most you care for at runtime.
+    By contrast with U-encoding, you must continually pass the instance around
+    at each method call at runtime, which is slightly more expensive.}
+  @item{
+    In favor of U-encoding, it keeps prototypes “open”, so you can keep composing them,
+    or using them with new parameters, at runtime, with no extra cost (see @secref{PFCTD}).
+    By contrast, the Y-encoding forces you to maintain separate specifications and targets,
+    and fully instantiate a new target for every configuration of objects before you may use it.}
+  @item{
+    In favor of Y-encoding, it makes the conceptual distinction between specification and target
+    easier, and encourages abstraction of what you want and how to achieve it.
+    By contrast, the U-encoding gives conflation for free (at least for single inheritance),
+    but may have promoted confusion between specification and target,
+    and low-level thinking in terms of the particulars of an implementation technique.}]
+
+@Paragraph{Inheriting from U means…}
+
+T and YASOS support single inheritance (@secref{SI})
+by providing a function @c{operate-as} that objects can call
+in order to delegate method resolution to a parent, that will be called
+with the current half as first argument:
+single inheritance is then simply about each successive ancestor
+chaining calls to the next ancestor’s hyper code until the method is found.
+This chain of calls is to be manually implemented as a simple design pattern in T and YASOS.
+JavaScript provides equivalent behavior through its builtin method resolution mechanism,
+that walks a “chain of prototypes” where each prototype’s @c{hyper}
+is explicitly reified as a datum, its @c{__proto__} attribute.
+
+Since all these languages have both first-class objects and first-class functions,
+one can implement mixin inheritance with
+functions that abstract over “the” super class of single inheritance.
+Then one can implement multiple inheritance on top of mixin inheritance with the usual construction.
+See @secref{IMSMO}.
+However, these constructions generate new data structures for each class,
+so that there is no sharing, unlike with plain single inheritance
+(see however the “best of both worlds”, @secref{OISMIT}).
+
+This inheritance mechanism walks the inheritance chain at every method call,
+which is efficient enough if the ancestries only use single inheritance and are shallow;
+it also trivially supports mutable inheritance hierarchies.
+However this mechanism does not scale well to large inheritance hierarchies.
+Now, caching of pre-computed effective methods can help with scaling,
+at the cost of making mutable inheritance much more complex
+(which is usually the correct option, see @secref{MoIaCU}).
+But at that point, Y-encoding becomes simpler than U-encoding.
+
+@Paragraph{Choosing U, Y?}
+
+In the end, U-encoding and Y-encoding are both equally capable for implementing
+the whole breadth of semantics of object systems, with many well-identified tradeoffs.
+Yet, U-encoding seems by far more popular. It seems to have been adopted, in many variants,
+by most implementations of most OO languages.
+Still, at least a few object implementations and academic papers use Y-encoding,
+including Nix, my own object systems and this book.
+
+Now while U-encoding is always a valid choice, I suspect there are times
+it is chosen despite the fact that Y-encoding would better suit the specific situation.
+And so what worries me is not the prevalence of U-encoding as such:
+it is the apparent broad ignorance among language designers and implementers
+of the existence of this choice, of the distinction between these two encodings,
+and of the broader design space for object representation (see @secref{EOI}).
+
+I haven’t run benchmarks, and so I won’t claim that one encoding is better than the other
+in some particular circumstance or another.
+But I deliberately chose Y-encoding as the one in which to present the theory of OO,
+and implement the code accompanying the book, because of the conceptual clarity it brings
+between the notions of target and specification, which is all-important to my theory.
+By contrast, U-encoding muddies the two with its half-resolved instances,
+and its widespread adoption probably contributes to the confusion between the two,
+as well as to the general misunderstanding about the semantics and purpose of OO.
+
+For in the end, an implementer’s choice between U-encoding or Y-encoding
+needn’t be exposed to regular programmers.
+In T and after it YASOS, an @emph{operation} abstracts over the U-encoded calling convention
+for sending messages to objects, and instead provides a regular function call interface,
+as well as a locus to define an operation-specific default behavior, and potentially more.
+Indeed, CLOS after CommonLoops generalizes this concept into that of @emph{generic function}
+(@secref{GF}):
+A generic function offers an interface isomorphic to the Y-encoding,
+modulo the exchange in the order of arguments, @c{(method-id object)}
+instead of @c{(object method-id)}.
+Thus, it is possible to nicely abstract away whether the underlying implementation
+uses one encoding or another@xnote["."]{
+  Note that by contrast, JavaScript not only doesn‘t offer an API
+  to abstract away its implementation details—it hardwires the low-level details
+  of how objects are implemented and how method lookup occurs.
+  On the one hand, a good mature object system might offer only a high-level API,
+  that maximizes expressiveness, offers more leeway to the implementer,
+  and minimizes the chances of bugs from low-level interference between code fragments.
+  On the other hand, JavaScript always had a quite immature and underpowered object system,
+  and exposing a low-level interface enables programmers to express themselves
+  in arbitrary ways while maintaining a common syntactic and semantic basis
+  for interaction between code from different libraries.
+  This book suggests that the pure lazy or stateful eager λ-calculus
+  would have been simpler and better,
+  plus optionally a layer of macro-expansion to provide syntactic abstraction.
+}
 
 @subsection{Small-Scale Advantages of Conflation: Performance, Sharing}
 
@@ -594,6 +732,11 @@ to effectively distinguish specification and target,
 yet no one seems to have been able to fully tease apart the concepts up until recently.
 
 @exercise[#:difficulty "Easy"]{
+  Read and make sense of the code I wrote for this chapter,
+  that you may find e.g. at
+  @url{https://github.com/metareflection/poof/blob/main/util/pommette.scm}
+}
+@exercise[#:difficulty "Easy"]{
   Reimplement the code from the previous chapter
   to use the @c{rproto} encoding above.
   Include both code I wrote, and code you wrote in exercises.
@@ -603,6 +746,13 @@ yet no one seems to have been able to fully tease apart the concepts up until re
   Play with it.
   Write a function that takes an object in YASOS encoding,
   and wraps it into an target record as per my minimal OO model.
+}
+@exercise[#:difficulty "Easy"]{
+  If given the half-resolved recursion schema @c{g=(f . U)} for a prototype,
+  how do you recover the modular extension @c{f}?@Note{
+    Hint: Find a right-inverse to the self-application combinator U.
+    While we’re at it, does U have a left-inverse?
+  }
 }
 @exercise[#:difficulty "Medium"]{
   Use Jsonnet, Nix, or some other Prototype OO language
@@ -763,7 +913,7 @@ Reppy, Rieke "Classes in ObjectML via Modules" 1996 FOOL3
 BruceCardelliPierce2006
 }
 
-@subsection{Parametric First-Class Type Descriptors}
+@subsection[#:tag "PFCTD"]{Parametric First-Class Type Descriptors}
 
 There are two main strategies to represent parametric types:
 “function of descriptors” vs “descriptor of functions”.
@@ -1232,7 +1382,7 @@ linear typing and subtyping.
 @~cite{LIL2012}
 }
 
-@subsection{Mutability of Inheritance as Code Upgrade}
+@subsection[#:tag "MoIaCU"]{Mutability of Inheritance as Code Upgrade}
 
 Keeping mutability orthogonal to OO as above works great as long as the fields are mutable,
 but the inheritance structure of specifications is immutable.

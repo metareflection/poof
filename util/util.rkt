@@ -107,11 +107,6 @@
       text
       (epigraph-attribution (or attribution -)))))))
 
-;; scribble/report subsubsub*section does not work https://github.com/racket/scribble/issues/540
-(define (Paragraph . x)
-  (list (html-elem (elem (bold x) "  "))
-        (tex-elem (elem (tex "\\paragraph{") x (tex "}")))))
-
 (define book-abstract-style
   (make-style
    #f
