@@ -3470,6 +3470,21 @@ and Fiech, Adrian",
 
 %% 1998
 
+@InProceedings{Okasaki1998,
+  author={Chris Okasaki and Andy Gill},
+  title={Fast Mergeable Integer Maps},
+  booktitle={Proceedings of the {ACM} {SIGPLAN} Workshop on {ML}},
+  pages={77--86},
+  month=sep,
+  year={1998},
+  url={https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.37.5452},
+  note={.
+    Original paper for a pure functional variant of big-endian Patricia tree (a.k.a. trie),
+    an efficient and popular way to represent finite maps indexed by integers
+    (that themselves could be the values of a hash function).
+  }
+}
+
 @article{Wadler1998,
   title={The Expression Problem},
   author={Philip Wadler},
@@ -3556,7 +3571,7 @@ and Fiech, Adrian",
   series={PLDI '99}
 }
 
-@InProceedings{Levy1999CBPV,
+@InProceedings{Levy1999,
   title={Call-by-Push-Value: A Subsuming Paradigm},
   year={1999},
   author={Blain Levy, Paul},
@@ -3640,6 +3655,26 @@ and Fiech, Adrian",
 }
 
 %% 2001
+
+@TechReport{Bagwell2001,
+  author={Phil Bagwell},
+  title={Ideal Hash Trees},
+  institution={EPFL},
+  year={2001},
+  number={LAMP-REPORT-2001-001},
+  url={https://lampwww.epfl.ch/papers/idealhashtrees.pdf},
+  note={.
+    Bagwell introduces a data structure that became popular for pure functional hash maps,
+    based on a big-endian trie of nodes indexed by hash-value,
+    with direct link to a “leaf” node with full key (not just hash) and value
+    when a sub-trie is sparse enough (and a “collision” node in the rare case that
+    a hash bucket has more than one element). The data structure also groups hash bits by 5,
+    so there is a 32-bit bitmap of which subtries are populated; the array of subtries is
+    compact, with popcount tricks to map from bit patterns to index in the compacted array
+    (reverse mapping not required because you only walk top down, and can just remember
+    the indexes along the way).
+  }
+}
 
 @InProceedings{Kiczales2001,
   author={Gregor Kiczales and Erik Hilsdale and Jim Hugunin and Mik Kersten and Jeffrey Palm and William G. Griswold},
@@ -4382,43 +4417,22 @@ and Fiech, Adrian",
 
 %% 2010
 
-@inproceedings{10.1145/1806596.1806631,
-author = {Might, Matthew and Smaragdakis, Yannis and Van Horn, David},
-title = {Resolving and exploiting the k-CFA paradox: illuminating functional vs. object-oriented program analysis},
-year = {2010},
-isbn = {9781450300193},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-url = {https://doi.org/10.1145/1806596.1806631},
-doi = {10.1145/1806596.1806631},
-abstract = {Low-level program analysis is a fundamental problem, taking the shape of "flow analysis" in functional languages and "points-to" analysis in imperative and object-oriented languages. Despite the similarities, the vocabulary and results in the two communities remain largely distinct, with limited cross-understanding. One of the few links is Shivers's k-CFA work, which has advanced the concept of "context-sensitive analysis" and is widely known in both communities.Recent results indicate that the relationship between the functional and object-oriented incarnations of k-CFA is not as well understood as thought. Van Horn and Mairson proved k-CFA for k ≥ 1 to be EXPTIME-complete; hence, no polynomial-time algorithm can exist. Yet, there are several polynomial-time formulations of context-sensitive points-to analyses in object-oriented languages. Thus, it seems that functional k-CFA may actually be a profoundly different analysis from object-oriented k-CFA. We resolve this paradox by showing that the exact same specification of k-CFA is polynomial-time for object-oriented languages yet exponential-time for functional ones: objects and closures are subtly different, in a way that interacts crucially with context-sensitivity and complexity. This illumination leads to an immediate payoff: by projecting the object-oriented treatment of objects onto closures, we derive a polynomial-time hierarchy of context-sensitive CFAs for functional programs.},
-booktitle = {Proceedings of the 31st ACM SIGPLAN Conference on Programming Language Design and Implementation},
-pages = {305–315},
-numpages = {11},
-keywords = {static analysis, pointer analysis, object-oriented, m-cfa, k-cfa, functional, control-flow analysis},
-location = {Toronto, Ontario, Canada},
-series = {PLDI '10}
-}
-
-
-@article{Might2010,
-  author = {Matthew Might and Yannis Smaragdakis and David Van Horn},
-  title = {Resolving and exploiting the k-CFA paradox: illuminating functional vs. object-oriented program analysis},
-  year = {2010},
-  issue_date = {June 2010},
-  publisher = {Association for Computing Machinery},
-  address = {New York, NY, USA},
-  volume = {45},
-  number = {6},
-  issn = {0362-1340},
-  url = {https://doi.org/10.1145/1809028.1806631},
-  doi = {10.1145/1809028.1806631},
-  abstract = {Low-level program analysis is a fundamental problem, taking the shape of "flow analysis" in functional languages and "points-to" analysis in imperative and object-oriented languages. Despite the similarities, the vocabulary and results in the two communities remain largely distinct, with limited cross-understanding. One of the few links is Shivers's k-CFA work, which has advanced the concept of "context-sensitive analysis" and is widely known in both communities.Recent results indicate that the relationship between the functional and object-oriented incarnations of k-CFA is not as well understood as thought. Van Horn and Mairson proved k-CFA for k ≥ 1 to be EXPTIME-complete; hence, no polynomial-time algorithm can exist. Yet, there are several polynomial-time formulations of context-sensitive points-to analyses in object-oriented languages. Thus, it seems that functional k-CFA may actually be a profoundly different analysis from object-oriented k-CFA. We resolve this paradox by showing that the exact same specification of k-CFA is polynomial-time for object-oriented languages yet exponential-time for functional ones: objects and closures are subtly different, in a way that interacts crucially with context-sensitivity and complexity. This illumination leads to an immediate payoff: by projecting the object-oriented treatment of objects onto closures, we derive a polynomial-time hierarchy of context-sensitive CFAs for functional programs.},
-  journal = {SIGPLAN Not.},
-  month = jun,
-  pages = {305–315},
-  numpages = {11},
-  keywords = {static analysis, pointer analysis, object-oriented, m-cfa, k-cfa, functional, control-flow analysis},
+@InProceedings{Might2010,
+  author={Might, Matthew and Smaragdakis, Yannis and Van Horn, David},
+  title={Resolving and exploiting the k-CFA paradox: illuminating functional vs. object-oriented program analysis},
+  year={2010},
+  isbn={9781450300193},
+  publisher={Association for Computing Machinery},
+  address={New York, NY, USA},
+  url={https://doi.org/10.1145/1806596.1806631},
+  doi={10.1145/1806596.1806631},
+  abstract={Low-level program analysis is a fundamental problem, taking the shape of "flow analysis" in functional languages and "points-to" analysis in imperative and object-oriented languages. Despite the similarities, the vocabulary and results in the two communities remain largely distinct, with limited cross-understanding. One of the few links is Shivers's k-CFA work, which has advanced the concept of "context-sensitive analysis" and is widely known in both communities.Recent results indicate that the relationship between the functional and object-oriented incarnations of k-CFA is not as well understood as thought. Van Horn and Mairson proved k-CFA for k ≥ 1 to be EXPTIME-complete; hence, no polynomial-time algorithm can exist. Yet, there are several polynomial-time formulations of context-sensitive points-to analyses in object-oriented languages. Thus, it seems that functional k-CFA may actually be a profoundly different analysis from object-oriented k-CFA. We resolve this paradox by showing that the exact same specification of k-CFA is polynomial-time for object-oriented languages yet exponential-time for functional ones: objects and closures are subtly different, in a way that interacts crucially with context-sensitivity and complexity. This illumination leads to an immediate payoff: by projecting the object-oriented treatment of objects onto closures, we derive a polynomial-time hierarchy of context-sensitive CFAs for functional programs.},
+  booktitle={Proceedings of the 31st ACM SIGPLAN Conference on Programming Language Design and Implementation},
+  pages={305–315},
+  numpages={11},
+  keywords={static analysis, pointer analysis, object-oriented, m-cfa, k-cfa, functional, control-flow analysis},
+  location={Toronto, Ontario, Canada},
+  series={PLDI '10},
   note={.
     The authors note how the complexity of k-CFA (Control Flow Analysis with context of depth k)
     was proven EXPTIME-complete for FP, yet polynomial for OOP;
@@ -4749,6 +4763,21 @@ series = {PLDI '10}
 }
 
 %% 2015
+
+@InProceedings{Steindorfer2015,
+  author={Michael Steindorfer and Jurgen J. Vinju},
+  title={Optimizing Hash-Array Mapped Tries for Fast and Lean Immutable JVM Collections},
+  booktitle={Proceedings of the 2015 ACM SIGPLAN International Conference on Object-Oriented Programming, Systems, Languages, and Applications (OOPSLA)},
+  year={2015},
+  doi={10.1145/2814270.2814312},
+  note={.
+    CHAMP is an improvement over the HAMT of Bagwell 2001, allowing for fewer type checks
+    by segregating the children of each node into two separate groups, marked by exclusive bitmaps,
+    the direct leaves (a common case, because the hash space is seldom saturated) and
+    the subnodes. Separate iteration for the two kinds of children works well because there
+    is no guarantee of monotonic hash values when iterating hash bindings.
+  }
+}
 
 @webpage{Bertot2015,
   title={Lambda-calculus and types},
@@ -5673,3 +5702,6 @@ series = {PLDI '10}
 % ch27 discusses classes and instances.
 
 % https://github.com/IUCompilerCourse/public-student-support-code
+% https://t.co/N9XvyHzwtO https://uc741c837fd0942d84d7b2c06c6a.dl.dropboxusercontent.com/cd/0/get/C9Z6dUVXWqqS5dHs6331gmT4s7eBqzZI9jjO7sQiOr18NHwZUNGH0h4QY5-Y19H0utJCvveG5g3dkocofjpKr1GzRBqp0_6TsRQ6_HK7nbnK-9G3bDq2Iw4G8qE3S0xJawOe8cjbJfMT5_eq71dYUVpF/file
+
+% https://openlibrary.org/books/OL387681M/Prototype-based_programming

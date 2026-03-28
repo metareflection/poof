@@ -5,14 +5,8 @@
 
 @title[#:tag "EtSoO"]{Extending the Scope of OO}
 @epigraph{
-  The psychological profile [of a programmer] is mostly
-  the ability to shift levels of abstraction, from low level to high level.
-  To see something in the small and to see something in the large.
-  When you’re writing a program, you’re saying, ‘Add one to the counter,’
-  but you know why you’re adding one to the counter.
-  You can step back and see a picture of the way a process is moving.
-  Computer scientists see things simultaneously at the low level and the high level.
-    @|#:- "Donald Knuth"|
+  If I have seen further it is by standing on the shoulders of giants.
+  @|#:- "Isaac Newton"|
 }
 @section{Optics for OO}
 @; https://golem.ph.utexas.edu/category/2020/01/profunctor_optics_the_categori.html
@@ -2139,9 +2133,10 @@ or will level the playing field in favor of new languages, static or dynamic.
   Optionally, implement the semantics of Beta instead of that of Simula,
   or in addition to it@xnote["."]{
     Note that in the case of Beta, much of the difficulty is in
-    understanding its semantics to begin with, based on the available documentation.
+    understanding its semantics to begin with,
+    based on the @italic{sui generis} nature of the little available documentation.
     See my notes on @citet{Kristensen1987Beta}, or
-    ask AI for help understanding the Beta documentation.
+    ask AI for help understanding Beta and its documentation.
 }}
 
 @exercise[#:difficulty "Medium"]{

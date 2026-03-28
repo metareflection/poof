@@ -945,7 +945,7 @@ without duplication of computation costs or side-effects@xnote["."]{
   ultimately the fixpoint combinator iterates indefinitely on a @emph{computation},
   and this wrapping is a case of mapping computations into values in an otherwise
   call-by-value model that requires you to talk about values.
-  In a calculus such as call-by-push-value@~cite{Levy1999CBPV},
+  In a calculus such as call-by-push-value@~cite{Levy1999},
   where values and computations live in distinct type universes,
   the fixpoint combinator would clearly be mapping
   computations to computations without having to go through the universe of values.

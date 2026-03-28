@@ -917,3 +917,7 @@ https://github.com/marcoheisig/fast-generic-functions
 
 CLIM presentation types implemented using the MOP
 https://www.jucs.org/jucs_14_20/an_implementation_of_clim/jucs_14_20_3358_3369_moore.pdf
+
+
+One thing Beta got almost but not quite right is that named function arguments with defaults and prototypes with holes (undefined attributes that become mandatory input arguments) are essentially the same thing.
+
