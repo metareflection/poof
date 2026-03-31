@@ -573,8 +573,4 @@ public:
 template <typename Spec>
 using GetPrecedenceList_t = typename C4Linearize<Spec>::precedence_list;
 
-// Alias: CPL == precedence list
-template <typename Spec>
-using GetCPL_t = GetPrecedenceList_t<Spec>;
-
 } // namespace c4

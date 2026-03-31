@@ -22,7 +22,7 @@ using c4::examples::C4N;
 // ── Suffix specs (stable "base layer", always at the tail of any CPL) ────────
 
 // Universal root — no parents.
-template <typename Super>
+template <typename Self, typename Super>
 struct Object : public Super {
     using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = true;
@@ -32,7 +32,7 @@ struct Object : public Super {
 };
 
 // Named: extends Object, adds a name field.
-template <typename Super>
+template <typename Self, typename Super>
 struct Named : public Super {
     using __c4__parents = TypeList<SpecList<Object>>;
     static constexpr bool __c4__is_suffix = true;
@@ -45,7 +45,7 @@ struct Named : public Super {
 // ── Infix specs (domain logic; suffix ancestors stay at the tail) ─────────────
 
 // Printable: infix mixin that uses the name field from the suffix ancestor Named.
-template <typename Super>
+template <typename Self, typename Super>
 struct Printable : public Super {
     using __c4__parents = TypeList<SpecList<Named>>;
     static constexpr bool __c4__is_suffix = false;
@@ -56,7 +56,7 @@ struct Printable : public Super {
 };
 
 // Loggable: infix mixin, also uses Named.
-template <typename Super>
+template <typename Self, typename Super>
 struct Loggable : public Super {
     using __c4__parents = TypeList<SpecList<Named>>;
     static constexpr bool __c4__is_suffix = false;
@@ -71,7 +71,7 @@ struct Loggable : public Super {
 // Service: combines Printable and Loggable.
 // CPL: [Service, Printable, Loggable, Named, Object]
 // Named and Object stay at the end because they are suffix specs.
-template <typename Super>
+template <typename Self, typename Super>
 struct Service : public Super {
     using __c4__parents = TypeList<SpecList<Printable, Loggable>>;
     static constexpr bool __c4__is_suffix = false;
@@ -81,16 +81,6 @@ struct Service : public Super {
 };
 
 using Service_Class = C4N<Service>;
-
-// ── Suffix subtyping checks (compile-time) ────────────────────────────────────
-// Suffix ancestors appear as literal base classes in the mixin chain, so
-// C4<X> is-a C4<Z> for any suffix ancestor Z — no virtual bases needed.
-
-static_assert(std::is_base_of_v<C4<Named>,    C4<Service>>,   "C4<Service> is-a C4<Named>");
-static_assert(std::is_base_of_v<C4<Object>,   C4<Service>>,   "C4<Service> is-a C4<Object>");
-static_assert(std::is_base_of_v<C4<Named>,    C4<Printable>>, "C4<Printable> is-a C4<Named>");
-static_assert(std::is_base_of_v<C4<Named>,    C4<Loggable>>,  "C4<Loggable> is-a C4<Named>");
-static_assert(std::is_base_of_v<C4<Object>,   C4<Named>>,     "C4<Named> is-a C4<Object>");
 
 int main() {
     Service_Class svc;
@@ -107,14 +97,6 @@ int main() {
 
     svc.print();
     svc.log("started");
-
-    // Safe upcast to suffix ancestor types.
-    // Service_Class = C4N<Service> = C4<Service, MixinNames>, so upcast targets
-    // must use the same base — C4N<Named> = C4<Named, MixinNames>.
-    C4N<Named>*  as_named  = &svc;
-    C4N<Object>* as_object = &svc;
-    std::cout << "Upcast to C4N<Named>:  " << (as_named  ? "ok" : "fail") << "\n";
-    std::cout << "Upcast to C4N<Object>: " << (as_object ? "ok" : "fail") << "\n";
 
     return 0;
 }

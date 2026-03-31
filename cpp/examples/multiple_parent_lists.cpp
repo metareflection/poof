@@ -23,7 +23,7 @@
 using namespace c4;
 using c4::examples::C4N;
 
-template <typename Super>
+template <typename Self, typename Super>
 struct O : public Super {
     using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = false;
@@ -32,7 +32,7 @@ struct O : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct A : public Super {
     using __c4__parents = TypeList<SpecList<O>>;
     static constexpr bool __c4__is_suffix = false;
@@ -41,7 +41,7 @@ struct A : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct B : public Super {
     using __c4__parents = TypeList<SpecList<O>>;
     static constexpr bool __c4__is_suffix = false;
@@ -50,7 +50,7 @@ struct B : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct C : public Super {
     using __c4__parents = TypeList<SpecList<O>>;
     static constexpr bool __c4__is_suffix = false;
@@ -64,7 +64,7 @@ struct C : public Super {
 //   List 2: SpecList<C>    — no positional constraint relative to A or B
 //
 // C3 determines the unique valid linearization: MultiParentList A B C O
-template <typename Super>
+template <typename Self, typename Super>
 struct MultiParentList : public Super {
     using __c4__parents = TypeList<SpecList<A, B>, SpecList<C>>;
     static constexpr bool __c4__is_suffix = false;

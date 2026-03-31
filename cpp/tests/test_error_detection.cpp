@@ -12,7 +12,7 @@ using namespace c4::meta;
 using c4::examples::C4N;
 
 // Local helper: a spec is composable iff its internal graph has no cycle.
-template <template<typename> class Spec>
+template <template<typename, typename> class Spec>
 inline constexpr bool CanCompose_v = !HasCycle_v<MakeSpecInternal_t<Spec>>;
 
 // =============================================================================
@@ -48,7 +48,7 @@ void test() {
 
 namespace test_confused_grid {
 
-template <typename Super>
+template <typename Self, typename Super>
 struct HG : public Super {  // Horizontal guide
     using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = false;
@@ -59,7 +59,7 @@ struct HG : public Super {  // Horizontal guide
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct VG : public Super {  // Vertical guide
     using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = false;
@@ -70,7 +70,7 @@ struct VG : public Super {  // Vertical guide
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct HVG : public Super {  // Horizontal-then-vertical
     using __c4__parents = TypeList<SpecList<HG, VG>>;
     static constexpr bool __c4__is_suffix = false;
@@ -81,7 +81,7 @@ struct HVG : public Super {  // Horizontal-then-vertical
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct VHG : public Super {  // Vertical-then-horizontal (conflict with HVG!)
     using __c4__parents = TypeList<SpecList<VG, HG>>;
     static constexpr bool __c4__is_suffix = false;
@@ -112,7 +112,7 @@ void test() {
 
 namespace test_valid {
 
-template <typename Super>
+template <typename Self, typename Super>
 struct ValidBase : public Super {
     using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = false;
@@ -123,7 +123,7 @@ struct ValidBase : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct ValidDerived : public Super {
     using __c4__parents = TypeList<SpecList<ValidBase>>;
     static constexpr bool __c4__is_suffix = false;
@@ -134,7 +134,7 @@ struct ValidDerived : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct ValidDiamond : public Super {
     using __c4__parents = TypeList<SpecList<ValidDerived, ValidBase>>;
     static constexpr bool __c4__is_suffix = false;
@@ -177,7 +177,7 @@ void test() {
 
 namespace test_cycle_check {
 
-template <typename Super>
+template <typename Self, typename Super>
 struct GoodSpec : public Super {
     using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = false;

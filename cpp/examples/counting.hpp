@@ -13,7 +13,7 @@
 namespace c4 {
 namespace examples {
 
-template <typename Super>
+template <typename Self, typename Super>
 class Counting : public Super {
     int nodes_visited = 0;
     int edges_visited = 0;

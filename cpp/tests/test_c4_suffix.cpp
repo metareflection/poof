@@ -54,7 +54,7 @@ bool verifyCPL(const std::vector<std::string>& actual,
 namespace suffix_compatible {
 
 // Base suffix specs
-template <typename Super>
+template <typename Self, typename Super>
 struct SBA : public Super {
     using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = true;
@@ -65,7 +65,7 @@ struct SBA : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct SBB : public Super {
     using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = true;
@@ -77,7 +77,7 @@ struct SBB : public Super {
 };
 
 // SBS inherits from SBA (both suffix)
-template <typename Super>
+template <typename Self, typename Super>
 struct SBS : public Super {
     using __c4__parents = TypeList<SpecList<SBA>>;
     static constexpr bool __c4__is_suffix = true;
@@ -89,7 +89,7 @@ struct SBS : public Super {
 };
 
 // sBs inherits from SBA (both suffix)
-template <typename Super>
+template <typename Self, typename Super>
 struct sBs : public Super {
     using __c4__parents = TypeList<SpecList<SBA>>;
     static constexpr bool __c4__is_suffix = true;
@@ -101,7 +101,7 @@ struct sBs : public Super {
 };
 
 // SBC inherits from SBS and SBB (suffix)
-template <typename Super>
+template <typename Self, typename Super>
 struct SBC : public Super {
     using __c4__parents = TypeList<SpecList<SBS, SBB>>;
     static constexpr bool __c4__is_suffix = true;
@@ -133,7 +133,7 @@ bool runTests() {
 namespace mixed_infix_suffix {
 
 // O is a suffix spec (base)
-template <typename Super>
+template <typename Self, typename Super>
 struct O : public Super {
     using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = true;
@@ -145,7 +145,7 @@ struct O : public Super {
 };
 
 // A is infix, inherits from suffix O
-template <typename Super>
+template <typename Self, typename Super>
 struct A : public Super {
     using __c4__parents = TypeList<SpecList<O>>;
     static constexpr bool __c4__is_suffix = false;
@@ -157,7 +157,7 @@ struct A : public Super {
 };
 
 // B is infix, inherits from infix A (which has suffix O in CPL)
-template <typename Super>
+template <typename Self, typename Super>
 struct B : public Super {
     using __c4__parents = TypeList<SpecList<A>>;
     static constexpr bool __c4__is_suffix = false;
@@ -189,7 +189,7 @@ bool runTests() {
 namespace complex_suffix {
 
 // Linear suffix chain
-template <typename Super>
+template <typename Self, typename Super>
 struct S1 : public Super {
     using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = true;
@@ -200,7 +200,7 @@ struct S1 : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct S2 : public Super {
     using __c4__parents = TypeList<SpecList<S1>>;
     static constexpr bool __c4__is_suffix = true;
@@ -211,7 +211,7 @@ struct S2 : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct S3 : public Super {
     using __c4__parents = TypeList<SpecList<S2>>;
     static constexpr bool __c4__is_suffix = true;
@@ -222,7 +222,7 @@ struct S3 : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct S4 : public Super {
     using __c4__parents = TypeList<SpecList<S3>>;
     static constexpr bool __c4__is_suffix = true;
@@ -234,7 +234,7 @@ struct S4 : public Super {
 };
 
 // Infix spec inheriting from middle of chain
-template <typename Super>
+template <typename Self, typename Super>
 struct I : public Super {
     using __c4__parents = TypeList<SpecList<S2>>;
     static constexpr bool __c4__is_suffix = false;
@@ -280,7 +280,7 @@ bool runTests() {
 
 namespace multiple_parent_lists {
 
-template <typename Super>
+template <typename Self, typename Super>
 struct O : public Super {
     using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = false;
@@ -291,7 +291,7 @@ struct O : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct A : public Super {
     using __c4__parents = TypeList<SpecList<O>>;
     static constexpr bool __c4__is_suffix = false;
@@ -302,7 +302,7 @@ struct A : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct B : public Super {
     using __c4__parents = TypeList<SpecList<O>>;
     static constexpr bool __c4__is_suffix = false;
@@ -313,7 +313,7 @@ struct B : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct C : public Super {
     using __c4__parents = TypeList<SpecList<O>>;
     static constexpr bool __c4__is_suffix = false;
@@ -327,7 +327,7 @@ struct C : public Super {
 // Two independent ordering groups: [A, B] and [C].
 // Equivalent semantics to TypeList<SpecList<A, B, C>> for this hierarchy,
 // but the relative ordering between C and {A,B} is not locally constrained.
-template <typename Super>
+template <typename Self, typename Super>
 struct MultiParentList : public Super {
     using __c4__parents = TypeList<SpecList<A, B>, SpecList<C>>;
     static constexpr bool __c4__is_suffix = false;
@@ -353,73 +353,6 @@ bool runTests() {
 } // namespace multiple_parent_lists
 
 // =============================================================================
-// Suffix Subtyping Property Test
-// =============================================================================
-// Demonstrates that C4<X> is a C++ subtype of C4<Z> whenever Z is a suffix
-// ancestor of X.
-//
-// This is an *emergent* property, not an explicitly engineered one:
-//
-//   C4Linearize guarantees (via MergeSuffixLists + MergeTwoSuffixes) that the
-//   suffix tail of X's CPL is exactly the full CPL of the most-specific suffix
-//   ancestor — call it Z1.  ChainMixins then folds the reversed CPL starting
-//   from Base (e.g. Mixin), so it builds:
-//
-//     X< ... <Z1<Z2<...<Zk<Mixin>>...>>>
-//
-//   Independently, C4<Z1> = ChainMixins([Zk,...,Z1], Mixin) = Z1<Z2<...<Zk<Mixin>>>.
-//   Because ChainMixins applies the same suffix subsequence in the same order in
-//   both cases, C4<Z1> appears *literally* as a C++ base class inside C4<X>.
-//   C++ base-class transitivity then gives C4<X> is-a C4<Z> for every suffix
-//   ancestor Z.
-//
-//   Note: C4Linearize does compute `most_specific_suffix` in every case, but
-//   ComposeImpl does not use it — the subtyping guarantee falls out of the
-//   algorithm structure rather than being wired in explicitly.
-
-namespace suffix_subtyping {
-
-// SBase: root suffix spec (no parents)
-template <typename Super>
-struct SBase : public Super {
-    using __c4__parents = TypeList<>;
-    static constexpr bool __c4__is_suffix = true;
-};
-
-// SChild: suffix spec that extends SBase
-template <typename Super>
-struct SChild : public Super {
-    using __c4__parents = TypeList<SpecList<SBase>>;
-    static constexpr bool __c4__is_suffix = true;
-};
-
-// InfixM: infix mixin whose suffix ancestor chain is SChild -> SBase
-template <typename Super>
-struct InfixM : public Super {
-    using __c4__parents = TypeList<SpecList<SChild>>;
-    static constexpr bool __c4__is_suffix = false;
-};
-
-// C4<InfixM> = InfixM<SChild<SBase<Mixin>>>, so C4<SChild> and C4<SBase> are
-// literal base classes — verified here both statically and at runtime.
-static_assert(std::is_base_of_v<C4<SBase>,  C4<InfixM>>, "C4<InfixM> should be subtype of C4<SBase>");
-static_assert(std::is_base_of_v<C4<SChild>, C4<InfixM>>, "C4<InfixM> should be subtype of C4<SChild>");
-
-bool test_suffix_subtyping() {
-    C4<InfixM> obj;
-    // Can upcast to suffix ancestor types
-    C4<SChild>* as_schild = &obj;
-    C4<SBase>*  as_sbase  = &obj;
-    std::cout << "Suffix subtyping:\n";
-    std::cout << "  C4<InfixM> IS-A C4<SChild>: " << (as_schild != nullptr ? "true" : "false") << "\n";
-    std::cout << "  C4<InfixM> IS-A C4<SBase>:  " << (as_sbase  != nullptr ? "true" : "false") << "\n";
-    std::cout << "  (static_asserts above already proved these at compile time)\n";
-    return true;
-}
-
-} // namespace suffix_subtyping
-
-// =============================================================================
 // Main
 // =============================================================================
 
@@ -433,9 +366,6 @@ int main() {
     all_passed &= mixed_infix_suffix::runTests();
     all_passed &= complex_suffix::runTests();
     all_passed &= multiple_parent_lists::runTests();
-
-    all_passed &= suffix_subtyping::test_suffix_subtyping();
-    std::cout << "Suffix subtyping: passed\n\n";
 
     if (all_passed) {
         std::cout << "All C4 suffix tests passed!\n";

@@ -53,7 +53,7 @@ using namespace c4;
 using c4::examples::C4N;
 
 // Base spec - no parents
-template <typename Super>
+template <typename Self, typename Super>
 struct O : public Super {
     using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = false;
@@ -63,7 +63,7 @@ struct O : public Super {
 };
 
 // A and B each inherit from O
-template <typename Super>
+template <typename Self, typename Super>
 struct A : public Super {
     using __c4__parents = TypeList<SpecList<O>>;
     static constexpr bool __c4__is_suffix = false;
@@ -72,7 +72,7 @@ struct A : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct B : public Super {
     using __c4__parents = TypeList<SpecList<O>>;
     static constexpr bool __c4__is_suffix = false;
@@ -82,7 +82,7 @@ struct B : public Super {
 };
 
 // Diamond inherits from both A and B
-template <typename Super>
+template <typename Self, typename Super>
 struct Diamond : public Super {
     using __c4__parents = TypeList<SpecList<A, B>>;
     static constexpr bool __c4__is_suffix = false;
@@ -108,10 +108,11 @@ int main() {
 }
 ```
 
-“Suffix property”: suffix specs (marked `__c4__is_suffix = true`) are guaranteed to have
-their class precedence list as the suffix of any descendent’s class precedence list,
-enabling fixed-offset field access. Suffix specs in a given class’s ancestry
-are always in a total order, though some classes in between them might not.
+“Suffix property”: suffix specs (marked `static constexpr bool __c4__is_suffix = true`)
+are guaranteed to have their class precedence list as the suffix of
+any descendent’s class precedence list, enabling fixed-offset field access.
+Suffix specs in a given class’s ancestry are always in a total order,
+though some infix (i.e. not-suffix) classes in between them might not.
 
 ## Examples
 
@@ -125,7 +126,8 @@ g++ -std=c++20 -Iinclude examples/<name>.cpp -o build/<name> && build/<name>
 | File | Demonstrates |
 |------|-------------|
 | `examples/diamond.cpp` | Basic diamond inheritance; canonical C4 usage with `C4N<>` |
-| `examples/suffix.cpp` | Suffix specs (`__c4__is_suffix = true`), fixed-tail CPL placement, and suffix subtyping: `C4<X>` is-a `C4<Y>` for every suffix ancestor `Y` |
+| `examples/interface.cpp` | Shows how to inherit from an interface or abstract class |
+| `examples/suffix.cpp` | Suffix specs (`__c4__is_suffix = true`), fixed-tail CPL placement |
 | `examples/multiple_parent_lists.cpp` | Multiple independent parent lists: `TypeList<SpecList<A,B>, SpecList<C>>` |
 | `examples/mixin_names.hpp` | `MixinNames` base and `C4N<Spec>` alias — used by examples and tests that need `collectNames` |
 | `examples/counting.hpp` | `Counting` mixin tracking nodes/edges visited; illustrates stateful mixins |
@@ -201,10 +203,3 @@ Explains the basic approach to implementing Mixin inheritance on top of C++ temp
 
 ## TODO
 
-* Replace unary templates Mixin<Super> by binary templates Minx<Self,Super> ?
-* Have some template Tail<Self,Super> that yields the Tail of Self's precedence list starting at Super
-* Have some way to statically check that some Mixin is in the ancestors of a C4 Class
-* Have some way to write a template that is parametric over a C4 Class
-  that descents from a given set ancestors?
-* Allow dynamic dispatch over descendents of a C4 Class:
-  the C4 class inherits from some virtual base class that declares the functions?

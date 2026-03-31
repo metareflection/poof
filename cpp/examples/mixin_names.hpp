@@ -20,7 +20,7 @@ struct MixinNames : public Mixin {
 };
 
 // C4N<Spec>: compose Spec with MixinNames as the chain root.
-template <template<typename> class Spec>
+template <template<typename, typename> class Spec>
 using C4N = C4<Spec, MixinNames>;
 
 } // namespace examples

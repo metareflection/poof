@@ -74,7 +74,7 @@ bool verifyCPL(const std::vector<std::string>& actual,
 namespace wiki2021 {
 
 // Unified spec pattern: spec IS the mixin
-template <typename Super>
+template <typename Self, typename Super>
 struct O : public Super {
     using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = false;
@@ -85,7 +85,7 @@ struct O : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct A : public Super {
     using __c4__parents = TypeList<SpecList<O>>;
     static constexpr bool __c4__is_suffix = false;
@@ -96,7 +96,7 @@ struct A : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct B : public Super {
     using __c4__parents = TypeList<SpecList<O>>;
     static constexpr bool __c4__is_suffix = false;
@@ -107,7 +107,7 @@ struct B : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct C : public Super {
     using __c4__parents = TypeList<SpecList<O>>;
     static constexpr bool __c4__is_suffix = false;
@@ -118,7 +118,7 @@ struct C : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct D : public Super {
     using __c4__parents = TypeList<SpecList<O>>;
     static constexpr bool __c4__is_suffix = false;
@@ -129,7 +129,7 @@ struct D : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct E : public Super {
     using __c4__parents = TypeList<SpecList<O>>;
     static constexpr bool __c4__is_suffix = false;
@@ -140,7 +140,7 @@ struct E : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct K1 : public Super {
     using __c4__parents = TypeList<SpecList<A, B, C>>;
     static constexpr bool __c4__is_suffix = false;
@@ -151,7 +151,7 @@ struct K1 : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct K2 : public Super {
     using __c4__parents = TypeList<SpecList<D, B, E>>;
     static constexpr bool __c4__is_suffix = false;
@@ -162,7 +162,7 @@ struct K2 : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct K3 : public Super {
     using __c4__parents = TypeList<SpecList<D, A>>;
     static constexpr bool __c4__is_suffix = false;
@@ -173,7 +173,7 @@ struct K3 : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct Z : public Super {
     using __c4__parents = TypeList<SpecList<K1, K2, K3>>;
     static constexpr bool __c4__is_suffix = false;
@@ -209,7 +209,7 @@ bool runRuntimeTests() {
 
 namespace wiki2023 {
 
-template <typename Super>
+template <typename Self, typename Super>
 struct O : public Super {
     using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = false;
@@ -220,7 +220,7 @@ struct O : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct A : public Super {
     using __c4__parents = TypeList<SpecList<O>>;
     static constexpr bool __c4__is_suffix = false;
@@ -231,7 +231,7 @@ struct A : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct B : public Super {
     using __c4__parents = TypeList<SpecList<O>>;
     static constexpr bool __c4__is_suffix = false;
@@ -242,7 +242,7 @@ struct B : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct J1 : public Super {
     using __c4__parents = TypeList<SpecList<A>>;
     static constexpr bool __c4__is_suffix = false;
@@ -253,7 +253,7 @@ struct J1 : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct J2 : public Super {
     using __c4__parents = TypeList<SpecList<A, B>>;
     static constexpr bool __c4__is_suffix = false;
@@ -264,7 +264,7 @@ struct J2 : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct J3 : public Super {
     using __c4__parents = TypeList<SpecList<B>>;
     static constexpr bool __c4__is_suffix = false;
@@ -275,7 +275,7 @@ struct J3 : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct Y : public Super {
     using __c4__parents = TypeList<SpecList<J1, J2, J3>>;
     static constexpr bool __c4__is_suffix = false;
@@ -309,7 +309,7 @@ bool runRuntimeTests() {
 
 namespace boat {
 
-template <typename Super>
+template <typename Self, typename Super>
 struct DB : public Super {  // DayBoat
     using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = false;
@@ -320,7 +320,7 @@ struct DB : public Super {  // DayBoat
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct WB : public Super {  // WheelBoat
     using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = false;
@@ -331,7 +331,7 @@ struct WB : public Super {  // WheelBoat
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct EL : public Super {  // EngineLess
     using __c4__parents = TypeList<SpecList<DB>>;
     static constexpr bool __c4__is_suffix = false;
@@ -342,7 +342,7 @@ struct EL : public Super {  // EngineLess
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct SM : public Super {  // SmallMultihull
     using __c4__parents = TypeList<SpecList<DB>>;
     static constexpr bool __c4__is_suffix = false;
@@ -353,7 +353,7 @@ struct SM : public Super {  // SmallMultihull
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct PWB : public Super {  // PowerWheelBoat
     using __c4__parents = TypeList<SpecList<WB>>;
     static constexpr bool __c4__is_suffix = false;
@@ -364,7 +364,7 @@ struct PWB : public Super {  // PowerWheelBoat
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct SC : public Super {  // SmallCatamaran
     using __c4__parents = TypeList<SpecList<SM>>;
     static constexpr bool __c4__is_suffix = false;
@@ -375,7 +375,7 @@ struct SC : public Super {  // SmallCatamaran
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct P : public Super {  // Pedalo
     using __c4__parents = TypeList<SpecList<EL, PWB, SC>>;
     static constexpr bool __c4__is_suffix = false;
@@ -409,7 +409,7 @@ bool runRuntimeTests() {
 
 namespace stackoverflow {
 
-template <typename Super>
+template <typename Self, typename Super>
 struct HH : public Super {
     using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = false;
@@ -420,7 +420,7 @@ struct HH : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct GG : public Super {
     using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = false;
@@ -431,7 +431,7 @@ struct GG : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct II : public Super {
     using __c4__parents = TypeList<SpecList<HH>>;
     static constexpr bool __c4__is_suffix = false;
@@ -442,7 +442,7 @@ struct II : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct FF : public Super {
     using __c4__parents = TypeList<SpecList<HH, GG>>;
     static constexpr bool __c4__is_suffix = false;
@@ -453,7 +453,7 @@ struct FF : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct EE : public Super {
     using __c4__parents = TypeList<SpecList<II, FF>>;
     static constexpr bool __c4__is_suffix = false;
@@ -464,7 +464,7 @@ struct EE : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct DD : public Super {
     using __c4__parents = TypeList<SpecList<FF>>;
     static constexpr bool __c4__is_suffix = false;
@@ -475,7 +475,7 @@ struct DD : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct CC : public Super {
     using __c4__parents = TypeList<SpecList<EE, DD>>;
     static constexpr bool __c4__is_suffix = false;
@@ -486,7 +486,7 @@ struct CC : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct BB : public Super {
     using __c4__parents = TypeList<SpecList<EE>>;
     static constexpr bool __c4__is_suffix = false;
@@ -497,7 +497,7 @@ struct BB : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct AA : public Super {
     using __c4__parents = TypeList<SpecList<CC, BB>>;
     static constexpr bool __c4__is_suffix = false;

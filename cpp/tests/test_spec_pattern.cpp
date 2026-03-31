@@ -15,7 +15,7 @@ using c4::examples::C4N;
 // =============================================================================
 
 // Base spec - no parents
-template <typename Super>
+template <typename Self, typename Super>
 struct O : public Super {
     using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = false;
@@ -27,7 +27,7 @@ struct O : public Super {
 };
 
 // A inherits from O
-template <typename Super>
+template <typename Self, typename Super>
 struct A : public Super {
     using __c4__parents = TypeList<SpecList<O>>;
     static constexpr bool __c4__is_suffix = false;
@@ -39,7 +39,7 @@ struct A : public Super {
 };
 
 // B inherits from O
-template <typename Super>
+template <typename Self, typename Super>
 struct B : public Super {
     using __c4__parents = TypeList<SpecList<O>>;
     static constexpr bool __c4__is_suffix = false;
@@ -51,7 +51,7 @@ struct B : public Super {
 };
 
 // Diamond inherits from A and B
-template <typename Super>
+template <typename Self, typename Super>
 struct Diamond : public Super {
     using __c4__parents = TypeList<SpecList<A, B>>;
     static constexpr bool __c4__is_suffix = false;
@@ -68,7 +68,7 @@ struct Diamond : public Super {
 // Suffix spec example
 // =============================================================================
 
-template <typename Super>
+template <typename Self, typename Super>
 struct Point : public Super {
     using __c4__parents = TypeList<>;
     static constexpr bool __c4__is_suffix = true;  // Suffix spec!
@@ -81,7 +81,7 @@ struct Point : public Super {
     }
 };
 
-template <typename Super>
+template <typename Self, typename Super>
 struct ColoredPoint : public Super {
     using __c4__parents = TypeList<SpecList<Point>>;
     static constexpr bool __c4__is_suffix = false;  // Infix, but parent is suffix
