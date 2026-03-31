@@ -399,7 +399,7 @@ but also the relationship between the two.
 We have the identity @c{Y f = U (B f U)} or equivalently @c{Y = B U (C B U)}
 where @c{B} is composition @c{B x y z = x (y z)} and
 @c{C} is the flip operator @c{C x y z = x (z y)}@xnote["."]{
-  Haskellers might write @c{Y} as @c{U (. U)} which is my new favorite emoji.}
+  Haskellers might write @c{Y} as @c{U .(. U)} which is my new favorite emoji.}
 Both @c{B} and @c{C} are linear, they just rearrange things without creating information,
 whereas @c{U} is all about duplication, creating new copies of information, and does all the work.
 Therefore it is fair to say that, up to a linear transformation,

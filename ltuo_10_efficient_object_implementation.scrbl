@@ -15,6 +15,20 @@
     @|#:-"Donald Knuth"|
 }
 @section{Representing Records}
+One way or another, object-oriented programming involves dealing with @emph{records},
+mappings from identifier to value,
+that embody the results of modular computations (see @secref{MFCM}).
+In previous chapters, I chose to represent records as functions,
+which simplified many aspects of my conceptual presentation, including fixpoints and types.
+However, in a practical system, the intent of records was always been
+an efficient low-level representation as contiguous words of memory @~cite{Hoare1965}.
+Most presentations of OO just introduce a low-level encoding for how their language implements objects,
+and declare that’s how things are;
+out of there, extremely complex low-level semantics emerge,
+and you are left to untangle desired meaning from undesired noise.
+I am taking a radically opposite approach: I instead am going to bridge this conceptual gap
+by starting from the high-level semantics, and zooming down to practical implementations thereof,
+the desired meaning being clear at all time.
 
 @subsection[#:tag "RaF"]{Records as Functions}
 @epigraph{
@@ -23,8 +37,8 @@
 }
 @Paragraph{A Universal Strategy}
 So far I have encoded Records as opaque functions
-with some kind of identifier as input argument,
-and returning a value as output (@secref{MOO}).
+with some kind of identifier as input argument (symbols, in Scheme),
+and returning an arbitrary value as output (@secref{MOO}).
 
 This record representation strategy works, and
 is portable to any language with Higher-Order Functions.
@@ -32,8 +46,8 @@ By using it, I have demonstrated a general recipe to implement OO
 directly on top of the λ-calculus only,
 which can itself be easily implemented on top of
 any language or virtual machine past, present or future.
-Indeed I have successfully deployed this very technique
-to build a lightweight HTML authoring tool for my slides;
+Indeed I have successfully deployed this very technique “in production”
+to build a lightweight pure functional HTML authoring tool for my slides;
 and so could anyone use that technique in a pinch to quickly build
 extensible configuration generators, or an extensible data structure library
 in an otherwise constrained environment.
@@ -78,14 +92,14 @@ to invest in a better solution, such as the ones I discuss below.
 
 @Paragraph{Not-so-Arbitrary Functions}
 Now, functions do not have to be arbitrary.
-They can follow some systematic pattern, at which point
-that pattern defines the real data structure,
+They can follow some systematic pattern;
+but then that pattern defines the @emph{actual} data structure,
 whether the pattern is explicitly coded by the programmer,
 or heroically inferred by the implementation, either statically or dynamically.
 The function then is but a convenient interface (or not-so-convenient, depending on expectations)
 to the underlying functionality, one that offers some modular abstraction
 over different underlying representations also using a function as an interface
-(though try to combine differently built functions,
+(however, try to combine differently built functions,
 and you will soon be back to arbitrary functions as above).
 
 For instance, a function could implement the same linear search for a key that I used,
@@ -103,19 +117,20 @@ Your imagination is the limit, but notice a few things:
   @item{The first function from regular keys to regular values behaves like
     our records-as-arbitrary-functions above, while the second conflated function,
     from “magic” messages to magic answers, provides some reflective interface
-    with which you can probe the implementation underneath the common interface.
+    with which you can probe the implementation underneath the first function.
     Reflection will be the recurring theme of this chapter.}]
 
 At that point, the functional interface only adds a small constant space and time overhead
 on top of whatever underlying data structure implementation is actually used underneath,
 and otherwise provides the costs and benefits of the uniform functional interface
 and its direct compatibility with the Y combinator.
-Introspection of keys is possible (though not necessary if unwanted),
+Using this technique, introspection of keys is possible (though not necessary if unwanted),
 as is “extrospection” (second-class or external knowledge of keys from outside the runtime),
 if the data structure is maintained extralinguistically via a design pattern.
-The space and time leak of shadowed bindings can be avoided.
+And through this introspection of extrospection,
+the space and time leak of shadowed bindings can be avoided.
 
-To go further, I must strip the functional interface, and peer at was what inside it.
+Now, to go further, I must strip the functional interface, and peer at what is hiding inside it.
 Once I do, I may find that a function from key to value was not the best interface,
 and not even the best functional interface.
 And so I may not want to put that interface back afterwards.
@@ -124,7 +139,7 @@ I may be able to use the Y combinator still, through some indirection layer;
 or I may be able to achieve the self-recursion intrinsic to objects
 through a very different mechanism.
 But first, let’s examine what was the data structure implicit
-in the chaining records-as-arbitrary-functions.
+in chaining records-as-arbitrary-functions.
 
 @subsection[#:tag "RaFM"]{Records as Finite Maps}
 
@@ -158,20 +173,28 @@ every random access is a linear search in @c{O(l)} where @c{l} is the length of 
   (where @c{n} is the size of the “working set” of data one works with),
   to deal with the physical limits of the memory hierarchy @~cite{MythOfRAM2014}.
 }
-Even then, there is a clear advantage to explicitly using alists
-over implicitly letting their structure emerge from the use of extend-record:
+Even then, @emph{there is a clear advantage to explicitly using alists}
+over implicitly letting their structure emerge from the use of @c{extend-record}:
 by making alists explicit, one can actually remove shadowed entries,
 and eliminate the space and time leak inevitable in the previous representation.
 
 @Paragraph{Finite Maps Beyond Alists}
 Stepping back from the particulars of an alist and its performance profile,
-the abstract interface it satisfies is that of a @emph{finite map}.
+one can then then realize that the abstract interface it satisfies
+is that of a @emph{finite map}.
 And indeed, the essence of a first-class record is a finite map:
 a map from a finite set of keys to a set of values,
 though those keys may be a subset of an infinite type.
 Finite maps are also known in various programming contexts as
-maps, dictionaries, associative arrays, associative containers, or sometimes,
-environments (since we are binding values to @emph{identifiers}).
+maps, dictionaries, associative arrays, or associative containers@xnote["."]{
+  When, as is the case here, finite maps bind values to @emph{identifiers},
+  they are also sometimes known as (lexical) environments.
+  And some Lisps have “first-class (lexical) environments” that can indeed nicely reify
+  the result of resolving modular definitions.
+  But the term “environment” has broader connotations in general,
+  and can mean any kind of context for evaluation;
+  so I will avoid it in this discussion.
+}
 
 Now, finite maps can be more efficient implemented using balanced binary trees,
 that allow random-access operations in @c{O(log n)} instead of @c{O(n)}.
@@ -212,23 +235,11 @@ Particularly popular among pure functional balanced tree algorithms are tries
 and their variants optimized for hash maps @~cite{Okasaki1998 Bagwell2001 Steindorfer2015}.
 
 For mutable records, or records used with a linear discipline,
-a traditional mutable hash table or HashMap provides @c{O(1)} random access.
-Remarks about hashing, interning, and unique numbering apply to mutable hash tables
+a traditional mutable hash table or HashMap provides @c{O(1)} random access,
+albeit with a constant factor that is typically one or two orders of magnitude larger
+than a direct field access in a statically typed language.
+My above remarks about hashing, interning, and unique numbering apply to mutable hash tables
 as well as immutable ones.
-
-@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
-
-@Paragraph{No Side Effects for an Internal Fixpoint}
-
-Now, whichever specific data structure is used underneath to represent a finite map,
-importantly, these data structures are “inert” values.
-Computing the value associated to a key can be done by an algorithm
-that always terminates in finite time.
-
-No side-effects... including those required for a fixpoint.
-
-Computation of X vs value of X @~cite{Levy1999}.
-
 
 @Paragraph{A Note on Power}
 @epigraph{
@@ -254,13 +265,15 @@ thereafter, the algorithms that modify that record cannot assume anything
 about the internals of the record being extended,
 and are thus restricted in how they may extending such records;
 all they can do is chain into the opaque record.
-You win big once in the beginning where it doesn’t matter,
-and lose big on all subsequent operations everytime afterwards.
+You win big, once, at the beginning;
+and you lose big on all subsequent operations everytime afterwards,
+that are where the system actually spend most of its time and space.
 
 The more general lesson is that strictures on data structures enable better performance.
 More precisely, strictures on past operations create a space in which future operations
 are free to be more efficient, whereas strictures on future operations create a space in which
-past operations are free to be more efficient—with various tradeoffs
+past operations are free to be more efficient.
+From this dual constraint emerge various tradeoffs
 between the two kinds of strictures and freedoms.
 
 Now, in general, the very same operations implemented by the very same algorithms,
@@ -271,9 +284,208 @@ that will maximize the benefits and minimize the cost of the software over its e
 Then again, sometimes past and future are not wholly unpredictable:
 there are clear-cut or at least statistically expected @emph{stages} to the computation,
 during each of which the nature and frequency of operations used are different,
-such that each stage would best benefit from its own choice of tradeoffs
+such that each stage would best benefit from its own specific choice of tradeoffs
 that would not work well in other stages.
 
+@subsection[#:tag "RaR"]{Records as Records}
+
+@Paragraph{A Lack of Class}
+
+Now here comes a disconnect: I have established that
+the semantics of first-class records is essentially that of a finite map,
+with a known performance profile that is much worse than the idea
+that everyone has of a record.
+Indeed, the name “record” itself, as per @citet{Hoare1965},
+suggests a low-level representation of data in terms of consecutive words of memory.
+Accessing a field should be just a matter of reading memory at a fixed offset from
+the start of the record. Why isn’t that the conclusion of the discussion so far?
+I see what my neighbor has—fast record field access—and I want the same.
+
+The key to this discrepancy is, of course,
+the difference between first-class records and second-class records:
+when compiling access to second-class records of known type or “shape”
+through fields labeled by second-class identifiers,
+a static analysis can assign a fixed offset to each of these accesses.
+But when implementing first-class records,
+you must be prepared for newly defined records,
+with newly defined sets of identifiers as keys,
+accessed through fields labeled by dynamically computed first-class identifiers.
+
+Thinking back about it, it wouldn’t have made sense
+to implement first-class records with first-class records.
+At best, it is a tautological identity that brings nothing;
+or it’s a level of gratuitous wrapping and indirection that only brings overhead.
+What it cannot bring is simplification or improvement.
+Whereas implementing first-class records with second-class records,
+and, actually, with the memory arrays that lie underneath—that does make sense,
+if it can be achieved.
+Second-class records then are indeed a case as discussed above, where staging
+enables computations before and after the stage transition (in this case, compilation)
+to use slightly implementation different strategies, yielding various optimizations.
+
+@Paragraph{General Case vs Common Case}
+
+The @emph{general} case of first-class records cannot be simplified beyond these finite maps,
+that are much slower than second-class records.
+But the @emph{common} case of first-class records is about the same as for second-class records:
+most of the time, the shape of the record can be known or guessed in advance,
+and so can the identifiers used to label the fields being accessed;
+then, a fixed offset can be computed in advanced and cached.
+
+@principle{An implementation must always support the general case} of what it is implementing,
+and be ready to fall back to less efficient but more general algorithms.
+@principle{But an implementation can rely on the common case},
+and use a more efficient algorithm @emph{most of the time},
+as long as it guards it with checks that indeed the preconditions
+for the validity of the more efficient algorithm still hold.
+And those checks can often be moved outside of performance-critical loops.
+(Indeed in the case of second-class records themselves, the checks can be moved
+wholly outside of the runtime, into the compile-time.)
+
+Thus, an implementation for first-class records can represent records
+as a second-class record plus that includes a first-class record descriptor
+that among other things perhaps, contains a mapping from field identifier to field offset.
+Accesses of a constant field can use a cache of record offsets for the field
+depending on recently seen record descriptors, to skip most of the computation
+after checking that indeed it matches expectations.
+Alternatively, or in addition, the mapping from field identifier to offset
+given a record shape can be optimized once using
+“perfect hashing” @;{ TODO cite
+  Fredman1984 "Storing a Sparse Table with O(1) Worst Case Access Time"?
+  Tarjan1979 "Storing a Sparse Table"? }
+which at a one-time cost may speed up each subsequent access.
+
+In the case of specifications with suffix specifications (@secref{OISMIT}),
+where some of the offsets must be inherited, while others may be allocated via perfect hashing,
+an indirection can be used, mapping identifiers to offset in a translation table
+that yields the offset in the record; thus, interestingly,
+support for suffix specifications slightly improves the performance of second-class record access,
+at the expense of slightly worsening the performance of first-class record access!
+
+@Paragraph{Some Concrete Encoding Considerations}
+
+In any case, any host language you choose for your implementation
+will offer kind of underlying low-level memory arrays,
+or of vector of nodes in an object graph,
+that can be leveraged to implement records.
+But every such host language will offer subtly different primitives,
+that you then have to deal with:
+offsets counted from 0 or 1 or some other constant due to reserved fields;
+word-addressing or byte-addressing with various alignment constraints;
+static or dynamic typing of the data being stored;
+varying support for garbage collection, coherence or atomicity of access across threads;
+etc.
+
+In a practical implementation, you will seek the most performant primitive available to you.
+In Scheme, that I use in this book,
+some implementations offer suitable primitives, but nothing portable is defined.
+For instance, Gambit Scheme exposes the internals of its “structure” machinery
+with operators such as @c{##make-structure}, @c{##structure-ref} and @c{##structure-set!};
+and Gerbil Scheme builds its object system on top of those.
+But the closest equivalent you can do portably in Scheme is
+to hijack vectors, the standard mechanism for one-dimensional array of arbitrary values,
+as the underlying representation.
+That is what I do in the code accompanying this book.
+
+I will not try to maintain “full abstraction” by
+redefining user-level vectors and all their primitives
+to be a subset of system-level vectors disjoint from the one I use to represent objects.
+This will leave that as an exercise to the reader.
+Presumably this problem disappears in the common case of using actual low-level primitives
+of an implementation language separated from the target language
+by compilation happening in a distinct evaluation stage.
+
+Happily, managing the details of translating a high-level representation strategy
+into a zoo of low-level primitives that change subtly with each host system
+is a good task for modern AI to semi-automate.
+
+@subsection{Digression: Fixpoints are for Computations, not Values}
+
+@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+
+Now, whichever specific data structure is used underneath to represent a finite map,
+importantly, a data structure is an “inert” @emph{value};
+looking up bindings can be done in a “pure” way involving no meaningful side-effect,
+and even adding, shadowing or removing bindings, involves no side-effect
+except those specific to the data structure if mutable (and not even that if immutable).
+In particular, there is no place in such a data structure for an arbitrary
+@emph{computation} that a fixpoint may be part of.
+The recursion through which modular extensions and OO in general are defined and resolved
+must happen @emph{outside} of the data structure itself.
+
+This is very unlike the case of records-as-arbitrary-functions that I was using previously:
+calling the function could do more than consult a fixed list of bindings,
+it could evaluate arbitrary computations (and, in Scheme, issue arbitrary side-effects).
+And I specifically relied on an arbitrary computation happening when looking up bindings
+to make that computation itself the fixpoint of a modular definition:
+my computations would recursively refer to the @c{self} variables,
+consult it for other bindings, store it in data structures,
+compute along chains of inherited @c{super} methods
+that could themselves recurse through @c{self} some more.
+
+But now that the bindings themselves are organized as an “inert” data structure,
+consulted through well-defined algorithms with no space for arbitrary computations,
+the fixpoint will have to happen @emph{before} or @emph{after} the data structure is consulted,
+depending on whether one used Y-encoding (@secref{MOO}) or U-encoding (@secref{CfUe}):
+@itemize[
+  @item{When using Y-encoding,
+    the recursion knot is necessarily tied @emph{before}
+    the data structure is built:
+    binding a @c{self} variable as part of the fixpoint operation
+    must happen before references to that self may be used
+    in initializing fields of the data structure.
+    Some of these references may be part of lazy computations that only fully unravel
+    after the data structure is returned and used;
+    but the crucial binding happens before.}
+  @item{When using U-encoding, the whole point is that the recursion knot happens @emph{after}
+    the data structure is built, when a caller invokes a method using the self-application
+    operator @c{U} or an argument-swapping variant thereof
+    (which corresponds to the outer @c{U.} to the left of @c{Y = U.(.U)});
+    the recursion schema is being composed to the right with @c{U}
+    (which corresponds to the inner @c{.U} to the right)
+    before returning the data structure, but that is deferred self-application,
+    and does not involve any fixpoint yet.}]
+
+Either way, as mentioned in @secref{DSF}, fixpoints, and thus
+resolution of modular definitions, and thus resolution of modular extensions,
+are essentially operations on @emph{computations}, and not quite on @emph{values},
+where the distinction between the two, and the duality of the two,
+is well explained by @citet{Levy1999}:
+computations are active processes that may return a value of corresponding type,
+while values are just inert results.
+Now, values are embedded in the universe of computations, wherein to each value
+corresponds a simple “pure” computation that just returns the value.
+But there are many ways to embed computations in the universe of values:
+@itemize[
+  @item{Computations as thunks—functions from unit to the desired value type,
+    with some set of acceptable side-effects.}
+  @item{Computations as delayed computations—about the same as thunks, but
+    the delayed computation must be “forced” instead of a thunk being invoked,
+    at which point the computation happens at most once,
+    and subsequent attempts to force the delayed computation yield the same value.}
+  @item{Computations as lazy computations—about the same as delayed computations,
+    but the lazy computation is treated syntactically as a value,
+    the “forcing” happens automatically if the value is inspected,
+    and lazy is idempotent, i.e. if a value is already lazy you don’t have to force it twice.}
+  @item{Computations as forks—as if a thunk was already scheduled to be evaluated in parallel,
+    and its side-effects may and will take place even if the computation isn’t explicitly invoked
+    to wait for its results.}
+  @item{Computations as futures—same as a fork, but the invoking the computation is implicit
+    when the result is needed, as with lazy vs delayed computations.}]
+An infinite number of more such embeddings can be devised.
+For instance, some variants will be thread-safe using some expensive mutual exclusion primitive;
+other variants require users to enforce mutual exclusion manually or will misbehave;
+some variants may involve a copy of the computation in each “process”, while others
+may try to ensure some unique (or centrally managed) copy
+of the process across a given network (or some guaranteed number of redundant copies).
+
+In a given fixpoint, including when computing the target of a specification,
+one of those embeddings must be chosen, with according consequence on the semantics of
+the fixpoint computation.
+In my Scheme examples, I will choose the (non-thread-safe) @c{delay} primitive
+for my embedding to illustrate the principle.
+Every language, library, etc., may choose its own embedding, parameterize over it,
+offer bridges between different such embeddings, etc.
 
 Since the first-class data structures
 
@@ -284,41 +496,6 @@ You have less power for initial record creation, but
 much more for all the subsequent operations that will matter for your runtime performance.
 
 
-@subsection[#:tag "RaR"]{Records as Records}
-
-Implementing first-class records with first-class records is a tautology
-that doesn’t actually bring anything.
-
-I see what my neighbor has, and I want the same.
-
-First-class vs second-class records.
-
-
-second-class records as memory vectors plus some second-class mapping of symbol to index.
-Now we’re talking.
-
-Records as memory vectors.
-
-The name “record” itself, as per @citet{Hoare1965},
-suggests a low-level representation of data in terms of consecutive words of memory.
-And so, I will show how to better implement records.
-The downside is that the techniques involved will necessarily be
-less portable than records-as-function.
-But any implementation language you use will have some kind
-of underlying low-level arrays of bytes, or of vector of nodes in an object graph,
-that can be leveraged to implement records.
-
-For a static implementation... no much more to add.
-For a dynamic implementation... how to map identifiers to offsets?
-
-It is possible to do better... but to actually efficient, I’ll have to write non-portable code.
-the code won’t be trivially portable.
-Your LLMs will help you.
-
-Records as records? Now we’re talking.
-
-For each shape (vector of names, or in reverse, mapping of names to slot index),
-compute a perfect hash so that lookup is not just O(1) but actually quite fast.
 
 @subsection{Lazy Records}
 
