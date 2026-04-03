@@ -505,7 +505,7 @@ What then should be the “super” argument passed to each modular extension,
 given the place of its specification in the ancestry DAG?
 
 @Paragraph{The Diamond Problem}
-One naive approach could be to view the inheritance DAG as some kind of attribute grammar,
+One naïve approach could be to view the inheritance DAG as some kind of attribute grammar,
 and compute the (open modular definition for) the super at each node of the DAG
 as a synthetic attribute@xnote[","]{
   Beware that what is typically called “child” and “parent” in an attribute grammar
@@ -1012,7 +1012,7 @@ Unhappily, this approach fails at respecting either Local Order or Monotonicity.
 Another approach is to consider the precedence list a synthesized attribute,
 and compute a child’s precedence list from those of its parents.
 That’s the only reasonable way to ensure monotonicity.
-However, the naive way to do it, by concatenating the lists then removing duplicates,
+However, the naïve way to do it, by concatenating the lists then removing duplicates,
 like LOOPS @~cite{Bobrow1983LOOPS}
 or after it (though removing from the other end) Scala @~cite{scalableComponentAbstractions2005},
 preserves neither Local Order nor Monotonicity.
@@ -1239,7 +1239,7 @@ these copies would badly interfere, in addition to leading to an exponential res
 as you keep pre-composing deeper graphs.
 Therefore, pre-composing modular extensions is the same non-solution
 that led to the “conflict” view of multiple inheritance,
-based on a naive conceptualization of how to generalize single inheritance.
+based on a naïve conceptualization of how to generalize single inheritance.
 Indeed, precomposed modular extensions are essentially the same as modular definitions.
 
 In the end, composing modular extensions is subject to dependency constraints.
@@ -1401,7 +1401,7 @@ prefer to use or implement single inheritance when offered the choice.
   @c{B} and @c{C} each inheriting from @c{A} that add respectively
   “wheels” and an “engine”, and @c{D} that inherits from both @c{B} and @c{C},
   that adds a “body” and completes the toy car.
-  Show that naively combining @c{B}’s and @c{C}’s modular definitions
+  Show that naïvely combining @c{B}’s and @c{C}’s modular definitions
   would overwrite away either the wheels or the engine.
   Show that combining their “precomposed” mixins @c{B A} and @c{C A} into @c{B A C A}
   would duplicate the effects of @c{A}, which is incorrect.
@@ -1815,7 +1815,7 @@ where the steps tagged with (C4) are those added to the C3 algorithm
 
 Note that the C3 algorithm as published by @~cite{Barrett1996C3},
 has complexity O(d²n²) where d is the number of parents, n of ancestors,
-because of the naive way it does a linear membership scan
+because of the naïve way it does a linear membership scan
 in the tails of the lists for each parent@xnote["."]{
   A worst-case example is, two parameters d and n,
   to find a linear order of size n, more or less evenly divided in d segments of size n/d,

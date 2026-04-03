@@ -357,7 +357,7 @@ but require constraints on the definition and use of methods after the fact.
 @; cite Millstein? Allen&al?
 In particular, the ability to add methods retroactively
 change the shape of the method DAG,
-and thus make previous naive manual DAG joins ineffectual;
+and thus make previous naïve manual DAG joins ineffectual;
 more careful DAG joins (that explicitly take all directly inherited methods as parameters)
 can become tedious and costly to write and run.
 Automated DAG joins through reduction to a method monoid via a precedence list
@@ -701,7 +701,7 @@ as well as less popular languages; many more popular languages support it using 
 @subsection[#:tag "multiple_dispatch"]{Multiple Dispatch}
 Simple methods, Binary methods, Multimethods, Constructors —
 Number object inputs being 1, 2, N, 0.
-Big big problem in the naive view of class OO.
+Big big problem in the naïve view of class OO.
 Not at all a problem with prototypes / typeclasses.
 
 

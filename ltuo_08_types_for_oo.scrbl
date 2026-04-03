@@ -275,14 +275,14 @@ As for the modular extensions themselves, they resemble those of mixin inheritan
 with the intersection of everything in the precedence list for the
 inherited, required and provided parameters, respectively.
 
-@section[#:tag "NNOOTT"]{The NNOOTT: Naive Non-recursive OO Type Theory}
+@section[#:tag "NNOOTT"]{The NNOOTT: Naïve Non-recursive OO Type Theory}
 
 @subsection[#:tag "OST"]{Obvious Simple Theory}
 
 The @c{SSModExt} or @c{SrModExt} types, taken literally,
 or similar types independently reinvented by many a programming language researcher,
 lead to the simplest and most obvious theory for typing OO,
-that I will dub the Naive Non-recursive Object-Oriented Type Theory (NNOOTT):
+that I will dub the Naïve Non-recursive Object-Oriented Type Theory (NNOOTT):
 it consists in considering subprototyping / subclassing (a relation between specifications)
 as the same as subtyping (a relation between targets).
 Thus, in this theory, a subclass, that extends a class with new fields,
@@ -305,8 +305,8 @@ while using the intersection of the required module context.
 The model accurately captures most simple uses of OO,
 and isn’t exactly what the types above tell us?
 
-However, this “Naive Non-recursive OO Type Theory”, as the name indicates,
-is a bit naive indeed, and only works in simple non-recursive cases.
+However, this “Naïve Non-recursive OO Type Theory”, as the name indicates,
+is a bit naïve indeed, and only works in simple non-recursive cases.
 Yet the NNOOTT is important to understand,
 both for the simple cases it is good enough to cover,
 and for its failure modes that tripped so many good programmers

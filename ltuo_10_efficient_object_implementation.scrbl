@@ -14,21 +14,21 @@
   Computer scientists see things simultaneously at the low level and the high level.
     @|#:-"Donald Knuth"|
 }
-@section{Representing Records}
+@section{Representing Object Records}
 One way or another, object-oriented programming involves dealing with @emph{records},
 mappings from identifier to value,
 that embody the results of modular computations (see @secref{MFCM}).
 In previous chapters, I chose to represent records as functions,
 which simplified many aspects of my conceptual presentation, including fixpoints and types.
-However, in a practical system, the intent of records was always been
+However, in a practical system, the intent of records has always been
 an efficient low-level representation as contiguous words of memory @~cite{Hoare1965}.
 Most presentations of OO just introduce a low-level encoding for how their language implements objects,
 and declare that’s how things are;
-out of there, extremely complex low-level semantics emerge,
+out of that, extremely complex low-level semantics emerge,
 and you are left to untangle desired meaning from undesired noise.
 I am taking a radically opposite approach: I instead am going to bridge this conceptual gap
 by starting from the high-level semantics, and zooming down to practical implementations thereof,
-the desired meaning being clear at all time.
+the desired meaning being clear at all times.
 
 @subsection[#:tag "RaF"]{Records as Functions}
 @epigraph{
@@ -52,7 +52,7 @@ and so could anyone use that technique in a pinch to quickly build
 extensible configuration generators, or an extensible data structure library
 in an otherwise constrained environment.
 
-Another advantage of this strategy is that it fit nicely with the Y combinator:
+Another advantage of this strategy is that it fitted nicely with the Y combinator:
 the record itself was the fixpoint, its type was that of a regular function.
 There was no need for complicated ad hoc wrapping and unwrapping with types
 that are never 100% compatible from one language to the next,
@@ -107,7 +107,7 @@ but also maintain a list of bound keys, that is returned if a “magic” value 
 (the magic value being otherwise outside the set of keys that can be arbitrarily bound).
 Or, assuming a totally ordered set of keys, the function could use
 some balanced binary tree underneath instead of a linear search,
-and there again provide introspection as to the node structure when queried with magic values.
+and there again provide introspection on the node structure when queried with magic values.
 Your imagination is the limit, but notice a few things:
 @itemize[
   @item{The existence of magic input values mean that what you have indeed is not “a function”
@@ -153,7 +153,7 @@ records are a chain of bindings that you consult with a linear search.
 And thus the data structure implicit in that choice of constraint is the @emph{alist},
 or association list: a singly linked list of pairs of a key and a value.
 
-Alists are a “naive” data structure, but not in a bad way:
+Alists are a “naïve” data structure, but not in a bad way:
 they are quite a simple and obvious approach to think about, and indeed, reason about;
 yet while not blazing fast, they do not suffer from a hidden flaw that make them terrible.
 That is why alists are often used as the basis on which to model, formalize, implement and
@@ -180,7 +180,7 @@ and eliminate the space and time leak inevitable in the previous representation.
 
 @Paragraph{Finite Maps Beyond Alists}
 Stepping back from the particulars of an alist and its performance profile,
-one can then then realize that the abstract interface it satisfies
+one can then realize that the abstract interface it satisfies
 is that of a @emph{finite map}.
 And indeed, the essence of a first-class record is a finite map:
 a map from a finite set of keys to a set of values,
@@ -196,7 +196,7 @@ maps, dictionaries, associative arrays, or associative containers@xnote["."]{
   so I will avoid it in this discussion.
 }
 
-Now, finite maps can be more efficient implemented using balanced binary trees,
+Now, finite maps can be more efficiently implemented using balanced binary trees,
 that allow random-access operations in @c{O(log n)} instead of @c{O(n)}.
 Comparing identifiers as strings can be somewhat expensive, however, and
 it is sometimes faster to compare their unique addresses,
@@ -220,7 +220,7 @@ and make the many subsequent comparisons for equality a cheaper @c{O(1)}@xnote["
   each named by a string, and containing a table of @emph{symbols}.
   Common Lisp also has a notion of @emph{uninterned symbols} that have a name,
   but are really meant to be compared by address.
-  Scheme has one has a single layer system of symbols;
+  Scheme has a single-layer system of symbols;
   some implementations have uninterned symbols, but not all;
   on the other hand, most implementations have a notion of @emph{identifier}
   that is richer than a symbol, embodying some provenance information with the symbol
@@ -255,7 +255,7 @@ One might find it remarkable that,
 despite granting users the power to hide arbitrarily sophisticated
 record implementation algorithms behind the interface of a function,
 the records-as-arbitrary-function strategy led to a data structure
-that is objectively @emph{worse} than the obvious naive solution.
+that is objectively @emph{worse} than the obvious naïve solution.
 
 Actually, that power is the very reason why
 the @c{extend-record} function is so powerless:
@@ -263,11 +263,11 @@ The power of an arbitrary function, the programmer can choose to exercise once a
 for some base record;
 thereafter, the algorithms that modify that record cannot assume anything
 about the internals of the record being extended,
-and are thus restricted in how they may extending such records;
+and are thus restricted in how they may extend such records;
 all they can do is chain into the opaque record.
 You win big, once, at the beginning;
 and you lose big on all subsequent operations everytime afterwards,
-that are where the system actually spend most of its time and space.
+which is where the system actually spends most of its time and space.
 
 The more general lesson is that strictures on data structures enable better performance.
 More precisely, strictures on past operations create a space in which future operations
@@ -289,7 +289,7 @@ that would not work well in other stages.
 
 @subsection[#:tag "RaR"]{Records as Records}
 
-@Paragraph{A Lack of Class}
+@Paragraph{Class Disparities}
 
 Now here comes a disconnect: I have established that
 the semantics of first-class records is essentially that of a finite map,
@@ -321,16 +321,16 @@ and, actually, with the memory arrays that lie underneath—that does make sense
 if it can be achieved.
 Second-class records then are indeed a case as discussed above, where staging
 enables computations before and after the stage transition (in this case, compilation)
-to use slightly implementation different strategies, yielding various optimizations.
+to use slightly different implementation strategies, yielding various optimizations.
 
-@Paragraph{General Case vs Common Case}
+@Paragraph{The General vs The Common}
 
 The @emph{general} case of first-class records cannot be simplified beyond these finite maps,
 that are much slower than second-class records.
 But the @emph{common} case of first-class records is about the same as for second-class records:
 most of the time, the shape of the record can be known or guessed in advance,
 and so can the identifiers used to label the fields being accessed;
-then, a fixed offset can be computed in advanced and cached.
+then, a fixed offset can be computed in advance and cached.
 
 @principle{An implementation must always support the general case} of what it is implementing,
 and be ready to fall back to less efficient but more general algorithms.
@@ -343,7 +343,7 @@ And those checks can often be moved outside of performance-critical loops.
 wholly outside of the runtime, into the compile-time.)
 
 Thus, an implementation for first-class records can represent records
-as a second-class record plus that includes a first-class record descriptor
+as a second-class record plus a first-class record descriptor
 that among other things perhaps, contains a mapping from field identifier to field offset.
 Accesses of a constant field can use a cache of record offsets for the field
 depending on recently seen record descriptors, to skip most of the computation
@@ -365,7 +365,7 @@ at the expense of slightly worsening the performance of first-class record acces
 @Paragraph{Some Concrete Encoding Considerations}
 
 In any case, any host language you choose for your implementation
-will offer kind of underlying low-level memory arrays,
+will offer some kind of underlying low-level memory arrays,
 or of vector of nodes in an object graph,
 that can be leveraged to implement records.
 But every such host language will offer subtly different primitives,
@@ -385,12 +385,12 @@ and Gerbil Scheme builds its object system on top of those.
 But the closest equivalent you can do portably in Scheme is
 to hijack vectors, the standard mechanism for one-dimensional array of arbitrary values,
 as the underlying representation.
-That is what I do in the code accompanying this book.
+That is what I will do in the code accompanying this book.
 
 I will not try to maintain “full abstraction” by
 redefining user-level vectors and all their primitives
 to be a subset of system-level vectors disjoint from the one I use to represent objects.
-This will leave that as an exercise to the reader.
+I will leave that as an exercise to the reader.
 Presumably this problem disappears in the common case of using actual low-level primitives
 of an implementation language separated from the target language
 by compilation happening in a distinct evaluation stage.
@@ -399,12 +399,12 @@ Happily, managing the details of translating a high-level representation strateg
 into a zoo of low-level primitives that change subtly with each host system
 is a good task for modern AI to semi-automate.
 
-@subsection{Digression: Fixpoints are for Computations, not Values}
+@subsection{Where did the Fixpoint Go?}
 
-@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
-
+@Paragraph{No Place for Fixpoints}
+Even more so than records, OO involves open recursion through fixpoints.
 Now, whichever specific data structure is used underneath to represent a finite map,
-importantly, a data structure is an “inert” @emph{value};
+importantly, a data structure is an “inert” @emph{value}:
 looking up bindings can be done in a “pure” way involving no meaningful side-effect,
 and even adding, shadowing or removing bindings, involves no side-effect
 except those specific to the data structure if mutable (and not even that if immutable).
@@ -416,7 +416,7 @@ must happen @emph{outside} of the data structure itself.
 This is very unlike the case of records-as-arbitrary-functions that I was using previously:
 calling the function could do more than consult a fixed list of bindings,
 it could evaluate arbitrary computations (and, in Scheme, issue arbitrary side-effects).
-And I specifically relied on an arbitrary computation happening when looking up bindings
+And I specifically relied on some arbitrary computation happening when looking up bindings
 to make that computation itself the fixpoint of a modular definition:
 my computations would recursively refer to the @c{self} variables,
 consult it for other bindings, store it in data structures,
@@ -426,7 +426,7 @@ that could themselves recurse through @c{self} some more.
 But now that the bindings themselves are organized as an “inert” data structure,
 consulted through well-defined algorithms with no space for arbitrary computations,
 the fixpoint will have to happen @emph{before} or @emph{after} the data structure is consulted,
-depending on whether one used Y-encoding (@secref{MOO}) or U-encoding (@secref{CfUe}):
+depending on whether one used Y-encoding (@secref{MOO}) or U-encoding (@secref{CfUe}), respectively:
 @itemize[
   @item{When using Y-encoding,
     the recursion knot is necessarily tied @emph{before}
@@ -446,8 +446,9 @@ depending on whether one used Y-encoding (@secref{MOO}) or U-encoding (@secref{C
     before returning the data structure, but that is deferred self-application,
     and does not involve any fixpoint yet.}]
 
-Either way, as mentioned in @secref{DSF}, fixpoints, and thus
-resolution of modular definitions, and thus resolution of modular extensions,
+@Paragraph{Fixpoints are for Computations, not Values}
+Either way, as mentioned in @secref{DSF},
+fixpoints, thus resolution of modular definitions, and resolution of modular extensions,
 are essentially operations on @emph{computations}, and not quite on @emph{values},
 where the distinction between the two, and the duality of the two,
 is well explained by @citet{Levy1999}:
@@ -466,7 +467,7 @@ But there are many ways to embed computations in the universe of values:
   @item{Computations as lazy computations—about the same as delayed computations,
     but the lazy computation is treated syntactically as a value,
     the “forcing” happens automatically if the value is inspected,
-    and lazy is idempotent, i.e. if a value is already lazy you don’t have to force it twice.}
+    and lazy is idempotent, i.e. if a value is already lazy, you don’t have to force it twice.}
   @item{Computations as forks—as if a thunk was already scheduled to be evaluated in parallel,
     and its side-effects may and will take place even if the computation isn’t explicitly invoked
     to wait for its results.}
@@ -480,24 +481,16 @@ may try to ensure some unique (or centrally managed) copy
 of the process across a given network (or some guaranteed number of redundant copies).
 
 In a given fixpoint, including when computing the target of a specification,
-one of those embeddings must be chosen, with according consequence on the semantics of
-the fixpoint computation.
+one of those embeddings must be chosen, with corresponding consequences on
+the semantics of the fixpoint computation.
 In my Scheme examples, I will choose the (non-thread-safe) @c{delay} primitive
 for my embedding to illustrate the principle.
-Every language, library, etc., may choose its own embedding, parameterize over it,
+Every language, object system, library, etc., may choose its own embedding, parameterize over it,
 offer bridges between different such embeddings, etc.
 
-Since the first-class data structures
+@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
 
-Record implementations that explicitly restrict the structure of records being extended
-unlock the option for the extension operators to look inside the records being extended
-and take advantage of the structure.
-You have less power for initial record creation, but
-much more for all the subsequent operations that will matter for your runtime performance.
-
-
-
-@subsection{Lazy Records}
+@subsection{Eager Records, Lazily Computed}
 
 
 

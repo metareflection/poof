@@ -230,6 +230,7 @@ on the author’s page, sci-hub.ru, archive.org, z-library.sk, github.com, etc.
     Changes to a master propagated immediately to every instance (dynamic binding),
     since the masters were shared and the properties recomputed,
     instead of being eagerly copied at instance creation. Awesome.
+    No “super” mechanism to further inherit properties from a master-master.
   }
 }
 
@@ -1823,14 +1824,15 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     Lisp is cited via the Chinual (a reference manual, not an explanation,
     even though better papers existed), and unsurprisingly misunderstood,
     and considered “not sufficiently simple, general, and efficient enough”,
-    (a riot considering Flavors as cited from a 1981 did in under 1,500 lines of code
+    (a riot considering Flavors as cited from 1981 did in under 1,500 lines of code
     so much more than C++ did in 100,000 in 1989; meanwhile,
     CLOS existed in 1988 and did even more and better in a few thousand lines of code).
-    The only other non-C++ citation is a 1984 techreport by Krogdahl
-    on multiple inheritance in Simula; I couldn’t find that report,
-    but Krogdahl 1985 just plainly disallows inheritance DAGs that are not trees—lame.
-    I laud the attention to performance, but performance at doing the wrong thing
-    is still infinite non-performance compared to a naive way of doing the right thing;
+    The only other non-C++ citation is a 1984 techreport by Krogdahl whom he randomly met
+    on a proposal for multiple inheritance in Simula (that never adopted it);
+    I couldn’t find that report, but Krogdahl 1985 just plainly disallows inheritance DAGs
+    that are not already trees—lame (though at least no exponential duplication).
+    I laud Stroustrup’s attention to performance, but performance at doing the wrong thing
+    is still infinite non-performance compared to a naïve way of doing the right thing;
     so in the end Stroustrup not doing basic bibliographical research is just malpractice.
   }
 }
@@ -4667,7 +4669,7 @@ and Fiech, Adrian",
   note={
     The author falls deep into the NNOOTT without realizing it.
     It is more sad than funny to see a young researcher “discover” sixty years later
-    as if they were new the naive ideas that our forefathers had when they first
+    as if they were new the naïve ideas that our forefathers had when they first
     stumbled upon OO, and dismiss without truly understanding it
     the research that he is citing.
     He is first responsible for his own failing, but
