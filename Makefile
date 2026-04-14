@@ -13,8 +13,8 @@ slides: slides-2025-racketcon # slides-2023-njpls slides-2024-lambdaconf slides-
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
-PDFVIEWER=xpdf -z width -fullscreen
-#PDFVIEWER=evince --presentation
+PDFVIEWER=xpdf -z width -fullscreen # foo.pdf :$(P)
+#PDFVIEWER=evince --presentation # --page-index $(P) foo.pdf
 endif
 ifeq ($(UNAME_S),Darwin)
 PDFVIEWER=open
@@ -32,7 +32,7 @@ build/poof.pdf: poof.scrbl poof.bib header.tex util/eval-check.rkt util/examples
 #	cd build ; scribble --pdf ../poof.scrbl
 	scribble --dest build --pdf poof.scrbl
 view: build/poof.pdf
-	$(PDFVIEWER) $< $P
+	$(PDFVIEWER) $< :$P
 pdf: build/poof.pdf
 
 # Testing the code in the paper itself
@@ -80,12 +80,6 @@ build/slides-2025-shu.html: slides-2025-shu.rkt util/reveal.rkt util/util.rkt ut
 slides-2025-racketcon: build/slides-2025-racketcon.html
 build/slides-2025-racketcon.html: slides-2025-racketcon.rkt util/reveal.rkt util/util.rkt util/coop.rkt util/protodoc.rkt util/coop.scm
 	racket $< > $@.tmp && mv $@.tmp $@ || { rm -f $@.tmp ; exit 42;}
-
-# New paper for 2024 (?)
-build/eoomi2024.pdf: eoomi2024.scrbl poof.bib header.tex util/eval-check.rkt util/examples-module.rkt util/util.rkt build/resources
-	scribble --dest build --style header.tex --pdf $<
-eoomi: build/eoomi2024.pdf
-	$(PDFVIEWER) $< $P
 
 # Side paper: LTUO
 # NB: trying to use --style header.tex causes my chapters to become 0.x !!!

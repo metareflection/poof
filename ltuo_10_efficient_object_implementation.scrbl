@@ -14,7 +14,7 @@
   Computer scientists see things simultaneously at the low level and the high level.
     @|#:-"Donald Knuth"|
 }
-@section{Representing Object Records}
+@section{Representing Records}
 One way or another, object-oriented programming involves dealing with @emph{records},
 mappings from identifier to value,
 that embody the results of modular computations (see @secref{MFCM}).
@@ -399,6 +399,8 @@ Happily, managing the details of translating a high-level representation strateg
 into a zoo of low-level primitives that change subtly with each host system
 is a good task for modern AI to semi-automate.
 
+@section{Representing Recursion}
+
 @subsection{Where did the Fixpoint Go?}
 
 @Paragraph{No Place for Fixpoints}
@@ -439,12 +441,11 @@ depending on whether one used Y-encoding (@secref{MOO}) or U-encoding (@secref{C
     but the crucial binding happens before.}
   @item{When using U-encoding, the whole point is that the recursion knot happens @emph{after}
     the data structure is built, when a caller invokes a method using the self-application
-    operator @c{U} or an argument-swapping variant thereof
-    (which corresponds to the outer @c{U.} to the left of @c{Y = U.(.U)});
-    the recursion schema is being composed to the right with @c{U}
-    (which corresponds to the inner @c{.U} to the right)
-    before returning the data structure, but that is deferred self-application,
-    and does not involve any fixpoint yet.}]
+    operator @c{U} or an argument-swapping variant thereof—which corresponds to
+    the outer @c{U.} to the left of @c{Y = U.(.U)}.
+    The recursion schema is being composed to the right with @c{U}—which corresponds to
+    the inner @c{.U} to the right—before returning the data structure,
+    but that is deferred self-application, and does not involve any fixpoint yet.}]
 
 @Paragraph{Fixpoints are for Computations, not Values}
 Either way, as mentioned in @secref{DSF},
@@ -460,38 +461,200 @@ But there are many ways to embed computations in the universe of values:
 @itemize[
   @item{Computations as thunks—functions from unit to the desired value type,
     with some set of acceptable side-effects.}
-  @item{Computations as delayed computations—about the same as thunks, but
-    the delayed computation must be “forced” instead of a thunk being invoked,
-    at which point the computation happens at most once,
-    and subsequent attempts to force the delayed computation yield the same value.}
-  @item{Computations as lazy computations—about the same as delayed computations,
-    but the lazy computation is treated syntactically as a value,
+  @item{Computations as delayed values—about the same as thunks, but
+    the delayed value must be “forced” instead of a thunk being invoked,
+    at which point the underlying computation happens at most once,
+    and subsequent attempts to force the delayed value yield the same value.}
+  @item{Computations as lazy values—about the same as delayed values,
+    but the lazy value is treated syntactically as a value,
     the “forcing” happens automatically if the value is inspected,
-    and lazy is idempotent, i.e. if a value is already lazy, you don’t have to force it twice.}
-  @item{Computations as forks—as if a thunk was already scheduled to be evaluated in parallel,
+    and the lazy wrapper is idempotent, i.e. if a value is already lazy,
+    you don’t have to force it twice (important since forcing is implicit).}
+  @item{Computations as forks—as if a thunk were already scheduled to be evaluated in parallel,
     and its side-effects may and will take place even if the computation isn’t explicitly invoked
     to wait for its results.}
   @item{Computations as futures—same as a fork, but the invoking the computation is implicit
-    when the result is needed, as with lazy vs delayed computations.}]
+    when the result is needed, as with lazy vs delayed values.}]
+
 An infinite number of more such embeddings can be devised.
 For instance, some variants will be thread-safe using some expensive mutual exclusion primitive;
-other variants require users to enforce mutual exclusion manually or will misbehave;
-some variants may involve a copy of the computation in each “process”, while others
+whereas other variants require users to enforce mutual exclusion manually or will misbehave;
+some variants may involve a copy of the computation on each “process”, while others
 may try to ensure some unique (or centrally managed) copy
-of the process across a given network (or some guaranteed number of redundant copies).
+of the process within a given machine or across a given network;
+further network variants may guarantee a number of redundant copies instead of a unique copy.
 
-In a given fixpoint, including when computing the target of a specification,
+In a given fixpoint, including but not limited to the case of computing the target of
+a modular or modularly extensible specification,
 one of those embeddings must be chosen, with corresponding consequences on
 the semantics of the fixpoint computation.
-In my Scheme examples, I will choose the (non-thread-safe) @c{delay} primitive
-for my embedding to illustrate the principle.
-Every language, object system, library, etc., may choose its own embedding, parameterize over it,
+Each object system or library in each programming language,
+may choose its own embedding, parameterize over it,
 offer bridges between different such embeddings, etc.
 
+In my Scheme examples that illustrate the principle, I will choose
+the (non-thread-safe) @c{delay} and @c{force} primitives
+to respectively embed computations into values, and
+to map values-that-embed-computations back into computations.
+The result will be verbose and somewhat syntactically awkward, but that is the whole point:
+to make the transitions between values and computations explicit,
+so you the reader can more clearly see where those transitions are needed.
+You can easily replace @c{delay} and @c{force} by whatever primitives make sense
+in the context of the programming language you will be using.
+In a lazy-by-default language such as Nix or Haskell, these two primitives
+may become implicit and invisible, yet their underlying necessity will matter
+once you want to think about performance and optimizations,
+or need to transform the code into monadic style to enable some side-effect in object definitions.
+
+@subsection[#:tag "RtM"]{Recursion through Mutation}
+
+@subsubsection{A Popular Strategy to Implement Recursion}
+
+Interestingly, mutation, the commonly available side-effect whereby
+programs may mutate variable bindings or memory cells, introduces a popular
+way to construct recursive definitions in two separate steps:
+First, allocate some cell to which you can hold a stable reference@xnote["."]{
+  I’ll speak of memory cell, to make mutation more explicit;
+  but your programming language might make it easier to think in terms of mutable variables.
+  Indeed, mutable variables would have been slightly easier to deal with in Scheme;
+  but my purpose is to make mutation semantics explicit.
+}
+Then, use the reference to backpatch the value of the cell in
+in a way that implements the recursion schema.
+The cell is said the be @emph{initialized} after this mutation is complete,
+@emph{uninitialized} until then.
+
+In this mutable paradigm, the reference provides access to the future recursively-defined object
+even before it is fully initialized (i.e. all cells involved initialized),
+much like the computation in the immutable paradigm.
+Meanwhile, the cell value, to be obtained by dereferencing the reference,
+provides access to the actual recursively-defined object,
+but only past complete initialization.
+The same duality between computation and value, open future and closed past, exists,
+as in the immutable paradigm.
+But it might not be as obvious to a novice programmer introduced to a language with mutation
+without a clear conceptual distinction between a variable (or memory cell),
+a reference to said variable or cell, and the current content or value of the variable or cell;
+indeed the very ergonomics of languages with mutation depends on
+an easy punning between these subtly different but contextually easily disambiguated notions.
+
+@subsubsection{Initialization Order}
+
+Recursion-through-Mutation involves a tradeoff in terms of complexity:
+references to mutable cells provide direct access to recursive data structures
+that are both very performant for the machine and quite ergonomic for the programmer;
+but using them correctly hinges on the programmer following a strict discipline with respect
+to making sure every cell is suitably initialized before it is used.
+
+Failure to follow a proper initialization order can lead to catastrophic results,
+especially when trying to dereference an uninitialized cell:
+In a safe language like CLOS, the system will immediately raise an “unbound slot” error,
+wherein you can easily diagnose where the problem happens and find a fix,
+and even restart the program with the fixed code when developing interactively.
+In a less safe language like Java or JavaScript, a slot accessed before it is initialized
+will contain a “null” or “undefined” value, ticking time-bomb
+that will explode at the programmer’s face long after the invalid access,
+potentially wasting hours of the programmer’s time to identify the culprit and debug the issue,
+but at least avoiding bigger issues.
+In unsafe languages like C or C++, a slot accessed before it is initialized
+can result in “Undefined Behavior”, invalid memory patterns being used,
+pointers to nowhere or to the wrong place, silent memory corruption,
+unsuspected incorrect results, vulnerability to attacks by malicious actors,
+your money being stolen, your computer compromised, your AI subverted, etc.
+A more subtle and happily rarer problem happens when a cell is initialized more than once
+with inconsistent values, sometimes subtly so
+(e.g. apparently equivalent values that lack some expected pointer equality),
+causing difficult to explain failures later in the program,
+or worse, unsuspected incorrect results.
+Then again, at another level of difficulty, concurrent object initialization
+can introduce race conditions.
+
+To avoid such costly failure modes, languages or libraries introduce
+various initialization protocols.
+But these protocols often fall short for being either
+too rudimentary or too complex, or at times both.
+
+A rudimentary protocol, as available in most languages,
+will be easy for compilers to enforce and programmers to follow:
+each constructor will have but little latitude in calling
+parent constructors in some constrained order with some constrained arguments;
+but such a protocol has little room for intermediate computations,
+forward references or circularities, and soon programmers find they have
+to leave fields uninitialized, or initialized with dummy values (like the infamous null),
+only to later mutate them with the actual initialized value.
+Rudimentary protocols thus solve the easy problems while leaving programmers on their own
+to solve the hard problems the hard way through extra layers of conventions—such as
+“factory” classes, static factory methods, or the “builder” pattern.
+
+More advanced protocols, such as
+the @c{initialize-instance}, @c{shared-initialize} and related methods of CLOS
+(that also offers a rudimentary protocol based on the @c{:initform} or @c{:initarg} of each slot,
+and @c{:default-initargs} of each class),
+allow for much more sophisticated orders of slot initialization,
+that can involve the results of arbitrary intermediate computations,
+indeed intermediate methods calls, etc.;
+yet the more sophisticated such methods get,
+the more discipline they will require from programmers, who are notoriously bad at it.
+And even such sophisticated protocols will have limitations
+that require the occasional use of uninitialized or null values;
+and they will still not be as flexible as the simple pure functional protocol we defined
+when used with laziness.
+
+@subsubsection{Initialization through Mutation is Too Low-level}
+@epigraph{
+  A programming language is low level when its programs require attention to the irrelevant.
+  @|#:-"Alan Perlis"|
+}
+Our previous pure functional lazy protocol can dynamically infer which slot definition
+depends on which other slot definition,
+and even detect circular dependencies@xnote["."]{
+  A lazy initialization protocol can still diverge into stack or heap overflow
+  due to infinite regress in producing more entities to initialize.
+  But such infinite regress cannot happen if programmers stick to common patterns
+  of static sets of identifiers without complex recursion;
+  and the same complex recursion patterns can cause infinite regress
+  even if tediously used in imperative languages.
+}
+An imperative protocol, by contrast, necessarily requires programmers to deal with more details,
+as it separates object computation into allocation and initialization phases.
+The imperative protocol is therefore comparatively @emph{low-level},
+which might make sense in the relatively rare cases that you really care
+about the performance of such initialization operations.
+But for most programmers, in most cases, this performance does not matter enough
+to justify having to care for all these irrelevant additional details.
+And most high-level languages will offer escape hatches to deal with such details
+in the rare cases that their performance matters.
+
+A deep reason why a proper initialization order can be quite difficult to define,
+much less enforce, in such low-level imperative languages intended for performance-junkies,
+compilers must statically generate simple binary code for each piece of source code
+to achieve the intended performance.
+But such simple code cannot by hypothesis handle subtle dependencies
+of initialization that hasn’t been specified yet,
+involving further cells that haven’t been defined yet,
+as naturally happens in the context of arbitrary OO code,
+made of partial specification the initialization behavior of which
+is to be extended and completed by further partial specifications.
+
+@subsubsection{Mutation-over-Purity}
+
+Recursion-through-mutation provides a colloquial alternative to pure fixpoints
+in languages with mutation.
+But it is also a useful strategy to implement recursive data structures in pure functional languages!
+
+Mutation can be expressed in a pure functional way, through a state monad
+that explicitly passes around a global record as a “mutable store”,
+current mapping of identifiers to values.
+Recursion-through-mutation can then be a valid implementation strategy
+in a pure @emph{applicative} programming language
+without any builtin primitive for lazy or delayed values
+(e.g. in-process Erlang, without using inter-process communications).
+Mutable state, though emulated in an awkward way,
+enables the expression forward references and circular definitions,
+that would not be directly expressible in such a language.
+
+
 @XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
-
-@subsection{Eager Records, Lazily Computed}
-
 
 
 @section[#:tag "MOP"]{Meta-Object Protocols}

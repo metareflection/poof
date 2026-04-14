@@ -658,9 +658,6 @@ I see a potential for confusion:
 - *targets* and elements of target types as such need no identity, but depending on what precisely you're specifying, may have one.
 
 
-@subsection{Method Combination}
-Idiots have methods conflict. Clever people have methods combine harmonously.
-Optics.
 @subsection{Multiple Dispatch}
 In OO, “late binding” enables modular definition and use of an interface
 with objects of unknown future type that satisfy this interface.
@@ -737,71 +734,7 @@ https://www.newted.org/download/manuals/NewtonScriptProgramLanguage.pdf
 https://thenewobjective.com/types-and-programming-languages/comb-inheritance/
 
 
-@@@
-
-As usual, you can extract the value of the module context from the lens and the modular extension
-by using a fixpoint operator.
-In a closed focused module extension, the value inherited is of the top type,
-and the value provided is the one for the entity being defined:
-@Code{
-type CFMExt r p = Lens' r p × MExt r top p
-}
-
-A monomorphic open focused modular extension
-where @c{r i p} are the required, inherited, provided type parameters for a modular extension,
-and @c{d} is a type parameter for the entity being defined.
-@Code{
-type FMExt d r i p = Lens' r d × MExt r i p
-}
-
-
-sub-definition: a is the user-visible object or method, b is what the extension contributes
-sub-context: s is the narrow context for the object definition, t is wider context for the ecosystem.
-
-Also, I'd make the footnote number a superscript both in the text and at the beginning of the footnote, I suppose by printing then adding some unicode magic constant (- #⁰ #\0)) to each digit's code.
-
-
 ------>8------>8------>8------>8------>8------>8------>8------>8------>8------
-
-But in Flavors methods do not have to be combined with the usual @c{mix} function.
-Instead of being viewed as (modular) extensions that you compose,
-they could be (modular) numbers that you add or multiply or get the maximum or minimum of;
-they could be lists that you concatenate, or sets that you merge;
-Any monoidal operation will do: associative, and with a neutral element:
-
-
-
-But, what is more, there could be several kinds of methods cooperating:
-“primary” methods that you combine as above, but also
-additional routines that you execute in one order (or the opposite)
-@c{before} or @c{after} the “primary” methods;
-wrapper routines that run @c{around} those methods so they can setup and tear down
-some environment, grab locks, transform arguments and results.
-CLOS, the polished successor of Flavors and LOOPS,
-
-There is a rich
-and, really, anything the programmer may choose to implement
-
-to be  not just to compete
-over which will survive or be deleted
-
-Method Combinations kept evolving in New Flavors @~cite{Moon1986Flavors},
-and were adopted by CommonLOOPS @~cite{Bobrow86CommonLoops}, CLOS @~cite{Bobrow88CLOS},
-and a whole lot of object systems, mainly in languages of the Lisp and Scheme family.
-Sadly, the feature seems not to have been adopted in other ecosystems, except that
-a lot of the “advice” part lives in Aspect Oriented Programming @; TODO cite
-frameworks, for Java and C#, and less popularly, for other languages.
-
-Generic functions for declarations. (New Flavors)
-
-Multimethods: (not LOOPS), CommonLOOPS, CLOS. Cecil. Dylan. Fortress. Julia.
-
-Generic functions for declarations. (CommonLOOPS?) CLOS.
-
-The visitor pattern, even after you go through all the pain of it,
-doesn't fully capture the expressiveness of multiple dispatch with method combination,
-because it finds only one method, and like Self’s ill-fated sender path inheritance,
-can’t back out of narrowing decision. Breaks “linearity” (conservation of information).
 
 Purity vs Orphan Typeclasses in Haskell.
 

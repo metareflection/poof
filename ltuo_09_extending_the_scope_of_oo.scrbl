@@ -341,7 +341,7 @@ But then, you wouldn’t be able to formalize the advanced notions
 I am going to discuss in the rest of this chapter.
 
 @Paragraph{Adjusting the Extension Focus}
-Given a focus on a specification
+Given a focus on a specification,
 one can focus on a specific method of that specification
 by further adjusting the extension focus using @c{u = (field-update key)}
 where @c{key} is the identifier for the method.
@@ -569,7 +569,7 @@ with the following definition:
 @Code{
 (def (base-instance-method-spec method-id method-body)
   (instance-method-spec method-id
-    (λ (element _call-next-method) (method-body element))))
+    (λ (_call-next-method element) (method-body element))))
 
 (base-instance-method-spec 'area
   (λ (element)
@@ -590,7 +590,7 @@ A @c{BorderedRectangle} that inherits from @c{Rectangle} might add border thickn
 Meanwhile, a @c{ScaledShape} mixin might instead use @c{call-next-method}:
 @Code{
 (instance-method-spec 'area
-  (λ (element call-next-method)
+  (λ (call-next-method element)
     (* (element 'scale-factor) (call-next-method))))
 }
 
@@ -722,8 +722,8 @@ Extending the class is just adding more slots to the mix:
   (colored-rectangle-proto 'area) => 200)
 }
 
-The entire class definition reduces to composing focused modular extensions—
-the same pattern used for methods, now lifted to slot initialization.Claude is AI and can make mistakes. Please double-check responses. Opus 4.5Claude is AI and can make mistakes. Please double-check responses.Share
+The entire class definition reduces to composing focused modular extensions—the same pattern
+used for methods, now lifted to slot initialization.
 
 
 @; TODO section on multiple and optimal inheritance in this context
@@ -737,7 +737,7 @@ the idea that the many methods declared in partial specifications
 are each to contribute partial information that will be harmoniously combined (mixed in),
 rather than complete information that have to compete with other conflicting methods
 that contradict it, the winners erasing the losers.
-Win-win interactions rather than win-lose, that was a revolution
+Win-win interactions rather than lose-lose, that was a revolution
 that made multiple inheritance sensible when it otherwise wasn’t.
 
 Flavors notably allowed regular or “primary” methods to be extended in subclasses with
@@ -762,7 +762,7 @@ that used an operator like @c{progn} (sequential execution), @c{and} or @c{or}
 (logical conjunction or disjunction, with short-circuit evaluation)
 to combine the results of each method, evaluated either in
 most-specific-first or most-specific-last order, as specified by the programmer.
-Typical other operators included @c{+ * max min progn list append nconc}@xnote["."]{
+Typical other operators included @c{+ * max min progn list append nconc}@xnote["—"]{
   @c{nconc} is a historical variant of @c{append} that uses side-effects
   to modify in place each non-empty list but the last, to link to the next one.
   It made sense in the slow and memory-constrained machines of the 1960s to 1980s,
@@ -771,6 +771,8 @@ Typical other operators included @c{+ * max min progn list append nconc}@xnote["
   where either the simpler and safer @c{append} is good enough,
   or optimization is better sought from a more sophisticated data representation than linked lists.
 }
+but you could use any operation that makes sense for your application,
+especially if monoidal (associative and with a neutral element).
 
 The simplest case of method combination is actually
 the usual composition of modular extensions,
@@ -786,18 +788,21 @@ on top of this foundation@xnote["."]{
   but @c{before} and @c{after} methods were also supported
   in the style of ADVISE @~cite{teitelman1966};
   @c{around} methods were only added in CLOS @~cite{Bobrow1988CLOS}.
-  The simple method combinations were supported, again without @c{around} methods.
+  The simple method combinations were supported, again without @c{around} methods,
+  and the simple @c{or} method combination covered a pretty common case of next-method-as-fallback.
   But you could define arbitrary method combinations by providing a @c{wrapper} macro
   that computed the effective method from the ordered list of individual methods.
   And chaining methods through a @c{call-next-method} first argument would definitely
   have been possible.
-  Still such a protocol was not provided in Flavors or its successors until
+  Still such a protocol was not directly provided in Flavors or its successors until
   it appeared in CommonLoops @~cite{Bobrow1986CommonLoops}.
 }
 
 Now, while the original method combinations of Flavors were quite capable,
-method combinations were further refined by New Flavors, CommonLoops, and
-most notably by CLOS @~cite{CLtL2 clhs AMOP Verna2023}.
+method combinations were further refined by
+New Flavors @~cite{Moon1986Flavors},
+CommonLoops @~cite{Bobrow1986CommonLoops}, and
+most notably by CLOS @~cite{Bobrow1988CLOS CLtL2 clhs AMOP Verna2023}.
 My presentation will therefore be more directly inspired by CLOS than by Flavors.
 
 @subsection{Uses of Method Combinations}
@@ -840,19 +845,19 @@ and check invariants after (re)initialization of some objects.
 And ASDF defines @c{:around} methods to fixup the results of special cases,
 setup or use caches around computations, adjust dynamic bindings around computations,
 or detect circular dependencies between actions.
-Other common uses of the standard method combination not present in ASDF include
+Other common uses of the standard method combination not illustrated by ASDF include
 logging (before, after or around) and permission checks
-(usually before, sometimes around to check results are authorized).
+(usually before to check arguments, sometimes around to also check results).
 
 Finally, for historical then backward-compatibility reasons, the ASDF methods
 @c{component-depends-on}, @c{input-files} and @c{output-files}
-use the standard method combination and manually append
-the contents of @c{call-next-method} to their results;
-but they would have better been written with the @c{append} method-combination,
+use the standard method combination wherein every method manually appends
+the contents of @c{call-next-method} to their results.
+They would have better been written with the @c{append} method-combination,
 which would have automated what is manually done through tedious convention.
 
 These methods allow ASDF to be written in a very modular and extensible style, and
-achieve in a few thousand lines of code (and a few more for Quicklisp)
+to achieve in a few thousand lines of code (and a few more for Quicklisp)
 what takes ten times more code in other languages,
 all the while exposing an extension interface actually used by many extensions:
 support for compiling and linking C, FORTRAN or Python code,
@@ -863,9 +868,10 @@ for conditional autoloading of systems, for parallel compilation, etc.
 One of the authors of method combinations went on to invent
 Aspect Oriented Programming (AOP) @~cite{Kiczales1997 Kiczales2001},
 that applies the ideas of Teitelman’s advice and Cannon’s method combinations
-to more languages.
+to more languages, with a little bit of popularity on Java or C#. @; TODO cite
+Sadly, method combinations have not otherwise been adopted beyond languages in the Lisp family.
 
-Certainly, for each use method combinations,
+Certainly, for each use of method combinations,
 equivalent effects could be achieved manually without method combinations,
 by having some master method calling one method for each of the sub-methods,
 orchestrated according to a known design pattern for each method combination.
@@ -1467,9 +1473,13 @@ But the visitor pattern also involves more boilerplate,
 having to define visitor classes with all the required information.
 Importantly, the visitor pattern also requires all state to be public,
 or otherwise shared with all possible present and future visitors.
-Finally, while there is still no good way to support “call-next-method”
-with the visitor pattern, at least the problem is factored in a way that
-the support could conceivably be implemented once and then shared with many visitors.
+Finally, there is still no good way to support “call-next-method”
+with the visitor pattern as commonly defined:
+it finds only one method, breaking “linearity” (conservation of information);
+like Self’s ill-fated sender path inheritance, it can’t back out of a bad narrowing decision.
+Yet at least the problem is factored in a way that visitors could conceivably be generalized
+(at a cost in complexity) to support “call-next-method”, and this support could then
+be implemented once and then shared with many generalized visitors.
 
 Now, if the object system itself has builtin support multiple dispatch, then
 double dispatch as a design pattern, and its generalizations to triple and n-uple dispatch,

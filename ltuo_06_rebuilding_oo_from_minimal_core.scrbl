@@ -1359,28 +1359,25 @@ so that indexed products, fixpoints, mutation, visibility rules and subtyping co
 can remain simple independent constructs each with simple reasoning rules,
 logically separable from each other yet harmoniously combinable together.
 By contrast, the “solution” found in popular languages like C++ or Java
-is all too often to introduce a single mother-of-all syntactic and semantic construct
+is all too often to the opposite of offering simple orthogonal concepts:
+these languages instead introduce a single mother-of-all syntactic and semantic construct
 of immense complexity, the “class”, that frankly not a single person in the world fully understands,
+the complete informal specification of which takes thousand-page books
+(a complete formal specification never being attempted,
+and being wholly impossible for human programmers to fathom, much less understand, if ever completed),
 and of which scientific papers only dare study
-but simplified (yet still very complex) models.
+but simplified (yet still extremely complex) models.
 
 Actually, when I remember that in most OO languages,
 OO is only ever relevant but at compile-time,
 I realize that of course mutation is orthogonal to OO,
 even in these languages, nay, especially so in these languages:
-since OO fragments are wholly evaluated at a time before there is any mutation whatsoever,
+since OO fragments are wholly evaluated at a time before any mutation whatsoever takes place,
 mutation cannot possibly be part of OO, even though it is otherwise part of these languages.
 Indeed the compile-time programming model of these languages, if any, is pure lazy functional.
 Thus, whether fields are mutable or immutable is of precious little concern
 to the compiler fragment that processes OO:
 it’s just a flag passed to the type checker and code generator after OO is processed away.
-
-@;{TODO
-@subsubsection{Autowrapping}
-The relationship between Mutable or Immutable objects with wrapping back and forth;
-linear typing and subtyping.
-@~cite{LIL2012}
-}
 
 @subsection[#:tag "MoIaCU"]{Mutability of Inheritance as Code Upgrade}
 
@@ -1491,6 +1488,37 @@ Languages that assume “purity” or absence of code upgrade, thereby deny thes
 and leave their users helpless, forced to reinvent entire frameworks of identity and update
 so they may then live in systems they build on top of these frameworks,
 rather than directly in the language that denies the issues.
+
+@subsubsection{Further Notes about Mutation}
+
+Programmers can use mutation to build recursive data structures,
+either as a way to implement OO itself, or as a way to
+initialize objects on top of classes defined through OO.
+There are various advantages to such a strategy,
+especially in terms of simplicity of implementation, performance and ergonomics
+on top of existing low-level languages and systems.
+But these advantages also come with significant drawbacks in terms of complexity of usage protocols,
+correctness and reasonability.
+I explore these tradeoffs in @secref{RtM}.
+
+Finally, it is important to realize that mutation or lack thereof
+are not an intrinsic property of computations, but only of some representations of those computations.
+Some programmers get very excited about mutability or immutability
+as if they were essential property of computations;
+they may even claim that only one of the two is the correct choice,
+and that those who use the other choice are wrong, stupid or crazy.
+But the computer executing the code does not care whether it was written in a language
+with or without mutability.
+And the very same algorithms can be written with mutable or immutable objects.
+Immutable computations can be expressed within ubiquitously stateful setting
+by following conventions regarding never mutating objects after initialization
+and never using them before.
+And mutable computations can be expressed within a pure functional setting
+as monadic passing of a linear immutable state.
+Not only that, but you can @emph{automatically} wrap objects written in one style
+(in-place mutation vs linear state-passing)
+so that they may be used in the context of the other style,
+as I did in @citet{LIL2012}.
 
 @exercise[#:difficulty "Easy"]{
   Implement a @c{Counter} prototype two ways:

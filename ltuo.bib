@@ -1374,9 +1374,12 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     that it further extends to support multi-methods (multiple dispatch).
     As in LOOPS, there are metaclasses
     (that control single or multiple inheritance, slot accessors).
-    It introduces what will later be known as call-next-method, then named run-super.
+    CommonLoops introduces what will later be known as call-next-method, then named run-super,
+    probably inspired by the equivalent functionality in Smalltalk,
+    developed by colleagues of the authors at PARC, and previously used by at least Bobrow and Kahn
+    (who also had such functionality in his earlier prototype object system at MIT).
     Method calls are compiled with various optimizations including local and global method caches.
-    Introduces class variables, init-forms in slot descriptions
+    CommonLoops also introduces class variables, init-forms in slot descriptions
     instead of access-time default values as in LOOPS, slot properties,
     “active values” (kind of method combination for slot accessors?).
     More nice design discussions and comparisons.
@@ -5711,3 +5714,24 @@ and Fiech, Adrian",
 % https://openlibrary.org/books/OL387681M/Prototype-based_programming
 
 % https://www.quora.com/How-did-the-concept-of-inheritance-develop-in-programming-languages-and-who-played-key-roles-in-its-evolution/answer/Fran%C3%A7ois-Ren%C3%A9-Rideau
+
+% https://dl.acm.org/doi/abs/10.1145/365230.365252
+% Origin of Ocaps?
+@article{10.1145/365230.365252,
+  author={Dennis, Jack B. and Van Horn, Earl C.},
+  title={Programming semantics for multiprogrammed computations},
+  year={1966},
+  issue_date={March 1966},
+  publisher={Association for Computing Machinery},
+  address={New York, NY, USA},
+  volume={9},
+  number={3},
+  issn={0001-0782},
+  doi={10.1145/365230.365252},
+  abstract={The semantics are defined for a number of meta-instructions which perform operations essential to the writing of programs in multiprogrammed computer systems. These meta-instructions relate to par
+  allel processing, protecting of separate computations, program debugging, and the sharing among users of memory segments and other computing objects, the names of which are hierarchically structured. The language sophistication contemplated is midway between an assembly language and an advanced algebraic language.},
+  journal={Commun. ACM},
+  month=mar,
+  pages={143–155},
+  numpages={13}
+}
