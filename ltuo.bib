@@ -247,13 +247,13 @@ on the author’s page, sci-hub.ru, archive.org, z-library.sk, github.com, etc.
   note={.
         This seminal paper introduces classes and subclasses,
         and many other notions now familiar and ubiquitous,
-        including his infamous "million dollar mistake", null.
-        Hoare calls "objects" and "attributes" high-level entities being modeled, "classes" their types,
-        "records" and "fields" the low-level representations of the previous as
-        "consecutive words of computer store", and "record classes" their types.
-        "References" are typed pointers, and "null" is a special reference
+        including his infamous “million dollar mistake”, null.
+        Hoare calls “objects” and “attributes” high-level entities being modeled, “classes” their types,
+        “records” and “fields” the low-level representations of the previous as
+        “consecutive words of computer store”, and “record classes” their types.
+        “References” are typed pointers, and “null” is a special reference
         for when a correspondence is partial rather than total.
-        "Discrimination" is a form of type-safe pattern-matching between subclasses.
+        “Discrimination” is a form of type-safe pattern-matching between subclasses.
         Hoare considers recursive data structures, yet does not anticipate that
         for them, subclassing will differ from subtyping.}
 }
@@ -261,6 +261,49 @@ on the author’s page, sci-hub.ru, archive.org, z-library.sk, github.com, etc.
 % compacting garbage collection - Aha, he cites LISP. And SIMULA.
 
 %% 1966
+
+@article{Landin1966,
+  author={P. J. Landin},
+  title={The Next 700 Programming Languages},
+  journal={Communications of the ACM},
+  volume={9},
+  number={3},
+  pages={157--166},
+  year={1966},
+  month=mar,
+  doi={10.1145/365230.365257},
+  note={.
+    This landmark paper introduces the hypothetical language ISWIM (If you See What I Mean),
+    a specializable backbone for programming languages with on a spine based on
+    functional programming and purely functional programming, terms Landin introduces.
+    Landin discusses families of languages at multiple levels of abstraction,
+    abstract machines, expressions vs statements, denotation, etc.
+    A lot of programming language concepts that these days we take for granted
+    can be traced to this paper.
+  }
+}
+
+@article{Dennis1966,
+  author={Dennis, Jack B. and Van Horn, Earl C.},
+  title={Programming Semantics for Multiprogrammed Computations},
+  year={1966},
+  issue_date={March 1966},
+  publisher={Association for Computing Machinery},
+  address={New York, NY, USA},
+  volume={9},
+  number={3},
+  issn={0001-0782},
+  doi={10.1145/365230.365252},
+  abstract={The semantics are defined for a number of meta-instructions which perform operations essential to the writing of programs in multiprogrammed computer systems. These meta-instructions relate to par
+  allel processing, protecting of separate computations, program debugging, and the sharing among users of memory segments and other computing objects, the names of which are hierarchically structured. The language sophistication contemplated is midway between an assembly language and an advanced algebraic language.},
+  journal={Commun. ACM},
+  month=Mar,
+  pages={143–155},
+  numpages={13},
+  note={.
+    Among other things, introduces object capabilities.
+  }
+}
 
 % Warren Teitelman MIT PhD dissertation "Pilot: A Step Toward Man-Computer Symbiosis" 1966
 % Gabriel2012 claims it introduces mixins as "advice".
@@ -2127,6 +2170,25 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 1991
 
+@InProceedings{Hoelzle1991,
+  author={Urs Hölzle and Craig Chambers and David Ungar},
+  title={Optimizing Dynamically-Typed Object-Oriented Languages with Polymorphic Inline Caches},
+  booktitle={ECOOP'91: European Conference on Object-Oriented Programming},
+  series={Lecture Notes in Computer Science},
+  volume={512},
+  pages={21--38},
+  publisher={Springer},
+  year={1991},
+  doi={10.1007/BFb0057013},
+  url={https://bibliography.selflanguage.org/_static/pics.pdf},
+  note={.
+    Describes how Self optimizes method lookup with per-call-site inline caches,
+    and introduces the terms “monomorphic”, “polymorphic” and “megamorphic”
+    as pertains to those inline caches.
+  }
+}
+
+
 @article{Moggi1991Monads,
   title={Notions of computation and monads},
   author={Moggi, Eugenio},
@@ -2178,8 +2240,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={https://research.utwente.nl/en/publications/functional-programming-with-bananas-lenses-envelopes-and-barbed-w/},
   note={.
     This influential paper presents a collection of
-    pure (lazy) functional programming design patterns, many inspired by category theory
-    expressed as functions and the logical laws that interrelated them.
+    pure (lazy) functional programming design patterns, many inspired by category theory,
+    expressed as functions and the logical laws that interrelate them.
     The patterns and functions are given recognizable names and
     a vocabulary is thus created for functional programmers to share and use.
     The paper notably popularized recursion schemes,
@@ -2793,16 +2855,40 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={https://hillside.net/elements-of-reusable-object-oriented-software-book},
   note={.
     The classic “Gang of Four” (GoF) book on Design Patterns. Much loved, much hated.
+    Here is a good reason to love design patterns and those who identify them:
+    Design patterns are good, very important, essential even, as necessary first steps—to
+    notice and identify the drudgery involved in coding software, so it can later
+    be automated away and eliminated, should the patterns keep reoccurring.
+    For the same reason, it is stupid to fawn at design patterns as if they are permanent solutions,
+    and a normal thing to collect then keep using over and over in the long run;
+    and it is proper to hate representations of design patterns as such.
     To quote Rich Hickey, «Patterns mean “I have run out of language.”»
-    I.e. patterns are using fourth class entities because you can’t (or otherwise fail to)
-    afford automation and abstraction.
-    Which is a bad thing to happen—but sometimes it does and then you’re glad you have patterns.
-    Also, having recognized patterns is a good and necessary first step
-    before you can automate them away.
-    What is very wrong indeed is being satisfied with their staying unautomated patterns,
-    when they recur enough to be important to your job.
-    A good language has only One Design Pattern: use, extend and evolve the language and its libraries.
-    But that requires macros, and most languages don’t have them. Lisp does.
+    I.e. patterns are fourth class entities manually processed by humans;
+    but it is always preferrable, and always possible,
+    to instead have first-class or second-class that automate the problem away.
+    Therefore, in a decent language, there is only One Design Pattern:
+    Use, extend, evolve and maintain the language and its libraries of functions and macros.
+    But that indeed requires macros, and most languages don’t have them. Lisp does.
+    Most “blub” languages utterly lack macros, or have very limited macros;
+    a few languages support “compile-time reflection” or “templates”,
+    mechanisms that are several orders of magnitude more complex than Lisp macros,
+    lack modularity, and require a completely different language, set of libraries
+    and/or mental programming model, compared to regular use of the language,
+    making them further unavailable to regular programmers.
+    Now, even in a decent language, automation can be expensive;
+    moreover, learning how to operate automation incurs its own cognitive burden.
+    And so sometimes indeed, it is preferrable not to automate the design pattern
+    and leave it as such, at least for the time being.
+    But only if the pattern is so simple or seldom used, or if the automation so complex,
+    that you cannot afford it, even with AI lowering the costs.
+    Being too poor to afford automation is a sad state of affairs—but often it does happen
+    and then you’re glad you have patterns.
+    What is very wrong indeed is being satisfied with just having identified a pattern,
+    being unaware of the possibility and necessity of automation or being wilfully blind to it,
+    accepting blub languages that make automation unaffordable,
+    being unwilling to pay the cost of moving away from these soul-crushing languages,
+    lacking a soul to be crushed by these languages to begin with,
+    or neglecting and corrupting the soul you do have.
   }
 }
 
@@ -2844,22 +2930,22 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     This is yet another paper that claims to model OO using Category Theory,
     but actually models the NNOOTT instead.
     The authors seem clueless about what they do, and provide no warning.
-    They also try to redefine "inheritance" as refinement,
-    except that when it's "non-monotonic", you only have a partial map,
+    They also try to redefine “inheritance” as refinement,
+    except that when it's “non-monotonic”, you only have a partial map,
     and anything goes (you said nothing). Shameful.
   }
 }
 
 @InProceedings{harper1994modules,
   title={A type-theoretic approach to higher-order modules with sharing},
-  author={Harper, Robert and Lillibridge, Mark},
+  author={Robert Harper and Mark Lillibridge},
   booktitle={the 21st ACM SIGPLAN-SIGACT symposium on Principles of programming languages},
   pages={123--137},
   year={1994},
   doi={10.1145/174675.176927},
   note={.
     This paper brilliantly introduces what will become Modules and Functors for SML.
-    One problem is that subtyping is not decidable.
+    One problem though is that subtyping is not decidable.
   }
 }
 
@@ -2879,7 +2965,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     He implements flavorless multiple inheritance, with or without mutation.
     This is solid work as a typesystem, but not very usable as an object system,
     and the limited support for subtyping doesn’t help.
-    Indeed, Rémy admits in a personal conversation that he was only interested
+    Indeed, Rémy admits in a personal conversation (2026) that he was only interested
     in typesystems, not object systems.
     Yet, this work is the basis for what will be the O in OCaml.
     As I often say, the O in OCaml actually stands for how much the authors of OCaml
@@ -2938,7 +3024,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % https://pl.cs.jhu.edu/projects/type-constraints/papers/type-inference-for-recursively-constrained-types-and-its-application-to-oop-longer-version.pdf
 @article{isoop1995,
   title={Type inference for recursively constrained types and its application to OOP},
-  author={Eifrig, Jonathan and Smith, Scott and Trifonov, Valery},
+  author={Jonathan Eifrig, and Scott Smith and Valery Trifonov},
   journal={Electronic Notes in Theoretical Computer Science},
   volume={1},
   pages={132--153},
@@ -2956,7 +3042,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % https://dl.acm.org/doi/pdf/10.1145/217838.217858
 @InProceedings{iloop1995,
   title={Sound Polymorphic Type Inference for Objects},
-  author={Eifrig, Jonathan and Smith, Scott and Trifonov, Valery},
+  author={Jonathan Eifrig, and Scott Smith and Valery Trifonov},
   booktitle={tenth annual conference on Object-oriented programming systems, languages, and applications},
   pages={169--184},
   year={1995},
@@ -3524,7 +3610,7 @@ and Fiech, Adrian",
 
 % https://www.semanticscholar.org/paper/Classes-and-mixins-Flatt-Krishnamurthi/c20e5f2a424b96209e6b400b23d319558932afa3
 @InProceedings{Mixins1998,
-  author={Flatt, Matthew and Krishnamurthi, Shriram and Felleisen, Matthias},
+  author={Matthew Flatt and Shriram Krishnamurthi and Matthias Felleisen},
   title={Classes and mixins},
   year={1998},
   isbn={0897919793},
@@ -5441,6 +5527,20 @@ and Fiech, Adrian",
   }
 }
 
+% Open Access under CC-BY-NC 4.0
+@book{Petricek2025Cultures,
+  author={Tomas Petricek},
+  title={Cultures of Programming: The Development of Programming Concepts and Methodologies},
+  publisher={Cambridge University Press},
+  year={2025},
+  doi={10.1017/9781009492379},
+  url={https://www.cambridge.org/core/books/cultures-of-programming/075A2D1DE611EE47807A683147B21691},
+  isbn={9781009492379 (ebook); 9781009492348 (hardback)},
+  note={.
+    XXXXX
+  }
+}
+
 %% UNCLASSIFIED
 
 %%% TODO: Add the following...
@@ -5715,23 +5815,8 @@ and Fiech, Adrian",
 
 % https://www.quora.com/How-did-the-concept-of-inheritance-develop-in-programming-languages-and-who-played-key-roles-in-its-evolution/answer/Fran%C3%A7ois-Ren%C3%A9-Rideau
 
-% https://dl.acm.org/doi/abs/10.1145/365230.365252
-% Origin of Ocaps?
-@article{10.1145/365230.365252,
-  author={Dennis, Jack B. and Van Horn, Earl C.},
-  title={Programming semantics for multiprogrammed computations},
-  year={1966},
-  issue_date={March 1966},
-  publisher={Association for Computing Machinery},
-  address={New York, NY, USA},
-  volume={9},
-  number={3},
-  issn={0001-0782},
-  doi={10.1145/365230.365252},
-  abstract={The semantics are defined for a number of meta-instructions which perform operations essential to the writing of programs in multiprogrammed computer systems. These meta-instructions relate to par
-  allel processing, protecting of separate computations, program debugging, and the sharing among users of memory segments and other computing objects, the names of which are hierarchically structured. The language sophistication contemplated is midway between an assembly language and an advanced algebraic language.},
-  journal={Commun. ACM},
-  month=mar,
-  pages={143–155},
-  numpages={13}
-}
+% https://www.quora.com/How-do-cognitive-biases-influence-the-perceived-opposition-between-functional-and-object-oriented-programming/answer/Fran%C3%A7ois-Ren%C3%A9-Rideau
+
+% https://www.cs.cmu.edu/~crary/819-f09/Landin66.pdf
+
+% PLOT, 2006-2008 http://users.rcn.com/david-moon/PLOT/index.html

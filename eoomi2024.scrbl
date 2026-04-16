@@ -1,27 +1,3 @@
-@subsubsection{Method Initialization Order}
-Traditional imperative OO languages often have a problem
-with the order of slot initialization.
-They require slots must be initialized in a fixed order,
-usually from most specific mixin to least specific, or the other way around.
-But subprototypes may disagree on the order of initialization of their common variables.
-This leads to awkward initialization protocols that are
-(a) inexpressive, forcing developers to make early choices before they have the right information,
-and/or (b) verbose, requiring developers to explicitly call super constructors
-in repetitive boilerplate, sometimes passing around a lot of arguments, sometimes unable to do so.
-Often, slots end up undefined or initialized with nulls, with later side-effects
-to fix them up after the fact;
-or a separate cumbersome protocol involves “factories” and “builders”
-to accumulate all the initialization data and process it before to initialize a prototype.
-
-By contrast, lazy evaluation enables modular initialization of prototype slots:
-Slots are bound to lazy formulas to compute their values,
-and these formulas may access other slots as well as inherited values.
-Each prototype may override some formulas, and
-the order of evaluation of slots will be appropriately updated.
-Regular inheritance with further prototypes,
-is thus the regular way to further specify how to initialize
-what slots are not yet fully specified yet.
-
 Pure lazy prototypes offer many advantages over effectful eager object initialization protocols:
 @itemize[
 @;#:style enumparenalph

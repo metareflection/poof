@@ -434,7 +434,8 @@ traditionally switch the order of arguments between the @c{half} and @c{method-i
 so that you instead write @c{(half method-id half)};
 there are good reasons to do that
 from the point of view of low-level representation and efficiency.
-But semantically, that is just a trivial isomorphism.
+But semantically, that is just a trivial isomorphism
+(see @secref{SRoRoS} for a discussion).
 
 @Paragraph{For or Against U, Y?}
 

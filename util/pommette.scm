@@ -352,7 +352,7 @@ let Y = f: (x: x x) (x: f (x x));
   (syntax-rules ()
     ((_ body ...) (compute-once (lambda () body ...)))))
 
-(define (! x) (x)) ;; force, even if from def or λ
+(define (once! x) (x)) ;; force, even if from def or λ
 
 ;; Y, once; B, once; U, once; Y, once with combinators; Y, once, expanded
 ;; direct adaptations of Yl Bl Ul Ylc Ylx to once and ! instead of delay and force.
@@ -361,14 +361,14 @@ let Y = f: (x: x x) (x: f (x x));
 (def (Bo x y z) ;; : (^Y→X)→^(Z→Y)→Z→X
   (x (once ((! y) z))))
 (def (Uo x) ;; : µX.^(X→A)→A
-  ((! x) x))
+  ((once! x) x))
 (def (Yoc f) ;; : ^(^X→X)→X
   (Uo (once (Bo f (once Uo)))))
 ;; : ^(^X→X)→X
-(def (Yox f) ((lambda (x) ((x) x)) (once (λ (x) (f (once ((! x) x)))))))
+(def (Yox f) ((lambda (x) ((x) x)) (once (λ (x) (f (once ((once! x) x)))))))
 
 (def once-pre-fact (λ (f n)
-  (if (<= n 1) n (* n ((! f) (- n 1))))))
+  (if (<= n 1) n (* n ((once! f) (- n 1))))))
 
 (expect
  ((Yo once-pre-fact) 6) => 720
@@ -2009,7 +2009,7 @@ let Y = f: (x: x x) (x: f (x x));
    (my-c4* '((C B) (C A)))    => '(C B A O)   ;; C before both, B before A
    (my-c4* '((A B) (B C) (C A))) =>fail!))    ;; cycle: A<B<C<A
 
-;;;;; 7.4 Prototype with Optimal Inheritance (POI)
+;;;; 7.4 Prototype with Optimal Inheritance (POI)
 
 ;; POI is a prototype in the style of rproto, the spec accessible via #f
 ;;   'mod-ext         -> ModExt             -- this spec's own modular extension
@@ -2255,7 +2255,9 @@ let Y = f: (x: x x) (x: f (x x));
         test-objects)
    => expected-pls))
 
-;;;;; 9.3.2 Double Dispatch and Visitor Pattern
+;;;;; 9.3 Multiple Dispatch
+
+;;;; 9.3.2 Double Dispatch and Visitor Pattern
 
 ;;; Manual double dispatch (design pattern):
 ;;   shape1's collide! dispatches a type-specialized callback on shape2,
@@ -2323,7 +2325,7 @@ let Y = f: (x: x x) (x: f (x x));
      (s 'collide! c) => 'square-circle
      (s 'collide! s) => 'square-square)))
 
-;;;;; 9.3.4 Implementing Multiple Dispatch
+;;;; 9.3.4 Implementing Multiple Dispatch
 ;;
 ;; Automate the double dispatch / visitor pattern:
 ;; store partial method tables locally in each spec, backward-compatible with single dispatch.
@@ -2569,7 +2571,66 @@ let Y = f: (x: x x) (x: f (x x));
     (known-ancestor-pairs square shape)
     => '((rectangle shape) (lozenge shape) (shape shape))))
 
-#||#
+
+;;;;; 10 Efficient Object Implementation
+
+;;;; 10.1.2 Records as Finite Maps
+
+;; TODO: records as alists
+
+;; TODO: records as weight-balanced trees ? trie-based hashmap ?
+
+;;;; 10.1.3 Records as Records
+
+;; TODO: mapping from name to offset; global cache; per-class/per-site inline caches; etc.
+
+;; TODO: perfect hashing from name to offset
+
+
+;;;; 10.2.1 Where did the Fixpoint Go?
+
+;; Creating a suspension, extracting its outcome (implemented with Scheme's delay/force)
+;; suspend : (→ V) → (Suspension V)
+;; outcome : (Suspension V) → V
+(define-syntax suspend (syntax-rules () ((_ expr) (delay expr))))
+(def outcome force)
+
+;; Optional short syntax:
+(define-syntax ^ (syntax-rules ()
+                   ((_ expr) (suspend expr))
+                   ((_ e1 e2 e3 ...) (suspend (e1 e2 e3 ...)))))
+(def ! outcome)
+(define-syntax ^! (syntax-rules () ((_ expr ...) (^ (! expr ...)))))
+
+;;;; 10.2.2 Suspended Records or Records of Suspensions
+
+;; Arguments and results suspended representation, matches lazy languages.
+;; Simple naming convention inspired by "hungarian notation":
+;; first symbol after variable name: v^ means it contains a suspension, v! means a value
+;; second symbols after variable name: v!^ v^^ mean it takes a suspension as argument, v!! v^! a value
+;; further symbols after variable name: suspensions or values for more arguments.
+;; first symbol before variable name: ^v means it returns a suspension, !v means it returns a value
+;; Thus, v! is a simple value, v^ a simple suspension,
+;; ^v!^^ is a value for function that takes two suspensions and returns one suspension.
+
+;; Y combinator for a "return suspensions by default" representation
+(def (^Y!! ^f!^) (letrec ((p^ (^f!^ (^! p^)))) p^))
+(def (^Y2!! ^f!^) ((λ (^h!^) (^h!^ (^ ^h!^))) (λ (^g^^) (^f!^ (^! (! ^g^^ ^g^^))))))
+
+;; Y combinator for a representation where arguments are suspended but results are values.
+(def (!Y!! !f!^) (letrec ((p^ (^ !f!^ p^))) (! p^)))
+(def (!Y2!! !f!^) ((λ (!h!^) (!h!^ (^ !h!^))) (λ (^g^^) (!f!^ (^! ^g^^ ^g^^)))))
+
+(def (^fix!^! base^ ^spec!^^) (^Y!! (^spec!^^ base^)))
+
+(def (^mix!!! ^parent!^^ ^child!^^)
+  (λ (super^ self^)
+    (^! ^child!^^ (^! ^parent!^^ super^ self^) self^)))
+
+(def (^field-spec!! field-id! !fun!^^)
+  (λ (super^ self^)
+    (^ !extend-record!!!! !field-id! (!fun!^^ super^ self^) (! super^))))
+
 #|
 The End. (For Now)
 |#
@@ -2579,6 +2640,3 @@ p1 = { a: Int , ...}
 p2 = { b: String, ... }
 p1∩p2 = {a : Int, b : String , ... }
 |#
-
-;; TODO: add compute-once where appropriate in method-combinations?
-;; TODO: add call-next-method support to binary-gf-init-spec for composable multimethods

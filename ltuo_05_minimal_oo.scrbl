@@ -927,7 +927,8 @@ and lazy Y with expanded definition:
   ((force x) x))
 (def (Ylc f)
   (Ul (delay (Bl f (delay Ul)))))
-(def (Ylx f) ((λ (x) ((force x) x)) (delay (λ (x) (f (delay ((force x) x)))))))
+(def (Ylx f) ((λ (x) ((force x) x))
+              (delay (λ (x) (f (delay ((force x) x)))))))
 }
 @; Test: ((Yl lazy-pre-fact) 6) ;==> 720
 @; Test: ((Ylc lazy-pre-fact) 6) ;==> 720

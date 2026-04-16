@@ -53,7 +53,7 @@ or are they mysteries that challenge your mental model of OO?
 Last but not least… have you had enough of us Lispers bragging about how our 1988 OO system
 is still decades ahead of yours?
 
-If any of these questions bother you, then this book is for you.
+If any of these questions bothers you, then this book is for you.
 This book offers a Theory of OO that it elucidates in simple terms on top of FP—as
 Intra-linguistic Modular Extensibility.
 A mouthful, but actually all simple concepts you already use,

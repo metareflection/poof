@@ -235,3 +235,7 @@ If factories were managed according to the Programming Language paradigm, each t
 Lisp had OOP, FP, Actors, Logic programming, Graphical User Interfaces, and many more paradigms, all together, already back in the 1970s, before any idiot invented an “opposition” between paradigms.
 
 The “opposition” between paradigms is just the resource limitation of idiots using the “programming language” paradigm and therefore having to allocate their limited resources to only one paradigm. When you adopt the “systems” paradigm of Lisp, you have a system that you extend in many ways, with no opposition between extensions, only complementarity.
+
+For 20 years, Lisp did not have the true LAMBDA, yet it had the LAMBDA nature(!)
+1958-1979 is when most of the great discoveries were made in Lisp land,
+and Lisp only adopted lexically scoped LAMBDA between 1975-1979.

@@ -232,7 +232,8 @@ and make the many subsequent comparisons for equality a cheaper @c{O(1)}@xnote["
   mapping symbols to such numbers.
 }
 Particularly popular among pure functional balanced tree algorithms are tries
-and their variants optimized for hash maps @~cite{Okasaki1998 Bagwell2001 Steindorfer2015}.
+and their variants optimized for hash maps @~cite{Okasaki1998 Bagwell2001 Steindorfer2015},
+or weight-balanced trees. @;{TODO cite https://github.com/dco-dev/ordered-collections/blob/021-specialized-ropes/doc/why-weight-balanced-trees.md}
 
 For mutable records, or records used with a linear discipline,
 a traditional mutable hash table or HashMap provides @c{O(1)} random access,
@@ -258,12 +259,12 @@ the records-as-arbitrary-function strategy led to a data structure
 that is objectively @emph{worse} than the obvious naïve solution.
 
 Actually, that power is the very reason why
-the @c{extend-record} function is so powerless:
-The power of an arbitrary function, the programmer can choose to exercise once and only once,
-for some base record;
-thereafter, the algorithms that modify that record cannot assume anything
+the @c{extend-record} function for records-as-functions is so powerless:
+The programmer can exercise the power of an arbitrary function,
+but once and only once, for some base record.
+Thereafter, the algorithms that modify that record cannot assume anything
 about the internals of the record being extended,
-and are thus restricted in how they may extend such records;
+and are thus maximally restricted in how they may extend such records;
 all they can do is chain into the opaque record.
 You win big, once, at the beginning;
 and you lose big on all subsequent operations everytime afterwards,
@@ -296,9 +297,13 @@ the semantics of first-class records is essentially that of a finite map,
 with a known performance profile that is much worse than the idea
 that everyone has of a record.
 Indeed, the name “record” itself, as per @citet{Hoare1965},
-suggests a low-level representation of data in terms of consecutive words of memory.
+suggests a low-level representation of data in terms of consecutive words of memory:
 Accessing a field should be just a matter of reading memory at a fixed offset from
-the start of the record. Why isn’t that the conclusion of the discussion so far?
+the start of the “record” as a contiguous array of memory.
+Indeed, I used the title “Records as Records” for its cognitive dissonance,
+but what I mean and most readers will understand (albeit not necessarily consciously so)
+is actually “Records as Contiguous Memory Arrays”.
+Why isn’t that the conclusion of the discussion so far?
 I see what my neighbor has—fast record field access—and I want the same.
 
 The key to this discrepancy is, of course,
@@ -317,7 +322,7 @@ At best, it is a tautological identity that brings nothing;
 or it’s a level of gratuitous wrapping and indirection that only brings overhead.
 What it cannot bring is simplification or improvement.
 Whereas implementing first-class records with second-class records,
-and, actually, with the memory arrays that lie underneath—that does make sense,
+and, these themsevles implemented with the memory arrays that lie underneath—that does make sense,
 if it can be achieved.
 Second-class records then are indeed a case as discussed above, where staging
 enables computations before and after the stage transition (in this case, compilation)
@@ -449,7 +454,7 @@ depending on whether one used Y-encoding (@secref{MOO}) or U-encoding (@secref{C
 
 @Paragraph{Fixpoints are for Computations, not Values}
 Either way, as mentioned in @secref{DSF},
-fixpoints, thus resolution of modular definitions, and resolution of modular extensions,
+fixpoints, and thus resolution of modular definitions and of modular extensions,
 are essentially operations on @emph{computations}, and not quite on @emph{values},
 where the distinction between the two, and the duality of the two,
 is well explained by @citet{Levy1999}:
@@ -473,15 +478,15 @@ But there are many ways to embed computations in the universe of values:
   @item{Computations as forks—as if a thunk were already scheduled to be evaluated in parallel,
     and its side-effects may and will take place even if the computation isn’t explicitly invoked
     to wait for its results.}
-  @item{Computations as futures—same as a fork, but the invoking the computation is implicit
+  @item{Computations as futures—same as a fork, but invoking the computation is implicit
     when the result is needed, as with lazy vs delayed values.}]
 
 An infinite number of more such embeddings can be devised.
 For instance, some variants will be thread-safe using some expensive mutual exclusion primitive;
 whereas other variants require users to enforce mutual exclusion manually or will misbehave;
-some variants may involve a copy of the computation on each “process”, while others
+some variants may involve one copy of the computation in each “process”, while others
 may try to ensure some unique (or centrally managed) copy
-of the process within a given machine or across a given network;
+of the computation in a single process on a given machine or across a given network;
 further network variants may guarantee a number of redundant copies instead of a unique copy.
 
 In a given fixpoint, including but not limited to the case of computing the target of
@@ -491,20 +496,67 @@ the semantics of the fixpoint computation.
 Each object system or library in each programming language,
 may choose its own embedding, parameterize over it,
 offer bridges between different such embeddings, etc.
+Whichever strategy is chosen,
+I will call @emph{suspension} the embedding of a computation into a value,
+and @emph{outcome} of the suspension the value that results
+from evaluating the computation to its end (if it terminates).
+I will speak of the suspended computation, but also, by extension, of the suspended value
+that is the outcome of the computation.
+If the computation yields a value of type foo,
+I will also call the computation a @emph{suspended foo}
+(e.g. suspended record, suspended integer).
+If the computation fails to terminate, trying to extract its outcome will also not terminate,
+but will only produce the side-effects of the computation.
 
-In my Scheme examples that illustrate the principle, I will choose
-the (non-thread-safe) @c{delay} and @c{force} primitives
-to respectively embed computations into values, and
-to map values-that-embed-computations back into computations.
-The result will be verbose and somewhat syntactically awkward, but that is the whole point:
+In my Scheme code, I will call @c{suspend} and @c{outcome}
+the primitives to suspend a computation and extract the outcome of a suspension.
+The resulting syntax is slightly verbose and awkward, but that is the whole point:
 to make the transitions between values and computations explicit,
 so you the reader can more clearly see where those transitions are needed.
-You can easily replace @c{delay} and @c{force} by whatever primitives make sense
-in the context of the programming language you will be using.
+My sample implementation of them will simply be the (non-thread-safe) @c{delay} and @c{force}
+primitives of Scheme, but you can use whichever primitives make sense for you,
+in whichever language you are using, in the context of the application you’re building.
 In a lazy-by-default language such as Nix or Haskell, these two primitives
-may become implicit and invisible, yet their underlying necessity will matter
-once you want to think about performance and optimizations,
-or need to transform the code into monadic style to enable some side-effect in object definitions.
+may become implicit and invisible, as the language already hides and handles this complexity for you;
+at least, they will remain invisible until you want to think about performance and optimizations,
+or need to transform the code into monadic style to enable some side-effect in your object definitions.
+
+@subsection[#:tag "SRoRoS"]{Suspended Records or Records of Suspensions}
+
+Once one explicitly separates the issues of
+representing records on the one hand, distinguishing records from their access functions,
+and representing recursion on the other hand, distinguishing suspensions from their outcomes,
+the simple formulas with a Y combinator of @secref{MOO} break down
+to become slightly more elaborate, and an implementor of OOP must face some choices.
+One notable choice is whether to put the suspended fixpoints before or after the record.
+
+Let’s assume a Y-encoding to start with.
+In the suspended record representation, a regular record of the method values
+is being computed as a fixpoint, but the actual target value is
+the suspension of this fixpoint computation, yielding the record as its outcome;
+a suspended variant of Y is used.
+@; TODO @Code{ ... } see pommette.scm
+In the record-of-suspensions representation, the target is a record whose values
+are suspensions that each yield the method value for the given key;
+a suspended variant of Y can be used,
+or an eager variant of Y specially allowing forward-reference for records (with language support).
+Finally, you can have both the record and its fields be suspensions, in a belt-and-suspenders move;
+this is actually what you have implicitly when you use Nix, Haskell,
+or other languages that are lazy by default.
+
+I briefly mentioned this choice between two isomorphic but different representations
+when discussing U-encoding @secref{CfUe}:
+An actual direct U-encoding would be a suspended record you invoke as
+@c{(record-ref (half half) method-id)},
+which would inefficiently recompute the entire record every time
+(or @c{(record-ref (half hyper half) method-id)} to support mixin or multiple inheritance).
+Instead, the ubiquitous isomorphic representation that everyone uses is actually
+a record of suspensions you invoke as @c{(record-ref half method-id half)}
+(or @c{(record-ref half method-id hyper half)} for mixin and multiple inheritance).
+Note that @c{half} itself, by requiring a call with @c{half} as argument (and maybe @c{hyper}),
+is already a form of suspension. No further form of suspension is required.
+
+@; TODO MORE CODE
 
 @subsection[#:tag "RtM"]{Recursion through Mutation}
 
@@ -515,18 +567,21 @@ programs may mutate variable bindings or memory cells, introduces a popular
 way to construct recursive definitions in two separate steps:
 First, allocate some cell to which you can hold a stable reference@xnote["."]{
   I’ll speak of memory cell, to make mutation more explicit;
-  but your programming language might make it easier to think in terms of mutable variables.
+  but your programming language might make it easier to think in terms
+  of mutable variables (as in Scheme), or mutable record (as in C).
   Indeed, mutable variables would have been slightly easier to deal with in Scheme;
-  but my purpose is to make mutation semantics explicit.
+  but my purpose is to make mutation semantics explicit, not to make its syntax easy.
+  The reference is then the address of the cell in memory or in the persistent store,
+  possibly coded or wrapped to fit the implementation and conventions of the programming language.
 }
-Then, use the reference to backpatch the value of the cell in
+Then, use the reference to backpatch the value of the cell
 in a way that implements the recursion schema.
-The cell is said the be @emph{initialized} after this mutation is complete,
+The cell is said to be @emph{initialized} after this mutation is complete,
 @emph{uninitialized} until then.
 
 In this mutable paradigm, the reference provides access to the future recursively-defined object
 even before it is fully initialized (i.e. all cells involved initialized),
-much like the computation in the immutable paradigm.
+much like the delayed computation in the immutable paradigm.
 Meanwhile, the cell value, to be obtained by dereferencing the reference,
 provides access to the actual recursively-defined object,
 but only past complete initialization.
@@ -540,11 +595,11 @@ an easy punning between these subtly different but contextually easily disambigu
 
 @subsubsection{Initialization Order}
 
-Recursion-through-Mutation involves a tradeoff in terms of complexity:
+Recursion-through-mutation involves a tradeoff in terms of complexity:
 references to mutable cells provide direct access to recursive data structures
 that are both very performant for the machine and quite ergonomic for the programmer;
-but using them correctly hinges on the programmer following a strict discipline with respect
-to making sure every cell is suitably initialized before it is used.
+but using them @emph{correctly} hinges on the programmer following a strict discipline
+with respect to making sure every cell is always suitably initialized before it is used.
 
 Failure to follow a proper initialization order can lead to catastrophic results,
 especially when trying to dereference an uninitialized cell:
@@ -554,7 +609,10 @@ and even restart the program with the fixed code when developing interactively.
 In a less safe language like Java or JavaScript, a slot accessed before it is initialized
 will contain a “null” or “undefined” value, ticking time-bomb
 that will explode at the programmer’s face long after the invalid access,
-potentially wasting hours of the programmer’s time to identify the culprit and debug the issue,
+when the program eventually tries to use the value and fails
+with a “null pointer exception” or some other error,
+potentially wasting hours of the programmer’s time
+identifying the culprit then fixing the bug,
 but at least avoiding bigger issues.
 In unsafe languages like C or C++, a slot accessed before it is initialized
 can result in “Undefined Behavior”, invalid memory patterns being used,
@@ -566,21 +624,27 @@ with inconsistent values, sometimes subtly so
 (e.g. apparently equivalent values that lack some expected pointer equality),
 causing difficult to explain failures later in the program,
 or worse, unsuspected incorrect results.
-Then again, at another level of difficulty, concurrent object initialization
-can introduce race conditions.
+Then again, concurrent object initialization
+can introduce another category of difficulty: race conditions.
 
 To avoid such costly failure modes, languages or libraries introduce
 various initialization protocols.
 But these protocols often fall short for being either
-too rudimentary or too complex, or at times both.
+too rudimentary or too complex—or, sometimes, both at once.
 
 A rudimentary protocol, as available in most languages,
 will be easy for compilers to enforce and programmers to follow:
-each constructor will have but little latitude in calling
-parent constructors in some constrained order with some constrained arguments;
-but such a protocol has little room for intermediate computations,
-forward references or circularities, and soon programmers find they have
-to leave fields uninitialized, or initialized with dummy values (like the infamous null),
+each constructor will have to explicitly and verbosely
+call parent constructors in repetitive boilerplate,
+in some constrained order with some constrained arguments,
+with little latitude in what these calls can do.
+But such a protocol has little room for intermediate computations,
+forward references, circularities, or divergence of orderings among descendents;
+thus programmers, forced to make decisions about ancestor initialization
+before they have the necessary information from descendents,
+soon find they have to leave fields uninitialized,
+initialized with dummy values (like the infamous null),
+or worse, with incomplete temporary values,
 only to later mutate them with the actual initialized value.
 Rudimentary protocols thus solve the easy problems while leaving programmers on their own
 to solve the hard problems the hard way through extra layers of conventions—such as
@@ -588,7 +652,8 @@ to solve the hard problems the hard way through extra layers of conventions—su
 
 More advanced protocols, such as
 the @c{initialize-instance}, @c{shared-initialize} and related methods of CLOS
-(that also offers a rudimentary protocol based on the @c{:initform} or @c{:initarg} of each slot,
+(that also offers a simple yet not verbose protocol
+based on the @c{:initform} or @c{:initarg} of each slot,
 and @c{:default-initargs} of each class),
 allow for much more sophisticated orders of slot initialization,
 that can involve the results of arbitrary intermediate computations,
@@ -596,8 +661,8 @@ indeed intermediate methods calls, etc.;
 yet the more sophisticated such methods get,
 the more discipline they will require from programmers, who are notoriously bad at it.
 And even such sophisticated protocols will have limitations
-that require the occasional use of uninitialized or null values;
-and they will still not be as flexible as the simple pure functional protocol we defined
+that require the occasional use of uninitialized or null values.
+They will still not be as flexible as the simple pure functional protocol we defined
 when used with laziness.
 
 @subsubsection{Initialization through Mutation is Too Low-level}
@@ -605,9 +670,17 @@ when used with laziness.
   A programming language is low level when its programs require attention to the irrelevant.
   @|#:-"Alan Perlis"|
 }
-Our previous pure functional lazy protocol can dynamically infer which slot definition
-depends on which other slot definition,
-and even detect circular dependencies@xnote["."]{
+In our previous pure functional suspended protocol,
+fields are bound to suspended computations that yield their values,
+and these computations can in turn access other fields as well as inherited values.
+This protocol can dynamically infer which field computations
+depend on which other fields.
+That makes the protocol maximally modular, since it enables maximal cooperation
+between specifications with minimal coordination as to any initialization order,
+and supports arbitrary changes in initialization order due to overrides.
+Fields are defined using regular inheritance and overrides,
+without the need for a separate initialization protocol.
+The protocol can even detect circular dependencies@xnote["."]{
   A lazy initialization protocol can still diverge into stack or heap overflow
   due to infinite regress in producing more entities to initialize.
   But such infinite regress cannot happen if programmers stick to common patterns
@@ -615,7 +688,9 @@ and even detect circular dependencies@xnote["."]{
   and the same complex recursion patterns can cause infinite regress
   even if tediously used in imperative languages.
 }
-An imperative protocol, by contrast, necessarily requires programmers to deal with more details,
+
+An imperative initialization protocol, by contrast,
+necessarily requires programmers to specially deal with more details,
 as it separates object computation into allocation and initialization phases.
 The imperative protocol is therefore comparatively @emph{low-level},
 which might make sense in the relatively rare cases that you really care
@@ -623,18 +698,32 @@ about the performance of such initialization operations.
 But for most programmers, in most cases, this performance does not matter enough
 to justify having to care for all these irrelevant additional details.
 And most high-level languages will offer escape hatches to deal with such details
-in the rare cases that their performance matters.
+in the rare cases that performance concerns justify the attention
+(indeed, those who write and extend compilers eventually need get down to that level).
 
 A deep reason why a proper initialization order can be quite difficult to define,
 much less enforce, in such low-level imperative languages intended for performance-junkies,
-compilers must statically generate simple binary code for each piece of source code
+is that compilers must statically generate simple binary code for each piece of source code
 to achieve the intended performance.
-But such simple code cannot by hypothesis handle subtle dependencies
-of initialization that hasn’t been specified yet,
-involving further cells that haven’t been defined yet,
-as naturally happens in the context of arbitrary OO code,
+But such simple static code by construction cannot handle subtle dependencies
+of initialization that haven’t been specified yet;
+it cannot topologically sort cells that haven’t been defined or overridden yet.
+Yet such deferred definitions and overrides occur naturally in arbitrary OO code,
 made of partial specification the initialization behavior of which
 is to be extended and completed by further partial specifications.
+
+First-class OO, and direct translation of second-class OO to first-class OO,
+necessarily requires dynamic semantics;
+and attempts to project such dynamic semantics into a static straight jacket
+necessarily bring pain in proportion to the impedance mismatch.
+But second-class OO, when each class is monomorphized by the compiler,
+and the language allows for dependency-based re-ordering of slot defining clauses,
+might topologically sort those definitions to accommodate a wider range of definitions
+that avoid initialization to temporary null values
+(assuming there is a @emph{static} such order, and not just a @emph{dynamic} one)—though
+I don’t know of any OO system that has chosen this semantics.
+Existing second-class OO systems tend to offer the worst-of-both-worlds
+in terms of initialization protocols.
 
 @subsubsection{Mutation-over-Purity}
 
@@ -644,18 +733,42 @@ But it is also a useful strategy to implement recursive data structures in pure 
 
 Mutation can be expressed in a pure functional way, through a state monad
 that explicitly passes around a global record as a “mutable store”,
-current mapping of identifiers to values.
+the current mapping of identifiers to values.
 Recursion-through-mutation can then be a valid implementation strategy
 in a pure @emph{applicative} programming language
-without any builtin primitive for lazy or delayed values
-(e.g. in-process Erlang, without using inter-process communications).
-Mutable state, though emulated in an awkward way,
-enables the expression forward references and circular definitions,
-that would not be directly expressible in such a language.
-
+without any builtin primitive for lazy or delayed values.
+This is notably the case when restricting yourself to a pure total strict subset of a language
+so that you can reason inductively about programs:
+the theorem prover ACL2 is based on doing exactly that in Lisp;
+and this is a common style in systems like Rocq, Lean, F*, ATS, Agda, Idris, etc.
+Mutable state, though awkwardly emulated,
+enables the expression of forward references and circular definitions,
+which would not be directly expressible in a pure applicative setting.
 
 @XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
 
+@section[#:tag "OL"]{Object Layout}
+
+How do we arrange things in memory?
+Field ordering and offsets.
+Classes, explicit or inferred
+(Self maps, V8 (Chrome) hidden classes, SpiderMonkey (Firefox) shapes, object descriptors,
+inline cache structures) - adding fields dynamically (hash-consing; issue with suffix classes).
+Prefix layout for slots of suffix classes.
+Property storage (in-object vs external).
+
+@section[#:tag "ED"]{Efficient Dispatch}
+
+Object descriptor, vtables (works well with single inheritance / suffix classes), interfaces, etc.
+Multiple dispatch.
+Inline caching per call-site @~cite{Hoelzle1991}, caching per-function.
+Method combinations: precomputing effective methods.
+Sealing and devirtualization.
+Type feedback and speculation—JIT at the atomic block level, not call site level.
+Fast paths (statically or dynamicall compiled) and fallback (dynamic: deoptimization and bailout).
+Caching and invalidation for dynamic class hierarchies.
+Usual optimization techniques after having expanded the OO semantics;
+but also typical OO patterns for what is static|dynamic{JITable|random}.
 
 @section[#:tag "MOP"]{Meta-Object Protocols}
 @epigraph{
@@ -671,11 +784,25 @@ that would not be directly expressible in such a language.
   cache invalidation, naming things, and off-by-one errors.
 @|#:-"Leon Bambrick"| @; http://martinfowler.com/bliki/TwoHardThings.html
 }
-
+What is a MOP?
+Metaobjects: classes, slots, methods, generic functions.
+Metaclasses: classes whose instances are classes.
+Introspection vs intercession.
+The MOP as a reflective tower.
 
 @subsection{Reflection: Introspection and Intercession}
 
-@subsection{Bootstrapping an Implementation}
+@section{Tower of Implementation}
+Reflective towers (3-Lisp, Brown, etc.).
+Reification and reflection.
+Infinite towers vs truncated towers. Turtles all the way down, not hooks all the way up.
+Collapsing towers for efficiency.
+Partial evaluation and Futamura projections.
+
+@citet{Chiba2000MetaHelix}.
+Add serialization, persistence, to a meta-object, NOT to the object.
+
+Different capabilities for objects and their meta-objects => more security.
 
 @subsection{Side Effects}
 
@@ -704,14 +831,60 @@ not intrinsic properties of the underlying computation.
 What @emph{is} an intrinsic property of computation on the other hand is
 that it can and will be decomposed many layers of implementations.
 
-@subsection{Tower of Implementation}
+@section{Bootstrapping an Implementation}
+The chicken-and-egg problem. Metacircular definition.
+At some level, “just” recursion and fixpoints.
+Tying the knot: how does Object have a class?
+Bootstrapping CLOS (or Smalltalk, or your system).
+Staged bootstrapping.
 
-@citet{Chiba2000MetaHelix}.
+@section{Interactions with lower-level subsystems}
+Garbage collection.
+Weak references for method caches.
+Finalizers and instance cleanup.
+GC-safe object layout (tagged pointers, object headers).
+Generational GC and write barriers for mutable slots.
+Or read barriers.
+Safe points for GC.
 
-Add serialization, persistence, to a meta-object, NOT to the object.
+Concurrency.
+Thread-safe slot access. Thread-safe class upgrade.
+Lock-free method dispatch.
+Safe points for JIT invalidation.
+Actor-model vs shared-memory implications.
 
-Different capabilities for objects and their meta-objects => more security.
+Serialization and Persistence
+Pickling objects with their classes. Interaction with Levels of implementation.
+Schema evolution (adding/removing slots).
+Object-relational mapping as a representation issue.
+Persisting continuations.
 
+FFI and Interoperability.
+Representing foreign objects
+Bridging OO systems (e.g., Python↔C++, JS↔WASM)
+Proxy objects and wrappers
+
+Debugging and Tooling.
+Preserving debugging information.
+Object inspectors and their MOP requirements.
+Stack traces through method combinations.
+
+Allocation Strategies.
+Inline allocation / bump pointers.
+Object pooling for common shapes.
+Stack allocation of non-escaping objects (escape analysis).
+Unboxing and scalar replacement; specialized arrays (unboxed floats, etc.).
+Immediate values (e.g. fixnums) and their type descriptors for OO dispatch.
+
+Security Considerations.
+Encapsulation enforcement at runtime.
+Capability-based security via object references.
+Sandboxing and membrane patterns.
+
+@section{Finale: Putting It All Together}
+How does it all connect?
+A tour through an actual implementation: the Gerbil MOP.
+What this book's accompanying code does (and doesn’t) do.
 
 @exercise[#:difficulty "Easy"]{
   Read and make sense of the code I wrote for this chapter,

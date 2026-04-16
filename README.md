@@ -21,8 +21,8 @@ I (Faré) am instead am preparing a book, titled “Lambda: the Ultimate Object�
 [Scribble source](ltuo.scrbl) and [annotated bibliography](ltuo.bib).
 It is still a Work-In-Progress, but well advanced already.
 I regularly update some precompiled draft
-[PDF](https://fare.tunes.org/files/cs/ltuo.pdf) and
-[HTML](https://fare.tunes.org/files/cs/ltuo.html).
+[PDF](https://fare.tunes.org/files/cs/poof/ltuo.pdf) and
+[HTML](https://fare.tunes.org/files/cs/poof/ltuo.html).
 Please send me feedback if you proofread.
 
 ## Abstract
