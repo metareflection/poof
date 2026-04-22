@@ -112,8 +112,9 @@ Your imagination is the limit, but notice a few things:
 @itemize[
   @item{The existence of magic input values mean that what you have indeed is not “a function”
     from arbitrary value to arbitrary value: instead it is a function from the sum of two types
-    (regular keys and magic messages) to a sum of two types (regular values and magic answers);
-    which is indeed a conflation of two functions, each of which may be a “record” of sorts.}
+    (regular keys and magic messages) to a sum of two types (regular values and magic answers),
+    where the sides of the sum are preserved, which indeed encodes a conflation of two functions,
+    each of which may be a “record” of sorts.}
   @item{The first function from regular keys to regular values behaves like
     our records-as-arbitrary-functions above, while the second conflated function,
     from “magic” messages to magic answers, provides some reflective interface
@@ -235,8 +236,10 @@ Particularly popular among pure functional balanced tree algorithms are tries
 and their variants optimized for hash maps @~cite{Okasaki1998 Bagwell2001 Steindorfer2015},
 or weight-balanced trees. @;{TODO cite https://github.com/dco-dev/ordered-collections/blob/021-specialized-ropes/doc/why-weight-balanced-trees.md}
 
-For mutable records, or records used with a linear discipline,
-a traditional mutable hash table or HashMap provides @c{O(1)} random access,
+@Paragraph{Mutable Records}
+Mutable records, or records used with a linear discipline, are mutable finite maps.
+A traditional implementation with a mutable hash table or HashMap,
+provides random access in @c{O(1)} (compared to @c{O(log n)} for immutable finite maps),
 albeit with a constant factor that is typically one or two orders of magnitude larger
 than a direct field access in a statically typed language.
 My above remarks about hashing, interning, and unique numbering apply to mutable hash tables
@@ -534,11 +537,15 @@ Let’s assume a Y-encoding to start with.
 In the suspended record representation, a regular record of the method values
 is being computed as a fixpoint, but the actual target value is
 the suspension of this fixpoint computation, yielding the record as its outcome;
-a suspended variant of Y is used.
+a suspended variant of Y is used: @c{Suspended(Record(k:K,Vₖ))},
+where @c{Suspended(X)} is essentially equivalent to a thunk @c{1→X},
+and @c{Record(k:K,Vₖ)} is the dependent type of records having
+for each key @c{k} a value of according type @c{Vₖ}.
 @; TODO @Code{ ... } see pommette.scm
 In the record-of-suspensions representation, the target is a record whose values
-are suspensions that each yield the method value for the given key;
-a suspended variant of Y can be used,
+are suspensions that each yield the method value for the given key:
+@c{Record(k:K,Suspended(Vₖ))}
+A suspended variant of Y can be used,
 or an eager variant of Y specially allowing forward-reference for records (with language support).
 Finally, you can have both the record and its fields be suspensions, in a belt-and-suspenders move;
 this is actually what you have implicitly when you use Nix, Haskell,
@@ -554,7 +561,19 @@ Instead, the ubiquitous isomorphic representation that everyone uses is actually
 a record of suspensions you invoke as @c{(record-ref half method-id half)}
 (or @c{(record-ref half method-id hyper half)} for mixin and multiple inheritance).
 Note that @c{half} itself, by requiring a call with @c{half} as argument (and maybe @c{hyper}),
-is already a form of suspension. No further form of suspension is required.
+is already a form of suspension. No further form of suspension is required,
+though they can be useful as caching mechanisms.
+
+There are tradeoffs to each representation.
+Each suspension adds a little bit of overhead at each use,
+but can save a significant though constant amount of work if actually unused.
+In a very dynamic system where it is hard to predict those things,
+and/or with feature-rich objects that provide a lot of convenience methods
+of which a small fraction are used, suspensions are a boon.
+In a spartan static system that was neatly designed to only define what is strictly needed
+and use it all—suspensions are pure overhead.
+That said, the spartan system might want to only use OO at compile-time,
+and expand to some optimized low-level code, à la C++.
 
 @; TODO MORE CODE
 
@@ -670,8 +689,8 @@ when used with laziness.
   A programming language is low level when its programs require attention to the irrelevant.
   @|#:-"Alan Perlis"|
 }
-In our previous pure functional suspended protocol,
-fields are bound to suspended computations that yield their values,
+In our previous pure functional lazy (or otherwise suspended) protocol,
+fields are bound to lazy computations that yield their values,
 and these computations can in turn access other fields as well as inherited values.
 This protocol can dynamically infer which field computations
 depend on which other fields.
@@ -688,6 +707,10 @@ The protocol can even detect circular dependencies@xnote["."]{
   and the same complex recursion patterns can cause infinite regress
   even if tediously used in imperative languages.
 }
+No uninitialized fields, no nulls, no memory corruption, no double-initialize,
+no race condition, no ordering issues, no side-effects that complicate everything,
+no factories, no builder patterns, no separate initialization protocol.
+Pure functional lazy prototypes just work.
 
 An imperative initialization protocol, by contrast,
 necessarily requires programmers to specially deal with more details,
@@ -720,9 +743,9 @@ But second-class OO, when each class is monomorphized by the compiler,
 and the language allows for dependency-based re-ordering of slot defining clauses,
 might topologically sort those definitions to accommodate a wider range of definitions
 that avoid initialization to temporary null values
-(assuming there is a @emph{static} such order, and not just a @emph{dynamic} one)—though
-I don’t know of any OO system that has chosen this semantics.
-Existing second-class OO systems tend to offer the worst-of-both-worlds
+(assuming there is a @emph{static} such order, and not just a @emph{dynamic} one).
+Unhappily, I don’t know of any OO system that has chosen this semantics;
+existing second-class OO systems tend to offer the worst-of-both-worlds
 in terms of initialization protocols.
 
 @subsubsection{Mutation-over-Purity}

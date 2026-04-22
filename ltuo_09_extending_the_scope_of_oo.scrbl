@@ -1062,13 +1062,16 @@ methods try to invoke their @c{super} argument as a @c{call-next-method}.
 (def (standard-compute-effective-method method-id sub-methods self)
   (call-chain (sub-methods 'around)
     (λ args
-      (progn-methods-most-specific-first (sub-methods 'before) self args)
+      (progn-methods-most-specific-first
+        (sub-methods 'before) self args)
       (let ((result
               (apply (call-chain (sub-methods 'primary)
-                       (λ args (apply no-applicable-method method-id args))
+                       (λ args
+                         (apply no-applicable-method method-id args))
                        self)
                      args)))
-        (progn-methods-most-specific-last (sub-methods 'after) self args)
+        (progn-methods-most-specific-last
+          (sub-methods 'after) self args)
         result))
     self))
 }
@@ -1143,27 +1146,32 @@ try to invoke their @c{super} argument as a @c{call-next-method}.
 
 (def compute-effective-method/progn
   (simple-compute-effective-method
-    'progn (λ (_) #f) (λ (_) #f) (λ (x) x) (λ (r _) r)
+    'progn (λ (_) #f) (λ (_) #f) (λ (x) x)
+    (λ (r _) r)
     'most-specific-first))
 
 (def compute-effective-method/and
   (simple-compute-effective-method
-    'and not (λ (_) #t) (λ (x) x) (λ (r _) r)
+    'and not (λ (_) #t) (λ (x) x)
+    (λ (r _) r)
     'most-specific-first))
 
 (def compute-effective-method/+
   (simple-compute-effective-method
-    '+ (λ (_) #f) (λ (_) 0) (λ (x) x) (λ (x y) (+ x y))
+    '+ (λ (_) #f) (λ (_) 0) (λ (x) x)
+    (λ (x y) (+ x y))
     'most-specific-first))
 
 (def compute-effective-method/*
   (simple-compute-effective-method
-    '* (λ (_) #f) (λ (_) 1) (λ (x) x) (λ (x y) (* x y))
+    '* (λ (_) #f) (λ (_) 1) (λ (x) x)
+    (λ (x y) (* x y))
     'most-specific-first))
 
 (def compute-effective-method/list
   (simple-compute-effective-method
-    'list (λ (_) #f) (λ (_) '()) (λ (x) (list x)) (λ (x y) (cons x y))
+    'list (λ (_) #f) (λ (_) '()) (λ (x) (list x))
+    (λ (x y) (cons x y))
     'most-specific-last))
 }
 You can define then initialize a function with specifications like this one:
@@ -1172,7 +1180,8 @@ You can define then initialize a function with specifications like this one:
   (mix
     (field-spec method-id
        (λ (_inherited self)
-          (compute-effective-method/list (self 'sub-methods method-id) self)))
+          (compute-effective-method/list
+            (self 'sub-methods method-id) self)))
     (method-combination-init-spec
        method-id (simple-method-combination-init 'list))))
 }
@@ -1387,8 +1396,10 @@ Thus, with multiple dispatch, a method can be specialized based
 not just on one argument, but on multiple arguments.
 A method specializing on multiple arguments is called a @emph{multimethod},
 and a language supporting multiple dispatch is the same as a language supporting multimethods.
-And the previous behavior of only specializing methods on a single object argument
+The previous behavior of only specializing methods on a single object argument
 is renamed “single dispatch”.
+The early “message passing” metaphor seemed to make this “single dispatch” special,
+but it is retrospectively obvious that it wasn’t.
 
 With multimethods, the notional table of method specifications,
 instead of being indexed by a pair of a generic function and a specification, is indexed by
@@ -1404,11 +1415,25 @@ a typeclass function with @c{n} typeclass constraints is like a generic function
 dispatching on @c{n} elements, being the “dictionaries” for each of those @c{n} constraints.
 The difference being that Haskell typeclasses do not support inheritance,
 but CLOS protocols do @~cite{LIL2012}.
+If @c{n = 0}, the function is a constructor (if it returns an object) or else an arbitrary function.
+If @c{n = 1}, the function is a regular OO method.
+If @c{n = 2}, the function is a binary method.
+If @c{n > 2}, the function is a more general multimethod.
+Multimethods unify all these concepts,
+that are often problematic in the naïve view of class OO,
+but pose no problem with prototypes or typeclasses or protocols.
 
 Multimethods notably simplify away “binary methods”, “double dispatch”,
-and the “visitor pattern”.
-They offer a modular alternative to these often nightmarish “design patterns”,
-and supporting actual win-win inheritance when they typically only support conflict inheritance.
+and the “visitor pattern”, offering
+a modular alternative to these often nightmarish “design patterns”.
+Moreover, multimethods support actual win-win inheritance
+when the above design patterns typically only support conflict inheritance.
+
+At least CLOS, Clojure and Julia support multimethods,
+as well as many Lisp and Scheme object systems (include Gerbil Scheme).
+Many past languages including Cecil, Dylan, Fortress or Slate also did.
+A few popular languages have libraries that implement some form of it.
+@; TODO CITE
 
 @subsection{Binary Methods Done Right}
 

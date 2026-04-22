@@ -1,23 +1,3 @@
-Pure lazy prototypes offer many advantages over effectful eager object initialization protocols:
-@itemize[
-@;#:style enumparenalph
-@item{The slot initialization order needs not be the same across an entire prototype hierarchy:
-      new prototypes can modify or override the order set by previous prototypes.}
-@item{When the order doesn’t require modification, no repetitive boilerplate is required
-      to follow the previous protocol.}
-@item{There are no null values that become ticking bombs at runtime,
-      no unbound slots that at least explode immediately but are still inflexible.}
-@item{There are no side-effects that complicate reasoning,
-      no computation yielding the wrong value because
-      it uses a slot before it is fully initialized,
-      no hard-to-reproduce race condition in slot initialization.}
-@item{At worst, there is a circular definition,
-      which can always be detected at runtime if not compile-time,
-      and cause an error to be raised immediately and deterministically,
-      with useful context information for debugging purposes.}
-@item{There is seldom the need for the “builder pattern”,
-      and when builders are desired they require less code.}]
-
 @subsubsection{If it’s so good...}
 Some may wonder why OO languages don’t use pure lazy functional programming
 for OO, if the two are meant for each other.
@@ -133,6 +113,7 @@ and can be used with arbitrarily refined types
 that may or may not be records, may or may not be functions, and
 may or may not generalize or specialize them in interesting ways.
 
+
 @subsubsection{Conflating Records and Functions}
 Many languages solve the above issue by allowing an instance to be simultaneously
 both a record and a function. Thus, prototype definitions can use extra record slots
@@ -194,6 +175,7 @@ whether resolved syntactically at compile-time (when possible)
 or dynamically at runtime (otherwise).
 We will call this implicit product a @emph{conflation}.
 
+
 @subsubsection{Freedom of and from Representation}
 We already saw in @seclink{encoding_records} that were many ways to represent records,
 that affect performance, memory usage, the ability to introspect values, etc.
@@ -214,6 +196,7 @@ This makes prototypes a more general and more modular notion
 that can be used in multiple ways in a same language ecosystem.
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLAH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
 
 @subsubsection[#:tag "keeping_extensibility_modular"]{Keeping Extensibility Modular}
 Specifying software with prototypes yet without objects works great,
@@ -247,6 +230,7 @@ to when an object is being used or extended.
 By the criteria in @seclink{modularity_and_incrementality},
 this conflation indeed makes OOP more modular.
 
+
 @subsubsection{Conflating More Features}
 For mixin inheritance, we wanted a prototypes to be just a mixin function.
 For multiple inheritance, we wanted a prototype to @emph{also} have a list of direct supers;
@@ -269,6 +253,7 @@ as additional conflated aspects of a prototype,
 factors in the prototype as (implicit) product,
 or equivalently slots in the prototype seen itself as a record instance.
 
+
 @subsubsection{Distinction and Conflation}
 Conflating many aspects of prototypes, instances and together objects
 in an implicit product brings better ergonomics and extensibility.
@@ -290,6 +275,7 @@ by necessity abide by this conflation.
 By insisting on both conflation and distinguish of the two concepts of instance and prototype,
 we aim at dispeling the confusion often reigns in even the most experienced OO practitioners
 when trying to reason about the fine behavior of OO programs.
+
 
 @section[#:tag "classes"]{Classes}
 
@@ -339,15 +325,18 @@ can become tedious and costly to write and run.
 Automated DAG joins through reduction to a method monoid via a precedence list
 make a lot of sense in this context; no manual joins needed.
 
+
 @subsubsection{Meta-Object Protocols}
 tying together all the bells and whistles in defining
     bindings, representations, objects, classes, methods, combinations, etc.
     We can adapt and generalize the techniques from AMOP in a pure functional setting.
 
+
 @subsubsection{Runtime Reflection}
 Controlling Meta-Objects,
     from Synchronous Message-Passing Proxies to Fully Abstract Asynchronous Containers.
     We can only briefly survey this topic, maybe reusing the Collapsing Towers of Interpreters.
+
 
 @section{Conclusion}
 
@@ -376,6 +365,7 @@ Indeed, they are much more elaborate constructions,
 the semantics of which can be simple, clear and general
 when decomposing it into the preceding concepts, but
 hopelessly complex, confusing and ad hoc when failing to.
+
 
 @subsection{Parting Words}
 
@@ -406,6 +396,7 @@ and should be a natural part of the OO ecosystem.
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLEH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
+
 Lack of awareness of this conflation
 can cause much confusion among students of OO.
 So can, to a lesser extent,
@@ -432,7 +423,9 @@ that may not actually be essential to OO.
   can appreciate both, and how they nicely complement each other.
 }
 
+
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLUH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
 
 @item{Discuss how purity and laziness make OO more modular,
   and solve difficult initialization order issues (@seclink{laziness}).}
@@ -455,7 +448,9 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLUH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 Many of the concepts and relationships we tackle have long been part of OO practice and lore,
 yet have been largely neglected in scientific literature and formalization attempts.
 
+
 @@@
+
 
 https://x.com/Ngnghm/status/1976680711345299533
 
@@ -480,6 +475,7 @@ These indexes may be cached between modifications, or wholly resolved at compile
 if the extension is external or second-class.
 
 @@@@
+
 
 @subsubsection{The Importance of Laziness}
 
@@ -635,20 +631,7 @@ I see a potential for confusion:
 
 
 @subsection{Multiple Dispatch}
-In OO, “late binding” enables modular definition and use of an interface
-with objects of unknown future type that satisfy this interface.
-To achieve this, Class OO systems customarily use “dynamic dispatch” of methods,
-wherein every object (element of a record type defined using a class)
-remembers its class (or rather, the target type of the class) in an implicit field,
-from which object methods can be recalled when the object's type is not known statically.
-Most Class OO languages have special syntax for this dynamic method dispatch on a single object
-based on its recorded type.
-This special syntax then seems to make “single dispatch” of methods with exactly one object
-something special in OO.
-The early “message passing” metaphor also seemed to make this “single dispatch” something special.
 
-But from the more general point of view of Prototype OO,
-this “single dispatch” is not special at all:
 @itemize[
 @item{First the notion of “object” as type element doesn’t even exist in Prototype OO.
 (as a primitive; you can obviously still construct it on top);
@@ -665,42 +648,30 @@ and trying to implement this behavior through a series of “single dispatch”
 calls to intermediate leads to non-modular code that is hard to maintain,
 and further does not support method combination.}]
 
-Thus, many languages support “multiple dispatch” or “multimethods”, @; TODO cite. LOOPS?
-a technique wherein the semantics of calling some “generic function”
-is specified through methods that depend on the types multiple of its arguments,
-and their type hierarchy: Lisp, Clojure, Julia support it natively,
-as well as less popular languages; many more popular languages support it using libraries.
-
-@subsection[#:tag "multiple_dispatch"]{Multiple Dispatch}
-Simple methods, Binary methods, Multimethods, Constructors —
-Number object inputs being 1, 2, N, 0.
-Big big problem in the naïve view of class OO.
-Not at all a problem with prototypes / typeclasses.
-
 
 @subsection{Type Monotonicity}
 Makes no sense at all as a general constraint when you realize anytime there's recursion of any kind,
 your methods won't all be simple methods. Deeply idiotic idea.
+
 
 @subsubsection[#:tag "global"]{Global Open Recursion}
 Orphaned Typeclasses.
 Open Mutual Recursion between multiple classes.
 How to do it in a pure functional way?
 Solution: global namespace hierarchy. You grow not just a language, but its library ecosystem with it.
-@subsection[#:tag "optics"]{Optics}
-Fields vs Optics for method combination wrapping vs Generalized optics.
-@subsubsection{Meta-Object Protocols}
-@subsubsection{Runtime Reflection}
+
 
 @;{TODO: Examine Ruby linearization algorithm, compare it to LOOPS, Scala, etc.
 Find concrete examples of where it does the Wrong Thing(tm).
 https://norswap.com/ruby-module-linearization/
 }
 
+
 More extension to the multiple inheritance algorithm:
 imagine each specification having a sort, with a DAG of sorts,
 such that linearization of specs must respect the partial order of sorts,
 or, which is stronger, the linearization of specs must respect the linearization of their sort.
+
 
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLYH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
@@ -826,7 +797,3 @@ https://github.com/marcoheisig/fast-generic-functions
 
 CLIM presentation types implemented using the MOP
 https://www.jucs.org/jucs_14_20/an_implementation_of_clim/jucs_14_20_3358_3369_moore.pdf
-
-
-One thing Beta got almost but not quite right is that named function arguments with defaults and prototypes with holes (undefined attributes that become mandatory input arguments) are essentially the same thing.
-

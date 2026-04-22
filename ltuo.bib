@@ -148,6 +148,9 @@ on the author’s page, sci-hub.ru, archive.org, z-library.sk, github.com, etc.
     Curry also tried to do logic with (for mathematical reasoning), which he called
     “illative combinatory logic”, though he didn’t find
     a completely satisfying (to himself) variant.
+    The book also notes the correspondence between logical implication and function types,
+    which will later be known as the Curry-Howard correspondence
+    (a.k.a. Curry-Howard-de Bruijn correspondence).
   }
 }
 
@@ -396,6 +399,19 @@ on the author’s page, sci-hub.ru, archive.org, z-library.sk, github.com, etc.
   url={https://web.archive.org/web/20131225084408/http://www.edelweb.fr/Simula/scb-1.pdf}
 }
 
+@TechReport{deBruijn1968,
+  author={Nicolaas Govert de Bruijn},
+  title={Automath, a Language for Mathematics},
+  institution={Department of Mathematics, Eindhoven University
+                 of Technology},
+  number={68-WSK-05},
+  year={1968},
+  note={Reprinted in revised form in: Automation and
+                 Reasoning, vol.~2, Classical Papers on
+                 Computational Logic 1967--1970,
+                 Springer, 1983, pp.~159--200}
+}
+
 %% 1972
 
 @InProceedings{Bobrow1972,
@@ -462,6 +478,20 @@ on the author’s page, sci-hub.ru, archive.org, z-library.sk, github.com, etc.
   }
 }
 
+@phdthesis{Girard1972,
+  author={Jean-Yves Girard},
+  title={Interprétation fonctionnelle et élimination des coupures
+         de l'arithmétique d'ordre supérieur},
+  school={Université Paris VII},
+  year={1972},
+  url={https://girard.perso.math.cnrs.fr/thesis.pdf},
+  note={.
+    Girard’s famous thesis introduced System F, a second-order intuitionnistic logic,
+    the proof system of which was later found to be equivalent to Reynolds 1974’s
+    typed λ-calculus with quantification over types.
+  }
+}
+
 %% 1973
 
 % XXX TODO
@@ -486,6 +516,24 @@ on the author’s page, sci-hub.ru, archive.org, z-library.sk, github.com, etc.
     that relate to each other in various ways.
     Minsky uses the words “prototype” and “inherit”, but incidentally,
     and NOT AT ALL to refer to the concepts at stake for OO.
+  }
+}
+
+@InProceedings{Reynolds1974,
+  author={John C. Reynolds},
+  title={Towards a Theory of Type Structure},
+  booktitle={Colloque sur la Programmation},
+  series={Lecture Notes in Computer Science},
+  volume={19},
+  pages={408--425},
+  publisher={Springer},
+  year={1974},
+  doi={10.1007/3-540-06859-7_148},
+  url={https://link.springer.com/chapter/10.1007/3-540-06859-7_148},
+  note={.
+    Reynolds’s famous paper introducing a
+    typed λ-calculus with quantification over types,
+    later found to be equivalent to Girard 1972’s System F.
   }
 }
 
@@ -631,7 +679,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 @InProceedings{DeRemerKron1975,
-  author={DeRemer, Frank and Kron, Hans},
+  author={Frank DeRemer and Hans Kron},
   title={Programming-in-the Large versus Programming-in-the-Small},
   year={1975},
   isbn={9781450373852},
@@ -1044,6 +1092,20 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
+@InCollection{Howard1980,
+  author={William A. Howard},
+  title={The Formulae-as-Types Notion of Construction},
+  booktitle={To {H.B.} Curry: Essays on Combinatory Logic,
+               Lambda Calculus and Formalism},
+  editor={Jonathan P. Seldin and J. Roger Hindley},
+  publisher={Academic Press},
+  year={1980},
+  pages={479--490},
+  note={Manuscript originally circulated 1969.
+    Made popular what is now known as the Curry-Howard-de Bruijn correspondance
+    between logical implication and function types.}
+}
+
 %% 1981
 
 % Chine Nual or chinual 3ed, 1981 has Flavors and defsystem. 1979 2ed doesn't.
@@ -1303,13 +1365,33 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
+@InProceedings{Reynolds1985,
+  author={John C. Reynolds},
+  title={Three Approaches to Type Structure},
+  booktitle={Mathematical Foundations of Software Development
+               (TAPSOFT/CAAP)},
+  series={Lecture Notes in Computer Science},
+  volume={185},
+  pages={97--138},
+  publisher={Springer},
+  year={1985},
+  doi={10.1007/3-540-15198-2_7},
+  url={https://link.springer.com/chapter/10.1007/3-540-15198-2_7},
+  note={.
+    Reynolds notes the equivalence between three approaches to types in programming languages:
+    Milner’s type deduction/inference system (Hindley-Milner with the polymorphic let);
+    the theory of subtypes and generic operators
+    (Reynolds's own earlier work on implicit conversions via category theory);
+    and the polymorphic/second-order typed lambda calculus (Girard’s logical System F).
+    He illustrates all three on a common functional language with products, sums, and lists,
+    comparing their expressiveness and trade-offs.
+  }
+}
 
-%% 1986
-
-@book{Cardelli1986Understanding,
+@book{Cardelli1985,
   title={On understanding types, data abstraction, and polymorphism},
   author={Cardelli, Luca and Wegner, Peter},
-  year={1986},
+  year={1985},
   publisher={Brown University. Department of Computer Science},
   url={http://lucacardelli.name/Papers/OnUnderstanding.A4.pdf},
   note={
@@ -1321,6 +1403,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     Great in some ways, and beyond lame in others.
   }
 }
+
+%% 1986
 
 % url={https://homepages.cwi.nl/~storm/teaching/reader/Lieberman86.pdf}
 @InProceedings{Lieberman1986,
@@ -1467,7 +1551,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     for which he wishes for the “graph oriented solutions” ability
     to directly call another method (which is a terrible idea and as he saw didn’t work),
     and finally worries about name clashes (yes, but that’s not specific to “linear solutions”).
-    Dissatisfied for wrong reasons, and not having any theory of what OO should and why,
+    Dissatisfied for wrong reasons, and not having any theory of what OO should do and why,
     he invents his own “tree solutions” for his system CommonObjects,
     trying to wish his simple Tree to solve a problem
     that obviously requires a DAG, admitting his solution
@@ -1603,6 +1687,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     and returns the specified values (none if no exit block).
     This asymmetry is there in the name of both keeping the system minimal
     and still identifying a pattern’s target (my word) with both procedures and records.
+    (I would have preferred a more symmetric design, where functions with named mandatory arguments
+    and prototypes with holes are the same thing.)
     Inheritance works by extending a pattern and its transitive subpatterns,
     using the same concatenation semantics as Simula:
     in each “do” block, an “inner” keyword may specify
@@ -1962,7 +2048,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % 4.2 seems to implicitly have a type dependency (what are F and G in (5)? I think typo G should be F)
 % url={https://dl.acm.org/doi/abs/10.1145/96709.96721}
 % Cites Mitch Wand 1987, 1989, 1989... gotta go deeper
-@InProceedings{cook1989inheritance,
+@InProceedings{Cook1989inheritance,
   title={Inheritance is not subtyping},
   author={Cook, William and Hill, Walter and Canning, Peter S},
   booktitle={17th ACM SIGPLAN-SIGACT symposium on Principles of programming languages},
@@ -1979,6 +2065,28 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     instead of a simpler construction of class as prototype as in Lieberman 1986;
     but that doesn’t affect the argument made.
   }
+}
+
+@InProceedings{Canning1989,
+  author={Peter Canning and William Cook and Walter Hill
+               and Walter Olthoff and John C. Mitchell},
+  title={F-Bounded Quantification for Object-Oriented
+               Programming},
+  booktitle={Fourth International Conference on Functional
+               Programming Languages and Computer Architecture
+               (FPCA)},
+  pages={273--280},
+  year={1989},
+  doi={10.1145/99370.99392},
+  url={https://dl.acm.org/doi/10.1145/99370.99392},
+  note={.
+    Introduces F-bounded quantification, where the bound
+    on a type variable may refer to the variable itself
+    ∀X ≤ F[X], G[X].
+    Designed to handle binary methods and recursive interfaces
+    that ordinary bounded quantification cannot type,
+    allowing typing of objects to overcome the NNOOTT.
+    From Cook's group, who also showed inheritance is not subtyping.}
 }
 
 @InProceedings{Chambers1989,
@@ -2448,6 +2556,23 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 %% 1992
+
+@InProceedings{Pierce1992,
+  author={Benjamin C. Pierce},
+  title={Bounded Quantification is Undecidable},
+  booktitle={Proceedings of the 19th ACM SIGPLAN-SIGACT Symposium
+               on Principles of Programming Languages (POPL)},
+  year={1992},
+  publisher={ACM},
+  doi={10.1145/143165.143228},
+  note={.
+    While it was known that you could type OO with a combination of
+    subtyping and quantification over bounded types,
+    Pierce importantly proves that this combination leads to type checking being undecidable.
+    That means that in practice, more restrictive combinations are needed to usefully type objects.
+    (See also 1994 journal version Information and Computation.)
+  }
+}
 
 @InProceedings{Ossher1992,
   author={Harold Ossher and William Harrison},
@@ -2973,6 +3098,28 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
+@inproceedings{Eifrig1994,
+  author={Jonathan Eifrig and Scott Smith and Valery Trifonov
+               and Amy Zwarico},
+  title={Application of {OOP} Type Theory: State,
+               Decidability, Integration},
+  booktitle={Proceedings of the Ninth Annual Conference on
+               Object-Oriented Programming Systems, Languages,
+               and Applications (OOPSLA)},
+  pages={16--30},
+  publisher={ACM},
+  year={1994},
+  doi={10.1145/191080.191083},
+  url={https://dl.acm.org/doi/10.1145/191080.191083},
+  note={.
+    The authors define a restricted OO language for which F-bounded polymorphism type inference
+    is decidable (when in general it is only semi-decidable).
+    The next year, they would instead introduce recursively constrained types as
+    a related typesystem that is intrinsically decidable, that more directly fits
+    the restrictions of their OO language.
+  }
+}
+
 % Liskov & Wing
 % A behavioral notion of subtyping
 
@@ -3022,9 +3169,10 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 % https://pl.cs.jhu.edu/projects/type-constraints/papers/type-inference-for-recursively-constrained-types-and-its-application-to-oop-longer-version.pdf
-@article{isoop1995,
-  title={Type inference for recursively constrained types and its application to OOP},
-  author={Jonathan Eifrig, and Scott Smith and Valery Trifonov},
+% MFPS XI
+@article{Eifrig1995isoop,
+  title={Type Inference for Recursively Constrained Types and Its Application to OOP},
+  author={Jonathan Eifrig and Scott Smith and Valery Trifonov},
   journal={Electronic Notes in Theoretical Computer Science},
   volume={1},
   pages={132--153},
@@ -3033,17 +3181,19 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={https://pl.cs.jhu.edu/projects/type-constraints/papers/type-inference-for-recursively-constrained-types-and-its-application-to-oop.pdf},
   doi={10.1016/S1571-0661(04)80008-2},
   note={.
-    This paper presents I-SOOP, a simple language with polymorphic recursively constrained types,
-    for which they present a type inference algorithm,
+    This paper, published at MFPS XI, presents I-SOOP,
+    a simple language with polymorphic recursively constrained types,
+    for which they present a (decidable) type inference algorithm,
     and that is the Right Thing™ on top of which to type OO.
   }
 }
 
 % https://dl.acm.org/doi/pdf/10.1145/217838.217858
-@InProceedings{iloop1995,
+@InProceedings{Eifrig1995iloop,
   title={Sound Polymorphic Type Inference for Objects},
-  author={Jonathan Eifrig, and Scott Smith and Valery Trifonov},
-  booktitle={tenth annual conference on Object-oriented programming systems, languages, and applications},
+  author={Jonathan Eifrig and Scott Smith and Valery Trifonov},
+  booktitle={Tenth Annual Conference on Object-Oriented Programming Systems, Languages, and Applications (OOPSLA)},
+  publisher={ACM},
   pages={169--184},
   year={1995},
   doi={10.1145/217838.217858},
@@ -3051,6 +3201,23 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     This paper presents I-LOOP, a language with classes, macro-reduced to I-SOOP, with type inference.
     AFAICT, the authors are the first to use polymorphic recursively constrained types,
     which is the Right Thing™ to type OO, what more with type inference.
+  }
+}
+
+@InCollection{deBruijn1995,
+  author={Nicolaas Govert de Bruijn},
+  title={On the Roles of Types in Mathematics},
+  booktitle={The Curry--Howard Isomorphism},
+  editor={Philippe de Groote},
+  series={Cahiers du Centre de logique},
+  number={8},
+  publisher={Academia-Bruylant},
+  year={1995},
+  pages={27--54},
+  url={http://alexandria.tue.nl/repository/freearticles/597627.pdf},
+  note={.
+    de Bruijn’s reflections on what became known as the Curry-Howard-de Bruijn correspondence
+    between function types and logical implication.
   }
 }
 
@@ -3647,6 +3814,43 @@ and Fiech, Adrian",
 
 %% 1999
 
+@article{Baldan1999,
+  author={Paolo Baldan and Giorgio Ghelli and Alessandra Raffaetà},
+  title={Basic Theory of {F}-Bounded Quantification},
+  journal={Information and Computation},
+  volume={153},
+  number={2},
+  pages={173--237},
+  year={1999},
+  doi={10.1006/inco.1999.2802},
+  url={https://www.sciencedirect.com/science/article/pii/S089054019992802X},
+  note={.
+    Establishes the semi-decidability of type inference for F-bounded polymorphism on
+    Curry-style terms (without type annotations).
+  }
+}
+
+@article{Wells1999,
+  author={Joe B. Wells},
+  title={Typability and Type Checking in System {F} are
+             Equivalent and Undecidable},
+  journal={Annals of Pure and Applied Logic},
+  volume={98},
+  number={1--3},
+  pages={111--156},
+  year={1999},
+  doi={10.1016/S0168-0072(98)00047-5},
+  url={https://www.sciencedirect.com/science/article/pii/S0168007298000475},
+  note={
+    Extending a version published at LICS 1994, Wells shows how typechecking is undecidable
+    for System F in Curry-style (where terms lack type annotations),
+    while it is trivially decidable in Church-style
+    (where every term and subterm has an explicit type annotations).
+    Typechecking programs in practice is thus possible, though it usually requires
+    at least some explicit type annotations on terms and their subterms.
+  }
+}
+
 @InProceedings{Fisher1999,
   author={Fisher, Kathleen and Reppy, John},
   title={The design of a class mechanism for Moby},
@@ -4054,8 +4258,8 @@ and Fiech, Adrian",
     Only 2 versions of the code allowed; at the 3rd, processes using the 1st are killed.
     I _suppose_ that means there are again only 2 versions left, and
     only 1 after all processes are fully updated.
-    That’s good enough great in Erlang because failure is always a valid fallback,
-    but may might not be enough in less resilient systems.
+    That’s great in Erlang because failure is always a valid fallback,
+    but may might not be good enough in less resilient systems.
     The semantics of upgrade is well-defined:
     calls to module-qualified name are dynamic, to unqualified name are static.
     Tail-calls are recommended but not mandated.
@@ -4238,6 +4442,20 @@ and Fiech, Adrian",
   }
 }
 
+@InProceedings{Kennedy2007,
+  author={Andrew J. Kennedy and Benjamin C. Pierce},
+  title={On Decidability of Nominal Subtyping with Variance},
+  booktitle={International Workshop on Foundations and
+               Developments of Object-Oriented Languages
+               (FOOL/WOOD)},
+  year={2007},
+  url={https://www.cis.upenn.edu/~bcpierce/papers/variance.pdf},
+  note={Proves undecidability of nominal subtyping with
+               variance in general, identifies three features whose
+               combination is responsible, and characterizes
+               decidable fragments covering .NET. Conjectures
+               decidability for Java and Scala.}
+}
 
 @Book{Manin2007,
   author={Yuri I. Manin},
@@ -5149,6 +5367,27 @@ and Fiech, Adrian",
 
 %% 2017
 
+@InProceedings{Dolan2017,
+  author={Stephen Dolan and Alan Mycroft},
+  title={Polymorphism, Subtyping, and Type Inference in {MLsub}},
+  booktitle={Proceedings of the 44th ACM SIGPLAN Symposium on
+               Principles of Programming Languages (POPL)},
+  pages={60--72},
+  publisher={ACM},
+  year={2017},
+  doi={10.1145/3009837.3009882},
+  url={https://dl.acm.org/doi/10.1145/3009837.3009882},
+  note={Define a variant MLsub of ML with subtyping,
+        that has the principal type inference of ML.
+        MLsub uses what Dolan calls “algebraic subtyping” in his thesis,
+        based on a polarity-based separation of type constraints,
+        e.g. for inputs vs outputs of functions, binding vs usage of variables,
+        or union vs intersection of types.
+        Extends the constraint-based approach of Eifrig 1995 ISOOP
+        with cleaner types and connections to the algebra of regular languages
+        and ML type inference.}
+}
+
 @article{Petricek2017,
   author={Tomas Petricek},
   title={Miscomputation in software: Learning to live with errors},
@@ -5174,7 +5413,7 @@ and Fiech, Adrian",
 @InProceedings{Grigore2017,
   author={Radu Grigore},
   title={Java Generics are Turing Complete},
-  booktitle={44th ACM SIGPLAN Symposium on Principles of Programming Languages},
+  booktitle={44th ACM SIGPLAN Symposium on Principles of Programming Languages (POPL)},
   series={POPL '17},
   pages={73--85},
   publisher={ACM},

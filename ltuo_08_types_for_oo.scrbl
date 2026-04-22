@@ -580,7 +580,7 @@ or they build extremely complex calculi to do the right thing despite the confus
 By having a clear concept of the distinction,
 I can simplify away all the complexity without introducing inconsistency.
 
-One can use the usual rules of subtyping @~cite{cardelli1986understanding} @; TODO cite
+One can use the usual rules of subtyping @~cite{cardelli1985} @; TODO cite
 and apply them separately to the types of specifications and their targets,
 knowing that “subtyping and fixpointing do not commute”,
 or to be more mathematically precise,
@@ -797,7 +797,7 @@ i.e. being able to use the underlying data structures and algorithms
 without having to know the details and internals.
 
 A first-class type descriptor is a record whose type is existentially quantified:
-@~cite{cardelli1986understanding mitchell1988abstract PT1993STTFOOP}
+@~cite{cardelli1985 mitchell1988abstract PT1993STTFOOP}
 @; TODO cite harper1994modules remy1994mlart
 as per the Curry–Howard correspondence, it is a witness of the proposition according to which
 “there is a type @c{T} that has this interface”, where the interface may include field getters
@@ -816,7 +816,7 @@ which embodies first-class modularity, but not modular extensibility.
 
 Now, if the typesystem includes subtypes, extensible records, and
 fixpoints involving open recursion,
-e.g. based on recursively constrained types @~cite{isoop1995 iloop1995}, then
+e.g. based on recursively constrained types @~cite{Eifrig1995isoop Eifrig1995iloop}, then
 those first-class module values can be the targets of modular extensions.
 @;{TODO @~cite{remy1994mlart} ?}
 And there we have first-class OO capable of expressing classes.
@@ -900,19 +900,147 @@ parameterized by other values, types and algorithms.
 
 @section{OO Type Theory and Practice}
 
+@subsection{Expressiveness vs Decidability}
+
+Types for OO have long faced issues not just of consistency (see the NNOOTT above),
+but also of decidability:
+some overly-general formalisms in which typing objects is undecidable and cannot be automated,
+whereas overly-restrictive formalisms can be automated but fail to type
+the kind of general programs that make OO actually useful.
+Finding the right balance of expressive power and decidability is therefore a challenge
+when designing suitable types for OO.
+
+The relation between OO and subtyping goes all the way back to @citet{Hoare1965},
+who thought subclasses would be the same as subtypes.
+@citet{Cardelli1984} made this relation formal, and popular among type theorists.
+Then, @citet{Cardelli1985} proposed @(Fsub) (System F with subtyping)
+as a framework in which to express those types:
+it enriches System F @~cite{Girard1972} a.k.a. the
+polymorphic λ-calculus @~cite{Reynolds1974 Reynolds1985} with subtyping.
+However, @citet{Pierce1992} proved that subtype checking for @(Fsub)
+is undecidable (and thus so is type inference), even on fully type-annotated terms:
+while you can recursively enumerate all valid subtyping judgements,
+making subtyping semi-decidable by construction, there are types not subtypes of a type,
+and terms not part of a type, for which you can never decide in finite time whether that is the case.
+Even System F was later found to have semi-decidable type inference
+and type checking for unannotated terms @~cite{Wells1999}—though
+this is resolved by requiring full type annotations
+which makes checking trivially decidable
+(in practice, programmers may only need @emph{some} type annotations).
+However, no such remedy is available for @(Fsub):
+the subtyping relation between fully specified types is itself undecidable,
+so no amount of annotation can rescue the type checker.
+Thus, Cardelli’s initial programme for types for OO failed on both grounds
+of consistency (see the NNOOTT) and decidability—which
+doesn’t diminish his great innovative contributions to the topic,
+including launching the field of research itself.
+
+Now, @citet{Canning1989} introduced F-bounded quantification,
+in which the bound on a type variable may refer to the variable itself:
+@code{∀X ≤ F[X], G[X]}.
+This technique provides self-reference in object types,
+so that the type of a field can indeed depend on the type of the object,
+notably enabling proper linked lists, binary methods, etc.,
+overcoming limitations of the NNOOTT.
+And indeed a subset of that team then had the proper tools to disprove the NNOOTT:
+inheritance is not subtyping @~cite{cook1989inheritance}.
+Being a conservative extension of @(Fsub), F-bounded polymorphism suffers from
+the same limitation of type inference only being semi-decidable,
+and requiring type annotations in practice @~cite{Baldan1999}.
+In practice, F-bounded quantification works well
+within the nominal type systems of languages like Java and Scala
+(where you write @code{<T extends Comparable<T>>}),
+but its theoretical foundations are less clean than one would like.
+
+A more radical approach was developed by
+@citet{Eifrig1994} and @citet{Eifrig1995isoop},
+who introduced @emph{recursively constrained types}:
+type schemes of the form @code{∀X[C], T}
+where @code{C} is a conjunction of subtyping constraints
+kept @emph{separate} from the type structure.
+This architectural separation is the key to decidability.
+In @(Fsub), bounds are embedded inside quantified types,
+and the contravariant subtyping rule for quantifiers
+allows these bounds to nest without limit—which is precisely
+what enables the encoding of undecidable problems.
+By moving constraints into a separate, first-order system
+with no quantifiers inside constraints,
+Eifrig, Smith, and Trifonov ensure that constraint solving
+reduces to well-understood fixpoint computations.
+@citet{Eifrig1995iloop} demonstrated that this framework
+is expressive enough to provide sound polymorphic type inference
+for objects with records, width and depth subtyping, and recursive types—all
+with a decidable algorithm that computes principal types,
+requiring no type annotations from the programmer.
+
+The contrast between these two lines of work is instructive.
+F-bounded quantification is often made to work in practice by imposing restrictions
+that prevent undecidability, or at least make it harder to fall into cases of non-termination:
+@itemize[
+  @item{Forcing top-level definitions to have explicit types
+        obviates type inference for those definitions,
+        helps with type inference for subterms,
+        and also reduces the potential for undetected type confusion for programmers.}
+  @item{Using nominal types rather than structural types makes type constraints more explicit,
+        and generates finite class hierarchies that make subtyping easier;
+        however, it only applies to second-class Class OO, not to first-class OO;
+        also, type parameters and wildcards can still generate an infinite set of instantiated types
+        from a finite set of declarations.}
+  @item{Variance declarations can restrict the more problematic cases
+        involving non-monotonic recursion,
+        like those used by Pierce to prove undecidability.}]
+Note that F-bounded quantification can and does work without these restrictions,
+as it has to, in, e.g. TypeScript—with the downside that programmers are more likely
+to encounter non-termination in practice.
+
+@citet{Kennedy2007} analyzed these restrictions precisely,
+proving that undecidability in nominal subtyping with variance
+follows from the combination of contravariant type constructors,
+expansive inheritance (where type parameters generate
+an infinite set of reachable types from finite declarations),
+and multiple supertypes with the same head constructor—a
+combination absent from Java, Scala, and .NET.
+They also conjectured that this combination was necessary for undecidability;
+however, @citet{Grigore2017} proved that though Java doesn’t have
+multiple supertypes with the same head constructor,
+it is still undecidable, due to its powerful wildcards allowing use-site contravariance,
+that can combine with Java’s expansive types.
+Keeping (sub)typing decidable is evidently very difficult, and
+not always worth the restrictions it requires.
+
+Constrained types modify the @emph{architecture}—they
+separate constraints from quantification entirely.
+Both avoid @(Fsub)’s undecidability,
+but by different mechanisms and with different trade-offs:
+F-bounded quantification is more expressive for specific OO patterns
+but lacks a clean decidability result in the abstract;
+constrained types achieve decidable inference
+but have seen less adoption in mainstream language design.
+Java and Scala adopted F-bounded quantification.
+The constrained-types approach influenced later theoretical work
+such as @citet{Dolan2017}’s MLsub,
+which achieves ML-style principal type inference with subtyping
+using related constraint-based techniques, neatly grouping type constraints
+in two opposite polarities for function inputs vs outputs, variable bindings vs uses,
+type intersections vs unions, etc.
+The lesson of both lines is that the expressiveness-decidability tradeoff
+is not as stark as @(Fsub)'s undecidability might suggest—one
+simply has to stop trying to do everything
+inside the subtyping judgment on quantified types.
+
 @subsection{OO Type Theory}
 
 Types for OO is a vast topic of which I am not a specialist,
 for which I am incapable of producing and presenting the Ultimate Theory.
 Instead, I invite you to read some of the better papers I’ve managed to identify
-and collect in my annotated bibliography, with the hope that
-the notes I wrote on these papers will be helpful to you@xnote["."]{
+and collect in my annotated bibliography at the end of this book,
+with the hope that the notes I wrote on these papers will be helpful to you@xnote["."]{
   Inasmuch as I’m still alive to write a next edition to this book,
   I appreciate your feedback in updating or improving the list below,
   as well as this book in general.
 }
 
-My very favorite papers are @citet{isoop1995 iloop1995},
+My very favorite papers are @citet{Eifrig1995isoop Eifrig1995iloop},
 that take the exact right approach to types for OO:
 start from a sound, minimal yet expressive enough general-purpose type theory,
 then build OO in a couple of simple λ-terms under this type theory.
@@ -923,6 +1051,7 @@ Also, I love @citet{Allen2011} because it shows you can just type
 multiple dispatch and multiple inheritance, topics that most type theorists
 don’t even try to address when considering OO, even though
 it could have been three even greater papers if things were factored the right way.
+And @citet{Dolan2017} seems like the right approach to think about type inference with subtypes.
 
 Then come papers that bring useful insight, though they
 ultimately fail to offer a positive solution to the actual problem
@@ -952,13 +1081,14 @@ A travesty, an inversion of right and wrong, and a waste of tremendous brainpowe
 @; TODO: Kim Bruce 1993 1994 1995, PolyTOIL
 @citet{Bruce1996Typing}, @citet{SubtypingMatch1997}.
 
-Finally, some publications are just bad cases of the NNOOTT,
-with heaps of pointless formalism piled on top to hide just how misguided the authors are,
-even though most of them came even after the NNOOTT had been utterly debunked.
+Finally, some publications, though some the earlier ones may been historical landmarks,
+and though some may have contributed good ideas, are just bad cases of the NNOOTT,
+with heaps of pointless formalism piled on top to hide just how misguided the authors are.
+All the but the earlier ones came after the NNOOTT had been disproved.
 They should serve as cautionary tales for how even brilliant minds can go wrong
 and have a negative impact on science when they become attached to flawed assumptions
-they can’t let go even after these assumptions have been debunked:
-@citet{Cardelli1984}, @citet{Cardelli1986Understanding},
+they can’t let go even after these assumptions have been utterly debunked:
+@citet{Cardelli1984}, @citet{Cardelli1985},
 @citet{Abadi1996Primitive AbadiCardelli1996ToO},
 @citet{Cartwright2013Inheritance}, @citet{abdelgawad2014domain}.
 
@@ -1041,7 +1171,7 @@ Yet this complexity derives directly from the conflation and confusion of specif
     whether it was computed through such a process or not.
   }@item{
     If the two were decoupled, you wouldn’t need to constantly adjust your logic
-    to sit on top of the ever shaking ground of an ever growing notion of classes;
+    to sit on top of the ever shaking ground of an ever growing notion of class;
     you could have permanent solid foundations that actually sit beneath,
     and the changes on top.
 }]
@@ -1138,8 +1268,10 @@ still I declare:
   Implement a typesystem for a language including the applicative λ-calculus and
   an extension for lazy evaluation, with a type inference engine.
   Extend your typesystem so it should include
-  recursively constrained types as in @citet{isoop1995}.
-  Implement a minimal object system on top as in the previous chapter, or as in @citet{iloop1995}.
+  recursively constrained types as in @citet{Eifrig1995isoop},
+  or the more modern variant of @citet{Dolan2017}.
+  Implement a minimal object system on top as in the previous chapter,
+  or as in @citet{Eifrig1995iloop}.
   Now extend it to support universal and existential quantification.
   Add it to Gerbil Scheme or some other language.
   Get your system published.

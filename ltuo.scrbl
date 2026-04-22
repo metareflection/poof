@@ -2,7 +2,13 @@
 @; -*- Scheme -*-
 @(require "util/ltuo_lib.rkt")
 
-@;{ TODO: use bookcover to create a book cover. }
+@;{ TODO: use bookcover to create a book cover.
+TODO: add the equations?
+
+mix p c t s = c (p t s) s
+fix t m = Y (m t)
+
+}
 
 @title[#:style (ltuo-style)]{
   Lambda: the Ultimate Object

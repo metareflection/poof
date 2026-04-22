@@ -4,7 +4,7 @@
 (require
   (only-in scribble/base
     ~ bold emph nested elem section subsection subsubsection
-    seclink verbatim linebreak image)
+    seclink verbatim linebreak image subscript)
   scriblib/bibtex
   (only-in scribble/core make-style)
   (only-in scribble/manual racket racketblock code codeblock litchar itemize item)
@@ -66,10 +66,12 @@
 (define-simple-macro (Xitemize body ...) (list body ...))
 (define-simple-macro (Xitem body ...) (list " " body ... " "))
 (define (ᵢ) (list (html-elem (c "ᵢ")) (tex "${}_i$")))
+(define (ₖ) (list (html-elem (c "ₖ")) (tex "${}_k$")))
 (define (Ri) (list (c "R") (ᵢ)))
 (define (Pi) (list (c "P") (ᵢ)))
 (define (⋂) (list (tex "$\bigcap$" (html-elem "⋂"))))
 (define (⇝) (list (tex "$\rightsquigarrow$" (html-elem "⇝"))))
+(define (Fsub) (list (html-elem (list "F" (subscript "≤"))) (tex-elem "$F_{≤}$")))
 
 (define super 'super)
 (define self 'self)
@@ -97,7 +99,9 @@
     (list (tex-addition
             (bytes-append
               #"\\DeclareUnicodeCharacter{3BB}{$\\lambda$}" ;; λ
+              #"\\DeclareUnicodeCharacter{1D62}{${}_{i}$}" ;; ᵢ
               #"\\DeclareUnicodeCharacter{207F}{${}^{n}$}" ;; ⁿ
+              #"\\DeclareUnicodeCharacter{2096}{${}_{k}$}" ;; ₖ
               #"\\DeclareUnicodeCharacter{225C}{$\\triangleq$}" ;; ≜
               #"\\DeclareUnicodeCharacter{22C2}{$\\cap$}" ;; ⋂
               #"\\DeclareUnicodeCharacter{1D52D}{$\\mathfrak{p}$}"))))) ;; 𝔭

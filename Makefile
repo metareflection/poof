@@ -89,6 +89,7 @@ build/ltuo.html: ltuo.scrbl ltuo.bib util/util.rkt util/ltuo_lib.rkt build/resou
 	RENDER_MODE=html scribble --dest build --html ltuo.scrbl
 build/ltuo.tex: ltuo.scrbl ltuo.bib util/util.rkt util/ltuo_lib.rkt $(wildcard ltuo_*.scrbl)
 	RENDER_MODE=latex scribble --dest build --latex ltuo.scrbl
+# NB: Find errors with a grep '^!' of the output.
 resources/pic/cube.pdf: resources/pic/cube.svg
 	inkscape resources/pic/cube.svg --export-type=pdf \
 	--export-width=640 --export-height=640 \
