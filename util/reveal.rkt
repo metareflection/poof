@@ -2,8 +2,8 @@
 
 (provide
  slide-group slide gslide x-slide
- L R t C CB ~ ~~ L~ Li
- Url image fragment color th* td* tL tR tC simple-table
+ L R t C CB ~ ~~ L~ Li Lc
+ Url Https image fragment color th* td* tL tR tC simple-table
  *white* *gray* *blue* *light-blue* *red* *light-red* *green* *light-green*
  spacing* spacing
  comment email
@@ -81,8 +81,10 @@
 (define (t . x) x)
 (define (C . x) (apply div align: 'center x))
 (define (CB . x) (C (apply b x)))
+(define (Lc . x) (div align: 'left (code x)))
 
 (define (Url . x) (a href: x (tt x)))
+(define (Https . x) (a href: (list "https://" x) (tt x)))
 ;;(define (comment . x) '())
 (define (email . x) (code class: 'email x))
 
@@ -179,10 +181,11 @@
                        (map (lambda (xs) (apply tr (apply line xs))) xss)))))
     (apply lines contents)))
 
-(define (reveal Title Sections)
+(define (reveal Title Sections #:headers (headers '())
+                #:onload (onload ""))
   (output-xml
    @html{
-     @head{
+     @head[
        @meta[http-equiv: "Content-Type" content: "text/html; charset=utf-8"]
        @meta[name: 'viewport content: "width=device-width, initial-scale=1"]
        @link[rel: 'icon href: "resources/pic/mukn-icon.svg" type: "image/svg+xml"]
@@ -191,13 +194,15 @@
        @link[rel: 'stylesheet href: @reveal-url{css/theme/black.css}]
        @link[rel: 'stylesheet href: @reveal-url{lib/css/zenburn.css}]
        @link[rel: 'stylesheet href: @resource-url{my.css}]
+       headers
        @title[Title]
-     }
+     ]
      @body[style: (string-append "background-repeat: no-repeat; "
                                  "background-size: 3%; "
                                  "background-origin: padding-box; "
                                  "background-position: bottom 0.46% left 0%; "
-                                 "background-image: url('resources/pic/mukn-icon-whitebg.png'); ")]{
+                                 "background-image: url('resources/pic/mukn-icon-whitebg.png'); ")
+           onload: onload]{
        @div[class: 'reveal]{@div[class: 'slides Sections]}
        @script[src: @reveal-url{lib/js/head.min.js}]
        @script[src: @reveal-url{js/reveal.min.js}]

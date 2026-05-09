@@ -200,6 +200,36 @@ on the author’s page, sci-hub.ru, archive.org, z-library.sk, github.com, etc.
 
 %% 1963
 
+% https://bitsavers.org/pdf/mit/ai/aim/AIM-057.pdf
+% Also transcription and bug report: https://github.com/acarrico/ai-memo/
+% Steele1993 reports deeper bugs in it.
+@TechReport{Hart1963,
+  author={Timothy P. Hart},
+  title={MACRO Definitions for LISP},
+  institution={MIT Artificial Intelligence Project},
+  type={AI Memo},
+  number={57},
+  month={October},
+  year={1963},
+  url={https://dspace.mit.edu/handle/1721.1/6111},
+  note={.
+    The first paper on macros.
+    Note how LISP 1.5 was very primitive at the time:
+    S-expressions were always used to write code in practice,
+    but M-expressions were still used for the theory;
+    and toplevel definitions had a special syntax separate from expression syntax.
+    With the introduction of the read-eval-print loop
+    (concept introduced by L. Peter Deutsch in 1964,
+    on the first interactive Lisp interpreter, on the PDP-1;
+    renamed from cycle to loop by Moon in 1974; acronymized by Schemers as REPL in the 1980s),
+    S-expressions became primary, and M-expressions would fall into disuse.
+    Greenblatt's PDP-6 LISP only had S-expressions, and, as it became MACLISP in 1969, also made
+    toplevel definitions uniform with expression syntax, replacing EVALQUOTE by EVAL for the REPL.
+    The memo also has a variety of bugs, some more obvious (see acarrico's transcript on GitHub),
+    some more subtle (see Steele 1993), that you may find interesting to hunt.
+  }
+}
+
 @InProceedings{Sutherland1963,
   author={Ivan E. Sutherland},
   title={Sketchpad: A Man-Machine Graphical Communication System},
@@ -354,7 +384,7 @@ on the author’s page, sci-hub.ru, archive.org, z-library.sk, github.com, etc.
 %% 1967
 
 % https://www.ub.uio.no/english/subjects/naturalscience-technology/informatics/themes/dns/index.html
-% Making it a booklet, but maybe it's a techreport?
+% Making it a Booklet, but maybe it's a TechReport?
 % Re-printed as chapter in 2002 "Software Pioneers: Contributions to Software Engineering"
 @Booklet{Simula1967,
   author={Dahl, Ole-Johan and Nygaard, Kristen},
@@ -2761,6 +2791,20 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 1993
 
+@InProceedings{Steele1993,
+  author={Guy L. Steele Jr. and Richard P. Gabriel},
+  title={The Evolution of Lisp},
+  booktitle={Proceedings of the Second ACM SIGPLAN Conference on History of Programming Languages (HOPL-II)},
+  month={March},
+  year={1993},
+  pages={231--270},
+  doi={10.1145/155360.155373},
+  url={https://www.dreamsongs.com/Files/Hopl2.pdf},
+  note={.
+    Gabriel and Steele discuss the evolution of Lisp and the essential concepts in it.
+  }
+}
+
 % http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.53.3952
 @InProceedings{ImplementingTypeClasses,
   title="Implementing Type Classes",
@@ -3887,7 +3931,7 @@ and Fiech, Adrian",
 
 % https://www.researchgate.net/publication/2436142_Avoiding_Confusion_in_Metacircularity_The_Meta-Helix
 @article{Chiba2000MetaHelix,
-  author={Chiba, Shigeru and Kiczales, Gregor and Lamping, John},
+  author={Shigeru Chiba and Gregor Kiczales and John Lamping},
   year={2000},
   month={11},
   title={Avoiding Confusion in Metacircularity: The Meta-Helix},
@@ -6026,10 +6070,6 @@ and Fiech, Adrian",
   url={https://opendylan.org/books/drm/}
 }
 
-% Scheme
-% Rabbit
-% Lambda Papers
-
 % https://dl.acm.org/doi/10.1145/3563835.3568735
 
 @Article{Fisher2008,
@@ -6059,3 +6099,77 @@ and Fiech, Adrian",
 % https://www.cs.cmu.edu/~crary/819-f09/Landin66.pdf
 
 % PLOT, 2006-2008 http://users.rcn.com/david-moon/PLOT/index.html
+
+% https://parentheticallyspeaking.org/articles/bicameral-not-homoiconic/
+
+% lazy evaluation (Friedman & Wise 1976)
+
+% https://dspace.mit.edu/bitstream/handle/1721.1/5790/AIM-353.pdf
+@TechReport{Steele1976Imperative,
+  author={Steele, Guy Lewis and Sussman, Gerald Jay},
+  title={LAMBDA: The Ultimate Imperative},
+  institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
+  year={1976},
+  month=mar,
+  number={AIM-353},
+  url={https://dspace.mit.edu/handle/1721.1/5790},
+  note={.
+    XXX
+  }
+}
+
+% https://dspace.mit.edu/bitstream/handle/1721.1/6091/AIM-379.pdf
+@TechReport{Steele1976Declarative,
+  author={Steele, Guy Lewis},
+  title={LAMBDA: The Ultimate Declarative},
+  institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
+  year={1976},
+  month=nov,
+  number={AIM-379},
+  url={https://dspace.mit.edu/handle/1721.1/6091},
+  note={.
+    XXX
+  }
+}
+
+% https://dspace.mit.edu/bitstream/handle/1721.1/5753/AIM-443.pdf
+@TechReport{Steele1977Goto,
+  author={Steele, Guy Lewis},
+  title={Debunking the “Expensive Procedure Call” Myth or, Procedure Call Implementations Considered Harmful or, LAMBDA: The Ultimate GOTO},
+  institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
+  year={1977},
+  month=oct,
+  number={AIM-443},
+  url={https://dspace.mit.edu/handle/1721.1/5753},
+  doi={10.1145/800179.810196},
+  note={.
+    XXX
+  }
+}
+
+@TechReport{Sussman1975Scheme,
+  author={Sussman, Gerald Jay and Steele, Guy Lewis},
+  title={Scheme: An Interpreter for Extended Lambda Calculus},
+  institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
+  year={1975},
+  month=dec,
+  number={AIM-349},
+  url={https://dspace.mit.edu/handle/1721.1/5794},
+  note={The original Scheme paper.}
+}
+
+@TechReport{steele1978rabbit,
+  author={Steele, Jr., Guy L.},
+  title={RABBIT: A Compiler for SCHEME (A Dialect of LISP)},
+  institution={Massachusetts Institute of Technology},
+  year={1978},
+  month=may,
+  type={Technical Report},
+  number={AI-TR-474},
+  address={Cambridge, MA},
+  url={https://dspace.mit.edu/handle/1721.1/6913},
+  note={.
+    Steele’s Master’s thesis.
+    Revised version of a dissertation submitted to the Department of Electrical Engineering and Computer Science
+  },
+}

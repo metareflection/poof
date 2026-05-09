@@ -25,6 +25,9 @@
     title #f
     parent #f
     path '()
+    options '()
+    headers '()
+    onload ""
     slide #f
     n-subdocs 0
     subdocs (λ (i) top-doc)))
@@ -43,10 +46,11 @@
 ;; : Doc -> (List Section)
 (def (doc-contents doc)
   (def slide (doc'slide))
+  (def options (doc'options))
   (def subdocs-contents (map doc-contents (doc-subdocs doc)))
   (if slide
-    (cons (section slide) subdocs-contents)
-    (section subdocs-contents)))
+    (cons (apply section (append options (list slide))) subdocs-contents)
+    (apply section (append options (list subdocs-contents)))))
 
 ;; : String -> $Proto Doc
 (def $title ($kv 'title))
@@ -101,17 +105,22 @@
        slide (plan-slide self super)))
      self super))
 
-;; : Xexpr Xexpr ... -> Proto Doc Doc
-(define ($xslide title . exprs)
+;; : Options Xexpr Xexpr ... -> Proto Doc Doc
+(define ($oslide title options . exprs)
   (λ (self super)
     (@ ($subdoc
         ($record
          title title
+         options options
          slide (list*
                 (title-para super)
                 (h1 title)
                 exprs)))
        self super)))
+
+;; : Xexpr Xexpr ... -> Proto Doc Doc
+(define ($xslide title . exprs)
+  (apply $oslide title '() exprs))
 
 ;; : Xexpr Xexpr ... -> Proto Doc Doc
 (define ($slide title . exprs)
@@ -126,4 +135,5 @@
 
 ;; : Doc -> Unit
 (def (reveal-doc doc)
-  (reveal (doc'title) (doc-contents doc)))
+  (reveal (doc'title) (doc-contents doc)
+          #:headers (doc'headers) #:onload (doc'onload)))

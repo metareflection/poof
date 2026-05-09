@@ -1102,7 +1102,17 @@ or multiple and single inheritance in terms of mixin inheritance,
 then I @emph{must} do so, until I reduce OO to its simplest expression,
 and identify the most fundamental building blocks within it,
 from which all the usual concepts can be reconstituted, explained, justified, evaluated,
-generalized, and maybe even improved upon.
+generalized, and maybe even improved upon@xnote["."]{
+  Occam's razor, the requirement of minimal explanations, is not mere aesthetics, but mental hygiene.
+  Accepting non-minimal explanations does more than waste cognitive space on extraneous details:
+  it opens a security vulnerability.
+  Any mechanism that lets you accept unwarranted complexity
+  will be exploited by the most effective memetic agents capable of doing so.
+  These agents then compete on persuasiveness and resource extraction;
+  the winner are typically ruthless specialists in mind-space colonization.
+  This matters in computing, where the stakes are relatively low, and parasites relatively benign.
+  It matters far more in domains that allocate power and resources at civilizational scale.
+}
 
 @subsection{Why Functional Programming?}
 
@@ -1126,7 +1136,7 @@ by using a theoretical variant of the λ-calculus,
 I and other people would not be able to directly run and test my algorithms
 without a costly and error-prone layer of translation or interpretation.
 
-A actual programming language that while very close to the λ-calculus
+An actual programming language that while very close to the λ-calculus
 comes with both additional features and additional restrictions,
 will introduce some complexity, and
 a barrier to entry to people not familiar with this particular language.
@@ -1186,13 +1196,13 @@ as a dialect in the wider tradition of LISP. @; CITE
 It has many implementations, dialects and close cousins, @; cite Racket
 a lot of documentation, modern libraries, @; TODO cite SRFIs
 decades of established lore, code base, user base, academic recognition.
-It also has macro systems @; TODO cite
+As an evolution from Lisp, it also has macros @~cite{Hart1963 Steele1993}
 that allow you to tailor the syntax of the language to your needs.
 
-Some other languages, like ML or Haskell, @; CITE
+Some other languages, like ML or Haskell, @; TODO CITE
 are closer to the theoretical λ-calculus, but come with builtin typesystems
 that are way too inexpressive to accept the λ-terms I use.
-I suspect that systems with dependent types, such as in Rocq, Agda or Lean, @; CITE
+I suspect that systems with dependent types, such as in Rocq, Agda or Lean, @; TODO CITE
 are sufficiently expressive, but the types involved might be unwieldy
 and would make it harder to explain the basic concepts I present.
 I leave it as an exercise to the reader to port my code to such platforms,

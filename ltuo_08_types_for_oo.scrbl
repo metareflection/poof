@@ -904,9 +904,10 @@ parameterized by other values, types and algorithms.
 
 Types for OO have long faced issues not just of consistency (see the NNOOTT above),
 but also of decidability:
-some overly-general formalisms in which typing objects is undecidable and cannot be automated,
-whereas overly-restrictive formalisms can be automated but fail to type
-the kind of general programs that make OO actually useful.
+make the typesystem too expressive, and not only does type inference becomes undecidable in theory,
+but even type checking does, and they may also become impossible to automate in practice;
+make the typesystem overly restrictive, and type inference can be easily automated,
+but the formalism will fail to type the kind of general programs that make OO actually useful.
 Finding the right balance of expressive power and decidability is therefore a challenge
 when designing suitable types for OO.
 
