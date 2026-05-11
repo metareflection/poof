@@ -180,9 +180,9 @@ for a general purpose programming language.
 Surely, that's not what makes Lisp special!?
 })
      ($slide "My Answer (2)"
-       ;; https://www.facebook.com/BruceLee/posts/it-is-like-a-finger-pointing-away-to-the-moon-dont-concentrate-on-the-finger-or-/10157904832570634/
-       @pic["Bruce Lee, Enter the Dragon Finger Moon.jpg" "75%"
-            "Bruce Lee, Enter the Dragon Finger pointing to the Moon"]
+      ;; https://i.pinimg.com/236x/56/d6/d8/56d6d8d7ede94abea35b410a026d3832--alan-watts-to-the-moon.jpg
+      @pic["Pointing to the Moon.jpg" "30%"
+           "Pointing to the Moon"]
        @comment{
 “When a wise man points at the Moon, the fool looks at the finger”.
 But when any fool can point at the Moon, the wise man marvels at the finger.
@@ -236,7 +236,7 @@ Rule-based Programming, Expert Systems, @br
 Pattern-Matching, Constraint Propagation, @br
 Concurrency- / Process- / Actor- oriented Programming, @br
 Tagged Microarchitectures (Lisp Machines), @br
-Lazy Evaluation, Static Typesystems, Theorem Provers... @br
+Lazy Evaluation, Typesystems, Theorem Provers... @br
 })
      ($slide "Was Lisp Great? (1980s)"
       @L{
@@ -252,17 +252,17 @@ Genetic Programming, Orthogonal Persistence...
 })
      ($slide "Was Lisp Great? (1990s)"
       @L{
-@b{Meta-Object Protocols},
-@b{Web programming}—especially so with continuations—,
-ANSI CL standard,
-C3 Linearization,
-Partial Evaluation
+@b{Meta-Object Protocols}, @br
+@b{Web programming}—especially so with continuations—, @br
+ANSI CL standard, @br
+C3 Linearization (Dylan), @br
+Partial Evaluation (Scheme)...
 })
      ($slide "Was Lisp Great? (2000s)"
       @L{
-@b{Module Systems with Proper Phase Separation for Metalevels} (Racket),
-Language-Oriented Programming (Racket),
-Mixing Static and Dynamic Types with Contracts (Racket),
+@b{Module Systems with Phase Separation} (Racket), @br
+Language-Oriented Programming (Racket), @br
+Mixing Static Types and Dynamic Contracts (Racket), @br
 Popularizing Persistent Data Structures (Clojure)...
 })
      ($slide "Was Lisp Great? (2010s)"
@@ -273,7 +273,7 @@ Higher-order software contracts (Racket)...
 })
      ($slide "Was Lisp Great? (2020s)"
       @L{
-Rhombus (Racket) — infix syntax with macros @br
+Rhombus (Racket) — more infix syntax with macros @br
 ...
 })
      ($slide "Now, wait a minute..."
@@ -351,7 +351,6 @@ And Lisp could integrate it well with other paradigms
 ... all that faster than possible outside Lisp.
 })
      ($slide "Lisp Makes Paradigms Friends"
-      ;; https://a-z-animals.com/animals/chameleon/pictures/
       @L{Objects are a poor man’s closures. @br @C{— Norman Adams @~ @~ @~}}
       @L{Closures are a poor man’s objects. @br @C{— Christian Quéinnec}}
       @comment{
@@ -384,13 +383,17 @@ anyone can dynamically build more languages.
 })
      ($oslide "The Serendipity of Parentheses (1)"
       (list data-transition: "slide-in none-out")
-      @Lc{(SETQ FOO (CONS BAR FOO)) ; 1958 LISP
+      @L{1958 LISP, MEXP, manually compiled:
+         @br @code{foo=cons[bar;foo]}}
+      @~
+      @Lc{(SETQ FOO (CONS BAR FOO)) ; 1960 LISP I, SEXP, interpreted
 }
       @~
       @Lc{MACRO (( ; 1963 LISP 1.5 @br
-           (STASH (LAMBDA (FORM)
+         (STASH (LAMBDA (FORM)
              (LIST (QUOTE SETQ)(CADAR FORM)
-                   (LIST (CONS (CADR FORM)(CADAR FORM))) ))) @br
+                   (LIST (CONS (CADR FORM) @br
+         (CADAR FORM))) ))) @br
 ))}
       @comment{
 What made Lisp great was this ability to program programming languages,
@@ -406,7 +409,7 @@ but serendipitously discovered over the years.
 The parenthetical syntax of symbolic expressions, or S-expressions, or SEXP,
 was initially meant only for data.
 Code was to use meta expressions, or M-expressions, or MEXP,
-a more traditional infix syntax.
+a more traditional infix syntax that was never unambiguously formalized.
 But McCarthy wrote a metacircular interpreter for code represented as data;
 it was a curiosity a first, for a Turing-style theorem;
 but it was turned into a practical implementation by Steve Russell in 1959;
@@ -536,7 +539,7 @@ where they can go straight to the notions that matter.
 })
      ($slide "A Machine for Thinking (2)"
       ;; https://www.afrenchcollection.com/the-thinker-by-auguste-rodin-rodin-museum/
-      @pic["Le penseur de Rodin.webp" "60%"
+      @pic["Le penseur de Rodin.webp" "27%"
            "Le penseur de Rodin"]
       @comment{
 *This* is what made Lisp a great substrate for innovation and development:
@@ -571,9 +574,9 @@ there must have been other factors at stake.
 Factors that were once present, and then disappeared.
 })
      ($slide "Symmathesy (1)"
-      ;; https://i.pinimg.com/236x/56/d6/d8/56d6d8d7ede94abea35b410a026d3832--alan-watts-to-the-moon.jpg
-      @pic["Pointing to the Moon.jpg" "75%"
-           "Pointing to the Moon"]
+      ;; https://www.facebook.com/BruceLee/posts/it-is-like-a-finger-pointing-away-to-the-moon-dont-concentrate-on-the-finger-or-/10157904832570634/
+      @pic["Bruce Lee, Enter the Dragon Finger Moon.jpg" "75%"
+            "Bruce Lee, Enter the Dragon Finger pointing to the Moon"]
       @comment{
 I previously likened the power of Lisp as that of
 being able to point a finger at semantics you're interested in.
@@ -584,7 +587,7 @@ enough of the semantics to keep developing software based on it.
 })
      ($slide "Symmathesy (2)"
       ;; https://thefactbase.com/the-internet-was-originally-called-arpanet-advanced-research-projects-agency-network-designed-by-the-us-department-of-defense/
-      @pic["ARPANET Geographic Map September 1973.jpg" "75%"
+      @pic["ARPANET Geographic Map September 1973.jpg" "60%"
            "ARPANET Geographic Map September 1973"]
       @comment{
 Lisp was initially developed at MIT, Stanford, BBN, Xerox PARC, etc.,
@@ -637,7 +640,7 @@ or keeping a community together.
 })
      ($slide "Tower of Babel"
       ;; https://www.wikiart.org/en/pieter-bruegel-the-elder/the-tower-of-babel-1563
-      @pic["The Great Tower of Babel, by Pieter Bruegel.jpg" "75%"
+      @pic["The Great Tower of Babel, by Pieter Bruegel.jpg" "60%"
            "The Great 'Tower of Babel', by Pieter Bruegel 1563"]
       @comment{
 There now exist hundreds of dialects of Lisp, tens of which are active.
@@ -706,7 +709,7 @@ Only a handful hackers dare hack each Lisp implementation.
      $plan-slide
      ($slide "Turning the Tide"
       ;; https://www.flickr.com/photos/suebsang/8640016968
-      @pic["empty_SoA.jpg" "75%"
+      @pic["empty_SoA.jpg" "55%"
            "Empty School of Athens"]
       @comment{
 Is the Lisp symmathesy forever gone?
@@ -719,7 +722,7 @@ as anticipated until the 1980s, is a boon for Lisp in the 2020s.
 })
      ($slide "A Thinking Machine for Thinking Machines"
       ;; https://www.google.com/imgres?q=rodin%20thinker%20robot&imgurl=https%3A%2F%2Ft4.ftcdn.net%2Fjpg%2F16%2F28%2F44%2F75%2F360_F_1628447521_OpkLCfGtYoQBO8uzmRDy3EZ3qv0GZNIx.jpg&imgrefurl=https%3A%2F%2Fstock.adobe.com%2Fbe_fr%2Fsearch%3Fk%3Dthinker%2Brobot&docid=sAf8ejYmfUcGHM&tbnid=IQsSYDYCvgi6YM&vet=12ahUKEwj5u-2azamUAxWlV6QEHT4sMcEQnPAOegQIGBAB..i&w=514&h=360&hcb=2&itg=1&ved=2ahUKEwj5u-2azamUAxWlV6QEHT4sMcEQnPAOegQIGBAB#sv=CAMSXhoyKhBlLS1pdEp0bGYyY3ZXWG5NMg4taXRKdGxmMmN2V1huTToOUEdxM1ZGdnZvNVp5Uk0gBCokCg5JUXNTWURZQ3ZnaTZZTRIQZS0taXRKdGxmMmN2V1huTRgAMAEYByCH4Z7qCEoIEAEYASABKAE
-      @pic["Robot Thinker.jpg" "75%"
+      @pic["Robot Thinker.jpg" "27%"
            "Robot variant of Rodin’s Thinker"]
       @comment{
 The Lambda Nature of Lisp was its ability
@@ -742,7 +745,7 @@ you should see that as an opportunity.
 })
      ($slide "Objective Costs"
       ;; https://www.reddit.com/r/ProgrammerHumor/comments/120mb3s/are_there_10x_developers/
-      @pic["Are there 10x developers.webp" "75%"
+      @pic["Are there 10x developers.webp" "36%"
            "Are there 10x developers?"]
       @comment{
 Anecdotal experience shows that a human has about
@@ -758,7 +761,7 @@ if you have the tokens to spare.
 })
      ($slide "Impedance Matching"
       ;; Wikipedia
-      @pic["Pont du Gard.jpg" "75%"
+      @pic["Pont du Gard.jpg" "80%"
            "Pont du Gard"]
       @comment{
 Now of course, there remains the problem of interoperation.
@@ -852,7 +855,7 @@ as participants in a Symmathesy.
      ($slide "AI-assisted Lisp Symmathesy"
       ;; https://chatgpt.com/c/69fd59be-0534-83ea-826b-07e89c6a684d
       ;; Please generate a variant of Raphael's "The School of Athens" where the characters are replaced by Anthropomorphic Robot versions of themselves, maybe in the style of 1980s scifi illustration. Otherwise, same color palette, composition, style as Raphael.
-      @pic["Robot School of Athens.png" "75%"
+      @pic["Robot School of Athens.png" "60%"
            "Robot School of Athens"]
       @comment{
 I believe that AI code generation can enable a new age of Lisp-based
@@ -882,7 +885,7 @@ And at that point, what I'm offering you is just the *opportunity*
 to get in early onto the train of the AI-assisted Lisp Symmathesy.
 })
      ($slide "Prophecy and Challenge (2)"
-      @pic["caza_stargazing_robot.jpg" "75%"
+      @pic["caza_stargazing_robot.jpg" "36%"
            "Philippe Caza: Le Robot qui rêvait"]
       @comment{
 Come, and enjoy with me, the days of innovation and cooperation
