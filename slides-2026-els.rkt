@@ -40,7 +40,6 @@ Once maintainer and rewriter of Common Lisp’s build system ASDF, and current c
 |#
 
 (require scribble/html
-         "util/util.rkt"
          "util/coop.rkt"
          (rename-in "util/coop.rkt" (|@| $))
          "util/protodoc.rkt"

@@ -5,8 +5,11 @@
 (require
   scribble/html
   "reveal.rkt"
-  "util.rkt"
+;;  "util.rkt"
   "coop.rkt")
+
+(define-syntax-rule (when/list condition body ...)
+  (if condition (begin body ...) '()))
 
 #; ;; Document
 (define-type Doc

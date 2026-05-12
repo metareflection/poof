@@ -1,7 +1,7 @@
 # Prototypes: Object Orientation, Functionally
 
 This directory contains the source for our paper
-“Prototypes: Object Orientation, Functionally”.
+**“Prototypes: Object Orientation, Functionally”**.
 View the [precompiled PDF](https://fare.tunes.org/files/cs/poof.pdf).
 The same [Racket Scribble source](poof.scrbl) can produces
 simultaneously a printable document and a runnable library.
@@ -16,7 +16,7 @@ A presentation was made at LambdaConf 2024, with a longer variant later made onl
 [Legends of LambdaConf](https://youtu.be/oAzBfY8OtG0).
 
 After giving up on getting a paper published on my broader ideas about OO,
-I (Faré) am instead am preparing a book, titled “Lambda: the Ultimate Object”,
+I (Faré) am instead am preparing a book, titled **“Lambda: the Ultimate Object”**,
 (subtitle “Object-Orientation Elucidated”), see its
 [Scribble source](ltuo.scrbl) and [annotated bibliography](ltuo.bib).
 It is still a Work-In-Progress, but well advanced already.

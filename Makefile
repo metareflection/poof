@@ -4,7 +4,7 @@
 all: slides # ltuo
 
 # Default slides: the next talk
-slides: slides-2026-els # slides-2025-racketcon slides-2023-njpls slides-2024-lambdaconf slides-2025-shu
+slides: slides-2026-els-lt # slides-2026-els slides-2025-racketcon slides-2023-njpls slides-2024-lambdaconf slides-2025-shu
 
 .DUMMY: all pdf view test repl prerequisites fare links \
   preslides slides \
@@ -84,6 +84,10 @@ build/slides-2025-racketcon.html: slides-2025-racketcon.rkt util/reveal.rkt util
 
 slides-2026-els: build/slides-2026-els.html
 build/slides-2026-els.html: slides-2026-els.rkt util/reveal.rkt util/util.rkt util/coop.rkt util/protodoc.rkt util/coop.scm
+	racket $< > $@.tmp && mv $@.tmp $@ || { rm -f $@.tmp ; exit 42;}
+
+slides-2026-els-lt: build/slides-2026-els-lt.html
+build/slides-2026-els-lt.html: slides-2026-els-lt.rkt util/reveal.rkt util/util.rkt util/coop.rkt util/protodoc.rkt util/coop.scm
 	racket $< > $@.tmp && mv $@.tmp $@ || { rm -f $@.tmp ; exit 42;}
 
 # Side paper: LTUO

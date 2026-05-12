@@ -5,6 +5,14 @@
     width: 40%;
     vertical-align: middle;
 }
+.nologo {
+    float: left;
+    width: 40%;
+    vertical-align: middle;
+    border: 0;
+    background: #222;
+    background-color: #222;
+}
 .title {
     float: right;
     width: 60%;
