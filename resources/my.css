@@ -4,6 +4,15 @@
     float: left;
     width: 40%;
     vertical-align: middle;
+    border:none; !important
+}
+.nologo {
+    float: left;
+    width: 40%;
+    vertical-align: middle;
+    border:none; !important
+    background: #222;
+    background-color: #222;
 }
 .nologo {
     float: left;

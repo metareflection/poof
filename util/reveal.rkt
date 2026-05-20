@@ -1,6 +1,7 @@
 #lang at-exp racket ;; -*- Scheme -*-
 
 (provide
+ resource-url pic-url logo-pic
  slide-group slide gslide x-slide
  L R t C CB ~ ~~ L~ Li Lc
  Url Https image fragment color th* td* tL tR tC simple-table
@@ -53,12 +54,12 @@
   (when (not condition) body ...))
 
 (define (resource-url . text)
-  (cons "resources/" text))
+  (apply string-append "resources/" text))
 
 (define (reveal-url . text)
   #; (cons "http://cdn.jsdelivr.net/reveal.js/3.0.0/" text)
   #; (cons "/home/fare/src/fare/reveal.js-master/" text)
-  (resource-url "reveal/" text))
+  (apply resource-url "reveal/" text))
 
 ;; Quick helpers
 (define-syntax-rule (defcodes lang ...)
@@ -181,6 +182,9 @@
                        (map (lambda (xs) (apply tr (apply line xs))) xss)))))
     (apply lines contents)))
 
+(define logo-pic
+  (make-parameter "resources/pic/mukn-icon-whitebg.png"))
+
 (define (reveal Title Sections #:headers (headers '())
                 #:onload (onload ""))
   (output-xml
@@ -201,7 +205,7 @@
                                  "background-size: 3%; "
                                  "background-origin: padding-box; "
                                  "background-position: bottom 0.46% left 0%; "
-                                 "background-image: url('resources/pic/mukn-icon-whitebg.png'); ")
+                                 "background-image: url('" (logo-pic) "'); ")
            onload: onload]{
        @div[class: 'reveal]{@div[class: 'slides Sections]}
        @script[src: @reveal-url{lib/js/head.min.js}]

@@ -69,13 +69,16 @@ This document is available under the bugroff license.
          (tr @td{@code{PgDn}: next} @td{@code{PgUp}: previous} @td{@code{↑ ↓ ← → ESC ⏎}
              @td{Touchscreen: swipe down until you must swipe right}})]))
       ($slide "Lambda the Ultimate Object"
-        @L{Object-Orientation Elucidated} ;; The Ultimate Book on Object-Orientation
+        @L{Object-Orientation Elucidated}
 
         @L{So far: >10 chapters, >300 pages, @br >200 annotated bibliography entries.}
 
         @L{Claude proofreads (finds bugs!) — helps with exercises!}
 
-        @L{Need help with last technical chapter (efficiency, MOP)})
+        @L{Need help with last technical chapter (efficiency, MOP)}
+@comment{
+The Ultimate Book on Object-Orientation
+})
 
       ($slide "1st Third: Informal"
         @L{1. Introduction: About the Book}
@@ -126,10 +129,10 @@ This document is available under the bugroff license.
                         (but also pure prototype library)})
 
       ($slide "C4 Algorithm"
-        @L{C3 is *objectively* better than CLOS linearization @br
+        @L{C3 is @emph{objectively} better than CLOS linearization @br
                  (Dylan, Python, Perl...)}
 
-        @L{You can mix "classes and structs" @br
+        @L{You can mix “classes and structs” @br
                  (Ruby, Scala).}
 
         @L{Both together: C4.}

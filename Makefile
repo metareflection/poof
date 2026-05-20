@@ -4,12 +4,12 @@
 all: slides # ltuo
 
 # Default slides: the next talk
-slides: slides-2026-els-lt # slides-2026-els slides-2025-racketcon slides-2023-njpls slides-2024-lambdaconf slides-2025-shu
+slides: slides-2026-elte # slides-2026-els-lt slides-2026-els slides-2025-racketcon slides-2023-njpls slides-2024-lambdaconf slides-2025-shu
 
 .DUMMY: all pdf view test repl prerequisites fare links \
   preslides slides \
   slides-2021-scheme-workshop slides-2023-njpls slides-2024-lambdaconf \
-  slides-2025-lambdaconf slides-2025-racketcon slides-2026-els \
+  slides-2025-lambdaconf slides-2025-racketcon slides-2026-els slides-2026-els-lt slides-2026-elte \
   %.preview %.view eoomi
 
 UNAME_S := $(shell uname -s)
@@ -88,6 +88,10 @@ build/slides-2026-els.html: slides-2026-els.rkt util/reveal.rkt util/util.rkt ut
 
 slides-2026-els-lt: build/slides-2026-els-lt.html
 build/slides-2026-els-lt.html: slides-2026-els-lt.rkt util/reveal.rkt util/util.rkt util/coop.rkt util/protodoc.rkt util/coop.scm
+	racket $< > $@.tmp && mv $@.tmp $@ || { rm -f $@.tmp ; exit 42;}
+
+slides-2026-elte: build/slides-2026-elte.html
+build/slides-2026-elte.html: slides-2026-elte.rkt util/reveal.rkt util/util.rkt util/coop.rkt util/protodoc.rkt util/coop.scm
 	racket $< > $@.tmp && mv $@.tmp $@ || { rm -f $@.tmp ; exit 42;}
 
 # Side paper: LTUO

@@ -2,11 +2,10 @@
 #|
 Lambda, the Ultimate Paradigm
 
-Slides for presentation at the European Lisp Symposium, 2026-05-11
-  https://european-lisp-symposium.org/2026/
+Slides for presentation at ELTE, 2026-05-20
 
 To compile it, use:
-  racket slides-2026-els.rkt > build/slides-2026-els.html
+  racket slides-2026-elte.rkt > build/slides-2026-elte.html
 
 To test interactively, try:
   racket -i -l scribble/reader -e "(use-at-readtable)" -l racket
@@ -44,6 +43,8 @@ Once maintainer and rewriter of Common Lisp’s build system ASDF, and current c
          (rename-in "util/coop.rkt" (|@| $))
          "util/protodoc.rkt"
          "util/reveal.rkt")
+
+(logo-pic (resource-url "pic/ff-on-white.svg"))
 
 (def (make-table lists)
   (table style: "border-bottom-width:0;"
@@ -95,10 +96,10 @@ Once maintainer and rewriter of Common Lisp’s build system ASDF, and current c
             @b{Lambda, the Ultimate Paradigm}]
        @p{@small{@(~)}}
        @C[style: "font-size: 66%"]{
-           François-René Rideau @(email "<fare@mukn.com>")}
+           François-René Rideau @(email "<fare@formalfoundry.ai>")}
        @C{@small{@Url{https://github.com/metareflection/poof}}}
        @div[style: "font-size: 50%;" (~)]
-       @C{@small{European Lisp Symposium 2026-05-11}}
+       @C{@small{Eötvös Loránd University 2026-05-20}}
        @div[style: "font-size: 50%;" (~)]
        @table[style: "text-align: left; padding-left: 0; margin-left: 0; width: 100%; font-size: 50%;"
          (tr @td{@code{PgDn}: next} @td{@code{PgUp}: previous} @td{@code{↑ ↓ ← → ESC ⏎}
@@ -388,7 +389,7 @@ anyone can dynamically build more languages.
       @Lc{(SETQ FOO (CONS BAR FOO)) ; 1960 LISP I, SEXP, interpreted
 }
       @~
-      @Lc{MACRO (( ; 1963 LISP 1.5 @br
+      @Lc{MACRO (( ; 1963 LISP 1.5 (w/ orig. bugs) @br
          (STASH (LAMBDA (FORM)
              (LIST (QUOTE SETQ)(CADAR FORM)
                    (LIST (CONS (CADR FORM) @br
@@ -665,8 +666,8 @@ when the community could gather around handful of dialects that mattered.
       @L{If you give someone Fortran, he has Fortran. @br
          If you give someone Lisp, he has any language he pleases. @br
          @C{— Guy L. Steele Jr.}}
-      @L{However, he’ll have a hard time finding someone else speaking
-         that same language he pleases. @br
+      @L{However, he’ll have a hard time finding someone else
+         speaking that same language he pleases. @br
          @C{— Faré (me) @(~ 4)}}
       @comment{
 The fragmentation of the community isn’t just linguistic — it’s cultural.
@@ -884,6 +885,20 @@ And at that point, what I'm offering you is just the *opportunity*
 to get in early onto the train of the AI-assisted Lisp Symmathesy.
 })
      ($slide "Prophecy and Challenge (2)"
+      ;; https://medium.com/alacris/what-do-formal-methods-actually-guarantee-d94ae8802be2
+      @pic["whiteboard_logic_formulas.webp" "60%"
+           "Philippe Caza: Le Robot qui rêvait"]
+      @comment{
+Since I'm among type theorists, what does that mean specifically for you?
+
+That metatheory and reflection are more important than getting the logic exactly right from the get go.
+This includes the ability to evolve the logic and change
+the proof structures or axiom schemas after the fact.
+
+Also, that building and cultivating (and funding) communities that can mutually benefit
+across their differences is just as important as getting either metatheory or theory just right.
+})
+     ($slide "Prophecy and Challenge (3)"
       @pic["caza_stargazing_robot.jpg" "36%"
            "Philippe Caza: Le Robot qui rêvait"]
       @comment{
