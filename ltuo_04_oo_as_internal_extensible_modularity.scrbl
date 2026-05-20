@@ -16,30 +16,41 @@ supporting fine-grained division of labor in software development.
 
 Some readers may balk at the formal part of this book being delayed one more chapter.
 But to distinguish OO from non-OO, and better OO from worse OO,
-and to decide when to use which OO and when not to use OO at all,
-one must understand the purpose of OO. And that is not formal.
+one must understand the purpose of OO.
+Only then may one adequately decide when to use or not use OO,
+and which form of OO if any is most appropriate.
 Just like to distinguish a chair from a non-chair, or a better chair from a worse chair,
-and decide when to use which chair and when not to use one,
-one must understand the purpose of a chair. And that goes beyond a formal description of a chair.
-Otherwise, one won’t be able to make the difference between the real thing and
-a broken version, a cheap plastic imitation, a mere representation, a decoy, a parody,
-a torture implement made to look like it, or a pile of toxic waste vaguely shaped like it.
+one must understand the purpose of a chair.
+And only then may one decide when to use or not use a chair,
+and which best fits the purpose if any.
 
+Moreover, that understanding of the purpose of a thing
+is not a mere matter of formal boxes to check.
+Otherwise, one won’t be able to distinguish the real thing from
+a broken version, a cheap plastic imitation, a mere representation, a decoy, a parody,
+a torture implement made to look like it.
+Or from a pile of toxic waste vaguely shaped like it.
 Would you sit on cactus arranged into a chair?
 Or on drum full of radioactive material?
-Because this is what could happen if you define a chair by its shape,
-or by the ability to sit on it, with no regard for its bigger purpose.
-Yet you will do the equivalent or inflict it upon others
+Because this is what happens when you define a chair merely by its shape,
+or by the ability to sit on it, without regard for its larger purpose.
+And you will do the equivalent or inflict it upon others
 if you don’t understand the purpose of OO.
-Crooks will actively sell bad OO to whoever spends millions of dollars
-in software development, training, tools and products based on it being labelled “OO”,
-without being able to distinguish the real thing from toxic waste.
+
+Crooks will actively sell bad OO to anyone willing to purchase indiscriminately based on the label.
+Each year, foolish customers spend large amounts of money
+on software development, training, tools and products that
+are actually toxic waste disguised as the real thing,
+just because they carry the label “OO”, “Web 2.0”, “Blockchain”, “AI”,
+or whatever is fashionable at the moment.
 Indeed, this very fraud is happening right now, and has been since the 1990s at least,
 to the tune of billions of dollars, as you may know if you have been following the industry.
 And industry or academic pundits who are satisfied with the appearance of OO,
 with the mere presence of some or all of its usual trappings,
-without understanding its purpose, what it is supposed to do or not do for programmers, are complicit:
-they mislead those who listen to them into being victims of the fraud.
+are complicit.
+They do not understand the purpose of OO,
+what it is supposed to do or not do for programmers,
+and mislead those who listen to them into being victims of the fraud.
 
 @section[#:tag "M"]{Modularity}
 @subsection{Division of Labor}

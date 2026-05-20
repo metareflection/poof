@@ -442,6 +442,23 @@ on the author’s page, sci-hub.ru, archive.org, z-library.sk, github.com, etc.
                  Springer, 1983, pp.~159--200}
 }
 
+%% 1970
+
+@InProceedings{Hewitt1970,
+  author={Carl Hewitt},
+  title={Description and Theoretical Analysis (Using Schemata) of PLANNER: A Language for Proving Theorems and Manipulating Models in a Robot},
+  booktitle={Proceedings of the 1st International Joint Conference on Artificial Intelligence},
+  year={1969},
+  pages={295--301},
+  publisher={International Joint Conferences on Artificial Intelligence Organization},
+  url={https://www.ijcai.org/Proceedings/69/Papers/031.pdf},
+  note={
+    Introduces PLANNER, an influential AI language combining procedural
+    and logical knowledge representations.
+    Relevant to the history of message passing, procedural abstraction, logic programming, and
+    ideas that later influenced actor systems and object-oriented programming.}
+}
+
 %% 1972
 
 @InProceedings{Bobrow1972,
@@ -750,6 +767,23 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 %% 1976
+
+% https://dspace.mit.edu/bitstream/handle/1721.1/5790/AIM-353.pdf
+@TechReport{Steele1976Imperative,
+  author={Steele, Guy Lewis and Sussman, Gerald Jay},
+  title={LAMBDA: The Ultimate Imperative},
+  institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
+  year={1976},
+  month=mar,
+  number={AIM-353},
+  url={https://dspace.mit.edu/handle/1721.1/5790},
+  note={.
+    The authors famously were trying to make sense of message dispatch in Hewitt’s Actors
+    based on continuations;
+    while writing tests for how the two should behave, their realized that there was no difference,
+    and this realization led to the design of Scheme.
+  }
+}
 
 % Also https://exhibits.stanford.edu/stanford-pubs/catalog/pf235fy3176
 @TechReport{Bobrow1976,
@@ -1139,7 +1173,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 %% 1981
 
 % Chine Nual or chinual 3ed, 1981 has Flavors and defsystem. 1979 2ed doesn't.
-% Stroustrup1989Multiple cites 3ed or 4ed (also 1981)
+% Stroustrup1989 cites 3ed or 4ed (also 1981)
 % NB: The chapter on Flavors, signed by Weinreb & Moon, also published as AIM-602, November 1980, updated 1981-01-16
 @manual{Weinreb1981Chinual3,
   author={Daniel Weinreb and David A. Moon},
@@ -1963,7 +1997,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 %% 1989
 
 % no DOI
-@article{Stroustrup1989Multiple,
+@article{Stroustrup1989,
   title={Multiple inheritance for C++},
   author={Bjarne Stroustrup},
   journal={Computing Systems},
@@ -4772,6 +4806,29 @@ and Fiech, Adrian",
 
 %% 2010
 
+% https://www.oscar.nierstrasz.org/posts/2010-08-26-JOT-TenThingsIHateAboutOOP
+@Article{Nierstrasz2010TenThings,
+  author={Oscar Nierstrasz},
+  title={Ten Things I Hate About Object-Oriented Programming},
+  journal={Journal of Object Technology},
+  year={2010},
+  volume={9},
+  number={5},
+  pages={5--16},
+  month=sep,
+  doi={10.5381/jot.2010.9.5.e1},
+  url={https://www.jot.fm/contents/issue_2010_09/editorial.html},
+  note={.
+    Nierstrasz is an OOP researcher in the Smalltalk tradition.
+    In this provocative essay, he criticizes a few things about how OO
+    is commonly practiced.
+    The criticism is not always about OO itself, though sometimes it is;
+    and whether it hits or misses, it certainly brings challenging thoughts
+    and can inspire directions for future R&D.
+  }
+}
+
+
 @InProceedings{Might2010,
   author={Might, Matthew and Smaragdakis, Yannis and Van Horn, David},
   title={Resolving and exploiting the k-CFA paradox: illuminating functional vs. object-oriented program analysis},
@@ -5811,7 +5868,7 @@ and Fiech, Adrian",
 }
 
 % Open Access under CC-BY-NC 4.0
-@book{Petricek2025Cultures,
+@book{Petricek2025,
   author={Tomas Petricek},
   title={Cultures of Programming: The Development of Programming Concepts and Methodologies},
   publisher={Cambridge University Press},
@@ -6104,20 +6161,6 @@ and Fiech, Adrian",
 
 % lazy evaluation (Friedman & Wise 1976)
 
-% https://dspace.mit.edu/bitstream/handle/1721.1/5790/AIM-353.pdf
-@TechReport{Steele1976Imperative,
-  author={Steele, Guy Lewis and Sussman, Gerald Jay},
-  title={LAMBDA: The Ultimate Imperative},
-  institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
-  year={1976},
-  month=mar,
-  number={AIM-353},
-  url={https://dspace.mit.edu/handle/1721.1/5790},
-  note={.
-    XXX
-  }
-}
-
 % https://dspace.mit.edu/bitstream/handle/1721.1/6091/AIM-379.pdf
 @TechReport{Steele1976Declarative,
   author={Steele, Guy Lewis},
@@ -6172,4 +6215,20 @@ and Fiech, Adrian",
     Steele’s Master’s thesis.
     Revised version of a dissertation submitted to the Department of Electrical Engineering and Computer Science
   },
+}
+
+% Alan Kay
+% https://www.mail-archive.com/fonc@vpri.org/msg03121.html
+
+% Gilad Bracha, Peter von der Ahé, Vassili Bykov, Yaron Kashai, William Maddox, and Eliot Miranda.
+% "Modules as Objects in Newspeak" 2010
+
+@techreport{James2012,
+  title={The Two Dualities of Computation: Negative and Fractional Types},
+  author={Roshan P James and Amr Sabry},
+  year={2012},
+  institution={Citeseer},
+  url={https://web.archive.org/web/20121229014345/https://www.cs.indiana.edu/~sabry/papers/rational.pdf},
+  note={.
+  }
 }

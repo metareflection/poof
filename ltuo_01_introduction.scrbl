@@ -16,8 +16,8 @@ is a paradigm for programming in terms of “objects”.
 What even are objects? What aren’t? What is OO? What isn’t?
 What is it for? What is a paradigm to begin with?
 How do I use OO to write programs? How do I make sense of existing OO programs?
-How may I best think about OO programs, to design them?
-How may I best reason about them, to debug them?
+How may I best think about OO programs when designing them?
+How may I best reason about them when debugging them?
 What are variants of OO? How do I compare them?
 How can I build OO if I don’t have it yet (or not a good variant of it)?
 And why are so many people so into OO, and so many others so against it?
@@ -32,13 +32,13 @@ But if you practice programming, and think about your practice,
 then you are in my target audience;
 and you will find it will be easier to program
 with the right ideas than with the wrong ones.
-And the Internet is certainly full of wrong and sometimes toxic ideas,
-about OO as about anything.
+And the Internet is certainly full of wrong and sometimes toxic ideas
+about OO, as about anything.
 
 To answer those questions,
-I will assume from my readers a passing familiarity with Functional Programming (FP).
+I will assume of my readers a passing familiarity with Functional Programming (FP).
 You don’t have to be an expert at FP;
-you just need basic knowledge about how to read and write
+you just need basic knowledge about how to read, write and evaluate
 “anonymous higher-order” functions
 in your favorite programming language@xnote["."]{
   Anonymous functions are just functions that do not need to have a name.
@@ -54,6 +54,18 @@ in your favorite programming language@xnote["."]{
   I do love these books, however I find their treatment of OO lacking—otherwise
   I wouldn't be writing the present book.
 }
+
+Note that this book will @emph{not} address how to use OO
+within some existing language or framework;
+you will find little here in terms of recipes, patterns or methodologies.
+There are already many books from which to learn such things.
+Instead, this book is about understanding OO itself:
+what it fundamentally is,
+how and why it works when it does,
+how and why it fails when misused or abused,
+and how its many variants relate to one another.
+My intended audience consists of would-be self-aware practitioners and implementers
+who seek to understand what it is they are doing—or should be doing.
 
 @subsection{Decades too late, but still decades ahead}
 @epigraph{Each new generation born is in effect
@@ -77,6 +89,7 @@ with Bobrow’s Lisp AI work, resulting in Smalltalk-76 and KRL-0.
 OO took off from there, at first reserved to the happy few
 who could use the most high-end systems from Xerox, BBN or MIT.
 OO became popular among researchers in the 1980s, and at some point was the Next Big Thing™.
+
 In the 1990s, OO finally became available to every programmer,
 accompanied by endless industry hype to promote it.
 By the mid 2000s it had become the normal paradigm to program in.
@@ -90,7 +103,7 @@ important, obsolete, normalized, and finally understood.”@Note{
   “Toute technique est mise au point, utilisée, importante,
   obsolète, normalisée puis comprise.” — Roland Trique, fr.sci.jargon, 1999
 }
-This book then is here to bring the final nail on the coffin of OO: understanding it.
+This book, then, is here to drive the final nail into the coffin of OO: understanding it.
 Too bad no one reads books anymore, except AIs.
 If that book, and most importantly its understanding, had come a few decades earlier,
 it could have saved a lot of people a lot of trouble.
@@ -107,7 +120,7 @@ is still decades ahead of yours).
 And even if I did, they will be retiring soon.
 However, a new generation of programmers is born every year,
 and it is always time to inspire and educate the new generation,
-that they do not fall as low as their predecessors, or lower.
+lest they fall as low as their predecessors, or lower.
 And even if AIs take over programming, they too will need education.
 
 @subsection{Towards a Rebirth of OO}
@@ -124,7 +137,7 @@ When I mention OO becoming boring, then forgotten, or talk of nailing its coffin
 I’m not celebrating OO’s decline.
 I’m lamenting that a bad version of OO became popular, then faded.
 Meanwhile, there’s little interest or funding in either industry or academia
-to further improvement to OO—a topic wrongly considered already understood.
+for further improvements to OO—a topic wrongly considered already understood.
 
 These days, bright programmers gravitate toward Functional Programming (FP),
 a paradigm unjustly neglected in the industry during OO’s heyday.
@@ -155,7 +168,7 @@ With the advanced features of Lisp OO at long last adopted by the mainstream.
 
 But I have to admit my defeat so far:
 I have yet to build a system to my liking
-that would attract a critical mass of adopters to become self-sustaining.
+that would attract enough adopters to become self-sustaining.
 And so, like all researchers who title their papers “Towards a …”
 when they fail to achieve their goals, I am switching to plan B:
 trying to convince others that there’s gold in them thar hills,
@@ -227,6 +240,7 @@ spend time explaining the denotations and connotations of my words as I was usin
 and defusing those that may mistakenly be heard by various readers from different communities;
 tell my readers to put aside the concepts they think they know,
 and somehow teach them the concepts I am putting behind the words, so they understand.
+
 But that takes a lot of time and space. For me. And for my readers.
 Resources that we both lack, especially scientific publications
 limited to 12-25 pages, depending on the venue@xnote["."]{
@@ -331,7 +345,7 @@ but that I can share in the form of a book.
 
 @exercise[#:difficulty "Medium"]{
   Laugh at other authors who wrote about OO.
-  They like me spent lot of time serious about the topic (or pretending to be),
+  They like me spent lot of time being serious about the topic (or pretending to be),
   yet failed to see the simple things I will explain.
 }
 
@@ -380,6 +394,8 @@ then called an Object-Oriented (Programming) Language (OOPL).
 
 This characterization of OO should be retrospectively obvious to all familiar with OO.
 Yet remarkably, some programmers explicitly reject it, eminent professors even@xnote["."]{
+  @;{TODO: Maybe move to chapter 3 section on Modularity being only half of OO,
+     leave only a short reference here?}
   A notable dissident to this characterization is William Cook,
   a respected academic who made many key contributions to understanding the semantics of inheritance
   @~cite{Cook1989 Cook1989Inheritance cook1989denotational bracha1990mixin Cook1994}
@@ -404,7 +420,7 @@ Yet remarkably, some programmers explicitly reject it, eminent professors even@x
   from the foreign point of view of FP;
   but his lack of appreciation and understanding for the OO tradition,
   indeed missing the point of it all,
-  were such, that they have become proverbial: immortalized in Gabriel’s essay
+  were such that they have become proverbial: immortalized in Gabriel’s essay
   “The Structure of a Programming Language Revolution” @~cite{Gabriel2012}
   as a prototypical failure to understand a phenomenon when viewed
   through a scientific paradigm incommensurable with the one that produced it.
@@ -430,13 +446,13 @@ to offer a @emph{Theory of OO}.
 
 @principle{This Theory of OO is Meaningful}.
 A theory is @emph{meaningful} if it is a body of explanations
-necessary and sufficient to explain what we do when
-we do OO, and we don’t when we don’t.
+necessary and sufficient to explain what we do when we do OO, and
+what we do not do when we do not.
 It can clearly state the problems to be solved by or for OO, and
 the criteria by which we can judge some solutions as better than others,
 good or bad, acceptable or unacceptable.
 In these explanatory abilities, the negative is as important as the positive:
-it allows to demarcate the concept of OO from other concepts;
+it makes it possible to demarcate the concept of OO from other concepts;
 to distinguish that which partakes in it, that explains it,
 from that which doesn’t, and would only corrupt it if accepted as part of OO.
 
@@ -519,6 +535,7 @@ if any at all@xnote["."]{
   you will be able to understand why they are either trivially expressible
   in terms of the above variants, or fundamentally flawed,
   if you should come across them.
+
   That said, when, in old papers, I see pioneers struggling to find solutions to problems
   few if anyone else suspected existed, then make mistakes, or take wrong turns—I
   laugh, I cry, but I root for them.
@@ -547,11 +564,15 @@ I will use the absence of inheritance as a baseline against which to evaluate ou
   An extreme optimist is a man who believes that humanity will probably survive
   even if it doesn’t take his advice. @|#:-"John McCarthy"|
 }
-I will claim that indeed (a) there is a best way to combine single and multiple inheritance,
-that (b) it involves linearization of the inheritance graph,
-that (c) there are enough constraints on linearization for the optimal algorithm
-to be well-defined up to some heuristic, and
-that (d) there are good reasons to prefer a specific heuristic.
+I will claim the following:
+@itemize[
+  @item{There is a best way to combine single and multiple inheritance.}
+  @item{This way involves linearization of the inheritance graph.}
+  @item{The constraints on linearization for the optimal algorithm
+        leave space for further extensions.}
+  @item{Pending extensions, this space is filled by a well-defined heuristic
+        that has uniquely predictable behavior.}]
+
 @principle{The C4 algorithm implements this Optimal Inheritance.}
 I implemented C4 as part of
 the builtin object system of @(GerbilScheme) @~cite{GerbilScheme}@xnote["."]{
@@ -563,7 +584,7 @@ the builtin object system of @(GerbilScheme) @~cite{GerbilScheme}@xnote["."]{
   to offer a usable programming environment.
   However, there is no common object system,
   instead plenty of different object systems that span the entire design space for OO—except for
-  their generally lacking static types.
+  their general lack of static types.
   @(GerbilScheme) provides its own builtin object system, not compatible with any standard,
   but with arguably the best inheritance of any object system to date (as of 2026).
 }
@@ -572,7 +593,7 @@ It is unusual for a book to claim some significant innovation like that:
 usually, a researcher would publish it at some conference.
 However, C4 in isolation might only look mildly interesting:
 it “just” combines a couple well-known ideas and a speed optimization.
-The concepts I develop are a prerequisite for the claim of optimality of C4 to even make sense,
+The concepts I develop are prerequisites for the optimality claim about C4 to even make sense,
 yet require this book to properly articulate.
 C4 itself is a notable improvement, that crowns the theory as productive.
 But the theory behind it is the real achievement.
@@ -587,7 +608,7 @@ a better inheritance algorithm with which to improve your existing (or future) l
 
 @exercise[#:difficulty "Medium"]{
   For each of the criteria that I claim my theory satisfies,
-  identify a theory you know about that fails this criterium.
+  identify a theory you know about that fails this criterion.
   With regards to productivity, mind that it is enough for the theory
   to have produced novel results @emph{at the time it was first proposed}—it is fine
   if the results of that theory are not novel anymore.
@@ -714,10 +735,11 @@ Others may want to skip the informal discussion and jump directly to the formal 
 at @secref{MOO}, about a third into the book.
 
 The most enthusiastic among you will read the book cover to cover,
-including footnotes and bibliographical notes, and
-go all the way into using and implementing
-the most advanced OO techniques of the later chapters (see @secref{EtSoO}, @secref{EOI}),
-end up building your OO system, and writing a sequel to this book.
+including footnotes and bibliographical notes.
+You may even do every exercise, and go all the way into using and implementing
+the most advanced OO techniques of the later chapters into your programming languages
+(see @secref{EtSoO}, @secref{EOI}).
+You will end up building your own OO system, and writing a sequel to this book.
 If you do, why not contact me and join me to build and write them together?
 
 But you don’t have to be that enthusiastic to read and hopefully enjoy this book.
@@ -742,7 +764,7 @@ and even ask AI assistants for navigation help.
   @|#:-"Grelling–Nelson paradox"|
 }
 This book includes enough self-descriptions ahead of each section
-that you hopefully may make reasonable decisions of which parts to read,
+that you hopefully may make reasonable decisions about which parts to read,
 to skip, to skim, to read attentively,
 to keep, to throw away—or, if you’re ambitious, rewrite.
 
@@ -780,7 +802,8 @@ please send them my way.
 }
 You will see me using the first person singular a lot in this book.
 That doesn’t mean I don’t want to include you in my narrative.
-Believe me, it would most delight me if you could feel the same joy at exploring this topic as I do.
+Believe me, nothing would delight me more than
+your feeling the same joy at exploring this topic as I do.
 Every sentence of this very book is an invitation for you to see and practice OO my way.
 That doesn’t mean I am bragging, either.
 That means I am taking responsibility for my actions.
@@ -880,7 +903,7 @@ I will define those terms precisely in
 @exercise[#:difficulty "Hard"]{
   Identify a case where you were once bamboozled by someone using the word “we”
   and your granting undue credit or accepting undue responsibility—or
-  a case were you bamboozled someone (typically child or spouse)
+  a case where you bamboozled someone (typically a child or spouse)
   with the same technique.
 }
 

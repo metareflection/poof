@@ -12,11 +12,15 @@
 Now that I’ve given an informal explanation of OO and
 what it is for (Internal Extensible Modularity),
 I can introduce formal semantics for it, starting with a truly minimal model:
-(1) No classes, no objects, just specifications and targets.
-(2) The simplest and most fundamental form of inheritance, mixin inheritance.
+@itemize[
+  @item{No classes, no objects, just specifications and targets.}
+  @item{The simplest and most fundamental form of inheritance, mixin inheritance.}]
+
 Mixin inheritance is indeed simplest from the point of view of post-1970s formal logic,
-though not from the point of view of implementation using mid-1960s computer technology,
-at which point I’d be using single inheritance indeed.
+expressible in two short lines of λ-calculus.
+Note, however, that it is not so simple at all from the point of view of
+mid-1960s to mid-1970s computer technology, the time at which inheritance was first invented.
+This is why single inheritance historically came first.
 
 @section{Minimal First-Class Extensibility}
 
@@ -25,22 +29,21 @@ at which point I’d be using single inheritance indeed.
 I will start by formalizing First-Class Extensibility in pure FP,
 as it will be easier than modularity, and a good warmup.
 To make it clearer what kind of computational objects I am talking about,
-I will be using semi-formal types as fourth-class entities,
-i.e. purely as design-patterns to be enforced by humans.
-I leave a coherent typesystem as an exercise to the reader,
-though I will offer some guidance and references to relevant literature (see @secref{TfOO}).
+I will be using semi-formal types:
+purely human-enforced design-patterns, what I previously called “fourth-class” entities.
+I leave a coherent automated “second-class” typesystem as an exercise to the reader;
+still I later offer some guidance and references to relevant literature (see @secref{TfOO}).
 
-Now, to extend to some computation returning some value of type @c{V},
-is simply to do some more computation, starting from that value,
+Now, extending some computation returning some value of type @c{V},
+simply consists in doing some more computation, starting from that value,
 and returning some extended value of some possibly different type @c{W}.
-Thus, in general an “extension” is actually an arbitrary transformation,
-which in FP, will be modeled as a function of type @c{V → W}.
+Thus, in general an “extension” is an arbitrary transformation,
+which in FP will be modeled as a function of type @c{V → W}.
 
 However, under a stricter notion of extension,
 @c{W} must be the same as @c{V} or a subtype thereof:
-you can add or refine type information about the entity being extended,
-or adjust it in minor ways;
-you may not invalidate the information specified so far,
+you can add or refine type information about the entity being extended;
+but you may not invalidate the information specified so far,
 at least none of the information encoded in the type.
 When that is the case, I will then speak of a “strict extension”.
 
@@ -48,14 +51,19 @@ Obviously, if types are allowed to be too precise,
 then any value @c{v} is, among other things, an element of
 the singleton type that contains only @c{v}, at which point
 the only allowed transformation is a constant non-transformation.
-Still, in a system in which developers can @emph{explicitly} declare
-the information they @emph{intend} to be preserved,
-as a type @c{V} if any (which funnily is non-trivial if @emph{not} @c{Any}),
-it makes sense to require only extensions that strictly respect that type,
-i.e. functions of type @c{V → V}, or @c{W ⊂ V ⇒ V → W}
-(meaning @c{V → W} under the constraint that @c{W} is a subtype of @c{V},
-for some type @c{W} to be declared, in which case the function is also of type @c{V → V})@xnote["."]{
-  And even without static types, the pure lazy functional language Jsonnet @~cite{jsonnet}
+This strongly suggests that rich subtyping is not and cannot be a constraint
+relative to inferred types, but only to declared types.
+Thus, consider a system in which developers can @emph{explicitly} declare
+the information they @emph{intend} to be preserved.
+Then consider extensions to some computation, with declared intended return type @c{V}, if any
+(which funnily is non-trivial if @emph{not} @c{Any}).
+It makes sense to require that these extensions should strictly respect that type,
+i.e. be functions of type @c{V → V}.
+More precisely, one could require a type of the form @c{W ⊂ V ⇒ V → W},
+i.e. @c{V → W} under the constraint that @c{W} is a subtype of @c{V},
+for some type @c{W} to be declared
+(in which case, the function is also of type @c{V → V})@xnote["."]{
+  Even without static types, the pure lazy functional language Jsonnet @~cite{jsonnet}
   allows programmers to specify dynamically checked constraints
   that objects must satisfy after they are instantiated (if they are, lazily).
   These constraints can ensure a runtime error is issued
@@ -66,17 +74,19 @@ for some type @c{W} to be declared, in which case the function is also of type @
 
 @subsection{Coloring a Point}
 
-The prototypical type @c{V} to (strictly) extend would be the type @c{Record} for records.
-Assuming for the moment some syntactic sugar, and postponing discussion of precise semantics,
-I could define a record as follows:
+The prototypical type @c{V} to extend would be the type @c{Record} for records.
+For the moment, I’ll assume some syntactic sugar,
+and I’ll postpone discussion of precise semantics.
+I can then define a record as follows:
 @Code{(define point-a (record (x 2) (y 4)))}
-i.e. the variable @c{point-a} is bound to a record that associates
-to symbol @c{x} the number @c{2} and to symbol @c{y} the number @c{4}.
+i.e. the variable @c{point-a} is bound to a record that maps
+the symbol @c{x} to the number @c{2} and the symbol @c{y} to the number @c{4}.
 
-A sample (strict) extension would be the function @c{paint-blue} below,
-that extends a given record (lexically bound to @c{p} within the body of the function)
-into a record that is a copy of the previous
-with a new or overriding binding associating to symbol @c{color} the string @c{"blue"}:
+A sample (strict) extension would be the function @c{paint-blue} below:
+It extends a given record, lexically bound to @c{p} within the body of the function;
+it returns a record that is a copy of the previous
+with a new or overriding binding;
+and that binding maps the symbol @c{color} to the string @c{"blue"}:
 @Code{(define (paint-blue p) (extend-record 'color "blue" p))}
 Obviously, if you apply this extension to that value with @c{(paint-blue point-a)}
 you obtain a record equal to what you could have directly defined as:
@@ -93,7 +103,7 @@ as contrasted to most such papers, and to further examples in subsequent section
 @subsection{Extending Arbitrary Values}
 
 The type @c{V} of some values being extended could be anything.
-The possibilities are endless, but here are a few simple real-life examples
+Here are a few simple real-life examples
 of strict extensions for some given type:
 @itemize[
 @item{The values could be numbers, and then
@@ -104,12 +114,12 @@ your extensions could append part identifiers to the list of spare parts or ingr
 before starting assembly of a physical project.}
 @item{The values could be lists of dependencies, where each dependency
 is a package to build, action to take or node to compute,
-in a build system, a reactive functional interface or a compiler.}]
+for instance in a build system, a reactive functional interface or a compiler.}]
 
 A record (indexed product) is just a common case because it can be used to encode anything.
 Mathematicians will tell you that products (indexed or not)
-give a nice “cartesian closed” categorical structure to the set of types
-for values being extended. What it means in the end is that
+give a nice “Cartesian closed” categorical structure to the set of types
+for values being extended. In practice, this means that
 you can decompose your specifications into elementary aspects that you can combine
 together in a record of how each aspect is extended.
 
@@ -119,12 +129,12 @@ The ultimate purpose of an extension @c{ext} is
 to be applied to some value @c{val},
 which in Scheme syntax is written @c{(ext val)}.
 
-But interestingly, extensions can be composed, such that from two extensions
-@c{ext1} and @c{ext2} you can extract an extension @c{(compose ext1 ext2)},
+But interestingly, extensions can be composed:
+from two extensions @c{ext1} and @c{ext2} you can extract an extension @c{(compose ext1 ext2)},
 also commonly written @c{ext1 ∘ ext2},
 that applies @c{ext1} to the result of applying @c{ext2} to the argument value.
-And since I am discussing first-class extensions in Scheme,
-you can always define the @c{compose} if not yet defined, as follows;
+Since I am discussing first-class extensions in Scheme,
+you can always define @c{compose} yourself, if it is not already provided, as follows;
 @c{compose} is an associative operator with the identity function @c{id} as neutral element:
 @Code{
 (def compose (λ (ext1 ext2) (λ (val) (ext1 (ext2 val)))))
@@ -155,8 +165,8 @@ Each extension then transforms its “inherited” input value
 into the desired extended output value,
 possibly refining the type @c{V} along the way,
 such that the initial type is the “top” type of this refinement hierarchy.
-The initial base value is also called a “top value” @c{⊤},
-and somewhat depends on what monoidal operation is used to extend it
+The initial base value is also called a “top value” @c{⊤};
+it somewhat depends on what monoidal operation is used to extend it
 as well as the domain type of values.
 
 @itemize[
@@ -1134,7 +1144,7 @@ for the same reasons@xnote["."]{
   The name @c{self} is used in Smalltalk, Scheme, Self, Python, Jsonnet, Nix,
   many more languages, and in a lot of the literature about OO semantics.
   In Simula, and after it, in C++, Java, JavaScript or Scala, the @c{this} keyword is used instead.
-  Note however, that I am currently discussing a variant of Prototype OO,
+  Note however that I am currently discussing a variant of Prototype OO,
   as in Self, Jsonnet, Nix, JavaScript, where the @c{self} or @c{this}
   is indeed the open recursion variable.
   In Class OO language, the definition being one of a type descriptor, not of a record,

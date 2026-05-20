@@ -58,8 +58,8 @@ are entities @emph{inside} the language,
 as opposed to merely files edited, preprocessed or generated @emph{outside} the language itself,
 which can be done for any language.
 
-Note that Modularity and Extensibility are properties of the process of writing software,
-rather so than of the software itself.
+Note that Modularity and Extensibility are properties
+of the process of writing software rather than of the software itself.
 Internality crucially embeds part of this process inside the software.
 But the software development process remains larger than the software itself.
 
@@ -80,12 +80,13 @@ and @emph{classes} if second-class
 A language offers prototype-based object orientation (“Prototype OO”) if it has prototypes,
 and class-based object orientation (“Class OO”) if it only has classes.
 
-The first arguably OO language used classes @~cite{Simula1967},
-but the second arguably and first definitely OO language used prototypes @~cite{Bobrow1976};
-and some languages provide both @~cite{Hewitt1979 EcmaScript2015}.
-Class OO is the more popular form of OO,
-but the most popular OO language, JavaScript,
-started with just Prototype OO, with Class OO only added on top twenty years later.
+The first arguably OO language used classes @~cite{Simula1967};
+but the first definitely OO language used prototypes @~cite{Bobrow1976},
+and was otherwise the second OO language.
+Some languages provide both @~cite{Hewitt1979 EcmaScript2015}.
+Class OO is the more popular form of OO.
+But the most popular OO language, JavaScript, started with just Prototype OO;
+Class OO was layered on top twenty years later.
 
 @subsection[#:tag "CaPfT"]{Classes as Prototypes for Types}
 @principle{A class is a compile-time prototype for a type descriptor}:
@@ -99,8 +100,8 @@ And indeed within Prototype OO, you can readily express
 prototypes for runtime type descriptors for your language,
 or prototypes for type descriptors for some other language you are processing as a meta-language.
 
-In this book, I will thus discuss the general case of OO,
-and thus will seldom mention classes, that are a special case of prototypes.
+In this book, I will discuss the general case of OO,
+and thus will seldom mention classes, since they are merely a special case of prototypes.
 Exceptions include when I elucidate the relationship between Class OO and Prototype OO,
 or mention existing systems that are somehow restricted in expressiveness
 so they only support classes@xnote["."]{
@@ -143,7 +144,7 @@ only an unintentional way that defeats guarantees of termination
 }
 @subsection[#:tag "SaT"]{Specifications and Targets}
 As I reconstruct the semantics of OO from first principles,
-I will see that more so than prototype, class, object, or method,
+I will see that more than prototype, class, object, or method,
 @principle{the fundamental notions of OO are @emph{specification} and @emph{target}}:
 @emph{target} computations are being specified by
 extensible and modular, partial @emph{specifications} (see @secref{MOO}).
@@ -176,8 +177,8 @@ It is not a record and does not have methods, fields, attributes or any such thi
 
 A target value in general is not an object, prototype or class either;
 it’s just an arbitrary value of that arbitrary domain that is targeted.
-It needs not be any kind of record nor record type;
-it needs not have been computed as the fixpoint of a specification;
+It need not be any kind of record nor record type;
+it need not have been computed as the fixpoint of a specification;
 indeed it is not tied to any specific way to compute it.
 It cannot be inherited from or otherwise extended
 according to any of the design patterns that characterize OO.
@@ -185,11 +186,11 @@ according to any of the design patterns that characterize OO.
 Rather, @principle{a prototype
 (a.k.a. “object” in Prototype OO, and “class” but not “object” in Class OO)
 is the @emph{conflation} of a specification and its target},
-i.e. an entity that depending on context at various times refers to
+i.e. an entity that, depending on context, at various times refers to
 either the specification (when you extend it)
 or its target (when you use its methods).
 
-Formally speaking, a conflation can be seen as a cartesian product
+Formally speaking, a conflation can be seen as a Cartesian product
 with implicit casts to either component factor depending on context.
 In the case of a prototype, you’ll implicitly refer to its specification
 when speaking of extending it or inheriting from it;
@@ -212,7 +213,7 @@ By letting programmers defer a decision they lack information to make,
 the conflation of specification and target is an essential pragmatic feature of Prototype OO:
 it increases intertemporal cooperation between programmers
 and their future collaborators (including their future selves)
-without the need of communication between the two (that would require time-travel).
+without the need for communication between the two (that would require time-travel).
 Thus, in first-class OO, @principle{Conflation Increases Modularity}.
 
 This modularity advantage, however, is largely lost in

@@ -26,7 +26,7 @@ But I hope you’ll give my ideas a fair hearing.
 On the other hand, if you are innocent of preconceptions about OO
 and come without having heard commentators explain what they think OO is
 and what they love or hate about it
-(which is unlikely if you’re interested enough about OO to read the present book),
+(which is unlikely if you’re interested enough in OO to read the present book),
 then you may wholly skip this chapter,
 and only come back after you encounter bad opinions about OO that need to be debunked.
 
@@ -55,8 +55,8 @@ This is especially true with regard to multiple inheritance,
 that will be an important topic later in this book.
 C++ boasts support for multiple inheritance, and many people,
 when thinking of multiple inheritance, think of what C++ offers.
-Yet, while C++ supports single inheritance well,
-what it calls “multiple inheritance” @~cite{Stroustrup1989Multiple}
+Now, C++ supports single inheritance well;
+but what it calls “multiple inheritance” @~cite{Stroustrup1989}
 is not at all the same as what almost everyone else calls “multiple inheritance”@xnote[":"]{
   Interestingly, the design of C++ non-virtual superclasses is very similar
   to the solution from Snyder’s CommonObjects @~cite{Snyder1986},
@@ -65,10 +65,11 @@ is not at all the same as what almost everyone else calls “multiple inheritanc
   hope the users won’t notice the difference.
   On the other hand, Stroustrup does cite the Lisp Machine Manual @~cite{Weinreb1981Chinual3},
   and rejects Flavors because it is not
-  “sufficiently simple, general and, efficient enough to warrant the complexity it would add to C++”,
-  which is exceedingly ironic considering Flavors was 1.4kloc (in October 1980, when cited),
+  “sufficiently simple, general and, efficient enough to warrant the complexity it would add to C++”;
+  this is exceedingly ironic considering Flavors was 1.4kloc (in October 1980, when cited),
   and C++ ~100kloc (in 1989, when citing),
-  with Flavors having much richer and more general OO functionality than C++.
+  with 1980 Flavors having much richer and more general OO functionality than C++,
+  not to mention its distant 1988 successor CLOS.
 }
 It is actually a modified kind of mixin inheritance
 with some kind of “duplication” of superclasses
@@ -82,10 +83,10 @@ Now, you can use C++’s powerful template language to reconstitute actual mixin
 and its method resolution on top of C++’s weird variant of inheritance@~cite{Smaragdakis2000Mixin};
 and you could no doubt further implement proper multiple inheritance on top of that@xnote["."]{
   One could achieve multiple inheritance as a design pattern on top of mixin inheritance,
-  as I will describe later in this book,
-  wherein developers would manually compute and specify
-  each class’s superclass precedence list;
-  but this cancels some of the modularity benefits of multiple inheritance
+  as I will describe later in this book:
+  developers would manually compute and specify
+  each class’s superclass precedence list.
+  But this cancels some of the modularity benefits of multiple inheritance
   versus single and mixin inheritance.
   Alternatively, someone could extend the above technique to also reimplement
   the entire superclass linearization apparatus
@@ -159,23 +160,26 @@ that claimed the words “object-oriented” in print with the modern sense
 (though the choice of expression itself was likely influenced by Alan Kay), and
 that also introduced the words “inheritance” and “prototype” in their OO meaning,
 has what is now called prototype-based OO (a.k.a. Prototype OO).
+
 The modern concept of OO can be traced back to the interaction between
 Bobrow’s KRL team and Kay’s Smalltalk team at PARC around 1976,
 both informed not just by Simula but also by many other predecessors.
 Kay took KRL’s inheritance, made it a well-defined concept specifically for @emph{programming}
 (which it was not originally in KRL) by identifying it with the prefix mechanism in Simula,
 that he replaced with the better resend mechanism, and popularized
-the word and concept of inheritance as well as the term “object-oriented”;
+the word and concept of inheritance as well as the term “object-oriented”.
 Bobrow adopted Kay’s improvements together with his own (hard to say which is whose),
-and was first at the publish line.
+and was first to publish.
 Then others at PARC, at MIT, and eventually Stroustrup at Bell Labs, adopted OO,
 and the rest is history.
+
 Certainly, Smalltalk was class-based, unlike KRL.
 Yet contemporary with Smalltalk or immediately after it
 were prototype-based languages Director @~cite{Kahn1976 Kahn1979Ani Kahn1979Director} and
 ThingLab @~cite{Borning1977 Borning1979 Borning1981}@xnote["."]{
   ThingLab was built on top of Smalltalk by members of the same team at PARC,
-  and oscillated between having or not having classes in addition to prototypes.}
+  and oscillated between having or not having classes in addition to prototypes.
+  Kahn joined PARC after graduating from MIT.}
 Plenty more Prototype OO or “class-less” OO languages followed
 @~cite{Hewitt1979 Rees1982T Adams1988OOPScheme Ungar1987 Chambers1989 Lawall89SelfInScheme Salzman2005 jsonnet nix2015 poof2021}.
 There are a lot more Prototype OO languages than I could have time to review @~cite{WikiProto},
@@ -254,16 +258,18 @@ as Haskell grew up to become a practical language@xnote["."]{
   or linear algebra are intrinsically stateful.
 }
 
-Yet, there are (a) pure models of OO such as those of
-Kamin, Reddy, Cook and Bracha@~cite{Kamin1988 ObjectsAsClosures Cook1989 Cook1989Denotational bracha1990mixin},
-(b) pure lazy dynamic OO languages such as Jsonnet or Nix@~cite{jsonnet dolstra2008nixos nix2015},
-and pure lazy OO systems for Scheme@~cite{poof2021},
-(c) languages happily combining OO and FP such as Common Lisp or Scala,
-with plenty of libraries restricting themselves
-to pure functional objects only @~cite{LIL2012 Chiusano2014FPScala}, and
-(d) last but not least, Oleg Kiselyov’s or Michael Gale’s implementations of
-statically typed OO both stateful and pure in the pure FP language Haskell(!)
-@~cite{Kiselyov2005HaskellOOS Hoop}.
+Yet, there are:
+@itemize[
+  @item{Pure models of OO such as those of
+    Kamin, Reddy, Cook and Bracha@~cite{Kamin1988 ObjectsAsClosures Cook1989 Cook1989Denotational bracha1990mixin},}
+  @item{pure lazy dynamic OO languages such as Jsonnet or Nix@~cite{jsonnet dolstra2008nixos nix2015},
+    and pure lazy OO systems for Scheme@~cite{poof2021},}
+  @item{languages happily combining OO and FP such as Common Lisp or Scala,
+    with plenty of libraries restricting themselves
+    to pure functional objects only @~cite{LIL2012 Chiusano2014FPScala}, and}
+  @item{last but not least, Oleg Kiselyov’s or Michael Gale’s implementations of
+    statically typed OO both stateful and pure in the pure FP language Haskell(!)
+    @~cite{Kiselyov2005HaskellOOS Hoop}.}]
 
 These provide ample evidence that OO does not at all require mutation,
 but is very compatible with FP, purity, and even with laziness and consistent static typing.
@@ -311,8 +317,8 @@ Now, insofar as some people identify encapsulation narrowly as the presence
 of specific visibility mechanisms such as found in C++ or Java
 (with some attributes or methods being @c{public}, @c{private} or something in-between,
 whose precise semantics the designers of different languages cannot agree on),
-I’ll easily dismiss such mechanisms as not essential to OO,
-since many quintessential OO languages like Smalltalk or Common Lisp
+I’ll easily dismiss such mechanisms as not essential to OO:
+indeed many quintessential OO languages like Smalltalk or Common Lisp
 lack any such specific mechanism,
 whereas many non-OO languages possess mechanisms to achieve the same effect,
 in the form of modules defining but not exporting identifiers
@@ -357,16 +363,16 @@ decades before anyone had the idea to fantasize a conflict between the two.
 
 The argument of Composition vs Inheritance is actually a distortion
 of a legitimate question of OO design, @; TODO cite
-wherein one has to decide whether some aspect of a class@Note{
+wherein one has to decide by which of two approaches some aspect of a class,
+embodied as attributes or methods, should be included in the class@xnote["."]{
   My counter-argument also works for prototypes or arbitrary OO specifications,
   but since the argument is usually given for classes, I will use classes in this section.
 }
-embodied as attributes or methods, should be included directly in the class
-(a) by inheriting from another class defining the aspect
-(the class @emph{is-a} subclass of the aspect class—inheritance of classes), or
-(b) indirectly by the class having as an attribute an object of that other class
-(the class @emph{has-a}n attribute of the aspect class—composition of classes
-seen as constructor functions)@xnote["."]{
+The first approach is inheritance of classes:
+a class defines the aspect, and the other one @emph{is-a} subclass of that aspect class.
+The second approach is “composition” of classes:
+a class defines the aspect, and the other one @emph{has-a} value of that aspect class
+as attribute (composition of classes seen as their constructor functions)@xnote["."]{
   There is also an old slogan of OO design,
   notably found in the famous “Gang of Four” (“GoF”) book @~cite{GoF1994},
   that you should “favor object composition over class inheritance”.
@@ -389,9 +395,9 @@ seen as constructor functions)@xnote["."]{
   actually has nothing to do with the OO vs FP debate—it is about using OO effectively.
 }
 
-The answer of course depends on expectations about how the class will be further specialized
+The answer of course depends on expectations about how the classes will be further extended
 within a static or dynamically evolving schema of data structures and algorithms.
-If the schema is small, static, well-understood and won’t need to evolve,
+If the schema is small, static, well-understood and won’t need to evolve
 it doesn’t really matter which technique is used to model it.
 But as it grows, evolves and boggles the mind,
 a more modular and extensible approach is more likely to enable adapting the software
@@ -415,19 +421,22 @@ to changing situations, at which point thoughtful uses of inheritance can help a
   you’ll soon enough see that the two entities may somehow share some attributes
   yet be actually distinct: ultimately, both @c{car} and @c{chassis} @emph{are} @c{lengthy},
   but a @c{car} @emph{has} a @c{chassis} and @emph{is not} a @c{chassis}.
+  Crucially, the design decision between inheritance and composition depends not just
+  on the current structure of the program, but also on expectations for its future evolution.
 }
 
 In the end, @principle{OO and FP are complementary, not opposite}.
 If there is a real opposition, it is not between two perfectly compatible techniques,
 but between two mindsets, between two tribes of programmers each locked
-into their narrow paradigm@~cite{Gabriel2012} and
+into their narrow paradigm@~cite{Gabriel2012 Petricek2017 Petricek2025} and
 unable to comprehend what the other is saying.
 
 @subsection{OO isn’t Message Passing}
 @epigraph{Name the greatest of all inventors. Accident.
   @|#:-"Mark Twain"|
 }
-Alan Kay, who invented Smalltalk and coined the term “Object-Oriented Programming” circa 1967,
+Alan Kay, who coined the term “Object-Oriented Programming” circa 1967,
+and subsequently invented Smalltalk in the early 1970s,
 before the modern concept of OO was fully formed (in 1976)@xnote[","]{
   While Kay had a crucial role in the invention and naming of OO,
   it is important not to put too much weight in the name without the full concept.
@@ -445,7 +454,8 @@ before the modern concept of OO was fully formed (in 1976)@xnote[","]{
   before the Bobrow and Winograd memo @~cite{Bobrow1976}
   that first uses “object-oriented” the modern way, presumably after Kay.
   Were these earlier uses in print legitimate?
-  Yes, but they are not the ones whose meaning took on. Kay’s meaning won—for good reasons.
+  Yes, but they are not the ones whose meaning took on.
+  Kay’s meaning, refined by Bobrow, won—for good reasons.
   However, for the same reason, while Kay’s personal use of the term dates back to 1967,
   we should still only credit the invention at the date that the concept became fully formed,
   which is with Kay’s Smalltalk-76 and Bobrow’s KRL-0, both in 1976,
@@ -464,7 +474,8 @@ However, neither Simula nor Smalltalk nor any popular OO language
 actually fits that metaphor.
 Actor languages actually do @~cite{Hewitt1979},
 but though somewhat influential on paper, they never got popular
-and always remained somewhat marginal in the tradition.
+and always remained somewhat marginal in the tradition;
+and they only acquired OO a decade after Actors were invented.
 @; TODO cite Yonezawa ?
 Instead, the only widely-used language to truly embody this metaphor
 is Erlang@~cite{OOP2010};
@@ -506,11 +517,11 @@ that Alan Kay also once mentioned was essential for OO@xnote["."]{
   including the pure applicative functional paradigm of Erlang in-process,
   or the process-oriented paradigm of Erlang between-processes.
 }
-
 Most OO languages have no support whatsoever for concurrency,
 or then again only as an afterthought added years or decades
 after the language was originally designed,
 and not integrated in any meaningful way with OO message dispatch.
+
 Moreover, many OO languages generalize and extend their method dispatch mechanism
 from “single dispatch” to “multiple dispatch”@~cite{
   Bobrow1986CommonLoops Bobrow1988CLOS Chambers1992 Allen2011}.
@@ -558,7 +569,7 @@ since there are plenty of OO languages without them,
 they are a well-liked, age-old extension
 in many OO languages (CLOS, CECIL, Dylan, Fortress, Clojure, Julia)
 and extensions exist for C++, Java, JavaScript, TypeScript, C#, Python, Ruby, etc.
-@; TODO cite stroustrup2007multimethods https://en.wikipedia.org/wiki/Multiple_dispatch
+@;{ TODO cite stroustrup2007multimethods https://en.wikipedia.org/wiki/Multiple_dispatch }
 The “message passing” paradigm, having no place for multimethods,
 thus falls short compared to other explanations of OO that accommodate them@xnote["."]{
   Now, the message passing paradigm @; TODO cite PLANNER, Actors
@@ -975,8 +986,8 @@ expressiveness of prototypes and classes, especially if considered as second-cla
 and in absence of reflection (or refraint from using it).
 But that is the conclusion that none of the authors who wrote on the topic made explicit,
 even though it is implicit in both.
-And so the authors focus on arguing about different ways to name the same concept in two contexts
-while failing to argue on the different contextual concepts that do matter@xnote["."]{
+And so the authors focus on arguing about different ways to name the same concept in two contexts;
+meanwhile they fail to argue on the different contextual concepts that do matter@xnote["."]{
   If irrelevant changes in the context are a valid excuse to give an existing concept a new name
   and get a publication with hundreds of citations based on such a great original discovery,
   I here dub “ainheritance” the concept of “inheritance”
@@ -1309,16 +1320,17 @@ What programmers do, not what programmers say.
 
 And these phenomena are what is captured by
 the intra-linguistic extensible modularity as defined above:
-(a) the ability to “code against an interface” and
-pass any value of any type that satisfies the interface
-(modularity, whether following structural or nominative rules),
-(b) the ability to extend and specialize existing code by creating a new entity
-that “inherits” the properties of existing entities and only needs specify
-additions and overrides in their behavior rather than repeat their specifications,
-wherein each extension can modularly refer to functionality defined
-in other yet-unapplied extensions; and
-(c) the fact that these entities and the primitives to define, use and specialize them
-exist @emph{within} the programming language rather than in an external preprocessing layer.
+@itemize[
+  @item{The ability to “code against an interface” and
+    pass any value of any type that satisfies the interface
+    (modularity, whether following structural or nominative rules).}
+  @item{The ability to extend and specialize existing code by creating a new entity
+    that “inherits” the properties of existing entities and only needs specify
+    additions and overrides in their behavior rather than repeat their specifications,
+    wherein each extension can modularly refer to functionality defined
+    in other yet-unapplied extensions.}
+  @item{The fact that these entities and the primitives to define, use and specialize them
+    exist @emph{within} the programming language rather than in an external preprocessing layer.}]
 
 I contend that the above is what is usually meant by OO,
 that matches the variety of OO languages and systems
@@ -1401,7 +1413,7 @@ a strong thing changes the meaning of a name.}
     but actually, much more broadly, apply unchanged to software development in general.
   (This is notably harder than the previous exercise!)@Note{
     As a hint, you may consider the criticism from @citet{Graham2001noop},
-    and the reply by Rees; or @citet{Armstrong2001}, or @citet{Gabriel2002}.
+    and the reply by Rees; or @citet{Armstrong2001}, @citet{Gabriel2002}, or @citet{Nierstrasz2010}.
     Which of the points actually pertain to OO and which don’t?
     You don’t have to have perfect answers, especially before I even explained in detail what OO is.
     The point of the exercise is to engage critically with what OO is or isn’t,
