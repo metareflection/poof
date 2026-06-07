@@ -9,8 +9,8 @@ with the performance of single inheritance.
 This project implements **Optimal Inheritance** using C++ template metaprogramming, based on:
 
 1. **Flavorful Multiple Inheritance**:
-   Multiple parent methods are not lose-lose conflict, but win-win cooperation.
-   They can each call the next along a linearized class precedence list. No information loss.
+   Multiple parent methods are not lose-lose conflict, but win-win cooperation. They can each
+   call the next method along a linearized class precedence list. No information loss.
 2. **Performance of Single Inheritance**:
    Classes that declare "static constexpr bool __c4__is_suffix = true;" are *suffix classes*,
    whose class precedence list is guaranteed to be the suffix of that of any descendent,
@@ -30,6 +30,13 @@ Sounds confusing? Read my book in the bibliography.
 ## Project Status
 
 It works. Tests pass. We're still working on making it simpler, better and more usable.
+
+## Contributors
+
+Code largely coded by Claude Opus 4.5 (Anthropic) as guided by François-René Rideau.
+Claude one-shotted a working but sloppy solution from specification, and then I had
+it rewrite and simplify it into half as much code with a nicer and more powerful API
+(again with help from Claude).
 
 ## Building and Testing
 
@@ -114,6 +121,14 @@ any descendent’s class precedence list, enabling fixed-offset field access.
 Suffix specs in a given class’s ancestry are always in a total order,
 though some infix (i.e. not-suffix) classes in between them might not.
 
+Suffix specs correspond to the notion of “class” in Scala or Ruby, that are in a mutual
+single-inheritance structure, as contrasted with infix (non-suffix) specs, that correspond
+to the notion of “trait” in Scala, or “module” in Ruby, that are in mutual multiple-inheritance
+structure. See also “struct” in Lisp (that have single inheritance) vs “class” in Lisp (that can
+have multiple inheritance) and “mixin” (which is an abstract class designed for use in a multiple
+inheritance context, except the word “mixin” pre-dates the words “abstract class”).
+
+
 ## Examples
 
 All runnable examples live in `examples/` and build with:
@@ -179,12 +194,6 @@ C4 extends C3 with support for **suffix specifications**. It enforces six constr
   (modulo our map implementation not being a hash-table but a linear map in C++,
   which in practice makes it O(dn²)). Contrast with the original C3 being O(d²n²).
 
-## Contributors
-
-Code largely coded by Claude Opus 4.5 (Anthropic) as guided by François-René Rideau.
-Claude one-shotted a working but sloppy solution from specification, and then I had
-it rewrite and simplify it into half as much code with a nicer and more powerful API.
-
 ## Bibliography
 
 **François-René Rideau**. "Gerbil Scheme C4 implementation". 2025.
@@ -203,3 +212,5 @@ Explains the basic approach to implementing Mixin inheritance on top of C++ temp
 
 ## TODO
 
+Package and distribute it as a library that C++ programmers might actually use.
+How? Where? I don't know, I don't partake in the C++ ecosystem.
