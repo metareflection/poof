@@ -4,6 +4,8 @@ A C++20 implementation of the C4 linearization algorithm, enabling "optimal inhe
 combining the expressiveness of flavorful multiple inheritance
 with the performance of single inheritance.
 
+***DEVELOPMENT OF THIS LIBRARY HAS MOVED TO < https://github.com/fare/c4-mixins >***
+
 ## Overview
 
 This project implements **Optimal Inheritance** using C++ template metaprogramming, based on:
