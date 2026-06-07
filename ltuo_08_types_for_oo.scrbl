@@ -1045,7 +1045,7 @@ My very favorite papers are @citet{Eifrig1995isoop Eifrig1995iloop},
 that take the exact right approach to types for OO:
 start from a sound, minimal yet expressive enough general-purpose type theory,
 then build OO in a couple of simple λ-terms under this type theory.
-A decade or two later come @citet{Kiselyov2005HaskellOOS} and @citet{Hoop}, who
+A decade or two later come @citet{Kiselyov2005} and @citet{Gale2015}, who
 also have the right attitude of just building OO on top of a general-purpose FP language,
 but choose Haskell as a now-practical substrate instead.
 Also, I love @citet{Allen2011} because it shows you can just type

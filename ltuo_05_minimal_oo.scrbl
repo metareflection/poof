@@ -88,7 +88,8 @@ it returns a record that is a copy of the previous
 with a new or overriding binding;
 and that binding maps the symbol @c{color} to the string @c{"blue"}:
 @Code{(define (paint-blue p) (extend-record 'color "blue" p))}
-Obviously, if you apply this extension to that value with @c{(paint-blue point-a)}
+If you apply this extension to the value @c{point-a} above
+with @c{(paint-blue point-a)},
 you obtain a record equal to what you could have directly defined as:
 @Code{(record (x 2) (y 4) (color "blue"))}
 
@@ -113,12 +114,13 @@ which could be useful to count the price, weight or number of parts in a project
 your extensions could append part identifiers to the list of spare parts or ingredients to order
 before starting assembly of a physical project.}
 @item{The values could be lists of dependencies, where each dependency
-is a package to build, action to take or node to compute,
-for instance in a build system, a reactive functional interface or a compiler.}]
+is for instance a package to build in a build system,
+an action to take in a reactive functional interface,
+or a node to transform a compiler.}]
 
 A record (indexed product) is just a common case because it can be used to encode anything.
 Mathematicians will tell you that products (indexed or not)
-give a nice “Cartesian closed” categorical structure to the set of types
+give a nice Cartesian-closed categorical structure to the set of types
 for values being extended. In practice, this means that
 you can decompose your specifications into elementary aspects that you can combine
 together in a record of how each aspect is extended.
@@ -143,8 +145,8 @@ you can always define @c{compose} yourself, if it is not already provided, as fo
 Now if I were discussing second-class extensions in a restricted compile-time language,
 composition might not be definable, and not expressible unless available as a primitive.
 That would make extensions a poorer algebra than if they could be composed.
-With composition, strict extensions for a given type of values are a monoid
-(and general extensions are a category).
+With composition, strict extensions for a given type of values form a monoid
+(and general extensions form a category).
 Without composition, extensions are just disjointed second-class constants without structure.
 I will show later that this explains why in a second-class setting,
 Single inheritance is less expressive than mixin inheritance and multiple inheritance.
@@ -165,9 +167,10 @@ Each extension then transforms its “inherited” input value
 into the desired extended output value,
 possibly refining the type @c{V} along the way,
 such that the initial type is the “top” type of this refinement hierarchy.
-The initial base value is also called a “top value” @c{⊤};
-it somewhat depends on what monoidal operation is used to extend it
-as well as the domain type of values.
+The initial base value is also called a “top value” @c{⊤}.
+The precise choice of this top value depends both
+on the monoidal operation used to compose extensions,
+and on the domain type of values.
 
 @itemize[
 @item{For the type @c{Record} of records, @c{⊤ = empty-record} the empty record.}

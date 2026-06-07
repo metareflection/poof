@@ -269,7 +269,7 @@ Yet, there are:
     to pure functional objects only @~cite{LIL2012 Chiusano2014FPScala}, and}
   @item{last but not least, Oleg Kiselyov’s or Michael Gale’s implementations of
     statically typed OO both stateful and pure in the pure FP language Haskell(!)
-    @~cite{Kiselyov2005HaskellOOS Hoop}.}]
+    @~cite{Kiselyov2005 Gale2015}.}]
 
 These provide ample evidence that OO does not at all require mutation,
 but is very compatible with FP, purity, and even with laziness and consistent static typing.

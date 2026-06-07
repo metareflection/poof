@@ -394,8 +394,32 @@ then called an Object-Oriented (Programming) Language (OOPL).
 
 This characterization of OO should be retrospectively obvious to all familiar with OO.
 Yet remarkably, some programmers explicitly reject it, eminent professors even@xnote["."]{
-  @;{TODO: Maybe move to chapter 3 section on Modularity being only half of OO,
-     leave only a short reference here?}
+  @;{TODO: Maybe move as much as possible to chapter 3 section on Modularity being only half of OO,
+     leaving here only enough to illustrate the lack of common concepts and discourse?
+
+Cook made landmark contributions to formal accounts of OO.
+That his account of what OO is mismatches common OO practice is revealing:
+the problem is not that some marginal author uses unusual vocabulary,
+but that even seminal formal accounts may lack a vocabulary shared with practitioners.
+
+  Cook’s work is worth mentioning precisely because it is serious and influential.
+  Yet it also illustrates a recurring difficulty in OO discourse:
+  technically strong accounts may use central OO vocabulary in ways that conflict
+  not only with my account, but with the expectations and usage of many OO practitioners.
+  This does not make the practitioners automatically right.
+  But such a mismatch is a symptom that the field lacks consensual vocabulary
+  and commonly accepted concepts adequate to reconcile theory, practice and history.
+  I return to this issue in @secref{...},
+  especially when discussing why modularity is only half of OO.
+
+  Cook is a useful example here not because his work is weak,
+  but because it is strong.
+  Precisely for that reason, the mismatch between his account and most practitioners’
+  illustrates the lack of consensual vocabulary or commonly accepted concepts
+  in discussions of OO.
+  I return to this issue in Chapter 3,
+  in the section on why modularity is only half of OO.
+}
   A notable dissident to this characterization is William Cook,
   a respected academic who made many key contributions to understanding the semantics of inheritance
   @~cite{Cook1989 Cook1989Inheritance cook1989denotational bracha1990mixin Cook1994}
