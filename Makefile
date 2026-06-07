@@ -1,7 +1,7 @@
 ## NB: If racket complains about some modules missing, try: make prerequisites
 
 # Default target: the latest slides
-all: slides # ltuo
+all: ltuo # slides
 
 # Default slides: the next talk
 slides: slides-2026-elte # slides-2026-els-lt slides-2026-els slides-2025-racketcon slides-2023-njpls slides-2024-lambdaconf slides-2025-shu
@@ -23,6 +23,7 @@ endif
 
 # Installing all the prerequisite Racket modules necessary to compile the paper and slides
 prerequisites:
+	mkdir build
 	for i in scribble-abbrevs scribble-minted scribble-math unstable-lib slideshow-text-style ; do \
 	  raco pkg install --auto --update-deps $$i ; \
 	done
