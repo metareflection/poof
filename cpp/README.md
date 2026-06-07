@@ -29,7 +29,9 @@ Sounds confusing? Read my book in the bibliography.
 
 ## Project Status
 
-It works. Tests pass. We're still working on making it simpler, better and more usable.
+It works. Tests pass.
+
+It just needs to be packaged and distributed into a C++ library that programmers will use.
 
 ## Contributors
 
@@ -190,9 +192,11 @@ C4 extends C3 with support for **suffix specifications**. It enforces six constr
 
 ### Complexity
 
-- **Optimized C4**: O(dn) using hash-table ancestor counting
-  (modulo our map implementation not being a hash-table but a linear map in C++,
-  which in practice makes it O(dn²)). Contrast with the original C3 being O(d²n²).
+- **Optimized C4**: C4 is O(dn) when using hash-table for ancestor counting; however,
+  I use a simple linear map in my C++ templates, which makes it O(dn²) in practice
+  (can you even have template-level hash-tables or sets in C++?).
+  Contrast with the original C3 being O(d²n²), while most simple class precedence algorithms
+  are O(dn) but fail to provide the good properties of C3 and C4.
 
 ## Bibliography
 
@@ -212,5 +216,8 @@ Explains the basic approach to implementing Mixin inheritance on top of C++ temp
 
 ## TODO
 
-Package and distribute it as a library that C++ programmers might actually use.
-How? Where? I don't know, I don't partake in the C++ ecosystem.
+  * Package and distribute it as a library that C++ programmers might actually use.
+    How? Where? I don't know, I don't partake in the C++ ecosystem.
+
+  * Figure out a way to be O(dn) or at least O(dn log n) with some kind of hash-tables
+    or sets for the ancestor counting.
