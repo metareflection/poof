@@ -132,12 +132,12 @@ to be applied to some value @c{val},
 which in Scheme syntax is written @c{(ext val)}.
 
 But interestingly, extensions can be composed:
-from two extensions @c{ext1} and @c{ext2} you can extract an extension @c{(compose ext1 ext2)},
+from two extensions @c{ext1} and @c{ext2} you can build an extension @c{(compose ext1 ext2)},
 also commonly written @c{ext1 ∘ ext2},
 that applies @c{ext1} to the result of applying @c{ext2} to the argument value.
 Since I am discussing first-class extensions in Scheme,
 you can always define @c{compose} yourself, if it is not already provided, as follows;
-@c{compose} is an associative operator with the identity function @c{id} as neutral element:
+@c{compose} is an associative operator with the identity function @c{identity} as neutral element:
 @Code{
 (def compose (λ (ext1 ext2) (λ (val) (ext1 (ext2 val)))))
 (def identity (λ (val) val))}
@@ -1104,7 +1104,7 @@ which as I will show can be used as a specification for a value of that type.
 While you could conceivably merge such modular extensions,
 the more interesting operation is to compose them, or more precisely,
 to compose each extension under the module context and bound identifier,
-an operation that for reasons that will soon become obvious,
+an operation that for reasons that will soon become obvious
 I will call mixin inheritance (of modular extensions):
 @Code{
 (def (mix p c t s)
@@ -1171,7 +1171,7 @@ any and every value by returning it unchanged, as follows@xnote[":"]{
   yet, Oliveira @~cite{MonadsMixins} or
   the @c{Control.Mixin.Mixin} library (part of the @c{monadiccp} package),
   instead both use the same representation as mine, with @c{super} before @c{self}.
-  Meanwhile, the Nix standard library, or the original paper @~cite{Bracha1990Mixin}
+  Meanwhile, the Nix standard library, or the original paper @~cite{Bracha1990}
   use the opposite order with @c{self} before @c{super}.
   The approaches are all equivalent semantically, but readers must be wary
   to properly translate between calling conventions when consulting different sources.
@@ -1184,7 +1184,7 @@ Note that since I decided to put the parent before the child as argument,
 this “mix” is contravariant with the composition of functions of @c{c} and @c{p},
 and the flow of information in this syntax goes left-to-right.
 The opposite call convention is also possible, with various minor tradeoffs.
-or you could have @c{c p t s} or @c{p c s t} with contravariant order between
+Or you could have @c{c p t s} or @c{p c s t} with contravariant order between
 the specification arguments during mixing and the target arguments during fixing.
 ultimately, the order of arguments is immaterial, up to a simple isomorphism.
 
@@ -1261,7 +1261,7 @@ in the most expensive resource, human-time.
 @subsection[#:tag "MSR"]{Minimally Specifying Records}
 
 The above functions @c{mix} and @c{fix} are indeed isomorphic
-to the theoretical model of OO from Bracha and Cook @~cite{Bracha1990Mixin}
+to the theoretical model of OO from Bracha and Cook @~cite{Bracha1990}
 and to the actual implementation of “extensions” in nixpkgs @~cite{nix2015}@xnote["."]{
   My presentation of mixin inheritance is actually slightly more general than what
   Bracha, Cook or Simons did define, in that my definition is not specialized for records.
@@ -1276,10 +1276,11 @@ and to the actual implementation of “extensions” in nixpkgs @~cite{nix2015}@
 }.
 This style of inheritance was dubbed “mixin inheritance” by Bracha and Cook@xnote[";"]{
   The name “mixin” originally comes from Flavors @~cite{Cannon1979},
-  inspired by the ice cream offerings at Emack & Bolios.
+  inspired by the ice cream offerings at Emack & Bolio’s
+  (that also inspired the “Ice Cream Koan” featuring Stallman).
   As for the concept itself, it was inspired both by
   previous attempts at multiple inheritance in KRL @~cite{Bobrow1976} or ThingLab @~cite{Borning1977},
-  combined with the ADVISE facility @~cite{teitelman1966}.
+  combined with the ADVISE facility @~cite{Teitelman1966}.
   However, Flavors offers full multiple inheritance (and was the first system to do it right),
   whereas the “mixins” of Bracha and Cook are a more rudimentary and more fundamental concept,
   that does not include automatic linearization of transitive dependencies.
@@ -1341,9 +1342,9 @@ wherein you can combine, compose, decompose, extract, and otherwise
 operate on open modular extensions to get richer open modular extensions,
 and eventually build a closed modular extension that you can instantiate.
 
-@; secref ch9
 Now, where performance or space matters,
-you would use an encoding of records-as-structures instead of records-as-functions.
+you would use an encoding of records-as-structures instead of records-as-functions
+(see @secref{EtSoO}).
 Then, instead of calling the record as a function with an identifier,
 you would invoke a dereference function with the record as first argument
 and the identifier as second argument.

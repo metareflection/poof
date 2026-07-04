@@ -238,11 +238,6 @@ https://european-lisp-symposium.org/2026/ Krakow. May 11-12. Submission deadline
 }
 
 
-LtUP: Lambda the Ultimate Paradigm
-Lessons from Lisp in the wars
-between OOP, FP, databases, AI, etc.
-
-
 A lambda embodies Perlis's aphorism "One man's constant is another man's variable": outside the lambda, its argument is a variable, but once inside its body, it becomes a constant. A lambda transforms one into the other—and then you start looking for opportunities either way.
 What do some people consider constant, that should be varied?
 What do some people consider variable, and what if you fix it one way or the other?
@@ -251,13 +246,9 @@ Maybe slightly more generally, it can turn something that is
 "locally variable, under first-class control".
 
 
-In cpp/c4, make the templates Mixin<Self,Super> so you can have meaningful
-subclasses of SuperMixin<Self,?> No that doesn't quite work, though you can
-have Mixin<Self,Super> inherit from virtual InterfaceA<Self> that can inherit from
-virtual InterfaceB<Self>... painful, but works.
-
-
 Rewrite the book with advice from various authors
 e.g. How to Write a Great Research Paper, SPJ
 
 https://github.com/fare/projects/issues/7
+
+Ingalls 2020 => Smalltalk-76 work starts on the beach in August 1976--one month after KRL is published.

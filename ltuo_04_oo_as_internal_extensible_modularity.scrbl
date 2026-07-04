@@ -449,7 +449,7 @@ programmers may have to manage large interfaces to achieve small results@xnote["
   languages just to name the structures, their fields and accessors.
   Admittedly, there is only so much room in this direction:
   as the software grows in scope, and the required features grow in intrinsic complexity,
-  there is a point at which it is becomes big to fit wholly in any programmer’s mind,
+  there is a point at which it becomes too big to fit wholly in any programmer’s mind,
   then it must be chipped away by moving parts into other modules,
   notably by reusing common algorithms and data structures from libraries
   rather than inline specialized versions.
@@ -801,12 +801,15 @@ by allowing the creation of new in-language entities built from existing ones
 in more powerful ways.
 To demonstrate how OO enables more extensibility, consider
 a course or library about increasingly more sophisticated data structures:
-when using a functional language with simple Hindley-Milner typechecking, @; TODO cite Okasaki book?
+when using a functional language with simple Hindley-Milner typechecking,
 each variant requires a near-complete rewrite from scratch
-of the data structure and all associated functions;
+of the data structure and all associated functions@~cite{Okasaki1996};
 but when using OO,
 each variant can be expressed as a refinement of previous variants
 with only a few targeted changes.
+(You may have to rearrange the hierarchy or introduce additional intermediate ancestors
+to keep the code extension clean; this will reflect a better understanding of the entities at stake
+and their interrelationship.)
 
 @subsection{Extensibility without Modularity}
 
@@ -929,7 +932,7 @@ using “hot-patches” that were not foreseen by the original programmer.
 @;{TODO examples}
 
 @exercise[#:difficulty "Easy"]{
-  Find examples for first-class, second-class, third-class and third-class extensibility.
+  Find examples for first-class, second-class, third-class and fourth-class extensibility.
 }
 
 @exercise[#:difficulty "Easy"]{
@@ -943,13 +946,13 @@ using “hot-patches” that were not foreseen by the original programmer.
   }@item{
      Downloading an update to some software that modifies it in place.
   }@item{
-     Manually fixing a bug in source code bug.
+     Manually fixing a bug in source code.
   }@item{
-     Having an AI fix a bug in source code bug.
+     Having an AI fix a bug in source code.
   }@item{
      Applying a patch file to modify some pristine source code release to fix bugs.
   }@item{
-     Filing a bug report in a bug system.
+     Filing a bug report in an issue tracker.
   }@item{
      Manually modifying a binary executable to add extra player health,
      defeat copy protection, disable remote telemetry, etc.
@@ -1182,11 +1185,11 @@ I was flabbergasted when I first saw
 basic OO actually implemented in two function definitions,
 in the Nix standard library @~cite{nix2015}.
 These two definitions can be ultimately traced in a long indirect line
-to the pioneering formalization by Bracha and Cook @~cite{bracha1990mixin},
+to the pioneering formalization by Bracha and Cook @~cite{Bracha1990},
 though the author wasn’t aware of the lineage, or indeed even that he was doing OO@xnote[";"]{
   Peter Simons, who implemented prototypes as a user-level library in Nix
   as “extensions”, wrote in a private communication that
-  he did not not know anything about their relationship to Prototypes, Mixins or OO,
+  he did not know anything about their relationship to Prototypes, Mixins or OO,
   but semi-independently reinvented them and their use,
   inspired by the Haskell support code by Russell O’Connor,
   and by examples and discussions with Andres Löh and Conor McBride;
@@ -1251,7 +1254,7 @@ Therefore, I pick Scheme as the best compromise in which to formalize OO.
   Locate file @c{util/pommette.scm} that comes with the source code for this book,
   e.g. at @url{https://github.com/metareflection/poof}.
   It contains all the examples in the book, and more, so you can run them,
-  copy/paste them, modify them, play with with them, etc.
+  copy/paste them, modify them, play with them, etc.
   See in the @c{Makefile} how to run it with your favorite implementation
   (currently supported: Gerbil Scheme, Chez Scheme, Racket).
 }

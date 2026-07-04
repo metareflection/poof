@@ -74,7 +74,7 @@ But the software development process remains larger than the software itself.
 }
 @subsection{Prototype OO vs Class OO}
 These in-language entities are called @emph{prototypes} if first-class
-(manipulated at runtime, and specifying values, most usually records),
+(manipulated at runtime, and specifying values, most usually records @~cite{Strachey1967}),
 and @emph{classes} if second-class
 (manipulated at compile-time only, and specifying types, most usually record types).
 A language offers prototype-based object orientation (“Prototype OO”) if it has prototypes,
@@ -305,15 +305,17 @@ In an influential paper@~cite{Hoare1965},
 Hoare introduced the notions of “class” and “subclass” of records
 (as well as, infamously, the @c{null} pointer).
 The first implementation of the concept appeared in Simula 67 @~cite{Simula1967}.
-Alan Kay later adopted this mechanism for Smalltalk 76 @~cite{Ingalls1978},
+Alan Kay later adopted this mechanism for Smalltalk-76 @~cite{Ingalls1978},
 as a compromise instead of the more general but then less well understood multiple inheritance
 @~cite{Kay1993EHoS}.
 Kay took the word “inheritance” from KRL @~cite{Winograd1975 Bobrow1976},
 a “Knowledge Representation Language” written Lisp around Minsky’s notion of Frames.
+(@citet{Ingalls2020} also reveals that work on Smalltalk-76 started in August only,
+which is after the July 4th publication of the KRL paper.)
 KRL had “inheritance of properties”,
 which was what we would now call “multiple inheritance”.
 The expressions “single inheritance” and “multiple inheritance”
-can be first be found in print in @citet{Stansfield1977COMEX},
+are first found in print in @citet{Stansfield1977COMEX},
 another Lisp-based frame system.
 Many other languages adopted “inheritance” after Smalltalk,
 including Java that made it especially popular circa 1995. @;{TODO @~cite{}. @TODO{or C#}}
@@ -344,8 +346,8 @@ in order from least specific superclass to most specific@xnote["."]{
   to store the working return value).
   The entire “inner” setup also makes sense in the context of spaghetti code with GOTOs,
   before Dijkstra made everyone consider them harmful in 1968;
-  the reliance on side-effects everywhere also made more sense before Lisp,
-  Functional Programming, and eventually concurrency and large distributed systems,
+  the reliance on side-effects everywhere also made more sense before
+  Lisp, Functional Programming, and eventually concurrency and large distributed systems,
   made people realize side-effects can be more confusing than pure information flow
   through function calls, return values and immutable let bindings.
   But this concatenation semantics is both limited and horribly complex to use
@@ -360,9 +362,9 @@ in order from least specific superclass to most specific@xnote["."]{
   No one but the Simula inventors wants anything resembling @c{inner}
   for the language they build or use.
   After Smalltalk, languages instead let subclass methods control the context
-  for possible call of superclass methods, rather than the other way around).
+  for possible call of superclass methods, rather than the other way around.
   Beta behavior is easily expressible with user-defined method combinations
-  in CLOS @~cite{Bobrow1988CLOS},
+  in CLOS @~cite{Cannon1979 Bobrow1988CLOS},
   or can also be retrieved by having methods
   explicitly build an effective method chained the other way around.
   Thus, I can rightfully say that inheritance, and OO,
@@ -375,11 +377,12 @@ in order from least specific superclass to most specific@xnote["."]{
   In the end, Simula should count as a precursor to OO, or at best an early draft of it—but
   either way, not the real, fully-formed concept.
   Dahl and Nygaard never invented, implemented, used or studied OO as most of us know it:
-  not then with Simula, not later with Beta, and never later in their life either.
-  Rather it was discovered and identified 9 years later by Bobrow and Winograd.
+  not then with Simula, not later with Beta, and never later in their life either
+  (though kept innovating with their form of proto-OO).
+  Rather OO as such was discovered and identified 9 years later by Bobrow and Winograd.
   Just like Columbus never set foot on the continent of America,
   which was rather discovered and identified 9 years later by Amerigo Vespucci.
-  Yet they made the single key contribution thanks to which
+  Yet Dahl and Nygaard made the single key contribution thanks to which
   the later greater discovery of OO became not just possible, but necessary.
   They rightfully deserve to be gently mocked for getting so close to a vast continent they sought
   yet failing to ever set foot on it.
@@ -423,21 +426,21 @@ adopting the term, retroactively applying it to Simula.
 The terms “single” and “multiple” inheritance were subsequently invented
 to distinguish the two approaches as well as recognize their commonality @~cite{Stansfield1977COMEX}.
 
-Although some more early systems
+Although many early systems
 @~cite{Borning1977 Traits Goldstein1980Extending Borning1982Multiple Bobrow1983LOOPS}
 used multiple inheritance,
 @principle{multiple inheritance only became usable with the epochal system Flavors}
 @~cite{Cannon1979 Weinreb1981Chinual3},
 refined and improved by successor Lisp object systems
 New Flavors@~cite{Moon1986Flavors}, CommonLoops@~cite{Bobrow1986CommonLoops}
-and CLOS@~cite{Bobrow1988CLOS CLtL2}.
+and CLOS@~cite{Bobrow1988CLOS Keene1989 CLtL2}.
 Since then, many languages including Ruby, Perl, Python and Scala
 correctly adopted the basic design of Flavors (though none of its more advanced features)—I
 will call them @emph{flavorful}@xnote["."]{
   To be fair, these languages all include the capability for a method to call a super-method,
   that was not @emph{directly} possible in Flavors (1979) without writing your own method-combination,
-  but only introduced by CommonLoops (1986) with its run-super function,
-  known as call-next-method in CLOS (1988).
+  but only introduced by CommonLoops (1986) with its @c{run-super} function,
+  known as @c{call-next-method} in CLOS (1988).
 }
 On the other hand, influential or popular languages including Smalltalk, Self, C++ and Ada
 failed to learn from Flavors and got multiple inheritance largely wrong—I
@@ -456,21 +459,25 @@ The proper semantics for a specification inheriting multiple different methods
 from a non-linear ancestry proved tricky to get just right.
 The older (1976) “flavorless” viewpoint sees it as a conflict between methods you must override.
 The newer (1979) “flavorful” viewpoint sees it as a cooperation between methods you can combine.
-Unhappily, too many in both academia and industry are stuck in 1976,
+Regrettably, too many in both academia and industry are stuck in 1976,
 and haven’t even heard of the flavorful viewpoint, or, when they have, still don’t understand it.
 For this reason, despite its being more expressive and more modular than single inheritance,
-flavorful multiple inheritance still isn’t as widely adopted as of 2026@xnote["."]{
-  Out of the top 50 most popular languages in the TIOBE index, 2025, @;{TODO cite}
-  6 support flavorful multiple inheritance (Python, Perl, Ruby, Lisp, Scala, Solidity),
-  3 only support flavorless multiple inheritance (C++, Ada, PHP),
-  2 require a non-standard library to support multiple inheritance (JavaScript, Lua),
-  17 only support single inheritance (Java, C#, VB, Delphi, R, MATLAB, Rust, COBOL, Kotlin, Swift, SAS, Dart, Julia, TypeScript, ObjC, ABAP, D),
-  and the rest don’t support inheritance at all (C, Go, Fortran, SQL, Assembly, Scratch, Prolog, Haskell, FoxPro, GAMC, PL/SQL, V, Bash, PowerShell, ML, Elixir, Awk, X++, LabView, Erlang).
+flavorless inheritance and mixin inheritance, flavorful multiple inheritance still
+isn’t as widely adopted as of 2026@xnote["."]{
+  Out of the top 50 most popular languages in the TIOBE index, June 2026, @;{TODO cite}
+  5 support flavorful multiple inheritance (Python, Perl, Ruby, Lisp, Scala),
+  4 only support flavorless multiple inheritance (C++, PHP, Ada, OCaml),
+  21 only support single inheritance (Java, C#, JavaScript, Visual Basic, R, Delphi, PHP, Swift, MATLAB, Objective-C, Kotlin, COBOL, SAS, Julia, Dart, Lua, TypeScript, VBScript, ABAP, D, CFML),
+  and the rest don’t support inheritance at all (C, SQL, Scratch, Rust, Go, Fortran, Assembly Language, Classic Visual Basic, PL/SQL, GML, Prolog, LabView, ML, Zig, Ladder Logic, X++, Erlang, PowerShell, Haskell, Caml).
+  Note that at least JavaScript, Lua, GML support enough higher-order dynamic behavior
+  to implement better forms of inheritance as patterns or libraries;
+  and language-supported metaprogramming and/or typelevel programming techniques can or could be used
+  to implement arbitrary forms of inheritance in C++, Rust, Zig, Haskell.
 }
 
 @subsection[#:tag "MIXIO"]{Mixin Inheritance Overview}
 
-Mixin inheritance was discovered last @~cite{bracha1990mixin},
+Mixin inheritance was discovered last @~cite{Bracha1990},
 probably because it relies on a more abstract pure functional view of OO—maybe
 also because it was one of the first successful attempts at elucidating inheritance
 in the paradigm of programming language semantics,
@@ -499,7 +506,7 @@ Mixin inheritance is in some way simpler than single inheritance
 and as expressive as multiple inheritance
 (arguably slightly more, though not in a practically meaningful way),
 but is less modular than multiple inheritance because it doesn’t automatically handle
-transitive dependencies but forces developers to handle them manually,
+transitive dependencies and instead forces developers to handle them manually,
 effectively making those transitive dependencies part of a specification’s interface.
 
 For all these reasons adoption of mixin inheritance remains relatively limited,
@@ -513,8 +520,9 @@ and Nix @~cite{nix2015}. @; TODO: cite gBeta ?
 Yet it still has outsized outreach, for just the use of GCL at Google means
 a large part of the world computing infrastructure
 is built upon configurations written using mixin inheritance@xnote["."]{
-  My understanding is that GCL as such only had single inheritance,
-  but that users would define their own mixins by abstracting over
+  There is some confidentiality around Google’s Configuration Language GCL.
+  Still, my understanding is that GCL as such only had single inheritance,
+  yet that users would define their own mixins by abstracting over
   the base class being extended using single inheritance, e.g.
   @c{lambda base: base { a = 1 + super.a; b = c + d;}}
   Semantically, this is just the same trick as used by Racket to implement mixins
@@ -586,8 +594,11 @@ at which point mixin inheritance is actually very popular, just not well-underst
   If not, what would need to be added?
   Describe the transition from incomplete specification to complete.
   Hint: Many typesystems can deal with incomplete specifications at the level of types,
-  but not directly of values. You might however a different “partial” record type
-  with options on each field as a feature outside the language if not inside it.
+  but not directly at the level of values. You might however define a separate “partial” record type
+  with options on each field, as a feature outside the language
+  (users manually define those partial record types)
+  if not inside it (some automated processor automatically define
+  the partial record types from the complete record types).
 }
 
 @exercise[#:difficulty "Medium, Recommended"]{

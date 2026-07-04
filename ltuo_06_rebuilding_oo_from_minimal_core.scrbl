@@ -4,7 +4,7 @@
 @(set-chapter-number 6)
 
 @title[#:tag "ROOfiMC"]{Rebuilding OO from its Minimal Core}
-@epigraph{Well begun is half done. @|#:- "Aristotle"|
+@epigraph{Well begun is half done. @|#:- "proverb quoted by Aristotle"|
 }
 Now that I have reconstructed a minimal OO system from first principles,
 I can layer all the usual features from OO languages on top of that core.
@@ -187,8 +187,8 @@ an implicit conflation pair of the specification and the target@xnote["."]{
   then must be explicitly re-grouped together as a pair,
   they could have solved the problem and stayed on top of the λ-calculus.
   Instead, they abandon such attempts, and rebuild their own syntactic theory
-  of a variant of the λ-calculus just for object,
-  with hundreds of pages of greek symbols that still fail to properly modeling objects,
+  of a variant of the λ-calculus just for objects,
+  with hundreds of pages of greek symbols that still fail to properly model objects,
   in an insanely complex @emph{abstraction inversion} @~cite{Baker1992CritiqueDKL}.
   Their futile theory can neither enlighten OO practitioners,
   nor make OO interesting to mathematical syntax theoreticians.
@@ -208,7 +208,8 @@ Note how the following functions are essentially unchanged compared to @c{pproto
   (force (cdr qproto)))
 (def (qproto-mix parent child)
   (qproto←spec (mix (spec←qproto parent) (spec←qproto child))))
-(define (qproto-mix* . l) (foldl (uncurry2 qproto-mix) pproto-id l))
+(def qproto-id (qproto←spec idModExt))
+(define (qproto-mix* . l) (foldl (uncurry2 qproto-mix) qproto-id l))
 }
 What changed from the previous @c{pproto} variant was that the
 @c{(λ (x) (cons spec x))} extension was moved from outside the fixpoint to inside:
@@ -236,7 +237,7 @@ In the case of recursive data structures implemented as data in contiguous regio
 such level of indirection is inevitable, as there is no way to have a contiguous region of memory
 of some size contain as a strict subset a contiguous region of memory of the same size,
 as would be required for a data structure to directly
-include an recursive element of the same type@xnote["."]{
+include a recursive element of the same type@xnote["."]{
   Exception: If after simplifying unit types away
   the only element of a structure is an element of the same structure.
   At which point it’s just an infinite loop to the same element,
@@ -355,7 +356,7 @@ that just returns the record as a constant:
 One simple and quite common encoding of objects conflates specification and target
 in a way that is subtly different from the encoding I have been using so far.
 It is notable for being the essence of the barebones object system of
-Yale T Scheme @~cite{Rees1982T Adams1988oopscheme},
+Yale T Scheme @~cite{Rees1982T Adams1988},
 later made portable as YASOS @~cite{Dickey1992},
 and more famously of the JavaScript (JS) object system @~cite{Eich1996JavaScript}:
 a prototype is a record of methods encoded as functions that take
@@ -544,7 +545,7 @@ modulo the exchange in the order of arguments, @c{(method-id object)}
 instead of @c{(object method-id)}.
 Thus, it is possible to nicely abstract away whether the underlying implementation
 uses one encoding or another@xnote["."]{
-  Note that by contrast, JavaScript not only doesn‘t offer an API
+  Note that by contrast, JavaScript not only doesn’t offer an API
   to abstract away its implementation details—it hardwires the low-level details
   of how objects are implemented and how method lookup occurs.
   On the one hand, a good mature object system might offer only a high-level API,
@@ -669,7 +670,7 @@ that I presented, is largely unknown by OO developers, and
 seems never to have been made explicit in the literature until
 I published @citet{poof2021}, that itself remained confidential.
 And yet, the knowledge of this conflation is necessarily present, if implicit,
-if not across the community of OO practioners,
+if not across the community of OO practitioners,
 at the very least among individual OO implementers—or else
 OO wouldn’t be possible at all.
 Sixty years of crucial information you don’t know you know!
@@ -694,7 +695,7 @@ Theorists have also long implicitly recognized the conflated concepts
 when developing sound typesystems for OO:
 for instance, Fisher @~cite{Fisher1996} distinguishes
 @c{pro} types for objects-as-prototypes and @c{obj} types for objects-as-records;
-and Bruce @~cite{bruce1996typing} complains that
+and Bruce @~cite{Bruce1996} complains that
 “the notions of type and class are often confounded in object-oriented programming languages” and
 there again distinguishes subtyping for a class’s target type (which he calls “subtyping”)
 and for its open specification (which he calls “matching”).
@@ -704,7 +705,9 @@ as syntactically and semantically separate entities in their languages,
 leading to much extraneous complexity in their respective typesystems.
 
 Implementers of stateful object systems at runtime may not have realized the conflation of entities,
-because they are too focused on low-level mechanisms for “delegation” or “inheritance”.
+because they are too focused on low-level mechanisms for “delegation” or “inheritance”;
+moreover, the near-ubiquitous reliance on U-encoding (see @secref{CfUe} above)
+may have made them unaware that there are even separate entities to think about.
 By contrast, writers of compilers for languages with second-class Class OO
 may not have realized the conflation because at their
 level it’s all pure functional specification with no target until runtime.
@@ -717,7 +720,7 @@ though it is hidden under much complexity in the implementation.
 Yet the authors of neither system make note of it in their documentation
 as a phenomenon worthy of remark. Though they implicitly rediscovered the concept
 and made it flesh, they failed to realize how momentous the discovery was,
-and shrugged it off as yet another one of those annoying implementation details
+and shrugged it off as yet another one of those many pesky little implementation details
 they had to face along the way.
 
 Finally, the confusion between target and specification can be seen as a special case of
@@ -746,7 +749,7 @@ yet no one seems to have been able to fully tease apart the concepts up until re
   Locate and read the YASOS source code (it’s short).
   Play with it.
   Write a function that takes an object in YASOS encoding,
-  and wraps it into an target record as per my minimal OO model.
+  and wraps it into a target record as per my minimal OO model.
 }
 @exercise[#:difficulty "Easy"]{
   If given the half-resolved recursion schema @c{g=(f . U)} for a prototype,
@@ -898,7 +901,7 @@ Note that, if I use the Nix approach of zero-cost casting to target when the tar
 then I can use the very same representation for type descriptors, whether they were generated
 as the fixpoint target of a specification, or directly created as records without such a fixpoint.
 This kind of representation is notably useful
-for bootstrapping a Meta-Object Protocol@~cite{amop}.
+for bootstrapping a Meta-Object Protocol@~cite{Kiczales1991}.
 
 As for “class methods” (also known as “static methods” in C++ or Java),
 they can be regular methods of the type descriptor,
@@ -922,7 +925,7 @@ There are two main strategies to represent parametric types:
 In the “function of descriptors” strategy, a parametric type is represented as
 a function from type descriptor to type descriptor:
 the function takes a type parameter as input, and
-returns a type descriptor specialized for that parameters as output.
+returns a type descriptor specialized for that parameter as output.
 As it computes the specialized descriptor, it can apply various specializations and optimizations,
 pre-selecting code paths and throwing away cases that do not apply,
 allowing for slightly better specialized code,
@@ -941,8 +944,8 @@ a type descriptor the methods of which may take extra parameters in front,
 one for the type descriptor of each type parameter.
 Methods that return non-function values may become functions of one or more type parameters.
 Thus, the type descriptor for a functor @c{F} may have a method @c{map}
-that takes two type parameters @c{A} and @c{B} and transforms an element of @c{P A}
-into an element of @c{P B}.
+that takes two type parameters @c{A} and @c{B} and transforms an element of @c{F A}
+into an element of @c{F B}.
 This strategy eliminates the need to heap-allocate a lot of specialized type descriptors;
 but it requires more bookkeeping, to remember which method of which type descriptor
 takes how many extra type descriptor parameters.
@@ -1130,8 +1133,8 @@ and pay the price of automatic or manual translation later.
 Interestingly, all this section’s discussion was about styles for target programs.
 Type descriptors can be used in any and all of those styles without any OO whatsoever@xnote["."]{
   Indeed, Haskell typeclasses are multi-type descriptors with modularity but without inheritance,
-  and so their Rust equivalent called “traits”—
-  not to be confused with Scala “traits”, that are single-type descriptors with multiple inheritance.
+  and so are their less-powerful Rust variants called “traits”—not to be confused
+  with Scala “traits”, that are single-type class-style descriptors with multiple inheritance.
   Modules in SML or OCaml can also offer “typeclass-style” type descriptors
   without modular extensibility through inheritance.
 
@@ -1207,7 +1210,7 @@ are being modularly and extensibly specified.
 Programming language designers put restrictions on their type-level language
 as they attempt to keep them both (1) sound, and also, inasmuch as possible
 (2) terminating in finite and practically guaranteed short time.
-These attempt sometimes succeed, but more often than not utterly fail,
+These attempts sometimes succeed, but more often than not utterly fail,
 because computational power and/or logical contradiction emerge
 from unforeseen interactions as the languages grow in complexity over time
 (see @secref{OOTP})@xnote["."]{
@@ -1250,9 +1253,11 @@ such that inheritance among classes is indeed a special case of
 inheritance among the underlying prototypes;
 however the opposite is not possible,
 since you cannot express Prototype OO’s first-class entities and their inheritance
-in terms of Class OO’s second-class entities and their inheritance.
+in terms of Class OO’s second-class entities and their inheritance:
+in most Class OO languages, all class inheritance ends with compile-time,
+before any prototype inheritance even starts, at runtime.
 
-At best, Prototype OO can be implemented on top of those dynamic languages
+At best, Prototype OO can be implemented on top of those dynamic Class OO languages
 that offer full-powered reflection so that prototypes can be classes;
 but even then it is unclear how much these mechanisms help,
 compared to directly implementing prototypes.
@@ -1278,22 +1283,25 @@ i.e. putting the cart before the horse.
   Play with it on some examples.
 }
 @exercise[#:difficulty "Medium"]{
-  The usual idiotic puzzle in Class OO design is whether
+  A notorious puzzle in Class OO design is whether
   @c{Square} should be a subclass of @c{Rectangle}
   or the other way around,
   when a Square is defined by its width,
   and the Rectangle by its width and height,
-  so it looks Rectangle is a subclass of Square,
+  so it looks like Rectangle is a subclass of Square,
   yet clearly a Square is a subtype of Rectangle.
   The two classes should both inherit from a common superclass @c{Shape}
   with a method @c{area} that the @c{Square} and @c{Rectangle} classes should appropriately override.
-  Can you figure out and implement the correct solution without reading the footnote?@Note{
-    The actual solution is of course that should distinguish a
+  Can you figure out and implement the correct solution without reading the footnote?
+  If you can’t, console yourself with the knowledge that many OO “experts” have given
+  a lot of wrong and sometimes idiotic “solutions” to this puzzle.@Note{
+    The actual solution is of course that you should distinguish a
     @c{RectangleInterface} that has @emph{getter methods} @c{width} and @c{height},
     from @c{RectangleImplementation} that has @emph{fields} @c{%width} and @c{%height},
-    and similarly for the Square having only a single field @c{%side}
-    with and a getter method @c{side},
-    wherein @c{SquareImplementation} inherits from @c{SquareInterface}
+    and according @emph{setter methods}.
+    Similarly, you should distinguish the @emph{SquareInterface} from the
+    @emph{SquareImplementation}.
+    The @c{SquareImplementation} inherits from @c{SquareInterface}
     that inherits from @c{RectangleInterface}
     (that it could also implement, though that might happen in a separate helper class),
     whereas @c{RectangleImplementation} only inherits from @c{RectangleInterface}.
@@ -1359,8 +1367,8 @@ so that indexed products, fixpoints, mutation, visibility rules and subtyping co
 (separately before and after fixpointing), etc.,
 can remain simple independent constructs each with simple reasoning rules,
 logically separable from each other yet harmoniously combinable together.
-By contrast, the “solution” found in popular languages like C++ or Java
-is all too often to the opposite of offering simple orthogonal concepts:
+By contrast, the “solution” found in popular languages like C++, Java, or C#
+is all too often the opposite of offering simple orthogonal concepts:
 these languages instead introduce a single mother-of-all syntactic and semantic construct
 of immense complexity, the “class”, that frankly not a single person in the world fully understands,
 the complete informal specification of which takes thousand-page books
@@ -1387,8 +1395,8 @@ but the inheritance structure of specifications is immutable.
 Happily, this covers every language with second-class classes (which is most OO languages),
 but also all everyday uses of OO even in languages with first-class prototypes and classes.
 Still, there are use cases in which changes to class or prototype hierarchies
-is actively used by some dynamic OO systems such as Smalltalk or Lisp:
-to support interactive development, or schema upgrade in long-lived persistent systems.
+are actively supported by some dynamic OO systems such as Smalltalk or Lisp:
+to enable interactive development, or schema upgrade in long-lived persistent systems.
 How then to model mutability of the inheritance structure itself,
 when the specification and targets of prototypes and classes are being updated?
 
@@ -1505,13 +1513,13 @@ I explore these tradeoffs in @secref{RtM}.
 Finally, it is important to realize that mutation or lack thereof
 are not an intrinsic property of computations, but only of some representations of those computations.
 Some programmers get very excited about mutability or immutability
-as if they were essential property of computations;
+as if they were essential properties of computations;
 they may even claim that only one of the two is the correct choice,
 and that those who use the other choice are wrong, stupid or crazy.
 But the computer executing the code does not care whether it was written in a language
 with or without mutability.
 And the very same algorithms can be written with mutable or immutable objects.
-Immutable computations can be expressed within ubiquitously stateful setting
+Immutable computations can be expressed within an ubiquitously stateful setting
 by following conventions regarding never mutating objects after initialization
 and never using them before.
 And mutable computations can be expressed within a pure functional setting
@@ -1527,7 +1535,8 @@ as I did in @citet{LIL2012}.
 @itemize[
   @item{Pure functional: @c{increment} returns a new counter with value increased by 1}
   @item{Mutable: @c{increment!} modifies the counter in place and returns @c{#f},
-         or some other appropriate unit value (e.g. @c{(void)} in many Scheme implementations).
+         or some other appropriate unit value
+         (e.g. @c{(void)} in many Scheme implementations).
   }]
 Show that both versions can be used to count from 0 to 10.
 What is the key difference in how client code must be written for each version?
@@ -1598,7 +1607,7 @@ What is the key difference in how client code must be written for each version?
 @exercise[#:difficulty "Hard"]{
   C++ is a pure functional lazy dynamic language—at compile-time.
   With the help of AI if needed, implement lazy streams, a lazy stream of all the integers,
-  and a stream of the all the factorial numbers, plus a test for the tenth one,
+  and a stream of all the factorial numbers, plus a test for the tenth one,
   @c{using} a recent version of the C++ template metaprogramming language.
   If you feel gung ho about C++ templates, implement the λ-calculus,
   and on top of it the @c{mix} and @c{fix} functions and the examples from @secref{MOO}.
@@ -1652,5 +1661,5 @@ What is the key difference in how client code must be written for each version?
   or implement a new object system that supports it.
   You may have to add a level of indirection to your representations, or a read barrier.
   For extra brownies, specify and implement a protocol to ensure objects are quiescent
-  before they may be updated (see notably my thesis @~cite{FarePhD Rideau2018Climbing})
+  before they may be updated (see notably my thesis @~cite{FarePhD Rideau2018Climbing}).
 }

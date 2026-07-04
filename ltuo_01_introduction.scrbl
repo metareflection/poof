@@ -85,7 +85,7 @@ that would have been useless earlier, and will soon be useless again.
 
 Conceived around 1967 with Dahl and Nygaard’s Simula and Alan Kay’s musings,
 OO was actually born in 1976 when these two collided with each other and
-with Bobrow’s Lisp AI work, resulting in Smalltalk-76 and KRL-0.
+with Bobrow’s Lisp AI work, resulting in KRL-0 and Smalltalk-76.
 OO took off from there, at first reserved to the happy few
 who could use the most high-end systems from Xerox, BBN or MIT.
 OO became popular among researchers in the 1980s, and at some point was the Next Big Thing™.
@@ -422,7 +422,7 @@ but that even seminal formal accounts may lack a vocabulary shared with practiti
 }
   A notable dissident to this characterization is William Cook,
   a respected academic who made many key contributions to understanding the semantics of inheritance
-  @~cite{Cook1989 Cook1989Inheritance cook1989denotational bracha1990mixin Cook1994}
+  @~cite{Cook1989 Cook1989Inheritance cook1989denotational Bracha1990 Cook1994}
   yet also argued that Inheritance was orthogonal to OO @; Also Cook1989?
   and that OO is about “classes” of “objects” that can only be accessed through “interfaces”
   @~cite{Cook1991 Cook2009 Cook2012}.
@@ -548,7 +548,7 @@ notably divided on whether to use a technique called “linearization”
 @~cite{Bobrow1976 Cannon1979 Traits}.
 A few prefer Mixin Inheritance,
 a variant in some sense intermediary between the two above,
-but in another sense more fundamental, more composable @~cite{bracha1990mixin}.
+but in another sense more fundamental, more composable @~cite{Bracha1990}.
 
 With this variety of options, programmers (respectively programming language designers)
 face a choice of which of several variants of inheritance to use (respectively implement),
@@ -600,7 +600,7 @@ I will claim the following:
 @principle{The C4 algorithm implements this Optimal Inheritance.}
 I implemented C4 as part of
 the builtin object system of @(GerbilScheme) @~cite{GerbilScheme}@xnote["."]{
-  Scheme @; XXX CITE lambda-the-ultimate r4rs r7rs-small
+  Scheme @~cite{Sussman1975 r7rs-small} @; XXX CITE lambda-the-ultimate r4rs
   is a language with a rather minimalist definition.
   Dozens of mutually incompatible implementations of Scheme exist
   that each provide their own extensions on top of this common minimal core,
@@ -837,10 +837,13 @@ Too many authors hide the responsibility for a decision among multiple authors
 or include the readers in a collective decision they did not make.
 Using an unwarranted “we” is a trick commonly used by conmen, narcissists and politicians
 (but I repeat myself), and I find it misleading even when done innocently.
-I once set myself and my friends a “cuss box” in which to drop a dollar
+I once instituted for myself and my friends a “cuss box” in which to drop a dollar
 when any of us did it, even on social media.
-But maybe Mark Twain put it best: “Only presidents, editors, and people with tapeworms
-have the right to use the editorial ‘we’.”
+As the jest goes: “Only presidents, editors, and people with tapeworms
+have the right to use the editorial ‘we’@xnote[".”"]{
+  The jest, often apocryphally attributed to Mark Twain,
+  is actually a variant of an idea by John Phoenix.
+}
 And I don’t think presidents have that right, either.
 
 I will still say “we” on occasions,
@@ -899,7 +902,7 @@ I will define those terms precisely in
 
 @exercise[#:difficulty "Easy"]{
   Note that this book addresses readers with some familiarity with programming,
-  and that it starts having code at @seclink["MOO"]{chapter 5}.
+  and that code only appears starting with @seclink["MOO"]{chapter 5}.
   Adjust your expectations and reading pattern accordingly.
 }
 

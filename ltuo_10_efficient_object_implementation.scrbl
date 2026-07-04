@@ -15,19 +15,51 @@
     @|#:-"Donald Knuth"|
 }
 @section{Representing Records}
-One way or another, object-oriented programming involves dealing with @emph{records},
-mappings from identifier to value,
-that embody the results of modular computations (see @secref{MFCM}).
+
+@subsection{Records Matter}
+
+@Paragraph{More Fundamental than Inheritance}
+One way or another, @principle{Object-Orientation involves dealing with @emph{records}},
+mappings from identifier to value.
+This is despite the fact that the rules of inheritance,
+that characterize the semantics of OO as such,
+say nothing whatsoever about records,
+as we saw in chapters @seclink["MOO"]{5} to @seclink["IMSMO"]{7}.
+
+Instead, in an even more fundamental way, records matter tremendously to OO because
+the entire point of OO is to enable modular extensible programming,
+and records are the very unit of modularity, as we saw in chapter @seclink["OOaIEM"]{4}.
+Indeed, records, i.e. products of (mostly) independent values labelled by meaningful names,
+verily embody the combined efforts of the independent developers
+who contribute to some software project.
+And inheritance is only the means to that end.
+
+Thus, a very important issue in implementing Object systems is
+how to efficiently represent records—both
+in conjunction with how they are being initially computed through inheritance,
+and independently from inheritance, when they are used over and over again,
+long after they have been computed through inheritance,
+and even for records computed without using inheritance.
+
+@Paragraph{Semantics First}
+Now, the original intent of records,
+even before they were first formally treated by @citet{Hoare1965},
+has always involved an efficient low-level representation as contiguous words of memory.
+And most presentations of OO just introduce a low-level encoding
+for how their language implements objects
+(often using a variant of @seclink["CfUe"]{U-encoding}),
+and declare that’s how things are.
+Out of that, extremely complex low-level semantics emerge,
+and you are left to untangle desired meaning from undesired noise.
+
+My approach in this book is the radical opposite:
+I am always putting the desired semantics first.
 In previous chapters, I chose to represent records as functions,
 which simplified many aspects of my conceptual presentation, including fixpoints and types.
-However, in a practical system, the intent of records has always been
-an efficient low-level representation as contiguous words of memory @~cite{Hoare1965}.
-Most presentations of OO just introduce a low-level encoding for how their language implements objects,
-and declare that’s how things are;
-out of that, extremely complex low-level semantics emerge,
-and you are left to untangle desired meaning from undesired noise.
-I am taking a radically opposite approach: I instead am going to bridge this conceptual gap
-by starting from the high-level semantics, and zooming down to practical implementations thereof,
+In this chapter, I am intent on connecting this semantics
+to a low-level representation as contiguous words of memory indeed.
+And to that effect, I will start from the same high-level semantics, and
+zoom down to practical implementations thereof,
 the desired meaning being clear at all times.
 
 @subsection[#:tag "RaF"]{Records as Functions}
@@ -290,6 +322,8 @@ there are clear-cut or at least statistically expected @emph{stages} to the comp
 during each of which the nature and frequency of operations used are different,
 such that each stage would best benefit from its own specific choice of tradeoffs
 that would not work well in other stages.
+A translation between different representations at the boundary between some or all of these stages
+may then take advantage of these discrepancy.
 
 @subsection[#:tag "RaR"]{Records as Records}
 
@@ -463,9 +497,11 @@ where the distinction between the two, and the duality of the two,
 is well explained by @citet{Levy1999}:
 computations are active processes that may return a value of corresponding type,
 while values are just inert results.
-Now, values are embedded in the universe of computations, wherein to each value
+Now, values are naturally embedded in the universe of computations, wherein to each value
 corresponds a simple “pure” computation that just returns the value.
-But there are many ways to embed computations in the universe of values:
+But there are many ways to embed computations in the universe of values,
+none of them more “natural” than the other, though each programming language may make one
+cheaper to express:
 @itemize[
   @item{Computations as thunks—functions from unit to the desired value type,
     with some set of acceptable side-effects.}
@@ -522,27 +558,33 @@ in whichever language you are using, in the context of the application you’re 
 In a lazy-by-default language such as Nix or Haskell, these two primitives
 may become implicit and invisible, as the language already hides and handles this complexity for you;
 at least, they will remain invisible until you want to think about performance and optimizations,
-or need to transform the code into monadic style to enable some side-effect in your object definitions.
+or need to transform the code into monadic style to enable some side-effect
+in the computations by which you define and build your objects.
 
 @subsection[#:tag "SRoRoS"]{Suspended Records or Records of Suspensions}
 
-Once one explicitly separates the issues of
-representing records on the one hand, distinguishing records from their access functions,
-and representing recursion on the other hand, distinguishing suspensions from their outcomes,
-the simple formulas with a Y combinator of @secref{MOO} break down
-to become slightly more elaborate, and an implementor of OOP must face some choices.
-One notable choice is whether to put the suspended fixpoints before or after the record.
+When considering the low-level details of implementation of objects,
+one will want to explicitly separate the issues at hand:
+first, one must choose a representation for records, as
+distinguished from their access functions;
+second, one must choose a representation for the recursive computation being specified,
+distinguishing suspensions from their outcomes.
+Then, the simple formulas with a Y combinator of @secref{MOO} break down,
+to be replaced by more elaborate variants;
+and each implementor of OOP must face the tradeoffs associated to their representation choices.
+Among those choices is whether to put the suspended fixpoints before or after the record.
 
 Let’s assume a Y-encoding to start with.
 In the suspended record representation, a regular record of the method values
-is being computed as a fixpoint, but the actual target value is
-the suspension of this fixpoint computation, yielding the record as its outcome;
-a suspended variant of Y is used: @c{Suspended(Record(k:K,Vₖ))},
+is being computed as a fixpoint;
+but the actual target value is the suspension of this fixpoint computation,
+yielding the record as its outcome.
+A suspended variant of Y is used: @c{Suspended(Record(k:K,Vₖ))},
 where @c{Suspended(X)} is essentially equivalent to a thunk @c{1→X},
 and @c{Record(k:K,Vₖ)} is the dependent type of records having
 for each key @c{k} a value of according type @c{Vₖ}.
 @; TODO @Code{ ... } see pommette.scm
-In the record-of-suspensions representation, the target is a record whose values
+By contrast, in the record-of-suspensions representation, the target is a record whose values
 are suspensions that each yield the method value for the given key:
 @c{Record(k:K,Suspended(Vₖ))}
 A suspended variant of Y can be used,
@@ -583,7 +625,7 @@ and expand to some optimized low-level code, à la C++.
 
 Interestingly, mutation, the commonly available side-effect whereby
 programs may mutate variable bindings or memory cells, introduces a popular
-way to construct recursive definitions in two separate steps:
+way of constructing recursive definitions in two separate steps:
 First, allocate some cell to which you can hold a stable reference@xnote["."]{
   I’ll speak of memory cell, to make mutation more explicit;
   but your programming language might make it easier to think in terms
@@ -768,9 +810,55 @@ Mutable state, though awkwardly emulated,
 enables the expression of forward references and circular definitions,
 which would not be directly expressible in a pure applicative setting.
 
+@subsection{From Computation to Structure}
+
+So far in this chapter I've focused on the computational aspect
+of how objects are brought into existence:
+how to think about them algorithmically;
+the importance of staging (second-class vs first-class)
+in determining what algorithms are even possible;
+how the duality of computation and values arises;
+how to implement the recursion inherent to modular definitions.
+
+Each of these topics by itself is vast:
+the theory of algorithms, even restricted to implement things as simple as finite maps;
+the theory of performance in the abstract
+(asymptotic or algorithmic complexity, models for large memory),
+and in the concrete (memory hierarchy and other practical limits to scaling);
+values, hierarchies of computations, type and effect systems,
+or concretely space and time overhead associated with calling conventions
+and choices of encodings for suspensions and outcomes;
+staged computations, moving termination issues to the meta-level,
+bootstrap issues, how to support staging, and interaction loops involving it,
+in toolchains and down to the operating system level.
+
+The interaction between these topics is only vaster.
+There is no space in this book to contain them, only to frame them
+in a light that shows relationships you might not otherwise notice in the extant literature.
+I am inviting you, the reader, to consider the tradeoffs involved
+when implementing objects—not in the narrow sense of minor optimizations
+after having accepted the semantics and ABI of some language you are extending,
+but in the broader sense of all the semantics you could be considering.
+For the choice of semantics will affect not just the performance of the programs you write,
+but what programs you might be writing instead under different semantic assumptions.
+I am hoping to inspire some of you to explore heretofore unexplored territory
+in the modular and extensible design and implementation of software.
+
+But I’ll stop here for now with these lofty goals
+(that, lofty as they may be, sometimes involve very low-level details).
+Let us now focus instead on pragmatic and familiar details for
+how to concretely represent objects at the end of these computations.
+However you may suspend computations, here are efficient ways to organize and represent their outcomes.
+
 @XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
 
 @section[#:tag "OL"]{Object Layout}
+
+@; TODO the layout is largely independence from how suspension is implemented.
+@; susp{i,R_i} ? {i,(susp(R_i)} ? {i,susp_i(R_i)} ? susp{i,susp_i(R_i)} ?
+
+
+@subsection{Objects From Computation to Structure}
 
 How do we arrange things in memory?
 Field ordering and offsets.
@@ -797,7 +885,7 @@ but also typical OO patterns for what is static|dynamic{JITable|random}.
 @epigraph{
   Metaobject protocols also disprove the adage that adding
   more flexibility to a programming language reduces its performance.
-  @|#:-"Kiczales, des Rivières, Bobrow"| @; AMOP
+  @|#:-"Kiczales, des Rivières, Bobrow"| @; Kiczales1991
 }
 @epigraph{We can solve any problem by introducing an extra level of indirection.
 @|#:-`("Butler Lampson" , @~cite{WikiFTSE})|}
@@ -916,7 +1004,7 @@ What this book's accompanying code does (and doesn’t) do.
 }
 
 @exercise[#:difficulty "Medium"]{
-  Read about the Meta-Object Protocol in CLOS @~cite{amop},
+  Read about the Meta-Object Protocol in CLOS @~cite{Kiczales1991},
   particularly the protocols for class redefinition and instance update.
   Compare the CLOS approach to the simpler models discussed in this chapter.
   What additional flexibility does the MOP provide?

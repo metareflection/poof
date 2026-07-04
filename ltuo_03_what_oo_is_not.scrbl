@@ -181,7 +181,7 @@ ThingLab @~cite{Borning1977 Borning1979 Borning1981}@xnote["."]{
   and oscillated between having or not having classes in addition to prototypes.
   Kahn joined PARC after graduating from MIT.}
 Plenty more Prototype OO or “class-less” OO languages followed
-@~cite{Hewitt1979 Rees1982T Adams1988OOPScheme Ungar1987 Chambers1989 Lawall89SelfInScheme Salzman2005 jsonnet nix2015 poof2021}.
+@~cite{Hewitt1979 Rees1982T Adams1988 Ungar1987 Chambers1989 Lawall89SelfInScheme Salzman2005 jsonnet nix2015 poof2021}.
 There are a lot more Prototype OO languages than I could have time to review @~cite{WikiProto},
 but prominent among them is JavaScript @~cite{Eich1996JavaScript},
 one of the most used programming languages in the world @~cite{TopPL2022},
@@ -261,7 +261,7 @@ as Haskell grew up to become a practical language@xnote["."]{
 Yet, there are:
 @itemize[
   @item{Pure models of OO such as those of
-    Kamin, Reddy, Cook and Bracha@~cite{Kamin1988 ObjectsAsClosures Cook1989 Cook1989Denotational bracha1990mixin},}
+    Kamin, Reddy, Cook and Bracha@~cite{Kamin1988 ObjectsAsClosures Cook1989 Cook1989Denotational Bracha1990},}
   @item{pure lazy dynamic OO languages such as Jsonnet or Nix@~cite{jsonnet dolstra2008nixos nix2015},
     and pure lazy OO systems for Scheme@~cite{poof2021},}
   @item{languages happily combining OO and FP such as Common Lisp or Scala,
@@ -458,7 +458,8 @@ before the modern concept of OO was fully formed (in 1976)@xnote[","]{
   Kay’s meaning, refined by Bobrow, won—for good reasons.
   However, for the same reason, while Kay’s personal use of the term dates back to 1967,
   we should still only credit the invention at the date that the concept became fully formed,
-  which is with Kay’s Smalltalk-76 and Bobrow’s KRL-0, both in 1976,
+  which is with Bobrow and Winograd’s KRL-0,
+  and Kay and Ingalls’ subsequent Smalltalk-76, both in 1976,
   because of each other (they were across-the-hall colleagues at PARC and cite each other).
 }
 notably explained@~cite{Kay2020} that he originally meant
@@ -487,7 +488,7 @@ was studied with various “process calculi”,
 that are also foreign to the OO tradition,
 and largely unacknowledged by the OO community.
 Indeed Erlang crucially lacks inheritance, or support for the “extreme late binding of all things”
-that Alan Kay also once mentioned was essential for OO@xnote["."]{
+that Alan Kay also identified as essential for OO@xnote["."]{
   In Erlang, each process is a dynamic pure applicative functional language
   enriched with the ability to exchange messages with other processes.
   Now, as we’ll see, you need fixpoints to express the semantics of OO;
@@ -516,6 +517,7 @@ that Alan Kay also once mentioned was essential for OO@xnote["."]{
   but only fits indirectly in other paradigms,
   including the pure applicative functional paradigm of Erlang in-process,
   or the process-oriented paradigm of Erlang between-processes.
+  See also the discussion in @secref{DSF}.
 }
 Most OO languages have no support whatsoever for concurrency,
 or then again only as an afterthought added years or decades
@@ -677,7 +679,7 @@ but in a trivial way that fails to support modularity@xnote["."]{
   despite being deliberately limited in abstraction, and, therefore, in modularity—and
   sometimes @emph{thanks to this limitation}.
   Restrictions to expressiveness can be very useful,
-  in the necessarily restricted or imprecise cases that they apply.
+  in the necessarily restricted or imprecise cases that they apply to.
   Indeed, in some cases, relational data modeling, not OO,
   is what you need to organize your data and your code.
   Moreover, Category Theory are a great way to improve on previous approaches
@@ -742,8 +744,8 @@ Then you should use that typesystem to describe not just
 records of elementary data types over the wire or on disk,
 but all the rich entities within your software, their interactions and interrelations.
 This will provide much more help with design and safety than any code-less methodology can.
-And if you picked an OO-capable language like C++, Java, C# or Scala,
-(or, with manually enforced dynamic types, Lisp, Ruby or Python),
+And if you picked an OO-capable language like C++, Java, C#, Scala or TypeScript,
+(or, with manually enforced dynamic types, Lisp, Ruby, Python or JavaScript),
 you can actually use OO as you do it.
 
 @section{OO vs Objects}
@@ -806,7 +808,7 @@ of an OO framework actual or imagined, but then again sometimes they may@xnote["
   calling some values “objects” may validly denote OO for the user
   yet not for the implementer.
 }
-For instance, Yale T Scheme has a class-less object system @~cite{Rees1982T Adams1988oopscheme};
+For instance, Yale T Scheme has a class-less object system @~cite{Rees1982T Adams1988};
 but the authors call “object” any language value,
 and specifically use “instance” to denote the prototypes in their object system.
 
@@ -989,7 +991,8 @@ even though it is implicit in both.
 And so the authors focus on arguing about different ways to name the same concept in two contexts;
 meanwhile they fail to argue on the different contextual concepts that do matter@xnote["."]{
   If irrelevant changes in the context are a valid excuse to give an existing concept a new name
-  and get a publication with hundreds of citations based on such a great original discovery,
+  and get a publication with hundreds of citations
+  based on such a great original discovery@~cite{Ringard1990},
   I here dub “ainheritance” the concept of “inheritance”
   when the name of the entity inheriting from others starts with “a”,
   “binheritance” the concept of “inheritance” when the programmer’s console is blue,
@@ -1005,7 +1008,7 @@ meanwhile they fail to argue on the different contextual concepts that do matter
   and launching the Interplanetary Xinheritance Foundation to auction the namespace away,
   as well as the related Intergalactic Zelegation Alliance.
   I am impatiently awaiting my Turing Award, or at least Dahl Nygaard prize,
-  for all these never discussed before original inventions related to OO.
+  for all these never-discussed-before original inventions related to OO.
 
   The Lieberman paper deserves its thousands of citations because it is a great paper.
   However, a lot of citers seem to fixate only on the unfortunate choice
@@ -1013,8 +1016,8 @@ meanwhile they fail to argue on the different contextual concepts that do matter
   who probably did not anticipate that he would set a bad trend with it.
   The delineation made sense in the historical context of the Actor team
   separately implementing prototypes and classes with related yet distinct mechanisms
-  in their ACT1 language @~cite{Hewitt1979}, way before they or anyone understood
-  how classes were a special case of prototypes.
+  in their ACT1 language @~cite{Hewitt1979}, way before they or anyone (except maybe Winograd)
+  understood how exactly classes were a special case of prototypes.
   But too many readers took this historical artifact as an essential distinction,
   and thereafter focused on studying or tweaking low-level “message passing” mechanisms
   on a wild goose chase for tricks and features,
@@ -1045,7 +1048,7 @@ prove constructively that prototypes can be pure, and that they use
 the very same inheritance mechanisms as classes,
 indeed with classes as a particular case of prototypes with the usual construction.
 Meanwhile, old reflective Class OO systems like Lisp and Smalltalk
-@~cite{Kahn1976 Kay1993EHoS Gabriel1991CLOS AMOP}
+@~cite{Kahn1976 Kay1993EHoS Gabriel1991CLOS Kiczales1991}
 also support mutable state to modify the inheritance structure at runtime,
 for the sake of dynamic redefinition of classes at runtime,
 in what remains semantically a pure functional model once when the structure is set.
@@ -1368,24 +1371,26 @@ a strong thing changes the meaning of a name.}
 
 @exercise[#:difficulty "Easy"]{
   With the help of a search engine or an AI,
-  find OO languages or libraries that illustrate each possible combination
+  find OO languages or libraries that illustrate points
   in the space defined by the following axes:
   (a) having an inheritance mechanism poorer than that of C++, equivalent, or richer;
   (b) having or not having classes;
   (c) using or not using mutable state;
   (d) with or without notions of “public” or “private” methods;
   (e) with or without the ability to express functional programs;
-  (f) with or without a notion message passing;
+  (f) with or without the metaphor of message passing;
   (g) with or without its authors claiming that it is OO.
-  Note that some combinations may not be found, and that is fine;
-  try to find at least one answer on each side of each axis.
+  You don’t have to fill the entire grid by hand,
+  though you may use AI to assist you in doing it.
+  Even then, some combinations might not have any current example.
+  Still, find at least one interesting answer on each side or each axis.
 }
 
 @exercise[#:difficulty "Medium"]{
-  In each of the above cases, or at least for a couple that you’re least familiar with,
-  dig deeper into the counter-example, and build an OO program
-  that doesn’t match the other paradigm, or a program in that other paradigm
-  that doesn’t match OO at all.
+  Identify an OO language that you're familiar with (or else, one that is popular),
+  and place it against each of the above axes.
+  Then, for each axis, find an example of OO language on the other side of the axis;
+  and find a non-OO language on this side of the axis (if possible).
 }
 
 @exercise[#:difficulty "Medium"]{

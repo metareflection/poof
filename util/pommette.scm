@@ -892,12 +892,13 @@ let Y = f: (x: x x) (x: f (x x));
   (cons spec super))
 (def (qproto←spec spec)
   (delay (fix-record (mix spec (qproto-wrapper spec)))))
+(def qproto-id (qproto←spec idModExt))
 (def spec←qproto car)
 (def (target←qproto qproto)
   (force (cdr qproto)))
 (def (qproto-mix parent child)
   (qproto←spec (mix (spec←qproto parent) (spec←qproto child))))
-(define (qproto-mix* . l) (foldl (uncurry2 qproto-mix) pproto-id l))
+(define (qproto-mix* . l) (foldl (uncurry2 qproto-mix) qproto-id l))
 
 
 ;;;; 6.1.4 Conflation for Records

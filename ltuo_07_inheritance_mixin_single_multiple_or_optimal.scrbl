@@ -47,7 +47,7 @@ fix : t → (t → s → s) → s
 @principle{In Single Inheritance, the specifications at stake are open modular definitions},
 as studied in @secref{MFCM},
 simpler than the modular extensions of mixin inheritance from @secref{MFCME}@xnote["."]{
-  In @citet{Cook1989}, @citet{bracha1990mixin},
+  In @citet{Cook1989}, @citet{Bracha1990},
   Cook calls “generator” what I call “modular definition”,
   and “wrapper” what I call “modular extension”.
   But those terms are a bit too general, while Cook’s limitation to records
@@ -168,10 +168,11 @@ Thus, single inheritance is no more expressive than mixin inheritance.
 Conversely, given a language with FP and dynamic types or sufficiently advanced types,
 you can implement first-class mixin inheritance on top of first-class single inheritance by
 writing a function that abstracts over which parent specification
-a specification will inheritance from, as in Racket née PLT Scheme @~cite{Mixins1998 Flatt2006Mixins}.
+a specification will inherit from, as in Racket née PLT Scheme @~cite{Mixins1998 Flatt2006Mixins}.
 In terms of complexity, this construct puts the cart before the horse,
 since it would be much easier to build mixin inheritance first, then single inheritance on top.
-Still, this style is possible, and may allow to cheaply leverage and extend existing infrastructure
+Still, this style is possible, and may allow one to
+cheaply leverage and extend existing infrastructure
 in which single inheritance was already implemented and widely used.
 
 Just like in mixin inheritance, a @emph{target} can thus still be seen as
@@ -229,7 +230,7 @@ subtle discrepancies creep in, that cause their own issues, sometimes critical.
 
 When there are many such independent features that are each duplicated onto many classes,
 the number of duplicated definitions can grow quadratically with the number of desired features,
-while the potential combinations grows exponentially, requiring users to maintain some
+while the number of potential combinations grows exponentially, requiring users to maintain some
 arbitrary order in that combination space.
 Important symmetries are broken, arbitrary choices must be made all over the codebase,
 and the code is more complex not just to write, but also to think about.
@@ -320,7 +321,7 @@ across all the subclasses of a given class.
 @exercise[#:difficulty "Hard"]{
   Implement the optimization that makes single inheritance fast:
   assign fixed numeric indices to methods as they are declared,
-  and implement method lookup as array access rather than hash-table lookup.t3
+  and implement method lookup as array access rather than hash-table lookup.
   Benchmark the difference on a hierarchy with 10 levels and 100 method calls.
 }
 
@@ -357,12 +358,12 @@ that each time dived into the first available branch of the inheritance DAG
 without backtracking @~cite{parentsSharedParts1991},
 but the authors eventually recognized how wrongheaded that was,
 and reverted to—sadly—the conflict paradigm @~cite{self2007hopl}@xnote["."]{
-  Like the “visitor pattern” approach to multiple dispatch, the
+  Like the “visitor pattern” approach to multiple dispatch (see @secref{MD}),
   Self’s once “sender path” approach to multiple inheritance
   fails to capture semantics contributed by concurrent branches of a partial order,
   by eagerly taking the first available branch without backtracking.
   In the end, like the “conflict” approach to method resolution though in a different way,
-  it violates of the “linearity” property I describe in @secref{CiMR},
+  it violates the “linearity” property I describe in @secref{CiMR},
   which explains why it cannot be satisfying.
 }
 
@@ -383,7 +384,7 @@ the ancestry of a specification is not a list as it was with single inheritance.
 It is not a tree, either, because a given ancestor can be reached through many paths.
 Instead, the ancestry of a specification is a Directed Acyclic Graph (DAG).
 And the union of all ancestries of all specifications is also a DAG,
-or which each specification’s ancestry is a “suffix” sub-DAG
+of which each specification’s ancestry is a “suffix” sub-DAG
 (i.e. closed to further transitive parents, but not to further transitive children),
 of which the specification is the most specific element.
 
@@ -453,20 +454,21 @@ some kind of efficient association tables based on these tags
 Note however, there are plenty of “reflective” extensions of the λ-calculus
 that do not need such detailed view of graph,
 and instead happily abstract over it@~cite{Mogensen1995}.
-So the lack of a builtin graph support is is actually a feature in other contexts@xnote["."]{
+So the lack of a builtin graph support is actually a feature in other contexts@xnote["."]{
   In any case, functional programming isn’t so much about
   using the λ-calculus without any extensions or monads,
   as it is about making it explicit what minimal set of extensions or monads
   you need to express your semantics.
   A stricter view of functional programming might insist on purity and equational reasoning,
   which interestingly is not preserved by making a state monad implicit in general
-  but @emph{is} preserved when making an opaque tag generator generator implicit,
+  but @emph{is} preserved when making an opaque tag generator implicit,
   wherein tags can only be observed through equality checks.
-  Such an extended such λ-calculus is still congruent, and still allows for substitution
+  Such an extended λ-calculus is still congruent, and still allows for substitution
   of equivalent expressions.
   But many expressions that are equivalent in the base λ-calculus become distinguished
   in this extension: in the base calculus, the expressions @c{(f E E)} (external duplication)
-  and @c{((λ (x) (f x x)) E)} (internal duplication) are always equivalent, but no more,
+  and @c{((λ (x) (f x x)) E)} (internal duplication) are always equivalent;
+  but they are equivalent no more in the extended calculus,
   since the internal duplication causes sharing and tag equalities
   while the external one doesn’t.
   This may confuse people touting the ill-defined notion of “referential transparency”
@@ -540,7 +542,7 @@ when the copy of A within B1 reinitializes the method
 Keeping only one of either B1 or B2 loses information from the other.
 There is no good answer;
 any data loss increases linearly as diamonds get wider or more numerous;
-meanwhile any duplication get exponentially worse as diamonds stack,
+meanwhile any duplication gets exponentially worse as diamonds stack,
 e.g. with E having parents D1 and D2 sharing parent C, and so on.
 That is why Mesa, Self, C++, Ada, PHP, etc.,
 view multiple distinct methods as a “conflict”, and issue an error
@@ -662,7 +664,7 @@ Languages that see “conflict” in independent method specifications,
 fail to respect the linearity property.
 Self’s once “sender path” approach to method resolution also failed to respect the linearity property
 @~cite{parentsSharedParts1991 self2007hopl};
-and after the authors realized the failure, they revert to plain conflict, which still fails.
+and after the authors realized the failure, they reverted to plain conflict, which still fails.
 
 Hypothetical languages that would require users to manually synthesize attributes
 from the inheritance DAG so as to extract semantics of methods,
@@ -726,8 +728,8 @@ the fields of a class can follow matching orders and actually work together.
 Methods that acquire and release resources can do it correctly,
 and avoid deadlock when these resources include holding a mutual exclusion lock@xnote["."]{
   Note that consistent linearization of methods within a class
-  is sufficient to order locks this holds if locks only if the locks are class-specific.
-  If the locks are shared with objects of other classes,
+  is sufficient to order locks only if the locks are class-specific.
+  If some locks are shared with objects of other classes,
   you need consistency across all classes that use those locks,
   and potentially across all classes.
   See monotonicity and global consistency below.
@@ -756,7 +758,7 @@ and so pay the full costs without providing the full benefits@xnote["."]{
   Unhappily, “static” member initialization does not rely on such linearization,
   only instance member initialization does; thus object constructors would have to do it
   the first time an object of the class is instantiated;
-  but the test for this first time would slow down every instantiated a little bit,
+  but the test for this first time would slow down every instantiation a little bit,
   which defeats the “need for speed” that often motivates the choice of C++.
   Also, since this design pattern requires active programmer cooperation,
   it will not work well when extending classes from existing libraries,
@@ -854,7 +856,7 @@ interspersed with potentially contradictory specifications from @c{Y},
 except where strictly necessary.
 Preference in specifications is consistent and predictable.
 
-Said otherwise, you can answer the question “which of these two behaviors win?” simply:
+Said otherwise, you can answer the question “which of these two behaviors wins?” simply:
 1. Does one explicitly override the other? If so, it wins.
 2. If not, which behavior first appears in a parent? It wins.
  (If the local precedence list is not totally ordered, linearize it first
@@ -865,13 +867,14 @@ This property was introduced by @citet{Ducournau1992} as “extended order”,
 and first enforced by the algorithm in @citet{Ducournau1994}.
 It is the first of the three eponymous constraints of C3 @~cite{Barrett1996C3}.
 
-Ducournau try to formalize the property in terms of the linearization being a @emph{subset}
+Ducournau et al. try to formalize the property in terms of the linearization being a @emph{subset}
 (rather than superset—bounding the linearization from the other side)
 of an “extended precedence graph”,
-total preorder that extends the local order such that if a parent comes before another,
+a total preorder that extends the local order such that if a parent comes before another,
 all its ancestors that aren’t before the other’s also come before.
-But their formalization is complex yet is not easily adapted to my extension
-of the local order being an arbitrary DAG rather than a total order.
+Their formalization is complex, yet is not easily adapted to my extension
+of the local order being an arbitrary DAG rather than a total order,
+or to other extensions.
 Thus I much prefer the informal explanation
 (that in turn could be formalized, just not the exact same way as Ducournau)
 in terms of consistent preference for a preferred specification’s ancestors
@@ -1062,11 +1065,11 @@ in my previous paper using Scheme@~cite{poof2021},
 or in a proof of concept in Nix@~cite{POP2021}.
 My production-quality implementation in @(GerbilScheme)@~cite{GerbilPOO}
 including many features and optimizations fits in few hundred lines of code@xnote["."]{
-  285 lines with lots of comments, 163 lines after stripping comments and blank lines.
+  291 lines with lots of comments, 205 lines after stripping comments and blank lines.
   Even converted to plain Scheme, with additional utility functions,
   it’s under 400 lines of code with comments, under 300 stripped.
 
-  The entire object system under 2000 lines of commented code for its runtime,
+  The entire object system fits under 2000 lines of commented code for its runtime,
   including all runtime optimizations enabled by single inheritance where appropriate.
 }
 
@@ -1174,7 +1177,7 @@ with mixin inheritance, or does it introduce concepts you do not need?
 And assuming it is a problem you face anyway, does it solve it in the simplest manner?
 
 @Paragraph{Multiple Inheritance is as Expressive as Mixin Inheritance}
-Mixin inheritance is clearly not less expressive as multiple inheritance,
+Mixin inheritance is clearly no less expressive than multiple inheritance,
 since every entity that can be written using multiple inheritance
 can just as well be written using mixin inheritance,
 by computing the precedence list manually.
@@ -1232,7 +1235,7 @@ Unhappily, that means that if another module @c{B2} also depends on @c{A}
 and exports @c{B2precomposed = (mix B2 A)},
 then users who want to define a specification @c{C} that uses both @c{B1} and @c{B2},
 will experience the very same diamond problem as when trying to synthesize
-a modular definition from an attribute grammar view of of multiple inheritance in @secref{DMRMI}:
+a modular definition from an attribute grammar view of multiple inheritance in @secref{DMRMI}:
 the pre-composed dependencies (@c{A} in this case) would be duplicated in the mix of
 @c{(mix B1precomposed B2precomposed) = (mix (mix B1 A) (mix B2 A))};
 these copies would badly interfere, in addition to leading to an exponential resource explosion
@@ -1271,7 +1274,7 @@ fragility of the entire ecosystem, as incompatibilities ripple out,
 and it becomes hard to find matching sets of libraries that have all the features one needs.
 Tight coupling is the antithesis of modularity@xnote["."]{
   If you want to make the change easy on your transitive users,
-  you may have write and send patches to lots of different libraries and programs
+  you may have to write and send patches to lots of different libraries and programs
   that depend on your software.
   This is actually the kind of activity I engaged in for years,
   as maintainer of Common Lisp’s build system ASDF.
@@ -1279,7 +1282,7 @@ Tight coupling is the antithesis of modularity@xnote["."]{
   a database of all free software repositories using ASDF (thousands of them),
   and of @c{cl-test-grid}, a program to automatically test all those repositories,
   as well as by the fact that most (but by no means all) of these software repositories
-  were on github or similar git hosting webserver.
+  were on github or some similar git hosting webserver.
   Making a breaking change in ASDF was painful enough as it is,
   having to slightly fix up to tens of libraries each time,
   but was overall affordable.
@@ -1405,7 +1408,7 @@ prefer to use or implement single inheritance when offered the choice.
   would overwrite away either the wheels or the engine.
   Show that combining their “precomposed” mixins @c{B A} and @c{C A} into @c{B A C A}
   would duplicate the effects of @c{A}, which is incorrect.
-  Show that the “conflict” semantics, the parts list is wrong
+  Show that with the “conflict” semantics, the parts list is wrong
   whichever way you “resolve” the conflict, whether in favor of @c{B} or @c{C}.
   Show that with proper linearization, each part appears exactly once and only once.
 }
@@ -1479,7 +1482,7 @@ and declare them as structs, too, thereby forfeiting use of multiple inheritance
 anywhere in that hierarchy, and losing any modularity benefit you might have enjoyed@xnote["."]{
   Another limitation of structs and classes in Common Lisp is that for historical reasons,
   the default syntax to define and use structs is very different (and much simpler)
-  from the CLOS syntax to use and define objects. You can use the explicitly use the CLOS
+  from the CLOS syntax to use and define objects. You can explicitly use the CLOS
   syntax to define structs by specifying an appropriate metaclass @c{structure-class}
   as opposed to @c{standard-class} for the standard objects of CLOS;
   however, the resulting syntax is more burdensome than either plain struct or plain CLOS syntax.
@@ -1487,7 +1490,7 @@ anywhere in that hierarchy, and losing any modularity benefit you might have enj
   between structs and classes. Yet this syntactic barrier remains minor compared to
   the semantic barrier of having to forfeit multiple inheritance in an entire class hierarchy.
 
-  Now, one could also conceivably use Common Lisp metaclasses @~cite{AMOP}
+  Now, one could also conceivably use Common Lisp metaclasses @~cite{Kiczales1991}
   to re-create arbitrary user-defined inheritance mechanisms,
   including my Optimal Inheritance below.
   The semantics of it would be relatively easy to re-create.
@@ -1517,7 +1520,7 @@ calls them respectively “classes” and “traits” @~cite{scalableComponentA
   that has nothing to do with either single or multiple inheritance.
   And to make things even more confusing, “multiple inheritance” in C++ is not
   what it is in Ruby, Scala, Lisp, Python and other flavorful languages;
-  instead it’s a mix of flavorlesss “conflict” inheritance (for “virtual” classes),
+  instead it’s a mix of flavorless “conflict” inheritance (for “virtual” classes),
   and weird path-renamed duplicated inheritance à la CommonObjects (for the non “virtual”)
   that tries hard to fit the square peg of a multiple inheritance DAG into the round hole of a tree.
   Anyway, the conclusion here once again is that the word “class” is utterly useless
@@ -1567,7 +1570,7 @@ the “suffixes” and identify the most specific suffix ancestor
   and the Scala team declined to answer my inquiries to this regard.
   Nevertheless, this is clearly an improvement,
   that makes Scala 3 as easy to use as Ruby or @(GerbilScheme) in this regard:
-  by comparison, Scala 2 was being less modular, in requiring users to do extra work
+  by comparison, Scala 2 was somewhat less modular, in requiring users to do extra work
   and make the “most specific class ancestor” a part of a trait’s interface,
   rather than only of its implementation.
 }
@@ -1711,8 +1714,8 @@ I define my own algorithm C4 as an extension of C3,
 that in addition to the constraints of C3, also respects the @emph{suffix property}
 for specifications that are declared as suffixes, and otherwise
 exempts suffix specifications and their ancestors from the extended precedence constraint.
-This means that an optimal inheritance specification, or @c{OISpec}
-by extending the @c{MISpec} of multiple inheritance
+This means that an optimal inheritance specification, or @c{OISpec},
+can be defined by extending the @c{MISpec} of multiple inheritance
 with a new field @c{suffix?} of type @c{Boolean},
 that tells whether or not the specification requires all its descendants
 to have its precedence list as a suffix of theirs.
@@ -1728,7 +1731,7 @@ where the steps tagged with (C4) are those added to the C3 algorithm
   @item{@bold{Extract parent precedence lists}:
         For each parent appearing in the Local Order
         (which in general can be several lists of totally ordered parents),
-        add the precedence list of the parent to the list of list of candidates,
+        add the precedence list of the parent to the list of lists of candidates,
         if said parent didn’t appear as ancestor already.
         Maintain a table of ancestor counts, that counts how many times each ancestor appears
         in the precedence lists so far;
@@ -1830,13 +1833,13 @@ in the tails of the lists for each parent@xnote["."]{
   Worst case is indeed Θ(d²n²) for the unoptimized algorithm, Θ(dn) for the optimized one.
 }
 But by maintaining a single hash-table of counts on all tails,
-I can keep the complexity O(dn), a quadratic improvement, that bring the cost of C3 or C4
-back down to the levels of less consistent algorithms such as used in Ruby or Scala.
+I can keep the complexity O(dn), a quadratic improvement, that brings the cost of C3 or C4
+back down to the levels of less consistent algorithms such as used in Lisp, Ruby or Scala.
 Unhappily, it looks like at least the Python and Perl implementations
 are missing this crucial optimization; it might not matter too much because
 their d and n values are I suspect even lower than in Common Lisp@xnote["."]{
   As mentioned in a previous note, in loading almost all of Quicklisp 2025-06-22, I found
-  d≤3 99% of the time, d=61 max, n≤5 90% of the time, n≤19 99% of the time, n=66 max.
+  d≤3 99% of the time, d=61 max, n≤5 90% of the time, n≤16 99% of the time, n=63 max.
 
   Now at these common sizes, a linear scan might actually be faster than a hash-table lookup.
   However, a good “hash-table” implementation might avoid hashing altogether and fallback
@@ -1848,7 +1851,7 @@ their d and n values are I suspect even lower than in Common Lisp@xnote["."]{
 
 There is also a space vs time tradeoff to check subtyping of suffixes,
 by using a vector (O(1) time, O(k) space per struct,
-where k is the inheritance depth the largest struct at stake)
+where k is the inheritance depth of the largest struct at stake)
 instead of a linked lists (O(k) time, O(1) space per struct).
 However, if you skip the interstitial infix specifications,
 suffix hierarchies usually remain shallow@xnote[","]{
@@ -1878,15 +1881,17 @@ that will all be higher priority than the extended precedence constraint@xnote["
 }
 
 This is interesting, because this distinguishes the constraints into two sets:
-those that define a list of total orders,
+those that refine a partial order,
 and this extended precedence that forces the selection algorithm based on that partial order.
 
 Conjectures, for you to prove or disprove as an exercise:
 @itemize[
   @item{The C3 algorithm picks the leftmost candidate to appear leftmost
-        in the concatenation of precedence lists.
+        in the list of lists of candidates.
         I believe (but haven’t proved) that this is also equivalent to
-        picking for next rightmost element the candidate to appear rightmost.}
+        picking for next rightmost element the candidate to appear rightmost.
+        Still, the construction of the list of lists of candidates is not symmetrical,
+        with the concatenation of precedence lists appearing before the local order itself.}
   @item{This algorithm maximizes the opportunity for a specification’s precedence list
         to share a longer suffix with its parents,
         thereby maximally enabling in practice the optimizations of single inheritance
@@ -1923,7 +1928,7 @@ that should probably be formalized and added to the constraints of C4.@xnote["."
 
 @exercise[#:difficulty "Medium"]{
   Consider this example lifted from Wikipedia @~cite{WikiC3},
-  with a base specification @code{O},
+  with a base specification @c{O},
   specifications @c{A B C D E} that each inherit only from @c{O},
   specifications @c{K1 K2 K3} with respective parents (in total local order)
   @c{A B C}, @c{D B E} and @c{D A},
@@ -1932,7 +1937,7 @@ that should probably be formalized and added to the constraints of C4.@xnote["."
   all of them being assumed to be infix specifications?
 }
 @;{
-Using the C3 or C4 algorithm, we get the precedence list @code{Z K1 K2 K3 D A B C E O},
+Using the C3 or C4 algorithm, we get the precedence list @c{Z K1 K2 K3 D A B C E O},
 with each subclass having its subset of ancestors in the same order
 in its own precedence list.
 }
@@ -1943,23 +1948,23 @@ in its own precedence list.
   @image[#:scale 0.55]{C3_linearization_example.eps})
 
 @;{
-If, using the C4 algorithm, @code{C} were declared a suffix specification, then
-the suffix @code{C O} must be preserved,
-and the precedence list would be changed to @code{Z K1 K2 K3 D A B E C O}.
-If both @code{C} and @code{E} were declared suffix specifications,
-then there would be a conflict between the suffixes @code{C O} and @code{E O}, and
-the definition of @code{Z} would fail with an error.
+If, using the C4 algorithm, @c{C} were declared a suffix specification, then
+the suffix @c{C O} must be preserved,
+and the precedence list would be changed to @c{Z K1 K2 K3 D A B E C O}.
+If both @c{C} and @c{E} were declared suffix specifications,
+then there would be a conflict between the suffixes @c{C O} and @c{E O}, and
+the definition of @c{Z} would fail with an error.
 
-In this class hierarchy, only @code{O}, one of @code{C E}, and/or @code{Z}
+In this class hierarchy, only @c{O}, one of @c{C E}, and/or @c{Z}
 may be declared a suffix specification without causing an error
 due to violation of the local precedence order.
 Indeed, a class may not be declared a struct if it appears in a direct superclass list
 before a class that is not one of its superclasses.
 However, this criterion is not necessary to prohibit struct-ability,
-and @code{K3} cannot be a struct either,
-because its superclass @code{D} appears before @code{B E} among the direct superclasses of @code{K2},
-which would break the struct suffix of @code{K3}
-when @code{Z} inherits from both @code{K2} and @code{K3}.
+and @c{K3} cannot be a struct either,
+because its superclass @c{D} appears before @c{B E} among the direct superclasses of @c{K2},
+which would break the struct suffix of @c{K3}
+when @c{Z} inherits from both @c{K2} and @c{K3}.
 }
 
 @exercise[#:difficulty "Medium"]{
@@ -2075,6 +2080,13 @@ flowchart BT
   and on the informal explanations in @secref{WOOiIO},
   sketch how you would assign Types to OO.
   Save your answer to compare with the treatment in @secref{TfOO}.
+}
+
+@exercise[#:difficulty "Hard"]{
+  Use AI and a Theorem Prover (such as Agda, Lean or Rocq)
+  to formalize the consistency properties of multiple inheritance.
+  How do you define “Extended Precedence” in a way that works with C4?
+  Can you prove it coincides with Ducournau’s definition in simpler cases?
 }
 
 @exercise[#:difficulty "Hard"]{

@@ -11,8 +11,8 @@ I chose honest arrogance and have seen no occasion to change.
 @|#:- "Frank Lloyd Wright"|
 }
 Here is the part of this book where I actually do the bragging,
-with a list of never-done-before feats I achieved in its book
-or the work that immediately preceded it:
+with a list of never-done-before feats I achieved in this book
+or the work that immediately led to it:
 
 @;TODO add secref's everywhere
 
@@ -20,7 +20,7 @@ or the work that immediately preceded it:
 I rebuilt Object Orientation (OO) from First Principles,
 offering an explanation of how the basic mechanisms of OO
 directly stem from Modularity, Extensibility, and Internality.
-The equations of @citet{Bracha1990Mixin} were not arbitrary axioms,
+The equations of @citet{Bracha1990} were not arbitrary axioms,
 but necessary theorems, that I could further simplify and generalize.
 
 @subsection{My Theory of OO is Constructive}
@@ -72,7 +72,7 @@ After making it explicit, the semantics of objects is astoundingly simple,
 it just involves a regular use of the simplest of recursion operators, the fixpoint.
 Plus an implicit pair to bundle specification and target together.
 I also argued why conflation, if properly understood, can increase modularity,
-even though when misunderstood it brings lost of harmful confusion.
+even though when misunderstood it brings lots of harmful confusion.
 
 @subsection{Open Modular Extensions as Fundamental}
 Compared to previous theories that only consider @emph{closed} modular extensions
@@ -80,7 +80,7 @@ Compared to previous theories that only consider @emph{closed} modular extension
 or worse, closed modular definitions (with no notion of extension),
 my @emph{open} modular extensions @emph{vastly} simplify OO, by enabling:
 @itemlist[
-  @item{Simpler more universal types with no ad hoc construct, just plain recursive subtypes}
+  @item{Simpler more universal types with no ad hoc constructs, just plain recursive subtypes}
   @item{Combining, composing and decomposing open specifications with rich algebraic tools}
   @item{Using optics to zoom semantics at all scales, down from individual method declarations
         up to entire ecosystems of mutually recursive prototypes}]
@@ -96,25 +96,22 @@ are in order of strictly decreasing modularity:
 (6) no inheritance.
 And I explained why so many great computer scientists
 got stuck into the flavorless “conflict” multiple inheritance
-and how and why the “harmonious combination” view is so much better.
+and how and why the flavorful “harmonious combination” view is so much better.
 
 @subsection{The Prefix Property, not Single Inheritance, matters}
 I explained why exactly single inheritance is more performant
-than other kind of inheritance so far.
+than any other kind of inheritance so far.
 I precisely identified the @emph{semantic} constraint that enables the extra performance:
-the @emph{prefix property},
-when other authors were incorrectly associating the performance with the
-more @emph{syntactic} constraint of single inheritance@xnote["."]{
+the @emph{prefix property}.
+Previous authors were incorrectly associating the performance with the
+@emph{syntactic} constraint of single inheritance@xnote["."]{
   More precisely, the prefix property is a semantic constraint
-  on the context of future use of a specification.
-  While single inheritance is either a syntactic constraint on how the specification is defined.
-  You could insist on calling that a semantic constraint, too:
-  a semantic constraint on the text of past specification construction.
-  But beware not to make the concept of “semantic” completely useless by
-  declaring everything semantic, thus making it incapable of discrimination.
-  And what is a syntactic constraint if not such semantic constraint
-  on the text of past specification construction?
-  Anyway, this shift from text/past to context/future is what matters, call it what you may.
+  on the contexts of future use of a specification.
+  Meanwhile single inheritance is usually presented as a syntactic constraint
+  on how the specification is defined as a second-class entity.
+  But it could be generalized to a semantic constraint valid even for first-class specifications:
+  a constraint on how specifications are constructed—a constraint on their past.
+  And then the semantic shift that matters is one from text/past to context/future.
 }
 I found that this property is actually compatible with mixin inheritance and multiple inheritance,
 wherein it can enable the same performance improvements for specifications

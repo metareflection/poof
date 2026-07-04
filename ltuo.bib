@@ -408,7 +408,7 @@ on the author’s page, sci-hub.ru, archive.org, z-library.sk, github.com, etc.
   }
 }
 
-@Misc{Strachey67,
+@Misc{Strachey1967,
   Author={Christopher Strachey},
   Title={Fundamental Concepts in Programming Languages},
   Year={1967},
@@ -416,7 +416,8 @@ on the author’s page, sci-hub.ru, archive.org, z-library.sk, github.com, etc.
   doi="10.1023/A:101000031310",
   note={.
     This classic paper, among many other things,
-    introduces the notion of “Ad hoc polymorphism”.
+    introduces notions such as “first and second class objects” or “ad hoc polymorphism”,
+    and identifies or clarifies many more notions.
   }}
 
 %% 1968
@@ -585,6 +586,23 @@ on the author’s page, sci-hub.ru, archive.org, z-library.sk, github.com, etc.
 }
 
 %% 1975
+
+@TechReport{Sussman1975,
+  author={Sussman, Gerald Jay and Steele, Guy Lewis},
+  title={Scheme: An Interpreter for Extended Lambda Calculus},
+  institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
+  year={1975},
+  month=dec,
+  number={AIM-349},
+  url={https://dspace.mit.edu/handle/1721.1/5794},
+  note={
+    The original paper about Scheme, a Lisp dialect with lexical scoping
+    and first-class continuations.
+    The paper was born from an attempt to understand message handling and message response
+    in actor systems, and function calls and function returns, realizing that they were all
+    similar to each other.
+  }
+}
 
 % POPL 1975 Plex
 % say "object-oriented" exceptions
@@ -768,6 +786,20 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 1976
 
+% https://dspace.mit.edu/bitstream/handle/1721.1/6091/AIM-379.pdf
+@TechReport{Steele1976Declarative,
+  author={Steele, Guy Lewis},
+  title={LAMBDA: The Ultimate Declarative},
+  institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
+  year={1976},
+  month=nov,
+  number={AIM-379},
+  url={https://dspace.mit.edu/handle/1721.1/6091},
+  note={.
+    XXX
+  }
+}
+
 % https://dspace.mit.edu/bitstream/handle/1721.1/5790/AIM-353.pdf
 @TechReport{Steele1976Imperative,
   author={Steele, Guy Lewis and Sussman, Gerald Jay},
@@ -801,9 +833,11 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     but also as Stanford Artificial Intelligence Laboratory Memo AIM-293 (November 1976),
     and later included in Cognitive Science, V. 1, No. 1, 1977.
     This watershed paper is AFAICT the first in a formal publication that uses the words
-    “object-oriented”, “inheritance”, “prototype”, “class” in their modern meaning.
-    The paper describes KRL-0, a first iteration of the design of KRL, written in Lisp,
-    as of May 1976.
+    “object-oriented”, “inheritance”, “prototype” in their modern meaning;
+    it also uses the word “class” in its modern meaning,
+    but the Simula 1967 paper can claim priority on that.
+    The paper describes KRL-0, a first iteration of the design of KRL,
+    an extension to Lisp, as of May 1976.
     KRL is a Knowledge Representation Language built in terms of objects.
     Bobrow and Winogard acknowledge the heritage of Minsky's frames,
     as well as of Smalltalk and Simula for the “object-oriented” definition
@@ -826,6 +860,10 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     and “object-oriented” is used three times, though Kay is only cited indirectly through
     a paper of his Learning Research Group that doesn’t use the expression.
     (multi-process oriented is also used three times, but with slightly different words each time.)
+    If anything, Winograd tries to do too much, the system is too complex,
+    and some of the solutions it offers are so general that they still require the user
+    to do a lot of the work (e.g. to properly handle multiple inheritance),
+    as the common usage patterns haven’t been identified yet.
   }
 }
 
@@ -913,6 +951,20 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 1977
 
+% https://dspace.mit.edu/bitstream/handle/1721.1/5753/AIM-443.pdf
+@TechReport{Steele1977,
+  author={Steele, Guy Lewis},
+  title={Debunking the “Expensive Procedure Call” Myth or, Procedure Call Implementations Considered Harmful or, LAMBDA: The Ultimate GOTO},
+  institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
+  year={1977},
+  month=oct,
+  number={AIM-443},
+  url={https://dspace.mit.edu/handle/1721.1/5753},
+  doi={10.1145/800179.810196},
+  note={.
+    XXX
+  }
+}
 @TechReport{Stansfield1977COMEX,
   title={COMEX: A Support System for a Commodities Expert},
   author={Stansfield, James L},
@@ -948,6 +1000,24 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 %% 1978
+
+@TechReport{Steele1978,
+  author={Steele, Jr., Guy L.},
+  title={RABBIT: A Compiler for SCHEME (A Dialect of LISP)},
+  institution={Massachusetts Institute of Technology},
+  year={1978},
+  month=may,
+  type={Technical Report},
+  number={AI-TR-474},
+  address={Cambridge, MA},
+  url={https://dspace.mit.edu/handle/1721.1/6913},
+  note={.
+    Steele’s Master’s thesis, describing his efficient compiler for Scheme,
+    a Lisp dialect with lexical scoping.
+    Revised version of a dissertation submitted to
+    the Department of Electrical Engineering and Computer Science.
+  },
+}
 
 % Starts with modularity principle
 % Mentions multiple inheritance of traits, but does not explain too much
@@ -1521,6 +1591,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   number={11},
   issn={0362-1340},
   doi={10.1145/960112.28698},
+  url={https://dl.acm.org/doi/10.1145/960112.28698},
   abstract={This paper describes Symbolics' newly redesigned object-oriented programming system, Flavors. Flavors encourages program modularity, eases the development of large, complex programs, and provides high efficiency at run time. Flavors is integrated into Lisp and the Symbolics program development environment. This paper describes the philosophy and some of the major characteristics of Symbolics' Flavors and shows how the above goals are addressed. Full details of Flavors are left to the programmers' manual, Reference Guide to Symbolics Common Lisp. (5)},
   journal={SIGPLAN Not.},
   month=jun,
@@ -1551,12 +1622,12 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   number={11},
   issn={0362-1340},
   doi={10.1145/960112.28700},
+  url={https://dl.acm.org/doi/10.1145/960112.28700},
   journal={SIGPLAN Not.},
   month=jun,
   pages={17–29},
   numpages={13},
   year={1986},
-  doi={10.1145/28697.28700},
   note={.
     Excellent paper.
     This reprint of a 1985 report presents CommonLoops, an evolution from LOOPS
@@ -1742,17 +1813,21 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   note={.
     Beta is the successor of Simula. It claims to unify classes, procedures, functions and types
     as a single abstraction mechanism called “patterns”.
-    Patterns are second-class prototypes (lexical constants),
-    with a magic “do” initialization method called at instantiation after computing the fixpoint.
+    Patterns are restricted prototypes that conflate first-class target records-or-procedures
+    with second-class specifications of those targets that can be used with single inheritance
+    (the successor gbeta (Ernst 2000) would later lift this second-class restriction,
+    at which point patterns are just a clumsy variant of the usual prototypes).
+    A magic “do” initialization method called at instantiation after computing the fixpoint.
     If neither an “enter” nor an “exit” block is specified,
     the fixpoint record is returned after initialization
     (there is no variable or pseudo-variable like “self” to otherwise refer to the fixpoint record).
     If either is defined, then the init takes specified input arguments (none if no enter block)
     and returns the specified values (none if no exit block).
     This asymmetry is there in the name of both keeping the system minimal
-    and still identifying a pattern’s target (my word) with both procedures and records.
-    (I would have preferred a more symmetric design, where functions with named mandatory arguments
-    and prototypes with holes are the same thing.)
+    and “unifying” procedures and records by using a single second-class syntactic construct
+    to specify either.
+    (they could have achieved a more symmetric design, by e.g.
+    identifying prototypes with holes and functions with named mandatory arguments.)
     Inheritance works by extending a pattern and its transitive subpatterns,
     using the same concatenation semantics as Simula:
     in each “do” block, an “inner” keyword may specify
@@ -1766,9 +1841,23 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     through argument and return values of function calls.
     In the end, each form of inheritance can be expressed in terms of the other one,
     but it seems to me that the one with vastly better ergonomics happily did win.
+    One point for which the authors deserve particular credit though is
+    the treatment of nested patterns. The authors seem to be the first to explicitly study
+    how inheritance interacts with lexical nesting of patterns
+    (which generalizes to prototypes and classes in other languages), and how to do it right.
+    The semantic infrastructure to do it right already existed in earlier prototype languages
+    such as KRL or Act-1; but their authors don’t seem to have specifically
+    noticed and examined the semantics of nesting prototypes. The Beta team did, albeit
+    with ad hoc words such as “virtual patterns” and “family polymorphism”.
     The report is hard to read: The authors are in their own world, with their own vocabulary,
     syntax and semantics, and fail to try to reduce their semantics
     to something simple in terms of logic, or anything understandable by others.
+    Dahl & Nygaard started the BETA project in 1976, when others already had better OO;
+    by the time their design stabilized around 1980, they were far behind the OO state of the art,
+    and they never caught up with progress that came up after 1977. Quite underwhelming.
+    They never entered a mutually beneficial dialogue with the rest of the OO world,
+    wherein they could exchange ideas in a common formalism, import good ideas from others,
+    export good ideas from them. Very sad waste of great talent by self-imposed intellectual isolation.
   }
 }
 % Do we want to talk about gBeta, where patterns are first-class,
@@ -1849,7 +1938,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   note={.
     This paper is a chapter of the Common Lisp specification then in the process of being standardized.
     The introduction is very short, and most of the paper is a description of the API,
-    primitive by primitive. There it no presentation of the concepts.
+    primitive by primitive. There is no presentation of the concepts.
     But the paper shows that CLOS was already mature in 1988 (the standard was finalized in 1994).
   }
 }
@@ -1897,7 +1986,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-@InProceedings{Adams1988OOPScheme,
+@InProceedings{Adams1988,
   Author={Norman I. Adams and Jonathan A. Rees},
   Title={Object-Oriented Programming in Scheme},
   url="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.46.954",
@@ -1953,7 +2042,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 % Extended version of previous paper at POPL'85 https://dl.acm.org/doi/10.1145/318593.318606
-@article{mitchell1988abstract,
+@article{Mitchell1988,
   title={Abstract Types have Existential Type},
   author={Mitchell, John C and Plotkin, Gordon D},
   journal={ACM Transactions on Programming Languages and Systems (TOPLAS)},
@@ -2186,6 +2275,13 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
+@book{Keene1989,
+  title={Object-Oriented programming in Common Lisp; A Programmer's Guide to CLOS},
+  author={Sonya E. Keene},
+  publisher={New York : Addison-Wesley},
+  year={1989},
+}
+
 % Also appeared in BIGRE Bulletin 65, July 1989
 @TechReport{Lawall89SelfInScheme,
   Author={Julia L. Lawall and Daniel P. Friedman},
@@ -2263,6 +2359,19 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 1990
 
+@misc{Ringard1990,
+  author={Y.-J. Ringard},
+  title={Mustard Watches: An Integrated Approach to Time and Food},
+  year={1990},
+  howpublished={Unpublished satirical manuscript},
+  url={https://girard.perso.math.cnrs.fr/mustard/article.html},
+  note={
+    Satirical parody of the proliferation of meaningless mathematical generalizations.
+    Written by Jean-Yves Girard under the pseudonym “Y.-J. Ringard”
+    and widely circulated informally.
+  }
+}
+
 @Article{Danvy1990,
   author={Olivier Danvy and Andrzej Filinski},
   title={Abstracting Control},
@@ -2304,7 +2413,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 % https://www.semanticscholar.org/paper/Mixin-based-inheritance-Bracha-Cook/cbc4f2d93bb62d1c287f4fe458de6ac416379282
 % url={https://doi.org/10.1145/97945.97982},
-@InProceedings{bracha1990mixin,
+@InProceedings{Bracha1990,
   author={Gilad Bracha and William Cook},
   title={Mixin-Based Inheritance},
   year={1990},
@@ -2460,7 +2569,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-@Book{AMOP,
+@Book{Kiczales1991,
   Title={The Art of the Meta-Object Protocol},
   Author={Gregor Kiczales and Des Rivières, Jim and Daniel G. Bobrow},
   Year={1991},
@@ -3548,7 +3657,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 % https://kbb04747.sites.pomona.edu/README.html#Match
-@article{Bruce1996Typing,
+@article{Bruce1996,
   title={Typing in Object-Oriented Languages: Achieving Expressiveness and Safety},
   author={Kim B. Bruce},
   journal={Unpublished, June},
@@ -3718,6 +3827,22 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
+@PhDThesis{Okasaki1996,
+  author={Chris Okasaki},
+  title={Purely Functional Data Structures},
+  school={Carnegie Mellon University},
+  address={Pittsburgh, PA},
+  year={1996},
+  month=sep,
+  number={CMU-CS-96-177},
+  url={https://www.cs.cmu.edu/~rwh/students/okasaki.pdf},
+  note={
+    Okasaki’s PhD thesis, his original presentation of persistent purely functional data structures
+    based on structural sharing and amortized analysis.
+    It was later expanded into a great 1998 book with same title.
+    A classic, greatly recommended.
+  }
+}
 
 %% 1997
 
@@ -5046,8 +5171,21 @@ and Fiech, Adrian",
 
 %% 2013
 
+@misc{r7rs-small,
+  author={{R7RS Working Group}},
+  title={Revised${}^7$ Report on the Algorithmic Language Scheme},
+  year={2013},
+  month=jul,
+  howpublished={Scheme Language Steering Committee},
+  url={https://standards.scheme.org/official/r7rs.pdf},
+  note={Final R7RS-small report, announced at Scheme 2013 on July 6, 2013;
+    archival ACM publication appeared in 2016.
+    Latest version of the standard for the Scheme language.
+  }
+}
+
 % extended abstract with idiotic proof-by-citation of abdelgawad2014domain
-@InProceedings{Cartwright2013Inheritance,
+@InProceedings{Cartwright2013,
   title={Inheritance IS Subtyping},
   author={Robert Cartwright and Moez A AbdelGawad},
   booktitle={The 25th Nordic Workshop on Programming Theory (NWPT)},
@@ -5065,7 +5203,7 @@ and Fiech, Adrian",
 % Unsurprisingly, his NOOP is plain NNOOTT.
 % No generics, no open recursion, no higher-order functions, all nominal.
 % He thanks bpierce for feedback.
-@article{abdelgawad2014domain,
+@article{Abdelgawad2014,
   title={A domain-theoretic model of nominally-typed object-oriented programming},
   author={Moez A AbdelGawad},
   journal={Electronic Notes in Theoretical Computer Science},
@@ -5663,6 +5801,39 @@ and Fiech, Adrian",
 }
 % See also https://www.quora.com/How-much-did-Daniel-Bobrow-and-Alan-Kay-interact-at-PARC-in-the-days-that-led-to-the-invention-of-modern-Object-Oriented-Programming-Is-Bobrow-and-Winograds-An-Overview-of-KRL-1976-the-first-publication-using-OO-in
 
+
+@article{Ingalls2020,
+  author={Daniel Ingalls},
+  title={The evolution of Smalltalk: from Smalltalk-72 through Squeak},
+  year={2020},
+  issue_date={June 2020},
+  publisher={Association for Computing Machinery},
+  address={New York, NY, USA},
+  volume={4},
+  number={HOPL},
+  url={https://doi.org/10.1145/3386335},
+  doi={10.1145/3386335},
+  abstract={This paper presents a personal view of the evolution of six generations of Smalltalk in which the author played a part, starting with Smalltalk-72 and progressing through Smalltalk-80 to Squeak and Etoys. It describes the forces that brought each generation into existence, the technical innovations that characterized it, and the growth in understanding of object-orientation and personal computing that emerged. It summarizes what that generation achieved and how it affected the future, both within the evolving group of developers and users, and in the outside world. The early Smalltalks were not widely accessible because they ran only on proprietary Xerox hardware; because of this, few people have experience with these important historical artifacts. To make them accessible, the paper provides links to live simulations that can be run in present-day web browsers. These simulations offer the ability to run pre-defined scripts, but also allow the user to go off-script, browse the details of the implementation, and try anything that could be done in the original system. An appendix includes anecdotal and technical aspects of how examples of each generation of Smalltalk were recovered, and how order was teased out of chaos to the point that these old systems could be brought back to life.},
+  journal={Proc. ACM Program. Lang.},
+  month=jun,
+  articleno={85},
+  numpages={101},
+  keywords={Virtual Machine, Squeak, Smalltalk, Objects, OOZE, NoteTaker, Morphic, Interpreter, EToys, Bytecode, Bootstrap, Blocks, BitBlt, Alto},
+  note={.
+    Dan Ingalls retreads the evolution of Smalltalk.
+    Of particular interest to me was Ted Kaehler’s OOZE, the Object-Oriented Zoned Environment,
+    an object-granular virtual memory system that made Smalltalk images orthogonally persistent
+    between 1973 and 1978. Also evidence, if any was needed, that the word “Object-Oriented”
+    was definitely in active use in Kay’s group in 1973 and earlier.
+    But Ingalls also explains how Kay’s team was aspiring to “superclasses” and
+    the yet-unnamed concept of inheritance in 1973 and probably earlier,
+    though they only got them with Smalltalk-76.
+    On the other hand, Ingalls states he started working on Smalltalk-76 in August 1976,
+    so three months after KRL-0 was complete and one month after the KRL-0 paper was published.
+    Thus Lisp (Interlisp) implemented inheritance (and thus proper, modern OO) before Smalltalk did.
+  }
+}
+
 %% 2021
 
 % Maybe cite the last episode of this story instead, that explains the concept?
@@ -5875,9 +6046,26 @@ and Fiech, Adrian",
   year={2025},
   doi={10.1017/9781009492379},
   url={https://www.cambridge.org/core/books/cultures-of-programming/075A2D1DE611EE47807A683147B21691},
-  isbn={9781009492379 (ebook); 9781009492348 (hardback)},
+  isbn={9781009492379},
   note={.
-    XXXXX
+    The author extends his earlier study (Petricek 2017) into a larger treatise on
+    the distinct cultures that grew around opposite mindsets about programming.
+  }
+}
+% ISBN 9781009492379 (ebook); 9781009492348 (hardback)
+
+%% 2026
+
+@misc{TIOBE,
+  author={TIOBE Software BV},
+  title={TIOBE Programming Community Index, June 2026},
+  year={2026},
+  month=jun,
+  url={https://web.archive.org/web/20260629091910/https://www.tiobe.com/tiobe-index/},
+  note={
+    Monthly programming language popularity ranking. Accessed July 2026.
+    Unhappily, the website does not offer historical data,
+    and you must use the Internet Archive for that.
   }
 }
 
@@ -5943,6 +6131,18 @@ and Fiech, Adrian",
 
 % Erik Ernst's work on gBeta:
 % https://www.researchgate.net/publication/2806012_gbeta_-_a_Language_with_Virtual_Attributes_Block_Structure_and_Propagating_Dynamic_Inheritance
+@techreport{Ernst2000,
+  author={Erik Ernst},
+  title={gbeta --- a Language with Virtual Attributes, Block Structure, and Propagating, Dynamic Inheritance},
+  institution={Department of Computer Science, University of Aarhus},
+  series={DAIMI PB},
+  number={549},
+  year={2000},
+  month=mar,
+  doi={10.7146/dpb.v29i549.7654},
+  url={https://tidsskrift.dk/daimipb/article/view/7654},
+  note={Comprehensive description of gbeta, a successor to BETA featuring first-class patterns, pattern computations, dynamic inheritance, mixins, virtual patterns, and family-oriented extensibility.}
+}
 
 % Design Rules: The Power of Modularity,  by Baldwin & Clark
 
@@ -6161,62 +6361,6 @@ and Fiech, Adrian",
 
 % lazy evaluation (Friedman & Wise 1976)
 
-% https://dspace.mit.edu/bitstream/handle/1721.1/6091/AIM-379.pdf
-@TechReport{Steele1976Declarative,
-  author={Steele, Guy Lewis},
-  title={LAMBDA: The Ultimate Declarative},
-  institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
-  year={1976},
-  month=nov,
-  number={AIM-379},
-  url={https://dspace.mit.edu/handle/1721.1/6091},
-  note={.
-    XXX
-  }
-}
-
-% https://dspace.mit.edu/bitstream/handle/1721.1/5753/AIM-443.pdf
-@TechReport{Steele1977Goto,
-  author={Steele, Guy Lewis},
-  title={Debunking the “Expensive Procedure Call” Myth or, Procedure Call Implementations Considered Harmful or, LAMBDA: The Ultimate GOTO},
-  institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
-  year={1977},
-  month=oct,
-  number={AIM-443},
-  url={https://dspace.mit.edu/handle/1721.1/5753},
-  doi={10.1145/800179.810196},
-  note={.
-    XXX
-  }
-}
-
-@TechReport{Sussman1975Scheme,
-  author={Sussman, Gerald Jay and Steele, Guy Lewis},
-  title={Scheme: An Interpreter for Extended Lambda Calculus},
-  institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
-  year={1975},
-  month=dec,
-  number={AIM-349},
-  url={https://dspace.mit.edu/handle/1721.1/5794},
-  note={The original Scheme paper.}
-}
-
-@TechReport{steele1978rabbit,
-  author={Steele, Jr., Guy L.},
-  title={RABBIT: A Compiler for SCHEME (A Dialect of LISP)},
-  institution={Massachusetts Institute of Technology},
-  year={1978},
-  month=may,
-  type={Technical Report},
-  number={AI-TR-474},
-  address={Cambridge, MA},
-  url={https://dspace.mit.edu/handle/1721.1/6913},
-  note={.
-    Steele’s Master’s thesis.
-    Revised version of a dissertation submitted to the Department of Electrical Engineering and Computer Science
-  },
-}
-
 % Alan Kay
 % https://www.mail-archive.com/fonc@vpri.org/msg03121.html
 
@@ -6232,3 +6376,15 @@ and Fiech, Adrian",
   note={.
   }
 }
+
+% Ole-Johan Dahl. 2004. The Birth of Object Orientation: the Simula Languages. In Lecture Notes in Computer Science. Springer Berlin Heidelberg, 15–25. https://doi.org/10.1007/978-3-540-39993-3_3
+% https://sci-hub.ru/10.1007/978-3-540-39993-3_3
+
+% Roger King. OOPSLA 1988. My cat is object-oriented.
+% https://dl.acm.org/doi/10.1145/63320.66469
+% https://archive.org/details/objectorientedco0000unse
+
+% Crichton and Krishnamurthi
+% A Core Calculus for Documents, Or, Lambda: The Ultimate Document
+% 2024
+% https://cs.brown.edu/people/sk/Publications/Papers/Published/ck-core-calc-doc-lambda-ultimate-doc/paper.pdf

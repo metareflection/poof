@@ -31,7 +31,7 @@ Furthermore, to keep formalizing OO features in terms of pure functional semanti
 these access paths I will formalize as functional @emph{lenses} (see below).
 
 This approach I propose to specifying OO software is a potential game-changer
-in making OO even more modular than it used to be, because now
+in making OO even more modular than it used to be, because
 method specifications can now be considered individually,
 then grouped incrementally into larger algebraically coherent chunks,
 and at each step, parsed, defined, typed, analyzed, proven correct, and generally reasoned about,
@@ -97,9 +97,9 @@ but your update function now has type @c{(a → b) → s → t},
 so that the inner change in value can involve different input and output types,
 and so can the outer change in context.
 But the starting points of the update function are the same as
-the start and end points of the the view function,
+the start and end points of the view function,
 so that you are updating the same thing you are viewing.
-Monomorphic lenses are a special case or polymorphic lenses.
+Monomorphic lenses are a special case of polymorphic lenses.
 @Code{
 type PolyLens s t a b =
        { view : s → a ; update : (a → b) → s → t }
@@ -126,7 +126,7 @@ I can also give separate types for View and Update:
 @Code{
 type View r s = s → r
 type Update i p j q = (i → p) → j → q
-type SkewLens r i p s j q =
+type SkewLens i r p j s q =
   { view : View r s ; update : Update i p j q }
 }
 
@@ -152,7 +152,11 @@ the two getters needn’t match, but the second getter and the setter must.
 
 @Paragraph{Composing Lenses}
 I can compose view, update and lenses as follows,
-with the obvious identity lens:
+with the obvious identity lens@xnote[":"]{
+  I also use an appropriate wrapper @c{op*←op1.1} for @c{compose-lens*} in the end.
+  The definition is left as an exercise to the reader;
+  you can look at the version I wrote in the @c{pommette.scm} file accompanying this book.
+}
 @Code{
 compose-view : View s t → View r s → View r t
 (def (compose-view v w)
@@ -167,14 +171,14 @@ make-lens : View r s → Update i p j q → SkewLens r i p s j q
     (extend-record 'update u
       empty-record)))
 
-compose-lens : SkewLens s j q ss jj qq → SkewLens r i p s j q →
-                 SkewLens r i p ss jj qq
+compose-lens : SkewLens j s q jj ss qq → SkewLens i r p j s q →
+                 SkewLens i r p jj ss qq
 (def (compose-lens l k)
   (make-lens
     (compose-view (l 'view) (k 'view))
     (compose-update (l 'update) (k 'update))))
 
-id-lens : SkewLens r i p r i p
+id-lens : SkewLens i r p i r p
 (def id-lens
   (make-lens identity identity))
 
@@ -231,7 +235,7 @@ but the two need not be the same, and the modification need not preserve types.
 
 @Paragraph{Skewing a Modular Extension}
 
-You may have notice that I used the same letters @c{r i p}
+You may have noticed that I used the same letters @c{i r p}
 to parameterize a @c{SkewLens} (plus their successors)
 as to parameterize a @c{ModExt}. This is not a coincidence.
 You can focus a modular extension by looking at it through a matching skew lens:
@@ -252,8 +256,8 @@ it has a sensor, the input from the module context,
 and an actuator, the output of an extension to the value under focus.
 
 A single skew lens can change both the module context, and the extension focus.
-A @c{SkewLens r i p s j q} can transform an inner @c{ModExt r i p}
-into an outer @c{ModExt s j q}.
+A @c{SkewLens i r p j s q} can transform an inner @c{ModExt i r p}
+into an outer @c{ModExt j s q}.
 As always, note that in general, @c{r} (required, the module context)
 is largely independent from @c{i p} (inherited and provided, the extension focus).
 They only coincide just before the end of the specification,
@@ -265,7 +269,7 @@ and the wheel or yoke through which they may pilot their boat:
 the submarine pilot is the sensactor, and the skew lens
 transforms the I/O loop of the pilot into the I/O loop of the submarine.
 Similarly, one may consider the laparoscope that a surgeon may use,
-and the separate instrument with which he will operate the patient:
+and the separate instrument with which he will operate on the patient:
 the “skew lens” transforms the surgeon I/O into the instrument I/O.
 
 It is a common case that the actuator is within the frame of the sensor,
@@ -304,12 +308,12 @@ potentially any other place you may currently be looking at.
 I will call @emph{specification focus} the datum of a skew lens
 to the complete or somehow outermost ecosystem of type @c{ES}:
 @Code{
-type SpecFocus r i p = ModExt r i p → ModExt ES ⊤ ES
+type SpecFocus i r p = ModExt i r p → ModExt ⊤ ES ES
 }
 More generally, you could use any answer type @c{A}, or even @c{⊥},
 and consider that a SpecFocus is just a continuation that consume a specification
 @Code{
-type SpecFocus r i p = ModExt r i p → A
+type SpecFocus i r p = ModExt i r p → A
 }
 
 A specification focus is the context for a specification or focused specification:
@@ -317,7 +321,7 @@ fit a specification into it, and you get your program.
 The general case above is an @emph{open} specification focus;
 a @emph{closed} specification focus is of the form:
 @Code{
-type ClosedSpecFocus a = ModExt p ⊤ p → A
+type ClosedSpecFocus a = ModExt ⊤ p p → A
 }}
 
 @subsection{Adjusting Context and Focus}
@@ -350,12 +354,12 @@ or equivalently @c{(update-lens (field-lens* 'foo 'bar) (field-update 'baz))}
 will let you specify a method @c{baz}
 for the specification under @c{foo.bar} in the ecosystem, where:
 @Code{
-update-only-lens : Update i p j q → SkewLens r i p r j q
+update-only-lens : Update i p j q → SkewLens i r p j r q
 (def (update-only-lens u)
   (make-lens identity u))
 
-update-lens : SkewLens r i p s j q → Update j q jj qq →
-     SkewLens r i p r jj qq
+update-lens : SkewLens i r p j s q → Update j q jj qq →
+     SkewLens i r p jj r qq
 (def (update-lens l u)
   (make-lens (l 'view) (compose (l 'update) u)))
 }
@@ -378,7 +382,7 @@ Then, you can use a lens with “negative focal length”:
 instead of narrowing the focus to some subset of it,
 it broadens the focus.
 Thus you can zoom out rather than only zoom in.
-Zooming out can take you back to were you were previously,
+Zooming out can take you back to where you were previously,
 or to a completely different place.
 
 For instance, given a broader context @c{c : s},
@@ -420,12 +424,12 @@ or logs its history, backs up or persists its data, does resource accounting, et
 
 To adjust the context without adjusting the extension focus, use:
 @Code{
-view-only-lens : View r s → SkewLens r i p s i p
+view-only-lens : View r s → SkewLens i r p i s p
 (def (view-only-lens v)
   (make-lens v identity))
 
-view-lens : SkewLens r i p s j q → View rr r →
-    SkewLens rr i p r j q
+view-lens : SkewLens i r p j s q → View rr r →
+    SkewLens i rr p j s q
 (def (view-lens l v)
   (make-lens (compose-view (l 'view) v) (l 'update)))
 }
@@ -515,7 +519,7 @@ wherein you use @c{instance-call} to call an instance method,
 that extracts the type descriptor using @c{type-of},
 that it then invoked with @c{'instance-methods}, the @c{method-id}, and the element.
 
-To modularly extend it a class instance method, one needs first
+To modularly extend a class instance method, one needs first
 focus on it, by composing a lens focusing on a prototype for a type descriptor
 with an @c{instance-method-lens} below, to obtain
 a skew lens for a specific instance method:
@@ -530,10 +534,11 @@ Now, when specifying a class instance method, the programmer thinks in terms of
 the class instance, i.e. an element of the class’s target type.
 And his method may use @c{call-next-method} to invoke the inherited behavior,
 from the tail of class precedence list of the instance’s type.
-However, the underlying modular extension machinery sees @c{self}, i.e. the class, and
+However, the underlying modular extension machinery sees @c{self}, i.e. the class,
 and @c{super}, the modular definition for the method so far,
-as inherited from the tail of class precedence list, i.e. ancestors behind the current class
-in the precedence list of the type of the original instance used as first argument.
+as inherited from the tail of the class precedence list,
+i.e. ancestors behind the current class in the precedence list
+of the type of the original instance used as first argument.
 I need a wrapper to bridge these two views, and at this point,
 a formal definition is simpler than the words that describe it:
 @Code{
@@ -639,16 +644,18 @@ To initialize a field @c{price} that defaults as a baseline
 to the sum of the prices of the parts times the contents of the field @c{markup},
 you would use:
 @Code{
-(simple-instance-field-spec 'parts (λ (_inherited self)
+(simple-instance-field-spec 'price (λ (_inherited self)
   (* (self 'markup)
      (foldl + 0 (λ (part) (part 'price)) (self 'parts)))))
 }
-A field @c{markup} that has no default initializer must be provided by users could be defined as:
+To define a field @c{markup} that has no default initializer and must be provided by users,
+you would use:
 @Code{
-(simple-instance-field-spec 'parts (λ (_inherited _self)
+(simple-instance-field-spec 'markup (λ (_inherited _self)
   (abort "missing field markup")))
 }
 A class could then define a default prototype for new instances as:
+@; TODO FIX THIS MESS
 @Code{
 (skew-ext (update-lens rproto-spec-lens (field-update 'new-instance-prototype))
   (λ (_inherited self)
@@ -665,7 +672,7 @@ and builds the instance prototype by focusing and mixing:
 @Code{
 (def (class-proto slots)
   (rproto←spec
-    (mix*
+    (apply mix*
       (map (λ (slot)
              (compose (field-update (slot 'name))
                       (slot 'init-spec)))
@@ -688,7 +695,7 @@ and builds the instance prototype by focusing and mixing:
 Each slot's @c{init-spec} is focused onto its field
 by composing with @c{field-update},
 then all are mixed together.
-The @c{fix-record} closes the recursion,
+The @c{fix-record} implicit in @c{rproto←spec} closes the recursion,
 yielding a prototype where each slot is initialized
 according to its descriptor.
 
@@ -718,6 +725,7 @@ Extending the class is just adding more slots to the mix:
 (def colored-rectangle-proto (class-proto colored-rectangle-slots))
 }
 @Code{
+(expect
   (colored-rectangle-proto 'color) => "black"
   (colored-rectangle-proto 'area) => 200)
 }
@@ -767,7 +775,7 @@ Typical other operators included @c{+ * max min progn list append nconc}@xnote["
   to modify in place each non-empty list but the last, to link to the next one.
   It made sense in the slow and memory-constrained machines of the 1960s to 1980s,
   especially so before modern garbage-collection.
-  But @c{nconc} rarely makes sense in modern days,
+  But @c{nconc} rarely makes sense in modern times,
   where either the simpler and safer @c{append} is good enough,
   or optimization is better sought from a more sophisticated data representation than linked lists.
 }
@@ -786,7 +794,7 @@ on top of this foundation@xnote["."]{
   in the default “daemon” method combination,
   only one primary method (from the most specific class) would be called,
   but @c{before} and @c{after} methods were also supported
-  in the style of ADVISE @~cite{teitelman1966};
+  in the style of ADVISE @~cite{Teitelman1966};
   @c{around} methods were only added in CLOS @~cite{Bobrow1988CLOS}.
   The simple method combinations were supported, again without @c{around} methods,
   and the simple @c{or} method combination covered a pretty common case of next-method-as-fallback.
@@ -802,7 +810,7 @@ Now, while the original method combinations of Flavors were quite capable,
 method combinations were further refined by
 New Flavors @~cite{Moon1986Flavors},
 CommonLoops @~cite{Bobrow1986CommonLoops}, and
-most notably by CLOS @~cite{Bobrow1988CLOS CLtL2 clhs AMOP Verna2023}.
+most notably by CLOS @~cite{Bobrow1988CLOS CLtL2 clhs Kiczales1991 Verna2023}.
 My presentation will therefore be more directly inspired by CLOS than by Flavors.
 
 @subsection{Uses of Method Combinations}
@@ -899,10 +907,10 @@ In CLOS after Flavors, a method specification can be tagged with a @emph{method 
 usually some kind of symbol, though, in many Lisp or Scheme dialects,
 a “keyword” may be used that is somehow
 distinct from regular symbols, often with a syntax involving a colon@xnote["."]{
-  Depending on the language or dialect, keywords are typically written with a some variant of
+  Depending on the language or dialect, keywords are typically written with some variant of
   a colon @c{:before} (in Common Lisp, where they are self-evaluating subset of symbols),
   or @c{after:} (in Gerbil Scheme, where they are self-evaluating separate from symbols), or
-  hash-colon @c{#:before} (in Racket, where they second-class syntax unless quoted,
+  hash-colon @c{#:before} (in Racket, where they are second-class syntax unless quoted,
   and then separate from symbols).
   Many dialects only have symbols, though many programs may still have a @emph{convention}
   of using symbols starting or ending with a colon as keyword specifiers in some protocols.
@@ -969,27 +977,49 @@ to be folded or otherwise processed later
   (compose-lens* (field-lens 'sub-methods)
                  (field-lens method-id)
                  (field-lens tag)))
-(def (sub-method-spec method-cons tag method-id method-spec)
-  (sub-method-lens method-id tag 'update
-    (λ (method-specs) (method-cons method-spec method-specs))))
+
+;; standard-method-cons : MethodFn → List(MethodFn) → List(MethodFn)
+;; Prepends a method fn to the existing list (standard cons).
 (def (standard-method-cons spec specs)
   (cons spec specs))
-(def standard-sub-method-spec
-  (sub-method-spec standard-method-cons))
-(def (sub-methods-support-spec)
-  (field-spec 'sub-methods record-spec))
-(def (method-combination-init-spec
-       method-id method-combination-init)
+
+;; sub-method-spec : MethodCons → Tag → MethodId → MethodFn → ModExt
+;;   MethodCons = MethodFn → List(MethodFn) → List(MethodFn)
+;;   Tag        = Symbol  (qualifier: 'primary 'before 'after 'around, or simple-comb name)
+;;   MethodId   = Symbol  (method name in the record, e.g. 'compute 'greet)
+;;   MethodFn   = CallNextMethod → Self → (Arg... → Result)  (see 9.2.2 for details)
+;;   ModExt     = ? → ? → ?  (modular extension; see field-spec)
+;; Creates a ModExt that prepends method-fn to sub-methods[method-id][tag].
+(def (sub-method-spec method-cons tag method-id method-fn)
   (field-spec 'sub-methods
-    (constant-field-spec method-id method-combination-init)))
-(def (simple-method-combination-init name)
-  (extend-record 'around '()
-   (extend-record name '()
-    empty-record)))
+    (λ (inherited _self)
+      (let* ((subs       (or inherited empty-record))
+             (per-method (or (subs method-id) empty-record))
+             (tag-list   (or (per-method tag) '())))
+        (extend-record method-id
+          (extend-record tag (method-cons method-fn tag-list) per-method)
+          subs)))))
+
+;; standard-sub-method-spec : Tag → MethodId → MethodFn → ModExt
+;;   (sub-method-spec with standard-method-cons; 1st arg is Tag, 2nd is MethodId)
+(def standard-sub-method-spec (sub-method-spec standard-method-cons))
+
+;; method-combination-init-spec : MethodId → InitRecord → ModExt
+;;   InitRecord = record {tag: List(MethodFn), ...}
+;; Initializes sub-methods[method-id] with init-record if not already present.
+(def (method-combination-init-spec method-id method-combination-init)
+  (field-spec 'sub-methods
+    (λ (inherited _self)
+      (let ((subs (or inherited empty-record)))
+        (if (subs method-id)
+          subs
+          (extend-record method-id method-combination-init subs))))))
+
+;; standard-method-combination-init : InitRecord  {before:() after:() around:() primary:()}
 (def standard-method-combination-init
-   (extend-record 'before '()
-    (extend-record 'after '()
-     (simple-method-combination-init 'primary))))
+  (extend-record 'before '()
+   (extend-record 'after '()
+    (simple-method-combination-init 'primary))))
 }
 
 Then there is the question of who is responsible for initializing
@@ -1031,12 +1061,12 @@ then the @c{primary} methods, and finally the @c{after} methods in reverse order
 The @c{call-chain} function chains methods through an inherited @c{call-next-method}
 argument that, if called with no argument, calls the next method with the same arguments,
 but, if called with arguments, passes them to the subsequent methods.
-The @c{progn-method-most-specific-} (-first and -last) methods chain the execution of methods
+The @c{progn-methods-most-specific-} (-first and -last) methods chain the execution of methods
 for @c{before} and @c{after} methods respectively.
 The @c{standard-no-applicable-method} is a good default when no method is defined.
 And @c{standard-compute-effective-method} finally
 computes the effective method from the sub-methods.
-The @c{abort} are a poor man’s error mechanism in case the @c{before} or @c{after}
+The @c{abort} is a poor man’s error mechanism in case the @c{before} or @c{after}
 methods try to invoke their @c{super} argument as a @c{call-next-method}.
 
 @Code{
@@ -1174,7 +1204,8 @@ try to invoke their @c{super} argument as a @c{call-next-method}.
     (λ (x y) (cons x y))
     'most-specific-last))
 }
-You can define then initialize a function with specifications like this one:
+You can define then initialize a method that uses a non-standard method combination
+by using specifications like this one:
 @Code{
 (def (list-method-init-spec method-id)
   (mix
@@ -1226,7 +1257,7 @@ to suitably initialize the method and its sub-methods,
 based on a @c{compute-effective-foo-method} function, and a @c{foo-method-combination-init} record;
 they would also define @c{foo-method-spec} or such for each sub-method,
 either using @c{standard-sub-method-spec}, or
-@c{sub-method-spec} with an appropriate a specialized @c{method-cons} argument
+@c{sub-method-spec} with an appropriate specialized @c{method-cons} argument
 to pre-compose the sub-method specifications in advance of @c{compute-effective-foo-method}.
 
 Suitably tagged method specifications can then be used in a structured way to enact any kind of
@@ -1345,7 +1376,7 @@ and the specification, prototype or class on the other hand.
 You can think of it as being in a relational data table indexed by two fields,
 the gf and the specification, or hash-table indexed by the pair.
 
-Generic function in the context of higher-order FP introduces some extra complexity.
+Generic functions in the context of higher-order FP introduces some extra complexity.
 Since methods don’t have a single owner but two,
 method lifetime management can become tricky:
 if either the generic function or the specification becomes unreachable,
@@ -1478,7 +1509,8 @@ the refined method might not be able to see the state of the object,
 or that state may have to be shared more broadly than desired.
 Finally, there is no good way to “call the next method” and compose multiple inherited behavior,
 and every programmer of every part of the protocol would have to cooperate with the pattern,
-which is hard to enforce.
+which is a hard discipline for a programmer to follow, and
+a near impossible one to enforce upon others.
 
 A more sophisticated approach known as the “visitor pattern” @~cite{GoF1994},
 is both a special case of double dispatch and a generalization of it.
@@ -1486,7 +1518,7 @@ A general-purpose method traditionally called @c{accept} takes a “visitor” o
 and each class @c{Foo} calls the special-purpose method @c{visitFoo} on the visitor,
 with the current object (of class @c{Foo} indeed) as parameter.
 The visitor pattern is thus an instance of double dispatch,
-that essentially provides a translation from the class namespace to the method namespace.
+wherein programmers essentially create a translation from the class namespace to the method namespace.
 Each visitor can then provide a method for each the specifications it wants to support;
 and visitors can themselves be extended with further methods to support further specifications,
 making them more extensible than e.g. pattern-matching on argument classes.
@@ -1495,7 +1527,9 @@ and the further arguments, you can use chains of visitors to implement all kinds
 Compared to regular double dispatch, the visitor pattern is more general, and
 crucially allows for operations being defined after the class is defined.
 But the visitor pattern also involves more boilerplate,
-having to define visitor classes with all the required information.
+having to define visitor classes with all the required information:
+A third-and-a-half-class entity that involves more code,
+but a least following a well-defined uniform convention.
 Importantly, the visitor pattern also requires all state to be public,
 or otherwise shared with all possible present and future visitors.
 Finally, there is still no good way to support “call-next-method”
@@ -1529,11 +1563,101 @@ Multimethods can thus naturally leverage and extend the techniques used for mult
 linearizing the order of methods,
 method combination based on the resulting precedence list, etc.,
 as done by CLOS @~cite{Bobrow1988CLOS}.
-Still, some languages like Dylan @~cite{Shalit1996} apply linearization to each argument,
+Conversely, some languages like Dylan @~cite{Shalit1996} apply linearization to each argument,
 and can linearize tuples of arguments still, yet apply the “conflict” view of inheritance
 in case of multiple incomparable tuples of arguments for the next method.
 And other languages sadly just adopt conflict all the way
 @~cite{Chambers1992 Salzman2005}.
+
+Yet, the same argument in favor of linearization applies
+for multiple dispatch as well as for multiple inheritance:
+Any side effects in your methods (that, in general case, exist)
+will necessarily be ordered one way or the other;
+the only question is whether the system automates a coherent order,
+or puts the onus onto users—at which point it will be both onerous and incoherent.
+Linearization is the necessary process that solves this ordering consistently
+(see the desirable consistency constraints described in @secref{CiMR}).
+Any rejection of linearization leads to a “conflict” view of inheritance (or lack thereof),
+that is costly, inexpressive, lossy, and generally counter-productive.
+
+@;{
+Consider a information-theoretic analysis of how much the above.
+
+We can try to simplify the problem into hopefully useful approximations
+by describing the system in terms of some parameters
+for which we use single “typical” numbers instead of complete distributions.
+
+- The total number of concrete classes in a codebase or ecosystem is C.
+  These are the types of the entities that will actually be used at runtime.
+  In languages with no inheritance, this is just the number of instantiated types.
+  Given a program design, C does not depend on the language used;
+  but of course, languages will influence which designs are more affordable to develop.
+  A non-trivial graphical application in a modern language (say JavaScript)
+  will typically have 50 to 500 user-defined classes,
+  maybe a bit less for simple applications based on frameworks leveraging higher-order functions,
+  maybe a lot more (many thousands) for more complex applications.
+  The total number of classes in Quicklisp is over 16000, plus over 2800 structs;
+  many apps do with very few classes, but some big apps have thousands.
+  Java has much wider adoption, and is very class-heavy, so numbers skyrocket,
+  with thousands of user-defined classes in a typical application,
+  often hundreds of thousands including dependencies, and up to a billion defined total.
+
+- By contrast, we may want to count total number T of traits in the same codebase.
+  A trait is a recognizable systematic unit of behavior, that may be repeated
+  many times over the program (in which case it is a fourth-class *design pattern*)
+  or factored out into actual internal (first-class or second-class) entities.
+  In an ideally expressive programming language using flavorful multiple inheritance, T>C,
+  and you never need to repeat yourself.
+  In a horribly mismaintained code base in an inexpressive programming language,
+  you might have C>T!, as the same traits end up endlessly duplicated and recombined
+  in all possible permutations
+  (and that's assuming we can summarize each combination down to the order in which
+  each trait is used at most once).
+
+- The number of direct dependencies we will treat as a single typical number D,
+  even though it's more of a distribution d(t), and a the bottom of the dependency graph
+  you have at the very least d-1 base traits with strictly fewer than d direct dependencies.
+  In the vast number of cases, d is between 1 and 3, and we can use 2 as a "typical" value.
+
+- Similarly, we can consider the typical size P of the precedence list:
+  how many traits a concrete class typically combines. Obviously D < P < T.
+
+- We can also consider a factor I of interaction between traits, corresponding to how much
+  the traits in a given precedence list tend to override each other's methods.
+  I is a number between 0 and 1. When I=0, the traits are always independent from each other;
+  when I=1, the traits constantly interact with each other.
+
+
+Given these parameters, we can analyze how useful the various kinds of inheritance can be.
+
+- Without any inheritance, every class must be written from scratch.
+  The traits are fourth-class "design patterns" that programmers have to duplicate
+  and repeat all over again. The total size of the code required is C*P*M.
+
+- With single inheritance, you don't need to repeat traits as long as they are part of
+  a shared line of ancestors. However, given the branching factor D, the shared line
+  is typically of size S=(log P / log D).
+
+considering some could have additional parameters, and further simplify by replacing each parameter by a single number representing its (weighted?) average, median, mode, maximum, etc., as appropriate depending on the context.
+
+For example, with can call P the typical size
+(obviously P < N, and for large enough applications, P << N).
+We can call D the number of direct parents,
+depth of the dependency graph between traits, number of parents for non-base classes, etc. We could e.g. have a random graph starting from 1 node, and each new node picks up to D random direct parents, removing those that cause an inconsistency or redundancy if added. Usually we have N >> D (N is many thousands in a rich Lisp application, D averages under 5 and maxes out around 20). We can also assume an average of M methods that matter per class; M is also relatively small, let's say it averages under 32.
+
+With "flavorful" multiple inheritance, and its superclass linearization, you can indeed have each trait be a class, define each method once per trait, and have code of size Θ(T*(D+M)), and it will automatically combine all the effects of all methods in a coherent order. That's the minimal code size, really.
+
+Mixin inheritance requires Θ(T*(P+M)) which is only a little worse, but the difference increases the deeper the OO gets.
+
+At the opposite, with no inheritance, each combination of traits requires its own incarnation, which on average involves code of size O(N*P*M). That's making things worse by a factor N. That's much worse.
+
+With single inheritance, any trait present in more than exact ancestry tail must be duplicated.
+
+flavorless multiple inheritance, and mixin inheritance.
+
+Single inheritance requires
+}
+
 
 Linearization of tuples typically happens via
 the lexicographical order of per-argument linearizations:
@@ -2112,7 +2236,7 @@ or will level the playing field in favor of new languages, static or dynamic.
 
 @exercise[#:difficulty "Easy"]{
   Implement the @emph{product} of two (or three, or more) lenses,
-  that allows view and update of a pair (or list) of data each based on it lens.
+  that allows view and update of a pair (or list) of data each based on its lens.
   Then, assuming you implemented POI as in @exercise-ref{exPOI},
   implement views, updates and lenses for POI—first
   for a tuple (e, s, p) of the extension, suffix flag and parent list list,
@@ -2129,9 +2253,9 @@ or will level the playing field in favor of new languages, static or dynamic.
     For @c{min} and @c{max}, note the existence of IEEE floating point number @c{+inf.0} and @c{-inf.0},
     as plausible values to return when no method is defined, though beware that
     using them may on some Scheme implementations cause undesired coercion to flonum,
-    and so does not work quite as should with integers.
+    and so does not work quite as it should with integers.
     I therefore do not recommend using them implicitly over issuing an error as CLOS does in this case.
-    Users can always explicitly include such a value in as base method
+    Users can always explicitly include such a value in as a base method
     if it works for them, e.g. because they are using flonums, anyway.
     Or they can define their own variant of @c{min} or @c{max}
     and corresponding method combinations that will avoid coercing the result.
@@ -2176,9 +2300,9 @@ or will level the playing field in favor of new languages, static or dynamic.
 
 @exercise[#:difficulty "Medium"]{
   Implement method caching for generic functions:
-  the generic function maintains a LRU cache of the last 8 times it was called,
+  the generic function maintains an LRU cache of the last 8 times it was called,
   on what (tuples of) specifications it was called,
-  what effective method resulted.
+  and what effective method resulted.
 
   Harder: use macros to instead (or additionally) implement
   a 4-deep LRU cache of effective methods @emph{per (dynamic) call site}
@@ -2191,13 +2315,14 @@ or will level the playing field in favor of new languages, static or dynamic.
   Which arguments would you have in which order, and why?
   Consider: the object to display itself, output display port being used
   that can be of many kind (Window system, text terminal, text file stream, binary stream, etc.),
-  some “descriptor” for the many options with which to interpret or decoded the object encoding
-  (unit for the numbers,language
+  some “descriptor” for the many options with which to interpret or decode the object encoding
+  (unit and bounds for a number, language used, entering digits vs sliding a ruler
+  or turning a knob, tying the number to some other visible effect, etc.).
 }
 
 @exercise[#:difficulty "Medium, Recommended"]{
   If you did exercise @exercise-ref{08to09}, compare
-  your attempt at explaining these advanced topics OO with how I did.
+  your attempt at explaining these advanced OO topics with how I did.
   What aspects did you anticipate? What surprised you?
   What did you do better or worse?
 }
