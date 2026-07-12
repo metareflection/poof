@@ -1524,7 +1524,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 @book{Cardelli1985,
   title={On understanding types, data abstraction, and polymorphism},
-  author={Cardelli, Luca and Wegner, Peter},
+  author={Luca Cardelli and Peter Wegner},
   year={1985},
   publisher={Brown University. Department of Computer Science},
   url={http://lucacardelli.name/Papers/OnUnderstanding.A4.pdf},
@@ -2771,14 +2771,15 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-@TechReport{Cardelli1992,
+@TechReport{Cardelli1989,
   title={Extensible records in a pure calculus of subtyping},
   author={Luca Cardelli},
-  year={1992},
+  year={1989},
   institution={Digital. Systems Research Center},
   number={SRC-RR-81},
   url="https://bitsavers.trailing-edge.com/pdf/dec/tech_reports/SRC-RR-81.pdf",
   note={.
+    Report originally pusblished in 1989, revised in 1992, 1993, included in a book in 1994.
     Cardelli presents F≤ρ, a calculus for records with row-variables and subtyping,
     that he translates to F≤, a known variant of System F (second-order λ-calculus)
     with subtyping but without row variables.
@@ -5349,7 +5350,7 @@ and Fiech, Adrian",
   lastchecked={2026-02-05},
   note={.
     Originally published as MSH in 2015, then renamed to Hoop in 2020, Hoop is
-    an pure functional object system written in Haskell.
+    a pure functional object system written in Haskell.
     Hoop uses template Haskell to provide a nice syntax to the underlying functionality,
     where manually expanding said syntax would be verbose and redundant;
     but it does not “cheat” in any way, e.g.
@@ -6068,323 +6069,3 @@ and Fiech, Adrian",
     and you must use the Internet Archive for that.
   }
 }
-
-%% UNCLASSIFIED
-
-%%% TODO: Add the following...
-
-% Conway's Law
-% Conway, Melvin (1968). "How do committees invent" (PDF). Datamation: 28–31.
-
-% Wegner Zdonik "Inheritance as an incremental modification mechanism or what Like is or isn't like" 1988
-
-% Bracha and Lindstrom 1992 Modularity meets inheritance
-
-% 2000 Oleg Kiselyov USENET post on okmij.org on the possibility of a pure variant of YASOS ?
-
-% https://okmij.org/ftp/Haskell/extensible/more.pdf
-
-% http://okmij.org/ftp/Computation/Subtyping/
-
-% https://okmij.org/ftp/Computation/typeclass.html#Kaes
-
-% Kaes ESOP 1988
-% Stefan Kaes: Parametric overloading in polymorphic programming languages
-%Proc. ESOP 1988, Springer's LNCS 300, pp. 131-144
-% <http://link.springer.com/chapter/10.1007%2F3-540-19027-9_9>
-
-% Stefan Kaes: Parametrischer Polymorphismus, Ueberladungen und Konversionen
-% Dissertation: TU Darmstadt, Fachbereich Informatik, 2005
-% <http://tuprints.ulb.tu-darmstadt.de/epda/000544/>
-
-% Featherweight Jigsaw - Replacing inheritance by composition in Java-like languages
-% https://dl.acm.org/doi/10.1016/j.ic.2012.02.004
-
-% C++ template lambda calculus https://gist.github.com/glaebhoerl/8970f682958826ed36f9
-
-% Hewitt, Carl, Viewing Control Structures as Patterns of Passing Messages, MIT AI Lab Memo 410, Dec 1976.
-
-% C2 wiki?
-% https://wiki.c2.com/?PrototypeBasedProgramming
-% https://wiki.c2.com/?ClassesPrototypesComparison
-% https://wiki.c2.com/?PrototypeBasedLanguage
-% "Popular" Prototype language: NewtonScript, LambdaMOO, Io, REBOL, Lua...
-
-% A History of Haskell: being lazy with class
-% Simon Peyton Jones
-% The Third ACM SIGPLAN History of Programming Languages Conference (HOPL-III) | June 2007
-% https://www.microsoft.com/en-us/research/publication/a-history-of-haskell-being-lazy-with-class/
-
-% Barak Pearlmutter & Kevin Lang's Oaklisp https://github.com/barak/oaklisp
-
-% Look at papers that cite Bracha 1990 on Semantic Scholar, including:
-% https://www.semanticscholar.org/paper/Function-Inheritance-%3A-Monadic-Memoization-Mixins-Brown-Cook/d2bf5dc5c6c6bff91d10a0e2dceaaa13c2064765
-% https://www.semanticscholar.org/paper/Object-Inheritance-Without-Classes-Jones-Homer/3dbc00e08dd1fa7c29faae9b2da544fb7e8d5579
-
-% Modularity: ch4 and ch9 of taoup, e.g. http://www.catb.org/~esr/writings/taoup/html/ch04s02.html#orthogonality
-
-% Semantics and Types for Objects with First-Class Member Names
-
-% Joe Gibbs Politz, Arjun Guha, Shriram Krishnamurthi
-% Foundations of Object-Oriented Languages, 2012
-% https://cs.brown.edu/~sk/Publications/Papers/Published/pgk-sem-type-fc-member-name/
-
-% Erik Ernst's work on gBeta:
-% https://www.researchgate.net/publication/2806012_gbeta_-_a_Language_with_Virtual_Attributes_Block_Structure_and_Propagating_Dynamic_Inheritance
-@techreport{Ernst2000,
-  author={Erik Ernst},
-  title={gbeta --- a Language with Virtual Attributes, Block Structure, and Propagating, Dynamic Inheritance},
-  institution={Department of Computer Science, University of Aarhus},
-  series={DAIMI PB},
-  number={549},
-  year={2000},
-  month=mar,
-  doi={10.7146/dpb.v29i549.7654},
-  url={https://tidsskrift.dk/daimipb/article/view/7654},
-  note={Comprehensive description of gbeta, a successor to BETA featuring first-class patterns, pattern computations, dynamic inheritance, mixins, virtual patterns, and family-oriented extensibility.}
-}
-
-% Design Rules: The Power of Modularity,  by Baldwin & Clark
-
-% Dart Book, by Gilad Bracha, Section 2.15 on mixins + examples all around, 5.9 on modularity
-
-% CUE rejects inheritance, instead has value/pattern unification along a lattice: https://cuelang.org/docs/concepts/logic/
-
-% https://www.piumarta.com/software/id-objmodel/objmodel2.pdf
-% OOPSLA07
-
-% Classes vs. Prototypes - Some Philosophical and Historical Observations
-% Antero Taivalsaari • Journal of Object-Oriented Programming • Published 1996
-% https://citeseerx.ist.psu.edu/doc_view/pid/30fcb7807ce73f16222761b97e36154f12349efb
-% Indeed very philosophical with not enough computer science
-
-% Jonathan Aldritch "The Power of Interoperability: Why Objects are Inevitable" Onward! 1993
-
-% Zhang, Sun, Oliveira "Compositional Programming" TOPLAS 2021
-
-% CECIL also had prototype inheritance / classless objects
-% A cursory look at the manual does not mention mutable parents, however
-
-% Guy Steele "Objects have not failed" 2002 https://www.dreamsongs.com/ObjectsHaveNotFailedNarr.html
-
-% Luc Steels "An Applicative View of OOP" 1982
-
-% 2003  Tom Hirschowitz  Call-by-value mixin modules
-% https://hirschowitz.pages.math.cnrs.fr/phd/these-tom.pdf
-% https://hirschowitz.pages.math.cnrs.fr/
-
-% https://www.quora.com/Why-is-functional-programming-seen-as-the-opposite-of-OOP-rather-than-an-addition-to-it/answer/Henry-Story
-
-% https://people.mpi-sws.org/~rossberg/mixml/
-% Andreas Rossberg, Derek Dreyer. Mixin' Up the ML Module System. TOPLAS 35(1), 2013. Revised and significantly extended version of the ICFP paper, including material from the appendices and a lot more.
-% Derek Dreyer, Andreas Rossberg. Mixin' Up the ML Module System. ICFP, 2008.
-% Derek Dreyer, Andreas Rossberg. Mixin' Up the ML Module System (Extended Mix). Expanded version including technical appendices, 2008.
-
-% More digging on the origins of OO:
-% https://x.com/Ngnghm/status/1898493837040849348
-
-% B. Jacobs, Coalgebraic Reasoning about Classes in Object-Oriented Languages. Electr. Notes in Theor. Comp. Sci. 11, 1998. (Special issue on the workshop Coalgebraic Methods in Computer Science (CMCS 1998))
-
-% Peter Wegner. Concepts and Paradigms of O..O..P.. 1990
-
-% Goguen...
-
-% change-class: https://github.com/shriram/plai-public/issues/60
-
-% Bob Harper PFPL existential types / inversion of scope
-
-% Category theory:
-
-% Category Theory in Programming
-% Noah Ma <noahstorym@gmail.com>
-% https://docs.racket-lang.org/ctp/index.html
-
-% See this article and its bibliography? https://scholarworks.iu.edu/iuswrrest/api/core/bitstreams/2706b860-ef5e-42b9-98c6-f29e3486220e/content
-
-% cite Douglas Engelbart's 1968 mother of all demos
-
-% https://www.jot.fm/contents/issue_2017_02/article2.html
-
-% https://www.dreamsongs.com/Files/LASC-Overview.pdf
-% The Common Lisp Object System by Linda G. DeMichiel
-
-% Does Yaohan Chu introduce the concept of HLL, or is it earlier?
-% https://dl.acm.org/doi/pdf/10.1145/800181.810257
-
-% 2024 Stephen H. Kaisler
-% Medley LOOPS: The Basic System
-% a.k.a. "Lisp Object-Oriented Programming System (LOOPS) Volume I: The Basic System"
-
-% https://www.jot.fm/issues/issue_2005_01/column2/
-
-% Jonathan Aldrich workshop paper on capability-safe reflection and an ECOOP on modular reasoning in aspect-oriented programming (the latter a bit dated now).
-
-% https://github.com/fogus/lang-genealogy
-
-% https://research.scheme.org/lambda-papers/
-
-% [CONFLANG23] Evolving a configuration language in place at Google scale
-% https://2023.splashcon.org/details/conflang-2023-papers/7/Evolving-a-configuration-language-in-place-at-Google-scale
-% https://www.youtube.com/watch?v=Dm8hygWaMXg
-% Talk about reimplementing the language and evolving its semantics a bit---but doesn't describe the semantics.
-
-% Hyperfunctions: Communicating Continuations
-% https://doisinkidney.com/pdfs/hyperfunctions.pdf
-
-% Programming Language Pragmatics
-% https://mlscott14627.github.io/PLP5e_online/
-
-% https://github.com/arl/E-Books-1/tree/master/program%20language
-
-% David A. Fisher, “Control Structures for Programming Languages” (CMU, May 1970):
-% https://cds.cern.ch/record/697456/files/CM-P00068047.pdf
-
-% The Implementation of Functional Programming Languages by Simon Peyton Jones (1987)
-% url={https://simon.peytonjones.org/slpj-book-1987/},
-% doi={10.5555/1096899},
-% Nah, only has lazy Y. For lazy languages only.
-
-% Never implemented, modularity and attempt at specification / verification,
-% No story for quantification, goes nowhere.
-% https://www.cs.cmu.edu/~Compose/VerificationofAlphard1976.pdf
-% Wulf, William A.; London, Ralph L.; Shaw, Mary (December 1976). "An Introduction to the Construction and Verification of Alphard Programs" (PDF). IEEE Transactions on Software Engineering. 2 (4): 253–265. doi:10.1109/TSE.1976.233830.
-
-% https://ootips.org/history.html
-% https://news.ycombinator.com/item?id=36826762
-
-% Tribute to Daniel Bobrow by his brother. Weak on technical content.
-% https://ojs.aaai.org/aimagazine/index.php/aimagazine/article/view/2770
-% DOI: https://doi.org/10.1609/aimag.v38i4.2770
-% doi={10.1609/aimag.v38i4.2770}
-
-% TODO: Open Data Types and Open Functions https://www.andres-loeh.de/OpenDatatypes.pdf
-% Andres Löh and Ralf Hinze, PPDP 2006 -- not really OO, just use of typeclasses.
-% cites O'Haskell (Norlander 2001) vs OOHaskell (Kiselyov & Lämmel 2005)
-
-% TODO: more papers by Ducournau
-% https://dl.acm.org/doi/abs/10.1145/1391956.1391960
-% https://dl.acm.org/doi/abs/10.1145/1639949.1640093
-% https://dl.acm.org/doi/abs/10.1145/1922649.1922655
-
-% https://hal-lirmm.ccsd.cnrs.fr/lirmm-00659592
-
-
-% The NIMBLE Project - Real-time common LISP for embedded expert systems applications
-% Henry Baker
-% https://doi.org/10.2514/6.1989-3140
-
-% Comb inheritance
-% https://thenewobjective.com/types-and-programming-languages/comb-inheritance/
-
-% Bjarne Stroustrup - Object Oriented Programming without Inheritance - ECOOP 2015
-% https://www.reddit.com/r/cpp/comments/3hkfxr/bjarne_stroustrup_object_oriented_programming/
-
-
-% call-by-value, call-by-name, CPS
-@InProceedings{herbelin2007,
-  title={The duality of computation},
-  author={Hugo Herbelin and Pierre-Louis Curien},
-  url={https://inria.hal.science/inria-00156377},
-  note={http://www.acm.org},
-  booktitle={SIGPLAN Notice},
-  address={Montréal, Canada},
-  publisher={ACM},
-  series={SIGPLAN Notice},
-  volume={35/9},
-  number={9},
-  pages={233-243},
-  year={2000},
-  month=Sep,
-  keywords={call-by-name ; call-by-value ; sequent calculus ; CPS-translations ; Curry-Howard-de Bruijn proof-as-program correspondence ; duality ; lambda-calculus},
-  pdf={https://inria.hal.science/inria-00156377v1/file/icfp-CuHer00-duality_errata.pdf},
-  hal_id={inria-00156377},
-  hal_version={v1},
-  doi={10.1145/351240.351262},
-}
-
-
-% TODO NOTE=
-% More on Subjective Dispatch
-@InProceedings{Gonzalez2007,
-  author={Sebastián González and Kim Mens and Patrick Heymans},
-  title={Highly Dynamic Behaviour Adaptability through Prototypes with Subjective Multimethods},
-  booktitle={Proceedings of the 2007 Symposium on Dynamic Languages},
-  series={DLS '07},
-  pages={77--88},
-  publisher={ACM},
-  year={2007},
-  doi={10.1145/1297081.1297094},
-  url={https://doi.org/10.1145/1297081.1297094}
-}
-
-@TechReport{Dylan1992,
-  author={Apple Computer, Inc.},
-  title={Dylan: An Object-Oriented Dynamic Language},
-  institution={Apple Computer, Inc.},
-  year={1992},
-  month={April},
-  note={Technical report; available via historical archives or OpenDylan documentation},
-  url={https://opendylan.org/books/drm/}
-}
-
-% https://dl.acm.org/doi/10.1145/3563835.3568735
-
-@Article{Fisher2008,
-  author={David Fisher and Olin Shivers},
-  title={Building language towers with Ziggurat},
-  journal={Journal of Functional Programming},
-  volume=18,
-  number={5-6},
-  year=2008,
-  month={May/June},
-  pages={707--780},
-  doi={10.1017/S0956796808006928},
-}
-
-% https://craftinginterpreters.com/contents.html
-% ch27 discusses classes and instances.
-
-% https://github.com/IUCompilerCourse/public-student-support-code
-% https://t.co/N9XvyHzwtO https://uc741c837fd0942d84d7b2c06c6a.dl.dropboxusercontent.com/cd/0/get/C9Z6dUVXWqqS5dHs6331gmT4s7eBqzZI9jjO7sQiOr18NHwZUNGH0h4QY5-Y19H0utJCvveG5g3dkocofjpKr1GzRBqp0_6TsRQ6_HK7nbnK-9G3bDq2Iw4G8qE3S0xJawOe8cjbJfMT5_eq71dYUVpF/file
-
-% https://openlibrary.org/books/OL387681M/Prototype-based_programming
-
-% https://www.quora.com/How-did-the-concept-of-inheritance-develop-in-programming-languages-and-who-played-key-roles-in-its-evolution/answer/Fran%C3%A7ois-Ren%C3%A9-Rideau
-
-% https://www.quora.com/How-do-cognitive-biases-influence-the-perceived-opposition-between-functional-and-object-oriented-programming/answer/Fran%C3%A7ois-Ren%C3%A9-Rideau
-
-% https://www.cs.cmu.edu/~crary/819-f09/Landin66.pdf
-
-% PLOT, 2006-2008 http://users.rcn.com/david-moon/PLOT/index.html
-
-% https://parentheticallyspeaking.org/articles/bicameral-not-homoiconic/
-
-% lazy evaluation (Friedman & Wise 1976)
-
-% Alan Kay
-% https://www.mail-archive.com/fonc@vpri.org/msg03121.html
-
-% Gilad Bracha, Peter von der Ahé, Vassili Bykov, Yaron Kashai, William Maddox, and Eliot Miranda.
-% "Modules as Objects in Newspeak" 2010
-
-@techreport{James2012,
-  title={The Two Dualities of Computation: Negative and Fractional Types},
-  author={Roshan P James and Amr Sabry},
-  year={2012},
-  institution={Citeseer},
-  url={https://web.archive.org/web/20121229014345/https://www.cs.indiana.edu/~sabry/papers/rational.pdf},
-  note={.
-  }
-}
-
-% Ole-Johan Dahl. 2004. The Birth of Object Orientation: the Simula Languages. In Lecture Notes in Computer Science. Springer Berlin Heidelberg, 15–25. https://doi.org/10.1007/978-3-540-39993-3_3
-% https://sci-hub.ru/10.1007/978-3-540-39993-3_3
-
-% Roger King. OOPSLA 1988. My cat is object-oriented.
-% https://dl.acm.org/doi/10.1145/63320.66469
-% https://archive.org/details/objectorientedco0000unse
-
-% Crichton and Krishnamurthi
-% A Core Calculus for Documents, Or, Lambda: The Ultimate Document
-% 2024
-% https://cs.brown.edu/people/sk/Publications/Papers/Published/ck-core-calc-doc-lambda-ultimate-doc/paper.pdf

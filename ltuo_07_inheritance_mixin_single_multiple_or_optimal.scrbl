@@ -353,18 +353,20 @@ Failing to learn from Flavors, C++ @~cite{Stroustrup1989}
 (and after it Ada) not only adopts the conflict view of Smalltalk,
 it also, like Simula @~cite{Krogdahl1985} or CommonObjects @~cite{Snyder1986},
 tries to force the ancestry DAG into a tree!
-Self initially tried a weird resolution method along a “sender path”
-that each time dived into the first available branch of the inheritance DAG
-without backtracking @~cite{parentsSharedParts1991},
-but the authors eventually recognized how wrongheaded that was,
-and reverted to—sadly—the conflict paradigm @~cite{self2007hopl}@xnote["."]{
-  Like the “visitor pattern” approach to multiple dispatch (see @secref{MD}),
-  Self’s once “sender path” approach to multiple inheritance
-  fails to capture semantics contributed by concurrent branches of a partial order,
-  by eagerly taking the first available branch without backtracking.
-  In the end, like the “conflict” approach to method resolution though in a different way,
-  it violates the “linearity” property I describe in @secref{CiMR},
-  which explains why it cannot be satisfying.
+Self initially tried a “sender path” resolution method,
+that is a variant of the conflict view with a builtin heuristic for conflict resolution:
+going into the first relevant branch of the inheritance DAG
+without backtracking @~cite{parentsSharedParts1991}.
+The authors eventually recognized how wrongheaded that was,
+only to revert to—sadly—the conflict view without resolution heuristic @~cite{self2007hopl}@xnote["."]{
+  Like the most naive variant of the “visitor pattern”
+  approach to multiple dispatch (see @secref{MD}),
+  Self’s once “sender path” approach to multiple inheritance has tunnel vision,
+  or anterograde amnesia: once it visits a branch of the inheritance DAG,
+  it becomes unable to capture semantics contributed by concurrent branches of the DAG.
+  But when you look at it carefully, the tunnel vision is an intrinsic limitation of
+  the conflict view of inheritance;
+  the automatic “sender path” heuristic only makes this limitation more automatically annoying.
 }
 
 I will focus mainly on explaining the correct,

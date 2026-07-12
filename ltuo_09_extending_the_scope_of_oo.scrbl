@@ -34,7 +34,7 @@ This approach I propose to specifying OO software is a potential game-changer
 in making OO even more modular than it used to be, because
 method specifications can now be considered individually,
 then grouped incrementally into larger algebraically coherent chunks,
-and at each step, parsed, defined, typed, analyzed, proven correct, and generally reasoned about,
+and at each step, parsed, defined, typed, analyzed, proved correct, and generally reasoned about,
 at whichever granularity they make sense—whereas before then,
 you couldn’t even start to parse a definition, much less reason about it,
 until after it was part of a potentially very large class, involving more semantic context
@@ -54,7 +54,7 @@ I may as well enjoy the benefits for basic features as well.
 A lens @~cite{bananas1991 Foster2007CombinatorsFB oconnor2012lenses Pickering2017Optics}
 is the pure Functional Programming take on what in stateful languages would typically be
 a C pointer, ML reference, Lisp Machine locative, Common Lisp place, etc.:
-a way to pin-point some location to inspect and modify within the wider program’s state.
+a way to pinpoint some location to inspect and modify within the wider program’s state.
 A lens is determined by a “view”, a function from a “source” to a “focus”;
 and an “update”, a function from a change to the focused data to a change
 of the wider state from “source” to an updated “target”@xnote["."]{
@@ -80,7 +80,7 @@ of the entry with key @c{(42, "baz")} within a table.
 
 @Paragraph{Monomorphic Lens}
 A monomorphic lens (or simple lens), can be seen as
-a pair of a view function @c{s → a}, and an update function @c{(a → a) → s → s}.
+a pair of a view function @c{s → a} and an update function @c{(a → a) → s → s}.
 The view function allows you to get a current “inner” value under focus, of type @c{a},
 from the “outer” context, of type @c{s}.
 The update function allows you to see how a local change in the “inner” value under focus
@@ -194,14 +194,14 @@ and @c{compose-update} is just @c{compose}.
   that some claim is more efficient, “van Laarhoven” lenses,
   but I will avoid it for the sake of clarity.
 }
-Views, Updates, Lenses are categories, wherein composition is associative,
+Views, Updates and Lenses each form categories, wherein composition is associative,
 and identities are neutral elements.
 
 
 @Paragraph{Field Lens}
 Given some record representation, a view for a field of identifier key @c{k}
-is just a function that returns the field value @c{r.k} for given as argument the record @c{r},
-whereas an update gives you a change in record given a change for that field.
+is just a function that, given as argument the record @c{r}, returns the field value @c{r.k};
+whereas an update gives you a change in this record given a change for that field.
 More sophisticated representations will have more sophisticated lenses,
 but here is what it looks like in my trivial representation of records
 as functions from identifiers to value, where @c{r.k = (r 'k)}:
@@ -264,7 +264,7 @@ They only coincide just before the end of the specification,
 to obtain a closed modular definition you can resolve with a single use of the Y combinator.
 
 One way to think of a skew lens is as similar to the pair of a periscope
-through with a submarine pilot may look outside,
+through which a submarine pilot may look outside,
 and the wheel or yoke through which they may pilot their boat:
 the submarine pilot is the sensactor, and the skew lens
 transforms the I/O loop of the pilot into the I/O loop of the submarine.
@@ -287,8 +287,8 @@ or an extension focus completely disjoint from the context being observed
 but in an exaggerated style).
 
 Now, inasmuch as you consider those function types as a model for stateful mutation
-with in-memory pointers, that means that the “read pointer” @c{r}
-and the “(re(ad)-write) pointer” @c{p} (with its “initial value” @c{i}) are independent;
+with in-memory pointers, that means that the “view read pointer” @c{v}
+and the “focus update pointer” @c{f} are independent;
 in a mutable variant of a skew lens, you will have two pointers,
 not just one as with monomorphic or polymorphic lens.
 
@@ -335,7 +335,7 @@ into another closed specification focus, such that a local closed specification
 you will use @c{(compose-lens (field-lens 'foo) (field-lens 'bar))} as your @c{SpecFocus}.
 
 As is a theme in this book, though,
-and which was never discussed before in the OO literature,
+and as far as I know has never been discussed before in the OO literature,
 the interesting entities are the @emph{open} specifications, not just the closed ones.
 This is what makes skew lenses interesting.
 If you considered only closed specifications, you would only consider monomorphic lenses
@@ -364,15 +364,15 @@ update-lens : SkewLens i r p j s q → Update j q jj qq →
   (make-lens (l 'view) (compose (l 'update) u)))
 }
 
-More generally, given a lens @c{l} to focus on the specification,
+More generally, given a lens @c{l} focusing on the specification,
 and a lens update @c{u} to refocus on just the extension focus,
-the lens @c{(compose-lens l (update-only-lens u))} will up focus on the method at @c{u}
+the lens @c{(compose-lens l (update-only-lens u))} will adjust focus onto the method at @c{u}
 of the specification at @c{l}.
 This is a common case when specifying
-a sub-method in a methods (more on that coming),
-a method in a specification,
-a specification in a library,
-a library in the ecosystem—all while keeping the broader entity
+a sub-method within a method (more on that coming),
+a method within a specification,
+a specification within a library,
+a library within the ecosystem—all while keeping the broader entity
 as context when specifying the narrower one.
 
 @Paragraph{Broadening the Focus}
@@ -488,10 +488,10 @@ and so the error behavior is probably the safest one to use by default:
     with the specification anymore unless the user keeps it so the hard way.
     If some further program extends that prototype, it will restart from the specification,
     and ignore any update otherwise made to fields.}
-  @item{If you try to have an update function that arbitrary changes the specification
+  @item{If you try to have an update function that arbitrarily changes the specification
     to be @c{constant-spec} that constantly returns the current state of the record,
     then the result remains extensible, but in a way that forgets the formulas,
-    only remembers the current values.}
+    and remembers only the current values.}
   @item{If you update the target then the magic specification field will be erased by default,
     and the object will not be extensible through inheritance anymore,
     unless you make it so again the hard way by explicitly providing a new magic specification field.}
@@ -512,15 +512,15 @@ To a first approximation, this corresponds to using variants of these Update fun
 @subsection{Optics for Class Instance Methods}
 
 Inasmuch as classes are prototypes, the way to deal with methods on a class
-are sensibly the same as for prototypes, or a refinement thereof.
+are essentially the same as for prototypes, or a refinement thereof.
 To define more precise lenses,
 I’ll further assume the encoding of @secref{SFCTD},
 wherein you use @c{instance-call} to call an instance method,
 that extracts the type descriptor using @c{type-of},
-that it then invoked with @c{'instance-methods}, the @c{method-id}, and the element.
+that is then invoked with @c{'instance-methods}, the @c{method-id}, and the element.
 
-To modularly extend a class instance method, one needs first
-focus on it, by composing a lens focusing on a prototype for a type descriptor
+To modularly extend a class instance method, one first needs to focus on it,
+by composing a lens focusing on a prototype for a type descriptor
 with an @c{instance-method-lens} below, to obtain
 a skew lens for a specific instance method:
 @Code{
@@ -533,7 +533,7 @@ a skew lens for a specific instance method:
 Now, when specifying a class instance method, the programmer thinks in terms of
 the class instance, i.e. an element of the class’s target type.
 And his method may use @c{call-next-method} to invoke the inherited behavior,
-from the tail of class precedence list of the instance’s type.
+from the tail of the class precedence list of the instance’s type.
 However, the underlying modular extension machinery sees @c{self}, i.e. the class,
 and @c{super}, the modular definition for the method so far,
 as inherited from the tail of the class precedence list,
@@ -605,10 +605,10 @@ and using lenses and sensactors to programmatically select each time
 how and where they fit in the bigger picture.
 You can give types to method specifications independently
 from any specific surrounding prototype or class specification.
-You can reuse these specification as part of multiple prototype specifications.
+You can reuse these specifications as part of multiple prototype specifications.
 You can transform them, store and transmit them, compose them, decompose them, recompose them,
 as first class objects.
-And can build infrastructure that systematizes any design pattern you follow
+And you can build infrastructure that systematizes any design pattern you follow
 in writing these specifications.
 
 @; TODO EXAMPLES:
@@ -692,7 +692,7 @@ and builds the instance prototype by focusing and mixing:
                        (error "Missing required slot" name)))))
 }
 
-Each slot's @c{init-spec} is focused onto its field
+Each slot’s @c{init-spec} is focused onto its field
 by composing with @c{field-update},
 then all are mixed together.
 The @c{fix-record} implicit in @c{rproto←spec} closes the recursion,
@@ -743,7 +743,7 @@ used for methods, now lifted to slot initialization.
 Another fantastic contribution from Flavors @~cite{Cannon1979} is Method Combinations:
 the idea that the many methods declared in partial specifications
 are each to contribute partial information that will be harmoniously combined (mixed in),
-rather than complete information that have to compete with other conflicting methods
+rather than complete information that has to compete with other conflicting methods
 that contradict it, the winners erasing the losers.
 Win-win interactions rather than lose-lose, that was a revolution
 that made multiple inheritance sensible when it otherwise wasn’t.
@@ -758,7 +758,7 @@ Flavors notably allowed regular or “primary” methods to be extended in subcl
   Note how the default order used by Lisp works better with the normal OO extension protocol
   adopted by everyone after Smalltalk.
 }
-that could setup and tear down resources, do logging or permission checking or resource accounting,
+that could set up and tear down resources, do logging or permission checking or resource accounting,
 hold and release locks, etc.
 Because these extension points are standard, both subclasses and clients can enjoy them
 without the author of the original method of the original class having to foresee,
@@ -768,16 +768,19 @@ But that was just the default “method combination”.
 Flavors also allowed you to define methods using a “simple method combination”
 that used an operator like @c{progn} (sequential execution), @c{and} or @c{or}
 (logical conjunction or disjunction, with short-circuit evaluation)
-to combine the results of each method, evaluated either in
+to combine the results of the methods, evaluated either in
 most-specific-first or most-specific-last order, as specified by the programmer.
 Typical other operators included @c{+ * max min progn list append nconc}@xnote["—"]{
   @c{nconc} is a historical variant of @c{append} that uses side-effects
   to modify in place each non-empty list but the last, to link to the next one.
   It made sense in the slow and memory-constrained machines of the 1960s to 1980s,
-  especially so before modern garbage-collection.
+  especially before modern garbage-collection.
   But @c{nconc} rarely makes sense in modern times,
   where either the simpler and safer @c{append} is good enough,
   or optimization is better sought from a more sophisticated data representation than linked lists.
+  @c{nconc} is just the opportunity of bugs due to side-effects
+  in unexpectedly shared data structures, that even if not present,
+  might happen after some later refactoring.
 }
 but you could use any operation that makes sense for your application,
 especially if monoidal (associative and with a neutral element).
@@ -790,7 +793,7 @@ as discussed in @secref{MI}.
 But I can do better, show how to implement all other method combinations
 on top of this foundation@xnote["."]{
   Ironically, that’s the one kind of method combination @emph{not} present as a builtin
-  in the original Flavors, while the more elaborate kind were already provided:
+  in the original Flavors, while the more elaborate kinds were already provided:
   in the default “daemon” method combination,
   only one primary method (from the most specific class) would be called,
   but @c{before} and @c{after} methods were also supported
@@ -845,13 +848,13 @@ depending on the classes of the arguments.
 
 Thus, ASDF defines @c{:before} methods to validate invariants and issue errors
 before the primary methods are called,
-automatically setup some preconditions (like creating destination directories for output files),
+automatically set up some preconditions (like creating destination directories for output files),
 or detect and record dependencies between actions.
 ASDF defines @c{:after} methods to track down actions that were successfully completed
 so they do not have to be taken again, or complete system-provided behavior
 and check invariants after (re)initialization of some objects.
 And ASDF defines @c{:around} methods to fixup the results of special cases,
-setup or use caches around computations, adjust dynamic bindings around computations,
+set up or use caches around computations, adjust dynamic bindings around computations,
 or detect circular dependencies between actions.
 Other common uses of the standard method combination not illustrated by ASDF include
 logging (before, after or around) and permission checks
@@ -868,7 +871,7 @@ These methods allow ASDF to be written in a very modular and extensible style, a
 to achieve in a few thousand lines of code (and a few more for Quicklisp)
 what takes ten times more code in other languages,
 all the while exposing an extension interface actually used by many extensions:
-support for compiling and linking C, FORTRAN or Python code,
+support for compiling and linking C, Fortran or Python code,
 for automatic dependency detection, for character encodings beside UTF-8,
 for deferred code in Lisp files, for file-local variables,
 for conditional autoloading of systems, for parallel compilation, etc.
@@ -1143,7 +1146,7 @@ where @c{name} is the name of the sub-method
 (and also conventionally that of the method combination),
 @c{stop?} a predicate on a result value saying whether to short circuit evaluation,
 @c{op0} a thunk to evaluate if there are no methods (takes one dummy argument),
-@c{op1} an unary operator to run on the first method result to make it into a return value,
+@c{op1} a unary operator to run on the first method result to make it into a return value,
 @c{op2} the (curried) binary operator with which to combine
 the result from the next method and the return value from previous computations
 into a new return value,
@@ -1461,9 +1464,9 @@ Moreover, multimethods support actual win-win inheritance
 when the above design patterns typically only support conflict inheritance.
 
 At least CLOS, Clojure and Julia support multimethods,
-as well as many Lisp and Scheme object systems (include Gerbil Scheme).
+as well as many Lisp and Scheme object systems (including Gerbil Scheme).
 Many past languages including Cecil, Dylan, Fortress or Slate also did.
-A few popular languages have libraries that implement some form of it.
+A few popular languages have libraries that implement some form of them.
 @; TODO CITE
 
 @subsection{Binary Methods Done Right}
@@ -1514,22 +1517,30 @@ a near impossible one to enforce upon others.
 
 A more sophisticated approach known as the “visitor pattern” @~cite{GoF1994},
 is both a special case of double dispatch and a generalization of it.
-A general-purpose method traditionally called @c{accept} takes a “visitor” object as argument,
-and each class @c{Foo} calls the special-purpose method @c{visitFoo} on the visitor,
-with the current object (of class @c{Foo} indeed) as parameter.
-The visitor pattern is thus an instance of double dispatch,
-wherein programmers essentially create a translation from the class namespace to the method namespace.
-Each visitor can then provide a method for each the specifications it wants to support;
-and visitors can themselves be extended with further methods to support further specifications,
-making them more extensible than e.g. pattern-matching on argument classes.
-By having the visitor object abstract over both the specific operation
-and the further arguments, you can use chains of visitors to implement all kinds of operations.
-Compared to regular double dispatch, the visitor pattern is more general, and
-crucially allows for operations being defined after the class is defined.
+I will present it with classes as is usual, but it generalizes to arbitrary specifications:
+@itemize[
+  @item{
+    A general-purpose method traditionally called @c{accept} takes a “visitor” object as argument,
+    and each class @c{Foo} calls the special-purpose method @c{visitFoo} on the visitor,
+    with the current object (of class @c{Foo} indeed) as parameter.
+    The visitor pattern is thus an instance of double dispatch,
+    wherein programmers essentially create a translation
+    from the class namespace to the method namespace.
+  }
+  @item{
+    Each visitor can then provide a method for each the specifications it wants to support;
+    and visitors can themselves be extended with further methods to support further specifications,
+    making them more extensible than e.g. pattern-matching on argument classes.
+  }
+  @item{
+    By having the visitor object abstract over both the specific operation
+    and the further arguments, you can use chains of visitors to implement all kinds of operations.
+    Compared to regular double dispatch, the visitor pattern is more general, and
+    crucially allows for operations being defined after the class is defined.
 But the visitor pattern also involves more boilerplate,
 having to define visitor classes with all the required information:
 A third-and-a-half-class entity that involves more code,
-but a least following a well-defined uniform convention.
+but at least following a well-defined uniform convention.
 Importantly, the visitor pattern also requires all state to be public,
 or otherwise shared with all possible present and future visitors.
 Finally, there is still no good way to support “call-next-method”
@@ -1571,7 +1582,7 @@ And other languages sadly just adopt conflict all the way
 
 Yet, the same argument in favor of linearization applies
 for multiple dispatch as well as for multiple inheritance:
-Any side effects in your methods (that, in general case, exist)
+Any side-effects in your methods (that, in general case, exist)
 will necessarily be ordered one way or the other;
 the only question is whether the system automates a coherent order,
 or puts the onus onto users—at which point it will be both onerous and incoherent.
@@ -1579,85 +1590,6 @@ Linearization is the necessary process that solves this ordering consistently
 (see the desirable consistency constraints described in @secref{CiMR}).
 Any rejection of linearization leads to a “conflict” view of inheritance (or lack thereof),
 that is costly, inexpressive, lossy, and generally counter-productive.
-
-@;{
-Consider a information-theoretic analysis of how much the above.
-
-We can try to simplify the problem into hopefully useful approximations
-by describing the system in terms of some parameters
-for which we use single “typical” numbers instead of complete distributions.
-
-- The total number of concrete classes in a codebase or ecosystem is C.
-  These are the types of the entities that will actually be used at runtime.
-  In languages with no inheritance, this is just the number of instantiated types.
-  Given a program design, C does not depend on the language used;
-  but of course, languages will influence which designs are more affordable to develop.
-  A non-trivial graphical application in a modern language (say JavaScript)
-  will typically have 50 to 500 user-defined classes,
-  maybe a bit less for simple applications based on frameworks leveraging higher-order functions,
-  maybe a lot more (many thousands) for more complex applications.
-  The total number of classes in Quicklisp is over 16000, plus over 2800 structs;
-  many apps do with very few classes, but some big apps have thousands.
-  Java has much wider adoption, and is very class-heavy, so numbers skyrocket,
-  with thousands of user-defined classes in a typical application,
-  often hundreds of thousands including dependencies, and up to a billion defined total.
-
-- By contrast, we may want to count total number T of traits in the same codebase.
-  A trait is a recognizable systematic unit of behavior, that may be repeated
-  many times over the program (in which case it is a fourth-class *design pattern*)
-  or factored out into actual internal (first-class or second-class) entities.
-  In an ideally expressive programming language using flavorful multiple inheritance, T>C,
-  and you never need to repeat yourself.
-  In a horribly mismaintained code base in an inexpressive programming language,
-  you might have C>T!, as the same traits end up endlessly duplicated and recombined
-  in all possible permutations
-  (and that's assuming we can summarize each combination down to the order in which
-  each trait is used at most once).
-
-- The number of direct dependencies we will treat as a single typical number D,
-  even though it's more of a distribution d(t), and a the bottom of the dependency graph
-  you have at the very least d-1 base traits with strictly fewer than d direct dependencies.
-  In the vast number of cases, d is between 1 and 3, and we can use 2 as a "typical" value.
-
-- Similarly, we can consider the typical size P of the precedence list:
-  how many traits a concrete class typically combines. Obviously D < P < T.
-
-- We can also consider a factor I of interaction between traits, corresponding to how much
-  the traits in a given precedence list tend to override each other's methods.
-  I is a number between 0 and 1. When I=0, the traits are always independent from each other;
-  when I=1, the traits constantly interact with each other.
-
-
-Given these parameters, we can analyze how useful the various kinds of inheritance can be.
-
-- Without any inheritance, every class must be written from scratch.
-  The traits are fourth-class "design patterns" that programmers have to duplicate
-  and repeat all over again. The total size of the code required is C*P*M.
-
-- With single inheritance, you don't need to repeat traits as long as they are part of
-  a shared line of ancestors. However, given the branching factor D, the shared line
-  is typically of size S=(log P / log D).
-
-considering some could have additional parameters, and further simplify by replacing each parameter by a single number representing its (weighted?) average, median, mode, maximum, etc., as appropriate depending on the context.
-
-For example, with can call P the typical size
-(obviously P < N, and for large enough applications, P << N).
-We can call D the number of direct parents,
-depth of the dependency graph between traits, number of parents for non-base classes, etc. We could e.g. have a random graph starting from 1 node, and each new node picks up to D random direct parents, removing those that cause an inconsistency or redundancy if added. Usually we have N >> D (N is many thousands in a rich Lisp application, D averages under 5 and maxes out around 20). We can also assume an average of M methods that matter per class; M is also relatively small, let's say it averages under 32.
-
-With "flavorful" multiple inheritance, and its superclass linearization, you can indeed have each trait be a class, define each method once per trait, and have code of size Θ(T*(D+M)), and it will automatically combine all the effects of all methods in a coherent order. That's the minimal code size, really.
-
-Mixin inheritance requires Θ(T*(P+M)) which is only a little worse, but the difference increases the deeper the OO gets.
-
-At the opposite, with no inheritance, each combination of traits requires its own incarnation, which on average involves code of size O(N*P*M). That's making things worse by a factor N. That's much worse.
-
-With single inheritance, any trait present in more than exact ancestry tail must be duplicated.
-
-flavorless multiple inheritance, and mixin inheritance.
-
-Single inheritance requires
-}
-
 
 Linearization of tuples typically happens via
 the lexicographical order of per-argument linearizations:
@@ -1839,7 +1771,7 @@ Instead, there is just an index made of nested records, where the @c{p1...pk} co
 to a path looking up @c{p1} in the top record, returning a record into which you
 lookup @c{p2}, etc., until @c{pk}; if a record is not found along the way,
 there is no method specialized on those prototypes@xnote["."]{
-  Obviously the index of methods would has to be somewhat more complex when supporting
+  Obviously the index of methods would have to be somewhat more complex when supporting
   more general specializers than classes or prototypes.
   For instance, instead of one method per tuple of classes,
   you might have lists or tables of methods with
@@ -2008,9 +1940,9 @@ The very same universal notion applies, to types of arbitrary complexity—or si
 
 @subsection{Two Different Semantics for Class Method Call}
 
-When describing the semantics Class OO in @secref{SFCTD},
+When describing the semantics of Class OO in @secref{SFCTD},
 I used the semantics commonly adopted by all Class OO languages,
-where calling method on an object will consult a type descriptor associated to the object,
+where calling a method on an object will consult a type descriptor associated to the object,
 then extracting a function associated to the method-id from that type descriptor,
 and calling that function with the object as first argument, followed by any remaining arguments.
 
@@ -2034,7 +1966,7 @@ Either way, what does that tell us about OO?
 
 @subsection{Method Dictionaries}
 
-To clarify where exactly the difference between the two dispatch strategies lie,
+To clarify where exactly the difference between the two dispatch strategies lies,
 both semantics can be factored through the use of
 a “typeclass dictionary” or “dispatch table”:
 @Code{
@@ -2168,7 +2100,9 @@ which can be quickly checked.
 
 Static dispatch uses static type information
 to optimize away method dispatch at compile-time.
-Compared to the looser dynamic dispatch—and,
+Sticking to static dispatch is the same as using OO’s modular extensibility at compile-time only,
+to generate code that is neither extensible nor modular at runtime.
+Compared to the looser dynamic dispatch,
 it not only brings more safety and performance, but does it in a @emph{predictable} way.
 These safety, performance and predictability are paramount for some applications
 and for “system programming”;

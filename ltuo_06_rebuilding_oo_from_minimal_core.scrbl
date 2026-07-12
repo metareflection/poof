@@ -276,7 +276,7 @@ The reference wrapper, pure isomorphism at one level,
 yet effectful non-isomorphism at another
 (requiring access to disk, database, network, credentials, user interface, etc.),
 also illustrates that
-@principle{one man’s purity is another man’s side effect} (to channel Alan Perlis).
+@principle{one man’s purity is another man’s side-effect} (to channel Alan Perlis).
 For instance, with merkleization, a reference uniquely identifies some pure data structure
 with a cryptographically secure hash that you can compute in a pure functional way;
 but dereferencing the hash is only possible if you already know the data

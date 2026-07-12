@@ -2,7 +2,7 @@
 @; -*- Scheme -*-
 @(require "util/ltuo_lib.rkt")
 @(set-chapter-number 4)
-@title[#:tag "OOaIEM"]{OO as Internal Extensible Modularity}
+@title[#:tag "OOaIEM"]{OO as Internal Modular Extensibilty}
 @epigraph{The benefits expected of modular programming are:
 (1) managerial—development time should be shortened because separate groups
 would work on each module with little need for communication;
@@ -577,7 +577,7 @@ each field is initialized before it is used@xnote["."]{
   is in the domain it is commonly applied to
   (defining mutable data structures and accompanying functions as “classes”),
   rather than in the semantic mechanism that is being applied to these domains
-  (extensible modular definitions of arbitrary code using inheritance).
+  (modular extensible definitions of arbitrary code using inheritance).
   But this is no surprise to those who are deeply familiar with C++ templates, Jsonnet or Nix,
   and other systems that allow programmers to directly use unrestricted OO
   in a more fundamental purely functional setting wherein OO can be leveraged
@@ -767,7 +767,7 @@ This example also illustrates how
 meta-linguistic mechanisms rather than linguistic ones},
 i.e. through tooling outside the language rather than
 through expressions inside the language.
-Even then, internalizing the locus of such extensible modularity within the language
+Even then, internalizing the locus of such modular extensibility within the language
 enables dynamic extension, runtime code sharing and user-guided specialization
 as intra-linguistic deployment processes that leverage the result of
 the extra-linguistic development process.
@@ -1024,7 +1024,7 @@ using “hot-patches” that were not foreseen by the original programmer.
   Get your change accepted upstream by the maintainers.
 }
 
-@section[#:tag "extensible_modularity"]{Extensible Modularity}
+@section[#:tag "modular_extensibility"]{Modular Extensibility}
 @epigraph{
   Power Couple:
     Two individuals that are super heroes by themselves

@@ -1322,7 +1322,7 @@ phenomena are what OO is.
 What programmers do, not what programmers say.
 
 And these phenomena are what is captured by
-the intra-linguistic extensible modularity as defined above:
+the intra-linguistic modular extensibility as defined above:
 @itemize[
   @item{The ability to “code against an interface” and
     pass any value of any type that satisfies the interface

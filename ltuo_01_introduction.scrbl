@@ -688,7 +688,7 @@ to ensure that my theory isn’t met with misunderstanding
 due to these misconceptions or to disagreements about what is or isn’t being theorized.
 
 In @seclink["OOaIEM"]{chapter 4}, I explain
-what I mean by Internal Extensible Modularity,
+what I mean by Internal Modular Extensibility,
 the rationale for OO, its motivation and purpose.
 This chapter remains informal, but lays the conceptual groundwork
 for the formal approach I take in the rest of this book.

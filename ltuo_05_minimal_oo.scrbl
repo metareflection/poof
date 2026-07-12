@@ -10,7 +10,7 @@
   @|#:- "Antoine de Saint-Exupéry"|
 }
 Now that I’ve given an informal explanation of OO and
-what it is for (Internal Extensible Modularity),
+what it is for (Internal Modular Extensibility),
 I can introduce formal semantics for it, starting with a truly minimal model:
 @itemize[
   @item{No classes, no objects, just specifications and targets.}
@@ -858,7 +858,7 @@ as many times as computations are duplicated, which can grow exponentially fast
 as the computation involves deeper sub-computations.
 In some cases, the eager evaluation may never terminate at all when lazy evaluation would,
 or not before the end of the universe.
-And of course, if there are any non-idempotent side effects,
+And of course, if there are any non-idempotent side-effects,
 they too will be potentially duplicated a large number of times.
 
 There are several potential alternatives to

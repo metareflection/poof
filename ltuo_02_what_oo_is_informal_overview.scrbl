@@ -467,8 +467,8 @@ isn’t as widely adopted as of 2026@xnote["."]{
   Out of the top 50 most popular languages in the TIOBE index, June 2026, @;{TODO cite}
   5 support flavorful multiple inheritance (Python, Perl, Ruby, Lisp, Scala),
   4 only support flavorless multiple inheritance (C++, PHP, Ada, OCaml),
-  21 only support single inheritance (Java, C#, JavaScript, Visual Basic, R, Delphi, PHP, Swift, MATLAB, Objective-C, Kotlin, COBOL, SAS, Julia, Dart, Lua, TypeScript, VBScript, ABAP, D, CFML),
-  and the rest don’t support inheritance at all (C, SQL, Scratch, Rust, Go, Fortran, Assembly Language, Classic Visual Basic, PL/SQL, GML, Prolog, LabView, ML, Zig, Ladder Logic, X++, Erlang, PowerShell, Haskell, Caml).
+  21 only support single inheritance (Java, C#, JavaScript, Visual Basic, R, Delphi, Swift, Fortran, MATLAB, Objective-C, Kotlin, COBOL, SAS, Julia, Dart, Lua, TypeScript, VBScript, ABAP, D, CFML),
+  and the rest don’t support inheritance at all (C, SQL, Scratch, Rust, Go, Assembly Language, Classic Visual Basic, PL/SQL, GML, Prolog, LabView, ML, Zig, Ladder Logic, X++, Erlang, PowerShell, Haskell, Caml).
   Note that at least JavaScript, Lua, GML support enough higher-order dynamic behavior
   to implement better forms of inheritance as patterns or libraries;
   and language-supported metaprogramming and/or typelevel programming techniques can or could be used

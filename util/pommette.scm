@@ -355,11 +355,11 @@ let Y = f: (x: x x) (x: f (x x));
 (define (once! x) (x)) ;; force, even if from def or λ
 
 ;; Y, once; B, once; U, once; Y, once with combinators; Y, once, expanded
-;; direct adaptations of Yl Bl Ul Ylc Ylx to once and ! instead of delay and force.
+;; direct adaptations of Yl Bl Ul Ylc Ylx to once and once! instead of delay and force.
 (def (Yo f) ;; : ^(^X→X)→X
   (letrec ((p (f (once p)))) p))
 (def (Bo x y z) ;; : (^Y→X)→^(Z→Y)→Z→X
-  (x (once ((! y) z))))
+  (x (once ((once! y) z))))
 (def (Uo x) ;; : µX.^(X→A)→A
   ((once! x) x))
 (def (Yoc f) ;; : ^(^X→X)→X
