@@ -1,0 +1,202 @@
+%% Literature leads promoted after review; also integrated into extra-organized.bib.
+
+@article{Conway1968,
+  author={Melvin E. Conway},
+  title={How Do Committees Invent?},
+  journal={Datamation},
+  volume={14},
+  number={4},
+  pages={28–31},
+  month={4},
+  year={1968},
+  url={https://www.melconway.com/Home/Committees_Paper.html},
+  note={Original statement of Conway’s law; relevant to the relation between modular software structure and the communication structure of the organizations that build it.}
+}
+
+@techreport{DahlMyhrhaugNygaard1970,
+  author={Ole-Johan Dahl and Bjørn Myhrhaug and Kristen Nygaard},
+  title={The SIMULA 67 Common Base Language},
+  number={S-22},
+  institution={Norwegian Computing Center},
+  year={1970},
+  url={https://www.simula67.info/},
+  note={Authoritative early specification of Simula 67; the priority source for classes, prefixing, virtual quantities and the operational details of the original object-oriented language.}
+}
+
+@phdthesis{Fisher1970,
+  author={David A. Fisher},
+  title={Control Structures for Programming Languages},
+  school={Carnegie Mellon University},
+  month={5},
+  year={1970},
+  url={https://cds.cern.ch/record/697456/files/CM-P00068047.pdf},
+  note={Early argument that control structures should be abstractions rather than a fixed language inventory; useful historical context for extensible language mechanisms.}
+}
+
+@inproceedings{FriedmanWise1976,
+  author={Daniel P. Friedman and David S. Wise},
+  editor={S. Michaelson and Robin Milner},
+  title={CONS Should Not Evaluate Its Arguments},
+  booktitle={Automata, Languages and Programming: Third International Colloquium},
+  pages={257–284},
+  publisher={Edinburgh University Press},
+  year={1976},
+  url={https://hdl.handle.net/2022/33858},
+  note={Early formulation of lazy constructors and cyclic or infinite data; relevant to fixed-point object encodings and to the lazy recursive records used by Nix overlays.}
+}
+
+@techreport{Hewitt1976,
+  author={Carl Hewitt},
+  title={Viewing Control Structures as Patterns of Passing Messages},
+  number={AI Memo 410},
+  institution={MIT Artificial Intelligence Laboratory},
+  month={12},
+  year={1976},
+  url={https://dspace.mit.edu/handle/1721.1/6272},
+  note={Primary statement of the actor/message-passing view of control; useful for distinguishing the actor lineage from object-oriented dispatch and inheritance.}
+}
+
+@inproceedings{Steels1982,
+  author={Luc Steels},
+  editor={Pierpaolo Degano and Erik Sandewall},
+  title={ORBIT: An Applicative View of Object-Oriented Programming},
+  booktitle={Integrated Interactive Computing Systems},
+  pages={193–205},
+  publisher={North-Holland},
+  year={1982},
+  url={https://dblp.org/rec/conf/ecics/Steels82},
+  note={Very early functional reconstruction of object-oriented programming, predating most later work on classes as functions and objects as fixed points.}
+}
+
+@inproceedings{DeMichielGabriel1987,
+  author={Linda G. DeMichiel and Richard P. Gabriel},
+  title={The Common Lisp Object System: An Overview},
+  booktitle={ECOOP 1987},
+  series={Lecture Notes in Computer Science},
+  volume={276},
+  pages={151–170},
+  publisher={Springer},
+  year={1987},
+  doi={10.1007/3-540-47891-4_15},
+  url={https://doi.org/10.1007/3-540-47891-4_15},
+  note={Earliest published overview of CLOS; documents the generic-function, multiple-dispatch and method-combination branch of object-oriented design.}
+}
+
+@inproceedings{Kaes1988,
+  author={Stefan Kaes},
+  title={Parametric Overloading in Polymorphic Programming Languages},
+  booktitle={ESOP 1988},
+  series={Lecture Notes in Computer Science},
+  volume={300},
+  pages={131–144},
+  publisher={Springer},
+  year={1988},
+  doi={10.1007/3-540-19027-9_9},
+  url={https://doi.org/10.1007/3-540-19027-9_9},
+  note={Priority source for type-class-like constrained overloading; useful when separating ad-hoc polymorphism from object dispatch and inheritance.}
+}
+
+@book{BaldwinClark2000,
+  author={Carliss Y. Baldwin and Kim B. Clark},
+  title={Design Rules, Volume 1: The Power of Modularity},
+  publisher={MIT Press},
+  year={2000},
+  isbn={978-0-262-02466-2},
+  url={https://mitpress.mit.edu/9780262291859/design-rules-volume-1/},
+  note={Develops modularity as an option-generating economic structure and identifies modular operators; useful background for the book’s purpose-level account of extensibility.}
+}
+
+@inproceedings{LohHinze2006,
+  author={Andres Löh and Ralf Hinze},
+  title={Open Data Types and Open Functions},
+  booktitle={Proceedings of the 8th ACM SIGPLAN Symposium on Principles and Practice of Declarative Programming},
+  series={PPDP 2006},
+  pages={133–144},
+  publisher={ACM},
+  year={2006},
+  doi={10.1145/1140335.1140352},
+  url={https://doi.org/10.1145/1140335.1140352},
+  note={Functional solution to two-dimensional extensibility through open data and functions; a useful non-OO comparison for the expression problem.}
+}
+
+@techreport{PiumartaWarth2006,
+  author={Ian Piumarta and Alessandro Warth},
+  title={Open Reusable Object Models},
+  number={TR-2006-003-a},
+  institution={Viewpoints Research Institute},
+  year={2006},
+  url={https://vpri.org/pdf/tr2006003a_objmod.pdf},
+  note={Minimal, open object model whose behavior is itself represented by ordinary objects; an unusually concrete bridge between prototypes, delegation and metaobject protocols.}
+}
+
+@inproceedings{HudakEtAl2007,
+  author={Paul Hudak and John Hughes and Simon Peyton Jones and Philip Wadler},
+  title={A History of Haskell: Being Lazy with Class},
+  booktitle={History of Programming Languages (HOPL-III)},
+  pages={1–55},
+  publisher={ACM},
+  year={2007},
+  doi={10.1145/1238844.1238856},
+  url={https://doi.org/10.1145/1238844.1238856},
+  note={Primary history of Haskell and type classes; useful for dating the development of constrained overloading and its relation to object-oriented polymorphism.}
+}
+
+@inproceedings{BrownCook2009,
+  author={Daniel Brown and William R. Cook},
+  title={Function Inheritance: Monadic Memoization Mixins},
+  booktitle={Brazilian Symposium on Programming Languages},
+  series={SBLP 2009},
+  year={2009},
+  url={https://www.cs.utexas.edu/~wcook/Drafts/2009/monadic-mixins.pdf},
+  note={Shows inheritance over functions through memoizing monadic mixins, strengthening the connection between inheritance, open recursion and functional composition.}
+}
+
+@inproceedings{BrachaEtAl2010,
+  author={Gilad Bracha and Peter von der Ahé and Vassili Bykov and Yaron Kashai and William Maddox and Eliot Miranda},
+  title={Modules as Objects in Newspeak},
+  booktitle={ECOOP 2010},
+  series={Lecture Notes in Computer Science},
+  volume={6183},
+  pages={405–428},
+  publisher={Springer},
+  year={2010},
+  doi={10.1007/978-3-642-14107-2_20},
+  url={https://doi.org/10.1007/978-3-642-14107-2_20},
+  note={Newspeak derives modules from nested classes rather than adding a separate module system; a major case study in unifying modularity and object structure.}
+}
+
+@article{LagorioServettoZucca2012,
+  author={Giovanni Lagorio and Marco Servetto and Elena Zucca},
+  title={Featherweight Jigsaw: Replacing Inheritance by Composition in Java-Like Languages},
+  journal={Information and Computation},
+  volume={214},
+  pages={86–111},
+  year={2012},
+  doi={10.1016/j.ic.2012.02.004},
+  url={https://doi.org/10.1016/j.ic.2012.02.004},
+  note={A small calculus that replaces built-in inheritance with explicit class-composition operators, directly testing which parts of inheritance are primitive.}
+}
+
+@inproceedings{PolitzGuhaKrishnamurthi2012,
+  author={Joe Gibbs Politz and Arjun Guha and Shriram Krishnamurthi},
+  title={Semantics and Types for Objects with First-Class Member Names},
+  booktitle={19th International Workshop on Foundations of Object-Oriented Languages},
+  series={FOOL 2012},
+  year={2012},
+  url={https://cs.brown.edu/~sk/Publications/Papers/Published/pgk-sem-type-fc-member-name/},
+  note={Treats member names as first-class values, exposing assumptions that ordinary object calculi bake into fixed syntactic labels.}
+}
+
+@inproceedings{JonesEtAl2016,
+  author={Timothy Jones and Michael Homer and James Noble and Kim B. Bruce},
+  title={Object Inheritance Without Classes},
+  booktitle={ECOOP 2016},
+  series={Leibniz International Proceedings in Informatics},
+  volume={56},
+  pages={13:1–13:26},
+  publisher={Schloss Dagstuhl--Leibniz-Zentrum für Informatik},
+  year={2016},
+  doi={10.4230/LIPIcs.ECOOP.2016.13},
+  url={https://doi.org/10.4230/LIPIcs.ECOOP.2016.13},
+  note={Separates inheritance from classes in a contemporary formal design, providing direct evidence that classlessness does not imply the absence of inheritance.}
+}

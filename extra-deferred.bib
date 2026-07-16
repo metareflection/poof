@@ -1,0 +1,312 @@
+%% Deferred bibliography and unresolved literature leads from extra.bib.
+%%
+%% These works were not included in extra-organized.bib because they were
+%% tangential, secondary, version-sensitive, or superseded by an earlier
+%% priority source. They are preserved here for possible use in other
+%% bibliographies. Dated entries are sorted by year and citation key;
+%% undated web documentation follows at the end.
+
+@book{Smullyan1985,
+  author={Smullyan, Raymond M.},
+  title={To Mock a Mockingbird and Other Logic Puzzles: Including an Amazing Adventure in Combinatory Logic},
+  publisher={Alfred A. Knopf},
+  year={1985},
+  note={An entertaining exposition of combinatory logic, including self-application and fixed-point combinators; potentially useful for a separate bibliography on recursion or combinators, but only metaphorically related to object orientation.}
+}
+
+@article{MitchellPlotkin1988,
+  author={Mitchell, John C. and Plotkin, Gordon D.},
+  title={Abstract Types Have Existential Type},
+  journal={ACM Transactions on Programming Languages and Systems},
+  volume={10},
+  number={3},
+  pages={470–502},
+  year={1988},
+  doi={10.1145/44501.45065},
+  url={https://doi.org/10.1145/44501.45065},
+  note={Expanded journal version of the 1985 POPL paper retained in the main bibliography; useful when the fuller treatment matters more than establishing priority.}
+}
+
+@misc{Kay1998SqueakMail,
+  author={Kay, Alan},
+  title={Email to the Squeak Developers Mailing List, 10 October 1998},
+  year={1998},
+  url={https://medium.com/javascript-scene/the-forgotten-history-of-oop-88d71b9b2d9f},
+  note={A frequently quoted statement about messaging and object orientation. The supplied URL is a secondary article rather than a stable primary archive of the message, so the entry was deferred pending identification of the original post.}
+}
+
+@inproceedings{CurienHerbelin2000,
+  author={Curien, Pierre-Louis and Herbelin, Hugo},
+  title={The Duality of Computation},
+  booktitle={Proceedings of the Fifth ACM SIGPLAN International Conference on Functional Programming},
+  series={ICFP ’00},
+  pages={233–243},
+  publisher={Association for Computing Machinery},
+  year={2000},
+  doi={10.1145/351240.351262},
+  url={https://doi.org/10.1145/351240.351262},
+  note={Foundational work on the call-by-name/call-by-value duality and the λμ~μ calculus; worthwhile for a bibliography on control duality, but too remote from the main object-orientation argument.}
+}
+
+@techreport{JamesSabry2012,
+  author={James, Roshan P. and Sabry, Amr},
+  title={The Two Dualities of Computation: Negative and Fractional Types},
+  institution={Indiana University},
+  year={2012},
+  url={https://web.archive.org/web/20121229014345/https://www.cs.indiana.edu/~sabry/papers/rational.pdf},
+  note={Unpublished technical report on negative and fractional types; potentially useful for a bibliography on reversible computation or type dualities, but not central to object orientation.}
+}
+
+@inproceedings{VermaEtAl2015,
+  author={Verma, Abhishek and Pedrosa, Luis and Korupolu, Madhukar R. and Oppenheimer, David and Tune, Eric and Wilkes, John},
+  title={Large-Scale Cluster Management at Google with Borg},
+  booktitle={Proceedings of the Tenth European Conference on Computer Systems},
+  series={EuroSys ’15},
+  pages={18:1–18:17},
+  publisher={Association for Computing Machinery},
+  year={2015},
+  doi={10.1145/2741948.2741964},
+  url={https://doi.org/10.1145/2741948.2741964},
+  note={Useful production context for Google’s declarative configuration lineage, including BCL/GCL, but the paper is primarily about cluster management rather than object systems.}
+}
+
+@misc{Wayne2019Kay,
+  author={Wayne, Hillel},
+  title={Alan Kay Did Not Invent Objects},
+  year={2019},
+  url={https://hillelwayne.com/post/alan-kay/},
+  note={Accessible secondary historical commentary emphasizing Simula’s priority for objects, classes and messages; deferred because the main bibliography favors primary historical sources.}
+}
+
+@misc{Nixcademy2024Overlays,
+  author={{Nixcademy}},
+  title={Mastering Nixpkgs Overlays: Techniques and Best Practice},
+  year={2024},
+  url={https://nixcademy.com/posts/mastering-nixpkgs-overlays-techniques-and-best-practice/},
+  note={Practitioner-oriented discussion of Nixpkgs overlays and their final/prev discipline; useful implementation evidence, but secondary and version-sensitive.}
+}
+
+@misc{GoFAQOOP,
+  author={{The Go Project}},
+  title={Frequently Asked Questions: Is Go an Object-Oriented Language?},
+  url={https://go.dev/doc/faq#Is_Go_an_object-oriented_language},
+  note={First-party but continuously updated language documentation giving Go’s “yes and no” answer; useful near a claim about Go, but unsuitable as a stable historical source.}
+}
+
+@misc{NixOSWikiOverlays,
+  author={{NixOS Wiki contributors}},
+  title={Overlays},
+  url={https://wiki.nixos.org/wiki/Overlays},
+  note={Community documentation describing overlays in subclassing terms and recording the self/super to final/prev terminology; useful near an implementation claim, but unstable as general bibliography evidence.}
+}
+
+@misc{RustBookOOP,
+  author={Klabnik, Steve and Nichols, Carol and the Rust Community},
+  title={The Rust Programming Language: What Does Object-Oriented Mean?},
+  url={https://doc.rust-lang.org/book/ch18-01-what-is-oo.html},
+  note={First-party but continuously revised discussion of which object-oriented features Rust supports; best cited at the exact claim rather than treated as a stable historical source.}
+}
+
+%% --------------------------------------------------------------------------
+%% Unresolved or unpromoted comment-only leads from the original extra.bib.
+%% These are deliberately preserved as comments rather than invented entries.
+%% --------------------------------------------------------------------------
+
+%% Object systems, inheritance, prototypes and OO history
+%
+% Oleg Kiselyov, circa 2000, Usenet discussion of a pure variant of YASOS?
+% https://okmij.org/ftp/Haskell/extensible/more.pdf
+% http://okmij.org/ftp/Computation/Subtyping/
+% https://okmij.org/ftp/Computation/typeclass.html#Kaes
+%
+% C++ template lambda calculus implementation sketch:
+% https://gist.github.com/glaebhoerl/8970f682958826ed36f9
+%
+% Stefan Kaes, Parametrischer Polymorphismus, Überladungen und Konversionen,
+% TU Darmstadt dissertation, 2005:
+% http://tuprints.ulb.tu-darmstadt.de/epda/000544/
+%
+% C2 Wiki discovery pages on prototype-based programming:
+% https://wiki.c2.com/?PrototypeBasedProgramming
+% https://wiki.c2.com/?ClassesPrototypesComparison
+% https://wiki.c2.com/?PrototypeBasedLanguage
+%
+% Original note listed NewtonScript, LambdaMOO, Io, REBOL and Lua as
+% prominent prototype-based languages worth checking individually.
+%
+% Barak Pearlmutter and Kevin Lang, Oaklisp:
+% https://github.com/barak/oaklisp
+%
+% Eric S. Raymond, The Art of Unix Programming, chapters 4 and 9 on modularity:
+% http://www.catb.org/~esr/writings/taoup/html/ch04s02.html#orthogonality
+%
+% Gilad Bracha, The Dart Programming Language, sections 2.15 and 5.9 on
+% mixins and modularity. Exact edition still to identify.
+%
+% CUE rejects inheritance in favor of value/pattern unification along a lattice:
+% https://cuelang.org/docs/concepts/logic/
+%
+% Antero Taivalsaari, Classes vs. Prototypes: Some Philosophical and Historical
+% Observations, Journal of Object-Oriented Programming, 1996:
+% https://citeseerx.ist.psu.edu/doc_view/pid/30fcb7807ce73f16222761b97e36154f12349efb
+% Original note: philosophically interesting, but light on computer science.
+%
+% CECIL also had prototype inheritance / classless objects; inspect its manual
+% for whether parent slots could be mutated.
+%
+% Guy L. Steele Jr., Objects Have Not Failed, 2002:
+% https://www.dreamsongs.com/ObjectsHaveNotFailedNarr.html
+%
+% Tom Hirschowitz, call-by-value mixin modules, 2003 dissertation and page:
+% https://hirschowitz.pages.math.cnrs.fr/phd/these-tom.pdf
+% https://hirschowitz.pages.math.cnrs.fr/
+%
+% Henry Story, Quora answer on functional programming and OOP:
+% https://www.quora.com/Why-is-functional-programming-seen-as-the-opposite-of-OOP-rather-than-an-addition-to-it/answer/Henry-Story
+%
+% Social-media lead on the origins of OO:
+% https://x.com/Ngnghm/status/1898493837040849348
+%
+% Bart Jacobs, Coalgebraic Reasoning about Classes in Object-Oriented Languages,
+% Electronic Notes in Theoretical Computer Science 11, 1998.
+%
+% Peter Wegner, Concepts and Paradigms of Object-Oriented Programming, 1990.
+%
+% Goguen — original note was not specific enough to identify a work.
+%
+% Shriram Krishnamurthi / PLAI issue on change-class:
+% https://github.com/shriram/plai-public/issues/60
+%
+% Bob Harper, Practical Foundations for Programming Languages: existential types
+% and inversion of scope. Exact edition and passage still to identify.
+%
+% Cite Douglas Engelbart’s 1968 “Mother of All Demos” where relevant.
+%
+% Alan Kay message in the VPRI Fundamentals of New Computing archive:
+% https://www.mail-archive.com/fonc@vpri.org/msg03121.html
+%
+% Journal of Object Technology article, 2017 issue 2, article 2:
+% https://www.jot.fm/contents/issue_2017_02/article2.html
+%
+% LASC overview PDF, exact bibliographic identity still to recover:
+% https://www.dreamsongs.com/Files/LASC-Overview.pdf
+%
+% Yaohan Chu and the origin of the term “high-level language”:
+% https://dl.acm.org/doi/pdf/10.1145/800181.810257
+%
+% Stephen H. Kaisler, Medley LOOPS: The Basic System, 2024; apparently also
+% titled Lisp Object-Oriented Programming System (LOOPS), Volume I.
+%
+% Journal of Object Technology column, 2005 issue 1:
+% https://www.jot.fm/issues/issue_2005_01/column2/
+%
+% Jonathan Aldrich workshop paper on capability-safe reflection and ECOOP paper
+% on modular reasoning in aspect-oriented programming. Exact papers unresolved.
+%
+% Programming-language genealogy repository:
+% https://github.com/fogus/lang-genealogy
+%
+% Scheme lambda papers index:
+% https://research.scheme.org/lambda-papers/
+%
+% Object-orientation history page and Hacker News discussion:
+% https://ootips.org/history.html
+% https://news.ycombinator.com/item?id=36826762
+%
+% Tribute to Daniel Bobrow by his brother; weak technical content:
+% https://ojs.aaai.org/aimagazine/index.php/aimagazine/article/view/2770
+% doi:10.1609/aimag.v38i4.2770
+%
+% More work by Roland Ducournau:
+% https://dl.acm.org/doi/abs/10.1145/1391956.1391960
+% https://dl.acm.org/doi/abs/10.1145/1639949.1640093
+% https://dl.acm.org/doi/abs/10.1145/1922649.1922655
+% https://hal-lirmm.ccsd.cnrs.fr/lirmm-00659592
+%
+% Henry G. Baker, The NIMBLE Project—Real-Time Common LISP for Embedded Expert
+% Systems Applications:
+% https://doi.org/10.2514/6.1989-3140
+%
+% Comb inheritance:
+% https://thenewobjective.com/types-and-programming-languages/comb-inheritance/
+%
+% Bjarne Stroustrup, Object-Oriented Programming without Inheritance, ECOOP 2015:
+% https://www.reddit.com/r/cpp/comments/3hkfxr/bjarne_stroustrup_object_oriented_programming/
+%
+% Unidentified ACM paper retained by DOI:
+% https://dl.acm.org/doi/10.1145/3563835.3568735
+%
+% Robert Nystrom, Crafting Interpreters, chapter 27 on classes and instances:
+% https://craftinginterpreters.com/contents.html
+%
+% Indiana University compiler-course support code:
+% https://github.com/IUCompilerCourse/public-student-support-code
+%
+% Unstable shortened/Dropbox source retained verbatim:
+% https://t.co/N9XvyHzwtO
+% https://uc741c837fd0942d84d7b2c06c6a.dl.dropboxusercontent.com/cd/0/get/C9Z6dUVXWqqS5dHs6331gmT4s7eBqzZI9jjO7sQiOr18NHwZUNGH0h4QY5-Y19H0utJCvveG5g3dkocofjpKr1GzRBqp0_6TsRQ6_HK7nbnK-9G3bDq2Iw4G8qE3S0xJawOe8cjbJfMT5_eq71dYUVpF/file
+%
+% Prototype-Based Programming, Open Library record:
+% https://openlibrary.org/books/OL387681M/Prototype-based_programming
+%
+% François-René Rideau, Quora answers on inheritance history and the perceived
+% opposition between functional and object-oriented programming:
+% https://www.quora.com/How-did-the-concept-of-inheritance-develop-in-programming-languages-and-who-played-key-roles-in-its-evolution/answer/Fran%C3%A7ois-Ren%C3%A9-Rideau
+% https://www.quora.com/How-do-cognitive-biases-influence-the-perceived-opposition-between-functional-and-object-oriented-programming/answer/Fran%C3%A7ois-Ren%C3%A9-Rideau
+%
+% David Moon, PLOT, 2006–2008:
+% http://users.rcn.com/david-moon/PLOT/index.html
+
+%% Modularity, configuration languages and extensibility
+%
+% Evolving a Configuration Language in Place at Google Scale, CONFLANG 2023:
+% https://2023.splashcon.org/details/conflang-2023-papers/7/Evolving-a-configuration-language-in-place-at-Google-scale
+% https://www.youtube.com/watch?v=Dm8hygWaMXg
+% Original note: discusses reimplementation and semantic evolution, but does not
+% describe the language semantics precisely.
+%
+% William A. Wulf, Ralph L. London and Mary Shaw, An Introduction to the
+% Construction and Verification of Alphard Programs, IEEE TSE 2(4), 1976:
+% https://www.cs.cmu.edu/~Compose/VerificationofAlphard1976.pdf
+% doi:10.1109/TSE.1976.233830
+% Original note: never implemented; modularity/specification/verification attempt,
+% with no satisfactory story for quantification.
+
+%% Type theory, control, categories and language foundations
+%
+% Category Theory in Programming, Noah Ma:
+% https://docs.racket-lang.org/ctp/index.html
+%
+% Category-theory article and bibliography, exact work unresolved:
+% https://scholarworks.iu.edu/iuswrrest/api/core/bitstreams/2706b860-ef5e-42b9-98c6-f29e3486220e/content
+%
+% Hyperfunctions: Communicating Continuations:
+% https://doisinkidney.com/pdfs/hyperfunctions.pdf
+%
+% Michael L. Scott, Programming Language Pragmatics, fifth-edition online material:
+% https://mlscott14627.github.io/PLP5e_online/
+%
+% General programming-language ebook repository, retained only as a discovery aid:
+% https://github.com/arl/E-Books-1/tree/master/program%20language
+%
+% Simon Peyton Jones, The Implementation of Functional Programming Languages,
+% 1987: https://simon.peytonjones.org/slpj-book-1987/
+% doi:10.5555/1096899
+% Original note: only supplies lazy Y and is relevant only to lazy languages.
+%
+% Peter Landin, 1966 paper PDF:
+% https://www.cs.cmu.edu/~crary/819-f09/Landin66.pdf
+%
+% Bicameral, Not Homoiconic:
+% https://parentheticallyspeaking.org/articles/bicameral-not-homoiconic/
+%
+% Ole-Johan Dahl, The Birth of Object Orientation: The Simula Languages, 2004:
+% doi:10.1007/978-3-540-39993-3_3
+%
+% Roger King, My Cat Is Object-Oriented, OOPSLA 1988:
+% https://dl.acm.org/doi/10.1145/63320.66469
+% https://archive.org/details/objectorientedco0000unse
+%
+% Crichton and Krishnamurthi, A Core Calculus for Documents, Or, Lambda: The
+% Ultimate Document, 2024:
+% https://cs.brown.edu/people/sk/Publications/Papers/Published/ck-core-calc-doc-lambda-ultimate-doc/paper.pdf
