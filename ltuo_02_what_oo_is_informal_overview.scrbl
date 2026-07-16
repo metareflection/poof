@@ -309,7 +309,7 @@ Alan Kay later adopted this mechanism for Smalltalk-76 @~cite{Ingalls1978},
 as a compromise instead of the more general but then less well understood multiple inheritance
 @~cite{Kay1993EHoS}.
 Kay took the word “inheritance” from KRL @~cite{Winograd1975 Bobrow1976},
-a “Knowledge Representation Language” written Lisp around Minsky’s notion of Frames.
+a “Knowledge Representation Language” written in Interlisp around Minsky’s notion of Frames.
 (@citet{Ingalls2020} also reveals that work on Smalltalk-76 started in August only,
 which is after the July 4th publication of the KRL paper.)
 KRL had “inheritance of properties”,

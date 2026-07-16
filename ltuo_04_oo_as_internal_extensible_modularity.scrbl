@@ -563,7 +563,7 @@ each field is initialized before it is used@xnote["."]{
 
   The init-before-use issue is well-known and exists outside of OO: it may happen
   whenever there is mutual recursion between variables or initial elements of data structures.
-  However, we’ll see that “open recursion” @~cite{Cardelli1992 Pierce2002TAPL},
+  However, we’ll see that “open recursion” @~cite{Cardelli1989 Pierce2002TAPL},
   i.e. the use of operators meant to be the argument of a fixpoint combinator,
   but also possibly composition before fixpointing,
   is ubiquitous in OO,

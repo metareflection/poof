@@ -1470,7 +1470,10 @@ A few popular languages have libraries that implement some form of them.
 @; TODO CITE
 
 @subsection{Binary Methods Done Right}
-
+@epigraph{
+  Patterns mean “I have run out of language.”
+  @|#:- "Rich Hickey"|
+}
 For decades, developers of object-oriented protocols have stumbled upon problems
 regarding “binary methods”, the behavior of which depends not just on one object,
 but also on a second object:
@@ -1536,25 +1539,42 @@ I will present it with classes as is usual, but it generalizes to arbitrary spec
     By having the visitor object abstract over both the specific operation
     and the further arguments, you can use chains of visitors to implement all kinds of operations.
     Compared to regular double dispatch, the visitor pattern is more general, and
-    crucially allows for operations being defined after the class is defined.
-But the visitor pattern also involves more boilerplate,
-having to define visitor classes with all the required information:
-A third-and-a-half-class entity that involves more code,
-but at least following a well-defined uniform convention.
+    crucially allows for new visiting operations to be defined after the class is defined.
+  }
+]
+
+Compared to double dispatch, the visitor pattern involves even more boilerplate:
+having to define visitor classes with all the required information.
+The design pattern is a third-and-a-half-class entity,
+largely done manually by a human (thus a fourth-class entity)
+yet with some amount of automation and well-defined uniform naming conventions
+in converting class names to visit methods (thus partly a third-class entity).
 Importantly, the visitor pattern also requires all state to be public,
 or otherwise shared with all possible present and future visitors.
-Finally, there is still no good way to support “call-next-method”
-with the visitor pattern as commonly defined:
-it finds only one method, breaking “linearity” (conservation of information);
+
+The visitor pattern involves more code than double-dispatch, at least the first time it’s used;
+but if used more than once, part of the visitor infrastructure can be shared between visitors.
+Importantly, and unlike double dispach, the visitor pattern allows new visitors
+to be defined after a class was defined:
+its class-to-method namespace translation can be seen as a manual implementation of
+a runtime-reflection facility that can enable dynamic behavior even in a static language.
+
+Finally, at least in the commonly described variants
+of either double dispatch or the visitor pattern,
+there is still no good way to support “call-next-method”:
+either it finds only one method, breaking “linearity” (conservation of information);
 like Self’s ill-fated sender path inheritance, it can’t back out of a bad narrowing decision.
 Yet at least the problem is factored in a way that visitors could conceivably be generalized
 (at a cost in complexity) to support “call-next-method”, and this support could then
 be implemented once and then shared with many generalized visitors.
+If this were done, the common design patterns could be tagged as “naive” versions;
+but of course, the real elaborate move would be to extend the object system itself
+to support multiple dispatch.
 
-Now, if the object system itself has builtin support multiple dispatch, then
+Indeed, if the object system itself has builtin for support multiple dispatch, then
 double dispatch as a design pattern, and its generalizations to triple and n-uple dispatch,
 or to the visitor pattern, disappear completely
-as complex yet insufficiently helpful design patterns.
+as complex yet no-longer-helpful design patterns.
 They are replaced by “just use the system-provided multiple dispatch”.
 Suddenly, these methods become simple to write, extensible for both arguments,
 without visibility issues (any method can see the state of any argument it matches),

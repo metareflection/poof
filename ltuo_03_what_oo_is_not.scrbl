@@ -900,9 +900,10 @@ that offer objects without inheritance, while reserving “object-oriented”
 for languages that do also offer inheritance.
 I broadly agree with Wegner’s nomenclature;
 however after further examining Wegner’s definitions,
-I see that he unjustly overlooked prototype object-orientation,
-and is wrong in requiring classes as part of “object-oriented” programming.
-Indeed, as stated earlier, I even object to “objects” being considered necessary for OOP.
+I see that he unjustly maligned prototype object-orientation,
+and is wrong in requiring classes as part of “object-oriented” programming
+(though later in his paper he does discuss “classless” systems).
+Furthermore, as stated earlier, I even object to “objects” being considered necessary for OOP.
 
 Still, it is clearly possible, indeed relatively common, to have “objects”
 without what either I or Wegner or most people recognize as “object-oriented” programming;
@@ -1146,7 +1147,6 @@ If so, you should also be careful never to ask about the philosophical or religi
 of authors, inventors, colleagues, etc., in your technical field, or any field,
 least you find yourself alienated from much of human knowledge.
 
-
 @subsection[#:tag "Imdc"]{Is my definition correct?}
 @epigraph{
   The truth or falsehood of all of man’s conclusions, inferences, thought and knowledge
@@ -1310,6 +1310,41 @@ only terrible loss@xnote["."]{
   to abuse you and thereby assert their dominance over you.
 }
 
+@subsection{Can’t we at least let experts determine what concepts to name?}
+@epigraph{
+  There could hardly be a more unbearable — and more irrational — world than
+  one in which the most eminent specialists in each field were allowed to proceed unchecked
+  with the realization of their ideals.
+  @|#:- "Friedrich A. Hayek"|
+}
+No, experts, even after excluding the all too common outright fraudulent ones,
+remain a terrible authority on what precisely the right concepts to care about are:
+some, more interested in the methods they master than in the problems people have,
+will happily define down a topic to whatever their limited methods can address;
+others, interested in their impact upon people, will offer convincing sounding explanations
+to manipulate people and try to sway them from what they actually care about
+to what the expert would prefer for them to care about instead.
+
+You might hope that at least on topics with little economic or political impact,
+there would be fewer incentives for bias. Unhappily, as per Sayre’s Law:
+@principle{Academic politics is the most vicious and bitter form of politics,
+because the stakes are so low.}
+The failure modes are many, and those expert most autistically interested in the truth
+are likely to be those whose findings are least promoted (by themselves or others)
+in terms intelligible by the public at large.
+You sadly cannot just trust “the experts”, and especially not so
+with respect to the precise delimitation of concepts.
+
+A rough public consensus about what a concept does and does not cover,
+while not precise around the edges, is actually much more accurate
+than any expert opinion on about what people actually care about—because it matters to them.
+On the other hand, a rough public consensus is a feeling, incapable of either precision or logic.
+It can measure what concept people actually care about, but provide no consistent explanation.
+For that you will have to consider what experts say,
+who only can get it right (though they more often than not get it terribly wrong).
+Even there you still cannot trust the experts,
+but must consider their opinions critically, with a big grain of salt.
+
 @subsection{So what phenomena count as OO?}
 @epigraph{The medium is the message.
   @|#:- "Marshall McLuhan"|
@@ -1322,7 +1357,7 @@ phenomena are what OO is.
 What programmers do, not what programmers say.
 
 And these phenomena are what is captured by
-the intra-linguistic modular extensibility as defined above:
+the intra-linguistic modular extensibility as defined in the previous chapter:
 @itemize[
   @item{The ability to “code against an interface” and
     pass any value of any type that satisfies the interface
@@ -1336,8 +1371,9 @@ the intra-linguistic modular extensibility as defined above:
     exist @emph{within} the programming language rather than in an external preprocessing layer.}]
 
 I contend that the above is what is usually meant by OO,
-that matches the variety of OO languages and systems
-without including systems that are decidedly not OO, like Erlang, SML or UML.
+that matches the variety of OO languages, systems and idioms,
+without including systems those are decidedly not OO, like the languages
+Erlang, Go, Rust, SML or UML (as of 2026 at least).
 Whatever clear or murky correspondence between names and concepts others may use,
 this paradigm is what matters, and is what I will call OO—it is what I will discuss in this book,
 and will systematically reduce to elementary concepts.
@@ -1387,7 +1423,7 @@ a strong thing changes the meaning of a name.}
 }
 
 @exercise[#:difficulty "Medium"]{
-  Identify an OO language that you're familiar with (or else, one that is popular),
+  Identify an OO language that you’re familiar with (or else, one that is popular),
   and place it against each of the above axes.
   Then, for each axis, find an example of OO language on the other side of the axis;
   and find a non-OO language on this side of the axis (if possible).

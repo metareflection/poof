@@ -584,3 +584,11 @@ https://chatgpt.com/g/g-p-6a0351f2f1348191981e419cf737223b/c/6a3e6777-9954-83ed-
   url={https://arxiv.org/abs/2310.19791},
   note={Recent neurosymbolic system that explicitly frames refactoring as synthesizing and documenting reusable libraries by compressing code.}
 }
+
+
+TODO: move all historical notes to an Appendix "A Revised History of Object-Orientation",
+and leave pointers to it in footnotes. OR, just add a suitable section to Chapter 4.
+Say the nice things about C++, Java, C#. Especially C++, love it or hate it
+(there are good reasons for both), did bring Internal Modular Extensibility
+where it had not been brought before, and with templates,
+showed how it was a pure functional lazy prototype OO language --- at compile-time.

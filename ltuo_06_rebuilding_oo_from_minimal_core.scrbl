@@ -1431,7 +1431,7 @@ the present book is not the right place for such a discussion.
 The only popular programming language that fully addresses all these code upgrade issues
 in its defined semantics is Erlang @~cite{Armstrong2003};
 however it does not have any OO support, and its approach
-is not always transposable to other languages@xnote["."]{
+is mostly not transposable to other languages@xnote["."]{
   Erlang will notably kill processes that still use obsolete code
   from before the current version now being upgraded to the next one.
   This is possible because Erlang has only very restricted sharing of state between processes,

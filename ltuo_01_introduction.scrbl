@@ -85,16 +85,34 @@ that would have been useless earlier, and will soon be useless again.
 
 Conceived around 1967 with Dahl and Nygaard’s Simula and Alan Kay’s musings,
 OO was actually born in 1976 when these two collided with each other and
-with Bobrow’s Lisp AI work, resulting in KRL-0 and Smalltalk-76.
+with Bobrow’s Lisp AI work, resulting in KRL-0 then Smalltalk-76@xnote["."]{
+  The “standard” history of OO@~cite{Black2013} treats Simula as
+  the necessary and sufficient foundation of OO, and Smalltalk as its successor,
+  while largely ignoring contributions from the Lisp tradition.
+  I recognize Simula was necessary but not sufficient.
+  Simula serendipitously introduced the first form of modular extensibility,
+  but in an embryonic form, and crucially without the concept of OO itself.
+  The concept and its key vocabulary (words such as “object-oriented” or “inheritance”)
+  were articulated only with KRL.
+  Even Smalltalk-76 came afterwards, though no doubt
+  interaction with Alan Kay’s neighboring Smalltalk team
+  did a lot to change KRL from the AI project it was in 1975
+  to the first OO language described as such it became in 1976.
+  Asking whether Simula is already OO is like asking whether some archaic @emph{Homo sapiens}
+  should count as fully modern human:
+  The exact label of an arbitrary delimitation matters less than
+  the precise understanding of when each critical trait appeared.
+}
 OO took off from there, at first reserved to the happy few
 who could use the most high-end systems from Xerox, BBN or MIT.
-OO became popular among researchers in the 1980s, and at some point was the Next Big Thing™.
+OO quickly became popular among researchers, then among hobbyists in the 1980s,
+and at some point was the Next Big Thing™.
 
-In the 1990s, OO finally became available to every programmer,
+By the 1990s, OO finally became available to every programmer,
 accompanied by endless industry hype to promote it.
-By the mid 2000s it had become the normal paradigm to program in.
-Then, at some point in the mid 2010s it started to become as boring as ubiquitous.
-Now in the mid 2020s it is on its way to become forgotten, at least among the Cool Kids.
+By the 2000s it had become the normal paradigm to program in.
+Then, at some point in the 2010s it started to become as boring as ubiquitous.
+Now in the 2020s it is on its way to become forgotten, at least among the Cool Kids.
 Yet, one thing OO never was, was understood.
 Until now.
 
