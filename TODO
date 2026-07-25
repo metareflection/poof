@@ -592,3 +592,5 @@ Say the nice things about C++, Java, C#. Especially C++, love it or hate it
 (there are good reasons for both), did bring Internal Modular Extensibility
 where it had not been brought before, and with templates,
 showed how it was a pure functional lazy prototype OO language --- at compile-time.
+
+TODO: discuss more extensibility for mixin inheritance.

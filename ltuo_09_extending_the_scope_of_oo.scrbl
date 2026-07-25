@@ -197,7 +197,6 @@ and @c{compose-update} is just @c{compose}.
 Views, Updates and Lenses each form categories, wherein composition is associative,
 and identities are neutral elements.
 
-
 @Paragraph{Field Lens}
 Given some record representation, a view for a field of identifier key @c{k}
 is just a function that, given as argument the record @c{r}, returns the field value @c{r.k};
@@ -509,7 +508,49 @@ To a first approximation, this corresponds to using variants of these Update fun
   abort)
 }
 
+@Paragraph{Nested Specifications}
+What is interesting about the approach above is that you get
+the semantics of nested specifications for free:
+a modularly extensible specification can itself contain
+nested modularly extensible specifications,
+and extensions to the outer specification can override the inner ones
+by extending them with the usual OO extension mechanism (inheritance).
+And the same outermost or global fixpoint will automatically compute
+all the inner fixpoints of all the inner specifications, without any issue.
+As mentioned before, that’s actually a case where it is very nice to have
+conflation of specification and target, so you don't need to constantly have to think
+about which you’re talking about, or have heavy syntactic markers all over the place.
+
+Of course, dynamic OO languages, whether Prototype OO languages or Class OO languages with reflection,
+always can and always could express these nested specifications and their overriding the hard way.
+But credit where credit is due, Beta@~cite{Kristensen1987}
+was the first language that explicitly supported such nested specifications,
+with its virtual patterns, and whose authors explicitly explored
+the resulting notion of “family polymorphism” (as they dubbed it). @;TODO cite
+This proves that its authors advanced OO in more ways than first implementing classes
+in Simula 67@~cite{Simula1967}.
+Other notable languages that explicitly support nested specifications include
+Newspeak@~cite{Bracha2008} with its nested classes (in a Class OO language), and
+Jsonnet@~cite{jsonnet} with its nested objects (in a Prototype OO language).
+Nix@~cite{nix2015}, that implements its extensions equivalent to Jsonnet
+in a few lines of λ-calculus as per @secref{MOO} and @secref{RPOO},
+does not provide any special operator to support nested extensions,
+and doesn’t need to: nesting extensions is already a common idiom in defining
+Nix packages, configurations, and their overrides.
+
+Scala@~cite{Odersky2005} is the only mainstream language that can express this semantics
+with a proper static typing discipline, though in a slightly roundabout way,
+using abstract type members and path-dependent nested types.
+C++ templates, that can express anything, can use CRTP @~cite{Coplien1995}
+to expose an explicit @c{Self} argument with which to express family polymorphism;
+but it can be a challenge to get the appropriate amount of statically typed runtime substituability
+between objects defined from such class.
+
+Finally, note that there is no reason why a nested 
+
 @subsection{Optics for Class Instance Methods}
+@; TODO: use rproto everywhere instead of directly ModExt ?
+@; Or better, use the MI variant?
 
 Inasmuch as classes are prototypes, the way to deal with methods on a class
 are essentially the same as for prototypes, or a refinement thereof.
@@ -655,16 +696,8 @@ you would use:
   (abort "missing field markup")))
 }
 A class could then define a default prototype for new instances as:
-@; TODO FIX THIS MESS
+@; TODO INSERT SUITABLE CODE HERE
 @Code{
-(skew-ext (update-lens rproto-spec-lens (field-update 'new-instance-prototype))
-  (λ (_inherited self)
-    (rproto-mix*
-      (apply mix*
-        (map (λ (slot)
-             (compose (field-update (slot 'name))
-                      (slot 'init-spec)))
-           slots)))))
 }
 
 A class descriptor holds a list of slot descriptors
@@ -1518,7 +1551,7 @@ and every programmer of every part of the protocol would have to cooperate with 
 which is a hard discipline for a programmer to follow, and
 a near impossible one to enforce upon others.
 
-A more sophisticated approach known as the “visitor pattern” @~cite{GoF1994},
+A more sophisticated approach known as the “visitor pattern” @~cite{Gamma1994},
 is both a special case of double dispatch and a generalization of it.
 I will present it with classes as is usual, but it generalizes to arbitrary specifications:
 @itemize[
@@ -2031,7 +2064,7 @@ or second-class typeclasses vs existentially quantified first-class values
 with typeclass constraints in Haskell (usually using GADT syntax);
 or even second-class libraries of functions vs structs containing functions pointers in C
 (that could even be used with COM or DCOM); @; TODO cite
-Scheme libraries vs objects-as-closures without inheritance as in SICP @~cite{SICP2},
+Scheme libraries vs objects-as-closures without inheritance as in SICP @~cite{Abelson1996},
 etc.
 
 @principle{Dynamic dispatch embodies first-class modularity},
@@ -2248,7 +2281,7 @@ or will level the playing field in favor of new languages, static or dynamic.
     Note that in the case of Beta, much of the difficulty is in
     understanding its semantics to begin with,
     based on the @italic{sui generis} nature of the little available documentation.
-    See my notes on @citet{Kristensen1987Beta}, or
+    See my notes on @citet{Kristensen1987}, or
     ask AI for help understanding Beta and its documentation.
 }}
 

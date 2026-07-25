@@ -261,7 +261,7 @@ as Haskell grew up to become a practical language@xnote["."]{
 Yet, there are:
 @itemize[
   @item{Pure models of OO such as those of
-    Kamin, Reddy, Cook and Bracha@~cite{Kamin1988 ObjectsAsClosures Cook1989 Cook1989Denotational Bracha1990},}
+    Kamin, Reddy, Cook and Bracha@~cite{Kamin1988 ObjectsAsClosures Cook1989 CookPalsberg1989 Bracha1990},}
   @item{pure lazy dynamic OO languages such as Jsonnet or Nix@~cite{jsonnet dolstra2008nixos nix2015},
     and pure lazy OO systems for Scheme@~cite{poof2021},}
   @item{languages happily combining OO and FP such as Common Lisp or Scala,
@@ -374,7 +374,7 @@ The second approach is “composition” of classes:
 a class defines the aspect, and the other one @emph{has-a} value of that aspect class
 as attribute (composition of classes seen as their constructor functions)@xnote["."]{
   There is also an old slogan of OO design,
-  notably found in the famous “Gang of Four” (“GoF”) book @~cite{GoF1994},
+  notably found in the famous “Gang of Four” (“GoF”) book @~cite{Gamma1994},
   that you should “favor object composition over class inheritance”.
   GoF argues not to create an exponential number of subclasses
   that specialize based on static information about what is or could be a runtime value,
@@ -907,8 +907,8 @@ Furthermore, as stated earlier, I even object to “objects” being considered 
 
 Still, it is clearly possible, indeed relatively common, to have “objects”
 without what either I or Wegner or most people recognize as “object-oriented” programming;
-and Wegner’s term “object-based” is fit to describe such cases
-where objects embody first-class modularity without inheritance @~cite{Jones1976 Liskov1987 SICP2}.
+and Wegner’s term “object-based” is fit to describe such cases where objects embody
+first-class modularity without inheritance @~cite{Jones1976 Liskov1987 Abelson1996}.
 
 @section{Misunderstandings about Inheritance}
 
@@ -1049,7 +1049,7 @@ prove constructively that prototypes can be pure, and that they use
 the very same inheritance mechanisms as classes,
 indeed with classes as a particular case of prototypes with the usual construction.
 Meanwhile, old reflective Class OO systems like Lisp and Smalltalk
-@~cite{Kahn1976 Kay1993EHoS Gabriel1991CLOS Kiczales1991}
+@~cite{Kahn1976 Kay1993 Gabriel1991CLOS Kiczales1991}
 also support mutable state to modify the inheritance structure at runtime,
 for the sake of dynamic redefinition of classes at runtime,
 in what remains semantically a pure functional model once when the structure is set.
@@ -1238,7 +1238,7 @@ if a definition at all@xnote["."]{
   (who previously used “slot inheritance” on early desktop publishing applications),
   and this adoption is what launched OO as a phenomenon.
   Kay stated adopting single inheritance over multiple inheritance
-  was a compromise @~cite{Kay1993EHoS};
+  was a compromise @~cite{Kay1993};
   his team later added multiple inheritance to Smalltalk @~cite{Goldstein1980Extending}, but
   it is unclear that Kay had much to do with that addition, that never became standard.
   More broadly, Kay didn’t endorse any specific inheritance mechanism,

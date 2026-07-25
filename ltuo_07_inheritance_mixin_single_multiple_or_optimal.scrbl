@@ -152,6 +152,7 @@ to implement or use it.
    and not to care enough to simplify it for others. }
 
 @Paragraph{Mixin Inheritance is More Expressive than Single Inheritance}
+@; TODO not just more expressive, but in an importantly relevant way MORE EXTENSIBLE
 Single inheritance can be trivially expressed in terms of mixin inheritance:
 a single inheritance specification is just a list of modular extensions composed
 with a base generator at one end;
@@ -168,7 +169,7 @@ Thus, single inheritance is no more expressive than mixin inheritance.
 Conversely, given a language with FP and dynamic types or sufficiently advanced types,
 you can implement first-class mixin inheritance on top of first-class single inheritance by
 writing a function that abstracts over which parent specification
-a specification will inherit from, as in Racket née PLT Scheme @~cite{Mixins1998 Flatt2006Mixins}.
+a specification will inherit from, as in Racket née PLT Scheme @~cite{Flatt1998 Flatt2006}.
 In terms of complexity, this construct puts the cart before the horse,
 since it would be much easier to build mixin inheritance first, then single inheritance on top.
 Still, this style is possible, and may allow one to
@@ -187,7 +188,7 @@ but as the list of all modular extensions directly and indirectly contributed.
 Now what if you only have second-class class OO, and
 your compile-time language lacks sufficiently expressive functions
 to build mixin inheritance atop single inheritance?
-Then, mixin inheritance is strictly more expressive@~cite{eppl91}
+Then, mixin inheritance is strictly more expressive@~cite{Felleisen1990}
 than single inheritance:
 You can still express single inheritance as a stunted way of using mixin inheritance.
 But you can’t express mixin inheritance on top of single inheritance anymore.
@@ -528,7 +529,7 @@ Modular extensions can be composed left and right,
 but modular definitions can only be on the right and on the left must be a modular extension.
 
 The difficulty of synthesizing a modular definition is known as
-the “diamond problem” @~cite{bracha1992jigsaw Inheritance1996}@xnote[":"]{
+the “diamond problem” @~cite{bracha1992jigsaw Taivalsaari1996}@xnote[":"]{
   Bracha says he didn’t invent the term “diamond problem”,
   that must have already circulated in the C++ community;
   his thesis quotes Bertrand Meyer who talks of “repeated inheritance”.
@@ -1019,7 +1020,7 @@ and compute a child’s precedence list from those of its parents.
 That’s the only reasonable way to ensure monotonicity.
 However, the naïve way to do it, by concatenating the lists then removing duplicates,
 like LOOPS @~cite{Bobrow1983LOOPS}
-or after it (though removing from the other end) Scala @~cite{scalableComponentAbstractions2005},
+or after it (though removing from the other end) Scala @~cite{Odersky2005},
 preserves neither Local Order nor Monotonicity.
 The somewhat more careful algorithm used by CommonLoops @~cite{Bobrow1986CommonLoops}
 and after it by CLOS (with minor changes) @; TODO check what those changes are
@@ -1506,7 +1507,7 @@ wherein “single inheritance” structs and “multiple inheritance” classes
 can extend each other—except that
 Ruby calls these entities respectively “classes” and “modules”
 whereas Scala, following the Smalltalk tradition,
-calls them respectively “classes” and “traits” @~cite{scalableComponentAbstractions2005}@xnote["."]{
+calls them respectively “classes” and “traits” @~cite{Odersky2005}@xnote["."]{
   It is bad enough that “class” denotes entities with multiple inheritance in Lisp or Python,
   but specifically entities with single inheritance in Smalltalk, Ruby or Scala.
   It doesn’t help that the Scala documentation is not consistent about that naming,

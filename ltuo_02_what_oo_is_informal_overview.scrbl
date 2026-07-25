@@ -307,7 +307,7 @@ Hoare introduced the notions of “class” and “subclass” of records
 The first implementation of the concept appeared in Simula 67 @~cite{Simula1967}.
 Alan Kay later adopted this mechanism for Smalltalk-76 @~cite{Ingalls1978},
 as a compromise instead of the more general but then less well understood multiple inheritance
-@~cite{Kay1993EHoS}.
+@~cite{Kay1993}.
 Kay took the word “inheritance” from KRL @~cite{Winograd1975 Bobrow1976},
 a “Knowledge Representation Language” written in Interlisp around Minsky’s notion of Frames.
 (@citet{Ingalls2020} also reveals that work on Smalltalk-76 started in August only,
@@ -331,7 +331,7 @@ in order from least specific superclass to most specific@xnote["."]{
   is the “inner” part between this prefix and suffix,
   marked by the @c{inner} keyword as a placeholder.
   Lack of explicit @c{inner} keyword is same as before, as if the keyword was at the end.
-  This approach by Simula and its successor Beta @~cite{Kristensen1987Beta}
+  This approach by Simula and its successor Beta @~cite{Kristensen1987}
   (that generalized classes to “patterns” that also covered method definitions the same way;
   except that lack of “inner” means the “do” block cannot be extended anymore,
   like “final” in Java or C++),
@@ -512,8 +512,8 @@ effectively making those transitive dependencies part of a specification’s int
 For all these reasons adoption of mixin inheritance remains relatively limited,
 to languages like
 StrongTalk @~cite{Bracha1993Strongtalk Bak2002Mixins},
-Racket @~cite{Mixins1998 Flatt2006Mixins},
-Newspeak @~cite{bracha2008},
+Racket @~cite{Flatt1998 Flatt2006},
+Newspeak @~cite{Bracha2008},
 GCL @~cite{gclviewer2008},
 Jsonnet @~cite{jsonnet},
 and Nix @~cite{nix2015}. @; TODO: cite gBeta ?

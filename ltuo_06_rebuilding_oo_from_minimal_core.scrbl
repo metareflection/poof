@@ -351,14 +351,15 @@ that just returns the record as a constant:
 
 @subsection[#:tag "CfUe"]{Conflation from U-encoding}
 
-@Paragraph{Y U NO SELF-APPLY?}
+@Paragraph{Y U NO APPLY SELF?}
 
 One simple and quite common encoding of objects conflates specification and target
 in a way that is subtly different from the encoding I have been using so far.
 It is notable for being the essence of the barebones object system of
 Yale T Scheme @~cite{Rees1982T Adams1988},
-later made portable as YASOS @~cite{Dickey1992},
-and more famously of the JavaScript (JS) object system @~cite{Eich1996JavaScript}:
+later made portable as YASOS @~cite{Dickey1992};
+and it was made famous by being standardized as
+the JavaScript (JS) object system @~cite{Eich1996JavaScript}:
 a prototype is a record of methods encoded as functions that take
 the record itself as parameter.
 However, beyond these object systems exposing their internals,
@@ -400,7 +401,7 @@ but also the relationship between the two.
 We have the identity @c{Y f = U (B f U)} or equivalently @c{Y = B U (C B U)}
 where @c{B} is composition @c{B x y z = x (y z)} and
 @c{C} is the flip operator @c{C x y z = x (z y)}@xnote["."]{
-  Haskellers might write @c{Y} as @c{U .(. U)} which is my new favorite emoji.}
+  Haskellers might write @c{Y} as @c{U.(.U)} which is my new favorite emoji.}
 Both @c{B} and @c{C} are linear, they just rearrange things without creating information,
 whereas @c{U} is all about duplication, creating new copies of information, and does all the work.
 Therefore it is fair to say that, up to a linear transformation,
@@ -435,7 +436,7 @@ traditionally switch the order of arguments between the @c{half} and @c{method-i
 so that you instead write @c{(half method-id half)};
 there are good reasons to do that
 from the point of view of low-level representation and efficiency.
-But semantically, that is just a trivial isomorphism
+But semantically, that is just a trivial linear isomorphism
 (see @secref{SRoRoS} for a discussion).
 
 @Paragraph{For or Against U, Y?}

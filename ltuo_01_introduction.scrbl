@@ -50,7 +50,7 @@ in your favorite programming language@xnote["."]{
   It is also possible to emulate such functions in languages that do not have them;
   that is a topic I will not cover, but I can refer you
   to classic books about programming languages that do it well
-  @~cite{EOPL3 SICP2 Queinnec1996LiSP Pierce2002TAPL PLAI}.
+  @~cite{EOPL3 Queinnec1996LiSP Abelson1996 Pierce2002TAPL PLAI}.
   I do love these books, however I find their treatment of OO lacking—otherwise
   I wouldn't be writing the present book.
 }
@@ -440,7 +440,7 @@ but that even seminal formal accounts may lack a vocabulary shared with practiti
 }
   A notable dissident to this characterization is William Cook,
   a respected academic who made many key contributions to understanding the semantics of inheritance
-  @~cite{Cook1989 Cook1989Inheritance cook1989denotational Bracha1990 Cook1994}
+  @~cite{Cook1989 Cook1989Inheritance CookPalsberg1989 Bracha1990}
   yet also argued that Inheritance was orthogonal to OO @; Also Cook1989?
   and that OO is about “classes” of “objects” that can only be accessed through “interfaces”
   @~cite{Cook1991 Cook2009 Cook2012}.
@@ -557,9 +557,9 @@ Dependent types are not necessary.
   When you come to a fork in the road, take it. @|#:-"Yogi Berra"|
 }
 Now since nearly the very beginning of OO,
-there have been multiple variants of inheritance to choose from @~cite{Inheritance1996}.
+there have been multiple variants of inheritance to choose from @~cite{Taivalsaari1996}.
 Many prefer Single Inheritance for its simplicity and performance
-@~cite{Simula1967 Kay1993EHoS}.
+@~cite{Simula1967 Kay1993}.
 Others prefer Multiple Inheritance, for its greater expressiveness and modularity,
 and this multiple inheritance itself comes in multiple flavors,
 notably divided on whether to use a technique called “linearization”

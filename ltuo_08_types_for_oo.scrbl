@@ -817,7 +817,7 @@ i.e. being able to use the underlying data structures and algorithms
 without having to know the details and internals.
 
 A first-class type descriptor is a record whose type is existentially quantified:
-@~cite{Cardelli1985 Mitchell1988 PT1993STTFOOP}
+@~cite{Cardelli1985 Mitchell1985 PT1993STTFOOP}
 @; TODO cite harper1994modules remy1994mlart
 as per the Curry–Howard correspondence, it is a witness of the proposition according to which
 “there is a type @c{T} that has this interface”, where the interface may include field getters
@@ -1084,7 +1084,7 @@ because it is incompatible with some of their self-inflicted assumptions or cons
 @citet{MonadsMixins}, @citet{Amin2016DependentOT},
 @citet{EssenceOfInheritance2016}, @citet{oiwc2016}.
 @; TODO Cook 1987 A self-ish model of inheritance ?
-@; @citet{Cook1989} ? @citet{Cook1989Denotational} ?
+@; @citet{Cook1989 CookPalsberg1989}
 
 Now there are papers that successfully type OO, and should be praised for it
 and for their other innovations—yet take the bad approach of starting with

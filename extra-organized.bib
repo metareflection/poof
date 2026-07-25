@@ -1,22 +1,3 @@
-%% Organized bibliography for Lambda the Ultimate Object.
-%%
-%% Generated from extra.bib by merging exact and near duplicates, correcting
-%% malformed metadata and promoting selected comment-only literature leads.
-%% Entries are sorted by year and then by citation key. Titles deliberately
-%% contain no BibTeX capitalization braces; names use Unicode accents.
-@article{DahlNygaard1966,
-  author={Dahl, Ole-Johan and Nygaard, Kristen},
-  title={SIMULA—an ALGOL-Based Simulation Language},
-  journal={Communications of the ACM},
-  volume={9},
-  number={9},
-  pages={671–678},
-  year={1966},
-  doi={10.1145/365813.365819},
-  url={https://doi.org/10.1145/365813.365819},
-  note={Earliest published account of the Simula lineage; useful for separating simulation objects from the later Simula 67 package of classes, inheritance and virtual procedures.}
-}
-
 @article{Conway1968,
   author={Melvin E. Conway},
   title={How Do Committees Invent?},
@@ -28,16 +9,6 @@
   year={1968},
   url={https://www.melconway.com/Home/Committees_Paper.html},
   note={Original statement of Conway’s law; relevant to the relation between modular software structure and the communication structure of the organizations that build it.}
-}
-
-@inproceedings{dahl1967class,
-  author={Ole-Johan Dahl and Kristen Nygaard},
-  title={Class and Subclass Declarations},
-  booktitle={Simulation Programming Languages (J. N. Buxton, ed.), Proc. IFIP Working Conf., Oslo 1967},
-  pages={158–174},
-  publisher={North-Holland},
-  year={1968},
-  note={Early account of class prefixing and virtual quantities, establishing the priority and original semantics of inheritance in Simula 67.}
 }
 
 @techreport{DahlMyhrhaugNygaard1970,
@@ -73,8 +44,16 @@
   note={Information hiding: the purpose-level concept of which encapsulation clauses were the shadow}
 }
 
-@inproceedings{hewitt1973actor,
-  author={Hewitt, Carl and Bishop, Peter and Steiger, Richard},
+@inproceedings{hewitt1973Actor,
+  title={Actor induction and meta-evaluation},
+  author={Hewitt, Carl and Bishop, Peter and Greif, Irene and Smith, Brian and Matson, Todd and Steiger, Richard},
+  booktitle={Proceedings of the 1st annual ACM SIGACT-SIGPLAN symposium on Principles of programming languages},
+  pages={153--168},
+  year={1973}
+}
+
+@inproceedings{Hewitt1973Universal,
+  author={Carl Hewitt and Peter Bishop and Richard Steiger},
   title={A universal modular ACTOR formalism for artificial intelligence},
   booktitle={Proc. 3rd International Joint Conference on Artificial Intelligence (IJCAI)},
   pages={235–245},
@@ -127,19 +106,8 @@
   note={Primary statement of the actor/message-passing view of control; useful for distinguishing the actor lineage from object-oriented dispatch and inheritance.}
 }
 
-@inproceedings{ingalls1978smalltalk76,
-  author={Ingalls, Daniel H. H.},
-  title={The Smalltalk-76 Programming System: Design and Implementation},
-  booktitle={POPL '78},
-  pages={9–16},
-  year={1978},
-  doi={10.1145/512760.512762},
-  url={https://doi.org/10.1145/512760.512762},
-  note={The retreat from Smalltalk-72's pure messaging to method dictionaries and a superclass chain: the embodiment test finding the pure-message model below the concept}
-}
-
-@inproceedings{NygaardDahl1978,
-  author={Nygaard, Kristen and Dahl, Ole-Johan},
+@inproceedings{Nygaard1978,
+  author={Kristen Nygaard and Ole-Johan Dahl},
   title={The Development of the SIMULA Languages},
   booktitle={History of Programming Languages (HOPL-I)},
   pages={439–480},
@@ -148,14 +116,6 @@
   doi={10.1145/800025.1198392},
   url={https://doi.org/10.1145/800025.1198392},
   note={Retrospective by the designers that documents how Simula I evolved into Simula 67 and why classes, prefixing and virtual procedures were introduced.}
-}
-
-@techreport{Cannon1979Flavors,
-  author={Cannon, Howard I.},
-  title={Flavors: A Non-Hierarchical Approach to Object-Oriented Programming},
-  institution={MIT Artificial Intelligence Laboratory},
-  year={1979},
-  note={MIT AI Lab working paper; origin of mixins and method combination}
 }
 
 @article{Ingalls1981SmalltalkPrinciples,
@@ -182,7 +142,7 @@
   note={Very early functional reconstruction of object-oriented programming, predating most later work on classes as functions and objects as fixed points.}
 }
 
-@inproceedings{reynolds1983types,
+@inproceedings{Reynolds1983,
   author={John C. Reynolds},
   title={Types, Abstraction and Parametric Polymorphism},
   booktitle={Information Processing 83 (IFIP Congress)},
@@ -192,54 +152,7 @@
   note={The theorem that modularity works: representation independence}
 }
 
-@inproceedings{Cardelli1984,
-  author={Cardelli, Luca},
-  title={A Semantics of Multiple Inheritance},
-  booktitle={Semantics of Data Types},
-  series={Lecture Notes in Computer Science},
-  volume={173},
-  number={2–3},
-  pages={51–67},
-  publisher={Springer},
-  year={1984},
-  doi={10.1016/0890-5401(88)90007-7},
-  url={https://lucacardelli.name/papers/inheritance.pdf},
-  note={First record model (conference version 1984, LNCS 173); its lack of open self is the founding model-vs-language discrepancy}
-}
-
-@book{abelson1985sicp,
-  author={Abelson, Harold and Sussman, Gerald Jay and Sussman, Julie},
-  title={Structure and Interpretation of Computer Programs},
-  publisher={MIT Press},
-  year={1985},
-  note={Chapter 3: objects as dispatching closures — the lambda-minimal embodiment, whose per-object ceremony reveals what direct support must provide}
-}
-
-@article{CardelliWegner1985,
-  author={Cardelli, Luca and Wegner, Peter},
-  title={On understanding types, data abstraction, and polymorphism},
-  journal={ACM Computing Surveys},
-  volume={17},
-  number={4},
-  pages={471–523},
-  year={1985},
-  doi={10.1145/6041.6042},
-  url={https://doi.org/10.1145/6041.6042},
-  note={Foundational taxonomy of polymorphism, abstraction and subtyping; provides the type-theoretic vocabulary against which object models are compared.}
-}
-
-@inproceedings{mitchell1985abstract,
-  author={Mitchell, John C. and Plotkin, Gordon D.},
-  title={Abstract types have existential types},
-  booktitle={POPL '85},
-  pages={37–51},
-  year={1985},
-  doi={10.1145/318593.318606},
-  url={https://doi.org/10.1145/318593.318606},
-  note={Earlier variant of the TOPLAS 10(3) 1988 version; the formal ground of the ADT pole of Reynolds's duality}
-}
-
-@book{agha1986actors,
+@book{Agha1986,
   author={Gul Agha},
   title={Actors: A Model of Concurrent Computation in Distributed Systems},
   publisher={MIT Press},
@@ -247,7 +160,7 @@
   note={The active branch, systematized}
 }
 
-@inproceedings{black1986emerald,
+@inproceedings{Black1986,
   author={Black, Andrew and Hutchinson, Norman and Jul, Eric and Levy, Henry},
   title={Object structure in the Emerald system},
   booktitle={OOPSLA '86},
@@ -268,18 +181,7 @@
   note={Primary account of generic functions and multiple dispatch in CommonLoops, a direct precursor of CLOS and its metaobject tradition.}
 }
 
-@inproceedings{Lieberman1986,
-  author={Lieberman, Henry},
-  title={Using prototypical objects to implement shared behavior in object-oriented systems},
-  booktitle={Proc. OOPSLA '86},
-  pages={214–223},
-  year={1986},
-  doi={10.1145/28697.28718},
-  url={https://doi.org/10.1145/28697.28718},
-  note={Priority for delegation; behavior sharing without classes, establishing sharing as the purpose and class as one realization}
-}
-
-@inproceedings{meyer1986genericity,
+@inproceedings{Meyer1986,
   author={Bertrand Meyer},
   title={Genericity versus Inheritance},
   booktitle={Proc. OOPSLA '86},
@@ -301,6 +203,7 @@
   note={Nygaard’s concise insider account of objects, classes and conceptual modeling in the Simula tradition.}
 }
 
+
 @inproceedings{America1987,
   author={America, Pierre},
   title={Inheritance and Subtyping in a Parallel Object-Oriented Language},
@@ -311,7 +214,7 @@
   note={One of the earliest formal treatments to distinguish inheritance from subtyping in an object-oriented language.}
 }
 
-@inproceedings{cointe1987objvlisp,
+@inproceedings{Cointe1987,
   author={Pierre Cointe},
   title={Metaclasses are First Class: the ObjVlisp Model},
   booktitle={Proc. OOPSLA '87},
@@ -320,7 +223,8 @@
   note={The tower closed by self-instantiation: fix one level up}
 }
 
-@inproceedings{DeMichielGabriel1987,
+% Journal version https://dreamsongs.com/Files/LASC-overview.pdf
+@InProceedings{DeMichiel1987,
   author={Linda G. DeMichiel and Richard P. Gabriel},
   title={The Common Lisp Object System: An Overview},
   booktitle={ECOOP 1987},
@@ -330,28 +234,16 @@
   publisher={Springer},
   year={1987},
   doi={10.1007/3-540-47891-4_15},
-  url={https://doi.org/10.1007/3-540-47891-4_15},
-  note={Earliest published overview of CLOS; documents the generic-function, multiple-dispatch and method-combination branch of object-oriented design.}
-}
-
-@inproceedings{Liskov1987,
-  author={Liskov, Barbara},
-  title={Data abstraction and hierarchy},
-  booktitle={OOPSLA '87 Addendum to the Proceedings},
-  pages={17–34},
-  year={1987},
-  note={Earlier variant; journal treatment: Liskov and Wing, A behavioral notion of subtyping, ACM TOPLAS 16(6):1811–1841, 1994, doi 10.1145/197320.197383. The normative complement (conformance) to the mechanism-level definition}
-}
-
-@inproceedings{stein1987delegation,
-  author={Lynn Andrea Stein},
-  title={Delegation Is Inheritance},
-  booktitle={Proc. OOPSLA '87},
-  pages={138–146},
-  year={1987},
-  doi={10.1145/38765.38820},
-  url={https://doi.org/10.1145/38765.38820},
-  note={Delegation and class inheritance unified as one mechanism on different carriers}
+  url={https://dreamsongs.com/Files/clos-overview.pdf},
+  note={
+    Earliest published overview of CLOS, including
+    generic functions, multiple dispatch and method-combinations.
+    The 1987 version of CLOS was somewhat incomplete, compared the 1988 version
+    that officially made it to the standard: the API is not as nice
+    and notably lacking with respect to the object (re)initialization protocol.
+    Still, the essential design and most major features are there.
+    Journal version LASC 1 (1989).
+  }
 }
 
 @inproceedings{Stroustrup1987,
@@ -363,67 +255,16 @@
   publisher={Springer-Verlag},
   year={1987},
   doi={10.1007/3-540-47891-4_6},
-  url={https://doi.org/10.1007/3-540-47891-4_6},
   note={Early practitioner attempt to delimit OOP around classes, inheritance and virtual functions; useful evidence for the C++ branch of the vocabulary.}
 }
 
-@inproceedings{UngarSmith1987,
-  author={Ungar, David and Smith, Randall B.},
-  title={Self: The Power of Simplicity},
-  booktitle={Conference Proceedings on Object-Oriented Programming Systems, Languages and Applications},
-  series={OOPSLA '87},
-  pages={227–242},
-  publisher={ACM},
-  year={1987},
-  doi={10.1145/38765.38828},
-  url={https://doi.org/10.1145/38765.38828},
-  note={Quintessential manifestation of the object model; its shared parent slots expose the sharing gap in the pure sigma-calculus}
-}
-
-@inproceedings{wand1987rows,
+@InProceedings{Wand1987,
   author={Mitchell Wand},
   title={Complete Type Inference for Simple Objects},
   booktitle={Proc. 2nd IEEE Symposium on Logic in Computer Science (LICS)},
   pages={37–44},
   year={1987},
   note={Row variables: the type-level name for “the rest of self”}
-}
-
-@inproceedings{Wegner1987,
-  author={Wegner, Peter},
-  title={Dimensions of object-based language design},
-  booktitle={Conference Proceedings on Object-Oriented Programming Systems, Languages and Applications},
-  series={OOPSLA '87},
-  volume={22},
-  number={12},
-  pages={168–182},
-  publisher={ACM},
-  year={1987},
-  doi={10.1145/38765.38823},
-  url={https://doi.org/10.1145/38765.38823},
-  note={Source of the object-based/class-based/object-oriented ladder, amended here: classes are inessential}
-}
-
-@inproceedings{AdamsRees1988,
-  author={Adams, Norman and Rees, Jonathan},
-  title={Object-Oriented Programming in Scheme},
-  booktitle={LISP and Functional Programming '88},
-  pages={277–288},
-  year={1988},
-  doi={10.1145/62678.62720},
-  url={https://doi.org/10.1145/62678.62720},
-  note={Demonstrates how objects, delegation and inheritance can be encoded in a small functional core, clarifying what language support adds beyond expressibility.}
-}
-
-@article{johnson1988reusable,
-  author={Ralph E. Johnson and Brian Foote},
-  title={Designing Reusable Classes},
-  journal={Journal of Object-Oriented Programming},
-  volume={1},
-  number={2},
-  pages={22–35},
-  year={1988},
-  note={Programming-by-difference; frameworks as the purpose made artifact}
 }
 
 @inproceedings{Kaes1988,
@@ -436,19 +277,8 @@
   publisher={Springer},
   year={1988},
   doi={10.1007/3-540-19027-9_9},
-  url={https://doi.org/10.1007/3-540-19027-9_9},
+  url={http://link.springer.com/chapter/10.1007%2F3-540-19027-9_9},
   note={Priority source for type-class-like constrained overloading; useful when separating ad-hoc polymorphism from object dispatch and inheritance.}
-}
-
-@inproceedings{Kamin1988,
-  author={Kamin, Samuel N.},
-  title={Inheritance in Smalltalk-80: A Denotational Definition},
-  booktitle={POPL '88},
-  pages={80–87},
-  year={1988},
-  doi={10.1145/73560.73567},
-  url={https://doi.org/10.1145/73560.73567},
-  note={Formalizes Smalltalk method lookup and inheritance, providing a useful comparison with generator-and-fixed-point semantics.}
 }
 
 @inproceedings{madsen1988what,
@@ -463,25 +293,6 @@
   note={The Scandinavian modeling view}
 }
 
-@book{meyer1988oosc,
-  author={Bertrand Meyer},
-  title={Object-Oriented Software Construction},
-  publisher={Prentice Hall},
-  year={1988},
-  note={The open–closed principle: the purpose clause behind R=P+M}
-}
-
-@inproceedings{Reddy1988,
-  author={Reddy, Uday S.},
-  title={Objects as Closures: Abstract Semantics of Object-Oriented Languages},
-  booktitle={Proc. ACM Conference on LISP and Functional Programming},
-  pages={289–297},
-  year={1988},
-  doi={10.1145/62678.62721},
-  url={https://doi.org/10.1145/62678.62721},
-  note={Executable generator semantics; with Adams–Rees (same venue), the Scheme proof-of-pudding}
-}
-
 @inproceedings{wegner1988incremental,
   author={Peter Wegner and Stanley B. Zdonik},
   title={Inheritance as an Incremental Modification Mechanism, or What Like Is and Isn't Like},
@@ -494,48 +305,6 @@
   note={Names and analyzes the derivation axis (R = P + M)}
 }
 
-@inproceedings{CanningEtAl1989,
-  author={Canning, Peter and Cook, William and Hill, Walter and Olthoff, Walter and Mitchell, John C.},
-  title={F-Bounded Polymorphism for Object-Oriented Programming},
-  booktitle={Proc. Functional Programming Languages and Computer Architecture (FPCA '89)},
-  pages={273–280},
-  year={1989},
-  doi={10.1145/99370.99392},
-  url={https://doi.org/10.1145/99370.99392},
-  note={Typing the open self; adopted almost as-is by Java/C# generics}
-}
-
-@inproceedings{ChambersUngarLee1989,
-  author={Chambers, Craig and Ungar, David and Lee, Elgin},
-  title={An Efficient Implementation of SELF},
-  booktitle={OOPSLA '89},
-  pages={49–70},
-  year={1989},
-  doi={10.1145/74877.74884},
-  url={https://doi.org/10.1145/74877.74884},
-  note={Maps: class structure reconstructed from prototype programs}
-}
-
-@phdthesis{Cook1989Thesis,
-  author={William R. Cook},
-  title={A Denotational Semantics of Inheritance},
-  school={Brown University},
-  year={1989},
-  note={Inheritance and open recursion as fixed-point manipulation}
-}
-
-@inproceedings{CookPalsberg1989,
-  author={Cook, William R. and Palsberg, Jens},
-  title={A denotational semantics of inheritance and its correctness},
-  booktitle={OOPSLA 1989},
-  pages={433–443},
-  publisher={ACM},
-  year={1989},
-  doi={10.1145/74878.74922},
-  url={https://doi.org/10.1145/74878.74922},
-  note={Generators, wrappers, fixpoints; correctness w.r.t. method lookup = the theory/practice bridge. Journal version in Information and Computation 114(2), 1994}
-}
-
 @inproceedings{madsen1989virtual,
   author={Ole Lehrmann Madsen and Birger Møller-Pedersen},
   title={Virtual Classes: A Powerful Mechanism in Object-Oriented Programming},
@@ -545,80 +314,8 @@
   note={Openness extended to member types (BETA lineage)}
 }
 
-@inproceedings{BrachaCook1990,
-  author={Gilad Bracha and William R. Cook},
-  title={Mixin-Based Inheritance},
-  booktitle={Proc. OOPSLA/ECOOP '90},
-  pages={303–311},
-  year={1990},
-  doi={10.1145/97946.97982},
-  url={https://doi.org/10.1145/97946.97982},
-  note={Inheritance factored into composable increments; derivation-device interchangeability}
-}
-
-@inproceedings{CookHillCanning1990,
-  author={Cook, William R. and Hill, Walter L. and Canning, Peter S.},
-  title={Inheritance Is Not Subtyping},
-  booktitle={Proc. POPL '90},
-  pages={125–135},
-  year={1990},
-  doi={10.1145/96709.96721},
-  url={https://doi.org/10.1145/96709.96721},
-  note={Canonical demonstration that implementation reuse and behavioral/type substitutability are distinct relations.}
-}
-
-@inproceedings{felleisen1990expressive,
-  author={Matthias Felleisen},
-  title={On the Expressive Power of Programming Languages},
-  booktitle={Proc. 3rd European Symposium on Programming (ESOP '90), LNCS 432},
-  pages={134–151},
-  publisher={Springer},
-  year={1990},
-  note={Journal version: Science of Computer Programming 17(1–3):35–75, 1991, doi:10.1016/0167-6423(91)90036-W. Grounds the support-vs-encoding test (local expressibility)}
-}
-
-@incollection{Cook1991,
-  author={Cook, William R.},
-  editor={J. W. de Bakker and W. P. de Roever and G. Rozenberg},
-  title={Object-oriented programming versus abstract data types},
-  booktitle={Foundations of Object-Oriented Languages (REX Workshop), LNCS 489},
-  series={Lecture Notes in Computer Science},
-  volume={489},
-  pages={151–178},
-  publisher={Springer},
-  year={1991},
-  doi={10.1007/BFb0019443},
-  url={https://www.cs.utexas.edu/~wcook/papers/OOPvsADT/CookOOPvsADT90.pdf},
-  note={Landmark comparison of existentially packaged ADTs with objects, centered on the dual placement of abstraction boundaries and self-reference.}
-}
-
-@book{KiczalesDesRivieresBobrow1991,
-  author={Kiczales, Gregor and des Rivières, Jim and Bobrow, Daniel G.},
-  title={The Art of the Metaobject Protocol},
-  publisher={MIT Press},
-  year={1991},
-  note={Definitive account of reflective object-system design in CLOS and of exposing implementation policy through a disciplined meta-level interface.}
-}
-
-@techreport{snyder1991essence,
-  author={Alan Snyder},
-  title={The Essence of Objects: Common Concepts and Terminology},
-  number={HPL-91-50},
-  institution={Hewlett-Packard Laboratories},
-  year={1991},
-  note={Descriptive consensus of practice; journal version in IEEE Software 10(1), 1993}
-}
-
-@phdthesis{bracha1992jigsaw,
-  author={Gilad Bracha},
-  title={The Programming Language Jigsaw: Mixins, Modularity and Multiple Inheritance},
-  school={University of Utah},
-  year={1992},
-  note={Inheritance decomposed into an operator basis: override, merge, rename, restrict, freeze}
-}
-
-@inproceedings{BrachaLindstrom1992,
-  author={Bracha, Gilad and Lindstrom, Gary},
+@inproceedings{Bracha1992Modularity,
+  author={Gilad Bracha and Gary Lindstrom},
   title={Modularity Meets Inheritance},
   booktitle={Proc. IEEE International Conference on Computer Languages (ICCL '92)},
   pages={282–290},
@@ -637,8 +334,8 @@
   note={Primary design report for Dylan’s CLOS-influenced object system, including generic functions, multiple inheritance and class linearization.}
 }
 
-@inproceedings{KiczalesLamping1992,
-  author={Kiczales, Gregor and Lamping, John},
+@inproceedings{Kiczales1992,
+  author={Gregor Kiczales and John Lamping},
   title={Issues in the Design and Specification of Class Libraries},
   booktitle={Proc. OOPSLA '92},
   pages={435–451},
@@ -648,21 +345,8 @@
   note={The specialization interface named and examined}
 }
 
-@article{Kay1993,
-  author={Kay, Alan C.},
-  title={The early history of Smalltalk},
-  journal={ACM SIGPLAN Notices},
-  volume={28},
-  number={3},
-  pages={69–95},
-  year={1993},
-  doi={10.1145/154766.155364},
-  url={https://doi.org/10.1145/154766.155364},
-  note={Primary retrospective on Smalltalk’s design goals and evolution; essential but best read alongside contemporary implementations and Simula sources.}
-}
-
-@inproceedings{Lamping1993,
-  author={Lamping, John},
+@InProceedings{Lamping1993,
+  author={John Lamping},
   title={Typing the Specialization Interface},
   booktitle={OOPSLA '93},
   pages={201–214},
@@ -670,7 +354,7 @@
   note={Introduces a type-level account of the assumptions subclasses make about inherited implementation, directly relevant to modular inheritance.}
 }
 
-@book{madsen1993beta,
+@Book{Madsen1993,
   author={Ole Lehrmann Madsen and Birger Møller-Pedersen and Kristen Nygaard},
   title={Object-Oriented Programming in the BETA Programming Language},
   publisher={Addison-Wesley},
@@ -689,31 +373,12 @@
   note={Early object calculus that makes method specialization explicit and supports comparison between object primitives and functional encodings.}
 }
 
-@book{GammaEtAl1994,
-  author={Erich Gamma and Richard Helm and Ralph Johnson and John Vlissides},
-  title={Design Patterns: Elements of Reusable Object-Oriented Software},
-  publisher={Addison-Wesley},
-  year={1994},
-  note={Source of the forwarding/“delegation” homonym; its composition-over-inheritance advice is the hooks theorem in folk form}
-}
-
 @book{GunterMitchell1994,
   editor={Gunter, Carl A. and Mitchell, John C.},
   title={Theoretical Aspects of Object-Oriented Programming: Types, Semantics, and Language Design},
   publisher={MIT Press},
   year={1994},
   note={Influential collection that consolidates early formal work on objects, inheritance, subtyping and encodings.}
-}
-
-@incollection{KaminReddy1994,
-  author={Kamin, Samuel N. and Reddy, Uday S.},
-  editor={Gunter, Carl A. and Mitchell, John C.},
-  title={Two Semantic Models of Object-Oriented Languages},
-  booktitle={Theoretical Aspects of Object-Oriented Programming},
-  pages={463–495},
-  publisher={MIT Press},
-  year={1994},
-  note={Compares alternative denotational accounts of objects and inheritance, exposing which semantic commitments are model-dependent.}
 }
 
 @article{LiskovWing1994,
@@ -725,8 +390,10 @@
   pages={1811–1841},
   year={1994},
   doi={10.1145/197320.197383},
-  url={https://doi.org/10.1145/197320.197383},
-  note={Canonical formulation of behavioral subtyping and substitutability, supplying the specification-side discipline that inheritance alone does not provide.}
+  note={.
+    Canonical formulation of behavioral subtyping and substitutability,
+    supplying the specification-side discipline that inheritance alone does not provide.
+  }
 }
 
 @article{PierceTurner1994,
@@ -740,7 +407,7 @@
   note={Develops an existential and recursive-type account of objects, useful for contrasting object encodings with primitive object calculi.}
 }
 
-@article{BruceCardelliCastagnaLeavensPierce1995,
+@article{Bruce1995Binary,
   author={Bruce, Kim B. and Cardelli, Luca and Castagna, Giuseppe and The Hopkins Objects Group and Leavens, Gary T. and Pierce, Benjamin C.},
   title={On Binary Methods},
   journal={Theory and Practice of Object Systems},
@@ -761,7 +428,7 @@
 }
 
 @article{cardelli1995obliq,
-  author={Cardelli, Luca},
+  author={Luca Cardelli},
   title={A language with distributed scope},
   journal={Computing Systems},
   volume={8},
@@ -794,19 +461,6 @@
   note={Shows why open recursion and subclassing complicate local reasoning, a central cost of inheritance-based extensibility.}
 }
 
-@book{AbadiCardelli1996,
-  author={Abadi, Martín and Cardelli, Luca},
-  title={A Theory of Objects},
-  series={Monographs in Computer Science},
-  publisher={Springer-Verlag},
-  address={New York, NY},
-  year={1996},
-  isbn={978-0-387-94775-4},
-  doi={10.1007/978-1-4419-8598-9},
-  url={https://doi.org/10.1007/978-1-4419-8598-9},
-  note={The σ-calculus: formation, invocation, override — the minimal formal model matching E, D, O}
-}
-
 @inproceedings{AbadiCardelliViswanathan1996,
   author={Abadi, Martín and Cardelli, Luca and Viswanathan, Ramesh},
   title={An Interpretation of Objects and Object Types},
@@ -816,16 +470,7 @@
   note={Connects object calculi to typed lambda calculus, clarifying what is primitive and what can be represented by functions and recursive records.}
 }
 
-@inproceedings{barrett1996monotonic,
-  author={Barrett, Kim and Cassels, Bob and Haahr, Paul and Moon, David A. and Playford, Keith and Withington, P. Tucker},
-  title={A monotonic superclass linearization for Dylan},
-  booktitle={OOPSLA '96},
-  pages={69–82},
-  year={1996},
-  note={C3: the normal form of chain-construction algebras; the canonical shape of derivation's difference operators}
-}
-
-@incollection{jacobs1996coalgebra,
+@incollection{Jacobs1996coalgebra,
   author={Bart Jacobs},
   editor={Burkhard Freitag and Cliff B. Jones and Christian Lengauer and Hans-Jörg Schek},
   title={Objects and Classes, Co-Algebraically},
@@ -849,30 +494,7 @@
   note={Introduces explicit contracts between superclasses and subclasses to diagnose and manage fragile inheritance dependencies.}
 }
 
-@article{Taivalsaari1996,
-  author={Taivalsaari, Antero},
-  title={On the notion of inheritance},
-  journal={ACM Computing Surveys},
-  volume={28},
-  number={3},
-  pages={438–479},
-  year={1996},
-  doi={10.1145/243439.243441},
-  url={https://doi.org/10.1145/243439.243441},
-  note={Survey establishing inheritance/delegation as variants of incremental modification}
-}
-
-@inproceedings{BrucePetersenFiech1997,
-  author={Bruce, Kim B. and Petersen, Leaf and Fiech, Adrian},
-  title={Subtyping Is Not a Good “Match” for Object-Oriented Languages},
-  booktitle={ECOOP '97},
-  series={LNCS 1241},
-  pages={104–127},
-  year={1997},
-  note={Argues for matching as a relation better suited than subtyping to extensible object interfaces and self types.}
-}
-
-@inproceedings{ernst1998predicate,
+@inproceedings{Ernst1998,
   author={Ernst, Michael and Kaplan, Craig and Chambers, Craig},
   title={Predicate dispatching: a unified theory of dispatch},
   booktitle={ECOOP '98},
@@ -883,15 +505,12 @@
   note={Endpoint of the selection-basis axis; motivates “determined by” over “supplied by”}
 }
 
-@inproceedings{flatt1998mixins,
-  author={Matthew Flatt and Shriram Krishnamurthi and Matthias Felleisen},
-  title={Classes and Mixins},
-  booktitle={Proc. POPL '98},
-  pages={171–183},
+@misc{Kay1998,
+  author={Alan Kay},
+  title={Email to the Squeak Developers Mailing List, 10 October 1998},
   year={1998},
-  doi={10.1145/268946.268961},
-  url={https://doi.org/10.1145/268946.268961},
-  note={The class/mixin algebra executed over λ; sister paper: Flatt–Felleisen, Units, PLDI '98}
+  url={https://medium.com/javascript-scene/the-forgotten-history-of-oop-88d71b9b2d9f},
+  note={A frequently quoted statement about messaging and object orientation. The supplied URL is a secondary article rather than a stable primary archive of the message, so the entry was deferred pending identification of the original post.}
 }
 
 @inproceedings{krishnamurthi1998synthesizing,
@@ -904,20 +523,23 @@
   note={The anticipated/unanticipated frontier worked in both directions}
 }
 
-@inproceedings{MikhajlovSekerinski1998,
-  author={Mikhajlov, Leonid and Sekerinski, Emil},
-  title={A study of the fragile base class problem},
+@inproceedings{Mikhajlov1998,
+  author={Leonid Mikhajlov and Emil Sekerinski},
+  title={A Study of the Fragile Base Class Problem},
   booktitle={Proc. ECOOP '98, LNCS 1445},
   series={Lecture Notes in Computer Science},
   volume={1445},
   pages={355–382},
   publisher={Springer},
   year={1998},
-  note={Formalizes the open-self coupling: derivation's propagation and its fragility are the same phenomenon}
+  note={
+    Formalizes the open-self coupling: derivation's propagation and
+    its fragility are the same phenomenon
+  }
 }
 
-@article{RemyVouillon1998,
-  author={Rémy, Didier and Vouillon, Jérôme},
+@article{Remy1998,
+  author={Didier Rémy and Jérôme Vouillon},
   title={Objective ML: An Effective Object-Oriented Extension to ML},
   journal={Theory and Practice of Object Systems},
   volume={4},
@@ -945,14 +567,17 @@
   note={Fix crossing module boundaries, posed precisely}
 }
 
-@inproceedings{igarashi1999featherweight,
-  author={Igarashi, Atsushi and Pierce, Benjamin C. and Wadler, Philip},
+@inproceedings{Igarashi1999,
+  author={Atsushi Igarashi, Benjamin C. Pierce and Philip Wadler},
   title={Featherweight Java: A Minimal Core Calculus for Java and GJ},
   booktitle={OOPSLA '99},
   year={1999},
   doi={10.1145/320384.320395},
-  url={https://doi.org/10.1145/320384.320395},
-  note={Journal version: ACM TOPLAS 23(3):396–450, 2001. Minimal class-based calculus; its extra machinery relative to the sigma-calculus shows classes are derived, not primitive}
+  note={.
+    Journal version: ACM TOPLAS 23(3):396–450, 2001.
+    Minimal class-based calculus;
+    its extra machinery relative to the sigma-calculus shows classes are derived, not primitive.
+  }
 }
 
 @inproceedings{Serrano1999WideClasses,
@@ -984,16 +609,34 @@
   note={Shows how open classes and multimethods can be added while preserving modular typechecking and compilation.}
 }
 
+@inproceedings{Curien2000,
+  author={Pierre-Louis Curien and Hugo Herbelin},
+  title={The Duality of Computation},
+  booktitle={Proceedings of the Fifth ACM SIGPLAN International Conference on Functional Programming},
+  series={ICFP ’00},
+  pages={233–243},
+  publisher={Association for Computing Machinery},
+  year={2000},
+  doi={10.1145/351240.351262},
+  url={https://doi.org/10.1145/351240.351262},
+  note={Foundational work on the call-by-name/call-by-value duality and the λμ~μ calculus; worthwhile for a bibliography on control duality, but too remote from the main object-orientation argument.}
+}
+
 @techreport{Ernst2000,
   author={Erik Ernst},
   title={gBeta: A Language with Virtual Attributes, Block Structure, and Propagating, Dynamic Inheritance},
+  series={DAIMI PB},
   number={549},
   institution={University of Aarhus, Department of Computer Science},
   month={3},
   year={2000},
   doi={10.7146/dpb.v29i549.7654},
   url={https://tidsskrift.dk/daimipb/article/view/7654},
-  note={Comprehensive account of gBeta’s first-class patterns, virtual attributes and dynamic inheritance, extending the BETA lineage.}
+  note={.
+    Comprehensive description of gBeta, a successor to BETA featuring first-class patterns,
+    virtual attributes, pattern computations, dynamic inheritance, mixins, virtual patterns, and
+    family-oriented extensibility.
+  }
 }
 
 @inproceedings{RubyLeavens2000,
@@ -1034,7 +677,7 @@
   note={Typed treatment of changing an object’s class at runtime, separating identity from its current implementation and classification.}
 }
 
-@inproceedings{ernst2001family,
+@inproceedings{Ernst2001,
   author={Erik Ernst},
   title={Family Polymorphism},
   booktitle={Proc. ECOOP 2001, LNCS 2072},
@@ -1065,14 +708,6 @@
   note={Formalizes mixin-style recursive module composition under call-by-value, illuminating initialization and recursion issues hidden by lazy models.}
 }
 
-@phdthesis{armstrong2003reliable,
-  author={Joe Armstrong},
-  title={Making Reliable Distributed Systems in the Presence of Software Errors},
-  school={KTH Royal Institute of Technology},
-  year={2003},
-  note={Erlang/OTP; behaviours as library-level framework derivation}
-}
-
 @misc{Kay2003,
   author={Kay, Alan C. and Ram, Stefan},
   title={Clarification of “Object-Oriented” (E-mails to Stefan Ram, 23 and 26 July 2003)},
@@ -1082,16 +717,8 @@
   note={“Messaging, local retention and protection and hiding of state-process, extreme late-binding”}
 }
 
-@misc{rees2003cluster,
-  author={Rees, Jonathan},
-  title={On object-oriented programming (letter to Paul Graham)},
-  year={2003},
-  url={https://www.paulgraham.com/reesoo.html},
-  note={The cluster-concept objection: nine features mixed and matched; answered here by factoring the cluster into two criteria plus corollaries}
-}
-
-@inproceedings{ScharliEtAl2003,
-  author={Schärli, Nathanael and Ducasse, Stéphane and Nierstrasz, Oscar and Black, Andrew P.},
+@inproceedings{Scharli2003,
+  author = {Nathanael Schärli and Stéphane Ducasse and Oscar Nierstrasz and Andrew P. Black},
   title={Traits: Composable Units of Behaviour},
   booktitle={Proc. ECOOP 2003, LNCS 2743},
   series={LNCS 2743},
@@ -1117,7 +744,11 @@
   title={Selective Open Recursion: Modular Reasoning about Components and Inheritance},
   booktitle={SAVCBS '04 (Workshop at FSE)},
   year={2004},
-  note={Restricts open recursion to explicitly selected methods, directly addressing fragile superclass–subclass coupling while retaining controlled inheritance.}
+  note={
+    Restricts open recursion to explicitly selected methods,
+    directly addressing fragile superclass–subclass coupling while retaining controlled inheritance.
+    Also circulated as a CMU report.
+  }
 }
 
 @inproceedings{GoldbergFindlerFlatt2004,
@@ -1127,13 +758,6 @@
   pages={116–129},
   year={2004},
   note={Compares and combines the conventional super direction with Simula/BETA inner, clarifying two dual policies for composing inherited code.}
-}
-
-@misc{KiselyovLammel2005,
-  author={Kiselyov, Oleg and Lämmel, Ralf},
-  title={Haskell's Overlooked Object System},
-  year={2005},
-  note={Draft; arXiv:cs/0509027}
 }
 
 @article{waddell2005letrec,
@@ -1147,7 +771,7 @@
   note={Effects × fix: closure is not atomic; R6RS letrec* is the language absorbing the lesson}
 }
 
-@article{armstrong2006quarks,
+@article{Armstrong2006,
   author={Armstrong, Deborah J.},
   title={The quarks of object-oriented development},
   journal={Communications of the ACM},
@@ -1157,7 +781,10 @@
   year={2006},
   doi={10.1145/1113034.1113040},
   url={https://doi.org/10.1145/1113034.1113040},
-  note={Frequency-count survey of definitions; evidence of the enumeration problem this definition resolves}
+  note={.
+    Frequency-count survey of definitions;
+    evidence of the enumeration problem this definition resolves
+  }
 }
 
 @phdthesis{Dolstra2006,
@@ -1201,18 +828,15 @@
   publisher={ACM},
   year={2006},
   doi={10.1145/1140335.1140352},
-  url={https://doi.org/10.1145/1140335.1140352},
-  note={Functional solution to two-dimensional extensibility through open data and functions; a useful non-OO comparison for the expression problem.}
+  url={https://www.andres-loeh.de/OpenDatatypes.pdf},
+  note={.
+    Functional solution to two-dimensional extensibility through open data and functions.
+    Not quite OO, just use of typeclasses.
+    A useful non-OO comparison for the expression problem.}
 }
 
-@phdthesis{miller2006robust,
-  author={Miller, Mark S.},
-  title={Robust composition: towards a unified approach to access control and concurrency control},
-  school={Johns Hopkins University},
-  year={2006},
-  note={Object-capability discipline: the protection axis pushed to its endpoint, encapsulation as the security model}
-}
-
+% https://www.piumarta.com/software/id-objmodel/objmodel2.pdf
+% OOPSLA07 ???
 @techreport{PiumartaWarth2006,
   author={Ian Piumarta and Alessandro Warth},
   title={Open Reusable Object Models},
@@ -1221,6 +845,27 @@
   year={2006},
   url={https://vpri.org/pdf/tr2006003a_objmod.pdf},
   note={Minimal, open object model whose behavior is itself represented by ordinary objects; an unusually concrete bridge between prototypes, delegation and metaobject protocols.}
+}
+
+@InProceedings{Herbelin2007,
+  title={The duality of computation},
+  author={Hugo Herbelin and Pierre-Louis Curien},
+  url={https://inria.hal.science/inria-00156377},
+  note={http://www.acm.org},
+  booktitle={SIGPLAN Notice},
+  address={Montréal, Canada},
+  publisher={ACM},
+  series={SIGPLAN Notice},
+  volume={35/9},
+  number={9},
+  pages={233-243},
+  year={2000},
+  month=Sep,
+  keywords={call-by-name ; call-by-value ; sequent calculus ; CPS-translations ; Curry-Howard-de Bruijn proof-as-program correspondence ; duality ; lambda-calculus},
+  pdf={https://inria.hal.science/inria-00156377v1/file/icfp-CuHer00-duality_errata.pdf},
+  hal_id={inria-00156377},
+  hal_version={v1},
+  doi={10.1145/351240.351262},
 }
 
 @inproceedings{dreyer2007recursive,
@@ -1232,7 +877,8 @@
   note={Double vision: seal × fix interference at the type level (named in his 2005 thesis)}
 }
 
-@inproceedings{Gonzalez2007,
+% TODO: Read. What language?
+@InProceedings{Gonzalez2007,
   author={Sebastián González and Kim Mens and Patrick Heymans},
   title={Highly Dynamic Behaviour Adaptability through Prototypes with Subjective Multimethods},
   booktitle={Proceedings of the 2007 Symposium on Dynamic Languages},
@@ -1242,10 +888,13 @@
   year={2007},
   doi={10.1145/1297081.1297094},
   url={https://doi.org/10.1145/1297081.1297094},
-  note={Explores runtime adaptation through prototypes and context-sensitive multimethod dispatch, relevant to the outer edge of dynamic object models.}
+  note={.
+    Explores runtime adaptation through prototypes and context-sensitive multimethod dispatch,
+    relevant to the outer edge of dynamic object models.
+  }
 }
 
-@inproceedings{HudakEtAl2007,
+@inproceedings{Hudak2007,
   author={Paul Hudak and John Hughes and Simon Peyton Jones and Philip Wadler},
   title={A History of Haskell: Being Lazy with Class},
   booktitle={History of Programming Languages (HOPL-III)},
@@ -1257,7 +906,7 @@
   note={Primary history of Haskell and type classes; useful for dating the development of constrained overloading and its relation to object-oriented polymorphism.}
 }
 
-@inproceedings{ierusalimschy2007lua,
+@inproceedings{Ierusalimschy2007,
   author={Ierusalimschy, Roberto and de Figueiredo, Luiz Henrique and Celes, Waldemar},
   title={The Evolution of Lua},
   booktitle={History of Programming Languages (HOPL-III)},
@@ -1281,14 +930,14 @@
   note={Shows how extensible language layers can be constructed compositionally, relevant to metaobject protocols and language-oriented modularity.}
 }
 
-@inproceedings{RossbergDreyer2008,
-  author={Rossberg, Andreas and Dreyer, Derek},
+@inproceedings{Rossberg2008,
+  author={Andreas Rossberg and Derek Dreyer},
   title={Mixin' Up the ML Module System},
   booktitle={Proc. ICFP 2008},
   pages={307–320},
   year={2008},
   doi={10.1145/1411204.1411248},
-  url={https://doi.org/10.1145/1411204.1411248},
+  url={https://people.mpi-sws.org/~rossberg/mixml/},
   note={Open modules formalized; journal version TOPLAS 35(1), 2013}
 }
 
@@ -1302,20 +951,7 @@
   note={Shows inheritance over functions through memoizing monadic mixins, strengthening the connection between inheritance, open recursion and functional composition.}
 }
 
-@inproceedings{Cook2009,
-  author={Cook, William R.},
-  title={On understanding data abstraction, revisited},
-  booktitle={Proceedings of the 24th ACM SIGPLAN Conference on Object-Oriented Programming, Systems, Languages, and Applications (OOPSLA '09)},
-  series={OOPSLA '09},
-  pages={557–572},
-  publisher={ACM},
-  year={2009},
-  doi={10.1145/1640089.1640133},
-  url={https://www.cs.utexas.edu/~wcook/Drafts/2009/essay.pdf},
-  note={Autognosis; objects vs ADTs made precise}
-}
-
-@inproceedings{BrachaEtAl2010,
+@inproceedings{Bracha2010,
   author={Gilad Bracha and Peter von der Ahé and Vassili Bykov and Yaron Kashai and William Maddox and Eliot Miranda},
   title={Modules as Objects in Newspeak},
   booktitle={ECOOP 2010},
@@ -1338,6 +974,15 @@
   note={Closest existing definition; this essay's point of departure}
 }
 
+@techreport{JamesSabry2012,
+  author={James, Roshan P. and Sabry, Amr},
+  title={The Two Dualities of Computation: Negative and Fractional Types},
+  institution={Indiana University},
+  year={2012},
+  url={https://web.archive.org/web/20121229014345/https://www.cs.indiana.edu/~sabry/papers/rational.pdf},
+  note={Unpublished technical report on negative and fractional types; potentially useful for a bibliography on reversible computation or type dualities, but not central to object orientation.}
+}
+
 @article{LagorioServettoZucca2012,
   author={Giovanni Lagorio and Marco Servetto and Elena Zucca},
   title={Featherweight Jigsaw: Replacing Inheritance by Composition in Java-Like Languages},
@@ -1350,8 +995,8 @@
   note={A small calculus that replaces built-in inheritance with explicit class-composition operators, directly testing which parts of inheritance are primitive.}
 }
 
-@inproceedings{OliveiraCook2012,
-  author={Oliveira, Bruno C. d. S. and Cook, William R.},
+@inproceedings{Oliveira2012,
+  author={Bruno C. d. S. Oliveira, and William R. Cook},
   title={Extensibility for the Masses: Practical Extensibility with Object Algebras},
   booktitle={Proc. ECOOP 2012, LNCS 7313},
   series={LNCS 7313},
@@ -1359,8 +1004,18 @@
   publisher={Springer},
   year={2012},
   doi={10.1007/978-3-642-31057-7_2},
-  url={https://doi.org/10.1007/978-3-642-31057-7_2},
-  note={Cell-factored slicing of the implementation matrix; reconciles the two trunks' extensibility}
+  note={.
+  }
+}
+
+@techreport{James2012,
+  title={The Two Dualities of Computation: Negative and Fractional Types},
+  author={Roshan P James and Amr Sabry},
+  year={2012},
+  institution={Citeseer},
+  url={https://web.archive.org/web/20121229014345/https://www.cs.indiana.edu/~sabry/papers/rational.pdf},
+  note={.
+  }
 }
 
 @inproceedings{PolitzGuhaKrishnamurthi2012,
@@ -1386,16 +1041,19 @@
   note={The purpose-level account: dynamic dispatch as the enabler of interoperation among independently developed components}
 }
 
-@article{Black2013,
-  author={Andrew P. Black},
-  title={Object-Oriented Programming: Some History, and Challenges for the Next Fifty Years},
-  journal={Information and Computation},
-  volume={231},
-  pages={3–20},
-  year={2013},
-  doi={10.1016/j.ic.2013.08.002},
-  url={https://arxiv.org/abs/1303.0427},
-  note={Historical evidence: Simula I vs 67, virtual as late addition, Emerald vs Wegner}
+@inproceedings{Verma2015,
+  author={Abhishek Verma and Luis Pedrosa and Madhukar R. Korupolu and David Oppenheimer and Eric Tune and John Wilkes},
+  title={Large-Scale Cluster Management at Google with Borg},
+  booktitle={Proceedings of the Tenth European Conference on Computer Systems},
+  series={EuroSys ’15},
+  pages={18:1–18:17},
+  publisher={Association for Computing Machinery},
+  year={2015},
+  doi={10.1145/2741948.2741964},
+  note={.
+    Useful production context for Google’s declarative configuration lineage, including BCL/GCL,
+    but the paper is primarily about cluster management rather than object systems.
+  }
 }
 
 @misc{black2016essence,
@@ -1407,7 +1065,7 @@
   note={Attempts to isolate inheritance from classes and subtyping, directly relevant to a mechanism-centered definition of inheritance.}
 }
 
-@inproceedings{JonesEtAl2016,
+@inproceedings{Jones2016,
   author={Timothy Jones and Michael Homer and James Noble and Kim B. Bruce},
   title={Object Inheritance Without Classes},
   booktitle={ECOOP 2016},
@@ -1421,8 +1079,19 @@
   note={Separates inheritance from classes in a contemporary formal design, providing direct evidence that classlessness does not imply the absence of inheritance.}
 }
 
-@article{ZhangSunOliveira2021,
-  author={Zhang, Weixin and Sun, Yaozhu and Oliveira, Bruno C. d. S.},
+@misc{Wayne2019,
+  author={Hillel Wayne},
+  title={Alan Kay Did Not Invent Objects},
+  year={2019},
+  url={https://hillelwayne.com/post/alan-kay/},
+  note={
+    Accessible secondary historical commentary emphasizing Simula’s priority
+    for objects, classes and messages. Commentary rather than primary source.
+  }
+}
+
+@article{Zhang2021,
+  author={Weixin Zhang and Yaozhu Sun and Bruno C. d. S. Oliveira},
   title={Compositional Programming},
   journal={ACM TOPLAS},
   volume={43},
@@ -1430,11 +1099,10 @@
   pages={1–61},
   year={2021},
   doi={10.1145/3460228},
-  url={https://doi.org/10.1145/3460228},
   note={Modern calculus of compositional extensions that generalizes object-algebra techniques and provides a functional comparison point for inheritance.}
 }
 
-@inproceedings{madsen2022grumpy,
+@inproceedings{Madsen2022,
   author={Ole Lehrmann Madsen and Birger Møller-Pedersen},
   title={What Object-Oriented Programming Was Supposed to Be},
   booktitle={Proc. Onward! 2022},
@@ -1454,15 +1122,19 @@
   note={Primary record of Nixpkgs terminology and the distinction between extension before a fixed point and merging after one.}
 }
 
-@misc{nixpkgs-fixed-points,
-  author={Nixpkgs contributors},
-  title={lib/fixed-points.nix: fix, extends, makeExtensible},
-  year={2026},
-  url={https://github.com/NixOS/nixpkgs/blob/master/lib/fixed-points.nix},
-  urldate={2026-07-12},
-  howpublished={Nixpkgs source, NixOS/nixpkgs},
-  note={Primary implementation source for Nixpkgs fixed points and overlays, showing generator extension and lazy self-reference in production code.}
+@misc{Nixcademy2024Overlays,
+  author={{Nixcademy}},
+  title={Mastering Nixpkgs Overlays: Techniques and Best Practice},
+  year={2024},
+  url={https://nixcademy.com/posts/mastering-nixpkgs-overlays-techniques-and-best-practice/},
+  note={Practitioner-oriented discussion of Nixpkgs overlays and their final/prev discipline; useful implementation evidence, but secondary and version-sensitive.}
 }
+
+@misc{nixos-wiki-overlays,
+  author={{NixOS Wiki contributors}},
+  title={Overlays},
+  url={https://wiki.nixos.org/wiki/Overlays},
+  note={Overlays as subclassing, stated by practitioners; documents the self/super to final/prev convention shift}}
 
 @misc{Yang2026Overlay,
   author={Yang, Bo},
@@ -1470,4 +1142,25 @@
   year={2026},
   url={https://arxiv.org/abs/2602.16291},
   note={Recent formalization of overlay composition inspired by Nix; useful as a stateless, declarative comparison with open-recursive inheritance.}
+}
+
+@misc{GoFAQ,
+  author={{The Go Project}},
+  title={Frequently Asked Questions: Is Go an Object-Oriented Language?},
+  url={https://go.dev/doc/faq#Is_Go_an_object-oriented_language},
+  note={First-party but continuously updated language documentation giving Go’s “yes and no” answer; useful near a claim about Go, but unsuitable as a stable historical source.}
+}
+
+@misc{NixOSWikiOverlays,
+  author={{NixOS Wiki contributors}},
+  title={Overlays},
+  url={https://wiki.nixos.org/wiki/Overlays},
+  note={Community documentation describing overlays in subclassing terms and recording the self/super to final/prev terminology; useful near an implementation claim, but unstable as general bibliography evidence.}
+}
+
+@misc{RustBook,
+  author={Klabnik, Steve and Nichols, Carol and the Rust Community},
+  title={The Rust Programming Language: What Does Object-Oriented Mean?},
+  url={https://doc.rust-lang.org/book/ch18-01-what-is-oo.html},
+  note={First-party but continuously revised discussion of which object-oriented features Rust supports; best cited at the exact claim rather than treated as a stable historical source.}
 }

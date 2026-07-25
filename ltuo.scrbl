@@ -43,7 +43,7 @@ Certainly, none that two computer scientists can agree about.
 By comparison, you well understand Functional Programming (FP).
 
 Can you explain OO in simple terms to an apprentice, or to yourself?
-Can you reason about OO programs, what they do, what they mean?
+Can you reason about OO programs and what they mean?
 Can you make sense of the tribal warfare between OO and FP advocates?
 Maybe you’ve enjoyed OO in the past, or have heard enough from colleagues who have,
 and are wondering what you are or aren’t missing?
@@ -51,17 +51,16 @@ Maybe you’d fancy implementing OO on top of the non-OO language
 you are currently using or building, but from what you know this looks too complicated?
 Indeed do you really understand why to implement which of no inheritance, single inheritance,
 mixin inheritance, or multiple inheritance?
-Can you weigh the arguments for multiple inheritance done in the style C++ or Ada,
+Can you weigh the arguments for multiple inheritance done in the style C++, Ada or PHP,
 versus the style of Lisp, Ruby, Python or Scala?
 Is there a best variant of inheritance anyway?
-And do concepts like prototypes, method combinations and multiple dispatch seem natural to you,
-or are they mysteries that challenge your mental model of OO?
+And do prototypes, method combinations and multiple dispatch seem natural to you,
+or are they mysteries that challenge your understanding of OO?
 Last but not least… are you tired of us Lispers bragging about how our 1988 OO system
 is still decades ahead of yours?
 
 If any of these questions bothers you, then this book is for you.
-This book offers a Theory of OO, explained in simple terms on top of FP—as
-Intra-linguistic Modular Extensibility.
+It offers a Theory of OO, explained in simple terms on top of FP—as Internal Modular Extensibility.
 A mouthful, but actually just simple concepts you already use,
 though you may not have clear names for them yet.
 This Theory of OO can answer all the questions above, and more.

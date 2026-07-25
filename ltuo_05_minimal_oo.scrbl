@@ -812,9 +812,10 @@ the self-application combinator U (called Ue for U, eager)@Note{
   It can be viewed as doing half the job of Y, and is
   the essence of the object encoding in @secref{CfUe}.
   @; TODO Y U NO meme. "U WANT REACH FIXPOINT? | Y U NO APPLY SELF?"
-  @; https://imgflip.com/i/anf0y5 https://imgflip.com/i/anf157 https://imgflip.com/i/anf1cz
-  @; High Expectations Asian Father meme
-  @; https://x.com/mlhaufe/status/2036275549358690557
+  @; High Expectations Asian Father meme / Y U NO meme
+  @; https://x.com/Ngnghm/status/2036273356387864639
+  This combinator is famously called M, the Mockingbird combinator,
+  in the delightful @citet{Smullyan1985}.
 }:
 @Code{
 (def (B x y z) ;; composition
@@ -831,6 +832,7 @@ the self-application combinator U (called Ue for U, eager)@Note{
 @; Test: ((Yex eager-pre-fact) 6) ;==> 720
 The Y combinator works by composing the argument function @c{f}
 with indefinite copies (duplications) of itself (and accompanying plumbing).
+
 In this applicative variant, the first, minor, issue with this combinator is
 that it only works to compute functions,
 because the only way to prevent an overly eager evaluation of a computation

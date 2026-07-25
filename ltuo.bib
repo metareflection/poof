@@ -135,22 +135,27 @@ on the author’s page, sci-hub.ru, archive.org, z-library.sk, github.com, etc.
   year={1958},
   url={https://archive.org/details/combinatorylogic0000curr},
   note={
+    Curry rediscovered and systematized Schönfinkel’s work
+    into what he (Curry) baptized “combinatory logic”.
     This great classic explains how you can do all the things that the λ-calculus
     without ever using λ, just with application of basic combinators.
     The most famous complete base of combinators is S K I with
     S = λ x y z . x z (y z), K = λ x y . x, I = λ x . x,
     with a straightforward syntactic translation from λ-terms to combinations.
     Also, I = S K K so S K is a base.
-    (Another famous base is X = λ f . f (λ x y z . x z (y z)) (λ x y z . x),
+    (Another famous base, with only one combinator, is
+    X = λ f . f (λ x y z . x z (y z)) (λ x y z . x),
     discovered by Fokker in 1989; see also Tromp’s work on minimal such operators).
     Section 7 fixed-point operators p. 155 discusses the usual (lazy) Y combinator,
     and its relationship to Turing 1937’s Θ: Θ = Y (S I).
-    Curry also tried to do logic with (for mathematical reasoning), which he called
-    “illative combinatory logic”, though he didn’t find
-    a completely satisfying (to himself) variant.
     The book also notes the correspondence between logical implication and function types,
     which will later be known as the Curry-Howard correspondence
     (a.k.a. Curry-Howard-de Bruijn correspondence).
+    Curry, in his sequel volume II “Illative Combinatory Logic”, tried to introduce
+    combinators for mathematical reasoning completely with combinators,
+    such as Π and Σ for universal and existential quantification.
+    But he was never fully satisfied with the solutions offered to avoid paradoxes—that ultimately
+    are the same as for presentations of logic and computation not based on combinators.
   }
 }
 
@@ -418,6 +423,7 @@ on the author’s page, sci-hub.ru, archive.org, z-library.sk, github.com, etc.
     This classic paper, among many other things,
     introduces notions such as “first and second class objects” or “ad hoc polymorphism”,
     and identifies or clarifies many more notions.
+    Widely circulated since 1967, but only officially published in 2000.
   }}
 
 %% 1968
@@ -541,12 +547,6 @@ on the author’s page, sci-hub.ru, archive.org, z-library.sk, github.com, etc.
 }
 
 %% 1973
-
-% XXX TODO
-% Hewitt, Bishop, Greif, Smith, Matson, Steiger
-% Actor Induction and Meta-evaluation
-% POPL
-% 1973
 
 %% 1974
 
@@ -1023,12 +1023,11 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % Mentions multiple inheritance of traits, but does not explain too much
 @inproceedings{Ingalls1978,
   author={Ingalls, Daniel H. H.},
-  title={The Smalltalk-76 programming system design and implementation},
+  title={The Smalltalk-76 Programming System: Design and Implementation},
   year={1978},
   isbn={9781450373487},
   publisher={Association for Computing Machinery},
   address={New York, NY, USA},
-  url={https://doi.org/10.1145/512760.512762},
   doi={10.1145/512760.512762},
   abstract={This paper describes a programming system based on the metaphor of communicating objects. Experience with a running system shows that this model provides flexibility, modularity and compactness. A compiled representation for the language is presented, along with an interpreter suitable for microcoding. The object-oriented model provides naturally efficient addressing; a corresponding virtual memory is described which offers dense utilization of resident space.},
   booktitle={the 5th ACM SIGACT-SIGPLAN Symposium on Principles of Programming Languages},
@@ -1457,11 +1456,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   author={Luca Cardelli},
   booktitle={Information and Computation},
   year={1984},
-  volume={76},
-  number={2},
-  pages={138-164},
-  year={1988},
-  issn={0890-5401},
   doi={10.1016/0890-5401(88)90007-7},
   url={http://lucacardelli.name/papers/inheritance.pdf},
   note={.
@@ -1473,6 +1467,63 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     Instead, he introduces a framework for subtyping
     in a λ-calculus with records and fixed-points.
     Both a historically seminal paper and a complete intellectual travesty.
+  }
+}
+
+% 1985
+
+% Extended version of previous paper at POPL'85 https://dl.acm.org/doi/10.1145/318593.318606
+% journal={ACM Transactions on Programming Languages and Systems (TOPLAS)},
+% volume={10},
+% number={3},
+% pages={470--502},
+% year={1988},
+% publisher={ACM New York, NY, USA},
+% doi={10.1145/44501.45065},
+% the formal ground of the ADT pole of Reynolds's duality
+@InProceedings{Mitchell1985,
+  title={Abstract Types have Existential Type},
+  author={John C Mitchell and Gordon D Plotkin},
+  booktitle={POPL '85},
+  pages={37–51},
+  year={1985},
+  doi={10.1145/318593.318606},
+  url={https://homepages.inf.ed.ac.uk/gdp/publications/Abstract_existential.pdf},
+  note={.
+    The title of this key paper captures the core contribution:
+    you should think of abstract types for data and functions that operate on them (i.e. modules),
+    as hiding the actual underlying type behind an existential quantifier.
+    This enables reasoning about modules as first-class values in second-order logic.
+    An extended Journal version was published in TOPLAS 10(3) 1988.
+  }
+}
+
+% https://z-library.sk/book/kJR6rW5nRN/to-mock-a-mockingbird-and-other-logic-puzzles-including-an-amazing-adventure-in-combinatory-logic.html
+% See also https://dkeenan.com/Lambda/index.htm
+@book{Smullyan1985,
+  author={Smullyan, Raymond},
+  title={To Mock a Mockingbird and Other Logic Puzzles: Including an Amazing Adventure in Combinatory Logic},
+  publisher={Knopf},
+  year={1985},
+  isbn={0-19-280142-2},
+  note={
+    One of Smullyan’s many delightful narrated puzzle books that prove deeper than they look,
+    “To Mock a Mockingbird” takes the reader through the essentials of combinatory logic.
+    With each chapter introducing more elaborate logical ideas,
+    the book with chapter 9 starts following Inspector Craig
+    as he explores the birds of various forests,
+    the birds being combinators and the forests logical systems.
+    The self-application combinator, that I called U in this book,
+    is called M (Mockingbird) in Smullyan’s.
+    The fixpoint combinator (that I called Y) appears in chapter 10 as the notion of a Sage bird Θ
+    (the same symbol Turing used to first denote such a combinator, though in chapter 13,
+    he calls U the critical part of the sage bird from Turing’s original paper,
+    which is different from my U, Smullyan’s M).
+    Smullyan then shows how to express logic and arithmetic with combinators, and
+    the book culminates in final chapter 25 with Gödel’s incompleteness theorem.
+    The epilogue pleasantly notes that Moses Schönfinkel,
+    whose work initiated what later became combinatory logic and the λ-calculus,
+    bore a surname that in German literally means “beautiful bird”.
   }
 }
 
@@ -1531,6 +1582,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   note={
     Wegner & Cardelli have plenty of good concepts, especially around types,
     including universal and existential quantification.
+    The paper inspired or launched an entire field of enquiry into formal types for OOP.
     And then in section 6.1 they fall squarely into the NNOOTT,
     explicitly confusing inheritance and subtyping.
     They also cite Smalltalk and Flavors in 6.3, just to immediately drop the ball.
@@ -1652,7 +1704,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 % NB: Much updated 1987 version at https://archive.org/details/researchdirectio00shri/page/164/mode/2up
 @InProceedings{Snyder1986,
-  author={Snyder, Alan},
+  author={Alan Snyder},
   title={Encapsulation and Inheritance in Object-Oriented Programming Languages},
   year={1986},
   isbn={0897912047},
@@ -1800,9 +1852,9 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % https://beta.cs.au.dk/ ?
 % https://www.semanticscholar.org/paper/The-BETA-Programming-Language-Kristensen-Madsen/3971897f708518e13809d3c0772105bd86526e50
 % https://tidsskrift.dk/daimipb/article/view/7578
-@TechReport{Kristensen1987Beta,
+@TechReport{Kristensen1987,
   title={The BETA programming language},
-  author={Kristensen, Bent Bruun and Madsen, Ole Lehrmann and Møller-Pedersen, Birger and Nygaard, Kristen},
+  author={Bent Bruun Kristensen and Ole Lehrmann Madsen and Birger Møller-Pedersen and Kristen Nygaard},
   journal={DAIMI Report Series},
   month=Oct,
   number={229},
@@ -1894,6 +1946,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   author={Barbara Liskov},
   title={Data Abstraction and Hierarchy},
   booktitle={OOPSLA '87},
+  pages={17–34},
   year={1987},
   doi={10.1145/62138.62141},
   publisher={ACM},
@@ -1927,6 +1980,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
+% Cite instead DeMichiel1987 ???
 % https://www.researchgate.net/publication/220178512_Common_Lisp_Object_System_Specification_X2JI3_Document_88-002R
 % https://link.springer.com/content/pdf/10.1007/bf01806962.pdf
 @Article{Bobrow1988CLOS,
@@ -2041,24 +2095,13 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={https://www.cs.man.ac.uk/~david/categories/book/book.pdf}
 }
 
-% Extended version of previous paper at POPL'85 https://dl.acm.org/doi/10.1145/318593.318606
-@article{Mitchell1988,
-  title={Abstract Types have Existential Type},
-  author={Mitchell, John C and Plotkin, Gordon D},
-  journal={ACM Transactions on Programming Languages and Systems (TOPLAS)},
-  volume={10},
-  number={3},
-  pages={470--502},
+% TODO
+@Book{Meyer1988,
+  author={Bertrand Meyer},
+  title={Object-Oriented Software Construction},
+  publisher={Prentice Hall},
   year={1988},
-  publisher={ACM New York, NY, USA},
-  doi={10.1145/44501.45065},
-  url={https://homepages.inf.ed.ac.uk/gdp/publications/Abstract_existential.pdf},
-  note={.
-    The title of this key paper captures the core contribution:
-    you should think of abstract types for data and functions that operate on them (i.e. modules),
-    as hiding the actual underlying type behind an existential quantifier.
-    This enables reasoning about modules as first-class values in second-order logic.
-  }
+  note={Notably introduces the open–closed principle.}
 }
 
 % TODO read deeper, make better analysis
@@ -2169,11 +2212,13 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-% POPL, short reprise of what's in his thesis
+% Short reprise of what's in his thesis
 % Also single-inheritance, records only
-@Article{Cook1989Denotational,
+% 1994 version doi={10.1006/inco.1994.1090},
+@InProceedings{CookPalsberg1989,
   title={A Denotational Semantics of Inheritance and its Correctness},
   author={William Cook and Jens Palsberg},
+  booktitle={OOPSLA 1989},
   journal={ACM Sigplan Notices},
   volume={24},
   number={10},
@@ -2181,6 +2226,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   year={1989},
   publisher={ACM New York, NY, USA},
   doi={10.1145/74877.74922},
+  url={https://www.cs.utexas.edu/~wcook/papers/ic94/ic94.pdf},
   note={.
     Groundbreaking paper, based on Cook’s PhD work, on the semantics of inheritance.
     (Also extended version in Information and Computation 1994.)
@@ -2193,6 +2239,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     The paper only covers Class OO, but does it by identifying a class
     with a constructor for a record of methods,
     which trivially generalizes to Prototype OO.
+    Journal version in Information and Computation 114(2), 1994,
+    with a bit more formalism and theorems.
   }
 }
 
@@ -2201,7 +2249,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % 4.2 seems to implicitly have a type dependency (what are F and G in (5)? I think typo G should be F)
 % url={https://dl.acm.org/doi/abs/10.1145/96709.96721}
 % Cites Mitch Wand 1987, 1989, 1989... gotta go deeper
-@InProceedings{Cook1989inheritance,
+@InProceedings{Cook1989Inheritance,
   title={Inheritance is not subtyping},
   author={Cook, William and Hill, Walter and Canning, Peter S},
   booktitle={17th ACM SIGPLAN-SIGACT symposium on Principles of programming languages},
@@ -2251,7 +2299,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   address={New York, NY, USA},
   url={https://doi.org/10.1145/74877.74884},
   doi={10.1145/74877.74884},
-  abstract={We have developed and implemented techniques that double the performance of dynamically-typed object-oriented languages. Our SELF implementation runs twice as fast as the fastest Smalltalk implementation, despite SELF's lack of classes and explicit variables.To compensate for the absence of classes, our system uses implementation-level maps to transparently group objects cloned from the same prototype, providing data type information and eliminating the apparent space overhead for prototype-based systems. To compensate for dynamic typing, user-defined control structures, and the lack of explicit variables, our system dynamically compiles multiple versions of a source method, each customized according to its receiver's map. Within each version the type of the receiver is fixed, and thus the compiler can statically bind and inline all messages sent to self. Message splitting and type prediction extract and preserve even more static type information, allowing the compiler to inline many other messages. Inlining dramatically improves performance and eliminates the need to hard-wire low-level methods such as +,==, and ifTrue:.Despite inlining and other optimizations, our system still supports interactive programming environments. The system traverses internal dependency lists to invalidate all compiled methods affected by a programming change. The debugger reconstructs inlined stack frames from compiler-generated debugging information, making inlining invisible to the SELF programmer.},
   booktitle={OOPSLA},
   pages={49–70},
   numpages={22},
@@ -2271,7 +2318,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     even if you had 8MB of RAM, a very large amount of RAM at the time.
     So Self was never practical for most users despite those optimizations—or
     perhaps because of them, since indiscriminate dynamic translation of bytecode to binary
-    does take a lot of RAM.
+    does take a lot of RAM (for the time—a few years later,
+    it became the standard way to implement Java).
   }
 }
 
@@ -2449,6 +2497,29 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
+% Journal doi={10.1016/0167-6423(91)90036-W}
+@inproceedings{Felleisen1990,
+  author={Matthias Felleisen},
+  title={On the Expressive Power of Programming Languages},
+  booktitle={Programming Languages and Systems --- ESOP '90},
+  editor={Neil D. Jones},
+  series={Lecture Notes in Computer Science},
+  volume={432},
+  pages={134--151},
+  publisher={Springer},
+  address={Berlin, Heidelberg},
+  year={1990},
+  doi={10.1007/3-540-52592-0_60},
+  url={https://www.cs.rice.edu/CS/PLT/Publications/Scheme/},
+  note={.
+    A beautiful paper on what it means for a programming language to be more expressive than another.
+    It is far from the last word on the topic, but it offers a simple, objective formal criterion
+    for the expressibility of one language by another:
+    expressibility through local syntactic transformations.
+    Expanded journal version in Science of Computer Programming 17(1--3):35--75, 1991.
+  }
+}
+
 %% 1991
 
 @InProceedings{Hoelzle1991,
@@ -2593,25 +2664,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   publisher={Kluwer Academic Publishers}
 }
 
-@article{eppl91,
-  author={Matthias Felleisen},
-  title={On the Expressive Power of Programming Languages},
-  institution={Rice University},
-  year={1991},
-  url={https://www.cs.rice.edu/CS/PLT/Publications/Scheme/},
-  doi={10.1016/0167-6423(91)90036-W},
-  journal={Science of Computer Programming},
-  volume={17},
-  number={1},
-  pages={35-75},
-  issn={0167-6423},
-  note={.
-    A beautiful paper on what it means for a programming language to be more expressive than another.
-    It is far from the last word on the topic, but it offers a simple, objective formal criterion
-    for the expressibility of one language by another.
-  }
-}
-
 % What a mess. https://x.com/xadh/status/1945251704011665663
 % https://github.com/shriram/plai-public/issues/62
 @InProceedings{parentsSharedParts1991,
@@ -2679,11 +2731,10 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % HPL-91-50
 % A possibly shortened version also published in *IEEE Software*, January 1993
 % as "The Essence of Objects: Concepts and Terms"
-@Misc{Snyder1991Essence,
+@Misc{Snyder1991,
   author={Alan Snyder},
   title={The Essence of Objects: Common Concepts and Terminology},
   year={1991},
-  abstract={Core concepts in object-oriented technology are defined. The concepts are the basis for characterizing and contrasting various object-oriented technologies. The core concepts are: all objects embody an abstraction, objects provide services, clients issue requests, objects are encapsulated, requests identify operations, requests can identify objects, new objects can be created, operations can be generic, objects can be classified in terms of their services, objects can have a common implementation, and objects can share partial implementations. To address communication problems, a glossary of terms appropriate for the diverse set of domains in which object-oriented concepts are being applied is developed. The definitions are grouped into three sections in top-down order: terms related to abstraction, terms related to requesting services, and terms related to performing services.},
   month=june,
   numpages={24},
   keywords={abstraction, object-oriented programming, object-oriented technology, requests, services},
@@ -2692,7 +2743,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     Alan Snyder tries to introduce and name the common concepts in OO,
     in a way mindful of the variety of OO languages and systems,
     from C++ to CLOS to the Iris db and more.
-    He insists on abstraction and encapsulation — features of what I would call "modularity",
+    He insists on abstraction and encapsulation — features of what I would call “modularity”,
     and only very quickly goes over inheritance, without details.
     Disappointing, but telling of how even pioneers only had a dim understanding of OO.
   }
@@ -2709,7 +2760,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   publisher="Springer Berlin Heidelberg",
   address="Berlin, Heidelberg",
   pages="151--178",
-  abstract="This tutorial collects and elaborates arguments for distinguishing between object-oriented programming and abstract data types. The basic distinction is that object-oriented programming achieves data abstraction by the use of procedural abstraction, while abstract data types depend upon type abstraction. Object-oriented programming and abstract data types can also be viewed as complimentary implementation techniques: objects are centered around the constructors of a data abstraction, while abstract data types are organized around the operations. These differences have consequences relating to extensibility, efficiency, typing, and verification; in many cases the strengths of one paradigm are the weaknesses of the other. Most object-oriented programming languages support aspects of both techniques, not a unification of them, so an understanding of their relative merits is useful in designing programs.",
   isbn="978-3-540-46450-1",
   doi="10.1007/BFb0019443",
   url={http://www.cs.utexas.edu/~wcook/papers/OOPvsADT/CookOOPvsADT90.pdf},
@@ -3055,7 +3105,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 % 1996 variant has better PDF: doi={10.1145/234286.1057828},
 % Read by Eric Normand https://ericnormand.me/podcast/the-early-history-of-smalltalk
-@InCollection{Kay1993EHoS,
+@InCollection{Kay1993,
   title={The Early History of Smalltalk},
   author={Alan Kay},
   booktitle={History of programming languages---II},
@@ -3143,23 +3193,9 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={https://www.cs.bham.ac.uk/~udr/papers/oosem.pdf}
 }
 
-@Article{Cook1994,
-  title={A Denotational Semantics of Inheritance and Its Correctness},
-  author={William Cook and Jens Palsberg},
-  journal={Information and Computation},
-  year={1994},
-  volume={114},
-  pages={329--350},
-  url={https://www.cs.utexas.edu/~wcook/papers/ic94/ic94.pdf},
-  doi={10.1006/inco.1994.1090},
-  note={.
-    Extended version of the OOPSLA 1989 article, with a bit more formalism and theorems.
-  }
-}
-
 % PDF: https://github.com/ansbilalgit/Books/blob/master/Erich%20Gamma,%20Richard%20Helm,%20Ralph%20Johnson,%20John%20M.%20Vlissides-Design%20Patterns_%20Elements%20of%20Reusable%20Object-Oriented%20Software%20%20-Addison-Wesley%20Professional%20(1994).pdf
 % https://z-lib.sk/book/M9pYZbPezO/design-patterns-elements-of-reusable-objectoriented-software.html
-@book{GoF1994,
+@book{Gamma1994,
   title={Design patterns: elements of reusable object-oriented software},
   author={Erich Gamma and Richard Helm and Ralph Johnson and John Vlissides},
   year={1994},
@@ -3308,10 +3344,34 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-% Liskov & Wing
-% A behavioral notion of subtyping
+% Journal treatment: Liskov and Wing, A behavioral notion of subtyping, ACM TOPLAS 16(6):1811–1841, 1994, doi 10.1145/197320.197383. The normative complement (conformance) to the mechanism-level definition
+% Compare to Liskov1987
 
 %% 1995
+
+@Article{Coplien1995,
+  author={James O. Coplien},
+  title={Curiously Recurring Template Patterns},
+  journal={C++ Report},
+  volume={7},
+  number={2},
+  pages={24--27},
+  year={1995},
+  month=feb,
+  url={https://drive.google.com/file/d/1yJPlJ2d_79gxEzicliT_M2Qn2dwOfCOP},
+  note={.
+    Introduces the name Curiously Recurring Template Pattern (CRTP)
+    for the C++ idiom in which a derived class passes itself as
+    an argument to the template for its base class,
+    enabling statically bound family-relative behavior.
+    This template argument makes explicit the Self argument to the underlying class specification,
+    that is otherwise hidden and inaccessible in the “base” C++ language.
+    Note that Coplien did not invent this pattern,
+    but repeatedly observed independently-reinvented instances of it,
+    from about as early as the C++ template language allowed it,
+    and eventually gave it a name.
+  }
+}
 
 @TechReport{Boyd1995,
   author={John R. Boyd},
@@ -3576,8 +3636,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-% https://github.com/alexisread/kevo/tree/main/0.9b6
-@Article{inheritance1996,
+@Article{Taivalsaari1996,
   author={Antero Taivalsaari},
   title={On the Notion of Inheritance},
   year={1996},
@@ -3587,9 +3646,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   volume={28},
   number={3},
   issn={0360-0300},
-  url={https://doi.org/10.1145/243439.243441},
+  url={https://github.com/alexisread/kevo/tree/main/0.9b6},
   doi={10.1145/243439.243441},
-  abstract={One of the most intriguing—and at the same time most problematic—notions in object-oriented programing is inheritance. Inheritance is commonly regarded as the feature that distinguishes object-oriented programming from other modern programming paradigms, but researchers rarely agree on its meaning and usage. Yet inheritance of often hailed as a solution to many problems hampering software development, and many of the alleged benefits of object-oriented programming, such as improved conceptual modeling and reusability, are largely credited to it. This article aims at a comprehensive understanding of inheritance, examining its usage, surveying its varieties, and presenting a simple taxonomy of mechanisms that can be seen as underlying different inheritance models.},
   journal={ACM Comput. Surv.},
   month={sep},
   pages={438--479},
@@ -3630,7 +3688,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     the systems I didn’t have time to mention.
   }
 }
-
 
 @PhDThesis{Fisher1996,
   title={Type Systems for object-oriented programming languages},
@@ -3728,7 +3785,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   doi={10.1006/inco.1996.0024},
   url={https://www.sciencedirect.com/science/article/pii/S0890540196900243},
   author={Martín Abadi and Luca Cardelli},
-  abstract={We introduce simple object calculi that support method override and object subsumption. We give an untyped calculus, typing rules, and equational rules. We illustrate the expressiveness of our calculi and the pitfalls that we avoid.},
   note={.
     A&C fall into all the common traps of OO:
     they confuse specification and target, therefore firmly believe in the NNOOTT;
@@ -3766,7 +3822,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-@Book{SICP2,
+@Book{Abelson1996,
   Author={Harold Abelson and Gerald Sussman},
   Title={Structure and Interpretation of Computer Program},
   Edition={2nd},
@@ -3781,9 +3837,9 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     but many of its insights are timeless.
     Even its footnotes alone are gold.
     However, the authors do not discuss OO as such:
-    they do build some notion of “objects” as message-handling functions,
+    in chapter 3, they do build some notion of “objects” as message-handling functions,
     but this only deals with the “encapsulation” of state (modularity) aspect of OO,
-    while the authors explicitly avoid the topic inheritance.
+    while the authors explicitly avoid the topic of inheritance (extensibility).
   }
 }
 
@@ -3952,7 +4008,7 @@ and Fiech, Adrian",
 @article{Wadler1998,
   title={The Expression Problem},
   author={Philip Wadler},
-  journal={Posted on the Java Genericity mailing list},
+  journal={Email to the Java Genericity mailing list},
   year={1998},
   url={https://homepages.inf.ed.ac.uk/wadler/papers/expression/expression.txt},
   note={.
@@ -3980,7 +4036,7 @@ and Fiech, Adrian",
 
 
 % https://www.semanticscholar.org/paper/Classes-and-mixins-Flatt-Krishnamurthi/c20e5f2a424b96209e6b400b23d319558932afa3
-@InProceedings{Mixins1998,
+@InProceedings{Flatt1998,
   author={Matthew Flatt and Shriram Krishnamurthi and Matthias Felleisen},
   title={Classes and mixins},
   year={1998},
@@ -3989,7 +4045,6 @@ and Fiech, Adrian",
   address={New York, NY, USA},
   url={https://doi.org/10.1145/268946.268961},
   doi={10.1145/268946.268961},
-  abstract={While class-based object-oriented programming languages provide a flexible mechanism for re-using and managing related pieces of code, they typically lack linguistic facilities for specifying a uniform extension of many classes with one set of fields and methods. As a result, programmers are unable to express certain abstractions over classes.In this paper we develop a model of class-to-class functions that we refer to as mixins. A mixin function maps a class to an extended class by adding or overriding fields and methods. Programming with mixins is similar to programming with single inheritance classes, but mixins more directly encourage programming to interfaces.The paper develops these ideas within the context of Java. The results are 1. an intuitive model of an essential Java subset; 2. an extension that explains and models mixins; and 3. type soundness theorems for these languages.},
   booktitle={25th ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
   pages={171–183},
   numpages={13},
@@ -4406,6 +4461,17 @@ and Fiech, Adrian",
 
 %% 2003
 
+@misc{Rees2003,
+  author={Jonathan Rees},
+  title={On Object-Oriented Programming},
+  year={2003},
+  url={https://www.paulgraham.com/reesoo.html},
+  note={
+    A response to Paul Graham about Object-Oriented Programming,
+    critical of what the concept had come to mean and
+    how it was abused in the industry at the time.
+}}
+
 @Webpage{Simionato2003,
   title={The Python 2.3 method resolution order},
   author={Michele Simionato},
@@ -4428,7 +4494,8 @@ and Fiech, Adrian",
   Day={23},
   lastchecked={2026-02-11},
   note={.
-    Alan Kay recollects the influences that led him to invent Object-Oriented Programming.
+    Alan Kay recollects the influences that led him to invent Object-Oriented Programming
+    in an email to Stefan Ram.
   }
 }
 
@@ -4499,7 +4566,7 @@ and Fiech, Adrian",
   }
 }
 
-@InProceedings{scalableComponentAbstractions2005,
+@InProceedings{Odersky2005,
   author={Martin Odersky and Matthias Zenger},
   title={Scalable component abstractions},
   year={2005},
@@ -4560,7 +4627,7 @@ and Fiech, Adrian",
 
 %% 2006
 
-@InProceedings{Flatt2006Mixins,
+@InProceedings{Flatt2006,
   author={Matthew Flatt and Robert Bruce Findler and Matthias Felleisen},
   title={Scheme with classes, mixins, and traits},
   booktitle={In Asian Symposium on Programming Languages and Systems (APLAS) 2006},
@@ -4595,7 +4662,11 @@ and Fiech, Adrian",
   title={Robust Composition: Towards a Unified Approach to Access Control and Concurrency Control},
   author={Mark Miller},
   year={2006},
-  institution={Johns Hopkins University}
+  institution={Johns Hopkins University},
+  note={
+    The classic thesis on the Object-Capability model, by one who partook
+    in some of the original experiments in taking it as an explicit basis for security.
+  }
 }
 
 %% 2007
@@ -5131,7 +5202,8 @@ and Fiech, Adrian",
 }
 
 % My replies: https://twitter.com/Ngnghm/status/1791988260266234028
-% XXXX UPDATE ENTRY
+% url={http://lambda-the-ultimate.org/node/4569},
+% XXXX UPDATE ENTRY, archive.org
 @Webpage{Cook2012,
   author={William Cook},
   title={A Proposal for Simplified, Modern Definitions of "Object" and "Object Oriented"},
@@ -5182,7 +5254,7 @@ and Fiech, Adrian",
   year={2013},
   month=oct,
   doi={10.1016/j.ic.2013.08.002},
-  url={https://doi.org/10.1016/j.ic.2013.08.002},
+  url={https://arxiv.org/abs/1303.0427},
   note={.
     A landmark Simula-centered historical account of Object-Oriented Programming.
     Wholly omits KRL and the entire Lisp tradition.
