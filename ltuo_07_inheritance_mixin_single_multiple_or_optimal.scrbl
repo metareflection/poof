@@ -39,7 +39,6 @@ fix : t → (t → s → s) → s
 (def (mix p c t s) (c (p t s) s))
 (def (fix t m) (Y (m t)))}
 
-
 @section[#:tag "SI"]{Single Inheritance}
 
 @subsection{Semantics of Single Inheritance}
@@ -709,7 +708,7 @@ i.e. a total (“linear”) order that has the partial order of the DAG as a sub
   necessarily implies finding a total order (linearization) in which to compose them.
   Still the same word has very different meanings in the two contexts.
 }
-Since CommonLoops @~cite{Bobrow1986CommonLoops}, it has been customary to call this order
+Since CommonLoops @~cite{Bobrow1986}, it has been customary to call this order
 the @emph{precedence list} of the class, prototype or specification, a term I will use,
 and to keep it in most-specific-first order:
 descendents to the left, ancestors to the right,
@@ -815,7 +814,7 @@ heuristically made by the linearization algorithm.
 
 This property was first used in New Flavors @~cite{Moon1986Flavors},
 that calls it “local ordering”.
-CommonLoops @~cite{Bobrow1986CommonLoops} adopted it as
+CommonLoops @~cite{Bobrow1986} adopted it as
 “local precedence”, “local ordering”, and “local precedence list”.
 CLOS @~cite{Bobrow1988CLOS CLtL2} adopts it as “local precedence order”.
 Ducournau et al. speak of “local ordering” or “local precedence order”
@@ -1022,7 +1021,7 @@ However, the naïve way to do it, by concatenating the lists then removing dupli
 like LOOPS @~cite{Bobrow1983LOOPS}
 or after it (though removing from the other end) Scala @~cite{Odersky2005},
 preserves neither Local Order nor Monotonicity.
-The somewhat more careful algorithm used by CommonLoops @~cite{Bobrow1986CommonLoops}
+The somewhat more careful algorithm used by CommonLoops @~cite{Bobrow1986}
 and after it by CLOS (with minor changes) @; TODO check what those changes are
 preserves Local Order, but not monotonicity.
 The slightly complex algorithm by Ducournau et al. @~cite{Ducournau1994},
@@ -1378,7 +1377,7 @@ instead of a fixed-offset array lookup, which is typically 10-100 times slower.
 
 Now, a lot of work has been done to improve the performance of multiple inheritance,
 through static method resolution when possible, @; TODO cite C++ ? type analysis ? sealing ?
-and otherwise through caching @~cite{Bobrow1986CommonLoops}. @; TODO cite SBCL?
+and otherwise through caching @~cite{Bobrow1986}. @; TODO cite SBCL?
 But these improvements introduce complexity, and caching
 increases memory pressure and still incurs a small runtime overhead
 even when successful at avoiding the full cost of the general case,
@@ -1910,7 +1909,7 @@ using the C4 algorithm.
 Thus, even without explicit language support for suffix specifications,
 you could enjoy most of the optimizations of de facto single inheritance
 if the implementation were clever enough to opportunistically take advantage of them.
-This is interestingly a property shared by the Ruby and Scala algorithm,
+Interestingly, this is a property shared by the Ruby and Scala algorithm,
 but not by the original LOOPS algorithm that Scala tweaked.
 This seems to be an important property for a tie-break heuristic,
 that should probably be formalized and added to the constraints of C4.@xnote["."]{
@@ -2065,7 +2064,7 @@ flowchart BT
   and lists of parents @c{((parent1 parent2 parent3))} (only one list of parents).
   Use @c{:pp} instead of @c{:p} for a variable number of lists instead,
   and @c{:p*} for a single value that is itself a list of lists of parents.
-  Replace @c{:e} and co. by the keyword syntax in your Lisp implementation.
+  Replace @c{:e} and co. by the keyword syntax in your Lisp implementation (if any).
 
   NB: I implemented those in pommette. Either don’t look at my solutions,
   or implement them for a different language or dialect.

@@ -432,7 +432,7 @@ used multiple inheritance,
 @principle{multiple inheritance only became usable with the epochal system Flavors}
 @~cite{Cannon1979 Weinreb1981Chinual3},
 refined and improved by successor Lisp object systems
-New Flavors@~cite{Moon1986Flavors}, CommonLoops@~cite{Bobrow1986CommonLoops}
+New Flavors@~cite{Moon1986Flavors}, CommonLoops@~cite{Bobrow1986}
 and CLOS@~cite{Bobrow1988CLOS Keene1989 CLtL2}.
 Since then, many languages including Ruby, Perl, Python and Scala
 correctly adopted the basic design of Flavors (though none of its more advanced features)—I

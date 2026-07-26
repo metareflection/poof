@@ -169,7 +169,7 @@ With Racket: racket pommette.rkt
 (def p1 (paint-blue point-a))
 (def p2 (record (x 2) (y 4) (color "blue")))
 
-;; Not that 'x is a constant expression returning the symbol x,
+;; Note that 'x is a constant expression returning the symbol x,
 ;; as opposed to plain x which is an expression that dereferences variable x.
 (expect (point-a 'x) => 2
         (point-a 'y) => 4
@@ -1302,7 +1302,8 @@ let Y = f: (x: x x) (x: f (x x));
 (def (class-proto slots)
   (rproto←spec
     (apply mix*
-      (map (λ (slot) (field-spec (slot 'name) (slot 'init-spec))) slots))))
+      (reverse
+       (map (λ (slot) (field-spec (slot 'name) (slot 'init-spec))) slots)))))
 
 (def (constant-slot name value)
   (record (name name)

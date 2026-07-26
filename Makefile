@@ -23,9 +23,9 @@ endif
 
 # Installing all the prerequisite Racket modules necessary to compile the paper and slides
 prerequisites:
-	mkdir build
+	mkdir -p build
 	for i in scribble-abbrevs scribble-minted scribble-math unstable-lib slideshow-text-style ; do \
-	  raco pkg install --auto --update-deps $$i ; \
+	  raco pkg install --auto --update-deps --skip-installed $$i ; \
 	done
 
 # Main dish: The Scheme Workshop 2021 paper
@@ -129,3 +129,4 @@ check-pommette-racket: util/pommette.rkt util/pommette.scm
 
 count-ltuo-citations: build/ltuo.tex
 	grep Autobibtarget build/ltuo.tex | wc -l
+	grep -c '^@' ltuo.bib extra*.bib

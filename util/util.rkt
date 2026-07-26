@@ -2,7 +2,8 @@
 
 (provide (all-defined-out))
 
-(require (only-in scribble/base elem linebreak nested italic smaller bold include-section para)
+(require (only-in scribble/base ~ emph elem linebreak nested italic smaller bold para
+                  section subsection include-section)
          (only-in scribble/core make-paragraph make-style content->string)
          (only-in scriblib/footnote note define-footnote)
          (only-in scriblib/render-cond cond-element cond-block)
@@ -156,3 +157,19 @@
            (bold (elem "Exercise " id (if difficulty (elem " (" difficulty ")") "")))
      " "
      text)))
+
+(define (tex-linebreak)
+  (when/list (render-latex?) (linebreak)))
+(define ~~
+  (when/list (render-latex?) (list ~ ~)))
+
+(define (anonymize x . y) y)
+(define (GerbilScheme) (anonymize "our Scheme implementation" "Gerbil Scheme"))
+(define (principle . x) (bold (emph x)))
+(define (Quote . x) (apply nested #:style "quote" x))
+
+(define (XXXX . x)
+   (list
+     (subsection #:style 'unnumbered "XXX EDIT HERE XXX")
+     (tex "\\noindent")
+     (bold "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")))

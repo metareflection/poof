@@ -50,6 +50,7 @@ Hint: my source code got URLs.
 @(hhr)  @tex{~\\{}\\{}~}
 
 @(generate-bibliography #:sec-title #f)
+@(report-unused-bibtex)
 
 @appendix
 

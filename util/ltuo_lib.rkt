@@ -3,7 +3,7 @@
 
 (require
   (only-in scribble/base
-    ~ bold emph nested elem section subsection subsubsection
+    bold nested elem subsubsection
     seclink verbatim linebreak image subscript)
   scriblib/bibtex
   (only-in scribble/core make-style)
@@ -23,6 +23,7 @@
 ;;  "util/examples-module.rkt"
   "enumitem.rkt"
   "util.rkt"
+  "bibtex-unused.rkt"
   (for-syntax "util.rkt")
   (for-label racket))
 
@@ -42,16 +43,6 @@
   (all-from-out "enumitem.rkt")
   (all-from-out "util.rkt")
   (for-syntax (all-from-out "util.rkt")))
-
-(define (tex-linebreak)
-  (when/list (render-latex?) (linebreak)))
-(define ~~
-  (when/list (render-latex?) (list ~ ~)))
-
-(define (anonymize x . y) y)
-(define (GerbilScheme) (anonymize "our Scheme implementation" "Gerbil Scheme"))
-(define (principle . x) (bold (emph x)))
-(define (Quote . x) (apply nested #:style "quote" x))
 
 
 (define-simple-macro (r a ...) (racket a ...))
@@ -75,13 +66,14 @@
 
 (define super 'super)
 (define self 'self)
-(define (XXXX . x)
-   (list
-     (subsection #:style 'unnumbered "XXX EDIT HERE XXX")
-     (tex "\\noindent")
-     (bold "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")))
 
-(define-bibtex-cite "ltuo.bib" ~cite citet generate-bibliography)
+;;(define-bibtex-cite "ltuo.bib" ~cite citet generate-bibliography)
+(define-values (~cite
+                citet
+                generate-bibliography
+                unused-bibtex-keys
+                report-unused-bibtex)
+  (setup-bibtex "ltuo.bib"))
 (define (~nocite . x) (let ((_ (apply ~cite x))) (void)))
 
 (define-simple-macro (defsection name tag text) (define (name (x text)) (seclink tag x)))

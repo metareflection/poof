@@ -110,6 +110,7 @@ type MonoLens s a = PolyLens s s a a
 A skew lens (or “irpjsq” lens, pronounced “earp jusq”), further generalizes the above:
 now the types for the update are not required to be the same as those for the view,
 so you don’t have to be looking exactly at the change you’re experiencing.
+
 The view @c{s → r} goes from an outer context @c{s} to an inner context @c{r}
 (where “r” is for required, and “s” is just the next letter),
 and the update goes from an extension @c{i → p} to @c{j → q}
@@ -302,6 +303,8 @@ depending on the kind of specification you’re interested in.
 The skew lens says what the specification is modifying exactly,
 relative to a known place—typically the entire ecosystem, but
 potentially any other place you may currently be looking at.
+
+@;TODO XXXXXXXXXXXXXXXXXXXXXXXXXXXX make it work with rproto, mip.
 
 @;{
 I will call @emph{specification focus} the datum of a skew lens
@@ -546,7 +549,7 @@ to expose an explicit @c{Self} argument with which to express family polymorphis
 but it can be a challenge to get the appropriate amount of statically typed runtime substituability
 between objects defined from such class.
 
-Finally, note that there is no reason why a nested 
+Finally, note that there is no reason why a nested XXXXXXXXXXXX
 
 @subsection{Optics for Class Instance Methods}
 @; TODO: use rproto everywhere instead of directly ModExt ?
@@ -660,7 +663,7 @@ in writing these specifications.
 @subsubsection{Simple Class Initialization}
 
 One may specify the fields of a class instance,
-by specifying individual field descriptors under a @c{instance-field-lens}:
+by specifying individual field descriptors under an @c{instance-field-lens}:
 @Code{
 (def (instance-field-lens field-id)
   (update-lens rproto-spec-lens
@@ -706,10 +709,11 @@ and builds the instance prototype by focusing and mixing:
 (def (class-proto slots)
   (rproto←spec
     (apply mix*
-      (map (λ (slot)
-             (compose (field-update (slot 'name))
-                      (slot 'init-spec)))
-           slots))))
+      (reverse
+       (map (λ (slot)
+              (compose (field-update (slot 'name))
+                       (slot 'init-spec)))
+            slots)))))
 
 (def (default-slot name value)
   (record (name name)
@@ -717,12 +721,12 @@ and builds the instance prototype by focusing and mixing:
 
 (def (computed-slot name thunk)
   (record (name name)
-          (init-spec (λ (super self) (thunk self)))))
+          (init-spec (λ (_super self) (thunk self)))))
 
 (def (required-slot name)
   (record (name name)
-          (init-spec (λ (super self)
-                       (error "Missing required slot" name)))))
+          (init-spec (λ (_super _self)
+                       (abort "Missing required slot" name)))))
 }
 
 Each slot’s @c{init-spec} is focused onto its field
@@ -839,13 +843,13 @@ on top of this foundation@xnote["."]{
   And chaining methods through a @c{call-next-method} first argument would definitely
   have been possible.
   Still such a protocol was not directly provided in Flavors or its successors until
-  it appeared in CommonLoops @~cite{Bobrow1986CommonLoops}.
+  it appeared in CommonLoops @~cite{Bobrow1986}.
 }
 
 Now, while the original method combinations of Flavors were quite capable,
 method combinations were further refined by
 New Flavors @~cite{Moon1986Flavors},
-CommonLoops @~cite{Bobrow1986CommonLoops}, and
+CommonLoops @~cite{Bobrow1986}, and
 most notably by CLOS @~cite{Bobrow1988CLOS CLtL2 clhs Kiczales1991 Verna2023}.
 My presentation will therefore be more directly inspired by CLOS than by Flavors.
 

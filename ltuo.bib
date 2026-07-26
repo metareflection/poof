@@ -100,7 +100,9 @@ on the author’s page, sci-hub.ru, archive.org, z-library.sk, github.com, etc.
   doi={10.2307/2268281},
   url={https://sci-hub.ru/https://www.jstor.org/stable/2268281},
   note={
-    In this 1-page banger, Turing casually introduces
+    In this 1-page banger, to solve the then-problem of how to compute
+    a “predecessor” function in the λ-calculus
+    (subtracting one from a natural number), Turing casually introduces
     the first ever version of a fixpoint operator,
     as a λ-term that in my notation would be written
     Θ ≜ ((λ (v u) (u (v v u))) (λ (v u) (u (v v u)))),
@@ -423,7 +425,7 @@ on the author’s page, sci-hub.ru, archive.org, z-library.sk, github.com, etc.
     This classic paper, among many other things,
     introduces notions such as “first and second class objects” or “ad hoc polymorphism”,
     and identifies or clarifies many more notions.
-    Widely circulated since 1967, but only officially published in 2000.
+    Widely circulated since 1967, but only officially published in HOSC(13)1, 2000.
   }}
 
 %% 1968
@@ -495,7 +497,7 @@ on the author’s page, sci-hub.ru, archive.org, z-library.sk, github.com, etc.
   }
 }
 
-@InCollection{dahl1972chapter,
+@InCollection{Dahl1972,
   title={Chapter III: Hierarchical program structures},
   author={Dahl, Ole-Johan and Hoare, Charles Antony Richard},
   booktitle={Structured programming},
@@ -611,8 +613,8 @@ on the author’s page, sci-hub.ru, archive.org, z-library.sk, github.com, etc.
 % and the ability for users to define exceptions in addition to those provided to the system
 % seems assumed, no mechanism or example of such definition is provided,
 % and in particular, no discussion about the extensibility of such definition
-@inproceedings{10.1145/512976.512997,
-  author={Goodenough, John B.},
+@inproceedings{Goodenough1975,
+  author={John B. Goodenough},
   title={Structured exception handling},
   year={1975},
   isbn={9781450373517},
@@ -1054,7 +1056,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 1979
 
-@InProceedings{10.5555/1623050.1623105,
+@InProceedings{Stefik1979,
   author={Mark Stefik},
   title={An examination of a frame-structured representation system},
   year={1979},
@@ -1362,8 +1364,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 1983
 
-@article{Novak1983GLISP,
-  author={Novak, Gordon S.},
+@article{Novak1983,
+  author={Gordon S. Novak},
   title={Data abstraction in GLISP},
   year={1983},
   issue_date={June 1983},
@@ -1408,6 +1410,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
+% First version 1981, see ECAI 1982 paper
 % Borning & Ingalls 1982 cite an early 1982 version of this paper
 % TODO: confirm no generic function, see what they call "messages"?
 % G. for Gureasko
@@ -1509,16 +1512,17 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   note={
     One of Smullyan’s many delightful narrated puzzle books that prove deeper than they look,
     “To Mock a Mockingbird” takes the reader through the essentials of combinatory logic.
-    With each chapter introducing more elaborate logical ideas,
-    the book with chapter 9 starts following Inspector Craig
-    as he explores the birds of various forests,
-    the birds being combinators and the forests logical systems.
+    Each chapter introducing more elaborate logical ideas,
+    and starting with chapter 9, the book follows Inspector Craig
+    as he explores the “birds” of various “forests”,
+    the birds being combinators and the forests being
+    sets of terms closed by application.
     The self-application combinator, that I called U in this book,
     is called M (Mockingbird) in Smullyan’s.
-    The fixpoint combinator (that I called Y) appears in chapter 10 as the notion of a Sage bird Θ
-    (the same symbol Turing used to first denote such a combinator, though in chapter 13,
-    he calls U the critical part of the sage bird from Turing’s original paper,
-    which is different from my U, Smullyan’s M).
+    The fixpoint combinator (that I called Y) appears in chapter 10 as the notion of a Sage bird Θ,
+    the same symbol Turing used to first denote such a combinator;
+    though in chapter 13, Smullyan calls U the critical part of the sage bird
+    from Turing’s original paper (which is different from my U, Smullyan’s M).
     Smullyan then shows how to express logic and arithmetic with combinators, and
     the book culminates in final chapter 25 with Gödel’s incompleteness theorem.
     The epilogue pleasantly notes that Moses Schönfinkel,
@@ -1663,7 +1667,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 % Almost modern syntax, lower case long(ish) identifiers.
-@InProceedings{Bobrow1986CommonLoops,
+@InProceedings{Bobrow1986,
   title={CommonLoops: Merging Lisp and Object-Oriented Programming},
   author={Daniel G. Bobrow and Kenneth Kahn and Gregor Kiczales and Larry Masinter and Mark Stefik and Frank Zdybel},
   booktitle={OOPSLA},
@@ -2085,8 +2089,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-@book{cct1988,
-  author={Rydeheard, David E. and Burstall, Rod M.},
+@book{Rydeheard1988,
+  author={David E. Rydeheard and Rod M. Burstall},
   title={Computational category theory},
   year={1988},
   ISBN={0131627368},
@@ -2166,9 +2170,9 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 % Authors of EuLisp don't like multiple inheritance, want mixin inheritance
-@book{bretthauer1989multiple,
+@book{Bretthauer1989,
   title={Multiple Vs. Single Inheritance in Object-oriented Programming Languages: What Do We Really Want?},
-  author={Bretthauer, Harry and Christaller, Thomas and Kopp, Jürgen},
+  author={Harry Bretthauer and Thomas Christaller and Jürgen Kopp},
   year={1989},
   publisher={Gesellschaft für Mathematik und Datenverarbeitung mbH}
 }
@@ -2561,7 +2565,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-@article{pierce1991programming,
+@article{Pierce1991,
   title={Programming with intersection types, union types, and polymorphism},
   author={Pierce, Benjamin C},
   year={1991},
@@ -2655,7 +2659,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-@InProceedings{Ungar91organizingprograms,
+@InProceedings{Ungar1991,
   Title={Organizing Programs Without Classes},
   author={David Ungar and Craig Chambers and Bay-Wei Chang and Urs Hölzle},
   journal={Lisp and Symbolic Computation},
@@ -3000,7 +3004,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 % http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.53.3952
-@InProceedings{ImplementingTypeClasses,
+@InProceedings{Peterson1993,
   title="Implementing Type Classes",
   author="John Peterson and Mark Jones",
   booktitle="ACM SIGPLAN Symposium on Programming Language Design and Implementation",
@@ -3015,7 +3019,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 % https://link.springer.com/chapter/10.1007/3-540-57342-9_64
-@InProceedings{Kiczales1993Traces,
+@InProceedings{Kiczales1993,
   author="Kiczales, Gregor",
   editor="Nishio, Shojiro and Yonezawa, Akinori",
   title="Traces (A cut at the ‘‘make isn’t generic’’ problem)",
@@ -3075,7 +3079,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % Examples include polymorphic collection.
 %
 @misc{PT1993STTFOOP,
-  author={Pierce, Benjamin C. and Turner, David N.},
+  author={Benjamin C. Pierce and David N. Turner},
   title={Simple Type-Theoretic Foundations for Object-Oriented Programming},
   year={1993},
   url={https://www.cambridge.org/core/journals/journal-of-functional-programming/article/simple-typetheoretic-foundations-for-objectoriented-programming/5C18E2E055B028F7214FBB183701830E},
@@ -3100,6 +3104,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     Brilliant and insightful.
     Yet, ultimately, an utter failure at the task its set upon itself,
     since it dodges rather than solves the problem announced in its title.
+    Journal version in JFP(4)2, 1994.
   }
 }
 
@@ -3186,7 +3191,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % https://api.semanticscholar.org/CorpusID:16832709
 % University of Illinois at Urbana-Champaign
 % October 4, 1993
-@InProceedings{Kamin1994TwoSM,
+@InProceedings{Kamin1994,
   title={Two semantic models of object-oriented languages},
   author={Samuel N. Kamin and Uday S. Reddy},
   year={1994},
@@ -3285,7 +3290,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-@InProceedings{harper1994modules,
+@InProceedings{Harper1994,
   title={A type-theoretic approach to higher-order modules with sharing},
   author={Robert Harper and Mark Lillibridge},
   booktitle={the 21st ACM SIGPLAN-SIGACT symposium on Principles of programming languages},
@@ -3298,7 +3303,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-@inproceedings{remy1994mlart,
+@inproceedings{Remy1994mlart,
   title={Programming objects with ML-ART an extension to ML with abstract and record types},
   author={Didier Rémy},
   booktitle={International Symposium on Theoretical Aspects of Computer Software},
@@ -3736,7 +3741,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-@InBook{stroustrup1996hopl,
+@InBook{Stroustrup1996,
   author={Stroustrup, Bjarne},
   title={A history of C++: 1979--1991},
   year={1996},
@@ -4351,7 +4356,7 @@ and Fiech, Adrian",
   }
 }
 
-@InProceedings{SullivanGriswoldCaiHallen2001,
+@InProceedings{Sullivan2001,
   author={Sullivan, Kevin J. and Griswold, William G. and Cai, Yuanfang and Hallen, Ben},
   title={The Structure and Value of Modularity in Software Design},
   year={2001},
@@ -4502,7 +4507,7 @@ and Fiech, Adrian",
 % https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=693f61d2515ac9b032801dd7a603c34f1b725071
 % Wrongly claims that multidispatch forgoes modular typechecking
 % Has no definition of modularity, except maybe for typechecking
-@phdthesis{millstein2003reconciling,
+@phdthesis{Millstein2003,
   title={Reconciling software extensibility with modular program reasoning},
   author={Millstein, Todd David},
   year={2003},
@@ -4648,7 +4653,7 @@ and Fiech, Adrian",
   }
 }
 
-@InProceedings{BruceCardelliPierce2006,
+@InProceedings{Bruce2006,
     author={Kim B. Bruce and Luca Cardelli and Benjamin C. Pierce},
     title={Comparing Object Encodings},
     booktitle={Journal of Functional Programming},
@@ -4658,7 +4663,7 @@ and Fiech, Adrian",
 }
 % http://citeseerx.ist.psu.edu/viewdoc/similar?doi=10.1.1.211.6777&type=cc
 
-@PhDThesis{miller2006,
+@PhDThesis{Miller2006,
   title={Robust Composition: Towards a Unified Approach to Access Control and Concurrency Control},
   author={Mark Miller},
   year={2006},
@@ -4932,13 +4937,6 @@ and Fiech, Adrian",
   }
 }
 
-@InProceedings{Brown_functioninheritance:,
-  author={Daniel Brown and William Cook},
-  title={Function Inheritance: Monadic Memoization Mixins},
-  booktitle={Brazilian Symposium on Programming Languages},
-  year={2009},
-}
-
 @InProceedings{Cook2009,
   author={William Cook},
   title={On Understanding Data Abstraction, Revisited},
@@ -4990,7 +4988,7 @@ and Fiech, Adrian",
 }
 
 % Recursion Scheme, FP & OOP ???
-@article{gibbons2009essence,
+@article{Gibbons2009,
   title={The essence of the iterator pattern},
   author={Gibbons, Jeremy and Oliveira, Bruno C d S},
   journal={Journal of functional programming},
@@ -5059,14 +5057,6 @@ and Fiech, Adrian",
     may also suggest how this affects the complexity of types for OO
     in a closed program fit being optimized vs an open program being extended.
   }
-}
-
-@InProceedings{Oliveira10effectiveadvice,
-  author={Bruno C. d. S. Oliveira and Tom Schrijvers and William Cook},
-  title={EffectiveAdvice: disciplined advice with explicit effects},
-  booktitle={AOSD’10: 9th International Conference on Aspect-Oriented Software Development},
-  pages={109--120},
-  year={2010}
 }
 
 @InProceedings{ASDF2,
