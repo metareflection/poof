@@ -1121,7 +1121,9 @@ The variable @c{t} is also called @c{super} in many contexts,
 for reasons that will become obvious@xnote[";"]{
   The @c{super} argument refers to the partial value computed so far
   from @emph{parent} specifications;
-  the initial seed value of @c{super} when computing the fixed point is a “base” or “top” value,
+  in Nix extensions it is sometimes called @c{previous},
+  the previous value passed to the current extension that will extend it.
+  The initial seed value of @c{super} when computing the fixed point is a “base” or “top” value,
   typically an empty record, possibly enriched with metadata or ancillary fields for runtime support.
   @c{super} embodies the @emph{extensible} side of OO,
   enabling a specification to build on values @emph{inherited} from parent specifications,
@@ -1148,15 +1150,27 @@ for the same reasons@xnote["."]{
   of a fixpoint operator, wherein it refers to the very entity being defined.
   The name @c{self} is used in Smalltalk, Scheme, Self, Python, Jsonnet, Nix,
   many more languages, and in a lot of the literature about OO semantics.
-  In Simula, and after it, in C++, Java, JavaScript or Scala, the @c{this} keyword is used instead.
-  Note however that I am currently discussing a variant of Prototype OO,
+  In the context of Nix extensions, it is sometimes called @c{final},
+  indicating how it refers to the final result of the computation (the fixed-point),
+  as opposed to the input or output of any intermediary computation step (as in @c{previous} above).
+  In Simula, and after it, in C++, Java, JavaScript or Scala, the @c{this} keyword is used instead
+  for the same general purpose, but there are many differences
+  that will confuse the untrained eye.
+  First, I am currently discussing a variant of Prototype OO,
   as in Self, Jsonnet, Nix, JavaScript, where the @c{self} or @c{this}
-  is indeed the open recursion variable.
-  In Class OO language, the definition being one of a type descriptor, not of a record,
-  the open recursion variable would instead be something like @c{Self}, @c{MyType} or @c{this.type},
-  though there is even less standardization in this area.
-  See below the discussion of the meaning of “object” in Prototype OO vs Class OO.
-  @; TODO secref Classes
+  is indeed the open recursion variable (see @secref{RPOO});
+  by constrast, in Class OO language, the modularly incrementally defined entity
+  is a type descriptor, a record, and the actual open recursion variable would instead
+  be something like @c{Self}, @c{MyType} or @c{this.type},
+  though there is even less standardization in this area (see @secref{RCOO}).
+  Second and much more subtly, in the JavaScript standard,
+  and in the implementation of most (but not all) low-level OO languages,
+  @c{this} is a variable often used in conjunction with the U combinator
+  instead of the Y combinator as above (see @secref{CfUe}).
+  Many people also (incorrectly, in my book, this book) use @c{self} with the U combinator.
+  For reasons that will become obvious, I use @c{half} in conjunction with the U combinator,
+  and reckon @c{final} might be less ambiguous in conjunction with the Y combinator,
+  though @c{self} is more traditional.
 }
 Modular extensions and their composition have nice algebraic properties.
 Indeed, modular extensions for a given context form a category,

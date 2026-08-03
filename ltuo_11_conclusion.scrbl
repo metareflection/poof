@@ -212,7 +212,7 @@ I built a solid coherent Theory of OO that I hope you’ll agree is compelling.
 AIs are not as limited as humans in terms of mental context.
 They do not experience the same pressure towards reusable code as humans do.
 They have redefined as “programming in the small” a lot of problems
-that were previously “programming in the large” @~cite{DeRemerKron1975}.
+that were previously “programming in the large” @~cite{DeRemer1975}.
 And so in many cases, AIs may prefer to deal directly with a lot of low-level details at once,
 tangle many aspects of a problem, and embrace the complexity of it all,
 so as to achieve more efficient results.

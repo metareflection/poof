@@ -10,7 +10,7 @@
 @epigraph{It was probably in 1967 when someone asked me what I was doing,
  and I said: “It’s object-oriented programming”. @|#:- "Alan Kay"|
 }
-Object-Oriented Programming (OOP), or Object Orientation (OO),
+Object-Oriented Programming (OOP), also called Object Orientation (OO),
 is a paradigm for programming in terms of “objects”.
 
 What even are objects? What aren’t? What is OO? What isn’t?
@@ -26,11 +26,11 @@ Am I missing something by not using OO, or by using it?
 
 These are the kinds of questions this book will help you answer.
 To get there, I will have to introduce many concepts.
-Don’t worry: when others may relish in complexity, I instead aspire to simplicity.
+Don’t worry: when others may revel in complexity, I instead aspire to simplicity.
 You will learn some new words and new ideas.
 But if you practice programming, and think about your practice,
 then you are in my target audience;
-and you will find it will be easier to program
+and you will find that it will be easier to program
 with the right ideas than with the wrong ones.
 And the Internet is certainly full of wrong and sometimes toxic ideas
 about OO, as about anything.
@@ -112,7 +112,7 @@ By the 1990s, OO finally became available to every programmer,
 accompanied by endless industry hype to promote it.
 By the 2000s it had become the normal paradigm to program in.
 Then, at some point in the 2010s it started to become as boring as ubiquitous.
-Now in the 2020s it is on its way to become forgotten, at least among the Cool Kids.
+Now in the 2020s it is on its way to becoming forgotten, at least among the Cool Kids.
 Yet, one thing OO never was, was understood.
 Until now.
 
@@ -563,7 +563,7 @@ Many prefer Single Inheritance for its simplicity and performance
 Others prefer Multiple Inheritance, for its greater expressiveness and modularity,
 and this multiple inheritance itself comes in multiple flavors,
 notably divided on whether to use a technique called “linearization”
-@~cite{Bobrow1976 Cannon1979 Traits}.
+@~cite{Bobrow1976 Cannon1979 Curry1982}.
 A few prefer Mixin Inheritance,
 a variant in some sense intermediary between the two above,
 but in another sense more fundamental, more composable @~cite{Bracha1990}.

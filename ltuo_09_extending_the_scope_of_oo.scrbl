@@ -8,7 +8,7 @@
   If I have seen further it is by standing on the shoulders of giants.
   @|#:- "Isaac Newton"|
 }
-@section{Optics for OO}
+@section[#:tag "OfOO"]{Optics for OO}
 @; https://golem.ph.utexas.edu/category/2020/01/profunctor_optics_the_categori.html
 @; Profunctor Optics: The Categorical View
 
@@ -51,7 +51,7 @@ I may as well enjoy the benefits for basic features as well.
 
 @subsection{Short Recap on Lenses}
 
-A lens @~cite{bananas1991 Foster2007CombinatorsFB oconnor2012lenses Pickering2017Optics}
+A lens @~cite{Meijer1991 Foster2007CombinatorsFB oconnor2012lenses Pickering2017Optics}
 is the pure Functional Programming take on what in stateful languages would typically be
 a C pointer, ML reference, Lisp Machine locative, Common Lisp place, etc.:
 a way to pinpoint some location to inspect and modify within the wider program’s state.
@@ -67,7 +67,7 @@ of the wider state from “source” to an updated “target”@xnote["."]{
   In a pure functional setting, the “getter” part is fine (same as view),
   but the “setter” part drops crucial information about the flow of information,
   and does not compose well, instead requiring the flow of information to be
-  be awkwardly moved to other parts of the program to be reinjected into the setter.
+  awkwardly moved to other parts of the program to be reinjected into the setter.
   By contrast, the “update” API trivially composes.
   In the Haskell lens libraries, the “update” function is instead called “over”;
   maybe because it “applies an update @emph{over} a change in focus”;
@@ -150,6 +150,10 @@ Note how you need a matching getter and setter to achieve a polymorphic lens.
 To achieve a skew lens, you would need two getters and a setter:
 one getter for the view, another getter and a setter for the update;
 the two getters needn’t match, but the second getter and the setter must.
+Now with the second getter and the setter, you could do strictly more than update;
+therefore this interface would be more restrictive than that of a skew lens:
+it would both require more work from programmers, yet
+reject many interesting skew lenses from which no such second getter can be meaningfully extracted.
 
 @Paragraph{Composing Lenses}
 I can compose view, update and lenses as follows,
@@ -195,8 +199,8 @@ and @c{compose-update} is just @c{compose}.
   that some claim is more efficient, “van Laarhoven” lenses,
   but I will avoid it for the sake of clarity.
 }
-Views, Updates and Lenses each form categories, wherein composition is associative,
-and identities are neutral elements.
+Views, Updates and Lenses each form categories of their own,
+wherein composition is associative, and identities are neutral elements.
 
 @Paragraph{Field Lens}
 Given some record representation, a view for a field of identifier key @c{k}
@@ -231,7 +235,7 @@ where you view the field @c{key} of your context and
 also modify the field @c{key} of the value you extend,
 but the two need not be the same, and the modification need not preserve types.
 
-@subsection{Focusing a Modular Extension}
+@subsection[#:tag "FME"]{Focusing a Modular Extension}
 
 @Paragraph{Skewing a Modular Extension}
 
@@ -248,6 +252,47 @@ skew-ext : SkewLens i r p j s q → ModExt i r p → ModExt j s q
 
 Thus with a @c{SkewLens i r p j s q},
 I can change a modular extension from parameters @c{i r p} to @c{j s q}.
+The fact that this is exactly what works for arbitrary open modular extensions
+justifies why I choose skew lenses and their view/update interface,
+as opposed to the more limited monomorphic or polymorphic lenses
+or the more naive getter/setter interface, that would work on closed modular extensions.
+
+Now, the type @c{SkewLens i r p s j q} works well with
+the Trivial Modular Extensions from @secref{TNMTfME}:
+@Code{
+type TModExt inherited required provided =
+  inherited → required → provided
+}
+But to work with the stricter and recursive modular extensions of @secref{ST},
+@Code{
+type ModExt inherited required newlyProvided =
+  ∀ super, self : Type
+    self ⊂ required self, super ⊂ (inherited self) ⇒
+        super → self → super∩(newlyProvided self)
+}
+you need an accompanying stricter and recursive type for skew lenses:
+@Code{
+type SSkewLens inherited required newlyProvided
+               jnherited sequired newlyQrovided =
+  ∀ super, self : Type
+    self ⊂ required self, super ⊂ (inherited self) ⇒
+  ∃ previous, final : Type
+    final ⊂ sequired final, previous ⊂ (jnherited final) ⇒
+  { view: final → self ;
+    update : (super → super ∩ (newlyProvided self)) →
+             (previous → previous ∩ (newlyQrovided final)) }
+}
+
+Alternatively, you could just change the point of view and define a lens
+as a transformation between modular extensions.
+However, not how the formula for skew lenses remains essentially the same,
+whichever types you assign to it, at least up to some linear isomorphism:
+you may rearrange the chairs on the deck, or change the order of arguments and results
+for each function, and even add “phantom” type-level arguments and results
+corresponding to “witnesses” for universal or existential type quantifiers.
+But in the end, the computation is the very same, all you do is
+be more precise about what set of computation contexts the function can be evaluated
+without type error.
 
 @Paragraph{Metaphors for Modular Extensions and Skew Lenses}
 
@@ -290,7 +335,10 @@ Now, inasmuch as you consider those function types as a model for stateful mutat
 with in-memory pointers, that means that the “view read pointer” @c{v}
 and the “focus update pointer” @c{f} are independent;
 in a mutable variant of a skew lens, you will have two pointers,
-not just one as with monomorphic or polymorphic lens.
+one read-only and one read-write, not just one as with monomorphic or polymorphic lens.
+This also explains why the “getter and setter” interface doesn’t work for skew lenses:
+the getter for the context does not match that for the focused element to update,
+so you also need a second getter for the latter, and a setter for the latter but not the former.
 
 @Paragraph{Focused Specification}
 
@@ -300,11 +348,57 @@ but in general, it may as well be a modular definition,
 a multiple inheritance specification, an optimal inheritance specification, etc.,
 depending on the kind of specification you’re interested in.
 
-The skew lens says what the specification is modifying exactly,
+The skew lens says what exactly the specification is modifying,
 relative to a known place—typically the entire ecosystem, but
 potentially any other place you may currently be looking at.
 
-@;TODO XXXXXXXXXXXXXXXXXXXXXXXXXXXX make it work with rproto, mip.
+Now, some of you may notice, the match between skew lens
+and modular specification is not just perfect, it is a bit @emph{too perfect}:
+what if instead of mixin inheritance, we want to use
+single, multiple or optimal inheritance?
+How is a multiple (or optimal) inheritance specification to be used?
+What then happens to the local order, precedence list, suffix flag,
+(and possibly conflated target), the other parts of a specification (and prototype)?
+Not just those to be used as input, but also those to be used as output, of the skew lens?
+And how are they to be affected when the skew lens is refocused?
+
+A simple, but ultimately unsatisfactory approach is to keep using skew lenses
+to locate which element under focus within some context is
+a specification or prototype that you want to update.
+The update would typically (though not necessarily) involve specializing the element.
+This specialization would consist in
+composing with a modular extension (for single or mixin inheritance), or
+prepending to the local order (either as a total order as list of parents,
+or better, as a partial order as list of lists of parents, for multiple or optimal inheritance).
+This approach works easily, and takes advantage of regular skew lenses
+with their usual simple laws.
+But it fails to specifically leverage the context view part of skew lenses,
+only leverages their focus update part, and thus fails to extend
+the notion of focused specification from modular extensions
+to richer forms of specifications.
+
+A more elaborate approach is to extend skew lenses to input and output prototypes,
+including all additional fields, and not just modular extensions.
+Applying a suitably extended skew lens would modify each of these,
+presumably specializing them (as above).
+You could specialize the context as well as the focus,
+and the inheritance DAG from a more general lens would remain a superset
+of the inheritance DAG from a more specialized lens, that only contains
+the changes affecting that context and focus.
+This approach may further involve advanced types that constrain
+the specializations to behave in various ways.
+With this approach, a focused specification keeps extending the simple case of modular extensions
+into richer object systems.
+
+@;{
+You might try to further decompose those lenses into elementary lenses
+that separately handle each aspect of a prototype, or further into
+consumers, matcher, destructurers, destructors, or continuations
+that take them into input (the negative part),
+and producers, constructors, initializers and other terms
+that yield them as output (the positive part),
+with more or less elaborate computations in between.
+}
 
 @;{
 I will call @emph{specification focus} the datum of a skew lens
@@ -313,7 +407,7 @@ to the complete or somehow outermost ecosystem of type @c{ES}:
 type SpecFocus i r p = ModExt i r p → ModExt ⊤ ES ES
 }
 More generally, you could use any answer type @c{A}, or even @c{⊥},
-and consider that a SpecFocus is just a continuation that consume a specification
+and consider that a SpecFocus is just a continuation that consumes a specification
 @Code{
 type SpecFocus i r p = ModExt i r p → A
 }
@@ -323,7 +417,7 @@ fit a specification into it, and you get your program.
 The general case above is an @emph{open} specification focus;
 a @emph{closed} specification focus is of the form:
 @Code{
-type ClosedSpecFocus a = ModExt ⊤ p p → A
+type ClosedSpecFocus p = ModExt ⊤ p p → A
 }}
 
 @subsection{Adjusting Context and Focus}
@@ -368,7 +462,8 @@ update-lens : SkewLens i r p j s q → Update j q jj qq →
 
 More generally, given a lens @c{l} focusing on the specification,
 and a lens update @c{u} to refocus on just the extension focus,
-the lens @c{(compose-lens l (update-only-lens u))} will adjust focus onto the method at @c{u}
+the lens @c{(compose-lens l (update-only-lens u))} will adjust focus on
+the method selected by @c{u}
 of the specification at @c{l}.
 This is a common case when specifying
 a sub-method within a method (more on that coming),
@@ -391,7 +486,7 @@ For instance, given a broader context @c{c : s},
 and a lens @c{l : MonoLens s a}, then the following “reverse lens” broadens the focus,
 by completing the “rest” of the reverse focus with data from the context.
 Beware though that if you use the update more than once, you will always get answers
-completed with data from the same non updated context.
+completed with data from the same non-updated context.
 If you want to update the context each time, you have to reverse the lens
 with the updated context every time.
 @Code{
@@ -416,7 +511,7 @@ or to locally override some configuration in the context;
 or to locally instrument some of the context entities
 (e.g. for debugging, testing, profiling performance, etc.);
 or just to switch the context to something different for any reason.
-You can also use the getter to narrow the context in terms
+You can also use the view to narrow the context in terms
 of visibility, access rights, or some other system of permissions or capabilities,
 so the extension may only invoke safe primitives,
 or primitives that were suitably wrapped in a “security proxy” for safety.
@@ -444,7 +539,7 @@ Here are two kinds of lenses that are essential to deal with prototypes and clas
 @Paragraph{Specification Methods}
 
 As told in the previous section,
-given a Lens @c{l} to focus on a specification from the environment,
+given a lens @c{l} to focus on a specification from the environment,
 and an Update @c{u} to focus the extension on a method or submethod within that specification,
 one can extend that method of that specification with a modular extension @c{m}, with:
 @Code{
@@ -470,7 +565,7 @@ based on composing open modular extensions.
 @Paragraph{Prototype Specification}
 
 I’ll assume for now that prototypes are records implemented with the @c{rproto} encoding
-from @secref{CfR}. Then, if you have a lens @c{l} to focus onto a prototype,
+from @secref{CfR}. Then, if you have a lens @c{l} to focus on a prototype,
 you may further focus on the prototype’s specification by further composing @c{l}
 with the following lens, after which you can further use lenses
 to modularly extend the specification methods as above:
@@ -483,7 +578,7 @@ to modularly extend the specification methods as above:
 The entire point of @c{rproto} is that the target view is @c{identity}.
 However, what the target update should be is an interesting question.
 There are many options; none of them seems universally correct;
-any of them can be a feature or a bug, depending on user intent, but is often a bug;
+any of them can be a feature or a bug, depending on user intent, but each is often a bug;
 and so the error behavior is probably the safest one to use by default:
 @itemlist[
   @item{If you update some fields of the target, then the target will not be in sync
@@ -498,7 +593,7 @@ and so the error behavior is probably the safest one to use by default:
     and the object will not be extensible through inheritance anymore,
     unless you make it so again the hard way by explicitly providing a new magic specification field.}
   @item{If you try to update the target, an error will be thrown,
-    and you won’t have to debug very hard surprises later.}]
+    and you won’t later have to debug very surprising behavior.}]
 To a first approximation, this corresponds to using variants of these Update functions:
 @Code{
 (def rproto-target-update/OutOfSync
@@ -519,23 +614,23 @@ nested modularly extensible specifications,
 and extensions to the outer specification can override the inner ones
 by extending them with the usual OO extension mechanism (inheritance).
 And the same outermost or global fixpoint will automatically compute
-all the inner fixpoints of all the inner specifications, without any issue.
+all the inner fixpoints of all the inner specifications, without any particular issue.
 As mentioned before, that’s actually a case where it is very nice to have
-conflation of specification and target, so you don't need to constantly have to think
+conflation of specification and target, so you don't need to think constantly
 about which you’re talking about, or have heavy syntactic markers all over the place.
 
 Of course, dynamic OO languages, whether Prototype OO languages or Class OO languages with reflection,
-always can and always could express these nested specifications and their overriding the hard way.
+have always been able to express these nested specifications and their overriding the hard way.
 But credit where credit is due, Beta@~cite{Kristensen1987}
 was the first language that explicitly supported such nested specifications,
 with its virtual patterns, and whose authors explicitly explored
 the resulting notion of “family polymorphism” (as they dubbed it). @;TODO cite
-This proves that its authors advanced OO in more ways than first implementing classes
+This proves that its authors advanced OO in more ways than by first implementing classes
 in Simula 67@~cite{Simula1967}.
 Other notable languages that explicitly support nested specifications include
 Newspeak@~cite{Bracha2008} with its nested classes (in a Class OO language), and
 Jsonnet@~cite{jsonnet} with its nested objects (in a Prototype OO language).
-Nix@~cite{nix2015}, that implements its extensions equivalent to Jsonnet
+Nix@~cite{nix2015}, which implements extensions equivalent to Jsonnet’s objects
 in a few lines of λ-calculus as per @secref{MOO} and @secref{RPOO},
 does not provide any special operator to support nested extensions,
 and doesn’t need to: nesting extensions is already a common idiom in defining
@@ -546,17 +641,15 @@ with a proper static typing discipline, though in a slightly roundabout way,
 using abstract type members and path-dependent nested types.
 C++ templates, that can express anything, can use CRTP @~cite{Coplien1995}
 to expose an explicit @c{Self} argument with which to express family polymorphism;
-but it can be a challenge to get the appropriate amount of statically typed runtime substituability
-between objects defined from such class.
-
-Finally, note that there is no reason why a nested XXXXXXXXXXXX
+but it can be a challenge to get the appropriate amount of
+statically typed runtime substitutability between objects defined from such class.
 
 @subsection{Optics for Class Instance Methods}
 @; TODO: use rproto everywhere instead of directly ModExt ?
 @; Or better, use the MI variant?
 
 Inasmuch as classes are prototypes, the way to deal with methods on a class
-are essentially the same as for prototypes, or a refinement thereof.
+is essentially the same as for prototypes, or a refinement thereof.
 To define more precise lenses,
 I’ll further assume the encoding of @secref{SFCTD},
 wherein you use @c{instance-call} to call an instance method,
@@ -576,9 +669,34 @@ a skew lens for a specific instance method:
 
 Now, when specifying a class instance method, the programmer thinks in terms of
 the class instance, i.e. an element of the class’s target type.
-And his method may use @c{call-next-method} to invoke the inherited behavior,
-from the tail of the class precedence list of the instance’s type.
-However, the underlying modular extension machinery sees @c{self}, i.e. the class,
+But the element does not exist yet, it has to itself be a parameter to some function,
+to be passed in the future, while the method has to be attached to the class somehow.
+
+Moreover, since methods may use @c{call-next-method} to invoke the inherited behavior,
+the instance on which the method is called need not be an instance of the class
+in which a method is defined: it can be an instance of any subclass thereof
+(unless the class is somehow “final”).
+Thus the method body must also accept as argument
+the @emph{effective type} (descriptor) of the instance,
+i.e. the target of said subclass (or half-target in U-encoding)—though
+if using dynamic dispatch rather than static dispatch (see @secref{DvSD}),
+this descriptor can be extracted from the class instance rather than passed as argument.
+
+Moreover, for an @emph{efficient} @c{call-next-method},
+each method must cheaply access a @c{super} parameter,
+and further pass to the next method @emph{its} super, and so on.
+Therefore, the method body must also accept as parameter
+the @emph{rest} of the precedence list.
+Now, when using single inheritance, you can cheaply compute the method’s super
+from the current class only: it is the class’s parent.
+But when using multiple or mixin inheritance, this does not apply, and the super must instead
+be found in the precedence list, which can be an O(n) sequential search,
+or a hash-table lookup which is O(1) but involves a large constant factor,
+so a more efficient implementation will pass the rest of the precedence list.
+(Also note that for efficiency, computation of effective methods can be cached.)
+
+Here is the code in the simplified case of just modular extensions in mixin inheritance:
+the underlying machinery sees @c{self}, i.e. the class,
 and @c{super}, the modular definition for the method so far,
 as inherited from the tail of the class precedence list,
 i.e. ancestors behind the current class in the precedence list
@@ -651,7 +769,7 @@ You can give types to method specifications independently
 from any specific surrounding prototype or class specification.
 You can reuse these specifications as part of multiple prototype specifications.
 You can transform them, store and transmit them, compose them, decompose them, recompose them,
-as first class objects.
+as first-class objects.
 And you can build infrastructure that systematizes any design pattern you follow
 in writing these specifications.
 
@@ -699,7 +817,7 @@ you would use:
   (abort "missing field markup")))
 }
 A class could then define a default prototype for new instances as:
-@; TODO INSERT SUITABLE CODE HERE
+@; TODO INSERT SUITABLE CODE HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 @Code{
 }
 
@@ -729,7 +847,7 @@ and builds the instance prototype by focusing and mixing:
                        (abort "Missing required slot" name)))))
 }
 
-Each slot’s @c{init-spec} is focused onto its field
+Each slot’s @c{init-spec} is focused on its field
 by composing with @c{field-update},
 then all are mixed together.
 The @c{fix-record} implicit in @c{rproto←spec} closes the recursion,
@@ -782,7 +900,7 @@ the idea that the many methods declared in partial specifications
 are each to contribute partial information that will be harmoniously combined (mixed in),
 rather than complete information that has to compete with other conflicting methods
 that contradict it, the winners erasing the losers.
-Win-win interactions rather than lose-lose, that was a revolution
+Win-win interactions rather than lose-lose: that was a revolution
 that made multiple inheritance sensible when it otherwise wasn’t.
 
 Flavors notably allowed regular or “primary” methods to be extended in subclasses with
@@ -811,11 +929,11 @@ Typical other operators included @c{+ * max min progn list append nconc}@xnote["
   @c{nconc} is a historical variant of @c{append} that uses side-effects
   to modify in place each non-empty list but the last, to link to the next one.
   It made sense in the slow and memory-constrained machines of the 1960s to 1980s,
-  especially before modern garbage-collection.
+  especially before modern garbage collection.
   But @c{nconc} rarely makes sense in modern times,
   where either the simpler and safer @c{append} is good enough,
   or optimization is better sought from a more sophisticated data representation than linked lists.
-  @c{nconc} is just the opportunity of bugs due to side-effects
+  @c{nconc} is just an opportunity of bugs due to side-effects
   in unexpectedly shared data structures, that even if not present,
   might happen after some later refactoring.
 }
@@ -827,7 +945,7 @@ the usual composition of modular extensions,
 wherein each extension can refer to its @c{super} argument
 along a multiple inheritance specification’s precedence list,
 as discussed in @secref{MI}.
-But I can do better, show how to implement all other method combinations
+But I can do better: I can show how to implement all other method combinations
 on top of this foundation@xnote["."]{
   Ironically, that’s the one kind of method combination @emph{not} present as a builtin
   in the original Flavors, while the more elaborate kinds were already provided:
@@ -835,29 +953,30 @@ on top of this foundation@xnote["."]{
   only one primary method (from the most specific class) would be called,
   but @c{before} and @c{after} methods were also supported
   in the style of ADVISE @~cite{Teitelman1966};
-  @c{around} methods were only added in CLOS @~cite{Bobrow1988CLOS}.
+  @c{around} methods were only added in CLOS @~cite{Bobrow1988}.
   The simple method combinations were supported, again without @c{around} methods,
   and the simple @c{or} method combination covered a pretty common case of next-method-as-fallback.
   But you could define arbitrary method combinations by providing a @c{wrapper} macro
   that computed the effective method from the ordered list of individual methods.
   And chaining methods through a @c{call-next-method} first argument would definitely
   have been possible.
-  Still such a protocol was not directly provided in Flavors or its successors until
+  Still, such a protocol was not directly provided in Flavors or its successors until
   it appeared in CommonLoops @~cite{Bobrow1986}.
 }
 
 Now, while the original method combinations of Flavors were quite capable,
 method combinations were further refined by
-New Flavors @~cite{Moon1986Flavors},
+New Flavors @~cite{Moon1986},
 CommonLoops @~cite{Bobrow1986}, and
-most notably by CLOS @~cite{Bobrow1988CLOS CLtL2 clhs Kiczales1991 Verna2023}.
+most notably by CLOS @~cite{Bobrow1988 Steele1990 clhs Kiczales1991 Verna2023}.
 My presentation will therefore be more directly inspired by CLOS than by Flavors.
 
 @subsection{Uses of Method Combinations}
 
 It would take a lot of space to reproduce and explain @italic{in extenso}
 some real-world examples that motivate the use of method combinations:
-they would probably have to be in Common Lisp (the only language that fully supports them),
+they would probably have to be in Common Lisp
+(the only top-50 popular language that fully supports them),
 with a quick introduction to the language, its I/O facilities,
 and some existing development framework for network client/server or GUI programming.
 A full introduction would then require programs large enough
@@ -866,7 +985,7 @@ use of the feature instead of “just” inlining it away.
 
 Still, I can point to ASDF @~cite{ASDF2 ASDF3}, the Common Lisp build system,
 as a program that makes good use of method combinations,
-and the source code of which is freely available, and well-documented.
+and the source code of which is freely available and well-documented.
 I know ASDF because I was once its maintainer and completely re-wrote it several times.
 CLIM, the Common Lisp Interface Manager,
 a large GUI library descended from that of the Lisp Machines,
@@ -890,7 +1009,7 @@ or detect and record dependencies between actions.
 ASDF defines @c{:after} methods to track down actions that were successfully completed
 so they do not have to be taken again, or complete system-provided behavior
 and check invariants after (re)initialization of some objects.
-And ASDF defines @c{:around} methods to fixup the results of special cases,
+And ASDF defines @c{:around} methods to fix up the results of special cases,
 set up or use caches around computations, adjust dynamic bindings around computations,
 or detect circular dependencies between actions.
 Other common uses of the standard method combination not illustrated by ASDF include
@@ -1366,7 +1485,7 @@ the previously discussed issue with lack of modularity.
 Protocols as independent entities also can avoid the complexity of mutable inheritance,
 wherein you’d modify a specification after the fact so it would inherit from a new interface.
 
-Generic functions were introduced as “generic operations” by T @~cite{Rees1982T},
+Generic functions were introduced as “generic operations” by T @~cite{Rees1982},
 and reprised as “generic functions” by New Flavors, LOOPS, CommonLoops, CLOS,
 but also beyond Lisp by Cecil @~cite{Chambers1992} and Fortress @~cite{Allen2011}.
 
@@ -1630,7 +1749,7 @@ with Julia’s single inheritance @~cite{Bezanson2014}.
 Multimethods can thus naturally leverage and extend the techniques used for multiple inheritance:
 linearizing the order of methods,
 method combination based on the resulting precedence list, etc.,
-as done by CLOS @~cite{Bobrow1988CLOS}.
+as done by CLOS @~cite{Bobrow1988}.
 Conversely, some languages like Dylan @~cite{Shalit1996} apply linearization to each argument,
 and can linearize tuples of arguments still, yet apply the “conflict” view of inheritance
 in case of multiple incomparable tuples of arguments for the next method.
@@ -2309,6 +2428,11 @@ or will level the playing field in favor of new languages, static or dynamic.
   some “descriptor” for the many options with which to interpret or decode the object encoding
   (unit and bounds for a number, language used, entering digits vs sliding a ruler
   or turning a knob, tying the number to some other visible effect, etc.).
+}
+
+@exercise[#:difficulty "Medium"]{
+  Implement the richer kinds of skew lenses fit for optimal inheritance, as per @secref{FME},
+  and use them to define more interesting prototypes than possible with mere modular extensions.
 }
 
 @exercise[#:difficulty "Medium, Recommended"]{

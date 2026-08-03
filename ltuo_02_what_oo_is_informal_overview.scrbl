@@ -12,7 +12,7 @@
 }
 In this chapter, I map out the important concepts of OO,
 that I will develop in the rest of this book.
-This chapter will contain only what explanation is strictly necessary
+This chapter will contain only what explanations are strictly necessary
 to relate concepts to one another and prevent their misinterpretation.
 More details, and justifications, will follow in subsequent chapters.
 
@@ -32,7 +32,7 @@ as opposed to all logic being expressed in a single monolithic loop@xnote["."]{
   The entire point of partial specifications is that they are not complete,
   and you want to be able to manipulate those incomplete specifications,
   even though, of course, trying to “instantiate” them
-  before all the information has been assembled should fail.
+  before all the information has been assembled will fail.
   Typesystems and semantic frameworks incapable of dealing with such incomplete information
   are thereby incapable of apprehending OO.
 }
@@ -42,7 +42,7 @@ A programmer can write or modify one part (or “module”)
 while knowing very little information about the contents of other parts,
 enabling specialization of tasks. Modularity is achieved by having modules
 interact with each other through well-defined “interfaces” only,
-as opposed to having to understand in detail the much larger contents
+instead of having to understand in detail the much larger contents
 of the other modules so as to interact with them.
 
 @subsection[#:tag "EO"]{Extensibility (Overview)}
@@ -315,7 +315,7 @@ which is after the July 4th publication of the KRL paper.)
 KRL had “inheritance of properties”,
 which was what we would now call “multiple inheritance”.
 The expressions “single inheritance” and “multiple inheritance”
-are first found in print in @citet{Stansfield1977COMEX},
+are first found in print in @citet{Stansfield1977},
 another Lisp-based frame system.
 Many other languages adopted “inheritance” after Smalltalk,
 including Java that made it especially popular circa 1995. @;{TODO @~cite{}. @TODO{or C#}}
@@ -364,7 +364,7 @@ in order from least specific superclass to most specific@xnote["."]{
   After Smalltalk, languages instead let subclass methods control the context
   for possible call of superclass methods, rather than the other way around.
   Beta behavior is easily expressible with user-defined method combinations
-  in CLOS @~cite{Cannon1979 Bobrow1988CLOS},
+  in CLOS @~cite{Cannon1979 Bobrow1988},
   or can also be retrieved by having methods
   explicitly build an effective method chained the other way around.
   Thus, I can rightfully say that inheritance, and OO,
@@ -424,23 +424,23 @@ to have multiple direct parents.
 The notion of (multiple) inheritance thus predates Smalltalk-76 @~cite{Ingalls1978}
 adopting the term, retroactively applying it to Simula.
 The terms “single” and “multiple” inheritance were subsequently invented
-to distinguish the two approaches as well as recognize their commonality @~cite{Stansfield1977COMEX}.
+to distinguish the two approaches as well as recognize their commonality @~cite{Stansfield1977}.
 
 Although many early systems
-@~cite{Borning1977 Traits Goldstein1980Extending Borning1982Multiple Bobrow1983LOOPS}
+@~cite{Borning1977 Curry1982 Goldstein1980 Borning1982 Bobrow1983}
 used multiple inheritance,
 @principle{multiple inheritance only became usable with the epochal system Flavors}
-@~cite{Cannon1979 Weinreb1981Chinual3},
+@~cite{Cannon1979 Weinreb1981},
 refined and improved by successor Lisp object systems
-New Flavors@~cite{Moon1986Flavors}, CommonLoops@~cite{Bobrow1986}
-and CLOS@~cite{Bobrow1988CLOS Keene1989 CLtL2}.
+New Flavors@~cite{Moon1986}, CommonLoops@~cite{Bobrow1986}
+and CLOS@~cite{Bobrow1988 Keene1989 Steele1990}.
 Since then, many languages including Ruby, Perl, Python and Scala
 correctly adopted the basic design of Flavors (though none of its more advanced features)—I
 will call them @emph{flavorful}@xnote["."]{
   To be fair, these languages all include the capability for a method to call a super-method,
   that was not @emph{directly} possible in Flavors (1979) without writing your own method-combination,
   but only introduced by CommonLoops (1986) with its @c{run-super} function,
-  known as @c{call-next-method} in CLOS (1988).
+  known as @c{call-next-method} in CLOS (1987).
 }
 On the other hand, influential or popular languages including Smalltalk, Self, C++ and Ada
 failed to learn from Flavors and got multiple inheritance largely wrong—I

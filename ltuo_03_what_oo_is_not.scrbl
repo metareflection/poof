@@ -41,7 +41,7 @@ and only come back after you encounter bad opinions about OO that need to be deb
   @|#:- @elem{Alan Kay, at OOPSLA ’97 (near peak C++ popularity)}|
 }
 The most popular OO language in the decades that OO was a popular trend (roughly 1980 to 2010),
-C++ indeed supports some form of OOP.
+C++ indeed supports some form of OO.
 But C++ is a rich language with many aspects completely independent of OO
 (e.g. efficient bit-banging, RAII, template metaprogramming, pointer aliasing, a memory model),
 whereas the OO aspects that it undoubtedly offers
@@ -63,7 +63,7 @@ is not at all the same as what almost everyone else calls “multiple inheritanc
   even though Stroustrup does not cite Snyder:
   redefine the problem to be whatever the desired “solution” does—a Tree instead of a DAG—and
   hope the users won’t notice the difference.
-  On the other hand, Stroustrup does cite the Lisp Machine Manual @~cite{Weinreb1981Chinual3},
+  On the other hand, Stroustrup does cite the Lisp Machine Manual @~cite{Weinreb1981},
   and rejects Flavors because it is not
   “sufficiently simple, general and, efficient enough to warrant the complexity it would add to C++”;
   this is exceedingly ironic considering Flavors was 1.4kloc (in October 1980, when cited),
@@ -115,7 +115,7 @@ and even most of those that look like OO are often different enough that
   Now even when C++ got multiple inheritance wrong,
   ignorance was no valid excuse,
   since Lisp got it right ten years earlier@~cite{Cannon1979}
-  and Stroustrup even cited it via @~cite{Weinreb1981Chinual3}.
+  and Stroustrup even cited it via @~cite{Weinreb1981}.
   Ignorance is even less excusable in the case of Ada
   copying C++’s “multiple inheritance” yet 14 years later.
   By contrast, many languages got it right in the same time frame,
@@ -181,7 +181,7 @@ ThingLab @~cite{Borning1977 Borning1979 Borning1981}@xnote["."]{
   and oscillated between having or not having classes in addition to prototypes.
   Kahn joined PARC after graduating from MIT.}
 Plenty more Prototype OO or “class-less” OO languages followed
-@~cite{Hewitt1979 Rees1982T Adams1988 Ungar1987 Chambers1989 Lawall89SelfInScheme Salzman2005 jsonnet nix2015 poof2021}.
+@~cite{Hewitt1979 Rees1982 Adams1988 Ungar1987 Chambers1989 Lawall1989 Salzman2005 jsonnet nix2015 poof2021}.
 There are a lot more Prototype OO languages than I could have time to review @~cite{WikiProto},
 but prominent among them is JavaScript @~cite{Eich1996JavaScript},
 one of the most used programming languages in the world @~cite{TopPL2022},
@@ -231,12 +231,12 @@ were using mutable state everywhere, and an eager evaluation model, at least by 
 And with 1990s slogans among Lispers like
 “objects are a poor man’s closures”@~cite{Dickey1992}, and
 “closures are a poor man’s objects”@~cite{Queinnec1996LiSP},
-the problem back then (and as early as at least Yale T Scheme @~cite{Rees1982T},
+the problem back then (and as early as at least Yale T Scheme @~cite{Rees1982},
 that developed the underlying concepts and implemented an entire system on them),
 was clearly not whether OO could be done purely with functions—obviously it could—but
 whether it made practical sense to program purely without side-effects in general.
 That question would only be slowly answered positively,
-in theory in the early 1990s @~cite{Moggi1991Monads}
+in theory in the early 1990s @~cite{Moggi1991}
 and in practice in the mid 2000s to mid 2010s,
 as Haskell grew up to become a practical language@xnote["."]{
   Some identify darcs (2003) as the first widely used real-world application written in Haskell.
@@ -261,7 +261,7 @@ as Haskell grew up to become a practical language@xnote["."]{
 Yet, there are:
 @itemize[
   @item{Pure models of OO such as those of
-    Kamin, Reddy, Cook and Bracha@~cite{Kamin1988 ObjectsAsClosures Cook1989 CookPalsberg1989 Bracha1990},}
+    Kamin, Reddy, Cook and Bracha@~cite{Kamin1988 Reddy1988 Cook1989 CookPalsberg1989 Bracha1990},}
   @item{pure lazy dynamic OO languages such as Jsonnet or Nix@~cite{jsonnet dolstra2008nixos nix2015},
     and pure lazy OO systems for Scheme@~cite{poof2021},}
   @item{languages happily combining OO and FP such as Common Lisp or Scala,
@@ -281,7 +281,7 @@ Actually, I will argue based on studying of the semantics of OO that
 @epigraph{A half-truth is a whole lie. @|#:-"Yiddish proverb"|
 }
 Many OO pundits claim that an essential concept in OO
-is “encapsulation” or “information hiding”@~cite{DeRemerKron1975}.
+is “encapsulation” or “information hiding”@~cite{DeRemer1975}.
 Some instead speak of “data abstraction” or some other kind of “abstraction”.
 There is no consensus as to what this or these concepts mean, and no clear definition,
 @; TODO{CITE} @; XXX cite Liskov??? Mary Shaw???
@@ -526,7 +526,7 @@ and not integrated in any meaningful way with OO message dispatch.
 
 Moreover, many OO languages generalize and extend their method dispatch mechanism
 from “single dispatch” to “multiple dispatch”@~cite{
-  Bobrow1986 Bobrow1988CLOS Chambers1992 Allen2011}.
+  Bobrow1986 Bobrow1988 Chambers1992 Allen2011}.
 Their “multimethods” are attached to tuples of prototypes or classes,
 and there is no single prototype, class, or single independent entity of any kind
 capable of either “receiving” or “sending” a message.
@@ -808,7 +808,7 @@ of an OO framework actual or imagined, but then again sometimes they may@xnote["
   calling some values “objects” may validly denote OO for the user
   yet not for the implementer.
 }
-For instance, Yale T Scheme has a class-less object system @~cite{Rees1982T Adams1988};
+For instance, Yale T Scheme has a class-less object system @~cite{Rees1982 Adams1988};
 but the authors call “object” any language value,
 and specifically use “instance” to denote the prototypes in their object system.
 
@@ -980,7 +980,7 @@ for an entire type (“class”) of “objects” (elements of the type).
 In the end, the inheritance mechanism is indeed the same, and it is very wrong to
 give it two different names depending on whether it is used for prototypes or for classes.
 Even Self, that became the most popular language with “delegation” in academia,
-uses the word “inheritance” in its papers @~cite{Ungar1987 Chambers1989 parentsSharedParts1991}.
+uses the word “inheritance” in its papers @~cite{Ungar1987 Chambers1989 Chambers1991}.
 And @citet{Stein1987} argues that delegation and inheritance are the same concept,
 and notes that prototypes map to classes, not class instances
 (though strictly speaking she gets the mathematical direction of the map wrong).
@@ -1049,7 +1049,7 @@ prove constructively that prototypes can be pure, and that they use
 the very same inheritance mechanisms as classes,
 indeed with classes as a particular case of prototypes with the usual construction.
 Meanwhile, old reflective Class OO systems like Lisp and Smalltalk
-@~cite{Kahn1976 Kay1993 Gabriel1991CLOS Kiczales1991}
+@~cite{Kahn1976 Kay1993 Gabriel1991 Kiczales1991}
 also support mutable state to modify the inheritance structure at runtime,
 for the sake of dynamic redefinition of classes at runtime,
 in what remains semantically a pure functional model once when the structure is set.
@@ -1211,7 +1211,7 @@ Originalists might say everyone must take it to mean whatever He defined It to m
 and sometimes cite him as in the epigraph above.
 
 But neither the above @~cite{Kay2003} nor any of Kay’s pronouncement on OO constitutes
-a precise definition with an objective criteria,
+a precise definition with objective criteria,
 if a definition at all@xnote["."]{
   My interpretation is that the first part of this definition (until the last comma)
   corresponds to modularity, the ability to think about programs in terms of separate
@@ -1239,7 +1239,7 @@ if a definition at all@xnote["."]{
   and this adoption is what launched OO as a phenomenon.
   Kay stated adopting single inheritance over multiple inheritance
   was a compromise @~cite{Kay1993};
-  his team later added multiple inheritance to Smalltalk @~cite{Goldstein1980Extending}, but
+  his team later added multiple inheritance to Smalltalk @~cite{Goldstein1980}, but
   it is unclear that Kay had much to do with that addition, that never became standard.
   More broadly, Kay didn’t endorse any specific inheritance mechanism,
   and never focused on that part of the design. To Kay it was only a means to an end,
@@ -1290,7 +1290,7 @@ would endlessly destroy the value of language and make clear meaning incommunica
 Beside, if you retreat to “inheritance” in the hope that at least for that term
 you can get people to agree on a clear unambiguous meaning@xnote[","]{
   The term “inheritance” is already corrupted,
-  since Goguen uses it at times to mean refinement @~cite{Goguen1992Sheaf}
+  since Goguen uses it at times to mean refinement @~cite{Goguen1992}
   while claiming to do OO,
   and others use it to mean the (non-modular) extension of database tables or equivalent.
   Moreover, the term “inheritance”, that originated in KRL,
@@ -1319,27 +1319,31 @@ only terrible loss@xnote["."]{
 }
 No, experts, even after excluding the all too common outright fraudulent ones,
 remain a terrible authority on what precisely the right concepts to care about are:
-some, more interested in the methods they master than in the problems people have,
-will happily define down a topic to whatever their limited methods can address;
-others, interested in their impact upon people, will offer convincing sounding explanations
+Some, more interested in the methods they master than in the problems people have,
+will happily define down a topic to whatever their limited methods can address.
+Others, interested in their impact upon people, will offer convincing sounding explanations
 to manipulate people and try to sway them from what they actually care about
 to what the expert would prefer for them to care about instead.
+The more ideologically motivated with happily lie, to the point of changing
+the official definitions of words to equivocate between the common meaning that people use
+and the made up meaning that make their lies sound true.
 
 You might hope that at least on topics with little economic or political impact,
 there would be fewer incentives for bias. Unhappily, as per Sayre’s Law:
 @principle{Academic politics is the most vicious and bitter form of politics,
 because the stakes are so low.}
 The failure modes are many, and those expert most autistically interested in the truth
-are likely to be those whose findings are least promoted (by themselves or others)
-in terms intelligible by the public at large.
+are likely to be those whose findings are least promoted (by themselves or others),
+at least in terms intelligible by the public at large.
 You sadly cannot just trust “the experts”, and especially not so
 with respect to the precise delimitation of concepts.
 
 A rough public consensus about what a concept does and does not cover,
-while not precise around the edges, is actually much more accurate
-than any expert opinion on about what people actually care about—because it matters to them.
+while not precise around the edges, is actually much more reliable
+than any expert opinion regarding what people actually care about—because it matters to them.
 On the other hand, a rough public consensus is a feeling, incapable of either precision or logic.
-It can measure what concept people actually care about, but provide no consistent explanation.
+It can measure what concept people actually care about,
+but provide no consistent explanation for them.
 For that you will have to consider what experts say,
 who only can get it right (though they more often than not get it terribly wrong).
 Even there you still cannot trust the experts,
@@ -1357,7 +1361,7 @@ phenomena are what OO is.
 What programmers do, not what programmers say.
 
 And these phenomena are what is captured by
-the intra-linguistic modular extensibility as defined in the previous chapter:
+the internal modular extensibility as defined in the previous chapter:
 @itemize[
   @item{The ability to “code against an interface” and
     pass any value of any type that satisfies the interface

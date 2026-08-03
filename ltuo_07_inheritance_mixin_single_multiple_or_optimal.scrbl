@@ -13,7 +13,7 @@ generalized behavior with code that specializes it.
 Multiple inheritance further encourages modularity by
 allowing object types to be built up from a toolkit of
 component parts.
-@|#:- @elem{David Moon @~cite{Moon1986Flavors}}|
+@|#:- @elem{David Moon @~cite{Moon1986}}|
 }
 @section[#:tag "MxI"]{Mixin Inheritance}
 @subsection{The Last Shall Be First}
@@ -55,7 +55,7 @@ simpler than the modular extensions of mixin inheritance from @secref{MFCME}@xno
   I already used the term “wrapper” in a related yet more specific way
   when discussing wrapping references for recursive conflation in @secref{RC};
   and a decade before Cook, Cannon @~cite{Cannon1979} also used a notion of wrapper
-  closer to what I use, in Flavor’s predecessor to CLOS @c{:around} methods @~cite{CLtL2},
+  closer to what I use, in Flavor’s predecessor to CLOS @c{:around} methods @~cite{Steele1990},
   or in the more general case, to CLOS declarative method combinations (@secref{MC}).
   The term “generator” is also too generic, and could describe many concepts in this book,
   while being overused in other contexts, too.
@@ -341,7 +341,7 @@ or it can have many elements in which case the inheritance is actually multiple 
 Now, early OO systems with multiple inheritance (and sadly many later ones still)
 didn’t have a good theory for how to resolve methods when a specification
 inherited different methods from multiple parents,
-and didn’t provide its own overriding definition @~cite{Borning1977 Ingalls1978 Traits}.
+and didn’t provide its own overriding definition @~cite{Borning1977 Ingalls1978 Curry1982}.
 This situation was deemed a “conflict” between inherited methods,
 which would result in an error, at compile-time in the more static systems.
 @; ??? Early Lisp systems would let users resolve things themselves ???
@@ -356,7 +356,7 @@ tries to force the ancestry DAG into a tree!
 Self initially tried a “sender path” resolution method,
 that is a variant of the conflict view with a builtin heuristic for conflict resolution:
 going into the first relevant branch of the inheritance DAG
-without backtracking @~cite{parentsSharedParts1991}.
+without backtracking @~cite{Chambers1991}.
 The authors eventually recognized how wrongheaded that was,
 only to revert to—sadly—the conflict view without resolution heuristic @~cite{self2007hopl}@xnote["."]{
   Like the most naive variant of the “visitor pattern”
@@ -528,7 +528,7 @@ Modular extensions can be composed left and right,
 but modular definitions can only be on the right and on the left must be a modular extension.
 
 The difficulty of synthesizing a modular definition is known as
-the “diamond problem” @~cite{bracha1992jigsaw Taivalsaari1996}@xnote[":"]{
+the “diamond problem” @~cite{Bracha1992 Taivalsaari1996}@xnote[":"]{
   Bracha says he didn’t invent the term “diamond problem”,
   that must have already circulated in the C++ community;
   his thesis quotes Bertrand Meyer who talks of “repeated inheritance”.
@@ -665,7 +665,7 @@ or they will have to live without.
 Languages that see “conflict” in independent method specifications,
 fail to respect the linearity property.
 Self’s once “sender path” approach to method resolution also failed to respect the linearity property
-@~cite{parentsSharedParts1991 self2007hopl};
+@~cite{Chambers1991 self2007hopl};
 and after the authors realized the failure, they reverted to plain conflict, which still fails.
 
 Hypothetical languages that would require users to manually synthesize attributes
@@ -812,11 +812,11 @@ is mandated by constraints from other parts of the code,
 despite a very slight decrease in modularity when the ordering is partly an arbitrary choice
 heuristically made by the linearization algorithm.
 
-This property was first used in New Flavors @~cite{Moon1986Flavors},
+This property was first used in New Flavors @~cite{Moon1986},
 that calls it “local ordering”.
 CommonLoops @~cite{Bobrow1986} adopted it as
 “local precedence”, “local ordering”, and “local precedence list”.
-CLOS @~cite{Bobrow1988CLOS CLtL2} adopts it as “local precedence order”.
+CLOS @~cite{Bobrow1988 Steele1990} adopts it as “local precedence order”.
 Ducournau et al. speak of “local ordering” or “local precedence order”
 @~cite{Ducournau1992 Ducournau1994}@xnote["."]{
   @citet{Barrett1996C3} notes that the algorithm in @citet{Ducournau1994}
@@ -847,9 +847,9 @@ Every partial order can be expressed that way,
 even if only with a list of lists of two elements, one list for each pair of comparable elements.
 
 @Paragraph{Extended Precedence: Consistency in Preferences}
-If a parent specification @c{X} is chosen to appear before a parent specification @c{Y}
+@emph{If a parent specification @c{X} is chosen to appear before a parent specification @c{Y}
 in the linearization, then all the ancestors of @c{X} that aren’t ancestors of @c{Y}
-will also appear before @c{Y} in the linearization
+will also appear before @c{Y} in the linearization}
 (and therefore also before any of @c{Y}’s ancestors,
 that may or may not be shared with @c{X}).
 Thus, even though @c{X} might itself be specified by composing many small specifications,
@@ -882,7 +882,6 @@ Thus I much prefer the informal explanation
 in terms of consistent preference for a preferred specification’s ancestors
 over its dispreferred alternative.
 
-
 @Paragraph{Monotonicity: Consistency across Ancestry}
 The “method resolution order” for a child specification should be consistent
 with the orders from each of its parents:
@@ -898,7 +897,7 @@ or security vulnerabilities instead of deadlocks.
 By contrast, with this consistency property, developers may not even have to care
 what kind of resources their parents may be allocating, if any, much less in what order.
 
-This property was described but not specifically named by @citet{Baker1991CLOStrophobia}
+This property was described but not specifically named by @citet{Baker1991}
 in corollary 2 of theorem 1, when discussing
 the consistency properties of linearization in CLOS (or in this case, the lack thereof).
 This property was first explicitly described by @citet{Ducournau1992}
@@ -954,7 +953,7 @@ would lead to many @emph{heisenbugs}.
 
 @Paragraph{Global Precedence: Consistency across All Ancestries}
 
-@citet{Baker1991CLOStrophobia} introduces the property that there should exist
+@citet{Baker1991} introduces the property that there should exist
 a global precedence list, i.e. a total ordering of specifications
 compatible with every specification’s precedence list.
 Unlike Shape Determinism, this is not a local property of every specification,
@@ -979,7 +978,7 @@ after a change to any given specification.
 
 A dummy mother-of-all precedence list can be produced at the end of static compilation
 to check global consistency, with an error issued if incompatibilities are detected
-(and if possible actionable error messages).
+(if possible, with actionable error messages).
 At the very least, an order can be enforced on lock-issuing specifications.
 
 Maintenance of a global order across a large codebase can be difficult,
@@ -995,7 +994,7 @@ and returns a list of specifications, that is
 a linearization of the argument specification’s ancestry DAG,
 satisfying the linearization property above.
 Further assume that the above returned precedence-list
-starts with specification itself, followed by its ancestors
+starts with the specification itself, followed by its ancestors
 from most specific to most generic (left to right).
 This is the convention established both by Flavors’ “class precedence list”
 and, maybe surprisingly, also by Simula’s “prefix sequence”,
@@ -1018,7 +1017,7 @@ Another approach is to consider the precedence list a synthesized attribute,
 and compute a child’s precedence list from those of its parents.
 That’s the only reasonable way to ensure monotonicity.
 However, the naïve way to do it, by concatenating the lists then removing duplicates,
-like LOOPS @~cite{Bobrow1983LOOPS}
+like LOOPS @~cite{Bobrow1983}
 or after it (though removing from the other end) Scala @~cite{Odersky2005},
 preserves neither Local Order nor Monotonicity.
 The somewhat more careful algorithm used by CommonLoops @~cite{Bobrow1986}
@@ -1030,7 +1029,8 @@ synthesize the precedence list while preserving all desired properties.
 C3 was notably adopted by OpenDylan, Python, Raku (Perl), Parrot, Solidity, PGF/TikZ.
 
 I provide in @secref{C4} below an informal description of
-my extension to the C3 algorithm, and, in appendix, the complete code.
+my extension to the C3 algorithm.
+Implementations are available as part of Gerbil Scheme.
 
 @subsection{Mixin Inheritance plus Precedence List}
 
@@ -1364,8 +1364,8 @@ because most OO hierarchies are shallow@xnote["."]{
   the 3 system classes shared by all user-defined classes.)
   As for the 2841 structs that use single inheritance
   (and not usually to define many methods, just for data fields),
-  63% had no non-trivial ancestor, 86% has 0 or 1, 96% had 2 or fewer, 99% had 3 or fewer,
-  99.9% had 4 or fewer, 1 had 5, 1 had 6, @c{ORG.SHIRAKUMO.BMP::BITMAPV5INFOHEADER}.
+  63% had no non-trivial ancestor, 86% had 0 or 1, 96% had 2 or fewer, 99% had 3 or fewer,
+  99.9% had 4 or fewer, 1 had 5, 1 had 6: @c{ORG.SHIRAKUMO.BMP::BITMAPV5INFOHEADER}.
   As can be seen, multiple inheritance leads to a very different style of programming,
   with more done in “traits” or “mixins”, than when only single inheritance is available.
 }
@@ -1469,7 +1469,7 @@ Lisp offered both single inheritance with its @c{struct}s,
 and multiple inheritance with its @c{class}es (nées flavors).
 @; David Moon’s MacLisp Reference Manual (April 1974) does not mention DEFSTRUCT.
 @; Ani/Director is from 1976, but never widely used.
-Since 1988, the Common Lisp Object System (a.k.a. CLOS) @~cite{Bobrow1988CLOS CLtL2}
+Since 1988, the Common Lisp Object System (a.k.a. CLOS) @~cite{Bobrow1988 Steele1990}
 even offered a way to interface uniformly with either structs or classes,
 using generic functions and metaclasses.
 Programmers could develop software with the flexibility of classes,
@@ -1918,6 +1918,15 @@ that should probably be formalized and added to the constraints of C4.@xnote["."
   or of a better variant that would also respect the hard constraints of C3.
   I also leave that problem as an exercise to the reader.
 }
+
+Note that of course, linearization can and must break symmetry in inheritance DAGs:
+given the local precedence lists @c{(A B C) (B D) (C E)}, @c{C} and @c{E} are otherwise
+unconstrained with respect to each other, yes linearization @emph{must} pick
+one before the other to yield a total order. And the choice of one over the other
+must then be propagated consistently as the hierarchy is extended with further sub-specifications.
+Extended Precedence is a good systematic way to break symmetry, that is very understandable,
+indeed, as simple as can be, and further matches the naive depth-first traversal algorithm
+of the original Flavors and of Ruby in simple cases where the inheritance DAG is a tree.
 
 @exercise[#:difficulty "Easy"]{
   Explain in your own words why the “suffix property” enables single-inheritance

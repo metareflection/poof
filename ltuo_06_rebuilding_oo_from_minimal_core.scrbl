@@ -189,7 +189,7 @@ an implicit conflation pair of the specification and the target@xnote["."]{
   Instead, they abandon such attempts, and rebuild their own syntactic theory
   of a variant of the λ-calculus just for objects,
   with hundreds of pages of greek symbols that still fail to properly model objects,
-  in an insanely complex @emph{abstraction inversion} @~cite{Baker1992CritiqueDKL}.
+  in an insanely complex @emph{abstraction inversion} @~cite{Baker1992}.
   Their futile theory can neither enlighten OO practitioners,
   nor make OO interesting to mathematical syntax theoreticians.
 }
@@ -356,7 +356,7 @@ that just returns the record as a constant:
 One simple and quite common encoding of objects conflates specification and target
 in a way that is subtly different from the encoding I have been using so far.
 It is notable for being the essence of the barebones object system of
-Yale T Scheme @~cite{Rees1982T Adams1988},
+Yale T Scheme @~cite{Rees1982 Adams1988},
 later made portable as YASOS @~cite{Dickey1992};
 and it was made famous by being standardized as
 the JavaScript (JS) object system @~cite{Eich1996JavaScript}:
@@ -991,7 +991,7 @@ As mentioned before, this can be very cheap when the type elements are records
 In Typeclass-style, by contrast, type descriptors and type elements are kept distinct and separate.
 There is emphatically no conflation.
 Type-descriptors are passed “out of band” as extra variables
-(see second-class “dictionaries” in Haskell @~cite{typeclasses},
+(see second-class “dictionaries” in Haskell @~cite{Wadler1989},
 or first-class “interfaces” in “Interface-Passing Style” @~cite{LIL2012}).
 This is efficient in another way, because you can pass around a few type descriptors
 that do not change within a given algorithm, and not spend time wrapping and unwrapping conflations.
@@ -1264,7 +1264,7 @@ but even then it is unclear how much these mechanisms help,
 compared to directly implementing prototypes.
 There could be code sharing between the two; yet trying to fit prototypes
 on top of classes rather than the other way around is what Henry Baker dubbed
-an @emph{abstraction inversion} @~cite{Baker1992CritiqueDKL},
+an @emph{abstraction inversion} @~cite{Baker1992},
 i.e. putting the cart before the horse.
 
 
@@ -1436,7 +1436,7 @@ is mostly not transposable to other languages@xnote["."]{
   Erlang will notably kill processes that still use obsolete code
   from before the current version now being upgraded to the next one.
   This is possible because Erlang has only very restricted sharing of state between processes,
-  so it can ensure PCLSRing @~cite{PCLSRing} without requiring user cooperation;
+  so it can ensure PCLSRing @~cite{Bawden1989} without requiring user cooperation;
   this is useful because Erlang and its ecosystem have a deep-seated “let it fail” philosophy
   wherein processes randomly dying is expected as a fact of life,
   and much infrastructure is provided for restarting failed processes,
@@ -1457,7 +1457,7 @@ Third, I must note how languages such as Smalltalk and Common Lisp include a lot
 for updating class definitions, including well-defined behavior with respect to how objects
 are updated when their classes change:
 see for instance the protocol around @c{update-instance-for-redefined-class}
-in CLOS, the Common Lisp Object System @~cite{Bobrow1988CLOS}.
+in CLOS, the Common Lisp Object System @~cite{Bobrow1988}.
 These facilities allow continuous concurrent processing of data elements
 with some identity preserved as the code evolves, even as
 the data associated to these identities evolves with the code.

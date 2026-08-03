@@ -159,7 +159,7 @@ and otherwise provides the costs and benefits of the uniform functional interfac
 and its direct compatibility with the Y combinator.
 Using this technique, introspection of keys is possible (though not necessary if unwanted),
 as is “extrospection” (second-class or external knowledge of keys from outside the runtime),
-if the data structure is maintained extralinguistically via a design pattern.
+if the data structure is maintained extra-linguistically via a design pattern.
 And through this introspection of extrospection,
 the space and time leak of shadowed bindings can be avoided.
 
@@ -915,7 +915,7 @@ Add serialization, persistence, to a meta-object, NOT to the object.
 
 Different capabilities for objects and their meta-objects => more security.
 
-@subsection{Side Effects}
+@subsection{Side-Effects}
 
 I will revert to stateful OO, because I suspect
 that's what my public is interested in, will use, and has in their underlying language.

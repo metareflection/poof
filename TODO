@@ -284,6 +284,17 @@ By compressing the amount of information the programmer needs to process,
 a superior programing abstraction (whether a form of inheritance or not) unlocks
 programs that were not accessible before, and effects that were not achievable before.
 
+Note how we previously (@secref{EwM}) discussed that compression
+corresponded to extensibility without modularity:
+programming by contributing a smaller amount of local information,
+though possibly in ways that require knowing a lot of global information.
+Measuring abstractions in terms of their ability to compress code
+thus does not tell us the entire picture.
+How usable they are would also involve modularity:
+the ability to understand how to use those abstractions with local reasoning.
+Yet, partial as it may be, compression can already help us compare abstractions,
+especially when they have already been established as modular.
+
 @subsection{The Geometry of Object-Oriented Hierarchies}
 
 We can extract from the Inheritance Hierarchy of a codebase or ecosystem
@@ -301,23 +312,39 @@ various quantities or distribution of quantities that describe this Hierarchy:
           maybe a lot more (many thousands) for more complex applications.
           The total number of classes in Quicklisp is over 16000, plus over 2800 structs;
           many apps do with very few classes, but some big apps have thousands.
-          Java has much wider adoption, and is very class-heavy, so numbers skyrocket,
-          with several thousands of user-defined classes in a typical application,
-          often hundreds of thousands including dependencies, and up to a billion defined total
-          (early Dalvik VM limitations to 65535 classes were quickly a problem).
-       }
-
-}
+          Java has much wider adoption, and is very class-heavy due to
+          “class-as-kitchen-sink” approach to add every language feature
+          a new bureaucratic complication to the semantics of classes.
+          Thus, numbers skyrocket with Java, in which a typical application
+          has several thousands of user-defined classes,
+          often hundreds of thousands of classes when counting dependencies,
+          and up to a billion defined total.
+          (Hence, early Dalvik VM limitations to 65535 classes were quickly a problem.)
+       }}
   @item{The total number T of notional traits that are shared between concrete classes
-        (actual traits with mixin inheritance or flavorful multiple inheritance).
-        Also varies a lot, from tens to millions? Hard to tell at scale
-        because of all the duplication between many programs and libraries.
-        In all of Quicklisp, a bit under 19000 structs and classes.
-        }
+        (actual traits with mixin inheritance or flavorful multiple inheritance)@xnote["."]{.
+          The number of traits also varies a lot, from tens to millions?
+          The number is easy to measure in a well-written application using multiple inheritance:
+          it is then just the number of “classes”, “mixins”, “modules” or “traits” in the program
+          (whichever way they are called in the programming language).
+          But if using single inheritance, the traits may be implicit in code duplicated across
+          many classes. And even using mixin inheritance or multiple inheritance
+          does not by itself guarantee that programmers will have maximally factored away
+          such duplicated code into shared mixins, especially when there are multiple programmers
+          who do not communicate well with each other, or a single programmer
+          who does not pay attention and might not care.
+        }}
   @item{The size p(c) of the precedence list of each class c, and its average P.}
   @item{The size m(t) of methods for each trait t, summarized by its an average M.}
   @item{The number d(t) of direct dependencies to a trait
         (its parents in multiple inheritance), or D some kind of average.}]
+
+
+Total number of inheritance links in multiple inheritance: C*D
+Total number of inheritance links in single inheritance: C*P [NAH, fewer!?]
+
+
+
 
 Already, we can contrast the baseline size of code with no inheritance
 vs the size of code in the best case of flavorful multiple inheritance:

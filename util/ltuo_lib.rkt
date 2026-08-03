@@ -62,7 +62,8 @@
 (define (Pi) (list (c "P") (ᵢ)))
 (define (⋂) (list (tex "$\bigcap$" (html-elem "⋂"))))
 (define (⇝) (list (tex "$\rightsquigarrow$" (html-elem "⇝"))))
-(define (Fsub) (list (html-elem (list "F" (subscript "≤"))) (tex-elem "$F_{≤}$")))
+(define (Fsub) (list (html-elem (list "F" (subscript "≤")))
+                     (tex-elem (tex "$F_{\\leq}$"))))
 
 (define super 'super)
 (define self 'self)
@@ -95,6 +96,7 @@
               #"\\DeclareUnicodeCharacter{207F}{${}^{n}$}" ;; ⁿ
               #"\\DeclareUnicodeCharacter{2096}{${}_{k}$}" ;; ₖ
               #"\\DeclareUnicodeCharacter{225C}{$\\triangleq$}" ;; ≜
+              #"\\DeclareUnicodeCharacter{2264}{$\\leq$}" ;; ≤
               #"\\DeclareUnicodeCharacter{22C2}{$\\cap$}" ;; ⋂
               #"\\DeclareUnicodeCharacter{1D52D}{$\\mathfrak{p}$}"))))) ;; 𝔭
 

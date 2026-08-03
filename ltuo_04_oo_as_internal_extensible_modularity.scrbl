@@ -2,7 +2,7 @@
 @; -*- Scheme -*-
 @(require "util/ltuo_lib.rkt")
 @(set-chapter-number 4)
-@title[#:tag "OOaIEM"]{OO as Internal Modular Extensibilty}
+@title[#:tag "OOaIEM"]{OO as Internal Modular Extensibility}
 @epigraph{The benefits expected of modular programming are:
 (1) managerial—development time should be shortened because separate groups
 would work on each module with little need for communication;
@@ -508,8 +508,8 @@ often with some static protocol to ensure that they are (hopefully, often all) i
 before they are used.
 In a high-level computation without mutation,
 each module is implemented as a function taking the module context as argument,
-the fields are implemented as functional lenses@;{TODO cite},
-and the mutual recursion is achieved using a fixpoint combinator@;{TODO cite};
+the fields are implemented as functional lenses (@secref{OfOO}),
+and the mutual recursion is achieved using a fixpoint combinator (@secref{DSF});
 lazy evaluation may be used as a dynamic protocol to ensure that
 each field is initialized before it is used@xnote["."]{
   It is hard to ensure initialization before use;
@@ -690,11 +690,12 @@ When done manually, it’s fourth-class extensibility.
 The automation need not be written in the same language as the software being extended,
 or as its usual language processor, though either may often be the case.
 
-Internal or Intra-linguistic extensibility, either first-class or second-class, by contrast,
+Internal extensibility, either first-class or second-class, by contrast,
 is the ability to extend, refine or modify a software entity
 without having to read, rewrite, or modify any of the previous functionality,
 indeed without having to know how it works or have access to its source code,
 only having to write the additions, refinements and modifications.
+Internal here means intra-linguistic, internal @emph{to the programming language}.
 Second-class extensibility happens only at compile-time, and is quite restricted,
 but enables more compiler optimizations and better developer tooling.
 First-class extensibility may happen at runtime, and is less restricted
@@ -705,9 +706,9 @@ based on all the information available to the program.
 
 These notions of extensibility are complementary and not opposite, for often to extend a program,
 you will first extract from the existing code a shared subset that can be used as a library
-(which is an extra-linguistic extension),
+(which is an external extension, extra-linguistic, outside the programming language),
 and rewrite both the old and new functionality as extensions of that library
-(which is an intra-linguistic extension),
+(which is an internal extension),
 as much as possible at compile-time for efficiency (which is second-class extensibility),
 yet enough at runtime to cover your needs (which is first-class extensibility).
 
@@ -811,7 +812,7 @@ with only a few targeted changes.
 to keep the code extension clean; this will reflect a better understanding of the entities at stake
 and their interrelationship.)
 
-@subsection{Extensibility without Modularity}
+@subsection[#:tag "EwM"]{Extensibility without Modularity}
 
 Before delving deeply into how OO brings together extensibility and modularity,
 it is worth explaining what extensibility without modularity means.

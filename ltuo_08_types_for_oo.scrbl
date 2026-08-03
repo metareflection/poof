@@ -43,7 +43,11 @@ or would have required reverting to unitypes with extra verbosity@xnote["."]{
   it’s a vast hindrance rather than a help.
   Sadly, that is the case of typesystems proposed by the likes of Bob Harper,
   when it comes to writing modular extensible programs.
-  The only popular language with a decent typesystem when it comes to OO is Scala.
+  As of 2026, the only popular language
+  with a decent typesystem when it comes to OO is Scala
+  (where we can judge “popular” as being in the top 50 in the TIOBE index
+  or the GitHub top programming languages @~cite{TIOBE TopPL2022});
+  though C++, Java, C#, Kotlin, Swift or TypeScript come close.
 }
 
 @subsection{Static Typing}
@@ -275,7 +279,11 @@ that enables such runtime reflection).
 I admit I am not sure how exactly to write types for specifications
 in multiple inheritance and optimal inheritance: there are type-level
 constraints on the local precedence order and the precedence list
-that require encoding the linearization algorithm (C4 or otherwise) into the type language.
+that may require encoding into the type language,
+if not the entire linearization algorithm (C4 or otherwise),
+at least an efficient commutative intersection of the (transitive) ancestry of a specification’s
+inherited, required and provided parameters
+(at which point the typesystem must indeed enforce the constraint of commutativity).
 As for the modular extensions themselves, they resemble those of mixin inheritance,
 with the intersection of everything in the precedence list for the
 inherited, required and provided parameters, respectively.
@@ -463,19 +471,24 @@ In other words, it makes us realize once again that @emph{recursion is not free}
 
 @subsection{Why NNOOTT?}
 
-The NNOOTT was implicit in the original OO paper @~cite{Simula1967}
+The NNOOTT was implicit in the original proto-OO paper @~cite{Simula1967}
 as well as in Hoare’s seminal paper that inspired it @~cite{Hoare1965}@xnote["."]{
   Hoare probably intended subtyping initially indeed for his families of record types;
   yet subclassing is what he and the Simula authors discovered instead.
   Such is scientific discovery:
   if you knew in advance what lied ahead, it would not be a discovery at all.
   Instead, you set out to discover something, but usually discover something else,
-  that, if actually new, will be surprising.
+  that, if actually new, will be surprising when you eventually realize the mismatch.
   The greater the discovery, the greater the surprise.
   And you may not realize what you have discovered until analysis is complete much later.
   The very best discoveries will then seem obvious in retrospect,
   given the new understanding of the subject matter,
   and familiarity with it due to its immense success.
+  And yet, there may be a lot of resistance initially against recognizing the discrepancy,
+  which ironically is felt as a mistake by the discoverers of the new phenomenon,
+  or by those of the discrepancy, or by the reviewers of either or both,
+  and by topic experts in general...
+  even though it is the symptom that there was quite an interesting discovery indeed!
 }
 It then proceeded to dominate the type theory of OO
 until debunked in the late 1980s @~cite{Cook1989Inheritance}.
@@ -483,7 +496,7 @@ Even after that debunking, it has remained prevalent in popular opinion,
 and still very active in academia and industry alike,
 and continually reinvented even when not explicitly transmitted
 @~cite{Cartwright2013 AbdelGawad2014}.
-And I readily admit it’s the first idea I too had
+I readily admit it’s the first idea I too had
 when I tried to put types on my modular extensions,
 as you can see in @citet{poof2021}.
 
@@ -526,8 +539,7 @@ is well worth examining.
   when most of the work is not that recursive case.
   It takes an advanced functional programming language or style,
   or a rare care for total correctness, for the recursive case to dominate the issue,
-  which was never a mainstream concern.
-  }
+  which was never a mainstream concern.}
 @item{
   Even in the 1980s and 1990s, theorists and practitioners being mostly disjoint populations,
   did not realize that they were not talking about precisely the same thing
@@ -549,7 +561,7 @@ is well worth examining.
   that precisely matches actual practice.}
 @item{
   The false theory will also emotionally satisfy those practitioners and their managers
-  who care more about feeling like they understand rather than actually understanding.
+  who care more about feeling (or looking) like they understand rather than actually understanding.
   This is especially true of the many who have trouble thinking about recursion,
   as is the case for a majority of novice programmers and vast majority of non-programmers.
   Even those who can successfully @emph{use} recursion,
@@ -559,7 +571,7 @@ is well worth examining.
 
 @section[#:tag "BtN"]{Beyond the NNOOTT}
 
-@subsection{Self Types}
+@subsection[#:tag "ST"]{Self Types}
 
 The key to fully dispelling the
 “conflation of subtyping and inheritance” @~cite{Fisher1996}
@@ -655,7 +667,7 @@ that each take the module context type @c{self} as parameter@xnote[":"]{
 @Code{
 type ModExt inherited required newlyProvided =
   ∀ super, self : Type
-    self ⊂ required self, super ⊂ (inherited self) ⇒
+    self ⊂ required self, super ⊂ inherited self ⇒
         super → self → super∩(newlyProvided self)
 }
 
@@ -1194,7 +1206,7 @@ Yet this complexity derives directly from the conflation and confusion of specif
     whether it was computed through such a process or not.
   }@item{
     If the two were decoupled, you wouldn’t need to constantly adjust your logic
-    to sit on top of the ever shaking ground of an ever growing notion of class;
+    to sit on top of the shaking ground of an ever growing notion of class;
     you could have permanent solid foundations that actually sit beneath,
     and the changes on top.
 }]
