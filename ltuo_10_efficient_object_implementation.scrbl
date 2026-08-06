@@ -204,7 +204,7 @@ every random access is a linear search in @c{O(l)} where @c{l} is the length of 
   Once you delve into details of layers of memory from CPU registers to L1, L2, L3 caches,
   to local disk then remote server and its disk, you have to factor in a @c{O(√n)} slowdown
   (where @c{n} is the size of the “working set” of data one works with),
-  to deal with the physical limits of the memory hierarchy @~cite{MythOfRAM2014}.
+  to deal with the physical limits of the memory hierarchy @~cite{Ernerfeldt2014}.
 }
 Even then, @emph{there is a clear advantage to explicitly using alists}
 over implicitly letting their structure emerge from the use of @c{extend-record}:
@@ -910,7 +910,7 @@ Infinite towers vs truncated towers. Turtles all the way down, not hooks all the
 Collapsing towers for efficiency.
 Partial evaluation and Futamura projections.
 
-@citet{Chiba2000MetaHelix}.
+@citet{Chiba2000}.
 Add serialization, persistence, to a meta-object, NOT to the object.
 
 Different capabilities for objects and their meta-objects => more security.

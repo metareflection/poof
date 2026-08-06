@@ -73,7 +73,7 @@
   note={Early argument that control structures should be abstractions rather than a fixed language inventory; useful historical context for extensible language mechanisms.}
 }
 
-@inproceedings{hewitt1973Actor,
+@inproceedings{Hewitt1973Actor,
   title={Actor induction and meta-evaluation},
   author={Hewitt, Carl and Bishop, Peter and Greif, Irene and Smith, Brian and Matson, Todd and Steiger, Richard},
   booktitle={Proceedings of the 1st annual ACM SIGACT-SIGPLAN symposium on Principles of programming languages},
@@ -386,6 +386,7 @@
   note={Influential collection that consolidates early formal work on objects, inheritance, subtyping and encodings.}
 }
 
+% Compare to Liskov1987
 @article{LiskovWing1994,
   author={Liskov, Barbara H. and Wing, Jeannette M.},
   title={A Behavioral Notion of Subtyping},
@@ -455,7 +456,7 @@
   note={Shows why open recursion and subclassing complicate local reasoning, a central cost of inheritance-based extensibility.}
 }
 
-@inproceedings{AbadiCardelliViswanathan1996,
+@inproceedings{Abadi1996Interpretation,
   author={Abadi, Martín and Cardelli, Luca and Viswanathan, Ramesh},
   title={An Interpretation of Objects and Object Types},
   booktitle={POPL '96},
@@ -673,7 +674,7 @@
 }
 
 @inproceedings{Hirschowitz2002,
-  author={Hirschowitz, Tom and Leroy, Xavier},
+  author={Tom Hirschowitz and Xavier Leroy},
   title={Mixin Modules in a Call-by-Value Setting},
   booktitle={ESOP 2002},
   series={LNCS 2305},
@@ -926,6 +927,19 @@
   note={Newspeak derives modules from nested classes rather than adding a separate module system; a major case study in unifying modularity and object structure.}
 }
 
+@article{Megacz2010,
+  author={Adam Megacz},
+  title={Multi-Level Languages are Generalized Arrows},
+  journal={CoRR},
+  volume={abs/1007.2885},
+  year={2010},
+  url={http://arxiv.org/abs/1007.2885},
+  eprinttype={arXiv},
+  eprint={1007.2885},
+  timestamp={Mon, 13 Aug 2018 16:49:11 +0200},
+  note={Explores open composition of language towers as arrowized structures.}
+}
+
 @techreport{JamesSabry2012,
   author={James, Roshan P. and Sabry, Amr},
   title={The Two Dualities of Computation: Negative and Fractional Types},
@@ -1008,29 +1022,6 @@
   }
 }
 
-@misc{Black2016,
-  author={Black, Andrew P. and Bruce, Kim B. and Noble, James},
-  title={The essence of inheritance},
-  year={2016},
-  url={https://arxiv.org/abs/1601.02059},
-  howpublished={arXiv:1601.02059},
-  note={Attempts to isolate inheritance from classes and subtyping, directly relevant to a mechanism-centered definition of inheritance.}
-}
-
-@inproceedings{Jones2016,
-  author={Timothy Jones and Michael Homer and James Noble and Kim B. Bruce},
-  title={Object Inheritance Without Classes},
-  booktitle={ECOOP 2016},
-  series={Leibniz International Proceedings in Informatics},
-  volume={56},
-  pages={13:1–13:26},
-  publisher={Schloss Dagstuhl--Leibniz-Zentrum für Informatik},
-  year={2016},
-  doi={10.4230/LIPIcs.ECOOP.2016.13},
-  url={https://doi.org/10.4230/LIPIcs.ECOOP.2016.13},
-  note={Separates inheritance from classes in a contemporary formal design, providing direct evidence that classlessness does not imply the absence of inheritance.}
-}
-
 @misc{Wayne2019,
   author={Hillel Wayne},
   title={Alan Kay Did Not Invent Objects},
@@ -1094,7 +1085,7 @@
 }
 
 @misc{Nixcademy2024,
-  author={{Nixcademy}},
+  author={Nixcademy},
   title={Mastering Nixpkgs Overlays: Techniques and Best Practice},
   year={2024},
   url={https://nixcademy.com/posts/mastering-nixpkgs-overlays-techniques-and-best-practice/},

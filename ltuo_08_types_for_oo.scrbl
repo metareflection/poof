@@ -46,7 +46,7 @@ or would have required reverting to unitypes with extra verbosity@xnote["."]{
   As of 2026, the only popular language
   with a decent typesystem when it comes to OO is Scala
   (where we can judge “popular” as being in the top 50 in the TIOBE index
-  or the GitHub top programming languages @~cite{TIOBE TopPL2022});
+  or the GitHub top programming languages @~cite{GitHub2022 TIOBE2026});
   though C++, Java, C#, Kotlin, Swift or TypeScript come close.
 }
 
@@ -150,7 +150,7 @@ Now, these types are somewhat burdensome, and not modular:
     In some languages with simple and rigid enough types, this means
     details of the target type may have to be wired in every extension,
     that are then not reusable with a different target type.
-    Languages with existential types may alleviate this stricture to a point@~cite{PT1993STTFOOP}.}
+    Languages with existential types may alleviate this stricture to a point@~cite{Pierce1993}.}
   @item{
     Also, the user must provide a top value for that target type as initial seed for the fixpoint.
     This works well enough when the target is a record of fields
@@ -336,7 +336,7 @@ types being provided by a modular extension,
 and types it requires from the module context.
 In his paper on objects as co-algebras,
 Bart Jacobs characterizes the types for the arguments and results of his methods
-as being “(constant) sets” @~cite{Jacobs1995ObjectsAC}@xnote[","]{
+as being “(constant) sets” @~cite{Jacobs1995}@xnote[","]{
   Jacobs is particularly egregious in smuggling this all-important restriction
   to how his paper fails to address the general and interesting case of OO
   in a single word, furthermore, in parentheses, at the end of section 2,
@@ -498,7 +498,7 @@ and continually reinvented even when not explicitly transmitted
 @~cite{Cartwright2013 AbdelGawad2014}.
 I readily admit it’s the first idea I too had
 when I tried to put types on my modular extensions,
-as you can see in @citet{poof2021}.
+as you can see in @citet{Rideau2021}.
 
 The reasons why, despite being inconsistent, the NNOOTT was and remains so popular,
 not just among the ignorant masses, but even among luminaries in computer science,
@@ -591,7 +591,7 @@ That is how I realized that what most people actually mean by “subtyping” in
 @emph{subtyping for the target of a class} (or prototype),
 which is distinct from
 @emph{subtyping for the specification of a class} (or prototype),
-variants of the latter of which Kim Bruce calls “matching” @~cite{SubtypingMatch1997}.
+variants of the latter of which Kim Bruce calls “matching” @~cite{Bruce1997}.
 @; TODO cite further
 But most people, being confused about the conflation of specification and target,
 fail to conceptualize the distinction, and either
@@ -656,7 +656,7 @@ where @c{Y} is the fixpoint operator for types@xnote["."]{
 
 A more precise view of a modular extension is thus as
 an entity parameterized by the varying type @c{self} of the module context
-(that Bruce calls @c{MyType} @~cite{Bruce1996 SubtypingMatch1997}). @; TODO cite further
+(that Bruce calls @c{MyType} @~cite{Bruce1996 Bruce1997}). @; TODO cite further
 As compared to the previous parametric type @c{SrModExt} that is parametrized by types @c{i r p},
 this parametric type @c{ModExt} is itself parametrized by parametric types @c{i r p}
 that each take the module context type @c{self} as parameter@xnote[":"]{
@@ -829,8 +829,8 @@ i.e. being able to use the underlying data structures and algorithms
 without having to know the details and internals.
 
 A first-class type descriptor is a record whose type is existentially quantified:
-@~cite{Cardelli1985 Mitchell1985 PT1993STTFOOP}
-@; TODO cite harper1994modules remy1994mlart
+@~cite{Cardelli1985 Mitchell1985 Pierce1993}
+@; TODO cite harper1994modules Remy1994
 as per the Curry–Howard correspondence, it is a witness of the proposition according to which
 “there is a type @c{T} that has this interface”, where the interface may include field getters
 (functions of type @c{T → F} for some field value @c{F}),
@@ -850,7 +850,7 @@ Now, if the typesystem includes subtypes, extensible records, and
 fixpoints involving open recursion,
 e.g. based on recursively constrained types @~cite{Eifrig1995isoop Eifrig1995iloop}, then
 those first-class module values can be the targets of modular extensions.
-@;{TODO @~cite{remy1994mlart} ?}
+@;{TODO @~cite{Remy1994} ?}
 And there we have first-class OO capable of expressing classes.
 
 Regarding subtyping, however, note that when modeling a class as a type descriptor,
@@ -861,7 +861,7 @@ a subtype of its superclass’s specification.
 Indeed, adding new variants to a sum type, which makes the extended type a supertype of the previous,
 is just as important as adding fields to a product type (or specializing its fields),
 which makes the extended type a subtype of the previous.
-Typical uses include extending a language grammar (as in @citet{garrigue2000code}),
+Typical uses include extending a language grammar (as in @citet{Garrigue2000}),
 defining new error cases, specializing the API of some reified protocol, etc.
 In most statically typed OO languages, that historically mandate the subclass specification type
 to be a subtype of its superclass specification types, programmers work around this limitation
@@ -1092,9 +1092,9 @@ Then come papers that bring useful insight, though they
 ultimately fail to offer a positive solution to the actual problem of
 designing good OO with good types,
 because it is incompatible with some of their self-inflicted assumptions or constraints:
-@citet{PT1993STTFOOP}, @citet{Pierce2002TAPL},
-@citet{MonadsMixins}, @citet{Amin2016DependentOT},
-@citet{EssenceOfInheritance2016}, @citet{oiwc2016}.
+@citet{Pierce1993}, @citet{Pierce2002},
+@citet{Oliveira2009}, @citet{Amin2016DependentOT},
+@citet{Black2016}, @citet{Jones2016}.
 @; TODO Cook 1987 A self-ish model of inheritance ?
 @; @citet{Cook1989 CookPalsberg1989}
 
@@ -1111,10 +1111,10 @@ And your approach cannot possibly scale to a real object system.
 Instead, you’ve rested logic on top of brittle OO,
 when logic should instead be the solid foundation on top of which to build OO.
 A travesty, an inversion of right and wrong, and a waste of tremendous brainpower.
-@citet{remy1994mlart},
+@citet{Remy1994},
 @citet{Fisher1994}, @citet{Fisher1996}, @; TODO @citet{Fisher1999}
 @; TODO: Kim Bruce 1993 1994 1995, PolyTOIL
-@citet{Bruce1996}, @citet{SubtypingMatch1997}.
+@citet{Bruce1996}, @citet{Bruce1997}.
 
 Finally, some publications, though some the earlier ones may have been historical landmarks,
 and though some may have contributed good ideas, are just bad cases of the NNOOTT,
@@ -1124,7 +1124,7 @@ They should serve as cautionary tales for how even brilliant minds can go wrong
 and have a negative impact on science when they become attached to flawed assumptions
 they can’t let go even after these assumptions have been utterly debunked:
 @citet{Cardelli1984}, @citet{Cardelli1985},
-@citet{Abadi1996Primitive AbadiCardelli1996ToO},
+@citet{Abadi1996Primitive Abadi1996Theory},
 @citet{Cartwright2013}, @citet{AbdelGawad2014}.
 
 PS: Static analyses are at some level equivalent to abstract interpretations,
@@ -1186,7 +1186,7 @@ Yet this complexity derives directly from the conflation and confusion of specif
       The concept of class is the “Katamari” of semantics:
       just like in the 2004 game “Katamari Damacy”,
       it is an initially tiny ball that indiscriminately clumps together with everything on its path,
-      growing into a Big Ball of Mud @~cite{Foote1997BBoM},
+      growing into a Big Ball of Mud @~cite{Foote1997},
       then a giant chaotic mish mash of miscellaneous protruding features,
       until it is so large that it collapses under its own weight to become a star—and,
       eventually, a black hole into which all information disappears never to get out again.

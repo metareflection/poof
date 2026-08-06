@@ -50,7 +50,7 @@ in your favorite programming language@xnote["."]{
   It is also possible to emulate such functions in languages that do not have them;
   that is a topic I will not cover, but I can refer you
   to classic books about programming languages that do it well
-  @~cite{EOPL3 Queinnec1996LiSP Abelson1996 Pierce2002TAPL PLAI}.
+  @~cite{Queinnec1996 Abelson1996 Pierce2002 Friedman2008 Khrisnamurthi2008}.
   I do love these books, however I find their treatment of OO lacking—otherwise
   I wouldn't be writing the present book.
 }
@@ -228,8 +228,8 @@ Come back if you’re ever curious about the backstory of my theory of OO.
   The world will never starve for want of wonders, but for want of wonder.
   @|#:- "Gilbert K. Chesterton"|
 }
-After I used the Prototype OO programming language Jsonnet @~cite{jsonnet} in production,
-then discovered that Nix @~cite{nix2015} implemented the very same object model in two lines of code,
+After I used the Prototype OO programming language Jsonnet @~cite{Cunningham2014} in production,
+then discovered that Nix @~cite{Simons2015} implemented the very same object model in two lines of code,
 OO finally clicked for me.
 After all those years of experiencing how great or terrible OO in various forms could be,
 yet never quite being able to explain to myself or others what OO even was,
@@ -241,7 +241,7 @@ as well as with the advanced types of feature-poorer OO systems like Scala’s.
 At least the only one who cared enough to write about it.
 
 So I tried to get the Good News out, by getting a paper published.
-And I did get a paper published eventually @~cite{poof2021},
+And I did get a paper published eventually @~cite{Rideau2021},
 but only at the Scheme Workshop, a small venue of sympathetic Lispers,
 who already understood half of it and did not need much effort to understand the rest,
 but who already had plenty of good object systems to play with.
@@ -305,7 +305,7 @@ I am not new to ideas that are hard to publish.
 My thesis on Reconciling Reflection and Semantics
 not only remains unpublished@~cite{FarePhD},
 none of the many ideas within it could be published in an academic venue,
-except for a very short summary in a small workshop@~cite{Rideau2018Climbing}.
+except for a very short summary in a small workshop@~cite{Rideau2018}.
 One explanation is that these ideas are hard to compress to
 fit within the size limits of publishable papers:
 out of the four parts in my thesis,
@@ -334,9 +334,9 @@ three decades of practical as well as theoretical experience with OO.
 I studied the semantics of programming languages in college.
 I professionally wrote or maintained OO programs
 in Lisp, Python, Java, JavaScript, Jsonnet, Scala, C++.
-I kept writing papers about OO while working in the industry@~cite{LIL2012 poof2021}.
+I kept writing papers about OO while working in the industry@~cite{Rideau2012 Rideau2021}.
 And for many years, I have been implementing OO,
-and maintaining two object systems for Gerbil Scheme@~cite{GerbilScheme GerbilPOO}.
+and maintaining two object systems for Gerbil Scheme@~cite{Vyzovitis2016 Rideau2020}.
 OO is a topic both easier and more concrete, in general and for me in particular.
 A topic in which I have direct experience as a frog,
 and where I can stand as a bird on the shoulders of giants
@@ -617,8 +617,8 @@ I will claim the following:
 
 @principle{The C4 algorithm implements this Optimal Inheritance.}
 I implemented C4 as part of
-the builtin object system of @(GerbilScheme) @~cite{GerbilScheme}@xnote["."]{
-  Scheme @~cite{Sussman1975 r7rs-small} @; XXX CITE lambda-the-ultimate r4rs
+the builtin object system of @(GerbilScheme) @~cite{Vyzovitis2016}@xnote["."]{
+  Scheme @~cite{Sussman1975 R7RS2013} @; XXX CITE lambda-the-ultimate r4rs
   is a language with a rather minimalist definition.
   Dozens of mutually incompatible implementations of Scheme exist
   that each provide their own extensions on top of this common minimal core,
@@ -825,7 +825,7 @@ I am seeking the perfect concise teachable example in each case,
 that neatly illustrates what I mean without taking too much space or explanations.
 Until I find it, I must direct you to online resources, where OO code in general is abundant.
 If you are looking specifically for code that uses Prototype OO and multiple inheritance,
-you may look at my library Gerbil-POO @~cite{GerbilPOO}:
+you may look at my library Gerbil-POO @~cite{Rideau2020}:
 it provides a practical but short implementation of a prototype object system;
 and it builds interesting type descriptors on top of that object system,
 including a nice trie data structure,

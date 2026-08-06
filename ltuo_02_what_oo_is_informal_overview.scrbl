@@ -83,7 +83,7 @@ and class-based object orientation (“Class OO”) if it only has classes.
 The first arguably OO language used classes @~cite{Simula1967};
 but the first definitely OO language used prototypes @~cite{Bobrow1976},
 and was otherwise the second OO language.
-Some languages provide both @~cite{Hewitt1979 EcmaScript2015}.
+Some languages provide both @~cite{Hewitt1979 ECMA2015}.
 Class OO is the more popular form of OO.
 But the most popular OO language, JavaScript, started with just Prototype OO;
 Class OO was layered on top twenty years later.
@@ -95,7 +95,7 @@ or some meta-level representation thereof across stages of evaluation.
 @;{ TODO see appendix XXX }
 
 Class OO is therefore a special case of Prototype OO,
-which is therefore the more general form of OO @~cite{Lieberman1986 poof2021}.
+which is therefore the more general form of OO @~cite{Lieberman1986 Rideau2021}.
 And indeed within Prototype OO, you can readily express
 prototypes for runtime type descriptors for your language,
 or prototypes for type descriptors for some other language you are processing as a meta-language.
@@ -269,10 +269,10 @@ Still, when you clearly tease the two notions apart,
 and are aware of when they are being conflated for practical purposes,
 so you can distinguish which of the two aspects should be invoked in which context,
 then the semantics of OO becomes quite simple.
-Shockingly, conflation was first explicitly discussed only in @citet{poof2021} even though
+Shockingly, conflation was first explicitly discussed only in @citet{Rideau2021} even though
 (a) the concept is implicitly older than OO, going at least as far back as @citet{Hoare1965},
 and (b) the implementation of various Prototype OO systems has to explicitly accommodate for it
-(see e.g. the @c{__unfix__} attribute in @citet{nix2015})
+(see e.g. the @c{__unfix__} attribute in @citet{Simons2015})
 even when the documentation is silent about it.
 
 @; TODO example Nix specification?
@@ -464,7 +464,7 @@ and haven’t even heard of the flavorful viewpoint, or, when they have, still d
 For this reason, despite its being more expressive and more modular than single inheritance,
 flavorless inheritance and mixin inheritance, flavorful multiple inheritance still
 isn’t as widely adopted as of 2026@xnote["."]{
-  Out of the top 50 most popular languages in the TIOBE index, June 2026, @;{TODO cite}
+  Out of the top 50 most popular languages in the TIOBE index, June 2026 @~cite{TIOBE2026}
   5 support flavorful multiple inheritance (Python, Perl, Ruby, Lisp, Scala),
   4 only support flavorless multiple inheritance (C++, PHP, Ada, OCaml),
   21 only support single inheritance (Java, C#, JavaScript, Visual Basic, R, Delphi, Swift, Fortran, MATLAB, Objective-C, Kotlin, COBOL, SAS, Julia, Dart, Lua, TypeScript, VBScript, ABAP, D, CFML),
@@ -511,12 +511,12 @@ effectively making those transitive dependencies part of a specification’s int
 
 For all these reasons adoption of mixin inheritance remains relatively limited,
 to languages like
-StrongTalk @~cite{Bracha1993Strongtalk Bak2002Mixins},
+StrongTalk @~cite{Bracha1993 Bak2002},
 Racket @~cite{Flatt1998 Flatt2006},
 Newspeak @~cite{Bracha2008},
-GCL @~cite{gclviewer2008},
-Jsonnet @~cite{jsonnet},
-and Nix @~cite{nix2015}. @; TODO: cite gBeta ?
+GCL @~cite{Bokharouss2008},
+Jsonnet @~cite{Cunningham2014},
+and Nix @~cite{Simons2015}. @; TODO: cite gBeta ?
 Yet it still has outsized outreach, for just the use of GCL at Google means
 a large part of the world computing infrastructure
 is built upon configurations written using mixin inheritance@xnote["."]{

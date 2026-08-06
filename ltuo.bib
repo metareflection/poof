@@ -12,18 +12,19 @@ Instructions for bibliography assistant:
 * Include all standard entries when available and meaningful for that kind of BibTeX entry and not redundant with other entry:
   author title booktitle editor journal year month school institution organization publisher isbn issn chapter pages eid numpages location number volume series address edition howpublished type
 * Always include doi= if available, and url= if available (no linebreak)
-* If fulltext is paywalled, try a sci-hub.ru prefix or archive.org search to see if available there.
+* Only include a URL that includes the full text in free access (PDF, PS, etc.),
+  don't include a URL that merely repeats the DOI with unless it includes a free-access full text.
+* If the fulltext is paywalled, try a sci-hub.ru prefix or archive.org search to see if available there.
+  Often, the book collecting the proceedings of a conference is available on archive.org or z-library.sk
+  rather than the individual article itself. Sometimes, someone has the full text on github.
 * Prefer Webpage (with lastchecked={YYYY-MM-DD} entry) over Online or Misc where applicable.
-* No spaces immediately around =
+* attribute={value}, --- no spaces immediately around =
 * Two spaces indentation for entries, 4 spaces for multiline note content.
 * note= as last entry, with explanation for relevance to the topic at hand.
    Linebreak at the end of each note sentence, and
    before 80 characters after end of semantic sentence unit.
    Prefer Unicode characters to TeX escape sequences.
-* Don't make up data. If you don't have the data, leave the corresponding entry empty
-
-If the PDF or PS isn't available from the DOI, it may be available from a search,
-on the author’s page, sci-hub.ru, archive.org, z-library.sk, github.com, etc.
+* Don't make up data. If you don't have the data, leave the corresponding entry empty.
 
 @preamble{
 }
@@ -35,7 +36,7 @@ on the author’s page, sci-hub.ru, archive.org, z-library.sk, github.com, etc.
 % From https://www.netlib.org/bibnet/authors/l/lovelace-ada-augusta.html
 @InCollection{Lovelace1843,
   author={Augusta Ada Lovelace},
-  booktitle={Richard Taylor's Scientific Memoirs},
+  booktitle={Richard Taylor’s Scientific Memoirs},
   title={Notes [on translation of Luigi Federico Menebrae's paper on Babbage's Analytical Engine]},
   pages={666--731},
   month=August,
@@ -81,10 +82,10 @@ on the author’s page, sci-hub.ru, archive.org, z-library.sk, github.com, etc.
   year={1844},
   url={https://fr.wikisource.org/wiki/Les_Trois_Mousquetaires},
   note={
-        This novel, despite being named “The Three Musketeers”,
-        famously has four musketeers as protagonists.
-        Admittedly, the main protagonist isn’t one yet
-        when he meets (and simultaneously duels!) the other three.
+    This novel, despite being named “The Three Musketeers”,
+    famously has four musketeers as protagonists.
+    Admittedly, the main protagonist isn’t one yet
+    when he meets (and simultaneously duels!) the other three.
   }
 }
 
@@ -3033,7 +3034,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 % StrongTalk.org still runs on Windows 10.
-@InProceedings{Bracha1993Strongtalk,
+@InProceedings{Bracha1993,
   title={Strongtalk: Typechecking Smalltalk in a production environment},
   author={Bracha, Gilad and Griswold, David},
   journal={ACM SIGPLAN Notices},
@@ -3077,7 +3078,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % also implements single inheritance on top, but really with mixin inheritance underneath.
 % Examples include polymorphic collection.
 %
-@misc{PT1993STTFOOP,
+@misc{Pierce1993,
   author={Benjamin C. Pierce and David N. Turner},
   title={Simple Type-Theoretic Foundations for Object-Oriented Programming},
   year={1993},
@@ -3269,7 +3270,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-@article{sernadas1994,
+@Article{Sernadas1994,
   author={Costa, J. and Sernadas, Amilcar and Sernadas, Cristina},
   year={1994},
   month={06},
@@ -3302,7 +3303,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-@inproceedings{Remy1994mlart,
+@InProceedings{Remy1994,
   title={Programming objects with ML-ART an extension to ML with abstract and record types},
   author={Didier Rémy},
   booktitle={International Symposium on Theoretical Aspects of Computer Software},
@@ -3347,9 +3348,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     the restrictions of their OO language.
   }
 }
-
-% Journal treatment: Liskov and Wing, A behavioral notion of subtyping, ACM TOPLAS 16(6):1811–1841, 1994, doi 10.1145/197320.197383. The normative complement (conformance) to the mechanism-level definition
-% Compare to Liskov1987
 
 %% 1995
 
@@ -3474,7 +3472,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 % AAI0576129 ???
-@PhDThesis{Rees1995W7,
+@PhDThesis{Rees1995,
   author={Jonathan A. Rees},
   title={A Security Kernel Based on the Lambda Calculus},
   year={1995},
@@ -3491,7 +3489,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 % https://x.com/Ngnghm/status/1985873697949761682
-@InProceedings{Jacobs1995ObjectsAC,
+@InProceedings{Jacobs1995,
   title={Objects and Classes, Co-Algebraically},
   author={Bart Jacobs},
   booktitle={Object Orientation with Parallelism and Persistence},
@@ -3586,7 +3584,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-@Misc{Eich1996JavaScript,
+@Misc{Eich1996,
   title={JavaScript Language Specification},
   author={Brendan Eich},
   year={1996},
@@ -3618,7 +3616,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-@InProceedings{Barrett1996C3,
+@InProceedings{Barrett1996,
   author={Kim Barrett and Bob Cassels and Paul Haahr and David A. Moon and Keith Playford and P. Tucker Withington},
   title={A Monotonic Superclass Linearization for Dylan},
   journal={OOPSLA},
@@ -3755,7 +3753,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   numpages={71}
 }
 
-@Book{AbadiCardelli1996ToO,
+@Book{Abadi1996Theory,
   author={Martín Abadi and Luca Cardelli},
   title={A Theory of Objects},
   year={1996},
@@ -3848,9 +3846,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 % https://github.com/appleby/Lisp-In-Small-Pieces?tab=readme-ov-file
-% https://christian.queinnec.org/WWW/LiSP.html
 % Les Langages Lisp 1994
-@book{Queinnec1996LiSP,
+@book{Queinnec1996,
   title={Lisp in Small Pieces},
   author={Queinnec, Christian},
   translator={Callaway, Kathleen},
@@ -3864,7 +3861,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-@webpage{CLHS,
+@webpage{Pitman1996,
   title={Common Lisp HyperSpec},
   author={Kent Pitman},
   url={https://www.lispworks.com/documentation/HyperSpec/Front/index.htm},
@@ -3926,7 +3923,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-@inproceedings{Foote1997BBoM,
+@inproceedings{Foote1997,
   title={Big Ball of Mud},
   author={Brian Foote and Joseph W. Yoder},
   booktitle={PLoP},
@@ -3947,7 +3944,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % Note that the book "Programming JavaScript for Netscape 2.0" (1996) by Tim Ritchey
 % also talks of inherit / inheritance, not delegate / delegation
 % https://archive.org/details/programmingjavas00ritc/mode/2up?q=inherit
-@Misc{ecmascript1997,
+@Misc{ECMA1997,
   title={ECMAScript: A general purpose cross-platform programming language},
   author={ECMA-262},
   year={1997},
@@ -3962,7 +3959,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-@InProceedings{SubtypingMatch1997,
+@InProceedings{Bruce1997,
   doi={10.1007/BFb0053376},
   author="Bruce, Kim B.
 and Petersen, Leaf
@@ -4149,7 +4146,7 @@ and Fiech, Adrian",
 %% 2000
 
 % https://www.researchgate.net/publication/2436142_Avoiding_Confusion_in_Metacircularity_The_Meta-Helix
-@article{Chiba2000MetaHelix,
+@article{Chiba2000,
   author={Shigeru Chiba and Gregor Kiczales and John Lamping},
   year={2000},
   month={11},
@@ -4170,7 +4167,7 @@ and Fiech, Adrian",
   }
 }
 
-@InProceedings{Smaragdakis2000Mixin,
+@InProceedings{Smaragdakis2000,
   title={Mixin-based programming in C++},
   author={Yannis Smaragdakis and Don Batory},
   booktitle={International Symposium on Generative and Component-Based Software Engineering},
@@ -4192,7 +4189,7 @@ and Fiech, Adrian",
 
 % No DOI
 % https://www.math.nagoya-u.ac.jp/~garrigue/papers/variant-reuse.pdf
-@inproceedings{garrigue2000code,
+@inproceedings{Garrigue2000,
   title={Code reuse through polymorphic variants},
   author={Garrigue, Jacques},
   booktitle={Workshop on Foundations of Software Engineering},
@@ -4328,7 +4325,7 @@ and Fiech, Adrian",
   }
 }
 
-@InProceedings{DSU2001,
+@InProceedings{Hicks2001,
   author={Hicks, Michael and Moore, Jonathan T. and Nettles, Scott},
   title={Dynamic Software Updating},
   year={2001},
@@ -4377,7 +4374,7 @@ and Fiech, Adrian",
 
 % No mention of recursive types, or fixpoints, etc.: Looks like the NNOOTT to me.
 % No DOI.
-@inproceedings{Bak2002Mixins,
+@inproceedings{Bak2002,
   title={Mixins in Strongtalk},
   author={Bak, Lars and Bracha, Gilad and Grarup, Steffen and Griesemer, Robert and Griswold, David and Hölzle, Urs},
   booktitle={ECOOP 2002 Workshop on Inheritance},
@@ -4408,7 +4405,7 @@ and Fiech, Adrian",
 % downloaded from https://www.cs.sjtu.edu.cn/~kzhu/cs383/Pierce_Types_Programming_Languages.pdf
 % This post claims that TAPL introduces the term "Open Recursion" https://journal.stuffwithstuff.com/2013/08/26/what-is-open-recursion/ - but Cardelli 1992 mentions it already.
 % ... see a system $F_{<:}^\omega$
-@Book{Pierce2002TAPL,
+@Book{Pierce2002,
   Author={Pierce, Benjamin C.},
   Title={Types and Programming Languages},
   Year={2002},
@@ -4750,7 +4747,7 @@ and Fiech, Adrian",
 }
 
 % Pages 9-1 to 9-50, scriblib/bibtex can’t parse that :-/
-@InProceedings{self2007hopl,
+@InProceedings{Ungar2007,
   author={David Ungar and Randall B. Smith},
   title={Self},
   year={2007},
@@ -4774,7 +4771,7 @@ and Fiech, Adrian",
 
 % For a history of lenses, see Jules Hedges' https://julesh.com/2018/08/16/lenses-for-philosophers/
 % https://www.cis.upenn.edu/~bcpierce/papers/lenses-full.pdf
-@Article{Foster2007CombinatorsFB,
+@Article{Foster2007,
   title={Combinators for bidirectional tree transformations: A linguistic approach to the view-update problem},
   author={Nate Foster and M. Greenwald and J. T. Moore and B. Pierce and A. Schmitt},
   journal={ACM Trans. Program. Lang. Syst.},
@@ -4793,7 +4790,7 @@ and Fiech, Adrian",
 
 %% 2008
 
-@book{OSullivan2008RWH,
+@book{OSullivan2008,
   title={Real World Haskell},
   author={O'Sullivan, Bryan and Goerzen, John and Stewart, Donald Bruce},
   year={2008},
@@ -4824,7 +4821,7 @@ and Fiech, Adrian",
 
 % Master Thesis. BCL
 % https://pure.tue.nl/ws/portalfiles/portal/46927079/638953-1.pdf
-@MastersThesis{gclviewer2008,
+@MastersThesis{Bokharouss2008,
   Author="Ibrahim Bokharouss",
   Title="GCL Viewer: a study in improving the understanding of GCL programs",
   School={Eindhoven University of Technology},
@@ -4846,7 +4843,7 @@ and Fiech, Adrian",
   }
 }
 
-@InProceedings{dolstra2008nixos,
+@InProceedings{Dolstra2008,
   title={NixOS: A purely functional Linux distribution},
   author={Dolstra, Eelco and Löh, Andres},
   booktitle={the 13th ACM SIGPLAN international conference on Functional programming},
@@ -4884,8 +4881,8 @@ and Fiech, Adrian",
   lastchecked={2021-03-14}
 }
 
-@book{eopl3,
-  author={Friedman, Daniel P. and Haynes, Christopher T. and Wand, Mitchell},
+@book{Friedman2008,
+  author={Daniel P. Friedman and Christopher T. Haynes and Mitchell Wand},
   title={Essentials of Programming Languages},
   edition={3rd},
   year={2008},
@@ -4902,7 +4899,7 @@ and Fiech, Adrian",
   }
 }
 
-@book{PLAI,
+@book{Khrisnamurthi2008,
   author={Shriram Khrisnamurthi},
   title={Programming Languages: Application and Interpretation},
   edition={1st},
@@ -4972,7 +4969,7 @@ and Fiech, Adrian",
 }
 
 % https://www.cs.ox.ac.uk/files/2136/Mixins.pdf
-@TechReport{MonadsMixins,
+@TechReport{Oliveira2009,
   title="The Different Aspects of Monads and Mixins",
   author="Oliveira, Bruno C. d. S.",
   institution={Oxford University Computing Laboratory},
@@ -5058,7 +5055,7 @@ and Fiech, Adrian",
   }
 }
 
-@InProceedings{ASDF2,
+@InProceedings{Rideau2010,
   author={François-René Rideau and Robert Goldman},
   title={Evolving ASDF: More Cooperation, Less Coordination},
   year={2010},
@@ -5085,7 +5082,7 @@ and Fiech, Adrian",
 }
 
 % Meh, not that much worth listening to.
-@Webpage{OOP2010,
+@Webpage{Johnson2010,
   title={Ralph Johnson, Joe Armstrong on the State of OOP (Interview at QCon)},
   author={Ralph Johnson and Joe Armstrong},
   year={2010},
@@ -5157,7 +5154,7 @@ and Fiech, Adrian",
   }
 }
 
-@webpage{oconnor2012lenses,
+@webpage{OConnor2012,
   author={Russell O’Connor},
   title={Polymorphic Update with van Laarhoven Lenses},
   year={2012},
@@ -5170,7 +5167,7 @@ and Fiech, Adrian",
   }
 }
 
-@InProceedings{LIL2012,
+@InProceedings{Rideau2012,
   author={François-René Rideau},
   title={LIL: CLOS Reaches Higher-Order, Sheds Identity and has a Transformative Experience},
   url="http://github.com/fare/lil-ilc2012/",
@@ -5251,7 +5248,7 @@ and Fiech, Adrian",
   }
 }
 
-@misc{r7rs-small,
+@misc{R7RS2013,
   author={{R7RS Working Group}},
   title={Revised${}^7$ Report on the Algorithmic Language Scheme},
   year={2013},
@@ -5303,7 +5300,7 @@ and Fiech, Adrian",
   }
 }
 
-@book{Chiusano2014FPScala,
+@book{Chiusano2014,
   title={Functional Programming in Scala},
   author={Chiusano, Paul and Bjarnason, Rúnar},
   year={2014},
@@ -5320,7 +5317,7 @@ and Fiech, Adrian",
   }
 }
 
-@webpage{jsonnet,
+@webpage{Cunningham2014,
   author={Dave Cunningham},
   title={Jsonnet},
   year=2014,
@@ -5340,7 +5337,7 @@ and Fiech, Adrian",
   }
 }
 
-@webpage{MythOfRAM2014,
+@webpage{Ernerfeldt2014,
   author={Emil Ernerfeldt},
   title={The Myth of RAM},
   year={2014},
@@ -5372,7 +5369,7 @@ and Fiech, Adrian",
   }
 }
 
-@InProceedings{ASDF3,
+@InProceedings{Rideau2014,
   author={François-René Rideau},
   title={ASDF 3, or Why Lisp is Now an Acceptable Scripting Language},
   url="https://github.com/fare/asdf3-2013",
@@ -5483,7 +5480,7 @@ and Fiech, Adrian",
   }
 }
 
-@Book{EcmaScript2015,
+@Book{ECMA2015,
   title={ECMAScript 2015 Language Specification},
   author={ECMA-262},
   year=2015,
@@ -5500,7 +5497,7 @@ and Fiech, Adrian",
   }
 }
 
-@webpage{nix2015,
+@webpage{Simons2015,
   title={Nixpkgs fixed-points library},
   author={Peter Simons},
   url={https://github.com/NixOS/nixpkgs/blob/master/lib/fixed-points.nix},
@@ -5517,10 +5514,8 @@ and Fiech, Adrian",
   }
 }
 
-@Article{Guha2015EssenceJS,
-  author={Arjun Guha and
-               Claudiu Saftoiu and
-               Shriram Krishnamurthi},
+@Article{Guha2015,
+  author={Arjun Guha and Claudiu Saftoiu and Shriram Krishnamurthi},
   title={The Essence of JavaScript},
   journal={CoRR},
   volume={abs/1510.00925},
@@ -5540,7 +5535,7 @@ and Fiech, Adrian",
 %% 2016
 
 % DOI for online edition: 10.1093/oso/9780198754626.001.0001
-@book{hanson2016,
+@book{Hanson2016,
   author={Hanson, Robin},
   title={The Age of Em: Work, Love, and Life when Robots Rule the Earth},
   year={2016},
@@ -5561,7 +5556,7 @@ and Fiech, Adrian",
   }
 }
 
-@webpage{ngnghm9,
+@webpage{Rideau2016,
   author={François-René Rideau},
   title={Build Systems and Modularity},
   year=2016,
@@ -5576,7 +5571,7 @@ and Fiech, Adrian",
 }
 
 % https://x.com/Ngnghm/status/1988891187340615763
-@incollection{EssenceOfInheritance2016,
+@incollection{Black2016,
   title={The Essence of Inheritance},
   author={Andrew P. Black and Kim B. Bruce and James Noble},
   booktitle={A List of Successes That Can Change the World: Essays Dedicated to Philip Wadler on the Occasion of His 60th Birthday},
@@ -5641,9 +5636,9 @@ and Fiech, Adrian",
 
 % https://sci-hub.ru/https://link.springer.com/article/10.1007/BF01178920
 % Bug: Scribble autobib can’t handle these kinds of pages
-@InProceedings{oiwc2016,
-  author={Jones, Timothy and Homer, Michael and Noble, James and Bruce, Kim},
-  title={{Object Inheritance Without Classes}},
+@InProceedings{Jones2016,
+  author={Timothy Jones and Michael Homer and James Noble and Kim B. Bruce},
+  title={Object Inheritance Without Classes},
   booktitle={30th European Conference on Object-Oriented Programming (ECOOP 2016)},
   Xpages={13:1--13:26},
   series={Leibniz International Proceedings in Informatics (LIPIcs)},
@@ -5665,7 +5660,7 @@ and Fiech, Adrian",
   }
 }
 
-@webpage{GerbilScheme,
+@webpage{Vyzovitis2016,
   author={Dimitris Vyzovitis},
   title={Gerbil Scheme},
   year=2016,
@@ -5748,7 +5743,7 @@ and Fiech, Adrian",
 }
 ;; TODO cite LangSec on unforeseen emergence of Turing-equivalence through “weird machines”?
 
-@Article{Pickering2017Optics,
+@Article{Pickering2017,
   title={Profunctor Optics: Modular Data Accessors},
   volume={1},
   ISSN={2473-7321},
@@ -5769,13 +5764,8 @@ and Fiech, Adrian",
 % https://lmcs.episciences.org/4319
 % This paper seems to be on the right track, but with much extra formalism and much missing insight.
 % Classes add a layer of complexity, and I think there may be bugs. Sigh.
-@article{DBLP:journals/corr/abs-1712-06906,
-  author={Jan Bessai and
-                  Tzu{-}Chun Chen and
-                  Andrej Dudenhefner and
-                  Boris Düdder and
-                  Ugo de'Liguoro and
-                  Jakob Rehof},
+@article{Bessai2017,
+  author={Jan Bessai and Tzu-Chun Chen and Andrej Dudenhefner and Boris Düdder and Ugo de'Liguoro and Jakob Rehof},
   title={Mixin Composition Synthesis based on Intersection Types},
   journal={CoRR},
   volume={abs/1712.06906},
@@ -5790,7 +5780,7 @@ and Fiech, Adrian",
 
 %% 2018
 
-@InProceedings{Rideau2018Climbing,
+@InProceedings{Rideau2018,
   author={François-René Rideau},
   title={Climbing Up the Semantic Tower --- at Runtime},
   booktitle={Off the Beaten Track Workshop at POPL},
@@ -5845,7 +5835,7 @@ and Fiech, Adrian",
 
 %% 2020
 
-@webpage{GerbilPOO,
+@webpage{Rideau2020,
   author={François-René Rideau},
   title={Gerbil-POO},
   year=2020,
@@ -5945,7 +5935,7 @@ and Fiech, Adrian",
     See Barrett 1996 for the original C3 citation.
   }
 }
-@InProceedings{poof2021,
+@InProceedings{Rideau2021,
   title={Prototypes: Object-Orientation, Functionally},
   author={François-René Rideau and Alex Knauth and Nada Amin},
   year={2021},
@@ -5962,7 +5952,7 @@ and Fiech, Adrian",
 % https://github.com/NixOS/rfcs/pull/91/
 % https://github.com/NixOS/nixpkgs/pull/116275
 % https://github.com/divnix/POP
-@Webpage{POP2021,
+@Webpage{Rideau2021POP,
   author={François-René Rideau},
   title={Pure Object Prototypes},
   url={https://github.com/divnix/POP},
@@ -5972,7 +5962,7 @@ and Fiech, Adrian",
   }
 }
 
-@article{Prykhodko2021DIT,
+@article{Prykhodko2021,
   author={Prykhodko, Sergiy and Prykhodko, Natalia and Tatiana, Smykodub},
   year={2021},
   month={06},
@@ -6002,7 +5992,7 @@ and Fiech, Adrian",
 }
 
 %% 2022
-@Webpage{TopPL2022,
+@Webpage{GitHub2022,
   author={GitHub},
   title={The top programming languages},
   url={https://octoverse.github.com/2022/top-programming-languages},
@@ -6037,7 +6027,7 @@ and Fiech, Adrian",
 }
 
 %% 2024
-@Webpage{Kiselyov2024Y,
+@Webpage{Kiselyov2024,
   title={Many Faces of the Fixed-Point Combinator},
   author={Oleg Kiselyov},
   url={https://okmij.org/ftp/Computation/fixed-point-combinators.html},
@@ -6135,7 +6125,7 @@ and Fiech, Adrian",
 
 %% 2026
 
-@misc{TIOBE,
+@misc{TIOBE2026,
   author={TIOBE Software BV},
   title={TIOBE Programming Community Index, June 2026},
   year={2026},

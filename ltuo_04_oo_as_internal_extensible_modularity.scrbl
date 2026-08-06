@@ -183,7 +183,7 @@ More ability to code one’s part, while requiring less knowledge about other pe
 }
 
 For instance, the object-oriented design of the Common Lisp build system
-ASDF@~cite{ASDF2 ASDF3}
+ASDF@~cite{Rideau2010 Rideau2014}
 made it simple to configure, to extend, and
 to refactor to use algorithms in @emph{O(n)} rather than @emph{O(n³)} or worse,
 all without any of the clients having to change their code.
@@ -197,7 +197,7 @@ with conditional selection and reconfiguration of modules,
 gradual deployment of features, user-defined composition of modules,
 automated A/B testing, and more.
 
-For a more complete theory of Modularity, see @citet{ngnghm9}.
+For a more complete theory of Modularity, see @citet{Rideau2016}.
 
 @subsection{Historical Modularity Breakthroughs}
 
@@ -563,7 +563,7 @@ each field is initialized before it is used@xnote["."]{
 
   The init-before-use issue is well-known and exists outside of OO: it may happen
   whenever there is mutual recursion between variables or initial elements of data structures.
-  However, we’ll see that “open recursion” @~cite{Cardelli1989 Pierce2002TAPL},
+  However, we’ll see that “open recursion” @~cite{Cardelli1989 Pierce2002},
   i.e. the use of operators meant to be the argument of a fixpoint combinator,
   but also possibly composition before fixpointing,
   is ubiquitous in OO,
@@ -1184,7 +1184,7 @@ even if “only” for the implementation of a meta-level tool such as a typeche
 
 I was flabbergasted when I first saw
 basic OO actually implemented in two function definitions,
-in the Nix standard library @~cite{nix2015}.
+in the Nix standard library @~cite{Simons2015}.
 These two definitions can be ultimately traced in a long indirect line
 to the pioneering formalization by Bracha and Cook @~cite{Bracha1990},
 though the author wasn’t aware of the lineage, or indeed even that he was doing OO@xnote[";"]{
@@ -1240,7 +1240,7 @@ Therefore, I pick Scheme as the best compromise in which to formalize OO.
 @exercise[#:difficulty "Easy, Required"]{
   Install on your computer an implementation of the programming language Scheme,
   read the tutorial (if necessary), and play with it.
-  I personally use Gerbil Scheme @~cite{GerbilScheme};
+  I personally use Gerbil Scheme @~cite{Vyzovitis2016};
   but if you are a beginner, you will probably find it much easier to use
   the closely related language Racket @~cite{Felleisen2015};
   or for a plain Scheme experience, we recommend Chez Scheme, that is very fast.

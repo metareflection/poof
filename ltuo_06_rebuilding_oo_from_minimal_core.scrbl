@@ -34,7 +34,7 @@ An equivalent OO system can be similarly defined
 in any language that has higher-order functions,
 even a pure functional language without mutation.
 Indeed Nix defines its “extension” system
-with essentially the same two-function kernel @~cite{nix2015}.
+with essentially the same two-function kernel @~cite{Simons2015}.
 But there is indeed one extra thing Nix does that my model so far doesn’t,
 wherein Nix has prototype objects and I don’t: conflation.
 
@@ -261,7 +261,7 @@ In the best case of a simple sequence of data,
 the sequence can be a contiguous array of memory and this fetching is constant time;
 in general, this fetching goes through the memory caching hierarchy,
 which logically requires a number of bits that grows logarithmically with the size of the working set,
-and physically requires a latency which grows as the square root of that size@~cite{MythOfRAM2014}.
+and physically requires a latency which grows as the square root of that size@~cite{Ernerfeldt2014}.
 
 Importantly, isomorphic as it might be at some abstract level,
 the reference type is not equal to the type being referenced,
@@ -359,7 +359,7 @@ It is notable for being the essence of the barebones object system of
 Yale T Scheme @~cite{Rees1982 Adams1988},
 later made portable as YASOS @~cite{Dickey1992};
 and it was made famous by being standardized as
-the JavaScript (JS) object system @~cite{Eich1996JavaScript}:
+the JavaScript (JS) object system @~cite{Eich1996}:
 a prototype is a record of methods encoded as functions that take
 the record itself as parameter.
 However, beyond these object systems exposing their internals,
@@ -643,15 +643,15 @@ for large software distributions on one machine or many,
 using GCL, Jsonnet or Nix as (pure functional) Prototype OO languages:
 @itemize[
 @item{
-  The Google Control Language GCL@~cite{gclviewer2008} (née BCL, Borg Control Language),
+  The Google Control Language GCL@~cite{Bokharouss2008} (née BCL, Borg Control Language),
   has been used to specify all of Google’s distributed software deployments
   since about 2003 (but uses dynamic rather than static scoping,
   causing dread among Google developers).}
 @item{
-  Jsonnet@~cite{jsonnet}, inspired by GCL but cleaned up to use static scoping,
+  Jsonnet@~cite{Cunningham2014}, inspired by GCL but cleaned up to use static scoping,
   has been particularly used to generate configurations for AWS or Kubernetes.}
 @item{
-  Nix@~cite{dolstra2008nixos} is used not just to configure
+  Nix@~cite{Dolstra2008} is used not just to configure
   entire software distributions for Linux or macOS,
   but also distributed services with NixOps or DisNix.}]
 All three languages have proven the practicality of pure lazy functional prototype objects,
@@ -669,7 +669,7 @@ yet this feature is arguably essential to the ergonomics of these languages.
 The notion of a @emph{conflation of specification and target},
 that I presented, is largely unknown by OO developers, and
 seems never to have been made explicit in the literature until
-I published @citet{poof2021}, that itself remained confidential.
+I published @citet{Rideau2021}, that itself remained confidential.
 And yet, the knowledge of this conflation is necessarily present, if implicit,
 if not across the community of OO practitioners,
 at the very least among individual OO implementers—or else
@@ -714,9 +714,9 @@ may not have realized the conflation because at their
 level it’s all pure functional specification with no target until runtime.
 One group of people though, must explicitly deal with the conflation of specification and target
 embodied as a first-class value: implementers of pure functional prototype systems.
-Nix @~cite{nix2015} explicitly remembers the specification by inserting
+Nix @~cite{Simons2015} explicitly remembers the specification by inserting
 the @c{__unfix__} attribute into its target records;
-and Jsonnet @~cite{jsonnet} must do something similar under the hood,
+and Jsonnet @~cite{Cunningham2014} must do something similar under the hood,
 though it is hidden under much complexity in the implementation.
 Yet the authors of neither system make note of it in their documentation
 as a phenomenon worthy of remark. Though they implicitly rediscovered the concept
@@ -725,7 +725,7 @@ and shrugged it off as yet another one of those many pesky little implementation
 they had to face along the way.
 
 Finally, the confusion between target and specification can be seen as a special case of
-the confusion between object and implementation discussed in @citet{Chiba2000MetaHelix},
+the confusion between object and implementation discussed in @citet{Chiba2000},
 wherein you can see the specification as @emph{implementing} the target.
 But though these authors saw a more general case in a wider theory with far reaching potential,
 they do not seem to have noticed this common case application.
@@ -842,7 +842,7 @@ in addition to a Theory of OO, I will only illustrate how to build
 @emph{first-class} Class OO, at runtime, on top of Prototype OO.
 I will use a technique described by Lieberman @~cite{Lieberman1986},
 and no doubt broadly similar to how many Class OO systems were implemented on top of JavaScript
-before web browsers ubiquitously adopted ES6 classes@~cite{EcmaScript2015}. @;{TODO CITE ???}
+before web browsers ubiquitously adopted ES6 classes@~cite{ECMA2015}. @;{TODO CITE ???}
 
 A type descriptor (which in C++ would correspond to a @c{vtable})
 will typically have methods as follows:
@@ -992,7 +992,7 @@ In Typeclass-style, by contrast, type descriptors and type elements are kept dis
 There is emphatically no conflation.
 Type-descriptors are passed “out of band” as extra variables
 (see second-class “dictionaries” in Haskell @~cite{Wadler1989},
-or first-class “interfaces” in “Interface-Passing Style” @~cite{LIL2012}).
+or first-class “interfaces” in “Interface-Passing Style” @~cite{Rideau2012}).
 This is efficient in another way, because you can pass around a few type descriptors
 that do not change within a given algorithm, and not spend time wrapping and unwrapping conflations.
 
@@ -1103,7 +1103,7 @@ so they follow the calling convention of the other style@xnote["."]{
   Note how the values associated with typeclasses can be “naked” primitive values
   that need not be records, just like the fields of class instances.
 }
-Simple metaprograms that enact this transformation have been written in Lisp @~cite{LIL2012}
+Simple metaprograms that enact this transformation have been written in Lisp @~cite{Rideau2012}
 in the simple case of functions in which the self-type only appears directly
 as one of the (potentially multiple) arguments or (potentially multiple) return values of a method.
 Such automation could be generalized to work with any kind of higher-order function types,
@@ -1158,7 +1158,7 @@ Although it was historically developed in the context
 of the style (A1, B1, C1, D1) of dynamic graph of mutable classes (Smalltalk, Lisp, JavaScript),
 or the style (A1, B1, C1, D2) of static graph of mutable classes (Simula, C++, Java),
 OO can well accommodate any style.
-I wrote OO in both Typeclass-style (A2) and pure-style (B2) @~cite{LIL2012 GerbilPOO},
+I wrote OO in both Typeclass-style (A2) and pure-style (B2) @~cite{Rideau2012 Rideau2020},
 and I have no doubt you could write OO to manipulate tables (C2) instead of record graphs (C1).
 There is no reason why you couldn’t use OO to specify programs in the (A2, B2, C2, D2)-style
 of static tables of pure functional typeclasses: this combination would make for a nice
@@ -1243,9 +1243,9 @@ nine years before Prototype OO (1976),
 and remains overall more popular in the literature and in practice:
 most popular OO languages only offer Class OO; @;{TODO cite}
 and even though the arguably most popular OO language, JavaScript,
-may have started with Prototype OO only @~cite{Eich1996JavaScript},
+may have started with Prototype OO only @~cite{Eich1996},
 people were constantly reimplementing classes on top—and twenty years later,
-classes were added to the language itself@~cite{EcmaScript2015}.
+classes were added to the language itself@~cite{ECMA2015}.
 
 And yet I will argue that Prototype OO is more fundamental than Class OO:
 as I demonstrated above, Class OO can be easily expressed in terms of Prototype OO
@@ -1445,7 +1445,7 @@ is mostly not transposable to other languages@xnote["."]{
 Lacking such deep language support, user support is required to ensure upgrades only happen
 when the system is “quiescent” (i.e. at rest,
 so there are no issues with outdated code frames upstack or in concurrent threads)
-for “Dynamic Software Updating” @~cite{DSU2001};
+for “Dynamic Software Updating” @~cite{Hicks2001};
 at that point, the compiler need only guarantee that calls to the upgradable entry points
 will not have been inlined.
 Happily, since code upgrade events happen at a much larger timescale than regular evaluation,
@@ -1528,7 +1528,7 @@ as monadic passing of a linear immutable state.
 Not only that, but you can @emph{automatically} wrap objects written in one style
 (in-place mutation vs linear state-passing)
 so that they may be used in the context of the other style,
-as I did in @citet{LIL2012}.
+as I did in @citet{Rideau2012}.
 
 @exercise[#:difficulty "Easy"]{
   Implement a @c{Counter} prototype two ways:
@@ -1597,7 +1597,7 @@ What is the key difference in how client code must be written for each version?
 }
 
 @exercise[#:difficulty "Hard"]{
-  Read my article @citet{LIL2012}, and implement in your language of choice
+  Read my article @citet{Rideau2012}, and implement in your language of choice
   the automated wrapping between pure and stateful style, class and typeclass styles.
   For extra points, also implement higher-order wrappings in the style of @citet{Findler2002}.
   For research points, instead of wrapping just the interface, translate the code itself.
@@ -1662,5 +1662,5 @@ What is the key difference in how client code must be written for each version?
   or implement a new object system that supports it.
   You may have to add a level of indirection to your representations, or a read barrier.
   For extra brownies, specify and implement a protocol to ensure objects are quiescent
-  before they may be updated (see notably my thesis @~cite{FarePhD Rideau2018Climbing}).
+  before they may be updated (see notably my thesis @~cite{FarePhD Rideau2018}).
 }

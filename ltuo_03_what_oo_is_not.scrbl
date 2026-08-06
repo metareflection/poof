@@ -80,7 +80,7 @@ Notably, C++ lacks the proper method resolution that enables a lot of
 the modularity of multiple inheritance in other languages.
 
 Now, you can use C++’s powerful template language to reconstitute actual mixin inheritance
-and its method resolution on top of C++’s weird variant of inheritance@~cite{Smaragdakis2000Mixin};
+and its method resolution on top of C++’s weird variant of inheritance@~cite{Smaragdakis2000};
 and you could no doubt further implement proper multiple inheritance on top of that@xnote["."]{
   One could achieve multiple inheritance as a design pattern on top of mixin inheritance,
   as I will describe later in this book:
@@ -135,7 +135,7 @@ Many claim that classes, as first implemented by Simula 67@~cite{Simula1967}
 (though implementing a concept previously named by Hoare@~cite{Hoare1965}),
 are essential to OO, and only ever care to implement, use, formalize,
 study, teach, promote, or criticize class-based OO (a.k.a. Class OO).
-Books from luminaries in Programming Languages @~cite{Pierce2002TAPL plai eopl3},
+Books from luminaries in Programming Languages @~cite{Pierce2002 Khrisnamurthi2008 Friedman2008},
 in their chapter about OO, barely even mention any other kind of OO if at all,
 much less study it.
 
@@ -181,12 +181,12 @@ ThingLab @~cite{Borning1977 Borning1979 Borning1981}@xnote["."]{
   and oscillated between having or not having classes in addition to prototypes.
   Kahn joined PARC after graduating from MIT.}
 Plenty more Prototype OO or “class-less” OO languages followed
-@~cite{Hewitt1979 Rees1982 Adams1988 Ungar1987 Chambers1989 Lawall1989 Salzman2005 jsonnet nix2015 poof2021}.
+@~cite{Hewitt1979 Rees1982 Adams1988 Ungar1987 Chambers1989 Lawall1989 Salzman2005 Cunningham2014 Simons2015 Rideau2021}.
 There are a lot more Prototype OO languages than I could have time to review @~cite{WikiProto},
-but prominent among them is JavaScript @~cite{Eich1996JavaScript},
-one of the most used programming languages in the world @~cite{TopPL2022},
+but prominent among them is JavaScript @~cite{Eich1996},
+one of the most used programming languages in the world @~cite{GitHub2022},
 maybe the top one by users
-(though it relatively recently also adopted classes on top of prototypes @~cite{EcmaScript2015}).
+(though it relatively recently also adopted classes on top of prototypes @~cite{ECMA2015}).
 
 Moreover, I will argue that Prototype OO @~cite{Borning1986}
 is more general than Class OO, that is but a special case of it @~cite{Lieberman1986}
@@ -230,7 +230,7 @@ as well as most languages until relatively recently,
 were using mutable state everywhere, and an eager evaluation model, at least by default.
 And with 1990s slogans among Lispers like
 “objects are a poor man’s closures”@~cite{Dickey1992}, and
-“closures are a poor man’s objects”@~cite{Queinnec1996LiSP},
+“closures are a poor man’s objects”@~cite{Queinnec1996},
 the problem back then (and as early as at least Yale T Scheme @~cite{Rees1982},
 that developed the underlying concepts and implemented an entire system on them),
 was clearly not whether OO could be done purely with functions—obviously it could—but
@@ -244,7 +244,7 @@ as Haskell grew up to become a practical language@xnote["."]{
   (and the “cabal hell” it started causing around 2006 until later solved by Stack),
   ghc6 (2006), that made Haskell much more practical to use, and
   new notable applications appeared like pandoc (2006), or xmonad (2007).
-  A turning point was perhaps the publication of “Real World Haskell” @~cite{OSullivan2008RWH}.
+  A turning point was perhaps the publication of “Real World Haskell” @~cite{OSullivan2008}.
   Eventually, Stack (2015) made non-trivial Haskell programs and scripts repeatable.
   Now there’s obviously a lot of subjectivity in deciding
   when exactly Haskell became “practical”—but one should expect
@@ -262,11 +262,11 @@ Yet, there are:
 @itemize[
   @item{Pure models of OO such as those of
     Kamin, Reddy, Cook and Bracha@~cite{Kamin1988 Reddy1988 Cook1989 CookPalsberg1989 Bracha1990},}
-  @item{pure lazy dynamic OO languages such as Jsonnet or Nix@~cite{jsonnet dolstra2008nixos nix2015},
-    and pure lazy OO systems for Scheme@~cite{poof2021},}
+  @item{pure lazy dynamic OO languages such as Jsonnet or Nix@~cite{Cunningham2014 Dolstra2008 Simons2015},
+    and pure lazy OO systems for Scheme@~cite{Rideau2021},}
   @item{languages happily combining OO and FP such as Common Lisp or Scala,
     with plenty of libraries restricting themselves
-    to pure functional objects only @~cite{LIL2012 Chiusano2014FPScala}, and}
+    to pure functional objects only @~cite{Rideau2012 Chiusano2014}, and}
   @item{last but not least, Oleg Kiselyov’s or Michael Gale’s implementations of
     statically typed OO both stateful and pure in the pure FP language Haskell(!)
     @~cite{Kiselyov2005 Gale2015}.}]
@@ -323,7 +323,7 @@ lack any such specific mechanism,
 whereas many non-OO languages possess mechanisms to achieve the same effect,
 in the form of modules defining but not exporting identifiers
 (e.g. not declaring them @c{extern} in C),
-or simply lexical scoping@~cite{Rees1995W7}.
+or simply lexical scoping@~cite{Rees1995}.
 @; TODO{cite Simula? JS?}
 
 Certainly, these mechanisms can be very useful,
@@ -479,7 +479,7 @@ and always remained somewhat marginal in the tradition;
 and they only acquired OO a decade after Actors were invented.
 @; TODO cite Yonezawa ?
 Instead, the only widely-used language to truly embody this metaphor
-is Erlang@~cite{OOP2010};
+is Erlang@~cite{Johnson2010};
 yet Erlang is not part of the OO tradition,
 and its authors have instead described its paradigm as “Concurrency-Oriented Programming”.
 Meanwhile the theory of computation through message-passing processes
@@ -658,7 +658,7 @@ between self-reference and reference to a constant (see @secref{TfOO}).
 
 Interestingly, Amílcar Sernadas’s or Bart Jacobs’s categorical theories
 of “objects” and “inheritance”
-@~cite{sernadas1994 Jacobs1995ObjectsAC Jacobs1996InheritanceAC}
+@~cite{Sernadas1994 Jacobs1995 Jacobs1996InheritanceAC}
 actually model UML and refinement,
 and not at all actual objects and inheritance as used in Programming Languages;
 a hijacking of the same words for completely different meanings,
@@ -1044,7 +1044,7 @@ at least not without using “magic” reflection primitives.
 One may then have been tempted then to see Prototype Delegation as intrinsically stateful,
 and class inheritance as intrinsically pure (though at compile-time).
 
-Yet, recent pure functional Prototype OO systems @~cite{jsonnet nix2015 poof2021}
+Yet, recent pure functional Prototype OO systems @~cite{Cunningham2014 Simons2015 Rideau2021}
 prove constructively that prototypes can be pure, and that they use
 the very same inheritance mechanisms as classes,
 indeed with classes as a particular case of prototypes with the usual construction.
@@ -1120,7 +1120,7 @@ and is strongly connoted to specific implementations using the message-passing p
 It also fell out of fashion some time in the 1990s,
 after JavaScript became a worldwide phenomenon, and (correctly) used the term “inheritance”
 rather than delegation (as it isn’t particularly “message passing”, just calling functions).
-@~cite{ecmascript1997}
+@~cite{ECMA1997}
 
 @section{Epistemological Digression}
 @epigraph{

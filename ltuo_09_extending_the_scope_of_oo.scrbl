@@ -51,7 +51,7 @@ I may as well enjoy the benefits for basic features as well.
 
 @subsection{Short Recap on Lenses}
 
-A lens @~cite{Meijer1991 Foster2007CombinatorsFB oconnor2012lenses Pickering2017Optics}
+A lens @~cite{Meijer1991 Foster2007 OConnor2012 Pickering2017}
 is the pure Functional Programming take on what in stateful languages would typically be
 a C pointer, ML reference, Lisp Machine locative, Common Lisp place, etc.:
 a way to pinpoint some location to inspect and modify within the wider program’s state.
@@ -629,8 +629,8 @@ This proves that its authors advanced OO in more ways than by first implementing
 in Simula 67@~cite{Simula1967}.
 Other notable languages that explicitly support nested specifications include
 Newspeak@~cite{Bracha2008} with its nested classes (in a Class OO language), and
-Jsonnet@~cite{jsonnet} with its nested objects (in a Prototype OO language).
-Nix@~cite{nix2015}, which implements extensions equivalent to Jsonnet’s objects
+Jsonnet@~cite{Cunningham2014} with its nested objects (in a Prototype OO language).
+Nix@~cite{Simons2015}, which implements extensions equivalent to Jsonnet’s objects
 in a few lines of λ-calculus as per @secref{MOO} and @secref{RPOO},
 does not provide any special operator to support nested extensions,
 and doesn’t need to: nesting extensions is already a common idiom in defining
@@ -968,7 +968,7 @@ Now, while the original method combinations of Flavors were quite capable,
 method combinations were further refined by
 New Flavors @~cite{Moon1986},
 CommonLoops @~cite{Bobrow1986}, and
-most notably by CLOS @~cite{Bobrow1988 Steele1990 clhs Kiczales1991 Verna2023}.
+most notably by CLOS @~cite{Bobrow1988 Steele1990 Pitman1996 Kiczales1991 Verna2023}.
 My presentation will therefore be more directly inspired by CLOS than by Flavors.
 
 @subsection{Uses of Method Combinations}
@@ -983,7 +983,7 @@ A full introduction would then require programs large enough
 that the advantage of OO in general and method combinations in particular justify
 use of the feature instead of “just” inlining it away.
 
-Still, I can point to ASDF @~cite{ASDF2 ASDF3}, the Common Lisp build system,
+Still, I can point to ASDF @~cite{Rideau2010 Rideau2014}, the Common Lisp build system,
 as a program that makes good use of method combinations,
 and the source code of which is freely available and well-documented.
 I know ASDF because I was once its maintainer and completely re-wrote it several times.
@@ -1604,7 +1604,7 @@ And indeed, you can desugar the latter into the former:
 a typeclass function with @c{n} typeclass constraints is like a generic function
 dispatching on @c{n} elements, being the “dictionaries” for each of those @c{n} constraints.
 The difference being that Haskell typeclasses do not support inheritance,
-but CLOS protocols do @~cite{LIL2012}.
+but CLOS protocols do @~cite{Rideau2012}.
 If @c{n = 0}, the function is a constructor (if it returns an object) or else an arbitrary function.
 If @c{n = 1}, the function is a regular OO method.
 If @c{n = 2}, the function is a binary method.

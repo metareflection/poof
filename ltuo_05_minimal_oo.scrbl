@@ -63,7 +63,7 @@ More precisely, one could require a type of the form @c{W ⊂ V ⇒ V → W},
 i.e. @c{V → W} under the constraint that @c{W} is a subtype of @c{V},
 for some type @c{W} to be declared
 (in which case, the function is also of type @c{V → V})@xnote["."]{
-  Even without static types, the pure lazy functional language Jsonnet @~cite{jsonnet}
+  Even without static types, the pure lazy functional language Jsonnet @~cite{Cunningham2014}
   allows programmers to specify dynamically checked constraints
   that objects must satisfy after they are instantiated (if they are, lazily).
   These constraints can ensure a runtime error is issued
@@ -520,7 +520,7 @@ or constant time, for a stateful implementation
 based on either known field offsets within an array,
 or hashing@xnote["."]{
   The nitpicky would also account for an extra square root factor
-  due to the limitations of physics@~cite{MythOfRAM2014}.
+  due to the limitations of physics@~cite{Ernerfeldt2014}.
 }
 
 @Paragraph{Merging Records}
@@ -800,7 +800,7 @@ the self-application combinator U (called Ue for U, eager)@Note{
   @c{(def fact (Ye eager-pre-fact))}
   and you can then test that e.g. @c{(fact 6)} returns @c{720}.
 }@Note{
-  Also note that the self-application combinator U @~cite{Kiselyov2024Y},
+  Also note that the self-application combinator U @~cite{Kiselyov2024},
   sometimes called the duplication combinator Δ, or ω
   (because @c{Ω = (ω ω)} is the canonical λ-term that never terminates),
   does the heavy lifting of the Y combinator,
@@ -1019,7 +1019,7 @@ all the code in this book at their favorite Scheme REPL,
 and also easily translate it to any other language
 that sports first-class higher-order functions@xnote["."]{
   I can’t leave the topic of the Y combinator without citing Oleg’s fantastic page on the topic,
-  even though it doesn’t directly address any of my concerns above: @citet{Kiselyov2024Y}.
+  even though it doesn’t directly address any of my concerns above: @citet{Kiselyov2024}.
 }.
 
 And with these issues settled, I will close this digression
@@ -1064,7 +1064,7 @@ and return to rebuilding OO from first principles.
 @exercise[#:difficulty "Hard"]{
   Compare three implementations of the Y combinator:
   eager @c{Ye}, eager stateful @c{Yes} and lazy @c{Yl} on some real-world application.
-  For instance, look at the slides I wrote @~cite{poof2021},
+  For instance, look at the slides I wrote @~cite{Rideau2021},
   instrument the code to count how many times the @c{plan-slide} function is called
   and display the result at the end, and see how that count changes if using
   the eager (applicative) @c{Ye} instead of the eager stateful @c{Yes}.
@@ -1139,7 +1139,7 @@ for reasons that will become obvious@xnote[";"]{
   but it works if you restrict yourself to single inheritance,
   or if you use template metaprogramming to arrange to pass a superclass,
   or list or DAG of superclasses, as argument to your template,
-  and manually reimplement mixin inheritance @~cite{Smaragdakis2000Mixin},
+  and manually reimplement mixin inheritance @~cite{Smaragdakis2000},
   or if you’re adventurous, multiple inheritance, on top of C++.
 }
 and the variable @c{s} is also called @c{self} in the same contexts,
@@ -1183,8 +1183,8 @@ any and every value by returning it unchanged, as follows@xnote[":"]{
   for composition of specifications (with information flow left-to-right).
   Haskellers and developers using similar composition-friendly languages
   might prefer this kind of representation,
-  the way they like van Laarhoven lenses @~cite{oconnor2012lenses};
-  yet, Oliveira @~cite{MonadsMixins} or
+  the way they like van Laarhoven lenses @~cite{OConnor2012};
+  yet, Oliveira @~cite{Oliveira2009} or
   the @c{Control.Mixin.Mixin} library (part of the @c{monadiccp} package),
   instead both use the same representation as mine, with @c{super} before @c{self}.
   Meanwhile, the Nix standard library, or the original paper @~cite{Bracha1990}
@@ -1278,7 +1278,7 @@ in the most expensive resource, human-time.
 
 The above functions @c{mix} and @c{fix} are indeed isomorphic
 to the theoretical model of OO from Bracha and Cook @~cite{Bracha1990}
-and to the actual implementation of “extensions” in nixpkgs @~cite{nix2015}@xnote["."]{
+and to the actual implementation of “extensions” in nixpkgs @~cite{Simons2015}@xnote["."]{
   My presentation of mixin inheritance is actually slightly more general than what
   Bracha, Cook or Simons did define, in that my definition is not specialized for records.
   Indeed, my closed modular extensions work on values of any type;

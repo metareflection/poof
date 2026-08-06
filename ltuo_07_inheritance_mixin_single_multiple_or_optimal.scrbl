@@ -358,7 +358,7 @@ that is a variant of the conflict view with a builtin heuristic for conflict res
 going into the first relevant branch of the inheritance DAG
 without backtracking @~cite{Chambers1991}.
 The authors eventually recognized how wrongheaded that was,
-only to revert to—sadly—the conflict view without resolution heuristic @~cite{self2007hopl}@xnote["."]{
+only to revert to—sadly—the conflict view without resolution heuristic @~cite{Ungar2007}@xnote["."]{
   Like the most naive variant of the “visitor pattern”
   approach to multiple dispatch (see @secref{MD}),
   Self’s once “sender path” approach to multiple inheritance has tunnel vision,
@@ -665,7 +665,7 @@ or they will have to live without.
 Languages that see “conflict” in independent method specifications,
 fail to respect the linearity property.
 Self’s once “sender path” approach to method resolution also failed to respect the linearity property
-@~cite{Chambers1991 self2007hopl};
+@~cite{Chambers1991 Ungar2007};
 and after the authors realized the failure, they reverted to plain conflict, which still fails.
 
 Hypothetical languages that would require users to manually synthesize attributes
@@ -819,14 +819,14 @@ CommonLoops @~cite{Bobrow1986} adopted it as
 CLOS @~cite{Bobrow1988 Steele1990} adopts it as “local precedence order”.
 Ducournau et al. speak of “local ordering” or “local precedence order”
 @~cite{Ducournau1992 Ducournau1994}@xnote["."]{
-  @citet{Barrett1996C3} notes that the algorithm in @citet{Ducournau1994}
+  @citet{Barrett1996} notes that the algorithm in @citet{Ducournau1994}
   fails to preserve the local precedence order in corner cases where
   a parent is also the ancestor of a previous parent. As an example,
   they exhibit the ancestry
   @c{(choice-widget) (menu choice-widget) (popup-mixin)
      (new-popup-menu menu popup-mixin choice-widget)}.
 }
-It is the second of the three eponymous constraints of C3 @~cite{Barrett1996C3},
+It is the second of the three eponymous constraints of C3 @~cite{Barrett1996},
 that calls it “local precedence order”.
 
 Among popular “flavorful” languages,
@@ -867,7 +867,7 @@ Said otherwise, you can answer the question “which of these two behaviors wins
 
 This property was introduced by @citet{Ducournau1992} as “extended order”,
 and first enforced by the algorithm in @citet{Ducournau1994}.
-It is the first of the three eponymous constraints of C3 @~cite{Barrett1996C3}.
+It is the first of the three eponymous constraints of C3 @~cite{Barrett1996}.
 
 Ducournau et al. try to formalize the property in terms of the linearization being a @emph{subset}
 (rather than superset—bounding the linearization from the other side)
@@ -902,7 +902,7 @@ in corollary 2 of theorem 1, when discussing
 the consistency properties of linearization in CLOS (or in this case, the lack thereof).
 This property was first explicitly described by @citet{Ducournau1992}
 then implemented by @citet{Ducournau1994},
-and is the third of the three eponymous constraints of C3 @~cite{Barrett1996C3}.
+and is the third of the three eponymous constraints of C3 @~cite{Barrett1996}.
 Among popular “flavorful” languages, Python, Perl and Solidity respect this constraint,
 but Ruby, Scala and Lisp fail to.
 (Though at least in Common Lisp you can use metaclasses to fix this issue for your code.)
@@ -933,7 +933,7 @@ under the nondescript name “acceptability”.
 It received little attention, maybe because most (all?) popular OO systems
 already respect it implicitly. The C3 algorithm respects it,
 but not enough to name it and count it among the constraints
-it purports to implement @~cite{Barrett1996C3}@xnote["."]{
+it purports to implement @~cite{Barrett1996}@xnote["."]{
   There are thus effectively four constraints enforced by C3,
   just like there are effectively four musketeers as main protagonists in
   The Three Musketeers @~cite{Dumas1844}.
@@ -1024,7 +1024,7 @@ The somewhat more careful algorithm used by CommonLoops @~cite{Bobrow1986}
 and after it by CLOS (with minor changes) @; TODO check what those changes are
 preserves Local Order, but not monotonicity.
 The slightly complex algorithm by Ducournau et al. @~cite{Ducournau1994},
-and the latter somewhat simpler C3 algorithm @~cite{Barrett1996C3 WikiC3},
+and the latter somewhat simpler C3 algorithm @~cite{Barrett1996 WikiC3},
 synthesize the precedence list while preserving all desired properties.
 C3 was notably adopted by OpenDylan, Python, Raku (Perl), Parrot, Solidity, PGF/TikZ.
 
@@ -1063,9 +1063,9 @@ by way of computing a precedence list.
 
 Complete implementations of prototypes using multiple inheritance
 in a few tens of lines of code are given
-in my previous paper using Scheme@~cite{poof2021},
-or in a proof of concept in Nix@~cite{POP2021}.
-My production-quality implementation in @(GerbilScheme)@~cite{GerbilPOO}
+in my previous paper using Scheme@~cite{Rideau2021},
+or in a proof of concept in Nix@~cite{Rideau2021POP}.
+My production-quality implementation in @(GerbilScheme)@~cite{Rideau2020}
 including many features and optimizations fits in few hundred lines of code@xnote["."]{
   291 lines with lots of comments, 205 lines after stripping comments and blank lines.
   Even converted to plain Scheme, with additional utility functions,
@@ -1105,7 +1105,7 @@ Sadly, multiple inheritance often remains
 unjustly overlooked, summarily dismissed,
 or left as an exercise to the reader in books that discuss the formalization
 of programming languages in general and/or OO in particular
-@~cite{AbadiCardelli1996ToO Pierce2002TAPL eopl3 plai}. @TODO{more?}
+@~cite{Abadi1996Theory Pierce2002 Friedman2008 Khrisnamurthi2008}. @TODO{more?}
 The wider academic literature is also lacking in proper treatment of
 types for multiple inheritance, with some notable exceptions like
 @citet{Chambers1992} or @citet{Allen2011},
@@ -1350,7 +1350,7 @@ Yet, in practice the extra step is run at compile-time for second-class OO,
 and does not affect runtime;
 moreover, it is often quite fast in practice
 because most OO hierarchies are shallow@xnote["."]{
-  A study of Java projects on GitHub @~cite{Prykhodko2021DIT}
+  A study of Java projects on GitHub @~cite{Prykhodko2021}
   found that the vast majority of classes had fewer than 5 ancestors,
   including the base class @c{Object}. But that is a language with single inheritance.
   A survey I ran on all Common Lisp classes defined by all projects in Quicklisp 2025-06-22
@@ -1689,7 +1689,7 @@ rather it was the suffix property implicit in single inheritance.
 The debate was not framed properly, and a suitable reframing solves the problem
 hopefully to everyone’s satisfaction.
 
-In 2024, @(GerbilScheme) @~cite{GerbilScheme} similarly modernized its object system by
+In 2024, @(GerbilScheme) @~cite{Vyzovitis2016} similarly modernized its object system by
 unifying its single inheritance and multiple inheritance hierarchies
 so its “struct”s and “class”es (named in the Lisp tradition) may extend each other.
 The result ended up largely equivalent to the classes and modules or traits of Ruby or Scala,
@@ -1705,7 +1705,7 @@ It is the first and so far only implementation of @emph{optimal inheritance}@xno
 
 @subsection[#:tag "C4"]{C4, or C3 Extended}
 
-The authors of C3 @~cite{Barrett1996C3 WikiC3},
+The authors of C3 @~cite{Barrett1996 WikiC3},
 after Ducournau et al. @~cite{Ducournau1992 Ducournau1994},
 crucially frame the problem of ancestry linearization in terms of
 constraints between the precedence list of a specification and those of its ancestors:
@@ -1818,7 +1818,7 @@ where the steps tagged with (C4) are those added to the C3 algorithm
    this example bug: direct supers (A) (S A) (B A S)).
 }
 
-Note that the C3 algorithm as published by @~cite{Barrett1996C3},
+Note that the C3 algorithm as published by @~cite{Barrett1996},
 has complexity O(d²n²) where d is the number of parents, n of ancestors,
 because of the naïve way it does a linear membership scan
 in the tails of the lists for each parent@xnote["."]{
