@@ -1,5 +1,5 @@
 #lang racket
-; -*- Scheme -*-
+;; -*- Scheme -*-
 
 (require
   (only-in scribble/base
@@ -8,8 +8,6 @@
   scriblib/bibtex
   (only-in scribble/core make-style)
   (only-in scribble/manual racket racketblock code codeblock litchar itemize item)
-;; (only-in scribble/example examples make-base-eval)
-;; (only-in scriblib/footnote note)
   (only-in scriblib/autobib make-bib authors define-cite)
   (only-in scribble-abbrevs appendix)
   (only-in scribble/html-properties css-addition head-extra html-defaults)
@@ -17,10 +15,8 @@
   (only-in scribble-math/dollar $)
   scribble/html-properties
   scriblib/render-cond
-
 ;; scribble/minted
   syntax/parse/define
-;;  "util/examples-module.rkt"
   "enumitem.rkt"
   "util.rkt"
   "bibtex-unused.rkt"
@@ -43,7 +39,6 @@
   (all-from-out "enumitem.rkt")
   (all-from-out "util.rkt")
   (for-syntax (all-from-out "util.rkt")))
-
 
 (define-simple-macro (r a ...) (racket a ...))
 (define (omega) "ω")
@@ -68,17 +63,11 @@
 (define super 'super)
 (define self 'self)
 
-;;(define-bibtex-cite "ltuo.bib" ~cite citet generate-bibliography)
-(define-values (~cite
-                citet
-                generate-bibliography
-                unused-bibtex-keys
-                report-unused-bibtex)
+(define-values (~cite citet generate-bibliography unused-bibtex-keys report-unused-bibtex)
   (setup-bibtex "ltuo.bib"))
 (define (~nocite . x) (let ((_ (apply ~cite x))) (void)))
 
 (define-simple-macro (defsection name tag text) (define (name (x text)) (seclink tag x)))
-(defsection section1 "Prototypes_bottom_up" "section 1")
 
 (define (favicon-style-properties)
   (when/list (render-html?)
@@ -121,7 +110,8 @@
     (else '())))
 
 ;; scribble/report subsubsub*section does not work https://github.com/racket/scribble/issues/540
-#;(define (Paragraph . x)
+#;
+(define (Paragraph . x)
   (list (html-elem (elem (bold x) "  "))
         (tex-elem (elem (tex "\\paragraph{") x (tex "}")))))
 (define Paragraph subsubsection)

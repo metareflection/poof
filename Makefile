@@ -10,7 +10,7 @@ slides: slides-2026-elte # slides-2026-els-lt slides-2026-els slides-2025-racket
   preslides slides \
   slides-2021-scheme-workshop slides-2023-njpls slides-2024-lambdaconf \
   slides-2025-lambdaconf slides-2025-racketcon slides-2026-els slides-2026-els-lt slides-2026-elte \
-  %.preview %.view eoomi
+  %.preview %.view
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
@@ -95,13 +95,13 @@ slides-2026-elte: build/slides-2026-elte.html
 build/slides-2026-elte.html: slides-2026-elte.rkt util/reveal.rkt util/util.rkt util/coop.rkt util/protodoc.rkt util/coop.scm
 	racket $< > $@.tmp && mv $@.tmp $@ || { rm -f $@.tmp ; exit 42;}
 
-# Side paper: LTUO
+# Side paper became a book: LtUO
 # NB: trying to use --style header.tex causes my chapters to become 0.x !!!
-build/ltuo.pdf: ltuo.scrbl ltuo.bib util/util.rkt util/ltuo_lib.rkt build/resources $(wildcard ltuo_*.scrbl) resources/pic/cube.pdf
+build/ltuo.pdf: ltuo.scrbl ltuo.bib util/util.rkt util/bibtex-unused.rkt util/ltuo_lib.rkt build/resources $(wildcard ltuo_*.scrbl) resources/pic/cube.pdf
 	RENDER_MODE=latex scribble --dest build --pdf ltuo.scrbl
-build/ltuo.html: ltuo.scrbl ltuo.bib util/util.rkt util/ltuo_lib.rkt build/resources $(wildcard ltuo_*.scrbl)
+build/ltuo.html: ltuo.scrbl ltuo.bib util/util.rkt util/bibtex-unused.rkt util/ltuo_lib.rkt build/resources $(wildcard ltuo_*.scrbl)
 	RENDER_MODE=html scribble --dest build --html ltuo.scrbl
-build/ltuo.tex: ltuo.scrbl ltuo.bib util/util.rkt util/ltuo_lib.rkt $(wildcard ltuo_*.scrbl)
+build/ltuo.tex: ltuo.scrbl ltuo.bib util/util.rkt util/bibtex-unused.rkt util/ltuo_lib.rkt $(wildcard ltuo_*.scrbl)
 	RENDER_MODE=latex scribble --dest build --latex ltuo.scrbl
 # NB: Find errors with a grep '^!' of the output.
 resources/pic/cube.pdf: resources/pic/cube.svg
@@ -115,18 +115,18 @@ ltuo: build/ltuo.html build/ltuo.pdf
 ltuo2: build/ltuo.html build/ltuo.pdf
 	rsync -av $^ ~fare/files/cs/poof/
 	rsync -av $^ bespin:files/cs/poof/
-	wc ltuo*.scrbl ltuo.bib eoomi2024.scrbl
+	wc ltuo*.scrbl ltuo.bib
 	$(PDFVIEWER) build/ltuo.pdf :$(P)
 
-check-pommette-gerbil: util/pommette-chez.scm util/pommette.scm
-	gxi util/pommette.scm
+check-pommette-gerbil: pommette/pommette-chez.scm pommette/pommette.scm
+	gxi pommette/pommette.scm
 
-check-pommette-chez: util/pommette-chez.scm util/pommette.scm
+check-pommette-chez: pommette/pommette-chez.scm pommette/pommette.scm
 	cd util ; chezscheme pommette-chez.scm < /dev/null
 
-check-pommette-racket: util/pommette.rkt util/pommette.scm
-	racket util/pommette.rkt
+check-pommette-racket: pommette/pommette.rkt pommette/pommette.scm
+	racket pommette/pommette.rkt
 
 count-ltuo-citations: build/ltuo.tex
-	grep Autobibtarget build/ltuo.tex | wc -l
+	grep 'Autobibtarget{' build/ltuo.tex | wc -l
 	grep -c '^@' ltuo.bib extra*.bib

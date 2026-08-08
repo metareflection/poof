@@ -739,7 +739,7 @@ yet no one seems to have been able to fully tease apart the concepts up until re
 @exercise[#:difficulty "Easy"]{
   Read and make sense of the code I wrote for this chapter,
   that you may find e.g. at
-  @url{https://github.com/metareflection/poof/blob/main/util/pommette.scm}
+  @url{https://github.com/metareflection/poof/blob/main/pommette/pommette.scm}
 }
 @exercise[#:difficulty "Easy"]{
   Reimplement the code from the previous chapter

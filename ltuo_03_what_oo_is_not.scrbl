@@ -122,9 +122,10 @@ and even most of those that look like OO are often different enough that
   including Common Lisp (1988), Python (1991), Ruby (1995), Scala (2004).
 }
 
-Of course, neither is OO defined by CLOS, Ruby, Python, Java, C#, Scala,
+Of course, neither is OO defined by Smalltalk, CLOS, Ruby, Python, Java, C#, Scala,
 or any particular language and its object system, however advanced, popular,
-or declared as prototypical by any particular pundit.
+or declared as prototypical by any particular pundit. OO is especially not whichever
+OO language you, the reader, first learned, or got to most associate in your mind with OO.
 
 @subsection[#:tag "OOiCO"]{OO isn’t Classes Only}
 @epigraph{
@@ -169,7 +170,7 @@ Kay took KRL’s inheritance, made it a well-defined concept specifically for @e
 that he replaced with the better resend mechanism, and popularized
 the word and concept of inheritance as well as the term “object-oriented”.
 Bobrow adopted Kay’s improvements together with his own (hard to say which is whose),
-and was first to publish.
+and was first to implement and publish.
 Then others at PARC, at MIT, and eventually Stroustrup at Bell Labs, adopted OO,
 and the rest is history.
 
@@ -179,7 +180,7 @@ were prototype-based languages Director @~cite{Kahn1976 Kahn1979Ani Kahn1979Dire
 ThingLab @~cite{Borning1977 Borning1979 Borning1981}@xnote["."]{
   ThingLab was built on top of Smalltalk by members of the same team at PARC,
   and oscillated between having or not having classes in addition to prototypes.
-  Kahn joined PARC after graduating from MIT.}
+  Meanwhile, Kahn, who wrote Director, joined PARC after graduating from MIT.}
 Plenty more Prototype OO or “class-less” OO languages followed
 @~cite{Hewitt1979 Rees1982 Adams1988 Ungar1987 Chambers1989 Lawall1989 Salzman2005 Cunningham2014 Simons2015 Rideau2021}.
 There are a lot more Prototype OO languages than I could have time to review @~cite{WikiProto},
@@ -855,6 +856,7 @@ This is all particularly ironic when the field I am studying is called “Object
 in which the most popular variant involves classes.
 But fields of knowledge are usually named as soon as the need is felt
 to distinguish them from other fields,
+often based on their more popular or salient features,
 long before they are well-understood, and thus based on misunderstandings;
 this misnomer is thus par for the course@xnote["."]{
   The wider field of study is similarly misnamed.
@@ -1324,7 +1326,7 @@ will happily define down a topic to whatever their limited methods can address.
 Others, interested in their impact upon people, will offer convincing sounding explanations
 to manipulate people and try to sway them from what they actually care about
 to what the expert would prefer for them to care about instead.
-The more ideologically motivated with happily lie, to the point of changing
+The more ideologically motivated will happily lie, to the point of changing
 the official definitions of words to equivocate between the common meaning that people use
 and the made up meaning that make their lies sound true.
 
@@ -1379,8 +1381,13 @@ that matches the variety of OO languages, systems and idioms,
 without including systems those are decidedly not OO, like the languages
 Erlang, Go, Rust, SML or UML (as of 2026 at least).
 Whatever clear or murky correspondence between names and concepts others may use,
-this paradigm is what matters, and is what I will call OO—it is what I will discuss in this book,
+@emph{this paradigm is what matters, and is what I will call OO}—it is
+what I will discuss in this book,
 and will systematically reduce to elementary concepts.
+I claim that the public has correctly identified a domain of worthwhile concern,
+and that as an expert building on the work of previous experts,
+I have identified the correct conceptual map of that domain
+that I am not choosing arbitrarily but acknowledging is what programmers care about.
 
 As to why should this particular meaning of “object-oriented” should win over
 other plausible meanings offered before or after Kay’s and Bobrow’s 1976 invention,

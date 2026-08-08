@@ -1252,7 +1252,7 @@ Therefore, I pick Scheme as the best compromise in which to formalize OO.
 }
 
 @exercise[#:difficulty "Easy, Required"]{
-  Locate file @c{util/pommette.scm} that comes with the source code for this book,
+  Locate file @c{pommette/pommette.scm} that comes with the source code for this book,
   e.g. at @url{https://github.com/metareflection/poof}.
   It contains all the examples in the book, and more, so you can run them,
   copy/paste them, modify them, play with them, etc.

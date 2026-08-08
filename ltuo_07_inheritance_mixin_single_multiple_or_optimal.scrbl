@@ -276,7 +276,7 @@ across all the subclasses of a given class.
 @exercise[#:difficulty "Easy"]{
   Read and make sense of the code I wrote for this chapter,
   that you may find e.g. at
-  @url{https://github.com/metareflection/poof/blob/main/util/pommette.scm}
+  @url{https://github.com/metareflection/poof/blob/main/pommette/pommette.scm}
 }
 
 @exercise[#:difficulty "Easy"]{

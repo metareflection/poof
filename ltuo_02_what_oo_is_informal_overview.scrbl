@@ -433,7 +433,7 @@ used multiple inheritance,
 @~cite{Cannon1979 Weinreb1981},
 refined and improved by successor Lisp object systems
 New Flavors@~cite{Moon1986}, CommonLoops@~cite{Bobrow1986}
-and CLOS@~cite{Bobrow1988 Keene1989 Steele1990}.
+and CLOS@~cite{DeMichiel1987 Bobrow1988 Keene1989 Steele1990}.
 Since then, many languages including Ruby, Perl, Python and Scala
 correctly adopted the basic design of Flavors (though none of its more advanced features)—I
 will call them @emph{flavorful}@xnote["."]{

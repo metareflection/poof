@@ -1,6 +1,4 @@
 #lang racket ;; -*- Scheme -*-
-
 (provide (all-defined-out)) ;; export everything for now... will refine later
-
-(include "prelude-racket.scm")
+(require (only-in r7rs cond-expand))
 (include "coop.scm")

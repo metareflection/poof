@@ -901,6 +901,11 @@ Metaclasses: classes whose instances are classes.
 Introspection vs intercession.
 The MOP as a reflective tower.
 
+Tying together all the bells and whistles in defining
+bindings, representations, objects, classes, methods, combinations, etc.
+We adapt and generalize the techniques from AMOP in a pure functional setting.
+
+
 @subsection{Reflection: Introspection and Intercession}
 
 @section{Tower of Implementation}
@@ -914,6 +919,11 @@ Partial evaluation and Futamura projections.
 Add serialization, persistence, to a meta-object, NOT to the object.
 
 Different capabilities for objects and their meta-objects => more security.
+
+Controlling Meta-Objects,
+from Synchronous Message-Passing Proxies to Fully Abstract Asynchronous Containers.
+We can only briefly survey this topic, maybe reusing the Collapsing Towers of Interpreters.
+
 
 @subsection{Side-Effects}
 
@@ -1000,7 +1010,7 @@ What this book's accompanying code does (and doesn’t) do.
 @exercise[#:difficulty "Easy"]{
   Read and make sense of the code I wrote for this chapter,
   that you may find e.g. at
-  @url{https://github.com/metareflection/poof/blob/main/util/pommette.scm}
+  @url{https://github.com/metareflection/poof/blob/main/pommette/pommette.scm}
 }
 
 @exercise[#:difficulty "Medium"]{

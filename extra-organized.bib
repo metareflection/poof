@@ -1,5 +1,5 @@
 @article{Strong1958,
-  author={Strong, J. and Wegstein, J. and Tritter, A. and Olsztyn, J. and Mock, O. and Steel, T.},
+  author={J. Strong and J. Wegstein and A. Tritter and J. Olsztyn and O. Mock and T. Steel},
   title={The Problem of Programming Communication with Changing Machines: a proposed solution},
   year={1958},
   issue_date={Aug. 1958},
@@ -23,7 +23,7 @@
 }
 
 @article{Bratman1961,
-  author={Bratman, Harvey},
+  author={Harvey Bratman},
   title={A alternate form of the “UNCOL diagram”},
   year={1961},
   issue_date={March 1961},
@@ -148,7 +148,7 @@
 }
 
 @article{Ingalls1981,
-  author={Ingalls, Daniel H. H.},
+  author={Daniel H. H. Ingalls},
   title={Design Principles Behind Smalltalk},
   journal={BYTE Magazine},
   volume={6},
@@ -169,6 +169,19 @@
   year={1982},
   url={https://dblp.org/rec/conf/ecics/Steels82},
   note={Very early functional reconstruction of object-oriented programming, predating most later work on classes as functions and objects as fixed points.}
+}
+
+% No online copy seems available (says Medley documentation)
+@TechReport{Bobrow1982LOOPS,
+  author={Daniel G. Bobrow and Mark Stefik},
+  title={LOOPS: Data and Object Oriented Programming for Interlisp},
+  institution={Xerox Palo Alto Research Center},
+  year={1982},
+  note={Technical report.
+    Describes the LOOPS object-oriented programming system for Interlisp,
+    including multiple inheritance, active values, composite objects,
+    and knowledge representation facilities.
+  }
 }
 
 @inproceedings{Reynolds1983,
@@ -220,6 +233,18 @@
   note={Nygaard’s concise insider account of objects, classes and conceptual modeling in the Simula tradition.}
 }
 
+@InProceedings{Briot1986,
+  author={Jean-Pierre Briot and Pierre Cointe},
+  title={The OBJVLISP Model: Definition of a Uniform, Reflexive and Extensible Object Oriented Language},
+  booktitle={Proceedings of the European Conference on Artificial Intelligence (ECAI 1986)},
+  year={1986},
+  url={https://www.researchgate.net/publication/220837569_The_OBJVLISP_Model_Definition_of_a_Uniform_Reflexive_and_Extensible_Object_Oriented_Language},
+  note={Introduces the minimal reflective object model ObjVLisp.
+    Presents a uniform architecture unifying objects, classes and metaclasses
+    through reflection, serving as the basis for later work on reflective
+    object-oriented architectures and CLOS.
+  }
+}
 @inproceedings{America1987,
   author={Pierre America},
   title={Inheritance and Subtyping in a Parallel Object-Oriented Language},
@@ -239,26 +264,17 @@
   note={The tower closed by self-instantiation: fix one level up}
 }
 
-% Journal version https://dreamsongs.com/Files/LASC-overview.pdf
-@InProceedings{DeMichiel1987,
-  author={Linda G. DeMichiel and Richard P. Gabriel},
-  title={The Common Lisp Object System: An Overview},
-  booktitle={ECOOP 1987},
-  series={Lecture Notes in Computer Science},
-  volume={276},
-  pages={151–170},
-  publisher={Springer},
+@InProceedings{Briot1987,
+  author={Jean-Pierre Briot and Pierre Cointe},
+  title={A Uniform Model for Object-Oriented Languages Using the Class Abstraction},
+  booktitle={Proceedings of the Tenth International Joint Conference on Artificial Intelligence (IJCAI-87)},
+  volume={1},
+  pages={40--43},
   year={1987},
-  doi={10.1007/3-540-47891-4_15},
-  url={https://dreamsongs.com/Files/clos-overview.pdf},
-  note={
-    Earliest published overview of CLOS, including
-    generic functions, multiple dispatch and method-combinations.
-    The 1987 version of CLOS was somewhat incomplete, compared the 1988 version
-    that officially made it to the standard: the API is not as nice
-    and notably lacking with respect to the object (re)initialization protocol.
-    Still, the essential design and most major features are there.
-    Journal version LASC 1 (1989).
+  month=aug,
+  url={https://www.researchgate.net/publication/220815939_A_Uniform_Model_for_Object-Oriented_Languages_Using_the_Class_Abstraction},
+  note={Develops the ObjVLisp model by making the class abstraction the
+    central unifying mechanism for reflective object-oriented languages.
   }
 }
 
@@ -281,6 +297,39 @@
   pages={37–44},
   year={1987},
   note={Row variables: the type-level name for “the rest of self”}
+}
+
+% Can't locate content
+@InProceedings{Graube1988,
+  author={Nicolas Graube},
+  title={Reflexive Architecture: From ObjVLisp to CLOS},
+  booktitle={ECOOP '88: European Conference on Object-Oriented Programming},
+  editor={Stein Gjessing and Kristen Nygaard},
+  series={Lecture Notes in Computer Science},
+  volume={322},
+  pages={110--127},
+  publisher={Springer},
+  address={Berlin, Heidelberg},
+  year={1988},
+  doi={10.1007/3-540-45910-3_7},
+  note={Describes the evolution from the reflective ObjVLisp architecture
+    toward CLOS, emphasizing metaclasses and reflective object-system
+    architecture.
+  }
+}
+
+@InProceedings{Buhr1988,
+  author={P. A. Buhr and C. R. Zarnke},
+  editor={Stein Gjessing and Kristen Nygaard},
+  title={Nesting in an Object Oriented Language is NOT for the Birds},
+  booktitle={ECOOP '88 European Conference on Object-Oriented Programming},
+  year={1988},
+  publisher={Springer Berlin Heidelberg},
+  address={Berlin, Heidelberg},
+  pages={128--145},
+  doi={10.1007/3-540-45910-3_8},
+  abstract="The notion of nested blocks has come into disfavour or has been ignored in recent program language design. Many of the current object oriented programming languages use subclassing as the sole mechanism to establish relationships between classes and have no general notion of nesting. We argue that nesting (and, more generally, hierarchical organization) is a powerful mechanism that provides facilities that are not otherwise possible in a class based programming language. We agree that traditional block structure and its associated nesting have severe problems, and we suggest several extensions to the notion of blocks and block structure that indirectly make nesting a useful and powerful mechanism, particularly in an object oriented programming system. The main extension is to allow references to definitions from outside of the containing block, thereby making the contained definitions available in a larger scope. References are made using either the name of the containing entity or an instance of the containing entity. The extensions suggest a way to organize the programming environment for a large, multi-user system. These facilities are not available with subclassing, and subclassing provides facilities not available by nesting; hence, an object oriented language can benefit by providing nesting as well.",
+ isbn={978-3-540-45910-1}
 }
 
 @inproceedings{Kaes1988,
@@ -319,6 +368,47 @@
   doi={10.1007/3-540-45910-3_4},
   url={https://doi.org/10.1007/3-540-45910-3_4},
   note={Names and analyzes the derivation axis (R=P + M)}
+}
+
+@InProceedings{Briot1989,
+  author={Jean-Pierre Briot and Pierre Cointe},
+  title={Programming with ObjVLisp Metaclasses in Smalltalk-80},
+  booktitle={Proceedings of the Conference on Object-Oriented Programming Systems, Languages, and Applications (OOPSLA '89)},
+  series={ACM SIGPLAN Notices},
+  volume={24},
+  number={10},
+  pages={419--432},
+  publisher={ACM},
+  year={1989},
+  month=oct,
+  doi={10.1145/74878.74921},
+  url={https://www.researchgate.net/publication/229023549_Programming_with_ObjVLisp_metaclasses_in_Smalltalk-80},
+  note={Introduces Classtalk by integrating the explicit metaclasses of
+    ObjVLisp into Smalltalk-80.
+    Bridges the minimal reflective architecture of ObjVLisp with the
+    richer metaclass facilities that culminated in CLOS.
+  }
+}
+
+% Also hard to locate a free PDF
+@InProceedings{Graube1989,
+  author={Nicolas Graube},
+  title={Metaclass Compatibility},
+  booktitle={Proceedings of the Conference on Object-Oriented Programming Systems, Languages, and Applications (OOPSLA '89)},
+  series={ACM SIGPLAN Notices},
+  volume={24},
+  number={10},
+  pages={305--315},
+  publisher={ACM},
+  year={1989},
+  month=oct,
+  doi={10.1145/74877.74898},
+  note={.
+    Studies compatibility issues arising when classes with different
+    metaclasses interact through inheritance.
+    Extends the reflective architecture developed in ObjVLisp toward
+    practical metaclass systems such as CLOS.
+  }
 }
 
 @inproceedings{Madsen1989,
@@ -673,6 +763,7 @@
   note={General semantic framework for modules, useful for comparing module composition with inheritance and recursive object construction.}
 }
 
+@ Also PhDThesis: Tom Hirschowitz Call-by-value mixin modules https://hirschowitz.pages.math.cnrs.fr/phd/these-tom.pdf
 @inproceedings{Hirschowitz2002,
   author={Tom Hirschowitz and Xavier Leroy},
   title={Mixin Modules in a Call-by-Value Setting},
@@ -706,7 +797,7 @@
 }
 
 @inproceedings{AldrichDonnelly2004,
-  author={Aldrich, Jonathan and Donnelly, Kevin},
+  author={Jonathan Aldrich and Kevin Donnelly},
   title={Selective Open Recursion: Modular Reasoning about Components and Inheritance},
   booktitle={SAVCBS '04 (Workshop at FSE)},
   year={2004},
@@ -718,7 +809,7 @@
 }
 
 @inproceedings{GoldbergFindlerFlatt2004,
-  author={Goldberg, David S. and Findler, Robert Bruce and Flatt, Matthew},
+  author={David S. Goldberg and Robert Bruce Findler and Matthew Flatt},
   title={Super and Inner: Together at Last!},
   booktitle={OOPSLA 2004},
   pages={116–129},
@@ -738,7 +829,7 @@
 }
 
 @article{Armstrong2006,
-  author={Armstrong, Deborah J.},
+  author={Deborah J. Armstrong},
   title={The quarks of object-oriented development},
   journal={Communications of the ACM},
   volume={49},

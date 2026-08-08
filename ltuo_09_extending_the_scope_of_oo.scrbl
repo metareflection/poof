@@ -9,8 +9,6 @@
   @|#:- "Isaac Newton"|
 }
 @section[#:tag "OfOO"]{Optics for OO}
-@; https://golem.ph.utexas.edu/category/2020/01/profunctor_optics_the_categori.html
-@; Profunctor Optics: The Categorical View
 
 @subsection{Focused Specifications}
 
@@ -682,7 +680,7 @@ i.e. the target of said subclass (or half-target in U-encoding)—though
 if using dynamic dispatch rather than static dispatch (see @secref{DvSD}),
 this descriptor can be extracted from the class instance rather than passed as argument.
 
-Moreover, for an @emph{efficient} @c{call-next-method},
+Yet again, for an @emph{efficient} @c{call-next-method},
 each method must cheaply access a @c{super} parameter,
 and further pass to the next method @emph{its} super, and so on.
 Therefore, the method body must also accept as parameter
@@ -808,7 +806,7 @@ you would use:
 @Code{
 (simple-instance-field-spec 'price (λ (_inherited self)
   (* (self 'markup)
-     (foldl + 0 (λ (part) (part 'price)) (self 'parts)))))
+     (foldl (λ (part acc) (+ acc (part 'price))) 0 (self 'parts)))))
 }
 To define a field @c{markup} that has no default initializer and must be provided by users,
 you would use:
@@ -1981,8 +1979,18 @@ if there was no global linearization order on which to pre-sort them@xnote["."]{
   In a pure language could also locally use a state monad for the same purpose;
   but the composed list-prependers have the advantage of remaining pure without a monad.
 }
-In any case, method lookup can be quite slow, and the results are better cached for efficiency.
-@;{TODO secref ch10}
+In any case, effective method computation can be quite slow, and
+the results are better cached for efficiency. @;{TODO @secref{ch10}}
+Then, you only pay the price once per call “shape” (tuple of specifications),
+which if you are using static classes only happens a finite and relatively small
+number of times in the program—whereas emulating the same semantics the naive way
+with double-dispatch or the visitor pattern without system support for multiple dispatch
+is precisely what would make the entire thing inefficient at every call.
+And in fact, in the rare case that call shapes are indeed very dynamic,
+so that the cache keeps missing, then you are precisely in the situation
+where you most need the expressiveness of multiple dispatch, since
+you are dynamically defining what would be extremely tedious with the visitor pattern
+(and mere double-dispatch is too static for that situation).
 
 Another issue with multiple dispatch, that only gets more “interesting”
 when using curried functions for handling arguments, is that the generic function
@@ -2339,7 +2347,7 @@ or will level the playing field in favor of new languages, static or dynamic.
 @exercise[#:difficulty "Easy"]{
   Read and make sense of the code I wrote for this chapter,
   that you may find e.g. at
-  @url{https://github.com/metareflection/poof/blob/main/util/pommette.scm}
+  @url{https://github.com/metareflection/poof/blob/main/pommette/pommette.scm}
   Or to make things harder, first try as much of the exercises as possible
   without reading my code.
 }

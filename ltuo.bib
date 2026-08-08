@@ -26,8 +26,7 @@ Instructions for bibliography assistant:
    Prefer Unicode characters to TeX escape sequences.
 * Don't make up data. If you don't have the data, leave the corresponding entry empty.
 
-@preamble{
-}
+  @preamble{}
 
 %% 1843
 
@@ -1410,7 +1409,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-% First version 1981, see ECAI 1982 paper
+% First version 1981 KB-VLSI-81-13,
+% see lost 1982 PARC report "LOOPS: Data and Object Oriented Programming for Interlisp" (ECAI 1982 paper?)
 % Borning & Ingalls 1982 cite an early 1982 version of this paper
 % TODO: confirm no generic function, see what they call "messages"?
 % G. for Gureasko
@@ -1761,6 +1761,29 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 %% 1987
+
+% Journal version https://dreamsongs.com/Files/LASC-overview.pdf
+@InProceedings{DeMichiel1987,
+  author={Linda G. DeMichiel and Richard P. Gabriel},
+  title={The Common Lisp Object System: An Overview},
+  booktitle={ECOOP 1987},
+  series={Lecture Notes in Computer Science},
+  volume={276},
+  pages={151–170},
+  publisher={Springer},
+  year={1987},
+  doi={10.1007/3-540-47891-4_15},
+  url={https://dreamsongs.com/Files/clos-overview.pdf},
+  note={
+    Earliest published overview of CLOS, including
+    generic functions, multiple dispatch and method-combinations.
+    The 1987 version of CLOS was somewhat incomplete, compared the 1988 version
+    that officially made it to the standard: the API is not as nice
+    and notably lacking with respect to the object (re)initialization protocol.
+    Still, the essential design and most major features are there.
+    Journal version LASC 1 (1989).
+  }
+}
 
 @article{Ungar1987,
   title={SELF: The power of simplicity},

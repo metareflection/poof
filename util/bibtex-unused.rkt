@@ -5,6 +5,7 @@
 ;; This module does not modify Scribble and does not assume a bibliography path.
 
 (require racket/list
+         racket/match
          racket/port
          racket/string
          scriblib/autobib
@@ -67,11 +68,19 @@
       key))
 
   (define (report-unused-bibtex [out (current-error-port)])
-    (let ([ks (unused-bibtex-keys)])
-      (when (pair? ks)
-       (fprintf out "Unused bibliography entries:\n~a" (car ks))
-       (for ([key (in-list (cdr ks))]) (fprintf out " ~a" key))
-       (newline out)))
+    (let* ([ltbs (length keys-in-order)]
+           [ubs (unused-bibtex-keys)]
+           [lubs (length ubs)]
+           [db (path->bibdb bib-path)])
+      (match-define (bibdb raw bibs) db)
+      (define ldb (hash-count raw))
+      (fprintf out "~a bibliography entries total" ltbs)
+      (unless (= ldb ltbs)
+        (fprintf out ", but ~a in db" ldb))
+      (unless (zero? lubs)
+        (fprintf out ", ~a used, ~a unused:\n~a" (- ltbs lubs) lubs (car ubs))
+        (for ([key (in-list (cdr ubs))]) (fprintf out " ~a" key)))
+      (newline out))
     ;; A value suitable for an at-expression in a Scribble document.
     null)
 
@@ -140,44 +149,66 @@
         [(char=? (string-ref source position) #\,) position]
         [else (loop (add1 position))])))
 
-  ;; Skip a whole {...} or (...) form. Braces shield parentheses in a
-  ;; parenthesized entry, as required for values such as {A title (draft)}.
+  ;; Skip a whole {...} or (...) form.  In a brace-delimited entry, braces
+  ;; determine the extent of the form even when they contain literal quote
+  ;; characters.  In a parenthesis-delimited entry, parentheses inside a
+  ;; braced or quoted value do not affect the outer parenthesis balance.
   (define (form-end opening-position opening)
-    (define closing (if (char=? opening #\{) #\} #\)))
-    (let loop ([position (add1 opening-position)]
-               [depth 1]
-               [brace-depth 0]
-               [quoted? #f]
-               [escaped? #f])
-      (cond
-        [(at-end? position) length]
-        [else
-         (define character (string-ref source position))
+    (cond
+      [(char=? opening #\{)
+       (let loop ([position (add1 opening-position)]
+                  [depth 1]
+                  [escaped? #f])
          (cond
-           [escaped?
-            (loop (add1 position) depth brace-depth quoted? #f)]
-           [(char=? character #\\)
-            (loop (add1 position) depth brace-depth quoted? #t)]
-           [(char=? character #\")
-            (loop (add1 position) depth brace-depth (not quoted?) #f)]
-           [quoted?
-            (loop (add1 position) depth brace-depth #t #f)]
-           [(and (char=? opening #\() (char=? character #\{))
-            (loop (add1 position) depth (add1 brace-depth) #f #f)]
-           [(and (char=? opening #\()
-                 (char=? character #\})
-                 (positive? brace-depth))
-            (loop (add1 position) depth (sub1 brace-depth) #f #f)]
-           [(positive? brace-depth)
-            (loop (add1 position) depth brace-depth #f #f)]
-           [(char=? character opening)
-            (loop (add1 position) (add1 depth) brace-depth #f #f)]
-           [(char=? character closing)
-            (if (= depth 1)
-                (add1 position)
-                (loop (add1 position) (sub1 depth) brace-depth #f #f))]
+           [(at-end? position) length]
            [else
-            (loop (add1 position) depth brace-depth #f #f)])])))
+            (define character (string-ref source position))
+            (cond
+              [escaped?
+               (loop (add1 position) depth #f)]
+              [(char=? character #\\)
+               (loop (add1 position) depth #t)]
+              [(char=? character #\{)
+               (loop (add1 position) (add1 depth) #f)]
+              [(char=? character #\})
+               (if (= depth 1)
+                   (add1 position)
+                   (loop (add1 position) (sub1 depth) #f))]
+              [else
+               (loop (add1 position) depth #f)])]))]
+      [else
+       (let loop ([position (add1 opening-position)]
+                  [depth 1]
+                  [brace-depth 0]
+                  [quoted? #f]
+                  [escaped? #f])
+         (cond
+           [(at-end? position) length]
+           [else
+            (define character (string-ref source position))
+            (cond
+              [escaped?
+               (loop (add1 position) depth brace-depth quoted? #f)]
+              [(char=? character #\\)
+               (loop (add1 position) depth brace-depth quoted? #t)]
+              [(char=? character #\")
+               (loop (add1 position) depth brace-depth (not quoted?) #f)]
+              [quoted?
+               (loop (add1 position) depth brace-depth #t #f)]
+              [(char=? character #\{)
+               (loop (add1 position) depth (add1 brace-depth) #f #f)]
+              [(and (char=? character #\}) (positive? brace-depth))
+               (loop (add1 position) depth (sub1 brace-depth) #f #f)]
+              [(positive? brace-depth)
+               (loop (add1 position) depth brace-depth #f #f)]
+              [(char=? character #\()
+               (loop (add1 position) (add1 depth) brace-depth #f #f)]
+              [(char=? character #\))
+               (if (= depth 1)
+                   (add1 position)
+                   (loop (add1 position) (sub1 depth) brace-depth #f #f))]
+              [else
+               (loop (add1 position) depth brace-depth #f #f)])]))]))
 
   (let loop ([position 0] [reversed-keys null])
     (define at-position (find-at position))
