@@ -38,6 +38,9 @@ https://wiki.c2.com/?PrototypeBasedLanguage
 
 @ https://www.quora.com/Why-is-functional-programming-seen-as-the-opposite-of-OOP-rather-than-an-addition-to-it/answer/Henry-Story
 
+@ https://www.quora.com/How-did-the-concept-of-inheritance-develop-in-programming-languages-and-who-played-key-roles-in-its-evolution/answer/Fran%C3%A7ois-Ren%C3%A9-Rideau
+@ https://www.quora.com/How-do-cognitive-biases-influence-the-perceived-opposition-between-functional-and-object-oriented-programming/answer/Fran%C3%A7ois-Ren%C3%A9-Rideau
+
 More digging on the origins of OO:
 https://x.com/Ngnghm/status/1898493837040849348
 
@@ -75,7 +78,7 @@ https://www.jot.fm/issues/issue_2005_01/column2/
 
 @ Jonathan Aldrich workshop paper on capability-safe reflection and an ECOOP on modular reasoning in aspect-oriented programming (the latter a bit dated now).
 
-https://github.com/fogus/lang-genealogy
+@ https://github.com/fogus/lang-genealogy
 
 @ https://research.scheme.org/lambda-papers/
 
@@ -140,20 +143,13 @@ https://t.co/N9XvyHzwtO https://uc741c837fd0942d84d7b2c06c6a.dl.dropboxuserconte
 
 @ https://openlibrary.org/books/OL387681M/Prototype-based_programming
 
-@ https://www.quora.com/How-did-the-concept-of-inheritance-develop-in-programming-languages-and-who-played-key-roles-in-its-evolution/answer/Fran%C3%A7ois-Ren%C3%A9-Rideau
-
-@ https://www.quora.com/How-do-cognitive-biases-influence-the-perceived-opposition-between-functional-and-object-oriented-programming/answer/Fran%C3%A7ois-Ren%C3%A9-Rideau
-
-@ https://www.cs.cmu.edu/~crary/819-f09/Landin66.pdf
-
 @ PLOT, 2006-2008 http://users.rcn.com/david-moon/PLOT/index.html
 
 @ https://parentheticallyspeaking.org/articles/bicameral-not-homoiconic/
 
-@ lazy evaluation (Friedman & Wise 1976)
-
 @ Alan Kay
 https://www.mail-archive.com/fonc@vpri.org/msg03121.html
+https://www.quora.com/What-is-the-Chronology-of-Early-OOP-see-self-answer-for-details/answer/Alan-Kay-11
 
 @ Ole-Johan Dahl. 2004. The Birth of Object Orientation: the Simula Languages. In Lecture Notes in Computer Science. Springer Berlin Heidelberg, 15–25. https://doi.org/10.1007/978-3-540-39993-3_3
 https://sci-hub.ru/10.1007/978-3-540-39993-3_3
@@ -181,3 +177,172 @@ https://www.korulang.org/
 @ Profunctor Optics: The Categorical View
 https://golem.ph.utexas.edu/category/2020/01/profunctor_optics_the_categori.html
 
+
+@misc{Wilson2007AbstractionCompression,
+  author={Greg Wilson},
+  title={Abstraction, Compression, and Errors},
+  year={2007},
+  url={https://third-bit.com/2007/01/12/abstraction-compression-and-errors/},
+  note={Blog post explicitly phrasing high-level programming abstractions as compression mechanisms, in response to Veldhuizen's work; useful as a concise pedagogical statement rather than a primary research source.}
+}
+
+@inproceedings{Veldhuizen2005Reuse,
+  author={Todd L. Veldhuizen},
+  title={Software Libraries and Their Reuse: Entropy, Kolmogorov Complexity, and Zipf's Law},
+  booktitle={Proceedings of the 2005 OOPSLA Workshop on Library-Centric Software Design},
+  year={2005},
+  doi={10.48550/arXiv.cs/0508023},
+  url={https://arxiv.org/abs/cs/0508023},
+  note={Probably the closest precedent: explicitly analyzes software reuse as compression using information theory and Kolmogorov complexity, and argues that domain entropy bounds possible reuse.}
+}
+
+@inproceedings{Veldhuizen2007Parsimony,
+  author={Todd L. Veldhuizen},
+  title={Parsimony Principles for Software Components and Metalanguages},
+  booktitle={Proceedings of the 6th International Conference on Generative Programming and Component Engineering},
+  pages={115--122},
+  year={2007},
+  doi={10.1145/1289971.1289992},
+  url={https://arxiv.org/abs/0707.4166},
+  note={Treats software as communication, libraries as codebooks, abstractions as motifs and reuse as compression; uses MDL to balance abstraction implementation cost against adaptation cost.}
+}
+
+@inproceedings{Veldhuizen2006Tradeoffs,
+  author={Todd L. Veldhuizen},
+  title={Tradeoffs in Metaprogramming},
+  booktitle={Proceedings of the 2006 ACM SIGPLAN Symposium on Partial Evaluation and Semantics-Based Program Manipulation},
+  pages={150--159},
+  year={2006},
+  doi={10.1145/1111542.1111569},
+  url={https://arxiv.org/abs/cs/0512065},
+  note={Uses computability theory to reason about tradeoffs among succinctness, expressive power and safety in metaprogramming; relevant to the cost of stronger abstraction mechanisms.}
+}
+
+@article{Damasevicius2006Abstraction,
+  author={Robertas Damaševičius},
+  title={On the Quantitative Estimation of Abstraction Level Increase in Metaprograms},
+  journal={Computer Science and Information Systems},
+  volume={3},
+  number={1},
+  pages={53--64},
+  year={2006},
+  doi={10.2298/CSIS0601053D},
+  url={https://doi.org/10.2298/CSIS0601053D},
+  note={Estimates abstraction-level increase by comparing information content at domain and meta levels using Kolmogorov complexity approximated by compression.}
+}
+
+@article{Barron1998MDL,
+  author={Andrew Barron and Jorma Rissanen and Bin Yu},
+  title={The Minimum Description Length Principle in Coding and Modeling},
+  journal={IEEE Transactions on Information Theory},
+  volume={44},
+  number={6},
+  pages={2743--2760},
+  year={1998},
+  doi={10.1109/18.720554},
+  url={https://doi.org/10.1109/18.720554},
+  note={Standard MDL reference: useful for grounding the analogy between choosing abstractions and choosing models that minimize model plus data-description length.}
+}
+
+@book{Li2008Kolmogorov,
+  author={Ming Li and Paul M. B. Vitányi},
+  title={An Introduction to Kolmogorov Complexity and Its Applications},
+  edition={3},
+  publisher={Springer},
+  year={2008},
+  doi={10.1007/978-0-387-49820-1},
+  url={https://doi.org/10.1007/978-0-387-49820-1},
+  note={Foundational reference for algorithmic information theory; supplies the theoretical background behind program-size and compression-based notions of abstraction.}
+}
+
+@book{Halstead1977SoftwareScience,
+  author={Maurice H. Halstead},
+  title={Elements of Software Science},
+  publisher={Elsevier North-Holland},
+  year={1977},
+  note={Early attempt to build a quantitative science of software from program vocabulary, length and volume; historically important even if not directly about abstraction as compression.}
+}
+
+@inproceedings{Kiczales1997AOP,
+  author={Gregor Kiczales and John Lamping and Anurag Mendhekar and Chris Maeda and Cristina Videira Lopes and Jean-Marc Loingtier and John Irwin},
+  title={Aspect-Oriented Programming},
+  booktitle={ECOOP 1997: Object-Oriented Programming},
+  series={Lecture Notes in Computer Science},
+  volume={1241},
+  pages={220--242},
+  publisher={Springer},
+  year={1997},
+  doi={10.1007/BFb0053381},
+  url={https://doi.org/10.1007/BFb0053381},
+  note={Canonical paper on cross-cutting concerns; relevant because cross-cutting aspects are exactly what create combinatorial pressure on single inheritance.}
+}
+
+@inproceedings{Tarr1999NDegrees,
+  author={Peri Tarr and Harold Ossher and William Harrison and Stanley M. Sutton Jr.},
+  title={N Degrees of Separation: Multi-Dimensional Separation of Concerns},
+  booktitle={Proceedings of the 21st International Conference on Software Engineering},
+  pages={107--119},
+  year={1999},
+  doi={10.1145/302405.302457},
+  url={https://doi.org/10.1145/302405.302457},
+  note={Argues that concerns are multi-dimensional and that available formalisms constrain decomposition; directly relevant to why single inheritance forces clumping.}
+}
+
+@inproceedings{Harrison1993SubjectOriented,
+  author={William Harrison and Harold Ossher},
+  title={Subject-Oriented Programming: A Critique of Pure Objects},
+  booktitle={Proceedings of the Eighth Annual Conference on Object-Oriented Programming Systems, Languages, and Applications},
+  pages={411--428},
+  year={1993},
+  doi={10.1145/167962.165932},
+  url={https://doi.org/10.1145/167962.165932},
+  note={Early attack on the idea that one class hierarchy can capture all views of an object; relevant to the context-multiplicity failure of single inheritance.}
+}
+
+@article{Batory2004Scaling,
+  author={Don Batory and Jacob Neal Sarvela and Axel Rauschmayer},
+  title={Scaling Step-Wise Refinement},
+  journal={IEEE Transactions on Software Engineering},
+  volume={30},
+  number={6},
+  pages={355--371},
+  year={2004},
+  doi={10.1109/TSE.2004.23},
+  url={https://doi.org/10.1109/TSE.2004.23},
+  note={Foundational feature-oriented/product-line paper; relevant to modeling useful concrete programs as combinations of feature refinements.}
+}
+
+@article{Ellis2023DreamCoder,
+  author={Kevin Ellis and Lionel Wong and Maxwell Nye and Mathias Sable-Meyer and Luc Cary and Lucas Morales and Luke Hewitt and Armando Solar-Lezama and Joshua B. Tenenbaum},
+  title={DreamCoder: Growing Generalizable, Interpretable Knowledge with Wake-Sleep Bayesian Program Learning},
+  journal={Philosophical Transactions of the Royal Society A},
+  volume={381},
+  number={2251},
+  year={2023},
+  doi={10.1098/rsta.2022.0050},
+  url={https://doi.org/10.1098/rsta.2022.0050},
+  note={Modern library-learning system that grows a domain-specific language by discovering reusable abstractions; useful modern parallel to abstraction as corpus compression.}
+}
+
+@article{Bowers2023Stitch,
+  author={Matthew Bowers and Theo X. Olausson and Lionel Wong and Gabriel Grand and Joshua B. Tenenbaum and Kevin Ellis and Armando Solar-Lezama},
+  title={Top-Down Synthesis for Library Learning},
+  journal={Proceedings of the ACM on Programming Languages},
+  volume={7},
+  number={POPL},
+  pages={1182--1213},
+  year={2023},
+  doi={10.1145/3571234},
+  url={https://doi.org/10.1145/3571234},
+  note={Introduces Stitch, a system for synthesizing abstractions that maximize shared structure in a corpus of programs; directly relevant to measuring abstractions by compressivity.}
+}
+
+@inproceedings{Grand2024LILO,
+  author={Gabriel Grand and Lionel Wong and Maddy Bowers and Theo X. Olausson and Muxin Liu and Joshua B. Tenenbaum and Jacob Andreas},
+  title={LILO: Learning Interpretable Libraries by Compressing and Documenting Code},
+  booktitle={International Conference on Learning Representations},
+  year={2024},
+  doi={10.48550/arXiv.2310.19791},
+  url={https://arxiv.org/abs/2310.19791},
+  note={Recent neurosymbolic system that explicitly frames refactoring as synthesizing and documenting reusable libraries by compressing code.}
+}

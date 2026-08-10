@@ -5,7 +5,7 @@
 
 @title[#:tag "Intro"]{Introduction}
 
-@section{Wherefore this Book}
+@section{Wherefore the Book}
 @subsection{Curiosity about OO, Familiarity with FP}
 @epigraph{It was probably in 1967 when someone asked me what I was doing,
  and I said: “It’s object-oriented programming”. @|#:- "Alan Kay"|
@@ -133,7 +133,7 @@ It would be nice to hear a few of my old colleagues tell me:
 “so @emph{that} is what OO was about all along!”
 But I have little hope of convincing many in the old generations
 of the benefits of OO done right
-(yes, I am one of those Lispers bragging about how their 1988 OO system
+(yes, I am one of those Lispers bragging about how our 1988 OO system
 is still decades ahead of yours).
 And even if I did, they will be retiring soon.
 However, a new generation of programmers is born every year,
@@ -148,8 +148,8 @@ Instead, teach them to yearn for the vast and endless sea.
 @|#:- "Antoine de Saint-Exupéry, creatively misquoted."|
 }
 I actually think OO is a fantastic programming paradigm to build software,
-one that I tremendously enjoy when I use it in Lisp, and miss when I can’t.
-But what passes for OO in mainstream programming languages disappoints me.
+one that I tremendously enjoy when I can use it in Lisp, and miss when I can’t.
+But what passes for OO in mainstream programming languages, ahem, disappoints me.
 
 When I mention OO becoming boring, then forgotten, or talk of nailing its coffin,
 I’m not celebrating OO’s decline.
@@ -175,7 +175,7 @@ OO can be so much more than you “blub” programmers can even imagine@xnote[".
   Blub is how Lispers disparagingly call less expressive languages, after @citet{Graham2001avg}.
   Graham notably wrote two books on Lisp, with interesting chapters on OO
   @~cite{Graham1994 Graham1995}.
-  He is however rightfully skeptical of the overuse of OO in corporate software
+  He was however rightfully skeptical of the overuse of OO in corporate software
   @~cite{Graham2001noop}.
 }
 
@@ -216,7 +216,7 @@ In writing this book, I am sharing the treasure map with you.
   Write your own book about OO. Show me how it’s done.
 }
 
-@section{Why this Book}
+@section{Why the Book}
 @epigraph{If there’s a book you really want to read but it hasn’t been written yet,
   then you must write it. @|#:- "Toni Morrison"|
 }
@@ -244,7 +244,7 @@ So I tried to get the Good News out, by getting a paper published.
 And I did get a paper published eventually @~cite{Rideau2021},
 but only at the Scheme Workshop, a small venue of sympathetic Lispers,
 who already understood half of it and did not need much effort to understand the rest,
-but who already had plenty of good object systems to play with.
+and already had plenty of good object systems to play with.
 Meanwhile, my repeated attempts at publishing in more mainstream
 Computer Science conferences or journals were met with incomprehension—also
 with great technical feedback, of course, that helped me learn and improve a lot,
@@ -263,13 +263,13 @@ But that takes a lot of time and space. For me. And for my readers.
 Resources that we both lack, especially scientific publications
 limited to 12-25 pages, depending on the venue@xnote["."]{
   Even a journal, with articles sometimes up to 70 pages,
-  would require splitting the content of this book into four parts;
-  maybe more, because each part would have to spend a good chunk of its page limit
-  to summarize enough of what comes before so that the current part is understandable,
+  would require splitting the content of this book into at least five parts;
+  many more actually, because each part would have to spend a good chunk of its page limit
+  just so as to summarize enough of what comes before so that the current part is understandable,
   and enough of what comes after so that it doesn’t appear pointless or petty.
   This is much more effort than just writing a book,
   an already costly and time-consuming endeavor.
-  Splitting the same content over a dozen or more 25-page papers would be even more work.
+  Splitting the same content over dozens of 25-page papers would be even more work.
   And so, as Pascal wrote about one of his letters:
   @italic{Je n’ai fait celle-ci plus longue que parce que
           je n’ai pas eu le loisir de la faire plus courte.}
@@ -326,7 +326,8 @@ Ideas that are hard to communicate to “frogs”,
 who don’t think at a high enough level of abstraction.
 And I suspect that even other “birds” who do think at a high enough level, sometimes higher,
 not being aphantasiac, are overwhelmed or distracted by their visual imagery,
-and miss structural patterns I perceive non-visually.
+and miss structural patterns I perceive non-visually
+(while, I presume, being able to easily see other patterns I struggle to perceive).
 
 However in the case of this book on Object Orientation,
 there is the difference that I actually have
@@ -340,7 +341,8 @@ and maintaining two object systems for Gerbil Scheme@~cite{Vyzovitis2016 Rideau2
 OO is a topic both easier and more concrete, in general and for me in particular.
 A topic in which I have direct experience as a frog,
 and where I can stand as a bird on the shoulders of giants
-who already solved many of the foundational problems.
+who already solved all the foundational problems,
+leaving a puzzle for which there only remains to fit the pieces together.
 On this mature topic, I am ready and capable, and can explain a complete Theory of OO
 that is also fully implemented and immediately usable.
 
@@ -396,7 +398,7 @@ but that I can share in the form of a book.
   They need not be books, and need not be about OO.
 }
 
-@section{What this Book}
+@section{What the Book}
 
 @subsection[#:tag "aToOO"]{A Theory of OO}
 @epigraph{There is nothing so practical as a good theory.
@@ -679,7 +681,7 @@ a better inheritance algorithm with which to improve your existing (or future) l
   or an optimal strategy to pick which variant in which circumstances.
 }
 
-@section{How this Book}
+@section{How the Book}
 
 @subsection{Plan of the Book}
 @epigraph{

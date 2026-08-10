@@ -314,11 +314,14 @@ Here is a Scheme implementation of the same idea,
 where the prefix @c{rproto} denotes a prototype implemented as a record,
 and my magic key is @c{#f}, the boolean false value,
 instead of some reserved symbol,
-so it doesn’t impede the free use of arbitrary symbols as keys.
+so it doesn’t impede the free use of arbitrary symbols as keys
+(other languages might use a reserved string for the purpose;
+for instance, Nix uses @c{"__unfix__"}).
 The function @c{rproto←spec} is used to define a prototype from a specification,
 by prepending a special specification @c{rproto-wrapper} in front
-that deals with remembering the provided specification;
-this function is used implicitly when composing prototypes using inheritance
+that deals with remembering the provided specification
+(an optimized equivalent to @c{(λ (spec super _self) (extend-record #f spec super))}).
+This function is used implicitly when composing prototypes using inheritance
 with the @c{rproto-mix} function.
 The function @c{spec←rproto} extracts the specification from a prototype,
 so you may inherit from it; this specifically doesn’t include the @c{rproto-wrapper},
@@ -327,7 +330,7 @@ The function @c{target←rproto} extracts the target from a prototype,
 so you may call methods on it—it is the identity function, and
 you can often inline it away.
 @Code{
-(def (rproto-wrapper spec super self method-id)
+(def (rproto-wrapper spec super _self method-id)
   (if method-id (super method-id) spec))
 (def (rproto←spec spec)
   (fix-record (mix spec (rproto-wrapper spec))))

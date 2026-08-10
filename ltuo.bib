@@ -312,6 +312,7 @@ Instructions for bibliography assistant:
   year={1966},
   month=mar,
   doi={10.1145/365230.365257},
+  url={https://www.cs.cmu.edu/~crary/819-f09/Landin66.pdf},
   note={.
     This landmark paper introduces the hypothetical language ISWIM (If you See What I Mean),
     a specializable backbone for programming languages with on a spine based on
@@ -394,24 +395,25 @@ Instructions for bibliography assistant:
 % Making it a Booklet, but maybe it's a TechReport?
 % Re-printed as chapter in 2002 "Software Pioneers: Contributions to Software Engineering"
 @Booklet{Simula1967,
-  author={Dahl, Ole-Johan and Nygaard, Kristen},
+  author={Ole-Johan Dahl and Kristen Nygaard},
   title={Class and subclass declarations},
   year={1967},
   url={https://www.ub.uio.no/fag/naturvitenskap-teknologi/informatikk/faglig/dns/dokumenter/classandsubclass1967.pdf},
   note={.
     THE breakthrough paper that leads to OO,
-    though we can debate whether it is itself OO as such;
-    not in the modern form made popular by Smalltalk, at least.
+    though we can debate whether it is itself OO as such—not in the modern form
+    made popular by Smalltalk, at least.
     Dahl and Nygaard implement classes for the first time.
-    They do not have the word “inheritance”, but the concept is there somehow.
-    A class may have a “prefix class” and “subclasses” of which it is the prefix class.
-    Its ancestry is its “prefix sequence”, weirdly kept in most- to least- specific order.
-    The keyword “this” is introduced that C++ will popularize.
+    They do not have the word “inheritance”, but the basic concept is there:
+    a class may have a “prefix class” and “subclasses” of which it is the prefix class.
+    Its ancestry is its “prefix sequence”, interestingly kept in most- to least- specific order.
+    As in Hoare 1965, “objects” have “attributes”.
+    The keyword “this” is introduced that C++ will popularize
+    to refer to other attributes of the current object.
     Because a prefix class may also include suffix code,
     the “body” for subclasses can be “split” with the keyword “inner”
     that pinpoints where to put the body of subclasses (by default, at the end).
-    The successor BETA will also follow this approach.
-    As in Hoare 1965, “objects” have “attributes”.
+    The successor BETA will also basically follow this approach.
   }
 }
 
@@ -430,12 +432,14 @@ Instructions for bibliography assistant:
 
 %% 1968
 
-% More condensed than the above, with more language context
 @Misc{Simula1968,
   Author={Ole-Johan Dahl and Bjørn Myhrhaug and Kristen Nygaard},
   Title={SIMULA 67 Common Base Language},
   Year={1968},
-  url={https://web.archive.org/web/20131225084408/http://www.edelweb.fr/Simula/scb-1.pdf}
+  url={https://web.archive.org/web/20131225084408/http://www.edelweb.fr/Simula/scb-1.pdf},
+  note={
+    More condensed than the 1967 presentation on classes, with more language context.
+  }
 }
 
 @TechReport{deBruijn1968,
@@ -3908,6 +3912,9 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
+% In the context of how functional style without OO
+% requires you to rewrite everything for every variant of a data structure,
+% rather than only the difference from known templates you inherit from.
 @PhDThesis{Okasaki1996,
   author={Chris Okasaki},
   title={Purely Functional Data Structures},
@@ -5122,6 +5129,7 @@ and Fiech, Adrian",
 %% 2011
 
 % From the Fortress team
+% TODO: see its bibliography for more papers to read
 @InProceedings{Allen2011,
   title={Type checking modular multiple dispatch with parametric polymorphism and multiple inheritance},
   author={Allen, Eric and Hilburn, Justin and Kilpatrick, Scott and Luchangco, Victor and Ryu, Sukyoung and Chase, David and Steele, Guy},

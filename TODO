@@ -1,6 +1,8 @@
 - [ ] Parse \emph and more (La)TeX idioms in bibtex.rkt, rendering them properly.
 - [ ] Move Cook controversy from footnotes to chapter 3
 - [ ] Move OO history to chapter 4
+- [ ] Promote POI from exercise to canon in chapter 7 and 9.
+- [ ] Go over all TODOs in the book
 
 It's not "recent research" so much as simplification and extraction of the essence of OO, as developed since the late 1960s, reduced to its core and implemented since the late 1970s, formalized since the late 1980s, made ubiquitous since the late 1990s, rediscovered in a pure functional setting in the late 2000s, and finally done right since the late 2010s.
 
@@ -84,22 +86,6 @@ PꚘF, pꚙf
 
 
 
-
------->8------>8------>8------>8------>8------>8------>8------>8------>8------
-We elucidate the essence of Object-Oriented Programming (OOP)
-using a constructive approach: we identify a minimal basis of concepts with which to synthesize existing and potential object systems. We reduce them to constructions atop the pure untyped lambda calculus, thereby obtaining both denotational semantics and effective implementation.
-
-We start from the simplest recognizable model of prototype-based OOP, so simple it arguably does not even have “objects” as such. We build further models of increasing sophistication, reproducing a growing subset of features found in past object systems, including original combinations.
-
-We discuss how to deal with issues like types, modularity, classes, mutation—and associated tradeoffs. We use Scheme to illustrate our approach.
------->8------>8------>8------>8------>8------>8------>8------>8------>8------
-
-This talk is a reprise of a paper and talk given at the Scheme Workshop 2021 (in a work done with Alex Knauth and Nada Amin)—with new answers to a couple of then-open questions. The code can be presented in any language with lambdas, and we'll be glad to use whichever language the audience is most familiar with (please advise). Lazy evaluation is slightly preferred (or else side-effects to emulate it). However, subtyping is required for non-trivial types (type discussion included in the talk). The ideas go back to the 1970s and their formalization to the early 1990s, but some of the developments are recent and the point of view on putting it all together is fresh.
-
-
-
------->8------>8------>8------>8------>8------>8------>8------>8------>8------
-
 type Lens s t a b = forall f. Functor f => (a -> f b) -> (s -> f t)
 
 lens: Lens super self inherited field | self <: super | field <: inherited
@@ -111,8 +97,6 @@ mix :: Mixin self super -> Mixin super sup2 -> Mixin self sup2
 mix child parent self super = child self (parent self super)
 
 
-
-
 methodOverride :: (self <: super, method <: inherited) => Lens super self inherited method -> (self inherited -> method) -> Mixin self super
 methodOverride lens body self super = lens (body self) super
 
@@ -120,30 +104,12 @@ lensedMixin :: (self <: super, method <: inherited) => Lens super self inherited
 lensedMixin lens mixin self super = over lens (mixin (get lens self)) super
 
 
-
-
------->8------>8------>8------>8------>8------>8------>8------>8------>8------
-;; ------>8------>8------>8------>8------>8------>8------>8------>8------>8------
-#| Different variant of prototypes, wherein self is lazy.
-(define (fix^ p t) (define s (p (delay s) t)) s)
-(define (((slot^ k v^) s^ t) m) (if (eq? m k) (force v) (t k)))
-(define (((slotGen^ k f) s^ t) m) (if (eq? m k) (f s^ (delay (t k))) (t k)))
-|#
-
-
-
-    ($section "Conclusion: OO is FP"
-     $plan-slide
      ($slide "Pure Functional Prototypes are Cool"
         @Li{Great for Theory}
         @Li{Great for Practice}
         @Li{Yields Great Insights}
         @Li{Incremental, Modular, Concise code})
 
-
-https://docs.racket-lang.org/scribble/extra-style.html
-
-https://www.quora.com/What-is-the-Chronology-of-Early-OOP-see-self-answer-for-details/answer/Alan-Kay-11?__filter__=all&__nsrc__=notif_page&__sncid__=52254481076&__snid3__=70031974587
 
 - single vs multiple vs mixin inheritance
 - prototypes vs classes
@@ -175,10 +141,7 @@ https://www.quora.com/What-is-the-Chronology-of-Early-OOP-see-self-answer-for-de
 - instance update upon class change—and the even much more powerful smalltalk become
 - interactive systems vs programming languages
 
-See the bibliography of the Allen 2011 paper for more on multimethods, multiple inheritance.
 
-
-Okasaki Pure Functional Data Structures... in the context of how functional style without OO requires you to rewrite everything for every variant of a data structure, rather than only the difference from known templates you inherit from.
 
 There is no OO whatsoever at runtime in C++, only plain procedural imperative stateful programming.
 
@@ -213,10 +176,6 @@ CRDT: I'm using the modern name—just a fancy way of saying that whichever way 
 
 Look at "export" statements in objects of Scala 3.
 
-Get AI to find citations for TODO.
-
-https://european-lisp-symposium.org/2026/ Krakow. May 11-12. Submission deadline 2026.03.15
-
 
 @exercise[#:difficulty "Easy"]{
 }
@@ -245,7 +204,6 @@ e.g. How to Write a Great Research Paper, SPJ
 https://github.com/fare/projects/issues/7
 
 Ingalls 2020 => Smalltalk-76 work starts on the beach in August 1976--one month after KRL is published.
-
 
 
 @section{Inheritance as Code Compression}
@@ -436,174 +394,6 @@ large closer to single inheritance.
 https://chatgpt.com/g/g-p-6a0351f2f1348191981e419cf737223b/c/6a3e6777-9954-83ed-b5f6-341d5f476ac8
 
 
-@misc{Wilson2007AbstractionCompression,
-  author={Greg Wilson},
-  title={Abstraction, Compression, and Errors},
-  year={2007},
-  url={https://third-bit.com/2007/01/12/abstraction-compression-and-errors/},
-  note={Blog post explicitly phrasing high-level programming abstractions as compression mechanisms, in response to Veldhuizen's work; useful as a concise pedagogical statement rather than a primary research source.}
-}
-
-@inproceedings{Veldhuizen2005Reuse,
-  author={Todd L. Veldhuizen},
-  title={Software Libraries and Their Reuse: Entropy, Kolmogorov Complexity, and Zipf's Law},
-  booktitle={Proceedings of the 2005 OOPSLA Workshop on Library-Centric Software Design},
-  year={2005},
-  doi={10.48550/arXiv.cs/0508023},
-  url={https://arxiv.org/abs/cs/0508023},
-  note={Probably the closest precedent: explicitly analyzes software reuse as compression using information theory and Kolmogorov complexity, and argues that domain entropy bounds possible reuse.}
-}
-
-@inproceedings{Veldhuizen2007Parsimony,
-  author={Todd L. Veldhuizen},
-  title={Parsimony Principles for Software Components and Metalanguages},
-  booktitle={Proceedings of the 6th International Conference on Generative Programming and Component Engineering},
-  pages={115--122},
-  year={2007},
-  doi={10.1145/1289971.1289992},
-  url={https://arxiv.org/abs/0707.4166},
-  note={Treats software as communication, libraries as codebooks, abstractions as motifs and reuse as compression; uses MDL to balance abstraction implementation cost against adaptation cost.}
-}
-
-@inproceedings{Veldhuizen2006Tradeoffs,
-  author={Todd L. Veldhuizen},
-  title={Tradeoffs in Metaprogramming},
-  booktitle={Proceedings of the 2006 ACM SIGPLAN Symposium on Partial Evaluation and Semantics-Based Program Manipulation},
-  pages={150--159},
-  year={2006},
-  doi={10.1145/1111542.1111569},
-  url={https://arxiv.org/abs/cs/0512065},
-  note={Uses computability theory to reason about tradeoffs among succinctness, expressive power and safety in metaprogramming; relevant to the cost of stronger abstraction mechanisms.}
-}
-
-@article{Damasevicius2006Abstraction,
-  author={Robertas Damaševičius},
-  title={On the Quantitative Estimation of Abstraction Level Increase in Metaprograms},
-  journal={Computer Science and Information Systems},
-  volume={3},
-  number={1},
-  pages={53--64},
-  year={2006},
-  doi={10.2298/CSIS0601053D},
-  url={https://doi.org/10.2298/CSIS0601053D},
-  note={Estimates abstraction-level increase by comparing information content at domain and meta levels using Kolmogorov complexity approximated by compression.}
-}
-
-@article{Barron1998MDL,
-  author={Andrew Barron and Jorma Rissanen and Bin Yu},
-  title={The Minimum Description Length Principle in Coding and Modeling},
-  journal={IEEE Transactions on Information Theory},
-  volume={44},
-  number={6},
-  pages={2743--2760},
-  year={1998},
-  doi={10.1109/18.720554},
-  url={https://doi.org/10.1109/18.720554},
-  note={Standard MDL reference: useful for grounding the analogy between choosing abstractions and choosing models that minimize model plus data-description length.}
-}
-
-@book{Li2008Kolmogorov,
-  author={Ming Li and Paul M. B. Vitányi},
-  title={An Introduction to Kolmogorov Complexity and Its Applications},
-  edition={3},
-  publisher={Springer},
-  year={2008},
-  doi={10.1007/978-0-387-49820-1},
-  url={https://doi.org/10.1007/978-0-387-49820-1},
-  note={Foundational reference for algorithmic information theory; supplies the theoretical background behind program-size and compression-based notions of abstraction.}
-}
-
-@book{Halstead1977SoftwareScience,
-  author={Maurice H. Halstead},
-  title={Elements of Software Science},
-  publisher={Elsevier North-Holland},
-  year={1977},
-  note={Early attempt to build a quantitative science of software from program vocabulary, length and volume; historically important even if not directly about abstraction as compression.}
-}
-
-@inproceedings{Kiczales1997AOP,
-  author={Gregor Kiczales and John Lamping and Anurag Mendhekar and Chris Maeda and Cristina Videira Lopes and Jean-Marc Loingtier and John Irwin},
-  title={Aspect-Oriented Programming},
-  booktitle={ECOOP 1997: Object-Oriented Programming},
-  series={Lecture Notes in Computer Science},
-  volume={1241},
-  pages={220--242},
-  publisher={Springer},
-  year={1997},
-  doi={10.1007/BFb0053381},
-  url={https://doi.org/10.1007/BFb0053381},
-  note={Canonical paper on cross-cutting concerns; relevant because cross-cutting aspects are exactly what create combinatorial pressure on single inheritance.}
-}
-
-@inproceedings{Tarr1999NDegrees,
-  author={Peri Tarr and Harold Ossher and William Harrison and Stanley M. Sutton Jr.},
-  title={N Degrees of Separation: Multi-Dimensional Separation of Concerns},
-  booktitle={Proceedings of the 21st International Conference on Software Engineering},
-  pages={107--119},
-  year={1999},
-  doi={10.1145/302405.302457},
-  url={https://doi.org/10.1145/302405.302457},
-  note={Argues that concerns are multi-dimensional and that available formalisms constrain decomposition; directly relevant to why single inheritance forces clumping.}
-}
-
-@inproceedings{Harrison1993SubjectOriented,
-  author={William Harrison and Harold Ossher},
-  title={Subject-Oriented Programming: A Critique of Pure Objects},
-  booktitle={Proceedings of the Eighth Annual Conference on Object-Oriented Programming Systems, Languages, and Applications},
-  pages={411--428},
-  year={1993},
-  doi={10.1145/167962.165932},
-  url={https://doi.org/10.1145/167962.165932},
-  note={Early attack on the idea that one class hierarchy can capture all views of an object; relevant to the context-multiplicity failure of single inheritance.}
-}
-
-@article{Batory2004Scaling,
-  author={Don Batory and Jacob Neal Sarvela and Axel Rauschmayer},
-  title={Scaling Step-Wise Refinement},
-  journal={IEEE Transactions on Software Engineering},
-  volume={30},
-  number={6},
-  pages={355--371},
-  year={2004},
-  doi={10.1109/TSE.2004.23},
-  url={https://doi.org/10.1109/TSE.2004.23},
-  note={Foundational feature-oriented/product-line paper; relevant to modeling useful concrete programs as combinations of feature refinements.}
-}
-
-@article{Ellis2023DreamCoder,
-  author={Kevin Ellis and Lionel Wong and Maxwell Nye and Mathias Sable-Meyer and Luc Cary and Lucas Morales and Luke Hewitt and Armando Solar-Lezama and Joshua B. Tenenbaum},
-  title={DreamCoder: Growing Generalizable, Interpretable Knowledge with Wake-Sleep Bayesian Program Learning},
-  journal={Philosophical Transactions of the Royal Society A},
-  volume={381},
-  number={2251},
-  year={2023},
-  doi={10.1098/rsta.2022.0050},
-  url={https://doi.org/10.1098/rsta.2022.0050},
-  note={Modern library-learning system that grows a domain-specific language by discovering reusable abstractions; useful modern parallel to abstraction as corpus compression.}
-}
-
-@article{Bowers2023Stitch,
-  author={Matthew Bowers and Theo X. Olausson and Lionel Wong and Gabriel Grand and Joshua B. Tenenbaum and Kevin Ellis and Armando Solar-Lezama},
-  title={Top-Down Synthesis for Library Learning},
-  journal={Proceedings of the ACM on Programming Languages},
-  volume={7},
-  number={POPL},
-  pages={1182--1213},
-  year={2023},
-  doi={10.1145/3571234},
-  url={https://doi.org/10.1145/3571234},
-  note={Introduces Stitch, a system for synthesizing abstractions that maximize shared structure in a corpus of programs; directly relevant to measuring abstractions by compressivity.}
-}
-
-@inproceedings{Grand2024LILO,
-  author={Gabriel Grand and Lionel Wong and Maddy Bowers and Theo X. Olausson and Muxin Liu and Joshua B. Tenenbaum and Jacob Andreas},
-  title={LILO: Learning Interpretable Libraries by Compressing and Documenting Code},
-  booktitle={International Conference on Learning Representations},
-  year={2024},
-  doi={10.48550/arXiv.2310.19791},
-  url={https://arxiv.org/abs/2310.19791},
-  note={Recent neurosymbolic system that explicitly frames refactoring as synthesizing and documenting reusable libraries by compressing code.}
-}
 
 
 TODO: move all historical notes to an Appendix "A Revised History of Object-Orientation",
@@ -813,8 +603,6 @@ instead of only supporting a single privileged instance type.
 This makes prototypes a more general and more modular notion
 that can be used in multiple ways in a same language ecosystem.
 
-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLAH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
 
 @subsubsection[#:tag "keeping_extensibility_modular"]{Keeping Extensibility Modular}
 Specifying software with prototypes yet without objects works great,
@@ -1000,9 +788,6 @@ FP provides a robust foundation for OO,
 and should be a natural part of the OO ecosystem.
 
 
-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLEH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-
 Lack of awareness of this conflation
 can cause much confusion among students of OO.
 So can, to a lesser extent,
@@ -1030,9 +815,6 @@ that may not actually be essential to OO.
 }
 
 
-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLUH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-
 @item{Discuss how purity and laziness make OO more modular,
   and solve difficult initialization order issues (@seclink{laziness}).}
 @; ^ and are actually used in practice in most OO languages—but only at the metalevel.
@@ -1055,9 +837,6 @@ Many of the concepts and relationships we tackle have long been part of OO pract
 yet have been largely neglected in scientific literature and formalization attempts.
 
 
-@@@
-
-
 https://x.com/Ngnghm/status/1976680711345299533
 
 And believe, I've tried a lot to write code as OCaml modules before I gave up. I had to play a lot of games with module scaffolding, composing things eagerly as much as possible and concentrating the open recursion and its resolution to a few special records.
@@ -1071,7 +850,6 @@ Here we're talking development time, though.
 The Scheme code for my (merkle) tries, using Prototype OO, is 2.5 times smaller, simpler and less head-achy than the OCaml code using modules, with more functionality and better testing, because of all the module scaffolding I did not have to do (also 2.5x fewer entities).
 Single inheritance also gives you N² instead of N, but at least not N³ or N⁴.
 
-@@@@
 
 In the notable case of data records that may be later extended,
 which is most relevant to OO,
@@ -1080,7 +858,6 @@ mapping identifiers to field index in the record.
 These indexes may be cached between modifications, or wholly resolved at compile-time
 if the extension is external or second-class.
 
-@@@@
 
 
 @subsubsection{The Importance of Laziness}
@@ -1125,7 +902,6 @@ as in editing a file, or redefining a class in Smalltalk or Lisp,
 an extension is a function that side-effects a mutable reference of type @r[E],
 or something equivalent.
 
-@@@@
 
 A pure functional language without side-effects is the setting for the simplest and
 probably clearest model of modularity:
@@ -1148,7 +924,6 @@ and all kind of intermediary data structures.
 As we will soon see, when implementing OO, this modular context is typically called @c{self},
 to access (the rest of) the modularly (and extensibly) defined entity.
 
-@@@@
 
 "Code reuse".
 Hated by detractors to OO.
@@ -1157,7 +932,6 @@ Requires good factoring indeed.
 Maintainership burden that is not as thoughtless as duplicating code,
 yet ultimately more efficient since it doesn't require duplicating design and fixes.
 
-@@@@
 
 The issue then is that establishing set of indexed types for a closed modular definition
 requires knowledge of all modules, whereas, to preserve the principle of modularity,
@@ -1224,11 +998,12 @@ and each developer must make his choice. Your Mileage May Vary.
 Just make sure you agree with anyone else that you will be directly sharing code with.
 
 
-@; Flavors combination vs C++ conflict https://x.com/Ngnghm/status/1980509375232885161
-@; https://cs.pomona.edu/~kim/FOOPL/prelim.pdf
+Flavors combination vs C++ conflict https://x.com/Ngnghm/status/1980509375232885161
+https://cs.pomona.edu/~kim/FOOPL/prelim.pdf
 
-@; Discussion with James Noble and David Barbour: https://x.com/Ngnghm/status/1988891187340615763
-@; multiple inheritance
+
+Discussion with James Noble and David Barbour: https://x.com/Ngnghm/status/1988891187340615763
+multiple inheritance
 
 
 I see a potential for confusion:
@@ -1279,15 +1054,11 @@ such that linearization of specs must respect the partial order of sorts,
 or, which is stronger, the linearization of specs must respect the linearization of their sort.
 
 
-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX BLYH XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
 Double or "Comb" inheritance in NewtonScript: very similar to our prototypes + meta^n classes,
 with single inheritance each.
 https://www.newted.org/download/manuals/NewtonScriptProgramLanguage.pdf
 https://thenewobjective.com/types-and-programming-languages/comb-inheritance/
 
-
------->8------>8------>8------>8------>8------>8------>8------>8------>8------
 
 Purity vs Orphan Typeclasses in Haskell.
 

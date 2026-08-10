@@ -1980,7 +1980,7 @@ if there was no global linearization order on which to pre-sort them@xnote["."]{
   but the composed list-prependers have the advantage of remaining pure without a monad.
 }
 In any case, effective method computation can be quite slow, and
-the results are better cached for efficiency. @;{TODO @secref{ch10}}
+the results are better cached for efficiency. @;TODO @secref{ch10}
 Then, you only pay the price once per call “shape” (tuple of specifications),
 which if you are using static classes only happens a finite and relatively small
 number of times in the program—whereas emulating the same semantics the naive way
@@ -2355,7 +2355,7 @@ or will level the playing field in favor of new languages, static or dynamic.
 @exercise[#:difficulty "Easy"]{
   Implement the @emph{product} of two (or three, or more) lenses,
   that allows view and update of a pair (or list) of data each based on its lens.
-  Then, assuming you implemented POI as in @exercise-ref{exPOI},
+  Then, assuming you implemented POI or lifted my implementation as in @secref{POI},
   implement views, updates and lenses for POI—first
   for a tuple (e, s, p) of the extension, suffix flag and parent list list,
   then for the individual elements of that tuple.

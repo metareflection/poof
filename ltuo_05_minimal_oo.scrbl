@@ -802,7 +802,7 @@ the self-application combinator U (called Ue for U, eager)@Note{
 }@Note{
   Also note that the self-application combinator U @~cite{Kiselyov2024},
   sometimes called the duplication combinator Δ, or ω
-  (because @c{Ω = (ω ω)} is the canonical λ-term that never terminates),
+  (because @c{Ω = ω ω} is the canonical λ-term that never terminates),
   does the heavy lifting of the Y combinator,
   hence the double use of it in the definition of Y f = U (B f U).
   @; Y = S (K U) (S (S (K B) I) (K U)), where U = S I I

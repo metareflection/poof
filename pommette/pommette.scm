@@ -1003,8 +1003,8 @@ let Y = f: (x: x x) (x: f (x x));
 ;; TODO: fix this
 (def (spec→hspec spec hyper half)
   ;; eta-conversions necessary in eager context
-  (letrec ((self (λ (x) (half half x))) ;; (η (half half))
-           (super (λ (x) (hyper half x)))) ;; (η (hyper half))
+  (letrec ((self (η (half half))) ;; (λ (x) (half half x))
+           (super (η (hyper half)))) ;; (λ (x) (hyper half x))
     (spec super self)))
 
 (define u-comp (spec→hspec (mix* coord-spec area-spec (add-x-spec 1) color-spec)))
@@ -2015,7 +2015,7 @@ let Y = f: (x: x x) (x: f (x x));
    (my-c4* '((C B) (C A)))    => '(C B A O)   ;; C before both, B before A
    (my-c4* '((A B) (B C) (C A))) =>fail!))    ;; cycle: A<B<C<A
 
-;;;; 7.4 Prototype with Optimal Inheritance (POI)
+;;;; 7.4.6 Prototypes with Optimal Inheritance (POI)
 
 ;; POI is a prototype in the style of rproto, the spec accessible via #f
 ;;   'mod-ext         -> ModExt             -- this spec's own modular extension
@@ -2044,8 +2044,8 @@ let Y = f: (x: x x) (x: f (x x));
        (precedence-list (lambda () (car (precedence-list-and-suffix))))
        (suffix (lambda () (cdr (precedence-list-and-suffix))))
        (self (η (fix (record (#f spec))
-                     (apply mix* finalize-spec
-                            (reverse (cons mod-ext (map poi-mod-ext (precedence-list))))))))
+                  (apply mix* finalize-spec
+                         (reverse (cons mod-ext (map poi-mod-ext (precedence-list))))))))
        (spec
         (lambda (msg)
           (case msg

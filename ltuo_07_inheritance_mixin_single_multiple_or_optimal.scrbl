@@ -1075,7 +1075,7 @@ including many features and optimizations fits in few hundred lines of code@xnot
   including all runtime optimizations enabled by single inheritance where appropriate.
 }
 
-@subsection{Notes on Types for Multiple Inheritance}
+@subsection[#:tag "NoTfMI"]{Notes on Types for Multiple Inheritance}
 
 As usual, @c{effectiveModExt} works on open specifications,
 whereas @c{fixMISpec} only works on closed specifications.
@@ -1725,8 +1725,9 @@ to have its precedence list as a suffix of theirs.
 to determine if the specification is sealed,
 i.e. allows no further extensions @~cite{Shalit1996}.) @;{TODO cite Scala 2.9 ?}
 
-I give a complete Scheme implementation of C4 in the appendix,
-but informally, the algorithm is as follows,
+I give a complete Scheme implementation of C4 in the accompanying code for the book,
+the pommette library. It is also part of @(GerbilScheme) (in the v0.19 release branch and later),
+and of a C++ library I wrote, @c{c4-mixins}. Semi-informally, the algorithm is as follows,
 where the steps tagged with (C4) are those added to the C3 algorithm
 (remove them for plain C3):
 @itemize[#:style'ordered
@@ -1867,6 +1868,31 @@ suffix hierarchies usually remain shallow@xnote[","]{
 }
 so it’s a bit moot what to optimize for.
 
+The description above was enough to describe the algorithm to an AI
+trained before it was published and included in training sets (though long after C3 was).
+For the sake of this book, we will assume a function @c{c4-linearize} with six arguments:
+(1) a head to prepend to the list of ordered parents
+  (typically containing only the new sub-class itself in a recursive definition,
+  or an empty list, with the sub-class is prepended later);
+(2) the local order as a list of lists of ordered parents;
+(3) a function that extracts or computes from each parent its own precedence list,
+    starting with the parent itself;
+(4) a function that for each ancestor tells whether it is a suffix;
+(5) an equality predicate for ancestors;
+(6) for debugging only, a function that returns the name, id or representation of an ancestor,
+    to be displayed in error messages (or else @c{identity} to pass the object itself,
+    assuming the system can somehow display it).
+The function returns a pair of two values: (a) the precedence list, and
+(b) the most specific suffix specification, if any (or else @c{#f};
+    a strongly typed language could use an option, or a base struct shared by all).
+
+@;{
+Generated from spec
+2025-12-29 with Claude Sonnet 4.5 (?) https://claude.ai/share/9390a2bb-df09-430b-a3ec-299e06749c47
+2026-08-08 with Claude Opus 5 High: https://gist.github.com/fare/a1fd9c116940111fadfd120f68291445
+TODO: try with Deepseek4, that cannot recognize C4.
+}
+
 @subsection[#:tag "CTBH"]{C3 Tie-Breaking Heuristic: Extended Precedence}
 
 The constraints of C3 or C4 uniquely determine how to merge precedence lists:
@@ -1927,6 +1953,94 @@ must then be propagated consistently as the hierarchy is extended with further s
 Extended Precedence is a good systematic way to break symmetry, that is very understandable,
 indeed, as simple as can be, and further matches the naive depth-first traversal algorithm
 of the original Flavors and of Ruby in simple cases where the inheritance DAG is a tree.
+
+@subsection[#:tag "POI"]{Prototypes with Optimal Inheritance}
+
+I can now implement POI, Prototypes with Optimal Inheritance:
+a function @c{make-poi} accepts a modular extension @c{e},
+a boolean @c{s} that if true indicates that the specification is a suffix,
+and a list of totally ordered lists of direct parents @c{p},
+and returns prototype @c{poi} that conflates specification and target,
+in the style of @c{rproto} from @secref{CfR}:
+you can access a prototype target’s field by passing its identifier to the @c{poi} as a function;
+and you can access the prototype’s specification by instead passing a magic value
+(perhaps the top value, @c{#f} in Scheme);
+the specification field contains @c{e}, @c{s} and @c{p},
+but also a cache of the precedence list and the specification’s most specific suffix ancestor,
+as well as any other meta data.
+
+The accessors can be defined as below.
+As in the @c{rproto} of @secref{CfR}, the prototype is a record whose regular fields
+are those of the target, but that has a special field named @c{#f} (the false value)
+containing the specification meta-data.
+@Code{
+(def (poi-spec poi) (poi #f))
+(def (poi-precedence-list poi) (poi-spec poi 'precedence-list))
+(def (poi-suffix poi) (poi-spec poi 'suffix))
+(def (poi-mod-ext poi) (poi-spec poi 'mod-ext))
+(def (poi-suffix? poi) (poi-spec poi 'suffix?))
+(def (poi-parents poi) (poi-spec poi 'parents))
+}
+
+Last but not least, the constructor for a @c{poi} is defined as follows:
+@Code{
+(def (make-poi mod-ext suffix? parents)
+  (letrec*
+      ((precedence-list-and-suffix*
+        (delay (c4-linearize (list self) parents
+                             poi-precedence-list
+                             poi-suffix? eq? identity)))
+       (precedence-list* (delay (car (force precedence-list-and-suffix*))))
+       (suffix* (delay (cdr (force precedence-list-and-suffix*))))
+       (effective-mod-ext* (delay (apply mix*
+                                    (reverse (map poi-mod-ext
+                                      (force precedence-list*))))))
+       (self* (delay (fix-record
+                       (mix (force effective-mod-ext*) (rproto-wrapper spec)))))
+       (spec
+        (lambda (msg)
+          (case msg
+            ((precedence-list) (force precedence-list*))
+            ((suffix)          (force suffix*))
+            ((mod-ext)         mod-ext)
+            ((suffix?)         suffix?)
+            ((parents)         parents)
+            (else #f))))
+       (self (force self*)))
+    self))
+}
+
+Note how I crucially rely on explicit laziness with @c{delay} and @c{force}
+to avoid constantly recomputing the precedence list and the most specific suffix,
+and, after them, the effective modular extension,
+and the target record itself (see the discussion in @secref{DSF})@xnote["."]{
+  As discussed then, eager pure functional programming could capture the expected answers
+  by using η-conversion instead of laziness to defer evaluation,
+  but that would cause a lot of recomputations and
+  fail the expected performance profile of OO.
+}
+Even then, the fields themselves are recomputed at every field access.
+Now, in the code above, the finalizer ensures the target record contains the metadata
+in a special field, in a way such that the metadata is available for further specialization
+even if the specification is incomplete and the field computations otherwise diverge,
+override this special field, or fail to pass the field query to their @c{super}.
+To avoid the field recomputations, the finalizer @c{final-mod-ext} could be extended
+to also lazily memoize all record fields into a hash-table@xnote["."]{
+  Optionally, that finalizer is also where non-strict modular extensions may be applied,
+  if any, as might be somehow configured in the specification or its ancestors.
+  See @secref{NoTfMI} above.
+}
+See how to efficiently implement objects in @secref{EOI}.
+
+Also note that I assume that the Scheme pointer-equality predicate @c{eq?}
+captures the equality between closures generated by @c{make-poi}
+(internally, the @c{self} variable);
+this is actually a side-effect in disguise.
+The effect could be modelled more finely by adding to every spec a field @c{id}
+initialized using a function @c{generate-tag}
+for the minimal side-effect of generating a unique tag;
+equality of POIs and their specifications would then be defined as that of their ids.
+
 
 @exercise[#:difficulty "Easy"]{
   Explain in your own words why the “suffix property” enables single-inheritance
@@ -2053,22 +2167,14 @@ flowchart BT
     G --> D --> B
 }
 
-@exercise[#:difficulty "Medium" #:tag "exPOI"]{
-  Implement POI, Prototypes with Optimal Inheritance:
-  a function @c{make-poi} accepts a modular extension @c{e},
-  a boolean @c{s} that if true indicates that the specification is a suffix,
-  and a list of totally ordered lists of direct parents @c{p},
-  and returns prototype @c{poi} that conflates specification and target,
-  in the style of @c{rproto} from @secref{CfR}:
-  you can access a prototype target’s field by passing its identifier to the @c{poi} as a function;
-  and you can access the prototype’s specification by instead passing a magic value
-  (perhaps the top value, @c{#f} in Scheme);
-  the specification field contains @c{e}, @c{s} and @c{p},
-  but also a cache of the precedence list and the specification’s most specific suffix ancestor,
-  as well as any other meta data.
-
-  Bonus: assuming you’re using Scheme or another language with Lisp-like macros,
-  implement a simplified syntax wherein @c{(poi :e modext :s suffix? :p parent1 parent2 parent3)}
+@exercise[#:difficulty "Medium" #:tag "synPOI"]{
+  Write syntactic sugar for @c{make-poi}, to make common cases usable,
+  that when the full generality of the function is not needed:
+  use optional arguments, keyword (or named) arguments,
+  or whatever your programming language provides.
+  If your language lacks keyword arguments, but possesses Lisp-like macros
+  (as in e.g. standard Scheme),
+  implement a simplified keyword syntax wherein @c{(poi :e modext :s suffix? :p parent1 parent2 parent3)}
   is a POI with given modular extension @c{modext}, boolean suffix status @c{suffix?}
   and lists of parents @c{((parent1 parent2 parent3))} (only one list of parents).
   Use @c{:pp} instead of @c{:p} for a variable number of lists instead,

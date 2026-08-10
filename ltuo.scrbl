@@ -39,7 +39,7 @@ There are many examples of OO—but everyone does it differently;
 every OO language offers an incompatible variant.
 There is no theory describing what common ground there is, if any,
 even less so one describing the best way to do OO.
-Certainly, none that two computer scientists can agree about.
+Certainly, none that two computer scientists can agree on.
 By comparison, you well understand Functional Programming (FP).
 
 Can you explain OO in simple terms to an apprentice, or to yourself?
