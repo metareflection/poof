@@ -654,20 +654,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 1976
 
-% https://dspace.mit.edu/bitstream/handle/1721.1/6091/AIM-379.pdf
-@TechReport{Steele1976Declarative,
-  author={Steele, Guy Lewis},
-  title={LAMBDA: The Ultimate Declarative},
-  institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
-  year={1976},
-  month=nov,
-  number={AIM-379},
-  url={https://dspace.mit.edu/handle/1721.1/6091},
-  note={.
-    XXX
-  }
-}
-
 % https://dspace.mit.edu/bitstream/handle/1721.1/5790/AIM-353.pdf
 @TechReport{Steele1976Imperative,
   author={Steele, Guy Lewis and Sussman, Gerald Jay},
@@ -678,10 +664,32 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   number={AIM-353},
   url={https://dspace.mit.edu/handle/1721.1/5790},
   note={.
+    The first “Lambda the Ultimate” paper.
     The authors famously were trying to make sense of message dispatch in Hewitt’s Actors
     based on continuations;
     while writing tests for how the two should behave, their realized that there was no difference,
     and this realization led to the design of Scheme.
+  }
+}
+
+% https://dspace.mit.edu/bitstream/handle/1721.1/6091/AIM-379.pdf
+@TechReport{Steele1976Declarative,
+  author={Steele, Guy Lewis},
+  title={LAMBDA: The Ultimate Declarative},
+  institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
+  year={1976},
+  month=nov,
+  number={AIM-379},
+  url={https://dspace.mit.edu/handle/1721.1/6091},
+  note={
+    The second “Lambda the Ultimate” paper.
+    It shows that λ-closures can be implemented efficiently,
+    arguing that λ-expressions are practical implementation entities
+    rather than merely semantic abstractions.
+    It demonstrates translations of many conventional language constructs
+    into λ-expressions while preserving efficient execution,
+    establishing the λ-calculus as a practical implementation substrate for high-level languages,
+    not merely a theoretical formalism for their semantics.
   }
 }
 
@@ -830,9 +838,15 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={https://dspace.mit.edu/handle/1721.1/5753},
   doi={10.1145/800179.810196},
   note={.
-    XXX
+    The third “Lambda the Ultimate” paper.
+    It introduces continuations as a practical implementation technique
+    and shows that local and non-local control constructs such as
+    GOTO, coroutine, and non-local procedure exit can all be expressed in terms of them.
+    It establishes the λ-calculus extended with first-class continuations
+    as a practical implementation substrate and semantic foundation for arbitrary control flow.
   }
 }
+
 @TechReport{Stansfield1977,
   title={COMEX: A Support System for a Commodities Expert},
   author={Stansfield, James L},
@@ -4720,11 +4734,10 @@ and Fiech, Adrian",
 
 % My replies: https://twitter.com/Ngnghm/status/1791988260266234028
 % url={http://lambda-the-ultimate.org/node/4569},
-% XXXX UPDATE ENTRY, archive.org
 @WebPage{Cook2012,
   author={William Cook},
   title={A Proposal for Simplified, Modern Definitions of "Object" and "Object Oriented"},
-  url={https://wcook.blogspot.com/2012/07/proposal-for-simplified-modern.html},
+  url={https://web.archive.org/web/20230709010929/http://wcook.blogspot.com/2012/07/proposal-for-simplified-modern.html},
   year=2012,
   note={.
     Cook delivers lots of precise insight in OO, that show a deep familiarity with the subject
