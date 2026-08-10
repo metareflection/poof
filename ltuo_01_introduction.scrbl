@@ -620,7 +620,7 @@ I will claim the following:
 @principle{The C4 algorithm implements this Optimal Inheritance.}
 I implemented C4 as part of
 the builtin object system of @(GerbilScheme) @~cite{Vyzovitis2016}@xnote["."]{
-  Scheme @~cite{Sussman1975 R7RS2013} @; XXX CITE lambda-the-ultimate r4rs
+  Scheme @~cite{Sussman1975 Steele1976Declarative Steele1976Imperative Steele1977 Steele1978 R7RS2013} @; XXX CITE r4rs
   is a language with a rather minimalist definition.
   Dozens of mutually incompatible implementations of Scheme exist
   that each provide their own extensions on top of this common minimal core,

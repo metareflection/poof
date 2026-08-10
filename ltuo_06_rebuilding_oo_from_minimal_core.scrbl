@@ -994,7 +994,7 @@ As mentioned before, this can be very cheap when the type elements are records
 In Typeclass-style, by contrast, type descriptors and type elements are kept distinct and separate.
 There is emphatically no conflation.
 Type-descriptors are passed “out of band” as extra variables
-(see second-class “dictionaries” in Haskell @~cite{Wadler1989},
+(see second-class “dictionaries” in Haskell @~cite{Wadler1989 Peterson1993},
 or first-class “interfaces” in “Interface-Passing Style” @~cite{Rideau2012}).
 This is efficient in another way, because you can pass around a few type descriptors
 that do not change within a given algorithm, and not spend time wrapping and unwrapping conflations.
