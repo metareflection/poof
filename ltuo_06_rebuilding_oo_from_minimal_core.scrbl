@@ -70,9 +70,10 @@ the specification and its target.
 
 My implementation below makes this product explicit,
 where I use the prefix @c{pproto} to denote a prototype implemented as a pair.
-I use the @c{cons} function of Scheme to create a pair, and
-the functions @c{car} and @c{cdr} to extract its respective first and second components.
-In a more practical implementation, a special kind of tagged pair would be used,
+I use the @c{cons} function of Scheme in the @c{pproto} definitions below
+to create a pair, and the functions @c{car} and @c{cdr} to extract
+its respective first and second components.
+In a more practical implementation, a special kind of tagged pair might be used,
 so the runtime would know to implicitly dereference the target in the common case,
 without developers having to painfully maintain the knowledge and
 explicitly tell the program when to dereference it (most of the time).
@@ -83,6 +84,7 @@ a record could be used for all these kinds of data and metadata, instead of a pa
   an immutable record of arbitrary metadata.
   All data elements except the “main” one could be stored in that record.
 }
+We will soon see however further issues with mere pairs in the eager case.
 
 The function @c{pproto←spec} is used to define a prototype from a specification,
 and is used implicitly when composing prototypes using inheritance
@@ -93,15 +95,13 @@ The function @c{target←pproto} extracts the target from a prototype,
 so you may call methods on it:
 
 @Code{
-(def (pproto←spec spec)
-  (cons spec (delay (fix-record spec))))
+(def (pproto←spec spec) (cons spec (fix-record spec)))
 (def spec←pproto car)
-(def (target←pproto pproto)
-  (force (cdr pproto)))
+(def target←pproto cdr)
 (def pproto-id (pproto←spec idModExt))
 (def (pproto-mix parent child)
   (pproto←spec (mix (spec←pproto parent) (spec←pproto child))))
-(define (pproto-mix* . l) (foldl (uncurry2 pproto-mix) pproto-id l))
+(define pproto-mix* (op*←op1.1 pproto-mix pproto-id))
 }
 
 @Paragraph{First Issue: Incomplete Specifications}
@@ -120,23 +120,25 @@ when a further attempt is made to use the target.
 Otherwise, an invalid target, which is a necessarily common case,
 would prevent access to the specification, defeating the entire point of conflation.
 
-The simplest device to delay evaluation of the target is lazy evaluation:
+In the code above, we trust that computing the target itself
+will delay any potentially problematic computation until after the fixpoint is reached.
+The function definition itself is guaranteed to terminate early on,
+since the actual computations within are protected by λ-abstractions.
+Any potentially non-terminating or error-throwing behavior will only happen
+after those abstractions are called.
+Thus, @c{delay} and @c{force} are not strictly necessary to prevent an invalid target from
+causing an error when computing the product.
+
+There are other solutions.
+For instance, you could allow arbitrary computations in your modular extensions,
+but altogether delay the evaluation of the target:
 @c{Proto = Spec × Lazy Target}.
-In second-class Class OO, the target is a descriptor for type,
+However, the most common solution, given that most popular languages only have second-class Class OO,
+is that the target is a type descriptor,
 that itself can always be computed without error in finite time,
 though the type may be empty, and trying to use it may result in static or dynamic errors.
 Execution in a latter stage of computation (runtime vs compile-time)
 can be seen as the ultimate form of delayed evaluation.
-
-Note how in our representation of records as functions,
-we already delay the potentially non-terminating or error-throwing behavior
-until the time the function is invoked.
-The function definition itself is guaranteed to terminate early on,
-since the actual computations within are protected by λ-abstractions.
-Thus, @c{delay} and @c{force} are not strictly necessary to prevent an invalid target from
-causing an error when computing the product.
-However, we use @c{delay} anyway for uniformity with the recursive conflation variant @c{qproto}
-presented next, where @c{delay} is required for correctness.
 
 @Paragraph{Second Issue: Recursion}
 
@@ -157,7 +159,7 @@ depending on whether they are specified as second-class entities before recursio
 or produced during the recursion as first-class entities.
 Tracking which kind you are dealing with at which time can be a big limitation,
 that is extremely complex, time-consuming, and bug-prone to lift or work around@xnote["."]{
-  @; TODO secref chapter 9 on metaobjects
+  @; TODO secref chapter 10 on metaobjects
   Metaobjects are a typical use case where you don’t (in general) have a clean program-wide staging
   of specification and targets: to determine the meta methods,
   you partially instantiate the “meta” part of the objects,
@@ -177,14 +179,14 @@ In a dynamic first-class OO language, the conflation of specification and target
 into a single entity, the prototype, must be recursively seen by the target
 when instantiating the specification.
 This is achieved by having the instantiation function compose a “magic” wrapper specification
-in front of the user-given specification before it takes a fixpoint.
+added in the most-specific position to the user-given specification before it takes a fixpoint.
 Said magic wrapper will wrap any recursive reference to the target into
-an implicit conflation pair of the specification and the target@xnote["."]{
+an implicit conflation the specification and the target@xnote["."]{
   @citet{Abadi1996Primitive} struggle with variants of this problem,
   and fail to find a solution, because they @emph{want} to keep confusing target and specification
   even though at some level they can clearly see they are different things.
   If they had conceptualized the two as being entities that need to be distinguished semantically,
-  then must be explicitly re-grouped together as a pair,
+  must then be explicitly re-grouped together as some kind of pair,
   they could have solved the problem and stayed on top of the λ-calculus.
   Instead, they abandon such attempts, and rebuild their own syntactic theory
   of a variant of the λ-calculus just for objects,
@@ -193,35 +195,55 @@ an implicit conflation pair of the specification and the target@xnote["."]{
   Their futile theory can neither enlighten OO practitioners,
   nor make OO interesting to mathematical syntax theoreticians.
 }
-Here is an implementation of that idea, wherein I prefix function names with @c{qproto}:
 
+Two caveats about this wrapper.
+First, it is a modular extension (though it doesn’t exercise the modular part),
+but importantly, in contrast to the usual pattern of OO extensions, it is non-strict:
+it transforms its input value into one that is @emph{not} a subtype of the input type.
+Instead, the input value is transformed into one that is in a strong sense isomorphic to it:
+you can recover one from the other, with an importantly added level of indirection.
+Second, to directly work with the eager variants of the @c{Y} combinator above,
+rather than requiring a lazy language or recursion through ad hoc stateful side-effects,
+we need our fixpoint to be a function, which is provided by our representation of records as functions.
+
+Thus, I will define and use functions @c{conflate}, @c{get-spec} and @c{get-target}
+to explicitly store and extract the information in the @c{spec} and @c{target} fields of a record.
+Here is an implementation of that idea, wherein I prefix function names with @c{qproto}:
 @Code{
+(def (conflate spec target)
+  (extend-record 'spec spec
+    (extend-record 'target target empty-record)))
+(def (get-spec tp) (tp 'spec))
+(def (get-target tp) (tp 'target))
+
 (def (qproto-wrapper spec super _self)
-  (cons spec super))
+  (conflate spec super))
 (def (qproto←spec spec)
-  (delay (fix-record (mix spec (qproto-wrapper spec)))))
+  (fix-record (mix spec (qproto-wrapper spec))))
 }
 Note how the following functions are essentially unchanged compared to @c{pproto}:
 @Code{
-(def spec←qproto car)
-(def (target←qproto qproto)
-  (force (cdr qproto)))
+(def spec←qproto get-spec)
+(def target←qproto get-target)
+(def qproto-id (qproto←spec idModExt))
 (def (qproto-mix parent child)
   (qproto←spec (mix (spec←qproto parent) (spec←qproto child))))
-(def qproto-id (qproto←spec idModExt))
-(define (qproto-mix* . l) (foldl (uncurry2 qproto-mix) qproto-id l))
+(define qproto-mix* (op*←op1.1 qproto-mix qproto-id))
 }
-What changed from the previous @c{pproto} variant was that the
-@c{(λ (x) (cons spec x))} extension was moved from outside the fixpoint to inside:
+What changed from the previous @c{pproto} variant was that
+the notional non-strict extension for conflation
+was moved from outside the fixpoint to inside the fixpoint,
+as a special most-specific modular extension.
 If @c{R} is the parametric type of the reference wrapper
 (e.g. @c{R Integer} is the type of a reference to an integer),
-and @c{M} is the parametric type of modular extension, also known as a @emph{recursion scheme},
+and @c{M} is the parametric type of the modular definition
+(that @citet{Bracha1990} call @emph{generator}, which fits in this context),
 then the type of @c{pproto} is @c{R (Y M)},
 and that of @c{qproto} is @c{Y (R ∘ M)}, so in both cases I have
-a reference to a recursive data structure that follows the recursion scheme,
+a reference to a recursive data structure that follows the generator,
 but in the second case further recursive accesses also use the reference.
 Note that @c{Y (R ∘ M) = R (Y (M ∘ R))} and @c{Y (M ∘ R)} is the type of
-a raw record that follows the recursion scheme and uses references for recursion,
+a raw record that follows the generator and uses references for recursion,
 instead of the type of reference to such, i.e. I have in turn @c{Y (M ∘ R) = M (Y (R ∘ M))};
 people interested in low-level memory access might want to privilege this latter @c{Y (M ∘ R)}
 representation instead of @c{Y (R ∘ M)}, which indeed is a notable difference
@@ -308,7 +330,8 @@ As a minor consequence, casting to a specification becomes slightly more expensi
 (table lookup vs fixed-offset field access),
 whereas casting to a target (the more common operation by far) becomes slightly cheaper
 (free vs fixed-offset field access).
-The semantics are otherwise essentially the same as for my implementation using pairs.
+The semantics are otherwise essentially the same as for my @c{qproto} implementation
+using explicit conflation.
 
 Here is a Scheme implementation of the same idea,
 where the prefix @c{rproto} denotes a prototype implemented as a record,
@@ -318,7 +341,7 @@ so it doesn’t impede the free use of arbitrary symbols as keys
 (other languages might use a reserved string for the purpose;
 for instance, Nix uses @c{"__unfix__"}).
 The function @c{rproto←spec} is used to define a prototype from a specification,
-by prepending a special specification @c{rproto-wrapper} in front
+by mixing a special specification @c{rproto-wrapper} in most-specific position,
 that deals with remembering the provided specification
 (an optimized equivalent to @c{(λ (spec super _self) (extend-record #f spec super))}).
 This function is used implicitly when composing prototypes using inheritance
@@ -340,9 +363,9 @@ you can often inline it away.
 (def target←rproto identity)
 (def (rproto-mix parent child)
   (rproto←spec (mix (spec←rproto parent) (spec←rproto child))))
-(define (rproto-mix* . l) (foldl (uncurry2 rproto-mix) rproto-id l))
+(define rproto-mix* (op*←op1.1 rproto-mix rproto-id))
 }
-Once again, some special extension is used in front, that is not strict,
+Once again, some special extension is used in most-specific position, that is not strict,
 and is almost-but-not-quite an isomorphism, and specially memorizes the specification.
 
 You may also define a prototype from a record by giving it a “spec”
@@ -393,7 +416,7 @@ The difference between the two encodings is subtle but quite interesting:
     every time they call a method to obtain the values they care about.
     These instances are half way between specification and target;
     they use (some variant of) the self-application combinator U,
-    where @c{U x = x x} (see @secref{DSF}).
+    where @c{U x = x x} (see @secref{USLCP}).
     This is why I call this representation and its variants @emph{U-encodings}.}]
 
 @Paragraph{Y: Double U}
@@ -403,7 +426,7 @@ but also the relationship between the two.
 
 We have the identity @c{Y f = U (B f U)} or equivalently @c{Y = B U (C B U)}
 where @c{B} is composition @c{B x y z = x (y z)} and
-@c{C} is the flip operator @c{C x y z = x (z y)}@xnote["."]{
+@c{C} is the flip operator @c{C x y z = x z y}@xnote["."]{
   Haskellers might write @c{Y} as @c{U.(.U)} which is my new favorite emoji.}
 Both @c{B} and @c{C} are linear, they just rearrange things without creating information,
 whereas @c{U} is all about duplication, creating new copies of information, and does all the work.
@@ -411,7 +434,7 @@ Therefore it is fair to say that, up to a linear transformation,
 Y crucially uses U twice; equivalently, U does half the work that Y does.
 
 In practice, the entities manipulated in the U-encoding, up to isomorphism,
-are functions @c{h = (f . U)}, where @c{f} is the recursion schema of which you want the fixpoint.
+are functions @c{h = (f . U)}, where @c{f} is the generator of which you want the fixpoint.
 The fixpoint of @c{f} is @c{self = f self = Y f = U h = h h}.
 Because U-encoding involves a recursion variable that is half-resolved,
 I like to call that variable @c{half} instead of @c{h}, so @principle{@c{self = half half}}.
@@ -426,7 +449,7 @@ and not only fail to notice the existence of two distinct encodings,
 but also use the very same names for recursion and inheritance variables in both cases,
 sometimes in the very same publication.
 I for one will reserve the variable name @c{self} to the result of the fixpoint,
-the parameter passed to wholly unresolved recursion schemas in Y-encoding;
+the parameter passed to wholly unresolved generators in Y-encoding;
 and similarly the variable name @c{super} to the inherited value.
 I will consistently use @c{half} and @c{hyper} when referring to
 the half-resolved recursion variable and half-resolved inheritance variable.
@@ -486,9 +509,9 @@ There are various advantages and disadvantages to U-encoding compared to Y-encod
 T and YASOS support single inheritance (@secref{SI})
 by providing a function @c{operate-as} that objects can call
 in order to delegate method resolution to a parent, that will be called
-with the current half as first argument:
+with the current @c{half} as first argument:
 single inheritance is then simply about each successive ancestor
-chaining calls to the next ancestor’s hyper code until the method is found.
+chaining calls to the next ancestor through the @c{hyper} variable until the method is found.
 This chain of calls is to be manually implemented as a simple design pattern in T and YASOS.
 JavaScript provides equivalent behavior through its builtin method resolution mechanism,
 that walks a “chain of prototypes” where each prototype’s @c{hyper}
@@ -517,9 +540,23 @@ But at that point, Y-encoding becomes simpler than U-encoding.
 In the end, U-encoding and Y-encoding are both equally capable for implementing
 the whole breadth of semantics of object systems, with many well-identified tradeoffs.
 Yet, U-encoding seems by far more popular. It seems to have been adopted, in many variants,
-by most implementations of most OO languages.
-Still, at least a few object implementations and academic papers use Y-encoding,
-including Nix, my own object systems and this book.
+by most implementations of most OO languages,
+since before OO was even invented @~cite{Sutherland1963}.
+Indeed, as far as I can tell, Y-encoding only appears in the literature
+in theoretical semantic models @~cite{Kamin1988 Reddy1988 Cook1989 CookPalsberg1989 Bracha1990},
+and in practical implementations much later @~cite{Kiselyov2005 Simons2015 Rideau2021}.
+Interestingly, Haskell-based OO systems tend to use Y-encoding
+because it leads to simpler types @~cite{Kiselyov2005 Gale2015}@xnote["."]{
+  U-encoding is typeable in Haskell only isorecursively: @c{(newtype Half a = Half (Half a -> a)},
+  legal because Haskell imposes no positivity condition.
+  Then, every self-application costs an explicit roll/unroll.
+  OCaml can type it directly under the @c{-rectypes} option, which on the other hand
+  has a reputation for hard-to-understand error messages.
+  In a total language, it is not typeable at all—though neither is a first-class Y combinator.
+  Also, U-encoding forces specification/target conflation as a typing discipline,
+  since generator, @c{half} and @c{hyper} all inhabit one type
+  and no separate target type exists to be had.
+}
 
 Now while U-encoding is always a valid choice, I suspect there are times
 it is chosen despite the fact that Y-encoding would better suit the specific situation.
@@ -539,10 +576,14 @@ as well as to the general misunderstanding about the semantics and purpose of OO
 
 For in the end, an implementer’s choice between U-encoding or Y-encoding
 needn’t be exposed to regular programmers.
+One is reducible to the other, and simpler wrappers transform one representation into the other.
+The choice of one or the other can be thus hidden in the innards of an object system,
+such that users are none the wiser if an implementation changes from one to the other.
+
 In T and after it YASOS, an @emph{operation} abstracts over the U-encoded calling convention
 for sending messages to objects, and instead provides a regular function call interface,
 as well as a locus to define an operation-specific default behavior, and potentially more.
-Indeed, CLOS after CommonLoops generalizes this concept into that of @emph{generic function}
+Indeed, CommonLoops then CLOS generalize this concept into that of @emph{generic function}
 (@secref{GF}):
 A generic function offers an interface isomorphic to the Y-encoding,
 modulo the exchange in the order of arguments, @c{(method-id object)}
@@ -564,7 +605,7 @@ uses one encoding or another@xnote["."]{
   plus optionally a layer of macro-expansion to provide syntactic abstraction.
 }
 
-@subsection{Small-Scale Advantages of Conflation: Performance, Sharing}
+@subsection[#:tag "SSAoCPS"]{Small-Scale Advantages of Conflation: Performance, Sharing}
 
 First, note how, if a specification is pure functional,
 i.e. without side-effects, whether state, non-determinism, I/O, or otherwise,
@@ -578,7 +619,7 @@ Indeed, in case of recursive access to the target, this performance enhancement
 can grow exponentially with the depth of the recursion,
 by using a shared computation instead of repeated recomputations
 (see the related discussion on the applicative Y combinator in
-@secref{DSF}).
+@secref{USLCP}).
 
 If on the other hand, the specification has side-effects
 (which of course supposes the language has side-effects to begin with),
@@ -593,7 +634,28 @@ i.e. create a new prototype that uses the same specification.
 Equivalently, they can create a prototype that inherits from it
 using as extension the neutral element @c{(rproto←spec idModExt)}.
 
-Now, plenty of earlier or contemporary Prototype OO languages,
+Now, sharing rather than recomputing is an issue not just when computing a prototype as such,
+but also when computing each of its attributes—the fields of its target record.
+You might @emph{want} each access to some field to be a recomputation, but then
+it would be cleaner to have the field return a nullary function
+(or unary that ignores its argument),
+that can then be explicitly called for side-effects.
+Thus with no loss of generality we can assume you do want sharing
+rather than recomputation for every field.
+This can be achieved with a @emph{wrapper}:
+a possibly non-strict modular extension added at the most-specific end just before the fixpoint,
+like @c{rproto-wrapper} above@xnote["."]{
+  Non-strictness enables some wrappers to change representation between the one
+  used in intermediate computations (the @c{super} variables) and the one used
+  in final targets (the @c{self} variables).
+  See also @secref{NoTfMI}.
+}
+The wrapper, in addition to registering specification metadata like @c{rproto-wrapper},
+could add a @emph{memoization} layer that caches computed field values into a hash-table,
+so they are never computed twice. And if the field names are known before instantiation,
+a vector can be used instead of a hash-table for faster access (see @secref{EOI}).
+
+Plenty of earlier or contemporary Prototype OO languages,
 from Director and ThingLab to Self and JavaScript and beyond,
 support mutation yet also offer objects as conflation of two aspects:
 one for inheritable and instantiatable specification,
@@ -615,9 +677,9 @@ Thus you may still define prototypes from incomplete erroneous specifications,
 and use them through inheritance to build larger prototypes, that, when complete,
 will not have undesired side-effects.
 Once again, @principle{Laziness proves essential to OO,
-even and especially in presence of side-effects}.
+even and especially in the presence of side-effects}.
 
-@subsection{Large-Scale Advantage of Conflation: More Modularity}
+@subsection{Large-Scale Advantages of Conflation: More Modularity}
 
 Remarkably, conflation is more modular than the lack thereof:
 thanks to it, programmers do not have to decide in advance
@@ -646,15 +708,15 @@ for large software distributions on one machine or many,
 using GCL, Jsonnet or Nix as (pure functional) Prototype OO languages:
 @itemize[
 @item{
-  The Google Control Language GCL@~cite{Bokharouss2008} (née BCL, Borg Control Language),
+  The Google Control Language GCL @~cite{Bokharouss2008} (née BCL, Borg Control Language),
   has been used to specify all of Google’s distributed software deployments
   since about 2003 (but uses dynamic rather than static scoping,
   causing dread among Google developers).}
 @item{
-  Jsonnet@~cite{Cunningham2014}, inspired by GCL but cleaned up to use static scoping,
+  Jsonnet @~cite{Cunningham2014}, inspired by GCL but cleaned up to use static scoping,
   has been particularly used to generate configurations for AWS or Kubernetes.}
 @item{
-  Nix@~cite{Dolstra2008} is used not just to configure
+  Nix @~cite{Dolstra2008} is used not just to configure
   entire software distributions for Linux or macOS,
   but also distributed services with NixOps or DisNix.}]
 All three languages have proven the practicality of pure lazy functional prototype objects,
@@ -667,12 +729,12 @@ this mixin prototype object model has vastly outsized outreach.
 It is hard to measure how much of this success is due to the feature of Conflation,
 yet this feature is arguably essential to the ergonomics of these languages.
 
-@subsection{Implicit Recognition of Conflation by OO Practitioners}
+@subsection{Implicit Recognition of Conflation by OO Practitioners and Theorists}
 
 The notion of a @emph{conflation of specification and target},
 that I presented, is largely unknown by OO developers, and
 seems never to have been made explicit in the literature until
-I published @citet{Rideau2021}, that itself remained confidential.
+I published @~cite{Rideau2021}, that itself remained confidential.
 And yet, the knowledge of this conflation is necessarily present, if implicit,
 if not across the community of OO practitioners,
 at the very least among individual OO implementers—or else
@@ -681,7 +743,7 @@ Sixty years of crucial information you don’t know you know!
 
 Common practitioners of OO have long implicitly recognized
 the conflated concepts of specification and target.
-Back in 1979, Flavors @~cite{Cannon1979} introduces the concept of a @emph{mixin} as
+Back in 1979, Flavors @~cite{Cannon1979} introduced the concept of a @emph{mixin} as
 a flavor meant to be inherited from, but not to be instantiated,
 by opposition to an instantiatable flavor;
 however, the nomenclature only stuck in the Lisp community
@@ -697,9 +759,9 @@ or trying to instantiate an abstract class.
 
 Theorists have also long implicitly recognized the conflated concepts
 when developing sound typesystems for OO:
-for instance, Fisher @~cite{Fisher1996} distinguishes
+for instance, @citet{Fisher1996} distinguishes
 @c{pro} types for objects-as-prototypes and @c{obj} types for objects-as-records;
-and Bruce @~cite{Bruce1996} complains that
+and @citet{Bruce1996} complains that
 “the notions of type and class are often confounded in object-oriented programming languages” and
 there again distinguishes subtyping for a class’s target type (which he calls “subtyping”)
 and for its open specification (which he calls “matching”).
@@ -732,7 +794,7 @@ the confusion between object and implementation discussed in @citet{Chiba2000},
 wherein you can see the specification as @emph{implementing} the target.
 But though these authors saw a more general case in a wider theory with far reaching potential,
 they do not seem to have noticed this common case application.
-@; TODO handle that in ch9 and add secref ?
+@; TODO handle that in ch10 and add secref ?
 
 Thus, through all the confusion of class OO languages so far,
 both practitioners and theorists have felt the need
@@ -756,7 +818,7 @@ yet no one seems to have been able to fully tease apart the concepts up until re
   and wraps it into a target record as per my minimal OO model.
 }
 @exercise[#:difficulty "Easy"]{
-  If given the half-resolved recursion schema @c{g=(f . U)} for a prototype,
+  If given the half-resolved generator @c{g=(f . U)} for a prototype,
   how do you recover the modular extension @c{f}?@Note{
     Hint: Find a right-inverse to the self-application combinator U.
     While we’re at it, does U have a left-inverse?
@@ -843,7 +905,7 @@ I meant it quite literally.
 Since I do not wish to introduce a Theory of Compilation in this book
 in addition to a Theory of OO, I will only illustrate how to build
 @emph{first-class} Class OO, at runtime, on top of Prototype OO.
-I will use a technique described by Lieberman @~cite{Lieberman1986},
+I will use a technique described by @citet{Lieberman1986},
 and no doubt broadly similar to how many Class OO systems were implemented on top of JavaScript
 before web browsers ubiquitously adopted ES6 classes@~cite{ECMA2015}. @;{TODO CITE ???}
 
@@ -1015,8 +1077,9 @@ There are many tradeoffs that can make one style preferable to the other, or not
     The two styles can be complementary, as the balance of static and dynamic information
     about functions and data can vary across libraries and within a program.}
   @item{
-    Typeclass-style works better when the data is or might not be records, but has homogeneous types,
-    and it is only wasteful to re-extract the same types from each piece of data.
+    Typeclass-style works better when the data is not records or might not be records,
+    but has homogeneous types;
+    it is then wasteful to re-extract the same types from each piece of data.
     Typeclass-style works well for processing a lot of uniform data.}
   @item{
     Class-style works better when data is made of records with heterogeneous types,
@@ -1178,8 +1241,10 @@ are second-class entities:
 they are not available as first-class values subject to arbitrary programming at runtime.
 Class OO then is a special case of Prototype OO,
 but only in a restricted second-class language—a reality
-that is quite obvious when doing template metaprogramming in C++.
-@;{TODO SECREF appendix demonstrating lazy prototype OO in C++}
+that is quite obvious when doing template metaprogramming in C++@xnote["."]{
+  See for instance my implementation of the optimal inheritance in header-only C++ 20,
+  @c{c4-mixins}: @url{https://github.com/fare/c4-mixins}
+}
 
 Some dynamic languages, such as Lisp, Smalltalk, Ruby or Python,
 let you programmatically use, create, inspect or modify classes at runtime,
@@ -1273,7 +1338,7 @@ i.e. putting the cart before the horse.
 
 @exercise[#:difficulty "Easy"]{
   Implement a simple type descriptor for a @c{Point} class with fields @c{x} and @c{y},
-  an @c{instance-methods} record containing a @c{distance-from-origin} method.
+  and an @c{instance-methods} record containing a @c{distance-from-origin} method.
   What are the space and time tradeoffs of such a method
   compared to the @c{rho-spec} of previous chapter?
 }
@@ -1323,7 +1388,7 @@ i.e. putting the cart before the horse.
 @exercise[#:difficulty "Medium"]{
   Unwrap the class-style type descriptors from the previous exercise
   into typeclass-style type descriptors, and play with them.
-  What did using data in one style feel compared to the other?
+  What did using data in one style feel like, compared to the other?
 }
 @exercise[#:difficulty "Hard"]{
   If you did the exercise @exercise-ref{4polyinterpol},
@@ -1339,7 +1404,10 @@ i.e. putting the cart before the horse.
 }
 
 @section[#:tag "SOO"]{Stateful OO}
-
+@epigraph{
+  An accident is something which may either belong
+  or not belong to any one and the self-same thing.
+  @|#:- "Aristotle, Topics I.5, 102b4"|}
 @subsection{Mutability of Fields as Orthogonal to OO}
 
 I have shown how OO is best explained in terms of pure lazy functional programming,
@@ -1412,7 +1480,7 @@ happens between two such code upgrades,
 in large spans of time during which the code is constant.
 Therefore, the usual semantics that consider inheritance structures as constant
 still apply for an overwhelming fraction of the time and an overwhelming fraction of objects,
-even in presence of such mutability.
+even in the presence of such mutability.
 There are indeed critical times when these usual semantics are insufficient,
 and the actual semantics at those times must be explained;
 but the usual semantics wherein inheritance is constant are not rendered irrelevant
@@ -1558,11 +1626,11 @@ What is the key difference in how client code must be written for each version?
   The chapter mentions that conflation enables state sharing
   between all users of a prototype.
   Demonstrate this by creating a mutable @c{SharedCounter} prototype,
-  obtaining two "references" to it (by extracting the target twice),
+  obtaining two “references” to it (by extracting the target twice),
   incrementing through one reference, and observing the change through the other.
   Then demonstrate cloning (creating a new prototype with the same specification)
   to obtain independent state. What is the semantic difference between
-  "extracting the target" and "cloning the prototype"?
+  “extracting the target” and “cloning the prototype”?
 }
 
 @exercise[#:difficulty "Medium"]{
@@ -1626,7 +1694,7 @@ What is the key difference in how client code must be written for each version?
     @item{Adding a new field with a default value}
     @item{Removing a field (what happens to its data?)}
     @item{Renaming a field (preserving its value)}
-    @item{Changing a field's type (with a user-provided conversion function)}]
+    @item{Changing a field’s type (with a user-provided conversion function)}]
   Demonstrate with a @c{Person} class that evolves through three versions:
   v1 has @c{name}; v2 adds @c{age}; v3 renames @c{name} to @c{full-name}
   and adds @c{email}.
@@ -1641,7 +1709,7 @@ What is the key difference in how client code must be written for each version?
   @itemize[
     @item{@emph{Eager invalidation}: all targets are immediately recomputed
           when any specification changes.}
-    @item{@emph{Lazy invalidation}: targets are marked "dirty" and only recomputed
+    @item{@emph{Lazy invalidation}: targets are marked “dirty” and only recomputed
           on next access.}
     @item{@emph{Versioned}: old targets remain valid for their specification version;
           new accesses get new targets.}]
@@ -1652,10 +1720,10 @@ What is the key difference in how client code must be written for each version?
 @exercise[#:difficulty "Hard"]{
   The chapter mentions that Erlang is the only popular language
   that fully addresses code upgrade semantics.
-  Research Erlang's hot code loading mechanism and its interaction with processes.
+  Research Erlang’s hot code loading mechanism and its interaction with processes.
   Then design (and optionally implement) a similar mechanism for a Scheme-based OO system:}
   @itemize[
-    @item{How do you ensure "quiescence" before applying updates?}
+    @item{How do you ensure “quiescence” before applying updates?}
     @item{How do you handle objects that are mid-operation during an upgrade?}
     @item{How do you handle objects referenced from the call stack?}]
   What simplifying assumptions does your design make compared to Erlang?

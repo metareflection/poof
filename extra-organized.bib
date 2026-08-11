@@ -802,8 +802,8 @@
 }
 
 % Compare to Liskov1987
-@Article{LiskovWing1994,
-  author={Liskov, Barbara H. and Wing, Jeannette M.},
+@Article{Liskov1994,
+  author={Barbara H. Liskov and Jeannette M. Wing},
   title={A Behavioral Notion of Subtyping},
   journal={ACM TOPLAS},
   volume={16},
@@ -1079,7 +1079,10 @@
   year={2000},
   doi={10.1145/351240.351262},
   url={https://doi.org/10.1145/351240.351262},
-  note={Foundational work on the call-by-name/call-by-value duality and the λμ~μ calculus; worthwhile for a bibliography on control duality, but too remote from the main object-orientation argument.}
+  note={
+    Foundational work on the call-by-name/call-by-value duality and the λμ~μ calculus;
+    worthwhile for a bibliography on control duality, but
+    too remote from the main object-orientation argument.}
 }
 
 @TechReport{Ernst2000,
@@ -1190,6 +1193,27 @@
   note={Formalizes mixin-style recursive module composition under call-by-value, illuminating initialization and recursion issues hidden by lazy models.}
 }
 
+% Code from 2001, article published 2002
+@Article{Nordlander2002,
+  author={Johan Nordlander},
+  title={Polymorphic Subtyping in O’Haskell},
+  journal={Science of Computer Programming},
+  volume={43},
+  number={2--3},
+  pages={93--127},
+  year={2002},
+  month=may,
+  issn={0167-6423},
+  doi={10.1016/S0167-6423(02)00026-6},
+  url={https://www.sciencedirect.com/science/article/pii/S0167642302000266},
+  note={
+    Introduces O’Haskell, extending Haskell with reactive “objects”,
+    subtyping, and polymorphism.
+    Unhappily, there don’t seem to be either fixpoints or inheritance,
+    so AFAICT, O’Haskell is not actually OO.
+  }
+}
+
 % https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=693f61d2515ac9b032801dd7a603c34f1b725071
 % Wrongly claims that multidispatch forgoes modular typechecking
 % Has no definition of modularity, except maybe for typechecking
@@ -1224,7 +1248,7 @@
   note={Folk statement of the closure/object equivalence at the untyped substrate}
 }
 
-@InProceedings{AldrichDonnelly2004,
+@InProceedings{Aldrich2004,
   author={Jonathan Aldrich and Kevin Donnelly},
   title={Selective Open Recursion: Modular Reasoning about Components and Inheritance},
   booktitle={SAVCBS '04 (Workshop at FSE)},
@@ -1236,13 +1260,15 @@
   }
 }
 
-@InProceedings{GoldbergFindlerFlatt2004,
+@InProceedings{Goldberg2004,
   author={David S. Goldberg and Robert Bruce Findler and Matthew Flatt},
   title={Super and Inner: Together at Last!},
   booktitle={OOPSLA 2004},
   pages={116–129},
   year={2004},
-  note={Compares and combines the conventional super direction with Simula/BETA inner, clarifying two dual policies for composing inherited code.}
+  note={
+    Compares and combines the conventional super direction with Simula/BETA inner,
+    clarifying two dual policies for composing inherited code.}
 }
 
 @Article{Waddell2005,
@@ -1302,7 +1328,7 @@
   note={Formal account of virtual classes and family polymorphism, extending late binding from methods to nested types.}
 }
 
-@InProceedings{LohHinze2006,
+@InProceedings{Loh2006,
   author={Andres Löh and Ralf Hinze},
   title={Open Data Types and Open Functions},
   booktitle={Proceedings of the 8th ACM SIGPLAN Symposium on Principles and Practice of Declarative Programming},
@@ -1529,13 +1555,16 @@
   note={Explores open composition of language towers as arrowized structures.}
 }
 
-@TechReport{JamesSabry2012,
-  author={James, Roshan P. and Sabry, Amr},
+@TechReport{James2012,
+  author={Roshan P. James and Amr Sabry},
   title={The Two Dualities of Computation: Negative and Fractional Types},
   institution={Indiana University},
   year={2012},
   url={https://web.archive.org/web/20121229014345/https://www.cs.indiana.edu/~sabry/papers/rational.pdf},
-  note={Unpublished technical report on negative and fractional types; potentially useful for a bibliography on reversible computation or type dualities, but not central to object orientation.}
+  note={
+    Unpublished technical report on negative and fractional types;
+    potentially useful for a bibliography on reversible computation or type dualities,
+    but not central to object orientation.}
 }
 
 @Article{Lagorio2012,
@@ -1559,16 +1588,6 @@
   publisher={Springer},
   year={2012},
   doi={10.1007/978-3-642-31057-7_2},
-  note={.
-  }
-}
-
-@TechReport{James2012,
-  title={The Two Dualities of Computation: Negative and Fractional Types},
-  author={Roshan P James and Amr Sabry},
-  year={2012},
-  institution={Citeseer},
-  url={https://web.archive.org/web/20121229014345/https://www.cs.indiana.edu/~sabry/papers/rational.pdf},
   note={.
   }
 }
@@ -1697,7 +1716,8 @@
   pages={1–61},
   year={2021},
   doi={10.1145/3460228},
-  note={Modern calculus of compositional extensions that generalizes object-algebra techniques and provides a functional comparison point for inheritance.}
+  note={
+    Modern calculus of compositional extensions that generalizes object-algebra techniques and provides a functional comparison point for inheritance.}
 }
 
 @InProceedings{Madsen2022,

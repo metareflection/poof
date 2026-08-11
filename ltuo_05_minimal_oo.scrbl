@@ -75,10 +75,10 @@ for some type @c{W} to be declared
 @subsection{Coloring a Point}
 
 The prototypical type @c{V} to extend would be the type @c{Record} for records.
-For the moment, I’ll assume some syntactic sugar,
+For the moment, I’ll assume some syntactic sugar both for definitions and records,
 and I’ll postpone discussion of precise semantics.
 I can then define a record as follows:
-@Code{(define point-a (record (x 2) (y 4)))}
+@Code{(def point-a (record (x 2) (y 4)))}
 i.e. the variable @c{point-a} is bound to a record that maps
 the symbol @c{x} to the number @c{2} and the symbol @c{y} to the number @c{4}.
 
@@ -87,7 +87,7 @@ It extends a given record, lexically bound to @c{p} within the body of the funct
 it returns a record that is a copy of the previous
 with a new or overriding binding;
 and that binding maps the symbol @c{color} to the string @c{"blue"}:
-@Code{(define (paint-blue p) (extend-record 'color "blue" p))}
+@Code{(def (paint-blue p) (extend-record 'color "blue" p))}
 If you apply this extension to the value @c{point-a} above
 with @c{(paint-blue point-a)},
 you obtain a record equal to what you could have directly defined as:
@@ -108,18 +108,18 @@ Here are a few simple real-life examples
 of strict extensions for some given type:
 @itemize[
 @item{The values could be numbers, and then
-your extensions could be adding some increment to a previous number,
-which could be useful to count the price, weight or number of parts in a project being specified.}
+  your extensions could be adding some increment to a previous number,
+  which could be useful to count the price, weight or number of parts in a project being specified.}
 @item{The values could be bags of strings, and
-your extensions could append part identifiers to the list of spare parts or ingredients to order
-before starting assembly of a physical project.}
+  your extensions could append part identifiers to the list of spare parts or ingredients to order
+  before starting assembly of a physical project.}
 @item{The values could be lists of dependencies, where each dependency
-is for instance a package to build in a build system,
-an action to take in a reactive functional interface,
-or a node to transform a compiler.}]
+  is for instance a package to build in a build system,
+  an action to take in a reactive functional interface,
+  or a node to transform process state in a compiler.}]
 
 A record (indexed product) is just a common case because it can be used to encode anything.
-Mathematicians will tell you that products (indexed or not)
+Mathematicians will tell you that products (indexed or not) and functions (“exponentials”)
 give a nice Cartesian-closed categorical structure to the set of types
 for values being extended. In practice, this means that
 you can decompose your specifications into elementary aspects that you can combine
@@ -215,9 +215,9 @@ any value could do as default, but often there is a more colloquial default.
 In C, you would use 0 in integer context and the @c{NULL} pointer in pointer context.
 In modern C++, similarly but with the @c{nullptr} instead of @c{NULL}.
 In Java, @c{null}.
-In Lisp, @c{NIL}.
+In Lisp, the simultaneously null (empty list) and false value @c{NIL}, also a symbol.
 In Scheme, the false boolean @c{#f}, or, in some dialects, a special unit value @c{(void)}
-(the null value @c{'()} being traditionally used only for lists).
+(the Scheme null value @c{'()} being traditionally used only for lists).
 In JavaScript, @c{undefined}, @c{null} or an empty record @c{{}}.
 In Python, @c{None}.
 Various languages may each offer some value that is easier to work with as a default,
@@ -247,8 +247,8 @@ and propose the use of said combinator.
 
 The idea would indeed work in many cases, as far as extracting a value goes:
 for any lazy type @c{V} (and similarly for function types),
-any extension that would return a useful result applied to @c{(lazy ⊥)}
-passing it as argument to the lazy @c{Y} combinator would also yield a result.
+any extension that yields a useful result applied to @c{(lazy ⊥)}
+passing it as argument to the lazy @c{Y} combinator will also yield a result.
 And indeed the results will be the same if the extension wholly ignores its argument,
 as is often the intent in those situations.
 Typically, you’d compose extensions, with one “to the right”
@@ -288,7 +288,7 @@ Thus, as far as one cares about extensibility:
 }
 
 @exercise[#:difficulty "Easy"]{
-  Discuss what top values may be appropriate or inappropriate for the follow types:
+  Discuss what top values may be appropriate or inappropriate for the following types:
   boolean, string, comparison function, integer, floating-point number,
   point (record of two coordinates @c{x} and @c{y}), in Scheme,
   and/or in your favorite language.
@@ -307,12 +307,12 @@ Thus, as far as one cares about extensibility:
 @exercise[#:difficulty "Easy"]{
   Write an extension that takes records representing
   a rectangle of given @c{length} and @c{width},
-  that extend them with a new field @c{area}, being the area of the rectangle.
+  that extends them with a new field @c{area}, being the area of the rectangle.
 }
 
 @exercise[#:difficulty "Medium"]{
-  Write an “discount” extension @c{(discount-spec percent)},
-  of the form @c{(λ (_self price) ...)}
+  Write a “discount” extension @c{(discount-spec percent)},
+  of the form @c{(λ (price _self) ...)}
   that takes a price and reduces it by some specified percentage.
   The percentage being a first argument to pass to the extension;
   or, if you want to be nitpicky,
@@ -327,7 +327,7 @@ Thus, as far as one cares about extensibility:
 }
 
 @exercise[#:difficulty "Medium"]{
-  The text argues against using Y combinator for extensibility.
+  The text argues against using the Y combinator for extensibility.
   Create an example demonstrating the difference between
   applying an extension to a top value and using the Y combinator on the extension.
   Show a case where they produce different behaviors.
@@ -343,7 +343,7 @@ Thus, as far as one cares about extensibility:
   Identify some domain on which to apply extensibility:
   for instance, configuration files for a given program you use.
   Define an appropriate type for these configurations,
-  a top value and some simple extensions for that types.
+  a top value and some simple extensions for that type.
   If possible, reuse existing parsers and printers (e.g. for JSON, YAML, .INI, etc.),
   or else build simple ones.
 }
@@ -402,12 +402,12 @@ is left as an exercise to the reader.
 
 @Paragraph{Typing Records}
 I could be content with a simple type @c{Record}, but then
-every access would be require some kind of type casting.
+every access would require some kind of type casting.
 Instead, I will propose slightly more elaborate types.
 
 Given types @c{V}, @c{W}, @c{X}... for values,
 @c{I}, @c{J}... for identifiers or other indexes,
-consider records or sets of bindings as values of an index product
+consider records or sets of bindings as values of an indexed product
 @c{∏R = i:I → R@(ᵢ)} wherein to each value @c{i} in the index set @c{I},
 the record will associate a value of type @(Ri),
 where @c{R} is a schema of types, a function from @c{I} to @c{Type}.
@@ -428,18 +428,18 @@ type ∏R = {x: Number, y: Number, color: String}
 }
 and a point @c{point-c} of type @c{∏R} defined as follows:
 @Code{
-(define point-c
+(def point-c
   (record (x 3) (y 4) (color "blue")))
 }
 
-@Paragraph{Implementing Records} @; TODO secref to chapter 9?
+@Paragraph{Implementing Records}
 I will call @emph{identifier} some large or infinite type of values
 over which equality or inequality can be decided at runtime by using a suitable primitive,
 or calling a suitable function.
-Since I use Scheme for my examples, I will use the symbols for identifiers
+Since I use Scheme for my examples, I will use symbols for identifiers
 (that I will later extend with booleans),
 the @c{equal?} primitive for testing equality, and
-the @c{(if @emph{condition then-clause else-clause})} special form for conditionals.
+the @c{(if @emph{condition} @emph{then-clause} @emph{else-clause})} special form for conditionals.
 In other programming languages that lack symbols as a builtin functionality,
 they can be implemented as interned strings, or instead of them,
 uninterned strings or numbers can be used as identifiers.
@@ -505,11 +505,11 @@ Not only does one not need these features to implement OO@xnote[","]{
   The Scheme implementation I use has builtin record support, and
   there are now somewhat portable libraries for records in Scheme;
   but I made it a point to use a minimal portable object system
-  to show the feasability and practicality of the approach;
+  to show the feasibility and practicality of the approach;
   and this way the code can be directly ported to any language with higher-order functions.
 }
 they constitute a “reflection” API
-that if exposed would interfere with various compiler optimizations,
+that if, exposed, would interfere with various compiler optimizations,
 the use of which is actively rejected when statically typing records.
 However, there are other reasons why my implementation is not practical for long-running programs:
 it leaks space when a binding is overridden,
@@ -570,7 +570,7 @@ is as a function of type @c{C → E}, from module context to specified entity@xn
 
 Typically, the module context @c{C} is a set of bindings mapping identifiers
 to useful values, often functions and constants,
-whether builtin the language runtime or available in its standard library.
+whether built into the language runtime or available in its standard library.
 Now, I already introduced types for such sets of bindings: record types.
 And as a language grows in use and scope, the module context will include
 further libraries from the language’s wider ecosystem,
@@ -589,11 +589,9 @@ the sorted list of filenames (as strings) in a directory (as a string),
 from a module context of type @c{∏R} that provides
 a function @c{ls} of type @c{String → List(String)} and
 a function @c{sort} that sorts a list of strings:
-@;{@Code{
-type R = { ls: String → List(String), sort: List(String) → List(String) }
-}}
 @Code{
-(define ls-sorted (λ (ctx) (compose (ctx 'sort) (ctx 'ls))))
+type R = { ls: String → List(String), sort: List(String) → List(String) }
+(def ls-sorted (λ (ctx) (compose (ctx 'sort) (ctx 'ls)))) ;; : R
 }
 
 Note how in the above code snippet, I model records as functions from symbol to value,
@@ -622,7 +620,7 @@ Now, the notion that the modular definition “provides” entities supposes
 that these entities will be available, bound to well-known identifiers in the module context.
 There are many strategies to realize this provision:
 @itemize[
-@item{The modular definition can be a paired with a single identifier,
+@item{The modular definition can be paired with a single identifier,
 under which the entity is intended to be bound in a complete module context.}
 @item{The modular definition can provide multiple bindings,
 wherein the entity defined is a module, to be merged as a record into
@@ -634,11 +632,9 @@ or the merging of records can be recursive, at which point a strategy must be de
 to determine how deep to recurse, for instance by somehow distinguishing “modules”
 from regular “records”.}]
 
-@; TODO secref Optics
-
 In the end, programmers could somehow specify how their modular definition will extend
 the module context, with whatever merges they want, however deeply nested—which
-will lead them to modular extensibility.
+will lead them to modular extensibility—see @secref{OfOO}.
 But for now, I will abstract over which strategy is used to
 assemble many modular definitions together.
 
@@ -663,7 +659,7 @@ it is precisely the right solution to resolve modular definitions:
 the @c{Y} combinator “ties the knots”,
 links each reference requiring an entity to the definition providing it,
 and closes all the open loops.
-It indeed does the same in a FP context that an object linker does
+It indeed does the same in an FP context that an object linker does
 in the lower-level imperative context of executable binaries:
 link references in open modular definitions to defined values in the closed result.
 
@@ -675,47 +671,73 @@ If there remain identifiers that are provided but not required,
 and they are not otherwise (meant to) be used via reflection,
 then a “tree shaker” or global dead code optimizer may eliminate them.
 
-
-@; TODO move to an appendix, with a summary of the conclusions?
-@subsection[#:tag "DSF"]{Digression: Scheme and FP}
-@epigraph{Purely applicative languages are poorly applicable. @|#:-"Alan Perlis"|
+@exercise[#:difficulty "Easy"]{
+  Play with the simple record system I implemented.
+  With what function can you extract all the values for multiple fields
+  in a single function call?
+  (You may use functions from your language’s standard library.)
 }
-Here are two ways in which Scheme departs from the theoretical model of Functional Programming,
-that affect their suitability to modeling Object Orientation.
-These discrepancies also apply to many (but not all) other programming languages.
+@exercise[#:difficulty "Easy"]{
+  Use existing library functions in your Scheme implementation of choice
+  to actually implement the example of modularly sorting a list of files.
+}
+@exercise[#:difficulty "Medium" #:tag "alist0"]{
+  Implement a trivial record system based on alists (lists of pairs of symbol and value)
+  instead of functions from symbol to value (you can reuse library functions if available).
+  Reimplement and evaluate the same examples using this record system instead of the one I used.
+  Implement conversions between the two representations.
+  What limitation do you notice in one direction?
+}
 
-@Paragraph{Function Arity}
+@section[#:tag "USLCP"]{Underappreciated Subtleties of the λ-calculus in Practice}
+@epigraph{Purely applicative languages are poorly applicable. @|#:- "Alan Perlis"|
+}
+Here are two subtle ways in which
+Scheme departs from the theoretical model of Functional Programming,
+that affect its suitability to modeling Object Orientation.
+These discrepancies also apply to most (but not all) other programming languages.
+What more, I suspect that most programmers who are familiar with the λ-calculus
+are unaware of these issues at all, or of how much they matter in practice.
+
+@subsection{Function Arity and Currying}
+@Paragraph{Curried Syntax}
 Functional Programming usually is written with unary functions (that take exactly one argument),
 and to express more than one argument, you “curry” it:
 you define a function of one argument that returns a function that processes the next argument, etc.,
 and when all the arguments are received you evaluate the desired function body.
 Then to apply a function to multiple arguments, you apply to the first argument,
 and apply the function returned to the second argument, etc.
+
 The syntax for defining and using such curried functions is somewhat heavy in Scheme,
-involving a lot of parentheses.
+involving a lot of left-leaning nested parentheses.
 By contrast, the usual convention for Functional Programming languages
 is to do away with these extra parentheses:
-in FP languages, two consecutive terms is function application, which is left-associative,
-so that or even just @c{f x y} is syntactic sugar for @c{((f x) y)};
+in FP languages, two consecutive terms constitute
+a function application, which is left-associative,
+so that even just @c{f x y} is syntactic sugar for @c{((f x) y)};
 and function definition is curried, so that @c{λ x y . E}
 is syntactic sugar for @c{λ x . λ y . E}.
 
 Thus, there is some syntactic discrepancy that makes code written in
-the “native” Functional style look ugly and somewhat hard to follow in Scheme.
+the “native” functional style look ugly and somewhat hard to follow in Scheme.
 Meanwhile, colloquial or “native” Scheme code may use any number of arguments as function arity,
 and even variable numbers of arguments, or, in some dialects, optional or keyword arguments,
 which does not map directly to mathematical variants of Functional Programming;
 but it is an error to call a function with the wrong number of arguments.
 
+@Paragraph{Lots of Insipid and Stupid Parentheses}
 One approach to resolving this discrepancy is to just cope with
-the syntactic ugliness of unary functions in Scheme, and use them nonetheless,
-despite Lots of Insipid and Stupid Parentheses@xnote["."]{
-  Detractors of the Lisp language
-  (that like many languages was customarily written in uppercase until the mid-1980s,
-  and is usually capitalized since)
+the syntactic ugliness of unary functions in Scheme,
+with a lot of extra parentheses everywhere,
+with an unusual accumulation of them to the left of expressions@xnote["."]{
+  Detractors of LISP
+  (that like many languages was customarily written in uppercase
+  until the late-1970s-to-mid-1980s,
+  and is usually capitalized since—Lisp)
   and its many dialects and derivatives,
   among which Scheme is prominent, invented the backronym
   “Lots of Insipid and Stupid Parentheses” to deride its syntax.
+
   While Lispers sometimes yearn for terser syntax—and
   at least one famous Schemer, Aaron Hsu, jumped ship to APL—to them,
   the parentheses, while a bit verbose, are just a familiar universal syntax that allows them
@@ -732,46 +754,88 @@ despite Lots of Insipid and Stupid Parentheses@xnote["."]{
   especially when not using the parentheses-aware, indentation-enforcing,
   semi-structured text editors that Lispers have been using since the 1970s, or
   when failing to format code properly (which those editors also help automate).
+
   Ironically, the syntactic and semantic abstraction powers of Lisp
   allow for programs that are significantly shorter than their equivalent
   in a mainstream language like Java,
   and as a result have not just fewer parentheses overall,
   but fewer brackets of any kind.
   It is therefore not the number of parentheses, but their density, that confuses
-  mainstream programmer, due to unfamiliarity and emotional connotations.
+  mainstream programmers, due to unfamiliarity and emotional connotations.
   Now, it may well be that the same abstraction powers of Lisp make it unsuitable
   for a majority of programmers, incapable of mastering such abstraction.
+
   As an age of AI programmers approaches that will have abstraction powers vastly superior
   to the current average human programmer, it remains to be seen what kind of syntaxes
   will make them more efficient, when working in isolation, with each other, or with humans.
   And maybe even statistical AIs will need the rapid feedback of algorithmic editors
   to balance their parentheses.
+
+  Still, even in Lisp or Scheme, there can be “too many parentheses”
+  for programmers to understand what is going on: more precisely, too many parentheses,
+  in unfamiliar places (to the left of expressions), in a large number
+  that obscures rather than illuminates the meaning of the program.
 }
 
+All these extraneous parentheses—compared to typical code written in a “native” Scheme style—make
+the code hard to read and write, its meaning easy to misunderstand,
+its bugs easy to overlook.
+The problem is not specific to Scheme: any language but a functional programming language
+with (spaced) concatenation as curried function call will have a variant of the same problem,
+with just as many parentheses as in Scheme.
+For instance, in JavaScript, you will find yourself reading and writing @c{f(x)(y)(z)(t)}
+all over the place instead of the more colloquial @c{f(x, y, z, t)},
+or the Scheme @c{((((f x) y) z) t)}.
+
+This is a pain and a distraction in about every language—but, interestingly, even more so in Scheme
+and other Lisp dialects in general, where the parentheses accumulate to the left:
+@c{((((((f x) y) z) t) u) v)}. One might then say that, contrary to popular belief,
+Scheme is @emph{bad} for Functional Programming—at least,
+Scheme without syntactic extensions (see below),
+for Functional Programming in the modern functional style that is native to functional programmers,
+with lots of curried functions.
+
+@Paragraph{Abandoning Functional Style}
 A second approach is to adopt a more native Scheme style over FP style,
-with a variety of different function arities, making sure that a function is always called
-with the correct number of arguments. This approach blends best with the rest of the Scheme
-ecosystem, but may hurt the eyes of regular FP practitioners, and
+with a variety of different function arities,
+making sure that a function is always called with the correct number of arguments.
+This approach blends best with the rest of the Scheme ecosystem,
+but may hurt the eyes of regular FP practitioners, and
 require extra discipline (or extra debugging) to use.
 
+You will have to ensure calls group arguments at the correct boundary:
+@c{((f x y) z t)} in Scheme, or @c{f(x,y)(z,t)} in JavaScript.
+You will have to ensure that partial function applications
+are explicit closures over all the arguments they don’t yet provide:
+@c{(lambda (z t) (g x y z t))} in Scheme,
+@c{function (z, t) { return g(x, y, z, t); }} in JavaScript.
+And you will have to be disciplined about always counting the variables used with each function.
+
+This discipline is somewhat costly, but is not generally a problem
+when writing a program specifically for a given programming language.
+However, it is a problem and a notable distraction when trying to explain
+the semantics of OO to a public familiar with FP and functional style—which
+is the purpose of this book.
+
+@Paragraph{Extending Scheme for Functional Style}
 The third approach, that I will adopt in this book, is to use Scheme macros
 to automatically curry function definitions and function applications:
 @itemize[
   @item{Thus, anonymous functions defined with @c{λ} (unicode character)
-    as opposed to the builtin Scheme @c{lambda} (ascii string)
+    as opposed to the builtin Scheme @c{lambda} (ASCII string)
     will be automatically curried, defining a chain of unary functions.
     Furthermore, calls to the variables they bind will also be automatically curried.
     Calls with insufficient arguments will return a partially applied function,
-    rather that throw an error.}
+    rather than throw an error.}
   @item{Additionally, functions defined with @c{def}, as opposed to the builtin Scheme @c{define},
     will also be automatically curried as with @c{λ};
-    calls to these functions and to variables they bind will also automatically curried.}
+    calls to these functions and to variables they bind will also be automatically curried.}
   @item{To define regular Scheme functions, especially for the sake of
     functions accepting variable numbers of arguments to lighten the syntax,
     I will still use the regular @c{lambda} and @c{define}.
     In other FP languages, you might instead use explicit list arguments,
     or record arguments for heterogeneous types.}
-  @item{Regular scheme functions can use the @c["@"] macro to explicitly call curried function
+  @item{Regular Scheme functions can use the @c["@"] macro to explicitly call curried function
     with uncurried arguments when the function isn’t bound to an autocurrying variable.}]
 
 The macros defining @c{λ}, @c{def} and @c["@"] fit within fifty lines of code.
@@ -779,23 +843,32 @@ Production-quality Scheme might use native Scheme style instead, for extra perfo
 but the performance penalty for curried code should remain relatively small,
 especially with a sufficiently optimizing compiler.
 I will thus write @c{(f x y)} where functional programmers write @c{f x y} or @c{(f x) y},
-@c{(λ (x y) expr)} where functional programmers write @c{λ x . λ y . expr} or @c{λ x y . expr},
+and where plain Scheme would write @c{((f x) y)}.
+And I will write @c{(λ (x y) expr)} where functional programmers write
+@c{λ x . λ y . expr} or @c{λ x y . expr},
 and @c{(def (foo x y) expr)} where functional programmers write
 @c{foo x y = expr} or @c{f = λ x . λ y . expr}.
 And the code will actually run in Scheme after a short prelude.
 
-@Paragraph{Many Y combinators}
-First, there are many variants to the fixpoint (or fixed-point) combinator Y,
-and the pure applicative Y combinator you could write in Scheme’s
-pure subset of the λ-calculus is actually quite bad in practice.
-Here is the applicative Y combinator, that I will call Ye (for Y, eager)
+In the end, Scheme @emph{is} quite good for Functional Programming,
+even in modern Functional Style—it just requires
+a little bit of macrology to adapt to a style not native to it.
+Meanwhile, mainstream languages lacking affordable macros will let their users down.
+
+@subsection{Many Y Combinators}
+There are many variants to the fixpoint (or fixed-point) combinator Y,
+and the pure applicative Y combinator you could write in
+the pure λ-calculus subset of Scheme is actually quite bad in practice.
+
+@Paragraph{Applicative Y}
+First, here is the applicative Y combinator, that I will call Ye (for Y, eager)
 expressed in terms of the composition combinator B and
 the self-application combinator U (called Ue for U, eager)@Note{
   A simple way to test the applicative/eager @c{Ye} combinator,
   or the subsequent variants @c{Yex} and @c{Yes}
   is to use it to define the factorial function:
-  first define the applicative recursion scheme for factorial:
-  @c{(def (eager-pre-fact f n) (if (<= n 1) n (* n (f (1- n)))))}
+  first define the applicative generator for factorial:
+  @c{(def (eager-pre-fact f n) (if (<= n 1) 1 (* n (f (1- n)))))}
   then you can define factorial as
   @c{(def fact (Ye eager-pre-fact))}
   and you can then test that e.g. @c{(fact 6)} returns @c{720}.
@@ -820,7 +893,7 @@ the self-application combinator U (called Ue for U, eager)@Note{
 @Code{
 (def (B x y z) ;; composition
   (x (y z)))
-(def (Ue x y) ;; eager U
+(def (Ue x y) ;; η-expanded U for use with eager Y
   (x x y))
 (def (Ye f) ;; eager Y
   (Ue (B f Ue)))
@@ -833,13 +906,14 @@ the self-application combinator U (called Ue for U, eager)@Note{
 The Y combinator works by composing the argument function @c{f}
 with indefinite copies (duplications) of itself (and accompanying plumbing).
 
-In this applicative variant, the first, minor, issue with this combinator is
-that it only works to compute functions,
+The first, relatively minor, issue with this applicative variant,
+is that it only works to compute @emph{functions},
 because the only way to prevent an overly eager evaluation of a computation
 that would otherwise diverge is to protect this evaluation under a λ.
 I happen to have chosen a representation of records as functions,
-such that the applicative Y still directly applies;
-if not, I may have had to somehow wrap my records in some sort of function,
+such that the applicative Y still directly applies,
+on which I depend a lot in this and subsequent chapters.
+If not, I may have had to somehow wrap my records in some sort of function,
 at which point I may as well use the lazy Y below,
 or switch to representing modular contexts as records of functions,
 instead of functions implementing or returning records.
@@ -869,18 +943,21 @@ the practically inapplicable applicative Y combinator:
 (2) a lazy Y combinator, or
 (3) a second-class Y combinator.
 
+@Paragraph{Stateful (Applicative) Y}
 A stateful Y combinator is what the @c{letrec} construct of Scheme provides
 (and also its @c{letrec*} variant, that the internal @c{define} expands to):
 it uses some underlying state mutation to create and initialize a mutable cell
 that will hold the shared fixpoint value, with the caveat that you should be careful
 not to access the variable before it was initialized@xnote["."]{
-  A variable won’t be accessed before it is used if you’re immediately binding the variable
-  to a λ expression, but may happen if you bind the variable to a function application expression,
+  A variable won’t be accessed before it is initialized
+  if you’re immediately binding the variable to a λ expression;
+  but uninitialized access may happen
+  if you bind the variable to a function application expression,
   wherein the variable is passed as argument without wrapping it in a λ,
   or the λ it is wrapped in is called before the evaluation of this expression completes.
   The Scheme language does not protect you in this case,
-  and, in general, could not protect you
-  without either severely limiting the language expressiveness,
+  and, in general, no language could protect you
+  without either severely limiting the language expressiveness
   or solving the halting problem.
   Various languages and their implementations,
   depending on various safety settings they might have or not,
@@ -888,25 +965,28 @@ not to access the variable before it was initialized@xnote["."]{
   use a special value such as @c{#!void} or @c{null} or @c{undefined}
   that is not usually part of the expected type,
   or access uninitialized memory potentially returning nonsensical results
-  or causing a latter fandango on core, etc.
+  or causing a later fandango on core, etc.
 }
 If the variable is only accessed after it is initialized,
-and the rest of the program is pure and doesn’t capture intermediate continuations
-with Scheme’s famous @c{call/cc}, the mutation cannot be exposed as a side-effect,
+and the rest of the program is pure and
+doesn’t capture intermediate continuations with Scheme’s famous @c{call/cc},
+the mutation cannot be observed as a side-effect,
 and the computation remains overall pure (deterministic, referentially transparent),
 though not definable in terms of the pure applicative λ-calculus.
-Note however how in the definition below, @c{p} still needs be a function,
+Note however how in the definition below, @c{p} still needs to be a function,
 and one must η-convert it into the equivalent but protected @c{(η p) = (λ (y) (p y))}
 (a syntactic definition that delays the evaluation of @c{p},
 not a function call with the value of @c{p}, which would defeat the purpose),
 before passing it to @c{f}, to prevent access to the variable @c{p} before its initialization
 (and @c{f} must also be careful not to invoke this protected @c{p} before returning).
-Here is the Y combinator, eager, stateful:
+Thus, @c{(Ue x)} could be defined as @c{(η (x x))}, and
+here is @c{Yes}, the Y combinator, eager, stateful:
 @Code{
 (def (Yes f) (letrec ((p (f (η p)))) p))
 }
 @; Test: ((Yes eager-pre-fact) 6) ;==> 720
 
+@Paragraph{Lazy Y}
 A second solution is to use a lazy Y, defined as Yl below.
 In a language like Nix (where @c{λ (f)} is written @c{f:}, and @c{let} like Scheme @c{letrec}
 recursively binds the variable in the definition body), you can simply define
@@ -915,8 +995,8 @@ every argument variable or function result must be protected by @c{delay},
 and one must @c{force} the delayed reference to extract the result value,
 you would write@xnote[":"]{
   Again, a simple way to test the lazy Y combinator Yl is to use it
-  to define the factorial function. First define the lazy “recursion schema” for the factorial:
-  @c{(def lazy-pre-fact (λ (f n) (if (<= n 1) n (* n ((force f) (1- n))))))}
+  to define the factorial function. First define the lazy “generator” for the factorial:
+  @c{(def lazy-pre-fact (λ (f n) (if (<= n 1) 1 (* n ((force f) (1- n))))))}
   Then the factorial function is
   @c{(def fact (Yl lazy-pre-fact))}
   and you can then test that e.g. @c{(fact 6)} returns @c{720}.
@@ -931,7 +1011,7 @@ you would write@xnote[":"]{
 @Code{
 (def (Yl f) (letrec ((p (f (delay p)))) p))
 }
-Or, if you want variant based on combinators,
+Or, if you want a variant based on combinators,
 here are respectively the lazy B (composition),
 lazy U (self-application), lazy Y written with combinators,
 and lazy Y with expanded definition:
@@ -972,14 +1052,16 @@ without duplication of computation costs or side-effects@xnote["."]{
 (Note that @c{delay} can be easily implemented on top of any stateful applicative language,
 though a thread-safe variant, if needed, is somewhat trickier to achieve.)
 
-Here is one implementation of laziness that works in a single-threaded environment:
+@Paragraph{Lazy on top of Applicative}
+Here is one implementation of laziness on top of the stateful applicative subset of Scheme,
+that works in a single-threaded environment:
 it takes a thunk as argument, and only calls the thunk the first time around,
-thereafter memoizes the result of that first invocation and returning it.
+thereafter memoizes the result of that first invocation and returns it.
 @Code{
 (define (compute-once thunk)
   (let ((computed? #f)
         (value #f))
-    (λ _
+    (lambda _
       (or computed?
           (let ((result (thunk)))
             (or computed?
@@ -989,25 +1071,72 @@ thereafter memoizes the result of that first invocation and returning it.
       value)))
 }
 If you already assume @c{delay} and @c{force}, you could write it as
-@c{(λ (thunk) (let ((x (delay (thunk)))) (λ _ (force x))))}.
-This approach transforms laziness into functions,
-and you can use the stateful Y on that function and get the same as a lazy Y on its result.
+@c{(lambda (thunk) (let ((x (delay (thunk)))) (lambda _ (force x))))}.
+This approach transforms lazy expressions you force into thunks you call.
+Whichever syntax you prefer for lazy evaluation,
+you can then define a lazy Y on top of this laziness,
+and start manually compiling your lazy functional programs into that.
+But that will be a lot of tedious effort for not-so-readable programs
+compared to the original in a lazy functional language.
 
+Now, hand-compiling lazy code into @c{delay} and @c{force} is
+a vast topic in itself, that this book can only allude to.
+It may involve types for delays or forced status,
+a lot of optimizations,
+and potentially tricky interactions with the garbage collector.
+It calls for a wider understanding of the duality
+of computations and values @~cite{Levy1999}. @; TODO Curien2000 Herbelin2007 ?
+Happily, only a tiny bit of laziness is necessary to understand fixpoints,
+or recursion in general, and their significance for OO.
+
+@Paragraph{Minimally Lazy Y}
+The minimal use of laziness with maximal impact in the context of fixpoints and OO would be
+to replace plain deferred evaluation without sharing by a lazy variant:
+Wherever the use of an applicative Y would require η-expansion,
+instead of @c{(η f)} above that expands to @c{(λ (x) (f x))},
+use @c{(η1 f)} that expands to @c{(let ((df (delay f))) (λ (x) ((force df) x)))}.
+
+In both variants, the @emph{expression} @c{f}
+(often a mere reference to a recursive variable, but potentially any expression involving one)
+is protected by a λ-abstraction,
+which is what makes the reference legal at all in the context of the recursion
+via @c{letrec} or other fixpoint.
+You still need a function you can η-expand rather than an arbitrary value:
+for functions, the deferral of evaluation happens transparently for callers, because
+the burden of evaluating or forcing is hidden
+under the syntactic and semantic cost of each function call.
+For a non-function value—a pair, a number—there is no such function call under which to hide forcing,
+and, unless you use a lazy language that hides forcing behind every non-trivial evaluation,
+the consumer must do the forcing explicitly.
+
+Now, @c{η1}, that can read as “η-expand but only evaluate once”,
+ensures the @emph{expression} for the function is only evaluated once.
+However, each invocation still does its own bit of computation.
+If you want repeated invocations with the same argument to remember
+and reuse the value from the first invocation, you will need
+to wrap the function into a layer that also @emph{memoizes} its results.
+
+@Paragraph{Second-class Y}
 A third solution, often used in programming languages with second-class OO only
 (or languages in which first-class functions must terminate), is
-for the @c{Y} combinator (or its notional equivalent) to only be called at compile-time,
-as a metaprogram, and only on modular definitions
-that abide by some kind of structural restriction
+for the @c{Y} combinator (or its notional equivalent)
+to only be called at compile-time, as a metaprogram,
+and only on modular definitions that abide by some kind of structural restriction
 that guarantees the existence and well-formedness of a fixpoint,
 as well as e.g. induction principles to reason about said fixpoint.
 Also, the compile-time language processor usually doesn’t expose any side-effect to the user,
 such that there is no semantic difference whether its implementation is itself pure or impure,
 and uses a fixpoint combinator or any other representation for recursion.
+
 Since I am interested in first-class semantics for OO, I will ignore this solution
 in the rest of this book, and leave it as an exercise for the reader.
-@;{TODO CITE Aaron Stump from U Iowa, etc.}
-@; TODO: Fix as a metaprogram. Kirill Gobulev.
+As far as what I’m discussing is concerned, whoever implements these languages with second-class OO
+will still need a first-class Y underneath, and all the semantics that I am describing with it.
+It is only the users of these languages who are somewhat shielded from the intricacies of recursion.
+@; TODO CITE Aaron Stump from U Iowa, etc.
+@; TODO: Fix as a metaprogram. Kirill Golubev. https://popl26.sigplan.org/details/rocqpl-2026-papers/17/Lambda-JS-la-Carte
 
+@Paragraph{My Editorial Choice}
 I have implemented variants of my minimal OO system in many combinations
 of the above solutions to these two issues, in Scheme and other languages.
 For the rest of this book, I will adopt a style where most functions are unary,
@@ -1022,28 +1151,11 @@ that sports first-class higher-order functions@xnote["."]{
   even though it doesn’t directly address any of my concerns above: @citet{Kiselyov2024}.
 }.
 
-And with these issues settled, I will close this digression
+And with these issues settled, I will close this section
 and return to rebuilding OO from first principles.
 
-@exercise[#:difficulty "Easy"]{
-  Play with the simple record system I implemented.
-  With what function can you extract all the values for multiple fields
-  in a single function call?
-  (You may use functions from your language’s standard library.)
-}
-@exercise[#:difficulty "Easy"]{
-  Use existing library functions in your Scheme implementation of choice
-  to actually implement the example of modularly sorting a list of files.
-}
-@exercise[#:difficulty "Medium" #:tag "alist0"]{
-  Implement a trivial record system based on alists (lists of pairs of symbol and value)
-  instead of functions from symbol to value (you can reuse library functions if available).
-  Reimplement and evaluate the same examples using this record system instead of the one I used.
-  Implement conversions between the two representations.
-  What limitation do you notice in one direction?
-}
 @exercise[#:difficulty "Medium"]{
-  Extend the @c{once} function above to:
+  Extend the @c{compute-once} function above to:
   (a) support non-nullary functions wherein provided arguments are passed through
     the first time around and ignored afterwards; optionally, also support multiple values;
   (b) detect attempts at reentrancy, and issue an error if detected,
@@ -1056,7 +1168,7 @@ and return to rebuilding OO from first principles.
   see how it detects and supports non-local exits (e.g. error) from within the thunk, etc.
   For instance, in Gerbil Scheme, look for the implementation of function @c{make-atomic-promise},
   as internally used by the form @c{delay-atomic}.
-  Alternatively, to make exercise hard, try implementing it all yourself from low-level primitives
+  Alternatively, to make the exercise hard, try implementing it all yourself from low-level primitives
   before you see how it is done; or try to port the Gerbil Scheme implementation
   to your favorite language if that language doesn’t yet support this feature
   (and then send a patch upstream, or publish a new library if the feature is not desired upstream).
@@ -1202,7 +1314,7 @@ and the flow of information in this syntax goes left-to-right.
 The opposite call convention is also possible, with various minor tradeoffs.
 Or you could have @c{c p t s} or @c{p c s t} with contravariant order between
 the specification arguments during mixing and the target arguments during fixing.
-ultimately, the order of arguments is immaterial, up to a simple isomorphism.
+Ultimately, the order of arguments is immaterial, up to a simple isomorphism.
 
 @subsection{Closing Modular Extensions}
 
@@ -1240,14 +1352,14 @@ I will define the common instantiation operation for modular extensions:
 @Code{(def fixt (fix top))}
 or to inline @c{fix} in its definition:
 @Code{(def (fixt m) (Y (m top)))}
-Note that if the language-wide top type is too wide in some context:
+Note that the language-wide top type is too wide in some contexts:
 for instance I chose @c{Any} as my top type in Scheme, with @c{#f} as my top value; but
 you may want to choose the narrower @c{Record} as your top type,
 so as to be able define individual methods,
 with a @c{empty-record} as default value.
 
-Then you can mix to the left of your modular extension,
-a modular extension that precedes to it, and that throws away
+Then you can mix to the right of your modular extension,
+a modular extension that follows it, and that throws away
 any the previous value or computation (i.e. ignores its @c{super} argument)
 and returns the new default value regardless of context (ignores its @c{self} argument;
 unless that default is extracted from the context):
@@ -1310,7 +1422,7 @@ This style of inheritance was dubbed “mixin inheritance” by Bracha and Cook@
   a new, useful, technical meaning.
   But that doesn’t mean the context that made the word superfluous should be forgotten,
   quite the contrary.
-  I will get back to Flavors when I discuss multiple inheritance. @;TODO secref
+  I will get back to Flavors when I discuss multiple inheritance (@secref{MI}).
 }
 and the two functions, that can easily be ported to any language with first-class functions,
 are enough to implement a complete object system.
@@ -1360,7 +1472,7 @@ and eventually build a closed modular extension that you can instantiate.
 
 Now, where performance or space matters,
 you would use an encoding of records-as-structures instead of records-as-functions
-(see @secref{EtSoO}).
+(see @secref{EOI}).
 Then, instead of calling the record as a function with an identifier,
 you would invoke a dereference function with the record as first argument
 and the identifier as second argument.
@@ -1377,7 +1489,7 @@ for many simple applications@xnote["."]{
   including sections not yet defined.
   It might seem impossible in an eager language, and without side-effects,
   to import data from slides that will only be defined later
-  into a whichever slide is being defined now;
+  into whichever slide is being defined now;
   and yet the Y combinator achieves this feat,
   and although I use the stateful Y for performance,
   a pure applicative Y also works without too much slowdown,
@@ -1497,14 +1609,14 @@ This demonstrates how modular extensions work
 and indeed implement the basic design patterns of OO.
 
 Because @c{mix} is associative, instead of using long chains of nested binary calls to @c{mix},
-I will instead use a n-ary @c{mix*} that can defined as follows
-(though in practice I would use a longer definition with more optimizations):
+I will use an n-ary @c{mix*} that can defined as follows,
+given an appropriate wrapper @c{op*←op1.1} left as an exercise to the reader
+(you can look at the version I wrote in the @c{pommette.scm} file accompanying this book):
 @Code{
-(define (uncurry2 f) (lambda (x y) ((f x) y)))
-(define (mix* . l) (foldl (uncurry2 mix) idModExt l))
+(define mix* (op*←op1.1 mix idModExt))
 }
 With this @c{mix*}, the leftmost argument is the least specific ancestor,
-and the rightmost argument is the most specific descendent (overriding previous ones).
+and the rightmost argument is the most specific descendant (overriding previous ones).
 Now, note how trying to instantiate @c{(add-x-spec 1)} or @c{rho-spec} alone would fail:
 the former relies on the @c{super} record to provide a useful inherited value to extend,
 whereas the latter relies on the @c{self} context to modularly provide @c{x} and @c{y} values.
@@ -1549,7 +1661,7 @@ it must be modularly provided by another modular definition.
 }
 Since by my disjointness hypothesis,
 the global specification for @c{start}, @c{length} and @c{size}
-will not be overridden, then @c{(self 'start)} and @c{(self 'length)}
+will not be overridden, @c{(self 'start)} and @c{(self 'length)}
 will always be bound to the values locally specified.
 Therefore, the value @c{5} may be inlined into the specification for @c{size},
 and a fixpoint combinator or @c{letrec} can be used to define the @c{length} function,
@@ -1617,7 +1729,7 @@ one modular entity for each of these bigger targets.
 Modular extensibility enables modularity at a finer grain.
 
 There is another important shift between modularity alone and modularity with extensibility,
-that I quietly smuggled in so far,
+that I have quietly smuggled in so far,
 because it happened naturally when modeling first-class entities using FP.
 Yet this shift deserves to be explicitly noted,
 especially since it is not quite natural in other settings

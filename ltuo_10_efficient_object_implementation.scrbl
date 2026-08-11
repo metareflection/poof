@@ -14,7 +14,7 @@
   Computer scientists see things simultaneously at the low level and the high level.
     @|#:-"Donald Knuth"|
 }
-@section{Representing Records}
+@section[#:tag "RR"]{Representing Records}
 
 @subsection{Records Matter}
 
@@ -485,12 +485,12 @@ depending on whether one used Y-encoding (@secref{MOO}) or U-encoding (@secref{C
     the data structure is built, when a caller invokes a method using the self-application
     operator @c{U} or an argument-swapping variant thereof—which corresponds to
     the outer @c{U.} to the left of @c{Y = U.(.U)}.
-    The recursion schema is being composed to the right with @c{U}—which corresponds to
+    The generator is being composed to the right with @c{U}—which corresponds to
     the inner @c{.U} to the right—before returning the data structure,
     but that is deferred self-application, and does not involve any fixpoint yet.}]
 
 @Paragraph{Fixpoints are for Computations, not Values}
-Either way, as mentioned in @secref{DSF},
+Either way, as mentioned in @secref{USLCP},
 fixpoints, and thus resolution of modular definitions and of modular extensions,
 are essentially operations on @emph{computations}, and not quite on @emph{values},
 where the distinction between the two, and the duality of the two,
@@ -636,7 +636,7 @@ First, allocate some cell to which you can hold a stable reference@xnote["."]{
   possibly coded or wrapped to fit the implementation and conventions of the programming language.
 }
 Then, use the reference to backpatch the value of the cell
-in a way that implements the recursion schema.
+in a way that implements the generator.
 The cell is said to be @emph{initialized} after this mutation is complete,
 @emph{uninitialized} until then.
 

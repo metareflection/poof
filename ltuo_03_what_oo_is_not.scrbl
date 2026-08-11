@@ -495,7 +495,7 @@ that Alan Kay also identified as essential for OO@xnote["."]{
   Now, as we’ll see, you need fixpoints to express the semantics of OO;
   but in a pure applicative context, you cannot directly express sharing the results of a computation,
   so the pure fixpoint combinators lead to exponential recomputations
-  as deeper self-references are involved (see @secref{DSF}).
+  as deeper self-references are involved (see @secref{USLCP}).
   OO is therefore possible using the applicative pure functional fragment of the language
   within an Erlang process, but the result will not scale very well;
   see for instance the example “object-via-closure” that Duncan McGreggor wrote as part of LFE.
@@ -518,7 +518,7 @@ that Alan Kay also identified as essential for OO@xnote["."]{
   but only fits indirectly in other paradigms,
   including the pure applicative functional paradigm of Erlang in-process,
   or the process-oriented paradigm of Erlang between-processes.
-  See also the discussion in @secref{DSF}.
+  See also the discussion in @secref{USLCP}.
 }
 Most OO languages have no support whatsoever for concurrency,
 or then again only as an afterthought added years or decades
@@ -934,9 +934,9 @@ match interfaces, subtyping or some form of polymorphism;
 and far too many people desperately try to use it as if the two were the same,
 which I describe in @secref{NNOOTT}.
 But that is actually deeply wrong, because inheritance crucially depends
-on computing a fixpoint after you compose extensions to recursion schemas,
+on computing a fixpoint after you compose extensions to an initial generator,
 and involves those nice things (interfaces, subtyping, polymorphism)
-@emph{before} the fixpoint, which does not translate to those same things @emph{after} the fixpoint,
+@emph{before} the fixpoint, which does not translate to those same things @emph{after} the fixpoint;
 yet the above pundits fail to understand the difference (see @secref{BtN}).
 
 Interfaces, subtyping and polymorphism are important concepts that absolutely matter a lot.

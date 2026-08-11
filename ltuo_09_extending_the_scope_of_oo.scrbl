@@ -155,11 +155,7 @@ reject many interesting skew lenses from which no such second getter can be mean
 
 @Paragraph{Composing Lenses}
 I can compose view, update and lenses as follows,
-with the obvious identity lens@xnote[":"]{
-  I also use an appropriate wrapper @c{op*←op1.1} for @c{compose-lens*} in the end.
-  The definition is left as an exercise to the reader;
-  you can look at the version I wrote in the @c{pommette.scm} file accompanying this book.
-}
+with the obvious identity lens:
 @Code{
 compose-view : View s t → View r s → View r t
 (def (compose-view v w)

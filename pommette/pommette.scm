@@ -4,11 +4,20 @@
 With Gerbil Scheme: gxi pommette.scm
 With Chez Scheme: chezscheme pommette-chez.scm
 With Racket: racket pommette.rkt
+
+Not yet working:
+With Gambit Scheme: gsi -:s pommette.scm
 |#
 #|
    Semicolons are comments to the end of line.
    Blocks between #| ... |# are multi-line comments.
 |#
+
+(cond-expand
+ (gambit
+  (load "~~/syntax-case"))
+ (gerbil
+  (import :std/debug/DBG)))
 
 ;;; Flag for verbose execution:
 (define verbose #t)
@@ -37,16 +46,16 @@ With Racket: racket pommette.rkt
   (syntax-rules ()
     ((_ name symbol-expr list-expr)
      (cond-expand
-       (gerbil
-        (define-syntax name
-          (syntax-rules ()
-            ((_ . x) (list-expr . x))
-            (_ symbol-expr))))
-       ((or racket chezscheme)
+       ((or chezscheme racket gambit)
         (define-syntax (name stx)
           (syntax-case stx ()
             ((_ . x) #'(list-expr . x))
-            (_ #'symbol-expr))))))
+            (_ #'symbol-expr))))
+       ((or gerbil)
+        (define-syntax name
+          (syntax-rules ()
+            ((_ . x) (list-expr . x))
+            (_ symbol-expr))))))
     ((_ name expr)
      (define-identifier-macro name expr expr))))
 
@@ -85,14 +94,14 @@ With Racket: racket pommette.rkt
 (define (check-failure expr thunk msg)
   (let ((failed?
          (cond-expand
-           (gerbil
-            (with-catch true (lambda () (thunk) #f)))
            (chezscheme
             (guard (e (#t #t)) (thunk) #f))
-           (guile
-            (catch #t (lambda () (thunk) #f) (lambda args #t)))
            (gambit
             (with-exception-catcher (lambda (_) #t) (lambda () (thunk) #f)))
+           (gerbil
+            (with-catch true (lambda () (thunk) #f)))
+           (guile
+            (catch #t (lambda () (thunk) #f) (lambda args #t)))
            (else
             'unsupported))))
     (case failed?
@@ -238,6 +247,9 @@ With Racket: racket pommette.rkt
 ;; A macro, not a function, precisely to protect against overly eager evaluation of f.
 (define-syntax η (syntax-rules () ((_ f) (λ (x) (f x)))))
 
+;; Memoizing variant of eta-conversion
+(define-syntax η1 (syntax-rules () ((_ f) (let ((df (delay f))) (λ (x) ((force df) x))))))
+
 ;; As a warm up, S K I combinators (that can also be useful later)
 (def (S x y z) (x z (y z)))
 (def (K x _y) x)
@@ -249,12 +261,12 @@ With Racket: racket pommette.rkt
 (def (B x y z)
   (x (y z)))
 
-;; Ue: U, eager -- self-application combinator
+;; Ue: U, eager -- self-application combinator, η-expanded U for use with eager Y
 ;; a.k.a. duplication combinator Δ \Delta, or ω, half of Ω = (ω ω)
 ;; "Half of Y"
 ;; https://en.wikipedia.org/wiki/SKI_combinator_calculus
 ;; https://www.tfeb.org/fragments/2020/03/09/the-u-combinator/
-;; same as (def (Ue x) (eta (x x)))
+;; same as (def (Ue x) (η (x x)))
 ;; : µX.(X→A)→A
 (def (Ue x y)
   (x x y))
@@ -340,7 +352,7 @@ let Y = f: (x: x x) (x: f (x x));
 (define (compute-once thunk)
   (let ((computed? #f)
         (value #f))
-    (λ _
+    (lambda _
       (or computed?
           (let ((result (thunk)))
             (or computed?
@@ -463,7 +475,6 @@ let Y = f: (x: x x) (x: f (x x));
 ;;; Useful when the top is #f and we are not sure whether a sub-record was initialized yet.
 (def (field-spec~ key compute-value super self method-id)
   (field-spec key compute-value (or super empty-record) self method-id))
-
 
 ;;; 5.3.6 Minimal Colored Point
 (def coord-spec
@@ -838,15 +849,14 @@ let Y = f: (x: x x) (x: f (x x));
 
 ;;;; 6.1.2 Conflation: Crouching Typecast, Hidden Product
 
+;; Same as (cons spec (fix-record spec)) but with a record shape
 (def (pproto←spec spec)
-  (cons spec (delay (fix-record spec))))
+  (cons spec (fix-record spec)))
 (def spec←pproto car)
-(def (target←pproto pproto)
-  (force (cdr pproto)))
+(def target←pproto cdr)
 (def pproto-id (pproto←spec idModExt))
 (def (pproto-mix parent child)
   (pproto←spec (mix (spec←pproto parent) (spec←pproto child))))
-;;(define (pproto-mix* . l) (foldl (uncurry2 pproto-mix) pproto-id l))
 (define pproto-mix* (op*←op1.1 pproto-mix pproto-id))
 
 (def coord-pproto (pproto←spec coord-spec))
@@ -857,10 +867,8 @@ let Y = f: (x: x x) (x: f (x x));
         (map (target←pproto color-pproto) '(x y z color)) => '(#f #f #f "blue")
         (map (target←pproto point-p-pproto) '(x y z color)) => '(2 4 #f "blue"))
 
-(def (add-x-pproto dx)
-  (pproto←spec (add-x-spec dx)))
+(def (add-x-pproto dx) (pproto←spec (add-x-spec dx)))
 (def rho-pproto (pproto←spec rho-spec))
-
 (def point-r-pproto (pproto-mix* rho-pproto coord-pproto (add-x-pproto 1)))
 (def point-rc-pproto (pproto-mix* point-r-pproto color-pproto))
 
@@ -888,18 +896,42 @@ let Y = f: (x: x x) (x: f (x x));
 |#
 
 ;;;; 6.1.3 Recursive Conflation
+
+;;; Trivial prototype conflation, as record of spec and target
+(def (conflate spec target)
+  (extend-record 'spec spec
+    (extend-record 'target target empty-record)))
+(def (get-spec tp) (tp 'spec))
+(def (get-target tp) (tp 'target))
+
 (def (qproto-wrapper spec super _self)
-  (cons spec super))
+  (conflate spec super))
 (def (qproto←spec spec)
-  (delay (fix-record (mix spec (qproto-wrapper spec)))))
+  (fix-record (mix spec (qproto-wrapper spec))))
+(def spec←qproto get-spec)
+(def target←qproto get-target)
 (def qproto-id (qproto←spec idModExt))
-(def spec←qproto car)
-(def (target←qproto qproto)
-  (force (cdr qproto)))
 (def (qproto-mix parent child)
   (qproto←spec (mix (spec←qproto parent) (spec←qproto child))))
-(define (qproto-mix* . l) (foldl (uncurry2 qproto-mix) qproto-id l))
+(define qproto-mix* (op*←op1.1 qproto-mix qproto-id))
 
+(def coord-qproto (qproto←spec coord-spec))
+(def color-qproto (qproto←spec color-spec))
+(def point-p-qproto (qproto-mix coord-qproto color-qproto))
+(def (add-x-qproto dx) (qproto←spec (add-x-spec dx)))
+(def area-qproto (qproto←spec (λ (super self) (area-spec super (η (get-target self))))))
+(def rho-qproto (qproto←spec (λ (super self) (rho-spec super (η (get-target self))))))
+(def point-q-qproto (qproto-mix area-qproto coord-qproto))
+(def point-r-qproto (qproto-mix* rho-qproto coord-qproto (add-x-qproto 1)))
+(def point-rc-qproto (qproto-mix* point-r-qproto color-qproto))
+
+(expect (map (target←qproto coord-qproto) '(x y z color)) => '(2 4 #f #f)
+        (map (target←qproto color-qproto) '(x y z color)) => '(#f #f #f "blue")
+        (map (target←qproto point-p-qproto) '(x y z color)) => '(2 4 #f "blue")
+        (map (target←qproto point-q-qproto) '(x y area color)) => '(2 4 8 #f)
+        (map (target←qproto (qproto-mix area-qproto coord-qproto)) '(x y area rho color)) => '(2 4 8 #f #f)
+        (map (target←qproto point-r-qproto) '(x y rho color)) => '(3 4 5 #f)
+        (map (target←qproto point-rc-qproto) '(x y rho color)) => '(3 4 5 "blue"))
 
 ;;;; 6.1.4 Conflation for Records
 
@@ -1633,9 +1665,8 @@ let Y = f: (x: x x) (x: f (x x));
 ;;;; Portable hash tables (using eq? as the key equality predicate)
 
 (cond-expand
-  (gerbil
+  ((or gerbil gambit)
    (begin
-     (import :std/debug/DBG)
      (define (make-eqht) (make-table test: eq?))
      (define (eqht-ref t k default) (table-ref t k default))
      (define (eqht-set! t k v) (table-set! t k v))))

@@ -2013,7 +2013,7 @@ Last but not least, the constructor for a @c{poi} is defined as follows:
 Note how I crucially rely on explicit laziness with @c{delay} and @c{force}
 to avoid constantly recomputing the precedence list and the most specific suffix,
 and, after them, the effective modular extension,
-and the target record itself (see the discussion in @secref{DSF})@xnote["."]{
+and the target record itself (see the discussion in @secref{USLCP})@xnote["."]{
   As discussed then, eager pure functional programming could capture the expected answers
   by using η-conversion instead of laziness to defer evaluation,
   but that would cause a lot of recomputations and

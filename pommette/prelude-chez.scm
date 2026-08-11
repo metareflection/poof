@@ -12,4 +12,3 @@
      (let ((result first))
        (begin rest ...)
        result))))
-

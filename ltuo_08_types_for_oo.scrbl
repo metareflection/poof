@@ -463,7 +463,7 @@ unsafe (program may silently misbehave at runtime if called with the wrong argum
 In some languages, self-reference already has to go through
 pointer indirection (e.g. in C++), or
 boxing (e.g. in Haskell, when using a @c{newtype Fix} generic constructor for fixpoints,
-while the open modular definition goes into a “recursion scheme”);
+while the open modular definition goes into a “generator”);
 thus the NNOOTT does not so much introduce an extra indirection step for recursion
 as it makes an existing indirection step obvious—and
 makes it dynamically rather than statically typed.
