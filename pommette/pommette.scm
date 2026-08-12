@@ -1736,7 +1736,7 @@ let Y = f: (x: x x) (x: f (x x));
           (loop (cdr l) (if r (cons r acc) acc))))))
 
 ;; c4-linearize head parents get-precedence-list suffix? [eq [get-name]]
-;;   -> (values precedence-list super-suffix-or-#f)
+;;   -> (cons precedence-list super-suffix-or-#f)
 ;;
 ;; Compute the precedence list for a specification.
 ;;   head               - prefix list to prepend (typically (list x) or '())
@@ -1748,7 +1748,7 @@ let Y = f: (x: x x) (x: f (x x));
 ;;   eq                 - equality on specs (optional, default: equal?)
 ;;   get-name           - name extractor for error messages (optional, default: identity)
 ;;
-;; Returns two values:
+;; Returns a pair of:
 ;;   - the linearized precedence list (most specific first)
 ;;   - the most specific suffix ancestor, or #f
 (define (c4-linearize head parents get-precedence-list suffix? . opts)
@@ -1762,13 +1762,13 @@ let Y = f: (x: x x) (x: f (x x));
     (cond
       ;; 0 non-empty parent-lists: base class
       ((null? parents)
-       (values head #f))
+       (cons head #f))
 
       ;; 1 parent-list with 1 parent: single inheritance
       ((and (null? (cdr parents)) (null? (cdar parents)))
        (let* ((parent (caar parents))
               (pl (get-precedence-list parent)))
-         (values (append head pl)
+         (cons (append head pl)
                  (if (suffix? parent) parent (super-suffix parent)))))
 
       ;; Multiple inheritance
@@ -1944,7 +1944,7 @@ let Y = f: (x: x x) (x: f (x x));
                   (c3loop (cons next rhead)
                           (remove-nulls (remove-next next tails))))))))
 
-         (values precedence-list ss))))))
+         (cons precedence-list ss))))))
 
 ;;;; Tests for C4 Linearization
 
@@ -1974,9 +1974,8 @@ let Y = f: (x: x x) (x: f (x x));
 (define (compute-pl x)
   (let ((cached (eqht-ref pl-cache x #f)))
     (or cached
-        (let-values (((pl _ss)
-                      (c4-linearize (list x) (list (test-get-supers x))
-                                    compute-pl test-struct? eq?)))
+        (let ((pl (car (c4-linearize (list x) (list (test-get-supers x))
+                                      compute-pl test-struct? eq?))))
           (eqht-set! pl-cache x pl)
           pl))))
 
@@ -2017,7 +2016,7 @@ let Y = f: (x: x x) (x: f (x x));
   (define (cg-pl x)
     (let ((cached (eqht-ref cg-cache x #f)))
       (or cached
-          (let-values (((pl _) (c4-linearize (list x) (list (cg-supers x)) cg-pl test-struct? eq?)))
+          (let ((pl (car (c4-linearize (list x) (list (cg-supers x)) cg-pl test-struct? eq?))))
             (eqht-set! cg-cache x pl) pl))))
   (expect (cg-pl 'CG) =>fail!))
 
@@ -2029,7 +2028,7 @@ let Y = f: (x: x x) (x: f (x x));
   (define (sbc-pl x)
     (let ((cached (eqht-ref sbc-cache x #f)))
       (or cached
-          (let-values (((pl _) (c4-linearize (list x) (list (sbc-supers x)) sbc-pl test-struct? eq?)))
+          (let ((pl (car (c4-linearize (list x) (list (sbc-supers x)) sbc-pl test-struct? eq?))))
             (eqht-set! sbc-cache x pl) pl))))
   (expect (sbc-pl 'SBc) =>fail!))
 
@@ -2037,7 +2036,7 @@ let Y = f: (x: x x) (x: f (x x));
 ;; Each sub-list is a totally-ordered chain; together they express a partial order DAG.
 (let ()
   (define (my-c4* local-order)
-    (let-values (((pl _) (c4-linearize '() local-order compute-pl test-struct? eq?)))
+    (let ((pl (car (c4-linearize '() local-order compute-pl test-struct? eq?))))
       pl))
   (expect
    (my-c4* '((A) (B) (C)))    => '(A B C O)   ;; three unordered singletons
@@ -2058,56 +2057,68 @@ let Y = f: (x: x x) (x: f (x x));
 ;;   e.g. (list (list A B C)) for a single chain, (list (list A B) (list C A)) for a DAG.
 
 (def (poi-spec poi) (poi #f))
-(def (poi-target poi) poi)
-(def (poi-id poi) (poi #f 'id))
-(def (poi-precedence-list poi) (cons poi (poi #f 'precedence-list)))
-(def (poi-suffix poi) (poi #f 'suffix))
-(def (poi-mod-ext poi) (poi #f 'mod-ext))
-(def (poi-suffix? poi) (poi #f 'suffix?))
-(def (poi-parents poi) (poi #f 'parents))
+(def (poi-name poi) (poi-spec poi 'name))
+(def (poi-precedence-list poi) (poi-spec poi 'precedence-list))
+(def (poi-suffix poi) (poi-spec poi 'suffix))
+(def (poi-mod-ext poi) (poi-spec poi 'mod-ext))
+(def (poi-suffix? poi) (poi-spec poi 'suffix?))
+(def (poi-parents poi) (poi-spec poi 'parents))
 
-(define (make-poi mod-ext suffix? parents)
+(def (make-poi name mod-ext suffix? parents)
   (letrec
-      ((id (generate-tag))
-       (precedence-list-and-suffix
-        (compute-once (lambda () (call-with-values (lambda ()
-          (c4-linearize '() parents poi-precedence-list poi-suffix? eq? poi-id)) cons))))
-       (precedence-list (lambda () (car (precedence-list-and-suffix))))
-       (suffix (lambda () (cdr (precedence-list-and-suffix))))
-       (self (η (fix (record (#f spec))
-                  (apply mix* finalize-spec
-                         (reverse (cons mod-ext (map poi-mod-ext (precedence-list))))))))
+      ((precedence-list-and-suffix*
+        (delay (c4-linearize '() parents
+                             poi-precedence-list
+                             poi-suffix? eq? poi-name)))
+       (ancestor-precedence-list* (delay (car (force precedence-list-and-suffix*))))
+       (precedence-list* (delay (cons self (force ancestor-precedence-list*))))
+       (suffix* (delay (cdr (force precedence-list-and-suffix*))))
+       (ancestor-mod-ext* (delay (apply mix*
+                                    (reverse (map poi-mod-ext
+                                      (force ancestor-precedence-list*))))))
+       (self* (delay (fix (record (#f spec))
+                       (mix* (force ancestor-mod-ext*) mod-ext))))
        (spec
         (lambda (msg)
           (case msg
-            ((target)          self)
-            ((precedence-list) (precedence-list))
-            ((suffix)          (suffix))
-            ((id)              id)
+            ((name)            name)
+            ((precedence-list) (force precedence-list*))
+            ((suffix)          (force suffix*))
             ((mod-ext)         mod-ext)
             ((suffix?)         suffix?)
             ((parents)         parents)
-            (else #f)))))
+            (else #f))))
+       (self (η (force self*))))
     self))
+
+#|
+(for-each (lambda (x y) (display x) (display ": ") (display y) (newline))
+          '(poi-spec poi-precedence-list poi-suffix poi-mod-ext poi-suffix? poi-parents make-poi)
+          (list poi-spec poi-precedence-list poi-suffix poi-mod-ext poi-suffix? poi-parents make-poi))
+(trace poi-spec poi-precedence-list poi-suffix poi-mod-ext poi-suffix? poi-parents make-poi)|#
 
 (define-syntax poi
   (syntax-rules ()
-    ((_ args ...) (poi-internal (args ...) idModExt #f '()))))
+    ((_ args ...) (poi-internal (args ...) #f idModExt #f '()))))
 (define-syntax poi-internal
-  (syntax-rules (:e :s :p :pp :p*)
-    ((_ () mod-ext suffix? parents) (make-poi mod-ext suffix? parents))
-    ((_ (:e e args ...) _ s p) (poi-internal (args ...) e s p))
-    ((_ (:s s args ...) e _ p) (poi-internal (args ...) e s p))
-    ((_ (:p p ...) e s _) (poi-internal () e s (list (list p ...))))
-    ((_ (:pp pp ...) e s _) (poi-internal () e s (list pp ...)))
-    ((_ (:p* p* args ...) e s _) (poi-internal (args ...) e s p*))))
+  (syntax-rules (:n :e :s :p :pp :p*)
+    ((_ () name mod-ext suffix? parents) (make-poi name mod-ext suffix? parents))
+    ((_ (:n n args ...) _ e s p) (poi-internal (args ...) n e s p))
+    ((_ (:e e args ...) n _ s p) (poi-internal (args ...) n e s p))
+    ((_ (:s s args ...) n e _ p) (poi-internal (args ...) n e s p))
+    ((_ (:p p ...) n e s _) (poi-internal () n e s (list (list p ...))))
+    ((_ (:pp pp ...) n e s _) (poi-internal () n e s (list pp ...)))
+    ((_ (:p* p* args ...) n e s _) (poi-internal (args ...) n e s p*))))
+(def (struct-name? s)
+  (>= (char->integer (string-ref (symbol->string s) 0)) 96))
+(define-syntax defpoi
+  (syntax-rules ()
+    ((_ name args ...) (def name (poi :n 'name :s (struct-name? 'name) args ...)))))
 
 ;; memo-poi: poi that memoizes all method accesses
 ;; It is a suffix poi, because memoization must happen in the very beginning,
 ;; and thus the finalizer must be registered at the very end.
-(def memo-poi
-     (poi :e (register-finalizer-spec (λ (super _self) (memo super)))
-          :s #t))
+(defpoi memo-poi :e (register-finalizer-spec (λ (super _self) (memo super))))
 
 ;;;; Tests for POI
 
@@ -2116,10 +2127,10 @@ let Y = f: (x: x x) (x: f (x x));
 ;; because def-bound parameters become identifier macros that expand
 ;; (compute-value inherited self) to ((compute-value inherited) self).
 (let ()
-  (define O (poi))
-  (define A (poi :e (constant-field-spec 'a 1) :p O))
-  (define B (poi :e (constant-field-spec 'b 2) :p O))
-  (define Z (poi :e (constant-field-spec 'z 3) :p A B))
+  (defpoi O)
+  (defpoi A :e (constant-field-spec 'a 1) :p O)
+  (defpoi B :e (constant-field-spec 'b 2) :p O)
+  (defpoi Z :e (constant-field-spec 'z 3) :p A B)
 
   ;; Precedence lists
   (expect
@@ -2129,8 +2140,8 @@ let Y = f: (x: x x) (x: f (x x));
 
 ;; Suffix (single-inheritance) chain: s <- C  where s is a suffix spec
 (let ()
-  (define s (poi :e (constant-field-spec 's 0) :s #t))
-  (define C (poi :e (constant-field-spec 'C 99) :p s))
+  (defpoi s :e (constant-field-spec 's 0) :s #t)
+  (defpoi C :e (constant-field-spec 'C 99) :p s)
 
   ;; s-oisp is the last (least-specific) in C's PL, as required by the suffix property
   (expect
@@ -2140,8 +2151,8 @@ let Y = f: (x: x x) (x: f (x x));
 
 ;; Overriding: child adds 10 to parent's field
 (let ()
-  (define base (poi :e (constant-field-spec 'val 5)))
-  (define child (poi :e (field-spec 'val (λ (inh _self) (+ inh 10))) :p base))
+  (defpoi base :e (constant-field-spec 'val 5))
+  (defpoi child :e (field-spec 'val (λ (inh _self) (+ inh 10))) :p base)
   (expect
    (base 'val) => 5
    (child 'val) => 15))   ;; child's +10 applied on top of base's 5
@@ -2153,112 +2164,67 @@ let Y = f: (x: x x) (x: f (x x));
 ;;            (2) diamond ancestors appear exactly once,
 ;;            (3) for suffix hierarchies, the suffix property holds.
 
+(define-syntax defhierarchy
+  (syntax-rules ()
+    ((_ (name . parents) ...)
+     (begin (defpoi name :e (constant-field-spec 'name 'name) :p . parents) ...))))
+
+(defhierarchy ;; same as expected-pls
+  (O) (A O) (B O) (C O) (D O) (E O)
+  (K1 A B C O) (K2 D B E O) (K3 D A O) (Z K1 K2 K3 D A B C E O)
+  (J1 C A B O) (J2 B D E O) (J3 A D O) (Y J1 C J3 A J2 B D E O)
+  (DB B O) (WB B O) (EL DB B O) (SM DB B O) (PWB EL DB WB B O) (SC SM DB B O)
+  (P PWB EL SC SM DB WB B O)
+  (GL O) (HG GL O) (VG GL O) (HVG HG VG GL O) (VHG VG HG GL O)
+  (HH) (GG HH) (II GG HH) (FF HH) (EE HH) (DD FF HH)
+  (CC EE FF GG HH) (BB) (AA BB CC EE DD FF GG HH)
+  (o O) (a o O) (b a o O) (c b a o O) (d D c b a o O) (M A B b a o O)
+  (N C c b a o O) (L M A B N C c b a o O) (k D L M A B N C c b a o O)
+  (j E k D L M A B N C c b a o O) (I N C M A B c b a o O)
+  (x1) (x2 x1) (x3 x2 x1) (x4 x3 x2 x1) (x5 x4 x3 x2 x1)
+  (SBA) (SBB) (SBS SBA) (sBs SBA) (SBC SBS SBA SBB))
+
+
 ;; --- Wikipedia 2021: Z hierarchy ---
 ;; Classes: O, A B C D E O, K1=(A B C), K2=(D B E), K3=(D A), Z=(K1 K2 K3)
 ;; Expected PL: Z K1 K2 K3 D A B C E O
-(let ()
-  (define-syntax m (syntax-rules () ((_ . p) (poi :p . p))))
-  (define O  (m))
-  (define A  (m O))
-  (define B  (m O))
-  (define C  (m O))
-  (define D  (m O))
-  (define E  (m O))
-  (define K1 (m A B C))
-  (define K2 (m D B E))
-  (define K3 (m D A))
-  (define Z  (m K1 K2 K3))
-  (expect
-   (poi-precedence-list Z) => (list Z K1 K2 K3 D A B C E O)
-   (poi-precedence-list K1) => (list K1 A B C O)
-   (poi-precedence-list K2) => (list K2 D B E O)
-   (poi-precedence-list K3) => (list K3 D A O)))
+(expect
+ (poi-precedence-list Z)  => (list Z K1 K2 K3 D A B C E O)
+ (poi-precedence-list K1) => (list K1 A B C O)
+ (poi-precedence-list K2) => (list K2 D B E O)
+ (poi-precedence-list K3) => (list K3 D A O))
 
 ;; --- Wikipedia 2023: Y hierarchy ---
 ;; J1=(C A B), J2=(B D E), J3=(A D), Y=(J1 J3 J2)
 ;; Expected PL: Y J1 C J3 A J2 B D E O
-(let ()
-  (define-syntax m (syntax-rules () ((_ . p) (poi :p . p))))
-  (define O  (m))
-  (define A  (m O))
-  (define B  (m O))
-  (define C  (m O))
-  (define D  (m O))
-  (define E  (m O))
-  (define J1 (m C A B))
-  (define J2 (m B D E))
-  (define J3 (m A D))
-  (define Y (m J1 J3 J2))
-  (expect (poi-precedence-list Y) => (list Y J1 C J3 A J2 B D E O)))
+(expect (poi-precedence-list Y) => (list Y J1 C J3 A J2 B D E O))
 
 ;; --- C3 paper: Boat hierarchy ---
 ;; boat(B), day-boat(DB=B), wheel-boat(WB=B), engine-less(EL=DB),
 ;; small-multihull(SM=DB), pedal-wheel-boat(PWB=EL WB),
 ;; small-catamaran(SC=SM), pedalo(P=PWB SC)
 ;; Expected PL: P PWB EL SC SM DB WB B O
-(let ()
-  (define-syntax m (syntax-rules () ((_ . p) (poi :p . p))))
-  (define O   (m))
-  (define B   (m O))
-  (define DB  (m B))
-  (define WB  (m B))
-  (define EL  (m DB))
-  (define SM  (m DB))
-  (define PWB (m EL WB))
-  (define SC  (m SM))
-  (define P   (m PWB SC))
-  (expect (poi-precedence-list P) => (list P PWB EL SC SM DB WB B O)))
+(expect (poi-precedence-list P) => (list P PWB EL SC SM DB WB B O))
 
 ;; --- C4 suffix hierarchy: lowercase = suffix (single-inheritance chain) ---
 ;; O, o=(O suffix), a=(o), b=(a), c=(b o), d=(D c) where D is a class
 ;; Expected PLs: o→(o O), a→(a o O), b→(b a o O), c→(c b a o O), d→(d D c b a o O)
-(let ()
-  (define-syntax m (syntax-rules () ((_ . p) (poi :p . p))))
-  (define-syntax s (syntax-rules () ((_ . p) (poi :s #t :p . p))))
-  (define O (m))
-  (define D (m O))
-  (define o (s O))
-  (define a (s o))
-  (define b (s a))
-  (define c (s b o))
-  (define d (s D c))
-  (expect
-   (poi-precedence-list o) => (list o O)
-   (poi-precedence-list a) => (list a o O)
-   (poi-precedence-list b) => (list b a o O)
-   (poi-precedence-list c) => (list c b a o O)
-   (poi-precedence-list d) => (list d D c b a o O)))
+(expect
+ (poi-precedence-list o) => (list o O)
+ (poi-precedence-list a) => (list a o O)
+ (poi-precedence-list b) => (list b a o O)
+ (poi-precedence-list c) => (list c b a o O)
+ (poi-precedence-list d) => (list d D c b a o O))
 
 ;; --- C4 regression: x5=(x4 x1) where x4=(x3), x3=(x2), x2=(x1), x1 base ---
 ;; Expected PL: x5 x4 x3 x2 x1
-(let ()
-  (define-syntax s (syntax-rules () ((_ . p) (poi :s #t :p . p))))
-  (define x1 (s))
-  (define x2 (s x1))
-  (define x3 (s x2))
-  (define x4 (s x3))
-  (define x5 (s x4 x1))
-  (expect
-   (poi-precedence-list x5) => (list x5 x4 x3 x2 x1)))
+(expect
+ (poi-precedence-list x5) => (list x5 x4 x3 x2 x1))
 
 ;; --- Instantiation with C4 merged fields across the Z hierarchy ---
 ;; Each class contributes a unique field; Z's instance can access all of them.
-(let ()
-  (define-syntax x
-    (syntax-rules ()
-      ((x name . p) (define name (poi :e (constant-field-spec 'name 'name) :p . p)))))
-  (x O)
-  (x A O)
-  (x B O)
-  (x C O)
-  (x D O)
-  (x E O)
-  (x K1 A B C)
-  (x K2 D B E)
-  (x K3 D A)
-  (x Z K1 K2 K3)
-  (expect
-   (map Z '(Z K1 K2 K3 A B C D E O missing)) => '(Z K1 K2 K3 A B C D E O #f)))
+(expect
+ (map Z '(Z K1 K2 K3 A B C D E O missing)) => '(Z K1 K2 K3 A B C D E O #f))
 
 ;; --- Full test-objects/test-supers/expected-pls coverage ---
 ;; Build POI instances for all test objects using the same test vectors
@@ -2267,12 +2233,12 @@ let Y = f: (x: x x) (x: f (x x));
 ;; exist in the alist when we create a child.
 (let ()
   (define sym-poi-alist '())  ;; (sym . oisp) pairs, most-recently-added first
-  (define (sym->poi sym)
+  (def (sym->poi sym)
     (let ((p (assq sym sym-poi-alist)))
       (if p (cdr p) (error "POI not found for symbol" sym))))
 
   ;; Reverse-lookup: OISpec -> symbol (for comparing PLs with expected-pls)
-  (define (poi->sym poi)
+  (def (poi->sym poi)
     (let ((p (find (lambda (pair) (eq? (cdr pair) poi)) sym-poi-alist)))
       (if p (car p) (error "No symbol for POI" poi))))
 
@@ -2282,7 +2248,7 @@ let Y = f: (x: x x) (x: f (x x));
      (let* ((supers  (test-get-supers sym))
             ;; Single chain of direct parents (same as c4-linearize call-site above)
             (parents (if (null? supers) '() (list (map sym->poi supers))))
-            (poi     (make-poi idModExt (test-struct? sym) parents)))
+            (poi     (make-poi sym idModExt (test-struct? sym) parents)))
        (set! sym-poi-alist (cons (cons sym poi) sym-poi-alist))))
    test-objects)
 
@@ -2553,59 +2519,56 @@ let Y = f: (x: x x) (x: f (x x));
           (apply-generic-function arity accepter invoker compute-effective-method multimethods self x))))))
 
 (let ()
-  (def shape (poi))
-  (def lozenge (poi :e (constant-field-spec 'type 'lozenge)
-                    :p shape))
-  (def rectangle (poi :e (constant-field-spec 'type 'rectangle)
-                      :p shape))
-  (def square (poi :e (constant-field-spec 'type 'square)
-                   :p rectangle lozenge))
-  (def known-ancestor-pairs
-       (poi :e (generic-function-spec
-                2 (K compute-effective-method/list)
-                `((list (,shape ,shape) ,(constant-spec (K '(shape shape))))
-                  (list (,rectangle ,shape) ,(constant-spec (K '(rectangle shape))))
-                  (list (,shape ,rectangle) ,(constant-spec (K '(shape rectangle))))
-                  (list (,lozenge ,shape) ,(constant-spec (K '(lozenge shape))))
-                  (list (,lozenge ,lozenge) ,(constant-spec (K '(lozenge lozenge))))
-                  (list (,shape ,lozenge) ,(constant-spec (K '(shape lozenge))))
-                  (list (,rectangle ,rectangle) ,(constant-spec (K '(rectangle rectangle))))
-                  (list (,square ,square) ,(constant-spec (K '(square square))))))))
+  (defpoi Shape)
+  (defpoi Lozenge :e (constant-field-spec 'type 'lozenge) :p Shape)
+  (defpoi Rectangle :e (constant-field-spec 'type 'rectangle) :p Shape)
+  (defpoi Square :e (constant-field-spec 'type 'square) :p Rectangle Lozenge)
+  (defpoi known-ancestor-pairs
+    :e (generic-function-spec
+        2 (K compute-effective-method/list)
+        `((list (,Shape ,Shape) ,(constant-spec (K '(shape shape))))
+          (list (,Rectangle ,Shape) ,(constant-spec (K '(rectangle shape))))
+          (list (,Shape ,Rectangle) ,(constant-spec (K '(shape rectangle))))
+          (list (,Lozenge ,Shape) ,(constant-spec (K '(lozenge shape))))
+          (list (,Lozenge ,Lozenge) ,(constant-spec (K '(lozenge lozenge))))
+          (list (,Shape ,Lozenge) ,(constant-spec (K '(shape lozenge))))
+          (list (,Rectangle ,Rectangle) ,(constant-spec (K '(rectangle rectangle))))
+          (list (,Square ,Square) ,(constant-spec (K '(square square)))))))
   (expect
-    (shape 'type) => #f
-    (rectangle 'type) => 'rectangle
-    (lozenge 'type) => 'lozenge
-    (square 'type) => 'square
+    (Shape 'type) => #f
+    (Rectangle 'type) => 'rectangle
+    (Lozenge 'type) => 'lozenge
+    (Square 'type) => 'square
 
-    (known-ancestor-pairs shape shape)
+    (known-ancestor-pairs Shape Shape)
     => '((shape shape))
 
     ;; rectangle x rectangle:
-    (known-ancestor-pairs rectangle rectangle)
+    (known-ancestor-pairs Rectangle Rectangle)
     => '((rectangle rectangle) (rectangle shape) (shape rectangle) (shape shape))
 
     ;; lozenge x lozenge: lozenge-lozenge + shape-shape
-    (known-ancestor-pairs lozenge lozenge)
+    (known-ancestor-pairs Lozenge Lozenge)
     => '((lozenge lozenge) (lozenge shape) (shape lozenge) (shape shape))
 
     ;; square x square: square inherits rectangle and lozenge
-    (known-ancestor-pairs square square)
+    (known-ancestor-pairs Square Square)
     => '((square square)
          (rectangle rectangle) (rectangle shape)
          (lozenge lozenge) (lozenge shape)
          (shape rectangle) (shape lozenge) (shape shape))
 
     ;; rectangle x shape
-    (known-ancestor-pairs rectangle shape)
+    (known-ancestor-pairs Rectangle Shape)
     => '((rectangle shape) (shape shape))
 
     ;; square x rectangle
-    (known-ancestor-pairs square rectangle)
+    (known-ancestor-pairs Square Rectangle)
     => '((rectangle rectangle) (rectangle shape)
          (lozenge shape) (shape rectangle) (shape shape))
 
     ;; square x shape: all applicable pairs
-    (known-ancestor-pairs square shape)
+    (known-ancestor-pairs Square Shape)
     => '((rectangle shape) (lozenge shape) (shape shape))))
 
 
