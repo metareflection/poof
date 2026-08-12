@@ -170,7 +170,7 @@ Kay took KRL’s inheritance, made it a well-defined concept specifically for @e
 that he replaced with the better resend mechanism, and popularized
 the word and concept of inheritance as well as the term “object-oriented”.
 Bobrow adopted Kay’s improvements together with his own (hard to say which is whose),
-and was first to implement and publish.
+and was first at the publish line with running software and a paper describing it.
 Then others at PARC, at MIT, and eventually Stroustrup at Bell Labs, adopted OO,
 and the rest is history.
 

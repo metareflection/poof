@@ -276,17 +276,51 @@ that enables such runtime reflection).
 
 @subsection[#:tag "StSfMuI"]{Strictest Subtypes for Multiple Inheritance}
 
-I admit I am not sure how exactly to write types for specifications
-in multiple inheritance and optimal inheritance: there are type-level
-constraints on the local precedence order and the precedence list
-that may require encoding into the type language,
-if not the entire linearization algorithm (C4 or otherwise),
-at least an efficient commutative intersection of the (transitive) ancestry of a specification’s
-inherited, required and provided parameters
-(at which point the typesystem must indeed enforce the constraint of commutativity).
-As for the modular extensions themselves, they resemble those of mixin inheritance,
-with the intersection of everything in the precedence list for the
-inherited, required and provided parameters, respectively.
+The precise meaning of specifications in multiple inheritance and optimal inheritance
+depends crucially on the outcome of the linearization algorithm.
+This poses challenges in assigning types to specifications:
+either you must precisely encode this linearization at the type-level,
+or you must ensure that the correctness of an imprecise type
+does not depend on the exact linearization
+(or, if using flavorless multiple inheritance, the exact conflict resolution strategy).
+
+One simple way to achieve the precise type is to indeed expand away
+the inheritance at compile-time, by encoding the linearization or conflict resolution
+using templates or type-level metaprogramming,
+reducing it to single inheritance or to flat structures without inheritance.
+Subtype polymorphism is monomorphized away and only instances of concrete classes are typed,
+at which point a precise monomorphic type is known.
+See for instance @~cite{Rideau2026cxx}.
+This strategy works because classes are second-class, and ancestry is a compile-time constant;
+it is not available for first-class OO.
+
+As for imprecise types, they impose on programmers the discipline
+of having the types for specifications constitute a meet-semilattice,
+the meet being type intersection.
+Intersection commutes, associates—thus it contributes the same type information
+to the effective modular extension and the target,
+regardless of the ancestor linearization order.
+Intersection is also idempotent—and so it is no problem that
+the type information for an ancestor is redundantly stated
+in all descendants along each “diamond”.
+The defining conditions of a semilattice are thus exactly those required
+to type specifications as you define them, and extend them into further specifications;
+these further specifications can only refine the overall intersection,
+never invalidate the type information already derived;
+that is what makes the typing itself both modular and extensible.
+This is a recurring trade.
+@principle{When type precision is sacrificed,
+the correctness of the type approximation is turned into
+a constraint on what programmers are allowed to do}:
+while the exact runtime behavior of a specification
+@emph{will} depend on the linearization order,
+its compile-time type will not and must not.
+
+The imprecise types then look like the @c{ModExt} I offered for mixin inheritance,
+except the @c{i r p} parameters will encode
+not only the types induced by the current modular extension,
+but also the transitive intersection of the types induced
+by all the specification’s ancestors.
 
 @section[#:tag "NNOOTT"]{The NNOOTT: Naïve Non-recursive OO Type Theory}
 
@@ -573,6 +607,7 @@ is well worth examining.
 
 @subsection[#:tag "ST"]{Self Types}
 
+@Paragraph{Deconfusing Types for Specification and Target}
 The key to fully dispelling the
 “conflation of subtyping and inheritance” @~cite{Fisher1996}
 or the “notions of type and class [being] often confounded” @~cite{Bruce1996}
@@ -613,52 +648,58 @@ and @c{F ⊂ G} (where @c{⊂}, sometimes written @c{≤} or @c{<:},
 is the standard notation for “is a subtype of”,
 and for elements of @c{Type → Type} means @c{∀ t, F t ⊂ G t}),
 it does not necessarily follow that @c{Y F ⊂ Y G}
-where @c{Y} is the fixpoint operator for types@xnote["."]{
-  The widening rules for the types of specification
-  and their fixpoint targets are different;
-  in other words, forgetting a field in a target record, or some of its precise type information,
-  is not at all the same as forgetting that field or its precise type in its specification
-  (which introduces incompatible behavior with respect to inheritance,
-  since extra fields may be involved as intermediary step in the specification,
-  that must be neither forgotten, nor overridden with fields of incompatible types).
+where @c{Y} is the fixpoint operator for types.
 
-  If the two entities are treated as a single one syntactically and semantically,
-  as all OO languages so far have done, @; ALL??
-  then their typesystem will have to encode in a weird way a pair of subtly different types
-  for each such entity, and the complexity will have to be passed on to the user,
-  with the object, and each of its field having two related but different declared types,
-  and potentially different visibility settings.
-  Doing this right involves a lot of complexity, both for the implementers and for the users,
-  at every place that object types are involved, either specified by the user, or displayed to him.
-  Then again, some languages may do it wrong by trying to have the specification fit the rules
-  of the target (or vice versa), leading to inconsistent rules and consistently annoying errors.
+@Paragraph{Reconstructing Visibility Rules}
+The widening rules for the types of specification
+and their fixpoint targets are different;
+in other words, forgetting a field in a target record, or some of its precise type information,
+is not at all the same as forgetting that field or its precise type in its specification
+(which introduces incompatible behavior with respect to inheritance,
+since extra fields may be involved as intermediary step in the specification,
+and must be neither forgotten, nor overridden with fields of incompatible types).
 
-  A typical way to record specification and target together is to annotate fields with visibility:
-  @c{public} (visible in the target)
-  yet possibly with a more specific type in the target
-  than in the specification (to allow for further extensions that diverge from the current target);
-  fields marked @c{protected} (visible only to extensions of the specification, not in the target);
-  and fields marked @c{private} (not visible to extensions of the specification,
-  even less so to the target; redundant with just defining a variable in a surrounding @c{let} scope).
-  I retrieve these familiar notions from C++ and Java just by reasoning from first principles
-  and thinking about distinct but related types for a specification and its target.
+If a language treats two entities as a single one syntactically and semantically,
+as all OO languages so far have done, @; ALL??
+then its typesystem will have to encode in a weird way a pair of subtly different types
+for each such entity, and the complexity will have to be passed on to the user:
+an object, and each of its fields, will have two related but different declared types,
+and potentially different visibility settings.
+Doing this right involves a lot of complexity, both for the implementers and for the users,
+at every place that object types are involved,
+either specified by the user, or displayed to the user.
+Then again, some languages may do it wrong by trying to have the specification fit the rules
+of the target (or vice versa), leading to inconsistent rules and consistently annoying errors.
 
-  Now, my opinion is that it is actually better to fully decouple the types
-  of the target and the specification, even in an “implicit pair” conflating the two:
-  Indeed, not only does that means that types are much simpler, that also mean that
-  intermediate computations, special cases to bootstrap a class hierarchy,
-  transformations done to a record after it was computed as a fixpoint, and
-  records where target and specification are out of sync
-  because of effects somewhere else in the system, etc.,
-  can be safely represented and typed,
-  without having to fight the typesystem or the runtime.
-}
+A typical way to record specification and target together is to annotate fields with visibility:
+@c{public} (visible in the target)
+yet possibly with a more specific type in the target
+than in the specification (to allow for further extensions that diverge from the current target);
+fields marked @c{protected} (visible only to extensions of the specification, not in the target);
+and fields marked @c{private} (not visible to extensions of the specification,
+even less so to the target; redundant with just defining a variable in a surrounding @c{let} scope).
+@principle{The visibility annotations of mainstream OO languages
+are what you necessarily get when you require a single type
+for the conflation of a specification and its target.}
+I retrieve these familiar notions from C++ and Java just by reasoning from first principles
+and thinking about distinct but related types for a specification and its target.
 
+Now, my opinion is that it is actually better to fully decouple the types
+of the target and the specification, even in an “implicit pair” conflating the two:
+Indeed, not only does that mean that types are much simpler, it also means that
+intermediate computations, special cases to bootstrap a class hierarchy,
+transformations done to a record after it was computed as a fixpoint, and
+records where target and specification are out of sync
+because of effects somewhere else in the system, etc.,
+can be safely represented and typed,
+without having to fight the typesystem or the runtime.
+
+@Paragraph{Recursively Constrained Types}
 A more precise view of a modular extension is thus as
 an entity parameterized by the varying type @c{self} of the module context
 (that Bruce calls @c{MyType} @~cite{Bruce1996 Bruce1997}). @; TODO cite further
-As compared to the previous parametric type @c{SrModExt} that is parametrized by types @c{i r p},
-this parametric type @c{ModExt} is itself parametrized by parametric types @c{i r p}
+As compared to the previous parametric type @c{SrModExt} that is parameterized by types @c{i r p},
+this parametric type @c{ModExt} is itself parameterized by parametric types @c{i r p}
 that each take the module context type @c{self} as parameter@xnote[":"]{
   The letters @c{r i p}, especially if reordered,
   by contrast to the @c{s t a b} commonly used for generalized lenses,
@@ -675,9 +716,9 @@ Notice how the type @c{self} of the module context
 is @emph{recursively} constrained by @c{self ⊂ (required self)}.
 This recursion matters inasmuch as the @c{required} operator does vary with its parameter,
 its body literally including @c{self}-references.
-Meanwhile, type @c{super} of the value in focus being extended
+Meanwhile, the type @c{super} of the value in focus being extended
 is constrained by @c{super ⊂ (inherited self)},
-but also appears in the returned value of type @c{(newlyProvided self) ∩ super}.
+but also appears in the returned value of type @c{super ∩ (newlyProvided self)}.
 There again, @c{self} (and not e.g. @c{super}) is used as the parameter:
 self-references refer to the same fixpoint of the complete specification,
 not to a supertype thereof, and not to the fixpoint of an ancestor specification.
@@ -709,8 +750,8 @@ via suitable recursive subtyping constraints.
 I could instead make the last constraint a definition
 @c{self = Y (inherited ∩ newlyProvided)}
 and check the two subtyping constraints about @c{top} and @c{required}.
-As for the type of @c{mix}, though it looks identical to
-the type I previously offered in the context of the NNOOTT,
+As for the type of @c{mix}, it looks the same as
+the type I previously offered, and that turned out to be the NNOOTT,
 except with @c{SrModExt} replaced by @c{ModExt}.
 However, there is an important though subtle difference:
 with @c{ModExt}, the arguments being intersected

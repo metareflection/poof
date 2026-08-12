@@ -33,7 +33,7 @@ fix t m = Y (m t)
 @book-abstract{
 As a software practitioner, you have not only heard of Object Orientation (OO),
 but seen it or used it, loved it or hated it.
-Yet you may have been frustrated that there never seem to be clear answers as to
+Yet you may have been frustrated that there never seems to be clear answers as to
 what exactly OO is or isn’t, what it is @emph{for}, when and how to use it or not use it.
 There are many examples of OO—but everyone does it differently;
 every OO language offers an incompatible variant.
@@ -51,17 +51,17 @@ Maybe you’d fancy implementing OO on top of the non-OO language
 you are currently using or building, but from what you know this looks too complicated?
 Indeed do you really understand why to implement which of no inheritance, single inheritance,
 mixin inheritance, or multiple inheritance?
-Can you weigh the arguments for multiple inheritance done in the style C++, Ada or PHP,
-versus the style of Lisp, Ruby, Python or Scala?
+Can you weigh the arguments for multiple inheritance done C++, Ada or PHP style,
+versus Lisp, Ruby, Python or Scala style?
 Is there a best variant of inheritance anyway?
 And do prototypes, method combinations and multiple dispatch seem natural to you,
-or are they mysteries that challenge your understanding of OO?
+or are they mysteries that challenge your notion of OO?
 Last but not least… are you tired of us Lispers bragging about how our 1988 OO system
 is still decades ahead of yours?
 
 If any of these questions bothers you, then this book is for you.
 It offers a Theory of OO, explained in simple terms on top of FP—as Internal Modular Extensibility.
-A mouthful, but actually just simple concepts you already use,
+A mouthful, but actually all simple concepts you already use,
 though you may not have clear names for them yet.
 This Theory of OO can answer all the questions above, and more.
 The answers almost always coincide with

@@ -366,7 +366,7 @@ you can often inline it away.
 (define rproto-mix* (op*←op1.1 rproto-mix rproto-id))
 }
 Once again, some special extension is used in most-specific position, that is not strict,
-and is almost-but-not-quite an isomorphism, and specially memorizes the specification.
+and is almost-but-not-quite an isomorphism, and specially handles the specification.
 
 You may also define a prototype from a record by giving it a “spec”
 that just returns the record as a constant:
@@ -378,7 +378,9 @@ that just returns the record as a constant:
 @subsection[#:tag "CfUe"]{Conflation from U-encoding}
 
 @Paragraph{Y U NO APPLY SELF?}
-
+@; Y U NO meme. "U WANT REACH FIXPOINT? | Y U NO APPLY SELF?"
+@; High Expectations Asian Father meme / Y U NO meme
+@; https://x.com/Ngnghm/status/2036273356387864639
 One simple and quite common encoding of objects conflates specification and target
 in a way that is subtly different from the encoding I have been using so far.
 It is notable for being the essence of the barebones object system of
@@ -640,11 +642,12 @@ You might @emph{want} each access to some field to be a recomputation, but then
 it would be cleaner to have the field return a nullary function
 (or unary that ignores its argument),
 that can then be explicitly called for side-effects.
-Thus with no loss of generality we can assume you do want sharing
+Thus with no loss of generality you can assume you do want sharing
 rather than recomputation for every field.
-This can be achieved with a @emph{wrapper}:
-a possibly non-strict modular extension added at the most-specific end just before the fixpoint,
-like @c{rproto-wrapper} above@xnote["."]{
+
+Non-recomputation of field values can be achieved with a @emph{wrapper}:
+a possibly non-strict modular extension added at the most-specific end,
+just before the fixpoint, like @c{rproto-wrapper} above@xnote["."]{
   Non-strictness enables some wrappers to change representation between the one
   used in intermediate computations (the @c{super} variables) and the one used
   in final targets (the @c{self} variables).
@@ -652,7 +655,8 @@ like @c{rproto-wrapper} above@xnote["."]{
 }
 The wrapper, in addition to registering specification metadata like @c{rproto-wrapper},
 could add a @emph{memoization} layer that caches computed field values into a hash-table,
-so they are never computed twice. And if the field names are known before instantiation,
+so they are never computed twice (see @secref{MYC}).
+And if the field names are known before instantiation,
 a vector can be used instead of a hash-table for faster access (see @secref{EOI}).
 
 Plenty of earlier or contemporary Prototype OO languages,
@@ -667,7 +671,7 @@ because the mutation of the internals of the specification, in languages that al
 may interact with the target state and behavior in weird ways.
 This mutation is not usually idiomatic in production code,
 but may be heavily relied upon during interactive development,
-or as part of implementing advanced infrastructure. @;{ TODO secref mutation }
+or as part of implementing advanced infrastructure (see @secref{SOO}).
 
 Last but not least, if your choice of representation for specifications and targets
 is such that instantiating a specification may itself issue side-effects such
@@ -1242,8 +1246,9 @@ they are not available as first-class values subject to arbitrary programming at
 Class OO then is a special case of Prototype OO,
 but only in a restricted second-class language—a reality
 that is quite obvious when doing template metaprogramming in C++@xnote["."]{
-  See for instance my implementation of the optimal inheritance in header-only C++ 20,
-  @c{c4-mixins}: @url{https://github.com/fare/c4-mixins}
+  See for instance @c{c4-mixins},
+  my implementation of the optimal inheritance in C++ 20 @~cite{Rideau2026cxx}
+  : @url{https://github.com/fare/c4-mixins}
 }
 
 Some dynamic languages, such as Lisp, Smalltalk, Ruby or Python,

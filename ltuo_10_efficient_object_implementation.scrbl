@@ -700,9 +700,9 @@ call parent constructors in repetitive boilerplate,
 in some constrained order with some constrained arguments,
 with little latitude in what these calls can do.
 But such a protocol has little room for intermediate computations,
-forward references, circularities, or divergence of orderings among descendents;
+forward references, circularities, or divergence of orderings among descendants;
 thus programmers, forced to make decisions about ancestor initialization
-before they have the necessary information from descendents,
+before they have the necessary information from descendants,
 soon find they have to leave fields uninitialized,
 initialized with dummy values (like the infamous null),
 or worse, with incomplete temporary values,

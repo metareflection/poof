@@ -780,20 +780,22 @@ with an unusual accumulation of them to the left of expressions@xnote["."]{
 All these extraneous parentheses—compared to typical code written in a “native” Scheme style—make
 the code hard to read and write, its meaning easy to misunderstand,
 its bugs easy to overlook.
-The problem is not specific to Scheme: any language but a functional programming language
-with (spaced) concatenation as curried function call will have a variant of the same problem,
+The problem is not specific to Scheme:
+any language that does not use (spaced) concatenation as curried function call
+will have a variant of the same problem,
 with just as many parentheses as in Scheme.
 For instance, in JavaScript, you will find yourself reading and writing @c{f(x)(y)(z)(t)}
-all over the place instead of the more colloquial @c{f(x, y, z, t)},
-or the Scheme @c{((((f x) y) z) t)}.
+all over the place instead of the more colloquial @c{f(x, y, z, t)}.
 
 This is a pain and a distraction in about every language—but, interestingly, even more so in Scheme
 and other Lisp dialects in general, where the parentheses accumulate to the left:
-@c{((((((f x) y) z) t) u) v)}. One might then say that, contrary to popular belief,
+@c{((((f x) y) z) t)}.
+One might then be tempted to say that, contrary to popular belief,
 Scheme is @emph{bad} for Functional Programming—at least,
-Scheme without syntactic extensions (see below),
+Scheme without syntactic extensions,
 for Functional Programming in the modern functional style that is native to functional programmers,
 with lots of curried functions.
+However, I will prove below that simple syntactic extensions solve the issue.
 
 @Paragraph{Abandoning Functional Style}
 A second approach is to adopt a more native Scheme style over FP style,
@@ -855,7 +857,7 @@ even in modern Functional Style—it just requires
 a little bit of macrology to adapt to a style not native to it.
 Meanwhile, mainstream languages lacking affordable macros will let their users down.
 
-@subsection{Many Y Combinators}
+@subsection[#:tag "MYC"]{Many Y Combinators}
 There are many variants to the fixpoint (or fixed-point) combinator Y,
 and the pure applicative Y combinator you could write in
 the pure λ-calculus subset of Scheme is actually quite bad in practice.
@@ -868,7 +870,7 @@ the self-application combinator U (called Ue for U, eager)@Note{
   or the subsequent variants @c{Yex} and @c{Yes}
   is to use it to define the factorial function:
   first define the applicative generator for factorial:
-  @c{(def (eager-pre-fact f n) (if (<= n 1) 1 (* n (f (1- n)))))}
+  @c{(def (eager-pre-fact f n) (if (<= n 1) 1 (* n (f (- n 1)))))}
   then you can define factorial as
   @c{(def fact (Ye eager-pre-fact))}
   and you can then test that e.g. @c{(fact 6)} returns @c{720}.
@@ -884,9 +886,6 @@ the self-application combinator U (called Ue for U, eager)@Note{
   @; SSK(S(K(SS(S(SSK))))K) = WC(SB(C(WC))) where W x y = x y y
   It can be viewed as doing half the job of Y, and is
   the essence of the object encoding in @secref{CfUe}.
-  @; TODO Y U NO meme. "U WANT REACH FIXPOINT? | Y U NO APPLY SELF?"
-  @; High Expectations Asian Father meme / Y U NO meme
-  @; https://x.com/Ngnghm/status/2036273356387864639
   This combinator is famously called M, the Mockingbird combinator,
   in the delightful @citet{Smullyan1985}.
 }:
@@ -996,7 +995,7 @@ and one must @c{force} the delayed reference to extract the result value,
 you would write@xnote[":"]{
   Again, a simple way to test the lazy Y combinator Yl is to use it
   to define the factorial function. First define the lazy “generator” for the factorial:
-  @c{(def lazy-pre-fact (λ (f n) (if (<= n 1) 1 (* n ((force f) (1- n))))))}
+  @c{(def lazy-pre-fact (λ (f n) (if (<= n 1) 1 (* n ((force f) (- n 1))))))}
   Then the factorial function is
   @c{(def fact (Yl lazy-pre-fact))}
   and you can then test that e.g. @c{(fact 6)} returns @c{720}.
@@ -1056,7 +1055,8 @@ though a thread-safe variant, if needed, is somewhat trickier to achieve.)
 Here is one implementation of laziness on top of the stateful applicative subset of Scheme,
 that works in a single-threaded environment:
 it takes a thunk as argument, and only calls the thunk the first time around,
-thereafter memoizes the result of that first invocation and returns it.
+thereafter memoizes the result of that first invocation and returns it
+(note the double check for @c{computed?}, to safely support reentrancy):
 @Code{
 (define (compute-once thunk)
   (let ((computed? #f)
@@ -1070,10 +1070,11 @@ thereafter memoizes the result of that first invocation and returns it.
                   (set! value result)))))
       value)))
 }
+This approach memoizes the result of a thunk you call,
+as an alternative API for laziness compared to @c{delay} and @c{force}.
 If you already assume @c{delay} and @c{force}, you could write it as
 @c{(lambda (thunk) (let ((x (delay (thunk)))) (lambda _ (force x))))}.
-This approach transforms lazy expressions you force into thunks you call.
-Whichever syntax you prefer for lazy evaluation,
+Whichever API you prefer for lazy evaluation,
 you can then define a lazy Y on top of this laziness,
 and start manually compiling your lazy functional programs into that.
 But that will be a lot of tedious effort for not-so-readable programs
@@ -1095,6 +1096,7 @@ to replace plain deferred evaluation without sharing by a lazy variant:
 Wherever the use of an applicative Y would require η-expansion,
 instead of @c{(η f)} above that expands to @c{(λ (x) (f x))},
 use @c{(η1 f)} that expands to @c{(let ((df (delay f))) (λ (x) ((force df) x)))}.
+Indeed, @principle{deferral makes recursion legal; sharing makes it affordable.}
 
 In both variants, the @emph{expression} @c{f}
 (often a mere reference to a recursive variable, but potentially any expression involving one)
@@ -1230,7 +1232,7 @@ will be extended first by @c{p} then by @c{c},
 each time within the module context @c{s}.
 
 The variable @c{t} is also called @c{super} in many contexts,
-for reasons that will become obvious@xnote[";"]{
+also for reasons that will become obvious@xnote[";"]{
   The @c{super} argument refers to the partial value computed so far
   from @emph{parent} specifications;
   in Nix extensions it is sometimes called @c{previous},
@@ -1271,7 +1273,7 @@ for the same reasons@xnote["."]{
   First, I am currently discussing a variant of Prototype OO,
   as in Self, Jsonnet, Nix, JavaScript, where the @c{self} or @c{this}
   is indeed the open recursion variable (see @secref{RPOO});
-  by constrast, in Class OO language, the modularly incrementally defined entity
+  by contrast, in Class OO language, the modularly incrementally defined entity
   is a type descriptor, a record, and the actual open recursion variable would instead
   be something like @c{Self}, @c{MyType} or @c{this.type},
   though there is even less standardization in this area (see @secref{RCOO}).
@@ -1279,8 +1281,9 @@ for the same reasons@xnote["."]{
   and in the implementation of most (but not all) low-level OO languages,
   @c{this} is a variable often used in conjunction with the U combinator
   instead of the Y combinator as above (see @secref{CfUe}).
-  Many people also (incorrectly, in my book, this book) use @c{self} with the U combinator.
-  For reasons that will become obvious, I use @c{half} in conjunction with the U combinator,
+  Many people also (incorrectly, in my book—and this is my book) use @c{self} with the U combinator.
+  For reasons that will become obvious (again, see @secref{CfUe}),
+  I use @c{half} in conjunction with the U combinator,
   and reckon @c{final} might be less ambiguous in conjunction with the Y combinator,
   though @c{self} is more traditional.
 }
@@ -1312,9 +1315,15 @@ Note that since I decided to put the parent before the child as argument,
 this “mix” is contravariant with the composition of functions of @c{c} and @c{p},
 and the flow of information in this syntax goes left-to-right.
 The opposite call convention is also possible, with various minor tradeoffs.
-Or you could have @c{c p t s} or @c{p c s t} with contravariant order between
-the specification arguments during mixing and the target arguments during fixing.
-Ultimately, the order of arguments is immaterial, up to a simple isomorphism.
+Ultimately, the order of arguments is immaterial to the semantics, up to a simple isomorphism.
+Still, covariance is important for usability.
+The @c{super} parameter strongly corresponds to the @c{parent} specification;
+the @c{self} parameter corresponds to the @c{child}, but only weakly so;
+thus the contravariant @c{c p t s} and @c{p c s t} orders are slightly unaesthetic.
+Meanwhile, the left-to-right or right-to-left flow of information
+should match the general style of the rest of your language,
+the order of the parents in the class definition syntax, and/or
+the order in which you store the precedence list (see @secref{MI}).
 
 @subsection{Closing Modular Extensions}
 
@@ -1502,7 +1511,6 @@ or for more power, the @c{compute-value} function
 would directly take @c{super} as its first argument,
 and @c{(super method-id)} would only be computed in the second branch.
 In a lazy context, @c{lazy-field-spec} could also directly use @c{extend-lazy-record}
-@; TODO secref to future definition of lazy variants?
 to add a binding to a record without having to eagerly compute the bound value.
 
 Whichever way simple modular extensions are defined,
@@ -1742,6 +1750,8 @@ therefore when you combine the two, it becomes essential that module contexts
 be not a single global entity, but many local entities.
 This shift from singular and global to plural and local is essential for Class OO,
 and even more so for Prototype OO.
+
+And now, on top of this Minimal OO, I will rebuild all the usual concepts of OO.
 
 @exercise[#:difficulty "Easy"]{
   Read and make sense of the code I wrote for this chapter,

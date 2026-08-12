@@ -2065,19 +2065,18 @@ let Y = f: (x: x x) (x: f (x x));
 (def (poi-parents poi) (poi-spec poi 'parents))
 
 (def (make-poi name mod-ext suffix? parents)
-  (letrec
+  (letrec*
       ((precedence-list-and-suffix*
         (delay (c4-linearize '() parents
                              poi-precedence-list
                              poi-suffix? eq? poi-name)))
-       (ancestor-precedence-list* (delay (car (force precedence-list-and-suffix*))))
-       (precedence-list* (delay (cons self (force ancestor-precedence-list*))))
+       (pre-precedence-list* (delay (car (force precedence-list-and-suffix*))))
+       (precedence-list* (delay (cons self (force pre-precedence-list*))))
        (suffix* (delay (cdr (force precedence-list-and-suffix*))))
-       (ancestor-mod-ext* (delay (apply mix*
-                                    (reverse (map poi-mod-ext
-                                      (force ancestor-precedence-list*))))))
-       (self* (delay (fix (record (#f spec))
-                       (mix* (force ancestor-mod-ext*) mod-ext))))
+       (effective-mod-ext* (delay (apply mix*
+                                    (reverse
+                                     (cons mod-ext
+                                           (map poi-mod-ext (force pre-precedence-list*)))))))
        (spec
         (lambda (msg)
           (case msg
@@ -2088,14 +2087,13 @@ let Y = f: (x: x x) (x: f (x x));
             ((suffix?)         suffix?)
             ((parents)         parents)
             (else #f))))
-       (self (η (force self*))))
+       (self (η1 (fix (record (#f spec)) (force effective-mod-ext*)))))
     self))
 
-#|
-(for-each (lambda (x y) (display x) (display ": ") (display y) (newline))
+#;(begin (for-each (lambda (x y) (display x) (display ": ") (display y) (newline))
           '(poi-spec poi-precedence-list poi-suffix poi-mod-ext poi-suffix? poi-parents make-poi)
           (list poi-spec poi-precedence-list poi-suffix poi-mod-ext poi-suffix? poi-parents make-poi))
-(trace poi-spec poi-precedence-list poi-suffix poi-mod-ext poi-suffix? poi-parents make-poi)|#
+         (trace poi-spec poi-precedence-list poi-suffix poi-mod-ext poi-suffix? poi-parents make-poi))
 
 (define-syntax poi
   (syntax-rules ()

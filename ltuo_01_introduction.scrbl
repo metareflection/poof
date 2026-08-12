@@ -32,8 +32,7 @@ But if you practice programming, and think about your practice,
 then you are in my target audience;
 and you will find that it will be easier to program
 with the right ideas than with the wrong ones.
-And the Internet is certainly full of wrong and sometimes toxic ideas
-about OO, as about anything.
+And the Internet is certainly full of wrong and sometimes toxic ideas—about OO, as about anything.
 
 To answer those questions,
 I will assume of my readers a passing familiarity with Functional Programming (FP).
@@ -58,7 +57,8 @@ in your favorite programming language@xnote["."]{
 Note that this book will @emph{not} address how to use OO
 within some existing language or framework;
 you will find little here in terms of recipes, patterns or methodologies.
-There are already many books from which to learn such things.
+There are already many books, and an immense body of existing code,
+from which to learn such things.
 Instead, this book is about understanding OO itself:
 what it fundamentally is,
 how and why it works when it does,

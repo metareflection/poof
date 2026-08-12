@@ -711,7 +711,7 @@ i.e. a total (“linear”) order that has the partial order of the DAG as a sub
 Since CommonLoops @~cite{Bobrow1986}, it has been customary to call this order
 the @emph{precedence list} of the class, prototype or specification, a term I will use,
 and to keep it in most-specific-first order:
-descendents to the left, ancestors to the right,
+descendants to the left, ancestors to the right,
 the opposite of the order used by my @c{mix} and @c{mix*} functions@xnote["."]{
   The Simula manual has a “prefix sequence” but it only involves single inheritance
   (that it calls concatenation semantics).
@@ -1868,12 +1868,13 @@ suffix hierarchies usually remain shallow@xnote[","]{
 }
 so it’s a bit moot what to optimize for.
 
-The description above was enough to describe the algorithm to an AI
-trained before it was published and included in training sets (though long after C3 was).
-For the sake of this book, we will assume a function @c{c4-linearize} with six arguments:
+The description above was enough for an AI,
+trained before it was published and included in training sets (though long after C3 was),
+to correctly implement the algorithm.
+For the sake of this book, I will assume a function @c{c4-linearize} with six arguments:
 (1) a head to prepend to the list of ordered parents
   (typically containing only the new sub-class itself in a recursive definition,
-  or an empty list, with the sub-class is prepended later);
+  or an empty list, with the sub-class prepended later);
 (2) the local order as a list of lists of ordered parents;
 (3) a function that extracts or computes from each parent its own precedence list,
     starting with the parent itself;
@@ -1882,7 +1883,7 @@ For the sake of this book, we will assume a function @c{c4-linearize} with six a
 (6) for debugging only, a function that returns the name, id or representation of an ancestor,
     to be displayed in error messages (or else @c{identity} to pass the object itself,
     assuming the system can somehow display it).
-The function returns a pair of two values: (a) the precedence list, and
+The function returns a pair of: (a) the precedence list, and
 (b) the most specific suffix specification, if any (or else @c{#f};
     a strongly typed language could use an option, or a base struct shared by all).
 
@@ -1946,25 +1947,28 @@ that should probably be formalized and added to the constraints of C4.@xnote["."
 }
 
 Note that of course, linearization can and must break symmetry in inheritance DAGs:
-given the local precedence lists @c{(A B C) (B D) (C E)}, @c{C} and @c{E} are otherwise
-unconstrained with respect to each other, yes linearization @emph{must} pick
+given the local precedence lists @c{(A B C) (B D) (C E)}, @c{D} and @c{E} are otherwise
+unconstrained with respect to each other, yet linearization @emph{must} pick
 one before the other to yield a total order. And the choice of one over the other
 must then be propagated consistently as the hierarchy is extended with further sub-specifications.
 Extended Precedence is a good systematic way to break symmetry, that is very understandable,
 indeed, as simple as can be, and further matches the naive depth-first traversal algorithm
 of the original Flavors and of Ruby in simple cases where the inheritance DAG is a tree.
 
+
 @subsection[#:tag "POI"]{Prototypes with Optimal Inheritance}
 
-I can now implement POI, Prototypes with Optimal Inheritance:
-a function @c{make-poi} accepts a modular extension @c{e},
+Having established what C4 computes and why,
+I can now implement prototypes on top of it—Prototypes with Optimal Inheritance, or POIs.
+A function @c{make-poi} accepts
+a modular extension @c{e},
 a boolean @c{s} that if true indicates that the specification is a suffix,
 and a list of totally ordered lists of direct parents @c{p},
-and returns prototype @c{poi} that conflates specification and target,
-in the style of @c{rproto} from @secref{CfR}:
-you can access a prototype target’s field by passing its identifier to the @c{poi} as a function;
+and returns a prototype that conflates specification and target,
+in the style of @c{rproto} from @secref{CfR}.
+You can access a prototype target’s field by passing its identifier to the @c{poi} as a function;
 and you can access the prototype’s specification by instead passing a magic value
-(perhaps the top value, @c{#f} in Scheme);
+(in Scheme I will use @c{#f});
 the specification field contains @c{e}, @c{s} and @c{p},
 but also a cache of the precedence list and the specification’s most specific suffix ancestor,
 as well as any other meta data.
@@ -1990,13 +1994,13 @@ Last but not least, the constructor for a @c{poi} is defined as follows:
         (delay (c4-linearize (list self) parents
                              poi-precedence-list
                              poi-suffix? eq? identity)))
-       (precedence-list* (delay (car (force precedence-list-and-suffix*))))
+       (pre-precedence-list* (delay (car (force precedence-list-and-suffix*))))
+       (precedence-list* (delay (cons self (force pre-precedence-list*))))
        (suffix* (delay (cdr (force precedence-list-and-suffix*))))
        (effective-mod-ext* (delay (apply mix*
-                                    (reverse (map poi-mod-ext
-                                      (force precedence-list*))))))
-       (self* (delay (fix-record
-                       (mix (force effective-mod-ext*) (rproto-wrapper spec)))))
+                                    (reverse
+                                     (cons mod-ext
+                                           (map poi-mod-ext (force pre-precedence-list*)))))))
        (spec
         (lambda (msg)
           (case msg
@@ -2006,12 +2010,12 @@ Last but not least, the constructor for a @c{poi} is defined as follows:
             ((suffix?)         suffix?)
             ((parents)         parents)
             (else #f))))
-       (self (force self*)))
+       (self (η1 (fix (record (#f spec)) (force effective-mod-ext*)))))
     self))
 }
 
 Note how I crucially rely on explicit laziness with @c{delay} and @c{force}
-to avoid constantly recomputing the precedence list and the most specific suffix,
+to avoid constantly recomputing the precedence list and the most specific suffix
 and, after them, the effective modular extension,
 and the target record itself (see the discussion in @secref{USLCP})@xnote["."]{
   As discussed then, eager pure functional programming could capture the expected answers
@@ -2019,35 +2023,40 @@ and the target record itself (see the discussion in @secref{USLCP})@xnote["."]{
   but that would cause a lot of recomputations and
   fail the expected performance profile of OO.
 }
-Even then, the fields themselves are recomputed at every field access.
-Now, in the code above, the finalizer ensures the target record contains the metadata
-in a special field, in a way such that the metadata is available for further specialization
-even if the specification is incomplete and the field computations otherwise diverge,
-override this special field, or fail to pass the field query to their @c{super}.
-To avoid the field recomputations, the finalizer @c{final-mod-ext} could be extended
-to also lazily memoize all record fields into a hash-table@xnote["."]{
-  Optionally, that finalizer is also where non-strict modular extensions may be applied,
-  if any, as might be somehow configured in the specification or its ancestors.
-  See @secref{NoTfMI} above.
-}
-See how to efficiently implement objects in @secref{EOI}.
+You may even notice the games I have to play to specially tuck
+the current prototype to the front of the precedence list,
+and its modular extension at the most specific end of the effective modular extension;
+I thus avoid avoid triggering some infinite circular evaluation between
+the @c{self} and the precedence-list.
+
+Even with the laziness in building the prototype,
+the fields themselves are recomputed at every field access, at significant cost;
+and if you want to avoid that, you’d have to memoize field values into a hash-table
+(see @secref{MYC}, @secref{SSAoCPS}).
+A wrapper inserted in most-specific position,
+in the manner of @c{qproto-wrapper} or @c{rproto-wrapper} (see @secref{RC}, @secref{CfR})
+could implement this memoization,
+possibly as an option based on a flag provided when specifying the prototype.
+More generally, such a wrapper could implement any number of user-specified
+finalizations on the prototype, including wrapping steps that are
+non-strict extensions and change representation (see @secref{NoTfMI} above).
+As for how to efficiently implement objects, see @secref{EOI}.
 
 Also note that I assume that the Scheme pointer-equality predicate @c{eq?}
 captures the equality between closures generated by @c{make-poi}
 (internally, the @c{self} variable);
-this is actually a side-effect in disguise.
+this is actually a side-effect in disguise (see @secref{RSaDN}).
 The effect could be modelled more finely by adding to every spec a field @c{id}
 initialized using a function @c{generate-tag}
 for the minimal side-effect of generating a unique tag;
 equality of POIs and their specifications would then be defined as that of their ids.
-
 
 @exercise[#:difficulty "Easy"]{
   Explain in your own words why the “suffix property” enables single-inheritance
   optimizations even in a multiple-inheritance system.
   What would break if a struct’s precedence list were @emph{not} a suffix
   of its descendant’s precedence list?
-  Show an example of inheritance hierarchy for which the single-inheritance optimization
+  Show an example of inheritance hierarchy for which the single-inheritance optimizations
   do not apply.
 }
 
@@ -2066,7 +2075,6 @@ Using the C3 or C4 algorithm, we get the precedence list @c{Z K1 K2 K3 D A B C E
 with each subclass having its subset of ancestors in the same order
 in its own precedence list.
 }
-
 
 @(if (render-html?)
   @image[#:scale 0.7]{C3_linearization_example.png}

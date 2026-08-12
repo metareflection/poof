@@ -45,7 +45,7 @@ just because they carry the label “OO”, “Web 2.0”, “Blockchain”, “
 or whatever is fashionable at the moment.
 Indeed, this very fraud is happening right now, and has been since the 1990s at least,
 to the tune of billions of dollars, as you may know if you have been following the industry.
-And industry or academic pundits who are satisfied with the appearance of OO,
+And pundits from industry or academia who are satisfied with the appearance of OO,
 with the mere presence of some or all of its usual trappings,
 are complicit.
 They do not understand the purpose of OO,

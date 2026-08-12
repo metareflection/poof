@@ -1702,7 +1702,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     in each “do” block, an “inner” keyword may specify
     where a subpattern’s additional “do” code will go
     (if there is no “inner”, then the “do” block is final).
-    Any communication of information between descendent and ancestor “do” blocks
+    Any communication of information between descendant and ancestor “do” blocks
     must happen through side-effects to the target record’s variables.
     This is in contrast with more colloquial OO, in which, after Smalltalk,
     the child controls how it makes use of a parent-provided method,
@@ -5621,6 +5621,19 @@ and Fiech, Adrian",
 % ISBN 9781009492379 (ebook); 9781009492348 (hardback)
 
 %% 2026
+
+@WebPage{Rideau2026cxx,
+  author={François-René Rideau},
+  title={c4-mixins},
+  url={https://github.com/fare/c4-mixins},
+  year={2021},
+  note={
+    My C++ implementation of optimal inheritance:
+    header-only C++20 mixins with a c4-linearized `super` chain.
+    Inspired by Smaragdakis 2000, with help from Claude
+    to translate the algorithm from Gerbil Scheme to about 1 kloc of C++ templates.
+  }
+}
 
 @Misc{TIOBE2026,
   author={TIOBE Software BV},
