@@ -76,7 +76,7 @@ As a function from source to focus and back, it can thus also be seen as general
 paths of fields and accessors, e.g. field @c{bar} of the third element of field @c{foo}
 of the entry with key @c{(42, "baz")} within a table.
 
-@Paragraph{Monomorphic Lens}
+@subsubsection{Monomorphic Lens}
 A monomorphic lens (or simple lens), can be seen as
 a pair of a view function @c{s → a} and an update function @c{(a → a) → s → s}.
 The view function allows you to get a current “inner” value under focus, of type @c{a},
@@ -88,7 +88,7 @@ type MonoLens s a =
        { view : s → a ; update : (a → a) → s → s }
 }
 
-@Paragraph{Polymorphic Lens}
+@subsubsection{Polymorphic Lens}
 A polymorphic lens (or “stabby” lens), of type @c{PolyLens s t a b}, generalizes the above:
 you still have a view function @c{s → a} to extract an inner value from the outer context,
 but your update function now has type @c{(a → b) → s → t},
@@ -104,7 +104,7 @@ type PolyLens s t a b =
 type MonoLens s a = PolyLens s s a a
 }
 
-@Paragraph{Skew Lens}
+@subsubsection{Skew Lens}
 A skew lens (or “irpjsq” lens, pronounced “earp jusq”), further generalizes the above:
 now the types for the update are not required to be the same as those for the view,
 so you don’t have to be looking exactly at the change you’re experiencing.
@@ -120,7 +120,7 @@ type SkewLens i r p j s q =
 type PolyLens s t a b = SkewLens a a b s s t
 }
 
-@Paragraph{View and Update}
+@subsubsection{View and Update}
 I can also give separate types for View and Update:
 @Code{
 type View r s = s → r
@@ -129,7 +129,7 @@ type SkewLens i r p j s q =
   { view : View r s ; update : Update i p j q }
 }
 
-@Paragraph{Getter and Setter}
+@subsubsection{Getter and Setter}
 There are cases when one may prefer the familiar view of lenses
 as involving a getter and a setter, instead of a view and an update.
 The getter and the view are the same thing, so that’s easy.
@@ -153,7 +153,7 @@ therefore this interface would be more restrictive than that of a skew lens:
 it would both require more work from programmers, yet
 reject many interesting skew lenses from which no such second getter can be meaningfully extracted.
 
-@Paragraph{Composing Lenses}
+@subsubsection{Composing Lenses}
 I can compose view, update and lenses as follows,
 with the obvious identity lens:
 @Code{
@@ -196,7 +196,7 @@ and @c{compose-update} is just @c{compose}.
 Views, Updates and Lenses each form categories of their own,
 wherein composition is associative, and identities are neutral elements.
 
-@Paragraph{Field Lens}
+@subsubsection{Field Lens}
 Given some record representation, a view for a field of identifier key @c{k}
 is just a function that, given as argument the record @c{r}, returns the field value @c{r.k};
 whereas an update gives you a change in this record given a change for that field.
@@ -231,7 +231,7 @@ but the two need not be the same, and the modification need not preserve types.
 
 @subsection[#:tag "FME"]{Focusing a Modular Extension}
 
-@Paragraph{Skewing a Modular Extension}
+@subsubsection{Skewing a Modular Extension}
 
 You may have noticed that I used the same letters @c{i r p}
 to parameterize a @c{SkewLens} (plus their successors)
@@ -288,7 +288,7 @@ But in the end, the computation is the very same, all you do is
 be more precise about what set of computation contexts the function can be evaluated
 without type error.
 
-@Paragraph{Metaphors for Modular Extensions and Skew Lenses}
+@subsubsection{Metaphors for Modular Extensions and Skew Lenses}
 
 A modular extension can be conceived as a @emph{sensactor}:
 it has a sensor, the input from the module context,
@@ -334,7 +334,7 @@ This also explains why the “getter and setter” interface doesn’t work for 
 the getter for the context does not match that for the focused element to update,
 so you also need a second getter for the latter, and a setter for the latter but not the former.
 
-@Paragraph{Focused Specification}
+@subsubsection{Focused Specification}
 
 A @emph{focused specification} will be the datum of a skew lens and a specification.
 Above, the specification was a modular extension;
@@ -416,7 +416,7 @@ type ClosedSpecFocus p = ModExt ⊤ p p → A
 
 @subsection{Adjusting Context and Focus}
 
-@Paragraph{Adjusting both together}
+@subsubsection{Adjusting both together}
 
 A monomorphic lens, or simple lens, can refocus a closed specification focus
 into another closed specification focus, such that a local closed specification
@@ -434,7 +434,7 @@ for the ecosystem before and after extension).
 But then, you wouldn’t be able to formalize the advanced notions
 I am going to discuss in the rest of this chapter.
 
-@Paragraph{Adjusting the Extension Focus}
+@subsubsection{Adjusting the Extension Focus}
 Given a focus on a specification,
 one can focus on a specific method of that specification
 by further adjusting the extension focus using @c{u = (field-update key)}
@@ -466,7 +466,7 @@ a specification within a library,
 a library within the ecosystem—all while keeping the broader entity
 as context when specifying the narrower one.
 
-@Paragraph{Broadening the Focus}
+@subsubsection{Broadening the Focus}
 
 At times, you may want to make the focus broader than the module context.
 Then, you can use a lens with “negative focal length”:
@@ -496,7 +496,7 @@ reverse-lens : s → MonoLens s a → MonoLens a s
   (make-lens (reverse-view s l) (reverse-update s l)))
 }
 
-@Paragraph{Adjusting the Context}
+@subsubsection{Adjusting the Context}
 
 The module context contains the data based on which a modular extension may compute its extension.
 Sometimes, you may want to narrow the context, to match the already narrowed extension focus;
@@ -530,7 +530,7 @@ view-lens : SkewLens i r p j s q → View rr r →
 So far the only primitive lens I showed was the field lens.
 Here are two kinds of lenses that are essential to deal with prototypes and classes.
 
-@Paragraph{Specification Methods}
+@subsubsection{Specification Methods}
 
 As told in the previous section,
 given a lens @c{l} to focus on a specification from the environment,
@@ -556,7 +556,7 @@ and maximize the chances that the result is correct and performant, etc.,
 all that is not just possible, but simple, using this pure functional approach to OO
 based on composing open modular extensions.
 
-@Paragraph{Prototype Specification}
+@subsubsection{Prototype Specification}
 
 I’ll assume for now that prototypes are records implemented with the @c{rproto} encoding
 from @secref{CfR}. Then, if you have a lens @c{l} to focus on a prototype,
@@ -600,7 +600,7 @@ To a first approximation, this corresponds to using variants of these Update fun
   abort)
 }
 
-@Paragraph{Nested Specifications}
+@subsubsection{Nested Specifications}
 What is interesting about the approach above is that you get
 the semantics of nested specifications for free:
 a modularly extensible specification can itself contain
@@ -2249,7 +2249,7 @@ to only using such a dialect.
 
 @subsection{Choosing between Static and Dynamic Dispatch}
 
-@Paragraph{Dynamic Dispatch}
+@subsubsection{Dynamic Dispatch}
 
 Dynamic dispatch is easy to implement in a few lines of code (again, as in @secref{SFCTD}).
 It requires much less mental and software scaffolding to implement and use than static dispatch,
@@ -2289,7 +2289,7 @@ the results of dynamic method dispatch can be cached, so that most of the time,
 one only needs to access the same effective method as the last time or one of the last few times,
 which can be quickly checked.
 
-@Paragraph{Static Dispatch}
+@subsubsection{Static Dispatch}
 
 Static dispatch uses static type information
 to optimize away method dispatch at compile-time.
@@ -2318,7 +2318,7 @@ one with a typesystem coherent enough to make computational sense,
 expressive enough that it is not merely a burden to programmers, yet
 not so complex that it boggles the mind.
 
-@Paragraph{Some Historical Perspective}
+@subsubsection{Some Historical Perspective}
 
 Historically, the first language with classes, Simula,
 was a language with static types based on Algol,

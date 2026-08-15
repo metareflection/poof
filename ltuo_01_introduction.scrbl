@@ -220,7 +220,8 @@ In writing this book, I am sharing the treasure map with you.
 @epigraph{If there’s a book you really want to read but it hasn’t been written yet,
   then you must write it. @|#:- "Toni Morrison"|
 }
-This section is about me, not you. So feel free to skip to the next section.
+This section is about me, not you—what caused me to write this book.
+So feel free to skip to the next section.
 Come back if you’re ever curious about the backstory of my theory of OO.
 
 @subsection{Proximate Cause}
@@ -260,7 +261,7 @@ tell my readers to put aside the concepts they think they know,
 and somehow teach them the concepts I am putting behind the words, so they understand.
 
 But that takes a lot of time and space. For me. And for my readers.
-Resources that we both lack, especially scientific publications
+Resources that we both lack, especially through scientific publications
 limited to 12-25 pages, depending on the venue@xnote["."]{
   Even a journal, with articles sometimes up to 70 pages,
   would require splitting the content of this book into at least five parts;
@@ -277,11 +278,11 @@ limited to 12-25 pages, depending on the venue@xnote["."]{
 }
 That was barely enough to address actual misunderstandings experienced by previous reviewers,
 and make my claims clear—see how much that takes
-in @secref{WOOin} and @secref{WOOiIO} respectively—with
+in @secref{WOOiIO} and @secref{WOOin} respectively—with
 no space left to properly explain and substantiate those claims.
 Attempts to compress that information into this kind of format
 would again lead to loss of clarity, and the inevitable misunderstanding by reviewers,
-and frankly, the readers they rightfully stand for.
+and frankly, the readers they rightfully stand for (to a point).
 
 Or, I could take the time and space to explain things right.
 But then, I’d have to abandon the hope of fitting in existing venues.
@@ -414,73 +415,16 @@ then called an Object-Oriented (Programming) Language (OOPL).
 
 This characterization of OO should be retrospectively obvious to all familiar with OO.
 Yet remarkably, some programmers explicitly reject it, eminent professors even@xnote["."]{
-  @;{TODO: Maybe move as much as possible to chapter 3 section on Modularity being only half of OO,
-     leaving here only enough to illustrate the lack of common concepts and discourse?
-
-Cook made landmark contributions to formal accounts of OO.
-That his account of what OO is mismatches common OO practice is revealing:
-the problem is not that some marginal author uses unusual vocabulary,
-but that even seminal formal accounts may lack a vocabulary shared with practitioners.
-
-  Cook’s work is worth mentioning precisely because it is serious and influential.
-  Yet it also illustrates a recurring difficulty in OO discourse:
-  technically strong accounts may use central OO vocabulary in ways that conflict
-  not only with my account, but with the expectations and usage of many OO practitioners.
-  This does not make the practitioners automatically right.
-  But such a mismatch is a symptom that the field lacks consensual vocabulary
-  and commonly accepted concepts adequate to reconcile theory, practice and history.
-  I return to this issue in @secref{...},
-  especially when discussing why modularity is only half of OO.
-
-  Cook is a useful example here not because his work is weak,
-  but because it is strong.
-  Precisely for that reason, the mismatch between his account and most practitioners’
-  illustrates the lack of consensual vocabulary or commonly accepted concepts
-  in discussions of OO.
-  I return to this issue in Chapter 3,
-  in the section on why modularity is only half of OO.
-}
-  A notable dissident to this characterization is William Cook,
-  a respected academic who made many key contributions to understanding the semantics of inheritance
-  @~cite{Cook1989 Cook1989Inheritance CookPalsberg1989 Bracha1990}
-  yet also argued that Inheritance was orthogonal to OO @; Also Cook1989?
-  and that OO is about “classes” of “objects” that can only be accessed through “interfaces”
-  @~cite{Cook1991 Cook2009 Cook2012}.
-
-  However, coding against an SML module would count as OO by Cook’s criteria,
-  and indeed Cook explicitly calls the untyped λ-calculus “the first object-oriented language”,
-  while dismissing Smalltalk as not OO enough because its integers are not pure objects@~cite{Cook2009}.
-  Cook’s definition, that embraces the modular aspect of OO while rejecting
-  its extensible or dynamic aspect, runs contrary to common practice.
-  It brings no light on any of the languages commonly considered OO
-  yet derided by Cook as not being OO enough,
-  no light on any of the Functional Programming (FP) languages blessed by Cook as actually being OO
-  to the surprise of their users, and no light on the difference between the two.
-
-  Cook’s many works on OO over the years also systematically neglect important concepts in OO,
-  such as prototypes, multiple inheritance, method combination or multiple dispatch.
-  In the end, Cook’s PhD and subsequent academic career grew out of
-  brilliantly modeling the key mechanism of OO (Inheritance)
-  from the foreign point of view of FP;
-  but his lack of appreciation and understanding for the OO tradition,
-  indeed missing the point of it all,
-  were such that they have become proverbial: immortalized in Gabriel’s essay
-  “The Structure of a Programming Language Revolution” @~cite{Gabriel2012}
-  as a prototypical failure to understand a phenomenon when viewed
-  through a scientific paradigm incommensurable with the one that produced it.
-  The problem is not just that Cook solved Inheritance as frog and
-  failed to take the big picture as a bird: he did take a bird’s view,
-  and still couldn’t see what his paradigm couldn’t express.
-
-  Cook is well worth mentioning precisely to illustrate the lack of
-  common vocabulary, common concepts, and common paradigms among those
-  who practice and study OO, even or especially
-  among notable academics with deep expertise in the field.
-  And yet, there are undeniably common practices, common phenomena, common concepts,
-  common language features, common design patterns, common goals, common aspirations,
-  worth understanding, conceptualizing, defining and naming
-  in the rich (though sometimes mutually conflicting) traditions
-  that grew around OO.
+  In @secref{WOOin}, I will discuss many contrary opinions about OO,
+  including by such luminaries of the topic as Alan Kay or William Cook,
+  or of adjacent topics like Joseph Goguen or Barbara Liskov.
+  In @secref{TfOO}, I will also criticize the approach of many great researchers about Types for OO.
+  And even in other chapters, I will issue my lot of opinions
+  that would no doubt make many respected scholars shake their head, both cited and not cited.
+  But my proving all these renowned scientists wrong on one question or another
+  in no way diminishes their contribution to OO or to neighboring topics;
+  and my respect for them only increases for their having achieved all they did
+  with the handicap of a wrong idea or two.
 }
 There is thus a need to elucidate the words and concepts of OO,
 behind the hype and confusion, and justify the choices made by OO
@@ -508,7 +452,7 @@ Consistency, however, is much harder when you want to actually
 say a lot of useful things that interact with each other—which
 is why we want the theory to also be relevant.
 
-@principle{This Theory of OO is Relevant}
+@principle{This Theory of OO is Relevant}.
 A theory of OO is @emph{relevant} to OO, and not of something else,
 if it matches the lore of OO:
 it will restate most if not all the things we know and care about OO,
@@ -539,7 +483,7 @@ that you can easily adapt to your favorite programming language
 (see @secref{WS} regarding choosing Scheme).
 I will explain which features are needed beyond the mere applicative λ-calculus, why,
 and how to typically implement them in existing programming languages.
-Remarkably, the main feature needed is lazy evaluation, or ways to emulate it, @; TODO cite
+Remarkably, the main feature needed is lazy evaluation, or ways to emulate it (@secref{USLCP}),
 as OO is most naturally defined in a pure lazy functional setting,
 and eager evaluation of OO without side-effects leads to exponential recomputations.
 
@@ -556,9 +500,9 @@ Dependent types are not necessary.
 
 @subsection{Multiple Variants of Inheritance}
 @epigraph{
-  When you come to a fork in the road, take it. @|#:-"Yogi Berra"|
+  When you come to a fork in the road, take it. @|#:- "Yogi Berra"|
 }
-Now since nearly the very beginning of OO,
+Since nearly the very beginning of OO,
 there have been multiple variants of inheritance to choose from @~cite{Taivalsaari1996}.
 Many prefer Single Inheritance for its simplicity and performance
 @~cite{Simula1967 Kay1993}.
@@ -760,7 +704,7 @@ If you want to check whether there’s anything new for you in this book,
 or are a future researcher interested in when now-well-known ideas were introduced,
 you may peek there first.
 
-Follows an @seclink["AB"]{Annotated Bibliography},
+Follows an extensive @seclink["AB"]{Annotated Bibliography},
 with notes about each of the works cited to explain what makes them relevant.
 
 @subsection{Stop and Go}

@@ -2,7 +2,7 @@
 
 (provide (all-defined-out))
 
-(require (only-in scribble/base ~ emph elem linebreak nested italic smaller bold para
+(require (only-in scribble/base ~ emph elem linebreak nested italic smaller bold para centered
                   section subsection include-section)
          (only-in scribble/core make-paragraph make-style content->string)
          (only-in scriblib/footnote note define-footnote)
@@ -173,3 +173,14 @@
      (subsection #:style 'unnumbered "XXX EDIT HERE XXX")
      (tex "\\noindent")
      (bold "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")))
+
+(define (dedication . x)
+  (cond
+   ((render-html?)
+    (centered (smaller (italic x))))
+   ((render-latex?)
+    (list
+     (tex "\\cleardoublepage\\thispagestyle{empty}\\vspace*{\\fill}
+           \\begin{center}\\begin{minipage}{0.72\\textwidth}\\itshape{}")
+     x
+     (tex "\\end{minipage}\\end{center}\\vspace*{\\fill}\\cleardoublepage{}")))))

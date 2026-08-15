@@ -38,8 +38,9 @@ and only come back after you encounter bad opinions about OO that need to be deb
 @subsection{OO isn’t Whatever C++ is}
 @epigraph{
   I made up the term ‘object-oriented’, and I can tell you I didn’t have C++ in mind.
-  @|#:- @elem{Alan Kay, at OOPSLA ’97 (near peak C++ popularity)}|
+  @|#:- "Alan Kay, at OOPSLA ’97 (near peak C++ popularity)"|
 }
+@subsubsection{Influential, Yet Atypical.}
 The most popular OO language in the decades that OO was a popular trend (roughly 1980 to 2010),
 C++ indeed supports some form of OO.
 But C++ is a rich language with many aspects completely independent of OO
@@ -72,7 +73,7 @@ is not at all the same as what almost everyone else calls “multiple inheritanc
   not to mention its distant 1988 successor CLOS.
 }
 It is actually a modified kind of mixin inheritance
-with some kind of “duplication” of superclasses
+with some kind of “duplication and renaming” of superclasses
 (for non-@c{virtual} superclasses, with members copied/renamed along the inheritance tree),
 and a subset of multiple inheritance (for @c{virtual} superclasses and member functions,
 with restriction from a “conflict” view of inheritance, see @secref{DMRMI}).
@@ -92,9 +93,9 @@ and you could no doubt further implement proper multiple inheritance on top of t
   the entire superclass linearization apparatus
   within the C++ template metaprogramming language.
   Template metaprogramming is most definitely powerful enough for the task,
-  though it will take a very motivated developer to do the hard work,
-  and the result will still be a burden for any developer who wants to use it.
-  Moreover, for all that cost, classes defined that way would only interoperate
+  though it will take a very motivated developer (or an AI) to do the hard work @~cite{Rideau2026cxx}.
+  Moreover, the result will still be a slight syntactic burden for any developer who wants to use it,
+  and classes defined that way would only interoperate
   with other classes following the exact same pattern.
   Maybe the library implementing the pattern could eventually be included
   in some semi-standard library, until, if it gets any traction,
@@ -110,22 +111,29 @@ and use “static dispatch” instead for the sake of performance (at doing the 
 In the end, C++ is many great and not-so-great things, but only few of those things are OO,
 and even most of those that look like OO are often different enough that
 @principle{C++ does not reliably inform about OO in general}@xnote["."]{
-  The situation is similar for Ada, that adopted multiple inheritance in 2003
+  The situation is similar for Ada and PHP, that adopted multiple inheritance in 2003 and 2005,
   by seemingly copying the general design of C++.
   Now even when C++ got multiple inheritance wrong,
   ignorance was no valid excuse,
   since Lisp got it right ten years earlier@~cite{Cannon1979}
   and Stroustrup even cited it via @~cite{Weinreb1981}.
-  Ignorance is even less excusable in the case of Ada
-  copying C++’s “multiple inheritance” yet 14 years later.
+  Ignorance is even less excusable in the case of Ada and PHP
+  copying C++’s “multiple inheritance” a decade and a half later.
   By contrast, many languages got it right in the same time frame,
   including Common Lisp (1988), Python (1991), Ruby (1995), Scala (2004).
 }
 
-Of course, neither is OO defined by Smalltalk, CLOS, Ruby, Python, Java, C#, Scala,
-or any particular language and its object system, however advanced, popular,
-or declared as prototypical by any particular pundit. OO is especially not whichever
-OO language you, the reader, first learned, or got to most associate in your mind with OO.
+@subsubsection{OO isn’t Defined by Any Particular Language or System}
+OO is a general concept that is not defined by any single particular instantiation of it,
+however advanced, popular, or declared as prototypical by any particular pundit.
+OO is especially not whichever OO language you, the reader, first learned,
+or got to most associate in your mind with OO.
+Smalltalk, CLOS, Ruby, Python, Java, JavaScript, C#, Scala, and many more...
+OO is precisely what these languages have in common.
+No language can embody OO and be “all OO, and nothing but OO”,
+because @principle{OO is not a language design, it’s a language @emph{feature}}.
+Yet if I had to exhibit a minimal, “prototypical” OO language (pun intended),
+I’d pick... Jsonnet (see @secref{RPOO}).
 
 @subsection[#:tag "OOiCO"]{OO isn’t Classes Only}
 @epigraph{
@@ -142,6 +150,7 @@ much less study it.
 
 Yet KRL@~cite{Bobrow1976},
 the very first system@Note{
+  @; TODO XXXXX Move history to ch4, leave a secref here
   KRL, though its name stands for “Knowledge Representation Language”,
   was arguably not a @emph{programming} language in most people’s understanding,
   though it was one in the then understanding of Lispers:
@@ -165,9 +174,12 @@ has what is now called prototype-based OO (a.k.a. Prototype OO).
 The modern concept of OO can be traced back to the interaction between
 Bobrow’s KRL team and Kay’s Smalltalk team at PARC around 1976,
 both informed not just by Simula but also by many other predecessors.
-Kay took KRL’s inheritance, made it a well-defined concept specifically for @emph{programming}
-(which it was not originally in KRL) by identifying it with the prefix mechanism in Simula,
-that he replaced with the better resend mechanism, and popularized
+Kay’s team took the word and concept of “inheritance” from KRL,
+made it usable in a more classical programming language (pun intended),
+thereby generalizing the sub-classing mechanism of Simula,
+and replacing its “concatenation semantics”
+with the more ergonomic message-resend mechanism nearly universally adopted since.
+
 the word and concept of inheritance as well as the term “object-oriented”.
 Bobrow adopted Kay’s improvements together with his own (hard to say which is whose),
 and was first at the publish line with running software and a paper describing it.
@@ -252,9 +264,10 @@ as Haskell grew up to become a practical language@xnote["."]{
   the transition to practicality to be an S curve, such that
   whichever reasonable yet somewhat arbitrary threshold criteria you choose,
   the answer would be at about the same time.
-  In any case, making a practical language pure functional was just not an option before 2010 or so,
+
+  In any case, making a practical language pure functional was just not an option before 2005 or so,
   and it is absurd to declare any programming language concept intrinsically stateful
-  merely because all its practical implementations before 2010 were stateful.
+  merely because all its practical implementations before 2005 were stateful.
   You could similarly make the absurd claim that logic programming, functional programming,
   or linear algebra are intrinsically stateful.
 }
@@ -279,8 +292,9 @@ Actually, I will argue based on studying of the semantics of OO that
 @principle{Pure Lazy Functional Programming is the natural setting for OO}. @;{TODO secref}
 
 @subsection{OO isn’t Encapsulation}
-@epigraph{A half-truth is a whole lie. @|#:-"Yiddish proverb"|
+@epigraph{A half-truth is a whole lie. @|#:- "Yiddish proverb"|
 }
+@subsubsection{The Hidden Information: Modularity}
 Many OO pundits claim that an essential concept in OO
 is “encapsulation” or “information hiding”@~cite{DeRemer1975}.
 Some instead speak of “data abstraction” or some other kind of “abstraction”.
@@ -301,23 +315,14 @@ beyond a mere technical property.
 And even then, modularity only characterizes half of OO,
 so that people who try to equate OO with that half only
 crucially miss the other half—@emph{extensibility} (see @secref{EO}, @secref{E})—and
-thus fail to properly identify OO@xnote["."]{
-  Someone who disregards the extensibility aspect of OO to only consider modularity
-  would count as OO any language with a module system, or encapsulated entities of any kind,
-  to the great surprise of the users and implementers of these languages.
-  “OO” languages by this standard would include
-  not just languages like Go that explicitly reject OO, but also
-  all Functional Programming (FP) languages,
-  since lexical scoping is enough to provide encapsulation.
-  See in the introduction (@seclink{aToOO}) the footnote about William Cook,
-  who held such views, and the notes on some of his more egregious writings
-  in my annotated bibliography @~cite{Cook1991 Cook2009 Cook2012}.
-}
+thus fail to properly identify OO.
 
+@subsubsection{Tunnel Vision: Visibility}
 Now, insofar as some people identify encapsulation narrowly as the presence
 of specific visibility mechanisms such as found in C++ or Java
 (with some attributes or methods being @c{public}, @c{private} or something in-between,
-whose precise semantics the designers of different languages cannot agree on),
+whose precise semantics the designers of different languages cannot agree on;
+see @secref{ST}),
 I’ll easily dismiss such mechanisms as not essential to OO:
 indeed many quintessential OO languages like Smalltalk or Common Lisp
 lack any such specific mechanism,
@@ -336,7 +341,66 @@ Misidentifying OO as being about these mechanisms rather
 than about the modularity they are meant to support can only lead to
 sacrificing the ends to the means.
 
-@subsection{OO isn’t opposite to FP}
+@subsubsection[#:tag "Cook"]{William R. Cook}
+One remarkable researcher made a particularly eloquent case
+for reducing “OO” to mere first-class modularity (my word, but with equivalent definitions):
+William R. Cook, the man who, each time with suitable collaborators,
+first formalized single inheritance in the λ-calculus @~cite{Cook1989 CookPalsberg1989},
+dispelled the long running belief that inheritance was subtyping @~cite{Cook1989Inheritance},
+introduced the first correct typesystem for inheritance @~cite{Canning1989},
+invented and formalized mixin inheritance @~cite{Bracha1990},
+and even studied uses of inheritance beyond what he considered OO @~cite{Brown2009}.
+That same man who did more than anyone to further
+the understanding of the formal semantics of inheritance,
+repeatedly claimed that inheritance was not essential to OO @~cite{Cook1991 Cook2009 Cook2012},
+and that its uses beyond first-class modularity were not OO.
+
+However, coding against first-class SML modules would count as OO by Cook’s criteria,
+while static dispatch in C++ or C# would count as not-OO.
+Indeed Cook explicitly calls the untyped λ-calculus “the first object-oriented language”
+@~cite{Cook2009 Cook2012},
+and classifies Go as OO @~cite{Cook2012},
+while downplaying Smalltalk as not OO enough because its integers are not pure objects@~cite{Cook2009}.
+Thus Cook’s definition, that embraces the modular aspect of OO (when first-class) while rejecting
+its extensibility aspect or its static variants, runs contrary to common practice.
+It brings no light on any of the languages commonly considered OO
+yet derided by Cook as not being OO enough,
+no light on any of the Functional Programming (FP) languages blessed by Cook as actually being OO
+to the surprise of their users, and no light on the difference between the two.
+It is a typical case of an expert (and what expert) being so right in his analysis,
+yet so wrong in his delineation of concepts (see below @secref{Experts}).
+
+In the end, Cook’s PhD and subsequent academic career grew out of
+brilliantly modeling the key mechanism of OO (Inheritance)
+from the foreign point of view of FP;
+but his lack of appreciation and understanding for the OO tradition,
+indeed missing the point of it all,
+were such that they have become proverbial: immortalized in Gabriel’s essay
+“The Structure of a Programming Language Revolution” @~cite{Gabriel2012}
+as a prototypical failure to understand a phenomenon when viewed
+through a scientific paradigm incommensurable with the one that produced it.
+The problem is not just that Cook solved Inheritance as frog and
+failed to take the big picture as a bird: he did take a bird’s view,
+and still couldn’t see what his paradigm couldn’t express.
+
+Cook’s view is marginal, and goes against the vast majority of OO practitioners.
+And I will keep arguing why that view is objectively incorrect,
+even though it is positively cited by many academics.
+It is not just some marginal author using unusual vocabulary:
+the view is worth mentioning precisely because Cook is so influential—indeed landmark.
+Cook’s many works on OO over the years also systematically neglect or downplay
+important concepts in OO, such as prototypes, multiple inheritance,
+method combination or multiple dispatch—a disdain actually shared by most academics.
+And the mismatch is a symptom that the field lacks a consensual vocabulary, and
+commonly accepted concepts, definitions—and more deepy, a paradigm—adequate
+to reconcile theory, practice and history.
+And yet, there are undeniably common practices, common phenomena, common concepts,
+common language features, common design patterns, common goals, common aspirations,
+worth understanding, conceptualizing, defining and naming
+in the rich (though sometimes mutually conflicting) traditions
+that grew around OO.
+
+@subsection{OO isn’t Opposite to FP}
 @; I destroy my enemies when I make them my friends. — Lincoln
 @; What about side by side with a friend? — Legolas in The Two Towers (movie)
 @epigraph{¿Por qué no los dos? (Why not both?)
@@ -660,13 +724,13 @@ between self-reference and reference to a constant (see @secref{TfOO}).
 Interestingly, Amílcar Sernadas’s or Bart Jacobs’s categorical theories
 of “objects” and “inheritance”
 @~cite{Sernadas1994 Jacobs1995 Jacobs1996InheritanceAC}
-actually model UML and refinement,
-and not at all actual objects and inheritance as used in Programming Languages;
-a hijacking of the same words for completely different meanings,
+actually model UML, and also Goguen’s refinement,
+but not at all actual objects and inheritance as used in Programming Languages:
+it’s a hijacking of the same words for completely different meanings,
 with the only similarity being that both sets of meanings
 involve arrows between specifications.
 At least Jacobs early on explicitly embraces the limitation whereby
-self-reference or recursion is prohibited from field definitions.
+self-reference or recursion is prohibited from field definitions (see @secref{LotN}).
 Just like UML, his co-algebra utterly fails to model OO;
 but at least his theory is internally consistent if not externally.
 
@@ -1312,7 +1376,7 @@ only terrible loss@xnote["."]{
   to abuse you and thereby assert their dominance over you.
 }
 
-@subsection{Can’t we at least let experts determine what concepts to name?}
+@subsection[#:tag "Experts"]{Can’t we at least let experts determine what concepts to name?}
 @epigraph{
   There could hardly be a more unbearable — and more irrational — world than
   one in which the most eminent specialists in each field were allowed to proceed unchecked

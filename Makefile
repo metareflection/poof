@@ -127,6 +127,6 @@ check-pommette-chez: pommette/pommette-chez.scm pommette/pommette.scm
 check-pommette-racket: pommette/pommette.rkt pommette/pommette.scm
 	racket pommette/pommette.rkt
 
-count-ltuo-citations: build/ltuo.tex
-	grep 'Autobibtarget{' build/ltuo.tex | wc -l
+count-ltuo-citations: # build/ltuo.tex
+	# grep 'Autobibtarget{' build/ltuo.tex | wc -l
 	grep -c '^@' ltuo.bib extra*.bib

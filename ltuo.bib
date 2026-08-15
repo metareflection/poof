@@ -2061,8 +2061,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 @InProceedings{Canning1989,
   author={Peter Canning and William Cook and Walter Hill
                and Walter Olthoff and John C. Mitchell},
-  title={F-Bounded Quantification for Object-Oriented
-               Programming},
+  title={F-Bounded Quantification for Object-Oriented Programming},
   booktitle={Fourth International Conference on Functional
                Programming Languages and Computer Architecture
                (FPCA)},
@@ -3380,7 +3379,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 @PhDThesis{Fisher1996,
   title={Type Systems for object-oriented programming languages},
-  author={Fisher, Kathleen Shanahan},
+  author={Kathleen Shanahan Fisher},
   year={1996},
   school={Stanford University},
   url={http://i.stanford.edu/pub/cstr/reports/cs/tr/98/1602/CS-TR-98-1602.pdf},
@@ -3468,8 +3467,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     will push back the point at which they confront the contradictions in their beliefs;
     they won’t abandon their beliefs so they abandon the models.
     Their “Self-Application Semantics” turns a λ into a primitive “ς”
-    that inverts basic logic so they can avoid obvious immediate contradiction,
-    then trying to limit the calculus to hide the further contradictions
+    that inverts basic logic so they can avoid obvious immediate contradiction;
+    then they try to restrict the calculus enough to hide further contradictions
     introduced by the intrinsic lie...
     that’s not solving the issue, just hiding the dirt under the rug.
     Their “Recursive Record Semantics” is perfectly correct for targets,
@@ -3479,7 +3478,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     the distinction of target (“record”) and specification (“generator”),
     but once again find the solution problematic (they are missing my “recursive conflation”).
     Then they go in and out of some Pierce “split-self” semantics (see Pierce and Turner 1993)
-    and note that it works well for Class OO but move on rather than dig into
+    and note that it works well for Class OO, but move on, rather than dig into
     the interesting fine reasons why.
     Finally their “solution” is to implement objects on top of the same
     syntactic rewrite logic paradigm as the λ-calculus is usually presented in.
@@ -4477,15 +4476,16 @@ and Fiech, Adrian",
 
 %% 2009
 
-@WebPage{Hoare2009,
-  author={Hoare, C.A.R.},
-  title={Null References: The Billion Dollar Mistake},
+@InProceedings{Brown2009,
+  author={Daniel Brown and William Cook},
+  title={Function Inheritance: Monadic Memoization Mixins},
+  booktitle={Brazilian Symposium on Programming Languages},
+  series={SBLP 2009},
   year={2009},
-  url={https://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare},
-  lastchecked={2026-02-04},
-  note={.
-    Talk delivered at QCon London, August 2009.
-    “I call it my billion-dollar mistake. It was the invention of the null reference in 1965.”
+  url={https://www.cs.utexas.edu/~wcook/Drafts/2009/sblp09-memo-mixins.pdf},
+  note={
+    Shows inheritance over functions through memoizing monadic mixins,
+    in the context of Haskell and monads for the side-effect of the memoization table.
   }
 }
 
@@ -4521,6 +4521,18 @@ and Fiech, Adrian",
     Cook wholly skips CLOS, and Prototypes. Sad.
     In the end, does not bring much lights to the topic, beyond the obvious.
     Cook understands modularity, but not extensibility.
+  }
+}
+
+@WebPage{Hoare2009,
+  author={Hoare, C.A.R.},
+  title={Null References: The Billion Dollar Mistake},
+  year={2009},
+  url={https://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare},
+  lastchecked={2026-02-04},
+  note={.
+    Talk delivered at QCon London, August 2009.
+    “I call it my billion-dollar mistake. It was the invention of the null reference in 1965.”
   }
 }
 
@@ -5629,9 +5641,9 @@ and Fiech, Adrian",
   year={2021},
   note={
     My C++ implementation of optimal inheritance:
-    header-only C++20 mixins with a c4-linearized `super` chain.
+    header-only C++20 mixins with a c4-linearized “super” chain.
     Inspired by Smaragdakis 2000, with help from Claude
-    to translate the algorithm from Gerbil Scheme to about 1 kloc of C++ templates.
+    to translate the C4 algorithm from Gerbil Scheme to about 1 kloc of C++ templates.
   }
 }
 

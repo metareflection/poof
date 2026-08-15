@@ -55,8 +55,8 @@
 (define (ₖ) (list (html-elem (c "ₖ")) (tex "${}_k$")))
 (define (Ri) (list (c "R") (ᵢ)))
 (define (Pi) (list (c "P") (ᵢ)))
-(define (⋂) (list (tex "$\bigcap$" (html-elem "⋂"))))
-(define (⇝) (list (tex "$\rightsquigarrow$" (html-elem "⇝"))))
+(define (⋂) (list (tex "$\\bigcap$") (html-elem "⋂")))
+(define (⇝) (list (tex "$\\rightsquigarrow$") (html-elem "⇝")))
 (define (Fsub) (list (html-elem (list "F" (subscript "≤")))
                      (tex-elem (tex "$F_{\\leq}$"))))
 
@@ -84,9 +84,10 @@
               #"\\DeclareUnicodeCharacter{1D62}{${}_{i}$}" ;; ᵢ
               #"\\DeclareUnicodeCharacter{207F}{${}^{n}$}" ;; ⁿ
               #"\\DeclareUnicodeCharacter{2096}{${}_{k}$}" ;; ₖ
+              #"\\DeclareUnicodeCharacter{21DD}{$\\rightsquigarrow$}" ;; ⇝
               #"\\DeclareUnicodeCharacter{225C}{$\\triangleq$}" ;; ≜
               #"\\DeclareUnicodeCharacter{2264}{$\\leq$}" ;; ≤
-              #"\\DeclareUnicodeCharacter{22C2}{$\\cap$}" ;; ⋂
+              #"\\DeclareUnicodeCharacter{22C2}{$\\bigcap$}" ;; ⋂
               #"\\DeclareUnicodeCharacter{1D52D}{$\\mathfrak{p}$}"))))) ;; 𝔭
 
 (define (ltuo-style)

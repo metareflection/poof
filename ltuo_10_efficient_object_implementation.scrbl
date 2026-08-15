@@ -18,7 +18,7 @@
 
 @subsection{Records Matter}
 
-@Paragraph{More Fundamental than Inheritance}
+@subsubsection{More Fundamental than Inheritance}
 One way or another, @principle{Object-Orientation involves dealing with @emph{records}},
 mappings from identifier to value.
 This is despite the fact that the rules of inheritance,
@@ -41,7 +41,7 @@ and independently from inheritance, when they are used over and over again,
 long after they have been computed through inheritance,
 and even for records computed without using inheritance.
 
-@Paragraph{Semantics First}
+@subsubsection{Semantics First}
 Now, the original intent of records,
 even before they were first formally treated by @citet{Hoare1965},
 has always involved an efficient low-level representation as contiguous words of memory.
@@ -67,7 +67,7 @@ the desired meaning being clear at all times.
   To have a right to do a thing is not at all the same as to be right in doing it.
   @|#:-"G.K. Chesterton"|
 }
-@Paragraph{A Universal Strategy}
+@subsubsection{A Universal Strategy}
 So far I have encoded Records as opaque functions
 with some kind of identifier as input argument (symbols, in Scheme),
 and returning an arbitrary value as output (@secref{MOO}).
@@ -91,7 +91,7 @@ that are never 100% compatible from one language to the next,
 and introduce language-specific record primitives with ever subtly different types,
 the explanations for which would have burdened an already concept-heavy exposé.
 
-@Paragraph{Issues with Records as Arbitrary Functions}
+@subsubsection{Issues with Records as Arbitrary Functions}
 However, there are various drawbacks to representing records as arbitrary functions:
 @itemize[
   @item{arbitrary functions are opaque, lacking introspection on which keys are valid@xnote[";"]{
@@ -122,7 +122,7 @@ happily, for larger or longer-running systems,
 one can afford the STEAM (Skill Time Energy Attention Money)
 to invest in a better solution, such as the ones I discuss below.
 
-@Paragraph{Not-so-Arbitrary Functions}
+@subsubsection{Not-so-Arbitrary Functions}
 Now, functions do not have to be arbitrary.
 They can follow some systematic pattern;
 but then that pattern defines the @emph{actual} data structure,
@@ -176,7 +176,7 @@ in chaining records-as-arbitrary-functions.
 
 @subsection[#:tag "RaFM"]{Records as Finite Maps}
 
-@Paragraph{From Implicit to Explicit Alists}
+@subsubsection{From Implicit to Explicit Alists}
 The only primitive that we could afford given arbitrary functions as records,
 was the @c{extend-record} primitive, that added one binding to an existing record,
 ultimately from the @c{empty-record}.
@@ -211,7 +211,7 @@ over implicitly letting their structure emerge from the use of @c{extend-record}
 by making alists explicit, one can actually remove shadowed entries,
 and eliminate the space and time leak inevitable in the previous representation.
 
-@Paragraph{Finite Maps Beyond Alists}
+@subsubsection{Finite Maps Beyond Alists}
 Stepping back from the particulars of an alist and its performance profile,
 one can then realize that the abstract interface it satisfies
 is that of a @emph{finite map}.
@@ -268,7 +268,7 @@ Particularly popular among pure functional balanced tree algorithms are tries
 and their variants optimized for hash maps @~cite{Okasaki1998 Bagwell2001 Steindorfer2015},
 or weight-balanced trees. @;{TODO cite https://github.com/dco-dev/ordered-collections/blob/021-specialized-ropes/doc/why-weight-balanced-trees.md}
 
-@Paragraph{Mutable Records}
+@subsubsection{Mutable Records}
 Mutable records, or records used with a linear discipline, are mutable finite maps.
 A traditional implementation with a mutable hash table or HashMap,
 provides random access in @c{O(1)} (compared to @c{O(log n)} for immutable finite maps),
@@ -277,7 +277,7 @@ than a direct field access in a statically typed language.
 My above remarks about hashing, interning, and unique numbering apply to mutable hash tables
 as well as immutable ones.
 
-@Paragraph{A Note on Power}
+@subsubsection{A Note on Power}
 @epigraph{
                 Every task involves constraint, @(linebreak)
               Solve the thing without complaint; @(linebreak)
@@ -327,7 +327,7 @@ may then take advantage of these discrepancy.
 
 @subsection[#:tag "RaR"]{Records as Records}
 
-@Paragraph{Class Disparities}
+@subsubsection{Class Disparities}
 
 Now here comes a disconnect: I have established that
 the semantics of first-class records is essentially that of a finite map,
@@ -365,7 +365,7 @@ Second-class records then are indeed a case as discussed above, where staging
 enables computations before and after the stage transition (in this case, compilation)
 to use slightly different implementation strategies, yielding various optimizations.
 
-@Paragraph{The General vs The Common}
+@subsubsection{The General vs The Common}
 
 The @emph{general} case of first-class records cannot be simplified beyond these finite maps,
 that are much slower than second-class records.
@@ -404,7 +404,7 @@ that yields the offset in the record; thus, interestingly,
 support for suffix specifications slightly improves the performance of second-class record access,
 at the expense of slightly worsening the performance of first-class record access!
 
-@Paragraph{Some Concrete Encoding Considerations}
+@subsubsection{Some Concrete Encoding Considerations}
 
 In any case, any host language you choose for your implementation
 will offer some kind of underlying low-level memory arrays,
@@ -445,7 +445,7 @@ is a good task for modern AI to semi-automate.
 
 @subsection{Where did the Fixpoint Go?}
 
-@Paragraph{No Place for Fixpoints}
+@subsubsection{No Place for Fixpoints}
 Even more so than records, OO involves open recursion through fixpoints.
 Now, whichever specific data structure is used underneath to represent a finite map,
 importantly, a data structure is an “inert” @emph{value}:
@@ -489,7 +489,7 @@ depending on whether one used Y-encoding (@secref{MOO}) or U-encoding (@secref{C
     the inner @c{.U} to the right—before returning the data structure,
     but that is deferred self-application, and does not involve any fixpoint yet.}]
 
-@Paragraph{Fixpoints are for Computations, not Values}
+@subsubsection{Fixpoints are for Computations, not Values}
 Either way, as mentioned in @secref{USLCP},
 fixpoints, and thus resolution of modular definitions and of modular extensions,
 are essentially operations on @emph{computations}, and not quite on @emph{values},

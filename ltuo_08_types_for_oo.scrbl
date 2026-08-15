@@ -607,7 +607,7 @@ is well worth examining.
 
 @subsection[#:tag "ST"]{Self Types}
 
-@Paragraph{Deconfusing Types for Specification and Target}
+@subsubsection{Deconfusing Types for Specification and Target}
 The key to fully dispelling the
 “conflation of subtyping and inheritance” @~cite{Fisher1996}
 or the “notions of type and class [being] often confounded” @~cite{Bruce1996}
@@ -650,7 +650,7 @@ and for elements of @c{Type → Type} means @c{∀ t, F t ⊂ G t}),
 it does not necessarily follow that @c{Y F ⊂ Y G}
 where @c{Y} is the fixpoint operator for types.
 
-@Paragraph{Reconstructing Visibility Rules}
+@subsubsection{Reconstructing Visibility Rules}
 The widening rules for the types of specification
 and their fixpoint targets are different;
 in other words, forgetting a field in a target record, or some of its precise type information,
@@ -694,7 +694,7 @@ because of effects somewhere else in the system, etc.,
 can be safely represented and typed,
 without having to fight the typesystem or the runtime.
 
-@Paragraph{Recursively Constrained Types}
+@subsubsection{Recursively Constrained Types}
 A more precise view of a modular extension is thus as
 an entity parameterized by the varying type @c{self} of the module context
 (that Bruce calls @c{MyType} @~cite{Bruce1996 Bruce1997}). @; TODO cite further
@@ -911,7 +911,7 @@ but this coping strategy requires defining a lot of subclasses,
 makes it hard to track whether all cases have been processed;
 essentially, the case analysis of the sum type is being dynamically rather than statically typed.
 
-@Paragraph{Note on Types for Second-Class Class OO}
+@subsubsection{Note on Types for Second-Class Class OO}
 Types for second-class classes can be easily deduced
 from types for first-class classes:
 A second-class class is “just” a first-class class that happens
@@ -1156,6 +1156,7 @@ A travesty, an inversion of right and wrong, and a waste of tremendous brainpowe
 @citet{Fisher1994}, @citet{Fisher1996}, @; TODO @citet{Fisher1999}
 @; TODO: Kim Bruce 1993 1994 1995, PolyTOIL
 @citet{Bruce1996}, @citet{Bruce1997}.
+@; TODO: mention how Fisher's operational semantics is U-encoded, but her types are Y-encoded. Cool.
 
 Finally, some publications, though some the earlier ones may have been historical landmarks,
 and though some may have contributed good ideas, are just bad cases of the NNOOTT,
@@ -1266,12 +1267,6 @@ still I declare:
   even if he might have thought so at times.
   Instead, he called himself an “extreme optimist”, viz,
   “a man who believes that humanity will probably survive even if it doesn’t take his advice.”
-}
-
-@exercise[#:difficulty "Easy"]{
-  Read and make sense of the code I wrote for this chapter,
-  that you may find e.g. at
-  @url{https://github.com/metareflection/poof/blob/main/pommette/pommette.scm}
 }
 
 @exercise[#:difficulty "Easy"]{

@@ -20,6 +20,14 @@ fix t m = Y (m t)
 @author{François-René Rideau}
 
 @(when/list (render-html?) (cube-logo))
+
+@dedication{
+  To William R. Cook, who first formalized inheritance in the λ-calculus,
+  and the discrepancy between inheritance and subtyping,
+  and also mixin inheritance—the foundations on which this book is built—and
+  who was, I discovered too late, the one person I most wanted to
+  argue about it with.
+}
 @noindent[]
 @italic{This book, though well advanced, is still a work in progress}@xnote["."]{
   For your convenience, a current draft is available

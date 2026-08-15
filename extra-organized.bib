@@ -785,6 +785,29 @@
   note={Introduces a type-level account of the assumptions subclasses make about inherited implementation, directly relevant to modular inheritance.}
 }
 
+% See also: https://ethw.org/Oral-History%3ABarbara_Liskov_%282001%29 (2001)
+@InProceedings{Liskov1993,
+  author={Barbara Liskov},
+  title={A History of CLU},
+  booktitle={History of Programming Languages---II},
+  editor={Thomas J. Bergin, Jr. and Richard G. Gibson, Jr.},
+  year={1993},
+  pages={471--510},
+  publisher={ACM},
+  address={New York, NY, USA},
+  isbn={0-201-89502-1},
+  doi={10.1145/154766.155367},
+  url={https://publications.csail.mit.edu/lcs/pubs/pdf/MIT-LCS-TR-561.pdf},
+  note={
+    Liskov's retrospective account of the development of data abstraction and CLU.
+    It presents CLU as the first implemented language providing direct
+    linguistic support for data abstraction and discusses its relationship to
+    the distinct object-oriented tradition.
+    Particularly useful as primary evidence against retrospective accounts
+    that simply identify Liskov's CLU work with object-oriented programming.
+  }
+}
+
 @Book{Madsen1993,
   author={Ole Lehrmann Madsen and Birger Møller-Pedersen and Kristen Nygaard},
   title={Object-Oriented Programming in the BETA Programming Language},
@@ -958,6 +981,29 @@
   booktitle={History of Programming Languages---II},
   pages={699–769},
   numpages={71}
+}
+
+@Article{Ancona1998,
+  author={Davide Ancona and Elena Zucca},
+  title={A Theory of Mixin Modules: Basic and Derived Operators},
+  journal={Mathematical Structures in Computer Science},
+  year={1998},
+  month=aug,
+  volume={8},
+  number={4},
+  pages={401--446},
+  publisher={Cambridge University Press},
+  issn={0960-1295},
+  doi={10.1017/S0960129598002576},
+  note={
+    Develops mixins as a general module mechanism with deferred components,
+    mutual dependencies, overriding and composition.
+    Its mixin calculus is independent of the underlying core language and can
+    express, among other modular constructs, variants of object-oriented
+    inheritance.
+    An early explicit generalization of inheritance-like composition from
+    objects and classes to modules.
+  }
 }
 
 @InProceedings{Ernst1998,
@@ -1194,6 +1240,7 @@
   series={ESEC/FSE-9}
 }
 
+% Inheritance in ML-style Module systems, already
 @Article{Ancona2002,
   author={Davide Ancona and Elena Zucca},
   title={A Calculus of Module Systems},
@@ -1292,6 +1339,31 @@
   note={
     Compares and combines the conventional super direction with Simula/BETA inner,
     clarifying two dual policies for composing inherited code.}
+}
+
+@ https://iolanguage.org/docs/Paper/index.html
+@InProceedings{Dekorte2005,
+  author={Steve Dekorte},
+  title={Io: A Small Programming Language},
+  booktitle={Companion to the 20th Annual ACM SIGPLAN Conference on Object-Oriented Programming, Systems, Languages, and Applications},
+  year={2005},
+  month=oct,
+  pages={166--167},
+  publisher={ACM},
+  address={New York, NY, USA},
+  isbn={1-59593-193-7},
+  doi={10.1145/1094855.1094916},
+  url={https://static.aminer.org/pdf/PDF/000/522/059/io_a_small_programming_language.pdf},
+  note={
+    The original published description of Io, a small prototype-based
+    object-oriented language created by Dekorte starting in 2002.
+    Io combines ideas from Smalltalk, Self, NewtonScript, Act1, Lisp and Lua.
+    Its objects contain slots and a list of prototypes; lookup recursively
+    searches these prototypes, and new objects are made by differential
+    inheritance through cloning.
+    The language also provides actors and futures for concurrency, coroutines,
+    runtime-accessible code and a deliberately minimal message-based syntax.
+  }
 }
 
 @Article{Waddell2005,
@@ -1521,14 +1593,28 @@
   note={Open modules formalized; journal version TOPLAS 35(1), 2013}
 }
 
-@InProceedings{Brown2009,
-  author={Daniel Brown and William Cook},
-  title={Function Inheritance: Monadic Memoization Mixins},
-  booktitle={Brazilian Symposium on Programming Languages},
-  series={SBLP 2009},
-  year={2009},
-  url={https://www.cs.utexas.edu/~wcook/Drafts/2009/monadic-mixins.pdf},
-  note={Shows inheritance over functions through memoizing monadic mixins, strengthening the connection between inheritance, open recursion and functional composition.}
+@Article{Swierstra2008,
+  author={Wouter Swierstra},
+  title={Data Types à la Carte},
+  journal={Journal of Functional Programming},
+  year={2008},
+  month=jul,
+  volume={18},
+  number={4},
+  pages={423--436},
+  publisher={Cambridge University Press},
+  issn={0956-7968},
+  doi={10.1017/S0956796808006758},
+  url={https://www.cs.tufts.edu/~nr/cs257/archive/wouter-swierstra/DataTypesALaCarte.pdf},
+  note={
+    A solution to the Expression Problem in Haskell that constructs extensible
+    recursive data types by taking fixed points of sums of functors.
+    New variants can be added modularly without modifying existing definitions,
+    while type classes provide type-safe injection into larger sums.
+    It demonstrates that inheritance-like modular extension is useful for
+    constructing data types independently of conventional object-oriented
+    programming.
+  }
 }
 
 % Recursion Scheme, FP & OOP ???

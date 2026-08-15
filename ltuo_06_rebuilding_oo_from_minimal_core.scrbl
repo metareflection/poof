@@ -40,7 +40,7 @@ wherein Nix has prototype objects and I don’t: conflation.
 
 @subsection[#:tag "CCTHP"]{Conflation: Crouching Typecast, Hidden Product}
 
-@Paragraph{Notional Pair}
+@subsubsection{Notional Pair}
 
 Prototype object systems have a notion of “object”, also known as “prototype”,
 that can be used both for computing methods, as with my model’s record @emph{targets},
@@ -66,7 +66,7 @@ when composing prototypes using inheritance, their respective specifications are
 and then the resulting composed specification is wrapped into a pair consisting of
 the specification and its target.
 
-@Paragraph{Trivial Implementation}
+@subsubsection{Trivial Implementation}
 
 My implementation below makes this product explicit,
 where I use the prefix @c{pproto} to denote a prototype implemented as a pair.
@@ -104,7 +104,7 @@ so you may call methods on it:
 (define pproto-mix* (op*←op1.1 pproto-mix pproto-id))
 }
 
-@Paragraph{First Issue: Incomplete Specifications}
+@subsubsection{First Issue: Incomplete Specifications}
 
 There is an important catch, however:
 the whole point of specifications is that most specifications are not complete,
@@ -140,7 +140,7 @@ though the type may be empty, and trying to use it may result in static or dynam
 Execution in a latter stage of computation (runtime vs compile-time)
 can be seen as the ultimate form of delayed evaluation.
 
-@Paragraph{Second Issue: Recursion}
+@subsubsection{Second Issue: Recursion}
 
 Now, there is a subtle issue with the above implementation:
 when a target recursively refers to “itself” as per its specification,
@@ -377,7 +377,7 @@ that just returns the record as a constant:
 
 @subsection[#:tag "CfUe"]{Conflation from U-encoding}
 
-@Paragraph{Y U NO APPLY SELF?}
+@subsubsection{Y U NO APPLY SELF?}
 @; Y U NO meme. "U WANT REACH FIXPOINT? | Y U NO APPLY SELF?"
 @; High Expectations Asian Father meme / Y U NO meme
 @; https://x.com/Ngnghm/status/2036273356387864639
@@ -421,7 +421,7 @@ The difference between the two encodings is subtle but quite interesting:
     where @c{U x = x x} (see @secref{USLCP}).
     This is why I call this representation and its variants @emph{U-encodings}.}]
 
-@Paragraph{Y: Double U}
+@subsubsection{Y: Double U}
 
 Now it is important to understand not just the difference between the two encodings,
 but also the relationship between the two.
@@ -467,7 +467,7 @@ from the point of view of low-level representation and efficiency.
 But semantically, that is just a trivial linear isomorphism
 (see @secref{SRoRoS} for a discussion).
 
-@Paragraph{For or Against U, Y?}
+@subsubsection{For or Against U, Y?}
 
 There are various advantages and disadvantages to U-encoding compared to Y-encodings.
 @itemize[
@@ -506,7 +506,7 @@ There are various advantages and disadvantages to U-encoding compared to Y-encod
     but may have promoted confusion between specification and target,
     and low-level thinking in terms of the particulars of an implementation technique.}]
 
-@Paragraph{Inheriting from U means…}
+@subsubsection{Inheriting from U means…}
 
 T and YASOS support single inheritance (@secref{SI})
 by providing a function @c{operate-as} that objects can call
@@ -537,7 +537,7 @@ at the cost of making mutable inheritance much more complex
 (which is usually the correct option, see @secref{MoIaCU}).
 But at that point, Y-encoding becomes simpler than U-encoding.
 
-@Paragraph{Choosing U, Y?}
+@subsubsection{Choosing U, Y?}
 
 In the end, U-encoding and Y-encoding are both equally capable for implementing
 the whole breadth of semantics of object systems, with many well-identified tradeoffs.
@@ -655,7 +655,7 @@ just before the fixpoint, like @c{rproto-wrapper} above@xnote["."]{
 }
 The wrapper, in addition to registering specification metadata like @c{rproto-wrapper},
 could add a @emph{memoization} layer that caches computed field values into a hash-table,
-so they are never computed twice (see @secref{MYC}).
+so they are never computed twice (see @secref{MLY}).
 And if the field names are known before instantiation,
 a vector can be used instead of a hash-table for faster access (see @secref{EOI}).
 

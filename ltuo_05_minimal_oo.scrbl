@@ -377,7 +377,7 @@ from which they can invoke a programmer-defined “main” entry-point with thei
 Before I model modularity as such, I shall delve deeper into the modeling of records,
 that are the usual substrate for much of modularity.
 
-@Paragraph{Record Nomenclature}
+@subsubsection{Record Nomenclature}
 I will follow Hoare @~cite{Hoare1965} in calling
 “record” the concrete representation of data that contains zero, one or many “fields”.
 A typical low-level implementation of records is as
@@ -400,7 +400,7 @@ keys, elements, components, columns, etc.
 Mapping which terms are used in any given paper to those used in this or another paper
 is left as an exercise to the reader.
 
-@Paragraph{Typing Records}
+@subsubsection{Typing Records}
 I could be content with a simple type @c{Record}, but then
 every access would require some kind of type casting.
 Instead, I will propose slightly more elaborate types.
@@ -432,7 +432,7 @@ and a point @c{point-c} of type @c{∏R} defined as follows:
   (record (x 3) (y 4) (color "blue")))
 }
 
-@Paragraph{Implementing Records}
+@subsubsection{Implementing Records}
 I will call @emph{identifier} some large or infinite type of values
 over which equality or inequality can be decided at runtime by using a suitable primitive,
 or calling a suitable function.
@@ -523,7 +523,7 @@ or hashing@xnote["."]{
   due to the limitations of physics@~cite{Ernerfeldt2014}.
 }
 
-@Paragraph{Merging Records}
+@subsubsection{Merging Records}
 Given a list of bindings as pairs of an identifier and a value,
 you can define a record that maps each identifier to the value in the first
 binding with that identifier in the list, if any
@@ -700,7 +700,7 @@ What more, I suspect that most programmers who are familiar with the λ-calculus
 are unaware of these issues at all, or of how much they matter in practice.
 
 @subsection{Function Arity and Currying}
-@Paragraph{Curried Syntax}
+@subsubsection{Curried Syntax}
 Functional Programming usually is written with unary functions (that take exactly one argument),
 and to express more than one argument, you “curry” it:
 you define a function of one argument that returns a function that processes the next argument, etc.,
@@ -725,7 +725,7 @@ and even variable numbers of arguments, or, in some dialects, optional or keywor
 which does not map directly to mathematical variants of Functional Programming;
 but it is an error to call a function with the wrong number of arguments.
 
-@Paragraph{Lots of Insipid and Stupid Parentheses}
+@subsubsection{Lots of Insipid and Stupid Parentheses}
 One approach to resolving this discrepancy is to just cope with
 the syntactic ugliness of unary functions in Scheme,
 with a lot of extra parentheses everywhere,
@@ -797,7 +797,7 @@ for Functional Programming in the modern functional style that is native to func
 with lots of curried functions.
 However, I will prove below that simple syntactic extensions solve the issue.
 
-@Paragraph{Abandoning Functional Style}
+@subsubsection{Abandoning Functional Style}
 A second approach is to adopt a more native Scheme style over FP style,
 with a variety of different function arities,
 making sure that a function is always called with the correct number of arguments.
@@ -819,7 +819,7 @@ However, it is a problem and a notable distraction when trying to explain
 the semantics of OO to a public familiar with FP and functional style—which
 is the purpose of this book.
 
-@Paragraph{Extending Scheme for Functional Style}
+@subsubsection{Extending Scheme for Functional Style}
 The third approach, that I will adopt in this book, is to use Scheme macros
 to automatically curry function definitions and function applications:
 @itemize[
@@ -862,7 +862,7 @@ There are many variants to the fixpoint (or fixed-point) combinator Y,
 and the pure applicative Y combinator you could write in
 the pure λ-calculus subset of Scheme is actually quite bad in practice.
 
-@Paragraph{Applicative Y}
+@subsubsection{Applicative Y}
 First, here is the applicative Y combinator, that I will call Ye (for Y, eager)
 expressed in terms of the composition combinator B and
 the self-application combinator U (called Ue for U, eager)@Note{
@@ -942,7 +942,7 @@ the practically inapplicable applicative Y combinator:
 (2) a lazy Y combinator, or
 (3) a second-class Y combinator.
 
-@Paragraph{Stateful (Applicative) Y}
+@subsubsection{Stateful (Applicative) Y}
 A stateful Y combinator is what the @c{letrec} construct of Scheme provides
 (and also its @c{letrec*} variant, that the internal @c{define} expands to):
 it uses some underlying state mutation to create and initialize a mutable cell
@@ -985,7 +985,7 @@ here is @c{Yes}, the Y combinator, eager, stateful:
 }
 @; Test: ((Yes eager-pre-fact) 6) ;==> 720
 
-@Paragraph{Lazy Y}
+@subsubsection{Lazy Y}
 A second solution is to use a lazy Y, defined as Yl below.
 In a language like Nix (where @c{λ (f)} is written @c{f:}, and @c{let} like Scheme @c{letrec}
 recursively binds the variable in the definition body), you can simply define
@@ -1051,7 +1051,7 @@ without duplication of computation costs or side-effects@xnote["."]{
 (Note that @c{delay} can be easily implemented on top of any stateful applicative language,
 though a thread-safe variant, if needed, is somewhat trickier to achieve.)
 
-@Paragraph{Lazy on top of Applicative}
+@subsubsection{Lazy on top of Applicative}
 Here is one implementation of laziness on top of the stateful applicative subset of Scheme,
 that works in a single-threaded environment:
 it takes a thunk as argument, and only calls the thunk the first time around,
@@ -1090,7 +1090,7 @@ of computations and values @~cite{Levy1999}. @; TODO Curien2000 Herbelin2007 ?
 Happily, only a tiny bit of laziness is necessary to understand fixpoints,
 or recursion in general, and their significance for OO.
 
-@Paragraph{Minimally Lazy Y}
+@subsubsection[#:tag "MLY"]{Minimally Lazy Y}
 The minimal use of laziness with maximal impact in the context of fixpoints and OO would be
 to replace plain deferred evaluation without sharing by a lazy variant:
 Wherever the use of an applicative Y would require η-expansion,
@@ -1118,7 +1118,7 @@ If you want repeated invocations with the same argument to remember
 and reuse the value from the first invocation, you will need
 to wrap the function into a layer that also @emph{memoizes} its results.
 
-@Paragraph{Second-class Y}
+@subsubsection{Second-class Y}
 A third solution, often used in programming languages with second-class OO only
 (or languages in which first-class functions must terminate), is
 for the @c{Y} combinator (or its notional equivalent)
@@ -1138,7 +1138,7 @@ It is only the users of these languages who are somewhat shielded from the intri
 @; TODO CITE Aaron Stump from U Iowa, etc.
 @; TODO: Fix as a metaprogram. Kirill Golubev. https://popl26.sigplan.org/details/rocqpl-2026-papers/17/Lambda-JS-la-Carte
 
-@Paragraph{My Editorial Choice}
+@subsubsection{My Editorial Choice}
 I have implemented variants of my minimal OO system in many combinations
 of the above solutions to these two issues, in Scheme and other languages.
 For the rest of this book, I will adopt a style where most functions are unary,
@@ -1321,7 +1321,7 @@ The @c{super} parameter strongly corresponds to the @c{parent} specification;
 the @c{self} parameter corresponds to the @c{child}, but only weakly so;
 thus the contravariant @c{c p t s} and @c{p c s t} orders are slightly unaesthetic.
 Meanwhile, the left-to-right or right-to-left flow of information
-should match the general style of the rest of your language,
+should match the general style of the rest of your language or its standard library,
 the order of the parents in the class definition syntax, and/or
 the order in which you store the precedence list (see @secref{MI}).
 

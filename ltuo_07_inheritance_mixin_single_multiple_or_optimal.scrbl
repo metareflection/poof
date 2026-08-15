@@ -104,7 +104,7 @@ Might one not as well directly adopt the simpler and more expressive mixin inher
 
 @subsection[#:tag "CMSI"]{Comparing Mixin and Single Inheritance}
 
-@Paragraph{Mixin Inheritance is Simpler than Single Inheritance, @emph{assuming FP}}
+@subsubsection{Mixin Inheritance is Simpler than Single Inheritance, @emph{assuming FP}}
 Assuming knowledge of Functional Programming (FP),
 the definitions of single inheritance above
 are slightly more complex than those of mixin inheritance,
@@ -150,7 +150,7 @@ to implement or use it.
    they tend to be clever enough not to need it to be simplified for them,
    and not to care enough to simplify it for others. }
 
-@Paragraph{Mixin Inheritance is More Expressive than Single Inheritance}
+@subsubsection{Mixin Inheritance is More Expressive than Single Inheritance}
 @; TODO not just more expressive, but in an importantly relevant way MORE EXTENSIBLE
 Single inheritance can be trivially expressed in terms of mixin inheritance:
 a single inheritance specification is just a list of modular extensions composed
@@ -210,7 +210,7 @@ the language syntax, static typesystem, dynamic semantics,
 or socially enforced coding conventions, or development costs
 somehow disallow or strongly discourage modular extensions as first-class entities.
 
-@Paragraph{Mixin Inheritance is More Modular than Single Inheritance}
+@subsubsection{Mixin Inheritance is More Modular than Single Inheritance}
 In second-class class OO with single inheritance,
 each modular extension can only be used once, at the site that it is defined,
 extending one modular definition’s implicit list of modular extensions.
@@ -239,7 +239,7 @@ rather than internal modularity through better language semantics.
 Overall, single inheritance is much less modular than mixin inheritance,
 and in that respect, it fails to fulfill the very purpose of inheritance.
 
-@Paragraph{Mixin Inheritance is Less Performant than Single Inheritance}
+@subsubsection{Mixin Inheritance is Less Performant than Single Inheritance}
 If single inheritance is more complex, less expressive and less modular than mixin inheritance,
 is there any reason to ever use it? Yes:
 the very semantic limitations of single inheritance are what enables
@@ -508,7 +508,7 @@ is the record of effective modular definitions for the individual methods.
 What then should be the “super” argument passed to each modular extension,
 given the place of its specification in the ancestry DAG?
 
-@Paragraph{The Diamond Problem}
+@subsubsection{The Diamond Problem}
 One naïve approach could be to view the inheritance DAG as some kind of attribute grammar,
 and compute the (open modular definition for) the super at each node of the DAG
 as a synthetic attribute@xnote[","]{
@@ -589,7 +589,7 @@ synthesizing a child’s modular definition from its parents’ modular definiti
 @; TODO Discuss Snyder’s idiotic "make ancestry a tree" idea reprised by C++ and Ada.
 @; TODO refer to later implementation of conflict on top of method combination. @secref{MC}
 
-@Paragraph{Cooperation not Conflict}
+@subsubsection{Cooperation not Conflict}
 To find a better consistent behavior than conflict requires a reassessment
 of what better designed attribute than a modular definition
 should be synthesized from the inheritance DAG if any.
@@ -612,7 +612,7 @@ also known as constraints on the method resolution algorithm.
 There is sadly no consistent naming for those properties across literature,
 so I will propose my own while recalling the names previously used.
 
-@Paragraph{Inheritance Order: Consistency with Inheritance}
+@subsubsection{Inheritance Order: Consistency with Inheritance}
 A specification’s modular extension shall always be composed
 “to the left” of any of its ancestors’,
 where sequential effects and computation results flow right to left.
@@ -632,7 +632,7 @@ the part database will already be initialized, and will not be overwritten later
 This property is so fundamental it is respected by all OO languages since Simula @~cite{Simula1967},
 and may not have been explicitly named before as distinct from inheritance itself.
 
-@Paragraph{Linearity: Conservation of Information}
+@subsubsection{Linearity: Conservation of Information}
 The information contributed by each ancestor’s modular extension
 shall be taken into account once and only once.
 User-specified extensions may drop or duplicate information,
@@ -683,7 +683,7 @@ Flavors’ flavor of multiple inheritance, which includes many more innovations,
 was a vast improvement in paradigm over all its predecessors,
 and sadly, also over most of its successors.
 
-@Paragraph{Linearization: Consistency across Methods}
+@subsubsection{Linearization: Consistency across Methods}
 Any sequential effects from the ancestor’s modular extension should be run
 in a consistent “Method Resolution Order@xnote["”"]{
    The term and its abbreviation MRO were introduced by Python 2.3 circa 2003,
@@ -709,8 +709,8 @@ i.e. a total (“linear”) order that has the partial order of the DAG as a sub
   Still the same word has very different meanings in the two contexts.
 }
 Since CommonLoops @~cite{Bobrow1986}, it has been customary to call this order
-the @emph{precedence list} of the class, prototype or specification, a term I will use,
-and to keep it in most-specific-first order:
+the @emph{precedence list} of the class, prototype or specification, a term I will use;
+and it is also customry to keep it in most-specific-first order:
 descendants to the left, ancestors to the right,
 the opposite of the order used by my @c{mix} and @c{mix*} functions@xnote["."]{
   The Simula manual has a “prefix sequence” but it only involves single inheritance
@@ -785,7 +785,10 @@ and tries to call the super method (either through an override, or through the l
 One advantage of this approach is that it does not affect the runtime semantics of methods
 in Class OO, it only filters code at compile-time (though with prototypes, this “compile-time”
 might be interleaved with runtime).
-However, whether such a feature is worth it depends crucially on its costs and benefits.
+Using method combinations (see @secref{MC}),
+one could even distinguish “base” sub-methods that use conflict,
+from “override” sub-methods that use linearization.`
+However, whether using one of these designs is worth it depends crucially on its costs and benefits.
 The benefits would be the ability to find and locate bugs that are not easily found and located
 by existing forms of testing and debugging, which is not obvious.
 The costs, which are obvious, are that it increases the cost of writing programs,
@@ -793,7 +796,7 @@ forcing programmers to insert a lot of dummy methods that call or reimplement th
 Instead, with linearization, the issue of which method to prefer is perfectly under
 the control of the programmer, thanks to one cheap tool: the local order.
 
-@Paragraph{Local Order: Consistency with User-Provided Order}
+@subsubsection{Local Order: Consistency with User-Provided Order}
 The “local (precedence) order” in which users list parents in each specification must be respected:
 if a parent appears before another in the list of parents local to some specification,
 then the two will appear in the same relative order (though not necessarily consecutively)
@@ -846,7 +849,7 @@ there were no specified local order constraint between parents.
 Every partial order can be expressed that way,
 even if only with a list of lists of two elements, one list for each pair of comparable elements.
 
-@Paragraph{Extended Precedence: Consistency in Preferences}
+@subsubsection{Extended Precedence: Consistency in Preferences}
 @emph{If a parent specification @c{X} is chosen to appear before a parent specification @c{Y}
 in the linearization, then all the ancestors of @c{X} that aren’t ancestors of @c{Y}
 will also appear before @c{Y} in the linearization}
@@ -882,7 +885,7 @@ Thus I much prefer the informal explanation
 in terms of consistent preference for a preferred specification’s ancestors
 over its dispreferred alternative.
 
-@Paragraph{Monotonicity: Consistency across Ancestry}
+@subsubsection{Monotonicity: Consistency across Ancestry}
 The “method resolution order” for a child specification should be consistent
 with the orders from each of its parents:
 if the precedence list for a parent places one extension before another,
@@ -907,7 +910,7 @@ Among popular “flavorful” languages, Python, Perl and Solidity respect this 
 but Ruby, Scala and Lisp fail to.
 (Though at least in Common Lisp you can use metaclasses to fix this issue for your code.)
 
-@Paragraph{Shape Determinism: Consistency across Equivalent Ancestries}
+@subsubsection{Shape Determinism: Consistency across Equivalent Ancestries}
 Two specifications with equivalent inheritance DAGs
 (with an isomorphism between them, bijection preserving partial order both ways)
 will yield equivalent precedence lists, up to the same isomorphism.
@@ -951,7 +954,7 @@ whenever the constraints otherwise allow multiple solutions.
 But the instability of such a heuristic when the code changes
 would lead to many @emph{heisenbugs}.
 
-@Paragraph{Global Precedence: Consistency across All Ancestries}
+@subsubsection{Global Precedence: Consistency across All Ancestries}
 
 @citet{Baker1991} introduces the property that there should exist
 a global precedence list, i.e. a total ordering of specifications
@@ -1166,7 +1169,7 @@ Together, they also tell us that some features could be automated in theory
 yet cannot be so in practice due to lack of synchronization between programmers,
 due to lack of a better OO variant.
 
-@Paragraph{Multiple Inheritance is less Simple than Mixin Inheritance}
+@subsubsection{Multiple Inheritance is less Simple than Mixin Inheritance}
 Obviously, multiple inheritance requires the system to implement some extra logic
 either to handle proper ancestor linearization, or to implement
 some really bad method resolution algorithm instead.
@@ -1178,7 +1181,7 @@ In other words, does multiple inheritance solve a problem you would have to face
 with mixin inheritance, or does it introduce concepts you do not need?
 And assuming it is a problem you face anyway, does it solve it in the simplest manner?
 
-@Paragraph{Multiple Inheritance is as Expressive as Mixin Inheritance}
+@subsubsection{Multiple Inheritance is as Expressive as Mixin Inheritance}
 Mixin inheritance is clearly no less expressive than multiple inheritance,
 since every entity that can be written using multiple inheritance
 can just as well be written using mixin inheritance,
@@ -1205,7 +1208,7 @@ would instead export a multiple inheritance specification to use once,
 that defines a helper that it possibly calls once, but can be thereafter called many times.
 Therefore I can say that multiple inheritance is as expressive as mixin inheritance in practice.
 
-@Paragraph{Multiple Inheritance is more Modular than Mixin Inheritance}
+@subsubsection{Multiple Inheritance is more Modular than Mixin Inheritance}
 I will now compare the two variants of inheritance from the point of view of modularity.
 Multiple inheritance requires somewhat more sophistication than mixin inheritance,
 adding the cognitive burden of a few more concepts,
@@ -1341,7 +1344,7 @@ the modularity issues one experiences with one kind of inheritance are still sup
 to the lack of modularity issues one experiences with the kinds of inheritance
 lacking the modularity about which to have issues to begin with.
 
-@Paragraph{Multiple Inheritance is slightly less Performant than Mixin Inheritance}
+@subsubsection{Multiple Inheritance is slightly less Performant than Mixin Inheritance}
 Compared to mixin inheritance, multiple inheritance involves this extra step of
 computing a specification’s precedence list.
 The linearization algorithm has a worst case complexity O(dn),
@@ -2032,7 +2035,7 @@ the @c{self} and the precedence-list.
 Even with the laziness in building the prototype,
 the fields themselves are recomputed at every field access, at significant cost;
 and if you want to avoid that, you’d have to memoize field values into a hash-table
-(see @secref{MYC}, @secref{SSAoCPS}).
+(see @secref{MLY}, @secref{SSAoCPS}).
 A wrapper inserted in most-specific position,
 in the manner of @c{qproto-wrapper} or @c{rproto-wrapper} (see @secref{RC}, @secref{CfR})
 could implement this memoization,
