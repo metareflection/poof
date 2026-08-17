@@ -246,6 +246,29 @@
   note={Reprinted in Gunter and Mitchell (eds.), Theoretical Aspects of Object-Oriented Programming, MIT Press, 1994. Earliest statement of the objects/ADT duality}
 }
 
+@Article{Saltzer1975,
+  author={Jerome H. Saltzer and Michael D. Schroeder},
+  title={The Protection of Information in Computer Systems},
+  journal={Proceedings of the IEEE},
+  year={1975},
+  month=sep,
+  volume={63},
+  number={9},
+  pages={1278--1308},
+  publisher={IEEE},
+  issn={0018-9219},
+  doi={10.1109/PROC.1975.9939},
+  url={https://users.ece.cmu.edu/~adrian/630-f05/readings/saltzer-schroeder-protection_information.pdf},
+  note={
+    A foundational treatment of computer protection mechanisms and principles.
+    Among its classic design principles is “least privilege”: every program
+    and user should operate with only the privileges necessary to perform its
+    task, limiting damage and interactions involving privileged components.
+    This principle was subsequently also called the Principle of Least
+    Authority (POLA), particularly in capability-security literature.
+  }
+}
+
 @InProceedings{Friedman1976,
   author={Daniel P. Friedman and David S. Wise},
   editor={S. Michaelson and Robin Milner},
@@ -269,6 +292,30 @@
   note={Primary statement of the actor/message-passing view of control; useful for distinguishing the actor lineage from object-oriented dispatch and inheritance.}
 }
 
+@Article{Smith1977,
+  author={John Miles Smith and Diane C. P. Smith},
+  title={Database Abstractions: Aggregation and Generalization},
+  journal={ACM Transactions on Database Systems},
+  year={1977},
+  month=jun,
+  volume={2},
+  number={2},
+  pages={105--133},
+  publisher={ACM},
+  issn={0362-5915},
+  doi={10.1145/320544.320546},
+  url={https://archive.org/details/readingsinartifi00mylo/page/138/mode/2up},
+  note={
+    Identifies aggregation and generalization as two fundamental and
+    independent abstractions for conceptual data modeling.
+    Generalization organizes objects into generic hierarchies, while
+    aggregation constructs composite objects from relationships among objects.
+    These anticipate the conceptual distinction later expressed in
+    object-oriented terminology as “is-a” versus “has-a” or “part-of”,
+    although Smith and Smith do not use those slogans.
+  }
+}
+
 @InProceedings{Nygaard1978,
   author={Kristen Nygaard and Ole-Johan Dahl},
   title={The Development of the SIMULA Languages},
@@ -279,6 +326,32 @@
   doi={10.1145/800025.1198392},
   url={https://doi.org/10.1145/800025.1198392},
   note={Retrospective by the designers that documents how Simula I evolved into Simula 67 and why classes, prefixing and virtual procedures were introduced.}
+}
+
+% Borrow unavailable: https://archive.org/details/associativenetwo00find/
+% https://link.springer.com/chapter/10.1007/978-94-015-7941-4_7
+@InCollection{Brachman1979,
+  author={Ronald J. Brachman},
+  title={On the Epistemological Status of Semantic Networks},
+  booktitle={Associative Networks: Representation and Use of Knowledge by Computers},
+  editor={Nicholas V. Findler},
+  year={1979},
+  pages={3--50},
+  publisher={Academic Press},
+  address={New York, NY, USA},
+  isbn={978-0-12-256380-5},
+  doi={10.1016/B978-0-12-256380-5.50007-4},
+  url={https://api.pageplace.de/preview/DT0400.9781483263014_A23867546/preview-9781483263014_A23867546.pdf},
+  note={
+    An influential analysis of semantic networks that introduces structured
+    inheritance networks and presents the then-developing KL-ONE knowledge
+    representation language.
+    It argues for an explicitly epistemological level of representation,
+    including structured concepts, roles and inheritance.
+    An important predecessor to Brachman's later analysis of “IS-A”
+    relationships and to the use of inheritance terminology in knowledge
+    representation.
+  }
 }
 
 @InProceedings{Stefik1979,
@@ -319,6 +392,65 @@
     between logical implication and function types.}
 }
 
+@Article{Ingalls1981,
+  author={Daniel H. H. Ingalls},
+  title={Design Principles Behind Smalltalk},
+  journal={BYTE Magazine},
+  volume={6},
+  number={8},
+  pages={286–298},
+  year={1981},
+  url={https://www.cs.virginia.edu/~evans/cs655/readings/smalltalk.html},
+  note={Compact statement of Smalltalk’s uniform object and message model, useful as a primary source for the Smalltalk tradition rather than later folklore.}
+}
+
+% https://www.caiac.ca/sites/default/files/shared/canai-archives/1982_CSCSI_Proceedings-opt.pdf
+@InProceedings{Brachman1982,
+  author={Ronald J. Brachman},
+  title={What “ISA” Is and Isn't},
+  booktitle={Proceedings of the Fourth Biennial Conference of the Canadian Society for Computational Studies of Intelligence},
+  year={1982},
+  month=may,
+  pages={212--221},
+  location={Saskatoon, Saskatchewan, Canada},
+  url={https://www.caiac.ca/sites/default/files/shared/canai-archives/1982_CSCSI_Proceedings-opt.pdf},
+  note={
+    An analysis of the different relationships represented by “ISA” links in
+    semantic networks, distinguishing genuine taxonomic relationships from
+    several other kinds of links.
+    A revised version, “What IS-A Is and Isn't: An Analysis of Taxonomic Links
+    in Semantic Networks”, appeared in Computer in 1983.
+    It documents sophisticated use and criticism of “ISA” terminology in
+    knowledge representation before its adoption as a characterization of
+    inheritance in object-oriented programming.
+  }
+}
+
+% No online copy seems available (says Medley documentation)
+@TechReport{Bobrow1982LOOPS,
+  author={Daniel G. Bobrow and Mark Stefik},
+  title={LOOPS: Data and Object Oriented Programming for Interlisp},
+  institution={Xerox Palo Alto Research Center},
+  year={1982},
+  note={Technical report.
+    Describes the LOOPS object-oriented programming system for Interlisp,
+    including multiple inheritance, active values, composite objects,
+    and knowledge representation facilities.
+  }
+}
+
+@InProceedings{Steels1982,
+  author={Luc Steels},
+  editor={Pierpaolo Degano and Erik Sandewall},
+  title={ORBIT: An Applicative View of Object-Oriented Programming},
+  booktitle={Integrated Interactive Computing Systems},
+  pages={193–205},
+  publisher={North-Holland},
+  year={1982},
+  url={https://dblp.org/rec/conf/ecics/Steels82},
+  note={Very early functional reconstruction of object-oriented programming, predating most later work on classes as functions and objects as fixed points.}
+}
+
 @Article{Novak1983,
   author={Gordon S. Novak},
   title={Data abstraction in GLISP},
@@ -347,43 +479,6 @@
   }
 }
 
-@Article{Ingalls1981,
-  author={Daniel H. H. Ingalls},
-  title={Design Principles Behind Smalltalk},
-  journal={BYTE Magazine},
-  volume={6},
-  number={8},
-  pages={286–298},
-  year={1981},
-  url={https://www.cs.virginia.edu/~evans/cs655/readings/smalltalk.html},
-  note={Compact statement of Smalltalk’s uniform object and message model, useful as a primary source for the Smalltalk tradition rather than later folklore.}
-}
-
-@InProceedings{Steels1982,
-  author={Luc Steels},
-  editor={Pierpaolo Degano and Erik Sandewall},
-  title={ORBIT: An Applicative View of Object-Oriented Programming},
-  booktitle={Integrated Interactive Computing Systems},
-  pages={193–205},
-  publisher={North-Holland},
-  year={1982},
-  url={https://dblp.org/rec/conf/ecics/Steels82},
-  note={Very early functional reconstruction of object-oriented programming, predating most later work on classes as functions and objects as fixed points.}
-}
-
-% No online copy seems available (says Medley documentation)
-@TechReport{Bobrow1982LOOPS,
-  author={Daniel G. Bobrow and Mark Stefik},
-  title={LOOPS: Data and Object Oriented Programming for Interlisp},
-  institution={Xerox Palo Alto Research Center},
-  year={1982},
-  note={Technical report.
-    Describes the LOOPS object-oriented programming system for Interlisp,
-    including multiple inheritance, active values, composite objects,
-    and knowledge representation facilities.
-  }
-}
-
 @InProceedings{Reynolds1983,
   author={John C. Reynolds},
   title={Types, Abstraction and Parametric Polymorphism},
@@ -392,6 +487,26 @@
   publisher={North-Holland},
   year={1983},
   note={The theorem that modularity works: representation independence}
+}
+
+@Article{Brachman1985,
+  author={Ronald J. Brachman and James G. Schmolze},
+  title={An Overview of the KL-ONE Knowledge Representation System},
+  journal={Cognitive Science},
+  year={1985},
+  volume={9},
+  number={2},
+  pages={171--216},
+  doi={10.1207/s15516709cog0902_1},
+  url={https://www.cs.cmu.edu/afs/cs/project/ai-repository/ai/html/air/air-55.html},
+  note={
+    The canonical overview of KL-ONE, a frame-based knowledge-representation
+    system whose structured concepts form an inheritance taxonomy.
+    KL-ONE's careful treatment of concept specialization and subsumption was
+    foundational for the subsequent development of description logics.
+    Relevant to the independent history of taxonomic “is-a” relationships and
+    inheritance in knowledge representation.
+  }
 }
 
 @Book{Agha1986,
@@ -478,15 +593,6 @@
   note={One of the earliest formal treatments to distinguish inheritance from subtyping in an object-oriented language.}
 }
 
-@InProceedings{Cointe1987,
-  author={Pierre Cointe},
-  title={Metaclasses are First Class: the ObjVlisp Model},
-  booktitle={Proc. OOPSLA '87},
-  pages={156–162},
-  year={1987},
-  note={The tower closed by self-instantiation: fix one level up}
-}
-
 @InProceedings{Briot1987,
   author={Jean-Pierre Briot and Pierre Cointe},
   title={A Uniform Model for Object-Oriented Languages Using the Class Abstraction},
@@ -499,6 +605,15 @@
   note={Develops the ObjVLisp model by making the class abstraction the
     central unifying mechanism for reflective object-oriented languages.
   }
+}
+
+@InProceedings{Cointe1987,
+  author={Pierre Cointe},
+  title={Metaclasses are First Class: the ObjVlisp Model},
+  booktitle={Proc. OOPSLA '87},
+  pages={156–162},
+  year={1987},
+  note={The tower closed by self-instantiation: fix one level up}
 }
 
 @InProceedings{Ducournau1987,
@@ -526,6 +641,7 @@
   }
 }
 
+% URL has the 1991 revision
 @InProceedings{Stroustrup1987,
   author={Bjarne Stroustrup},
   title={What is Object-Oriented Programming?},
@@ -535,7 +651,13 @@
   publisher={Springer-Verlag},
   year={1987},
   doi={10.1007/3-540-47891-4_6},
-  note={Early practitioner attempt to delimit OOP around classes, inheritance and virtual functions; useful evidence for the C++ branch of the vocabulary.}
+  url={https://www.stroustrup.com/whatis.pdf},
+  note={.
+    A study of what OOP is, and how it compares to mere “data abstraction”
+    (parametric polymorphism), from Stroustrup’s eminently practical mind.
+    Among other things, requires both inheritance and dynamic dispatch for OO.
+    Not a scientist, but an engineer, and a very good one.
+  }
 }
 
 @InProceedings{Wand1987,
@@ -684,6 +806,53 @@
   pages={397–406},
   year={1989},
   note={Openness extended to member types (BETA lineage)}
+}
+
+@InCollection{Stein1989,
+  author={Lynn Andrea Stein and Henry Lieberman and David Ungar},
+  title={A Shared View of Sharing: The Treaty of Orlando},
+  booktitle={Object-Oriented Concepts, Databases, and Applications},
+  editor={Won Kim and Frederick H. Lochovsky},
+  year={1989},
+  chapter={3},
+  pages={31--48},
+  publisher={ACM Press and Addison-Wesley},
+  address={Reading, MA, USA},
+  isbn={0-201-14410-7},
+  doi={10.1145/63320.66470},
+  note={
+    An expanded presentation and commentary on the 1987 Treaty of Orlando,
+    which sought to reconcile class-based inheritance and prototype-based delegation.
+    Stein, Lieberman and Ungar decompose the apparent opposition into
+    independent dimensions of sharing, distinguishing mechanisms for creating
+    similar objects from mechanisms by which one object can act on behalf of another.
+    The original two-page treaty appeared in the OOPSLA 1987 Addendum.
+
+    The paper brings interesting concepts such as three dimensions for sharing software:
+    static vs dynamic, implicit vs explicit (ability to share), per object vs per group.
+    Stein then discusses anticipated vs unanticipated sharing, and tries to organize
+    a taxonomy of techniques and situations when one technique is preferable to the other,
+    rather than explain how the techniques are semantically related to each other.
+    A feeling / perception approach that maybe defuses conflict but doesn’t solve any problem.
+  }
+}
+
+@Book{Booch1991,
+  author={Grady Booch},
+  title={Object-Oriented Design with Applications},
+  year={1991},
+  publisher={Benjamin/Cummings Publishing Company},
+  series={The Benjamin/Cummings Series in Ada and Software Engineering},
+  address={Redwood City, CA, USA},
+  isbn={0-8053-0091-0},
+  url={https://archive.org/details/objectorientedde00grad},
+  note={
+    An influential early systematic treatment of object-oriented design,
+    presenting abstraction, encapsulation, modularity, hierarchy, typing,
+    concurrency and persistence as elements of the object model.
+    Useful for tracing the design vocabulary and rules of thumb that became
+    conventional in mainstream object-oriented practice around 1990.
+  }
 }
 
 @Article{Pierce1991,
@@ -942,6 +1111,26 @@
   pages={396–409},
   year={1996},
   note={Connects object calculi to typed lambda calculus, clarifying what is primitive and what can be represented by functions and recursive records.}
+}
+
+@Book{Gabriel1996,
+  author={Richard P. Gabriel},
+  title={Patterns of Software: Tales from the Software Community},
+  year={1996},
+  publisher={Oxford University Press},
+  address={New York, NY, USA},
+  isbn={0-19-510269-X},
+  url={https://www.dreamsongs.com/Files/PatternsOfSoftware.pdf},
+  note={
+    A collection of essays on software design, programming languages,
+    programming culture and the software industry.
+    It develops Gabriel's influential application of Christopher Alexander's
+    ideas about patterns, habitability and piecemeal growth to software,
+    and includes reflections on Lisp, object-oriented and functional
+    programming, and the history and failure of Lucid.
+    Particularly valuable as a contemporary practitioner's account of the
+    programming-language communities and disputes of the 1980s and 1990s.
+  }
 }
 
 @InCollection{Jacobs1996coalgebra,
@@ -1462,6 +1651,27 @@
   note={Minimal, open object model whose behavior is itself represented by ordinary objects; an unusually concrete bridge between prototypes, delegation and metaobject protocols.}
 }
 
+@Book{Booch2007,
+  author={Grady Booch and Robert A. Maksimchuk and Michael W. Engle and Bobbi J. Young and Jim Conallen and Kelli A. Houston},
+  title={Object-Oriented Analysis and Design with Applications},
+  year={2007},
+  publisher={Addison-Wesley},
+  series={Addison-Wesley Object Technology Series},
+  address={Upper Saddle River, NJ, USA},
+  edition={3},
+  isbn={978-0-201-89551-3},
+  url={https://github.com/gmoral/Books/raw/master/Object.Oriented.Analysis.and.Design.with.Applications.3rd.Edition.by.Booch.pdf},
+  note={
+    A major textbook and methodological account of object-oriented analysis
+    and design, originally published in 1991 and substantially revised in
+    subsequent editions.
+    It presents inheritance as an “is-a” hierarchy while distinguishing
+    aggregation and composition relationships between objects, and is useful
+    for tracing the terminology and design heuristics of mainstream
+    object-oriented methodology.
+  }
+}
+
 @InProceedings{Herbelin2007,
   title={The duality of computation},
   author={Hugo Herbelin and Pierre-Louis Curien},
@@ -1721,7 +1931,9 @@
   year={2013},
   doi={10.1145/2509578.2514738},
   url={https://www.cs.cmu.edu/~aldrich/papers/objects-essay.pdf},
-  note={The purpose-level account: dynamic dispatch as the enabler of interoperation among independently developed components}
+  note={.
+    Another paper touting OO as modularity only, without inheritance.
+  }
 }
 
 @Article{Guha2015,
