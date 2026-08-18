@@ -620,7 +620,7 @@ was the first language that explicitly supported such nested specifications,
 with its virtual patterns, and whose authors explicitly explored
 the resulting notion of “family polymorphism” (as they dubbed it). @;TODO cite
 This proves that its authors advanced OO in more ways than by first implementing classes
-in Simula 67@~cite{Simula1967}.
+in Simula 67@~cite{Dahl1967}.
 Other notable languages that explicitly support nested specifications include
 Newspeak@~cite{Bracha2008} with its nested classes (in a Class OO language), and
 Jsonnet@~cite{Cunningham2014} with its nested objects (in a Prototype OO language).
@@ -811,7 +811,7 @@ you would use:
   (abort "missing field markup")))
 }
 A class could then define a default prototype for new instances as:
-@; TODO INSERT SUITABLE CODE HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+@XXXX{TODO INSERT SUITABLE CODE HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
 @Code{
 }
 

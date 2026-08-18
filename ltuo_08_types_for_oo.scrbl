@@ -460,7 +460,7 @@ or as parameters to type-level functions, “templates”, etc.
 These methods will break the precondition for subclassing being subtyping.
 
 And such methods are not an “advanced” or “anomalous” case, but quintessential.
-The very first example in the very first paper about actual classes @~cite{Simula1967},
+The very first example in the very first paper about actual classes @~cite{Dahl1967},
 involves recursive data types:
 it is a class @c{linkage} that defines references @c{suc} and @c{pred} to the “same” type,
 that classes can inherit from so that their elements shall be part of a doubly linked list.
@@ -505,7 +505,7 @@ In other words, it makes us realize once again that @emph{recursion is not free}
 
 @subsection{Why NNOOTT?}
 
-The NNOOTT was implicit in the original proto-OO paper @~cite{Simula1967}
+The NNOOTT was implicit in the original proto-OO paper @~cite{Dahl1967}
 as well as in Hoare’s seminal paper that inspired it @~cite{Hoare1965}@xnote["."]{
   Hoare probably intended subtyping initially indeed for his families of record types;
   yet subclassing is what he and the Simula authors discovered instead.
@@ -1024,7 +1024,7 @@ Being a conservative extension of @(Fsub), F-bounded polymorphism suffers from
 the same limitation of type inference only being semi-decidable,
 and requiring type annotations in practice @~cite{Baldan1999}.
 In practice, F-bounded quantification works well
-within the nominal type systems of languages like Java and Scala
+within the nominal typesystems of languages like Java and Scala
 (where you write @c{<T extends Comparable<T>>}),
 but its theoretical foundations are less clean than one would like.
 
@@ -1281,7 +1281,7 @@ still I declare:
 @exercise[#:difficulty "Easy"]{
   The chapter claims that the very first example in the very first OO paper
   involves recursive types that defeat the NNOOTT.
-  Read the @c{linkage} class example in @~cite{Simula1967}.
+  Read the @c{linkage} class example in @~cite{Dahl1967}.
   Explain precisely which field types involve self-reference,
   and why a subclass of @c{linkage} cannot be a subtype of @c{linkage}
   under standard subtyping rules and still actually be a linkage

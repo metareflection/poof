@@ -140,7 +140,7 @@ I’d pick... Jsonnet (see @secref{RPOO}).
   The class/instance distinction is not needed if the alternative of using prototypes is adopted.
   @|#:- @citet{Lieberman1986}|
 }
-Many claim that classes, as first implemented by Simula 67@~cite{Simula1967}
+Many claim that classes, as first implemented by Simula 67@~cite{Dahl1967}
 (though implementing a concept previously named by Hoare@~cite{Hoare1965}),
 are essential to OO, and only ever care to implement, use, formalize,
 study, teach, promote, or criticize class-based OO (a.k.a. Class OO).
@@ -148,47 +148,16 @@ Books from luminaries in Programming Languages @~cite{Pierce2002 Khrisnamurthi20
 in their chapter about OO, barely even mention any other kind of OO if at all,
 much less study it.
 
-Yet KRL@~cite{Bobrow1976},
-the very first system@Note{
-  @; TODO XXXXX Move history to ch4, leave a secref here
-  KRL, though its name stands for “Knowledge Representation Language”,
-  was arguably not a @emph{programming} language in most people’s understanding,
-  though it was one in the then understanding of Lispers:
-  it is a layer on top of Lisp, what one would now call an “object system”.
-  But Lisp, being extensible, blurs the distinction between a new language
-  and an extension to the existing language, and KRL was certainly a language by that standard.
-  Also, while the original intention in the original 1975 paper @~cite{Winograd1975} was
-  to model knowledge in terms of Frames @~cite{Minsky1974}, and not to write programs;
-  but by the 1976 report @~cite{Bobrow1976} the concern has shifted, and
-  while the frames model is still present and cited, it has taken a secondary role,
-  while defining procedures has taken a prominent role.
-  The 1975 article introduces the expression “inheritance of properties” descriptively,
-  without implementation;
-  the 1976 article uses it as a more formal definition, with an implementation.
-}
-that claimed the words “object-oriented” in print with the modern sense
-(though the choice of expression itself was likely influenced by Alan Kay), and
-that also introduced the words “inheritance” and “prototype” in their OO meaning,
+Yet KRL@~cite{Bobrow1976}, the very first system
+that claimed the words “object-oriented” in print with the modern sense (see @secref{HMEB}), and
+also introduced the words “inheritance” and “prototype” in their OO meaning,
 has what is now called prototype-based OO (a.k.a. Prototype OO).
 
-The modern concept of OO can be traced back to the interaction between
-Bobrow’s KRL team and Kay’s Smalltalk team at PARC around 1976,
-both informed not just by Simula but also by many other predecessors.
-Kay’s team took the word and concept of “inheritance” from KRL,
-made it usable in a more classical programming language (pun intended),
-thereby generalizing the sub-classing mechanism of Simula,
-and replacing its “concatenation semantics”
-with the more ergonomic message-resend mechanism nearly universally adopted since.
-
-the word and concept of inheritance as well as the term “object-oriented”.
-Bobrow adopted Kay’s improvements together with his own (hard to say which is whose),
-and was first at the publish line with running software and a paper describing it.
-Then others at PARC, at MIT, and eventually Stroustrup at Bell Labs, adopted OO,
-and the rest is history.
-
 Certainly, Smalltalk was class-based, unlike KRL.
-Yet contemporary with Smalltalk or immediately after it
-were prototype-based languages Director @~cite{Kahn1976 Kahn1979Ani Kahn1979Director} and
+But Smalltalk adopted inheritance after KRL.
+And the very next OO languages immediately after Smalltalk
+were prototype-based languages
+Director @~cite{Kahn1976 Kahn1979Ani Kahn1979Director} and
 ThingLab @~cite{Borning1977 Borning1979 Borning1981}@xnote["."]{
   ThingLab was built on top of Smalltalk by members of the same team at PARC,
   and oscillated between having or not having classes in addition to prototypes.
@@ -282,12 +251,13 @@ Yet, there are:
     with plenty of libraries restricting themselves
     to pure functional objects only @~cite{Rideau2012 Chiusano2014}, and}
   @item{last but not least, Oleg Kiselyov’s or Michael Gale’s implementations of
-    statically typed OO both stateful and pure in the pure FP language Haskell(!)
+    statically typed OO both stateful and pure as libraries in the pure FP language Haskell(!)
     @~cite{Kiselyov2005 Gale2015}.}]
 
 These provide ample evidence that OO does not at all require mutation,
 but is very compatible with FP, purity, and even with laziness and consistent static typing.
-(This does not mean that Haskell typeclasses or Rust traits are OO; they are not—see @secref{CSvTS}.)
+(But this does not mean that Haskell typeclasses or Rust traits are OO;
+they are not—see @secref{CSvTS}.)
 Actually, I will argue based on studying of the semantics of OO that
 @principle{Pure Lazy Functional Programming is the natural setting for OO}. @;{TODO secref}
 
@@ -406,89 +376,145 @@ that grew around OO.
 @epigraph{¿Por qué no los dos? (Why not both?)
   @|#:- "Old El Paso"|
 }
-Some argue that there is an essential conflict between OO and FP,
+@subsubsection{The Long Flamewar}
+For as long as there has been social media,
+dating back at least to USENET in the late 1980s or very early 1990s,
+there have been mutually hostile exchanges, a.k.a. “flamewars”,
+between those I call zealOOts and FPanatics (respective proponents of OO and FP).
+These heated exchanges assume or argue that there is an essential conflict between OO and FP,
 between Inheritance and Composition,
 wherein OO is about modeling every possible domain in terms of inheritance,
 and FP is about modeling every possible domain in terms of composition,
 and the two must somehow duel to death.
 
 But OO and FP, inheritance and composition, are just pairs of distinct concepts.
-Neither of which subsumes the other; each fits a distinct set of situations.
-@;Each distinct concept has its set of situations that it fits,
-@;distinct from that of any other concept (or else they are actually the same concept);
-@;a concept that fits all situations has no content and is useless;
-@;and two concepts like OO and FP neither of which subsumes the other,
-@;cover sets of situations neither of which is a subset of the other.
-It makes no sense to oppose them, especially not when I see that
+Neither of which subsumes the other; each fits a distinct set of situations@xnote["."]{
+  Each distinct concept has its set of situations that it fits,
+  distinct from that of any other concept (or else they are actually the same concept).
+  A concept that fits all situations has no content and is useless;
+  and two concepts like OO and FP neither of which subsumes the other,
+  cover sets of situations neither of which is a subset of the other.
+}
+It makes no sense to oppose them, especially not when one can see that
 OO can be implemented in a few lines of FP, whereas
 most modern OO languages contain FP as a subset—and
 Lisp has harmoniously combined OO and FP together ever since they both emerged in the 1970s,
-@; TODO cite
 decades before anyone had the idea to fantasize a conflict between the two.
+As for those who argue that FP requires rich static types:
+Scala has popularly combined OO, FP and types since 2005, followed by TypeScript in 2012,
+not to mention earlier research experiments.
 
-The argument of Composition vs Inheritance is actually a distortion
-of a legitimate question of OO design, @; TODO cite
-wherein one has to decide by which of two approaches some aspect of a class,
-embodied as attributes or methods, should be included in the class@xnote["."]{
-  My counter-argument also works for prototypes or arbitrary OO specifications,
-  but since the argument is usually given for classes, I will use classes in this section.
-}
-The first approach is inheritance of classes:
-a class defines the aspect, and the other one @emph{is-a} subclass of that aspect class.
-The second approach is “composition” of classes:
-a class defines the aspect, and the other one @emph{has-a} value of that aspect class
-as attribute (composition of classes seen as their constructor functions)@xnote["."]{
-  There is also an old slogan of OO design,
-  notably found in the famous “Gang of Four” (“GoF”) book @~cite{Gamma1994},
-  that you should “favor object composition over class inheritance”.
-  GoF argues not to create an exponential number of subclasses
-  that specialize based on static information about what is or could be a runtime value,
-  because classes are compile-time and human-developer-time objects
-  that are less flexible and costlier in human effort than runtime entities.
-  These arguments of course do not apply for regular Prototype OO,
-  wherein umpteen combinations of prototypes (and classes as a particular case)
-  can be generated at runtime at no additional cost in human effort.
-  Still, the point can be made that if a programmer is confused about which of is-a or has-a
-  to use in a particular case, it’s a good heuristic to start with has-a,
-  which will quickly lead to an obvious showstopper issue if it doesn’t work,
-  whereas picking is-a where has-a was the better choice can lead to a lot of complications
-  before it is realized that it won’t work right.
-  Yet it is always preferable to understand the difference between “is” and “has”,
-  and to use the correct one based on understanding of the domain being modeled,
-  rather than on vague heuristics that substitute for lack of understanding.
-  At any rate, this slogan, though oft-quoted out of context in online debates,
-  actually has nothing to do with the OO vs FP debate—it is about using OO effectively.
-}
+@subsubsection{Composition vs Inheritance}
+Often, a FPanatic will raise an argument from authority,
+citing the “second principle of object-oriented design”
+from the famous “Gang of Four” (“GoF”) book @~cite{Gamma1994}:
+“favor object composition over class inheritance”.
+The FPanatic will thus claim that even famous OO pundits recommend composition over inheritance.
+Checkmate, zealOOt!
 
-The answer of course depends on expectations about how the classes will be further extended
+However the original says “object composition” and not “function composition”@xnote[":"]{
+  If you squint a bit, object composition can be seen as
+  a special case of function composition where the functions are the object constructors.
+  But it’s not a stand in for the general case, and the “favor” does not mean that
+  composition can substitute for inheritance in every situation.
+}
+it is not at all an argument about FP vs OO—it is a heuristic for using OO effectively,
+that assumes OO either way.
+Citing the slogan out of context, misquoting it as “favor composition over inheritance”,
+and repeating it without checking the original, speaks poorly of the utterer.
+
+This “principle” is worth examining for the lessons it teaches us about OO.
+It compares “[t]he two most common techniques for reusing functionality in object-oriented systems”,
+“class inheritance and object composition”.
+The first approach, class inheritance, the authors describe as “white-box reuse”,
+wherein the new class has access to the internals of the old one.
+The second approach, object composition, the authors describe as “black-box reuse”,
+wherein the new class does not have that access.
+
+GoF argues not to create an exponential number of subclasses
+that specialize based on static information about what is or could be a runtime value,
+because classes are compile-time and human-developer-time objects
+that are less flexible and costlier in human effort than runtime entities.
+However, this argument, while correct in the context of Class OO,
+does not apply for Prototype OO, wherein umpteen combinations of prototypes
+(and classes as a particular case) can be generated at runtime
+at no additional cost in terms of human effort.
+
+Once you understand the notion that prototypes in general and classes in particular
+are the conflation of two distinct entities, a specification and the target you may compute from it,
+a better argument can be made for the “principle”
+as a special case of the “Principle of Least Privilege” @~cite{Saltzer1973}:
+@principle{every program should be granted the least privilege necessary to get its job done}—including
+every module of a larger program.
+It’s easy enough to add a new privilege to an existing program when you need it,
+it’s much harder to audit every use case of an existing program
+to see if you can safely remove an old privilege—or to fail to
+and later deal with bugs and vulnerabilities.
+
+In this case, since you can compute a target from its specification,
+accessing the specification is a greater privilege than just holding a target;
+therefore sharing just a target, through “composition”,
+is preferable to sharing a specification through “inheritance”—when possible.
+Hence, if a new specification doesn’t need to reuse the computation of the old one,
+it should just reuse its target. Moreover, even if you must reuse the computation,
+you should, when that makes sense, do so as part of a smaller specification
+that you then compose as a target.
+Still, the above is a heuristic. “When that makes sense.” But what makes sense when?
+
+@subsubsection{Beyond Heuristics: Understanding}
+
+It is always preferable to base decisions
+on an actual understanding of the domain being modeled,
+rather than let a heuristic substitute for lack of understanding.
+That is where it really helps to think of “inheritance” vs “composition”
+in terms of these more directly usable names: “is-a” vs “has-a” relationships@xnote["."]{
+  I’m not sure who first introduces is-a and has-a in the vocabulary.
+  is-a goes back to early semantic networks in the 1960s to the point
+  that over a decade later, @citet{Brachman1982} criticizes abuse of the term.
+  @citet{Smith1977} compare and contrast close cousins of is-a and has-a together
+  as “generalization” and “aggregation” respectively,
+  though not the hyphenated short-hand names,
+  and in the context of data modeling for databases
+  where they mean something subtly different (see @secref{OiaMotW}).
+  @citet{Wegner1987} uses is-a but not has-a,
+  and @citet{Blake1987} use is-a and has-a-part together
+  (the latter a reverse of is-a-part-of).
+  @citet{Meyers1992} has isa and has-a firmly established.
+}
+The simple informal question “is an X a Y, or does an X have a Y?”
+then gives the answer as to whether to use inheritance (if the answer was the former),
+or composition (if the answer was the latter) in defining X from Y.
+
+@emph{Is} a car a chassis (inheritance),
+or does it @emph{have} a chassis while not @emph{being} it (composition)?
+If you’re writing a program that is only interested in the length of objects,
+you may model a @c{car} as a @c{lengthy} object with a @c{length} slot,
+and a @c{chassis} too. Now if your program will only ever be interested
+but in the length of objects, you may altogether skip any object modelling:
+and only use numeric length values directly everywhere for all program variables.
+Is a car a chassis? Yes, they are both their length, which is the same number,
+and you may unify the three, or let your compiler’s optimizer unify them
+as you initialize them from the same computation.
+Now if you know your program will evolve to become interested in
+the width of objects as well as their length,
+you might have records with length and width rather than mere numbers,
+and still unify a car and its chassis.
+But if your program eventually becomes interested in the height, weight or price of objects,
+and those of their components when they need be replaced,
+you’ll soon enough see that the two entities may somehow share some attributes
+yet be actually distinct: ultimately, both @c{car} and @c{chassis} @emph{are} @c{lengthy},
+but a @c{car} @emph{has} a @c{chassis} and @emph{is not} a @c{chassis}.
+
+Crucially, the design decision between inheritance and composition depends not just
+on the current structure of the program, but also on expectations for its future evolution,
 within a static or dynamically evolving schema of data structures and algorithms.
 If the schema is small, static, well-understood and won’t need to evolve
-it doesn’t really matter which technique is used to model it.
+it doesn’t really matter much which technique is used to model it.
 But as it grows, evolves and boggles the mind,
 a more modular and extensible approach is more likely to enable adapting the software
-to changing situations, at which point thoughtful uses of inheritance can help a lot@xnote["."]{
-  @emph{Is} a car a chassis (inheritance),
-  or does it @emph{have} a chassis while not @emph{being} it (composition)?
-  If you’re writing a program that is only interested in the length of objects,
-  you may model a @c{car} as a @c{lengthy} object with a @c{length} slot,
-  and a @c{chassis} too. Now if your program will only ever be interested
-  but in the length of objects, you may altogether skip any object modelling:
-  and only use numeric length values directly everywhere for all program variables.
-  Is a car a chassis? Yes, they are both their length, which is the same number,
-  and you may unify the three, or let your compiler’s optimizer unify them
-  as you initialize them from the same computation.
-  Now if you know your program will evolve to become interested in
-  the width of objects as well as their length,
-  you might have records with length and width rather than mere numbers,
-  and still unify a car and its chassis.
-  But if your program eventually becomes interested in the height, weight or price of objects,
-  and those of their components when they need be replaced,
-  you’ll soon enough see that the two entities may somehow share some attributes
-  yet be actually distinct: ultimately, both @c{car} and @c{chassis} @emph{are} @c{lengthy},
-  but a @c{car} @emph{has} a @c{chassis} and @emph{is not} a @c{chassis}.
-  Crucially, the design decision between inheritance and composition depends not just
-  on the current structure of the program, but also on expectations for its future evolution.
-}
+to changing situations, at which point thoughtful uses of inheritance can help a lot.
+
+@subsubsection{The Real Opposition between OO and FP}
 
 In the end, @principle{OO and FP are complementary, not opposite}.
 If there is a real opposition, it is not between two perfectly compatible techniques,
@@ -496,9 +522,41 @@ but between two mindsets, between two tribes of programmers each locked
 into their narrow paradigm@~cite{Gabriel2012 Petricek2017 Petricek2025} and
 unable to comprehend what the other is saying.
 
+In particular, there is an industrial bias towards OO vs an academic bias towards FP,
+that matches the respective concerns of those milieus.
+The entire point of OO is internal modular extensibility,
+i.e. system support for programming in minimal increments
+that require minimal understanding of the rest of the program.
+OO is the exact tool that enables limited humans to collaborate
+on projects wider than what any of them could deal at once, covering more ground,
+which is what industrial scaling demands.
+Meanwhile, the entire point of FP is its deep connection to formal logic,
+i.e. calculus support for precisely understanding the exact semantics of entire programs.
+FP is the exact tool that enables limited humans to individually
+solve problems as tall as can entirely fit in their brains, neatly decomposing them
+into layers wherein each is reduced to the one below,
+which is what academic publishing rewards.
+
+A lot of opposition between OO and FP is thus struggle between various tribes of programmers,
+as much as clashes between people with different temperaments,
+each kind of programmer will be unable to fathom much less appreciate
+the kind of problems that the other kind faces and solves.
+And people capable of mastering and appreciating both OO and FP, like me, and like you, gentle reader,
+will tend to be outcasts, who dare venture beyond what their tribes consider normal and good.
+
+Funnily, there are always more advanced experts in OO who will use modular extensibility
+to build large fleets of distributed computers each having its complete software installations
+specified and configured—way beyond what ordinary OO Programmers can fathom.
+And there will be Category Theorists, who invoke deep correspondences between logical and mathematical
+structures to generate software solutions that will amaze
+all but the most advanced Functional Programmer.
+I shudder at what scale AIs will take software when they confidently surpass us in this regard,
+both in width and in depth.
+Happily for me and for you, the basic understanding of OO that I’m trying to communicate in this book
+only requires a basic understanding of FP, so I can write it, and you can read it.
+
 @subsection{OO isn’t Message Passing}
-@epigraph{Name the greatest of all inventors. Accident.
-  @|#:-"Mark Twain"|
+@epigraph{Name the greatest of all inventors. Accident. @|#:- "Mark Twain"|
 }
 Alan Kay, who coined the term “Object-Oriented Programming” circa 1967,
 and subsequently invented Smalltalk in the early 1970s,
@@ -531,7 +589,7 @@ notably explained@~cite{Kay2020} that he originally meant
 a metaphor of computation through independent (concurrent, isolated) processes
 communicating by passing asynchronous messages.
 This metaphor also guided the modifications originally
-brought to Algol by Simula@~cite{Simula1966}.
+brought to Algol by Simula@~cite{Dahl1966}.
 It is also present in notable early object systems such as
 Director @~cite{Kahn1976 Kahn1979Ani Kahn1979Director} and
 ThingLab @~cite{Borning1977 Borning1979 Borning1981}.
@@ -1121,7 +1179,7 @@ for the sake of dynamic redefinition of classes at runtime,
 in what remains semantically a pure functional model once when the structure is set.
 See how in CLOS you can define methods on generic function
 @c{update-instance-for-redefined-class} to control how data is preserved, dropped or transformed
-when a class is redefined. @;{TODO XXX @~cite{}}
+when a class is redefined (see @secref{MoIaCU}).
 Mutable state and mutable inheritance structure in particular are therefore
 clearly an independent issue from prototypes vs classes,
 though it might not have been obvious at the time.

@@ -865,6 +865,33 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
+@Article{Smith1977,
+  author={John Miles Smith and Diane C. P. Smith},
+  title={Database Abstractions: Aggregation and Generalization},
+  journal={ACM Transactions on Database Systems},
+  year={1977},
+  month=jun,
+  volume={2},
+  number={2},
+  pages={105--133},
+  publisher={ACM},
+  issn={0362-5915},
+  doi={10.1145/320544.320546},
+  url={https://archive.org/details/readingsinartifi00mylo/page/138/mode/2up},
+  note={
+    Identifies aggregation and generalization as two fundamental and
+    independent abstractions for conceptual data modeling in the context of databases.
+    Generalization organizes objects into generic hierarchies, while
+    aggregation constructs composite objects from relationships among objects.
+    These anticipate the conceptual distinction later expressed in
+    object-oriented terminology as “is-a” versus “has-a” or “part-of”,
+    although Smith and Smith do not use those slogans.
+    However, lack of support for self-variables in types means this “generalization”
+    only matches inheritance in the trivial case where no recursion happens.
+    See section 3.1.7.
+  }
+}
+
 @TechReport{Stansfield1977,
   title={COMEX: A Support System for a Commodities Expert},
   author={Stansfield, James L},
@@ -1172,6 +1199,28 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     Succeeds to ThingLab 1977, a Smalltalk experiment by Borning 1980,
     and PIE in Smalltalk by Goldstein&Bobrow 1980.
     Cites Flavors and LOOPS as contrasts.}
+}
+
+% https://www.caiac.ca/sites/default/files/shared/canai-archives/1982_CSCSI_Proceedings-opt.pdf
+@InProceedings{Brachman1982,
+  author={Ronald J. Brachman},
+  title={What “ISA” Is and Isn't},
+  booktitle={Proceedings of the Fourth Biennial Conference of the Canadian Society for Computational Studies of Intelligence},
+  year={1982},
+  month=may,
+  pages={212--221},
+  location={Saskatoon, Saskatchewan, Canada},
+  url={https://www.caiac.ca/sites/default/files/shared/canai-archives/1982_CSCSI_Proceedings-opt.pdf},
+  note={
+    An analysis of the different relationships represented by “ISA” links in
+    semantic networks, distinguishing genuine taxonomic relationships from
+    several other kinds of links.
+    A revised version, “What IS-A Is and Isn't: An Analysis of Taxonomic Links
+    in Semantic Networks”, appeared in Computer in 1983.
+    It documents sophisticated use and criticism of “ISA” terminology in
+    knowledge representation before its adoption as a characterization of
+    inheritance in object-oriented programming.
+  }
 }
 
 @Article{Curry1982,
@@ -1611,13 +1660,15 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={https://old.cs.uct.ac.za/Members/edwin/publications/1987-part-whole.pdf},
   note={
     Proposes explicit part hierarchies as an extension to Smalltalk, allowing
-    structured whole-part relationships while preserving encapsulation.
-    It contrasts the class hierarchy's “IS-A” or “IS-A-KIND-OF” relation with
-    the part hierarchy's “IS-A-PART-OF”, or conversely “HAS-A-PART”, relation,
+    structured whole-part relationships while preserving encapsulation,
+    such that an object can be seen as made of parts, that are themselves made of parts, etc.
+    It contrasts the class hierarchy’s “IS-A” or “IS-A-KIND-OF” relation with
+    the part hierarchy’s “IS-A-PART-OF”, or conversely “HAS-A-PART”, relation,
     providing an early explicit comparison of the relationships later commonly
     described as “is-a” versus “has-a”.
     It argues that inheritance and part-whole composition represent orthogonal
     dimensions of organization.
+    Note that both “is-a” and “has-a-part” have direct and transitively closed relations.
   }
 }
 

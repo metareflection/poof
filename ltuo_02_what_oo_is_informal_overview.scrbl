@@ -80,7 +80,7 @@ and @emph{classes} if second-class
 A language offers prototype-based object orientation (“Prototype OO”) if it has prototypes,
 and class-based object orientation (“Class OO”) if it only has classes.
 
-The first arguably OO language used classes @~cite{Simula1967};
+The first arguably OO language used classes @~cite{Dahl1967};
 but the first definitely OO language used prototypes @~cite{Bobrow1976},
 and was otherwise the second OO language.
 Some languages provide both @~cite{Hewitt1979 ECMA2015}.
@@ -92,7 +92,7 @@ Class OO was layered on top twenty years later.
 @principle{A class is a compile-time prototype for a type descriptor}:
 a record of a type and accompanying type-specific methods,
 or some meta-level representation thereof across stages of evaluation.
-@;{ TODO see appendix XXX }
+@;{ TODO see chapter 10 }
 
 Class OO is therefore a special case of Prototype OO,
 which is therefore the more general form of OO @~cite{Lieberman1986 Rideau2021}.
@@ -275,8 +275,6 @@ and (b) the implementation of various Prototype OO systems has to explicitly acc
 (see e.g. the @c{__unfix__} attribute in @citet{Simons2015})
 even when the documentation is silent about it.
 
-@; TODO example Nix specification?
-
 @section{Inheritance Overview}
 @epigraph{Discovery consists of seeing what everybody has seen and thinking what nobody has thought.
   @|#:- "Albert Szent-Györgyi"|
@@ -290,26 +288,32 @@ from which the specified target computation can be extracted.
 There have historically been three main variants of inheritance,
 with each object system using a variation on one or two of them:
 single inheritance, multiple inheritance and mixin inheritance.
-For historical reasons, I may speak of classes, subclasses and superclasses
+For historical reasons, I may speak of classes, subclasses and superclasses (direct or not)
 in this section, especially when discussing previous systems using those terms;
 but when discussing the general case of prototypes and specifications,
 I will prefer speaking of specifications and their
-parents, ancestors, children and descendants—also specifications.
+parents, ancestors, children and descendants@Note{
+  As far as I can tell, “parent” in this meaning first appears in print
+  as early as @citet{Borning1977};
+  “ancestors” and “descendents” (with a final e) in @citet{Goldberg1983},
+  and “child” only in @citet{Snyder1986}, who explicitly uses all of these words
+  in preference to the more common alternatives.
+}—also specifications.
 
 @subsection{Single Inheritance Overview}
 
 Historically, the first inheritance mechanism discovered
-was @emph{single inheritance} @~cite{Simula1967},
-though it was not known by that name until a decade later.
+was @emph{single inheritance} @~cite{Dahl1967},
+though it was not known by that name until a decade later @~cite{Stansfield1977}.
 In an influential paper@~cite{Hoare1965},
 Hoare introduced the notions of “class” and “subclass” of records
 (as well as, infamously, the @c{null} pointer).
-The first implementation of the concept appeared in Simula 67 @~cite{Simula1967}.
+The first implementation of the concept appeared in Simula 67 @~cite{Dahl1967}.
 Alan Kay later adopted this mechanism for Smalltalk-76 @~cite{Ingalls1978},
 as a compromise instead of the more general but then less well understood multiple inheritance
 @~cite{Kay1993}.
 Kay took the word “inheritance” from KRL @~cite{Winograd1975 Bobrow1976},
-a “Knowledge Representation Language” written in Interlisp around Minsky’s notion of Frames.
+a “Knowledge Representation Language” implementing Minsky’s notion of Frames in Interlisp
 (@citet{Ingalls2020} also reveals that work on Smalltalk-76 started in August only,
 which is after the July 4th publication of the KRL paper.)
 KRL had “inheritance of properties”,
@@ -318,77 +322,14 @@ The expressions “single inheritance” and “multiple inheritance”
 are first found in print in @citet{Stansfield1977},
 another Lisp-based frame system.
 Many other languages adopted “inheritance” after Smalltalk,
-including Java that made it especially popular circa 1995. @;{TODO @~cite{}. @TODO{or C#}}
+including Java that made it especially popular circa 1995.
 
 In Simula, a class is defined starting from a previous class as a “prefix”.
 The effective text of a class (hence its semantics) is then the “concatenation”
 of the direct text of all its transitive @emph{prefix classes},
 including all the field definitions, method functions and initialization actions,
 in order from least specific superclass to most specific@xnote["."]{
-  Simula later on also allows each class or procedure
-  to define a “suffix” as well as a “prefix”,
-  wherein the body of each subclass or subprocedure
-  is the “inner” part between this prefix and suffix,
-  marked by the @c{inner} keyword as a placeholder.
-  Lack of explicit @c{inner} keyword is same as before, as if the keyword was at the end.
-  This approach by Simula and its successor Beta @~cite{Kristensen1987}
-  (that generalized classes to “patterns” that also covered method definitions the same way;
-  except that lack of “inner” means the “do” block cannot be extended anymore,
-  like “final” in Java or C++),
-  is in sharp contrast with how inheritance is done in almost all other languages,
-  that copy Smalltalk.
-  The “prefix” makes sense to initialize variables, and to allow procedure definitions
-  to be overridden by later more specialized definitions;
-  the “suffix” is sufficient to do cleanups and post-processing,
-  especially when all communication of information between concatenated code fragments
-  happens through side-effects to shared instance variables
-  (including, in Algol style, a special variable with the same name as the procedure being defined,
-  to store the working return value).
-  The entire “inner” setup also makes sense in the context of spaghetti code with GOTOs,
-  before Dijkstra made everyone consider them harmful in 1968;
-  the reliance on side-effects everywhere also made more sense before
-  Lisp, Functional Programming, and eventually concurrency and large distributed systems,
-  made people realize side-effects can be more confusing than pure information flow
-  through function calls, return values and immutable let bindings.
-  But this concatenation semantics is both limited and horribly complex to use
-  in the post-1968 context of structured code blocks,
-  not to mention post-1970s higher-order functions, etc.
-  You could express the modern approach in a roundabout way in Beta,
-  by explicitly building a list or nesting of higher-order functions as your only side-effect,
-  that re-invert control in a pure way back the way everyone else does it,
-  that you call at the end; but that would be an awkward design pattern.
-  And so, while Simula was definitely a breakthrough, its particular form of inheritance
-  was also a dead-end.
-  No one but the Simula inventors wants anything resembling @c{inner}
-  for the language they build or use.
-  After Smalltalk, languages instead let subclass methods control the context
-  for possible call of superclass methods, rather than the other way around.
-  Beta behavior is easily expressible with user-defined method combinations
-  in CLOS @~cite{Cannon1979 Bobrow1988},
-  or can also be retrieved by having methods
-  explicitly build an effective method chained the other way around.
-  Thus, I can rightfully say that inheritance, and OO,
-  were only invented and named through the interaction of
-  Bobrow’s Interlisp team and Kay’s Smalltalk team at PARC circa 1976,
-  both informed by ideas from Simula, and Minsky’s frames,
-  and able to integrate these ideas in their respective
-  AI and teachable computing experiments thanks to their dynamic environments,
-  considerably more flexible than the static Algol context of Simula.
-  In the end, Simula should count as a precursor to OO, or at best an early draft of it—but
-  either way, not the real, fully-formed concept.
-  Dahl and Nygaard never invented, implemented, used or studied OO as most of us know it:
-  not then with Simula, not later with Beta, and never later in their life either
-  (though kept innovating with their form of proto-OO).
-  Rather OO as such was discovered and identified 9 years later by Bobrow and Winograd.
-  Just like Columbus never set foot on the continent of America,
-  which was rather discovered and identified 9 years later by Amerigo Vespucci.
-  Yet Dahl and Nygaard made the single key contribution thanks to which
-  the later greater discovery of OO became not just possible, but necessary.
-  They rightfully deserve to be gently mocked for getting so close to a vast continent they sought
-  yet failing to ever set foot on it.
-  But this only makes me admire them more for having crossed an uncharted ocean
-  the vast extent of which no one suspected, beyond horizons past which no one dared venture,
-  to find a domain no one else dreamed existed.
+  The complete story is more complex and deserves a section of its own—see @secref{Inner}.
 }
 In modern terms, most authors call the prefix a superclass in general,
 or direct superclass when it is syntactically specified as a superclass by the user.
@@ -468,7 +409,7 @@ isn’t as widely adopted as of 2026@xnote["."]{
   5 support flavorful multiple inheritance (Python, Perl, Ruby, Lisp, Scala),
   4 only support flavorless multiple inheritance (C++, PHP, Ada, OCaml),
   21 only support single inheritance (Java, C#, JavaScript, Visual Basic, R, Delphi, Swift, Fortran, MATLAB, Objective-C, Kotlin, COBOL, SAS, Julia, Dart, Lua, TypeScript, VBScript, ABAP, D, CFML),
-  and the rest don’t support inheritance at all (C, SQL, Scratch, Rust, Go, Assembly Language, Classic Visual Basic, PL/SQL, GML, Prolog, LabView, ML, Zig, Ladder Logic, X++, Erlang, PowerShell, Haskell, Caml).
+  and the rest don’t support inheritance at all (C, SQL, Scratch, Rust, Go, Assembly Language, Classic Visual Basic (up to VB6), PL/SQL, Transact-SQL, GML, Prolog, LabView, ML, Zig, Ladder Logic, X++, Erlang, PowerShell, Haskell, Caml).
   Note that at least JavaScript, Lua, GML support enough higher-order dynamic behavior
   to implement better forms of inheritance as patterns or libraries;
   and language-supported metaprogramming and/or typelevel programming techniques can or could be used
@@ -589,7 +530,7 @@ at which point mixin inheritance is actually very popular, just not well-underst
   In the first footnote of the chapter, I claim that
   “typesystems and semantic frameworks incapable of dealing with such incomplete information
   are thereby incapable of apprehending OO.”
-  Find a type system you know (Java, Haskell, TypeScript, etc.) and explain:
+  Find a typesystem you know (Java, Haskell, TypeScript, etc.) and explain:
   Can it represent incomplete specifications? If so, how?
   If not, what would need to be added?
   Describe the transition from incomplete specification to complete.

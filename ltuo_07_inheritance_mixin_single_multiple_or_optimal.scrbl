@@ -102,6 +102,79 @@ Why then ever use single inheritance,
 since it still requires the entities of mixin inheritance in addition to its own?
 Might one not as well directly adopt the simpler and more expressive mixin inheritance?
 
+@subsection{Extending the Previous Method}
+@XXXX{XXXX}
+@subsubsection[#:tag "Inner"]{Simula’s @c{inner}: Superclass-Controlled Extension}
+
+Simula later on also allows each class or procedure
+to define a “suffix” as well as a “prefix”,
+wherein the body of each subclass or subprocedure
+is the “inner” part between this prefix and suffix,
+marked by the @c{inner} keyword as a placeholder.
+Lack of explicit @c{inner} keyword is same as before, as if the keyword was at the end.
+This approach by Simula and its successor Beta @~cite{Kristensen1987}
+(that generalized classes to “patterns” that also covered method definitions the same way;
+except that lack of “inner” means the “do” block cannot be extended anymore,
+like “final” in Java or C++),
+is in sharp contrast with how inheritance is done in almost all other languages,
+that copy Smalltalk.
+The “prefix” makes sense to initialize variables, and to allow procedure definitions
+to be overridden by later more specialized definitions;
+the “suffix” is sufficient to do cleanups and post-processing,
+especially when all communication of information between concatenated code fragments
+happens through side-effects to shared instance variables
+(including, in Algol style, a special variable with the same name as the procedure being defined,
+to store the working return value).
+The entire “inner” setup also makes sense in the context of spaghetti code with GOTOs,
+before Dijkstra made everyone consider them harmful in 1968;
+the reliance on side-effects everywhere also made more sense before
+Lisp, Functional Programming, and eventually concurrency and large distributed systems,
+made people realize side-effects can be more confusing than pure information flow
+through function calls, return values and immutable let bindings.
+But this concatenation semantics is both limited and horribly complex to use
+in the post-1968 context of structured code blocks,
+not to mention post-1970s higher-order functions, etc.
+You could express the modern approach in a roundabout way in Beta,
+by explicitly building a list or nesting of higher-order functions as your only side-effect,
+that re-invert control in a pure way back the way everyone else does it,
+that you call at the end; but that would be an awkward design pattern.
+And so, while Simula was definitely a breakthrough, its particular form of inheritance
+was also a dead-end.
+No one but the Simula inventors wants anything resembling @c{inner}
+for the language they build or use.
+After Smalltalk, languages instead let subclass methods control the context
+for possible call of superclass methods, rather than the other way around.
+Beta behavior is easily expressible with user-defined method combinations
+in CLOS @~cite{Cannon1979 Bobrow1988},
+or can also be retrieved by having methods
+explicitly build an effective method chained the other way around.
+Thus, I can rightfully say that inheritance, and OO,
+were only invented and named through the interaction of
+Bobrow’s Interlisp team and Kay’s Smalltalk team at PARC circa 1976,
+both informed by ideas from Simula, and Minsky’s frames,
+and able to integrate these ideas in their respective
+AI and teachable computing experiments thanks to their dynamic environments,
+considerably more flexible than the static Algol context of Simula.
+In the end, Simula should count as a precursor to OO, or at best an early draft of it—but
+either way, not the real, fully-formed concept.
+Dahl and Nygaard never invented, implemented, used or studied OO as most of us know it:
+not then with Simula, not later with Beta, and never later in their life either
+(though kept innovating with their form of proto-OO).
+Rather OO as such was discovered and identified 9 years later by Bobrow and Winograd.
+Just like Columbus never set foot on the continent of America,
+which was rather discovered and identified 9 years later by Amerigo Vespucci.
+Yet Dahl and Nygaard made the single key contribution thanks to which
+the later greater discovery of OO became not just possible, but necessary.
+They rightfully deserve to be gently mocked for getting so close to a vast continent they sought
+yet failing to ever set foot on it.
+But this only makes me admire them more for having crossed an uncharted ocean
+the vast extent of which no one suspected, beyond horizons past which no one dared venture,
+to find a domain no one else dreamed existed.
+
+
+@subsubsection{Smalltalk’s @c{super}: Resending to the Superclass}
+@subsubsection{Lisp’s @c{call-next-method}: Generalizing to Multiple Inheritance}
+
 @subsection[#:tag "CMSI"]{Comparing Mixin and Single Inheritance}
 
 @subsubsection{Mixin Inheritance is Simpler than Single Inheritance, @emph{assuming FP}}
@@ -629,7 +702,7 @@ it can declare a dependency on @c{base-bill-of-parts} as a parent,
 and then it can be confident that when it registers a part,
 the part database will already be initialized, and will not be overwritten later.
 
-This property is so fundamental it is respected by all OO languages since Simula @~cite{Simula1967},
+This property is so fundamental it is respected by all OO languages since Simula @~cite{Dahl1967},
 and may not have been explicitly named before as distinct from inheritance itself.
 
 @subsubsection{Linearity: Conservation of Information}

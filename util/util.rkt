@@ -168,11 +168,17 @@
 (define (principle . x) (bold (emph x)))
 (define (Quote . x) (apply nested #:style "quote" x))
 
+(define XXXX-counter 1)
+
 (define (XXXX . x)
-   (list
-     (subsection #:style 'unnumbered "XXX EDIT HERE XXX")
+  (let ((n XXXX-counter))
+    (set! XXXX-counter (+ XXXX-counter 1))
+    (list
+     (subsection #:style 'unnumbered
+                 #:tag (format "XXXX ~a" n)
+                 (format "XXX EDIT HERE ~aXXX" (if (> n 1) (format "~a " n) "")))
      (tex "\\noindent")
-     (bold "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")))
+     (bold "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"))))
 
 (define (dedication . x)
   (cond

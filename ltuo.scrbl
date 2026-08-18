@@ -2,14 +2,6 @@
 @; -*- Scheme -*-
 @(require "util/ltuo_lib.rkt")
 
-@;{ TODO: use bookcover to create a book cover.
-TODO: add the equations?
-
-mix p c t s = c (p t s) s
-fix t m = Y (m t)
-
-}
-
 @title[#:style (ltuo-style)]{
   Lambda: the Ultimate Object
     @linebreak[] @tex-linebreak[]
@@ -24,9 +16,9 @@ fix t m = Y (m t)
 @dedication{
   To William R. Cook, who first formalized inheritance in the λ-calculus,
   and the discrepancy between inheritance and subtyping,
-  and also mixin inheritance—the foundations on which this book is built—and
-  who was, I discovered too late, the one person I most wanted to
-  argue about it with.
+  and also mixin inheritance—the foundations on which this book is built.
+  He was, I discovered too late,
+  the one person with whom I most wanted to argue about the ideas herein.
 }
 @noindent[]
 @italic{This book, though well advanced, is still a work in progress}@xnote["."]{
@@ -41,13 +33,13 @@ fix t m = Y (m t)
 @book-abstract{
 As a software practitioner, you have not only heard of Object Orientation (OO),
 but seen it or used it, loved it or hated it.
-Yet you may have been frustrated that there never seems to be clear answers as to
+Yet you may have been frustrated that there never seem to be clear answers as to
 what exactly OO is or isn’t, what it is @emph{for}, when and how to use it or not use it.
 There are many examples of OO—but everyone does it differently;
 every OO language offers an incompatible variant.
 There is no theory describing what common ground there is, if any,
-even less so one describing the best way to do OO.
-Certainly, none that two computer scientists can agree on.
+much less one describing the best way to do OO—certainly,
+none that two computer scientists can agree on.
 By comparison, you well understand Functional Programming (FP).
 
 Can you explain OO in simple terms to an apprentice, or to yourself?
@@ -57,8 +49,8 @@ Maybe you’ve enjoyed OO in the past, or have heard enough from colleagues who 
 and are wondering what you are or aren’t missing?
 Maybe you’d fancy implementing OO on top of the non-OO language
 you are currently using or building, but from what you know this looks too complicated?
-Indeed do you really understand why to implement which of no inheritance, single inheritance,
-mixin inheritance, or multiple inheritance?
+Indeed do you really understand which to implement of no inheritance, single inheritance,
+mixin inheritance, or multiple inheritance, and why?
 Can you weigh the arguments for multiple inheritance done C++, Ada or PHP style,
 versus Lisp, Ruby, Python or Scala style?
 Is there a best variant of inheritance anyway?
@@ -92,7 +84,7 @@ What is easily underappreciated, this theory can demarcate
 this common domain of OO from a lot of related but quite distinct domains
 that may look like OO and even share some of its vocabulary,
 yet can be shown to be conceptually foreign.
-The crown of this Theory of OO, though, is a new algorithm, C4, that allows combining
+The crown of this Theory of OO, though, is a new algorithm, C4, that combines
 single and multiple inheritance in a way that is better—and provably so—than
 the alternatives used in any programming language so far.
 }

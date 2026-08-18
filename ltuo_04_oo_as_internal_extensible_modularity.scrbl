@@ -788,7 +788,7 @@ from which all required changes are automatically propagated coherently
 (whether that configuration is internal or external, first-class to fourth-class).
 Whenever multiple files must be modified together
 (such as interface and implementation files in many languages),
-the true units of modularity (or in this case extensibility)
+the true units of modularity (0or in this case extensibility)
 are not the individual files—but each group of files that must be modified in tandem;
 and sometimes, the units of extensibility are entities that span parts of multiple files,
 which is even more cumbersome.
@@ -1057,8 +1057,14 @@ and units of extension with respect to functors, remain second-class
 with respect one crucial aspect of modularity:
 resolving many modular definitions from many people together into a single program.
 
+@subsection[#:tag "HMEB"]{Historical Modular Extensibility Breakthroughs}
+
+@XXXX{XXXX}
+
+@citet{Black2013}
+
 Early examples of Modularity and Extensibility together that pre-date fully-formed OO include
-of course classes in Simula 1967 @~cite{Simula1967}, but also precursor breakthroughs like
+of course classes in Simula 1967 @~cite{Dahl1967}, but also precursor breakthroughs like
 the “locator words” of the Burroughs B5000 @~cite{Lonergan1961 Barton1961}, and
 Ivan Sutherland’s Sketchpad’s “masters and instances” @~cite{Sutherland1963},
 that both inspired Kay, or Warren Teitelman’s Pilot’s ADVISE facility @~cite{Teitelman1966},
@@ -1074,6 +1080,62 @@ in Flavors and CLOS@xnote["."]{
   stopped following or understanding OO developments from the Lisp world,
   and Interlisp had much more influence on the MIT Lispers than on the co-located Smalltalkers.
 }
+
+  given in , that treats Simula as
+  the necessary and sufficient foundation of OO, and Smalltalk as its successor,
+  while largely ignoring contributions from the Lisp tradition.
+  I recognize Simula was necessary but not sufficient.
+  Simula serendipitously introduced the first form of modular extensibility,
+  but in an embryonic form, and crucially without the concept of OO itself.
+  The concept and its key vocabulary (words such as “object-oriented” or “inheritance”)
+  were articulated only with KRL.
+  Even Smalltalk-76 came afterwards, though no doubt
+  interaction with Alan Kay’s neighboring Smalltalk team
+  did a lot to change KRL from the AI project it was in 1975
+  to the first OO language described as such it became in 1976.
+  A flurry of OO languages happened just after KRL and Smalltalk,
+  while nothing happened after Simula was published.
+  Asking whether Simula is already OO is like asking whether some archaic @emph{Homo sapiens}
+  should count as fully modern human:
+  The exact label of an arbitrary delimitation matters less than
+  the precise understanding of when each critical trait appeared.
+}
+
+OO was actually born in 1976 when these two collided with each other and
+with Bobrow’s Lisp AI work, resulting in KRL-0 then Smalltalk-76
+
+KRL first system that claimed the words “object-oriented” in print with the modern sense
+(though the choice of expression itself was likely influenced by Alan Kay)
+  @; TODO XXXXX Move history to ch4, leave a secref here
+  KRL, though its name stands for “Knowledge Representation Language”,
+  was arguably not a @emph{programming} language in most people’s understanding,
+  though it was one in the then understanding of Lispers:
+  it is a layer on top of Lisp, what one would now call an “object system”.
+  But Lisp, being extensible, blurs the distinction between a new language
+  and an extension to the existing language, and KRL was certainly a language by that standard.
+  Also, while the original intention in the original 1975 paper @~cite{Winograd1975} was
+  to model knowledge in terms of Frames @~cite{Minsky1974}, and not to write programs;
+  but by the 1976 report @~cite{Bobrow1976} the concern has shifted, and
+  while the frames model is still present and cited, it has taken a secondary role,
+  while defining procedures has taken a prominent role.
+  The 1975 article introduces the expression “inheritance of properties” descriptively,
+  without implementation;
+  the 1976 article uses it as a more formal definition, with an implementation.
+
+The modern concept of OO can be traced back to the interaction between
+Bobrow’s KRL team and Kay’s Smalltalk team at PARC around 1976,
+both informed not just by Simula but also by many other predecessors.
+Kay’s team took the word and concept of “inheritance” from KRL,
+made it usable in a more classical programming language (pun intended),
+thereby generalizing the sub-classing mechanism of Simula,
+and replacing its “concatenation semantics”
+with the more ergonomic message-resend mechanism nearly universally adopted since.
+
+the word and concept of inheritance as well as the term “object-oriented”.
+Bobrow adopted Kay’s improvements together with his own (hard to say which is whose),
+and was first at the publish line with running software and a paper describing it.
+Then others at PARC, at MIT, and eventually Stroustrup at Bell Labs, adopted OO,
+and the rest is history.
 
 @subsection{Modular Extensible Specifications}
 

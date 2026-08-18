@@ -733,7 +733,7 @@ this mixin prototype object model has vastly outsized outreach.
 It is hard to measure how much of this success is due to the feature of Conflation,
 yet this feature is arguably essential to the ergonomics of these languages.
 
-@subsection{Implicit Recognition of Conflation by OO Practitioners and Theorists}
+@subsection{Implicit Recognition of Conflation in OO Lore and Literature}
 
 The notion of a @emph{conflation of specification and target},
 that I presented, is largely unknown by OO developers, and

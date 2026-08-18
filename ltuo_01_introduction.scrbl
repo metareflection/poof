@@ -26,7 +26,7 @@ Am I missing something by not using OO, or by using it?
 
 These are the kinds of questions this book will help you answer.
 To get there, I will have to introduce many concepts.
-Don’t worry: when others may revel in complexity, I instead aspire to simplicity.
+Don’t worry: while others may revel in complexity, I instead aspire to simplicity.
 You will learn some new words and new ideas.
 But if you practice programming, and think about your practice,
 then you are in my target audience;
@@ -50,8 +50,8 @@ in your favorite programming language@xnote["."]{
   that is a topic I will not cover, but I can refer you
   to classic books about programming languages that do it well
   @~cite{Queinnec1996 Abelson1996 Pierce2002 Friedman2008 Khrisnamurthi2008}.
-  I do love these books, however I find their treatment of OO lacking—otherwise
-  I wouldn't be writing the present book.
+  I do love these books; however, I find their treatment of OO lacking—otherwise
+  I wouldn’t be writing the present book.
 }
 
 Note that this book will @emph{not} address how to use OO
@@ -80,35 +80,32 @@ unlike the barbarians of times past?
 No, people of past years were not barbarians
 though they were ignorant of what we now know;
 and neither are we barbarians for failing to know what our successors will.
-Every mind is just too busy with knowledge from its time,
+Every mind is just too busy with knowledge from its own time,
 that would have been useless earlier, and will soon be useless again.
 
-Conceived around 1967 with Dahl and Nygaard’s Simula and Alan Kay’s musings,
-OO was actually born in 1976 when these two collided with each other and
-with Bobrow’s Lisp AI work, resulting in KRL-0 then Smalltalk-76@xnote["."]{
-  The “standard” history of OO@~cite{Black2013} treats Simula as
-  the necessary and sufficient foundation of OO, and Smalltalk as its successor,
-  while largely ignoring contributions from the Lisp tradition.
-  I recognize Simula was necessary but not sufficient.
-  Simula serendipitously introduced the first form of modular extensibility,
-  but in an embryonic form, and crucially without the concept of OO itself.
-  The concept and its key vocabulary (words such as “object-oriented” or “inheritance”)
-  were articulated only with KRL.
-  Even Smalltalk-76 came afterwards, though no doubt
-  interaction with Alan Kay’s neighboring Smalltalk team
-  did a lot to change KRL from the AI project it was in 1975
-  to the first OO language described as such it became in 1976.
-  Asking whether Simula is already OO is like asking whether some archaic @emph{Homo sapiens}
-  should count as fully modern human:
-  The exact label of an arbitrary delimitation matters less than
-  the precise understanding of when each critical trait appeared.
+OO was first embodied in 1967 by Dahl and Nygaard with Simula,
+named that same year by Alan Kay whose vision would lead to Smalltalk,
+yet only formally conceptualized in 1976 by Bobrow and Winograd with KRL,
+then made practical by Ingalls with Smalltalk-76.@xnote["."]{
+  My historical account of OO is slightly different from the “standard” history,
+  not in the facts (that I don’t think anyone disputes, given publication records),
+  but in their interpretation:
+  Beyond being well-read enough to be aware of works that others neglect,
+  the history of a concept crucially hinges on one’s understanding
+  of what the concept even @emph{is}.
+  This understanding drives which contributions to emphasize as the real breakthroughs.
+  Citation counts can’t tell you what actually mattered, and
+  thus can’t tell what came first among what actually mattered;
+  they can only tell what once became fashionable to write about among academics.
+  See @secref{HMEB} for my historical account—that I give @emph{after}
+  all my conceptual exposition.
 }
 OO took off from there, at first reserved to the happy few
 who could use the most high-end systems from Xerox, BBN or MIT.
 OO quickly became popular among researchers, then among hobbyists in the 1980s,
 and at some point was the Next Big Thing™.
 
-By the 1990s, OO finally became available to every programmer,
+By the 1990s, OO finally became available to every programmer who cared,
 accompanied by endless industry hype to promote it.
 By the 2000s it had become the normal paradigm to program in.
 Then, at some point in the 2010s it started to become as boring as ubiquitous.
@@ -123,7 +120,7 @@ important, obsolete, normalized, and finally understood.”@Note{
 }
 This book, then, is here to drive the final nail into the coffin of OO: understanding it.
 Too bad no one reads books anymore, except AIs.
-If that book, and most importantly its understanding, had come a few decades earlier,
+If such a book, and most importantly its understanding, had come a few decades earlier,
 it could have saved a lot of people a lot of trouble.
 OO sure baffled me for a long time, and many around me.
 Now that I am not baffled anymore,
@@ -131,7 +128,7 @@ I can bring you all my explanations—but long after the battle.
 
 It would be nice to hear a few of my old colleagues tell me:
 “so @emph{that} is what OO was about all along!”
-But I have little hope of convincing many in the old generations
+But I have little hope of convincing many in the older generations
 of the benefits of OO done right
 (yes, I am one of those Lispers bragging about how our 1988 OO system
 is still decades ahead of yours).
@@ -148,7 +145,7 @@ Instead, teach them to yearn for the vast and endless sea.
 @|#:- "Antoine de Saint-Exupéry, creatively misquoted."|
 }
 I actually think OO is a fantastic programming paradigm to build software,
-one that I tremendously enjoy when I can use it in Lisp, and miss when I can’t.
+one that I enjoy tremendously when I can use it in Lisp, and miss when I can’t.
 But what passes for OO in mainstream programming languages, ahem, disappoints me.
 
 When I mention OO becoming boring, then forgotten, or talk of nailing its coffin,
@@ -343,7 +340,7 @@ OO is a topic both easier and more concrete, in general and for me in particular
 A topic in which I have direct experience as a frog,
 and where I can stand as a bird on the shoulders of giants
 who already solved all the foundational problems,
-leaving a puzzle for which there only remains to fit the pieces together.
+leaving a puzzle whose pieces mostly remained to be fitted together—with a few still to be cut.
 On this mature topic, I am ready and capable, and can explain a complete Theory of OO
 that is also fully implemented and immediately usable.
 
@@ -366,7 +363,7 @@ but that I can share in the form of a book.
 
 @exercise[#:difficulty "Medium"]{
   Laugh at other authors who wrote about OO.
-  They like me spent lot of time being serious about the topic (or pretending to be),
+  They like me spent a lot of time being serious about the topic (or pretending to be),
   yet failed to see the simple things I will explain.
 }
 
@@ -420,7 +417,7 @@ Yet remarkably, some programmers explicitly reject it, eminent professors even@x
   or of adjacent topics like Joseph Goguen or Barbara Liskov.
   In @secref{TfOO}, I will also criticize the approach of many great researchers about Types for OO.
   And even in other chapters, I will issue my lot of opinions
-  that would no doubt make many respected scholars shake their head, both cited and not cited.
+  that would no doubt make many respected scholars shake their heads, both cited and not cited.
   But my proving all these renowned scientists wrong on one question or another
   in no way diminishes their contribution to OO or to neighboring topics;
   and my respect for them only increases for their having achieved all they did
@@ -453,18 +450,18 @@ say a lot of useful things that interact with each other—which
 is why we want the theory to also be relevant.
 
 @principle{This Theory of OO is Relevant}.
-A theory of OO is @emph{relevant} to OO, and not of something else,
+A theory of OO is @emph{relevant} to OO, and not to something else,
 if it matches the lore of OO:
-it will restate most if not all the things we know and care about OO,
+it will restate most if not all the things we know and care about with respect to OO,
 especially what has been well-known for decades.
 
 To be both consistent and relevant at the same time in a lore full
 of controversial and mutually contradictory opinions,
 a theory must be critical when recalling the existing lore:
 it must organize the information, distinguish the wheat from the chaff,
-promoting some views deemed correct and denouncing incorrect ones,
-whether or not they are backed by majority opinions.
-Even if it contradicts the explanations of previous theories though,
+and promote some views deemed correct while denouncing incorrect ones,
+whether or not they concur with majority views.
+Still, even if it contradicts the explanations of previous theories,
 a theory must still account for and be consistent with
 the same observed and verifiable phenomena;
 or else it is a theory of something different altogether.
@@ -492,7 +489,7 @@ I am a proficient user of types, but am no expert at the design, implementation 
 Therefore I will only provide semi-formal designs
 for what better static types for OO should look like.
 And I will refer to the better papers among the many I have read,
-for what I believe are good foundations for typing OO@~cite{Eifrig1995isoop Eifrig1995iloop Allen2011}.
+for what I believe are good foundations for typing OO@~cite{Eifrig1995ISOOP Eifrig1995ILOOP Allen2011}.
 Among other things, good OO types should work not just for Second-Class Classes,
 but also for First-Class Prototypes;
 they require recursive types, subtyping, and some form of existential types.
@@ -505,7 +502,7 @@ Dependent types are not necessary.
 Since nearly the very beginning of OO,
 there have been multiple variants of inheritance to choose from @~cite{Taivalsaari1996}.
 Many prefer Single Inheritance for its simplicity and performance
-@~cite{Simula1967 Kay1993}.
+@~cite{Dahl1967 Kay1993}.
 Others prefer Multiple Inheritance, for its greater expressiveness and modularity,
 and this multiple inheritance itself comes in multiple flavors,
 notably divided on whether to use a technique called “linearization”
@@ -564,7 +561,7 @@ I will claim the following:
 @principle{The C4 algorithm implements this Optimal Inheritance.}
 I implemented C4 as part of
 the builtin object system of @(GerbilScheme) @~cite{Vyzovitis2016}@xnote["."]{
-  Scheme @~cite{Sussman1975 Steele1976Declarative Steele1976Imperative Steele1977 Steele1978 R7RS2013} @; XXX CITE r4rs
+  Scheme @~cite{Sussman1975 Steele1976Declarative Steele1976Imperative Steele1977 Steele1978 R7RS2013}
   is a language with a rather minimalist definition.
   Dozens of mutually incompatible implementations of Scheme exist
   that each provide their own extensions on top of this common minimal core,
@@ -686,17 +683,17 @@ those for combining single and multiple inheritance.
 I explain why the residual heuristic I also adopt from C3 is arguably the best one.
 
 In @seclink["TfOO"]{chapter 8}, I study the kind of types and typesystems
-that are suitable to reason about OO.
+that are suitable for reasoning about OO.
 I notably clarify the all-too-common confusion between subtyping and subclassing.
 This chapter is somewhat less constructive than the others, as
 I do not actually implement a typesystem.
 
-In @seclink["EtSoO"]{chapter 9}, I discuss
-more advanced topics including
-Focused Modular Extensions, Method Combination, Multiple Dispatch (Multimethods),
-Monotonicity, Orphan Typeclasses, and Global Fixpoints.
+In @seclink["EtSoO"]{chapter 9}, I discuss more advanced topics including
+focused modular extensions, method combination, generic functions,
+multiple dispatch (multimethods), global dispatch tables, and static vs dynamic dispatch.
 
-In @seclink["EOI"]{chapter 10}, I discuss object representation and meta-object protocols.
+In @seclink["EOI"]{chapter 10}, I discuss efficient object implementation,
+including meta-object protocols.
 
 Finally, in @seclink["Conclusion"]{chapter 11},
 I conclude by recapitulating my original findings.
@@ -704,8 +701,8 @@ If you want to check whether there’s anything new for you in this book,
 or are a future researcher interested in when now-well-known ideas were introduced,
 you may peek there first.
 
-Follows an extensive @seclink["AB"]{Annotated Bibliography},
-with notes about each of the works cited to explain what makes them relevant.
+The chapters are followed by an extensive @seclink["AB"]{Annotated Bibliography},
+with notes about each of the works cited to explain what makes it relevant.
 
 @subsection{Stop and Go}
 @epigraph{Begin at the beginning and go on till you come to the end: then stop.
@@ -725,7 +722,7 @@ at @secref{MOO}, about a third into the book.
 The most enthusiastic among you will read the book cover to cover,
 including footnotes and bibliographical notes.
 You may even do every exercise, and go all the way into using and implementing
-the most advanced OO techniques of the later chapters into your programming languages
+the most advanced OO techniques of the later chapters in your programming language of choice
 (see @secref{EtSoO}, @secref{EOI}).
 You will end up building your own OO system, and writing a sequel to this book.
 If you do, why not contact me and join me to build and write them together?
@@ -767,8 +764,8 @@ in this case, it was written not by me, but by my friend Jesse Forgione.
 I intend to include more examples in a future edition.
 But good examples take time to write, and space in the book;
 they can be too much for some readers and not enough for others.
-I am seeking the perfect concise teachable example in each case,
-that neatly illustrates what I mean without taking too much space or explanations.
+I am seeking the perfect concise teachable example in each case:
+one that neatly illustrates what I mean without taking too much space or explanations.
 Until I find it, I must direct you to online resources, where OO code in general is abundant.
 If you are looking specifically for code that uses Prototype OO and multiple inheritance,
 you may look at my library Gerbil-POO @~cite{Rideau2020}:
@@ -799,21 +796,24 @@ That means I am taking responsibility for my actions.
 Too many authors hide the responsibility for a decision among multiple authors
 (even when there is only one),
 or include the readers in a collective decision they did not make.
-Using an unwarranted “we” is a trick commonly used by conmen, narcissists and politicians
+Using an unwarranted “we” is a trick commonly used by con men, narcissists and politicians
 (but I repeat myself), and I find it misleading even when done innocently.
 I once instituted for myself and my friends a “cuss box” in which to drop a dollar
 when any of us did it, even on social media.
 As the jest goes: “Only presidents, editors, and people with tapeworms
 have the right to use the editorial ‘we’@xnote[".”"]{
   The jest, often apocryphally attributed to Mark Twain,
-  is actually a variant of an idea by John Phoenix.
+  is actually a variant of an idea by John Phoenix,
+  with many contributors evolving the formulation.
+  As with OO and other ideas, the originator may have done the greater conceptual leap,
+  yet not been the one who brought it to full fruition.
 }
 And I don’t think presidents have that right, either.
 
 I will still say “we” on occasions,
 speaking for me and you readers, or for all humans.
-That “we” will then be passive, as things that we are, experience, or happen to us,
-or are constrained by the laws of logic and history:
+That “we” will then be passive, as for things that we are, experience, or undergo,
+or laws of logic and history that constrain us:
 “we saw that example in a previous section” (you who read and I who wrote),
 “that experiment tells us” (us who saw it),
 “we cannot solve the termination problem” (we subject to logic).
@@ -827,7 +827,7 @@ while shifting praise or blame or responsibility onto others:
 @epigraph{
   The difference between the right word and the almost right word
   is the difference between lightning and the lightning bug.
-  @|#:-"Mark Twain"|
+  @|#:- "Mark Twain"|
 }
 As I restate well-known and less-known lore of Object Orientation,
 I will endeavor to precisely define the terms I use.
@@ -860,7 +860,7 @@ that are at odds with the theory I am laying out.
 I will also avoid the word “class” when talking about
 the most general kind of entity subject to inheritance,
 since a class is but a quite limited special case of a @emph{prototype},
-that is itself derivative of what I’ll call a @emph{specification}.
+which is itself derivative of what I’ll call a @emph{specification}.
 I will define those terms precisely in
 @secref{WOOiIO}, @secref{OOaIEM}, @secref{MOO}, @secref{ROOfiMC}.
 
@@ -881,7 +881,7 @@ I will define those terms precisely in
 }
 
 @exercise[#:difficulty "Medium"]{
-  Identify in your domain of expertise, a technical word that is used to mean different things
+  Identify in your domain of expertise a technical word that is used to mean different things
   by practitioners of different backgrounds and communities.
 }
 
