@@ -66,7 +66,7 @@ is not at all the same as what almost everyone else calls “multiple inheritanc
   hope the users won’t notice the difference.
   On the other hand, Stroustrup does cite the Lisp Machine Manual @~cite{Weinreb1981},
   and rejects Flavors because it is not
-  “sufficiently simple, general and, efficient enough to warrant the complexity it would add to C++”;
+  “sufficiently simple, general and efficient enough to warrant the complexity it would add to C++”;
   this is exceedingly ironic considering Flavors was 1.4kloc (in October 1980, when cited),
   and C++ ~100kloc (in 1989, when citing),
   with 1980 Flavors having much richer and more general OO functionality than C++,
@@ -337,7 +337,7 @@ It brings no light on any of the languages commonly considered OO
 yet derided by Cook as not being OO enough,
 no light on any of the Functional Programming (FP) languages blessed by Cook as actually being OO
 to the surprise of their users, and no light on the difference between the two.
-It is a typical case of an expert (and what expert) being so right in his analysis,
+It is a typical case of an expert (and what an expert) being so right in his analysis,
 yet so wrong in his delineation of concepts (see below @secref{Experts}).
 
 In the end, Cook’s PhD and subsequent academic career grew out of
@@ -362,7 +362,7 @@ Cook’s many works on OO over the years also systematically neglect or downplay
 important concepts in OO, such as prototypes, multiple inheritance,
 method combination or multiple dispatch—a disdain actually shared by most academics.
 And the mismatch is a symptom that the field lacks a consensual vocabulary, and
-commonly accepted concepts, definitions—and more deepy, a paradigm—adequate
+commonly accepted concepts, definitions—and more deeply, a paradigm—adequate
 to reconcile theory, practice and history.
 And yet, there are undeniably common practices, common phenomena, common concepts,
 common language features, common design patterns, common goals, common aspirations,
@@ -479,7 +479,7 @@ in terms of these more directly usable names: “is-a” vs “has-a” relation
   @citet{Wegner1987} uses is-a but not has-a,
   and @citet{Blake1987} use is-a and has-a-part together
   (the latter a reverse of is-a-part-of).
-  @citet{Meyers1992} has isa and has-a firmly established.
+  @citet{Meyers1992} has is-a (that he spells “isa”) and has-a firmly established.
 }
 The simple informal question “is an X a Y, or does an X have a Y?”
 then gives the answer as to whether to use inheritance (if the answer was the former),
@@ -528,7 +528,7 @@ The entire point of OO is internal modular extensibility,
 i.e. system support for programming in minimal increments
 that require minimal understanding of the rest of the program.
 OO is the exact tool that enables limited humans to collaborate
-on projects wider than what any of them could deal at once, covering more ground,
+on projects wider than what any of them could deal with at once, covering more ground,
 which is what industrial scaling demands.
 Meanwhile, the entire point of FP is its deep connection to formal logic,
 i.e. calculus support for precisely understanding the exact semantics of entire programs.
@@ -539,13 +539,13 @@ which is what academic publishing rewards.
 
 A lot of opposition between OO and FP is thus struggle between various tribes of programmers,
 as much as clashes between people with different temperaments,
-each kind of programmer will be unable to fathom much less appreciate
+in which each kind of programmer proves unable to fathom much less appreciate
 the kind of problems that the other kind faces and solves.
 And people capable of mastering and appreciating both OO and FP, like me, and like you, gentle reader,
 will tend to be outcasts, who dare venture beyond what their tribes consider normal and good.
 
 Funnily, there are always more advanced experts in OO who will use modular extensibility
-to build large fleets of distributed computers each having its complete software installations
+to build large fleets of distributed computers each having its complete software installation
 specified and configured—way beyond what ordinary OO Programmers can fathom.
 And there will be Category Theorists, who invoke deep correspondences between logical and mathematical
 structures to generate software solutions that will amaze
@@ -560,31 +560,7 @@ only requires a basic understanding of FP, so I can write it, and you can read i
 }
 Alan Kay, who coined the term “Object-Oriented Programming” circa 1967,
 and subsequently invented Smalltalk in the early 1970s,
-before the modern concept of OO was fully formed (in 1976)@xnote[","]{
-  While Kay had a crucial role in the invention and naming of OO,
-  it is important not to put too much weight in the name without the full concept.
-  Back in the 1960s and 1970s, many things were user-oriented,
-  calculus-oriented, terminal-oriented, etc.
-  The word “object-oriented” appears in print in works about psychology, sociology, and
-  even in a few papers in Computer Science, before Smalltalk and KRL,
-  the earliest I could find being written in 1971 by Bobrow’s brother @~cite{Bobrow1972},
-  but not quite with that meaning. @; TODO Goodenough. Ross? @citet{Ross1976} -- earlier?
-  @citet{Jones1976} also come close,
-  using the word with respect to encapsulating types and code together,
-  though without the extensibility aspect that has been the defining trait
-  of what programmers expect from OO languages.
-  Jones and Liskov published that paper months
-  before the Bobrow and Winograd memo @~cite{Bobrow1976}
-  that first uses “object-oriented” the modern way, presumably after Kay.
-  Were these earlier uses in print legitimate?
-  Yes, but they are not the ones whose meaning took on.
-  Kay’s meaning, refined by Bobrow, won—for good reasons.
-  However, for the same reason, while Kay’s personal use of the term dates back to 1967,
-  we should still only credit the invention at the date that the concept became fully formed,
-  which is with Bobrow and Winograd’s KRL-0,
-  and Kay and Ingalls’ subsequent Smalltalk-76, both in 1976,
-  because of each other (they were across-the-hall colleagues at PARC and cite each other).
-}
+before the modern concept of OO was fully formed (in 1976—see @secref{HMEB}),
 notably explained@~cite{Kay2020} that he originally meant
 a metaphor of computation through independent (concurrent, isolated) processes
 communicating by passing asynchronous messages.
@@ -607,7 +583,7 @@ yet Erlang is not part of the OO tradition,
 and its authors have instead described its paradigm as “Concurrency-Oriented Programming”.
 Meanwhile the theory of computation through message-passing processes
 was studied with various “process calculi”,
-@; TODO cite pi calculus, join calculus, rho calculus, CHAM, etc.
+@; TODO cite pi calculus, join calculus, rho calculus, CHAM, etc. --- or retrospective on such?
 that are also foreign to the OO tradition,
 and largely unacknowledged by the OO community.
 Indeed Erlang crucially lacks inheritance, or support for the “extreme late binding of all things”
@@ -655,13 +631,13 @@ and there is no single prototype, class, or single independent entity of any kin
 capable of either “receiving” or “sending” a message.
 Instead, they are attached to a “generic function”
 that handles the dispatch based on the types of its arguments@xnote["."]{
-  @; TODO move generic functions to chapter 8, and leave a secref here.
-  The “generic function” functionality from the Common Lisp Object System (CLOS) @; TODO cite
+  The “generic function” functionality from the Common Lisp Object System (CLOS)
+  @~cite{Bobrow1988} (see @secref{GF})
   can be viewed as isomorphic to the “protocols” functionality of Clojure;
   and Common Lispers also use the word “protocol” informally to designate a set of generic functions.
   They would in turn be isomorphic to the “typeclasses” of Haskell
-  or the “traits” of Rust... @; TODO cite
-  if only these latter two supported inheritance, which they don’t.
+  or the “traits” of Rust...
+  if only these latter two supported inheritance, which they don’t (@secref{CSvTS}).
   These idioms all denote a set of related function names and type signatures,
   that are implemented differently for different configurations,
   where each configuration is associated to @emph{one or multiple} types of arguments
@@ -701,7 +677,7 @@ thus falls short compared to other explanations of OO that accommodate them@xnot
   can be extended with a notion of “group messaging”
   where one object sends a “message” to a “group” of objects as a collective entity
   (rather than each member of the target group)
-  @; TODO cite ABCL group messaging
+  @; TODO cite ABCL group messaging ?
   or to a “chemical” paradigm where a “chemical reaction” may involve
   multiple entities in and multiple entities out, with “message” entities
   conveying the changes in intermediary steps. @; TODO cite CHAM
@@ -741,6 +717,7 @@ that describes a different set of programming languages and patterns@xnote["."]{
   @|#:- @elem{Abraham Lincoln, explaining the difference between
                  lexical scoping and dynamic scoping}|
 }
+@subsubsection{OO is No Theory of Everything}
 Some have claimed that OO is meant to be @emph{the} way to model the world,
 or at least @emph{a} way,
 often in association with the concurrent message passing model
@@ -762,8 +739,10 @@ People seriously studying OO should not take at face value the claims of
 Snake Oil and Silver Bullet salesmen, either about what their products can do,
 or about whether these products indeed embody OO. Mostly, they do not.
 
-Consider methodologies such as UML that claim to do OO modeling, @; TODO cite
-drawing diagrams of relations between classes including inheritance.
+@subsubsection[#:tag "OOinDM"]{OO is not Data Modeling}
+Consider methodologies such as UML,
+and various schools or gurus that claim to teach OO “Design”, “Analysis”, “Modeling”, etc.,
+drawing diagrams of relations between classes that ostensibly include inheritance.
 Besides the fact that classes are not essential to OO as seen previously,
 UML and similar languages do not even meaningfully have classes:
 there is no proper semantics to inheritance,
@@ -775,14 +754,14 @@ Should human offspring be modeled as arbitrary animals,
 or should they be modeled as human only?
 Conversely, if some animals eat other animals,
 does that mean that humans automatically eat humans, or only some other animals?
-In presence of recursion, UML falls apart,
+When trying to reason about recursion, UML falls apart,
 by failing to distinguish between subclassing and subtyping,
 between self-reference and reference to a constant (see @secref{TfOO}).
 
 Interestingly, Amílcar Sernadas’s or Bart Jacobs’s categorical theories
 of “objects” and “inheritance”
 @~cite{Sernadas1994 Jacobs1995 Jacobs1996InheritanceAC}
-actually model UML, and also Goguen’s refinement,
+actually model UML, and also Goguen’s refinement (see below),
 but not at all actual objects and inheritance as used in Programming Languages:
 it’s a hijacking of the same words for completely different meanings,
 with the only similarity being that both sets of meanings
@@ -793,8 +772,7 @@ Just like UML, his co-algebra utterly fails to model OO;
 but at least his theory is internally consistent if not externally.
 
 @principle{UML, co-algebras and other similar methodologies
-are actually relational data modeling @; TODO cite
-disguised as OO}.
+are actually relational data modeling disguised as OO}. @; TODO cite
 As we’ll see later, their “classes” are extensible indeed,
 but in a trivial way that fails to support modularity@xnote["."]{
   Note that there is nothing wrong at all with relational data modeling as such:
@@ -805,8 +783,10 @@ but in a trivial way that fails to support modularity@xnote["."]{
   in the necessarily restricted or imprecise cases that they apply to.
   Indeed, in some cases, relational data modeling, not OO,
   is what you need to organize your data and your code.
-  Moreover, Category Theory are a great way to improve on previous approaches
-  to relational data, as witness by the field of Categorical Databases. @; TODO cite
+  Moreover, Category Theory is a great way to improve on previous approaches
+  to relational data, as witnessed by the field of Categorical Databases, @; TODO cite
+  which, unlike the works above, makes genuine and non-trivial use of Category Theory
+  to automate computations.
   However, what is very wrong, and intellectually dishonest,
   was to sell relational data modeling as OO back when OO was trendy, based on
   a superficial and at times deliberate misunderstanding of OO
@@ -822,40 +802,31 @@ where the operations of interest are higher-level than getting or setting fields
 where you incrementally extend not just data types but also algorithms,
 where there are “binary methods” that involve two objects at once,
 or even more elaborate higher-order functions, etc.
+
 More broadly, these methodologies lack any effective semantics of inheritance,
 of method resolution in computing properties of objects along their class hierarchies,
 or of anything that has the precision required to specify code
 that can actually run and be reasoned about.
-But specifying code is exactly where the conceptual difficulties and gains of OO
+Yet specifying code is exactly where the conceptual difficulties and gains of OO
 are both to be found with respect to software construction.
 In fact, these handwaving methodologies@Note{
-  @; TODO: give Goguen his own subsection?
-  Not all uses of Category Theory in “OO” are handwaving.
-  Goguen, who invokes Category Theory in his papers,
-  and is cited by these later categorical imitators,
-  develops precise formal specification of code, refinement of such specifications,
-  and actual implementation of executable code. @;{TODO cite}
-  On the other hand, Goguen’s claim to do “OO” is dubious,
-  despite some attempts in later works to retrofit some actual OO concepts into his systems;
-  instead, what he developed turns out to be
-  a completely different and orthogonal paradigm—term rewriting.
-  Term rewriting is a wonderfully interesting paradigm to study,
-  but has never seen any adoption for practical programming,
-  though it has found use in reasoning about programs.
-  What Goguen calls “inheritance” most of the time is actually code refinement,
-  a technique that can be used to build proven-correct compilers,
-  though it is not a general theory of code implementation applicable
-  to arbitrary such compilers.
+  Not all approaches involving “object-orientation” and “category theory” are vacuous.
+  Indeed, see the section about Goguen below,
+  or simply libraries that combine the object and functional aspects of Scala or TypeScript
+  to import concepts from Category Theory to automate the handling of data structures
+  or side-effects. @; TODO cite?
 }
-are specifically designed to fool
-those incapable or unwilling to wrestle with computation
-into believing they understand all there is to know about software modeling.
+serve to lull those incapable or unwilling to wrestle with computation
+into believing that they understand all there is to know about software modeling.
 Yet the nature and correctness of software lies precisely
 in this gap they are unable or unwilling to explore.
 
-An actual theory of types for OO must confront not just products of elementary data types,
+To see what these methodologies lack, consider
+what actually modeling a computation with types requires.
+An actual theory of types for computations must confront not just products of elementary data types,
 but sum types, function types, subtyping, constrained type parameters,
-existential and universal types, and more—including, especially, fixpoints (recursion).
+existential and universal types, and more—including, especially, fixpoints (recursion):
+in the example above, they should be able to express that human offspring are human.
 And you can always go beyond with session types, substructural types, temporal types,
 separation types, dependent types, etc.
 In the end, if you care about modeling the types in your software (and you usually should),
@@ -870,13 +841,73 @@ This will provide much more help with design and safety than any code-less metho
 And if you picked an OO-capable language like C++, Java, C#, Scala or TypeScript,
 (or, with manually enforced dynamic types, Lisp, Ruby, Python or JavaScript),
 you can actually use OO as you do it.
+The ability to actually apply to OO programs is the standard by which
+any methodology that claims to be “OO” should be judged.
+
+@subsubsection[#:tag "Goguen"]{OO is not what Goguen did}
+
+Goguen spent decades developing what he eventually called “Hidden Algebra”,
+a rightfully influential formalism based on @emph{term rewriting},
+that involves interactions between “objects” with private “hidden” state,
+and can precisely describe the operational semantics of all kinds of computation systems.
+
+In doing so, Goguen reuses a lot of vocabulary from OO;
+but most of the time, what he describes with those words is not at all
+what actual OO practitioners mean when they speak of “object”, “class”, “inheritance”, etc.
+He uses the word “inheritance” to mean @emph{refinement}, a very different kind of relationship
+between computations, wherein the refined computation
+reproduces every detail of the original computation,
+and possibly adds further details of its own.
+
+By contrast, Goguen also reuses a lot of vocabulary from Category Theory,
+and this time in a competent way, that matches the usage made by other Category Theorists.
+Hidden Algebra does not advance Category Theory,
+but makes genuine (though somewhat shallow) use of it
+to specify observational semantics of computations in a “final, coalgebraic” style.
+Unlike the handwaving categorical imitators discussed above, who cite him,
+the framework Goguen develops enables precise formal specification of code,
+and refinement of such specifications, down to actual implementation of executable code.
+
+In Hidden Algebra (HA) as in Category Theory (CT) and in Object-Orientation (OO),
+you get diagrams with arrows between nodes, but they mean different things.
+In CT, the nodes are called “objects” (adding to the potential for confusion),
+and the arrows are called “homomorphisms” or just “morphisms” with uniform rules for composition;
+though when the nodes themselves correspond to structures of objects and morphisms,
+they are called “categories” and the arrows are called “functors”, with a few additional rules.
+In HA, the nodes are “algebras” over “signatures”
+that represent the syntax of some data and operations,
+and the arrows are refinement relations between those algebras,
+that indeed follow the rules of CT.
+In OO, the nodes are “classes” and the arrows are “inheritance”, and
+they mean something completely different.
+
+To add to the confusion, Goguen himself repeatedly invokes the analogy of his algebras
+to classes, of the states of computations within his algebras to objects,
+and of his refinements to inheritance.
+His use of CT is beyond reproach, but his analogy to OO does not survive examination.
+Goguen develops a remarkable and very valuable paradigm for specifying computations,
+that leads to working tools like OBJ, OBJ3, CafeOBJ, Maude,
+that can actually interpret or compile code, or generate formal systems to reason about the code.
+His students and followers themselves have used his tools and concepts
+to further advance technology.
+But Goguen’s use of the trappings of OO is a case study in stealing the vocabulary from one
+domain to misapply it to another, which may have started as confused belief
+that one approach (CT) directly applied to modeling another domain (OO),
+but ended up generating lots of confusing prose that fooled many superficial readers
+into believing his was indeed a faithful model of OO.
+To be fair, Goguen never explicitly made such a claim, yet he never explicitly disclaimed it,
+and constantly used it implicitly to market his work to OO conferences at a time when OO was hip.
+
+In conclusion, there have been many groups of people claiming to do “modeling” with or for OO,
+some informally, some formally. But the best that can be said about them is that they were
+right about the wrong thing (as far as actual OO is concerned),
+and whatever their intent, ended up diluting the meaning of a good word.
 
 @section{OO vs Objects}
 @epigraph{
   Computer Science is no more about computers than astronomy is about telescopes.
   @|#:-"E. W. Dijkstra"|
 }
-
 Remarkably, counter-intuitively, and despite the name,
 I found that Object-Orientation is not about objects,
 that you can have OO without objects and objects without OO.
@@ -924,7 +955,7 @@ The authors will not usually claim that these objects are part
 of an OO framework actual or imagined, but then again sometimes they may@xnote["."]{
   This situation can be muddled by layers of language:
   Consider a language without OO itself implemented in an OO language.
-  The word “object” might then be validly denote OO
+  The word “object” might then validly denote OO
   from the point of view of the implementer using the OO meta-language,
   yet not from the point of view of the user using the non-OO language.
   Conversely, when an OO language is implemented using a non-OO language,
@@ -969,7 +1000,7 @@ and to avoid the words “object” or “class” unless necessary, and then
 only in narrowly defined contexts@xnote["."]{
   I am, however, under no illusion that my chosen words would remain unambiguous very long
   if my works were to find any success. They would soon be rallying targets
-  not just for honest people to use, but also for ignoramus, spammers, cranks, and frauds
+  not just for honest people to use, but also for ignoramuses, spammers, cranks, and frauds
   to subvert—and hopefully for pioneers to creatively misuse
   as they make some unforeseen discovery.
 }
@@ -1095,7 +1126,7 @@ the system that made OO popular.
 Opposing inheritance and delegation is also logically counterfactual:
 @citet{Lieberman1986} itself explains how “inheritance” (i.e. classes)
 can be expressed as a special use of “delegation” (i.e. prototypes).
-On the other hand, paper also explains you cannot go the other way around
+On the other hand, the paper also explains you cannot go the other way around
 and express prototypes in terms of classes:
 prototypes enable dynamic extension of individual “objects” (prototypes) at runtime,
 while classes only allow extension at compile-time, and only
@@ -1110,7 +1141,7 @@ and notes that prototypes map to classes, not class instances
 (though strictly speaking she gets the mathematical direction of the map wrong).
 The real distinction and comparison that should have been made was between the relative
 expressiveness of prototypes and classes, especially if considered as second-class entities
-and in absence of reflection (or refraint from using it).
+and in absence of reflection (or refraining from using it).
 But that is the conclusion that none of the authors who wrote on the topic made explicit,
 even though it is implicit in both.
 And so the authors focus on arguing about different ways to name the same concept in two contexts;
@@ -1269,7 +1300,7 @@ maybe you should skip this section, or only return to it
 after you read those more technical chapters.
 If so, you should also be careful never to ask about the philosophical or religious opinions
 of authors, inventors, colleagues, etc., in your technical field, or any field,
-least you find yourself alienated from much of human knowledge.
+lest you find yourself alienated from much of human knowledge.
 
 @subsection[#:tag "Imdc"]{Is my definition correct?}
 @epigraph{
@@ -1572,7 +1603,7 @@ a strong thing changes the meaning of a name.}
   Bonus: Take one of the criticisms you found that does not actually apply to OO.
   Rewrite it to address what the critic was probably actually concerned about
   (e.g., C++ specifically, imperative programming, etc.)
-  without incorrectly blaming "OO" for it.
+  without incorrectly blaming “OO” for it.
 }
 
 @exercise[#:difficulty "Hard"]{
@@ -1581,7 +1612,7 @@ a strong thing changes the meaning of a name.}
   Wrong targets for which criticism will not count as answers to this exercise
   (though they may be otherwise interesting), include:
   (1) criticism of things I already denounced as not being OO,
-  (2) criticism of particular systems that happen to written with OO,
+  (2) criticism of particular systems that happen to be written with OO,
     but for which this aspect of the system is irrelevant,
   (3) criticism of mistakes that do apply to OO,
     but actually, much more broadly, apply unchanged to software development in general.

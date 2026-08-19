@@ -371,7 +371,7 @@ and types it requires from the module context.
 In his paper on objects as co-algebras,
 Bart Jacobs characterizes the types for the arguments and results of his methods
 as being “(constant) sets” @~cite{Jacobs1995}@xnote[","]{
-  Jacobs is particularly egregious in smuggling this all-important restriction
+  Jacobs (see @secref{OOinDM}) is particularly egregious in smuggling this all-important restriction
   to how his paper fails to address the general and interesting case of OO
   in a single word, furthermore, in parentheses, at the end of section 2,
   without any discussion whatsoever as to the momentous significance of that word.
@@ -390,14 +390,15 @@ as being “(constant) sets” @~cite{Jacobs1995}@xnote[","]{
   a fake mantle of formal mathematical legitimacy?
   Either way, the field is rife with bad science,
   not to mention the outright snake oil of the OO industry in its heyday:
-  In the late 1980s, every new software product was claiming to be “object-oriented”,
-  and in the 1990s, IBM would even hire comedians to become “evangelists”
+  In the late 1980s, every new software product was claiming to be “object-oriented”, @;{
+    TODO cite "my cat is object oriented" parody?
+  } and in the 1990s, IBM would even hire comedians to become “evangelists”
   for their Visual Age Smalltalk technology, soon recycled into Java evangelists.
   Jacobs is not the only one, and he may even have extenuating circumstances.
-  He may have been ill-inspired by Goguen, whom he cites, who also abuses
-  the terminology from OO to make his own valid but loosely-related
+  He may have been ill-inspired by Goguen (see @secref{Goguen}),
+  whom he cites, who also abuses the terminology from OO to make his own valid but loosely-related
   application of Category Theory to software specification.
-  He may also have been pressured to make his work “relevant” by publishing in OO conferences,
+  Jacobs may also have been pressured to make his work “relevant” by publishing in OO conferences,
   under pain of losing funding, and
   he may have been happy to find his work welcome even though he didn’t try hard,
   trusting reviewers to send stronger feedback if his work hadn’t been fit.
@@ -452,7 +453,7 @@ Indeed, in general, specifications may contain so called “binary methods”
 that take another value of the same target type as argument,
 such as in very common comparison functions (e.g. equality or order)
 or algebraic operations (e.g. addition, multiplication, composition), etc.
-and beyond these, specifications may actually contain arbitrary higher-order functions
+Beyond these, specifications may actually contain arbitrary higher-order functions
 involving the target type in zero, one or many positions,
 both “negative” (as an overall argument)
 or “positive” (as an overall result), @; TODO cite Felleisen???

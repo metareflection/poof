@@ -512,56 +512,6 @@ Instructions for bibliography assistant:
 
 %% 1975
 
-% Also https://exhibits.stanford.edu/stanford-pubs/catalog/pf235fy3176
-@TechReport{Bobrow1976,
-  author={Daniel G. Bobrow and Terry Winograd},
-  title={An Overview of KRL, A Knowledge Representation Language},
-  year={1976},
-  month={July},
-  day={4},
-  institution={Xerox PARC},
-  number={CSL-76-4},
-  url={https://bitsavers.trailing-edge.com/pdf/xerox/parc/techReports/CSL-76-4_An_Overview_of_KRL_-_A_Knowledge_Representation_Language_19760704.pdf},
-  doi={10.1207/s15516709cog0101_2},
-  note={.
-    Published by PARC on July 4th 1976, exactly 200 years after the Declaration of Independence,
-    but also as Stanford Artificial Intelligence Laboratory Memo AIM-293 (November 1976),
-    and later included in Cognitive Science, V. 1, No. 1, 1977.
-    This watershed paper is AFAICT the first in a formal publication that uses the words
-    “object-oriented”, “inheritance”, “prototype” in their modern meaning;
-    it also uses the word “class” in its modern meaning,
-    but the Simula 1967 paper can claim priority on that.
-    The paper describes KRL-0, a first iteration of the design of KRL,
-    an extension to Lisp, as of May 1976.
-    KRL is a Knowledge Representation Language built in terms of objects.
-    Bobrow and Winogard acknowledge the heritage of Minsky’s frames,
-    as well as of Smalltalk and Simula for the “object-oriented” definition
-    of “procedural attachments” (that we would now call methods).
-    An object is a “unit”, that has “slots”;
-    a “prototype” can provide one of multiple “perspectives” on the object
-    (thereby constituting multiple inheritance, though the two words aren’t used together),
-    with each prototype slot either being a “further specification”
-    or being left with “default assumptions” from its “class”.
-    Each slot, including a “self” slot for the object itself,
-    has a “description” made of one or many “descriptors”;
-    descriptors can match more specific descriptors,
-    thereby constituting a query language for the knowledge base.
-    There are further notions of feature, category,
-    category type (basic, abstract, specialization, individual, manifestation, relation, proposition),
-    subclass, multiprocessing, demons that trap on objects or trigger on classes, etc.
-    A very rich system for the day.
-    The paper demonstrates the birth of OO as an interaction between Bobrow and Kay:
-    “inheritance of properties” is used definitionally when Winograd 1975 used it descriptively,
-    and “object-oriented” is used three times, though Kay is only cited indirectly through
-    a paper of his Learning Research Group that doesn’t use the expression.
-    (multi-process oriented is also used three times, but with slightly different words each time.)
-    If anything, Winograd tries to do too much, the system is too complex,
-    and some of the solutions it offers are so general that they still require the user
-    to do a lot of the work (e.g. to properly handle multiple inheritance),
-    as the common usage patterns haven’t been identified yet.
-  }
-}
-
 % https://link.springer.com/chapter/10.1007/3-540-07168-7_77
 % InBook - fix bug
 @Misc{Dennis1975,
@@ -645,30 +595,6 @@ Instructions for bibliography assistant:
   }
 }
 
-@InProceedings{Ross1976,
-  author={Ross, Douglas T.},
-  title={Toward foundations for the understanding of type},
-  year={1976},
-  month=March,
-  isbn={9781450378987},
-  publisher={Association for Computing Machinery},
-  address={New York, NY, USA},
-  url={https://doi.org/10.1145/800237.807120},
-  doi={10.1145/800237.807120},
-  abstract={I have now written, have available from SofTech, and have submitted for publication elsewhere, the first two of a series of deep philosophical papers [1, 2] about Plex [3]. Among other things, I believe these papers begin to provide a proper foundation for our endeavors in computer science and software engineering. The trend of these developments is indicated in the following, which I call The Proem of Plex1 and Plex2 [“Proem: 1.) A preliminary discourse to a longer piece of writing. 2.) An introductory comment before a speech. 3.) Something that opens or begins.”—Webster’s].},
-  booktitle={Proceedings of the 1976 Conference on Data: Abstraction, Definition and Structure},
-  pages={63–65},
-  numpages={3},
-  location={Salt Lake City, Utah, USA},
-  note={.
-    In an unreadable manic publication that is more poetry than science,
-    Ross first uses in print (March 1976) the word “object-oriented”
-    in a way that vaguely refers to thinking about data types in an abstract way.
-    But since it’s all poetic handwaving (despite the invocation of mathematical symbols),
-    this publication can be dismissed as worthless as a potential first definition of OO.
-  }
-}
-
 @TechReport{Sussman1975,
   author={Sussman, Gerald Jay and Steele, Guy Lewis},
   title={Scheme: An Interpreter for Extended Lambda Calculus},
@@ -747,42 +673,53 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 1976
 
-% https://dspace.mit.edu/bitstream/handle/1721.1/6091/AIM-379.pdf
-@TechReport{Steele1976Declarative,
-  author={Steele, Guy Lewis},
-  title={LAMBDA: The Ultimate Declarative},
-  institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
+% Also https://exhibits.stanford.edu/stanford-pubs/catalog/pf235fy3176
+@TechReport{Bobrow1976,
+  author={Daniel G. Bobrow and Terry Winograd},
+  title={An Overview of KRL, A Knowledge Representation Language},
   year={1976},
-  month=nov,
-  number={AIM-379},
-  url={https://dspace.mit.edu/handle/1721.1/6091},
-  note={
-    The second “Lambda the Ultimate” paper.
-    It shows that λ-closures can be implemented efficiently,
-    arguing that λ-expressions are practical implementation entities
-    rather than merely semantic abstractions.
-    It demonstrates translations of many conventional language constructs
-    into λ-expressions while preserving efficient execution,
-    establishing the λ-calculus as a practical implementation substrate for high-level languages,
-    not merely a theoretical formalism for their semantics.
-  }
-}
-
-% https://dspace.mit.edu/bitstream/handle/1721.1/5790/AIM-353.pdf
-@TechReport{Steele1976Imperative,
-  author={Steele, Guy Lewis and Sussman, Gerald Jay},
-  title={LAMBDA: The Ultimate Imperative},
-  institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
-  year={1976},
-  month=mar,
-  number={AIM-353},
-  url={https://dspace.mit.edu/handle/1721.1/5790},
+  month={July},
+  day={4},
+  institution={Xerox PARC},
+  number={CSL-76-4},
+  url={https://bitsavers.trailing-edge.com/pdf/xerox/parc/techReports/CSL-76-4_An_Overview_of_KRL_-_A_Knowledge_Representation_Language_19760704.pdf},
+  doi={10.1207/s15516709cog0101_2},
   note={.
-    The first “Lambda the Ultimate” paper.
-    The authors famously were trying to make sense of message dispatch in Hewitt’s Actors
-    based on continuations;
-    while writing tests for how the two should behave, their realized that there was no difference,
-    and this realization led to the design of Scheme.
+    Published by PARC on July 4th 1976, exactly 200 years after the Declaration of Independence,
+    but also as Stanford Artificial Intelligence Laboratory Memo AIM-293 (November 1976),
+    and later included in Cognitive Science, V. 1, No. 1, 1977.
+    This watershed paper is AFAICT the first in a formal publication that uses the words
+    “object-oriented”, “inheritance”, “prototype” in their modern meaning;
+    it also uses the word “class” in its modern meaning,
+    but the Simula 1967 paper can claim priority on that.
+    The paper describes KRL-0, a first iteration of the design of KRL,
+    an extension to Lisp, as of May 1976.
+    KRL is a Knowledge Representation Language built in terms of objects.
+    Bobrow and Winogard acknowledge the heritage of Minsky’s frames,
+    as well as of Smalltalk and Simula for the “object-oriented” definition
+    of “procedural attachments” (that we would now call methods).
+    An object is a “unit”, that has “slots”;
+    a “prototype” can provide one of multiple “perspectives” on the object
+    (thereby constituting multiple inheritance, though the two words aren’t used together),
+    with each prototype slot either being a “further specification”
+    or being left with “default assumptions” from its “class”.
+    Each slot, including a “self” slot for the object itself,
+    has a “description” made of one or many “descriptors”;
+    descriptors can match more specific descriptors,
+    thereby constituting a query language for the knowledge base.
+    There are further notions of feature, category,
+    category type (basic, abstract, specialization, individual, manifestation, relation, proposition),
+    subclass, multiprocessing, demons that trap on objects or trigger on classes, etc.
+    A very rich system for the day.
+    The paper demonstrates the birth of OO as an interaction between Bobrow and Kay:
+    “inheritance of properties” is used definitionally when Winograd 1975 used it descriptively,
+    and “object-oriented” is used three times, though Kay is only cited indirectly through
+    a paper of his Learning Research Group that doesn’t use the expression.
+    (multi-process oriented is also used three times, but with slightly different words each time.)
+    If anything, Winograd tries to do too much, the system is too complex,
+    and some of the solutions it offers are so general that they still require the user
+    to do a lot of the work (e.g. to properly handle multiple inheritance),
+    as the common usage patterns haven’t been identified yet.
   }
 }
 
@@ -841,6 +778,69 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     classes and parents is not explained — are they the same hierarchy? a separate one?
     Are the child/parent and class/instance relationships the same or different?
     Kahn cites Kay, and Hewitt, but not Bobrow and Winograd (though he later does in his thesis).
+  }
+}
+
+@InProceedings{Ross1976,
+  author={Ross, Douglas T.},
+  title={Toward foundations for the understanding of type},
+  year={1976},
+  month=March,
+  isbn={9781450378987},
+  publisher={Association for Computing Machinery},
+  address={New York, NY, USA},
+  url={https://doi.org/10.1145/800237.807120},
+  doi={10.1145/800237.807120},
+  abstract={I have now written, have available from SofTech, and have submitted for publication elsewhere, the first two of a series of deep philosophical papers [1, 2] about Plex [3]. Among other things, I believe these papers begin to provide a proper foundation for our endeavors in computer science and software engineering. The trend of these developments is indicated in the following, which I call The Proem of Plex1 and Plex2 [“Proem: 1.) A preliminary discourse to a longer piece of writing. 2.) An introductory comment before a speech. 3.) Something that opens or begins.”—Webster’s].},
+  booktitle={Proceedings of the 1976 Conference on Data: Abstraction, Definition and Structure},
+  pages={63–65},
+  numpages={3},
+  location={Salt Lake City, Utah, USA},
+  note={.
+    In an unreadable manic publication that is more poetry than science,
+    Ross first uses in print (March 1976) the word “object-oriented”
+    in a way that vaguely refers to thinking about data types in an abstract way.
+    But since it’s all poetic handwaving (despite the invocation of mathematical symbols),
+    this publication can be dismissed as worthless as a potential first definition of OO.
+  }
+}
+
+% https://dspace.mit.edu/bitstream/handle/1721.1/6091/AIM-379.pdf
+@TechReport{Steele1976Declarative,
+  author={Steele, Guy Lewis},
+  title={LAMBDA: The Ultimate Declarative},
+  institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
+  year={1976},
+  month=nov,
+  number={AIM-379},
+  url={https://dspace.mit.edu/handle/1721.1/6091},
+  note={
+    The second “Lambda the Ultimate” paper.
+    It shows that λ-closures can be implemented efficiently,
+    arguing that λ-expressions are practical implementation entities
+    rather than merely semantic abstractions.
+    It demonstrates translations of many conventional language constructs
+    into λ-expressions while preserving efficient execution,
+    establishing the λ-calculus as a practical implementation substrate for high-level languages,
+    not merely a theoretical formalism for their semantics.
+  }
+}
+
+% https://dspace.mit.edu/bitstream/handle/1721.1/5790/AIM-353.pdf
+@TechReport{Steele1976Imperative,
+  author={Steele, Guy Lewis and Sussman, Gerald Jay},
+  title={LAMBDA: The Ultimate Imperative},
+  institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
+  year={1976},
+  month=mar,
+  number={AIM-353},
+  url={https://dspace.mit.edu/handle/1721.1/5790},
+  note={.
+    The first “Lambda the Ultimate” paper.
+    The authors famously were trying to make sense of message dispatch in Hewitt’s Actors
+    based on continuations;
+    while writing tests for how the two should behave, their realized that there was no difference,
+    and this realization led to the design of Scheme.
   }
 }
 
@@ -1358,46 +1358,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 % 1985
 
-% Almost modern syntax, lower case long(ish) identifiers.
-@InProceedings{Bobrow1986,
-  title={CommonLoops: Merging Lisp and Object-Oriented Programming},
-  author={Daniel G. Bobrow and Kenneth Kahn and Gregor Kiczales and Larry Masinter and Mark Stefik and Frank Zdybel},
-  booktitle={OOPSLA},
-  issue_date={Nov. 1986},
-  publisher={Association for Computing Machinery},
-  address={New York, NY, USA},
-  volume={21},
-  number={11},
-  issn={0362-1340},
-  doi={10.1145/960112.28700},
-  url={https://dl.acm.org/doi/10.1145/960112.28700},
-  journal={SIGPLAN Not.},
-  month=jun,
-  pages={17–29},
-  numpages={13},
-  year={1986},
-  note={.
-    Excellent paper.
-    This reprint of a 1985 report presents CommonLoops, an evolution from LOOPS
-    that integrates lessons from New Flavors, from which it takes
-    linearization, method combinations and generic functions,
-    that it further extends to support multi-methods (multiple dispatch).
-    As in LOOPS, there are metaclasses
-    (that control single or multiple inheritance, slot accessors).
-    CommonLoops introduces what will later be known as call-next-method, then named run-super,
-    probably inspired by the equivalent functionality in Smalltalk,
-    developed by colleagues of the authors at PARC, and previously used by at least Bobrow and Kahn
-    (who also had such functionality in his earlier prototype object system at MIT).
-    Method calls are compiled with various optimizations including local and global method caches.
-    CommonLoops also introduces class variables, init-forms in slot descriptions
-    instead of access-time default values as in LOOPS, slot properties,
-    “active values” (kind of method combination for slot accessors?).
-    More nice design discussions and comparisons.
-    Symbols are all lowercase, names are shortened (e.g. defmeth, not defmethod).
-    A direct predecessor to CLOS.
-  }
-}
-
 @Book{Cardelli1985,
   title={On understanding types, data abstraction, and polymorphism},
   author={Luca Cardelli and Peter Wegner},
@@ -1518,6 +1478,46 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 %% 1986
+
+% Almost modern syntax, lower case long(ish) identifiers.
+@InProceedings{Bobrow1986,
+  title={CommonLoops: Merging Lisp and Object-Oriented Programming},
+  author={Daniel G. Bobrow and Kenneth Kahn and Gregor Kiczales and Larry Masinter and Mark Stefik and Frank Zdybel},
+  booktitle={OOPSLA},
+  issue_date={Nov. 1986},
+  publisher={Association for Computing Machinery},
+  address={New York, NY, USA},
+  volume={21},
+  number={11},
+  issn={0362-1340},
+  doi={10.1145/960112.28700},
+  url={https://dl.acm.org/doi/10.1145/960112.28700},
+  journal={SIGPLAN Not.},
+  month=jun,
+  pages={17–29},
+  numpages={13},
+  year={1986},
+  note={.
+    Excellent paper.
+    This reprint of a 1985 report presents CommonLoops, an evolution from LOOPS
+    that integrates lessons from New Flavors, from which it takes
+    linearization, method combinations and generic functions,
+    that it further extends to support multi-methods (multiple dispatch).
+    As in LOOPS, there are metaclasses
+    (that control single or multiple inheritance, slot accessors).
+    CommonLoops introduces what will later be known as call-next-method, then named run-super,
+    probably inspired by the equivalent functionality in Smalltalk,
+    developed by colleagues of the authors at PARC, and previously used by at least Bobrow and Kahn
+    (who also had such functionality in his earlier prototype object system at MIT).
+    Method calls are compiled with various optimizations including local and global method caches.
+    CommonLoops also introduces class variables, init-forms in slot descriptions
+    instead of access-time default values as in LOOPS, slot properties,
+    “active values” (kind of method combination for slot accessors?).
+    More nice design discussions and comparisons.
+    Symbols are all lowercase, names are shortened (e.g. defmeth, not defmethod).
+    A direct predecessor to CLOS.
+  }
+}
 
 @InProceedings{Borning1986,
   title={Classes Versus Prototypes in Object-Oriented Languages},
@@ -4959,7 +4959,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 @Misc{R7RS2013,
-  author={{R7RS Working Group}},
+  author={R7RS Working Group},
   title={Revised${}^7$ Report on the Algorithmic Language Scheme},
   year={2013},
   month=jul,

@@ -1061,12 +1061,45 @@ resolving many modular definitions from many people together into a single progr
 
 @XXXX{XXXX}
 
+@subsubsection{Before “OO” was OO: 1961-1975}
+
+@subsubsection{OO in the Lab: 1976-1989}
+
+@subsubsection{OO at Work: 1990-}
+
+  While Kay had a crucial role in the invention and naming of OO,
+  it is important not to put too much weight in the name without the full concept.
+  Back in the 1960s and 1970s, many things were user-oriented,
+  calculus-oriented, terminal-oriented, etc.
+  The word “object-oriented” appears in print in works about psychology, sociology, and
+  even in a few papers in Computer Science, before Smalltalk and KRL,
+  the earliest I could find being written in 1971 by Bobrow’s brother @~cite{Bobrow1972},
+  but not quite with that meaning. @; TODO Goodenough. Ross? @citet{Ross1976} -- earlier?
+  @citet{Jones1976} also come close,
+  using the word with respect to encapsulating types and code together,
+  though without the extensibility aspect that has been the defining trait
+  of what programmers expect from OO languages.
+  Jones and Liskov published that paper months
+  before the Bobrow and Winograd memo @~cite{Bobrow1976}
+  that first uses “object-oriented” the modern way, presumably after Kay.
+  Were these earlier uses in print legitimate?
+  Yes, but they are not the ones whose meaning took on.
+  Kay’s meaning, refined by Bobrow, won—for good reasons.
+  However, for the same reason, while Kay’s personal use of the term dates back to 1967,
+  we should still only credit the invention at the date that the concept became fully formed,
+  which is with Bobrow and Winograd’s KRL-0,
+  and with Kay and Ingalls’ subsequent Smalltalk-76, both in 1976,
+  because of each other (they were across-the-hall colleagues at PARC and cite each other).
+}
+
 @citet{Black2013}
 
 Early examples of Modularity and Extensibility together that pre-date fully-formed OO include
 of course classes in Simula 1967 @~cite{Dahl1967}, but also precursor breakthroughs like
 the “locator words” of the Burroughs B5000 @~cite{Lonergan1961 Barton1961}, and
-Ivan Sutherland’s Sketchpad’s “masters and instances” @~cite{Sutherland1963},
+Ivan Sutherland’s Sketchpad’s “masters and instances” @~cite{Sutherland1963}
+(a third-and-half class modular extensibility: no automation to construct and check the
+entities, but automation in how they are accessed),
 that both inspired Kay, or Warren Teitelman’s Pilot’s ADVISE facility @~cite{Teitelman1966},
 that was influential at least in the Lisp community and led to method combination
 in Flavors and CLOS@xnote["."]{
