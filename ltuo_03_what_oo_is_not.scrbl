@@ -593,7 +593,7 @@ that Alan Kay also identified as essential for OO@xnote["."]{
   Now, as we’ll see, you need fixpoints to express the semantics of OO;
   but in a pure applicative context, you cannot directly express sharing the results of a computation,
   so the pure fixpoint combinators lead to exponential recomputations
-  as deeper self-references are involved (see @secref{USLCP}).
+  as deeper self-references are involved (see @secref{USPLC}).
   OO is therefore possible using the applicative pure functional fragment of the language
   within an Erlang process, but the result will not scale very well;
   see for instance the example “object-via-closure” that Duncan McGreggor wrote as part of LFE.
@@ -616,7 +616,7 @@ that Alan Kay also identified as essential for OO@xnote["."]{
   but only fits indirectly in other paradigms,
   including the pure applicative functional paradigm of Erlang in-process,
   or the process-oriented paradigm of Erlang between-processes.
-  See also the discussion in @secref{USLCP}.
+  See also the discussion in @secref{USPLC}.
 }
 Most OO languages have no support whatsoever for concurrency,
 or then again only as an afterthought added years or decades
@@ -1036,10 +1036,15 @@ Hence the tribal turn of many online “debates”.
 
 Conversely, the word “object” has many valid uses outside of OO,
 to denote embodiments for first-class modularity without first-class modular extensibility.
-A few early texts use the word “object-oriented” this way @~cite{Bobrow1972 Ross1976 Jones1976},
-to denote entities that can be used in modular ways, though they cannot be extended with inheritance.
-Still, the modern meaning of “object-oriented”, that does imply the presence of inheritance,
-is well established by now.
+A few early texts use the word “object-oriented” this way
+@~cite{Bobrow1972 Goodenough1975 Ross1976 Jones1976},
+to denote first-class entities that can be used in modular ways,
+though they cannot be extended with inheritance.
+However, the modern meaning of “object-oriented” does imply the presence of inheritance,
+as is well established by now.
+There are still some dissidents, such as Cook (see @secref{Cook}),
+or even arguably Kay himself (see below);
+
 
 Alan Kay, who invented the term “object-oriented”,
 strongly implies first-class modularity using the term,
@@ -1058,7 +1063,7 @@ however after further examining Wegner’s definitions,
 I see that he unjustly maligned prototype object-orientation,
 and is wrong in requiring classes as part of “object-oriented” programming
 (though later in his paper he does discuss “classless” systems).
-Furthermore, as stated earlier, I even object to “objects” being considered necessary for OOP.
+Furthermore, as stated earlier, I even object to “objects” being considered necessary for OO.
 
 Still, it is clearly possible, indeed relatively common, to have “objects”
 without what either I or Wegner or most people recognize as “object-oriented” programming;

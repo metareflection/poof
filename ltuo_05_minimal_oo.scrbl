@@ -408,13 +408,13 @@ Instead, I will propose slightly more elaborate types.
 Given types @c{V}, @c{W}, @c{X}... for values,
 @c{I}, @c{J}... for identifiers or other indexes,
 consider records or sets of bindings as values of an indexed product
-@c{∏R = i:I → R@(ᵢ)} wherein to each value @c{i} in the index set @c{I},
-the record will associate a value of type @(Ri),
+@c{∏R = i:I → Rᵢ} wherein to each value @c{i} in the index set @c{I},
+the record will associate a value of type @c{Rᵢ},
 where @c{R} is a schema of types, a function from @c{I} to @c{Type}.
 
 To simplify this model, a pure functional record of type @c{∏R}
 can be viewed as a function indexed by the domain @c{I} of indexes
-to @(Ri) for each @c{i}.
+to @c{Rᵢ} for each @c{i}.
 When invoked on a value not in @c{I}, the function may return any value, or diverge.
 To further simplify, and for the sake of modeling records as first-class functions,
 when using Scheme, for indexes I will use symbols (interned strings)
@@ -689,7 +689,7 @@ then a “tree shaker” or global dead code optimizer may eliminate them.
   What limitation do you notice in one direction?
 }
 
-@section[#:tag "USLCP"]{Underappreciated Subtleties of the λ-calculus in Practice}
+@section[#:tag "UPSLC"]{Underappreciated Practical Subtleties of the λ-calculus}
 @epigraph{Purely applicative languages are poorly applicable. @|#:- "Alan Perlis"|
 }
 Here are two subtle ways in which
@@ -1095,7 +1095,7 @@ The minimal use of laziness with maximal impact in the context of fixpoints and 
 to replace plain deferred evaluation without sharing by a lazy variant:
 Wherever the use of an applicative Y would require η-expansion,
 instead of @c{(η f)} above that expands to @c{(λ (x) (f x))},
-use @c{(η1 f)} that expands to @c{(let ((df (delay f))) (λ (x) ((force df) x)))}.
+use @c{(η₁ f)} that expands to @c{(let ((df (delay f))) (λ (x) ((force df) x)))}.
 Indeed, @principle{deferral makes recursion legal; sharing makes it affordable.}
 
 In both variants, the @emph{expression} @c{f}
@@ -1111,7 +1111,7 @@ For a non-function value—a pair, a number—there is no such function call und
 and, unless you use a lazy language that hides forcing behind every non-trivial evaluation,
 the consumer must do the forcing explicitly.
 
-Now, @c{η1}, that can read as “η-expand but only evaluate once”,
+Now, @c{η₁}, that can read as “η-expand but only evaluate once”,
 ensures the @emph{expression} for the function is only evaluated once.
 However, each invocation still does its own bit of computation.
 If you want repeated invocations with the same argument to remember

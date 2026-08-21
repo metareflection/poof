@@ -290,8 +290,8 @@ On a different dimension,
 separately compiled object files, as implemented by FORTRAN (1956), @; TODO cite
 provided third-class modularity through an external linker.
 Later developments like
-typechecked second-class Modules à la Modula-2 (1978), @; TODO cite Wirth;
-@; TODO also look into Liskov’s CLU, Mary Shaw’s Alphard, etc.
+typechecked second-class “clusters” à la CLU (1974), “modules” à la Modula-2 (1978), @; TODO cite
+@; TODO also look into, Mary Shaw’s Alphard, etc.
 Higher-Order Modules à la ML (1985), @; TODO cite David MacQueen 1985
 typeclasses à la Haskell (or traits in Rust),
 interfaces à la Java, and much more,
@@ -300,7 +300,6 @@ provided second-class modularity as part of a language itself.
 Finally, objects in Smalltalk-72 (even before Smalltalk adopted inheritance in 1976),
 or first-class modules in ML @~cite{Russo1998},
 provided first-class modularity.
-
 
 @subsection{Modularity and Complexity}
 
@@ -509,7 +508,7 @@ before they are used.
 In a high-level computation without mutation,
 each module is implemented as a function taking the module context as argument,
 the fields are implemented as functional lenses (@secref{OfOO}),
-and the mutual recursion is achieved using a fixpoint combinator (@secref{USLCP});
+and the mutual recursion is achieved using a fixpoint combinator (@secref{USPLC});
 lazy evaluation may be used as a dynamic protocol to ensure that
 each field is initialized before it is used@xnote["."]{
   It is hard to ensure initialization before use;
@@ -1057,15 +1056,64 @@ and units of extension with respect to functors, remain second-class
 with respect one crucial aspect of modularity:
 resolving many modular definitions from many people together into a single program.
 
-@subsection[#:tag "HMEB"]{Historical Modular Extensibility Breakthroughs}
+@subsection[#:tag "HMEB"]{A History of OO (Modular Extensibility Breakthroughs)}
 
 @XXXX{XXXX}
 
 @subsubsection{Before “OO” was OO: 1961-1975}
 
-@subsubsection{OO in the Lab: 1976-1989}
+Alan Kay likes to cite as early inspirations for OO
+the Burroughs B5000 computer, and Ivan Sutherland’s Sketchpad.
 
-@subsubsection{OO at Work: 1990-}
+The B5000 @~cite{Lonergan1961 Barton1961} is a hardware architecture that
+among other innovations introduces a notion of “locator words”,
+whereby data and code is accessed indirectly
+through “program reference tables”.
+Two table registers are supported, a global one,
+that prefigures global linker tables,
+and local, that prefigures an object’s virtual dispatch table.
+Writing code against such tables was modular;
+extending the tables was extensibility;
+further more this style enables what we’d now call position-independent code and data.
+But this modular extensibility came with no language it could be internal to;
+you had to program that directly in binary or assembly;
+though even that was remarkably high-level compared to other computer architectures,
+thanks to its “Right-Hand” Polish Notation for operations on elements from the stack
+(that we might now call “Reverse Polish Notation”,
+in a style popularized by FORTH and PostScript—see also Factor). @; TODO cite
+And then again, only access to data and code using the table registers is kind of automated,
+outside any “language” (I’ll call that third-class)
+defining data and code that follows the correct convention remains completely manual (fourth-class);
+therefore I’ll call this third-and-a-half modular extensibility, which is external to a language.
+
+Sketchpad @~cite{Sutherland1963} is an ancestor to graphical CAD programs,
+with a builtin constraint solver that you configure through a system
+of “masters and instances”: you could modularly define new objects as made
+of components, each an instance of an existing object transformed by a similarity
+(affine transformation that preserves angles), and extensibly define new objects
+that further transformed previous objects or applied a composed similarity to an existing master.
+Modifications to a master would propagate to all their instances, recursively.
+Sketchpad also had “generic blocks” to package graphical operations in a uniform way
+against a common interface—once again an instance of modularity.
+Sketchpad didn’t have “self” references, though, so modularity and extensibility didn’t interact
+the way needed to achieve modular extensibility. It was modularity and extensibility
+complementing each other rather than combined.
+I still include it in here as one of Kay’s inspirations.
+
+Not an influence to Alan Kay, but to Daniel Bobrow,
+Howard Cannon @~cite{Cannon1979} and the Lisp school,
+another breakthrough in modular extensibility was
+Warren Teitelman’s Pilot’s ADVISE facility @~cite{Teitelman1966}:
+ADVISE enabled programmers to dynamically extend a function with “advices”,
+that would run before or after the function itself was called;
+those happening after could even consult or modify the value returned
+(though this was not originally an intended interface).
+This was first-class modular extensibility, though at the level of named functions
+rather than records, and using side-effects for communication between advices.
+
+Now of course, the modular extensibility breakthrough every knows about is
+Simula 1967 @~cite{Dahl1967}: inspired by @citet{Hoare1965}, Dahl and
+
 
   While Kay had a crucial role in the invention and naming of OO,
   it is important not to put too much weight in the name without the full concept.
@@ -1080,6 +1128,7 @@ resolving many modular definitions from many people together into a single progr
   though without the extensibility aspect that has been the defining trait
   of what programmers expect from OO languages.
   Jones and Liskov published that paper months
+
   before the Bobrow and Winograd memo @~cite{Bobrow1976}
   that first uses “object-oriented” the modern way, presumably after Kay.
   Were these earlier uses in print legitimate?
@@ -1090,19 +1139,10 @@ resolving many modular definitions from many people together into a single progr
   which is with Bobrow and Winograd’s KRL-0,
   and with Kay and Ingalls’ subsequent Smalltalk-76, both in 1976,
   because of each other (they were across-the-hall colleagues at PARC and cite each other).
-}
 
-@citet{Black2013}
 
-Early examples of Modularity and Extensibility together that pre-date fully-formed OO include
-of course classes in Simula 1967 @~cite{Dahl1967}, but also precursor breakthroughs like
-the “locator words” of the Burroughs B5000 @~cite{Lonergan1961 Barton1961}, and
-Ivan Sutherland’s Sketchpad’s “masters and instances” @~cite{Sutherland1963}
-(a third-and-half class modular extensibility: no automation to construct and check the
-entities, but automation in how they are accessed),
-that both inspired Kay, or Warren Teitelman’s Pilot’s ADVISE facility @~cite{Teitelman1966},
-that was influential at least in the Lisp community and led to method combination
-in Flavors and CLOS@xnote["."]{
+@subsubsection{OO in the Lab: 1976-1988}
+
   There were definitely exchanges between the Smalltalk and Interlisp teams at PARC:
   In the 1970s, Kay got “inheritance” from Bobrow’s KRL,
   who in return got “object-oriented” and applied inheritance to procedures.
@@ -1112,7 +1152,6 @@ in Flavors and CLOS@xnote["."]{
   but it seems that—maybe after Kay’s and many others’ departure from PARC—the Smalltalk team
   stopped following or understanding OO developments from the Lisp world,
   and Interlisp had much more influence on the MIT Lispers than on the co-located Smalltalkers.
-}
 
   given in , that treats Simula as
   the necessary and sufficient foundation of OO, and Smalltalk as its successor,
@@ -1132,7 +1171,6 @@ in Flavors and CLOS@xnote["."]{
   should count as fully modern human:
   The exact label of an arbitrary delimitation matters less than
   the precise understanding of when each critical trait appeared.
-}
 
 OO was actually born in 1976 when these two collided with each other and
 with Bobrow’s Lisp AI work, resulting in KRL-0 then Smalltalk-76
@@ -1169,6 +1207,25 @@ Bobrow adopted Kay’s improvements together with his own (hard to say which is 
 and was first at the publish line with running software and a paper describing it.
 Then others at PARC, at MIT, and eventually Stroustrup at Bell Labs, adopted OO,
 and the rest is history.
+
+@citet{Black2013}
+
+Culminate with the publication of CLOS (1988),
+
+@subsubsection{OO at Work: 1989-}
+
+In 1989, Turbo Pascal 5.5 came out, and brought Object-Oriented Programming to the masses.
+C++ 2.0 also came out in 1989, though C++ remained a luxury product
+until Microsoft adopted it and released its first version of a compiler and a class library in 1992.
+Python 
+Java and JavaScript in 1995.
+
+2004–05 (Ruby/Rails, PHP 5, Scala — OO becomes the water everyone swims in),
+
+Confident: Objective-C 1984 (Cox & Love; NeXT adopts 1988, Apple via NeXT acquisition 1996, iPhone SDK 2008 makes it mass-market). Perl 1987, OO added in Perl 5, 1994. Python 1991, classes from the start. Ruby 1995 (Japan), Western breakout with Rails 2004–05. PHP 1995, OO usable only from PHP 5, 2004. Ada 1983, OO added in Ada 95. VB.NET 2002. Delphi 1995. Lua 1993. Scala 2004. Dart 2011. Kotlin announced 2011, 1.0 in 2016. TypeScript 2012. Swift 2014. Julia 2012.
+
+Notable omissions from your list: Smalltalk-80 (1980) and CLOS (1988) you have elsewhere; C++ 1985; Eiffel 1986 — which matters disproportionately for your book, since Meyer's OOSC is where a great deal of the is-a/has-a and design-by-contract vocabulary got established, and Eiffel has genuine multiple inheritance with explicit conflict resolution (renaming, select) — a fourth design point beside flavorful, flavorless-conflict, and C++-duplication. Also Go 2009 and Rust 2010–15, both of which you cite in ch. 3 as not OO, so they matter as boundary cases.
+
 
 @subsection{Modular Extensible Specifications}
 

@@ -480,7 +480,7 @@ that you can easily adapt to your favorite programming language
 (see @secref{WS} regarding choosing Scheme).
 I will explain which features are needed beyond the mere applicative λ-calculus, why,
 and how to typically implement them in existing programming languages.
-Remarkably, the main feature needed is lazy evaluation, or ways to emulate it (@secref{USLCP}),
+Remarkably, the main feature needed is lazy evaluation, or ways to emulate it (@secref{USPLC}),
 as OO is most naturally defined in a pure lazy functional setting,
 and eager evaluation of OO without side-effects leads to exponential recomputations.
 
@@ -515,7 +515,6 @@ With this variety of options, programmers (respectively programming language des
 face a choice of which of several variants of inheritance to use (respectively implement),
 if any at all@xnote["."]{
   And then there are dubious variants published in obscure papers, that I will not discuss.
-  @; e.g. "Reverse Inheritance"
   Hopefully, after reading @secref{IMSMO},
   you will be able to understand why they are either trivially expressible
   in terms of the above variants, or fundamentally flawed,

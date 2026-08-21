@@ -196,30 +196,6 @@
   note={The rival abstraction discipline; the contrast defines the object side}
 }
 
-% POPL 1975 Plex
-% say "object-oriented" exceptions
-% A good predecessor to Lisp exceptions
-% paper is extremely verbose; while exception handling is well-described,
-% and the ability for users to define exceptions in addition to those provided to the system
-% seems assumed, no mechanism or example of such definition is provided,
-% and in particular, no discussion about the extensibility of such definition
-@InProceedings{Goodenough1975,
-  author={John B. Goodenough},
-  title={Structured exception handling},
-  year={1975},
-  isbn={9781450373517},
-  publisher={Association for Computing Machinery},
-  address={New York, NY, USA},
-  url={https://doi.org/10.1145/512976.512997},
-  doi={10.1145/512976.512997},
-  abstract={In this paper, we define what exception conditions are, discuss the requirements exception handling language features must satisfy, survey and analyze existing approaches to exception handling, and propose some new language features for dealing with exceptions in an orderly and reliable way. Our objective is not solely to put forward a language proposal. It is also to analyze exception handling issues and principles in detail. The proposed language features serve to highlight exception handling issues by showing how deficiencies in current approaches could be remedied in a coherent and orderly way.},
-  booktitle={2nd ACM SIGACT-SIGPLAN Symposium on Principles of Programming Languages},
-  pages={204–224},
-  numpages={21},
-  location={Palo Alto, California},
-  series={POPL '75}
-}
-
 % Uses the word prototypes and objects in a suggestive but informal way.
 % The knowledge representation is a decision tree in a 3kloc LISP program
 % with over a thousand COND.
@@ -760,6 +736,29 @@
   pages={397–406},
   year={1989},
   note={Openness extended to member types (BETA lineage)}
+}
+
+% Incorrectly 2002 on https://www.researchgate.net/publication/2568977_A_Survey_of_Object-Oriented_Concepts
+@InCollection{Nierstrasz1989,
+  author={Oscar Nierstrasz},
+  title={A Survey of Object-Oriented Concepts},
+  booktitle={Object-Oriented Concepts, Databases, and Applications},
+  editor={Won Kim and Frederick H. Lochovsky},
+  year={1989},
+  pages={3--21},
+  publisher={ACM Press and Addison-Wesley},
+  address={Reading, MA, USA},
+  isbn={0-201-14410-7},
+  doi={10.1145/63320.66468},
+  url={https://citeseerx.ist.psu.edu/document?doi=132f397d37cac14762b0a868efe2d5c90527ef73&repid=rep1&type=pdf},
+  note={
+    Surveys object-oriented concepts and mechanisms in contemporary languages
+    and systems, taking encapsulation rather than inheritance as the defining
+    characteristic of object orientation.
+    Of particular interest is its taxonomy of unusual dynamic inheritance
+    mechanisms, including “part inheritance”, “scope inheritance” and
+    “dynamic subclassing”.
+  }
 }
 
 @InCollection{Stein1989,

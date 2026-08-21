@@ -1,7 +1,15 @@
 - [ ] Parse \emph and more (La)TeX idioms in bibtex.rkt, rendering them properly.
-- [ ] Move Cook controversy from footnotes to chapter 3
-- [ ] Move OO history to chapter 4
+- [X] Move Cook controversy from footnotes to chapter 3
+- [ ] Move OO history to chapter 4.
+- [ ] Move the concatenation semantics analysis to chapter 6.
 - [ ] Promote POI from exercise to canon in chapter 9.
+- [ ] Fix chapter 9
+- [ ] Complete chapter 10
+- [ ] Include Ducournau & al on efficient multiple inheritance in chapter 10
+- [ ] Include Cointe, Briot & al on metaobjects in chapter 10
+- [ ] Finalize conclusion in chapter 11
+- [ ] Read more of the French school
+- [ ] Add quantitative analysis to chapter 7
 - [ ] Go over all TODOs in the book
 
 It's not "recent research" so much as simplification and extraction of the essence of OO, as developed since the late 1960s, reduced to its core and implemented since the late 1970s, formalized since the late 1980s, made ubiquitous since the late 1990s, rediscovered in a pure functional setting in the late 2000s, and finally done right since the late 2010s.

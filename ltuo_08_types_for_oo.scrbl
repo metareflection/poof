@@ -877,7 +877,7 @@ as per the Curry–Howard correspondence, it is a witness of the proposition acc
 “there is a type @c{T} that has this interface”, where the interface may include field getters
 (functions of type @c{T → F} for some field value @c{F}),
 some field setters (functions of type @c{T → F → T} for a pure linear representation,
-or @c{T → F @(⇝) 1} if I denote by @c{@(⇝)} a “function” with side-effects),
+or @c{T → F ⇝ 1} if I denote by @c{⇝} a “function” with side-effects),
 binary tests (functions of type @c{T → T → 2}),
 binary operations (functions of type @c{T → T → T}),
 constructors for @c{T} (functions that create a new value of type @c{T},

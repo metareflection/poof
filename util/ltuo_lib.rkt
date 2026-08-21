@@ -51,12 +51,6 @@
 (define-simple-macro (TODO body ...) '())
 (define-simple-macro (Xitemize body ...) (list body ...))
 (define-simple-macro (Xitem body ...) (list " " body ... " "))
-(define (ᵢ) (list (html-elem (c "ᵢ")) (tex "${}_i$")))
-(define (ₖ) (list (html-elem (c "ₖ")) (tex "${}_k$")))
-(define (Ri) (list (c "R") (ᵢ)))
-(define (Pi) (list (c "P") (ᵢ)))
-(define (⋂) (list (tex "$\\bigcap$") (html-elem "⋂")))
-(define (⇝) (list (tex "$\\rightsquigarrow$") (html-elem "⇝")))
 (define (Fsub) (list (html-elem (list "F" (subscript "≤")))
                      (tex-elem (tex "$F_{\\leq}$"))))
 

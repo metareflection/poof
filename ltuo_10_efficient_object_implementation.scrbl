@@ -490,7 +490,7 @@ depending on whether one used Y-encoding (@secref{MOO}) or U-encoding (@secref{C
     but that is deferred self-application, and does not involve any fixpoint yet.}]
 
 @subsubsection{Fixpoints are for Computations, not Values}
-Either way, as mentioned in @secref{USLCP},
+Either way, as mentioned in @secref{USPLC},
 fixpoints, and thus resolution of modular definitions and of modular extensions,
 are essentially operations on @emph{computations}, and not quite on @emph{values},
 where the distinction between the two, and the duality of the two,

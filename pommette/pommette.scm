@@ -248,7 +248,7 @@ With Gambit Scheme: gsi -:s pommette.scm
 (define-syntax η (syntax-rules () ((_ f) (λ (x) (f x)))))
 
 ;; Memoizing variant of eta-conversion
-(define-syntax η1 (syntax-rules () ((_ f) (let ((df (delay f))) (λ (x) ((force df) x))))))
+(define-syntax η₁ (syntax-rules () ((_ f) (let ((df (delay f))) (λ (x) ((force df) x))))))
 
 ;; As a warm up, S K I combinators (that can also be useful later)
 (def (S x y z) (x z (y z)))
@@ -2087,7 +2087,7 @@ let Y = f: (x: x x) (x: f (x x));
             ((suffix?)         suffix?)
             ((parents)         parents)
             (else #f))))
-       (self (η1 (fix (record (#f spec)) (force effective-mod-ext*)))))
+       (self (η₁ (fix (record (#f spec)) (force effective-mod-ext*)))))
     self))
 
 #;(begin (for-each (lambda (x y) (display x) (display ": ") (display y) (newline))

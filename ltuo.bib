@@ -315,9 +315,19 @@ Instructions for bibliography assistant:
     is Teitelman’s introduction of ADVISE, a facility a function with new behavior:
     advices to be run before or after the function, or somehow wrapping it,
     that you add or remove dynamically.
-    This would later inspire Cannon 1979’s method combinations.
+    The “somehow wrapping it” though was a happy accident of how the implementation
+    of ADVISE binds the previous function results to VALUE,
+    dynamic variable that subsequent after methods can read or write.
+    This was used and abused, and by the 1971 manual for the Tenex Lisp variant at BBN
+    (but not the 1969 BBN Lisp manual),
+    the variable was renamed !VALUE to avoid unintentional capture,
+    while documenting as an official interface that it could be usefully read and written.
+    The ADVISE facility would later inspire Cannon 1979’s method combinations.
   }
 }
+% https://www.bitsavers.org/pdf/bbn/The_BBN-LISP_System_Apr69.pdf section XIX
+% https://softwarepreservation.computerhistory.org/LISP/bbnlisp/TenexLispRef_Jul71.pdf section XIX
+% https://softwarepreservation.computerhistory.org/LISP/uppsala/Haraldson-LISP_details.pdf section 26
 
 % Simula I back in 1966 has processes and more, but DOES NOT have OO
 @Article{Dahl1966,
@@ -595,6 +605,50 @@ Instructions for bibliography assistant:
   }
 }
 
+% POPL 1975 Plex
+% say "object-oriented" exceptions
+% A good predecessor to Lisp exceptions
+% paper is extremely verbose; while exception handling is well-described,
+% and the ability for users to define exceptions in addition to those provided to the system
+% seems assumed, no mechanism or example of such definition is provided,
+% and in particular, no discussion about the extensibility of such definition
+@InProceedings{Goodenough1975,
+  author={John B. Goodenough},
+  title={Structured exception handling},
+  year={1975},
+  isbn={9781450373517},
+  publisher={Association for Computing Machinery},
+  address={New York, NY, USA},
+  url={https://doi.org/10.1145/512976.512997},
+  doi={10.1145/512976.512997},
+  abstract={In this paper, we define what exception conditions are, discuss the requirements exception handling language features must satisfy, survey and analyze existing approaches to exception handling, and propose some new language features for dealing with exceptions in an orderly and reliable way. Our objective is not solely to put forward a language proposal. It is also to analyze exception handling issues and principles in detail. The proposed language features serve to highlight exception handling issues by showing how deficiencies in current approaches could be remedied in a coherent and orderly way.},
+  booktitle={2nd ACM SIGACT-SIGPLAN Symposium on Principles of Programming Languages},
+  pages={204–224},
+  numpages={21},
+  location={Palo Alto, California},
+  series={POPL '75},
+  note={.
+    Goodenough explains the PLEX approach to exception handling,
+    compared to contemporary approaches.
+    He notably describes Ross’s 1967 “AED free storage package”
+    as having “object-oriented exception handlers”.
+    The description is 1975 retrospective characterization by Goodenough:
+    the original paper (by a PLEX colleague then at MIT)
+    mentions “error” rather than “exceptions” and does not speak of “object”
+    for the reified “zones” of storage allocation;
+    what Goodenough seems to mean by the moniker is that
+    when allocation from a zone fails, an “error procedure FERR” (original term by Ross)
+    associated with the zone is called to handle the error;
+    as opposed to, e.g. lexical scoping of error handlers as in Goodenough’s paper.
+    In my terminology (roughly descended from Wegner 1987),
+    the AED free storage package approach counts as “object-based”,
+    but not “object-oriented” since
+    AED provides no inheritance mechanism through which
+    these object-associated handlers can be extended.
+    However, Goodenough’s use of “object-oriented” shows that the term was “in the air” at the time.
+  }
+}
+
 @TechReport{Sussman1975,
   author={Sussman, Gerald Jay and Steele, Guy Lewis},
   title={Scheme: An Interpreter for Extended Lambda Calculus},
@@ -611,18 +665,6 @@ Instructions for bibliography assistant:
     similar to each other.
   }
 }
-
-% TODO 1975 Hewitt Stereotypes -- uses the word "inherit" a lot, especially with frames.
-% p.101 “The "frame" problem of McCarthy for assertional frames corresponds closely to
-% the problems of "inheritance of attributes" and "default values" for object frames.
-% For example the fable quoted by Minsky about the wolf and the lamb is very close to
-% the frame problems of McCarthy.”
-% Bibliography includes by McCarthy "Programs with Common Sense" (1958),
-% and "Some philosophical problems from the standpoint of Artificial Intelligence" (1969),
-% neither of which has it, and by Minksy "A Framework for Representing Knowledge",
-% that discusses “"default" assignments” and discusses how the wolf is lying in accusing the lamb
-% and the issues with representing knowledge for that.
-
 
 % https://web.archive.org/web/20200511083536/https://hci.stanford.edu/winograd/papers/FrameRep.pdf
 @InCollection{Winograd1975,
@@ -1782,6 +1824,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     So, is it a bad paper? Was it wrong to invite her at OOPSLA? Not at all.
     She is a great influential researcher who deserved her Turing Award.
     But was her talk good about OO? Not at all either.
+    It was a good talk at OOPSLA, just not one about OO.
   }
 }
 

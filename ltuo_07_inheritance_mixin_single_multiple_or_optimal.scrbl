@@ -1901,9 +1901,9 @@ because of the naïve way it does a linear membership scan
 in the tails of the lists for each parent@xnote["."]{
   A worst-case example is, two parameters d and n,
   to find a linear order of size n, more or less evenly divided in d segments of size n/d,
-  and for each segment head S@(ᵢ), define a specification T@(ᵢ) that S@(ᵢ) as its single parent;
-  Make the local precedence order the T@(ᵢ) sorted from shortest to longest ancestry.
-  The T@(ᵢ) serve to defeat the local order property in allowing the S@(ᵢ)
+  and for each segment head Sᵢ, define a specification Tᵢ that Sᵢ as its single parent;
+  Make the local precedence order the Tᵢ sorted from shortest to longest ancestry.
+  The Tᵢ serve to defeat the local order property in allowing the Sᵢ
   to be put on the tails list in this pessimal order.
   Then each candidate Θ(n) times will be consulted an amortized Θ(d) times,
   each time causing
@@ -2086,14 +2086,14 @@ Last but not least, the constructor for a @c{poi} is defined as follows:
             ((suffix?)         suffix?)
             ((parents)         parents)
             (else #f))))
-       (self (η1 (fix (record (#f spec)) (force effective-mod-ext*)))))
+       (self (η₁ (fix (record (#f spec)) (force effective-mod-ext*)))))
     self))
 }
 
 Note how I crucially rely on explicit laziness with @c{delay} and @c{force}
 to avoid constantly recomputing the precedence list and the most specific suffix
 and, after them, the effective modular extension,
-and the target record itself (see the discussion in @secref{USLCP})@xnote["."]{
+and the target record itself (see the discussion in @secref{USPLC})@xnote["."]{
   As discussed then, eager pure functional programming could capture the expected answers
   by using η-conversion instead of laziness to defer evaluation,
   but that would cause a lot of recomputations and
@@ -2290,7 +2290,7 @@ flowchart BT
   Can you prove it coincides with Ducournau’s definition in simpler cases?
 }
 
-@exercise[#:difficulty "Hard"]{
+@exercise[#:difficulty "Hard" #:tag "c4impl"]{
   With the help of AI if needed, implement the C4 algorithm as described above,
   in your favorite programming language.
   Or else, translate the version from Gerbil Scheme into it.
@@ -2302,15 +2302,38 @@ flowchart BT
   to accept flavorful multiple inheritance with C4 linearization as its OO inheritance mechanism.
 }
 
+@exercise[#:difficulty "Hard"]{
+  Use some AI tool to list as many different forms of inheritance
+  not precisely analyzed in this book as possible.
+  Consult earlier and later surveys and taxonomies about object-orientation or inheritance.
+  For instance, consider Comb Inheritance, Reverse Inheritance,
+  Part or Scope Inheritance, etc.
+  Pick one of these forms at random from the list—otherwise,
+  most everyone would pick the first on the list.
+  Analyze that form of inheritance, reading primary sources and maybe even resurrecting old software,
+  until you can reduce its semantics to a few simple constructs in the λ-calculus.
+  Some of those forms might require concepts from later chapters.
+  If possible, reuse the basic bricks I have offered in this book.
+  If not possible, make note of it, and identify
+  what is missing from the conceptual tools I offered.
+  @bold{Extra Credit}:
+  If you find content worth adding to the next edition of this book, send it to me!
+  @bold{NB}: Before AI, this would have been a Research-level exercise; now it is merely Hard.
+}
+
 @exercise[#:difficulty "Research"]{
-  Do the above exercise for some Common Lisp implementation (suggestion: SBCL or CCL),
-  then modify the implementation so C4 becomes the default,
+  Implement C4 in some Common Lisp implementation as in @exercise-ref{c4impl}
+  (suggestion: SBCL or CCL),
+  then modify the implementation so C4 may optionally become the default
+  (based on a flag that remains NIL by default for now for compatibility);
   then figure out how many of the classes in Quicklisp (if any) are incompatible with C4.
-  Fix them, and see if you can make C4 the new default, at least optionally.
+  Fix them, and see if you can make C4 the new default.
   See if you can get buy in from other implementations.
   If needed, argue with Lispers that the inability to mix classes and structs
   makes CLOS inferior in one way to Ruby and Scala, and lack of monotonicity
   makes it inferior in one way to Python or Perl. Use their pride against (and for) them.
+  You will find that while the implementation part is Hard,
+  the social games to get a language improvement accepted are the real Research part.
 }
 
 @exercise[#:difficulty "Research"]{

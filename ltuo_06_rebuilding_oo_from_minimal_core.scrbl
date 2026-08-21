@@ -418,7 +418,7 @@ The difference between the two encodings is subtle but quite interesting:
     every time they call a method to obtain the values they care about.
     These instances are half way between specification and target;
     they use (some variant of) the self-application combinator U,
-    where @c{U x = x x} (see @secref{USLCP}).
+    where @c{U x = x x} (see @secref{USPLC}).
     This is why I call this representation and its variants @emph{U-encodings}.}]
 
 @subsubsection{Y: Double U}
@@ -621,7 +621,7 @@ Indeed, in case of recursive access to the target, this performance enhancement
 can grow exponentially with the depth of the recursion,
 by using a shared computation instead of repeated recomputations
 (see the related discussion on the applicative Y combinator in
-@secref{USLCP}).
+@secref{USPLC}).
 
 If on the other hand, the specification has side-effects
 (which of course supposes the language has side-effects to begin with),

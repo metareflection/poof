@@ -1466,6 +1466,19 @@ while being defined independently (that’s what “orthogonal” means).
 Protocol implementations are modular entities, that are also first-class and extensible
 in CLOS or Clojure, but sadly only second-class and not extensible in Haskell or Rust.
 
+The capability is old: in a live Smalltalk or Lisp image,
+adding a method to a class you don’t own is not a feature of its own,
+but a consequence of the image being editable.
+This ambient capability is also carried in dynamic languages like Ruby and Python,
+where it surfaces as global “monkey patching”
+(a regular idiom for Rubyists, even after the language added its scoped “refinements” in 2013;
+an idiom frowned upon by Pythonistas).
+An interesting case is that of Objective-C:
+a static language (program structure fixed at compile-time)
+inspired by the dynamic language Smalltalk,
+it had to reify this capability as a named construct, “categories”—borrowing
+the word from Smalltalk’s purely organizational method categories.
+
 @subsection[#:tag "GF"]{Generic Functions}
 
 In CLOS as opposed to Clojure, protocols are informal (external, fourth-class) groupings
