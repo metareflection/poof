@@ -418,7 +418,7 @@ The difference between the two encodings is subtle but quite interesting:
     every time they call a method to obtain the values they care about.
     These instances are half way between specification and target;
     they use (some variant of) the self-application combinator U,
-    where @c{U x = x x} (see @secref{UPSLC}).
+    where @c{U x = x x} (@secref{UPSLC}).
     This is why I call this representation and its variants @emph{U-encodings}.}]
 
 @subsubsection{Y: Double U}
@@ -496,7 +496,7 @@ There are various advantages and disadvantages to U-encoding compared to Y-encod
     at each method call at runtime, which is slightly more expensive.}
   @item{
     In favor of U-encoding, it keeps prototypes “open”, so you can keep composing them,
-    or using them with new parameters, at runtime, with no extra cost (see @secref{PFCTD}).
+    or using them with new parameters, at runtime, with no extra cost (@secref{PFCTD}).
     By contrast, the Y-encoding forces you to maintain separate specifications and targets,
     and fully instantiate a new target for every configuration of objects before you may use it.}
   @item{
@@ -566,7 +566,7 @@ it is chosen despite the fact that Y-encoding would better suit the specific sit
 And so what worries me is not the prevalence of U-encoding as such:
 it is the apparent broad ignorance among language designers and implementers
 of the existence of this choice, of the distinction between these two encodings,
-and of the broader design space for object representation (see @secref{EOI}).
+and of the broader design space for object representation (@secref{EOI}).
 
 I haven’t run benchmarks, and so I won’t claim that one encoding is better than the other
 in some particular circumstance or another.
@@ -656,9 +656,9 @@ just before the fixpoint, like @c{rproto-wrapper} above@xnote["."]{
 }
 The wrapper, in addition to registering specification metadata like @c{rproto-wrapper},
 could add a @emph{memoization} layer that caches computed field values into a hash-table,
-so they are never computed twice (see @secref{MLY}).
+so they are never computed twice (@secref{MLY}).
 And if the field names are known before instantiation,
-a vector can be used instead of a hash-table for faster access (see @secref{EOI}).
+a vector can be used instead of a hash-table for faster access (@secref{EOI}).
 
 Plenty of earlier or contemporary Prototype OO languages,
 from Director and ThingLab to Self and JavaScript and beyond,
@@ -672,7 +672,7 @@ because the mutation of the internals of the specification, in languages that al
 may interact with the target state and behavior in weird ways.
 This mutation is not usually idiomatic in production code,
 but may be heavily relied upon during interactive development,
-or as part of implementing advanced infrastructure (see @secref{SOO}).
+or as part of implementing advanced infrastructure (@secref{SOO}).
 
 Last but not least, if your choice of representation for specifications and targets
 is such that instantiating a specification may itself issue side-effects such
@@ -777,7 +777,7 @@ leading to much extraneous complexity in their respective typesystems.
 
 Implementers of stateful object systems at runtime may not have realized the conflation of entities,
 because they are too focused on low-level mechanisms for “delegation” or “inheritance”;
-moreover, the near-ubiquitous reliance on U-encoding (see @secref{CfUe} above)
+moreover, the near-ubiquitous reliance on U-encoding (@secref{CfUe})
 may have made them unaware that there are even separate entities to think about.
 By contrast, writers of compilers for languages with second-class Class OO
 may not have realized the conflation because at their
@@ -1054,9 +1054,9 @@ In Class-style, each type element
 carries its own type descriptor.
 To this end, the type descriptor is conflated with the type element
 in the same way that specifications are conflated with their targets
-(see @secref{RC}, @secref{CfR}).
+(@secref{RC}, @secref{CfR}).
 As mentioned before, this can be very cheap when the type elements are records
-(see @secref{CfR}, @secref{SFCTD}): just add a special field with a “magic” key.
+(@secref{CfR}, @secref{SFCTD}): just add a special field with a “magic” key.
 
 In Typeclass-style, by contrast, type descriptors and type elements are kept distinct and separate.
 There is emphatically no conflation.
@@ -1288,7 +1288,7 @@ as they attempt to keep them both (1) sound, and also, inasmuch as possible
 These attempts sometimes succeed, but more often than not utterly fail,
 because computational power and/or logical contradiction emerge
 from unforeseen interactions as the languages grow in complexity over time
-(see @secref{OOTP})@xnote["."]{
+(@secref{OOTP})@xnote["."]{
   Even the C preprocessor, with annoying rules added to “guarantee” termination in finite time,
   ends up allowing arbitrary metaprogramming in practice @~cite{Hirrolot2021}.
   Henry Baker tried to explain it in old posts on USENET that I never understood,
@@ -1666,7 +1666,7 @@ What is the key difference in how client code must be written for each version?
   making a model of single inheritance should be relatively easy.
   Making a model of multiple inheritance, on the other hand can be quite hard,
   especially since there are actually two very different kinds of multiple inheritance,
-  the “flavorless” (as in Smalltalk, C++, Ada) and
+  the “flavorless” (as in Smalltalk, C++, PHP) and
   the “flavorful” (as in CLOS, Ruby, Python, Scala).
   Can you model whichever kinds of multiple inheritance you have used in the past, if any?
   Or invent your own, if you are not familiar with either?

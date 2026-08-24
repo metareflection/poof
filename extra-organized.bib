@@ -76,7 +76,7 @@
   abstract={The semantics are defined for a number of meta-instructions which perform operations essential to the writing of programs in multiprogrammed computer systems. These meta-instructions relate to par
   allel processing, protecting of separate computations, program debugging, and the sharing among users of memory segments and other computing objects, the names of which are hierarchically structured. The language sophistication contemplated is midway between an assembly language and an advanced algebraic language.},
   journal={Commun. ACM},
-  month=Mar,
+  month=mar,
   pages={143–155},
   numpages={13},
   note={.
@@ -91,7 +91,7 @@
   volume={14},
   number={4},
   pages={28–31},
-  month={4},
+  month=apr,
   year={1968},
   url={https://www.melconway.com/Home/Committees_Paper.html},
   note={Original statement of Conway’s law; relevant to the relation between modular software structure and the communication structure of the organizations that build it.}
@@ -149,7 +149,7 @@
   author={David A. Fisher},
   title={Control Structures for Programming Languages},
   school={Carnegie Mellon University},
-  month={5},
+  month=may,
   year={1970},
   url={https://cds.cern.ch/record/697456/files/CM-P00068047.pdf},
   note={Early argument that control structures should be abstractions rather than a fixed language inventory; useful historical context for extensible language mechanisms.}
@@ -282,7 +282,7 @@
   title={Viewing Control Structures as Patterns of Passing Messages},
   number={AI Memo 410},
   institution={MIT Artificial Intelligence Laboratory},
-  month={12},
+  month=dec,
   year={1976},
   url={https://dspace.mit.edu/handle/1721.1/6272},
   note={Primary statement of the actor/message-passing view of control; useful for distinguishing the actor lineage from object-oriented dispatch and inheritance.}
@@ -303,6 +303,29 @@
     Computing Center as Publication No. 559. Useful as an early primary source
     for the development of BETA and for determining the terminology used by
     the Simula/BETA school before “object-oriented” became standard.
+  }
+}
+
+@Article{Liskov1977,
+  author={Barbara Liskov and Alan Snyder and Russell Atkinson and
+    Craig Schaffert},
+  title={Abstraction Mechanisms in CLU},
+  journal={Communications of the ACM},
+  volume={20},
+  number={8},
+  pages={564--576},
+  year={1977},
+  month=aug,
+  doi={10.1145/359763.359789},
+  url={https://web.eecs.umich.edu/~weimerw/2011-6610/reading/liskov-clu-abstraction.pdf},
+  note={
+    Presents CLU's mechanisms for procedural, data and control abstraction.
+    In particular, a cluster is a separately compiled module encapsulating
+    the representation and operations of an abstract type, and clusters may
+    be parameterized to define generic abstractions.
+    Clusters are not first-class values: their use and instantiation belong
+    to the static module and type structure rather than ordinary run-time
+    computation.
   }
 }
 
@@ -394,16 +417,25 @@
   note={Compact statement of Smalltalk’s uniform object and message model, useful as a primary source for the Smalltalk tradition rather than later folklore.}
 }
 
-% No online copy seems available (says Medley documentation)
-@TechReport{Bobrow1982LOOPS,
-  author={Daniel G. Bobrow and Mark Stefik},
-  title={LOOPS: Data and Object Oriented Programming for Interlisp},
-  institution={Xerox Palo Alto Research Center},
-  year={1982},
-  note={Technical report.
-    Describes the LOOPS object-oriented programming system for Interlisp,
-    including multiple inheritance, active values, composite objects,
-    and knowledge representation facilities.
+@Book{Liskov1981,
+  author={Barbara Liskov and Russell Atkinson and Toby Bloom and
+    J. Eliot B. Moss and Craig Schaffert and Robert Scheifler and
+    Alan Snyder},
+  title={CLU Reference Manual},
+  series={Lecture Notes in Computer Science},
+  volume={114},
+  publisher={Springer},
+  address={Berlin, Germany},
+  year={1981},
+  isbn={978-3-540-10836-8},
+  doi={10.1007/BFb0035014},
+  note={
+    Definitive reference manual for CLU.
+    Cluster definitions implement abstract types and may be parameterized,
+    but actual parameters used to instantiate generated types must be
+    constants computable at compile time.
+    Thus CLU's cluster mechanism provides static parametric modularity,
+    rather than first-class modules selectable or composed at run time.
   }
 }
 
@@ -909,7 +941,7 @@
   author={Alan Snyder},
   title={The Essence of Objects: Common Concepts and Terminology},
   year={1991},
-  month=june,
+  month=jun,
   numpages={24},
   keywords={abstraction, object-oriented programming, object-oriented technology, requests, services},
   url={https://shiftleft.com/mirrors/www.hpl.hp.com/techreports/91/HPL-91-50.pdf},
@@ -946,7 +978,7 @@
   title={Dylan: An Object-Oriented Dynamic Language},
   number={Eastern Research and Technology Report},
   institution={Apple Computer},
-  month={4},
+  month=apr,
   year={1992},
   url={https://opendylan.org/books/drm/},
   note={Primary design report for Dylan’s CLOS-influenced object system, including generic functions, multiple inheritance and class linearization.}
@@ -1359,7 +1391,7 @@
   series={DAIMI PB},
   number={549},
   institution={University of Aarhus, Department of Computer Science},
-  month={3},
+  month=mar,
   year={2000},
   doi={10.7146/dpb.v29i549.7654},
   url={https://tidsskrift.dk/daimipb/Article/view/7654},
@@ -1695,7 +1727,7 @@
   number={9},
   pages={233-243},
   year={2000},
-  month=Sep,
+  month=sep,
   keywords={call-by-name ; call-by-value ; sequent calculus ; CPS-translations ; Curry-Howard-de Bruijn proof-as-program correspondence ; duality ; lambda-calculus},
   pdf={https://inria.hal.science/inria-00156377v1/file/icfp-CuHer00-duality_errata.pdf},
   hal_id={inria-00156377},
@@ -1797,7 +1829,7 @@
   author={Yaron Minsky},
   title={The ML sweet spot},
   year=2008,
-  month=April,
+  month=apr,
   url={https://blog.janestreet.com/the-ml-sweet-spot/},
   lastchecked={2021-03-14}
 }

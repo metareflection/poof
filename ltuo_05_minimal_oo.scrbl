@@ -32,7 +32,7 @@ To make it clearer what kind of computational objects I am talking about,
 I will be using semi-formal types:
 purely human-enforced design-patterns, what I previously called “fourth-class” entities.
 I leave a coherent automated “second-class” typesystem as an exercise to the reader;
-still I later offer some guidance and references to relevant literature (see @secref{TfOO}).
+still I later offer some guidance and references to relevant literature (@secref{TfOO}).
 
 Now, extending some computation returning some value of type @c{V},
 simply consists in doing some more computation, starting from that value,
@@ -1272,15 +1272,15 @@ for the same reasons@xnote["."]{
   that will confuse the untrained eye.
   First, I am currently discussing a variant of Prototype OO,
   as in Self, Jsonnet, Nix, JavaScript, where the @c{self} or @c{this}
-  is indeed the open recursion variable (see @secref{RPOO});
+  is indeed the open recursion variable (@secref{RPOO});
   by contrast, in Class OO language, the modularly incrementally defined entity
   is a type descriptor, a record, and the actual open recursion variable would instead
   be something like @c{Self}, @c{MyType} or @c{this.type},
-  though there is even less standardization in this area (see @secref{RCOO}).
+  though there is even less standardization in this area (@secref{RCOO}).
   Second and much more subtly, in the JavaScript standard,
   and in the implementation of most (but not all) low-level OO languages,
   @c{this} is a variable often used in conjunction with the U combinator
-  instead of the Y combinator as above (see @secref{CfUe}).
+  instead of the Y combinator as above (@secref{CfUe}).
   Many people also (incorrectly, in my book—and this is my book) use @c{self} with the U combinator.
   For reasons that will become obvious (again, see @secref{CfUe}),
   I use @c{half} in conjunction with the U combinator,
@@ -1323,7 +1323,7 @@ thus the contravariant @c{c p t s} and @c{p c s t} orders are slightly unaesthet
 Meanwhile, the left-to-right or right-to-left flow of information
 should match the general style of the rest of your language or its standard library,
 the order of the parents in the class definition syntax, and/or
-the order in which you store the precedence list (see @secref{MI}).
+the order in which you store the precedence list (@secref{MI}).
 
 @subsection{Closing Modular Extensions}
 
@@ -1481,7 +1481,7 @@ and eventually build a closed modular extension that you can instantiate.
 
 Now, where performance or space matters,
 you would use an encoding of records-as-structures instead of records-as-functions
-(see @secref{EOI}).
+(@secref{EOI}).
 Then, instead of calling the record as a function with an identifier,
 you would invoke a dereference function with the record as first argument
 and the identifier as second argument.

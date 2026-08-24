@@ -5,6 +5,9 @@ Lambda, the Ultimate Paradigm
 Slides for presentation at the European Lisp Symposium, 2026-05-11
   https://european-lisp-symposium.org/2026/
 
+Video:
+  https://youtu.be/rvovixO3cO4
+
 To compile it, use:
   racket slides-2026-els.rkt > build/slides-2026-els.html
 

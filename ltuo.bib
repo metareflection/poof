@@ -1,32 +1,32 @@
 %%% Bibliography, roughly sorted by year of publication
 % (See TODO at the end for more)
 
-Instructions for bibliography assistant:
-* Must be valid BibTeX.
-* Capitalize Article Book InCollection InProceedings, etc.
-* AuthorYYYY format, without suffix, unless needed to disambiguate.
-  If needed to disambiguate, then add suffix with most distinguishing word
-  on each of the ambiguous papers, e.g. Kleene1936Metamathematics Kleene1936Recursive.
-* Author names in First Last instead of Last, First style where possible,
-  but keep commas (and ands) that are required by BibTex format.
-* Include all standard entries when available and meaningful for that kind of BibTeX entry and not redundant with other entry:
-  author title booktitle editor journal year month school institution organization publisher isbn issn chapter pages eid numpages location number volume series address edition howpublished type
-* Always include doi= if available, and url= if available (no linebreak)
-* Only include a URL that includes the full text in free access (PDF, PS, etc.), at least borrowable,
-  don’t include a URL that merely repeats the DOI with unless it includes a free-access full text.
-* If the fulltext is paywalled, try a sci-hub.ru prefix or archive.org search to see if available there.
-  Often, the book collecting the proceedings of a conference is available on archive.org or z-library.sk
-  rather than the individual article itself. Sometimes, someone has the full text on github.
-* Prefer Webpage (with lastchecked={YYYY-MM-DD} entry) over Online or Misc where applicable.
-* attribute={value}, --- no spaces immediately around =
-* Two spaces indentation for entries, 4 spaces for multiline note content.
-* note= as last entry, with explanation for relevance to the topic at hand.
-   Linebreak at the end of each note sentence, and
-   before 80 characters after end of semantic sentence unit.
-   Prefer Unicode characters to TeX escape sequences.
-* Don’t make up data. If you don’t have the data, leave the corresponding entry empty.
+% Instructions for bibliography assistant:
+% * Must be valid BibTeX.
+% * Capitalize Article Book InCollection InProceedings, etc.
+% * AuthorYYYY format, without suffix, unless needed to disambiguate.
+%   If needed to disambiguate, then add suffix with most distinguishing word
+%   on each of the ambiguous papers, e.g. Kleene1936Metamathematics Kleene1936Recursive.
+% * Author names in First Last instead of Last, First style where possible,
+%   but keep commas (and ands) that are required by BibTex format.
+% * Include all standard entries when available and meaningful for that kind of BibTeX entry and not redundant with other entry:
+%   author title booktitle editor journal year month school institution organization publisher isbn issn chapter pages eid numpages location number volume series address edition howpublished type
+% * Always include doi= if available, and url= if available (no linebreak)
+% * Only include a URL that includes the full text in free access (PDF, PS, etc.), at least borrowable,
+%   don’t include a URL that merely repeats the DOI with unless it includes a free-access full text.
+% * If the fulltext is paywalled, try a sci-hub.ru prefix or archive.org search to see if available there.
+%   Often, the book collecting the proceedings of a conference is available on archive.org or z-library.sk
+%   rather than the individual article itself. Sometimes, someone has the full text on github.
+% * Prefer WebPage (with lastchecked={YYYY-MM-DD} entry) over Online or Misc where applicable.
+% * attribute={value}, --- no spaces immediately around =
+% * Two spaces indentation for entries, 4 spaces for multiline note content.
+% * note= as last entry, with explanation for relevance to the topic at hand.
+%    Linebreak at the end of each note sentence, and
+%    before 80 characters after end of semantic sentence unit.
+%    Prefer Unicode characters to TeX escape sequences.
+% * Don’t make up data. If you don’t have the data, leave the corresponding entry empty.
 
-  @preamble{}
+% @preamble{}
 
 %% 1843
 
@@ -36,18 +36,18 @@ Instructions for bibliography assistant:
 @InCollection{Lovelace1843,
   author={Augusta Ada Lovelace},
   booktitle={Richard Taylor’s Scientific Memoirs},
-  title={Notes [on translation of Luigi Federico Menebrae’s paper on Babbage’s Analytical Engine]},
+  title={Notes [on translation of Luigi Federico Menabrae’s paper on Babbage’s Analytical Engine]},
   pages={666--731},
-  month=August,
+  month=aug,
   year=1843,
   url={https://www.google.com/books/edition/Scientific_Memoirs_Selected_from_the_Tra/qsY-AAAAYAAJ?gbpv=1&pg=PA666},
   note={.
-    This paper is the verily the foundation of all Computer Science,
+    This paper is verily the foundation of all Computer Science,
     which should rightfully be called by the name Lovelace baptized it:
     “the science of operations”.
     Ada Augusta King, Countess of Lovelace, translates to English
     an article (in French) about the Babbage Analytical Engine,
-    by Luigi Menebrae, who would later become Prime Minister of newly-unified Italy;
+    by Luigi Menabrae, who would later become Prime Minister of newly-unified Italy;
     and her translator’s notes are fantastic.
     Only her initials appear (A.A.L, at one point mistyped A.L.L.),
     because a woman, especially a noble one, shall not write, especially not on such lowly topics.
@@ -216,7 +216,7 @@ Instructions for bibliography assistant:
   institution={MIT Artificial Intelligence Project},
   type={AI Memo},
   number={57},
-  month={October},
+  month=oct,
   year={1963},
   url={https://dspace.mit.edu/handle/1721.1/6111},
   note={.
@@ -312,8 +312,8 @@ Instructions for bibliography assistant:
   url={https://dspace.mit.edu/bitstream/handle/1721.1/6905/AITR-221.pdf},
   note={.
     This thesis is very rich in ideas, but the one that matters most for OO
-    is Teitelman’s introduction of ADVISE, a facility a function with new behavior:
-    advices to be run before or after the function, or somehow wrapping it,
+    is Teitelman’s introduction of ADVISE, a facility for extending a function with new behavior:
+    advice to be run before or after the function, or somehow wrapping it,
     that you add or remove dynamically.
     The “somehow wrapping it” though was a happy accident of how the implementation
     of ADVISE binds the previous function results to VALUE,
@@ -344,7 +344,7 @@ Instructions for bibliography assistant:
   doi={10.1145/365813.365819},
   abstract={This paper is an introduction to SIMULA, a programming language designed to provide a systems analyst with unified concepts which facilitate the concise description of discrete event systems. A system description also serves as a source language simulation program. SIMULA is an extension of ALGOL 60 in which the most important new concept is that of quasi-parallel processing.},
   journal={Commun. ACM},
-  month={sep},
+  month=sep,
   pages={671--678},
   numpages={8},
   note={.
@@ -415,13 +415,44 @@ Instructions for bibliography assistant:
     (user (2x), calculus (5x), computation, retrieval, algebra (4x), terminal),
     and two articles use the word “object” a lot,
     but the word “object-oriented” appears just once, in the article by
-    Robert J. “Rusty” Bobrow, younger brother of Daniel, also working on BBN Lisp,
+    Robert J. “Rusty” Bobrow.
+    Robert, younger brother of Daniel, also working on BBN Lisp,
     informally describes his work on a data management system:
     “there is no inherent antagonism between the relational point of view and
     the object-oriented network viewpoint in database management”,
     by which he refers to what we would now call graph databases,
     not to object-oriented programming.
     Still, the word was in the air, if not yet the technical meaning.
+  }
+}
+
+@TechReport{Dennis1972,
+  author={Jack B. Dennis},
+  title={Modularity},
+  institution={Project MAC, Massachusetts Institute of Technology},
+  number={Computation Structures Group Memo 70},
+  address={Cambridge, MA, USA},
+  year={1972},
+  month=jun,
+  url={https://csg.csail.mit.edu/pubs/memos/Memo-70/Memo-70.pdf},
+  note={
+    One of the very earliest papers on the notion of modularity as such.
+    Dennis defines modularity as follows:
+    “We take the following statements to be the objectives of modular programming:
+    1. One must be able to convince himself of the correctness of a program module,
+    independently of the context of its use in building larger units of software.
+    2. One must be able to conveniently put together program modules written under
+    different authorities without knowledge of their inner workings.”
+    Dennis further insists modularity is a property of a computer system,
+    and must be internal (my word) to the “linguistic level” of the computer system.
+    Dennis compares the modularity situation in Fortran, Algol 60, PL/I, Algol 68, Lisp,
+    and at another level discusses Multics and dynamic linking. He cites Simula.
+    He correctly identifies the issue with that of managing free and bound variables,
+    and offers as a basic model to represent modular programs
+    deterministic graph rewrite evaluation with static scoping,
+    which anticipates ideas later associated with object capability models.
+    Notes prepared for a course at the Technical University of Munich in February 1972,
+    later collected and published as “Software Engineering: An Advanced Course” in 1975.
   }
 }
 
@@ -453,7 +484,7 @@ Instructions for bibliography assistant:
   doi={10.1145/361598.361623},
   abstract={This paper discusses modularization as a mechanism for improving the flexibility and comprehensibility of a system while allowing the shortening of its development time. The effectiveness of a “modularization” is dependent upon the criteria used in dividing the system into modules. A system design problem is presented and both a conventional and unconventional decomposition are described. It is shown that the unconventional decompositions have distinct advantages for the goals outlined. The criteria used in arriving at the decompositions are discussed. The unconventional decomposition, if implemented with the conventional assumption that a module consists of one or more subroutines, will be less efficient in most cases. An alternative approach to implementation which does not have this effect is sketched.},
   journal={Commun. ACM},
-  month={dec},
+  month=dec,
   pages={1053--1058},
   numpages={6},
   keywords={modules, software, KWIC index, modularity, software engineering, software design},
@@ -521,48 +552,6 @@ Instructions for bibliography assistant:
 }
 
 %% 1975
-
-% https://link.springer.com/chapter/10.1007/3-540-07168-7_77
-% InBook - fix bug
-@Misc{Dennis1975,
-  author="Dennis, Jack B.",
-  editor="Bauer, F. L.
-  and Dennis, J. B.
-  and Waite, W. M.
-  and Gotlieb, C. C.
-  and Graham, R. M.
-  and Griffiths, M.
-  and Helms, H. J.
-  and Morton, B.
-  and Poole, P. C.
-  and Tsichritzis, D.",
-  title="Modularity",
-  bookTitle="Software Engineering: An Advanced Course",
-  year="1975",
-  publisher="Springer Berlin Heidelberg",
-  address="Berlin, Heidelberg",
-  pages="128--182",
-  isbn="978-3-540-37502-9",
-  doi="10.1007/3-540-07168-7_77",
-  url="https://doi.org/10.1007/3-540-07168-7_77",
-  note={.
-    One the very earliest papers on the notion of modularity as such.
-    Dennis defines modularity as follows:
-    “We take the following statements to be the objectives of modular programming:
-    1. One must be able to convince himself of the correctness of a program module,
-    independently of the context of its use in building larger units of software.
-    2. One must be able to conveniently put together program modules written under
-    different authorities without knowledge of their inner workings.”
-    Dennis further insists modularity is a property of a computer system,
-    and must be internal (my word) to the “linguistic level” of the computer system.
-    Dennis compares the modularity situation in Fortran, Algol 60, PL/I, Algol 68, Lisp,
-    and at another level discusses Multics and dynamic linking. He cites Simula.
-    He correctly identifies the issue with that of managing free and bound variables,
-    and offers as a basic model to represent modular programs
-    deterministic graph rewrite evaluation with static scoping,
-    which anticipates object capability models.
-  }
-}
 
 @InProceedings{DeRemer1975,
   author={Frank DeRemer and Hans Kron},
@@ -720,7 +709,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   author={Daniel G. Bobrow and Terry Winograd},
   title={An Overview of KRL, A Knowledge Representation Language},
   year={1976},
-  month={July},
+  month=jul,
   day={4},
   institution={Xerox PARC},
   number={CSL-76-4},
@@ -755,9 +744,10 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     A very rich system for the day.
     The paper demonstrates the birth of OO as an interaction between Bobrow and Kay:
     “inheritance of properties” is used definitionally when Winograd 1975 used it descriptively,
-    and “object-oriented” is used three times, though Kay is only cited indirectly through
-    a paper of his Learning Research Group that doesn’t use the expression.
-    (multi-process oriented is also used three times, but with slightly different words each time.)
+    and “object-oriented” is used three times, though Kay across-the-hall colleague of Bobrow,
+    is only cited indirectly through a paper of his Learning Research Group
+    that doesn’t use the expression.
+    (Multi-process oriented is also used three times, but with slightly different words each time.)
     If anything, Winograd tries to do too much, the system is too complex,
     and some of the solutions it offers are so general that they still require the user
     to do a lot of the work (e.g. to properly handle multiple inheritance),
@@ -771,7 +761,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   journal={IEEE Transactions on Software Engineering},
   title={A Language Extension for Controlling Access to Shared Data},
   year={1976},
-  month=April,
+  month=apr,
   volume={SE-2},
   number={4},
   pages={277-285},
@@ -828,7 +818,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   author={Douglas T. Ross},
   title={Toward foundations for the understanding of type},
   year={1976},
-  month=March,
+  month=mar,
   isbn={9781450378987},
   publisher={Association for Computing Machinery},
   address={New York, NY, USA},
@@ -893,10 +883,10 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % Uses the word "prototypes", and has no classes. And multiple inheritance.
 @InProceedings{Borning1977,
   author={Alan Hamilton Borning},
-  title={{ThingLab} --- an Object-Oriented System for Building Simulations using Constraints},
+  title={ThingLab — an Object-Oriented System for Building Simulations using Constraints},
   booktitle={5th International Conference on Artificial Intelligence},
   pages={497--498},
-  month={August},
+  month=aug,
   year={1977},
   url={https://www.ijcai.org/Proceedings/77-1/Papers/085.pdf},
   note={.
@@ -1027,7 +1017,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 @PhDThesis{Borning1979,
   author={Alan Hamilton Borning},
-  title={{ThingLab} --- A Constraint-Oriented Simulation Laboratory},
+  title={ThingLab --- A Constraint-Oriented Simulation Laboratory},
   biburl={https://www.bibsonomy.org/bibtex/263cae088243a5fd341d7d634d8176bb3/n770},
   publisher={Palo Alto Research Center XEROX},
   url={https://constraints.cs.washington.edu/ui/thinglab-tr.pdf},
@@ -1084,9 +1074,9 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 @TechReport{Hewitt1979,
   title={Security and Modularity in Message Passing},
-  author={Hewitt, Carl and Attardi, Giuseppe and Lieberman, Henry},
+  author={Carl Hewitt and Giuseppe Attardi and Henry Lieberman},
   year={1979},
-  month=February,
+  month=feb,
   institution={MIT Artificial Intelligence Laboratory},
   number={AI-WP-180},
   url={https://dspace.mit.edu/handle/1721.1/41147},
@@ -1209,7 +1199,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   author={Daniel Weinreb and David A. Moon},
   title={Lisp Machine Manual},
   edition={3rd},
-  month={March},
+  month=mar,
   year={1981},
   publisher={Massachusetts Institute of Technology},
   address={Cambridge, MA},
@@ -1280,7 +1270,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   doi={10.1145/966873.806468},
   abstract={This paper describes a new technique for organizing software which has been used successfully by the Xerox Star 8010 workstation. The workstation (WS) software is written in an “object-oriented” style: it can be viewed as a system of inter-communicating objects of different object types. Most of the WS software considers object types to be constructed by assembling more primitive abstractions called traits. A trait is a characteristic of an object, and is expressed as a set of operations which may be applied to objects carrying that trait. The traits model of subclassing generalizes the SIMULA-67 model by permitting multiple inheritance paths. This paper describes the relationship of WS software to the traits model and then describes the model itself.},
   journal={ACM SIGOA Newsletter},
-  month={jun},
+  month=jun,
   pages={1--9},
   numpages={9},
   note={.
@@ -1426,7 +1416,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   number={2},
   pages={318--326},
   year={1985},
-  month={June},
+  month=jun,
   doi={10.1007/BF01934377},
   url={https://link.springer.com/article/10.1007/BF01934377},
   note={.
@@ -1627,7 +1617,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     This paper describes the New Flavors system from Symbolics,
     after it acquired the new “generic function” syntax,
     respect for local precedence order, and other niceties.
-    Moon rightfully insists on the modularity advantage of Flavors (already mentionned by Cannon).
+    Moon rightfully insists on the modularity advantage of Flavors (already mentioned by Cannon).
     This is a fantastic explanation on how to do multiple inheritance right, only way too short.
   }
 }
@@ -1766,7 +1756,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   title={The BETA programming language},
   author={Bent Bruun Kristensen and Ole Lehrmann Madsen and Birger Møller-Pedersen and Kristen Nygaard},
   journal={DAIMI Report Series},
-  month=Oct,
+  month=oct,
   number={229},
   year={1987},
   doi={10.7146/dpb.v16i229.7578},
@@ -2073,7 +2063,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   author={Uday Reddy},
   title={Objects as Closures - Abstract Semantics of Object Oriented Languages},
   booktitle={ACM Symposium on LISP and Functional Programming},
-  month={02},
+  month=feb,
   pages={289–-297},
   doi={10.1145/62678.62721},
   year={1988},
@@ -2632,7 +2622,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   institution={School of Computer Science, Carnegie-Mellon University},
   number={CMU-CS-91-143},
   year=1991,
-  month=May,
+  month=may,
   url={https://cl-pdx.com/static/CMU-CS-91-143.pdf},
   note={
     A collection of portable free software utilities in Common Lisp, among which
@@ -2644,7 +2634,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     knowledge of what exactly the code is supposed to mean is gone.
     So after Mark stopped maintaining, it was hard for maintainer to handle the bitrot,
     leading to a reimplementation from scratch, ASDF
-    (for which I seperated and documented a well-defined portability layer).
+    (for which I separated and documented a well-defined portability layer).
   }
 }
 
@@ -2655,11 +2645,14 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   Publisher={MIT Press},
   url={https://direct.mit.edu/books/book/2607/The-Art-of-the-Metaobject-Protocol},
   note={.
-    This classic book describes how the implementation of an OO system
-    can itself use OO, making it extensible using itself,
-    with a few manually tied loops to bootstrap the system.
+    This classic book, often known as AMOP,
+    describes how the implementation of an OO system can itself use OO,
+    making it extensible using itself,
+    which can be used both for richer semantics and higher performance.
+    The feat requires a few manually tied loops to bootstrap the system.
     Beautiful.
-    Many Common Lisp implementations have adopted some variant of this design.
+    Many Common Lisp implementations have adopted some variant of this design,
+    even though it was rejected from the Common Lisp standard itself.
   }
 }
 
@@ -3071,7 +3064,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   author={Guy L. Steele Jr. and Richard P. Gabriel},
   title={The Evolution of Lisp},
   booktitle={Proceedings of the Second ACM SIGPLAN Conference on History of Programming Languages (HOPL-II)},
-  month={March},
+  month=mar,
   year={1993},
   pages={231--270},
   doi={10.1145/155360.155373},
@@ -3176,14 +3169,12 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     because most programmers then (and still now) didn’t have this ability;
     it does briefly cite other OO languages (CLOS, Self, Dylan, Eiffel) and their capabilities,
     but doesn’t dwell on them.
-
     I see no issue with the book itself, but instead with the following it had,
     from people taking the wrong lessons from it—elevating the book as canon and eternal theory.
     The authors are not scientists and don’t claim to be;
     they lack the proper concepts that would bring enlightenment
     (that even scientists were lacking at the time);
     and they do their best with folk explanations that do not constitute theory at all.
-
     Here is a good reason to love design patterns and those who identify them:
     Design patterns are good, very important, essential even, as necessary first steps—to
     notice and identify the drudgery involved in coding software, so it can later
@@ -3195,7 +3186,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     I.e. patterns are fourth class entities manually processed by humans;
     but it is always preferrable, and always possible,
     to instead have first-class or second-class that automate the problem away.
-
     Therefore, in a decent language, there is only One Design Pattern:
     Use, extend, evolve and maintain the language and its libraries of functions and macros.
     But that indeed requires macros, and most languages don’t have them. Lisp does.
@@ -3205,7 +3195,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     lack modularity, and require a completely different language, set of libraries
     and/or mental programming model, compared to regular use of the language,
     making them further unavailable to regular programmers.
-
     Now, even in a decent language, automation can be expensive;
     moreover, learning how to operate automation incurs its own cognitive burden.
     And so sometimes indeed, it is preferrable not to automate the design pattern
@@ -3216,7 +3205,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     than you can afford given your own limited applications, even with AI lowering the costs.
     Being too poor to afford automation is a sad state of affairs—but often it does happen
     and then you’re glad you have patterns.
-
     What is very wrong indeed is being satisfied with just having identified a pattern,
     being unaware of the possibility and necessity of automation or being wilfully blind to it,
     accepting blub languages that make automation unaffordable,
@@ -3274,7 +3262,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 @Article{Sernadas1994,
   author={Costa, J. and Sernadas, Amilcar and Sernadas, Cristina},
   year={1994},
-  month={06},
+  month=jun,
   pages={5-26},
   title={Object inheritance beyond subtyping},
   volume={31},
@@ -3562,7 +3550,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   author={Kim Barrett and Bob Cassels and Paul Haahr and David A. Moon and Keith Playford and P. Tucker Withington},
   title={A Monotonic Superclass Linearization for Dylan},
   journal={OOPSLA},
-  month={oct},
+  month=oct,
   pages={69–82},
   numpages={14},
   year={1996},
@@ -3775,7 +3763,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={https://github.com/alexisread/kevo/tree/main/0.9b6},
   doi={10.1145/243439.243441},
   journal={ACM Comput. Surv.},
-  month={sep},
+  month=sep,
   pages={438--479},
   numpages={42},
   keywords={object-oriented programming, language constructs, delegation, inheritance, incremental modification, programming languages},
@@ -3854,7 +3842,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   title={ECMAScript: A general purpose cross-platform programming language},
   author={ECMA-262},
   year={1997},
-  month=June,
+  month=jun,
   url={https://ecma-international.org/publications-and-standards/standards/ecma-262/},
   note={.
     This is the ECMAScript language specification, 1st edition,
@@ -4042,7 +4030,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 @Article{Chiba2000,
   author={Shigeru Chiba and Gregor Kiczales and John Lamping},
   year={2000},
-  month={11},
+  month=nov,
   title={Avoiding Confusion in Metacircularity: The Meta-Helix},
   isbn={978-3-540-60954-4},
   journal={Lecture Notes in Computer Science},
@@ -4371,7 +4359,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   Title={Clarification of “object-oriented” (email)},
   URL={https://www.purl.org/stefan_ram/pub/doc_kay_oop_en},
   Year={2003},
-  Month={07},
+  month=jul,
   Day={23},
   lastchecked={2026-02-11},
   note={.
@@ -4447,7 +4435,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   doi={10.1145/1103845.1094815},
   abstract={We identify three programming language abstractions for the construction of reusable components: abstract type members, explicit selftypes, and modular mixin composition. Together, these abstractions enable us to transform an arbitrary assembly of static program parts with hard references between them into a system of reusable components. The transformation maintains the structure of the original system. We demonstrate this approach in two case studies, a subject/observer framework and a compiler front-end.},
   journal={SIGPLAN Not.},
-  month={oct},
+  month=oct,
   pages={41--57},
   numpages={17},
   keywords={Scala, abstract types, classes, components, mixins},
@@ -4614,7 +4602,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   Title={GCL Viewer: a study in improving the understanding of GCL programs},
   School={Eindhoven University of Technology},
   year=2008,
-  month=Aug,
+  month=aug,
   day=31,
   url={https://research.tue.nl/en/studentTheses/gcl-viewer},
   note={.
@@ -4852,7 +4840,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     improvements to algorithms for program representation and analysis.
     The correspondance between program analysis, abstract interpretation, and typesystems,
     may also suggest how this affects the complexity of types for OO
-    in a closed program fit being optimized vs an open program being extended.
+    in a closed program being optimized vs an open program being extended.
   }
 }
 
@@ -5007,7 +4995,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   author={Russell O’Connor},
   title={Polymorphic Update with van Laarhoven Lenses},
   year={2012},
-  month={June},
+  month=jun,
   day={23},
   url={http://r6.ca/blog/20120623T104901Z.html},
   lastchecked={2025-12-01},
@@ -5178,7 +5166,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   author={Emil Ernerfeldt},
   title={The Myth of RAM},
   year={2014},
-  month={April},
+  month=apr,
   day={21},
   url={https://www.ilikebigbits.com/2014_04_21_myth_of_ram_1.html},
   lastchecked={2025-12-01},
@@ -5231,7 +5219,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   title={ECMAScript 2015 Language Specification},
   author={ECMA-262},
   year=2015,
-  month={June},
+  month=jun,
   edition={6th},
   keywords={JavaScript spec specification},
   url={http://www.ecma-international.org/ecma-262/6.0/ECMA-262.pdf},
@@ -5560,7 +5548,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   publisher={Aspect-Oriented Software Association (AOSA)},
   author={Pickering, Matthew and Gibbons, Jeremy and Wu, Nicolas},
   year={2017},
-  month={Apr},
+  month=apr,
   note={.
     The paper generalizes lenses, prisms, traversals and other kinds of “functional optics”
     in terms of profunctors.
@@ -5573,7 +5561,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   author={François-René Rideau},
   title={Climbing Up the Semantic Tower --- at Runtime},
   booktitle={Off the Beaten Track Workshop at POPL},
-  month={January},
+  month=jan,
   year={2018},
   url={https://github.com/fare/climbing},
   note={.
@@ -5711,7 +5699,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 @Article{Prykhodko2021,
   author={Prykhodko, Sergiy and Prykhodko, Natalia and Tatiana, Smykodub},
   year={2021},
-  month={06},
+  month=jun,
   pages={159-172},
   title={A Statistical Evaluation of The Depth of Inheritance Tree Metric for Open-Source Applications Developed in Java},
   volume={46},

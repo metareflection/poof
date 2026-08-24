@@ -1182,3 +1182,8 @@ https://github.com/marcoheisig/fast-generic-functions
 
 CLIM presentation types implemented using the MOP
 https://www.jucs.org/jucs_14_20/an_implementation_of_clim/jucs_14_20_3358_3369_moore.pdf
+
+Failed to reply:
+https://www.quora.com/How-did-Alan-Kays-vision-of-object-oriented-circulate-before-Smalltalk-76-I-saw-papers-by-Bobrow-1971-Robert-the-younger-brother-Goodenough-1975-Ross-1976-Jones-Liskov-1976-ab-using-the-term-I-guess-inspired-by-Kay
+My understanding is that OOZE continuously saved the image. Did Smalltalk-80 also do that? If so, how did they ensure consistency of the image? (database people would speak of “ACID” properties) Could you end up with an inconsistent image?
+By contrast, my understanding of east coast Lisp images is that you have to explicitly dump/save the image, and any change not included in such an explicit save would be lost—but could of course be replayed from file, if saved to a file—Lisp was still primarily file-based, which I understand was the opposite of image-first Smalltalk. Actually, I think Bobrow’s Interlisp tried harder to be both image-based and file-based, but I don’t understand what consistency mechanisms it did or didn’t have.

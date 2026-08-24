@@ -26,7 +26,7 @@ a path from the top of the program state to the method being extended.
 Thus, instead of being “free floating”, your specification will be “located”
 within the context of the greater program state.
 Furthermore, to keep formalizing OO features in terms of pure functional semantics,
-these access paths I will formalize as functional @emph{lenses} (see below).
+these access paths I will formalize as functional @emph{lenses} (see below). @;{TODO secref}
 
 The approach I herein propose to specifying OO software is a potential game-changer,
 with the potential to make OO even more modular than it was thus far:
@@ -673,7 +673,7 @@ in which a method is defined: it can be an instance of any subclass thereof
 Thus the method body must also accept as argument
 the @emph{effective type} (descriptor) of the instance,
 i.e. the target of said subclass (or half-target in U-encoding)—though
-if using dynamic dispatch rather than static dispatch (see @secref{DvSD}),
+if using dynamic dispatch rather than static dispatch (@secref{DvSD}),
 this descriptor can be extracted from the class instance rather than passed as argument.
 
 Yet again, for an @emph{efficient} @c{call-next-method},
@@ -899,13 +899,7 @@ that made multiple inheritance sensible when it otherwise wasn’t.
 
 Flavors notably allowed regular or “primary” methods to be extended in subclasses with
 “before” and “after” methods, respectively called before and after the primary method@xnote[","]{
-  The semantics of before and after methods is quite similar to the concatenation semantics
-  of Simula and Beta, except that the most-specific-first order of before methods
-  and most-specific-last order of after methods is the opposite of the concatenation semantics
-  of Simula. Of course, one could easily define a new method combination
-  that uses the order of Simula, opposite of this default order for before and after methods.
-  Note how the default order used by Lisp works better with the normal OO extension protocol
-  adopted by everyone after Smalltalk.
+  See @secref{Inner} for a comparison with the original concatenation semantics of Simula and Beta.
 }
 that could set up and tear down resources, do logging or permission checking or resource accounting,
 hold and release locks, etc.
@@ -1106,6 +1100,8 @@ each sub-method would be expanded into a separate method.
 
 @subsection{Representing sub-methods}
 
+@XXXX{XXXX}
+
 The best way to store sub-methods would be if there were “funcallable instances”
 (to use CLOS terminology; like instances in T, that are funcallable in general)
 that conflate a function and a record in a single entity.
@@ -1116,8 +1112,8 @@ as I implemented them so far, then funcallable instances wouldn’t work—the f
 call interface is already used for field access
 (unless symbols are excluded from the function’s co-domain, but that’s ugly).
 And since accessing a record value cannot be a function call, you also cannot directly use
-the Y combinator on a record the way we did previously (see @secref{MFCM}),
-but must instead use a slightly different strategy (see @secref{RaR}).
+the Y combinator on a record the way we did previously (@secref{MFCM}),
+but must instead use a slightly different strategy (@secref{RaR}).
 
 Lacking such funcallable instances, we can store sub-method information
 in a record @c{sub-methods} next to the methods being combined.
@@ -1423,6 +1419,72 @@ detail accumulation, etc.,
 that the primary methods can safely rely on.
 Method combinations promote modularity thanks to better factoring of code,
 that allows for the extensibility of code along more independent axes.
+
+@subsection[#:tag "Inner"]{Simula’s @c{inner}: Superclass-Controlled Extension}
+
+The very first OO language, Simula, and its direct successor Beta,
+had a peculiar way of combining methods—or, in their parlance,
+the bodies of classes and virtual procedures. They called it “concatenation semantics”.
+
+@XXXX{XXXXX}
+
+The semantics of before and after methods is quite similar to the
+of Simula and Beta, except that the most-specific-first order of before methods
+and most-specific-last order of after methods is the opposite of the concatenation semantics
+of Simula. Of course, one could easily define a new method combination
+that uses the order of Simula, opposite of this default order for before and after methods.
+Note how the default order used by Lisp works better with the normal OO extension protocol
+adopted by everyone after Smalltalk.
+
+Simula later on also allows each class or procedure
+to define a “suffix” as well as a “prefix”,
+wherein the body of each subclass or subprocedure
+is the “inner” part between this prefix and suffix,
+marked by the @c{inner} keyword as a placeholder.
+Lack of explicit @c{inner} keyword is same as before, as if the keyword was at the end.
+This approach by Simula and its successor Beta @~cite{Kristensen1987}
+(that generalized classes to “patterns” that also covered method definitions the same way;
+except that lack of “inner” means the “do” block cannot be extended anymore,
+like “final” in Java or C++),
+is in sharp contrast with how inheritance is done in almost all other languages,
+that copy Smalltalk.
+The “prefix” makes sense to initialize variables, and to allow procedure definitions
+to be overridden by later more specialized definitions;
+the “suffix” is sufficient to do cleanups and post-processing,
+especially when all communication of information between concatenated code fragments
+happens through side-effects to shared instance variables
+(including, in Algol style, a special variable with the same name as the procedure being defined,
+to store the working return value).
+The entire “inner” setup also makes sense in the context of spaghetti code with GOTOs,
+before Dijkstra made everyone consider them harmful in 1968;
+the reliance on side-effects everywhere also made more sense before
+Lisp, Functional Programming, and eventually concurrency and large distributed systems,
+made people realize side-effects can be more confusing than pure information flow
+through function calls, return values and immutable let bindings.
+But this concatenation semantics is both limited and horribly complex to use
+in the post-1968 context of structured code blocks,
+not to mention post-1970s higher-order functions, etc.
+You could express the modern approach in a roundabout way in Beta,
+by explicitly building a list or nesting of higher-order functions as your only side-effect,
+that re-invert control in a pure way back the way everyone else does it,
+that you call at the end; but that would be an awkward design pattern.
+And so, while Simula was definitely a breakthrough, its particular form of inheritance
+was also a dead-end.
+No one but the Simula inventors wants anything resembling @c{inner}
+for the language they build or use.
+After Smalltalk, languages instead let subclass methods control the context
+for possible call of superclass methods, rather than the other way around.
+Beta behavior is easily expressible with user-defined method combinations
+in CLOS @~cite{Cannon1979 Bobrow1988},
+or can also be retrieved by having methods
+explicitly build an effective method chained the other way around.
+Thus, I can rightfully say that inheritance, and OO,
+were only invented and named through the interaction of
+Bobrow’s Interlisp team and Kay’s Smalltalk team at PARC circa 1976,
+both informed by ideas from Simula, and Minsky’s frames,
+and able to integrate these ideas in their respective
+AI and teachable computing experiments thanks to their dynamic environments,
+considerably more flexible than the static Algol context of Simula.
 
 @subsection{Inherited Interfaces vs Orthogonal Protocols}
 
@@ -1796,7 +1858,7 @@ than with the second (was the source file plain Lisp, or C FFI code, code transp
 Of course, if the operation is commutative (e.g. addition)
 then the order of arguments does not matter, but this is the exception, not the rule.
 
-Like the multiple inheritance that it extends (see @secref{RSaDN}),
+Like the multiple inheritance that it extends (@secref{RSaDN}),
 multiple dispatch relies on the ability to reify the graph nature of computations
 through the generation and equality checking of unique tags,
 which programming languages typically implement by exposing pointer equality

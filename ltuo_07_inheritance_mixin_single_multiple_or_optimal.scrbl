@@ -19,7 +19,7 @@ component parts.
 @subsection{The Last Shall Be First}
 
 What I implemented in the previous chapters is mixin inheritance
-(see @secref{MIXIO}):
+(@secref{MIXIO}):
 the last discovered and least well-known variant of inheritance.
 And yet, I already discussed above that object prototypes with mixin inheritance
 are used to specify software configurations at scale. @;TODO secref
@@ -28,7 +28,7 @@ since I built it in two lines of code, and
 will proceed to build the other variants on top of it.
 
 @subsection{Mixin Semantics}
-I showed above (see @secref{MFCME})
+I showed above (@secref{MFCME})
 that mixin inheritance involves just
 one type constructor @c{ModExt} and two functions @c{fix} and @c{mix},
 repeated here more concisely from the previous chapter:
@@ -101,79 +101,6 @@ to define mixin inheritance.
 Why then ever use single inheritance,
 since it still requires the entities of mixin inheritance in addition to its own?
 Might one not as well directly adopt the simpler and more expressive mixin inheritance?
-
-@subsection{Extending the Previous Method}
-@XXXX{XXXX}
-@subsubsection[#:tag "Inner"]{Simula’s @c{inner}: Superclass-Controlled Extension}
-
-Simula later on also allows each class or procedure
-to define a “suffix” as well as a “prefix”,
-wherein the body of each subclass or subprocedure
-is the “inner” part between this prefix and suffix,
-marked by the @c{inner} keyword as a placeholder.
-Lack of explicit @c{inner} keyword is same as before, as if the keyword was at the end.
-This approach by Simula and its successor Beta @~cite{Kristensen1987}
-(that generalized classes to “patterns” that also covered method definitions the same way;
-except that lack of “inner” means the “do” block cannot be extended anymore,
-like “final” in Java or C++),
-is in sharp contrast with how inheritance is done in almost all other languages,
-that copy Smalltalk.
-The “prefix” makes sense to initialize variables, and to allow procedure definitions
-to be overridden by later more specialized definitions;
-the “suffix” is sufficient to do cleanups and post-processing,
-especially when all communication of information between concatenated code fragments
-happens through side-effects to shared instance variables
-(including, in Algol style, a special variable with the same name as the procedure being defined,
-to store the working return value).
-The entire “inner” setup also makes sense in the context of spaghetti code with GOTOs,
-before Dijkstra made everyone consider them harmful in 1968;
-the reliance on side-effects everywhere also made more sense before
-Lisp, Functional Programming, and eventually concurrency and large distributed systems,
-made people realize side-effects can be more confusing than pure information flow
-through function calls, return values and immutable let bindings.
-But this concatenation semantics is both limited and horribly complex to use
-in the post-1968 context of structured code blocks,
-not to mention post-1970s higher-order functions, etc.
-You could express the modern approach in a roundabout way in Beta,
-by explicitly building a list or nesting of higher-order functions as your only side-effect,
-that re-invert control in a pure way back the way everyone else does it,
-that you call at the end; but that would be an awkward design pattern.
-And so, while Simula was definitely a breakthrough, its particular form of inheritance
-was also a dead-end.
-No one but the Simula inventors wants anything resembling @c{inner}
-for the language they build or use.
-After Smalltalk, languages instead let subclass methods control the context
-for possible call of superclass methods, rather than the other way around.
-Beta behavior is easily expressible with user-defined method combinations
-in CLOS @~cite{Cannon1979 Bobrow1988},
-or can also be retrieved by having methods
-explicitly build an effective method chained the other way around.
-Thus, I can rightfully say that inheritance, and OO,
-were only invented and named through the interaction of
-Bobrow’s Interlisp team and Kay’s Smalltalk team at PARC circa 1976,
-both informed by ideas from Simula, and Minsky’s frames,
-and able to integrate these ideas in their respective
-AI and teachable computing experiments thanks to their dynamic environments,
-considerably more flexible than the static Algol context of Simula.
-
-In the end, Simula should count as a precursor to OO, or at best an early draft of it—but
-either way, not the real, fully-formed concept.
-
-Dahl and Nygaard never invented, implemented, used or studied OO as most of us know it:
-not then with Simula, not later with Beta, and never later in their life either
-(though kept innovating with their form of proto-OO).
-
-Yet Dahl and Nygaard made the single key contribution thanks to which
-the later greater discovery of OO became not just possible, but necessary.
-They rightfully deserve to be gently mocked for getting so close to a vast continent they sought
-yet failing to ever set foot on it.
-But this only makes me admire them more for having crossed an uncharted ocean
-the vast extent of which no one suspected, beyond horizons past which no one dared venture,
-to find a domain no one else dreamed existed.
-
-
-@subsubsection{Smalltalk’s @c{super}: Resending to the Superclass}
-@subsubsection{Lisp’s @c{call-next-method}: Generalizing to Multiple Inheritance}
 
 @subsection[#:tag "CMSI"]{Comparing Mixin and Single Inheritance}
 
@@ -402,7 +329,7 @@ across all the subclasses of a given class.
 
 @subsection[#:tag "C&IS4MI"]{Correct and Incorrect Semantics for Multiple Inheritance}
 
-With multiple inheritance (see @secref{MULIO}), a specification can declare
+With multiple inheritance (@secref{MULIO}), a specification can declare
 a list of parent specifications that it inherits from.
 Each specification may then contribute methods to the overall definition of the target.
 The list can be empty in which case the specification is a base specification
@@ -423,7 +350,7 @@ which would result in an error, at compile-time in the more static systems.
 Flavors @~cite{Cannon1979} identified the correct solution,
 that involves cooperation and harmony rather than conflict and chaos.
 Failing to learn from Flavors, C++ @~cite{Stroustrup1989}
-(and after it Ada) not only adopts the conflict view of Smalltalk,
+(and after it PHP) not only adopts the conflict view of Smalltalk,
 it also, like Simula @~cite{Krogdahl1985} or CommonObjects @~cite{Snyder1986},
 tries to force the ancestry DAG into a tree!
 Self initially tried a “sender path” resolution method,
@@ -433,7 +360,7 @@ without backtracking @~cite{Chambers1991}.
 The authors eventually recognized how wrongheaded that was,
 only to revert to—sadly—the conflict view without resolution heuristic @~cite{Ungar2007}@xnote["."]{
   Like the most naive variant of the “visitor pattern”
-  approach to multiple dispatch (see @secref{MD}),
+  approach to multiple dispatch (@secref{MD}),
   Self’s once “sender path” approach to multiple inheritance has tunnel vision,
   or anterograde amnesia: once it visits a branch of the inheritance DAG,
   it becomes unable to capture semantics contributed by concurrent branches of the DAG.
@@ -619,7 +546,7 @@ There is no good answer;
 any data loss increases linearly as diamonds get wider or more numerous;
 meanwhile any duplication gets exponentially worse as diamonds stack,
 e.g. with E having parents D1 and D2 sharing parent C, and so on.
-That is why Mesa, Self, C++, Ada, PHP, etc.,
+That is why Mesa, Self, C++, PHP, etc.,
 view multiple distinct methods as a “conflict”, and issue an error
 if an attempt is made to rely on a method definition from specification C’s parents;
 C has to provide a method override,
@@ -632,7 +559,7 @@ but it is probably the single least useful among all possible consistent behavio
 @item{The approach drops all available information in case of conflict;
       users are then forced to otherwise reimplement the functionality of all but at most one
       of the methods that could have been combined,
-      thereby failing in large part the Criterion for Extensibility (see @secref{CfE}).}
+      thereby failing in large part the Criterion for Extensibility (@secref{CfE}).}
 @item{Even this reimplementation in general is impractical or at times impossible;
       the whole point of modularity is that
       the person doing the extensions is not an expert in the code being extended
@@ -642,7 +569,7 @@ but it is probably the single least useful among all possible consistent behavio
       even when the code is available, understandable and legally copyable,
       it may not be affordable to keep up with changes in code from a different project,
       with people moving at a speed and in a direction incompatible with one’s own schedule.
-      This is a big failure for Modularity (see @secref{CfM}).}
+      This is a big failure for Modularity (@secref{CfM}).}
 @item{Users trying to circumvent the broken inheritance mechanism still have to invent their
       own system to avoid the same exponential duplication problem that the
       implementers of the OO system have punted on.
@@ -659,7 +586,7 @@ Which means, better behavior has to @emph{not} be simply based on
 synthesizing a child’s modular definition from its parents’ modular definition.
 
 @; TODO See also Malayeri & Aldrich’s 2009 "CZ: Multiple Inheritance without Diamonds" and its citations 43, 46.
-@; TODO Discuss Snyder’s idiotic "make ancestry a tree" idea reprised by C++ and Ada.
+@; TODO Discuss Snyder’s idiotic "make ancestry a tree" idea reprised by C++.
 @; TODO refer to later implementation of conflict on top of method combination. @secref{MC}
 
 @subsubsection{Cooperation not Conflict}
@@ -858,7 +785,7 @@ and tries to call the super method (either through an override, or through the l
 One advantage of this approach is that it does not affect the runtime semantics of methods
 in Class OO, it only filters code at compile-time (though with prototypes, this “compile-time”
 might be interleaved with runtime).
-Using method combinations (see @secref{MC}),
+Using method combinations (@secref{MC}),
 one could even distinguish “base” sub-methods that use conflict,
 from “override” sub-methods that use linearization.`
 However, whether using one of these designs is worth it depends crucially on its costs and benefits.
@@ -1447,7 +1374,7 @@ because most OO hierarchies are shallow@xnote["."]{
 }
 
 Multiple inheritance otherwise involves the same runtime performance issues as mixin inheritance
-compared to single inheritance (see @secref{CMSI}):
+compared to single inheritance (@secref{CMSI}):
 in general, method or field access requires a hash-table lookup
 instead of a fixed-offset array lookup, which is typically 10-100 times slower.
 
@@ -1509,7 +1436,7 @@ prefer to use or implement single inheritance when offered the choice.
   With the help of an AI if needed, implement then use flavorless multiple inheritance
   from @secref{IMSMO} on top of CLOS.
   You will thereby both prove that CLOS can implement the same multiple inheritance
-  patterns as C++, ADA, Smalltalk do—but also how much effort that takes,
+  patterns as C++, PHP, Smalltalk do—but also how much effort that takes,
   and how uncolloquial the resulting style is@xnote["."]{
     I used Claude Code (Opus 4.5) to create and debug in a few minutes
     a working implementation of flavorless inheritance on SBCL and CCL, using the CLOS MOP.
@@ -1527,7 +1454,7 @@ prefer to use or implement single inheritance when offered the choice.
 
 @section[#:tag "OISMIT"]{Optimal Inheritance: Single and Multiple Inheritance Together}
 
-@subsection{State of the Art in Mixing Single and Multiple Inheritance}
+@subsection[#:tag "SotAiMSaMI"]{State of the Art in Mixing Single and Multiple Inheritance}
 
 With all these variants of inheritance and their tradeoffs
 naturally comes a question:
@@ -1652,6 +1579,10 @@ the “suffixes” and identify the most specific suffix ancestor
   and make the “most specific class ancestor” a part of a trait’s interface,
   rather than only of its implementation.
 }
+
+PHP 5.4 (2012) also mixes “classes” and “traits” like Scala,
+but relies on flavorless conflict rather than flavorful linearization to handle “diamonds”.
+
 
 @subsection{The Key to Single Inheritance Performance}
 
@@ -2108,20 +2039,20 @@ the @c{self} and the precedence-list.
 Even with the laziness in building the prototype,
 the fields themselves are recomputed at every field access, at significant cost;
 and if you want to avoid that, you’d have to memoize field values into a hash-table
-(see @secref{MLY}, @secref{SSAoCPS}).
+(@secref{MLY}, @secref{SSAoCPS}).
 A wrapper inserted in most-specific position,
-in the manner of @c{qproto-wrapper} or @c{rproto-wrapper} (see @secref{RC}, @secref{CfR})
+in the manner of @c{qproto-wrapper} or @c{rproto-wrapper} (@secref{RC}, @secref{CfR})
 could implement this memoization,
 possibly as an option based on a flag provided when specifying the prototype.
 More generally, such a wrapper could implement any number of user-specified
 finalizations on the prototype, including wrapping steps that are
-non-strict extensions and change representation (see @secref{NoTfMI} above).
+non-strict extensions and change representation (@secref{NoTfMI}).
 As for how to efficiently implement objects, see @secref{EOI}.
 
 Also note that I assume that the Scheme pointer-equality predicate @c{eq?}
 captures the equality between closures generated by @c{make-poi}
 (internally, the @c{self} variable);
-this is actually a side-effect in disguise (see @secref{RSaDN}).
+this is actually a side-effect in disguise (@secref{RSaDN}).
 The effect could be modelled more finely by adding to every spec a field @c{id}
 initialized using a function @c{generate-tag}
 for the minimal side-effect of generating a unique tag;

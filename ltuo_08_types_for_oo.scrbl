@@ -371,7 +371,7 @@ and types it requires from the module context.
 In his paper on objects as co-algebras,
 Bart Jacobs characterizes the types for the arguments and results of his methods
 as being “(constant) sets” @~cite{Jacobs1995}@xnote[","]{
-  Jacobs (see @secref{OOinDM}) is particularly egregious in smuggling this all-important restriction
+  Jacobs (@secref{OOinDM}) is particularly egregious in smuggling this all-important restriction
   to how his paper fails to address the general and interesting case of OO
   in a single word, furthermore, in parentheses, at the end of section 2,
   without any discussion whatsoever as to the momentous significance of that word.
@@ -395,7 +395,7 @@ as being “(constant) sets” @~cite{Jacobs1995}@xnote[","]{
   } and in the 1990s, IBM would even hire comedians to become “evangelists”
   for their Visual Age Smalltalk technology, soon recycled into Java evangelists.
   Jacobs is not the only one, and he may even have extenuating circumstances.
-  He may have been ill-inspired by Goguen (see @secref{Goguen}),
+  He may have been ill-inspired by Goguen (@secref{Goguen}),
   whom he cites, who also abuses the terminology from OO to make his own valid but loosely-related
   application of Category Theory to software specification.
   Jacobs may also have been pressured to make his work “relevant” by publishing in OO conferences,
@@ -976,7 +976,7 @@ parameterized by other values, types and algorithms.
 
 @subsection{Expressiveness vs Decidability}
 
-Types for OO have long faced issues not just of consistency (see the NNOOTT above),
+Types for OO have long faced issues not just of consistency (@secref{NNOOTT}),
 but also of decidability:
 Make the typesystem too expressive, and not only does type inference become undecidable in theory,
 but even type checking becomes undecidable in theory, and
@@ -1008,7 +1008,7 @@ However, no such remedy is available for @(Fsub):
 the subtyping relation between fully specified types is itself undecidable,
 so no amount of annotation can rescue the type checker.
 Thus, Cardelli’s initial programme for types for OO failed on both grounds
-of consistency (see the NNOOTT) and decidability—which
+of consistency (@secref{NNOOTT}) and decidability—which
 doesn’t diminish his great innovative contributions to the topic,
 including launching the field of research itself.
 

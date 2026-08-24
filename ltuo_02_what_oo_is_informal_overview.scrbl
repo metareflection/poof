@@ -23,7 +23,7 @@ More details, and justifications, will follow in subsequent chapters.
 @principle{Object Orientation (“OO”) is a technique that enables the specification of programs
 through extensible and modular @emph{partial} specifications,
 embodied as entities @emph{within} a programming language}
-(see @secref{OOaIEM}, @secref{MOO}).
+(@secref{OOaIEM}, @secref{MOO}).
 
 @subsection{Partial specifications}
 A program is made of many parts that can be written independently,
@@ -147,7 +147,7 @@ As I reconstruct the semantics of OO from first principles,
 I will see that more than prototype, class, object, or method,
 @principle{the fundamental notions of OO are @emph{specification} and @emph{target}}:
 @emph{target} computations are being specified by
-extensible and modular, partial @emph{specifications} (see @secref{MOO}).
+extensible and modular, partial @emph{specifications} (@secref{MOO}).
 
 The target can be any kind of computation, returning any type of value.
 In Prototype OO, the target most usually computes a record,
@@ -407,13 +407,15 @@ flavorless inheritance and mixin inheritance, flavorful multiple inheritance sti
 isn’t as widely adopted as of 2026@xnote["."]{
   Out of the top 50 most popular languages in the TIOBE index, June 2026 @~cite{TIOBE2026}
   5 support flavorful multiple inheritance (Python, Perl, Ruby, Lisp, Scala),
-  4 only support flavorless multiple inheritance (C++, PHP, Ada, OCaml),
-  21 only support single inheritance (Java, C#, JavaScript, Visual Basic, R, Delphi, Swift, Fortran, MATLAB, Objective-C, Kotlin, COBOL, SAS, Julia, Dart, Lua, TypeScript, VBScript, ABAP, D, CFML),
+  3 only support flavorless multiple inheritance (C++, PHP, OCaml),
+  22 only support single inheritance (Java, C#, JavaScript, Visual Basic, R, Delphi, Swift, Fortran, MATLAB, Objective-C, Kotlin, COBOL, Ada, SAS, Julia, Dart, Lua, TypeScript, VBScript, ABAP, D, CFML),
   and the rest don’t support inheritance at all (C, SQL, Scratch, Rust, Go, Assembly Language, Classic Visual Basic (up to VB6), PL/SQL, Transact-SQL, GML, Prolog, LabView, ML, Zig, Ladder Logic, X++, Erlang, PowerShell, Haskell, Caml).
   Note that at least JavaScript, Lua, GML support enough higher-order dynamic behavior
   to implement better forms of inheritance as patterns or libraries;
   and language-supported metaprogramming and/or typelevel programming techniques can or could be used
   to implement arbitrary forms of inheritance in C++, Rust, Zig, Haskell.
+  I also didn’t count as multiple inheritance the special support of multiple inheritance
+  for Java interfaces or Ada abstract classes.
 }
 
 @subsection[#:tag "MIXIO"]{Mixin Inheritance Overview}
@@ -432,7 +434,7 @@ extracting their target computation is just computing their fixpoint.
 Mixin inheritance also maps directly to the concepts
 of Modularity and Extensibility I am discussing,
 and for these reasons I will study it first when presenting a formal semantics of OO
-(see @secref{MOO}).
+(@secref{MOO}).
 
 Mixins equipped with a binary inheritance operator constitute a monoid
 (associative with neutral element),

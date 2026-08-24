@@ -722,7 +722,7 @@ The most enthusiastic among you will read the book cover to cover,
 including footnotes and bibliographical notes.
 You may even do every exercise, and go all the way into using and implementing
 the most advanced OO techniques of the later chapters in your programming language of choice
-(see @secref{EtSoO}, @secref{EOI}).
+(@secref{EtSoO}, @secref{EOI}).
 You will end up building your own OO system, and writing a sequel to this book.
 If you do, why not contact me and join me to build and write them together?
 
