@@ -8,7 +8,7 @@
 @section{Wherefore the Book}
 @subsection{Curiosity about OO, Familiarity with FP}
 @epigraph{It was probably in 1967 when someone asked me what I was doing,
- and I said: “It’s object-oriented programming”. @|#:- "Alan Kay"|
+ and I said: “It’s object-oriented programming”. @|#:- "Alan Kay"| @; Kay2003
 }
 Object-Oriented Programming (OOP), also called Object Orientation (OO),
 is a paradigm for programming in terms of “objects”.
@@ -480,7 +480,7 @@ that you can easily adapt to your favorite programming language
 (see @secref{WS} regarding choosing Scheme).
 I will explain which features are needed beyond the mere applicative λ-calculus, why,
 and how to typically implement them in existing programming languages.
-Remarkably, the main feature needed is lazy evaluation, or ways to emulate it (@secref{USPLC}),
+Remarkably, the main feature needed is lazy evaluation, or ways to emulate it (@secref{UPSLC}),
 as OO is most naturally defined in a pure lazy functional setting,
 and eager evaluation of OO without side-effects leads to exponential recomputations.
 

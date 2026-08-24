@@ -418,7 +418,7 @@ The difference between the two encodings is subtle but quite interesting:
     every time they call a method to obtain the values they care about.
     These instances are half way between specification and target;
     they use (some variant of) the self-application combinator U,
-    where @c{U x = x x} (see @secref{USPLC}).
+    where @c{U x = x x} (see @secref{UPSLC}).
     This is why I call this representation and its variants @emph{U-encodings}.}]
 
 @subsubsection{Y: Double U}
@@ -545,7 +545,8 @@ Yet, U-encoding seems by far more popular. It seems to have been adopted, in man
 by most implementations of most OO languages,
 since before OO was even invented @~cite{Sutherland1963}.
 Indeed, as far as I can tell, Y-encoding only appears in the literature
-in theoretical semantic models @~cite{Kamin1988 Reddy1988 Cook1989 CookPalsberg1989 Bracha1990},
+in theoretical semantic models
+@~cite{Cook1987 Kamin1988 Reddy1988 Cook1989 CookPalsberg1989 Bracha1990},
 and in practical implementations much later @~cite{Kiselyov2005 Simons2015 Rideau2021}.
 Interestingly, Haskell-based OO systems tend to use Y-encoding
 because it leads to simpler types @~cite{Kiselyov2005 Gale2015}@xnote["."]{
@@ -621,7 +622,7 @@ Indeed, in case of recursive access to the target, this performance enhancement
 can grow exponentially with the depth of the recursion,
 by using a shared computation instead of repeated recomputations
 (see the related discussion on the applicative Y combinator in
-@secref{USPLC}).
+@secref{UPSLC}).
 
 If on the other hand, the specification has side-effects
 (which of course supposes the language has side-effects to begin with),

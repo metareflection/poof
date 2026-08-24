@@ -155,14 +155,14 @@ both informed by ideas from Simula, and Minsky’s frames,
 and able to integrate these ideas in their respective
 AI and teachable computing experiments thanks to their dynamic environments,
 considerably more flexible than the static Algol context of Simula.
+
 In the end, Simula should count as a precursor to OO, or at best an early draft of it—but
 either way, not the real, fully-formed concept.
+
 Dahl and Nygaard never invented, implemented, used or studied OO as most of us know it:
 not then with Simula, not later with Beta, and never later in their life either
 (though kept innovating with their form of proto-OO).
-Rather OO as such was discovered and identified 9 years later by Bobrow and Winograd.
-Just like Columbus never set foot on the continent of America,
-which was rather discovered and identified 9 years later by Amerigo Vespucci.
+
 Yet Dahl and Nygaard made the single key contribution thanks to which
 the later greater discovery of OO became not just possible, but necessary.
 They rightfully deserve to be gently mocked for getting so close to a vast continent they sought
@@ -2093,7 +2093,7 @@ Last but not least, the constructor for a @c{poi} is defined as follows:
 Note how I crucially rely on explicit laziness with @c{delay} and @c{force}
 to avoid constantly recomputing the precedence list and the most specific suffix
 and, after them, the effective modular extension,
-and the target record itself (see the discussion in @secref{USPLC})@xnote["."]{
+and the target record itself (see the discussion in @secref{UPSLC})@xnote["."]{
   As discussed then, eager pure functional programming could capture the expected answers
   by using η-conversion instead of laziness to defer evaluation,
   but that would cause a lot of recomputations and

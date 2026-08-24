@@ -169,6 +169,26 @@
   }
 }
 
+@Article{Hoare1972,
+  author={C. A. R. Hoare},
+  title={Proof of Correctness of Data Representations},
+  journal={Acta Informatica},
+  year={1972},
+  volume={1},
+  number={4},
+  pages={271--281},
+  publisher={Springer},
+  doi={10.1007/BF00289507},
+  url={https://sci-hub.ru/https://link.springer.com/article/10.1007/BF00289507},
+  note={
+    Develops representation invariants and abstraction functions for proving
+    programs correct independently of the concrete representation chosen for
+    their data. An important precursor to abstract data types and data
+    abstraction, separating the externally relevant properties of data from
+    their internal representation.
+  }
+}
+
 @InProceedings{Hewitt1973Actor,
   title={Actor induction and meta-evaluation},
   author={Hewitt, Carl and Bishop, Peter and Greif, Irene and Smith, Brian and Matson, Todd and Steiger, Richard},
@@ -266,6 +286,24 @@
   year={1976},
   url={https://dspace.mit.edu/handle/1721.1/6272},
   note={Primary statement of the actor/message-passing view of control; useful for distinguishing the actor lineage from object-oriented dispatch and inheritance.}
+}
+
+@TechReport{Kristensen1977,
+  author={Bent Bruun Kristensen and Ole Lehrmann Madsen and Kristen Nygaard},
+  title={BETA Language Development: Survey Report, 1 November 1976},
+  institution={Department of Computer Science, Aarhus University},
+  number={DAIMI PB-65},
+  year={1977},
+  month=sep,
+  doi={10.7146/dpb.v6i65.6483},
+  url={https://tidsskrift.dk/daimipb/article/view/6483},
+  note={
+    Revised September 1977 version of the November 1976 survey report,
+    presenting the initial ideas behind BETA. Also published by the Norwegian
+    Computing Center as Publication No. 559. Useful as an early primary source
+    for the development of BETA and for determining the terminology used by
+    the Simula/BETA school before “object-oriented” became standard.
+  }
 }
 
 @InProceedings{Nygaard1978,
@@ -379,6 +417,24 @@
   year={1982},
   url={https://dblp.org/rec/conf/ecics/Steels82},
   note={Very early functional reconstruction of object-oriented programming, predating most later work on classes as functions and objects as fixed points.}
+}
+
+@InProceedings{Kristensen1983,
+  author={Bent Bruun Kristensen and Ole Lehrmann Madsen and
+    Birger Møller-Pedersen and Kristen Nygaard},
+  title={Abstraction Mechanisms in the BETA Programming Language},
+  booktitle={Proceedings of the 10th ACM SIGACT-SIGPLAN Symposium on
+    Principles of Programming Languages},
+  year={1983},
+  pages={285--298},
+  publisher={ACM},
+  doi={10.1145/567067.567095},
+  url={https://doi.org/10.1145/567067.567095},
+  note={
+    Presents the abstraction mechanisms of BETA, developed as a successor to
+    Simula. An important primary source for the BETA school’s treatment of
+    classes, procedures, types and related abstraction mechanisms.
+  }
 }
 
 @Article{Novak1983,
@@ -571,6 +627,42 @@
   }
 }
 
+@InCollection{Kristensen1987,
+  author={Bent Bruun Kristensen and Ole Lehrmann Madsen and
+    Birger Møller-Pedersen and Kristen Nygaard},
+  title={The BETA Programming Language},
+  booktitle={Research Directions in Object-Oriented Programming},
+  editor={Bruce Shriver and Peter Wegner},
+  publisher={MIT Press},
+  address={Cambridge, MA, USA},
+  year={1987},
+  pages={7--48},
+  isbn={0-262-19264-0},
+  url={https://www.sigmod.org/publications/dblp/db/books/collections/ShriverW87.html},
+  note={
+    Presents BETA in a collection explicitly devoted to object-oriented
+    programming. Useful for tracing the point by which the Simula/BETA school
+    had adopted “object-oriented programming” as the name for its tradition.
+  }
+}
+
+@TechReport{Madsen1987,
+  author={Ole Lehrmann Madsen and Birger Møller-Pedersen},
+  title={The BETA Programming Language},
+  institution={Department of Computer Science, Aarhus University},
+  number={DAIMI PB-229},
+  year={1987},
+  month=aug,
+  doi={10.7146/dpb.v16i229.7578},
+  url={https://tidsskrift.dk/daimipb/article/view/7578},
+  note={
+    A comprehensive description of BETA after more than a decade of language
+    development. Explicitly describes BETA as supporting an object-oriented
+    perspective on programming, making it useful for tracing the adoption of
+    “object-oriented” terminology within the Simula/BETA school.
+  }
+}
+
 % URL has the 1991 revision
 @InProceedings{Stroustrup1987,
   author={Bjarne Stroustrup},
@@ -644,18 +736,6 @@
   doi={10.1007/3-540-19027-9_9},
   url={http://link.springer.com/chapter/10.1007%2F3-540-19027-9_9},
   note={Priority source for type-class-like constrained overloading; useful when separating ad-hoc polymorphism from object dispatch and inheritance.}
-}
-
-@InProceedings{Madsen1988,
-  author={Ole Lehrmann Madsen and Birger Møller-Pedersen},
-  title={What Object-Oriented Programming May Be — and What It Does Not Have to Be},
-  booktitle={Proc. ECOOP '88, LNCS 322},
-  pages={1–20},
-  publisher={Springer},
-  year={1988},
-  doi={10.1007/3-540-45910-3_1},
-  url={https://doi.org/10.1007/3-540-45910-3_1},
-  note={The Scandinavian modeling view}
 }
 
 @Book{Rydeheard1988,
@@ -905,29 +985,6 @@
   pages={201–214},
   year={1993},
   note={Introduces a type-level account of the assumptions subclasses make about inherited implementation, directly relevant to modular inheritance.}
-}
-
-% See also: https://ethw.org/Oral-History%3ABarbara_Liskov_%282001%29 (2001)
-@InProceedings{Liskov1993,
-  author={Barbara Liskov},
-  title={A History of CLU},
-  booktitle={History of Programming Languages---II},
-  editor={Thomas J. Bergin, Jr. and Richard G. Gibson, Jr.},
-  year={1993},
-  pages={471--510},
-  publisher={ACM},
-  address={New York, NY, USA},
-  isbn={0-201-89502-1},
-  doi={10.1145/154766.155367},
-  url={https://publications.csail.mit.edu/lcs/pubs/pdf/MIT-LCS-TR-561.pdf},
-  note={
-    Liskov's retrospective account of the development of data abstraction and CLU.
-    It presents CLU as the first implemented language providing direct
-    linguistic support for data abstraction and discusses its relationship to
-    the distinct object-oriented tradition.
-    Particularly useful as primary evidence against retrospective accounts
-    that simply identify Liskov's CLU work with object-oriented programming.
-  }
 }
 
 @Book{Madsen1993,
@@ -1872,21 +1929,6 @@
   year={2012},
   url={https://cs.brown.edu/~sk/Publications/Papers/Published/pgk-sem-type-fc-member-name/},
   note={Treats member names as first-class values, exposing assumptions that ordinary object calculi bake into fixed syntactic labels.}
-}
-
-@InProceedings{Aldrich2013,
-  author={Aldrich, Jonathan},
-  title={The power of interoperability: why objects are inevitable},
-  booktitle={Proceedings of the 2013 ACM International Symposium on New Ideas, New Paradigms, and Reflections on Programming and Software},
-  series={Onward! 2013},
-  pages={101–116},
-  publisher={ACM},
-  year={2013},
-  doi={10.1145/2509578.2514738},
-  url={https://www.cs.cmu.edu/~aldrich/papers/objects-essay.pdf},
-  note={.
-    Another paper touting OO as modularity only, without inheritance.
-  }
 }
 
 @Article{Guha2015,

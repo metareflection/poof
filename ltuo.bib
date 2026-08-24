@@ -784,13 +784,14 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     the very first one to do it with a definition.
     However, this not a definition that I or much anyone else accepts,
     since J&L have it mean (in my words) modularity but without extensibility.
-    J&L list Simula 67, CLU and Alphard as their examples of OO.
+    J&L cite Simula 67, CLU and Alphard as their examples of OO,
+    but not Smalltalk (maybe for lack of publication to cite).
     Simula is a good example, but Alphard is just hopeless vaporware,
     and the authors’ language CLU is at the forefront of internal modularity
     but completely ignores internal extensibility.
     J&L also cite Lisp, but only in the context of already offering the kind of functionality
     they use as a code example. Their not including it in their list of examples of OO is correct,
-    since KRL wasn’t a part of Lisp but an extension on top of it.
+    since KRL wasn’t a part of Lisp but an extension on top of it—and was published later.
     Still, a good paper, with some of CLU’s great contributions to the topic of modularity.
   }
 }
@@ -824,7 +825,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 @InProceedings{Ross1976,
-  author={Ross, Douglas T.},
+  author={Douglas T. Ross},
   title={Toward foundations for the understanding of type},
   year={1976},
   month=March,
@@ -839,7 +840,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   numpages={3},
   location={Salt Lake City, Utah, USA},
   note={.
-    In an unreadable manic publication that is more poetry than science,
+    In an unreadable manic publication that is more “philosophy” than science,
     Ross first uses in print (March 1976) the word “object-oriented”
     in a way that vaguely refers to thinking about data types in an abstract way.
     But since it’s all poetic handwaving (despite the invocation of mathematical symbols),
@@ -1714,6 +1715,27 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
+% Find a copy somehow? Seems to put Cook before Kamin & Reddy
+@TechReport{Cook1987,
+  author={William R. Cook},
+  title={Self-Referential Models of Inheritance},
+  institution={Brown University},
+  year={1987},
+  month=mar,
+  note={
+    An early formulation of Cook’s denotational account
+    of inheritance in terms of self-referential structures.
+    This work was subsequently developed in his 1989 dissertation.
+    However, I haven’t been able to locate the text (yet?), and so
+    only know what Wegner 1987 says: “Following Cook, we define a
+    class-independent form of inheritance in terms of a
+    particular mechanism for self-reference that allows
+    remotely defined operations to be internalized as part
+    of the extended identity of an object.” Then the next paragraph
+    describes in English the equations found in Cook.
+  }
+}
+
 % Journal version https://dreamsongs.com/Files/LASC-overview.pdf
 @InProceedings{DeMichiel1987,
   author={Linda G. DeMichiel and Richard P. Gabriel},
@@ -1915,6 +1937,11 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     I like his definition of orthogonality: “A collection of features is orthogonal (independent)
     if, for every subset, there is a language that possesses that subset of features
     and no features from the complementary subset.”
+    On the other hand, Wegner is mistaken in requiring
+    classes as part of his definition for “object-oriented” programming—even though
+    he recognizes (citing Cook 1987) that “delegation” (of prototypes, and more)
+    is a more general concept than “inheritance” (of classes), and though
+    he does at a later point discuss “classless” systems.
   }
 }
 
@@ -2952,6 +2979,30 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     Simula-style inheritance was deliberately left out of Kay’s work on FLEX and early Smalltalk.
     Kay credits Larry Tesler (slot inheritance), Henry Lieberman (delegation),
     and Bobrow and Winograd’s KRL (Frames), for the invention of Smalltalk inheritance.
+  }
+}
+
+% See also: https://ethw.org/Oral-History%3ABarbara_Liskov_%282001%29 (2001)
+@InProceedings{Liskov1993,
+  author={Barbara Liskov},
+  title={A History of CLU},
+  booktitle={History of Programming Languages---II},
+  editor={Thomas J. Bergin, Jr. and Richard G. Gibson, Jr.},
+  year={1993},
+  pages={471--510},
+  publisher={ACM},
+  address={New York, NY, USA},
+  isbn={0-201-89502-1},
+  doi={10.1145/154766.155367},
+  url={https://publications.csail.mit.edu/lcs/pubs/pdf/MIT-LCS-TR-561.pdf},
+  note={
+    Liskov’s retrospective account of the development of data abstraction and CLU
+    (previously MIT LCS-TR-561 report from 1992).
+    It presents CLU as the first implemented language providing direct
+    linguistic support for data abstraction and discusses its relationship to
+    the distinct object-oriented tradition.
+    Liskov is careful to distinguish her meaning for object-oriented (Wegner’s and my “object-based”)
+    under which CLU is OO, from what she reckons is the more common meaning that includes inheritance.
   }
 }
 
@@ -4109,6 +4160,24 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
+@TechReport{Dahl2001,
+  author={Ole-Johan Dahl},
+  title={The Birth of Object Orientation: The Simula Languages},
+  institution={Department of Informatics, University of Oslo},
+  year={2001},
+  month=jun,
+  url={https://www.mn.uio.no/ifi/english/about/ole-johan-dahl/bibliography/the-birth-of-object-orientation-the-simula-languages.pdf},
+  note={
+    Dahl’s retrospective account of the development of Simula I and Simula 67,
+    emphasizing the ideas that later became associated with object orientation.
+    It discusses objects, classes, prefixing, virtual procedures, abstraction
+    and the historical circumstances of the Simula project from the perspective
+    of one of its principal designers.
+    An almost identical version was later published in From Object-Orientation
+    to Formal Methods (Springer, 2004), pp. 15—25.
+  }
+}
+
 @WebPage{Graham2001avg,
   title={Beating the Averages},
   author={Graham, Paul},
@@ -4968,6 +5037,22 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 %% 2013
+
+@InProceedings{Aldrich2013,
+  author={Jonathan Aldrich},
+  title={The power of interoperability: why objects are inevitable},
+  booktitle={Proceedings of the 2013 ACM International Symposium on New Ideas, New Paradigms, and Reflections on Programming and Software},
+  series={Onward! 2013},
+  pages={101–116},
+  publisher={ACM},
+  year={2013},
+  doi={10.1145/2509578.2514738},
+  url={https://www.cs.cmu.edu/~aldrich/papers/objects-essay.pdf},
+  note={.
+    Another paper touting OO as first-class modularity only, without inheritance.
+  }
+}
+% TODO: more notes
 
 % https://arxiv.org/pdf/1303.0427
 @Article{Black2013,

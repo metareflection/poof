@@ -129,4 +129,4 @@ check-pommette-racket: pommette/pommette.rkt pommette/pommette.scm
 
 count-ltuo-citations: # build/ltuo.tex
 	# grep 'Autobibtarget{' build/ltuo.tex | wc -l
-	grep -c '^@' ltuo.bib extra*.bib
+	grep -c '^@' ltuo.bib extra*.bib rejected.bib

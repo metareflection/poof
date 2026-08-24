@@ -508,7 +508,7 @@ before they are used.
 In a high-level computation without mutation,
 each module is implemented as a function taking the module context as argument,
 the fields are implemented as functional lenses (@secref{OfOO}),
-and the mutual recursion is achieved using a fixpoint combinator (@secref{USPLC});
+and the mutual recursion is achieved using a fixpoint combinator (@secref{UPSLC});
 lazy evaluation may be used as a dynamic protocol to ensure that
 each field is initialized before it is used@xnote["."]{
   It is hard to ensure initialization before use;
@@ -1024,7 +1024,7 @@ using “hot-patches” that were not foreseen by the original programmer.
   Get your change accepted upstream by the maintainers.
 }
 
-@section[#:tag "modular_extensibility"]{Modular Extensibility}
+@section[#:tag "ME4"]{Modular Extensibility}
 @epigraph{
   Power Couple:
     Two individuals that are super heroes by themselves
