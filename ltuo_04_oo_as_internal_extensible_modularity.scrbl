@@ -31,7 +31,7 @@ a broken version, a cheap plastic imitation, a mere representation, a decoy, a p
 a torture implement made to look like it.
 Or from a pile of toxic waste vaguely shaped like it.
 Would you sit on cactus arranged into a chair?
-Or on drum full of radioactive material?
+Or on a drum full of radioactive material?
 Because this is what happens when you define a chair merely by its shape,
 or by the ability to sit on it, without regard for its larger purpose.
 And you will do the equivalent or inflict it upon others
@@ -192,10 +192,15 @@ that shunned the use of objects (possibly for portability reasons at the time),
 was notably hard to configure, and resisted several attempts to extend or refactor it.
 
 Note that while external modularity enables cooperation during development,
-internal modularity also enables cooperation during deployment,
+internal modularity also facilitates cooperation during deployment,
 with conditional selection and reconfiguration of modules,
 gradual deployment of features, user-defined composition of modules,
 automated A/B testing, and more.
+(Even if second-class at the language level, internal modularity will be first-class at the level
+of the external deployment “scripts”.
+You might achieve the same feature with external modularity,
+but might then have to import the entire toolchain during deployment,
+making it much slower, more expensive, and less safe.)
 
 For a more complete theory of Modularity, see @citet{Rideau2016}.
 
@@ -290,7 +295,8 @@ On a different dimension,
 separately compiled object files, as implemented by FORTRAN (1956), @; TODO cite
 provided third-class modularity through an external linker.
 Later developments like
-typechecked second-class “clusters” à la CLU (1974), “modules” à la Modula-2 (1978), @; TODO cite
+statically instantiated and typechecked second-class “clusters” à la CLU (1974), @; TODO cite
+“modules” à la Modula-2 (1978), @; TODO cite
 @; TODO also look into, Mary Shaw’s Alphard, etc.
 Higher-Order Modules à la ML (1985), @; TODO cite David MacQueen 1985
 typeclasses à la Haskell (or traits in Rust),
@@ -388,7 +394,7 @@ programmers may have to manage large interfaces to achieve small results@xnote["
     and introduce an impedance mismatch of their own.
   }
   @Xitem{(5)
-    Any alleged benefits from dividing in multiple distributed processes,
+    Any alleged benefits from dividing a program in multiple distributed processes,
     whether in terms of failure-resistance, modularity, safety or performance
     are wholly lost if and when (as is often the case) persistent data
     all ends up being centralized in database services,
@@ -397,7 +403,8 @@ programmers may have to manage large interfaces to achieve small results@xnote["
   @Xitem{(6)
     The overall system is not made any smaller for being divided in smaller parts;
     actually, all the artificial process crossings, marshallings and unmarshallings,
-    actually make the overall system noticeably larger in proportion to how small those parts are.
+    actually make the overall system noticeably larger in proportion to how small those parts are,
+    with more attack surface for bugs and vulnerabilities.
     Lots of small problems are added at both runtime and compile-time,
     while no actual problem whatsoever is solved.
   }
@@ -419,7 +426,7 @@ programmers may have to manage large interfaces to achieve small results@xnote["
   cannot conceivably do anything to help about that, only hinder.
   @;{ TODO cite something about HURD? Footnote? }
 
-  Now, there are sometimes quite valid socio-economical (and not technical) justifications
+  Now, there are sometimes quite valid socioeconomic (and not technical) justifications
   to dividing a program into multiple services:
   when there are many teams having distinct incentives, feedback loops, responsibilities,
   service level agreements they are financially accountable for, etc.,
@@ -466,7 +473,7 @@ including in the future.
 These references happen through a module context, a data structure
 with many fields or subfields that refer to each module, submodule,
 or subcomputation specified therein.
-When comes time to integrate all the module specifications into a complete computation,
+When comes the time to integrate all the module specifications into a complete computation,
 then comes the problem of implementing the circularity between the definition of the module context
 and the definitions of those modules.
 
@@ -484,19 +491,21 @@ or dynamically by a dynamic loader when loading shared object files,
 in either case, before any of the programmer’s regular code is run
 (though some hooks may be provided for low-level programmer-specified initialization).
 
-At the other extreme, all third-class or second-class module evaluation
-may be deferred until runtime, the runtime result being no different
-than if first-class internal modularity was used,
-though there might be benefits to keeping modularity compile-time only
+At the other extreme, an implementation might defer
+all third-class or second-class module evaluation until runtime;
+the runtime representation of those modules would being no different
+than if first-class internal modularity was used.
+However, the semantics distinction remains,
+as these representations will be inaccessible to regular programmers;
+and there might be benefits to keeping modularity compile-time only
 in terms of program analysis, synthesis or transformation.
-For local or first-class modules, compilers usually generate some kind of
-“virtual method dispatch table”
-(or simply “virtual table” or “dispatch table” or some such)
-for each modularly defined entity, that, if it cannot resolve statically,
-will exist as such at runtime.
+For first-class modules whose components cannot be statically resolved,
+compilers may represent the module at runtime
+as a record of values and functions—a “virtual method dispatch table”
+(or simply “virtual table” or “dispatch table” or some such).
 Thus, Haskell typeclasses become “dictionaries” that may or may not be fully inlined.
 In the case of OO, prototypes are indeed typically represented
-by such “dispatch table” at runtime—which in Class OO
+by such a “dispatch table” at runtime—which in Class OO
 would be the type descriptor for each object, carried at runtime for dynamic dispatch.
 
 In a low-level computation with pointers into mutable memory,
@@ -572,7 +581,7 @@ each field is initialized before it is used@xnote["."]{
   Thus we see that the simplest, most natural and safest usable setting for OO is:
   lazy evaluation.
 
-  This may come at a surprise to many who mistakenly believe the essence of OO
+  This may come as a surprise to many who mistakenly believe the essence of OO
   is in the domain it is commonly applied to
   (defining mutable data structures and accompanying functions as “classes”),
   rather than in the semantic mechanism that is being applied to these domains
@@ -781,13 +790,13 @@ Compilers and interpreters that process source code meant for human consumption 
 along with preprocessors, interactive editors, and all kinds of software tooling,
 greatly facilitated external extensibility, too.
 Meanwhile, software that requires configuration through many files
-that must be carefully and manually kept in synch
+that must be carefully and manually kept in sync
 is less extensible than one configurable through a single file
 from which all required changes are automatically propagated coherently
 (whether that configuration is internal or external, first-class to fourth-class).
 Whenever multiple files must be modified together
 (such as interface and implementation files in many languages),
-the true units of modularity (0or in this case extensibility)
+the true units of modularity (or in this case extensibility)
 are not the individual files—but each group of files that must be modified in tandem;
 and sometimes, the units of extensibility are entities that span parts of multiple files,
 which is even more cumbersome.
@@ -855,7 +864,7 @@ they may not contain any self-reference to the entity being defined and its attr
 
 Extensibility of software entities means that variants of these software entities
 may be reused many times in as many different contexts @~cite{Johnson1988},
-so more software can be achieved for fewer efforts.
+so more software can be achieved with less effort.
 
 Now, external extensibility through editing (as opposed to e.g. preprocessing)
 means that these entities are “forked”,
@@ -919,7 +928,7 @@ as only a subset of computable extensions are possible.
 This kind of limited extensibility is not uncommon in computing systems;
 the restrictions can help keep the developers safe and simplify the work of language implementers;
 on the other hand, they may push developers with more advanced needs towards
-relying external extensibility instead, or picking an altogether different language.
+relying on external extensibility instead, or picking an altogether different language.
 
 In a pure functional model of extensibility,
 an extension is a function that takes the original unextended value
@@ -1047,14 +1056,26 @@ that grow with each programmer’s needs without getting bogged down in coordina
 
 Remarkably, though, you can have each of modularity and extensibility separately, and
 that isn’t the same as having the two together.
-For instance, first-class modules in ML are units of modularity,
-on which you can do dynamic dispatch, and that you can transform with “functors”,
-functions that take modules as parameters and return modules as a result.
-But somehow you cannot define an extension in a modular way.
-First-class modules, while units of modularity with respect to dispatch,
-and units of extension with respect to functors, remain second-class
-with respect one crucial aspect of modularity:
-resolving many modular definitions from many people together into a single program.
+For instance, modules in ML are units of modularity,
+that you can include and extend into larger modules,
+or transform into other modules with ML “functors”.
+This modularity used to be second-class, but then
+ML dialects eventually added support for first-class modules,
+on which you can do dynamic dispatch.
+Yet even then, you cannot inside the language define an extension in a modular way:
+definitions from one module cannot implicitly refer
+to definitions supplied later by independent extensions into their eventual combination;
+at least not without some non-standard extensions enabling open recursive modules.
+@; TODO Hirschowitz2002 Dreyer2007 Rossberg2008
+
+Now, modularity and extensibility are simple enough that the current informal chapter
+can successfully discuss them.
+But the subtleties of modular extensibility evade such informal treatment.
+To restate the previous paragraph formally (@secref{IME})
+requires having formally defined modularity, extensibility, and modular extensibility,
+which will have to wait for the next chapter (@secref{MOO}).
+For this reason, I won’t be able to have this section on Modular Extensibility
+follow the same simple pattern as those on Modularity and Extensibility apart.
 
 @subsection[#:tag "HMEB"]{Modular Extensibility Breakthroughs: A History of OO}
 
@@ -1082,7 +1103,7 @@ outside any “language” (I’ll call that third-class)
 defining data and code that follows the correct convention remains completely manual (fourth-class);
 therefore I’ll call this third-and-a-half modular extensibility, which is external to a language.
 
-Sketchpad @~cite{Sutherland1963} is an ancestor to graphical CAD programs,
+Sketchpad @~cite{Sutherland1963} is an ancestor of graphical CAD programs,
 with a builtin constraint solver that you configure through a system
 of “masters and instances”: you could modularly define new objects as made
 of components, each an instance of an existing object transformed by a similarity
@@ -1094,7 +1115,7 @@ against a common interface—once again an instance of modularity.
 Sketchpad didn’t have “self” references, though, so modularity and extensibility didn’t interact
 the way needed to achieve modular extensibility. It was modularity and extensibility
 complementing each other rather than combined.
-I still include it in here as one of Kay’s inspirations.
+I still include it here as one of Kay’s inspirations.
 
 Not an influence to Alan Kay, but to Daniel Bobrow,
 Howard Cannon @~cite{Cannon1979} and the Lisp school,
@@ -1104,15 +1125,17 @@ ADVISE enabled programmers to dynamically extend a function with “advice”,
 that would run before or after the function itself was called;
 those happening after could even consult or modify the value returned
 (though this was not originally an intended interface).
-This was first-class modular extensibility, though at the level of named functions
-rather than records, and using side-effects for communication between advice.
+With this enhancement, ADVISE was first-class modular extensibility,
+though it was a special-purpose form that only worked at the level of named functions,
+not a general-purpose form of it working on records, and even then, not very usable,
+using side-effects for communication between advice.
 
 Now of course, the modular extensibility breakthrough everyone knows about is
 Simula 1967 @~cite{Dahl1967}: inspired by @citet{Hoare1965}, Dahl and Nygaard
 implement classes and sub-classes with single inheritance and “concatenation semantics”
 (@secref{Inner}).
-Simula serendipitously introduced the first form of modular extensibility,
-but in an embryonic form, and crucially
+Simula thus introduced the first form of modular extensibility,
+though in an embryonic form, and crucially
 without the concept and name of OO itself (@secref{OOnaming})@xnote["."]{
   One may quibble whether Simula is already OO,
   when the name and concept are not there,
@@ -1124,7 +1147,7 @@ without the concept and name of OO itself (@secref{OOnaming})@xnote["."]{
   the precise understanding of when each critical trait appeared.
   Simula is missing pieces from what one may today expect of an OO language,
   yet it passes my criterion of Internal Modular Extensibility,
-  and is the first ever to pass.
+  and is the first ever to pass and apply to general “objects”.
 }
 
 No other known form of internal modular extensibility appears before 1976.
@@ -1134,11 +1157,13 @@ No other known form of internal modular extensibility appears before 1976.
 1976 is when OO takes off, thanks to the interaction
 between Kay’s Smalltalk team and Bobrow’s Interlisp team, both at Xerox PARC.
 Bobrow and Winograd @; then a Stanford professor spending 50% of his time as consultant at PARC
-implemented KRL-0, the first “object-oriented” programming language,
-in which “inheritance” and “prototypes” first appear (classes also appear, citing Simula)@xnote["."]{
+implemented KRL-0, the first programming language
+that claims to be “object-oriented” in the modern sense,
+that includes “inheritance” (a word the authors also introduce in its modern meaning;
+they also introduce “prototypes” and mention classes, citing Simula)@xnote["."]{
   The original intention in @citet{Winograd1975} was
   to model knowledge in terms of Frames @~cite{Minsky1974}, and not to write programs;
-  But by the time they were done @~cite{Bobrow1976}, the concern has shifted, and
+  But by the time they were done in May @~cite{Bobrow1976}, the concern has shifted, and
   while the frames model was still present, it had taken a secondary role,
   while defining procedures had taken a more prominent role.
   The result was a layer on top of Lisp, what one would now call an “object system”.
@@ -1148,24 +1173,27 @@ in which “inheritance” and “prototypes” first appear (classes also appea
   without implementation;
   the 1976 article uses it as a more formal definition, with an implementation.
 }
-Kay got “inheritance” from KRL, and Ingalls implemented it in Smalltalk-76,
+Kay got the word “inheritance” from KRL, and Ingalls implemented it in Smalltalk-76@xnote[","]{
+  Ingalls started working on Smalltalk-76 in August @~cite{Ingalls2020}.
+}
 simplifying it to single inheritance, and making it much more usable @~cite{Kay1993 Ingalls1978}.
 
 The Smalltalk team kept innovating from there.
-As early as 1977, ThingLab experimented with prototypes on top of Smalltalk
-@~cite{Borning1977 Borning1979 Borning1981}, which later led to
-Self @~cite{Ungar1987}, a variant of Smalltalk with prototypes instead of classes,
-that was also quite successful in terms of influence both in academia and industry.
-Smalltalk development continued, and Smalltalk-80 brought OO to the masses,
-notably thanks to an article in BYTE Magazine, @; TODO cite
+As early as 1977, ThingLab implemented prototypes (and multiple inheritance) on top of Smalltalk
+@~cite{Borning1977 Borning1979 Borning1981}.
+A decade later, Self @~cite{Ungar1987}, a standalone variant of Smalltalk
+with prototypes instead of classes, was also quite influential both in academia and industry.
+Smalltalk development continued, and Smalltalk-80 @~cite{Goldberg1983} brought the idea of OO
+(if not the generally unaffordable implementation) to the wider public of early PC hobbyists,
+notably thanks to a special issue of BYTE Magazine @~cite{BYTE1981},
 and to inspiring the Apple Macintosh.
 Colleagues of Kay at PARC used a more Algol-like language with multiple inheritance
 for the first commercial computer with a GUI,
 the Xerox Star 8010 workstation @~cite{Curry1982}.
 
 While the development of Simula itself ground to a halt,
-its authors started work on a successor, Beta, in 1976 @~cite{Kristensen1987 Dahl2001}.
-Meanwhile Simula directly inspired Stroustrup to work on C-with-classes in 1978,
+its authors in 1976 started work on a successor, BETA @~cite{Kristensen1987 Dahl2001}.
+Meanwhile Simula directly inspired Stroustrup to work on C-with-classes in 1979,
 which became the vastly successful C++ in 1985. @; TODO cite
 
 OO became a phenomenon. The most interesting thing in programming languages.
@@ -1203,8 +1231,8 @@ That’s only for the “main line” of object systems that influenced CLOS.
 There are too many lesser-known variants to list, and I haven’t even started
 discussing the prolific French, German or Japanese schools, and many other authors world-wide.
 
-CLOS was an achievement, including more and richer features than found in any OO language since,
-integrated with the standard library of Common Lisp functions and data structures:
+CLOS was an achievement, bringing together an unusually rich collection of OO mechanisms
+in a language, integrated with its standard library of functions and data structures:
 multiple inheritance with linearization, method combinations, generic functions, multiple dispatch,
 abstraction over slot access, dynamic typechecking, an elaborate initialization protocol,
 including re-initialization in case of changed or redefined classes,
@@ -1220,8 +1248,10 @@ In 1989, Turbo Pascal 5.5 came out, and brought Object-Oriented Programming to a
 with great documentation, an interactive text interface, and plenty of examples
 (it later became Delphi, bringing Rapid Application Development
 of graphical applications for Windows in 1995).
-C++ 2.0 also came out in 1989, though C++ remained a luxury product
-until Microsoft adopted it and released its first version of a compiler and a class library in 1992.
+C++ 2.0 also came out in 1989, with Turbo C++ the following year
+making it available to users of mere PCs when it was previously a luxury for power users
+with workstations or big PCs. Microsoft then adopted it and released its first version
+of a compiler and a class library in 1992.
 
 The following years brought many other successful OO languages to the industry:
 Python 1991, Lua 1993, Java and JavaScript 1995,
@@ -1229,15 +1259,22 @@ Ada adopting objects 1995,
 Ruby 1995 (in Japan; Western breakout with Rails 2004–05),
 Objective-C (originally 1984, adopted by NeXT 1988, by Apple via NeXT acquisition 1996,
 became a mass-market language with the iPhone SDK in 2008);
-VB.NET 2002, PHP 5 2004, Scala 2004, Dart 2011, Julia 2012, TypeScript 2012, Swift 2014, Kotlin 2016...
-these are just the most popular ones. Non-OO languages became the minority: Go 2009, Rust 2010.
+VB.NET 2002, PHP 3 1998 (OO further redesigned 2004, 2012),
+Scala 2004, Dart 2011, Julia 2012, TypeScript 2012, Swift 2014, Kotlin 2016...
+these are just the most popular ones.
+New non-OO languages became the minority: Go 2009, Rust 2010.
 
-Progress on the theory of OO didn’t stop, and
-experimentation of new language features continued—but became slower or less relevant:
+OO now being a serious industrial endeavor had consequences.
+Progress on the theory of OO didn’t stop, but had to focus on what industrial languages did
+or how to improve them.
+Java in particular became the focus of much recycling
+(but also furthering) of previous research.
+On the other hand, experimentation of new or improved language features continued—but
+became slower or less relevant:
 New languages now had to compete with incumbents possessing large user and code bases.
 To be relevant, new features now needed to be backed by big corporations,
 and backward compatible with their ecosystem.
-Also, the low-hanging fruits had already been picked.
+Radical redesigns became niche.
 
 @subsection{Modular Extensible Specifications}
 
@@ -1246,8 +1283,8 @@ but in a modular way: the extension is able to use some modular context
 to refer to values defined and extended by other pieces of code.
 
 At this point, I reach the end of what can be clearly explained while remaining informal.
-I must introduce a formal model of modularity, extensibility,
-and the two together, to further convey the ideas behind OO without resorting to handwaving.
+I must introduce a formal model of modularity, of extensibility, and of the two together,
+to further convey the ideas behind OO without resorting to handwaving.
 The last task to carry informally is therefore a justification of my approach to formalization.
 
 @section{Why a Minimal Model of First-Class OO using FP?}
@@ -1288,7 +1325,7 @@ generalized, and maybe even improved upon@xnote["."]{
   Any mechanism that lets you accept unwarranted complexity
   will be exploited by the most effective memetic agents capable of doing so.
   These agents then compete on persuasiveness and resource extraction;
-  the winner are typically ruthless specialists in mind-space colonization.
+  the winners are typically ruthless specialists in mind-space colonization.
   This matters in computing, where the stakes are relatively low, and parasites relatively benign.
   It matters far more in domains that allocate power and resources at civilizational scale.
 }
@@ -1329,7 +1366,7 @@ My code will also provide a baseline for implementers who would want to use my i
 and who may just port my code to their programming language of choice,
 and be able to debug their port by comparing its behavior to that of the original I provide.
 They can implement basic OO in two lines of code in any modern programming language,
-and have a full-featured OO system in a few hundreds of lines of code.
+and have a full-featured OO system in a few hundred lines of code.
 
 @subsection{Why First-Class?}
 
@@ -1410,7 +1447,7 @@ Therefore, I pick Scheme as the best compromise in which to formalize OO.
   or for a plain Scheme experience, we recommend Chez Scheme, that is very fast.
   You can also play with it on websites like replit.
   Another option is for you to do all exercises in your own programming language of choice,
-  which will be much easier if your language at least support first-class higher-order functions,
+  which will be much easier if your language at least supports first-class higher-order functions,
   and either dynamic typing, or recursively constrained (sub)types;
   you’re on your own to translate the problems and their solutions in said language of your choice.
 }

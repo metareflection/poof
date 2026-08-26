@@ -117,11 +117,11 @@ you might not need single inheritance at all.
 
 But while Functional Programming and its basic concepts including
 lexical scoping and higher-order functions
-may be boringly obvious to the average programmer of 2025,
+may be boringly obvious to the average programmer of 2026,
 they were only fully adopted by mainstream OO programming languages like
 C++, Java in the 2010s, and slightly earlier for C#,
 after JavaScript became popular in application development
-and made FP popular with it, in the 2000s.
+and made FP popular with it, in the mid to late 2000s.
 Back when single inheritance was invented in the 1960s,
 these were extremely advanced concepts that very few mastered,
 even among language designers.
@@ -150,8 +150,7 @@ to implement or use it.
    they tend to be clever enough not to need it to be simplified for them,
    and not to care enough to simplify it for others. }
 
-@subsubsection{Mixin Inheritance is More Expressive than Single Inheritance}
-@; TODO not just more expressive, but in an importantly relevant way MORE EXTENSIBLE
+@subsubsection[#:tag "MIsMEtSI"]{Mixin Inheritance is More Extensible than Single Inheritance}
 Single inheritance can be trivially expressed in terms of mixin inheritance:
 a single inheritance specification is just a list of modular extensions composed
 with a base generator at one end;
@@ -163,7 +162,11 @@ so they are only ever used but as the second argument (to the right) of the @c{m
 never the first.
 Meanwhile, those extensions used as the first argument (to the left) of the @c{mix} function
 must be constant, defined on the spot, and never reused afterwards.
-Thus, single inheritance is no more expressive than mixin inheritance.
+
+Thus, single inheritance is no more @emph{expressive} than mixin inheritance @~cite{Felleisen1990}.
+And this expressiveness corresponds to case of @emph{extensibility}
+that can be covered by mixin inheritance and not single inheritance,
+making mixin inheritance more extensible than single inheritance.
 
 Conversely, given a language with FP and dynamic types or sufficiently advanced types,
 you can implement first-class mixin inheritance on top of first-class single inheritance by
@@ -187,7 +190,7 @@ but as the list of all modular extensions directly and indirectly contributed.
 Now what if you only have second-class class OO, and
 your compile-time language lacks sufficiently expressive functions
 to build mixin inheritance atop single inheritance?
-Then, mixin inheritance is strictly more expressive@~cite{Felleisen1990}
+Then, mixin inheritance is strictly more expressive
 than single inheritance:
 You can still express single inheritance as a stunted way of using mixin inheritance.
 But you can’t express mixin inheritance on top of single inheritance anymore.
@@ -476,7 +479,22 @@ So the lack of a builtin graph support is actually a feature in other contexts@x
   This may confuse people touting the ill-defined notion of “referential transparency”
   or abusing it to mean that external equivalence of expressions should imply
   internal equality checks to return true even in externally duplicated contexts.
+  As a Hard exercise, you may try to prove or disprove my conjecture that
+  the side-effect is invisible to @emph{internal} observations
+  if and only if it can be achieved with a Commutative Affine Monad.
+  @;{ Claude suggests looking at:
+    Stark "Observable Properties of Higher Order Functions that Dynamically Create Local Names," ~1993
+    Gabbay–Pitts nominal sets for a denotational version
+    Odersky’s λν (POPL 1994) is the confluence-preserving version
+    Augustsson, Rittri & Synek, "On generating unique names" (JFP 1994)
+    Plotkin–Power, "Notions of Computation Determine Monads"
+    Jacobs, "Affine Monads and Side-Effect-Freeness"
+  }
 }
+
+@;{
+AKSHULLY, the type can abstract away how the whole thing was built,
+and only show the synthetic r i p that intersect those of all ancestors @secref{StSfMuI}
 
 The type for a multiple inheritance specification would thus look like the following,
 where @c{Nat} is the type of natural numbers,
@@ -495,6 +513,7 @@ type MISpec r i p =
   { getModExt : ModExt r i p ;
     parents : DependentList j: (ModExt (pr j) (pi j) (pp j)) ;
     tag : Tag }}
+}
 
 @subsection[#:tag "DMRMI"]{Difficulty of Method Resolution in Multiple Inheritance}
 
@@ -833,7 +852,7 @@ It is the second of the three eponymous constraints of C3 @~cite{Barrett1996},
 that calls it “local precedence order”.
 
 Among popular “flavorful” languages,
-Common Lisp, Python, Perl, and Solidity notably respect this constraint,
+Common Lisp, Python, Perl and Solidity notably respect this constraint,
 but Ruby and Scala fail to.
 
 For even more user control, and thus more expressiveness, some systems might accept
@@ -1029,11 +1048,13 @@ preserves Local Order, but not monotonicity.
 The slightly complex algorithm by Ducournau et al. @~cite{Ducournau1994},
 and the latter somewhat simpler C3 algorithm @~cite{Barrett1996 WikiC3},
 synthesize the precedence list while preserving all desired properties.
-C3 was notably adopted by OpenDylan, Python, Raku (Perl), Parrot, Solidity, PGF/TikZ.
+C3 was notably adopted by gBeta (by 1999), Python (2003), Parrot (2005),
+Raku (by 2005), Perl (2007), OpenDylan (2012), Solidity (2014), PGF/TikZ (2015).
 
 I provide in @secref{C4} below an informal description of
 my extension to the C3 algorithm.
-Implementations are available as part of Gerbil Scheme.
+Implementations are available as part of Gerbil Scheme @~cite{Vyzovitis2016}
+or my C++ library c4-mixins @~cite{Rideau2026cxx}.
 
 @subsection{Mixin Inheritance plus Precedence List}
 
@@ -1181,7 +1202,7 @@ In other words, does multiple inheritance solve a problem you would have to face
 with mixin inheritance, or does it introduce concepts you do not need?
 And assuming it is a problem you face anyway, does it solve it in the simplest manner?
 
-@subsubsection{Multiple Inheritance is as Expressive as Mixin Inheritance}
+@subsubsection{Multiple Inheritance is as Extensible as Mixin Inheritance}
 Mixin inheritance is clearly no less expressive than multiple inheritance,
 since every entity that can be written using multiple inheritance
 can just as well be written using mixin inheritance,
@@ -1192,6 +1213,10 @@ if you restrict yourself to the subset of mixin inheritance
 where you don’t repeat any modular extension in a list you compose:
 define one multiple inheritance specification without parents per modular extension,
 and one specification with the list of the previous as parents to combine them.
+The DAG is a tree, and linearization, assuming it respects Extended Precedence,
+will flatten that tree to a list of modular extensions that compose in a monoid
+the same as with whatever parenthesization corresponds to the mixin expression tree.
+
 If for some reason you do want to repeat a modular extension, then you may have
 to duplicate the repeated definitions, though you may factor most code
 out of the definition into a helper (part of the specification containing the modular extension),
@@ -1207,6 +1232,9 @@ since the same module that exported a modular extension to use multiple times,
 would instead export a multiple inheritance specification to use once,
 that defines a helper that it possibly calls once, but can be thereafter called many times.
 Therefore I can say that multiple inheritance is as expressive as mixin inheritance in practice.
+
+And as we saw above (@secref{MIsMEtSI}), in this context, expressiveness is extensibility:
+it corresponds to what (modular) extensions can or cannot be expressed in what situations.
 
 @subsubsection{Multiple Inheritance is more Modular than Mixin Inheritance}
 I will now compare the two variants of inheritance from the point of view of modularity.
@@ -1582,7 +1610,6 @@ the “suffixes” and identify the most specific suffix ancestor
 
 PHP 5.4 (2012) also mixes “classes” and “traits” like Scala,
 but relies on flavorless conflict rather than flavorful linearization to handle “diamonds”.
-
 
 @subsection{The Key to Single Inheritance Performance}
 

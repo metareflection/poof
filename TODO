@@ -1,7 +1,7 @@
 - [ ] Parse \emph and more (La)TeX idioms in bibtex.rkt, rendering them properly.
 - [X] Move Cook controversy from footnotes to chapter 3
-- [ ] Move OO history to chapter 4.
-- [ ] Move the concatenation semantics analysis to chapter 6.
+- [X] Move OO history to chapter 4.
+- [ ] Move the concatenation semantics analysis to chapter 9.
 - [ ] Promote POI from exercise to canon in chapter 9.
 - [ ] Fix chapter 9
 - [ ] Complete chapter 10

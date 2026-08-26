@@ -610,17 +610,18 @@ by extending them with the usual OO extension mechanism (inheritance).
 And the same outermost or global fixpoint will automatically compute
 all the inner fixpoints of all the inner specifications, without any particular issue.
 As mentioned before, that’s actually a case where it is very nice to have
-conflation of specification and target, so you don't need to think constantly
-about which you’re talking about, or have heavy syntactic markers all over the place.
+conflation of specification and target, so you don’t need
+either to think constantly about which you’re referring to,
+nor to insert heavy syntactic markers all over the place.
 
 Of course, dynamic OO languages, whether Prototype OO languages or Class OO languages with reflection,
 have always been able to express these nested specifications and their overriding the hard way.
-But credit where credit is due, Beta@~cite{Kristensen1987}
+But credit where credit is due, BETA@~cite{Kristensen1987}
 was the first language that explicitly supported such nested specifications,
 with its virtual patterns, and whose authors explicitly explored
-the resulting notion of “family polymorphism” (as they dubbed it). @;TODO cite
-This proves that its authors advanced OO in more ways than by first implementing classes
-in Simula 67@~cite{Dahl1967}.
+the resulting notion of “family polymorphism” (as Ernst dubbed it). @;TODO cite Ernst2001
+This proves that the scandinavian school advanced OO in more ways
+than by first implementing classes in Simula 67@~cite{Dahl1967}.
 Other notable languages that explicitly support nested specifications include
 Newspeak@~cite{Bracha2008} with its nested classes (in a Class OO language), and
 Jsonnet@~cite{Cunningham2014} with its nested objects (in a Prototype OO language).
@@ -633,10 +634,58 @@ Nix packages, configurations, and their overrides.
 Scala@~cite{Odersky2005} is the only mainstream language that can express this semantics
 with a proper static typing discipline, though in a slightly roundabout way,
 using abstract type members and path-dependent nested types.
-C++ templates, that can express anything, can use CRTP @~cite{Coplien1995}
-to expose an explicit @c{Self} argument with which to express family polymorphism;
+In C++, templates can express anything, and expose an explicit @c{Self} argument
+with which to express family polymorphism using CRTP @~cite{Coplien1995};
 but it can be a challenge to get the appropriate amount of
-statically typed runtime substitutability between objects defined from such class.
+statically typed runtime substitutability between objects defined from such classes.
+
+@subsubsection[#:tag "IoNaI"]{Interaction of Nesting and Inheritance}
+
+When nesting specifications, only a subset of the specifications for the outer context
+will contain nested specifications affecting a particular inner focus.
+The ancestor hierarchy of specifications relevant for the inner focus is thus
+a sub-DAG of the ancestor hierarchy of specifications for the outer context.
+
+In the case of single inheritance, or even mixin inheritance
+the semantics of instantiation is simple and obvious: hierarchy DAGs are actually total orders,
+and the hierarchy at an inner focus is a subset of that at an outer context,
+from which the irrelevant nodes (whose modular extension doesn’t after the inner focus)
+can be simply removed, as they contribute nothing to the semantics.
+
+But the case of multiple inheritance
+(either flavorful as in gBeta @~cite{Ernst2000}, or flavorless) is not so simple:
+nodes that are irrelevant with respect to their modular extension
+are actually relevant with respect to introducing conflicts (in the flavorless case)
+or ordering constraints (in the flavorful case).
+Thus, you can’t filter out ancestors based on their direct modular extension not modifying the focus;
+you can only filter out ancestors all of whose transitive ancestors do not modify the focus.
+
+Now how does ancestry management work when writing specifications with multiple inheritance?
+At the top-level, the parent DAG of a specification looks very much
+like some kind of module imports:
+you specify parent specifications you depend on, in some local order (list or DAG).
+When a specification contains nested specifications, the outer order induces an inner order.
+When an entire specification is nested as some inner focus, the semantics is the same as if
+each inner parent had been lifted into an outer parent at the context level containing
+the nested modular extension with appropriately lifted ancestors, recursively
+(the lifting otherwise preserving identity).
+
+Now, whichever form of inheritance you use,
+the things being specified at times may themselves be specifications, prototypes, classes.
+They may be further overridden in a covariant way (towards more specialized variants);
+or they may be overridden in a contravariant way (towards less specialized variants);
+or they may be overridden in invariant ways—yet still have a default value that may change;
+or they may follow arbitrary kinds of method combinations (@secref{MC}).
+
+Now, BETA (with single inheritance) and gBeta (with multiple inheritance)
+only support the covariant pattern where subpatterns further-specialize.
+But there are many cases where you don’t want this covariant,
+but somehow use the modular extensions within your specifications to
+edit, compose, and otherwise specify prototypes and classes in non-monotonic ways.
+And so Newspeak, Jsonnet or Nix (all of them with mixin inheritance) make it cheap
+to use the covariant nested pattern (especially with @c{+:} in Jsonnet),
+but allow arbitrary overrides in general—that
+may involve specialization of prototypes @; TODO (@secref{XXX}).
 
 @subsection{Optics for Class Instance Methods}
 @; TODO: use rproto everywhere instead of directly ModExt ?
@@ -899,7 +948,7 @@ that made multiple inheritance sensible when it otherwise wasn’t.
 
 Flavors notably allowed regular or “primary” methods to be extended in subclasses with
 “before” and “after” methods, respectively called before and after the primary method@xnote[","]{
-  See @secref{Inner} for a comparison with the original concatenation semantics of Simula and Beta.
+  See @secref{Inner} for a comparison with the original concatenation semantics of Simula and BETA.
 }
 that could set up and tear down resources, do logging or permission checking or resource accounting,
 hold and release locks, etc.
@@ -1422,14 +1471,14 @@ that allows for the extensibility of code along more independent axes.
 
 @subsection[#:tag "Inner"]{Simula’s @c{inner}: Superclass-Controlled Extension}
 
-The very first OO language, Simula, and its direct successor Beta,
+The very first OO language, Simula, and its direct successor BETA,
 had a peculiar way of combining methods—or, in their parlance,
 the bodies of classes and virtual procedures. They called it “concatenation semantics”.
 
 @XXXX{XXXXX}
 
 The semantics of before and after methods is quite similar to the
-of Simula and Beta, except that the most-specific-first order of before methods
+of Simula and BETA, except that the most-specific-first order of before methods
 and most-specific-last order of after methods is the opposite of the concatenation semantics
 of Simula. Of course, one could easily define a new method combination
 that uses the order of Simula, opposite of this default order for before and after methods.
@@ -1442,7 +1491,7 @@ wherein the body of each subclass or subprocedure
 is the “inner” part between this prefix and suffix,
 marked by the @c{inner} keyword as a placeholder.
 Lack of explicit @c{inner} keyword is same as before, as if the keyword was at the end.
-This approach by Simula and its successor Beta @~cite{Kristensen1987}
+This approach by Simula and its successor BETA @~cite{Kristensen1987}
 (that generalized classes to “patterns” that also covered method definitions the same way;
 except that lack of “inner” means the “do” block cannot be extended anymore,
 like “final” in Java or C++),
@@ -1464,7 +1513,7 @@ through function calls, return values and immutable let bindings.
 But this concatenation semantics is both limited and horribly complex to use
 in the post-1968 context of structured code blocks,
 not to mention post-1970s higher-order functions, etc.
-You could express the modern approach in a roundabout way in Beta,
+You could express the modern approach in a roundabout way in BETA,
 by explicitly building a list or nesting of higher-order functions as your only side-effect,
 that re-invert control in a pure way back the way everyone else does it,
 that you call at the end; but that would be an awkward design pattern.
@@ -1474,7 +1523,7 @@ No one but the Simula inventors wants anything resembling @c{inner}
 for the language they build or use.
 After Smalltalk, languages instead let subclass methods control the context
 for possible call of superclass methods, rather than the other way around.
-Beta behavior is easily expressible with user-defined method combinations
+BETA behavior is easily expressible with user-defined method combinations
 in CLOS @~cite{Cannon1979 Bobrow1988},
 or can also be retrieved by having methods
 explicitly build an effective method chained the other way around.
@@ -2492,13 +2541,13 @@ or will level the playing field in favor of new languages, static or dynamic.
   the concatenation semantics of Simula, and its “inner” keyword.
   Implement it purely with functions, and optionally use macros so the syntax
   is closer to the original.
-  Optionally, implement the semantics of Beta instead of that of Simula,
+  Optionally, implement the semantics of BETA instead of that of Simula,
   or in addition to it@xnote["."]{
-    Note that in the case of Beta, much of the difficulty is in
+    Note that in the case of BETA, much of the difficulty is in
     understanding its semantics to begin with,
     based on the @italic{sui generis} nature of the little available documentation.
     See my notes on @citet{Kristensen1987}, or
-    ask AI for help understanding Beta and its documentation.
+    ask AI for help understanding BETA and its documentation.
 }}
 
 @exercise[#:difficulty "Medium"]{
@@ -2559,6 +2608,16 @@ or will level the playing field in favor of new languages, static or dynamic.
 @exercise[#:difficulty "Hard"]{
   Can you retroactively add methods to a generic function?
   In a pure functional way? With eager evaluation? With lazy evaluation?
+}
+
+@exercise[#:difficulty "Hard"]{
+  Determine whether suggested scheme for nested POI inheritance matches @secref{IoNaI}
+  BETA’s polymorphic families with single inheritance in the case
+  that POI’s are all suffix specifications.
+  Determine whether it matches whatever Newspeak does for nested classes
+  with the mixin extension pattern
+  when the inheritance DAG is a tree you can flatten into a list of mixins.
+  Exhibit either formal proofs of equivalence, or counter-examples.
 }
 
 @exercise[#:difficulty "Research"]{

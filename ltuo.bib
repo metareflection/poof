@@ -1192,6 +1192,28 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
+% No @Periodical in Scribble bibtex
+@Misc{BYTE1981,
+  editor={Christopher P. Morgan},
+  title={Special Issue on Smalltalk},
+  howpublished={BYTE 6 (8)},
+  journal={BYTE},
+  volume={6},
+  number={8},
+  year={1981},
+  month=aug,
+  url={https://www.worldradiohistory.com/Archive-Byte/80s/Byte-1981-08.pdf},
+  note={
+    Special issue of BYTE Magazine devoted to Smalltalk-80, edited by Christopher P. Morgan,
+    containing articles by Adele Goldberg, Dan Ingalls, Larry Tesler and
+    other members of the Xerox Learning Research Group.
+    Conspicuously absent from the list of authors is Alan Kay, who had left Xerox.
+    The issue brought Smalltalk and object-oriented programming to a broad audience
+    of microcomputer enthusiasts, and was an important milestone in the popularization
+    of the object-oriented paradigm.
+  }
+}
+
 % Chine Nual or chinual 3ed, 1981 has Flavors and defsystem. 1979 2ed doesn’t.
 % Stroustrup1989 cites 3ed or 4ed (also 1981)
 % NB: The chapter on Flavors, signed by Weinreb & Moon, also published as AIM-602, November 1980, updated 1981-01-16
@@ -1763,7 +1785,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   volume={16},
   url={https://tidsskrift.dk/daimipb/article/view/7578},
   note={.
-    Beta is the successor of Simula. It claims to unify classes, procedures, functions and types
+    BETA is the successor of Simula. It claims to unify classes, procedures, functions and types
     as a single abstraction mechanism called “patterns”.
     Patterns are restricted prototypes that conflate first-class target records-or-procedures
     with second-class specifications of those targets that can be used with single inheritance
@@ -1799,7 +1821,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     (which generalizes to prototypes and classes in other languages), and how to do it right.
     The semantic infrastructure to do it right already existed in earlier prototype languages
     such as KRL or Act-1; but their authors don’t seem to have specifically
-    noticed and examined the semantics of nesting prototypes. The Beta team did, albeit
+    noticed and examined the semantics of nesting prototypes. The BETA team did, albeit
     with ad hoc words such as “virtual patterns” and “family polymorphism”.
     The report is hard to read: The authors are in their own world, with their own vocabulary,
     syntax and semantics, and fail to try to reduce their semantics
@@ -1812,9 +1834,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     export good ideas from them. Very sad waste of great talent by self-imposed intellectual isolation.
   }
 }
-% Do we want to talk about gBeta, where patterns are first-class,
-% and can be extended at runtime, allowing for mixins?
-% (and sometimes in-place, as in a monotonic change-class).
 
 % Also published in ACM SIGPLAN Notices 23(5):17--34, May 1988
 @InProceedings{Liskov1987,
@@ -2388,7 +2407,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   address={New York, NY, USA},
   url={https://bracha.org/oopsla90.pdf},
   doi={10.1145/97945.97982},
-  abstract={The diverse inheritance mechanisms provided by Smalltalk, Beta, and CLOS are interpreted as different uses of a single underlying construct. Smalltalk and Beta differ primarily in the direction of class hierarchy growth. These inheritance mechanisms are subsumed in a new inheritance model based on composition of mixins, or abstract subclasses. This form of inheritance can also encode a CLOS multiple-inheritance hierarchy, although changes to the encoded hierarchy that would violate encapsulation are difficult. Practical application of mixin-based inheritance is illustrated in a sketch of an extension to Modula-3.},
+  abstract={The diverse inheritance mechanisms provided by Smalltalk, BETA, and CLOS are interpreted as different uses of a single underlying construct. Smalltalk and BETA differ primarily in the direction of class hierarchy growth. These inheritance mechanisms are subsumed in a new inheritance model based on composition of mixins, or abstract subclasses. This form of inheritance can also encode a CLOS multiple-inheritance hierarchy, although changes to the encoded hierarchy that would violate encapsulation are difficult. Practical application of mixin-based inheritance is illustrated in a sketch of an extension to Modula-3.},
   booktitle={OOPLSA/ECOOP},
   pages={303--311},
   numpages={9},
@@ -4045,6 +4064,29 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     The paper thus introduces an explicit implemented-by relationship
     to avoid confusion between metalevels when extending implementations,
     e.g. adding shadow slots for history, implementing persistence, etc.
+  }
+}
+
+@PhDThesis{Ernst2000,
+  author={Erik Ernst},
+  title={gBeta: A Language with Virtual Attributes, Block Structure, and Propagating, Dynamic Inheritance},
+  series={DAIMI PB},
+  number={549},
+  institution={University of Aarhus, Department of Computer Science},
+  month=mar,
+  year={2000},
+  doi={10.7146/dpb.v29i549.7654},
+  url={https://tidsskrift.dk/daimipb/article/download/7654/6510/0},
+  note={.
+    Comprehensive description of gBeta, a successor to BETA featuring first-class patterns,
+    virtual attributes, pattern computations, dynamic inheritance, mixins, virtual patterns, and
+    family-oriented extensibility.
+    gBeta uses flavorful multiple inheritance with C3,
+    with builtin combinations and proper nesting for (virtual) classes, objects, procedures.
+    Despite the author claiming gBeta to be class-based and not prototype-based,
+    its first-class objects are actually prototypes that remember both “target” fields
+    (that can be dynamically extended as well as assigned if mutable),
+    and “specification” patterns and classes (that can be dynamically further specialized).
   }
 }
 

@@ -459,14 +459,15 @@ Racket @~cite{Flatt1998 Flatt2006},
 Newspeak @~cite{Bracha2008},
 GCL @~cite{Bokharouss2008},
 Jsonnet @~cite{Cunningham2014},
-and Nix @~cite{Simons2015}. @; TODO: cite gBeta ?
+and Nix @~cite{Simons2015}.
 Yet it still has outsized outreach, for just the use of GCL at Google means
 a large part of the world computing infrastructure
 is built upon configurations written using mixin inheritance@xnote["."]{
   There is some confidentiality around Google’s Configuration Language GCL.
   Still, my understanding is that GCL as such only had single inheritance,
-  yet that users would define their own mixins by abstracting over
-  the base class being extended using single inheritance, e.g.
+  yet that users would often build and use entire frameworks using mixin inheritance,
+  wherein mixins are defined by abstracting over a base class
+  that is then extended using single inheritance, e.g.
   @c{lambda base: base { a = 1 + super.a; b = c + d;}}
   Semantically, this is just the same trick as used by Racket to implement mixins
   on top of single inheritance.
@@ -474,7 +475,6 @@ is built upon configurations written using mixin inheritance@xnote["."]{
 One may also construe the way C++ handles non-“virtual” repeated superclasses
 as a form of mixin inheritance with automatic renaming,
 at which point mixin inheritance is actually very popular, just not well-understood.
-
 
 @exercise[#:difficulty "Easy"]{
   Identify one to three concepts from this chapter that you were not familiar with.

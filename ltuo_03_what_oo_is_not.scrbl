@@ -1157,7 +1157,7 @@ beyond horizons past which no one dared venture,
 to find a domain no one else dreamed existed—and change the world.
 
 Despite all the greatness of the very first pioneers,
-it is appropriate that a concept be named by those who identified it,
+it is appropriate that a concept be named by or after those who identified it,
 and that a name shall refer principally to the concept that matters most
 among all those it is used or abused for.
 
