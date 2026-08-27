@@ -1937,7 +1937,7 @@ requires the selection of the first possible candidate at each time.
 New variants may add their own set of extra constraints on the partial order,
 that will all be higher priority than the extended precedence constraint@xnote["."]{
   For instance, some classes could be tagged as “base” classes for their respective aspects
-  (like our @c{base-bill-of-parts} in @seclink{IME}), and we could require base classes
+  (like our @c{base-bill-of-parts} in @seclink{IoMaE}), and we could require base classes
   to be treated before others. This could be generalized as assigning
   some “higher” partial order among groups of classes (metaclasses),
   that has higher priority than the regular order, or then again “lower” orders, etc.

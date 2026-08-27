@@ -1637,7 +1637,7 @@ since the entire point of a specification is to contribute some @emph{partial} i
 about one small aspect of an overall computation,
 that in general depends on other aspects being defined by complementary specifications.
 
-@subsection[#:tag "IME"]{Interaction of Modularity and Extensibility}
+@subsection[#:tag "IoMaE"]{Interaction of Modularity and Extensibility}
 
 Without extensibility, a modular module specification need never access
 the identifiers it specifies via the global module context (@c{self}),

@@ -186,7 +186,7 @@ an implicit conflation the specification and the target@xnote["."]{
   and fail to find a solution, because they @emph{want} to keep confusing target and specification
   even though at some level they can clearly see they are different things.
   If they had conceptualized the two as being entities that need to be distinguished semantically,
-  must then be explicitly re-grouped together as some kind of pair,
+  and must then be explicitly re-grouped together as some kind of pair,
   they could have solved the problem and stayed on top of the λ-calculus.
   Instead, they abandon such attempts, and rebuild their own syntactic theory
   of a variant of the λ-calculus just for objects,
@@ -207,22 +207,22 @@ rather than requiring a lazy language or recursion through ad hoc stateful side-
 we need our fixpoint to be a function, which is provided by our representation of records as functions.
 
 Thus, I will define and use functions @c{conflate}, @c{get-spec} and @c{get-target}
-to explicitly store and extract the information in the @c{spec} and @c{target} fields of a record.
-Here is an implementation of that idea, wherein I prefix function names with @c{qproto}:
+to explicitly store and extract the information in the @c{spec} and @c{target} fields of a record:
 @Code{
 (def (conflate spec target)
   (extend-record 'spec spec
     (extend-record 'target target empty-record)))
 (def (get-spec tp) (tp 'spec))
 (def (get-target tp) (tp 'target))
-
+}
+I can now give an implementation of recursive conflation,
+wherein I prefix function names with @c{qproto}.
+Note how the following functions are essentially unchanged compared to @c{pproto}:
+@Code{
 (def (qproto-wrapper spec super _self)
   (conflate spec super))
 (def (qproto←spec spec)
   (fix-record (mix spec (qproto-wrapper spec))))
-}
-Note how the following functions are essentially unchanged compared to @c{pproto}:
-@Code{
 (def spec←qproto get-spec)
 (def target←qproto get-target)
 (def qproto-id (qproto←spec idModExt))
@@ -272,7 +272,7 @@ include a recursive element of the same type@xnote["."]{
 
 This use of a reference wrapper can be seen as an instance of the so-called
 “Fundamental theorem of software engineering” @~cite{WikiFTSE}:
-@emph{We can solve any problem by introducing an extra level of indirection}.
+@principle{We can solve any problem by introducing an extra level of indirection}.
 But more meaningfully, it can also be seen as the embodiment of the fact that,
 computationally, @principle{recursion is not free}.
 While at some abstract level of pure logic or mathematics,
@@ -684,7 +684,7 @@ will not have undesired side-effects.
 Once again, @principle{Laziness proves essential to OO,
 even and especially in the presence of side-effects}.
 
-@subsection{Large-Scale Advantages of Conflation: More Modularity}
+@subsection[#:tag "LSAoCMM"]{Large-Scale Advantages of Conflation: More Modularity}
 
 Remarkably, conflation is more modular than the lack thereof:
 thanks to it, programmers do not have to decide in advance

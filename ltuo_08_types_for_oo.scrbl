@@ -88,7 +88,7 @@ Now, with only modularity, or only extensibility, what’s more second-class onl
 you could contrive a way for the typechecker to always exactly know all the types required,
 by prohibiting open recursion through the module context,
 and generating magic projections behind the scenes (and a magic merge during linking).
-But as I previously showed in @secref{IME},
+But as I previously showed in @secref{IoMaE},
 once you combine modularity and extensibility, what’s more first-class,
 then open recursion through the module context becomes the entire point,
 and your typesystem must confront it.
@@ -467,7 +467,7 @@ it is a class @c{linkage} that defines references @c{suc} and @c{pred} to the �
 that classes can inherit from so that their elements shall be part of a doubly linked list.
 This example, and any data structure defined using recursion,
 will defeat the NNOOTT if examined closely.
-Not only is such recursion a most frequent occurrence, I showed above in @secref{IME} that
+Not only is such recursion a most frequent occurrence, I showed above in @secref{IoMaE} that
 while you can eschew support for fixpoints through the module context
 when considering modularity or extensibility separately,
 open recursion through module contexts becomes essential when considering them together.
@@ -1257,13 +1257,10 @@ Yet this complexity derives directly from the conflation and confusion of specif
 And so, to the almost entirety of industry and academia alike,
 composed of people most of whom are better and cleverer than me in more ways than one,
 still I declare:
-  @;{ TODO insert meme picture?
-      https://xach.livejournal.com/170311.html
-      https://www.xach.com/img/doing-it-wrong.jpg
-  }
 @principle{Programming: You’re Doing It Completely Wrong.}@Note{
-  Zach Beane famously made a funny meme of John McCarthy, inventor of Lisp,
-  ostensibly uttering that condemnation.
+  Zach Beane @hyperlink["https://xach.livejournal.com/170311.html"]{famously made}
+  a @hyperlink["https://www.xach.com/img/doing-it-wrong.jpg"]{funny meme of John McCarthy},
+  inventor of Lisp, ostensibly uttering that condemnation.
   The actual McCarthy, of course, was not the kind who would say anything like that,
   even if he might have thought so at times.
   Instead, he called himself an “extreme optimist”, viz,
@@ -1294,7 +1291,7 @@ still I declare:
 }
 
 @exercise[#:difficulty "Medium"]{
-  The chapter mentions “binary methods” as a case where NNOOTT fails.
+  The chapter mentions “binary methods” as a case where the NNOOTT fails.
   Implement a specification for @c{Comparable} values with a method
   @c{compare : Self → Self → Ordering}
   (where @c{Ordering} is the type for a choice between the symbols @c{< = > incomparable},

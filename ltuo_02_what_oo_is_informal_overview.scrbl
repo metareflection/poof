@@ -198,7 +198,7 @@ and you’ll implicitly refer to its target when speaking of calling a method,
 looking at its attributes, reading or writing a field, etc.
 See @secref{CCTHP}.
 
-@subsection{Modularity of Conflation}
+@subsection[#:tag "MoC"]{Modularity of Conflation}
 
 In first-class OO without conflation,
 developers of reusable libraries are forced to decide in advance and in utter ignorance
@@ -209,10 +209,10 @@ Choosing target over specification everywhere would of course defeat extensibili
 but choosing specification over target for the sake of extensibility,
 especially so without the shared computation cache afforded by conflation,
 would lead to an exponential explosion of runtime reevaluations.
-By letting programmers defer a decision they lack information to make,
-the conflation of specification and target is an essential pragmatic feature of Prototype OO:
+By letting programmers not have to make a decision they lack information to make,
+the conflation of specification and target is an essential usability feature of Prototype OO:
 it increases intertemporal cooperation between programmers
-and their future collaborators (including their future selves)
+and their future collaborators (most usually including their future selves)
 without the need for communication between the two (that would require time-travel).
 Thus, in first-class OO, @principle{Conflation Increases Modularity}.
 

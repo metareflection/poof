@@ -1071,7 +1071,7 @@ at least not without some non-standard extensions enabling open recursive module
 Now, modularity and extensibility are simple enough that the current informal chapter
 can successfully discuss them.
 But the subtleties of modular extensibility evade such informal treatment.
-To restate the previous paragraph formally (@secref{IME})
+To restate the previous paragraph formally (@secref{IoMaE})
 requires having formally defined modularity, extensibility, and modular extensibility,
 which will have to wait for the next chapter (@secref{MOO}).
 For this reason, I won’t be able to have this section on Modular Extensibility

@@ -129,9 +129,10 @@ and even most of what looks like OO in C++ is often different enough from OO tha
 OO is a general concept that is not defined by any single particular instantiation of it,
 however advanced, popular, or declared as prototypical by any particular pundit.
 OO is especially not whichever OO language you, the reader, first learned,
-or got to most associate in your mind with OO.
+or got to most associate with OO in your mind.
 Smalltalk, CLOS, Ruby, Python, Java, JavaScript, C#, Scala, and many more...
-OO is precisely what these languages have in common.
+however great or lame in many ways, none of these language is OO.
+Instead, OO is precisely what these languages have in common.
 No language can embody OO and be “all OO, and nothing but OO”,
 because @principle{OO is not a language design, it’s a language @emph{feature}}.
 Yet if I had to exhibit a minimal, “prototypical” OO language (pun intended),
@@ -155,17 +156,17 @@ that claimed the words “object-oriented” in print with the modern sense (@se
 also introduced the words “inheritance” and “prototype” in their OO meaning,
 has what is now called prototype-based OO (a.k.a. Prototype OO).
 
-Certainly, Smalltalk was class-based, unlike KRL.
+Certainly, Smalltalk, that made OO popular, was class-based, unlike KRL.
 But Smalltalk adopted inheritance after KRL.
 And the very next OO languages immediately after Smalltalk
-were prototype-based languages
+were both prototype-based:
 Director @~cite{Kahn1976 Kahn1979Ani Kahn1979Director} and
 ThingLab @~cite{Borning1977 Borning1979 Borning1981}@xnote["."]{
   ThingLab was built on top of Smalltalk by members of the same team at PARC,
   and oscillated between having or not having classes in addition to prototypes.
   Meanwhile, Kahn, who wrote Director, joined PARC after graduating from MIT.}
 Plenty more Prototype OO or “class-less” OO languages followed
-@~cite{Hewitt1979 Rees1982 Adams1988 Ungar1987 Chambers1989 Lawall1989 Salzman2005 Cunningham2014 Simons2015 Rideau2021}.
+@~cite{Hewitt1979 Rees1982 Adams1988 Ungar1987 Chambers1989 Lawall1989 Salzman2005 Cunningham2014 Simons2015 Rideau2021}. @; TODO Dekorte2005
 There are a lot more Prototype OO languages than I could have time to review @~cite{WikiProto},
 but prominent among them is JavaScript @~cite{Eich1996},
 one of the most used programming languages in the world @~cite{GitHub2022},
@@ -1162,6 +1163,9 @@ and that a name shall refer principally to the concept that matters most
 among all those it is used or abused for.
 
 @section{Misunderstandings about Inheritance}
+
+The word “object” is not the only one that is contentious in the study of OO.
+The word “inheritance” has its own controversies, though smaller in scale.
 
 @subsection{Absurd Rejection of “Inheritance of Implementation”}
 @epigraph{

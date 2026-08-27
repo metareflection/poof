@@ -558,19 +558,29 @@ based on composing open modular extensions.
 
 @subsubsection{Prototype Specification}
 
-I’ll assume for now that prototypes are records implemented with the @c{rproto} encoding
-from @secref{CfR}. Then, if you have a lens @c{l} to focus on a prototype,
-you may further focus on the prototype’s specification by further composing @c{l}
-with the following lens, after which you can further use lenses
+I’ll assume for now that prototypes are records implemented with the @c{poi} encoding
+from @secref{POI}@xnote["."]{
+  Note how POI and multiple inheritance in general relies on equality of generated identity tags,
+  which you some consider an unwanted side-effect.
+  In this case, you may use @c{rproto} from @secref{CfR} that relies on mixin inheritance,
+  which is pure. Or you may request users to manually provide identity tags.
+  Or you may restrict your prototypes to the second-class usage at meta-level
+  where this side-effect is acceptable (and identity is provided from source location).
+}
+Then, if you have a lens @c{l} to focus on a prototype,
+you may further focus on the prototype’s specification
+(in the case of POI, the list of arguments to @c{make-poi})
+by further composing @c{l} with the following lens, after which you can further use lenses
 to modularly extend the specification methods as above:
 @Code{
-(def rproto-spec-view spec←rproto)
-(def rproto-spec-setter rproto←spec)
-(def rproto-spec-lens
-  (lens←getter*setter rproto-spec-view rproto-spec-setter))}
+(def poi-spec-view (list (poi-mod-ext poi) (poi-suffix? poi) (poi-parents poi)))
+(def poi-spec-setter (lambda (args) (apply make-poi args)))
+(def poi-spec-lens
+  (lens←getter*setter poi-spec-view poi-spec-setter))}
 
-The entire point of @c{rproto} is that the target view is @c{identity}.
-However, what the target update should be is an interesting question.
+The entire point of @c{POI} (after @c{rproto}, @secref{CfR})
+is that the target view is @c{identity}.
+However, what the basis for target update should be is an interesting question.
 There are many options; none of them seems universally correct;
 any of them can be a feature or a bug, depending on user intent, but each is often a bug;
 and so the error behavior is probably the safest one to use by default:
@@ -584,20 +594,22 @@ and so the error behavior is probably the safest one to use by default:
     then the result remains extensible, but in a way that forgets the formulas,
     and remembers only the current values.}
   @item{If you update the target then the magic specification field will be erased by default,
-    and the object will not be extensible through inheritance anymore,
-    unless you make it so again the hard way by explicitly providing a new magic specification field.}
+    and the object will not be extensible through inheritance anymore
+    (overriding the metadata field under magic key @c{#f})
+    unless you make it so again the hard way by explicitly providing a new metadata field.}
   @item{If you try to update the target, an error will be thrown,
     and you won’t later have to debug very surprising behavior.}]
-To a first approximation, this corresponds to using variants of these Update functions:
+To a first approximation, this corresponds to using variants of these @c{poi-target} functions
+as the basis for what an @c{poi-target-update} will do:
 @Code{
-(def rproto-target-update/OutOfSync
-  identity)
-(def rproto-target-update/OverwriteSpec
-  rproto←record)
-(def rproto-target-update/NoMoreSpec
-  (extend-record #f #f))
-(define rproto-target-update/Error
-  abort)
+(def (poi-target-update/OutOfSync u poi)
+  (u poi))
+(def (poi-target-update/OverwriteSpec u poi)
+  (make-poi (constant-spec (u poi)) #f '()))
+(def (poi-target-update/NoMoreSpec u poi)
+  (u (extend-record #f #f poi)))
+(define (poi-target-update/Error u poi)
+  (abort "cannot update a poi target"))
 }
 
 @subsubsection{Nested Specifications}
@@ -618,9 +630,9 @@ Of course, dynamic OO languages, whether Prototype OO languages or Class OO lang
 have always been able to express these nested specifications and their overriding the hard way.
 But credit where credit is due, BETA@~cite{Kristensen1987}
 was the first language that explicitly supported such nested specifications,
-with its virtual patterns, and whose authors explicitly explored
-the resulting notion of “family polymorphism” (as Ernst dubbed it). @;TODO cite Ernst2001
-This proves that the scandinavian school advanced OO in more ways
+with its virtual patterns, and the author of the successor gBeta explicitly explored
+the resulting notion of “family polymorphism”. @;TODO cite Ernst2001
+This proves that the “scandinavian school” advanced OO in more ways
 than by first implementing classes in Simula 67@~cite{Dahl1967}.
 Other notable languages that explicitly support nested specifications include
 Newspeak@~cite{Bracha2008} with its nested classes (in a Class OO language), and
@@ -685,7 +697,109 @@ edit, compose, and otherwise specify prototypes and classes in non-monotonic way
 And so Newspeak, Jsonnet or Nix (all of them with mixin inheritance) make it cheap
 to use the covariant nested pattern (especially with @c{+:} in Jsonnet),
 but allow arbitrary overrides in general—that
-may involve specialization of prototypes @; TODO (@secref{XXX}).
+may involve specialization of prototypes.
+
+@subsubsection[#:tag "NP"]{Nested Prototypes}
+@epigraph{
+  Yo dawg, I heard you like prototypes, @linebreak[]
+  so we put prototypes in your prototypes @linebreak[]
+  so you can prototype while you prototype
+  @|#:- @elem{riffing on an
+          @hyperlink["https://imgflip.com/i/azsjnz"]{Internet meme},
+          @hyperlink["https://knowyourmeme.com/sensitive/memes/xzibit-yo-dawg"]{c. 2007}}|
+}
+OO is a useful way to modularly and incrementally write software,
+and not just at the toplevel of a project.
+In general, many definitions nested inside your project will themselves benefit
+from being defined using OO.
+And the inheritance structure of those inner definitions follows its own logic,
+largely independent from the toplevel inheritance structure of the project,
+and not a trivial sub-structure thereof.
+
+As I already mentioned (@secref{MoC}, @secref{SSAoCPS}, @secref{LSAoCMM}),
+that’s where prototypes and their conflation really shine,
+compared to managing specifications and their targets separately:
+Define your nested objects, and you can always use them both for target queries
+and specification extension, without having to add a finalization pass
+that computes each target from its specification,
+which would require omniscience about the exact fine-grained nesting structure of the entire program
+including all imported modules and generated sub-structures.
+
+The trivial case is that one of the outer “extensions”
+introduces a nested object where no previous object existed,
+the definition of which is perfect and never itself needs to be extended.
+While each inner definition may involve multiple other definitions it inherits from,
+each nested definition appears fully formed. Any further extension will happen
+by defining a new binding that uses the previous one but does not override it.
+This is great when possible, but the entire point of OO is to cover cases
+that are not trivial that way (@secref{IoMaE}).
+
+Only slightly less trivial is the case when the original definition is a default placeholder value,
+and a further extension just replaces the default by some unrelated value that satisfies
+the implicit or explicit type constraint on the binding,
+but is somehow more appropriate to the application at hand
+(e.g. for performance or compatibility reasons).
+The original binding may be to some null value or @c{None} option,
+or to some descriptor with methods corresponding to a solid choice
+of a default service or algorithm for the given purpose
+(in 2026, you might pick
+builtin hash-tables for associative arrays,
+builtin lists (singly linked?) or balanced trees for sequences,
+sqlite for a local relational database,
+BLAKE3 for a cryptographic hash function,
+zstd for a compression algorithm,
+some language-standard library for serialization,
+JSON or JSONC for human-readable configuration and data,
+etc.)
+The “extension” would pick a more appropriate value in context,
+as a constant that ignores the previous default.
+
+Now, for a simple OO extension that actually respects and extends
+the inheritance structure of the previous value that is itself a prototype,
+the obvious answer is of course that the extended value inherits from the previous “super” value.
+When using single inheritance, one or more modular extensions
+can be mixed in at the most-specific end of its inheritance list, specializing the previous value.
+When using mixin inheritance, one or more modular extensions can also be mixed in
+at the other least-specific end of the inheritance list, providing tentative defaults
+rather than definitive overrides to newly defined aspects used by other modules.
+When using multiple or optimal inheritance, the previous value may be one of the parents
+in local precedence order of the extended value (list or DAG).
+In all these cases, the previous value can be largely opaque and abstract to the inner extension,
+which allows multiple inner extensions to be composed in whichever order respects
+the dependencies declared through the inheritance structure of the outer extension.
+
+When using multiple or optimal inheritance, a prototype may be defined
+by editing its local precedence order, adding new constraints at either end of its DAG.
+This protocol can express richer sets of behaviors through extension than the above,
+but requires that extension behavior should be contributed
+through the modular extensions of ancestors rather than directly:
+the direct modular extension of the prototype is applied last,
+after those of the ancestors are mixed in;
+thus, if defined (other than @c{idModExt}) it should only contain
+a finalizer for the methods defined by those ancestors.
+The extended values must respect that invariant,
+which makes them not as opaque as with the regular inheritance protocol.
+Such an extension protocol must thus be agreed upon in advance when the prototype is defined.
+Now, if agreeing in advance to a non-trivial OO extension protocol is a thing,
+a related approach is Method Combinations (@secref{MC}).
+
+Finally, there are various non-modular extensions you can make to prototypes.
+These extensions are sometimes useful, but require care to avoid clashes.
+They are better done in a final wrapper (@secref{RC}), or
+in a finalization step that may itself be part of a method combination.
+Thus, for instance, you might want not just to compose with an existing modular extension,
+but to wrap around it, e.g. to rename method names, or wrap method arguments and results, etc.
+If you’re going that way, you might want a wrapper around each and every modular extension
+in the ancestry so far, or maybe around the entire object—such global wrapping is more modular
+(requires less information about which ancestor did what) but its result is still not modular
+(you must make sure to run this wrapping the last thing,
+or else every additional extension not in currently wrapped set must coordinate).
+If possible, you are better off avoiding non-modular extensions and instead
+define intermediate objects you can extend independently from the wrapping.
+Once again, some method combination can do that for you.
+Another non-modular extension, when using optimal inheritance,
+is to turn the suffix flag on for performance, or to turn it off for semantic compatibility
+when adding ancestors at the least-specific end of the ancestry for the purpose of infrastructure.
 
 @subsection{Optics for Class Instance Methods}
 @; TODO: use rproto everywhere instead of directly ModExt ?
