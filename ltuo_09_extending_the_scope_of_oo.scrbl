@@ -556,7 +556,7 @@ and maximize the chances that the result is correct and performant, etc.,
 all that is not just possible, but simple, using this pure functional approach to OO
 based on composing open modular extensions.
 
-@subsubsection{Prototype Specification}
+@subsubsection[#:tag "PS"]{Prototype Specification}
 
 I’ll assume for now that prototypes are records implemented with the @c{poi} encoding
 from @secref{POI}@xnote["."]{
@@ -573,10 +573,17 @@ you may further focus on the prototype’s specification
 by further composing @c{l} with the following lens, after which you can further use lenses
 to modularly extend the specification methods as above:
 @Code{
-(def poi-spec-view (list (poi-mod-ext poi) (poi-suffix? poi) (poi-parents poi)))
-(def poi-spec-setter (lambda (args) (apply make-poi args)))
+(def (poi-spec-view poi) (list (poi-mod-ext poi) (poi-suffix? poi) (poi-parents poi)))
+(def (poi-spec-setter args _) (apply make-poi args)))
 (def poi-spec-lens
-  (lens←getter*setter poi-spec-view poi-spec-setter))}
+  (lens←getter*setter poi-spec-view poi-spec-setter))
+(def poi-modext-lens
+  (compose-lens poi-spec-lens list-first-lens))
+(def poi-suffix?-lens
+  (compose-lens poi-spec-lens list-second-lens))
+(def poi-parents-lens
+  (compose-lens poi-spec-lens list-third-lens))
+}
 
 The entire point of @c{POI} (after @c{rproto}, @secref{CfR})
 is that the target view is @c{identity}.
@@ -2603,10 +2610,11 @@ or will level the playing field in favor of new languages, static or dynamic.
 @exercise[#:difficulty "Easy"]{
   Implement the @emph{product} of two (or three, or more) lenses,
   that allows view and update of a pair (or list) of data each based on its lens.
-  Then, assuming you implemented POI or lifted my implementation as in @secref{POI},
-  implement views, updates and lenses for POI—first
-  for a tuple (e, s, p) of the extension, suffix flag and parent list list,
-  then for the individual elements of that tuple.
+  Implement @c{car-lens}, @c{cdr-lens} to access the two parts of a @c{cons},
+  or the equivalent lenses for a pair in your language,
+  then @c{list-first-lens}, @c{list-second-lens}, @c{list-third-lens} as used in @secref{PS},
+  or the equivalent in your language to access the components of a triplet,
+  whichever way you encode specifications for optimal inheritance.
 }
 
 @exercise[#:difficulty "Easy"]{
