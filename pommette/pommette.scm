@@ -1,11 +1,12 @@
 ;;;;;; pommette - a cheeky, barebones implementation of a meta-object protocol.
 ;;;;;; LtUO demonstration mini object systems written in Scheme
 #|
+Working:
 With Gerbil Scheme: gxi pommette.scm
 With Chez Scheme: chezscheme pommette-chez.scm
 With Racket: racket pommette.rkt
 
-Not yet working:
+Not working:
 With Gambit Scheme: gsi -:s pommette.scm
 |#
 #|
@@ -15,9 +16,11 @@ With Gambit Scheme: gsi -:s pommette.scm
 
 (cond-expand
  (gambit
-  (load "~~/syntax-case"))
+  (load "~~/syntax-case")) ;; sadly, Gambit's syntax-case can't handle the stuff below :-(
  (gerbil
-  (import :std/debug/DBG)))
+  (import :std/debug/DBG))
+ (else
+  #f))
 
 ;;; Flag for verbose execution:
 (define verbose #t)
@@ -76,8 +79,8 @@ With Gambit Scheme: gsi -:s pommette.scm
      (begin
        ;; Allow autocurrying self-reference in the definition body
        ;; (name) with 0 args calls tmp; (name a ...) curries via @
-       (define-syntax @tmp (syntax-rules () ((_) (tmp)) ((_ . a) (@ tmp . a))))
        (define tmp (let () . body))
+       (define-syntax @tmp (syntax-rules () ((_) (tmp)) ((_ . a) (@ tmp . a))))
        (define-identifier-macro v tmp @tmp)))))
 
 ;;; Expectations -- trivial test suite
@@ -155,6 +158,29 @@ With Gambit Scheme: gsi -:s pommette.scm
  ;; failed uncurried call to curried function:
  ((λ (x y z t) (+ x y z t)) 1 2 3 4) =>fail!)
 
+;; curry/list : apply a curried function to a list of args, one at a time (companion to @).
+(def (curry/list f l)
+  (let loop ((f f) (l l))
+    (if (pair? l)
+        (loop (f (car l)) (cdr l))
+        f)))
+
+(expect
+ (curry/list + '()) => +
+ (curry/list + '(4)) => 4
+ (curry/list (λ (x y z) (+ x y z)) '(5 6 7)) => 18)
+
+(def (uncurry/list arity k)
+  (let loop ((n arity) (r '()))
+    (if (zero? n) (k (reverse r))
+        (λ (x) (loop (- n 1) (cons x r))))))
+
+(expect
+ (uncurry/list 0 vector) => '#(())
+ (uncurry/list 1 vector 'a) => '#((a))
+ (uncurry/list 2 vector 'a 'b) => '#((a b))
+ (uncurry/list 3 vector 'a 'b 'c) => '#((a b c)))
+
 ;;; 5.2.2 Records (moved ahead, because we use it in 5.1.2 already)
 (def (empty-record _)
   #f)
@@ -208,13 +234,28 @@ With Gambit Scheme: gsi -:s pommette.scm
         (@ compose add1 mul10 4) => 41
         (compose mul10 mul10 3) => 300)
 
-;; Generalizing compose to n-ary composition.
-(define compose*
-  (case-lambda
-    (() identity)
-    ((x) x)
-    ((x y) (compose x y))
-    ((x . r) (compose x (apply compose* r))))) ;; or (foldl compose* x r)
+;; n-ary from a binary monoid op. NAME/list folds a list right-associatively (empty ⇒ id,
+;; singleton ⇒ its element); NAME* is the varargs spelling — (define (NAME* . a) (NAME/list
+;; a)). Same convention across the file's `*` operators (compose*, mix*, compose-lens*,
+;; field-lens*, …). The `go` recursion lives here once (a letrec, not the auto-curry `def`).
+(define (op/list←op2 op2 id)
+  (letrec ((go (lambda (l)
+                 (cond ((null? l) id)
+                       ((null? (cdr l)) (car l))
+                       (else (op2 (car l) (go (cdr l))))))))
+    go))
+(define (op*←op2 op2 id)
+  (let ((go (op/list←op2 op2 id)))
+    (lambda args (go args))))
+;; …and for a curried operator that takes one argument then the next.
+(define (op/list←op1.1 op1.1 id)
+  (op/list←op2 (lambda (x y) (@ op1.1 x y)) id))
+(define (op*←op1.1 op1.1 id)
+  (op*←op2 (lambda (x y) (@ op1.1 x y)) id))
+
+;; Generalizing compose to n-ary composition — an instance of the above.
+(def compose/list (op/list←op1.1 compose identity))
+(define (compose* . args) (compose/list args))
 
 (define (uncurry2 f) (lambda (x y) ((f x) y)))
 
@@ -411,21 +452,8 @@ let Y = f: (x: x x) (x: f (x x));
 (def (fix t m) ;; top (supermost) element, and modular extension
   (Y (m t))) ;; Apply m to t, take the fixpoint for the self argument
 
-;; Generalizing compose*
-;; Take a monoid two-argument operation op2, return the n-ary variant.
-(define op*←op2 (lambda (op2 id)
-  ;; Simpler, though less efficient: (λ args (foldl op2 id args))
-  (letrec ((op* (case-lambda
-                 (() id)
-                 ((x) x)
-                 ((x y) (op2 x y))
-                 ((x . r) (op2 x (apply op* r)))))) ;; or (foldl op2 x r)
-    op*)))
-;; Variant of op*←op2, but for a curried operator that takes one argument then the next.
-(define op*←op1.1 (lambda (op1.1 id)
-  (op*←op2 (lambda (x y) (@ op1.1 x y)) id)))
-
-(define mix* (op*←op1.1 mix idModExt))
+(def mix/list (op/list←op1.1 mix idModExt))
+(define (mix* . args) (mix/list args))
 
 ;; Specification that calls a unary operation on the super value
 (def (op-super-spec op super _self)
@@ -473,6 +501,8 @@ let Y = f: (x: x x) (x: f (x x));
 
 ;;; field-spec~ : like field-spec, but treats #f super as empty-record.
 ;;; Useful when the top is #f and we are not sure whether a sub-record was initialized yet.
+;;; (For a NESTED key path see field-spec~* / field-spec~/list in §9.1.2, built on the
+;;; field-update~* lens family.)
 (def (field-spec~ key compute-value super self method-id)
   (field-spec key compute-value (or super empty-record) self method-id))
 
@@ -700,7 +730,7 @@ let Y = f: (x: x x) (x: f (x x));
   (fix-record (mix* (constant-field-spec 'Key symbol-order)
                     binary-tree-map-spec)))
 
-(define my-binary-dict
+(def my-binary-dict
   (foldl (lambda (kv t) (symbol-tree-map 'acons (car kv) (cdr kv) t))
          (symbol-tree-map 'empty)
          '((a . "I") (b . "II") (c . "III") (d . "IV") (e . "V"))))
@@ -719,12 +749,12 @@ let Y = f: (x: x x) (x: f (x x));
 ;;   node = (left-subtree ((k . v) . height) right-subtree)
 ;; Height is stored alongside the kv pair for O(1) balance-factor checks.
 (def (avl-tree-rebalance-spec super _self method-id)
-  (define (left t)    (car t))
-  (define (kv t)      (caadr t))
-  (define (height t)  (if (null? t) 0 (cdadr t)))
-  (define (right t)   (caddr t))
-  (define (balance t) (if (null? t) 0 (- (height (right t)) (height (left t)))))
-  (define (mk l ckv r)
+  (def (left t)    (car t))
+  (def (kv t)      (caadr t))
+  (def (height t)  (if (null? t) 0 (cdadr t)))
+  (def (right t)   (caddr t))
+  (def (balance t) (if (null? t) 0 (- (height (right t)) (height (left t)))))
+  (def (mk l ckv r)
     (let ((lh (height l)) (rh (height r)))
       (or (member (- rh lh) '(-1 0 1)) (error "tree unbalanced!"))
       (list l (cons ckv (+ 1 (max lh rh))) r)))
@@ -749,7 +779,7 @@ let Y = f: (x: x x) (x: f (x x));
                     binary-tree-map-spec
                     avl-tree-rebalance-spec)))
 
-(define my-avl-dict
+(def my-avl-dict
   (foldl (lambda (kv t) (Dict 'acons (car kv) (cdr kv) t))
          (Dict 'empty)
          '((a . "I") (b . "II") (c . "III") (d . "IV") (e . "V"))))
@@ -824,7 +854,7 @@ let Y = f: (x: x x) (x: f (x x));
 ;; Tests: build a map with 10 entries (threshold=8).
 ;; After inserting a..j in order: a and b (oldest) are evicted to AVL;
 ;; c..j (8 entries, most-recent-first) remain in the alist.
-(define my-hybrid-dict
+(def my-hybrid-dict
   (foldl (lambda (kv t) (alist+avl-map 'acons (car kv) (cdr kv) t))
          (alist+avl-map 'empty)
          '((a . 1) (b . 2) (c . 3) (d . 4) (e . 5)
@@ -836,7 +866,7 @@ let Y = f: (x: x x) (x: f (x x));
   (alist+avl-map 'ref my-hybrid-dict 'z (lambda () #f)) => #f) ;; absent
 
 ;; afoldr collects all 10 entries; alist values shadow any stale AVL entries.
-(define my-hybrid-alist
+(def my-hybrid-alist
   (alist+avl-map 'afoldr (λ (k v acc) (cons (cons k v) acc))
                  '() my-hybrid-dict))
 
@@ -857,7 +887,8 @@ let Y = f: (x: x x) (x: f (x x));
 (def pproto-id (pproto←spec idModExt))
 (def (pproto-mix parent child)
   (pproto←spec (mix (spec←pproto parent) (spec←pproto child))))
-(define pproto-mix* (op*←op1.1 pproto-mix pproto-id))
+(def pproto-mix/list (op/list←op1.1 pproto-mix pproto-id))
+(define (pproto-mix* . args) (pproto-mix/list args))
 
 (def coord-pproto (pproto←spec coord-spec))
 (def color-pproto (pproto←spec color-spec))
@@ -913,6 +944,7 @@ let Y = f: (x: x x) (x: f (x x));
 (def qproto-id (qproto←spec idModExt))
 (def (qproto-mix parent child)
   (qproto←spec (mix (spec←qproto parent) (spec←qproto child))))
+(def qproto-mix/list (op/list←op1.1 qproto-mix qproto-id))
 (define qproto-mix* (op*←op1.1 qproto-mix qproto-id))
 
 (def coord-qproto (qproto←spec coord-spec))
@@ -945,6 +977,7 @@ let Y = f: (x: x x) (x: f (x x));
 (def target←rproto identity)
 (def (rproto-mix parent child)
   (rproto←spec (mix (spec←rproto parent) (spec←rproto child))))
+(def rproto-mix/list (op/list←op1.1 rproto-mix rproto-id))
 (define rproto-mix* (op*←op1.1 rproto-mix rproto-id))
 (def (rproto←record r)
   (rproto←spec (constant-spec r)))
@@ -973,16 +1006,18 @@ let Y = f: (x: x x) (x: f (x x));
 ;;; (pass half before method-id, not after as in YASOS
 ;;; also take a late-bound hyper/htop for mixin semantics)
 
-(define rop*←op2 (lambda (op2 id)
-  ;; Simpler, though less efficient: (λ args (foldl op2 id args))
-  (letrec ((op* (case-lambda
-                 (() id)
-                 ((x) x)
-                 ((x y) (op2 x y))
-                 ;; weird: (foldl (lambda (x y) (op2 y x)) x r) doesn't work with Chez (?)
-                 ((x y . r) (apply op* (op2 x y) r)))))
-    op*)))
-;; Variant of rop*←op2, but for a curried operator that takes one argument then the next.
+;; Reversed (left-associative) fold — rop/list←op2 consumes a list, rop*←op2 is varargs.
+(define (rop/list←op2 op2 id)
+  (lambda (l)
+    (if (null? l) id
+        (let loop ((acc (car l)) (rest (cdr l)))
+          (if (null? rest) acc (loop (op2 acc (car rest)) (cdr rest)))))))
+(define (rop*←op2 op2 id)
+  (let ((go (rop/list←op2 op2 id)))
+    (lambda args (go args))))
+;; Variants of rop/list←op2 / rop*←op2 for a curried operator that takes one arg then the next.
+(define rop/list←op1.1 (lambda (op1.1 id)
+  (rop/list←op2 (lambda (x y) (@ op1.1 x y)) id)))
 (define rop*←op1.1 (lambda (op1.1 id)
   (rop*←op2 (lambda (x y) (@ op1.1 x y)) id)))
 
@@ -994,6 +1029,7 @@ let Y = f: (x: x x) (x: f (x x));
 (def (half-ref half) (half half))
 (def (hspec-rmix hparent hchild hyper half)
   (hchild (hparent hyper) half))
+(def hspec-rmix/list (rop/list←op1.1 hspec-rmix id-hspec))
 (define hspec-rmix* (rop*←op1.1 hspec-rmix id-hspec))
 (def (hspec-half-top) (hspec-half half-top))
 (def (hspec-half-record) (hspec-half half-empty-record))
@@ -1039,7 +1075,7 @@ let Y = f: (x: x x) (x: f (x x));
            (super (η (hyper half)))) ;; (λ (x) (hyper half x))
     (spec super self)))
 
-(define u-comp (spec→hspec (mix* coord-spec area-spec (add-x-spec 1) color-spec)))
+(def u-comp (spec→hspec (mix* coord-spec area-spec (add-x-spec 1) color-spec)))
 
 (expect (map (half-ref (hspec-half-record u-comp)) '(x y z color area)) => '(3 4 #f "blue" 12))
 
@@ -1135,6 +1171,9 @@ let Y = f: (x: x x) (x: f (x x));
             y)))))
 
 ;;;; List utilities needed by C4
+;; NB: For ease of porting, C4 and the utilities it relies on are written in plain Scheme
+;; rather than the autocurry dialect I've been using
+;; for the conceptual exploration of OO in "functional programming" style.
 
 ;; Reverse lst and prepend to tail.
 (define (append-reverse lst tail)
@@ -1170,14 +1209,14 @@ let Y = f: (x: x x) (x: f (x x));
           (loop (cdr l) (if r (cons r acc) acc))))))
 
 ;; c4-linearize head parents get-precedence-list suffix? [eq [get-name]]
-;;   -> (cons precedence-list super-suffix-or-#f)
+;;   → (cons precedence-list super-suffix-or-#f)
 ;;
 ;; Compute the precedence list for a specification.
 ;;   head               - prefix list to prepend (typically (list x) or '())
 ;;   parents            - list of totally-ordered parent chains (each chain is a list);
 ;;                        supports an arbitrary DAG for the local precedence order,
 ;;                        e.g. '((A B C)) for a single chain, or '((A B) (C A)) for a DAG.
-;;   get-precedence-list - procedure: x -> its full precedence list (incl. x at front)
+;;   get-precedence-list - procedure: x → its full precedence list (incl. x at front)
 ;;   suffix?            - predicate: is x a "suffix" (single-inh struct)?
 ;;   eq                 - equality on specs (optional, default: equal?)
 ;;   get-name           - name extractor for error messages (optional, default: identity)
@@ -1285,7 +1324,7 @@ let Y = f: (x: x x) (x: f (x x));
              parent-list))
           parents))
 
-         ;; Build suffix-tail-index: element -> position.
+         ;; Build suffix-tail-index: element → position.
          ;; Most specific element gets highest index (= length of suffix-tail),
          ;; least specific gets index 1.
          (define suffix-tail-index (make-eqht))
@@ -1482,10 +1521,10 @@ let Y = f: (x: x x) (x: f (x x));
 ;;;; 7.4.6 Prototypes with Optimal Inheritance (POI)
 
 ;; POI is a prototype in the style of rproto, the spec accessible via #f
-;;   'mod-ext         -> ModExt             -- this spec's own modular extension
-;;   'parents         -> List(List(POI))    -- local precedence chains of direct parents
-;;   'suffix?         -> Bool               -- requires the suffix property (single-inh chain)
-;;   'precedence-list -> List(POI)          -- linearized ancestors, most-specific first (lazy)
+;;   'mod-ext         → ModExt             -- this spec's own modular extension
+;;   'parents         → List(List(POI))    -- local precedence chains of direct parents
+;;   'suffix?         → Bool               -- requires the suffix property (single-inh chain)
+;;   'precedence-list → List(POI)          -- linearized ancestors, most-specific first (lazy)
 ;;
 ;; parents is a list of totally-ordered chains, the same format as c4-linearize's parents:
 ;;   e.g. (list (list A B C)) for a single chain, (list (list A B) (list C A)) for a DAG.
@@ -1499,7 +1538,7 @@ let Y = f: (x: x x) (x: f (x x));
 (def (poi-parents poi) (poi-spec poi 'parents))
 
 (def (make-poi name mod-ext suffix? parents)
-  (letrec*
+  (letrec
       ((precedence-list-and-suffix*
         (delay (c4-linearize '() parents
                              poi-precedence-list
@@ -1616,94 +1655,94 @@ let Y = f: (x: x x) (x: f (x x));
     ((_ (name . parents) ...)
      (begin (defpoi name :e (constant-field-spec 'name 'name) :p . parents) ...))))
 
-(defhierarchy ;; same as expected-pls
-  (O) (A O) (B O) (C O) (D O) (E O)
-  (K1 A B C O) (K2 D B E O) (K3 D A O) (Z K1 K2 K3 D A B C E O)
-  (J1 C A B O) (J2 B D E O) (J3 A D O) (Y J1 C J3 A J2 B D E O)
-  (DB B O) (WB B O) (EL DB B O) (SM DB B O) (PWB EL DB WB B O) (SC SM DB B O)
-  (P PWB EL SC SM DB WB B O)
-  (GL O) (HG GL O) (VG GL O) (HVG HG VG GL O) (VHG VG HG GL O)
-  (HH) (GG HH) (II GG HH) (FF HH) (EE HH) (DD FF HH)
-  (CC EE FF GG HH) (BB) (AA BB CC EE DD FF GG HH)
-  (o O) (a o O) (b a o O) (c b a o O) (d D c b a o O) (M A B b a o O)
-  (N C c b a o O) (L M A B N C c b a o O) (k D L M A B N C c b a o O)
-  (j E k D L M A B N C c b a o O) (I N C M A B c b a o O)
-  (x1) (x2 x1) (x3 x2 x1) (x4 x3 x2 x1) (x5 x4 x3 x2 x1)
-  (SBA) (SBB) (SBS SBA) (sBs SBA) (SBC SBS SBA SBB))
-
-
-;; --- Wikipedia 2021: Z hierarchy ---
-;; Classes: O, A B C D E O, K1=(A B C), K2=(D B E), K3=(D A), Z=(K1 K2 K3)
-;; Expected PL: Z K1 K2 K3 D A B C E O
-(expect
- (poi-precedence-list Z)  => (list Z K1 K2 K3 D A B C E O)
- (poi-precedence-list K1) => (list K1 A B C O)
- (poi-precedence-list K2) => (list K2 D B E O)
- (poi-precedence-list K3) => (list K3 D A O))
-
-;; --- Wikipedia 2023: Y hierarchy ---
-;; J1=(C A B), J2=(B D E), J3=(A D), Y=(J1 J3 J2)
-;; Expected PL: Y J1 C J3 A J2 B D E O
-(expect (poi-precedence-list Y) => (list Y J1 C J3 A J2 B D E O))
-
-;; --- C3 paper: Boat hierarchy ---
-;; boat(B), day-boat(DB=B), wheel-boat(WB=B), engine-less(EL=DB),
-;; small-multihull(SM=DB), pedal-wheel-boat(PWB=EL WB),
-;; small-catamaran(SC=SM), pedalo(P=PWB SC)
-;; Expected PL: P PWB EL SC SM DB WB B O
-(expect (poi-precedence-list P) => (list P PWB EL SC SM DB WB B O))
-
-;; --- C4 suffix hierarchy: lowercase = suffix (single-inheritance chain) ---
-;; O, o=(O suffix), a=(o), b=(a), c=(b o), d=(D c) where D is a class
-;; Expected PLs: o→(o O), a→(a o O), b→(b a o O), c→(c b a o O), d→(d D c b a o O)
-(expect
- (poi-precedence-list o) => (list o O)
- (poi-precedence-list a) => (list a o O)
- (poi-precedence-list b) => (list b a o O)
- (poi-precedence-list c) => (list c b a o O)
- (poi-precedence-list d) => (list d D c b a o O))
-
-;; --- C4 regression: x5=(x4 x1) where x4=(x3), x3=(x2), x2=(x1), x1 base ---
-;; Expected PL: x5 x4 x3 x2 x1
-(expect
- (poi-precedence-list x5) => (list x5 x4 x3 x2 x1))
-
-;; --- Instantiation with C4 merged fields across the Z hierarchy ---
-;; Each class contributes a unique field; Z's instance can access all of them.
-(expect
- (map Z '(Z K1 K2 K3 A B C D E O missing)) => '(Z K1 K2 K3 A B C D E O #f))
-
-;; --- Full test-objects/test-supers/expected-pls coverage ---
-;; Build POI instances for all test objects using the same test vectors
-;; already validated for c4-linearize directly.  test-objects is in topological
-;; order (each object's supers appear earlier in the list), so parents always
-;; exist in the alist when we create a child.
 (let ()
-  (define sym-poi-alist '())  ;; (sym . oisp) pairs, most-recently-added first
-  (def (sym->poi sym)
-    (let ((p (assq sym sym-poi-alist)))
-      (if p (cdr p) (error "POI not found for symbol" sym))))
+  (defhierarchy ;; same as expected-pls
+    (O) (A O) (B O) (C O) (D O) (E O)
+    (K1 A B C O) (K2 D B E O) (K3 D A O) (Z K1 K2 K3 D A B C E O)
+    (J1 C A B O) (J2 B D E O) (J3 A D O) (Y J1 C J3 A J2 B D E O)
+    (DB B O) (WB B O) (EL DB B O) (SM DB B O) (PWB EL DB WB B O) (SC SM DB B O)
+    (P PWB EL SC SM DB WB B O)
+    (GL O) (HG GL O) (VG GL O) (HVG HG VG GL O) (VHG VG HG GL O)
+    (HH) (GG HH) (II GG HH) (FF HH) (EE HH) (DD FF HH)
+    (CC EE FF GG HH) (BB) (AA BB CC EE DD FF GG HH)
+    (o O) (a o O) (b a o O) (c b a o O) (d D c b a o O) (M A B b a o O)
+    (N C c b a o O) (L M A B N C c b a o O) (k D L M A B N C c b a o O)
+    (j E k D L M A B N C c b a o O) (I N C M A B c b a o O)
+    (x1) (x2 x1) (x3 x2 x1) (x4 x3 x2 x1) (x5 x4 x3 x2 x1)
+    (SBA) (SBB) (SBS SBA) (sBs SBA) (SBC SBS SBA SBB))
 
-  ;; Reverse-lookup: OISpec -> symbol (for comparing PLs with expected-pls)
-  (def (poi->sym poi)
-    (let ((p (find (lambda (pair) (eq? (cdr pair) poi)) sym-poi-alist)))
-      (if p (car p) (error "No symbol for POI" poi))))
-
-  ;; Create one OISpec per test object
-  (for-each
-   (lambda (sym)
-     (let* ((supers  (test-get-supers sym))
-            ;; Single chain of direct parents (same as c4-linearize call-site above)
-            (parents (if (null? supers) '() (list (map sym->poi supers))))
-            (poi     (make-poi sym idModExt (test-struct? sym) parents)))
-       (set! sym-poi-alist (cons (cons sym poi) sym-poi-alist))))
-   test-objects)
-
-  ;; Check every object's precedence-list matches the expected one
+  ;; --- Wikipedia 2021: Z hierarchy ---
+  ;; Classes: O, A B C D E O, K1=(A B C), K2=(D B E), K3=(D A), Z=(K1 K2 K3)
+  ;; Expected PL: Z K1 K2 K3 D A B C E O
   (expect
-   (map (lambda (sym) (map poi->sym (poi-precedence-list (sym->poi sym))))
-        test-objects)
-   => expected-pls))
+   (poi-precedence-list Z)  => (list Z K1 K2 K3 D A B C E O)
+   (poi-precedence-list K1) => (list K1 A B C O)
+   (poi-precedence-list K2) => (list K2 D B E O)
+   (poi-precedence-list K3) => (list K3 D A O))
+
+  ;; --- Wikipedia 2023: Y hierarchy ---
+  ;; J1=(C A B), J2=(B D E), J3=(A D), Y=(J1 J3 J2)
+  ;; Expected PL: Y J1 C J3 A J2 B D E O
+  (expect (poi-precedence-list Y) => (list Y J1 C J3 A J2 B D E O))
+
+  ;; --- C3 paper: Boat hierarchy ---
+  ;; boat(B), day-boat(DB=B), wheel-boat(WB=B), engine-less(EL=DB),
+  ;; small-multihull(SM=DB), pedal-wheel-boat(PWB=EL WB),
+  ;; small-catamaran(SC=SM), pedalo(P=PWB SC)
+  ;; Expected PL: P PWB EL SC SM DB WB B O
+  (expect (poi-precedence-list P) => (list P PWB EL SC SM DB WB B O))
+
+  ;; --- C4 suffix hierarchy: lowercase = suffix (single-inheritance chain) ---
+  ;; O, o=(O suffix), a=(o), b=(a), c=(b o), d=(D c) where D is a class
+  ;; Expected PLs: o→(o O), a→(a o O), b→(b a o O), c→(c b a o O), d→(d D c b a o O)
+  (expect
+   (poi-precedence-list o) => (list o O)
+   (poi-precedence-list a) => (list a o O)
+   (poi-precedence-list b) => (list b a o O)
+   (poi-precedence-list c) => (list c b a o O)
+   (poi-precedence-list d) => (list d D c b a o O))
+
+  ;; --- C4 regression: x5=(x4 x1) where x4=(x3), x3=(x2), x2=(x1), x1 base ---
+  ;; Expected PL: x5 x4 x3 x2 x1
+  (expect
+   (poi-precedence-list x5) => (list x5 x4 x3 x2 x1))
+
+  ;; --- Instantiation with C4 merged fields across the Z hierarchy ---
+  ;; Each class contributes a unique field; Z's instance can access all of them.
+  (expect
+   (map Z '(Z K1 K2 K3 A B C D E O missing)) => '(Z K1 K2 K3 A B C D E O #f))
+
+  ;; --- Full test-objects/test-supers/expected-pls coverage ---
+  ;; Build POI instances for all test objects using the same test vectors
+  ;; already validated for c4-linearize directly.  test-objects is in topological
+  ;; order (each object's supers appear earlier in the list), so parents always
+  ;; exist in the alist when we create a child.
+  (let ()
+    (define sym-poi-alist '())  ;; (sym . oisp) pairs, most-recently-added first
+    (def (sym->poi sym)
+      (let ((p (assq sym sym-poi-alist)))
+        (if p (cdr p) (error "POI not found for symbol" sym))))
+
+    ;; Reverse-lookup: OISpec -> symbol (for comparing PLs with expected-pls)
+    (def (poi->sym poi)
+      (let ((p (find (lambda (pair) (eq? (cdr pair) poi)) sym-poi-alist)))
+        (if p (car p) (error "No symbol for POI" poi))))
+
+    ;; Create one OISpec per test object
+    (for-each
+     (lambda (sym)
+       (let* ((supers  (test-get-supers sym))
+              ;; Single chain of direct parents (same as c4-linearize call-site above)
+              (parents (if (null? supers) '() (list (map sym->poi supers))))
+              (poi     (make-poi sym idModExt (test-struct? sym) parents)))
+         (set! sym-poi-alist (cons (cons sym poi) sym-poi-alist))))
+     test-objects)
+
+    ;; Check every object's precedence-list matches the expected one
+    (expect
+     (map (lambda (sym) (map poi->sym (poi-precedence-list (sym->poi sym))))
+          test-objects)
+     => expected-pls)))
 
 ;;;;; 9 Extending the Scope of OO
 
@@ -1739,6 +1778,7 @@ let Y = f: (x: x x) (x: f (x x));
 (def id-lens
   (make-lens identity identity))
 
+(def compose-lens/list (op/list←op1.1 compose-lens id-lens))
 (define compose-lens* (op*←op1.1 compose-lens id-lens))
 
 ;;; Getter and Setter (moved after make-lens)
@@ -1755,8 +1795,8 @@ let Y = f: (x: x x) (x: f (x x));
 (def (field-lens key)
   (make-lens (field-view key) (field-update key)))
 
-(define (field-lens* . keys)
-  (apply compose-lens* (map field-lens keys)))
+(def (field-lens/list keys) (compose-lens/list (map field-lens keys)))
+(define (field-lens* . keys) (field-lens/list keys))
 
 ;; Same but #f interpreted as empty-record
 ;; field-view~ : Key → Record → Value
@@ -1769,18 +1809,45 @@ let Y = f: (x: x x) (x: f (x x));
 (def (field-lens~ key)
   (make-lens (field-view~ key) (field-update~ key)))
 
-(define (field-view~* . keys)
-  (apply compose* (map field-view~ (reverse keys))))
+(def (field-view~/list keys) (compose/list (map field-view~ (reverse keys))))
+(define (field-view~* . keys) (field-view~/list keys))
 
-;; field-lens~* : Key... → Lens
+;; field-lens~/list / field-lens~* : Key... → Lens
 ;; Like field-lens* but each intermediate node is initialized to empty-record if #f.
-(define (field-lens~* . keys)
-  (apply compose-lens* (map field-lens~ keys)))
+(def (field-lens~/list keys) (compose-lens/list (map field-lens~ keys)))
+(define (field-lens~* . keys) (field-lens~/list keys))
 
-;; field-update~* : Key... → (Value → Value) → Record → Record
-;; Like field-update~ but nested over multiple keys.
-(define (field-update~* . keys)
-  (apply compose* (map field-update~ keys)))
+;; field-update~/list : List(Key) → (Value → Value) → Record → Record
+;;   field-update~ nested over a key path; every missing record on the way (including the
+;;   target) ⇒ empty-record. Empty list ⇒ identity, i.e. the record itself is the leaf and
+;;   the call reads as (f rec).
+(def (field-update~/list keys) (compose/list (map field-update~ keys)))
+(define (field-update~* . keys) (field-update~/list keys))
+
+;; field-spec~/list : List(Key) → compute → ModExt   (compute = (inherited-leaf self) → leaf)
+;;   A field-spec whose target is the nested key path `keys`; missing records default to
+;;   empty-record. inherited-leaf is #f when absent, so compute owns any leaf default
+;;   (argument order as field-spec's (inherited self)). A single-key path ⇒ plain field-spec.
+;;   The OUTER key stays lazy like field-spec; once it fires the whole sub-record is rebuilt
+;;   eagerly — fine for descriptors (instance-methods, instance-field-meta), NOT for the
+;;   per-field value initializers that can `abort`, which stay plain lazy field-spec.
+(def (field-spec~/list keys compute)
+  (field-spec (car keys)
+    (λ (inherited-sub self)
+      (field-update~/list (cdr keys) (λ (leaf) (compute leaf self)) inherited-sub))))
+(define (field-spec~* . keys) (field-spec~/list keys))
+
+(let ()
+  (def s (fix-record (mix* ((field-spec~* 'm 'a) (λ (_i _s) 1))
+                           ((field-spec~* 'm 'b) (λ (_i _s) 2))
+                           ((field-spec~* 'm 'a) (λ (i _s) (+ i 10)))
+                           ((field-spec~* 'p 'q 'r) (λ (i _s) (or i 'seed))))))
+  (expect
+   (s 'm 'a) => 11    ;; second 'a spec chains on the first (1 -> +10)
+   (s 'm 'b) => 2
+   (s 'm 'c) => #f
+   (s 'p 'q 'r) => 'seed   ;; 3-key path: intermediate records auto-created
+   (s 'other) => #f))
 
 
 (def test-rec (record (a (record (b (record (c 42)))))))
@@ -1936,6 +2003,13 @@ let Y = f: (x: x x) (x: f (x x));
 (def poi-parents-lens
   (compose-lens poi-spec-lens list-fourth-lens))
 
+;;; 9.1.5.5. Nested Specifications
+(def (update-rproto/mix modext rp)
+  (rproto-mix (rproto←spec modext) rp))
+(def (update-poi-modext/mix modext poi)
+  (poi-modext-lens 'update (mix modext) poi))
+
+
 ;; Optics: poi-spec-lens / poi-name-lens / poi-modext-lens /
 ;; poi-suffix?-lens / poi-parents-lens, and poi←record / record←poi.
 ;; (Exercised here, once poi and defpoi actually exist, rather than in 9.1.5
@@ -1945,68 +2019,507 @@ let Y = f: (x: x x) (x: f (x x));
   (defpoi child :e (field-spec 'val (λ (inh _self) (+ inh 10))) :p base)
   (defpoi other-base :e (constant-field-spec 'val 100))
 
-  ;; the lenses agree with the plain getters
-  (expect
-   (poi-spec-lens 'view child) => (poi-spec-view child)
-   (poi-name-lens    'view child) => (poi-name child)
-   (poi-modext-lens  'view child) => (poi-mod-ext child)
-   (poi-suffix?-lens 'view child) => (poi-suffix? child)
-   (poi-parents-lens 'view child) => (poi-parents child))
-
   ;; poi-parents-lens re-parents child onto other-base, keeping child's
   ;; own name and mod-ext (so its +10 field-spec still applies on top)
   (def reparented (poi-parents-lens 'update (K (list (list other-base))) child))
+
+  ;; poi←record / record←poi round-trip a plain record
+  (def wrapped (poi←record (record (val 42))))
+
+  ;; the lenses agree with the plain getters
   (expect
+   (poi-spec-lens    'view child) => (poi-spec-view child)
+   (poi-name-lens    'view child) => (poi-name child)
+   (poi-modext-lens  'view child) => (poi-mod-ext child)
+   (poi-suffix?-lens 'view child) => (poi-suffix? child)
+   (poi-parents-lens 'view child) => (poi-parents child)
+
    (poi-name reparented) => (poi-name child)
    (poi-mod-ext reparented) => (poi-mod-ext child)
    (poi-parents reparented) => (list (list other-base))
    (reparented 'val) => 110  ;; other-base's 100, plus child's own +10
-   (poi-precedence-list reparented) => (list reparented other-base))
+   (poi-precedence-list reparented) => (list reparented other-base)
 
-  ;; poi←record / record←poi round-trip a plain record
-  (def wrapped (poi←record (record (val 42))))
-  (expect
    (wrapped 'val) => 42
-   ((record←poi child) 'val) => 15   ;; ordinary field access still works
-   ((record←poi child) #f) => #f))   ;; but the magic spec key is erased
+   (record←poi child 'val) => 15   ;; ordinary field access still works
+   (record←poi child #f) => #f))   ;; but the magic spec key is erased
 
-;;;; 9.1.6 Optics for Class Instance Methods
+;;;; 9.1.6 Optics for Classes
 
-;; instance-method-lens : MethodId → SkewLens for a class instance method
-(def (instance-method-lens method-id)
-  (update-lens poi-modext-lens
-    (compose-update (field-update 'instance-methods)
-                    (field-update method-id))))
+(def (instance-method-lens method-id) (field-lens~* 'instance-methods method-id))
+(def (instance-field-lens field-id) (field-lens~* 'instance-field-meta field-id))
 
 ;; make-call-next-method : inherited-method → element → args → call-next-method-fn
+;;   ()                       calls the inherited method on the same element/args
+;;   (new-element . new-args) calls it with a replacement element and/or args
 (def (make-call-next-method inherited-method element args)
   (case-lambda
     (()              (apply (inherited-method element) args))
     ((new-element . new-args) (apply (inherited-method new-element) new-args))))
 
-;; instance-method-spec : MethodId → (element → call-next-method → result) → ModExt
+;; instance-method-spec : MethodId → (call-next-method element arg ... → Result) → ModExt
+;;   Installs instance-methods[method-id] = (λ (element) (λ args …)) — the shape instance-call
+;;   expects. method-body is an auto-curried λ, so apply it with curry/list, never `apply`.
+;;   field-spec~* threads the parent class's instance-methods[method-id] in as the
+;;   call-next-method target (arriving via make-poi's mix* of ancestor mod-exts).
 (def (instance-method-spec method-id method-body)
-  (skew-ext (instance-method-lens method-id)
-    (λ (inherited-method _self element)
-      (λ args
-        (method-body element
-          (make-call-next-method inherited-method element args))))))
+  ((field-spec~* 'instance-methods method-id)
+    (λ (inherited-method _self element . args)
+      (curry/list method-body
+        (cons (make-call-next-method inherited-method element args)
+              (cons element args))))))
 
-;; base-instance-method-spec : omits call-next-method for leaf methods
+;; base-instance-method-spec : leaf instance method, no call-next-method parameter.
 (def (base-instance-method-spec method-id method-body)
-  (instance-method-spec method-id
-    (λ (element _call-next-method) (method-body element))))
+  ((field-spec~* 'instance-methods method-id)
+    (λ (_inherited-method _self element . args)
+      (curry/list method-body (cons element args)))))
 
-;; instance-field-lens : FieldId → SkewLens for a class instance field descriptor
-(def (instance-field-lens field-id)
-  (update-lens poi-modext-lens
-    (compose-update (field-update 'instance-fields)
-                    (field-update field-id))))
+;; field-name-insert : append x at the most-specific (tail) end if absent; if x is already
+;;   present, keep the earlier (less-specific) mention and drop this one. Preserves the
+;;   accumulation order least-specific → most-specific, which keeps the suffix-class
+;;   optimization: a suffix class's own fields stay contiguous at the start of the list.
+(def (field-name-insert x)
+  (def (f lst)
+    (cond ((null? lst) (list x))
+          ((eq? x (car lst)) lst)
+          (else (cons (car lst) (f (cdr lst))))))
+  f)
 
-;; simple-instance-field-spec : FieldId → ModExt → ModExt
-(def (simple-instance-field-spec field-id init-mod-ext)
-  (skew-ext (instance-field-lens field-id)
-    (poi←record (record (init init-mod-ext)))))
+;; A CHECK is either #f (designating the identity function, but optimizable away),
+;; or a function that on valid inputs return the unmodified (or normalized) input
+;; and on invalid inputs (abort …)s on invalid inputs.
+
+;; apply-check : Check → Value →! Value
+(def (apply-check check value)
+  (if check (check value) value))
+
+;; simple-check : String → (Any → Boolean) → Check
+(def (simple-check name pred)
+  (and pred (λ (v) (if (pred v) v (abort "check failed" name v)))))
+
+;; mix-check : Check → Check → Check
+(def (mix-check older newer)
+  (cond ((not newer) older)
+        ((not older) newer)
+        (else (mix older newer))))
+
+;; A CHECK-SPEC is a Modular Extension (inherited-check instance-self → check) or #f
+
+(def (simple-check-spec name pred)
+  (let ((check (simple-check name pred)))
+    (λ (inherited-check _self) (mix-check inherited-check check))))
+(def number-check-spec (simple-check-spec "number" number?))
+(def string-check-spec (simple-check-spec "string" string?))
+(def empty-check-spec (constant-spec #f))
+
+;; mix-maybe : (OrFalse Spec) → (OrFalse Spec) → (OrFalse Spec)
+(def (mix-maybe older newer)
+  (cond ((not newer) older)
+        ((not older) newer)
+        (else (mix older newer))))
+
+;; instance-field-spec : FieldId → InitSpec → CheckSpec → ModExt over the class descriptor.
+;;   InitSpec  : inherited-value whole-object → value  -- CHAINS on the parent's init
+;;   (call-next-method for initializers); a bare (λ (_i _o) v) still REPLACES, read `_i` to
+;;   refine. CheckSpec : (inherited-check self) → check, or #f for none — see above;
+;;   (simple-check-spec name pred) is the common case, empty-check-spec drops the inherited one.
+;;   Two contributions to the class descriptor:
+;;     instance-field-names    : field-name-insert into the inherited list (accumulation order)
+;;     instance-field-meta[id] : REFINES the inherited (record (init …) (check …)) — init
+;;                               chains via mix*, check-spec via mix-check-spec. The single
+;;                               home for {init, check, doc?, mutable?}.
+;;   The per-instance initializer ModExt is derived from this table by
+;;   class-default-instance-spec — no separate instance-field-spec* field.
+(def (instance-field-spec field-id init-spec check-spec)
+  (mix*
+    (field-spec 'instance-field-names
+      (λ (inh _self) (field-name-insert field-id (or inh '()))))
+    ((field-spec~* 'instance-field-meta field-id 'init)
+      (λ (inh _self) (mix-maybe inh init-spec)))
+    ((field-spec~* 'instance-field-meta field-id 'check)
+      (λ (inh _self) (mix-maybe inh check-spec)))))
+
+;; simple-instance-field-spec : the book's name; no check.
+(def (simple-instance-field-spec field-id init-spec) (instance-field-spec field-id init-spec #f))
+
+;; class-default-instance-spec : classPOI → ModExt over an instance record — #t → the class
+;;   POI (so type-of / instance-call resolve), plus, per field that has an init, a
+;;   (field-spec id <chained init>) read straight from instance-field-meta. Mandatory fields
+;;   (init #f) are skipped — the constructor supplies them. Re-fixed per construction.
+;;   TODO (ch.10): this is O(#fields) per construction; memoise on the class POI.
+;;   TODO: the checks belong in a finalizer and/or method combination,
+;;   and/or separate validation layer.
+(def (class-default-instance-spec cls)
+  (mix (constant-field-spec #t cls)
+    (mix/list (filter identity
+               (map (λ (id)
+                      (let ((init-spec ((field-view~* 'instance-field-meta id 'init) cls)))
+                        (and init-spec (field-spec id init-spec))))
+                    (or (cls 'instance-field-names) '()))))))
+
+;;; Reflection + constructors -------------------------------------------------------------
+
+;; mandatory-fields : classPOI → list of field ids whose meta init is #f (accumulation order).
+(def (mandatory-fields cls)
+  (filter (λ (id) (not (cls 'instance-field-meta id 'init)))
+          (or (cls 'instance-field-names) '())))
+
+;; check-instance : resolve each field's check-spec against the fixed instance (inherited-
+;;   check #f, self = inst) and run the resulting check on the field value; each aborts if
+;;   bad. A check-spec that yields #f means "no check" — the field is never forced.
+(def (check-instance cls inst)
+  (for-each (λ (id)
+              (let ((cs ((field-view~* 'instance-field-meta id 'check) cls)))
+                (when cs
+                  (let ((c (@ cs #f inst)))
+                    (when c
+                      (c (inst id)))))))
+            (or (cls 'instance-field-names) '()))
+  inst)
+
+;; make-instance/ext : roll-your-own -- extend the class's default prototype with an
+;;   arbitrary ModExt, then fix + check. `ext` is the MORE-DERIVED side, so its constants
+;;   override the class's own NON-chaining field inits; the class's chaining inits still
+;;   compose among themselves inside class-default-instance-spec.
+(def (make-instance/ext cls ext)
+  (check-instance cls (fix-record (mix (class-default-instance-spec cls) ext))))
+
+;; make-instance : the plain constructor -- CURRIED over the mandatory fields only, in
+;;   accumulation order; supplies each as a constant, then fixes against the default
+;;   prototype (make-instance/ext's check-instance validates every field with real `self`).
+;;   Zero mandatory fields => returns the instance directly.
+(def (make-instance cls)
+  (let loop ((need (mandatory-fields cls)) (ext idModExt))
+    (if (null? need) (make-instance/ext cls ext)
+        (λ (v) (loop (cdr need) (mix ext (constant-field-spec (car need) v)))))))
+
+;;;; 9.1.6.1 Worked Example — Nested Classes and Family Polymorphism
+
+;; TODO: sync the scribble. The two code blocks in ltuo_09_extending_the_scope_of_oo.scrbl
+;;   (around @; TODO fix this near line 852, and @XXXX{TODO INSERT SUITABLE CODE HERE} near
+;;   line 1012) still show the old `update-lens poi-modext-lens` formulation of the 9.1.6
+;;   optics, which cannot run. The working formulation is the `field-spec`-based one above
+;;   (instance-method-spec / base-instance-method-spec / instance-field-spec /
+;;   mandatory-instance-field), mirroring sub-method-spec (9.2.1). This section is the
+;;   prototype answer to the open exercise at ltuo_09 ~2760 (does nested-POI inheritance
+;;   match the book's "Interaction of Nesting and Inheritance" / Newspeak?).
+
+;;; Part 0 — the complete plain class machinery (methods, fields, checks, constructors),
+;;; exercised directly — no nesting / family machinery yet.
+(defpoi P0-Widget :e
+  (base-instance-method-spec 'render (λ (el) (string-append "<" (el 'tag) ">"))))
+(defpoi P0-Boxed :e
+  (instance-method-spec 'render (λ (cnm el) (string-append "[" (cnm) "]")))
+  :p P0-Widget)
+(defpoi P0-Trace :e
+  (instance-method-spec 'render
+    (λ (cnm el) (cnm (extend-record 'tag (string-append "!" (el 'tag)) el))))
+  :p P0-Widget)
+;; a bare instance: #t → class POI, plus a constant 'tag field, fixed against empty-record
+(def (bare cls tag)
+  (fix-record (mix* (constant-field-spec #t cls) (constant-field-spec 'tag tag))))
+(expect
+ ((instance-call (bare P0-Widget "b") 'render)) => "<b>"
+ ((instance-call (bare P0-Boxed  "b") 'render)) => "[<b>]"     ;; call-next-method chains
+ ((instance-call (bare P0-Trace  "b") 'render)) => "<!b>")     ;; advanced CNM (updated element)
+
+;; field init: whole instance = context, field value = focus; inits chain
+(defpoi P0-Base :e (instance-field-spec 'n (constant-spec 1) #f))
+(defpoi P0-Sub  :e (instance-field-spec 'n (λ (inh _obj) (* 10 inh)) #f) :p P0-Base)
+(def (nfix cls) (fix-record (class-default-instance-spec cls)))
+(expect
+ (nfix P0-Base 'n) => 1
+ (nfix P0-Sub  'n) => 10)   ;; chained: 1 → *10
+
+;; minimal reflection layer
+(defpoi P0-Rec :e (mix* (instance-field-spec 'tag #f string-check-spec)
+                        (instance-field-spec 'n (constant-spec 1) #f)))
+(expect
+ (P0-Rec 'instance-field-names) => '(tag n)   ;; accumulation order: mandatory 'tag then 'n
+ (@ P0-Rec 'instance-field-meta 'tag 'init) => #f
+ (procedure? (@ P0-Rec 'instance-field-meta 'n 'init)) => #t
+ (procedure? (@ P0-Rec 'instance-field-meta 'tag 'check)) => #t)
+
+;; a whole plain class + subclass, built with the constructors
+(defpoi P0-Thing :e
+  (mix* (instance-field-spec 'name #f string-check-spec)
+        (instance-field-spec 'size (λ (_i _o) 1) #f)
+        (base-instance-method-spec 'show
+          (λ (el) (string-append (el 'name) "×" (number->string (el 'size)))))))
+(defpoi P0-Big :e (instance-field-spec 'size (λ (inh _o) (* 100 inh)) #f) :p P0-Thing)
+(expect
+ (mandatory-fields P0-Thing) => '(name)
+ (make-instance P0-Thing "x" 'size) => 1                 ;; curried over the mandatory `name`
+ ((instance-call (make-instance P0-Thing "x") 'show)) => "x×1"
+ (make-instance P0-Big "x" 'size) => 100                 ;; `size` init chains (1 → *100)
+ (make-instance P0-Thing 42) =>fail!                     ;; `name` check aborts at construction
+ (make-instance/ext P0-Thing (mix* (constant-field-spec 'name "y")
+                                   (constant-field-spec 'size 9)) 'size) => 9)  ;; roll-your-own
+
+;;; Nested inner classes as nested POIs ----------------------------------------------------
+
+;; inner-class : InnerName → ClassModExt → ModExt (over the family's class descriptor).
+;;   A family's OWN local contribution to a nested inner class. ClassModExt is a mix* of
+;;   instance-method-spec / instance-field-spec / mandatory-instance-field / inner-class forms.
+;;   compute-value must NOT use `self`: family-own-inner-spec re-runs this ModExt on empty
+;;   records purely to read the declared inner-class table back out.
+(def (inner-class inner-name class-modext)
+  (field-spec 'inner-class-specs
+    (λ (inh _self)
+      (extend-record inner-name (record (modext class-modext)) (or inh empty-record)))))
+
+;; inner-class/replace : Newspeak-style NON-covariant lateral swap. The derived nested POI
+;;   gets parents '() -- it does NOT inherit the base inner class, it replaces it wholesale.
+(def (inner-class/replace inner-name class-modext)
+  (field-spec 'inner-class-specs
+    (λ (inh _self)
+      (extend-record inner-name (record (modext class-modext) (replace #t))
+        (or inh empty-record)))))
+
+;; family-inner-class : familyPOI → InnerName → the effective nested-class POI.
+;;   (a) its poi-parents are PROJECTED from (poi-parents family): each outer parent P
+;;       contributes (family-inner-class P inner-name);
+;;   (b) memoized on family x inner-name with eq? tables, so a diamond's two paths to the
+;;       same base inner class reach the SAME object -- c4-linearize needs eq? identity;
+;;   (c) each family contributes only its own local modext; make-poi's internal mix* of
+;;       ancestor mod-exts does the C4-ordered cross-family merge;
+;;   (d) every nested-class POI carries field 'owner-family (most-derived wins after the
+;;       mix), so a Node reaches its sibling NodeCodec and the Edge cross-family check can
+;;       compare (type-of node)'s owner-family -- instances need NO per-instance family tag.
+;;   Irrelevant ancestors are NOT filtered (they still impose ordering, cf. the book's
+;;   "Interaction of Nesting and Inheritance"), so length(inner PL) == length(outer PL).
+;;   make-poi defers c4-linearize, so building the nested subtree is cheap and every
+;;   memoized identity is stable before any precedence list is forced.
+;;   Plain `define`: `def`'s identifier-macro self-reference through nested λ/map is unreliable.
+(def family-inner-class-memo (make-eqht))    ;; familyPOI → (eqht InnerName → nested POI)
+
+(define (family-own-inner-spec family inner-name)
+  (let ((ics (@ (poi-mod-ext family) empty-record empty-record 'inner-class-specs)))
+    (and ics (ics inner-name))))
+
+(define (family-inner-class family inner-name)
+  (let* ((per (or (eqht-ref family-inner-class-memo family #f)
+                  (let ((h (make-eqht)))
+                    (eqht-set! family-inner-class-memo family h) h)))
+         (hit (eqht-ref per inner-name #f)))
+    (or hit
+        (let* ((spec     (family-own-inner-spec family inner-name))
+               (declared (if spec (or (spec 'modext) idModExt) idModExt))
+               (own      (mix* declared (constant-field-spec 'owner-family family)))
+               (replace? (and spec (spec 'replace)))
+               (parents  (if replace?
+                             '()
+                             (map (λ (chain)
+                                    (map (λ (p) (family-inner-class p inner-name)) chain))
+                                  (poi-parents family))))
+               (node     (make-poi inner-name own (poi-suffix? family) parents)))
+          (eqht-set! per inner-name node)
+          node))))
+
+;;; The example: Workspace (toplevel, namespace only) ⊃ Graph ⊃ Node / Edge / NodeCodec ---
+
+;; Node: base describe + a MANDATORY string-checked `label` + serialize (CONSUMES NodeCodec).
+(def graph-node-mx
+  (mix* (base-instance-method-spec 'describe
+          (λ (el) (string-append "N(" (el 'label) ")")))
+        (instance-field-spec 'label #f string-check-spec)
+        (base-instance-method-spec 'serialize
+          (λ (node)
+            (let ((codec (make-instance
+                           (family-inner-class ((type-of node) 'owner-family) 'NodeCodec))))
+              ((instance-call codec 'write) node))))))
+
+;; Edge: describe errors on a cross-family edge, else brackets its endpoints' describe.
+(def graph-edge-mx
+  (mix* (base-instance-method-spec 'describe
+          (λ (el)
+            (unless (eq? (type-of (el 'from) 'owner-family)
+                         (type-of (el 'to)   'owner-family))
+              (error "cross-family edge"))
+            (string-append "E[" ((instance-call (el 'from) 'describe)) "=>"
+                               ((instance-call (el 'to)   'describe)) "]")))
+        (instance-field-spec 'from #f #f)
+        (instance-field-spec 'to #f #f)))
+
+;; NodeCodec: inner class in CONTRAVARIANT position -- CONSUMED by Node.serialize.
+;;   write : (codec) → (node)   → string        read : (codec) → (string) → field-record
+(def line-codec-mx
+  (mix* (base-instance-method-spec 'write (λ (_c node) (string-append "label=" (node 'label))))
+        (base-instance-method-spec 'read  (λ (_c s)    (record (label s))))))
+
+;; The Graph family: the three inner classes + family-instance factory methods.
+;;   (type-of g) is the family POI => new-node / new-edge build instances of THAT family.
+(def graph-mx
+  (mix* (inner-class 'Node     graph-node-mx)
+        (inner-class 'Edge     graph-edge-mx)
+        (inner-class 'NodeCodec line-codec-mx)
+        (base-instance-method-spec 'new-node
+          (λ (g label) ((make-instance (family-inner-class (type-of g) 'Node)) label)))
+        (base-instance-method-spec 'new-edge
+          (λ (g a b) (@ (make-instance (family-inner-class (type-of g) 'Edge)) a b)))))
+
+;; >=3 nesting levels: Workspace (namespace only) ⊃ Graph ⊃ Node / Edge / NodeCodec
+(defpoi Workspace :e (inner-class 'Graph graph-mx))
+(def Graph (family-inner-class Workspace 'Graph))
+
+;; outer diamond over the nested Graph POI -- covariant refinement of Node
+(defpoi ColorGraph
+  :e (inner-class 'Node
+       (mix* (instance-field-spec 'color (constant-spec "black") #f)
+             (instance-method-spec 'describe
+               (λ (cnm el) (string-append (cnm) "@" (el 'color))))))
+  :p Graph)
+(defpoi WeightedGraph
+  :e (inner-class 'Node
+       (mix (instance-field-spec 'weight (constant-spec 1) #f)
+            (instance-method-spec 'describe (λ (cnm el) (string-append (cnm) "#w")))))
+  :p Graph)
+(defpoi RichGraph  :e idModExt
+  :p* (list (list ColorGraph Graph) (list WeightedGraph Graph)))
+(defpoi RichGraph2 :e idModExt
+  :p* (list (list WeightedGraph Graph) (list ColorGraph Graph)))
+
+;; field-init CHAINING (call-next-method for initializers): HeavyGraph multiplies the
+;; inherited `weight` default. Chaining works on a DEFAULTED field; a mandatory field has
+;; no inherited value to chain on.
+(defpoi HeavyGraph
+  :e (inner-class 'Node (instance-field-spec 'weight (λ (inh _obj) (* 10 inh)) #f))
+  :p WeightedGraph)
+
+;; advanced call-next-method: replacement element
+(defpoi TracingGraph
+  :e (inner-class 'Node
+       (instance-method-spec 'describe
+         (λ (cnm el) (cnm (extend-record 'label (string-append ">" (el 'label)) el)))))
+  :p Graph)
+
+;; NON-COVARIANT: the contravariant NodeCodec cannot be inherited-and-extended in lockstep
+;; with Node; a family that changes Node's serialized form must RE-IMPLEMENT it.
+;; (1) lateral swap: JsonGraph replaces NodeCodec wholesale (parents '()).
+(defpoi JsonGraph
+  :e (inner-class/replace 'NodeCodec
+       (mix* (base-instance-method-spec 'write
+               (λ (_c node) (string-append "{\"label\":\"" (node 'label) "\"}")))
+             (base-instance-method-spec 'read (λ (_c s) (record (label s))))))
+  :p Graph)
+;; (2) opposite-direction sibling: IdOnlyGraph makes Node SMALLER -- label init aborts, adds
+;;     id -- so it must ALSO override new-node (the inherited factory passes a label). Its
+;;     codec writes LESS, vs ColorGraph adding a field so the codec writes MORE.
+(defpoi IdOnlyGraph
+  :e (mix* (inner-class 'Node
+             (mix* (instance-field-spec 'id    (λ (_inh _obj) "0") #f)
+                   ;; drop label: aborting init + no-check (so check-instance never forces it
+                   ;; and the inherited string? is not enforced)
+                   (instance-field-spec 'label (λ (_inh _obj) (abort "IdOnlyGraph: no label"))
+                                        empty-check-spec)))
+           (inner-class/replace 'NodeCodec
+             (mix* (base-instance-method-spec 'write (λ (_c node) (string-append "id=" (node 'id))))
+                   (base-instance-method-spec 'read  (λ (_c s) (record (id s))))))
+           (base-instance-method-spec 'new-node
+             (λ (g _label) (make-instance (family-inner-class (type-of g) 'Node)))))
+  :p Graph)
+
+;;; Part C — the full worked example
+(let ()
+  (def GN (family-inner-class Graph 'Node))
+  (def CN (family-inner-class ColorGraph 'Node))
+  (def WN (family-inner-class WeightedGraph 'Node))
+  (def RN (family-inner-class RichGraph 'Node))
+  (def g   (make-instance/ext Graph         idModExt))
+  (def cg  (make-instance/ext ColorGraph    idModExt))
+  (def wg  (make-instance/ext WeightedGraph idModExt))
+  (def rg  (make-instance/ext RichGraph     idModExt))
+  (def rg2 (make-instance/ext RichGraph2    idModExt))
+  (def tg  (make-instance/ext TracingGraph  idModExt))
+  (def hg  (make-instance/ext HeavyGraph    idModExt))
+  (def jg  (make-instance/ext JsonGraph     idModExt))
+  (def ig  (make-instance/ext IdOnlyGraph   idModExt))
+  (def (dn n) ((instance-call n 'describe)))
+  (def (nn graph label) (@ (instance-call graph 'new-node) label))
+
+  ;; >=3-level nesting + outer diamond linearizes
+  (expect
+   (map poi-name (poi-precedence-list Graph)) => '(Graph)
+   (map poi-name (poi-precedence-list RichGraph))
+     => '(RichGraph ColorGraph WeightedGraph Graph)
+   (map poi-name (poi-precedence-list RichGraph2))
+     => '(RichGraph2 WeightedGraph ColorGraph Graph))
+
+  ;; covariant refinement of a NESTED poi + eq? identity preserved across the diamond
+  (expect
+   (length (poi-precedence-list GN)) => 1
+   (length (poi-precedence-list CN)) => 2
+   (eq? (cadr (poi-precedence-list CN)) GN) => #t
+   (length (poi-precedence-list RN)) => 4
+   (eq? (car        (poi-precedence-list RN))   RN) => #t
+   (eq? (list-ref   (poi-precedence-list RN) 1) CN) => #t
+   (eq? (list-ref   (poi-precedence-list RN) 2) WN) => #t
+   (eq? (list-ref   (poi-precedence-list RN) 3) GN) => #t
+   (eq? (family-inner-class ColorGraph 'Node) CN) => #t)
+
+  ;; minimal reflection layer
+  (expect
+   (GN 'instance-field-names) => '(label)
+   (CN 'instance-field-names) => '(label color)   ;; base 'label, then ColorGraph's own 'color
+   (mandatory-fields GN) => '(label)
+   (mandatory-fields CN) => '(label)
+   (@ GN 'instance-field-meta 'label 'init) => #f
+   (procedure? (@ CN 'instance-field-meta 'color 'init)) => #t
+   ;; CN doesn't re-spec 'label, so it inherits GN's check-spec; resolving it (inherited-
+   ;; check #f, self #f) yields a check that enforces string?.
+   (procedure? (@ CN 'instance-field-meta 'label 'check)) => #t
+   (begin ((@ (@ CN 'instance-field-meta 'label 'check) #f #f) "s") 'ok) => 'ok
+   ((@ (@ CN 'instance-field-meta 'label 'check) #f #f) 42) =>fail!)
+
+  ;; plain curried constructor: mandatory fields only, sorted-name order, each checked
+  (expect
+   ((make-instance CN "A") 'label) => "A"
+   ((make-instance CN "A") 'color) => "black"
+   (make-instance CN 42) =>fail!)
+
+  ;; roll-your-own extension overrides a non-chaining class init
+  (expect
+   ((make-instance/ext CN (mix* (constant-field-spec 'label "A")
+                                (constant-field-spec 'color "red"))) 'color) => "red"
+   ((make-instance/ext CN (mix* (constant-field-spec 'label "A")
+                                (constant-field-spec 'color "red"))) 'label) => "A")
+
+  ;; field-init chaining (call-next-method for initializers)
+  (expect
+   (nn wg "n" 'weight) => 1
+   (nn hg "n" 'weight) => 10)
+
+  ;; family polymorphism: the factory builds instances of ITS family's inner class
+  (expect
+   (nn g  "n" 'color) => #f
+   (nn cg "n" 'color) => "black")
+
+  ;; outer C4 order induces the inner describe method-resolution order
+  (expect
+   (dn (nn g   "A")) => "N(A)"
+   (dn (nn cg  "A")) => "N(A)@black"
+   (dn (nn rg  "A")) => "N(A)#w@black"
+   (dn (nn rg2 "A")) => "N(A)@black#w")
+
+  ;; advanced call-next-method (replacement element)
+  (expect
+   (dn (nn tg "A")) => "N(>A)")
+
+  ;; edge factory: same family OK, cross-family errors
+  (expect
+   (let* ((a (nn cg "X")) (b (nn cg "Y")))
+     (dn (@ (instance-call cg 'new-edge) a b))) => "E[N(X)@black=>N(Y)@black]"
+   (let* ((a (nn cg "X")) (b (nn g "Y")))
+     (dn (@ (instance-call cg 'new-edge) a b))) =>fail!)
+
+  ;; contravariant inner class — lateral swap + opposite-direction sibling
+  (expect
+   (length (poi-precedence-list (family-inner-class JsonGraph 'NodeCodec))) => 1
+   ((instance-call (nn jg "A") 'serialize)) => "{\"label\":\"A\"}"
+   ((instance-call (nn g  "A") 'serialize)) => "label=A"
+   ((instance-call (nn ig "ignored") 'serialize)) => "id=0"
+   ((nn ig "ignored") 'label) =>fail!))
 
 ;;;; 9.1.7 Simple Class Initialization
 
@@ -2072,15 +2585,11 @@ let Y = f: (x: x x) (x: f (x x));
 ;;   ModExt     = ? → ? → ?  (modular extension; see field-spec)
 ;;
 ;; Creates a ModExt that prepends method-fn to sub-methods[method-id][tag].
+;; The 3-deep nesting (sub-methods → method-id → tag, leaf = a list) is field-spec~*
+;; (§5.3.5); the tag-list leaf defaults #f, so `compute` supplies the empty list.
 (def (sub-method-spec method-cons tag method-id method-fn)
-  (field-spec 'sub-methods
-    (λ (inherited _self)
-      (let* ((subs       (or inherited empty-record))
-             (per-method (or (subs method-id) empty-record))
-             (tag-list   (or (per-method tag) '())))
-        (extend-record method-id
-          (extend-record tag (method-cons method-fn tag-list) per-method)
-          subs)))))
+  ((field-spec~* 'sub-methods method-id tag)
+    (λ (tag-list _self) (method-cons method-fn (or tag-list '())))))
 
 ;; standard-sub-method-spec : Tag → MethodId → MethodFn → ModExt
 ;;   (sub-method-spec with standard-method-cons; 1st arg is Tag, 2nd is MethodId)
@@ -2367,14 +2876,13 @@ let Y = f: (x: x x) (x: f (x x));
       (field-spec 'collide-with-circle! (constant-spec (K 'circle-square)))
       (field-spec 'collide-with-square! (constant-spec (K 'square-square)))))
 
-  (let ()
-    (def c (fix-record circle-dd))
-    (def s (fix-record square-dd))
-    (expect
-     (c 'collide! c) => 'circle-circle
-     (c 'collide! s) => 'circle-square
-     (s 'collide! c) => 'square-circle
-     (s 'collide! s) => 'square-square)))
+  (def c (fix-record circle-dd))
+  (def s (fix-record square-dd))
+  (expect
+   (c 'collide! c) => 'circle-circle
+   (c 'collide! s) => 'circle-square
+   (s 'collide! c) => 'square-circle
+   (s 'collide! s) => 'square-square))
 
 ;;; Visitor pattern:
 ;;   Each shape acts both as an element (accept! dispatches to visitor's visit-MYTYPE!)
@@ -2426,29 +2934,7 @@ let Y = f: (x: x x) (x: f (x x));
 ;;   2. look up method:      (sub-methods[gf])[s2-tag]
 ;;   3. apply:               (method obj1 obj2)
 
-(def (curry/list f l)
-  (let loop ((f f) (l l))
-    (if (pair? l)
-        (loop (f (car l)) (cdr l))
-        f)))
-
-(expect
- (curry/list + '()) => +
- (curry/list + '(4)) => 4
- (curry/list (λ (x y z) (+ x y z)) '(5 6 7)) => 18)
-
-(def (uncurry/list arity k)
-  (let loop ((n arity) (r '()))
-    (if (zero? n) (k (reverse r))
-        (λ (x) (loop (- n 1) (cons x r))))))
-
-(expect
- (uncurry/list 0 vector) => '#(())
- (uncurry/list 1 vector 'a) => '#((a))
- (uncurry/list 2 vector 'a 'b) => '#((a b))
- (uncurry/list 3 vector 'a 'b 'c) => '#((a b c)))
-
-;; uncurried-accepter : mandatory optionals -> accepter function that returns args
+;; uncurried-accepter : mandatory optionals → accepter function that returns args
 ;; mandatory: exact number of required args
 ;; optionals: 0 (none), a positive integer (max extra args), or #t (unlimited rest)
 ;; Takes a continuation k, calls it with args, a flat list, as single argument when called.
@@ -2474,7 +2960,7 @@ let Y = f: (x: x x) (x: f (x x));
           (error "uncurried-invoker: too many arguments" (+ mandatory optionals) all-args)))
     (apply f all-args)))
 
-;; curried-accepter : mandatory optionals optionals-with-last? -> accepter
+;; curried-accepter : mandatory optionals optionals-with-last? → accepter
 ;; mandatory: number of curried args collected one at a time
 ;; optionals: 0 (none), positive integer (max extra), or #t (unlimited rest)
 ;; optionals-with-last?: if #t, optionals bundled with last mandatory arg, otherwise, as extra call.
@@ -2704,13 +3190,63 @@ let Y = f: (x: x x) (x: f (x x));
 
 (def (^fix!^! base^ ^spec!^^) (^Y!! (^spec!^^ base^)))
 
-(def (^mix!!! ^parent!^^ ^child!^^)
-  (λ (super^ self^)
-    (^! ^child!^^ (^! ^parent!^^ super^ self^) self^)))
+;; Suspended mirror of (mix p c) = (λ (t s) (c (p t s) s)). The modexts already return a
+;; suspended record, so call them directly — an earlier `(^! …)` here re-suspended the
+;; parent's result, handing the child a promise where it expected a record (Gambit's `force`
+;; chains through and hides it; Racket's does not).
+(def (^mix!!! ^parent!^^ ^child!^^ super^ self^)
+  (^child!^^ (^parent!^^ super^ self^) self^))
 
-(def (^field-spec!! field-id! !fun!^^)
-  (λ (super^ self^)
-    (^ !extend-record!!!! !field-id! (!fun!^^ super^ self^) (! super^))))
+;; !extend-record!!!! : value-returning, value-arg form of extend-record (which already
+;; returns a plain record-function and takes plain values) — just the naming-convention alias.
+(def !extend-record!!!! extend-record)
+
+(def (^field-spec!! field-id! !fun!^^ super^ self^)
+  (^ !extend-record!!!! field-id! (!fun!^^ super^ self^) (! super^)))
+
+;;; Tests for §10.2.1 (suspensions) and §10.2.2 (suspended combinators + records).
+;; All `def`s first, then one `expect` (Racket bodies want definitions before expressions).
+(let ()
+  ;; fact-gen returns a VALUE — a generator for the !-combinators (!Y!! / !Y2!!).
+  (def fact-gen (λ (self^ n) (if (= n 0) 1 (* n (! self^ (- n 1))))))
+  ;; ^fact-gen returns a SUSPENSION — a generator for the ^-combinators (^Y!! / ^Y2!!),
+  ;; which return suspensions iff their generator does.
+  (def ^fact-gen (λ (^self) (^ (λ (n) (if (= n 0) 1 (* n (! ^self (- n 1))))))))
+  (def base^ (^ empty-record))
+  (def px^ (^fix!^! base^ (^field-spec!! 'x (λ (_s^ _f^) 2))))
+  (def pxy^ (^fix!^! base^ (^mix!!! (^field-spec!! 'x (λ (_s^ _f^) 2))
+                                    (^field-spec!! 'y (λ (_s^ _f^) 4)))))
+  (def chained^ (^fix!^! base^ (^mix!!! (^field-spec!! 'x (λ (_s^ _f^) 10))
+                                        (^field-spec!! 'x (λ (super^ _f^) (+ 1 (! super^ 'x)))))))
+  ;; TODO: a self-referential field — one whose compute-value reads (! self^ 'other) — cannot
+  ;;   be tested here yet: it forces p^ while p^ is still being forced (Gambit loops, Racket
+  ;;   raises "reentrant promise"). The non-suspended `Yes` avoids this because `(η p)` is a
+  ;;   function and a finished record is a value; a suspended-record fixpoint needs an
+  ;;   η-style self guard or the "records of suspensions" representation (key → Suspension).
+  (expect
+   ;; §10.2.1 — ^ suspends, ! forces; ^ is lazy; ^! forces its operand then re-suspends the
+   ;; call. `^!`'s operand must itself be a suspension (its whole point) — passing a bare
+   ;; procedure means `!`/force sees a non-promise, which Gambit passes through but Chez
+   ;; forces as a 0-arg thunk.
+   (! (^ 42)) => 42
+   (! (^ (+ 1 2))) => 3
+   (begin (^ (error "must not run")) 'not-forced) => 'not-forced
+   (! (^! (^ (λ (a b) (+ a b))) 2 3)) => 5
+   ;; §10.2.2 — suspended fixpoint combinators (factorial). ^-combinators return a
+   ;; suspension, so force it; !-combinators return the value directly.
+   (! (^Y!!  ^fact-gen) 5) => 120
+   (! (^Y2!! ^fact-gen) 5) => 120
+   (!Y!!  fact-gen 5) => 120
+   (!Y2!! fact-gen 5) => 120
+   ;; §10.2.2 — a single suspended field-spec, fixed
+   (! px^ 'x) => 2
+   (! px^ 'y) => #f
+   ;; §10.2.2 — ^mix!!! of two independent specs
+   (! pxy^ 'x) => 2
+   (! pxy^ 'y) => 4
+   (! pxy^ 'z) => #f
+   ;; §10.2.2 — ^mix!!! chaining: child spec reads super
+   (! chained^ 'x) => 11))
 
 #|
 The End. (For Now)
