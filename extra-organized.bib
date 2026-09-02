@@ -1599,6 +1599,8 @@
     inheritance through cloning.
     The language also provides actors and futures for concurrency, coroutines,
     runtime-accessible code and a deliberately minimal message-based syntax.
+    Multiple inheritance uses a simple depth-first lookup of messages through the ancestry
+    (which can explode exponentially with diamonds).
   }
 }
 

@@ -1738,7 +1738,10 @@ It is the first and so far only implementation of @emph{optimal inheritance}@xno
 }
 
 @subsection[#:tag "C4"]{C4, or C3 Extended}
-
+@epigraph{When in Doubt, C4.
+  @|#:- @hyperlink["https://x.com/conaldete/status/2094355877117784246"
+    ]{Jamie Hyneman, @emph{MythBusters}}|
+}
 The authors of C3 @~cite{Barrett1996 WikiC3},
 after Ducournau et al. @~cite{Ducournau1992 Ducournau1994},
 crucially frame the problem of ancestry linearization in terms of

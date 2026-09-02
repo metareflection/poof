@@ -164,7 +164,7 @@ compose-view : View s t → View r s → View r t
 compose-update : Update i p j q → Update j q k r → Update i p k r
 (def compose-update compose)
 
-make-lens : View r s → Update i p j q → SkewLens r i p s j q
+make-lens : View r s → Update i p j q → SkewLens i r p j s q
 (def (make-lens v u)
   (extend-record 'view v
     (extend-record 'update u
@@ -251,7 +251,7 @@ justifies why I choose skew lenses and their view/update interface,
 as opposed to the more limited monomorphic or polymorphic lenses
 or the more naive getter/setter interface, that would work on closed modular extensions.
 
-Now, the type @c{SkewLens i r p s j q} works well with
+Now, the type @c{SkewLens i r p j s q} works well with
 the Trivial Modular Extensions from @secref{TNMTfME}:
 @Code{
 type TModExt inherited required provided =
@@ -279,7 +279,7 @@ type SSkewLens inherited required newlyProvided
 
 Alternatively, you could just change the point of view and define a lens
 as a transformation between modular extensions.
-However, not how the formula for skew lenses remains essentially the same,
+However, note how the formula for skew lenses remains essentially the same,
 whichever types you assign to it, at least up to some linear isomorphism:
 you may rearrange the chairs on the deck, or change the order of arguments and results
 for each function, and even add “phantom” type-level arguments and results
@@ -561,7 +561,7 @@ based on composing open modular extensions.
 I’ll assume for now that prototypes are records implemented with the @c{poi} encoding
 from @secref{POI}@xnote["."]{
   Note how POI and multiple inheritance in general relies on equality of generated identity tags,
-  which you some consider an unwanted side-effect.
+  which some of you may consider an unwanted side-effect.
   In this case, you may use @c{rproto} from @secref{CfR} that relies on mixin inheritance,
   which is pure. Or you may request users to manually provide identity tags.
   Or you may restrict your prototypes to the second-class usage at meta-level
@@ -574,7 +574,7 @@ by further composing @c{l} with the following lens, after which you can further 
 to modularly extend the specification methods as above:
 @Code{
 (def (poi-spec-view poi) (list (poi-mod-ext poi) (poi-suffix? poi) (poi-parents poi)))
-(def (poi-spec-setter args _) (apply make-poi args)))
+(def (poi-spec-setter args _) (apply make-poi args))
 (def poi-spec-lens
   (lens←getter*setter poi-spec-view poi-spec-setter))
 (def poi-modext-lens
@@ -639,7 +639,7 @@ But credit where credit is due, BETA@~cite{Kristensen1987}
 was the first language that explicitly supported such nested specifications,
 with its virtual patterns, and the author of the successor gBeta explicitly explored
 the resulting notion of “family polymorphism”. @;TODO cite Ernst2001
-This proves that the “scandinavian school” advanced OO in more ways
+This proves that the “Scandinavian school” advanced OO in more ways
 than by first implementing classes in Simula 67@~cite{Dahl1967}.
 Other notable languages that explicitly support nested specifications include
 Newspeak@~cite{Bracha2008} with its nested classes (in a Class OO language), and
@@ -668,7 +668,7 @@ a sub-DAG of the ancestor hierarchy of specifications for the outer context.
 In the case of single inheritance, or even mixin inheritance
 the semantics of instantiation is simple and obvious: hierarchy DAGs are actually total orders,
 and the hierarchy at an inner focus is a subset of that at an outer context,
-from which the irrelevant nodes (whose modular extension doesn’t after the inner focus)
+from which the irrelevant nodes (whose modular extension doesn’t affect the inner focus)
 can be simply removed, as they contribute nothing to the semantics.
 
 But the case of multiple inheritance
@@ -774,6 +774,12 @@ in local precedence order of the extended value (list or DAG).
 In all these cases, the previous value can be largely opaque and abstract to the inner extension,
 which allows multiple inner extensions to be composed in whichever order respects
 the dependencies declared through the inheritance structure of the outer extension.
+@Code{
+(def (update-rproto/mix modext rp)
+  (rproto-mix (rproto←spec modext) rp))
+(def (update-poi-modext/mix modext poi)
+  (poi-modext-lens 'update (mix modext) poi))
+}
 
 When using multiple or optimal inheritance, a prototype may be defined
 by editing its local precedence order, adding new constraints at either end of its DAG.
@@ -808,9 +814,27 @@ Another non-modular extension, when using optimal inheritance,
 is to turn the suffix flag on for performance, or to turn it off for semantic compatibility
 when adding ancestors at the least-specific end of the ancestry for the purpose of infrastructure.
 
-@subsection{Optics for Class Instance Methods}
-@; TODO: use rproto everywhere instead of directly ModExt ?
-@; Or better, use the MI variant?
+@XXXX{XXXXX}
+
+@subsection{Optics for Classes}
+
+I’ll assume a simple model for first-class classes as per @secref{SFCTD},
+wherein classes are just prototypes for type descriptors.
+
+@subsubsection{Optics for Class Instance Methods}
+
+The point of an object is that it will (or at least may) be used more than once
+(or else, you might as well directly do the one computation at stake
+without constructing the object to begin with).
+Thus, I will start with discussing how to use an object before how to create one,
+since it is the most frequent operation.
+
+Objects are records, mappings from field identifiers to values.
+For the sake of dynamic dispatch (@secref{DD}),
+one special field (in my Scheme examples I use the boolean true @c{#t} for its identifier)
+holds a type descriptor from which methods can be dynamically extracted.
+(If using static dispatch (@secref{SD}) then the type descriptor
+is provided separately, and often inlined away as methods are statically resolved.)
 
 Inasmuch as classes are prototypes, the way to deal with methods on a class
 is essentially the same as for prototypes, or a refinement thereof.
@@ -824,9 +848,10 @@ To modularly extend a class instance method, one first needs to focus on it,
 by composing a lens focusing on a prototype for a type descriptor
 with an @c{instance-method-lens} below, to obtain
 a skew lens for a specific instance method:
+@; TODO fix this: must compose the modext with something that updates the field?
 @Code{
 (def (instance-method-lens method-id)
-  (update-lens rproto-spec-lens
+  (update-lens poi-modext-lens
     (compose-update (field-update 'instance-methods)
                     (field-update method-id))))
 }
@@ -872,9 +897,11 @@ a formal definition is simpler than the words that describe it:
   (skew-ext (instance-method-lens method-id)
     (λ (inherited-method _self element)
       (λ args
-        (method-body element
+        (apply method-body
           (make-call-next-method
-            inherited-method element args))))))
+            inherited-method element args)
+          element
+          args)))))
 (def (make-call-next-method inherited-method element args)
    (case-lambda
      (() (apply (inherited-method element) args))
@@ -1051,9 +1078,6 @@ Extending the class is just adding more slots to the mix:
 
 The entire class definition reduces to composing focused modular extensions—the same pattern
 used for methods, now lifted to slot initialization.
-
-
-@; TODO section on multiple and optimal inheritance in this context
 
 @section[#:tag "MC"]{Method Combinations}
 
@@ -2494,7 +2518,7 @@ to only using such a dialect.
 
 @subsection{Choosing between Static and Dynamic Dispatch}
 
-@subsubsection{Dynamic Dispatch}
+@subsubsection[#:tag "DD"]{Dynamic Dispatch}
 
 Dynamic dispatch is easy to implement in a few lines of code (again, as in @secref{SFCTD}).
 It requires much less mental and software scaffolding to implement and use than static dispatch,
@@ -2534,7 +2558,7 @@ the results of dynamic method dispatch can be cached, so that most of the time,
 one only needs to access the same effective method as the last time or one of the last few times,
 which can be quickly checked.
 
-@subsubsection{Static Dispatch}
+@subsubsection[#:tag "SD"]{Static Dispatch}
 
 Static dispatch uses static type information
 to optimize away method dispatch at compile-time.

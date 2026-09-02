@@ -118,11 +118,12 @@ ltuo2: build/ltuo.html build/ltuo.pdf
 	wc ltuo*.scrbl ltuo.bib
 	$(PDFVIEWER) build/ltuo.pdf :$(P)
 
+# On Ubuntu, you need: sudo apt install chezscheme scheme-chez-srfi
 check-pommette-gerbil: pommette/pommette-chez.scm pommette/pommette.scm
 	gxi pommette/pommette.scm
 
 check-pommette-chez: pommette/pommette-chez.scm pommette/pommette.scm
-	cd util ; chezscheme pommette-chez.scm < /dev/null
+	cd pommette ; chezscheme pommette-chez.scm < /dev/null
 
 check-pommette-racket: pommette/pommette.rkt pommette/pommette.scm
 	racket pommette/pommette.rkt

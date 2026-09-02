@@ -1419,7 +1419,7 @@ in the contexts that people care about.
 People using my definition will be able to make good decisions,
 whereas those using other definitions will make bad decisions where their definitions differ.
 
-@subsection{What does it even mean for a definition to be correct?}
+@subsection{Does it even mean anything for a definition to be correct?}
 @epigraph{
   “When I use a word,” Humpty Dumpty said, in rather a scornful tone,
   “it means just what I choose it to mean—neither more nor less.”
@@ -1465,7 +1465,7 @@ local retention and protection and hiding of state-process,
 and extreme late-binding of all things. @|#:- "Alan Kay"|
 }
 No, that isn’t possible, nor would it be appropriate if it were.
-Alan Kay coined the expression “Object Oriented Programming” in 1967.
+Alan Kay coined the expression “Object Oriented Programming” circa 1967.
 Originalists might say everyone must take it to mean whatever He defined It to mean,
 and sometimes cite him as in the epigraph above.
 
