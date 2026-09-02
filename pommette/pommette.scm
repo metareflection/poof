@@ -1,5 +1,15 @@
 ;;;;;; pommette - a cheeky, barebones implementation of a meta-object protocol.
-;;;;;; LtUO demonstration mini object systems written in Scheme
+;;; Mini object systems written in Scheme as demonstration for LtUO.
+;;;
+;;; The entire purpose of pommette is CLARITY: to make it obviously clear what OO *means*.
+;;; Educational value is what we seek, and simplicity is an important tool,
+;;; with the caveat that it is a special kind of simplicity: not in terms of bytes, but of
+;;; understandability to humans (and AIs, too, but second to humans, since
+;;; AIs are already trained to understand what humans can, whereas not the other way around).
+;;; Good naming matters, pleasant indentation, etc.
+;;;
+;;; Anything that gets in the way of clarity must be corrected or eliminated.
+;;; If anything could be made clearer—please show me what and how.
 #|
 Working:
 With Gerbil Scheme: gxi pommette.scm
@@ -1573,6 +1583,18 @@ let Y = f: (x: x x) (x: f (x x));
 (def (record←poi p)
   (extend-record #f #f p))
 
+;; poi-mix/list : List(POI) → POI  -- a fresh anonymous POI inheriting from the given POIs as
+;;   independent singleton parent chains (leftmost most-specific); C4 merges them.
+;;   poi-mix* is the varargs spelling, poi-mix the binary one.
+(def (poi-mix/list pois) (make-poi #f idModExt #f (map list pois)))
+(define (poi-mix* . pois) (poi-mix/list pois))
+(def (poi-mix a b) (poi-mix* a b))
+
+;; poi-mix-spec : POI → ModExt (inherited-poi self → poi)  -- poi-mix `contrib` onto the
+;;   inherited POI (contrib wins); if nothing was inherited, `contrib` itself.
+(def (poi-mix-spec contrib)
+  (λ (inherited _self) (if inherited (poi-mix contrib inherited) contrib)))
+
 ;;; Prototype Target Update options (what to do when updating the target of an rproto)
 (def (poi-target-update/OutOfSync u poi) ;; just update fields, spec no longer matches
   (u poi))
@@ -1592,9 +1614,10 @@ let Y = f: (x: x x) (x: f (x x));
     ((_ (:n n args ...) _ e s p) (poi-internal (args ...) n e s p))
     ((_ (:e e args ...) n _ s p) (poi-internal (args ...) n e s p))
     ((_ (:s s args ...) n e _ p) (poi-internal (args ...) n e s p))
+    ((_ (:p* p* args ...) n e s _) (poi-internal (args ...) n e s p*))
+    ;; NB: :p and :pp must be used as LAST keywords, because they eat the rest of the argument list
     ((_ (:p p ...) n e s _) (poi-internal () n e s (list (list p ...))))
-    ((_ (:pp pp ...) n e s _) (poi-internal () n e s (list pp ...)))
-    ((_ (:p* p* args ...) n e s _) (poi-internal (args ...) n e s p*))))
+    ((_ (:pp pp ...) n e s _) (poi-internal () n e s (list pp ...)))))
 (def (struct-name? s)
   (>= (char->integer (string-ref (symbol->string s) 0)) 96))
 (define-syntax defpoi
@@ -2049,31 +2072,20 @@ let Y = f: (x: x x) (x: f (x x));
 (def (instance-method-lens method-id) (field-lens~* 'instance-methods method-id))
 (def (instance-field-lens field-id) (field-lens~* 'instance-field-meta field-id))
 
-;; make-call-next-method : inherited-method → element → args → call-next-method-fn
-;;   ()                       calls the inherited method on the same element/args
-;;   (new-element . new-args) calls it with a replacement element and/or args
-(def (make-call-next-method inherited-method element args)
-  (case-lambda
-    (()              (apply (inherited-method element) args))
-    ((new-element . new-args) (apply (inherited-method new-element) new-args))))
-
-;; instance-method-spec : MethodId → (call-next-method element arg ... → Result) → ModExt
-;;   Installs instance-methods[method-id] = (λ (element) (λ args …)) — the shape instance-call
-;;   expects. method-body is an auto-curried λ, so apply it with curry/list, never `apply`.
-;;   field-spec~* threads the parent class's instance-methods[method-id] in as the
-;;   call-next-method target (arriving via make-poi's mix* of ancestor mod-exts).
+;; instance-method-spec : MethodId → (call-next-method element → Result) → ModExt
+;;   Installs instance-methods[method-id] = (λ (element) (method-body cnm element)) — auto-
+;;   curried, so instance-call hands back that partial application and any remaining method
+;;   args are supplied by the caller's auto-curry (a 0-arg method needs no extra ()).
+;;   cnm IS the parent class's installed method (element → result): a body calls (cnm el) to
+;;   re-run it on the same element, (cnm other-el) on a replacement.
 (def (instance-method-spec method-id method-body)
   ((field-spec~* 'instance-methods method-id)
-    (λ (inherited-method _self element . args)
-      (curry/list method-body
-        (cons (make-call-next-method inherited-method element args)
-              (cons element args))))))
+    (λ (inherited-method _self element)
+      (method-body inherited-method element))))
 
 ;; base-instance-method-spec : leaf instance method, no call-next-method parameter.
 (def (base-instance-method-spec method-id method-body)
-  ((field-spec~* 'instance-methods method-id)
-    (λ (_inherited-method _self element . args)
-      (curry/list method-body (cons element args)))))
+  ((field-spec~* 'instance-methods method-id) (constant-spec method-body)))
 
 ;; field-name-insert : append x at the most-specific (tail) end if absent; if x is already
 ;;   present, keep the earlier (less-specific) mention and drop this one. Preserves the
@@ -2143,20 +2155,40 @@ let Y = f: (x: x x) (x: f (x x));
 ;; simple-instance-field-spec : the book's name; no check.
 (def (simple-instance-field-spec field-id init-spec) (instance-field-spec field-id init-spec #f))
 
-;; class-default-instance-spec : classPOI → ModExt over an instance record — #t → the class
-;;   POI (so type-of / instance-call resolve), plus, per field that has an init, a
+;; base-class : the root class POI. Every class inherits it — directly via `defclass`, or
+;;   transitively through a class parent, or (for nested classes) because family-inner-class
+;;   appends it to the projected parents. It defines one derived field, `base-instance` : a
+;;   parentless POI for the class's default instance prototype — #t → the class POI (so
+;;   type-of / instance-call resolve), plus, per field that has an init, a
 ;;   (field-spec id <chained init>) read straight from instance-field-meta. Mandatory fields
-;;   (init #f) are skipped — the constructor supplies them. Re-fixed per construction.
-;;   TODO (ch.10): this is O(#fields) per construction; memoise on the class POI.
-;;   TODO: the checks belong in a finalizer and/or method combination,
-;;   and/or separate validation layer.
-(def (class-default-instance-spec cls)
-  (mix (constant-field-spec #t cls)
-    (mix/list (filter identity
-               (map (λ (id)
-                      (let ((init-spec ((field-view~* 'instance-field-meta id 'init) cls)))
-                        (and init-spec (field-spec id init-spec))))
-                    (or (cls 'instance-field-names) '()))))))
+;;   (init #f) are skipped — the constructor supplies them.
+;;   TODO: the checks belong in a finalizer / method combination / validation layer.
+;; poi-add-parent : POI → POI → POI  -- append `parent` as a final (least-specific) chain.
+(def (poi-add-parent parent)
+  (poi-parents-lens 'update (λ (ps) (append (or ps '()) (list (list parent))))))
+
+(defpoi base-class :e
+  (field-spec 'base-instance
+    (λ (_inh self)
+      (make-poi 'base-instance
+        (mix (constant-field-spec #t self)
+          (mix/list (filter identity
+                     (map (λ (id)
+                            (let ((i ((field-view~* 'instance-field-meta id 'init) self)))
+                              (and i (field-spec id i))))
+                          (or (self 'instance-field-names) '())))))
+        #f '()))))
+
+;; class←poi : root a POI at base-class (least-specific parent).
+(def class←poi (poi-add-parent base-class))
+
+;; defclass : defpoi then class←poi — same :e / :p / :pp / :p* args as defpoi, just rooted
+;;   at base-class. For a subclass of a class C, plain `defpoi … :p C` inherits base-class
+;;   transitively. (No struct-name? suffix heuristic — that's an example convention only.)
+(define-syntax defclass
+  (syntax-rules ()
+    ((_ name args ...)
+     (def name (class←poi (poi :n 'name args ...))))))
 
 ;;; Reflection + constructors -------------------------------------------------------------
 
@@ -2178,21 +2210,23 @@ let Y = f: (x: x x) (x: f (x x));
             (or (cls 'instance-field-names) '()))
   inst)
 
-;; make-instance/ext : roll-your-own -- extend the class's default prototype with an
-;;   arbitrary ModExt, then fix + check. `ext` is the MORE-DERIVED side, so its constants
-;;   override the class's own NON-chaining field inits; the class's chaining inits still
-;;   compose among themselves inside class-default-instance-spec.
-(def (make-instance/ext cls ext)
-  (check-instance cls (fix-record (mix (class-default-instance-spec cls) ext))))
+;; make-instance/ext : roll-your-own — `ext-poi` is your extension POI; the instance is a
+;;   live POI with `ext-poi` most-specific and (cls 'base-instance) least-specific (so ext's
+;;   constants override the class's own field inits). check-instance then validates it.
+(def (make-instance/ext cls ext-poi)
+  (check-instance cls (poi-add-parent (cls 'base-instance) ext-poi)))
 
-;; make-instance : the plain constructor -- CURRIED over the mandatory fields only, in
-;;   accumulation order; supplies each as a constant, then fixes against the default
-;;   prototype (make-instance/ext's check-instance validates every field with real `self`).
-;;   Zero mandatory fields => returns the instance directly.
+;; make-instance : the plain constructor — CURRIED over the mandatory fields only, in
+;;   accumulation order; each supplied as a constant field, collected into an ext POI.
+;;   Zero mandatory fields ⇒ returns the instance POI directly.
 (def (make-instance cls)
-  (let loop ((need (mandatory-fields cls)) (ext idModExt))
-    (if (null? need) (make-instance/ext cls ext)
-        (λ (v) (loop (cdr need) (mix ext (constant-field-spec (car need) v)))))))
+  (let loop ((need (mandatory-fields cls)) (fields '()))
+    (if (null? need)
+        (make-instance/ext cls
+          (make-poi 'make-instance
+                    (mix/list (map (λ (kv) (constant-field-spec (car kv) (cdr kv))) fields))
+                    #f '()))
+        (λ (v) (loop (cdr need) (cons (cons (car need) v) fields))))))
 
 ;;;; 9.1.6.1 Worked Example — Nested Classes and Family Polymorphism
 
@@ -2210,7 +2244,7 @@ let Y = f: (x: x x) (x: f (x x));
 (defpoi P0-Widget :e
   (base-instance-method-spec 'render (λ (el) (string-append "<" (el 'tag) ">"))))
 (defpoi P0-Boxed :e
-  (instance-method-spec 'render (λ (cnm el) (string-append "[" (cnm) "]")))
+  (instance-method-spec 'render (λ (cnm el) (string-append "[" (cnm el) "]")))
   :p P0-Widget)
 (defpoi P0-Trace :e
   (instance-method-spec 'render
@@ -2220,21 +2254,21 @@ let Y = f: (x: x x) (x: f (x x));
 (def (bare cls tag)
   (fix-record (mix* (constant-field-spec #t cls) (constant-field-spec 'tag tag))))
 (expect
- ((instance-call (bare P0-Widget "b") 'render)) => "<b>"
- ((instance-call (bare P0-Boxed  "b") 'render)) => "[<b>]"     ;; call-next-method chains
- ((instance-call (bare P0-Trace  "b") 'render)) => "<!b>")     ;; advanced CNM (updated element)
+ (instance-call (bare P0-Widget "b") 'render) => "<b>"
+ (instance-call (bare P0-Boxed "b") 'render) => "[<b>]"     ;; call-next-method chains
+ (instance-call (bare P0-Trace "b") 'render) => "<!b>")     ;; advanced CNM (updated element)
 
 ;; field init: whole instance = context, field value = focus; inits chain
-(defpoi P0-Base :e (instance-field-spec 'n (constant-spec 1) #f))
-(defpoi P0-Sub  :e (instance-field-spec 'n (λ (inh _obj) (* 10 inh)) #f) :p P0-Base)
-(def (nfix cls) (fix-record (class-default-instance-spec cls)))
+(defclass P0-Base :e (instance-field-spec 'n (constant-spec 1) #f))
+(defpoi   P0-Sub  :e (instance-field-spec 'n (λ (inh _obj) (* 10 inh)) #f) :p P0-Base)
+(def (nfix cls) (cls 'base-instance))
 (expect
  (nfix P0-Base 'n) => 1
  (nfix P0-Sub  'n) => 10)   ;; chained: 1 → *10
 
 ;; minimal reflection layer
-(defpoi P0-Rec :e (mix* (instance-field-spec 'tag #f string-check-spec)
-                        (instance-field-spec 'n (constant-spec 1) #f)))
+(defclass P0-Rec :e (mix* (instance-field-spec 'tag #f string-check-spec)
+                          (instance-field-spec 'n (constant-spec 1) #f)))
 (expect
  (P0-Rec 'instance-field-names) => '(tag n)   ;; accumulation order: mandatory 'tag then 'n
  (@ P0-Rec 'instance-field-meta 'tag 'init) => #f
@@ -2242,7 +2276,7 @@ let Y = f: (x: x x) (x: f (x x));
  (procedure? (@ P0-Rec 'instance-field-meta 'tag 'check)) => #t)
 
 ;; a whole plain class + subclass, built with the constructors
-(defpoi P0-Thing :e
+(defclass P0-Thing :e
   (mix* (instance-field-spec 'name #f string-check-spec)
         (instance-field-spec 'size (λ (_i _o) 1) #f)
         (base-instance-method-spec 'show
@@ -2251,129 +2285,90 @@ let Y = f: (x: x x) (x: f (x x));
 (expect
  (mandatory-fields P0-Thing) => '(name)
  (make-instance P0-Thing "x" 'size) => 1                 ;; curried over the mandatory `name`
- ((instance-call (make-instance P0-Thing "x") 'show)) => "x×1"
+ (instance-call (make-instance P0-Thing "x") 'show) => "x×1"
  (make-instance P0-Big "x" 'size) => 100                 ;; `size` init chains (1 → *100)
  (make-instance P0-Thing 42) =>fail!                     ;; `name` check aborts at construction
- (make-instance/ext P0-Thing (mix* (constant-field-spec 'name "y")
-                                   (constant-field-spec 'size 9)) 'size) => 9)  ;; roll-your-own
+ (make-instance/ext P0-Thing (poi :e (mix (constant-field-spec 'name "y")
+                                          (constant-field-spec 'size 9))) 'size) => 9)
 
-;;; Nested inner classes as nested POIs ----------------------------------------------------
+;;; Nested classes as POI-valued fields --------------------------------------------------
+;;
+;; An inner class is just a POI held in a regular field of the family class.
+;;   base declaration : (constant-field-spec 'Node graph-node)      -- graph-node a class POI
+;;   covariant refine : (poi-mix-field-spec  'Node colorgraph-node) -- poi-mix onto inherited
+;;   lateral replace  : (constant-field-spec 'NodeCodec json-codec) -- constant ignores inherited
+;;   access           : (Graph 'Node), (ColorGraph 'Node)          -- plain field access
+;; The family's own C4-ordered mix* of ancestor mod-exts drives the poi-mix chaining, so a
+;; diamond's (RichGraph 'Node) linearizes exactly as the outer hierarchy does — no explicit
+;; projection, and eq? identity is free (the base (Graph 'Node) is one constant object).
 
-;; inner-class : InnerName → ClassModExt → ModExt (over the family's class descriptor).
-;;   A family's OWN local contribution to a nested inner class. ClassModExt is a mix* of
-;;   instance-method-spec / instance-field-spec / mandatory-instance-field / inner-class forms.
-;;   compute-value must NOT use `self`: family-own-inner-spec re-runs this ModExt on empty
-;;   records purely to read the declared inner-class table back out.
-(def (inner-class inner-name class-modext)
-  (field-spec 'inner-class-specs
-    (λ (inh _self)
-      (extend-record inner-name (record (modext class-modext)) (or inh empty-record)))))
-
-;; inner-class/replace : Newspeak-style NON-covariant lateral swap. The derived nested POI
-;;   gets parents '() -- it does NOT inherit the base inner class, it replaces it wholesale.
-(def (inner-class/replace inner-name class-modext)
-  (field-spec 'inner-class-specs
-    (λ (inh _self)
-      (extend-record inner-name (record (modext class-modext) (replace #t))
-        (or inh empty-record)))))
-
-;; family-inner-class : familyPOI → InnerName → the effective nested-class POI.
-;;   (a) its poi-parents are PROJECTED from (poi-parents family): each outer parent P
-;;       contributes (family-inner-class P inner-name);
-;;   (b) memoized on family x inner-name with eq? tables, so a diamond's two paths to the
-;;       same base inner class reach the SAME object -- c4-linearize needs eq? identity;
-;;   (c) each family contributes only its own local modext; make-poi's internal mix* of
-;;       ancestor mod-exts does the C4-ordered cross-family merge;
-;;   (d) every nested-class POI carries field 'owner-family (most-derived wins after the
-;;       mix), so a Node reaches its sibling NodeCodec and the Edge cross-family check can
-;;       compare (type-of node)'s owner-family -- instances need NO per-instance family tag.
-;;   Irrelevant ancestors are NOT filtered (they still impose ordering, cf. the book's
-;;   "Interaction of Nesting and Inheritance"), so length(inner PL) == length(outer PL).
-;;   make-poi defers c4-linearize, so building the nested subtree is cheap and every
-;;   memoized identity is stable before any precedence list is forced.
-;;   Plain `define`: `def`'s identifier-macro self-reference through nested λ/map is unreliable.
-(def family-inner-class-memo (make-eqht))    ;; familyPOI → (eqht InnerName → nested POI)
-
-(define (family-own-inner-spec family inner-name)
-  (let ((ics (@ (poi-mod-ext family) empty-record empty-record 'inner-class-specs)))
-    (and ics (ics inner-name))))
-
-(define (family-inner-class family inner-name)
-  (let* ((per (or (eqht-ref family-inner-class-memo family #f)
-                  (let ((h (make-eqht)))
-                    (eqht-set! family-inner-class-memo family h) h)))
-         (hit (eqht-ref per inner-name #f)))
-    (or hit
-        (let* ((spec     (family-own-inner-spec family inner-name))
-               (declared (if spec (or (spec 'modext) idModExt) idModExt))
-               (own      (mix* declared (constant-field-spec 'owner-family family)))
-               (replace? (and spec (spec 'replace)))
-               (parents  (if replace?
-                             '()
-                             (map (λ (chain)
-                                    (map (λ (p) (family-inner-class p inner-name)) chain))
-                                  (poi-parents family))))
-               (node     (make-poi inner-name own (poi-suffix? family) parents)))
-          (eqht-set! per inner-name node)
-          node))))
+;; poi-mix-field-spec : Key → contributionPOI → ModExt over the class descriptor.
+(def (poi-mix-field-spec key contrib) (field-spec key (poi-mix-spec contrib)))
 
 ;;; The example: Workspace (toplevel, namespace only) ⊃ Graph ⊃ Node / Edge / NodeCodec ---
+;;; new-node / new-edge stamp `owner` (the family class) onto each instance they build;
+;;; serialize and the Edge cross-family check read (node 'owner).
 
 ;; Node: base describe + a MANDATORY string-checked `label` + serialize (CONSUMES NodeCodec).
-(def graph-node-mx
+(defclass graph-node :e
   (mix* (base-instance-method-spec 'describe
           (λ (el) (string-append "N(" (el 'label) ")")))
         (instance-field-spec 'label #f string-check-spec)
         (base-instance-method-spec 'serialize
           (λ (node)
-            (let ((codec (make-instance
-                           (family-inner-class ((type-of node) 'owner-family) 'NodeCodec))))
-              ((instance-call codec 'write) node))))))
+            (let ((codec (make-instance ((node 'owner) 'NodeCodec))))
+              (instance-call codec 'write node))))))
 
 ;; Edge: describe errors on a cross-family edge, else brackets its endpoints' describe.
-(def graph-edge-mx
+(defclass graph-edge :e
   (mix* (base-instance-method-spec 'describe
           (λ (el)
-            (unless (eq? (type-of (el 'from) 'owner-family)
-                         (type-of (el 'to)   'owner-family))
+            (unless (eq? ((el 'from) 'owner) ((el 'to) 'owner))
               (error "cross-family edge"))
-            (string-append "E[" ((instance-call (el 'from) 'describe)) "=>"
-                               ((instance-call (el 'to)   'describe)) "]")))
+            (string-append "E[" (instance-call (el 'from) 'describe) "=>"
+                               (instance-call (el 'to) 'describe) "]")))
         (instance-field-spec 'from #f #f)
         (instance-field-spec 'to #f #f)))
 
 ;; NodeCodec: inner class in CONTRAVARIANT position -- CONSUMED by Node.serialize.
 ;;   write : (codec) → (node)   → string        read : (codec) → (string) → field-record
-(def line-codec-mx
+(defclass line-codec :e
   (mix* (base-instance-method-spec 'write (λ (_c node) (string-append "label=" (node 'label))))
         (base-instance-method-spec 'read  (λ (_c s)    (record (label s))))))
 
-;; The Graph family: the three inner classes + family-instance factory methods.
-;;   (type-of g) is the family POI => new-node / new-edge build instances of THAT family.
-(def graph-mx
-  (mix* (inner-class 'Node     graph-node-mx)
-        (inner-class 'Edge     graph-edge-mx)
-        (inner-class 'NodeCodec line-codec-mx)
+;; The Graph family: the three inner classes as fields + family-instance factory methods.
+;;   (type-of g) is the family class POI ⇒ new-node / new-edge build instances of THAT family.
+(defclass graph :e
+  (mix* (constant-field-spec 'Node     graph-node)
+        (constant-field-spec 'Edge     graph-edge)
+        (constant-field-spec 'NodeCodec line-codec)
         (base-instance-method-spec 'new-node
-          (λ (g label) ((make-instance (family-inner-class (type-of g) 'Node)) label)))
+          (λ (g label)
+            (make-instance/ext ((type-of g) 'Node)
+              (poi :e (mix (constant-field-spec 'owner (type-of g))
+                           (constant-field-spec 'label label))))))
         (base-instance-method-spec 'new-edge
-          (λ (g a b) (@ (make-instance (family-inner-class (type-of g) 'Edge)) a b)))))
+          (λ (g a b)
+            (make-instance/ext ((type-of g) 'Edge)
+              (poi :e (mix* (constant-field-spec 'owner (type-of g))
+                            (constant-field-spec 'from a)
+                            (constant-field-spec 'to b))))))))
 
 ;; >=3 nesting levels: Workspace (namespace only) ⊃ Graph ⊃ Node / Edge / NodeCodec
-(defpoi Workspace :e (inner-class 'Graph graph-mx))
-(def Graph (family-inner-class Workspace 'Graph))
+(defpoi Workspace :e (constant-field-spec 'Graph graph))
+(def Graph (Workspace 'Graph))
 
-;; outer diamond over the nested Graph POI -- covariant refinement of Node
+;; outer diamond over the Graph family -- covariant refinement of the Node inner class
 (defpoi ColorGraph
-  :e (inner-class 'Node
-       (mix* (instance-field-spec 'color (constant-spec "black") #f)
-             (instance-method-spec 'describe
-               (λ (cnm el) (string-append (cnm) "@" (el 'color))))))
+  :e (poi-mix-field-spec 'Node
+       (poi :e (mix* (instance-field-spec 'color (constant-spec "black") #f)
+                     (instance-method-spec 'describe
+                       (λ (cnm el) (string-append (cnm el) "@" (el 'color)))))))
   :p Graph)
 (defpoi WeightedGraph
-  :e (inner-class 'Node
-       (mix (instance-field-spec 'weight (constant-spec 1) #f)
-            (instance-method-spec 'describe (λ (cnm el) (string-append (cnm) "#w")))))
+  :e (poi-mix-field-spec 'Node
+       (poi :e (mix (instance-field-spec 'weight (constant-spec 1) #f)
+                    (instance-method-spec 'describe (λ (cnm el) (string-append (cnm el) "#w"))))))
   :p Graph)
 (defpoi RichGraph  :e idModExt
   :p* (list (list ColorGraph Graph) (list WeightedGraph Graph)))
@@ -2381,82 +2376,77 @@ let Y = f: (x: x x) (x: f (x x));
   :p* (list (list WeightedGraph Graph) (list ColorGraph Graph)))
 
 ;; field-init CHAINING (call-next-method for initializers): HeavyGraph multiplies the
-;; inherited `weight` default. Chaining works on a DEFAULTED field; a mandatory field has
-;; no inherited value to chain on.
+;; inherited `weight` default.
 (defpoi HeavyGraph
-  :e (inner-class 'Node (instance-field-spec 'weight (λ (inh _obj) (* 10 inh)) #f))
+  :e (poi-mix-field-spec 'Node
+       (poi :e (instance-field-spec 'weight (λ (inh _obj) (* 10 inh)) #f)))
   :p WeightedGraph)
 
 ;; advanced call-next-method: replacement element
 (defpoi TracingGraph
-  :e (inner-class 'Node
-       (instance-method-spec 'describe
-         (λ (cnm el) (cnm (extend-record 'label (string-append ">" (el 'label)) el)))))
+  :e (poi-mix-field-spec 'Node
+       (poi :e (instance-method-spec 'describe
+                 (λ (cnm el) (cnm (extend-record 'label (string-append ">" (el 'label)) el))))))
   :p Graph)
 
 ;; NON-COVARIANT: the contravariant NodeCodec cannot be inherited-and-extended in lockstep
 ;; with Node; a family that changes Node's serialized form must RE-IMPLEMENT it.
-;; (1) lateral swap: JsonGraph replaces NodeCodec wholesale (parents '()).
+;; (1) lateral swap: JsonGraph replaces NodeCodec wholesale (a constant field ignores inherited).
 (defpoi JsonGraph
-  :e (inner-class/replace 'NodeCodec
-       (mix* (base-instance-method-spec 'write
-               (λ (_c node) (string-append "{\"label\":\"" (node 'label) "\"}")))
-             (base-instance-method-spec 'read (λ (_c s) (record (label s))))))
+  :e (constant-field-spec 'NodeCodec
+       (poi :e (mix* (base-instance-method-spec 'write
+                       (λ (_c node) (string-append "{\"label\":\"" (node 'label) "\"}")))
+                     (base-instance-method-spec 'read (λ (_c s) (record (label s)))))
+            :p base-class))
   :p Graph)
 ;; (2) opposite-direction sibling: IdOnlyGraph makes Node SMALLER -- label init aborts, adds
 ;;     id -- so it must ALSO override new-node (the inherited factory passes a label). Its
 ;;     codec writes LESS, vs ColorGraph adding a field so the codec writes MORE.
 (defpoi IdOnlyGraph
-  :e (mix* (inner-class 'Node
-             (mix* (instance-field-spec 'id    (λ (_inh _obj) "0") #f)
-                   ;; drop label: aborting init + no-check (so check-instance never forces it
-                   ;; and the inherited string? is not enforced)
-                   (instance-field-spec 'label (λ (_inh _obj) (abort "IdOnlyGraph: no label"))
-                                        empty-check-spec)))
-           (inner-class/replace 'NodeCodec
-             (mix* (base-instance-method-spec 'write (λ (_c node) (string-append "id=" (node 'id))))
-                   (base-instance-method-spec 'read  (λ (_c s) (record (id s))))))
+  :e (mix* (poi-mix-field-spec 'Node
+             (poi :e (mix* (instance-field-spec 'id    (λ (_inh _obj) "0") #f)
+                           ;; drop label: aborting init + empty-check-spec (so check-instance
+                           ;; never forces it and the inherited string? is not enforced)
+                           (instance-field-spec 'label (λ (_inh _obj) (abort "IdOnlyGraph: no label"))
+                                                empty-check-spec))))
+           (constant-field-spec 'NodeCodec
+             (poi :e (mix* (base-instance-method-spec 'write (λ (_c node) (string-append "id=" (node 'id))))
+                           (base-instance-method-spec 'read  (λ (_c s) (record (id s)))))
+                  :p base-class))
            (base-instance-method-spec 'new-node
-             (λ (g _label) (make-instance (family-inner-class (type-of g) 'Node)))))
+             (λ (g _label)
+               (make-instance/ext ((type-of g) 'Node)
+                 (poi :e (constant-field-spec 'owner (type-of g)))))))
   :p Graph)
 
 ;;; Part C — the full worked example
 (let ()
-  (def GN (family-inner-class Graph 'Node))
-  (def CN (family-inner-class ColorGraph 'Node))
-  (def WN (family-inner-class WeightedGraph 'Node))
-  (def RN (family-inner-class RichGraph 'Node))
-  (def g   (make-instance/ext Graph         idModExt))
-  (def cg  (make-instance/ext ColorGraph    idModExt))
-  (def wg  (make-instance/ext WeightedGraph idModExt))
-  (def rg  (make-instance/ext RichGraph     idModExt))
-  (def rg2 (make-instance/ext RichGraph2    idModExt))
-  (def tg  (make-instance/ext TracingGraph  idModExt))
-  (def hg  (make-instance/ext HeavyGraph    idModExt))
-  (def jg  (make-instance/ext JsonGraph     idModExt))
-  (def ig  (make-instance/ext IdOnlyGraph   idModExt))
-  (def (dn n) ((instance-call n 'describe)))
-  (def (nn graph label) (@ (instance-call graph 'new-node) label))
+  (def GN (Graph 'Node))
+  (def CN (ColorGraph 'Node))
+  (def WN (WeightedGraph 'Node))
+  (def RN (RichGraph 'Node))
+  (def g   (make-instance Graph))
+  (def cg  (make-instance ColorGraph))
+  (def wg  (make-instance WeightedGraph))
+  (def rg  (make-instance RichGraph))
+  (def rg2 (make-instance RichGraph2))
+  (def (dn n) (instance-call n 'describe))
+  (def (nn graph label) (instance-call graph 'new-node label))
 
-  ;; >=3-level nesting + outer diamond linearizes
+  ;; >=3-level nesting + outer diamond linearizes (base-class is the shared root)
   (expect
-   (map poi-name (poi-precedence-list Graph)) => '(Graph)
+   (map poi-name (poi-precedence-list Graph)) => '(graph base-class)
    (map poi-name (poi-precedence-list RichGraph))
-     => '(RichGraph ColorGraph WeightedGraph Graph)
+     => '(RichGraph ColorGraph WeightedGraph graph base-class)
    (map poi-name (poi-precedence-list RichGraph2))
-     => '(RichGraph2 WeightedGraph ColorGraph Graph))
+     => '(RichGraph2 WeightedGraph ColorGraph graph base-class))
 
-  ;; covariant refinement of a NESTED poi + eq? identity preserved across the diamond
+  ;; the inner Node class: covariant refinement, and the diamond converges on ONE graph-node
   (expect
-   (length (poi-precedence-list GN)) => 1
-   (length (poi-precedence-list CN)) => 2
-   (eq? (cadr (poi-precedence-list CN)) GN) => #t
-   (length (poi-precedence-list RN)) => 4
-   (eq? (car        (poi-precedence-list RN))   RN) => #t
-   (eq? (list-ref   (poi-precedence-list RN) 1) CN) => #t
-   (eq? (list-ref   (poi-precedence-list RN) 2) WN) => #t
-   (eq? (list-ref   (poi-precedence-list RN) 3) GN) => #t
-   (eq? (family-inner-class ColorGraph 'Node) CN) => #t)
+   (memq graph-node (poi-precedence-list GN)) => (list graph-node base-class)
+   (memq graph-node (poi-precedence-list CN)) => (list graph-node base-class)   ;; graph-node once
+   (memq graph-node (poi-precedence-list RN)) => (list graph-node base-class)   ;; …in the diamond too
+   (length (filter (λ (p) (eq? p graph-node)) (poi-precedence-list RN))) => 1)
 
   ;; minimal reflection layer
   (expect
@@ -2466,13 +2456,12 @@ let Y = f: (x: x x) (x: f (x x));
    (mandatory-fields CN) => '(label)
    (@ GN 'instance-field-meta 'label 'init) => #f
    (procedure? (@ CN 'instance-field-meta 'color 'init)) => #t
-   ;; CN doesn't re-spec 'label, so it inherits GN's check-spec; resolving it (inherited-
-   ;; check #f, self #f) yields a check that enforces string?.
+   ;; CN inherits GN's check-spec for 'label; resolving it yields a check enforcing string?.
    (procedure? (@ CN 'instance-field-meta 'label 'check)) => #t
    (begin ((@ (@ CN 'instance-field-meta 'label 'check) #f #f) "s") 'ok) => 'ok
    ((@ (@ CN 'instance-field-meta 'label 'check) #f #f) 42) =>fail!)
 
-  ;; plain curried constructor: mandatory fields only, sorted-name order, each checked
+  ;; plain curried constructor: mandatory fields only, each checked
   (expect
    ((make-instance CN "A") 'label) => "A"
    ((make-instance CN "A") 'color) => "black"
@@ -2480,15 +2469,15 @@ let Y = f: (x: x x) (x: f (x x));
 
   ;; roll-your-own extension overrides a non-chaining class init
   (expect
-   ((make-instance/ext CN (mix* (constant-field-spec 'label "A")
-                                (constant-field-spec 'color "red"))) 'color) => "red"
-   ((make-instance/ext CN (mix* (constant-field-spec 'label "A")
-                                (constant-field-spec 'color "red"))) 'label) => "A")
+   ((make-instance/ext CN (poi :e (mix (constant-field-spec 'label "A")
+                                       (constant-field-spec 'color "red")))) 'color) => "red"
+   ((make-instance/ext CN (poi :e (mix (constant-field-spec 'label "A")
+                                       (constant-field-spec 'color "red")))) 'label) => "A")
 
   ;; field-init chaining (call-next-method for initializers)
   (expect
    (nn wg "n" 'weight) => 1
-   (nn hg "n" 'weight) => 10)
+   (nn (make-instance HeavyGraph) "n" 'weight) => 10)
 
   ;; family polymorphism: the factory builds instances of ITS family's inner class
   (expect
@@ -2504,22 +2493,23 @@ let Y = f: (x: x x) (x: f (x x));
 
   ;; advanced call-next-method (replacement element)
   (expect
-   (dn (nn tg "A")) => "N(>A)")
+   (dn (nn (make-instance TracingGraph) "A")) => "N(>A)")
 
   ;; edge factory: same family OK, cross-family errors
   (expect
    (let* ((a (nn cg "X")) (b (nn cg "Y")))
-     (dn (@ (instance-call cg 'new-edge) a b))) => "E[N(X)@black=>N(Y)@black]"
+     (dn (instance-call cg 'new-edge a b))) => "E[N(X)@black=>N(Y)@black]"
    (let* ((a (nn cg "X")) (b (nn g "Y")))
-     (dn (@ (instance-call cg 'new-edge) a b))) =>fail!)
+     (dn (instance-call cg 'new-edge a b))) =>fail!)
 
   ;; contravariant inner class — lateral swap + opposite-direction sibling
   (expect
-   (length (poi-precedence-list (family-inner-class JsonGraph 'NodeCodec))) => 1
-   ((instance-call (nn jg "A") 'serialize)) => "{\"label\":\"A\"}"
-   ((instance-call (nn g  "A") 'serialize)) => "label=A"
-   ((instance-call (nn ig "ignored") 'serialize)) => "id=0"
-   ((nn ig "ignored") 'label) =>fail!))
+   (instance-call (nn (make-instance JsonGraph) "A") 'serialize) => "{\"label\":\"A\"}"
+   (instance-call (nn g "A") 'serialize) => "label=A"
+   (let ((ig (make-instance IdOnlyGraph)))
+     (instance-call (nn ig "ignored") 'serialize)) => "id=0"
+   (let ((ig (make-instance IdOnlyGraph)))
+     ((nn ig "ignored") 'label)) =>fail!))
 
 ;;;; 9.1.7 Simple Class Initialization
 
