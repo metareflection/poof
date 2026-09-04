@@ -10,6 +10,24 @@
 }
 @section[#:tag "OfOO"]{Optics for OO}
 
+@subsection{Optics: A Pure Functional Approach to Pointers (and more)}
+
+This section will introduce lenses and “optics” in general—tools
+functional programmers use to edit (sometimes deeply) nested data structures.
+Why bother? Why not “just” assume stateful side-effects, and
+use pointers that you follow a path to the data you want to edit in place?
+
+Because when it comes to semantics, pointers and side-effects are actually
+much more complex and indirect, involving some global store with non-local effects—which
+makes them much harder to reason about.
+By all means, when it comes to the efficient implementation of objects (@secref{EOI}),
+I will use side-effects galore.
+But as long as one is investigating what objects @emph{mean},
+what can be expressed with them, and why—then
+the semantic simplicity of pure functional programming matters, a lot.
+And optics are indeed “just” the pure functional analogue to pointers within data structures,
+to paths to follow from one pointer to another—used in systematic ways.
+
 @subsection{Focused Specifications}
 
 Before I may revisit familiar features of advanced OO systems such as
@@ -26,7 +44,7 @@ a path from the top of the program state to the method being extended.
 Thus, instead of being “free floating”, your specification will be “located”
 within the context of the greater program state.
 Furthermore, to keep formalizing OO features in terms of pure functional semantics,
-these access paths I will formalize as functional @emph{lenses} (see below). @;{TODO secref}
+these access paths I will formalize as functional @emph{lenses} (@secref{SRoL}).
 
 The approach I herein propose to specifying OO software is a potential game-changer,
 with the potential to make OO even more modular than it was thus far:
@@ -47,7 +65,7 @@ when handwaving the relationship between open and closed modular extensions was 
 But since I am going to pay the price anyway for the sake of explaining advanced features,
 I may as well enjoy the benefits for basic features as well.
 
-@subsection{Short Recap on Lenses}
+@subsection[#:tag "SRoL"]{Short Recap on Lenses}
 
 A lens @~cite{Meijer1991 Foster2007 OConnor2012 Pickering2017}
 is the pure Functional Programming take on what in stateful languages would typically be
@@ -196,7 +214,7 @@ and @c{compose-update} is just @c{compose}.
 Views, Updates and Lenses each form categories of their own,
 wherein composition is associative, and identities are neutral elements.
 
-@subsubsection{Field Lens}
+@subsubsection[#:tag "FL"]{Field Lens}
 Given some record representation, a view for a field of identifier key @c{k}
 is just a function that, given as argument the record @c{r}, returns the field value @c{r.k};
 whereas an update gives you a change in this record given a change for that field.
@@ -228,6 +246,18 @@ But it can also be used as a polymorphic lens or skew lens,
 where you view the field @c{key} of your context and
 also modify the field @c{key} of the value you extend,
 but the two need not be the same, and the modification need not preserve types.
+
+In practice, I also use a variant @c{field-lens~} that
+when applied to a context that is the default value @c{#f}
+treats it as if it had been the @c{empty-record}, and a variant @c{field-lens~*}
+that goes through a series of fields in order, with such defaulting at each level.
+Similarly, I use functions @c{field-view~}, @c{field-view~*},
+@c{field-update~} and @c{field-update~*} for the view and update aspects of those lenses,
+and @c{field-spec~} and @c{field-spec~*} for skew lenses that
+zoom the focus onto such defaulted fields@xnote["."]{
+  As an exercise, implement these functions.
+  Or then again just look how I write them in pommette.
+}
 
 @subsection[#:tag "FME"]{Focusing a Modular Extension}
 
@@ -449,7 +479,7 @@ update-only-lens : Update i p j q → SkewLens i r p j r q
   (make-lens identity u))
 
 update-lens : SkewLens i r p j s q → Update j q jj qq →
-     SkewLens i r p jj r qq
+     SkewLens i r p jj s qq
 (def (update-lens l u)
   (make-lens (l 'view) (compose (l 'update) u)))
 }
@@ -484,8 +514,8 @@ completed with data from the same non-updated context.
 If you want to update the context each time, you have to reverse the lens
 with the updated context every time.
 @Code{
-reverse-view : s → MonoLens s a → View a s
-reverse-update : s → MonoLens s a → Update a s a s
+reverse-view : s → MonoLens s a → View s a
+reverse-update : s → MonoLens s a → Update s s a a
 reverse-lens : s → MonoLens s a → MonoLens a s
 
 (def (reverse-view s l a)
@@ -525,7 +555,7 @@ view-lens : SkewLens i r p j s q → View rr r →
   (make-lens (compose-view (l 'view) v) (l 'update)))
 }
 
-@subsection{Optics for Specifications and Prototypes}
+@subsection[#:tag "OfSaP"]{Optics for Specifications and Prototypes}
 
 So far the only primitive lens I showed was the field lens.
 Here are two kinds of lenses that are essential to deal with prototypes and classes.
@@ -761,40 +791,75 @@ etc.)
 The “extension” would pick a more appropriate value in context,
 as a constant that ignores the previous default.
 
-Now, for a simple OO extension that actually respects and extends
-the inheritance structure of the previous value that is itself a prototype,
-the obvious answer is of course that the extended value inherits from the previous “super” value.
+Now, when the value to extend is a specification, prototype or class,
+a good question is how to extend this value in a way that respects its inheritance structure.
+The obvious answer is of course for the extended value to inherit from the previous value.
 When using single inheritance, one or more modular extensions
 can be mixed in at the most-specific end of its inheritance list, specializing the previous value.
 When using mixin inheritance, one or more modular extensions can also be mixed in
 at the other least-specific end of the inheritance list, providing tentative defaults
 rather than definitive overrides to newly defined aspects used by other modules.
 When using multiple or optimal inheritance, the previous value may be one of the parents
-in local precedence order of the extended value (list or DAG).
+in the local precedence order of the extended value (list or DAG).
 In all these cases, the previous value can be largely opaque and abstract to the inner extension,
 which allows multiple inner extensions to be composed in whichever order respects
 the dependencies declared through the inheritance structure of the outer extension.
+
+When using mixin inheritance,
+you would use @c{(rproto-mix inherited extension)} (@secref{CfR})
+to extend those sub-fields you want to edit.
+When using multiple or optimal inheritance, you would use
+@c{(poi-mix extension inherited)} (mind the opposite order of arguments) defined as follows@xnote[":"]{
+  Most implementations of multiple inheritance do not support arbitrary DAGs, only total orders,
+  for the local precedence order. This corresponds to using @c{(list parents)}
+  instead of @c{(map list parents)} when specifying the local precedence order,
+  i.e. the parents @emph{must} be in the specified order or else it’s an error.
+  The implementation I propose with @c{(map list parents)} creates a list of singletons,
+  meaning the parents are independent, and the linearization will reorder them
+  to avoid inconsistency (but will otherwise preserve the order whenever consistent).
+}
 @Code{
-(def (update-rproto/mix modext rp)
-  (rproto-mix (rproto←spec modext) rp))
-(def (update-poi-modext/mix modext poi)
-  (poi-modext-lens 'update (mix modext) poi))
+(def (poi-mix/list parents) (make-poi idModExt #f (map list parents)))
+(define (poi-mix* . parents) (poi-mix/list parents))
+(def (poi-mix extension inherited) (poi-mix* extension inherited))
 }
 
-When using multiple or optimal inheritance, a prototype may be defined
-by editing its local precedence order, adding new constraints at either end of its DAG.
+You would use this combinator as part of modular extensions as follows:
+@Code{
+(def (poi-mix-spec contrib)
+  (λ (inherited _self) (poi-mix contrib inherited)))
+(def (poi-mix-field-spec key contrib)
+  (field-spec key (poi-mix-spec contrib)))
+}
+
+There again, you would often use variants that support default cases,
+where an absent record or field is automatically populated, or
+a yet-undefined or missing modular extension silently ignored or replaced.
+
+Now, you could use a slightly different combinator for inherited and extension prototypes,
+one that combines the local precedence orders:
+the new prototype, instead of inheriting from the previous ones,
+will combine their modular extensions and local precedence orders.
 This protocol can express richer sets of behaviors through extension than the above,
-but requires that extension behavior should be contributed
+but requires that regular extension behavior should be contributed
 through the modular extensions of ancestors rather than directly:
 the direct modular extension of the prototype is applied last,
-after those of the ancestors are mixed in;
-thus, if defined (other than @c{idModExt}) it should only contain
-a finalizer for the methods defined by those ancestors.
-The extended values must respect that invariant,
-which makes them not as opaque as with the regular inheritance protocol.
-Such an extension protocol must thus be agreed upon in advance when the prototype is defined.
-Now, if agreeing in advance to a non-trivial OO extension protocol is a thing,
-a related approach is Method Combinations (@secref{MC}).
+after those of the ancestors are mixed in—including those to be added in the future.
+Thus, if the direct modular extension is anything else than @c{idModExt},
+it should contain only finalizing behavior to be applied after all ancestor contributions,
+including contributions from ancestors added by future extensions.
+Such an extension protocol must thus be agreed upon in advance,
+as it differs from the regular protocol:
+the previous protocol with @c{poi-mix} preserves the two prototypes as distinct ancestors
+with their own identities, whereas this alternative merges their specifications into one prototype.
+Whichever protocol you use, though, you will want to move as much functionality as possible
+into parents and their ancestors,
+because this is how you ensure that specifications are not applied multiple times,
+and are included in a suitable dependency order,
+while also avoiding superfluous constraints
+that could only cause needless linearization failures.
+Also, if agreeing in advance to a non-trivial OO extension protocol is a thing,
+another different and related approach is Method Combinations (@secref{MC}).
 
 Finally, there are various non-modular extensions you can make to prototypes.
 These extensions are sometimes useful, but require care to avoid clashes.
@@ -805,7 +870,7 @@ but to wrap around it, e.g. to rename method names, or wrap method arguments and
 If you’re going that way, you might want a wrapper around each and every modular extension
 in the ancestry so far, or maybe around the entire object—such global wrapping is more modular
 (requires less information about which ancestor did what) but its result is still not modular
-(you must make sure to run this wrapping the last thing,
+(you must make sure to run this wrapping last,
 or else every additional extension not in currently wrapped set must coordinate).
 If possible, you are better off avoiding non-modular extensions and instead
 define intermediate objects you can extend independently from the wrapping.
@@ -813,8 +878,6 @@ Once again, some method combination can do that for you.
 Another non-modular extension, when using optimal inheritance,
 is to turn the suffix flag on for performance, or to turn it off for semantic compatibility
 when adding ancestors at the least-specific end of the ancestry for the purpose of infrastructure.
-
-@XXXX{XXXXX}
 
 @subsection{Optics for Classes}
 
@@ -844,16 +907,14 @@ wherein you use @c{instance-call} to call an instance method,
 that extracts the type descriptor using @c{type-of},
 that is then invoked with @c{'instance-methods}, the @c{method-id}, and the element.
 
-To modularly extend a class instance method, one first needs to focus on it,
-by composing a lens focusing on a prototype for a type descriptor
-with an @c{instance-method-lens} below, to obtain
-a skew lens for a specific instance method:
-@; TODO fix this: must compose the modext with something that updates the field?
+To modularly extend a class instance method, one first needs to focus on it.
+The class descriptor holds instance methods under the field @c{instance-methods},
+itself a record from @c{method-id} to method; so the lens onto a specific instance method
+is just a nested defaulting field lens (@secref{FL}), and the modular extension that
+installs one is the corresponding nested defaulting field spec, @c{field-spec~*}:
 @Code{
 (def (instance-method-lens method-id)
-  (update-lens poi-modext-lens
-    (compose-update (field-update 'instance-methods)
-                    (field-update method-id))))
+  (field-lens~* 'instance-methods method-id))
 }
 
 Now, when specifying a class instance method, the programmer thinks in terms of
@@ -861,28 +922,33 @@ the class instance, i.e. an element of the class’s target type.
 But the element does not exist yet, it has to itself be a parameter to some function,
 to be passed in the future, while the method has to be attached to the class somehow.
 
-Moreover, since methods may use @c{call-next-method} to invoke the inherited behavior,
+Moreover, since methods may use @c{next-method} to invoke the inherited behavior,
 the instance on which the method is called need not be an instance of the class
 in which a method is defined: it can be an instance of any subclass thereof
 (unless the class is somehow “final”).
-Thus the method body must also accept as argument
-the @emph{effective type} (descriptor) of the instance,
-i.e. the target of said subclass (or half-target in U-encoding)—though
-if using dynamic dispatch rather than static dispatch (@secref{DvSD}),
-this descriptor can be extracted from the class instance rather than passed as argument.
+Thus the method body must not assume its argument’s type,
+but if needed dynamically extract it from the argument’s magic @c{#t} field,
+using dynamic dispatch rather than static dispatch (@secref{DvSD}).
 
-Yet again, for an @emph{efficient} @c{call-next-method},
-each method must cheaply access a @c{super} parameter,
-and further pass to the next method @emph{its} super, and so on.
-Therefore, the method body must also accept as parameter
-the @emph{rest} of the precedence list.
+Yet again, for an @emph{efficient} @c{next-method},
+the implementation must cheaply determine the inherited effective method.
+In the definition below, this happens implicitly through the usual inheritance mechanism:
+while composing method specifications, each contribution receives the method accumulated so far
+as its @c{next-method}.
+In general, each method must cheaply access a @c{super} parameter,
+and further pass to the next method @emph{its} super, and so on,
+such that the entire precedence list (or a method-relevant subset thereof)
+must be implicitly or explicitly passed to the method body.
 Now, when using single inheritance, you can cheaply compute the method’s super
 from the current class only: it is the class’s parent.
 But when using multiple or mixin inheritance, this does not apply, and the super must instead
-be found in the precedence list, which can be an O(n) sequential search,
-or a hash-table lookup which is O(1) but involves a large constant factor,
-so a more efficient implementation will pass the rest of the precedence list.
-(Also note that for efficiency, computation of effective methods can be cached.)
+be found in the precedence list, which from the current specification
+can be an O(n) sequential search, or
+a hash-table lookup which is O(1) but involves a large constant factor;
+thus a more efficient implementation will somehow pass the rest of the precedence list.
+Also note that for the sake of efficiency, the computation of an effective method,
+though somewhat expensive, can be cached, and
+need not be completed more than once per run of the program.
 
 Here is the code in the simplified case of just modular extensions in mixin inheritance:
 the underlying machinery sees @c{self}, i.e. the class,
@@ -894,62 +960,45 @@ I need a wrapper to bridge these two views, and at this point,
 a formal definition is simpler than the words that describe it:
 @Code{
 (def (instance-method-spec method-id method-body)
-  (skew-ext (instance-method-lens method-id)
-    (λ (inherited-method _self element)
-      (λ args
-        (apply method-body
-          (make-call-next-method
-            inherited-method element args)
-          element
-          args)))))
-(def (make-call-next-method inherited-method element args)
-   (case-lambda
-     (() (apply (inherited-method element) args))
-     ((new-element . new-args)
-        (apply (inherited-method new-element) new-args))))
+  ((field-spec~* 'instance-methods method-id)
+    (λ (next-method _self element)
+      (method-body next-method element))))
 }
-The @c{_self} argument is ignored,
-because the @c{method-body} can presumably extract the type from the class instance.
-In typeclass-style, it might instead be passed to the @c{method-body}.
-Note how the second clause of the @c{case-lambda} above implements
-an advanced use of @c{call-next-method} not available in all languages,
-wherein you can provide an updated instance and updated arguments.
-In a pure language, it may be more important than in an effectful language
-to be able to call the next method with an updated instance and updated arguments.
-However, there are semantic constraints on what new element and new arguments
-can be safely used with the inherited method;
-some object system authors might not be ready to either enforce those constraints
-or deal with programs that break them at runtime, and may choose
-not to offer this advanced use case to their users.
+Note how the @c{_self} argument (holding the class target) is ignored,
+because, using class style OO, the @c{method-body} and any @c{instance-call} it invokes
+can extract the type (if and when needed) from the class instance @c{element} itself
+(that you must pass as argument to the @c{next-method} when calling it;
+also note that given autocurrying as used throughout this book,
+this @c{element} parameter can be η-converted away in the above definition).
+In typeclass style, the self argument must not be ignored, and
+instead must be passed explicitly to the @c{method-body}.
 
-As an example application, a method @c{area} may be declared on a class @c{Rectangle}
+As a simplification, I can also define a @c{base-instance-method-spec}
+for methods that never invoke the @c{next-method}.
+An example application would be a method @c{area} to be declared
+on a class @c{Rectangle} of records with a @c{height} and a @c{width},
 with the following definition:
 @Code{
 (def (base-instance-method-spec method-id method-body)
-  (instance-method-spec method-id
-    (λ (_call-next-method element) (method-body element))))
+  (instance-method-spec method-id (K method-body)))
 
 (base-instance-method-spec 'area
-  (λ (element)
-    (* (element 'width) (element 'height))))
+  (λ (r) (* (r 'width) (r 'height))))
 }
-The area method does not need a @c{call-next-method},
-since it computes @c{area} directly,
-so I use a simpler @c{base-instance-method-spec} that wholly omits that argument.
 
 A @c{BorderedRectangle} that inherits from @c{Rectangle} might add border thickness with:
 @Code{
 (base-instance-method-spec 'area
   (λ (element)
-      (let ((border (* 2 (element 'border-width))))
-        (* (+ (element 'width) border)
-           (+ (element 'height) border)))))
+    (let ((border-adjustment (* 2 (element 'border-width))))
+      (* (+ (element 'width) border-adjustment)
+         (+ (element 'height) border-adjustment)))))
 }
-Meanwhile, a @c{ScaledShape} mixin might instead use @c{call-next-method}:
+Meanwhile, a @c{ScaledShape} mixin might instead use @c{next-method}:
 @Code{
 (instance-method-spec 'area
-  (λ (call-next-method element)
-    (* (element 'scale-factor) (call-next-method))))
+  (λ (next-method element)
+    (* (element 'scale-factor) (next-method element))))
 }
 
 Classes, like prototypes in general, can thus be defined incrementally,
@@ -964,120 +1013,168 @@ as first-class objects.
 And you can build infrastructure that systematizes any design pattern you follow
 in writing these specifications.
 
-@; TODO EXAMPLES:
-@; DEFINING A METHOD OUTSIDE A CLASS
-@; COMBINING METHODS INTO DIFFERENT CLASSES
-@; WRAPPING A METHOD INTO... A RENAMING?
+@TODO{FOR SECOND EDITION:
+Examples:
+- defining a method outside a class
+- modular extensions used repeatedly to add methods to different classes,
+  without being given an identity as a (super)class... just included
+  as part of something else with an identity.
+- wrapping a set of methods into... a renaming? And how that doesn’t quite commute with inheritance,
+  but maybe if your renaming is a functor, and you have a natural transformation to class names,
+  you can naturally have a transformed ancestry.
+}
 
 @subsubsection{Simple Class Initialization}
 
 One may specify the fields of a class instance,
-by specifying individual field descriptors under an @c{instance-field-lens}:
+by specifying individual field descriptors
+under an @c{instance-field-lens} from the class descriptor:
 @Code{
 (def (instance-field-lens field-id)
-  (update-lens rproto-spec-lens
-    (compose-update (field-update 'instance-fields)
-                   (field-update field-id))))
+  (field-lens~* 'instance-fields field-id))
 }
-A simple field descriptor would be a record of an @c{init} modular extension to initialize it,
-and other information such as whether the slot is mutable (in a language with side-effects),
-type information (that could be static if the class is second-class, but will be dynamic here), etc.
-I will stick to just the @c{init} protocol for now:
+Note that @c{field-lens~*} is the nested defaulting field lens from the exercise in @secref{FL}:
+it focuses on @c{'instance-fields field-id}, a record collecting the per-field
+@c{init} modular extension plus, as a further exercise, a @c{check} for validation,
+and possibly other metadata (e.g. documentation).
+
+A simple field descriptor would be a record of information about the field:
+how to initialize it,
+what (static or dynamic type) of value it should hold,
+what checkable invariants it should respect,
+whether it’s mutable or immutable (in a language with side-effects),
+what documentation to show the user about it, etc.
+For a minimal model, I will store only a modular extension to initialize it in a field @c{init}
+that is a modular extension for the field value in the context of the class instance.
+Because I will later need to iterate over fields,
+but my records-as-functions lack any introspection on the keys they support,
+I will also explicitly remember a list of the names of supported fields,
+which also illustrates how a simple form of reflection is implemented by classes;
+moreover that list will preserve the order in which fields are defined by superclasses.
+This list is not strictly necessary to the semantics of initialization as such:
+a class that needed no reflection could incrementally build its @c{base-instance} directly.
+But there are many other use cases (such as I/O) for which it is beneficial to have
+a stable order in which to enumerate field names.
 @Code{
-(def (simple-instance-field-spec field-id init-mod-ext)
-  (skew-ext (instance-field-lens field-id)
-    (rproto←record (record (init init-mod-ext)))))
+(def (instance-field-spec field-id init-spec)
+  (mix*
+    (field-spec~ 'instance-field-names
+      (λ (inh _self) (field-name-insert field-id (or inh '()))))
+    ((field-spec~* 'instance-fields field-id 'init)
+      (λ (inh _self) (mix-maybe inh init-spec)))))
+(def (field-name-insert x lst)
+  (cond ((null? lst) (list x))
+        ((eq? x (car lst)) lst)
+        (else (cons (car lst) (field-name-insert x (cdr lst))))))
+(def (mix-maybe a b) (if a (if b (mix a b) a) b))
 }
+
 To initialize a field @c{parts} that is a list of parts,
-defaulting to an empty list, you would use something like:
+defaulting to an empty list, I would use something like:
 @Code{
-(simple-instance-field-spec 'parts (constant-spec '()))
+(instance-field-spec 'parts (constant-spec '()))
 }
 To initialize a field @c{price} that defaults as a baseline
 to the sum of the prices of the parts times the contents of the field @c{markup},
-you would use:
+I would use:
 @Code{
-(simple-instance-field-spec 'price (λ (_inherited self)
+(instance-field-spec 'price (λ (_inherited self)
   (* (self 'markup)
      (foldl (λ (part acc) (+ acc (part 'price))) 0 (self 'parts)))))
 }
 To define a field @c{markup} that has no default initializer and must be provided by users,
-you would use:
+I would use:
 @Code{
-(simple-instance-field-spec 'markup (λ (_inherited _self)
-  (abort "missing field markup")))
+(instance-field-spec 'markup #f)
 }
-A class could then define a default prototype for new instances as:
-@XXXX{TODO INSERT SUITABLE CODE HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+A class could then define a default prototype for new instances as a derived field
+@c{base-instance}, contributed by a root class @c{base-class} that every class inherits:
 @Code{
+(def base-class
+  (make-poi
+    (field-spec 'base-instance
+      (λ (_inh self)
+        (make-poi
+          (mix (constant-field-spec #t self)
+            (mix/list
+              (filter identity
+                (map (λ (id)
+                       (let ((i (self 'instance-fields id 'init)))
+                         (and i (field-spec id i))))
+                     (or (self 'instance-field-names) '())))))
+          #f '())))
+    #f '()))
+}
+@c{base-instance} is a parentless POI: its magic @c{#t} key maps to the class POI itself,
+so @c{type-of} and dynamic method dispatch can resolve through it;
+and each field with a non-@c{#f} @c{init} becomes a @c{(field-spec id <chained init>)}
+read straight from the class’s @c{instance-fields} table.
+Fields whose @c{init} is @c{#f} are skipped by the @c{base-instance}—the programmer
+must supply a value when constructing an instance,
+or as part of a further subclass being instantiated;
+otherwise an error may happen when trying to use the uninitialized value.
+To instantiate a new element of a @c{class}, define a poi that provides values
+at least all these otherwise uninitialized fields, possibly overrides even the initialized ones,
+and inherits from the @c{(class 'base-instance)}.
+
+To define a class, just define a prototype for a type descriptor using
+@c{instance-field-spec} and @c{instance-method-spec}
+(or the equivalent, or elaborations on them),
+and inherit from @c{base-class} so your @c{base-instance} is defined.
+Note that if a prototype already inherits from another existing class defined that way,
+it would already inherit @c{base-class} transitively through it.
+And more functionality could be added to @c{base-class} or extensions thereof,
+besides this @c{base-instance}:
+such as static typing information, dynamic validation passes,
+builtin support for display, serialization or debugging, etc.
+Various functions, macros or DSLs (domain-specific languages)
+could help further streamline the process.
+
+For example, a class @c{Rectangle-class}
+with fields width and height, and a method area:
+@Code{
+(def Rectangle-class
+  (make-poi
+    (mix*
+      (instance-field-spec 'width #f)
+      (instance-field-spec 'height #f)
+      (base-instance-method-spec 'area
+        (λ (element) (* (element 'width) (element 'height)))))
+    #f (list (list base-class))))
+
+(def (make-rectangle width height)
+  (make-poi
+    (mix (constant-field-spec 'width width)
+         (constant-field-spec 'height height))
+    #f (list (list (Rectangle-class 'base-instance)))))
+
+(def my-rectangle (make-rectangle 10 20))
+
+(instance-call my-rectangle 'area) ;=> 200
 }
 
-A class descriptor holds a list of slot descriptors
-and builds the instance prototype by focusing and mixing:
+Extending the class is just adding more fields or methods to the mix.
+Here, we define a field @c{color} with default value @c{"black"}:
 @Code{
-(def (class-proto slots)
-  (rproto←spec
-    (apply mix*
-      (reverse
-       (map (λ (slot)
-              (compose (field-update (slot 'name))
-                       (slot 'init-spec)))
-            slots)))))
+(def ColoredRectangle-class
+  (make-poi
+    (mix (instance-field-spec 'color (constant-spec "black"))
+         (base-instance-method-spec 'perimeter
+           (λ (r) (* 2 (+ (r 'width) (r 'height))))))
+    #f (list (list Rectangle-class))))
 
-(def (default-slot name value)
-  (record (name name)
-          (init-spec (constant-spec value))))
+(def my-colored-rectangle
+  (make-poi
+    (mix/list (map constant-field-spec
+                   '(width height) '(3 5)))
+    #f (list (list (ColoredRectangle-class 'base-instance)))))
 
-(def (computed-slot name thunk)
-  (record (name name)
-          (init-spec (λ (_super self) (thunk self)))))
-
-(def (required-slot name)
-  (record (name name)
-          (init-spec (λ (_super _self)
-                       (abort "Missing required slot" name)))))
-}
-
-Each slot’s @c{init-spec} is focused on its field
-by composing with @c{field-update},
-then all are mixed together.
-The @c{fix-record} implicit in @c{rproto←spec} closes the recursion,
-yielding a prototype where each slot is initialized
-according to its descriptor.
-
-For example, a @c{Rectangle} class with width, height, and computed area:
-@Code{
-(def rectangle-slots
-  (list
-    (default-slot 'width 10)
-    (default-slot 'height 20)
-    (computed-slot 'area
-      (λ (self) (* (self 'width) (self 'height))))))
-
-(def rectangle-proto (class-proto rectangle-slots))
-}
-@Code{
-(expect
-  (rectangle-proto 'width) => 10
-  (rectangle-proto 'height) => 20
-  (rectangle-proto 'area) => 200)
-}
-
-Extending the class is just adding more slots to the mix:
-@Code{
-(def colored-rectangle-slots
-  (cons (default-slot 'color "black") rectangle-slots))
-
-(def colored-rectangle-proto (class-proto colored-rectangle-slots))
-}
-@Code{
-(expect
-  (colored-rectangle-proto 'color) => "black"
-  (colored-rectangle-proto 'area) => 200)
+(my-colored-rectangle 'color) ;=> "black"
+(instance-call my-colored-rectangle 'perimeter) ;=> 16
 }
 
 The entire class definition reduces to composing focused modular extensions—the same pattern
-used for methods, now lifted to slot initialization.
+for method and field definitions.
 
 @section[#:tag "MC"]{Method Combinations}
 
@@ -1415,6 +1512,33 @@ computes the effective method from the sub-methods.
 The @c{abort} is a poor man’s error mechanism in case the @c{before} or @c{after}
 methods try to invoke their @c{super} argument as a @c{call-next-method}.
 
+The @c{call-next-method} argument itself is built by @c{make-call-next-method} from the
+remaining chain @c{next} and the current @c{args}: called with no argument it forwards the
+original @c{args}, called with new arguments it forwards those instead.
+@Code{
+(def (make-call-next-method next args)
+  (case-lambda
+    (()       (apply next args))
+    (new-args (apply next new-args))))
+}
+Note how the second clause of the @c{case-lambda} above implements
+an advanced use of @c{call-next-method} not available in all languages,
+wherein you can provide an updated instance and updated arguments.
+In a pure language, it may be more important than in an effectful language
+to be able to call the next method with an updated instance and updated arguments.
+However, there are semantic constraints on what new element and new arguments
+can be safely used with the inherited method;
+some object system authors might not be ready to either enforce those constraints
+or deal with programs that break them at runtime, and may choose
+not to offer this advanced use case to their users.
+
+
+
+@TODO{This is the multiple-dispatch @c{call-next-method} referred to from @secref{OfOO}:
+the single-inheritance @c{instance-method-spec} of @secref{OfOO} threads the inherited method
+directly as its first argument and needs no such wrapper; only method combinations, which
+must forward a variable argument list down a chain of sub-methods, need the @c{case-lambda}
+form and its @c{args} plumbing.}
 @Code{
 (def (call-chain methods on-exhausted self)
   (foldr
@@ -2642,6 +2766,37 @@ or will level the playing field in favor of new languages, static or dynamic.
 }
 
 @exercise[#:difficulty "Easy"]{
+  Implement semantic and syntactic helpers for defining classes and their instances:
+}
+@itemize[
+  @item{
+    A function @c{poi-add-parent} that takes a parent and adds it at the very end
+    of the a poi’s local precedence order.}
+  @item{
+    A function @c{class←poi} that ensures a poi inherits from @c{base-class}.}
+  @item{
+    A macro @c{defclass} that defines a variable as a poi
+    that always implicitly inherits from @c{base-class}}
+  @item{
+    A function @c{instance←class} that given a class and a poi
+    returns a new poi wherein the given poi extends the base-instance of the given class.}
+  @item{
+    A function @c{make-instance} that with a class the rest of its arguments as a plist
+    of field name and field value, creates an element of the class wherein the respective
+    given fields are bound to the given values, and other fields are as specified by
+    the class’s base-instance, e.g. @c{(make-instance class 'x 1 'y 2)}.
+    As a bonus, have @c{make-instance} include validation checks.
+    }
+  @item{
+    A function @c{mandatory-fields} that given a class, returns a list of the mandatory
+    fields for the class—those without initialization data.}
+  @item{
+    A function @c{class-constructor} that given a class and as many arguments as there
+    mandatory fields (curried the usual way), in order, constructs an element of the class
+    where each mandatory field has the value given from the arguments, in order.}]
+}
+
+@exercise[#:difficulty "Easy"]{
   Write efficient implementations of the missing simple CLOS method combinations, for
   @c{+ * max min progn list append nconc or and}.
   Hints: @c{progn} is just the Lisp operator for sequential evaluation of expressions,
@@ -2680,6 +2835,13 @@ or will level the playing field in favor of new languages, static or dynamic.
   systematically intercepts all method calls, and maintains a table
   of which methods of which extensions are effectively called how many times
   during a program execution.
+}
+
+@exercise[#:difficulty "Medium"]{
+  Implement optional validation and normalization for class elements.
+  The default method will run validation checks on each field value.
+  For each field with a defined validation check, check the field.
+  The @c{make-instance} function will run those checks.
 }
 
 @exercise[#:difficulty "Medium"]{

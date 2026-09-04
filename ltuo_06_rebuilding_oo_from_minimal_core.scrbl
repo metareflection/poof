@@ -1045,11 +1045,11 @@ whereas the “descriptor-of-functions” strategy leads to descriptors the call
 requires clients to systematically pass the descriptor itself to the methods it contains
 so as to close the fixpoint loop.
 
-@subsection[#:tag "CSvTS"]{Class-style vs Typeclass-style}
+@subsection[#:tag "CSvTS"]{Class Style vs Typeclass Style}
 
-Now, there are two common styles for using type descriptors: Class-style and Typeclass-style.
+Now, there are two common styles for using type descriptors: class style and typeclass style.
 
-In Class-style, each type element
+In class style, each type element
 (known in this style as “class instance”, “instance”, or “object”)
 carries its own type descriptor.
 To this end, the type descriptor is conflated with the type element
@@ -1058,7 +1058,7 @@ in the same way that specifications are conflated with their targets
 As mentioned before, this can be very cheap when the type elements are records
 (@secref{CfR}, @secref{SFCTD}): just add a special field with a “magic” key.
 
-In Typeclass-style, by contrast, type descriptors and type elements are kept distinct and separate.
+In typeclass style, by contrast, type descriptors and type elements are kept distinct and separate.
 There is emphatically no conflation.
 Type-descriptors are passed “out of band” as extra variables
 (see second-class “dictionaries” in Haskell @~cite{Wadler1989 Peterson1993},
@@ -1075,35 +1075,35 @@ There are many tradeoffs that can make one style preferable to the other, or not
     When a function works on data the precise type for which is @emph{not} known in advance,
     that’s when a runtime type descriptor in either style may help.}
   @item{
-    Class-style helps most when each piece of data is always going to be used with the same type,
+    Class style helps most when each piece of data is always going to be used with the same type,
     and/or when functions are more “dynamic” and do not always work with the same type of data.
-    Typeclass-style helps most when each piece of data can be used as element of many types,
+    Typeclass style helps most when each piece of data can be used as element of many types,
     and/or when functions are more “static” and always work with the same type of data.
     The two styles can be complementary, as the balance of static and dynamic information
     about functions and data can vary across libraries and within a program.}
   @item{
-    Typeclass-style works better when the data is not records or might not be records,
+    Typeclass style works better when the data is not records or might not be records,
     but has homogeneous types;
     it is then wasteful to re-extract the same types from each piece of data.
-    Typeclass-style works well for processing a lot of uniform data.}
+    Typeclass style works well for processing a lot of uniform data.}
   @item{
-    Class-style works better when data is made of records with heterogeneous types,
+    Class style works better when data is made of records with heterogeneous types,
     and functions make control-flow decisions based on the kind of records the users feed them.
-    Class-style works well for processing weakly-structured documents.}
+    Class style works well for processing weakly-structured documents.}
   @item{
-    Typeclass-style works better if you can build your type descriptor once per function
+    Typeclass style works better if you can build your type descriptor once per function
     and use it on a lot of data.
-    Class-style works better if you can build your type descriptor once per piece of data
+    Class style works better if you can build your type descriptor once per piece of data
     and use it on a lot of functions.}
   @item{
-    Typeclass-style works better when the same pieces of data are being reinterpreted
+    Typeclass style works better when the same pieces of data are being reinterpreted
     as elements of varying types, often enough or at a fine enough grain,
     that it does not make sense to re-conflate the entire data set with every change of point of view.
-    Class-style works better if type reinterpretations are few and localized.}
+    Class style works better if type reinterpretations are few and localized.}
   @item{
-    In particular, typeclass-style works better when type descriptors applied to objects
+    In particular, typeclass style works better when type descriptors applied to objects
     can be extended after those objects are defined;
-    class-style works better when new kinds of objects that match a type descriptor
+    class style works better when new kinds of objects that match a type descriptor
     can be created after those type descriptors have been defined;
     in either style, you can use an extra parameter to describe at runtime the discrepancy
     between the semantics you could express at compile-time and the one you want at runtime.}
@@ -1124,7 +1124,7 @@ There are many tradeoffs that can make one style preferable to the other, or not
     but sometimes for first-class typeclasses that change at runtime based on user interaction,
     even while the object representation may stay the same.}
   @item{
-    Constructors are quite special in “class-style”,
+    Constructors are quite special in “class style”,
     since regular methods are called by extracting them from an object’s type descriptor,
     but there is not yet an object from which to extract a type descriptor
     when what you are doing is precisely constructing the first known object of that type
@@ -1134,37 +1134,37 @@ There are many tradeoffs that can make one style preferable to the other, or not
     complete with an appropriate type descriptor.
     This creates an asymmetry between constructors and other methods,
     that requires special treatment when transforming type descriptors.
-    By contrast, in “typeclass-style”, constructors are just regular methods;
+    By contrast, in “typeclass style”, constructors are just regular methods;
     there can be more than one, using different calling conventions,
     or creating elements from different subsets or subtypes of the type (disjoint or not).
     Many typeclass transformations, dualities, etc., become more uniform and simpler
-    when using typeclass-style. Type descriptors in typeclass style, in which constructors
+    when using typeclass style. Type descriptors in typeclass style, in which constructors
     are just normal methods, are therefore more natural and easy to use for parametric polymorphism
     than type descriptors in class style.}
   @item{
-    Finally, typeclass-style can be extended more easily and more uniformly
-    than traditional class-style to support APIs involving
+    Finally, typeclass style can be extended more easily and more uniformly
+    than traditional class style to support APIs involving
     multiple related types being simultaneously defined in mutually recursive ways:
     data structures and their indexes, paths or zippers, containers and containees,
     bipartite graphs, grammars with multiple non-terminals, expressions and types, etc.
     Instead of distinguishing a main class under which others are nested,
     or having a hierarchy of “friend” classes indirectly recursing through a global context,
-    typeclass-style treats all classes uniformly, yet can locally encapsulate
+    typeclass style treats all classes uniformly, yet can locally encapsulate
     an entire family of them, potentially infinite.
-    There is, however, a way to retrieve most of these advantages of typeclass-style
-    while remaining in class-style, though only few languages support it:
+    There is, however, a way to retrieve most of these advantages of typeclass style
+    while remaining in class style, though only few languages support it:
     using multi-methods (see below). @; TODO secref
 }]
 
-There is an isomorphism between class-style and typeclass-style type descriptors,
+There is an isomorphism between class style and typeclass style type descriptors,
 to the point that a simple transformation can wrap objects written in one style and their methods
 so they follow the calling convention of the other style@xnote["."]{
-  To go from Class-style to Typeclass-style, simply extract the type descriptor,
+  To go from Class style to Typeclass style, simply extract the type descriptor,
   class metaobject, vtable, etc., from an object, and make that your type descriptor.
   For “typeclasses” that are parameterized by many types, use a record that contains
   each of those descriptors for each of those types as fields.
 
-  To go from Typeclass-style to Class-style, you can wrap every value or tuple of values
+  To go from Typeclass style to Class style, you can wrap every value or tuple of values
   into a record of the values and the typeclass they are supposed to be used with.
   When invoking typeclass functions, unwrap the values from those records to use them as arguments;
   and wrap the results back into records that conflate the values and an appropriate typeclass.
@@ -1206,18 +1206,18 @@ Interestingly, all this section’s discussion was about styles for target progr
 Type descriptors can be used in any and all of those styles without any OO whatsoever@xnote["."]{
   Indeed, Haskell typeclasses are multi-type descriptors with modularity but without inheritance,
   and so are their less-powerful Rust variants called “traits”—not to be confused
-  with Scala “traits”, that are single-type class-style descriptors with multiple inheritance.
-  Modules in SML or OCaml can also offer “typeclass-style” type descriptors
+  with Scala “traits”, that are single-type class style descriptors with multiple inheritance.
+  Modules in SML or OCaml can also offer “typeclass style” type descriptors
   without modular extensibility through inheritance.
 
-  Non-OO class-style type descriptors are also possible.
+  Non-OO class style type descriptors are also possible.
   For instance, Gambit Scheme allows users to define new data structures,
   and to declare the equivalent of methods that specialize how values of those new types
   will be printed, or tested for equality;
   these methods are not part of any actual object system capable of inheritance,
   yet each “structure” record carries the equivalent of a type descriptor field
   in “class style” so that the system knows which method to use.
-  It is possible to layer an actual OO class system on top of such non-OO “class-style” mechanism,
+  It is possible to layer an actual OO class system on top of such non-OO “class style” mechanism,
   and indeed the @(GerbilScheme) object system is built
   atop Gambit Scheme’s non-OO structure facility.
 }
@@ -1229,7 +1229,7 @@ Although it was historically developed in the context
 of the style (A1, B1, C1, D1) of dynamic graph of mutable classes (Smalltalk, Lisp, JavaScript),
 or the style (A1, B1, C1, D2) of static graph of mutable classes (Simula, C++, Java),
 OO can well accommodate any style.
-I wrote OO in both Typeclass-style (A2) and pure-style (B2) @~cite{Rideau2012 Rideau2020},
+I wrote OO in both Typeclass style (A2) and pure-style (B2) @~cite{Rideau2012 Rideau2020},
 and I have no doubt you could write OO to manipulate tables (C2) instead of record graphs (C1).
 There is no reason why you couldn’t use OO to specify programs in the (A2, B2, C2, D2)-style
 of static tables of pure functional typeclasses: this combination would make for a nice
@@ -1351,10 +1351,10 @@ i.e. putting the cart before the horse.
 @exercise[#:difficulty "Easy"]{
   If you did exercise @exercise-ref{alist0},
   package the functions together in one prototype.
-  You now have a typeclass-style type descriptor.
+  You now have a typeclass style type descriptor.
 }
 @exercise[#:difficulty "Medium"]{
-  Wrap the typeclass-style type descriptor above into a class-style type descriptor.
+  Wrap the typeclass style type descriptor above into a class style type descriptor.
   Play with it on some examples.
 }
 @exercise[#:difficulty "Medium"]{
@@ -1392,18 +1392,18 @@ i.e. putting the cart before the horse.
     (what it provides to users vs what it requires from users).
 }}
 @exercise[#:difficulty "Medium"]{
-  Unwrap the class-style type descriptors from the previous exercise
-  into typeclass-style type descriptors, and play with them.
+  Unwrap the class style type descriptors from the previous exercise
+  into typeclass style type descriptors, and play with them.
   What did using data in one style feel like, compared to the other?
 }
 @exercise[#:difficulty "Hard"]{
   If you did the exercise @exercise-ref{4polyinterpol},
-  redo it with parametric typeclass-style type descriptors.
+  redo it with parametric typeclass style type descriptors.
   Throw a dice for which available representation to use
   for records, for prototypes, for polymorphism.
 }
 @exercise[#:difficulty "Hard"]{
-  Define a typeclass-style multi-type descriptor for
+  Define a typeclass style multi-type descriptor for
   a Graph with Vertex and Edge types, and
   implement Tarjan’s Strongly Connected Component algorithm
   as a client to that descriptor.
@@ -1675,7 +1675,7 @@ What is the key difference in how client code must be written for each version?
 
 @exercise[#:difficulty "Hard"]{
   Read my article @citet{Rideau2012}, and implement in your language of choice
-  the automated wrapping between pure and stateful style, class and typeclass styles.
+  the automated wrapping between pure and stateful style, class and typeclass style.
   For extra points, also implement higher-order wrappings in the style of @citet{Findler2002}.
   For research points, instead of wrapping just the interface, translate the code itself.
   For extra research points, automate the translation between styles at the compiler level,

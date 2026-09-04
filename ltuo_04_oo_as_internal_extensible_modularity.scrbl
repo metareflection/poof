@@ -1117,27 +1117,30 @@ the way needed to achieve modular extensibility. It was modularity and extensibi
 complementing each other rather than combined.
 I still include it here as one of Kay’s inspirations.
 
-Not an influence to Alan Kay, but to Daniel Bobrow,
+Not a direct influence to Alan Kay, but one to Daniel Bobrow,
 Howard Cannon @~cite{Cannon1979} and the Lisp school,
 another breakthrough in modular extensibility was
 Warren Teitelman’s ADVISE facility @~cite{Teitelman1966}:
 ADVISE enabled programmers to dynamically extend a function with “advice”,
 that would run before or after the function itself was called;
 those happening after could even consult or modify the value returned
-(though this was not originally an intended interface).
-With this enhancement, ADVISE was first-class modular extensibility,
-though it was a special-purpose form that only worked at the level of named functions,
-not a general-purpose form of it working on records, and even then, not very usable,
-using side-effects for communication between advice.
+(though this was not originally an intended interface),
+or otherwise use side-effects to communicate with other advice.
+ADVISE is thus the earliest form of internal (first-class) modular extensibility,
+though it was a special-purpose form that only worked at the level of named functions.
 
 Now of course, the modular extensibility breakthrough everyone knows about is
-Simula 1967 @~cite{Dahl1967}: inspired by @citet{Hoare1965}, Dahl and Nygaard
+Simula 67 @~cite{Dahl1967}: inspired by @citet{Hoare1965}, Dahl and Nygaard
 implement classes and sub-classes with single inheritance and “concatenation semantics”
 (@secref{Inner}).
-Simula thus introduced the first form of modular extensibility,
+As with ADVISE, the base and extended “inner” bodies of virtual classes and virtual procedures
+could only communicate with each other through side-effects to variables,
+but at least this was a clearly intended interface from the beginning.
+Simula thus introduced the first form of @emph{general-purpose}
+internal (second-class) modular extensibility,
 though in an embryonic form, and crucially
 without the concept and name of OO itself (@secref{OOnaming})@xnote["."]{
-  One may quibble whether Simula is already OO,
+  One may quibble whether Simula 67 (or ADVISE) is already OO,
   when the name and concept are not there,
   and the “concatenation semantics” is more primitive and less usable
   than what users expect of OO since Smalltalk-76.
@@ -1156,13 +1159,13 @@ No other known form of internal modular extensibility appears before 1976.
 
 1976 is when OO takes off, thanks to the interaction
 between Kay’s Smalltalk team and Bobrow’s Interlisp team, both at Xerox PARC.
-Bobrow and Winograd @; then a Stanford professor spending 50% of his time as consultant at PARC
+Bobrow and Winograd @;{ then a Stanford professor spending 50% of his time as consultant at PARC }
 implemented KRL-0, the first programming language
 that claims to be “object-oriented” in the modern sense,
 that includes “inheritance” (a word the authors also introduce in its modern meaning;
-they also introduce “prototypes” and mention classes, citing Simula)@xnote["."]{
+they also introduce “prototypes”, and mention classes, citing Simula)@xnote["."]{
   The original intention in @citet{Winograd1975} was
-  to model knowledge in terms of Frames @~cite{Minsky1974}, and not to write programs;
+  to model knowledge in terms of Frames @~cite{Minsky1974}, and not to write programs.
   But by the time they were done in May @~cite{Bobrow1976}, the concern has shifted, and
   while the frames model was still present, it had taken a secondary role,
   while defining procedures had taken a more prominent role.
@@ -1186,7 +1189,7 @@ with prototypes instead of classes, was also quite influential both in academia 
 Smalltalk development continued, and Smalltalk-80 @~cite{Goldberg1983} brought the idea of OO
 (if not the generally unaffordable implementation) to the wider public of early PC hobbyists,
 notably thanks to a special issue of BYTE Magazine @~cite{BYTE1981},
-and to inspiring the Apple Macintosh.
+and thanks to inspiring the Apple Macintosh.
 Colleagues of Kay at PARC used a more Algol-like language with multiple inheritance
 for the first commercial computer with a GUI,
 the Xerox Star 8010 workstation @~cite{Curry1982}.
@@ -1197,11 +1200,11 @@ Meanwhile Simula directly inspired Stroustrup to work on C-with-classes in 1979,
 which became the vastly successful C++ in 1985. @; TODO cite
 
 OO became a phenomenon. The most interesting thing in programming languages.
-The future of computing. Languages were extended. @; TODO cite. Modula, Objective-C...
-One notable and influential new OO language was Eiffel,
-that brought much more innovation than just the contracts it is remembered for. @; TODO cite Meyer
+The future of computing. Existing languages were extended. @; TODO cite. Modula, Objective-C...
+New languages were designed specifically around OO—a notable and influential one being Eiffel,
+that included much more innovation than just the contracts it is remembered for. @; TODO cite Meyer
 Conferences were organized and became big. @; TODO cite
-Commercial software started claiming to be OO, whether it was or not.
+Commercial software started claiming to be OO, whether it actually was or not.
 @; TODO cite My cat is object-oriented
 
 Now, the standard history of OO @~cite{Black2013}
@@ -1225,7 +1228,7 @@ T @~cite{Rees1982 Adams1988},
 LOOPS @~cite{Bobrow1983},
 New Flavors @~cite{Moon1986},
 CommonLoops @~cite{Bobrow1986},
-with their crown achievement
+and their crown achievement
 CLOS @~cite{DeMichiel1987 Bobrow1988 Keene1989 Baker1991 Gabriel1991 Graham1995}.
 That’s only for the “main line” of object systems that influenced CLOS.
 There are too many lesser-known variants to list, and I haven’t even started
@@ -1249,8 +1252,9 @@ with great documentation, an interactive text interface, and plenty of examples
 (it later became Delphi, bringing Rapid Application Development
 of graphical applications for Windows in 1995).
 C++ 2.0 also came out in 1989, with Turbo C++ the following year
-making it available to users of mere PCs when it was previously a luxury for power users
-with workstations or big PCs. Microsoft then adopted it and released its first version
+making it available to the mass market users of regular PCs,
+when it was previously a luxury for power users with workstations or big PCs.
+Microsoft then adopted it and released its first version
 of a compiler and a class library in 1992.
 
 The following years brought many other successful OO languages to the industry:
@@ -1265,15 +1269,15 @@ these are just the most popular ones.
 New non-OO languages became the minority: Go 2009, Rust 2010.
 
 OO now being a serious industrial endeavor had consequences.
-Progress on the theory of OO didn’t stop, but had to focus on what industrial languages did
-or how to improve them.
-Java in particular became the focus of much recycling
+Progress on the theory of OO didn’t stop, but often was refocused
+on what industrial languages did or how to improve them.
+Java in particular became the locus of much recycling
 (but also furthering) of previous research.
-On the other hand, experimentation of new or improved language features continued—but
+Experimentation of new or improved language features did continue—but
 became slower or less relevant:
 New languages now had to compete with incumbents possessing large user and code bases.
 To be relevant, new features now needed to be backed by big corporations,
-and backward compatible with their ecosystem.
+and be backward compatible with their ecosystem.
 Radical redesigns became niche.
 
 @subsection{Modular Extensible Specifications}
@@ -1406,9 +1410,10 @@ developed by their respective authors, whom I will cite.
 
 @subsection[#:tag "WS"]{Why Scheme?}
 
-The Algorithmic Language Scheme @; TODO cite original paper, Steele thesis, R{1-7}RS
-is a minimal language built around a variant of the applicative λ-calculus,
-as a dialect in the wider tradition of LISP. @; CITE
+The Algorithmic Language Scheme
+@~cite{Sussman1975 Steele1976Declarative Steele1976Imperative Steele1977 Steele1978 R7RS2013}
+is a relatively small language built around a variant of the applicative λ-calculus,
+as a dialect in the wider tradition of Lisp. @; TODO CITE
 It has many implementations, dialects and close cousins, @; cite Racket
 a lot of documentation, modern libraries, @; TODO cite SRFIs
 decades of established lore, code base, user base, academic recognition.
@@ -1422,21 +1427,29 @@ I suspect that systems with dependent types, such as in Rocq, Agda or Lean, @; T
 are sufficiently expressive, but the types involved might be unwieldy
 and would make it harder to explain the basic concepts I present.
 I leave it as an exercise to the reader to port my code to such platforms,
+or to variants with suitable typesystems (@secref{TfOO}),
 and look forward to the result.
 
 Nix, that directly provides λ-calculus with dynamic typing,
 is lazy, which actually makes the basic concepts simpler.
 But it would require more care for implementers trying to port such an implementation
-to most programming contexts that are applicative.
-Also, Nix is more recent, less well-known, its syntax and semantics less recognizable;
-the Lindy effect @; TODO cite
-means it will probably disappear sooner than Scheme,
-making this book harder to read for potential readers across time.
-Finally, Nix as compared to Scheme, is missing a key feature beyond the basic λ-calculus,
+to most programming contexts, that are applicative.
+Also, Nix is more recent, less well-known, its syntax and semantics less recognizable.
+Finally, Nix, as compared to Scheme, is missing a key feature beyond the basic λ-calculus,
 that I will use when building multiple inheritance:
 the ability to test two specifications for equality.
 
-Therefore, I pick Scheme as the best compromise in which to formalize OO.
+Actually, Scheme is as far as I can tell the oldest @emph{surviving} language
+with a continuous user and code base that fully supports the λ-calculus
+(without type restrictions that prevent the expression of OO).
+Thus, by the Lindy effect, @; TODO cite Ord2023
+it is also the language with the longuest expectation
+of continued relevance to future readers—much more so than Nix, or any other alternative.
+This means that Scheme in some form will probably survive longer than any more recent language,
+and likely much longer than whether ephemeral language is more popular today.
+Any other choice will likely make this book harder to read for potential readers across time.
+
+Therefore, I pick Scheme as the best compromise of a language in which to formalize OO.
 
 @exercise[#:difficulty "Easy, Required"]{
   Install on your computer an implementation of the programming language Scheme,

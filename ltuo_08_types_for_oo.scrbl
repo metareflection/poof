@@ -939,38 +939,46 @@ it can also be simpler in other ways, involving more uniform concepts.
 
 @subsection{First-Class OO Beyond Classes}
 
-My approach to OO can vastly simplify types for it, because it explicitly decouples
-concepts that previously people implicitly conflated:
+My approach to OO can vastly simplify the typing of OO,
+because it explicitly decouples concepts that previous approaches implicitly conflated:
 not only specifications and their targets,
 but also modularity and extensibility,
-fixpoints and types.
+and units of fixpointing and type descriptors.
 
-By decoupling specifications and targets, I can type them separately, subtype them separately,
-not have to deal with the extreme complexity of
-the vain quest of trying to type and subtype them together.
+By decoupling specifications and targets,
+I can type the two separately, subtype them separately,
+and sidestep the extreme complexity of
+the vain quest to type and subtype them @emph{together}.
+First-class OO can directly express “structures” of cooperating values, types and algorithms
+parameterized by other values, types and algorithms;
+these structures can be organized as records,
+and defined as targets of modularly extensible specifications.
+A common simple pattern is for such structures to be “classes”,
+but much richer structures are also possible, making first-class OO
+much more expressive than the second-class Class OO of popular languages.
 
 By decoupling modularity and extensibility, I can type not just closed specifications,
 but also open specifications, which makes everything so much simpler,
 more composable and decomposable.
-Individual class, object, method, sub-method specifications, etc.,
-can be typed with some variant of the @c{V → C → V} pattern,
-composed, assembled in products or co-products, etc.,
-with no coupling making the unit of specification the same as the unit of fixpointing.
+Individual specifications for classes, objects, methods, sub-methods, etc.,
+can be typed with some variant of the @c{V → C → W} pattern (@secref{ME}),
+composed, assembled in products or coproducts, etc.,
+without a coupling that forces the unit of specification to coincide with the unit of fixpointing.
 
-Finally, with typeclass-style (as in @secref{CSvTS}),
-the unit of fixpointing need not be a type descriptor;
-it could be a value without an existential type, or a descriptor for multiple existential types;
-it could be a descriptor not just for a finite set of types,
-but even an infinite family of types, etc.
-In an extreme case, it can even be not just a type descriptor,
-but the entire ecosystem — a pattern actively used
-in Jsonnet or Nix (though without formal types).
-
-To build such records, one may in turn make them the targets of modular extensions,
-such that first-class OO can express much more than mere “classes”,
-especially so than second-class classes of traditional Class OO.
-First-class OO can directly express sets of cooperating values, types and algorithms
-parameterized by other values, types and algorithms.
+Finally, in typeclass style (@secref{CSvTS}),
+the unit of fixpointing needs not be a type descriptor:
+it could be any value, including one that isn’t a “descriptor” at all;
+it could be a descriptor for values and computations, but without any type component,
+or a descriptor with multiple type components;
+it could be a descriptor not just for one type or a finite family of types,
+but even for an infinite family of types, etc.
+In an extreme case, it could even be the entire ecosystem—a pattern actively used
+in Jsonnet and Nix (though without formal types).
+Most existing languages are limited by requiring all OO open recursion to go through classes,
+each with a single implicit variable standing for a type descriptor
+(even worse, often with undesired covariance constraints).
+A better system will instead allow open recursion through as many implicit or explicit variables
+as a program needs (without any such undesired constraints).
 
 @section{OO Type Theory and Practice}
 
@@ -1346,4 +1354,11 @@ still I declare:
   Now extend it to support universal and existential quantification.
   Add it to Gerbil Scheme or some other language.
   Get your system published.
+}
+
+@TODO{FOR 2nd Edition
+Actually implement all those typesystems in Scheme, and
+retroactively apply them to pommette (where appropriate).
+Implement a UI for visualizing types, type constraints, or the many typesystems, on a given term.
+See how the type system interacts with macro expansion.
 }

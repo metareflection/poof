@@ -367,7 +367,7 @@ Now if my book has any influence, and quite possibly even if it has none@xnote["
 }
 a better form of OO will increase in relative popularity:
 pure functional lazy OO, either dynamically typed or with recursively constrained subtyping,
-in typeclass-style more so than in class-style,
+in typeclass style more so than in class style,
 with flavorful optimal inheritance,
 skew lenses for open modular extensions,
 method combinations, multiple dispatch and meta-objects.
