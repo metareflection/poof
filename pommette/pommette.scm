@@ -1071,14 +1071,18 @@ let Y = f: (x: x x) (x: f (x x));
         (map (half-ref point-34ah) '(x y z color area)) => '(3 4 #f "blue" 12))
 
 
-;; TODO: write and test wrapper to Y-style spec from a U-style hspec, and back
+;; Wrappers to a Y-style spec from a U-style hspec, and back.
+;; hspec→spec threads the Y-style `super`/`self` straight into the hspec's
+;; `hyper`/`half` slots (each ignores the late-bound half it is handed and yields
+;; the Y-style value): the parent record for `hyper`, the whole object for `half`.
+;; This is the mirror image of spec→hspec below. Correct at instantiation; a
+;; converted hspec used as a non-most-specific mixin in a further chain may still
+;; misbehave (its `hyper` fallthrough only reaches `super`, never a later spec).
 (def (hspec→spec hspec super self)
-   (letrec ((half (λ (_) (hspec (λ (_) super) half))))
-     (half #f)))
+  (hspec (λ (_half) super) (λ (_half) self)))
 (expect (map (fix-record (hspec→spec (hspec-rmix* coord-hspec color-hspec (add-x-hspec 1) area-hspec)))
              '(x y z color area)) => '(3 4 #f "blue" 12))
 
-;; TODO: fix this
 (def (spec→hspec spec hyper half)
   ;; eta-conversions necessary in eager context
   (letrec ((self (η (half half))) ;; (λ (x) (half half x))
@@ -1088,6 +1092,113 @@ let Y = f: (x: x x) (x: f (x x));
 (def u-comp (spec→hspec (mix* coord-spec area-spec (add-x-spec 1) color-spec)))
 
 (expect (map (half-ref (hspec-half-record u-comp)) '(x y z color area)) => '(3 4 #f "blue" 12))
+
+;;; More tests for the two converters under non-trivial inheritance.
+;;; Naming: `super`/`self` are the Y-style channels (inherited value / whole object);
+;;; `hyper`/`half` are their U-style counterparts. The point is to exercise both
+;;; channels across a conversion boundary, and mixed-style chains where one mixin
+;;; is a converted spec sitting among native ones (and vice versa).
+
+;; hspec→spec at instantiation: an hspec chain that uses `hyper` (add-x-hspec chains
+;; on the inherited x) AND `half` (area-hspec reads the fixed x,y), converted to a
+;; Y-spec and closed with fix-record.
+(expect (map (fix-record
+              (hspec→spec (hspec-rmix* coord-hspec (add-x-hspec 1) area-hspec)))
+             '(x y area color))
+        => '(3 4 12 #f))
+
+;; spec→hspec at instantiation: a Y-spec chain that uses `super` (add-x-spec) AND
+;; `self` (area-spec, rho-spec), converted to a U-hspec and closed the U way.
+(expect (map (half-ref (hspec-half-record
+              (spec→hspec (mix* coord-spec (add-x-spec 1) area-spec rho-spec))))
+             '(x y area rho color))
+        => '(3 4 12 5 #f))
+
+;; Round-trips are identity, with both inheritance channels in play.
+(expect (map (fix-record
+              (hspec→spec (spec→hspec
+               (mix* coord-spec (add-x-spec 1) area-spec rho-spec))))
+             '(x y area rho color))
+        => '(3 4 12 5 #f))
+(expect (map (half-ref (hspec-half-record
+              (spec→hspec (hspec→spec
+               (hspec-rmix* coord-hspec (add-x-hspec 1) area-hspec)))))
+             '(x y area color))
+        => '(3 4 12 #f))
+
+;; Mixed chain, Y-style `mix*` with a converted hspec in the middle:
+;; the hspec's `hyper` reads the Y-sibling to its left (x=10), and the Y-spec to
+;; its right (add-x-spec 1) then chains on the hspec's result. 10 +5 +1 = 16.
+(expect ((fix-record (mix* (constant-field-spec 'x 10)
+                           (hspec→spec (add-x-hspec 5))
+                           (add-x-spec 1)))
+         'x)
+        => 16)
+
+;; Same, but the converted hspec uses `half`: area-hspec reads x,y contributed by
+;; native Y-specs (no field conflict with the more-specific color-spec).
+(expect (map (fix-record (mix* coord-spec (hspec→spec area-hspec) color-spec))
+             '(x area color))
+        => '(2 8 "blue"))
+
+;; Mixed chain, U-style `hspec-rmix*` with a converted Y-spec:
+;; area-spec's `self` becomes the full U-fixpoint, so it reads x,y from the
+;; native hspecs regardless of whether it is the least- or most-specific mixin.
+(expect ((half-ref (hspec-half-record
+          (hspec-rmix* (spec→hspec area-spec)
+                       (constant-field-hspec 'x 3)
+                       (constant-field-hspec 'y 7))))
+         'area)
+        => 21)
+(expect ((half-ref (hspec-half-record
+          (hspec-rmix* (constant-field-hspec 'x 3)
+                       (constant-field-hspec 'y 7)
+                       (spec→hspec area-spec))))
+         'area)
+        => 21)
+
+;; The converted spec's `self` sees a U-side override applied AFTER it:
+;; (mix* coord-spec area-spec) is converted, then x is overridden to 5 by a
+;; more-specific native hspec; area recomputes as 5*4 = 20.
+(expect ((half-ref (hspec-half-record
+          (hspec-rmix* (spec→hspec (mix* coord-spec area-spec))
+                       (constant-field-hspec 'x 5))))
+         'area)
+        => 20)
+
+;; A native hspec's `hyper` reading a converted-spec parent: 9 +4 = 13.
+(expect ((half-ref (hspec-half-record
+          (hspec-rmix* (spec→hspec (constant-field-spec 'x 9))
+                       (add-x-hspec 4))))
+         'x)
+        => 13)
+
+;; Deep: Y-style `mix*` whose middle mixin is a converted U-chain (native `hyper`
+;; and `half`), flanked by Y-specs that use `super`/`self`. All four channels in
+;; one pipeline: x = 2 +3 = 5, y = 4, area = half.x*half.y = 20, rho = |(5,4)|.
+(expect (map (fix-record
+              (mix* coord-spec
+                    (hspec→spec (hspec-rmix* (add-x-hspec 3) area-hspec))
+                    rho-spec))
+             '(x y area))
+        => '(5 4 20))
+(expect ((fix-record
+          (mix* coord-spec
+                (hspec→spec (hspec-rmix* (add-x-hspec 3) area-hspec))
+                rho-spec))
+         'rho)
+        => (sqrt 41))
+
+;; A converted hspec that is NOT the most-specific mixin still resolves its
+;; `half`/self-references against the final object: `x` is overridden to 6 by a
+;; more-specific Y-spec to the right, and area-hspec (which reads x,y via `half`)
+;; recomputes 6*4 = 24. Works because hspec→spec threads its `self` argument into
+;; the `half` slot; it used to drop `self` and crash here on (* #f #f).
+(expect ((fix-record (mix* (hspec→spec area-hspec)
+                           coord-spec
+                           (constant-field-spec 'x 6)))
+         'area)
+        => 24)
 
 
 ;;;; 6.2.2 Simple First-Class Type Descriptors
