@@ -323,6 +323,12 @@
     the variable was renamed !VALUE to avoid unintentional capture,
     while documenting as an official interface that it could be usefully read and written.
     The ADVISE facility would later inspire Cannon 1979’s method combinations.
+    Note that compared to ADVISE (and to later Lisp method combinations),
+    the concatenation semantics of Simula 67, with its “inner” marker, is inside-out;
+    also ADVISE extension of functions is in-place (modifies the existing function),
+    and does not support nesting, whereas Simula extensions are pure at the metalevel,
+    a new class being generated for each extension, and allows nested virtual procedures
+    inside classes.
   }
 }
 % https://www.bitsavers.org/pdf/bbn/The_BBN-LISP_System_Apr69.pdf section XIX
@@ -1353,6 +1359,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
+% TODO: Also introduces metaclasses
 @Book{Goldberg1983,
   author={Adele Goldberg and David Robson},
   title={Smalltalk-80: The Language and its Implementation},
@@ -1391,23 +1398,34 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
-% The PDF is for the 1988 extended version
+% Journal version 10.1016/0890-5401(88)90007-7
 @InProceedings{Cardelli1984,
-  title={A Semantics of Multiple Inheritance},
   author={Luca Cardelli},
-  booktitle={Information and Computation},
+  title={A Semantics of Multiple Inheritance},
+  booktitle={Semantics of Data Types},
+  editor={Gilles Kahn and David B. MacQueen and Gordon Plotkin},
   year={1984},
-  doi={10.1016/0890-5401(88)90007-7},
+  series={Lecture Notes in Computer Science},
+  volume={173},
+  pages={51--67},
+  location={Sophia Antipolis, France},
+  publisher={Springer-Verlag},
+  address={Berlin, Heidelberg},
+  isbn={978-3-540-13346-9},
+  issn={0302-9743},
+  doi={10.1007/3-540-13346-1_2},
   url={http://lucacardelli.name/papers/inheritance.pdf},
-  note={.
-    Despite the title of this paper being about multiple inheritance,
-    it (or the 1988 revised PDF on the author’s site),
-    only discusses this topic briefly.
+  note={
+    Despite its title, this paper barely discusses multiple inheritance
+    and fails to provide a semantics for it.
     Then Cardelli on page 4 assumes the NNOOTT, i.e. that subclassing is subtyping,
-    and completely omits any attempt at modeling inheritance from his formal treatment.
-    Instead, he introduces a framework for subtyping
-    in a λ-calculus with records and fixed-points.
-    Both a historically seminal paper and a complete intellectual travesty.
+    and completely omits any further attempt at modeling inheritance from his formal treatment.
+    Instead, he introduces a rich framework for subtyping
+    in a λ-calculus with records and fixed-points,
+    including what may be the first Y-encoding of objects.
+    Both a seminal paper for so many great ideas,
+    yet an intellectual travesty with respect to what its title claims.
+    Expanded journal version: Information and Computation 76(2--3):138--164, 1988.
   }
 }
 
@@ -2068,7 +2086,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     Kamin uses syntactic rewrite rules, that he directly translated into a running ML program.
     This paper deserves much praise for being a first of its genre,
     translating a foreign paradigm in the vocabulary of FP,
-    and being constructive with an actual running implementation.
+    and being constructive with an actual running implementation based on U-encoding.
     In a way, the paper does too much by trying to have a realistic subset of Smalltalk,
     and too little by spending too little time explaining its dense model of inheritance,
     indeed as the fixpoint of the hierarchy of class definitions.
@@ -2077,7 +2095,32 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
+@Article{Lang1988,
+  author={Kevin J. Lang and Barak A. Pearlmutter},
+  title={Oaklisp: An Object-Oriented Dialect of Scheme},
+  journal={LISP and Symbolic Computation},
+  year={1988},
+  month={may},
+  volume={1},
+  number={1},
+  pages={39--51},
+  publisher={Kluwer Academic Publishers},
+  issn={0892-4635},
+  doi={10.1007/BF01806175},
+  url={https://mural.maynoothuniversity.ie/id/eprint/10239/1/BP-Oaklisp-1988.pdf},
+  note={
+    Describes Oaklisp, a message-based object-oriented dialect of Scheme with
+    lexical scope, multiple inheritance and first-class types.
+    Integrates its object system deeply enough that types and operations are
+    themselves ordinary first-class objects rather than a separate class
+    mechanism attached to Lisp.
+    Particularly relevant as an early attempt to unify Scheme's first-class
+    functional abstractions with a Smalltalk-like object model.
+  }
+}
+
 % https://core.ac.uk/download/pdf/42828491.pdf
+% TODO Rejoinder with common 1994 paper
 @InProceedings{Reddy1988,
   author={Uday Reddy},
   title={Objects as Closures - Abstract Semantics of Object Oriented Languages},
@@ -2091,8 +2134,9 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     Where Kamin implemented a complete workable subset of Smalltalk-80,
     Reddy instead decomposes the concepts of OO into simpler concepts
     that he gradually extends.
-    Reddy doesn’t provide running code, though he says Kamin implemented Reddy’s
-    variant as well as Kamin’s own.
+    Reddy explains how to achieve OO with Y-encoding.
+    Reddy doesn’t provide complete running code
+    but notes that Kamin implemented Reddy’s variant as well as Kamin’s own.
     Together a great pair of paper.
   }
 }
@@ -2836,14 +2880,32 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
+  note={
+    Reuses Goguen's earlier sheaf-theoretic notion of object to model
+    concurrent interacting systems, now explicitly including object-oriented
+    systems.
+    Models objects by sheaves, inheritance by sheaf morphisms, systems by
+    diagrams and interconnection by categorical constructions, and gives a
+    semantics for a simple concurrent object-based language.
+    The framework is deliberately much broader than object-oriented
+    programming, applying equally to circuits, differential equations and
+    other interacting systems, so its ``inheritance'' should not be confused
+    with a detailed semantics of method inheritance and open recursion.
+  }
+}
+
+% Compare to McBride's ornaments, that involve a forgetful functor, but for data only.
 @Article{Goguen1992,
   title={Sheaf Semantics for Concurrent Interacting Objects},
-  author={Goguen, Joseph A},
+  author={Joseph A. Goguen},
   journal={Mathematical Structures in Computer Science},
   volume={2},
   number={2},
   year={1992},
+  month=jun,
   pages={159--191},
+  publisher={Cambridge University Press},
+  issn={0960-1295},
   doi={10.1017/S0960129500001420},
   url={https://cseweb.ucsd.edu/~goguen/ps/sheaf.ps.gz},
   note={.
@@ -3049,6 +3111,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % also implements single inheritance on top, but really with mixin inheritance underneath.
 % Examples include polymorphic collection.
 %
+% TODO: GPT has a more generous read of the paper than I do below, so gotta re-read it at some point.
 @Misc{Pierce1993,
   author={Benjamin C. Pierce and David N. Turner},
   title={Simple Type-Theoretic Foundations for Object-Oriented Programming},
@@ -3145,6 +3208,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
+% TODO: Gotta re-read to check, but GPT says the implementation is U-encoded and so is the pro type,
+% whereas the obj type is the resolved fixpoint.
 @Article{Fisher1994,
   title={A Lambda-Calculus of Objects and Method Specialization},
   author={Kathleen Fisher and Furio Honsell and John C. Mitchell},
@@ -3251,6 +3316,34 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     Graham’s style is abductive: he has absorbed the concepts,
     but tries to lead the reader to it via a hands on approach,
     rather than explaining the theory.
+  }
+}
+
+% https://api.semanticscholar.org/CorpusID:16832709
+% University of Illinois at Urbana-Champaign
+% October 4, 1993
+% https://www.cs.bham.ac.uk/~udr/papers/oosem.pdf
+@InCollection{Kamin1994,
+  author={Samuel N. Kamin and Uday S. Reddy},
+  title={Two Semantic Models of Object-Oriented Languages},
+  booktitle={Theoretical Aspects of Object-Oriented Programming: Types, Semantics, and Language Design},
+  editor={Carl A. Gunter and John C. Mitchell},
+  year={1994},
+  chapter={13},
+  pages={463--496},
+  series={Foundations of Computing},
+  publisher={The MIT Press},
+  isbn={978-0-262-07155-0},
+  address={Cambridge, Massachusetts},
+  url={https://openlibrary.org/books/OL1419064M/Theoretical_aspects_of_object-oriented_programming},
+  note={
+    Kamin and Reddy join forces once again, and explicitly compare
+    updated versions of their two semantic models of OO.
+    The paper is heavy in formalism, which in the end drowns rather than highlights
+    the beautiful and important idea in the conclusion: the equivalence between
+    what they initially call “closure semantics” and “data structure semantics”
+    and finally call the fixed-point model and the self-application model—what in this book
+    I call Y-encoding and U-encoding.
   }
 }
 
@@ -3609,6 +3702,36 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
+% https://www.researchgate.net/publication/2436142_Avoiding_Confusion_in_Metacircularity_The_Meta-Helix
+@InProceedings{Chiba1996,
+  author={Shigeru Chiba and Gregor Kiczales and John Lamping},
+  title={Avoiding Confusion in Metacircularity: The Meta-Helix},
+  booktitle={Object Technologies for Advanced Software},
+  editor={Kokichi Futatsugi and Satoshi Matsuoka},
+  year=1996,
+  month={mar},
+  pages={157--172},
+  volume={1049},
+  series={Lecture Notes in Computer Science},
+  location={Kanazawa, Japan},
+  publisher={Springer},
+  address={Berlin, Heidelberg},
+  isbn={978-3-540-60954-4},
+  doi={10.1007/3-540-60954-7_49},
+  url={https://static.csg.ci.i.u-tokyo.ac.jp/papers/96/chiba-isotas96.pdf},
+  note={.
+    Great paper about a missing piece in Meta-Object Protocols
+    (therefore even more so with systems lacking a MOP):
+    the ability to distinguish an object from the underlying object implementing it.
+    There’s obviously a useful conflation in practice;
+    yet at crucial times when implementing some features,
+    you need to distinguish the two (and so on, in a tower of implementation).
+    The paper thus introduces an explicit implemented-by relationship
+    to avoid confusion between metalevels when extending implementations,
+    e.g. adding shadow slots for history, implementing persistence, etc.
+  }
+}
+
 @Misc{Eich1996,
   title={JavaScript Language Specification},
   author={Brendan Eich},
@@ -3903,6 +4026,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     This is the original, defining paper for Aspect-Oriented Programming (AOP).
     It introduced the key ideas of cross-cutting concerns, aspects, join points, advice,
     and aspect weaving.
+    Cross-cutting aspects are exactly what create combinatorial pressure on single inheritance,
+    and can be solved with multiple inheritance and method combinations.
   }
 }
 
@@ -4045,28 +4170,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 2000
 
-% https://www.researchgate.net/publication/2436142_Avoiding_Confusion_in_Metacircularity_The_Meta-Helix
-@Article{Chiba2000,
-  author={Shigeru Chiba and Gregor Kiczales and John Lamping},
-  year={2000},
-  month=nov,
-  title={Avoiding Confusion in Metacircularity: The Meta-Helix},
-  isbn={978-3-540-60954-4},
-  journal={Lecture Notes in Computer Science},
-  doi={10.1007/3-540-60954-7_49},
-  note={.
-    Great paper about a missing piece in Meta-Object Protocols
-    (therefore even more so with systems lacking a MOP):
-    the ability to distinguish an object from the underlying object implementing it.
-    There’s obviously a useful conflation in practice;
-    yet at crucial times when implementing some features,
-    you need to distinguish the two (and so on, in a tower of implementation).
-    The paper thus introduces an explicit implemented-by relationship
-    to avoid confusion between metalevels when extending implementations,
-    e.g. adding shadow slots for history, implementing persistence, etc.
-  }
-}
-
 @PhDThesis{Ernst2000,
   author={Erik Ernst},
   title={gBeta: A Language with Virtual Attributes, Block Structure, and Propagating, Dynamic Inheritance},
@@ -4078,15 +4181,19 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   doi={10.7146/dpb.v29i549.7654},
   url={https://tidsskrift.dk/daimipb/article/download/7654/6510/0},
   note={.
-    Comprehensive description of gBeta, a successor to BETA featuring first-class patterns,
-    virtual attributes, pattern computations, dynamic inheritance, mixins, virtual patterns, and
-    family-oriented extensibility.
+    Comprehensive description of gBeta, a successor to BETA featuring
+    first-class patterns, runtime pattern computations, mixins,
+    virtual attributes, virtual patterns, dynamic inheritance, and family-oriented extensibility.
     gBeta uses flavorful multiple inheritance with C3,
     with builtin combinations and proper nesting for (virtual) classes, objects, procedures.
     Despite the author claiming gBeta to be class-based and not prototype-based,
     its first-class objects are actually prototypes that remember both “target” fields
     (that can be dynamically extended as well as assigned if mutable),
     and “specification” patterns and classes (that can be dynamically further specialized).
+    Dynamic inheritance means that the ancestry of a given object can change at runtime
+    (though only in a monotonic way). Meanwhile, pattern variables
+    can also be dynamically assigned to different objects (including in non-monotonic ways).
+    Runtime binding 
   }
 }
 
@@ -5254,6 +5361,24 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     Long ago while at École Normale Supérieure, I learned a lot from Yves’s lecture notes.
     My memory fails regarding how this particular document compares to them.
     The bibliography has more documents, in particular the classic Barendregt 1984.
+  }
+}
+
+% 5.9 on modularity
+@Book{Bracha2015,
+  author={Gilad Bracha},
+  title={The Dart Programming Language},
+  year={2015},
+  month={dec},
+  publisher={Addison-Wesley Professional},
+  address={Boston, Massachusetts},
+  isbn={978-0-13-342995-4},
+  note={
+    Authoritative description of the original Dart language by its specification lead,
+    including its object model, libraries, optional type system and reflection.
+    Section 2.15 develops Dart’s mixins and uses them to illustrate flexible reuse
+    across class hierarchies, with further examples throughout the book.
+    Chapter 3 treats libraries, privacy, imports, exports and related modularity mechanisms.
   }
 }
 
