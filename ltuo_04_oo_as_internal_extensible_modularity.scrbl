@@ -1127,7 +1127,8 @@ those happening after could even consult or modify the value returned
 (though this was not originally an intended interface),
 or otherwise use side-effects to communicate with other advice.
 ADVISE is thus the earliest form of internal (first-class) modular extensibility,
-though it was a special-purpose form that only worked at the level of named functions.
+though it was a special-purpose form that only worked in-place at the level of named functions,
+with no nesting.
 
 Now of course, the modular extensibility breakthrough everyone knows about is
 Simula 67 @~cite{Dahl1967}: inspired by @citet{Hoare1965}, Dahl and Nygaard
@@ -1150,7 +1151,8 @@ without the concept and name of OO itself (@secref{OOnaming})@xnote["."]{
   the precise understanding of when each critical trait appeared.
   Simula is missing pieces from what one may today expect of an OO language,
   yet it passes my criterion of Internal Modular Extensibility,
-  and is the first ever to pass and apply to general “objects”.
+  and is the first ever to pass and apply to general “objects”,
+  or at least to classes with nested methods (its “virtual procedures”).
 }
 
 No other known form of internal modular extensibility appears before 1976.
@@ -1430,20 +1432,20 @@ I leave it as an exercise to the reader to port my code to such platforms,
 or to variants with suitable typesystems (@secref{TfOO}),
 and look forward to the result.
 
-Nix, that directly provides λ-calculus with dynamic typing,
+Nix, that directly provides a λ-calculus with dynamic typing,
 is lazy, which actually makes the basic concepts simpler.
-But it would require more care for implementers trying to port such an implementation
+But its laziness would require more care for implementers trying to port such an implementation
 to most programming contexts, that are applicative.
 Also, Nix is more recent, less well-known, its syntax and semantics less recognizable.
 Finally, Nix, as compared to Scheme, is missing a key feature beyond the basic λ-calculus,
 that I will use when building multiple inheritance:
-the ability to test two specifications for equality.
+the ability to test two specifications for identity.
 
 Actually, Scheme is as far as I can tell the oldest @emph{surviving} language
 with a continuous user and code base that fully supports the λ-calculus
 (without type restrictions that prevent the expression of OO).
 Thus, by the Lindy effect, @; TODO cite Ord2023
-it is also the language with the longuest expectation
+it is also the language with the greatest expectation
 of continued relevance to future readers—much more so than Nix, or any other alternative.
 This means that Scheme in some form will probably survive longer than any more recent language,
 and likely much longer than whether ephemeral language is more popular today.

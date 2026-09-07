@@ -12,6 +12,13 @@
 - [ ] Add quantitative analysis to chapter 7
 - [ ] Go over all TODOs in the book
 
+2nd Ed
+- [ ] "Four Pillars"
+- [ ] Who killed OO?
+- [ ] Actually implement the various typecheckers and counter-examples
+- [ ] Information-theoretic and quantitative analysis of inheritance
+- [ ] Modularity and Extensibility separately vs together
+
 It's not "recent research" so much as simplification and extraction of the essence of OO, as developed since the late 1960s, reduced to its core and implemented since the late 1970s, formalized since the late 1980s, made ubiquitous since the late 1990s, rediscovered in a pure functional setting in the late 2000s, and finally done right since the late 2010s.
 
 
@@ -1187,3 +1194,32 @@ Failed to reply:
 https://www.quora.com/How-did-Alan-Kays-vision-of-object-oriented-circulate-before-Smalltalk-76-I-saw-papers-by-Bobrow-1971-Robert-the-younger-brother-Goodenough-1975-Ross-1976-Jones-Liskov-1976-ab-using-the-term-I-guess-inspired-by-Kay
 My understanding is that OOZE continuously saved the image. Did Smalltalk-80 also do that? If so, how did they ensure consistency of the image? (database people would speak of “ACID” properties) Could you end up with an inconsistent image?
 By contrast, my understanding of east coast Lisp images is that you have to explicitly dump/save the image, and any change not included in such an explicit save would be lost—but could of course be replayed from file, if saved to a file—Lisp was still primarily file-based, which I understand was the opposite of image-first Smalltalk. Actually, I think Bobrow’s Interlisp tried harder to be both image-based and file-based, but I don’t understand what consistency mechanisms it did or didn’t have.
+
+
+
+A SHORT SECTION TO OPEN THE CONCLUDING CHAPTER
+@section{Who killed OO?}
+
+Now that you have reached the final chapter of this book,
+I can reveal to you the solution to the mystery: Who killed OO?
+
+@subsection{The Murder Mystery}
+OOPSLA, founded in 1986, diluted into SPLASH in 2010.
+
+@subsection{The Usual Suspects}
+Package deal of class OO with imperative programming
+Disinterest by FPers whose type couldn't handle it, and didn't understand its purpose
+Entropy
+
+@subsection{The Body Absconded}
+How do we know OO is dead? Where is the body?
+OO is alive and well. Just not in mainstream languages.
+the crippled version
+Cite rpg+Foote vs gls+Noble at OOPSLA 2002
+Not "did the victim die?" but "who is the victim?"
+
+@epigraph{
+  @Code{Array(16).join('wat' - 1) + ' Batman!'}
+  @|#:- "Gary Bernhardt"|
+}
+

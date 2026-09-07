@@ -667,14 +667,19 @@ Of course, dynamic OO languages, whether Prototype OO languages or Class OO lang
 have always been able to express these nested specifications and their overriding the hard way.
 But credit where credit is due, BETA@~cite{Kristensen1987}
 was the first language that explicitly supported such nested specifications,
-with its virtual patterns, and the author of the successor gBeta explicitly explored
-the resulting notion of “family polymorphism”. @;TODO cite Ernst2001
+with its virtual patterns, and the author of the successor gBeta @~cite{Ernst2000}
+explicitly explored the resulting notion of “family polymorphism”. @;TODO cite Ernst2001
 This proves that the “Scandinavian school” advanced OO in more ways
-than by first implementing classes in Simula 67@~cite{Dahl1967}.
-Other notable languages that explicitly support nested specifications include
-Newspeak@~cite{Bracha2008} with its nested classes (in a Class OO language), and
-Jsonnet@~cite{Cunningham2014} with its nested objects (in a Prototype OO language).
-Nix@~cite{Simons2015}, which implements extensions equivalent to Jsonnet’s objects
+than by first implementing classes in Simula 67@~cite{Dahl1967};
+their variant of family polymorphism though is limited by an often undesirable constraint
+that patterns overriding should be monotonic, i.e. the new pattern must inherit from the old one.
+
+Other notable languages that explicitly support nested specifications,
+and lift this monotonicity limitation, include
+Newspeak@~cite{Bracha2008} with its nested classes (in a stateful Class OO language), and,
+in a pure functional and prototypical setting,
+Jsonnet @~cite{Cunningham2014} and Nix @~cite{Simons2015}.
+Nix, which implements extensions equivalent to Jsonnet’s objects
 in a few lines of λ-calculus as per @secref{MOO} and @secref{RPOO},
 does not provide any special operator to support nested extensions,
 and doesn’t need to: nesting extensions is already a common idiom in defining
@@ -879,7 +884,7 @@ Another non-modular extension, when using optimal inheritance,
 is to turn the suffix flag on for performance, or to turn it off for semantic compatibility
 when adding ancestors at the least-specific end of the ancestry for the purpose of infrastructure.
 
-@subsection{Optics for Classes}
+@subsection[#:tag "OfC"]{Optics for Classes}
 
 I’ll assume a simple model for first-class classes as per @secref{SFCTD},
 wherein classes are just prototypes for type descriptors.
@@ -1391,40 +1396,45 @@ each sub-method would be expanded into a separate method.
 
 @subsection{Representing sub-methods}
 
-@XXXX{XXXX}
-
 The best way to store sub-methods would be if there were “funcallable instances”
 (to use CLOS terminology; like instances in T, that are funcallable in general)
 that conflate a function and a record in a single entity.
 Then the sub-methods would be stored in the “record” part of the method,
-and the method would still be its “function” part.
-However, if records are already applied as functions to symbols to extract values,
-as I implemented them so far, then funcallable instances wouldn’t work—the function
-call interface is already used for field access
-(unless symbols are excluded from the function’s co-domain, but that’s ugly).
-And since accessing a record value cannot be a function call, you also cannot directly use
-the Y combinator on a record the way we did previously (@secref{MFCM}),
-but must instead use a slightly different strategy (@secref{RaR}).
+and the method would still be its “function” part@xnote["."]{
+  Equivalently, the “function” part would be just one special field of the record,
+  automatically invoked when the record is used as a function.
+}
+However, since I have already been implementing records as functions, as I did so far,
+then funcallable instances wouldn’t work—the function interface
+is already used for field access.
+I could exclude symbols (and booleans), that I used as record keys,
+from the codomain of the “function” as such—but that’s an ugly limitation.
+And I crucially relied on records-as-functions
+for the semantics of objects as fixpoints (@secref{MFCM}),
+and so a change of strategy while possible (@secref{RaR}) would complexify
+the one aspect that most simplifies my account of the semantics of OO.
 
-Lacking such funcallable instances, we can store sub-method information
-in a record @c{sub-methods} next to the methods being combined.
-For the sake of generality, a method-spec can be any kind of specification
+Thus instead of storing sub-method information in the same entity
+as the function being defined, I will store it in a record next to it.
+The upside is I can keep using my simple pure functional fixpoint semantics;
+the downside is that information about a method now resides in a pair of bindings
+that must be transported together, rather than in a single entity
+that can be syntactically bound once.
+In practice, I will store sub-method information in a record @c{sub-methods}
+next to the methods being combined.
+
+For the sake of generality, a sub-method-spec can be any kind of specification
 (modular extension, multiple or optimal inheritance specification, etc.),
-and the @c{method-cons} says how to combine it with the specification data so far;
+and a function @c{method-cons} says how to combine it with the specification data so far;
 it could be an actual @c{mix} of modular extensions, or
 just something that @c{cons}es the new specification into a list
 to be folded or otherwise processed later
 (e.g. for conflict resolution in flavorless multiple inheritance):
-@Code{
-(def (sub-method-lens method-id tag)
-  (compose-lens* (field-lens 'sub-methods)
-                 (field-lens method-id)
-                 (field-lens tag)))
 
-;; standard-method-cons : MethodFn → List(MethodFn) → List(MethodFn)
-;; Prepends a method fn to the existing list (standard cons).
-(def (standard-method-cons spec specs)
-  (cons spec specs))
+
+@XXXX{XXXX}
+
+@Code{
 
 ;; sub-method-spec : MethodCons → Tag → MethodId → MethodFn → ModExt
 ;;   MethodCons = MethodFn → List(MethodFn) → List(MethodFn)
@@ -1746,6 +1756,16 @@ the bodies of classes and virtual procedures. They called it “concatenation se
 
 @XXXX{XXXXX}
 
+Inside-out compared to CLOS before/after methods.
+BETA's inner: procedures are non-extensible by default.
+ADVISE (and after it, Flavors and CLOS): procedures are extensible by default.
+ADVISE extends in-place, when Simula, BETA and OO languages extend in a pure way.
+(gBeta also has extension in-place).
+The CLOS before/after and Simula/BETA inner are inter-expressible, but
+the ergonomics is much better for CLOS, which is a reason why no one uses inner outside beta:
+inner makes function not extensible by default.
+
+
 The semantics of before and after methods is quite similar to the
 of Simula and BETA, except that the most-specific-first order of before methods
 and most-specific-last order of after methods is the opposite of the concatenation semantics
@@ -1961,6 +1981,8 @@ Which leads us to the invention of multiple dispatch.
 @section[#:tag "MD"]{Multiple Dispatch}
 
 @subsection{Multimethods}
+
+@; TODO CITE Leavens1988 Mugridge1991 Castagna1992 Millstein2002
 
 So far, the choice of what (effective) method to evaluate when calling a generic function
 only depended on its first argument, “the” object on which the function was invoked.

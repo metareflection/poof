@@ -297,7 +297,7 @@ for which all extensions are trivially strict).
 The reference wrapper, pure isomorphism at one level,
 yet effectful non-isomorphism at another
 (requiring access to disk, database, network, credentials, user interface, etc.),
-also illustrates that
+also illustrates that @; TODO cite Friedman2000
 @principle{one man’s purity is another man’s side-effect} (to channel Alan Perlis).
 For instance, with merkleization, a reference uniquely identifies some pure data structure
 with a cryptographically secure hash that you can compute in a pure functional way;
@@ -540,13 +540,15 @@ But at that point, Y-encoding becomes simpler than U-encoding.
 @subsubsection{Choosing U, Y?}
 
 In the end, U-encoding and Y-encoding are both equally capable for implementing
-the whole breadth of semantics of object systems, with many well-identified tradeoffs.
+the whole breadth of semantics of object systems, with many well-identified tradeoffs—and indeed
+were explicitly identified as “self-application model” and “fixed point model” by @citet{Kamin1994},
+who proved the two as equivalent.
 Yet, U-encoding seems by far more popular. It seems to have been adopted, in many variants,
 by most implementations of most OO languages,
 since before OO was even invented @~cite{Sutherland1963}.
 Indeed, as far as I can tell, Y-encoding only appears in the literature
 in theoretical semantic models
-@~cite{Cook1987 Kamin1988 Reddy1988 Cook1989 CookPalsberg1989 Bracha1990},
+@~cite{Cardelli1984 Cook1987 Kamin1988 Reddy1988 Cook1989 CookPalsberg1989 Bracha1990},
 and in practical implementations much later @~cite{Kiselyov2005 Simons2015 Rideau2021}.
 Interestingly, Haskell-based OO systems tend to use Y-encoding
 because it leads to simpler types @~cite{Kiselyov2005 Gale2015}@xnote["."]{
@@ -794,8 +796,11 @@ and made it flesh, they failed to realize how momentous the discovery was,
 and shrugged it off as yet another one of those many pesky little implementation details
 they had to face along the way.
 
+% TODO cite Cook1989 distinguishes, but does not conflate back
+% TODO cite Simons1995 / 2005 distinguishes, and notes the conflation, calls it sad.
+
 Finally, the confusion between target and specification can be seen as a special case of
-the confusion between object and implementation discussed in @citet{Chiba2000},
+the confusion between object and implementation discussed in @citet{Chiba1996},
 wherein you can see the specification as @emph{implementing} the target.
 But though these authors saw a more general case in a wider theory with far reaching potential,
 they do not seem to have noticed this common case application.
@@ -977,6 +982,11 @@ for bootstrapping a Meta-Object Protocol@~cite{Kiczales1991}.
 As for “class methods” (also known as “static methods” in C++ or Java),
 they can be regular methods of the type descriptor,
 or there can be a method @c{class-methods} in the type descriptor containing a record of them.
+
+A minimal set of semantic primitives sufficient to define such first-class classes is
+introduced in @secref{OfC}.
+For more fleshed out examples, do the exercises in @secref{EtSoO},
+or look at my solutions in the code accompanying this book.
 
 @;{
 TODO Discuss encodings and types?

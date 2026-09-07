@@ -915,7 +915,7 @@ Infinite towers vs truncated towers. Turtles all the way down, not hooks all the
 Collapsing towers for efficiency.
 Partial evaluation and Futamura projections.
 
-@citet{Chiba2000}.
+@citet{Chiba1996}.
 Add serialization, persistence, to a meta-object, NOT to the object.
 
 Different capabilities for objects and their meta-objects => more security.

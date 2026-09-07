@@ -63,21 +63,22 @@ though often a severely stunted one.
 
 @subsection{Conflation of Specification and Target as All-Important}
 I elucidated the concept of conflation,
-latent in all OO since @citet{Hoare1965},
-necessarily though implicitly addressed by each and every one of my predecessors,
-yet never a single time once explicitly documented before. Shame on them.
+latent in all OO since @citet{Hoare1965}.
+Conflation was necessarily addressed
+by each and every one of my predecessors with a practical implementation,
+yet never once did any of them once explicitly document it before me. Shame on them.
 Before making this concept explicit,
 the semantics of objects was extremely complex and ad hoc.
 After making it explicit, the semantics of objects is astoundingly simple,
 it just involves a regular use of the simplest of recursion operators, the fixpoint.
 Plus an implicit pair to bundle specification and target together.
-I also argued why conflation, if properly understood, can increase modularity,
+I also argued why conflation, if properly understood, can crucially increase modularity,
 even though when misunderstood it brings lots of harmful confusion.
 
 @subsection{Open Modular Extensions as Fundamental}
 Compared to previous theories that only consider @emph{closed} modular extensions
 (where the extension focus coincides with the module context),
-or worse, closed modular definitions (with no notion of extension),
+or worse, closed modular definitions (with no first-class notion of extension),
 my @emph{open} modular extensions @emph{vastly} simplify OO, by enabling:
 @itemlist[
   @item{Simpler more universal types with no ad hoc constructs, just plain recursive subtypes}
@@ -85,16 +86,16 @@ my @emph{open} modular extensions @emph{vastly} simplify OO, by enabling:
   @item{Using optics to zoom semantics at all scales, down from individual method declarations
         up to entire ecosystems of mutually recursive prototypes}]
 
-@subsection{Flavorful Multiple Inheritance is Most Modular}
+@subsection{Flavorful Multiple Inheritance is Most Modularly Extensible}
 Using my characterization of modularity, I could prove that the following variants of inheritance
-are in order of strictly decreasing modularity:
+are in order of strictly decreasing modular extensibility:
 (1) flavorful multiple inheritance with local order and monotonicity,
 (2) less consistent flavorful multiple inheritance,
 (3) mixin inheritance,
 (4) flavorless “conflict” multiple inheritance,
 (5) single inheritance, and
 (6) no inheritance.
-And I explained why so many great computer scientists
+I explained why so many great computer scientists
 got stuck into the flavorless “conflict” multiple inheritance
 and how and why the flavorful “harmonious combination” view is so much better.
 
@@ -125,14 +126,37 @@ I implemented a new variant of inheritance.
 It is more than just combining previous ideas,
 such as tucking C3 onto the design of Ruby or Scala,
 though even that, or just my optimization of C3 from O(d²n²) to O(dn),
-would have been a (modest) contribution:
+would have been a (modest) original contribution:
 I also showed that the resulting design is necessary to fulfill a higher purpose of optimality:
 it subsumes multiple inheritance, from which it keeps the maximum modularity,
 and single inheritance, from which it keeps the maximum performance.
 It is not arbitrary, not just a clever hack made necessary
 for backward compatibility with existing infrastructure.
 This Optimal Inheritance, as implemented by my C4 algorithm, is now part of @(GerbilScheme);
-you can easily port my code to add it to your own language.
+you can easily port my code to add this feature to your own language.
+
+@subsection{The Most Comprehensive Account of OO in Pure FP to date}
+Culminating with @secref{EtSoO}, I published the most comprehensive semantics of OO
+in a pure functional style—which matters because
+@principle{A pure functional semantics crucially enables @emph{local}, compositional reasoning
+about OO programs using ordinary equational and logical foundations},
+without first having to account for hidden state and aliasing.
+Sure, every piece was there already, from @citet{Cook1987} to @citet{Simons2015}
+via @citet{Bracha1990} and @citet{Kiselyov2005}
+and many more. @TODO{Leavens1988 Mugridge1991 Castagna1992 Millstein2002}
+But I am the first to tie it all together in one place with one coherent story, including
+(a) naked specifications, prototypes, classes and typeclasses,
+(b) both distinction and conflation of specifications and targets,
+(c) single, mixin and multiple inheritance, nested definitions and family polymorphism,
+(d) method combinations,
+(e) multiple dispatch,
+(f) static and dynamic dispatch@xnote["."]{
+   The only side-effects I used, if they are effects, were
+   laziness (for adequate performance), recursion (for fixpoints), @; TODO cite Friedman2000
+   and generation of identity tags (for the DAGs of multiple and optimal inheritance).
+   None of these “effects” breaks local reasoning, and thus they might not even count
+   as side-effects for most people (and can be simply expressed in well-known monads).
+}
 
 @section{Why Bragging Matters}
 @subsection{Spreading New Ideas}
@@ -150,17 +174,18 @@ By providing a clear list, I am making sure they know where to start from, and w
 Readers, @principle{the list of achievements above is a list of opportunities for you to improve
 the software you use and build}.
 
-I actually started the list of achievements above back when this book was supposed to be a short paper
+I actually started the list of achievements above
+back when this book was supposed to be a short paper
 to submit to a conference or journal.
 Reviewers are overwhelmed with papers to review,
 most of them of bad quality, hiding vacuity under a heap of verbiage.
-They are not paid, and it is draining to say no, even to outright bad papers,
+Reviewers are not paid, and it is draining to say no, even to outright bad papers,
 and even more so to papers that have some good in it,
 but that are not yet worth the reader’s time.
-An author has to make extra effort to make his contributions clear,
+An author has to spend some effort to make his original contributions clear and explicit,
 even though it’s hard on him, even though some authors will give up
 before they make their paper publishable, and their original contributions are then sadly lost.
-I thank the rejecting reviewer who once told me to make my claims clearer.
+I thank a rejecting reviewer who once told me to make my claims clearer.
 
 @subsection{Spreading Coherent Theories}
 @epigraph{@emph{Let theory guide your observations},

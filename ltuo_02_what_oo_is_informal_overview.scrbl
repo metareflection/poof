@@ -86,7 +86,7 @@ and was otherwise the second OO language.
 Some languages provide both @~cite{Hewitt1979 ECMA2015}.
 Class OO is the more popular form of OO.
 But the most popular OO language, JavaScript, started with just Prototype OO;
-Class OO was layered on top twenty years later.
+Class OO was layered on top twenty years later. (@secref{OOiCO})
 
 @subsection[#:tag "CaPfT"]{Classes as Prototypes for Types}
 @principle{A class is a compile-time prototype for a type descriptor}:
@@ -459,12 +459,14 @@ Racket @~cite{Flatt1998 Flatt2006},
 Newspeak @~cite{Bracha2008},
 GCL @~cite{Bokharouss2008},
 Jsonnet @~cite{Cunningham2014},
+Dart @~cite{Bracha2015},
 and Nix @~cite{Simons2015}.
 Yet it still has outsized outreach, for just the use of GCL at Google means
 a large part of the world computing infrastructure
 is built upon configurations written using mixin inheritance@xnote["."]{
   There is some confidentiality around Google’s Configuration Language GCL.
-  Still, my understanding is that GCL as such only had single inheritance,
+  Still, my understanding from discussing with Googlers who have used it is that
+  GCL as such only supports single inheritance,
   yet that users would often build and use entire frameworks using mixin inheritance,
   wherein mixins are defined by abstracting over a base class
   that is then extended using single inheritance, e.g.
