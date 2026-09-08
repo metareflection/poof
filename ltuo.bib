@@ -284,18 +284,18 @@
   pages={39--69},
   year={1965},
   url={http://archive.computerhistory.org/resources/text/Knuth_Don_X4100/PDF_index/k-9-pdf/k-9-u2293-Record-Handling-Hoare.pdf},
-  note={.
-        This seminal paper introduces classes and subclasses,
-        and many other notions now familiar and ubiquitous,
-        including his infamous “million dollar mistake”, null.
-        Hoare calls “objects” and “attributes” high-level entities being modeled, “classes” their types,
-        “records” and “fields” the low-level representations of the previous as
-        “consecutive words of computer store”, and “record classes” their types.
-        “References” are typed pointers, and “null” is a special reference
-        for when a correspondence is partial rather than total.
-        “Discrimination” is a form of type-safe pattern-matching between subclasses.
-        Hoare considers recursive data structures, yet does not anticipate that
-        for them, subclassing will differ from subtyping.}
+  note={
+    This seminal paper introduces classes and subclasses,
+    and many other notions now familiar and ubiquitous,
+    including his infamous “million dollar mistake”, null.
+    Hoare calls “objects” and “attributes” high-level entities being modeled, “classes” their types,
+    “records” and “fields” the low-level representations of the previous as
+    “consecutive words of computer store”, and “record classes” their types.
+    “References” are typed pointers, and “null” is a special reference
+    for when a correspondence is partial rather than total.
+    “Discrimination” is a form of type-safe pattern-matching between subclasses.
+    Hoare considers recursive data structures, yet does not anticipate that
+    for them, subclassing will differ from subtyping.}
 }
 % How original are the boxes-and-arrows drawings for pointers? The heap allocation?
 % compacting garbage collection - Aha, he cites LISP. And SIMULA.
@@ -354,10 +354,11 @@
   pages={671--678},
   numpages={8},
   note={.
-    SIMULA is an extension of Algol for “quasi-parallel processing”.
-    In 1966, it doesn’t have classes yet, but has some variant
-    of what MIT people will later call “Actors”, will asynchronous message passing
-    between independently running entities.
+    SIMULA is an extension of ALGOL 60 for “quasi-parallel processing”.
+    In 1966, it doesn’t have classes yet, but has “activities”,
+    some variant of what MIT people will later call “Actors”,
+    with some kind of cooperative multithreading.
+    This version of SIMULA would later be retrospectively called SIMULA I.
   }
 }
 
@@ -373,8 +374,8 @@
   url={https://www.ub.uio.no/fag/naturvitenskap-teknologi/informatikk/faglig/dns/dokumenter/classandsubclass1967.pdf},
   note={.
     THE breakthrough paper that leads to OO,
-    though we can debate whether it is itself OO as such—not in the modern form
-    made popular by Smalltalk, at least.
+    though we can debate whether it is itself OO as such—certainly not
+    in the modern form made popular by Smalltalk, at least.
     Dahl and Nygaard implement classes for the first time.
     They do not have the word “inheritance”, but the basic concept is there:
     a class may have a “prefix class” and “subclasses” of which it is the prefix class.
@@ -385,7 +386,25 @@
     Because a prefix class may also include suffix code,
     the “body” for subclasses can be “split” with the keyword “inner”
     that pinpoints where to put the body of subclasses (by default, at the end).
-    The successor BETA will also basically follow this approach.
+    That body, like that or the previous SIMULA I, could “detach” (without argument)
+    and return control to the caller of the class instance
+    (or, the first time around, to whoever used new on the class).
+    Within classes, some procedures can be declared virtual,
+    at which point subclasses can override them, and
+    dynamic dispatch will be used to select which is called based on an object’s class;
+    but no provision is made to call a superclass’s overridden procedure.
+    The successor BETA will generalize and smooth out those semantics.
+    Interestingly, the body of a class in Simula 67, as of an activity in Simula I (Dahl 1966),
+    does not “return”, but does “detach”. The body is invoked when a class is instantiated by a
+    x = new ClassName statement, that only returns after the class body first detaches.
+    Subsequently, the client can call(x) and evaluation will synchronously resume,
+    until the class body detaches again.
+    Calling and detaching convey no messages and involve no locking:
+    programmers are expected to follow a hierarchical co-routine discipline,
+    and communicate through side-effects to variables.
+    Hierarchical behavior is facilitated by the ability to nest classes,
+    but those nested classes are not “virtual” and cannot be further-extended
+    as part of family polymorphism as in BETA.
   }
 }
 
@@ -401,6 +420,30 @@
     and identifies or clarifies many more notions.
     Widely circulated since 1967, but only officially published in HOSC(13)1, 2000.
   }}
+
+%% 1968
+
+@Article{Dijkstra1968,
+  author={Edsger W. Dijkstra},
+  title={Go To Statement Considered Harmful},
+  journal={Communications of the ACM},
+  volume=11,
+  number=3,
+  pages={147--148},
+  month={March},
+  year=1968,
+  doi={10.1145/362929.362947},
+  url={https://doi.org/10.1145/362929.362947},
+  note={.
+    This informal letter to the editor of the CACM became an instant classic
+    that profoundly changed programming languages.
+    Before it, people had no problem using GOTO statements everywhere.
+    Dijkstra shamed them into defining and using higher-level control structures
+    that are easier to reason about.
+    Not by saying things they didn’t know or didn’t agree with—but by making it obvious
+    to everyone that they and everyone else knew and agreed.
+  }
+}
 
 %% 1972
 
@@ -2092,30 +2135,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     indeed as the fixpoint of the hierarchy of class definitions.
     But that’s OK, because Reddy 1988 is a very complementary paper
     that explains the concepts behind Kamin.
-  }
-}
-
-@Article{Lang1988,
-  author={Kevin J. Lang and Barak A. Pearlmutter},
-  title={Oaklisp: An Object-Oriented Dialect of Scheme},
-  journal={LISP and Symbolic Computation},
-  year={1988},
-  month={may},
-  volume={1},
-  number={1},
-  pages={39--51},
-  publisher={Kluwer Academic Publishers},
-  issn={0892-4635},
-  doi={10.1007/BF01806175},
-  url={https://mural.maynoothuniversity.ie/id/eprint/10239/1/BP-Oaklisp-1988.pdf},
-  note={
-    Describes Oaklisp, a message-based object-oriented dialect of Scheme with
-    lexical scope, multiple inheritance and first-class types.
-    Integrates its object system deeply enough that types and operations are
-    themselves ordinary first-class objects rather than a separate class
-    mechanism attached to Lisp.
-    Particularly relevant as an early attempt to unify Scheme's first-class
-    functional abstractions with a Smalltalk-like object model.
   }
 }
 

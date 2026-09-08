@@ -227,7 +227,7 @@
 
 @InProceedings{Hewitt1973Actor,
   title={Actor induction and meta-evaluation},
-  author={Hewitt, Carl and Bishop, Peter and Greif, Irene and Smith, Brian and Matson, Todd and Steiger, Richard},
+  author={Carl Hewitt and Peter Bishop and Irene Greif and Brian Smith and Todd Matson and Richard Steiger},
   booktitle={Proceedings of the 1st annual ACM SIGACT-SIGPLAN symposium on Principles of programming languages},
   pages={153--168},
   year={1973}
@@ -1023,6 +1023,30 @@
   note={Priority source for type-class-like constrained overloading; useful when separating ad-hoc polymorphism from object dispatch and inheritance.}
 }
 
+@Article{Lang1988,
+  author={Kevin J. Lang and Barak A. Pearlmutter},
+  title={Oaklisp: An Object-Oriented Dialect of Scheme},
+  journal={LISP and Symbolic Computation},
+  year={1988},
+  month={may},
+  volume={1},
+  number={1},
+  pages={39--51},
+  publisher={Kluwer Academic Publishers},
+  issn={0892-4635},
+  doi={10.1007/BF01806175},
+  url={https://mural.maynoothuniversity.ie/id/eprint/10239/1/BP-Oaklisp-1988.pdf},
+  note={
+    Describes Oaklisp, a message-based object-oriented dialect of Scheme with
+    lexical scope, multiple inheritance and first-class types.
+    Integrates its object system deeply enough that types and operations are
+    themselves ordinary first-class objects rather than a separate class
+    mechanism attached to Lisp.
+    Particularly relevant as an early attempt to unify Scheme's first-class
+    functional abstractions with a Smalltalk-like object model.
+  }
+}
+
 % multimethods
 @PhdThesis{Leavens1988,
   author={Gary Todd Leavens},
@@ -1695,6 +1719,16 @@
 
 %% 1995
 
+@Misc{Blome1995,
+  author={Rainer Blome},
+  title={CLOS-style method combination in Self},
+  year={1995},
+  month={September},
+  howpublished={Self-interest mailing list},
+  url={https://lists.squeakfoundation.org/archives/list/self-interest@lists.selflanguage.org/thread/R2WQKKNKUXEWJ355WMVUB7EUR3WMGXDY/},
+  note={Explores implementing CLOS-style method combination in Self and explicitly contrasts the execution order of CLOS before, primary, after and around methods with BETA's inner mechanism. Also discusses constructing and caching effective methods. Useful contemporary evidence that generalized method combination can be layered reflectively over a prototype-based single-dispatch language.}
+}
+
 @Article{Bruce1995Binary,
   author={Bruce, Kim B. and Cardelli, Luca and Castagna, Giuseppe and The Hopkins Objects Group and Leavens, Gary T. and Pierce, Benjamin C.},
   title={On Binary Methods},
@@ -1715,7 +1749,7 @@
   note={Typed object language exploring matching and polymorphism beyond ordinary subtyping, relevant to the history of object type systems.}
 }
 
-@Article{Cardelli1995obliq,
+@Article{Cardelli1995,
   author={Luca Cardelli},
   title={A language with distributed scope},
   journal={Computing Systems},
@@ -1723,7 +1757,9 @@
   number={1},
   pages={27–59},
   year={1995},
-  note={Obliq: the object calculus made a language; distribution forces identity, location, and migration semantics on which the calculus is silent}
+  note={
+    Obliq: the object calculus made a language;
+    distribution forces identity, location, and migration semantics on which the calculus is silent}
 }
 
 % Curry-deBruijn-Howard isomorphism
@@ -1825,7 +1861,7 @@
   note={Connects object calculi to typed lambda calculus, clarifying what is primitive and what can be represented by functions and recursive records.}
 }
 
-@TechReport{Chambers1996BeCecil,
+@TechReport{Chambers1996,
   author={Craig Chambers and Gary T. Leavens},
   title={BeCecil, a Core Object-Oriented Language with Block Structure and Multimethods: Semantics and Typing},
   institution={Department of Computer Science and Engineering, University of Washington},
@@ -2230,7 +2266,6 @@
 }
 
 % Prototypes
-% catalog only: https://openlibrary.org/books/OL387681M/Prototype-based_programming
 @Book{Noble1999,
   editor={James Noble and Antero Taivalsaari and Ivan Moore},
   title={Prototype-Based Programming: Concepts, Languages and Applications},
@@ -2238,6 +2273,7 @@
   month=may,
   publisher={Springer},
   isbn={978-9814021258},
+  url={https://researchportal.tuni.fi/en/publications/prototype-based-programming-concepts-languages-and-applications/},
   address={Singapore},
   note={
     Contemporary collection surveying the history, concepts, languages and
@@ -2339,11 +2375,12 @@
   number={TR546},
   address={Bloomington, Indiana, USA},
   url={https://homes.luddy.indiana.edu/sabry/files/recursion-monads-tr.pdf},
-  note={Directly compares unfolding and updating interpretations of fixed points,
+  note={
+    Directly compares unfolding and updating interpretations of fixed points,
     observing that they are equivalent in pure calculi but behave differently
     in the presence of computational effects.
-    Studies three variants of monadic fixed points and argues that updating
-    recursion should itself be treated as a computational effect.
+    Studies three variants of monadic fixed points in Haskell,
+    and argues that updating recursion should itself be treated as a computational effect.
     Probably the most directly relevant reference for distinguishing pure,
     lazy and stateful operational realizations of recursion.}
 }
@@ -2374,7 +2411,9 @@
   booktitle={OOPSLA 2000},
   pages={208–228},
   year={2000},
-  note={Formalizes conditions under which subclasses can be verified without access to superclass implementations.}
+  note={
+    Formalizes conditions under which subclasses can be verified
+    without access to superclass implementations.}
 }
 
 @Manual{Sassenrath2000,
@@ -2697,6 +2736,21 @@
   note={Foundational feature-oriented/product-line paper; relevant to modeling useful concrete programs as combinations of feature refinements.}
 }
 
+@InProceedings{Bettini2004,
+  author={Lorenzo Bettini and Viviana Bono and Betti Venneri},
+  title={Subtyping-Inheritance Conflicts: The Mobile Mixin Case},
+  booktitle={Exploring New Frontiers of Theoretical Informatics},
+  editor={Jean-Jacques Lévy and Ernst W. Mayr and John C. Mitchell},
+  series={IFIP Advances in Information and Communication Technology},
+  volume={155},
+  pages={451--464},
+  publisher={Kluwer/Springer},
+  year={2004},
+  doi={10.1007/1-4020-8141-3_35},
+  url={https://doi.org/10.1007/1-4020-8141-3_35},
+  note={Studies conflicts between inheritance and subtyping for classes and mixins: ordinary width/depth subtyping on inheritable entities can be type-unsafe even though it is sound for objects. It develops a safe subtyping discipline for first-class mobile classes and mixins, and is directly relevant to the distinction between inheritance and subtyping.}
+}
+
 % https://sci-hub.ru/10.1007/978-3-540-39993-3_3
 @InCollection{Dahl2004,
   author={Ole-Johan Dahl},
@@ -2728,9 +2782,16 @@
   booktitle={OOPSLA 2004},
   pages={116–129},
   year={2004},
-  note={
-    Compares and combines the conventional super direction with Simula/BETA inner,
-    clarifying two dual policies for composing inherited code.}
+  publisher={ACM},
+  doi={10.1145/1028976.1028987},
+  url={https://doi.org/10.1145/1028976.1028987},
+  note={.
+    Contrasts subclass-controlled overriding through super
+    with superclass-controlled augmentation through BETA-style inner, then
+    presents a language supporting both mechanisms together,
+    with a formal semantics and an implementation in MzScheme.
+    Directly relevant to the discussion of method extension,
+    overriding and before/after-style method combination.}
 }
 
 % Y combinator
@@ -2813,6 +2874,27 @@
   }
 }
 
+% multimethods and method combinations
+@InProceedings{Foote2005,
+  author={Brian Foote and Ralph E. Johnson and James Noble},
+  title={Efficient Multimethods in a Single Dispatch Language},
+  booktitle={ECOOP 2005 --- Object-Oriented Programming},
+  editor={Andrew P. Black},
+  series={Lecture Notes in Computer Science},
+  volume={3586},
+  pages={337--361},
+  publisher={Springer},
+  year={2005},
+  doi={10.1007/11531142_15},
+  url={https://doi.org/10.1007/11531142_15},
+  note={.
+    Shows how Smalltalk's reflective facilities can efficiently implement
+    multimethod dispatch on top of an otherwise single-dispatch object model.
+    Relevant to the treatment of multiple dispatch and to the distinction
+    between a language's primitive dispatch mechanism and
+    more general method-combination mechanisms implementable within it.}
+}
+
 % Good types for OO. Part 9 talks about conflation of class and types
 % https://staffwww.dcs.shef.ac.uk/people/a.simons/classify/
 @Article{Simons2005,
@@ -2889,6 +2971,16 @@
     year={2006},
 }
 
+@TechReport{Chambers2006,
+  author={Craig Chambers},
+  title={The Diesel Language: Specification and Rationale},
+  institution={Department of Computer Science and Engineering, University of Washington},
+  year={2006},
+  month={March},
+  note={Version 0.2. Specifies Diesel, a purely object-oriented successor to Cecil with explicit classes, singleton objects, multiple inheritance, generic functions with multiple dispatch, predicate classes, static typing and modules. Particularly relevant for its unusual object model, which separates methods and fields from classes, allows clients to extend existing classes and unifies inheritance with instantiation and subtyping.},
+  url={https://projectsweb.cs.washington.edu/research/projects/cecil/www/Internal/doc-diesel-lang/diesel-spec.pdf}
+}
+
 % Code Compression
 @article{Damasevicius2006,
   author={Robertas Damaševičius},
@@ -2912,8 +3004,22 @@
   note={The substrate language: pure, lazy, untyped — the setting in which the object system's stateless projection is the natural one}
 }
 
+@Article{Ducasse2006,
+  author={Stéphane Ducasse and Oscar Nierstrasz and Nathanael Schärli and Roel Wuyts and Andrew P. Black},
+  title={Traits: A Mechanism for Fine-Grained Reuse},
+  journal={ACM Transactions on Programming Languages and Systems},
+  volume={28},
+  number={2},
+  pages={331--388},
+  month={March},
+  year={2006},
+  doi={10.1145/1119479.1119483},
+  url={https://doi.org/10.1145/1119479.1119483},
+  note={Develops traits as pure units of behavioral reuse consisting only of methods, composed by explicit symmetric operations rather than by inheritance. Directly relevant to the book's treatment of mixins, inheritance and modular reuse, especially as an influential alternative that deliberately separates reuse from the state and hierarchy supplied by classes.}
+}
+
 @InProceedings{Ernst2006,
-  author={Ernst, Erik and Ostermann, Klaus and Cook, William R.},
+  author={Erik Ernst and Klaus Ostermann and William R. Cook},
   title={A Virtual Class Calculus},
   booktitle={POPL 2006},
   pages={270–282},
@@ -3657,6 +3763,17 @@
 }
 
 %% 2017
+
+@Manual{Agesen2017,
+  author={Ole Agesen and Lars Bak and Craig Chambers and Bay-Wei Chang and Urs Hölzle and John Maloney and Tobias Pape and Randall B. Smith and David Ungar and Mario Wolczko},
+  editor={Russell Allen},
+  title={The Self Handbook},
+  year={2017},
+  month={May},
+  organization={The Self Project},
+  url={https://handbook.selflanguage.org/SelfHandbook2017.1.pdf},
+  note={Reference manual for Self 2017.1, covering the prototype-based language, delegation, traits, mirrors, the live object environment and implementation. Particularly relevant to the book's treatment of prototype-based OO and of programming directly with live objects rather than source-text representations.}
+}
 
 % https://lmcs.episciences.org/4319
 % This paper seems to be on the right track, but with much extra formalism and much missing insight.
