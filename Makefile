@@ -10,11 +10,13 @@ slides: slides-2026-elte # slides-2026-els-lt slides-2026-els slides-2025-racket
   preslides slides \
   slides-2021-scheme-workshop slides-2023-njpls slides-2024-lambdaconf \
   slides-2025-lambdaconf slides-2025-racketcon slides-2026-els slides-2026-els-lt slides-2026-elte \
+  ltuohtml ltuopdf ltuoview ltuosync ltuowc ltuo ltuo2 count-ltuo-citations \
+  check-pommette-gerbil check-pommette-racket check-pommette-chez \
   %.preview %.view
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
-PDFVIEWER=xpdf -z width -fullscreen # foo.pdf :$(P)
+PDFVIEWER=xpdf -z width -fullscreen # foo.pdf $(P) ## at least xpdf 3.04 uses $(P) and no :$(P)
 #PDFVIEWER=evince --presentation # --page-index $(P) foo.pdf
 endif
 ifeq ($(UNAME_S),Darwin)
@@ -34,7 +36,7 @@ build/poof.pdf: poof.scrbl poof.bib header.tex util/eval-check.rkt util/examples
 #	cd build ; scribble --pdf ../poof.scrbl
 	scribble --dest build --pdf poof.scrbl
 view: build/poof.pdf
-	$(PDFVIEWER) $< :$P
+	$(PDFVIEWER) $< $P
 pdf: build/poof.pdf
 
 # Testing the code in the paper itself
@@ -109,14 +111,17 @@ resources/pic/cube.pdf: resources/pic/cube.svg
 	--export-width=640 --export-height=640 \
 	--export-background-opacity=0 \
 	--export-filename=resources/pic/cube.pdf
+ltuohtml: build/ltuo.html
 ltuopdf: build/ltuo.pdf
-ltuo: build/ltuo.html build/ltuo.pdf
-	$(PDFVIEWER) build/ltuo.pdf :$(P)
-ltuo2: build/ltuo.html build/ltuo.pdf
+ltuoview: ltuopdf
+	$(PDFVIEWER) build/ltuo.pdf $(P)
+ltuo: ltuohtml ltuopdf ltuowc ltuoview
+ltuo2: ltuohtml ltuopdf ltuowc ltuosync ltuoview
+ltuosync:
 	rsync -av $^ ~fare/files/cs/poof/
 	rsync -av $^ bespin:files/cs/poof/
+ltuowc:
 	wc ltuo*.scrbl ltuo.bib
-	$(PDFVIEWER) build/ltuo.pdf :$(P)
 
 # On Ubuntu, you need: sudo apt install chezscheme scheme-chez-srfi
 check-pommette-gerbil: pommette/pommette-chez.scm pommette/pommette.scm

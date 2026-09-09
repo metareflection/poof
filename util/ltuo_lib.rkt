@@ -43,7 +43,7 @@
 (define-simple-macro (r a ...) (racket a ...))
 (define (omega) "ω")
 (define-simple-macro (c a ...) (elem #:style 'tt a ...))
-(define-simple-macro (Code a ...) (verbatim a ...))
+(define-simple-macro (Code a ...) (list (verbatim a ...) (tex "\\addvspace{0.5\\baselineskip}\n")))
 (define-simple-macro (Definitions a ...) (examples/module poof #:no-result a ...))
 (define-simple-macro (Examples a ...) (examples #:eval poof #:no-result a ...))
 (define-simple-macro (Checks a ...) (examples #:eval poof #:label #f a ...))

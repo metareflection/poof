@@ -86,7 +86,7 @@ and was otherwise the second OO language.
 Some languages provide both @~cite{Hewitt1979 ECMA2015}.
 Class OO is the more popular form of OO.
 But the most popular OO language, JavaScript, started with just Prototype OO;
-Class OO was layered on top twenty years later. (@secref{OOiCO})
+Class OO was layered on top twenty years later. (@secref{OOinCO})
 
 @subsection[#:tag "CaPfT"]{Classes as Prototypes for Types}
 @principle{A class is a compile-time prototype for a type descriptor}:
@@ -317,7 +317,7 @@ a “Knowledge Representation Language” implementing Minsky’s notion of Fram
 (@citet{Ingalls2020} also reveals that work on Smalltalk-76 started in August only,
 which is after the July 4th publication of the KRL paper.)
 KRL had “inheritance of properties”,
-which was what we would now call “multiple inheritance”.
+which was what would now be called “multiple inheritance”.
 The expressions “single inheritance” and “multiple inheritance”
 are first found in print in @citet{Stansfield1977},
 another Lisp-based frame system.

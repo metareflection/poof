@@ -15,7 +15,7 @@
 This section will introduce lenses and “optics” in general—tools
 functional programmers use to edit (sometimes deeply) nested data structures.
 Why bother? Why not “just” assume stateful side-effects, and
-use pointers that you follow a path to the data you want to edit in place?
+follow pointers along a path to the data you want to edit in place?
 
 Because when it comes to semantics, pointers and side-effects are actually
 much more complex and indirect, involving some global store with non-local effects—which
@@ -30,13 +30,13 @@ to paths to follow from one pointer to another—used in systematic ways.
 
 @subsection{Focused Specifications}
 
-Before I may revisit familiar features of advanced OO systems such as
+Before I can revisit familiar features of advanced OO systems such as
 accessors, method combinations or multimethods, I must once again
 introduce some new elementary concept that will much simplify their formalization:
 @emph{focused} specifications.
 
-A specification, whether modular definitions, modular extensions,
-multiple inheritance specifications, optimal inheritance specifications, etc.,
+A specification, whether a modular definition, a modular extension,
+a multiple inheritance specification, an optimal inheritance specification, etc.,
 can be @emph{focused} by enriching it (via conflation or explicit product)
 with two access paths:
 a path from the top of the program state to the module context being referenced, and
@@ -46,28 +46,29 @@ within the context of the greater program state.
 Furthermore, to keep formalizing OO features in terms of pure functional semantics,
 these access paths I will formalize as functional @emph{lenses} (@secref{SRoL}).
 
-The approach I herein propose to specifying OO software is a potential game-changer,
+The approach I herein propose to specifying OO software is a game-changer,
 with the potential to make OO even more modular than it was thus far:
 method specifications can now be considered individually,
 then grouped incrementally into larger algebraically coherent chunks;
 at each step, every specification can be parsed, defined, typed, analyzed, proved correct,
 and generally reasoned about, at whichever granularity it makes sense.
-Before then, you couldn’t even start to parse a definition, much less reason about it,
+Until now, you couldn’t even start to semantically process a definition, much less reason about it,
 until after it was part of a potentially very large class, involving more semantic context
 than can safely fit within anyone’s ability to reason correctly.
 
-Before I discuss new features, I will start with showing how focused specifications
+Before I discuss new features, I will start by showing how focused specifications
 can simplify the formalization of individual classes or prototypes within an ecosystem,
 or of regular methods within a prototype.
-Having to introduce lenses means the notion of focused specification
-was overkill and a distraction in the formalism of previous chapters,
+The cost of introducing lenses is why the notion of focused specification
+would have been overkill and a distraction in the formalism of previous chapters,
 when handwaving the relationship between open and closed modular extensions was good enough.
 But since I am going to pay the price anyway for the sake of explaining advanced features,
 I may as well enjoy the benefits for basic features as well.
 
 @subsection[#:tag "SRoL"]{Short Recap on Lenses}
 
-A lens @~cite{Meijer1991 Foster2007 OConnor2012 Pickering2017}
+A lens @~cite{Foster2007 OConnor2012 Pickering2017} @;TODO{
+  cite Bancilhon1981 Oles1982 }
 is the pure Functional Programming take on what in stateful languages would typically be
 a C pointer, ML reference, Lisp Machine locative, Common Lisp place, etc.:
 a way to pinpoint some location to inspect and modify within the wider program’s state.
@@ -77,25 +78,24 @@ of the wider state from “source” to an updated “target”@xnote["."]{
   In more stateful languages, a more popular view is that of
   a pair of a “getter” and a “setter”;
   this maps well to lower-level primitives of stateful languages.
-  But these variants do not compose well in a pure functional setting,
+  But these variants are more awkward to compose in a pure functional setting,
   where composability is a good sign of good design,
   while lack of composability is a strong “smell” of bad design.
   In a pure functional setting, the “getter” part is fine (same as view),
   but the “setter” part drops crucial information about the flow of information,
-  and does not compose well, instead requiring the flow of information to be
-  awkwardly moved to other parts of the program to be reinjected into the setter.
-  By contrast, the “update” API trivially composes.
+  and requires interaction with the getter to retrieve information for composability,
+  when an update can be trivially composed independently from the getter/view.
   In the Haskell lens libraries, the “update” function is instead called “over”;
   maybe because it “applies an update @emph{over} a change in focus”;
   maybe also because the word “update” was taken by other functions;
-  it’s not a great name. We’ll stick to “update”.
+  it’s not a great name. I’ll stick to “update”.
 }
 As a function from source to focus and back, it can thus also be seen as generalizing
 paths of fields and accessors, e.g. field @c{bar} of the third element of field @c{foo}
 of the entry with key @c{(42, "baz")} within a table.
 
 @subsubsection{Monomorphic Lens}
-A monomorphic lens (or simple lens), can be seen as
+A monomorphic lens (or simple lens) can be seen as
 a pair of a view function @c{s → a} and an update function @c{(a → a) → s → s}.
 The view function allows you to get a current “inner” value under focus, of type @c{a},
 from the “outer” context, of type @c{s}.
@@ -123,7 +123,9 @@ type MonoLens s a = PolyLens s s a a
 }
 
 @subsubsection{Skew Lens}
-A skew lens (or “irpjsq” lens, pronounced “earp jusq”), further generalizes the above:
+A skew lens (or “irpjsq” lens, pronounced “earp jusq”)
+is my further generalization of the above,
+invented specifically to fit the needs of modular extensions in this book:
 now the types for the update are not required to be the same as those for the view,
 so you don’t have to be looking exactly at the change you’re experiencing.
 
@@ -168,7 +170,7 @@ one getter for the view, another getter and a setter for the update;
 the two getters needn’t match, but the second getter and the setter must.
 Now with the second getter and the setter, you could do strictly more than update;
 therefore this interface would be more restrictive than that of a skew lens:
-it would both require more work from programmers, yet
+it would both require more work from programmers, and yet
 reject many interesting skew lenses from which no such second getter can be meaningfully extracted.
 
 @subsubsection{Composing Lenses}
@@ -179,7 +181,7 @@ compose-view : View s t → View r s → View r t
 (def (compose-view v w)
   (compose w v))
 
-compose-update : Update i p j q → Update j q k r → Update i p k r
+compose-update : Update j q k r → Update i p j q → Update i p k r
 (def compose-update compose)
 
 make-lens : View r s → Update i p j q → SkewLens i r p j s q
@@ -216,11 +218,13 @@ wherein composition is associative, and identities are neutral elements.
 
 @subsubsection[#:tag "FL"]{Field Lens}
 Given some record representation, a view for a field of identifier key @c{k}
-is just a function that, given as argument the record @c{r}, returns the field value @c{r.k};
-whereas an update gives you a change in this record given a change for that field.
+is just a function that, given as context argument the record @c{r},
+returns the field value @c{r.k} or, in Scheme syntax, with my records-as-functions, @c{(r 'k)}.
+Meanwhile, an update gives you a change in this overall context record
+given a change for that field under focus.
 More sophisticated representations will have more sophisticated lenses,
 but here is what it looks like in my trivial representation of records
-as functions from identifiers to value, where @c{r.k = (r 'k)}:
+as functions from identifiers to values.
 @Code{
 (def (field-view key s)
   (s key))
@@ -315,8 +319,8 @@ you may rearrange the chairs on the deck, or change the order of arguments and r
 for each function, and even add “phantom” type-level arguments and results
 corresponding to “witnesses” for universal or existential type quantifiers.
 But in the end, the computation is the very same, all you do is
-be more precise about what set of computation contexts the function can be evaluated
-without type error.
+be more or less precise about the set of computation contexts
+in which the function can be evaluated without type error.
 
 @subsubsection{Metaphors for Modular Extensions and Skew Lenses}
 
@@ -324,7 +328,7 @@ A modular extension can be conceived as a @emph{sensactor}:
 it has a sensor, the input from the module context,
 and an actuator, the output of an extension to the value under focus.
 
-A single skew lens can change both the module context, and the extension focus.
+A single skew lens can change both the module context and the extension focus.
 A @c{SkewLens i r p j s q} can transform an inner @c{ModExt i r p}
 into an outer @c{ModExt j s q}.
 As always, note that in general, @c{r} (required, the module context)
@@ -334,7 +338,7 @@ to obtain a closed modular definition you can resolve with a single use of the Y
 
 One way to think of a skew lens is as similar to the pair of a periscope
 through which a submarine pilot may look outside,
-and the wheel or yoke through which they may pilot their boat:
+and the wheel or yoke through which he may pilot his boat:
 the submarine pilot is the sensactor, and the skew lens
 transforms the I/O loop of the pilot into the I/O loop of the submarine.
 Similarly, one may consider the laparoscope that a surgeon may use,
@@ -345,7 +349,7 @@ It is a common case that the actuator is within the frame of the sensor,
 such that the sensactor may observe not only what they are modifying, but also a wider context.
 In formal words, there are two polymorphic lenses @c{l} and @c{k}
 such that the skew lens view is @c{(l 'view)}, and the skew lens update is
-@c{(compose-lens k l 'update)}, further specializing the previous view.
+@c{(compose-lens l k 'update)}, further specializing the previous view.
 But that is not necessary in the general case.
 Just like competent painters can put paint on canvas while looking at their model,
 not at their hand, the “skew lens” does not imply that the hand is seen by the eye,
@@ -356,10 +360,11 @@ or an extension focus completely disjoint from the context being observed
 but in an exaggerated style).
 
 Now, inasmuch as you consider those function types as a model for stateful mutation
-with in-memory pointers, that means that the “view read pointer” @c{v}
-and the “focus update pointer” @c{f} are independent;
-in a mutable variant of a skew lens, you will have two pointers,
-one read-only and one read-write, not just one as with monomorphic or polymorphic lens.
+with in-memory pointers, that means that the “context view pointer” @c{v}
+and the “focus update pointer” @c{u} are independent.
+In a mutable variant of a skew lens, you will have two pointers,
+one read-only and one read-write, not just a single pointer
+as with monomorphic or polymorphic lenses.
 This also explains why the “getter and setter” interface doesn’t work for skew lenses:
 the getter for the context does not match that for the focused element to update,
 so you also need a second getter for the latter, and a setter for the latter but not the former.
@@ -378,10 +383,10 @@ potentially any other place you may currently be looking at.
 
 Now, some of you may notice, the match between skew lens
 and modular specification is not just perfect, it is a bit @emph{too perfect}:
-what if instead of mixin inheritance, we want to use
+what if instead of mixin inheritance, one wanted to use
 single, multiple or optimal inheritance?
 How is a multiple (or optimal) inheritance specification to be used?
-What then happens to the local order, precedence list, suffix flag,
+What then happens to the local order, precedence list, suffix flag
 (and possibly conflated target), the other parts of a specification (and prototype)?
 Not just those to be used as input, but also those to be used as output, of the skew lens?
 And how are they to be affected when the skew lens is refocused?
@@ -397,9 +402,9 @@ or better, as a partial order as list of lists of parents, for multiple or optim
 This approach works easily, and takes advantage of regular skew lenses
 with their usual simple laws.
 But it fails to specifically leverage the context view part of skew lenses,
-only leverages their focus update part, and thus fails to extend
-the notion of focused specification from modular extensions
-to richer forms of specifications.
+and only leverages their focus update part;
+thus it fails to extend the notion of focused specification
+from modular extensions to richer forms of specifications.
 
 A more elaborate approach is to extend skew lenses to input and output prototypes,
 including all additional fields, and not just modular extensions.
@@ -425,7 +430,7 @@ with more or less elaborate computations in between.
 }
 
 @;{
-I will call @emph{specification focus} the datum of a skew lens
+I will call @emph{specification focus} the pair of a skew lens
 to the complete or somehow outermost ecosystem of type @c{ES}:
 @Code{
 type SpecFocus i r p = ModExt i r p → ModExt ⊤ ES ES
@@ -452,7 +457,8 @@ A monomorphic lens, or simple lens, can refocus a closed specification focus
 into another closed specification focus, such that a local closed specification
 @c{ClosedSpec a} can be turned into a global closed specification for the complete ecosystem,
 @c{ClosedSpec ES}. Thus, when specifying a value @c{foo.bar} in the ecosystem,
-you will use @c{(compose-lens (field-lens 'foo) (field-lens 'bar))} as your @c{SpecFocus}.
+you will use @c{(compose-lens (field-lens 'foo) (field-lens 'bar))}
+to focus your modular extensions.
 
 As is a theme in this book, though,
 and as far as I know has never been discussed before in the OO literature,
@@ -478,8 +484,8 @@ update-only-lens : Update i p j q → SkewLens i r p j r q
 (def (update-only-lens u)
   (make-lens identity u))
 
-update-lens : SkewLens i r p j s q → Update j q jj qq →
-     SkewLens i r p jj s qq
+update-lens : SkewLens i r p j s q → Update ii pp i p →
+     SkewLens ii r pp j s q
 (def (update-lens l u)
   (make-lens (l 'view) (compose (l 'update) u)))
 }
@@ -506,8 +512,8 @@ Thus you can zoom out rather than only zoom in.
 Zooming out can take you back to where you were previously,
 or to a completely different place.
 
-For instance, given a broader context @c{c : s},
-and a lens @c{l : MonoLens s a}, then the following “reverse lens” broadens the focus,
+For instance, given a broader context @c{c : s}
+and a lens @c{l : MonoLens s a}, the following “reverse lens” broadens the focus,
 by completing the “rest” of the reverse focus with data from the context.
 Beware though that if you use the update more than once, you will always get answers
 completed with data from the same non-updated context.
@@ -557,19 +563,19 @@ view-lens : SkewLens i r p j s q → View rr r →
 
 @subsection[#:tag "OfSaP"]{Optics for Specifications and Prototypes}
 
-So far the only primitive lens I showed was the field lens.
-Here are two kinds of lenses that are essential to deal with prototypes and classes.
+With this optics toolbox, I can construct nested OO specifications
+in terms of composing a lot of small localized pure functions.
 
 @subsubsection{Specification Methods}
 
-As told in the previous section,
-given a lens @c{l} to focus on a specification from the environment,
-and an Update @c{u} to focus the extension on a method or submethod within that specification,
+As explained in the previous section,
+given a lens @c{l} to focus on a specification from the environment
+and an update @c{u} to focus the extension on a method or submethod within that specification,
 one can extend that method of that specification with a modular extension @c{m}, with:
 @Code{
 (skew-ext (update-lens l u) m)
 }
-For instance, to move 50 pixels to the right a widget registered under the name “foo”,
+For instance, to move a widget registered under the name “foo” 50 pixels to the right,
 you might use:
 @Code{
 (skew-ext (update-lens (field-lens* 'widgets 'foo)
@@ -590,12 +596,14 @@ based on composing open modular extensions.
 
 I’ll assume for now that prototypes are records implemented with the @c{poi} encoding
 from @secref{POI}@xnote["."]{
-  Note how POI and multiple inheritance in general relies on equality of generated identity tags,
+  Note how POI and multiple inheritance in general rely on equality of generated identity tags,
   which some of you may consider an unwanted side-effect.
-  In this case, you may use @c{rproto} from @secref{CfR} that relies on mixin inheritance,
+  In this case, you may use @c{rproto} from @secref{CfR} that relies only on mixin inheritance,
   which is pure. Or you may request users to manually provide identity tags.
   Or you may restrict your prototypes to the second-class usage at meta-level
-  where this side-effect is acceptable (and identity is provided from source location).
+  where you somehow find this side-effect more acceptable
+  (and where second-class restrictions might make source location alone
+  enough to identify entities).
 }
 Then, if you have a lens @c{l} to focus on a prototype,
 you may further focus on the prototype’s specification
@@ -603,8 +611,10 @@ you may further focus on the prototype’s specification
 by further composing @c{l} with the following lens, after which you can further use lenses
 to modularly extend the specification methods as above:
 @Code{
-(def (poi-spec-view poi) (list (poi-mod-ext poi) (poi-suffix? poi) (poi-parents poi)))
-(def (poi-spec-setter args _) (apply make-poi args))
+(def (poi-spec-view poi)
+  (list (poi-mod-ext poi) (poi-suffix? poi) (poi-parents poi)))
+(def (poi-spec-setter args _)
+  (apply make-poi args))
 (def poi-spec-lens
   (lens←getter*setter poi-spec-view poi-spec-setter))
 (def poi-modext-lens
@@ -636,7 +646,7 @@ and so the error behavior is probably the safest one to use by default:
     unless you make it so again the hard way by explicitly providing a new metadata field.}
   @item{If you try to update the target, an error will be thrown,
     and you won’t later have to debug very surprising behavior.}]
-To a first approximation, this corresponds to using variants of these @c{poi-target} functions
+To a first approximation, this corresponds to these @c{poi-target} functions
 as the basis for what an @c{poi-target-update} will do:
 @Code{
 (def (poi-target-update/OutOfSync u poi)
@@ -645,11 +655,11 @@ as the basis for what an @c{poi-target-update} will do:
   (make-poi (constant-spec (u poi)) #f '()))
 (def (poi-target-update/NoMoreSpec u poi)
   (u (extend-record #f #f poi)))
-(define (poi-target-update/Error u poi)
+(def (poi-target-update/Error u poi)
   (abort "cannot update a poi target"))
 }
 
-@subsubsection{Nested Specifications}
+@subsubsection[#:tag "NS"]{Nested Specifications}
 What is interesting about the approach above is that you get
 the semantics of nested specifications for free:
 a modularly extensible specification can itself contain
@@ -659,8 +669,8 @@ by extending them with the usual OO extension mechanism (inheritance).
 And the same outermost or global fixpoint will automatically compute
 all the inner fixpoints of all the inner specifications, without any particular issue.
 As mentioned before, that’s actually a case where it is very nice to have
-conflation of specification and target, so you don’t need
-either to think constantly about which you’re referring to,
+conflation of specification and target, so you need
+neither to think constantly about which you’re referring to,
 nor to insert heavy syntactic markers all over the place.
 
 Of course, dynamic OO languages, whether Prototype OO languages or Class OO languages with reflection,
@@ -668,10 +678,10 @@ have always been able to express these nested specifications and their overridin
 But credit where credit is due, BETA@~cite{Kristensen1987}
 was the first language that explicitly supported such nested specifications,
 with its virtual patterns, and the author of the successor gBeta @~cite{Ernst2000}
-explicitly explored the resulting notion of “family polymorphism”. @;TODO cite Ernst2001
+explicitly explored the resulting notion of “family polymorphism”. @;TODO cite Ernst2001 Ernst2006
 This proves that the “Scandinavian school” advanced OO in more ways
 than by first implementing classes in Simula 67@~cite{Dahl1967};
-their variant of family polymorphism though is limited by an often undesirable constraint
+although, their variant of family polymorphism is limited by the often undesirable constraint
 that patterns overriding should be monotonic, i.e. the new pattern must inherit from the old one.
 
 Other notable languages that explicitly support nested specifications,
@@ -700,9 +710,10 @@ will contain nested specifications affecting a particular inner focus.
 The ancestor hierarchy of specifications relevant for the inner focus is thus
 a sub-DAG of the ancestor hierarchy of specifications for the outer context.
 
-In the case of single inheritance, or even mixin inheritance
-the semantics of instantiation is simple and obvious: hierarchy DAGs are actually total orders,
-and the hierarchy at an inner focus is a subset of that at an outer context,
+In the case of single inheritance or even mixin inheritance,
+the semantics of instantiation is simple and obvious:
+hierarchy DAGs are actually total orders, and the hierarchy at an inner focus
+is a subset of that at an outer context,
 from which the irrelevant nodes (whose modular extension doesn’t affect the inner focus)
 can be simply removed, as they contribute nothing to the semantics.
 
@@ -738,7 +749,7 @@ but somehow use the modular extensions within your specifications to
 edit, compose, and otherwise specify prototypes and classes in non-monotonic ways.
 And so Newspeak, Jsonnet or Nix (all of them with mixin inheritance) make it cheap
 to use the covariant nested pattern (especially with @c{+:} in Jsonnet),
-but allow arbitrary overrides in general—that
+but allow arbitrary overrides in general—which
 may involve specialization of prototypes.
 
 @subsubsection[#:tag "NP"]{Nested Prototypes}
@@ -850,7 +861,7 @@ but requires that regular extension behavior should be contributed
 through the modular extensions of ancestors rather than directly:
 the direct modular extension of the prototype is applied last,
 after those of the ancestors are mixed in—including those to be added in the future.
-Thus, if the direct modular extension is anything else than @c{idModExt},
+Thus, if the direct modular extension is anything other than @c{idModExt},
 it should contain only finalizing behavior to be applied after all ancestor contributions,
 including contributions from ancestors added by future extensions.
 Such an extension protocol must thus be agreed upon in advance,
@@ -864,22 +875,22 @@ and are included in a suitable dependency order,
 while also avoiding superfluous constraints
 that could only cause needless linearization failures.
 Also, if agreeing in advance to a non-trivial OO extension protocol is a thing,
-another different and related approach is Method Combinations (@secref{MC}).
+a different and related approach is Method Combinations (@secref{MC}).
 
 Finally, there are various non-modular extensions you can make to prototypes.
 These extensions are sometimes useful, but require care to avoid clashes.
 They are better done in a final wrapper (@secref{RC}), or
 in a finalization step that may itself be part of a method combination.
 Thus, for instance, you might want not just to compose with an existing modular extension,
-but to wrap around it, e.g. to rename method names, or wrap method arguments and results, etc.
+but to wrap around it, e.g. to rename methods, or wrap method arguments and results, etc.
 If you’re going that way, you might want a wrapper around each and every modular extension
 in the ancestry so far, or maybe around the entire object—such global wrapping is more modular
 (requires less information about which ancestor did what) but its result is still not modular
 (you must make sure to run this wrapping last,
-or else every additional extension not in currently wrapped set must coordinate).
+or else every additional extension not in the currently wrapped set must coordinate).
 If possible, you are better off avoiding non-modular extensions and instead
-define intermediate objects you can extend independently from the wrapping.
-Once again, some method combination can do that for you.
+defining intermediate objects you can extend independently from the wrapping.
+Systematizing this pattern is what method combinations do.
 Another non-modular extension, when using optimal inheritance,
 is to turn the suffix flag on for performance, or to turn it off for semantic compatibility
 when adding ancestors at the least-specific end of the ancestry for the purpose of infrastructure.
@@ -894,8 +905,8 @@ wherein classes are just prototypes for type descriptors.
 The point of an object is that it will (or at least may) be used more than once
 (or else, you might as well directly do the one computation at stake
 without constructing the object to begin with).
-Thus, I will start with discussing how to use an object before how to create one,
-since it is the most frequent operation.
+Thus, I will start by discussing how to use an object before how to create one,
+since that is the most frequent operation.
 
 Objects are records, mappings from field identifiers to values.
 For the sake of dynamic dispatch (@secref{DD}),
@@ -909,8 +920,8 @@ is essentially the same as for prototypes, or a refinement thereof.
 To define more precise lenses,
 I’ll further assume the encoding of @secref{SFCTD},
 wherein you use @c{instance-call} to call an instance method,
-that extracts the type descriptor using @c{type-of},
-that is then invoked with @c{'instance-methods}, the @c{method-id}, and the element.
+which extracts the type descriptor using @c{type-of},
+which is then invoked with @c{'instance-methods}, the @c{method-id}, and the element.
 
 To modularly extend a class instance method, one first needs to focus on it.
 The class descriptor holds instance methods under the field @c{instance-methods},
@@ -924,7 +935,7 @@ installs one is the corresponding nested defaulting field spec, @c{field-spec~*}
 
 Now, when specifying a class instance method, the programmer thinks in terms of
 the class instance, i.e. an element of the class’s target type.
-But the element does not exist yet, it has to itself be a parameter to some function,
+But the element does not exist yet—it has to itself be a parameter to some function,
 to be passed in the future, while the method has to be attached to the class somehow.
 
 Moreover, since methods may use @c{next-method} to invoke the inherited behavior,
@@ -1031,7 +1042,7 @@ Examples:
 
 @subsubsection{Simple Class Initialization}
 
-One may specify the fields of a class instance,
+One may specify the fields of a class instance
 by specifying individual field descriptors
 under an @c{instance-field-lens} from the class descriptor:
 @Code{
@@ -1118,8 +1129,9 @@ Fields whose @c{init} is @c{#f} are skipped by the @c{base-instance}—the progr
 must supply a value when constructing an instance,
 or as part of a further subclass being instantiated;
 otherwise an error may happen when trying to use the uninitialized value.
-To instantiate a new element of a @c{class}, define a poi that provides values
-at least all these otherwise uninitialized fields, possibly overrides even the initialized ones,
+To instantiate a new element of (the target type of) a @c{class},
+define a poi that provides values for at least all these otherwise uninitialized fields,
+possibly overrides even the initialized ones,
 and inherits from the @c{(class 'base-instance)}.
 
 To define a class, just define a prototype for a type descriptor using
@@ -1159,13 +1171,11 @@ with fields width and height, and a method area:
 }
 
 Extending the class is just adding more fields or methods to the mix.
-Here, we define a field @c{color} with default value @c{"black"}:
+Here, I define a field @c{color} with default value @c{"black"}:
 @Code{
 (def ColoredRectangle-class
   (make-poi
-    (mix (instance-field-spec 'color (constant-spec "black"))
-         (base-instance-method-spec 'perimeter
-           (λ (r) (* 2 (+ (r 'width) (r 'height))))))
+    (instance-field-spec 'color (constant-spec "black"))
     #f (list (list Rectangle-class))))
 
 (def my-colored-rectangle
@@ -1175,7 +1185,7 @@ Here, we define a field @c{color} with default value @c{"black"}:
     #f (list (list (ColoredRectangle-class 'base-instance)))))
 
 (my-colored-rectangle 'color) ;=> "black"
-(instance-call my-colored-rectangle 'perimeter) ;=> 16
+(instance-call my-colored-rectangle 'area) ;=> 15
 }
 
 The entire class definition reduces to composing focused modular extensions—the same pattern
@@ -1190,7 +1200,7 @@ the idea that the many methods declared in partial specifications
 are each to contribute partial information that will be harmoniously combined (mixed in),
 rather than complete information that has to compete with other conflicting methods
 that contradict it, the winners erasing the losers.
-Win-win interactions rather than lose-lose: that was a revolution
+@principle{Win-win interactions rather than lose-lose}: that was a revolution
 that made multiple inheritance sensible when it otherwise wasn’t.
 
 Flavors notably allowed regular or “primary” methods to be extended in subclasses with
@@ -1209,7 +1219,7 @@ that used an operator like @c{progn} (sequential execution), @c{and} or @c{or}
 (logical conjunction or disjunction, with short-circuit evaluation)
 to combine the results of the methods, evaluated either in
 most-specific-first or most-specific-last order, as specified by the programmer.
-Typical other operators included @c{+ * max min progn list append nconc}@xnote["—"]{
+Typical other operators included @c{+ * max min list append nconc}@xnote["—"]{
   @c{nconc} is a historical variant of @c{append} that uses side-effects
   to modify in place each non-empty list but the last, to link to the next one.
   It made sense in the slow and memory-constrained machines of the 1960s to 1980s,
@@ -1217,15 +1227,15 @@ Typical other operators included @c{+ * max min progn list append nconc}@xnote["
   But @c{nconc} rarely makes sense in modern times,
   where either the simpler and safer @c{append} is good enough,
   or optimization is better sought from a more sophisticated data representation than linked lists.
-  @c{nconc} is just an opportunity of bugs due to side-effects
-  in unexpectedly shared data structures, that even if not present,
+  @c{nconc} is seldom more than the opportunity for bugs due to side-effects
+  in unexpectedly shared data structures, which sharing, if not present yet,
   might happen after some later refactoring.
 }
 but you could use any operation that makes sense for your application,
 especially if monoidal (associative and with a neutral element).
 
-The simplest case of method combination is actually
-the usual composition of modular extensions,
+@principle{The simplest case of method combination is actually
+the usual composition of modular extensions},
 wherein each extension can refer to its @c{super} argument
 along a multiple inheritance specification’s precedence list,
 as discussed in @secref{MI}.
@@ -1236,23 +1246,26 @@ on top of this foundation@xnote["."]{
   in the default “daemon” method combination,
   only one primary method (from the most specific class) would be called,
   but @c{before} and @c{after} methods were also supported
-  in the style of ADVISE @~cite{Teitelman1966};
-  @c{around} methods were only added in CLOS @~cite{Bobrow1988}.
+  in the style of ADVISE @~cite{Teitelman1966}.
+  Although @c{around} methods as such were only added in CLOS @~cite{Bobrow1988},
+  in Flavors you could define the equivalent of a single @c{around} method
+  by providing a @c{wrapper} macro, or, later, alternatively, a @c{whopper} function.
   The simple method combinations were supported, again without @c{around} methods,
   and the simple @c{or} method combination covered a pretty common case of next-method-as-fallback.
-  But you could define arbitrary method combinations by providing a @c{wrapper} macro
+  You could also provide your own method combination
   that computed the effective method from the ordered list of individual methods.
-  And chaining methods through a @c{call-next-method} first argument would definitely
+  Chaining methods through a @c{call-next-method} first argument would definitely
   have been possible.
   Still, such a protocol was not directly provided in Flavors or its successors until
-  it appeared in CommonLoops @~cite{Bobrow1986}.
+  it appeared in CommonLoops @~cite{Bobrow1986},
+  and no one seems to have implemented it on top of Flavors. “Could have” is not “did”.
 }
 
 Now, while the original method combinations of Flavors were quite capable,
 method combinations were further refined by
 New Flavors @~cite{Moon1986},
 CommonLoops @~cite{Bobrow1986}, and
-most notably by CLOS @~cite{Bobrow1988 Steele1990 Pitman1996 Kiczales1991 Verna2023}.
+most notably by CLOS @~cite{DeMichiel1987 Bobrow1988 Steele1990 Kiczales1991 Pitman1996 Verna2023}.
 My presentation will therefore be more directly inspired by CLOS than by Flavors.
 
 @subsection{Uses of Method Combinations}
@@ -1264,63 +1277,71 @@ they would probably have to be in Common Lisp
 with a quick introduction to the language, its I/O facilities,
 and some existing development framework for network client/server or GUI programming.
 A full introduction would then require programs large enough
-that the advantage of OO in general and method combinations in particular justify
+that the advantage of OO in general and method combinations in particular justifies
 use of the feature instead of “just” inlining it away.
 
 Still, I can point to ASDF @~cite{Rideau2010 Rideau2014}, the Common Lisp build system,
-as a program that makes good use of method combinations,
-and the source code of which is freely available and well-documented.
-I know ASDF because I was once its maintainer and completely re-wrote it several times.
+as a relatively short program that makes good use of method combinations,
+the source code of which is freely available and well-documented.
+I know ASDF in and out because I was once its maintainer and completely rewrote it several times.
 CLIM, the Common Lisp Interface Manager,
 a large GUI library descended from that of the Lisp Machines,
 is also heavily object-oriented, with plenty of uses of method combinations;
-but I am not as familiar with it.
-Plenty of other examples abound in Quicklisp.
+but I am not familiar with it.
+Other examples abound in Quicklisp.
 
-ASDF will define some general abstract classes that correspond to some protocol
-(such as @c{component} and @c{operation}) that are gradually specialized
-into subclasses and mixins (such as @c{source-file} and @c{downward-operation})
-until concrete classes are defined (such as @c{cl-source-file} and @c{load-op}).
-To each class (or pair of component and operation classes, see @secref{MD} below)
+ASDF defines some general abstract classes that correspond to its build specification protocol,
+the main ones being @c{operation} and @c{component}.
+These classes are gradually specialized into subclasses and mixins
+(such as @c{downward-operation} and @c{source-file})
+until concrete classes are defined (such as @c{load-op} and @c{cl-source-file}).
+To each class (or pair of operation and component classes, see @secref{MD} below)
 is associated one or two methods, sometimes more, that extend the inherited behavior.
 In the end, each method call may combine the effects of half a dozen individual inherited methods,
 depending on the classes of the arguments.
 
 Thus, ASDF defines @c{:before} methods to validate invariants and issue errors
 before the primary methods are called,
-automatically set up some preconditions (like creating destination directories for output files),
-or detect and record dependencies between actions.
+to automatically set up some preconditions (like creating destination directories for output files),
+or to detect and record dependencies between actions.
 ASDF defines @c{:after} methods to track down actions that were successfully completed
-so they do not have to be taken again, or complete system-provided behavior
+so they do not have to be taken again, or to complete system-provided behavior
 and check invariants after (re)initialization of some objects.
 And ASDF defines @c{:around} methods to fix up the results of special cases,
 set up or use caches around computations, adjust dynamic bindings around computations,
 or detect circular dependencies between actions.
 Other common uses of the standard method combination not illustrated by ASDF include
 logging (before, after or around) and permission checks
-(usually before to check arguments, sometimes around to also check results).
+(usually before to check arguments, sometimes around to also check results or effect logs).
 
-Finally, for historical then backward-compatibility reasons, the ASDF methods
+Finally, for historical reasons, the ASDF methods
 @c{component-depends-on}, @c{input-files} and @c{output-files}
-use the standard method combination wherein every method manually appends
-the contents of @c{call-next-method} to their results.
+use the standard method combination yet follow a convention wherein
+every method manually appends the contents of @c{call-next-method} to their results.
 They would have been better written with the @c{append} method-combination,
 which would have automated what is manually done through tedious convention.
+But that change would break backward compatibility;
+thus it is not justified unless and until this or some other such breakage
+is the necessary cost to achieve major benefits
+during another rewrite of ASDF.
 
 These methods allow ASDF to be written in a very modular and extensible style, and
 to achieve in a few thousand lines of code (and a few more for Quicklisp)
-what takes ten times more code in other languages,
+what takes ten times more code in other languages@xnote[","]{
+  As an exercise, compare the size of ASDF to that of
+  a simple build system in these languages.
+}
 all the while exposing an extension interface actually used by many extensions:
 support for compiling and linking C, Fortran or Python code,
-for automatic dependency detection, for character encodings beside UTF-8,
+for automatic dependency detection, for character encodings besides UTF-8,
 for deferred code in Lisp files, for file-local variables,
 for conditional autoloading of systems, for parallel compilation, etc.
 
-One of the authors of method combinations went on to invent
+One of the authors of CLOS and its modern method combinations went on to invent
 Aspect Oriented Programming (AOP) @~cite{Kiczales1997 Kiczales2001},
-that applies the ideas of Teitelman’s advice and Cannon’s method combinations to more languages;
+which applies the ideas of Teitelman’s advice and Cannon’s method combinations to more languages;
 AOP briefly achieved modest popularity on Java or C#. @; TODO cite
-Sadly, method combinations have not otherwise been adopted beyond languages in the Lisp family.
+Sadly, method combinations have seen very little adoption beyond languages in the Lisp family.
 
 Certainly, for each use of method combinations,
 equivalent effects could be achieved manually without method combinations,
@@ -1346,8 +1367,9 @@ With method combinations, a target method is called the @emph{effective method}.
 It is computed based on individual @emph{method specifications}
 declared by each specification along the way.
 
-In CLOS after Flavors, a method specification can be tagged with a @emph{method qualifier},
-usually some kind of symbol, though, in many Lisp or Scheme dialects,
+In CLOS after Flavors, a method specification can be tagged with
+one or more @emph{method qualifiers}, usually some kind of symbol,
+though, in many Lisp or Scheme dialects,
 a “keyword” may be used that is somehow
 distinct from regular symbols, often with a syntax involving a colon@xnote["."]{
   Depending on the language or dialect, keywords are typically written with some variant of
@@ -1361,18 +1383,30 @@ distinct from regular symbols, often with a syntax involving a colon@xnote["."]{
   or to a choice of named arguments in many languages.
 }
 In this book, I will use regular symbols like @c{before} for method qualifiers,
-for portability, that I will quote to prevent evaluation.
+that I will quote it to prevent evaluation.
+To simplify, I will allow only one qualifier per sub-method.
 
-A regular method specification that is not explicitly tagged by the user
+A regular method specification that is not explicitly qualified by the user
 is implicitly qualified as a @emph{primary} method specification by the system.
 I will use the symbol @c{primary} for that in my implementation@xnote["."]{
-  In Common Lisp, primary method specifications are tagged with the unit value @c{NIL}
-  that is also a magic self-evaluating constant symbol, a boolean,
-  the conventional end-of-list marker, and general-purpose
-  null value, default value and unit value.
+  In Common Lisp, primary method specifications are left unqualified:
+  their list of qualifiers is @c{NIL},
+  a magic Lisp value that is the empty list, but also
+  a magic self-evaluating constant symbol, a boolean, and
+  a general-purpose null value, default value and unit value.
+  However, while CLOS accepts an ordered @emph{list} of qualifiers for its methods,
+  the builtin method combinations of CLOS, as well as
+  all the user-specified method combinations I know of only use one qualifier
+  per method if any is present, the first that matches its expectations.
+  So there is very little loss of generality in practice in having a single qualifier,
+  even though I suppose that the feature exists because someone, at some point,
+  used it, or at least envisioned a use for it.
+  Thus, albeit @c{NIL} is actually a symptom of a primary method’s list of qualifiers being empty,
+  in practice, CLOS primary methods behave as if @c{NIL} were their single qualifier.
   I could similarly have used the less-overloaded but still commonly used
-  boolean false value @c{#f} for the same purpose.
-  Each adaptation of CLOS to a different language will choose its own.
+  boolean false value @c{#f} as the single-qualifier I assign to primary methods,
+  instead of the symbol @c{primary}.
+  Each adaptation of CLOS to a different language will choose its own representation.
 }
 In addition to @c{primary} methods,
 the @emph{standard method combination}, used by default (most-specific first),
@@ -1383,7 +1417,7 @@ supports @c{before} methods that will be executed before the primary methods (mo
 Simple method combinations accept methods with a method qualifier with the same symbol
 as the simple method combination (e.g. @c{+} for adding the results of the methods),
 called most-specific first, returning a result as if their bodies were combined
-by function or macro naming the method combination (for the builtin ones;
+by the function or macro naming the method combination (for the builtin ones;
 or whatever the user specifies, for user-specified ones);
 simple method combinations also accept @c{around} methods.
 
@@ -1393,6 +1427,9 @@ the @emph{effective sub-method}:
 e.g. the @c{primary} sub-method, the @c{before} sub-method, etc.
 Indeed, when manually expressing method combinations as a design pattern,
 each sub-method would be expanded into a separate method.
+Note that by contrast, CLOS documentation @~cite{Pitman1996} instead speaks of “method groups”,
+conceptualizing the many methods each with potentially many qualifiers
+as part of a flatter or less-neatly-differentiated space of methods.
 
 @subsection{Representing sub-methods}
 
@@ -1404,14 +1441,14 @@ and the method would still be its “function” part@xnote["."]{
   Equivalently, the “function” part would be just one special field of the record,
   automatically invoked when the record is used as a function.
 }
-However, since I have already been implementing records as functions, as I did so far,
+However, since I have so far already been implementing records as functions,
 then funcallable instances wouldn’t work—the function interface
 is already used for field access.
 I could exclude symbols (and booleans), that I used as record keys,
-from the codomain of the “function” as such—but that’s an ugly limitation.
+from the domain of the “function” as such—but that’s an ugly limitation.
 And I crucially relied on records-as-functions
-for the semantics of objects as fixpoints (@secref{MFCM}),
-and so a change of strategy while possible (@secref{RaR}) would complexify
+for the semantics of objects as fixpoints (@secref{MFCM}).
+Therefore a change of strategy while possible (@secref{RaR}) would complexify
 the one aspect that most simplifies my account of the semantics of OO.
 
 Thus instead of storing sub-method information in the same entity
@@ -1423,181 +1460,182 @@ that can be syntactically bound once.
 In practice, I will store sub-method information in a record @c{sub-methods}
 next to the methods being combined.
 
-For the sake of generality, a sub-method-spec can be any kind of specification
-(modular extension, multiple or optimal inheritance specification, etc.),
-and a function @c{method-cons} says how to combine it with the specification data so far;
-it could be an actual @c{mix} of modular extensions, or
-just something that @c{cons}es the new specification into a list
-to be folded or otherwise processed later
-(e.g. for conflict resolution in flavorless multiple inheritance):
-
-
-@XXXX{XXXX}
-
+To specify a sub-method, you need:
+@itemize[
+  @item{A function @c{method-cons} and a base value @c{methods-nil}
+        to combine your sub-methods together for the sake of your method combination;
+        typically just (a curried variant of) @c{cons} and @c{'()} to build a list,
+        for @c{standard-compute-effective-method}.}
+  @item{A @c{qualifier} recognized by your method combination;
+        typically @c{'primary}, @c{'before}, @c{'after} or @c{'around},
+        for @c{standard-compute-effective-method}.}
+  @item{The name @c{method-id} of the method to which you attach your sub-method.}
+  @item{A function @c{method-fn} that takes as arguments a @c{call-next-method} function
+        and a list of arguments to the generic function,
+        that returns the method result.}]
 @Code{
+(def (sub-method-spec method-cons methods-nil
+                      qualifier method-id method-fn)
+  ((field-spec~* 'sub-methods method-id qualifier)
+    (λ (qualifier-methods _self)
+      (method-cons method-fn (or qualifier-methods methods-nil)))))
 
-;; sub-method-spec : MethodCons → Tag → MethodId → MethodFn → ModExt
-;;   MethodCons = MethodFn → List(MethodFn) → List(MethodFn)
-;;   Tag        = Symbol  (qualifier: 'primary 'before 'after 'around, or simple-comb name)
-;;   MethodId   = Symbol  (method name in the record, e.g. 'compute 'greet)
-;;   MethodFn   = CallNextMethod → Self → (Arg... → Result)  (see 9.2.2 for details)
-;;   ModExt     = ? → ? → ?  (modular extension; see field-spec)
-;; Creates a ModExt that prepends method-fn to sub-methods[method-id][tag].
-(def (sub-method-spec method-cons tag method-id method-fn)
-  (field-spec 'sub-methods
-    (λ (inherited _self)
-      (let* ((subs       (or inherited empty-record))
-             (per-method (or (subs method-id) empty-record))
-             (tag-list   (or (per-method tag) '())))
-        (extend-record method-id
-          (extend-record tag (method-cons method-fn tag-list) per-method)
-          subs)))))
-
-;; standard-sub-method-spec : Tag → MethodId → MethodFn → ModExt
-;;   (sub-method-spec with standard-method-cons; 1st arg is Tag, 2nd is MethodId)
-(def standard-sub-method-spec (sub-method-spec standard-method-cons))
-
-;; method-combination-init-spec : MethodId → InitRecord → ModExt
-;;   InitRecord = record {tag: List(MethodFn), ...}
-;; Initializes sub-methods[method-id] with init-record if not already present.
-(def (method-combination-init-spec method-id method-combination-init)
-  (field-spec 'sub-methods
-    (λ (inherited _self)
-      (let ((subs (or inherited empty-record)))
-        (if (subs method-id)
-          subs
-          (extend-record method-id method-combination-init subs))))))
-
-;; standard-method-combination-init : InitRecord  {before:() after:() around:() primary:()}
-(def standard-method-combination-init
-  (extend-record 'before '()
-   (extend-record 'after '()
-    (simple-method-combination-init 'primary))))
+(def standard-sub-method-spec
+  (sub-method-spec (λ (x y) (cons x y)) '()))
 }
+You may notice the following about the initialization protocol:
+@itemize[
+  @item{
+    I am using the defaulting variant @c{field-spec~*} that will replace the default value
+    @c{#f} by a record at each level that a record is expected.
+    The first time a sub-method of the given qualifier is declared,
+    @c{methods-nil} will be assumed as the previous initial value,
+    which is the empty list @c{'()} for standard sub-methods.}
+  @item{
+    These defaults allow me to simplify the protocol so users do not have to explicitly
+    ensure that sub-methods will be initialized with a suitable set of values
+    as a dependency before any sub-method is defined.}
+  @item{
+    A more “static” answer would instead require the object to inherit from a “protocol” specification
+    that initializes sub-methods for the methods that are part of the protocol;
+    and each such “protocol” specification would itself inherit from a “protocol support” specification
+    that initializes the sub-methods record, that in turn inherits from a “record” specification
+    that initializes the record being specified.
+    Such explicit chain of dependencies would properly ensure that well-typed initial values
+    are available before any method declaration.
+    In a dynamic language, this would be a lot of verbose drudgery;
+    in a static language, meta-level automation could eliminate the verbosity.
+    There is some didactic value to the verbose drudgery, and I invite you to try it, as an exercise;
+    but for this chapter, I will avoid it, which will save on paper and
+    remove potential distractions from my further definitions.}
+  @item{
+    A yet more sophisticated answer, whether the language is static or dynamic,
+    would be for programmable meta-objects to handle the above automation in a library
+    rather than as part of the core language itself.
+    Those meta-objects must be instantiated (and thus specified)
+    before the base object even starts being specified,
+    which introduces interesting staging and bootstrap issues.
+    See @secref{MOP} for a discussion of meta-objects.}]
 
-Then there is the question of who is responsible for initializing
-the sub-methods record and each of the sub-methods, what the default value should be, etc.
-The simplest, “dynamic”, answer would be that the field lens treats an absent field as
-a field yielding the top value @c{#f}, and
-would treat @c{#f} as an empty record when extending it;
-and finally @c{method-cons} would recognize @c{#f} and treat it specially.
-
-A more “static” answer would require the object to inherit
-from a “protocol” specification that initializes sub-methods
-for the methods that are part of the protocol;
-and each such “protocol” specification itself inherits from a “protocol support” specification
-that initializes the sub-methods record, that in turn inherits from a “record” specification
-that initializes the record being specified.
-No dynamic handling of uninitialized values, instead strict discipline in specifications.
-This discipline works best with types, or at least with multiple (or optimal) inheritance,
-so that programmers do not have to manually chain the many modular extensions involved
-in the correct dependency order without feedback beyond a runtime type mismatch.
-
-A yet more sophisticated answer would have meta-objects automatically handle
-the initialization of specifications and targets, prototypes, and classes.
-Those meta-objects must be instantiated (and thus specified)
-before the base object even starts being specified,
-which introduces interesting staging and bootstrap issues.
-See @secref{MOP} for a discussion of meta-objects.
-
-For this chapter, I will adopt the “static” approach
-while manually maintaining the initialization discipline
-without help from either types or multiple inheritance.
-The approach is somewhat more verbose and harder to get right than the others,
-but it is more explicit and thus hopefully more didactic.
+Also note that I’m using simple modular extensions here
+for sub-methods, as for methods and all nested definitions.
+Indeed, the general pattern I’m following is that the unit of inheritance management,
+of modular sharing of code, with respect to multiple (or optimal) inheritance,
+is the class or prototype.
+One could conceivably use prototypes at every level where I’m using records,
+but in my case this would bring much complexity for little expressiveness advantage.
+Interestingly, some languages (gBeta, Jsonnet) pay the price of this complexity,
+hiding it behind a cheap field override syntax.
+This approach makes a lot of sense if you design a language around its object system;
+but not if you add an object system to an existing language, as I’m doing here.
 
 @subsection{Standard Method Combination}
 
-We can then implement the standard method combination as follows:
+I can now implement the standard method combination as follows:
 running the @c{around} methods, and wrapped inside them the @c{before} methods,
 then the @c{primary} methods, and finally the @c{after} methods in reverse order.
 The @c{call-chain} function chains methods through an inherited @c{call-next-method}
-argument that, if called with no argument, calls the next method with the same arguments,
-but, if called with arguments, passes them to the subsequent methods.
-The @c{progn-methods-most-specific-} (-first and -last) methods chain the execution of methods
-for @c{before} and @c{after} methods respectively.
+argument that, if called with no argument, calls the next method with the same argument list,
+but, if called with a fresh list, passes that to the subsequent methods instead.
+The @c{progn-methods-most-specific-} (@c{-first} and @c{-last}) functions
+chain the execution of methods for @c{before} and @c{after} methods respectively.
 The @c{standard-no-applicable-method} is a good default when no method is defined.
 And @c{standard-compute-effective-method} finally
 computes the effective method from the sub-methods.
 The @c{abort} is a poor man’s error mechanism in case the @c{before} or @c{after}
-methods try to invoke their @c{super} argument as a @c{call-next-method}.
-
-The @c{call-next-method} argument itself is built by @c{make-call-next-method} from the
-remaining chain @c{next} and the current @c{args}: called with no argument it forwards the
-original @c{args}, called with new arguments it forwards those instead.
-@Code{
-(def (make-call-next-method next args)
-  (case-lambda
-    (()       (apply next args))
-    (new-args (apply next new-args))))
+methods try to invoke their @c{super} argument as a @c{call-next-method}@xnote["."]{
+  Note that in CLOS itself, a @c{no-applicable-method} generic function is called
+  when there is no applicable method, which by default will raise an error.
+  A @c{no-next-method} error is raised when you try to @c{call-next-method}
+  without a next method.
+  CLOS also raises an error for no primary method in simple method combinations,
+  when my implementation instead returns a neutral element.
+  Modifying my code to account for all the subtleties of CLOS is left
+  as an exercise to the reader.
 }
-Note how the second clause of the @c{case-lambda} above implements
-an advanced use of @c{call-next-method} not available in all languages,
-wherein you can provide an updated instance and updated arguments.
-In a pure language, it may be more important than in an effectful language
-to be able to call the next method with an updated instance and updated arguments.
-However, there are semantic constraints on what new element and new arguments
-can be safely used with the inherited method;
-some object system authors might not be ready to either enforce those constraints
-or deal with programs that break them at runtime, and may choose
-not to offer this advanced use case to their users.
 
+To keep this presentation minimal, a method here takes just two things:
+a @c{call-next-method} function and @c{self}, the object the generic function was
+invoked on — @c{CallNextMethod → Self → Result}.
+Every combination below is single-dispatch, and a method that needs more than the
+receiver reads the object's other fields straight from @c{self}.
+@c{make-call-next-method} builds the @c{call-next-method} argument from the
+remaining chain @c{next} and the current @c{self}: called with no argument it
+re-runs the rest of the chain on that same receiver; called with one, on a fresh
+receiver — the DSL delivers that single argument by ordinary currying, no special
+machinery needed.
 
+@TODO{Exercise: give methods a full @emph{calling convention} so they can take
+arguments beyond the receiver.  The generic function records an @emph{arity} and
+a pair of functions: an @emph{accepter} that gathers the call's arguments — one at
+a time, as a curried language delivers them — into a list, and an @emph{invoker}
+that applies that list to a method written with its own lambda list.  Multiple
+dispatch (@secref{MOP}) is built exactly this way; sharing the machinery here also
+generalizes @c{call-next-method} from a fresh receiver to a fresh whole argument
+list.  Beware the semantic constraint: the set of methods applicable to the new
+arguments should match the old, or reusing the chain is unsound.}
 
-@TODO{This is the multiple-dispatch @c{call-next-method} referred to from @secref{OfOO}:
-the single-inheritance @c{instance-method-spec} of @secref{OfOO} threads the inherited method
-directly as its first argument and needs no such wrapper; only method combinations, which
-must forward a variable argument list down a chain of sub-methods, need the @c{case-lambda}
-form and its @c{args} plumbing.}
+A sub-method list that was never populated is @c{#f} rather than @c{'()} — so
+@c{call-chain} and the @c{progn-methods-} helpers coerce it with @c{(or methods '())},
+and @c{standard-compute-effective-method} reads each qualifier through a small @c{sub}
+helper that also turns a missing @emph{record} into @c{#f}.  With no primary method
+the primary chain is just @c{no-applicable-method}.
+
 @Code{
-(def (call-chain methods on-exhausted self)
+(def (make-call-next-method next self)
+  (λ new
+    (if (null? new)
+      (next self)            ;; () — replay on the same receiver
+      (next (car new)))))    ;; (cnm other) — re-run the chain on a fresh receiver
+
+(def (call-chain methods on-exhausted)
   (foldr
     (lambda (m next)
-      (λ args
-        (apply ((m (make-call-next-method next args)) self) args)))
+      (λ (self)
+        ((m (make-call-next-method next self)) self)))
     on-exhausted
-    methods))
+    (or methods '())))
 
-(def (progn-methods-most-specific-first methods self args)
-  (foldl (lambda (m _) (apply ((m abort) self) args)) #f methods))
+(def (progn-methods-most-specific-first methods self)
+  (foldl (lambda (m _) ((m abort) self)) #f (or methods '())))
 
-(def (progn-methods-most-specific-last methods self args)
-  (foldr (lambda (m _) (apply ((m abort) self) args)) #f methods))
+(def (progn-methods-most-specific-last methods self)
+  (foldr (lambda (m _) ((m abort) self)) #f (or methods '())))
 
 (define (standard-no-applicable-method method-id . args)
   (error "no applicable method" method-id args))
 
 (define no-applicable-method standard-no-applicable-method)
 
-(def (standard-compute-effective-method method-id sub-methods self)
-  (call-chain (sub-methods 'around)
-    (λ args
-      (progn-methods-most-specific-first
-        (sub-methods 'before) self args)
-      (let ((result
-              (apply (call-chain (sub-methods 'primary)
-                       (λ args
-                         (apply no-applicable-method method-id args))
-                       self)
-                     args)))
-        (progn-methods-most-specific-last
-          (sub-methods 'after) self args)
-        result))
-    self))
+(def (self-sub-methods self method-id)
+  (let ((sm (self 'sub-methods)))
+    (and sm (sm method-id))))
+
+(def (standard-compute-effective-method method-id sub-methods)
+  (let ((sub (lambda (qualifier) (and sub-methods (sub-methods qualifier)))))
+    (call-chain (sub 'around)
+      (λ (self)
+        (progn-methods-most-specific-first (sub 'before) self)
+        (let ((result
+                ((call-chain (sub 'primary)
+                   (λ (self) (no-applicable-method method-id self)))
+                 self)))
+          (progn-methods-most-specific-last (sub 'after) self)
+          result)))))
 }
-You can then initialize a method to use the standard method combination by calling this function:
+You then initialize a method to use the standard method combination with this
+function; @c{(obj 'method-id)} runs the effective method on the receiver
+(@c{self-sub-methods} returns @c{#f} when the method has no sub-methods yet):
 @Code{
 (def (standard-method-init-spec method-id)
-  (mix
-    (field-spec method-id
-       (λ (_inherited self)
-          (standard-compute-effective-method
-            method-id (self 'sub-methods method-id) self)))
-    (method-combination-init-spec
-       method-id standard-method-combination-init)))
+  (field-spec method-id
+    (λ (_inherited self)
+      ((standard-compute-effective-method
+         method-id (self-sub-methods self method-id))
+       self))))
 }
 And you can define sub-methods by using these specifications
-with arguments @c{method-id method-spec}:
+with arguments @c{method-id method-fn}:
 @Code{
 (def primary-method-spec (standard-sub-method-spec 'primary))
 (def before-method-spec (standard-sub-method-spec 'before))
@@ -1627,77 +1665,73 @@ where @c{name} is the name of the sub-method
 @c{op2} the (curried) binary operator with which to combine
 the result from the next method and the return value from previous computations
 into a new return value,
-@c{order} one of the two symbols @c{most-specific-first} or @c{most-specific-last}
-telling in which order to run the methods,
+@c{finish} a unary operator applied to the final accumulator
+(the identity for many associative combinations; @c{reverse} for @c{list};
+some arbitrary function on the list of inputs as accumulated by cons in the general case),
 and @c{sub-methods} a record of the sub-methods.
-Again, the @c{abort} are a poor man’s error mechanism in case the regular methods
-try to invoke their @c{super} argument as a @c{call-next-method}.
+The methods run @emph{most-specific-first}, exactly as Common Lisp’s short-form
+method combinations do — the effective method is
+@c{(operator (most-specific …) … (least-specific …))} and @c{operator} evaluates
+its arguments left to right.  So @c{op1}/@c{op2} fold left in that order;
+@c{list} accumulates with @c{cons} and hands @c{reverse} to @c{finish} so the
+result is back in most-specific-first order without an @c{O(n²)} append.
+As with the standard combination, each sub-method has the same contract
+@c{CallNextMethod → Self → Result}; @c{run} invokes each with @c{abort} as
+@c{call-next-method} and folds its @c{Result} with @c{op1} and @c{op2}
+(a simple primary method must not call the next; an @c{around} one calls it to
+reach the folded inner value).
 
 @Code{
 (def (simple-compute-effective-method
-       name stop? op0 op1 op2 order sub-methods self)
-  (let* ((arounds (sub-methods 'around))
-         (methods (sub-methods name))
-         (ordered (case order
-                    ((most-specific-first) methods)
-                    ((most-specific-last) (reverse methods)))))
+       name stop? op0 op1 op2 finish sub-methods)
+  (let* ((sub     (lambda (qualifier) (and sub-methods (sub-methods qualifier))))
+         (arounds (sub 'around))          ;; #f (⇒ empty) if never initialized
+         (methods (sub name)))            ;; most-specific-first, as in CL
    (call-chain arounds
-    (λ args
-      (letrec ((run (λ (m) (m abort self)))
+    (λ (self)
+      (letrec ((run (λ (m) ((m abort) self)))
                (f   (lambda (acc lst)
                       (if (and (not (stop? acc)) (pair? lst))
                         (let ((v (op2 (run (car lst)) acc)))
                           (if (stop? v) v (f v (cdr lst))))
                         acc))))
-        (if (pair? ordered)
-          (f (op1 (run (car ordered))) (cdr ordered))
-          (op0 #f))))
-    self)))
+        (finish
+          (if (pair? methods)
+            (f (op1 (run (car methods))) (cdr methods))
+            (op0 #f))))))))
 
 (def compute-effective-method/progn
   (simple-compute-effective-method
-    'progn (λ (_) #f) (λ (_) #f) (λ (x) x)
-    (λ (r _) r)
-    'most-specific-first))
+    'progn (λ (_) #f) (λ (_) #f) (λ (x) x) (λ (r _) r) identity))
 
 (def compute-effective-method/and
   (simple-compute-effective-method
-    'and not (λ (_) #t) (λ (x) x)
-    (λ (r _) r)
-    'most-specific-first))
+    'and not (λ (_) #t) (λ (x) x) (λ (r _) r) identity))
 
 (def compute-effective-method/+
   (simple-compute-effective-method
-    '+ (λ (_) #f) (λ (_) 0) (λ (x) x)
-    (λ (x y) (+ x y))
-    'most-specific-first))
+    '+ (λ (_) #f) (λ (_) 0) (λ (x) x) (λ (x y) (+ x y)) identity))
 
 (def compute-effective-method/*
   (simple-compute-effective-method
-    '* (λ (_) #f) (λ (_) 1) (λ (x) x)
-    (λ (x y) (* x y))
-    'most-specific-first))
+    '* (λ (_) #f) (λ (_) 1) (λ (x) x) (λ (x y) (* x y)) identity))
 
 (def compute-effective-method/list
   (simple-compute-effective-method
-    'list (λ (_) #f) (λ (_) '()) (λ (x) (list x))
-    (λ (x y) (cons x y))
-    'most-specific-last))
+    'list (λ (_) #f) (λ (_) '()) (λ (x) (list x)) (λ (x y) (cons x y)) reverse))
 }
-You can define then initialize a method that uses a non-standard method combination
-by using specifications like this one:
+You define then initialize a method that uses a non-standard method combination
+with a specification like this one:
 @Code{
 (def (list-method-init-spec method-id)
-  (mix
-    (field-spec method-id
-       (λ (_inherited self)
-          (compute-effective-method/list
-            (self 'sub-methods method-id) self)))
-    (method-combination-init-spec
-       method-id (simple-method-combination-init 'list))))
+  (field-spec method-id
+    (λ (_inherited self)
+      ((compute-effective-method/list
+         (self-sub-methods self method-id))
+       self))))
 }
-And you can define sub-methods by using specifications like this one,
-and/or the @c{around-method-spec} above, with arguments @c{method-id method-spec}:
+After which you can define sub-methods by using specifications like this one,
+and/or the @c{around-method-spec} above, with arguments @c{method-id method-fn}:
 @Code{
 (def list-method-spec (standard-sub-method-spec 'list))
 }
@@ -1705,21 +1739,23 @@ and/or the @c{around-method-spec} above, with arguments @c{method-id method-spec
 @subsection{User-defined Method Combinations}
 
 And users are not limited to predefined method combinations.
-In the most general case, users may define their own method combination,
+In the most general case, users may define their own method combinations,
 that support methods declared with whichever qualifiers they want to support,
 ordered whichever way they prefer.
 Thus for instance, they may define and use method combinations for the following purposes:
 
 @itemize[
-  @item{They may reimplement the inheritance semantics of Simula, of C++,
+  @item{They may reimplement the inheritance semantics of Simula, BETA, Self, C++,
         or of whichever their favorite programming language is.}
   @item{They may define additional layers of @c{around}, @c{before} and @c{after} methods,
-        with the same order as usual, or the opposite order@xnote["."]{
+        with the same order as usual, or with the opposite order@xnote["."]{
            Interestingly, at some point, ASDF 1 defined a method combination just
            for the purpose of another layer of around methods.
-           But ASDF 2, vying for portability even on some implementations that didn’t support it,
-           removed it, and instead achieved the same effect manually for the only method
-           that used it, by introducing a new wrapping method that calls the regular one.
+           But ASDF 2, striving for portability even on some less-compliant implementations
+           that didn’t support such user-defined method combinations, removed it.
+           ASDF 2 instead achieved the same effect manually for the only method
+           that used that extra around combination, by introducing
+           a new wrapping method that calls the regular one.
            Even without the portability issue, a method combination usually only makes sense
            when it is actively used by more than one method.
         }}
@@ -1734,13 +1770,14 @@ Thus for instance, they may define and use method combinations for the following
 
 To that end, they would develop some kind of @c{foo-method-init-spec}
 to suitably initialize the method and its sub-methods,
-based on a @c{compute-effective-foo-method} function, and a @c{foo-method-combination-init} record;
+based on a @c{compute-effective-foo-method} function,
+and possibly an initial record of sub-method qualifiers,
 they would also define @c{foo-method-spec} or such for each sub-method,
 either using @c{standard-sub-method-spec}, or
 @c{sub-method-spec} with an appropriate specialized @c{method-cons} argument
 to pre-compose the sub-method specifications in advance of @c{compute-effective-foo-method}.
 
-Suitably tagged method specifications can then be used in a structured way to enact any kind of
+Suitably qualified method specifications can then be used in a structured way to enact any kind of
 environment setup or cleanup, argument validation, argument normalization,
 resource allocation and deallocation, locking, logging, error handling, access control,
 detail accumulation, etc.,
@@ -1750,79 +1787,172 @@ that allows for the extensibility of code along more independent axes.
 
 @subsection[#:tag "Inner"]{Simula’s @c{inner}: Superclass-Controlled Extension}
 
-The very first OO language, Simula, and its direct successor BETA,
-had a peculiar way of combining methods—or, in their parlance,
-the bodies of classes and virtual procedures. They called it “concatenation semantics”.
+@subsubsection{Concatenation Semantics}
 
-@XXXX{XXXXX}
+The very first OO language, Simula @~cite{Dahl1967}, had a peculiar way of combining
+the body of classes, which it called “concatenation semantics”.
+Its direct successor BETA @~cite{Kristensen1987} unified classes and virtual procedures
+in a common notion of “patterns”, with the same semantics to extend their bodies.
+In either language, the body of a subclass or subpattern is evaluated
+wherever the parent’s body includes the @c{inner} keyword
+(which is a no-op when instantiating said parent rather than a descendant thereof).
+Additionally, in Simula, an @c{inner} is added at the end of the class’s body if otherwise missing.
+By contrast in BETA, a missing inner just means that the body won’t be extended further:
+you can still extend the pattern, but whatever body your extension offers will never be evaluated.
+A class or pattern has more than a body, though: new fields can be defined, existing
+virtual procedures (Simula) or pattern fields (BETA) can be overridden,
+and in the case of BETA (but not Simula), these fields can themselves
+have bodies and fields of their own, etc. (@secref{NS})
 
-Inside-out compared to CLOS before/after methods.
-BETA's inner: procedures are non-extensible by default.
-ADVISE (and after it, Flavors and CLOS): procedures are extensible by default.
-ADVISE extends in-place, when Simula, BETA and OO languages extend in a pure way.
-(gBeta also has extension in-place).
-The CLOS before/after and Simula/BETA inner are inter-expressible, but
-the ergonomics is much better for CLOS, which is a reason why no one uses inner outside beta:
-inner makes function not extensible by default.
+The Simula terminology “class prefix” for superclass betrays the origin of concatenation semantics:
+classes literally started as prefixes evaluated in the context of the new class,
+defining data fields and procedures and body elements for it,
+before the data fields and procedures and body elements of the subclass were in turn processed.
+Then, the authors of Simula added a “suffix” part to the body elements,
+to allow for cleanups and post-processing.
+The semantic elements of the subclass were thus sandwiched between prefix and suffix,
+becoming an “inner” part, hence the @c{inner} keyword.
+In Simula, @c{inner} had to be a top-level statement.
+In BETA, not only can it be present in a control structure,
+it can be nested inside another object, allowing for higher-order control structures;
+an optional label following the @c{inner} keyword then specifies
+which object up the lexical chain the @c{inner} statement refers to.
+What started as a naive simplest possible implementation of Hoare’s idea @~cite{Hoare1965}
+was generalized to something much more sophisticated...
+and yet still quite low-level.
 
+@subsubsection{Inheritance from Before Structured Programming}
 
-The semantics of before and after methods is quite similar to the
-of Simula and BETA, except that the most-specific-first order of before methods
-and most-specific-last order of after methods is the opposite of the concatenation semantics
-of Simula. Of course, one could easily define a new method combination
-that uses the order of Simula, opposite of this default order for before and after methods.
-Note how the default order used by Lisp works better with the normal OO extension protocol
-adopted by everyone after Smalltalk.
+When using concatenation semantics, any information sharing or transfer
+between concatenated code fragments along the ancestry
+requires side-effects to some shared instance variable.
+This includes any effect to and from the result value to be returned:
+it is up to the users to roll their own protocol for that,
+each pattern declaring variables to be used for its results (or other purposes),
+and each subpattern having to carefully follow the protocol,
+reading or writing these variables@xnote["."]{
+  Simula, after ALGOL, automatically names a variable after the current procedure
+  for the value to return, that you are supposed to write to, and possibly read.
+  However, this only applies to procedures, that in Simula can be overridden,
+  but without possibility of combination with old methods
+  (and thus in this case, the most specific method wins, completely,
+  which is at odds with how concatenation semantics works on Simula classes and BETA patterns).
+  In Simula, unlike later BETA, concatenation semantics only applies to class bodies,
+  that do not return anything.
+  In BETA, where concatenation semantics applies to sub-patterns,
+  that conceptually can be virtual procedures or nested virtual classes,
+  you have to name your result variable or variables,
+  and then explicitly return them in an @c{exit} block.
+}
 
-Simula later on also allows each class or procedure
-to define a “suffix” as well as a “prefix”,
-wherein the body of each subclass or subprocedure
-is the “inner” part between this prefix and suffix,
-marked by the @c{inner} keyword as a placeholder.
-Lack of explicit @c{inner} keyword is same as before, as if the keyword was at the end.
-This approach by Simula and its successor BETA @~cite{Kristensen1987}
-(that generalized classes to “patterns” that also covered method definitions the same way;
-except that lack of “inner” means the “do” block cannot be extended anymore,
-like “final” in Java or C++),
-is in sharp contrast with how inheritance is done in almost all other languages,
-that copy Smalltalk.
-The “prefix” makes sense to initialize variables, and to allow procedure definitions
-to be overridden by later more specialized definitions;
-the “suffix” is sufficient to do cleanups and post-processing,
-especially when all communication of information between concatenated code fragments
-happens through side-effects to shared instance variables
-(including, in Algol style, a special variable with the same name as the procedure being defined,
-to store the working return value).
-The entire “inner” setup also makes sense in the context of spaghetti code with GOTOs,
-before Dijkstra made everyone consider them harmful in 1968;
-the reliance on side-effects everywhere also made more sense before
-Lisp, Functional Programming, and eventually concurrency and large distributed systems,
-made people realize side-effects can be more confusing than pure information flow
-through function calls, return values and immutable let bindings.
-But this concatenation semantics is both limited and horribly complex to use
-in the post-1968 context of structured code blocks,
-not to mention post-1970s higher-order functions, etc.
-You could express the modern approach in a roundabout way in BETA,
-by explicitly building a list or nesting of higher-order functions as your only side-effect,
-that re-invert control in a pure way back the way everyone else does it,
-that you call at the end; but that would be an awkward design pattern.
-And so, while Simula was definitely a breakthrough, its particular form of inheritance
-was also a dead-end.
-No one but the Simula inventors wants anything resembling @c{inner}
-for the language they build or use.
-After Smalltalk, languages instead let subclass methods control the context
-for possible call of superclass methods, rather than the other way around.
-BETA behavior is easily expressible with user-defined method combinations
-in CLOS @~cite{Cannon1979 Bobrow1988},
-or can also be retrieved by having methods
-explicitly build an effective method chained the other way around.
-Thus, I can rightfully say that inheritance, and OO,
-were only invented and named through the interaction of
-Bobrow’s Interlisp team and Kay’s Smalltalk team at PARC circa 1976,
-both informed by ideas from Simula, and Minsky’s frames,
-and able to integrate these ideas in their respective
-AI and teachable computing experiments thanks to their dynamic environments,
-considerably more flexible than the static Algol context of Simula.
+This approach sits well in the context of 1960s spaghetti code with GOTOs,
+before @citet{Dijkstra1968} made everyone consider them harmful.
+Indeed the original intuition of “concatenation semantics” perfectly fits
+as the literal concatenation of the code generated to implement a class,
+whether in assembly language, or at some similar low-level of abstraction
+within an intermediate representation by the compiler.
+Unsurprisingly, the one known almost-OO predecessor to Simula, ADVISE @~cite{Teitelman1966},
+uses the very same mechanism of communication through variable assignment:
+@c{after} advice would assign or read the special variable @c{VALUE}
+to affect the function return value or be affected by it
+(variable soon enough renamed to @c{!VALUE} to avoid unintentional capture).
+
+But this kind of design already felt quite low-level by the late 1970s.
+Being able to call the next method and use its result in a functional style
+was soon found to be much more ergonomic;
+and it is only more so after concurrency and large distributed systems eventually
+made people realize that side-effects can be more confusing than pure information flow.
+Thus, while Simula was definitely a breakthrough,
+its particular form of inheritance was also a dead-end.
+There’s a good reason why almost no one outside Scandinavian academia is interested
+in using @c{inner}, at least not as the primary inheritance mechanism in their language.
+
+@subsubsection{Inner as Method Combination}
+
+From my point of view, class and pattern bodies are methods,
+and concatenation semantics is a method combination.
+And compared to the near-universal practice in OO languages since Smalltalk, it is inside out;
+and it is only more obviously inside out compared to ADVISE and Flavors style method combinations.
+
+In most OO languages, the most specific method controls the behavior of method invocations:
+the dispatch mechanism identifies that method and calls this most specific method, and
+it decides whether and when to chain into the next method, and so on along the chain
+from most specific to least specific method.
+This allows for radical overrides of the semantics, and enables the modeling
+of a wide variety of situations.
+
+With “concatenation semantics”, the behavior is inverted:
+the least specific method is called first,
+and controls the behavior, and so on from least specific to most specific method.
+Radical overrides are possible, but only with explicit permission, and, in the general case,
+with an explicit inversion of control:
+each method takes an inner continuation argument, and calls the next method
+accumulating its own contribution in front of the continuation,
+until the last method runs the continuation in the now inverted order.
+In other words, you could be manually doing as a convention
+what method combinations automate as a service.
+Of course, this arrangement is onerous,
+especially without adequate syntactic support from the language.
+
+If you have CLOS style method combinations @~cite{Pitman1996},
+you can define the prefix and suffix parts
+of the method body as @c{before} and @c{after} methods, except that
+your Simula style method combination must invert the usual CLOS order for these methods
+(inherited from Flavors @~cite{Cannon1979}, inherited from ADVISE @~cite{Teitelman1966}),
+so @c{before} methods are most-specific-last instead of most-specific-first,
+and the other way around for @c{after} methods.
+Alternatively, using only standard method combinations, you can express behavior
+equivalent to Simula class-body concatenation by defining two methods:
+a @c{simula-before} method in which you define prefixes as @c{after} methods,
+and a @c{simula-after} method in which you define suffixes as @c{before} methods.
+This is syntactically confusing if you don’t have macros to automate the details away,
+but provides the correct semantics, and proves that Simula style concatenation semantics
+is trivially expressible in terms of method combinations@xnote["."]{
+  For BETA nested inner blocks, you should be using @c{around} methods instead,
+  there again with an inverted order.
+  And then again, you could use the same kind of control inversion
+  to implement CLOS-style inheritance on top of concatenation semantics—if
+  you were crazy enough to use BETA or gBeta.
+}
+
+@subsubsection{Usability Matters}
+@epigraph{
+  It is a profoundly erroneous truism, repeated by all copy-books
+  and by eminent people when they are making speeches,
+  that we should cultivate the habit of thinking of what we are doing.
+  The precise opposite is the case. Civilization advances by extending
+  the numbers of important operations which we can perform without thinking about them.
+  Operations of thought are like cavalry charges in battle—they are strictly limited in number,
+  they require fresh horses, and must only be made at decisive moments.
+  @|#:- "Alfred North Whitehead"|
+}
+In the end, Simula style inheritance, even updated by BETA, is a dinosaur with poor usability.
+Simula is extremely limited in what you can do and
+the side-effects it relies on are the opposite of modular.
+BETA is more expressive, yet its strict inner mechanism requires
+a lot of forethought from each pattern author to make it extensible in just the right way.
+Smalltalk style inheritance, almost universally adopted, is much easier to use,
+and everything is extensible by default without having to think too much about it@xnote["."]{
+  Preference for one over the other may also reveal a cultural trait @~cite{Petricek2025}.
+  Control freaks vs hippies—it is no surprise the Simula team favored static typing,
+  while the Smalltalk team favored dynamic typing.
+}
+CLOS style method combinations are even easier to use and extend,
+in many standard ways, without the initial author having to think of it at all.
+And with user-defined method combinations, you can do even more,
+including expressing Simula style inheritance, if it ever were useful for any purpose.
+This kind of method combination, while not popular,
+nevertheless has users who deem it useful. @; TODO cite Blome1995 Goldberg2004 Foote2005
+
+After all this discussion about inheritance,
+I feel that while Dahl and Nygaard’s invention of Simula @~cite{Dahl1967}
+has been justly celebrated as a breakthrough,
+it is quite unfair to characterize it as “the invention of OO”,
+while ignoring the precedent of Teitelman, whose ADVISE @~cite{Teitelman1966}
+already had the basic mechanism done better (though in narrower situations),
+and the essential followup of Bobrow and Winograd, and of Kay and Ingalls,
+whose respective KRL-0 @~cite{Bobrow1976} and Smalltalk-76 @~cite{Ingalls1978}
+conceptualized and named inheritance and OO, and made them actually usable.
 
 @subsection{Inherited Interfaces vs Orthogonal Protocols}
 
@@ -1837,7 +1967,7 @@ Second, and just as importantly, requiring specifications (and prototypes and cl
 to inherit from a common ancestor to be able to define a method,
 means that you cannot add new methods to specifications after the fact.
 
-Java and C# are two languages known for their terrible design requiring
+Java and C# are two languages known for their design requiring
 a class to explicitly inherit from an interface at the moment it is created
 so it may expose methods that satisfy that interface.
 This design is terrible, because it requires omniscience from
@@ -1854,7 +1984,7 @@ those future interfaces will still require yet another layer
 of wrapping or reimplementation all over again,
 for each team that wants to extend the capabilities of a class.
 
-By contrast, CLOS generic functions, Clojure protocols, Haskell typeclasses, Rust traits, etc.,
+By contrast, CLOS generic functions and Clojure protocols
 enable programmers to define methods for a class (or typeclass) @emph{after the fact},
 without wrappings and unwrappings, reimplementations, etc.
 This vastly increases modularity.
@@ -1864,9 +1994,14 @@ The key feature is some notion of “protocol”, i.e. a set of related function
 that can have different implementations for various types, classes, specifications, etc.,
 while being defined independently (that’s what “orthogonal” means).
 Protocol implementations are modular entities, that are also first-class and extensible
-in CLOS or Clojure, but sadly only second-class and not extensible in Haskell or Rust.
+in CLOS or Clojure.
+Haskell typeclasses and to a lesser extent Rust traits or Go structural interfaces
+offer second-class solutions that are somewhat more modular than C++, Java or C#,
+yet much less than CLOS or Clojure, each of them having many limitations,
+and none of them modularly extensible.
+@; TODO footnote to explain the limitatoins
 
-The capability is old: in a live Smalltalk or Lisp image,
+The capability is old: in a live Smalltalk or Lisp image since the 1970s,
 adding a method to a class you don’t own is not a feature of its own,
 but a consequence of the image being editable.
 This ambient capability is also carried in dynamic languages like Ruby and Python,
@@ -1874,7 +2009,7 @@ where it surfaces as global “monkey patching”
 (a regular idiom for Rubyists, even after the language added its scoped “refinements” in 2013;
 an idiom frowned upon by Pythonistas).
 An interesting case is that of Objective-C:
-a static language (program structure fixed at compile-time)
+a static language (program structure fixed at compile-time) with a dynamic runtime,
 inspired by the dynamic language Smalltalk,
 it had to reify this capability as a named construct, “categories”—borrowing
 the word from Smalltalk’s purely organizational method categories.
@@ -1897,8 +2032,9 @@ Protocols as independent entities can also avoid the complexity of mutable inher
 wherein you’d modify a specification after the fact so it would inherit from a new interface.
 
 Generic functions were introduced as “generic operations” by T @~cite{Rees1982},
-and reprised as “generic functions” by New Flavors, LOOPS, CommonLoops, CLOS,
-but also beyond Lisp by Cecil @~cite{Chambers1992} and Fortress @~cite{Allen2011}.
+and reprised as “generic functions” by New Flavors, CommonLoops, CLOS,
+but also beyond Lisp by Cecil @~cite{Chambers1992}, Fortress @~cite{Allen2011}
+and Julia @~cite{Bezanson2014}.
 
 In the “message passing” paradigm adopted by the original Flavors after Smalltalk and Actors,
 objects receive and handle messages.
@@ -1957,11 +2093,12 @@ if it escapes or may escape, then garbage collection is required, and may involv
 a weak hash-table indexed by weak pairs (i.e. the pair becomes unreachable
 when either side becomes unreachable, at which point so do indexed entries).
 
-Then again, in CLOS, generic functions and classes are considered
-second-class global objects for regular programs, so the problem is avoided
-(though reflection through the MOP makes them first-class
+Then again, in CLOS, defining generic functions and classes (as opposed to using them)
+involves second-class global entities for regular programs that avoid use of reflection,
+so the problem is avoided;
+however, reflection through the MOP makes these definitions first-class
 for the sake of metaprograms and infrastructure, at which point
-programmers are supposed to solve the problem manually if it arises).
+programmers are supposed to solve the problem manually if it arises.
 More second-class concepts built into the language do increase complexity somewhat though.
 And in a very dynamic language with first-class prototypes and generic functions
 that get defined locally, avoiding space leaks will involve extra complexity
@@ -1975,7 +2112,7 @@ Since the entities are independent, new ones can be modularly defined
 without modifying existing ones, instead extending those existing ones in incremental ways.
 This is the essence of any real solution to the “expression problem” @~cite{Wadler1998}.
 And then you may further realize that you could gain even more modularity
-by associating methods not to a pair of entities, but to arbitrary large tuples of entities.
+by associating methods not to a pair of entities, but to arbitrarily large tuples of entities.
 Which leads us to the invention of multiple dispatch.
 
 @section[#:tag "MD"]{Multiple Dispatch}
@@ -1992,7 +2129,7 @@ you call @emph{its} method, etc. There is one entity, of which you select one su
 But once Cannon invented method combinations, and the concept of generic function followed,
 then it became natural to wonder why effective method selection should only depend on
 one argument, especially when there are plenty of “binary methods”
-that in fact go through great lengths to work around this limitation:
+that in fact go to great lengths to work around this limitation:
 comparison functions, algebraic operators (addition, multiplication, etc.), and more.
 
 Thus, with multiple dispatch, a method can be specialized based
@@ -2010,13 +2147,14 @@ an arbitrary tuple of a generic function and any number of specifications—thou
 the same number for every method within a given generic function,
 the “generic arity” of the function (e.g. 2 for binary methods).
 
-Also, a protocol (sets of related generic functions)
+Also, a protocol (a set of related generic functions)
 supporting dispatch on multiple arguments
 is akin to a typeclass that depends on multiple typeclass constraints.
 And indeed, you can desugar the latter into the former:
 a typeclass function with @c{n} typeclass constraints is like a generic function
 dispatching on @c{n} elements, being the “dictionaries” for each of those @c{n} constraints.
-The difference is that Haskell typeclasses do not support inheritance,
+The difference is that Haskell typeclasses do not support methods
+chaining into parent methods;
 but CLOS protocols do @~cite{Rideau2012}.
 If @c{n = 0}, the function is a constructor (if it returns an object) or else an arbitrary function.
 If @c{n = 1}, the function is a regular OO method.
@@ -2030,7 +2168,7 @@ Multimethods notably simplify away “binary methods”, “double dispatch”,
 and the “visitor pattern”, offering
 a modular alternative to these often nightmarish “design patterns”.
 Moreover, multimethods support actual win-win inheritance
-when the above design patterns typically only support conflict inheritance.
+whereas the above design patterns typically only support conflict inheritance.
 
 At least CLOS, Clojure and Julia support multimethods,
 as well as many Lisp and Scheme object systems (including Gerbil Scheme).
@@ -2041,13 +2179,13 @@ A few popular languages have libraries that implement some form of them.
 @subsection{Binary Methods Done Right}
 @epigraph{
   Patterns mean “I have run out of language.”
-  @|#:- "Rich Hickey"|
+  @|#:- @elem{Rich Hickey, @emph{Simple Made Easy}}|
 }
 For decades, developers of object-oriented protocols have stumbled upon problems
 regarding “binary methods”, the behavior of which depends not just on one object,
 but also on a second object:
 comparing objects of various types for equality or for (total or partial) order;
-adding two numbers involves different operations whether you try to add two integers,
+adding two numbers involves different operations depending on whether you try to add two integers,
 or two floating-point numbers, or an integer and a floating-point number,
 or two strings, or two matrices of the same shape, etc.;
 displaying an object on some graphical or text terminal;
@@ -2056,7 +2194,7 @@ planning or performing a build operation on a code component;
 etc.
 
 In languages that only have single dispatch, writing such methods is problematic,
-and not only due to the contravariance issues we discussed relative to typing (@secref{LotN}):
+and not only due to the contravariance issues I discussed relative to typing (@secref{LotN}):
 how do you write such code, and how do you keep it modular and extensible?
 You can dispatch on the first object, and have a method in each case; fine.
 But what about the second object?
@@ -2071,7 +2209,7 @@ thus the method @c{add} on an integer calls the method @c{add-to-integer} on the
 with the first object as first argument—exchanging the roles of dispatch object
 and first non-dispatch argument, but after having specialized the method.
 This approach is known as the “double dispatch” design pattern,
-and can be generalized to triple dispatch, or any kind of n-uple dispatch.
+and can be generalized to triple dispatch, or any kind of n-ary dispatch.
 
 But double dispatch is awkward and limited in many ways:
 since languages that need this do not have generic functions or multiple dispatch,
@@ -2081,14 +2219,15 @@ must be known in advance when defining the specification for the second argument
 so this fourth-class design pattern is only extensible for the second argument.
 Also, in languages with visibility limitations on an object’s internal state,
 the refined method might not be able to see the state of the object,
-or that state may have to be shared more broadly than desired.
-Finally, there is no good way to “call the next method” and compose multiple inherited behavior,
+or that state may have to be shared more broadly than desired to enable double dispatch.
+Finally, there is no good way to “call the next method” and compose multiple inherited behaviors,
 and every programmer of every part of the protocol would have to cooperate with the pattern,
 which is a hard discipline for a programmer to follow, and
 a near impossible one to enforce upon others.
 
-A more sophisticated approach known as the “visitor pattern” @~cite{Gamma1994},
-is both a special case of double dispatch and a generalization of it.
+A more sophisticated approach known as the “visitor pattern” @~cite{Gamma1994}
+is both a special case of double dispatch (in how it’s implemented)
+and a generalization of it (in what capabilities it offers).
 I will present it with classes as is usual, but it generalizes to arbitrary specifications:
 @itemize[
   @item{
@@ -2100,8 +2239,8 @@ I will present it with classes as is usual, but it generalizes to arbitrary spec
     from the class namespace to the method namespace.
   }
   @item{
-    Each visitor can then provide a method for each of the specifications it wants to support;
-    and visitors can themselves be extended with further methods to support further specifications,
+    Each visitor can then provide a method for each of the classes it wants to support;
+    and visitors can themselves be extended with further methods to support further classes,
     making them more extensible than e.g. pattern-matching on argument classes.
   }
   @item{
@@ -2109,8 +2248,7 @@ I will present it with classes as is usual, but it generalizes to arbitrary spec
     and the further arguments, you can use chains of visitors to implement all kinds of operations.
     Compared to regular double dispatch, the visitor pattern is more general, and
     crucially allows for new visiting operations to be defined after the class is defined.
-  }
-]
+  }]
 
 Compared to double dispatch, the visitor pattern involves even more boilerplate:
 having to define visitor classes with all the required information.
@@ -2131,23 +2269,36 @@ a runtime-reflection facility that can enable dynamic behavior even in a static 
 Finally, at least in the commonly described variants
 of either double dispatch or the visitor pattern,
 there is still no good way to support “call-next-method”:
-either it finds only one method, breaking “linearity” (conservation of information);
-like Self’s ill-fated sender path inheritance, it can’t back out of a bad narrowing decision.
-Yet at least the problem is factored in a way that visitors could conceivably be generalized
-(at a cost in complexity) to support “call-next-method”, and this support could then
-be implemented once and then shared with many generalized visitors.
-If this were done, the common design patterns could be tagged as “naive” versions;
+Either it finds only one method, breaking “linearity” (conservation of information);
+like Self’s ill-fated sender path tiebreaker rule, it can’t back out of a bad narrowing decision.
+Or it has to explore the entire space of methods, implement some backtracking search,
+suffer exponential explosion in presence of diamonds, or also implement
+some clever conflict detection, or some linearization—in a word,
+reinvent better inheritance mechanisms as manually enforced design patterns
+on top of what the language provides.
+A lot of the machinery could then be implemented once and shared by many generalized visitors;
+yet at the same time users would have to (correctly) write a lot of boilerplate
+to reflect enough of the structure of their classes for the common machinery to take over.
+Needless to say, the existing literature on visitors remains confined
+to the most primitive of these design patterns—the one that breaks linearity.
+If the more elaborate design patterns were implemented, the primitive ones
+could be tagged as “naive” versions;
 but of course, the real elaborate move would be to extend the object system itself
 to support multiple dispatch.
 
-Indeed, if the object system itself has builtin for support multiple dispatch, then
-double dispatch as a design pattern, and its generalizations to triple and n-uple dispatch,
+Indeed, if the object system itself has builtin support for multiple dispatch, then
+double dispatch as a design pattern, and its generalizations to triple and n-ary dispatch,
 or to the visitor pattern, disappear completely
 as complex yet no-longer-helpful design patterns.
 They are replaced by “just use the system-provided multiple dispatch”.
 Suddenly, these methods become simple to write, extensible for both arguments,
-without visibility issues (any method can see the state of any argument it matches),
-and with full win-win composability of the methods.
+without the visibility issues of double dispatch and visitors
+(any method can see the state of any argument it matches);
+moreover, you can achieve full win-win composability of the methods
+if using flavorful multiple inheritance or optimal inheritance with multimethods (as in CLOS),
+and not something flavorless (as in Cecil, Slate or Julia).
+And you don’t have to write a lot of painful boilerplate—and, which is worse—keep that boilerplate
+up to date as the code evolves.
 
 @; TODO: footnote explaining that pommette.scm contains examples.
 
@@ -2171,7 +2322,7 @@ And other languages sadly just adopt conflict all the way
 
 Yet, the same argument in favor of linearization applies
 for multiple dispatch as well as for multiple inheritance:
-Any side-effects in your methods (that, in general case, exist)
+Any side-effects in your methods (that, in the general case, exist)
 will necessarily be ordered one way or the other;
 the only question is whether the system automates a coherent order,
 or puts the onus onto users—at which point it will be both onerous and incoherent.
@@ -2187,14 +2338,23 @@ in the degenerate case that only the most specific method is called;
 it has a clear precedence based on the first argument,
 and it nicely extends single dispatch on the first argument,
 in that methods specialized on the first argument
-will be ordered relatively to each other the same as if dispatching on just that argument.
+will be ordered relative to each other the same as if dispatching on just that argument.
 The linearization necessarily induces an asymmetry between arguments,
 and it is important to choose the correct order of arguments when designing a multimethod protocol:
 the argument that most crucially affects the behavior of the method
 should appear first in the signature.
 For instance, the ASDF API is correct in dispatching on operation first, and component second,
 since the behavior varies more with the first (compile some code, or load it, link it, etc.)
-than with the second (was the source file plain Lisp, or C FFI code, code transpiled to Lisp, etc.).
+than with the second (was the source file plain Lisp, or C FFI code,
+code transpiled to Lisp, etc.)@xnote["."]{
+  @; TODO move to bibliography and cite
+  Interestingly, Daniel Barlow, who started
+  @hyperlink["https://asdf.common-lisp.dev/"]{ASDF} in 2001,
+  chose this order correctly, when Kent Pitman’s
+  @hyperlink["https://nhplace.com/kent/Papers/Large-Systems.html"]{much older design document}
+  that inspired him had the arguments in the reverse order
+  (that I believe would have made things much harder).
+}
 Of course, if the operation is commutative (e.g. addition)
 then the order of arguments does not matter, but this is the exception, not the rule.
 
@@ -2257,7 +2417,7 @@ But then authors of multiple libraries would have to coordinate to all adopt the
 At this point, it is better if the language itself offers such a base specification.
 
 Now, when using single dispatch, users might have used a separate defaulting mechanism
-to specify how their method invocations behave in absence of explicit specialized methods.
+to specify how their method invocations behave in the absence of explicit specialized methods.
 For instance, CLOS’s @c{no-applicable-method} generic function, or
 Smalltalk’s @c{doesNotUnderstand:} message, can catch these cases, and more, actually.
 But these mechanisms are both more powerful than needed yet not precise enough
@@ -2293,9 +2453,9 @@ I started from an implementation of Prototypes with Optimal Inheritance (acronym
 mixing the lessons of @secref{ROOfiMC} and @secref{IMSMO}. @; (ch 6 and 7)
 The names of functions related to them start or end with “poi”.
 A poi, being a prototype, conflates target and specification.
-In the style of @c{rproto} @secref{CfR}, it stores specification information and other metadata
-(including a cache of the precedence list) in a special field
-(in this case, using @c{#f} as the access key).
+In the style of @c{rproto} (@secref{CfR}),
+it stores specification information and other metadata (including a cache of the precedence list)
+in a special field (in this case, using @c{#f} as the access key).
 
 Then came the issue of where to store method information,
 which was especially important since I chose to stick to a pure functional implementation
@@ -2320,7 +2480,7 @@ that contains the user-specified code.
 For the sake of method combinations, each generated method explicitly
 invokes the regular @c{call-next-method} mechanism to accumulate all declared user methods
 in a lexicographically ordered list: each @c{m_...pk} method first recurses
-into dispatching to the next argument, then using per-prototype inheritance
+into dispatching to the next argument, then uses per-prototype inheritance
 to recurse into ancestors of the current prototype@xnote["."]{
   Note that if one only cares for the most specific matching method,
   one doesn’t need to accumulate methods in lists,
@@ -2383,12 +2543,13 @@ if there was no global linearization order on which to pre-sort them@xnote["."]{
   As another performance concern, one should also be careful to not recursively
   @c{append} and re-@c{append} lists of methods at each level of recursion:
   @c{append} is an @c{O(l)} operation on usual single-linked lists,
-  where @c{l} is the number of methods found; and this reappending would cost @c{O(lⁿ)}
-  where @c{n} is the number of arguments, instead of @c{O(l)} as should be.
+  where @c{l} is the number of methods found;
+  and this reappending would cost @c{O(nl²)}
+  where @c{n} is the number of arguments, instead of @c{O(nl)} as should be.
   Instead, one should adopt a representation of lists that has a constant-time appending operation,
   even if just to flatten it to the usual single-linked lists at the end.
   The simplest such representation is by representing list-builders as functions that
-  prepend elements to a list.
+  prepend elements to a list, a.k.a. difference lists. @; TODO cite Hughes1986
   Composing two such functions is the same as appending the lists of their elements.
   By applying the final list-prepending function to the empty list,
   the binary tree of composed element-prependers is indeed flattened.
@@ -2415,16 +2576,16 @@ when using curried functions for handling arguments, is that the generic functio
 must accept all the arguments of each invocation before it may evaluate any individual method:
 this includes non-dispatch mandatory arguments, and, if the language supports them,
 optional positional arguments, rest arguments and keyword arguments.
-To support arbitrary shapes of argument lists, we can factor the multiple dispatch
+To support arbitrary shapes of argument lists, I can factor the multiple dispatch
 of a generic function into three parts—an accepter, a combiner, and an invoker:
 @itemize[
   @item{The accepter function accepts all these arguments, makes a record of them
     (e.g. in Scheme, a list), and invokes a continuation function on them
     (taken as argument to the accepter).}
   @item{The combiner applies the method combination, by
-    using the linearization algorithm on the methods of each method tag it supports,
+    using the linearization algorithm on the methods of each method qualifier it supports,
     based on multiple dispatch with the supported arity.
-    The combiner then invoke these methods in order,
+    The combiner then invokes these methods in order,
     each with a suitable additional (and in many languages, implicit) @c{call-next-method} argument,
     by calling the invoker function.}
   @item{The invoker function passes along the recorded arguments to the current method@xnote["."]{
@@ -2448,10 +2609,13 @@ With “subjective dispatch” @~cite{Salzman2005} or “subjective multimethods
 some context (usually dynamically bound) provides an implicit first argument to all methods,
 before all explicit arguments.
 With the dual “objective dispatch”, or “objective multimethods”,
-some context provides an object at the end of the argument list
-(for instance, in Cecil, Dylan, the @c{obj.method(arg)} syntax thus treats the object @c{obj}).
+some context provides an object at the end of the argument list:
+for instance, in Cecil or Dylan, the @c{obj.method(arg)} syntax
+expands to @c{method(arg, obj)} with the object surprisingly in @emph{last} dispatch position;
+this is unlike a more traditional convention as with Javascript
+and other single-dispatch languages, where it appears first.
 
-If using “conflict” for incomparable tuples of specifications,
+Now if using “conflict” for incomparable tuples of specifications (as in Cecil and Dylan),
 then argument positions are symmetrical, and “subjective” and “objective” dispatch are isomorphic.
 On the other hand, if using flavorful method linearization for multiple dispatch,
 then argument positions are very much not symmetrical.
@@ -2485,7 +2649,8 @@ Programmers don’t extend just one class, yielding an extended class—they
 extend one class hierarchy, yielding an extended class hierarchy;
 or even one ecosystem, yielding an extended ecosystem.
 This perspective also solves apparent problems like the need for “orphan instances”
-for Haskell typeclasses@xnote[","]{
+for Haskell typeclasses, retroactive “friend” classes in C++ or interfaces in Java,
+the “expression problem”, etc@xnote["."]{
   Orphan instances are what happens when some Haskell package defines new kinds of typeclasses
   (which in OO would be protocols, i.e. sets of generic functions),
   while another independent package defines new kinds of data structures
@@ -2498,7 +2663,7 @@ for Haskell typeclasses@xnote[","]{
   must depend on the other.
 
   By contrast, not only are Common Lispers not afraid of “orphaned methods”,
-  some invented @c{asdf-system-connections} to automatically load systems with those methods
+  Gary King invented @c{asdf-system-connections} to automatically load systems with those methods
   when both the system with the generic functions and the system with classes were loaded.
   Of course this is only actually useful in the context of an @emph{interactive} system
   where which modules will be loaded depends on interaction with the user.
@@ -2507,8 +2672,7 @@ for Haskell typeclasses@xnote[","]{
   But the point is that the independent definition of classes, protocols and methods is
   a huge feature, and not a bug, though it appears wrong if you look at it the wrong way.
 }
-retroactive “friend” classes in C++ or interfaces in Java,
-the “expression problem”, etc. All issues dissolve when one realizes
+All issues dissolve when one realizes
 the unit of coherent extension was never the individual class or object or function,
 but the entire program or library being modified. Indeed, logical “laws” interrelating
 functions and data structures always prevented the unilateral extension of a single entity
@@ -2537,10 +2701,10 @@ this phenomenon of a constant name for changing content
 happens @emph{inside} the language rather than only outside it.
 
 Nota Bene: By using modular extensions as first-class functions,
-we do not need to introduce a hierarchy of complex new syntactic constructs
-each time we generalize modular extensibility from individual method,
+I do not need to introduce a hierarchy of complex new syntactic constructs
+each time I generalize modular extensibility from individual methods,
 to prototypes or classes, to hierarchies of prototypes, to entire software ecosystems, etc.
-The very same universal notion applies, to types of arbitrary complexity—or simplicity.
+The very same universal notion applies to types of arbitrary complexity—or simplicity.
 
 @section[#:tag "DvSD"]{Dynamic vs Static Dispatch}
 
@@ -2554,9 +2718,9 @@ and finally will call that function with the object as first argument,
 followed by any remaining arguments.
 
 This semantics is called @emph{dynamic dispatch},
-and though every Class OO language supports it,
+and though every popular Class OO language supports it,
 it is actually not the default in Simula, C++ and C#,
-that instead favor @emph{static dispatch} by default:
+which instead favor @emph{static dispatch} by default:
 programs include type declarations, and the type descriptors from which functions are extracted
 are “statically” based on those declarations at compile-time,
 rather than on object values at runtime.
@@ -2591,16 +2755,16 @@ from second-class type annotations about the object, as e.g.
 To further clarify the concepts at stake in a language
 with @emph{both} static types and dynamic dispatch,
 @citet{Allen2011} cleverly introduces the word
-@emph{Kin} to denote the runtime object “type” used for dynamic dispatch,
+@emph{ilk} to denote the runtime object “type” used for dynamic dispatch,
 as contrasted to @emph{Type} as traditionally denoting the compile-time object type
 when doing type analysis and optimization, and in this case also static dispatch.
 Now, in a consistent typesystem, a Type will correctly determine
-what is the set of possible Kins that an expression of that Type can have at runtime.
-And if a narrow enough set of Kins is determined through the type analysis,
+what is the set of possible Ilks that an expression of that Type can have at runtime.
+And if a narrow enough set of Ilks is determined through the type analysis,
 especially through the use of class sealing or “final” annotations, then
 the method could be determined at compile-time even though the language does dynamic dispatch,
 and the dispatch could be optimized away at compile-time.
-If the set of Kins allowed by the Type is too large or open, then the type analysis
+If the set of Ilks allowed by the Type is too large or open, then the type analysis
 does not permit optimization of dynamic dispatch into static dispatch.
 
 @subsection{First-class vs second-class modularity}
@@ -2644,14 +2808,16 @@ might not use it. But the two are not separated by formal execution “stages”
 
 On the other hand, Class OO embodies second-class modular extensibility,
 and indeed introduces a formal separation between a compile-time execution stage
-during which classes are defined, and a runtime execution stage during which they are used
-(though some languages such as Smalltalk and Lisp offer reflection facilities through which
-the two stages can be interleaved or blurred, though even then that is the exception
-rather than the rule).
+during which classes are defined, and a runtime execution stage during which they are used.
 And second-class modular extensibility does not imply first-class modularity.
 
-You could very well have Class OO without first-class modularity,
-and indeed that is what happens when you stick to static dispatch in C++ or Java, etc.:
+Now, a few languages do offer Class OO as first-class modular extensibility
+through reflection facilities that can interleave or blur stages of evaluation;
+but these days, these languages and the use of those facilities even in those languages,
+are the exception rather than the rule.
+
+In the opposite direction, you could very well have Class OO without first-class modularity,
+and indeed that is what happens when you stick to static dispatch in C++, Java or C#, etc.:
 the behavior of the program is completely determined at compile-time,
 code paths not depending on runtime lookup of object type descriptors.
 It is easy to imagine a Class OO language that only has static dispatch
@@ -2659,8 +2825,10 @@ and does not even feature dynamic dispatch as a “virtual” option;
 it might be somewhat rigid to work with,
 and programmers used to dynamic languages and dynamic dispatch might be quite dismayed
 to find that a lot of their usual design patterns do not apply anymore.
-But it would still be Class OO, and a lot of C++ programs already stick
-to only using such a dialect.
+It would fail many people’s misdefinition of “OO”
+as being or implying first-class modularity (@secref{OOinE}).
+But it would still be Class OO, and a lot of C++ programs
+already stick to only using such a dialect.
 
 @subsection{Choosing between Static and Dynamic Dispatch}
 
@@ -2678,10 +2846,10 @@ Thus, only dynamic dispatch offers a semantics
 that all OO programmers can understand, implement, use, and agree on,
 whereas static dispatch is not even applicable to dynamic OO languages.
 Inasmuch as one is looking for a dispatch strategy that is “natural” to Class OO,
-and that be universally adopted by both dynamic and static languages,
+and that can be universally adopted by both dynamic and static languages,
 then necessarily this dispatch strategy must be dynamic dispatch.
 That is why in practice all Class OO languages offer dynamic dispatch at least as an option
-(even though, as we saw, one could imagine a Class OO language with only static dispatch).
+(even though, as I mentioned, one could imagine a Class OO language with only static dispatch).
 
 The dynamic approach also allows for much more experimentation,
 and amplification of successes and correction of failures,
@@ -2706,14 +2874,19 @@ which can be quickly checked.
 
 @subsubsection[#:tag "SD"]{Static Dispatch}
 
-Static dispatch uses static type information
-to optimize away method dispatch at compile-time.
+With static dispatch, the dispatch itself (resolution to effective method)
+can be fully resolved at compile-time, based on static type information.
+In rare cases, a compiler is able to infer at compile-time based on static analysis
+what would be the result of a runtime dispatch,
+or speculatively handle known dispatch patterns,
+an optimization known as devirtualization.
+
 Sticking to static dispatch is the same as using OO’s modular extensibility at compile-time only,
 to generate code that is neither extensible nor modular at runtime.
 Compared to the looser dynamic dispatch,
 static dispatch not only brings more safety and performance,
 but does so in a @emph{predictable} way.
-These safety, performance and predictability are paramount for some applications
+Such safety, performance and predictability are paramount for some applications
 and for “system programming”;
 they also satisfy programmers with a mindset very different
 from those who like dynamic dispatch @~cite{Petricek2017}.
@@ -2739,7 +2912,7 @@ Historically, the first language with classes, Simula,
 was a language with static types based on Algol,
 and offered both static and dynamic dispatch—years before OO was even conceptualized.
 But the first languages that fully conceptualized OO,
-Smalltalk and KRL (an extension to Lisp),
+Smalltalk and KRL (an extension to Lisp)
 were dynamic languages that only offered dynamic dispatch (KRL had Prototype OO);
 the dynamic aspect was instrumental in enabling the experimentation
 that led to the invention of modern OO and a lot of its features.
@@ -2749,8 +2922,8 @@ leaned heavily into the static dispatch approach, but kept dynamic dispatch as a
 C#, heavily inspired by C++ as well as by Java, followed.
 These languages, with large corporate backing,
 evolved over many decades to slowly acquire better features,
-until their typesystems became quite expressive;
-as of late, they are even capable of expressing functional programming,
+until their typesystems became quite expressive.
+As of late, they are even capable of expressing functional programming,
 when they were initially incapable of it.
 These languages also raise the bar quite high for any new object-oriented language
 that would try to bet on static dispatch:
@@ -2770,9 +2943,9 @@ will increase inertia in favor of these static-dispatch Class OO incumbents,
 or will level the playing field in favor of new languages, static or dynamic.
 
 @exercise[#:difficulty "Easy"]{
-  Read and make sense of the code I wrote for this chapter,
+  Read and make sense of the example code I developed for this chapter,
   that you may find e.g. at
-  @url{https://github.com/metareflection/poof/blob/main/pommette/pommette.scm}
+  @url{https://github.com/metareflection/poof/blob/main/pommette/pommette.scm}.
   Or to make things harder, first try as much of the exercises as possible
   without reading my code.
 }
@@ -2793,43 +2966,45 @@ or will level the playing field in favor of new languages, static or dynamic.
 @itemize[
   @item{
     A function @c{poi-add-parent} that takes a parent and adds it at the very end
-    of the a poi’s local precedence order.}
+    of a poi’s local precedence order.}
   @item{
     A function @c{class←poi} that ensures a poi inherits from @c{base-class}.}
   @item{
     A macro @c{defclass} that defines a variable as a poi
-    that always implicitly inherits from @c{base-class}}
+    that always implicitly inherits from @c{base-class}.}
   @item{
     A function @c{instance←class} that given a class and a poi
     returns a new poi wherein the given poi extends the base-instance of the given class.}
   @item{
-    A function @c{make-instance} that with a class the rest of its arguments as a plist
+    A function @c{make-instance} that, given a class and the rest of its arguments as a plist
     of field name and field value, creates an element of the class wherein the respective
     given fields are bound to the given values, and other fields are as specified by
-    the class’s base-instance, e.g. @c{(make-instance class 'x 1 'y 2)}.
-    As a bonus, have @c{make-instance} include validation checks.
-    }
+    the class’s @c{base-instance}, e.g. @c{(make-instance class 'x 1 'y 2)}.}
+  @item{
+    An extension to @c{base-class} and @c{make-instance}
+    that includes user-specified validation checks.}
   @item{
     A function @c{mandatory-fields} that given a class, returns a list of the mandatory
     fields for the class—those without initialization data.}
   @item{
-    A function @c{class-constructor} that given a class and as many arguments as there
+    A function @c{class-constructor} that given a class and as many arguments as there are
     mandatory fields (curried the usual way), in order, constructs an element of the class
     where each mandatory field has the value given from the arguments, in order.}]
-}
 
 @exercise[#:difficulty "Easy"]{
-  Write efficient implementations of the missing simple CLOS method combinations, for
-  @c{+ * max min progn list append nconc or and}.
+  Write efficient implementations of the missing simple CLOS method combinations,
+  for those of @c{+ * max min progn list append nconc or and} that weren’t implemented yet.
   Hints: @c{progn} is just the Lisp operator for sequential evaluation of expressions,
   returning the value of the last one. @c{nconc} is a variant of @c{append} that uses side-effects;
   and @c{append} and @c{nconc} done wrong
   will be quadratic rather than linear so be careful@xnote["."]{
-    For @c{min} and @c{max}, note the existence of IEEE floating point number @c{+inf.0} and @c{-inf.0},
+    For @c{min} and @c{max}, note the existence
+    of IEEE floating point numbers @c{+inf.0} and @c{-inf.0},
     as plausible values to return when no method is defined, though beware that
     using them may on some Scheme implementations cause undesired coercion to flonum,
     and so does not work quite as it should with integers.
-    I therefore do not recommend using them implicitly over issuing an error as CLOS does in this case.
+    I therefore do not recommend using them implicitly
+    over issuing an error as CLOS does in this case.
     Users can always explicitly include such a value as a base method
     if it works for them, e.g. because they are using flonums, anyway.
     Or they can define their own variant of @c{min} or @c{max}
@@ -2926,8 +3101,8 @@ or will level the playing field in favor of new languages, static or dynamic.
 
 @exercise[#:difficulty "Hard"]{
   Implement a pure functional monadic variant of the standard method dispatch.
-  How does the object system need be extended (if at all) to support pure monadic operations
-  that can fully replace stateful OO?
+  How does the object system need to be extended (if at all)
+  to support pure monadic operations that can fully replace stateful OO?
 }
 
 @exercise[#:difficulty "Hard"]{
@@ -2941,9 +3116,9 @@ or will level the playing field in favor of new languages, static or dynamic.
 }
 
 @exercise[#:difficulty "Hard"]{
-  Determine whether suggested scheme for nested POI inheritance matches @secref{IoNaI}
-  BETA’s polymorphic families with single inheritance in the case
-  that POI’s are all suffix specifications.
+  Determine whether the scheme for nested POI inheritance suggested in @secref{IoNaI}
+  matches BETA’s polymorphic families with single inheritance,
+  in the case where POIs are all suffix specifications.
   Determine whether it matches whatever Newspeak does for nested classes
   with the mixin extension pattern
   when the inheritance DAG is a tree you can flatten into a list of mixins.

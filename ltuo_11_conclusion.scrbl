@@ -4,6 +4,14 @@
 @(set-chapter-number 11)
 
 @title[#:tag "Conclusion"]{Conclusion}
+@epigraph{
+  When you are young you are afraid people will steal your ideas;
+  when you are old you are afraid they won’t.
+  @|#:- "David D. Friedman"|}
+@epigraph{
+  Don’t worry about people stealing your ideas.
+  If your ideas are any good, you’ll have to ram them down people’s throats.
+  @|#:- "Howard Aiken"|}
 
 @section{Scientific Contributions}
 @epigraph{Early in life I had to choose between honest arrogance and hypocritical humility.

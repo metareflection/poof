@@ -54,17 +54,17 @@ simpler than the modular extensions of mixin inheritance from @secref{MFCME}@xno
   Even in the confines of my exploration of OO,
   I already used the term “wrapper” in a related yet more specific way
   when discussing wrapping references for recursive conflation in @secref{RC};
-  and a decade before Cook, Cannon @~cite{Cannon1979} also used a notion of wrapper
-  closer to what I use, in Flavor’s predecessor to CLOS @c{:around} methods @~cite{Steele1990},
+  and a decade before Cook, Cannon @~cite{Cannon1979} also used a notion of “wrapper”
+  closer to what I use, in Flavors’s predecessor to CLOS @c{:around} methods @~cite{Steele1990},
   or in the more general case, to CLOS declarative method combinations (@secref{MC}).
   The term “generator” is also too generic, and could describe many concepts in this book,
-  while being overused in other contexts, too.
+  while being overused in other contexts, too (Python coroutines, Haskell lazy streams, etc.).
   I will thus stick with my expressions “modular definition” and “modular extension”
   that are not currently in widespread use in computer science, that are harder to confuse,
   and that I semantically justified by reconstructing their meaning from first principle.
 }
 Modular definitions take a @c{self} as open recursion argument
-and return a record using @c{self} for self-reference.
+and return an extended value that may use @c{self} for self-reference.
 Unlike modular extensions, they do not take a @c{super} argument,
 since they are only inherited from, but don’t themselves inherit, at least not anymore:
 what superclass they did inherit from is a closed choice made in the past,
@@ -344,23 +344,35 @@ or it can have many elements in which case the inheritance is actually multiple 
 Now, early OO systems with multiple inheritance (and sadly many later ones still)
 didn’t have a good theory for how to resolve methods when a specification
 inherited different methods from multiple parents,
-and didn’t provide its own overriding definition @~cite{Borning1977 Ingalls1978 Curry1982}.
+and didn’t provide its own overriding definition
+@~cite{Borning1977 Ingalls1978 Curry1982}. @; TODO Ducasse2006
 This situation was deemed a “conflict” between inherited methods,
-which would result in an error, at compile-time in the more static systems.
-@; ??? Early Lisp systems would let users resolve things themselves ???
-@; LOOPS 1983 provides you tools to resolve things yourself... Yikes. CommonLoops linearizes.
-@; TODO triple check how KRL, Ani did it
+which would result in an error, at compile-time in the more static systems@xnote["."]{
+  In KRL @~cite{Bobrow1976}, the first system with (multiple) inheritance,
+  multiple answers from inheritance triggered the use of a user-programmed strategy
+  to compute the effective inherited attribute.
+  The strategy function could use “signals” computed from the ancestry
+  to decide what precise behavior to follow.
+  Very flexible, but also the sign that the authors did not yet understand
+  what behavior was suitable.
+  LOOS @~cite{Bobrow1983} had something similar.
+  But CommonLoops @~cite{Bobrow1986} then CLOS @~cite{Bobrow1988}
+  adopt the solution from Flavors.
+  Meanwhile the “conflict” languages provide no such general “strategy” functionality,
+  and require the programmer to come up with a complete solution by hand.
+}
 Flavors @~cite{Cannon1979} identified the correct solution,
 that involves cooperation and harmony rather than conflict and chaos.
+
 Failing to learn from Flavors, C++ @~cite{Stroustrup1989}
 (and after it PHP) not only adopts the conflict view of Smalltalk,
 it also, like Simula @~cite{Krogdahl1985} or CommonObjects @~cite{Snyder1986},
 tries to force the ancestry DAG into a tree!
-Self initially tried a “sender path” resolution method,
+Self initially tried a “sender path tiebreaker rule” to resolve methods,
 that is a variant of the conflict view with a builtin heuristic for conflict resolution:
 going into the first relevant branch of the inheritance DAG
 without backtracking @~cite{Chambers1991}.
-The authors eventually recognized how wrongheaded that was,
+The authors of Self eventually recognized how wrongheaded that was,
 only to revert to—sadly—the conflict view without resolution heuristic @~cite{Ungar2007}@xnote["."]{
   Like the most naive variant of the “visitor pattern”
   approach to multiple dispatch (@secref{MD}),
@@ -483,12 +495,12 @@ So the lack of a builtin graph support is actually a feature in other contexts@x
   the side-effect is invisible to @emph{internal} observations
   if and only if it can be achieved with a Commutative Affine Monad.
   @;{ Claude suggests looking at:
-    Stark "Observable Properties of Higher Order Functions that Dynamically Create Local Names," ~1993
-    Gabbay–Pitts nominal sets for a denotational version
-    Odersky’s λν (POPL 1994) is the confluence-preserving version
-    Augustsson, Rittri & Synek, "On generating unique names" (JFP 1994)
-    Plotkin–Power, "Notions of Computation Determine Monads"
-    Jacobs, "Affine Monads and Side-Effect-Freeness"
+    Stark "Observable Properties of Higher Order Functions that Dynamically Create Local Names" ~1993,
+    Gabbay–Pitts nominal sets for a denotational version,
+    Odersky’s λν (POPL 1994) is the confluence-preserving version,
+    Augustsson, Rittri & Synek, "On generating unique names" (JFP 1994),
+    Plotkin–Power, "Notions of Computation Determine Monads",
+    Jacobs, "Affine Monads and Side-Effect-Freeness".
   }
 }
 
@@ -540,7 +552,11 @@ as a synthetic attribute@xnote[","]{
 by somehow combining the modular definitions at each of the supers.
 After all, that’s what people used to do with single inheritance:
 synthesize the modular definition of the child from that of the parent
-and the child’s modular extension.
+and the child’s modular extension@xnote["."]{
+  Note again how much of the literature, after Cook, calls modular definitions “generators”,
+  and modular extensions “mixins”.
+  See @secref{MOO} why I chose the names “modular definition” and “modular extension” instead.
+}
 Unhappily, I showed earlier in @secref{MFCM} that there is no general way to combine
 multiple modular definitions into one, except to keep one and drop the others.
 Modular extensions can be composed left and right,
@@ -548,7 +564,7 @@ but modular definitions can only be on the right and on the left must be a modul
 
 The difficulty of synthesizing a modular definition is known as
 the “diamond problem” @~cite{Bracha1992 Taivalsaari1996}@xnote[":"]{
-  Bracha says he didn’t invent the term “diamond problem”,
+  Bracha says (on Twitter) he didn’t invent the term “diamond problem”,
   that must have already circulated in the C++ community;
   his thesis quotes Bertrand Meyer who talks of “repeated inheritance”.
 }
@@ -561,6 +577,7 @@ yet possibly still the loss of what the B2 contributed,
 when the copy of A within B1 reinitializes the method
 (assuming B2 is computed before B1).
 Keeping only one of either B1 or B2 loses information from the other.
+
 There is no good answer;
 any data loss increases linearly as diamonds get wider or more numerous;
 meanwhile any duplication gets exponentially worse as diamonds stack,
@@ -592,8 +609,22 @@ but it is probably the single least useful among all possible consistent behavio
 @item{Users trying to circumvent the broken inheritance mechanism still have to invent their
       own system to avoid the same exponential duplication problem that the
       implementers of the OO system have punted on.
-      They are in a worse position to do it because they are mere users;
-      and their solution will involve non-standard coding conventions
+      Not only would this be a complex endeavor,
+      users are in a worse position to do it than implementers
+      for having to retrofit these “solutions” on top of a broken system@xnote["."]{
+        For instance, if the system exposed the ability to explicitly combine
+        the modular definitions inherited from parents,
+        users could implement their own variant of a CRDT @; TODO cite
+        for the values of their methods.
+        If the system somehow guaranteed a stable order in the traversal of the parent DAG,
+        or the users could somehow retrieve a stable order from the metadata,
+        then they could drop the commutative requirement of usual CRDTs.
+        Given enough introspection capabilities into the system,
+        users could thus through extremely complex and roundabout way
+        implement flavorful multiple inheritance as I describe below.
+        But it would be an extremely expensive mess of an abstraction inversion @~cite{Baker1992}.
+      }
+      Moreover, these solution will involve non-standard coding conventions
       that will not work across team boundaries.
       This is another big failure for Modularity (again see @secref{CfM}).}]
 
@@ -806,7 +837,7 @@ in Class OO, it only filters code at compile-time (though with prototypes, this 
 might be interleaved with runtime).
 Using method combinations (@secref{MC}),
 one could even distinguish “base” sub-methods that use conflict,
-from “override” sub-methods that use linearization.`
+from “override” sub-methods that use linearization.
 However, whether using one of these designs is worth it depends crucially on its costs and benefits.
 The benefits would be the ability to find and locate bugs that are not easily found and located
 by existing forms of testing and debugging, which is not obvious.
@@ -1940,8 +1971,9 @@ requires the selection of the first possible candidate at each time.
 New variants may add their own set of extra constraints on the partial order,
 that will all be higher priority than the extended precedence constraint@xnote["."]{
   For instance, some classes could be tagged as “base” classes for their respective aspects
-  (like our @c{base-bill-of-parts} in @seclink{IoMaE}), and we could require base classes
-  to be treated before others. This could be generalized as assigning
+  (like the @c{base-bill-of-parts} in @seclink{IoMaE}), and
+  base classes could be treated before others.
+  This could be generalized as assigning
   some “higher” partial order among groups of classes (metaclasses),
   that has higher priority than the regular order, or then again “lower” orders, etc.
 }
@@ -2108,7 +2140,7 @@ equality of POIs and their specifications would then be defined as that of their
   all of them being assumed to be infix specifications?
 }
 @;{
-Using the C3 or C4 algorithm, we get the precedence list @c{Z K1 K2 K3 D A B C E O},
+Using the C3 or C4 algorithm, the resulting precedence list is @c{Z K1 K2 K3 D A B C E O},
 with each subclass having its subset of ancestors in the same order
 in its own precedence list.
 }

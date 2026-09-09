@@ -120,7 +120,7 @@ when a further attempt is made to use the target.
 Otherwise, an invalid target, which is a necessarily common case,
 would prevent access to the specification, defeating the entire point of conflation.
 
-In the code above, we trust that computing the target itself
+The code above assumes that computing the target itself
 will delay any potentially problematic computation until after the fixpoint is reached.
 The function definition itself is guaranteed to terminate early on,
 since the actual computations within are protected by λ-abstractions.
@@ -204,7 +204,7 @@ Instead, the input value is transformed into one that is in a strong sense isomo
 you can recover one from the other, with an importantly added level of indirection.
 Second, to directly work with the eager variants of the @c{Y} combinator above,
 rather than requiring a lazy language or recursion through ad hoc stateful side-effects,
-we need our fixpoint to be a function, which is provided by our representation of records as functions.
+the fixpoint needs to be a function, which is provided by the representation of records as functions.
 
 Thus, I will define and use functions @c{conflate}, @c{get-spec} and @c{get-target}
 to explicitly store and extract the information in the @c{spec} and @c{target} fields of a record:
@@ -426,7 +426,7 @@ The difference between the two encodings is subtle but quite interesting:
 Now it is important to understand not just the difference between the two encodings,
 but also the relationship between the two.
 
-We have the identity @c{Y f = U (B f U)} or equivalently @c{Y = B U (C B U)}
+Consider the identity @c{Y f = U (B f U)} or equivalently @c{Y = B U (C B U)}
 where @c{B} is composition @c{B x y z = x (y z)} and
 @c{C} is the flip operator @c{C x y z = x z y}@xnote["."]{
   Haskellers might write @c{Y} as @c{U.(.U)} which is my new favorite emoji.}
@@ -906,7 +906,7 @@ Class OO is but a special case of Prototype OO,
 wherein a class is a prototype for a type,
 i.e., the conflation of a modular extension for a type descriptor,
 and the type descriptor that is the fixpoint of that specification.
-Thus, when I claimed in @secref{OOiCO} that
+Thus, when I claimed in @secref{OOinCO} that
 the situation of classes in OO was similar to that of types in FP,
 I meant it quite literally.
 
@@ -1178,7 +1178,7 @@ so they follow the calling convention of the other style@xnote["."]{
   into a record of the values and the typeclass they are supposed to be used with.
   When invoking typeclass functions, unwrap the values from those records to use them as arguments;
   and wrap the results back into records that conflate the values and an appropriate typeclass.
-  This is the same trick that we used with recursive conflation.
+  This is the same trick that I used with recursive conflation.
   You just need to know which arguments and results of which method to wrap or unwrap.
 
   Note how the values associated with typeclasses can be “naked” primitive values

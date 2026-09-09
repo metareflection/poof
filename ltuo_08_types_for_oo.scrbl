@@ -45,7 +45,7 @@ or would have required reverting to unitypes with extra verbosity@xnote["."]{
   when it comes to writing modular extensible programs.
   As of 2026, the only popular language
   with a decent typesystem when it comes to OO is Scala
-  (where we can judge “popular” as being in the top 50 in the TIOBE index
+  (where I judge “popular” as being in the top 50 in the TIOBE index
   or the GitHub top programming languages @~cite{GitHub2022 TIOBE2026});
   though C++, Java, C#, Kotlin, Swift or TypeScript come close.
 }
@@ -1145,8 +1145,6 @@ because it is incompatible with some of their self-inflicted assumptions or cons
 @citet{Pierce1993}, @citet{Pierce2002},
 @citet{Oliveira2009}, @citet{Amin2016DependentOT},
 @citet{Black2016}, @citet{Jones2016}.
-@; TODO Cook 1987 A self-ish model of inheritance ?
-@; @citet{Cook1989 CookPalsberg1989}
 
 Now there are papers that successfully type OO, and should be praised for it
 and for their other innovations—yet take the bad approach of starting with
@@ -1166,6 +1164,24 @@ A travesty, an inversion of right and wrong, and a waste of tremendous brainpowe
 @; TODO: Kim Bruce 1993 1994 1995, PolyTOIL
 @citet{Bruce1996}, @citet{Bruce1997}.
 @; TODO: mention how Fisher's operational semantics is U-encoded, but her types are Y-encoded. Cool.
+
+@; TODO Cook 1987 A self-ish model of inheritance ?
+@; @citet{Cook1989 CookPalsberg1989}
+@; Canning1989 Cook1989Inheritance
+
+@; Leavens1988 Mugridge1991 Millstein2002
+@; Pierce1991
+@; GunterMitchell1994
+@; FisherMitchell1995
+@; Simons1995 Simons2005
+@; Abadi1996Interpretation
+@; Chambers1996
+@; Pierce1997
+@; Bono1999 Bono2002
+@; Hirschowitz2002 Dreyer2007 Rossberg2008 Hirschowitz2009 Bessai2017
+@; Politz2012
+@; Oliveira2013
+
 
 Finally, some publications, though some the earlier ones may have been historical landmarks,
 and though some may have contributed good ideas, are just bad cases of the NNOOTT,

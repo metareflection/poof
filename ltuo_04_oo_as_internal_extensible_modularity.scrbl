@@ -1459,8 +1459,8 @@ Therefore, I pick Scheme as the best compromise of a language in which to formal
   I personally use Gerbil Scheme @~cite{Vyzovitis2016};
   but if you are a beginner, you will probably find it much easier to use
   the closely related language Racket @~cite{Felleisen2015};
-  or for a plain Scheme experience, we recommend Chez Scheme, that is very fast.
-  You can also play with it on websites like replit.
+  or for a plain Scheme experience, I recommend Chez Scheme, that is very fast.
+  You can also play with these implementations on websites like replit.
   Another option is for you to do all exercises in your own programming language of choice,
   which will be much easier if your language at least supports first-class higher-order functions,
   and either dynamic typing, or recursively constrained (sub)types;

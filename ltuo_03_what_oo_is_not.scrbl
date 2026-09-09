@@ -138,7 +138,7 @@ because @principle{OO is not a language design, it’s a language @emph{feature}
 Yet if I had to exhibit a minimal, “prototypical” OO language (pun intended),
 I’d pick... Jsonnet (@secref{RPOO}).
 
-@subsection[#:tag "OOiCO"]{OO isn’t Classes Only}
+@subsection[#:tag "OOinCO"]{OO isn’t Classes Only}
 @epigraph{
   The class/instance distinction is not needed if the alternative of using prototypes is adopted.
   @|#:- @citet{Lieberman1986}|
@@ -265,7 +265,7 @@ Actually, I will argue from the semantics of OO, that
 @principle{Pure Lazy Functional Programming is the natural setting for OO}
 (@secref{UPSLC}).
 
-@subsection{OO isn’t Encapsulation}
+@subsection[#:tag "OOinE"]{OO isn’t Encapsulation}
 @epigraph{A half-truth is a whole lie. @|#:- "Yiddish proverb"|
 }
 @subsubsection{The Information Hidden: Modularity}

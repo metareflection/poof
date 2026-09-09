@@ -559,6 +559,20 @@
 
 %% 1981
 
+@Article{Bancilhon1981,
+  author={François Bancilhon and Nicolas Spyratos},
+  title={Update Semantics of Relational Views},
+  journal={ACM Transactions on Database Systems},
+  volume={6},
+  number={4},
+  pages={557--575},
+  month={December},
+  year={1981},
+  doi={10.1145/319628.319634},
+  url={https://doi.org/10.1145/319628.319634},
+  note={Classic treatment of the relational view-update problem. It characterizes update translation through a complementary view: choosing what information is kept invariant in the complement determines an update policy, and valid translators correspond to such constant-complement choices. Relevant to bidirectional transformations, lenses and the semantics of updating derived views rather than directly stored data.}
+}
+
 @Article{Ingalls1981,
   author={Daniel H. H. Ingalls},
   title={Design Principles Behind Smalltalk},
@@ -594,6 +608,17 @@
 }
 
 %% 1982
+
+@PhdThesis{Oles1982,
+  author={Frank Joseph Oles},
+  title={A Category-Theoretic Approach to the Semantics of Programming Languages},
+  school={Syracuse University},
+  address={Syracuse, NY},
+  year={1982},
+  month={August},
+  url={https://www.cs.cmu.edu/afs/cs.cmu.edu/project/fox-19/member/jcr/www/FrankOlesThesis.pdf},
+  note={Develops a categorical denotational semantics for programming languages, especially block structure, local variables and mutable store, using indexed/functor-category constructions. Foundational background for later semantic accounts of state, possible worlds and Algol-like languages; relevant to the book mainly as semantic infrastructure rather than specifically to object orientation.}
+}
 
 % Lindy Effect
 @Book{Mandelbrot1982,
@@ -760,6 +785,28 @@
     broader mathematical use of the word ``object''.
     A preliminary version of the fuller 1987 treatment.
   }
+}
+
+@Article{Hughes1986,
+  author={R. John M. Hughes},
+  title={A Novel Representation of Lists and Its Application to the Function reverse},
+  journal={Information Processing Letters},
+  volume={22},
+  number={3},
+  pages={141--144},
+  month={March},
+  year={1986},
+  doi={10.1016/0020-0190(86)90059-1},
+  url={https://doi.org/10.1016/0020-0190(86)90059-1},
+  note={.
+    Introduces what are now called difference lists (or Hughes lists),
+    though the paper itself calls them a “functional representation” of lists:
+    representing a list by a first-class function that appends it to a future tail.
+    Concatenation then becomes function composition and takes constant time,
+    while conversion back to an ordinary list is linear.
+    Relevant as a classic example of replacing a data representation
+    by its action as a higher-order function, and
+    of deriving efficient functional programs by representation change.}
 }
 
 @InProceedings{Meyer1986,
@@ -3666,6 +3713,16 @@
     This article is great in desugaring the prototype sublanguage of JS,
     but doesn't cover classes.
   }
+}
+
+@Misc{Kmett2015,
+  author={Edward A. Kmett},
+  title={History of Lenses},
+  year={2015},
+  month={August},
+  howpublished={lens project wiki},
+  url={https://smunix.github.io/github.com/ekmett/lens/wiki/History-of-Lenses.html},
+  note={Informal historical account of the development of Haskell lenses and related abstractions, tracing the line from iterators and accessors through van Laarhoven lenses, polymorphic update, traversals and later generalizations. Useful as a map of the lineage and terminology, but not as a primary technical source for individual priority claims.}
 }
 
 % https://www.reddit.com/r/cpp/comments/3hkfxr/bjarne_stroustrup_object_oriented_programming/

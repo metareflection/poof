@@ -1724,7 +1724,7 @@ let Y = f: (x: x x) (x: f (x x));
   (poi←record (u poi)))
 (def (poi-target-update/NoMoreSpec u poi) ;; erase the magic spec field, no longer extensible
   (u (record←poi poi)))
-(define (poi-target-update/Error u poi) ;; signal an error — safest default
+(def (poi-target-update/Error u poi) ;; signal an error — safest default
   (abort "cannot update a poi target"))
 
 (define-syntax poi
@@ -2729,15 +2729,110 @@ let Y = f: (x: x x) (x: f (x x));
 
 ;;;;; 9.2 Method Combinations
 
+;;;; 9.2.0 Calling Conventions
+;; A generic function stores a CallingConvention: how to gather its call
+;; arguments (the `accepter`) and how to apply them to a method (the `invoker`),
+;; given an `arity` of leading (dispatch) arguments.  Method combinations and
+;; multiple dispatch both use it.
+
+;; uncurried-accepter : mandatory optionals → accepter function that returns args
+;; mandatory: exact number of required args
+;; optionals: 0 (none), a positive integer (max extra args), or #t (unlimited rest)
+;; Takes a continuation k, calls it with args, a flat list, as single argument when called.
+(def (uncurried-accepter mandatory optionals)
+  (λ (k . args)
+    (let ((n (length args)))
+      (or (>= n mandatory)
+          (error "uncurried-accepter: too few arguments" mandatory args))
+      (or (eq? optionals #t)
+          (<= n (+ mandatory optionals))
+          (error "uncurried-accepter: too many arguments" (+ mandatory optionals) args)))
+    (k args)))
+
+;; opposite of the uncurried-accepter: produce a invoker that takes a function and a list or arguments,
+;; and invokes the function.
+(def (uncurried-invoker mandatory optionals)
+  (λ (f all-args)
+    (let ((n (length all-args)))
+      (or (>= n mandatory)
+          (error "uncurried-invoker: too few arguments" mandatory all-args))
+      (or (eq? optionals #t)
+          (<= n (+ mandatory optionals))
+          (error "uncurried-invoker: too many arguments" (+ mandatory optionals) all-args)))
+    (apply f all-args)))
+
+;; curried-accepter : mandatory optionals optionals-with-last? → accepter
+;; mandatory: number of curried args collected one at a time
+;; optionals: 0 (none), positive integer (max extra), or #t (unlimited rest)
+;; optionals-with-last?: if #t, optionals bundled with last mandatory arg, otherwise, as extra call.
+;; Takes a continuation k, calls it with all-args, a flat list, as single argument when saturated.
+(def (curried-accepter mandatory optionals optionals-with-last?)
+  (λ (k)
+    (let loop ((remaining mandatory) (acc '()))
+      (cond
+        ((and (zero? remaining) (equal? optionals 0))
+         (k (reverse acc)))
+        ((or (zero? remaining)
+             (and optionals-with-last? (= remaining 1)))
+         (uncurried-accepter
+          remaining optionals
+          (λ (rest) (k (append (reverse acc) rest)))))
+        (else
+         (λ (x) (loop (- remaining 1) (cons x acc))))))))
+
+;; opposite of the accepter: produce a invoker that takes a function and a list or arguments,
+;; and invokes the function.
+(def (curried-invoker mandatory optionals optionals-with-last?)
+  (let* ((last? (and optionals-with-last? (> mandatory 0)))
+         (stop  (if last? (- mandatory 1) mandatory)))
+    (λ (f all-args)
+      (let ((n (length all-args)))
+        (or (>= n mandatory)
+            (error "curried-invoker: too few arguments" mandatory all-args))
+        (or (eq? optionals #t)
+            (<= n (+ mandatory optionals))
+            (error "curried-invoker: too many arguments" (+ mandatory optionals) all-args)))
+      (let* ((curried-args (take all-args stop))
+             (rest-args    (list-tail all-args stop))
+             (f1           (curry/list f curried-args)))
+        (if (equal? optionals 0)
+            f1
+            ((uncurried-invoker (if last? 1 0) optionals) f1 rest-args))))))
+
+(def (make-calling-convention arity accepter invoker)
+  (record (arity arity)
+          (accepter accepter)
+          (invoker invoker)))
+
+(def (uncurried-convention arity extra-mandatory optionals)
+  (let ((mandatory (+ arity extra-mandatory)))
+    (make-calling-convention
+      arity
+      (uncurried-accepter mandatory optionals)
+      (uncurried-invoker (+ mandatory 1) optionals))))  ;; +1 for cnm
+
+(def (curried-convention arity extra-mandatory optionals optionals-with-last?)
+  (let ((mandatory (+ arity extra-mandatory)))
+    (make-calling-convention
+      arity
+      (curried-accepter mandatory optionals optionals-with-last?)
+      (curried-invoker (+ mandatory 1) optionals optionals-with-last?))))  ;; +1 for cnm
+
+(def (default-convention arity)
+  (curried-convention arity 0 0 #f))
+
+;; as-calling-convention : Designator → CallingConvention
+;;   A bare number n designates (default-convention n); anything else is already
+;;   a convention record.
+(def (as-calling-convention designator)
+  (if (number? designator) (default-convention designator) designator))
+
+
 ;;;; 9.2.1 Representing Sub-Methods
 
-;; standard-method-cons : MethodFn → List(MethodFn) → List(MethodFn)
-;; Prepends a method fn to the existing list (standard cons).
-(def (standard-method-cons spec specs)
-  (cons spec specs))
-
 ;; sub-method-spec : MethodCons → Tag → MethodId → MethodFn → ModExt
-;;   MethodCons = MethodFn → List(MethodFn) → List(MethodFn)
+;;   MethodCons = MethodFn → MethodFns → MethodFns
+;;   MethodNil  = MethodFns
 ;;   Tag        = Symbol  (qualifier: 'primary 'before 'after 'around, or simple-comb name)
 ;;   MethodId   = Symbol  (method name in the record, e.g. 'compute 'greet)
 ;;   MethodFn   = CallNextMethod → Self → (Arg... → Result)  (see 9.2.2 for details)
@@ -2746,13 +2841,13 @@ let Y = f: (x: x x) (x: f (x x));
 ;; Creates a ModExt that prepends method-fn to sub-methods[method-id][tag].
 ;; The 3-deep nesting (sub-methods → method-id → tag, leaf = a list) is field-spec~*
 ;; (§5.3.5); the tag-list leaf defaults #f, so `compute` supplies the empty list.
-(def (sub-method-spec method-cons tag method-id method-fn)
+(def (sub-method-spec method-cons methods-nil tag method-id method-fn)
   ((field-spec~* 'sub-methods method-id tag)
-    (λ (tag-list _self) (method-cons method-fn (or tag-list '())))))
+    (λ (tag-methods _self) (method-cons method-fn (or tag-methods methods-nil)))))
 
 ;; standard-sub-method-spec : Tag → MethodId → MethodFn → ModExt
 ;;   (sub-method-spec with standard-method-cons; 1st arg is Tag, 2nd is MethodId)
-(def standard-sub-method-spec (sub-method-spec standard-method-cons))
+(def standard-sub-method-spec (sub-method-spec (λ (x y) (cons x y)) '()))
 
 ;; sub-method-lens : MethodId → Tag → SkewLens into the sub-methods record
 ;; (Useful for rproto encoding; in Y encoding prefer sub-method-spec directly.)
@@ -2760,6 +2855,15 @@ let Y = f: (x: x x) (x: f (x x));
   (compose-lens* (field-lens 'sub-methods)
                  (field-lens method-id)
                  (field-lens tag)))
+
+;; self-sub-methods : Self → MethodId → (OrFalse SubMethods)
+;; The per-method-id sub-method record, or #f if none was ever contributed (no
+;; method-combination-init-spec, no sub-method-spec).  The compute-effective-method
+;; functions treat #f — whether the whole record or an individual tag — as
+;; "empty", so method-combination-init-spec is a convenience, not a requirement.
+(def (self-sub-methods self method-id)
+  (let ((sm (self 'sub-methods)))
+    (and sm (sm method-id))))
 
 ;; method-combination-init-spec : MethodId → InitRecord → ModExt
 ;;   InitRecord = record {tag: List(MethodFn), ...}
@@ -2786,49 +2890,45 @@ let Y = f: (x: x x) (x: f (x x));
 
 ;;;; 9.2.2 Standard Method Combination
 
-;; MethodFn = CallNextMethod → Self → (Arg... → Result)   (curried)
-;;   CallNextMethod = case-lambda: () → Result | new-arg... → Result
-;;     calling with no args forwards the original args to the next method;
-;;     calling with new-args uses those instead.
-;;   Self   = the current object (the fixpoint record)
-;;   Arg... = the method's own user arguments (applied after Self)
-;;
-;; This mirrors the ModExt triple: CallNextMethod ≈ Inherited, Self ≈ Required.
-;; Methods that ignore CallNextMethod and Self may use (constant-spec f)
-;;   where f is a function of Arg... only.
-;;
-;; call-chain invokes m as: first (m cnm) → fn-of-self,
-;;   then (fn-of-self self) → fn-of-args, then (apply fn-of-args args).
+;; MethodFn = CallNextMethod → Arg... → Result   (curried; its own lambda list)
+;;   A method declares whatever parameters it wants after CallNextMethod; the
+;;   generic function's `invoker` (from its calling convention, §9.2.0) applies
+;;   the gathered argument list to it.  For a single-dispatch method combination
+;;   the first argument is the receiver, so a method that needs it writes
+;;   (λ (call-next-method self x ...) ...); one that doesn't just omits it.
+;;   CallNextMethod = () → Result   re-run the rest of the chain on the same args,
+;;                  | Arg... → Result   re-run it on a fresh argument list, gathered
+;;                                      through the convention's accepter.
 
-;; make-call-next-method : Next → Args → CallNextMethod
-;;   Next = ...Args → Result  (the remaining chain)
-;; When called with no args, forwards the original args to next.
-;; When called with new-args, forwards them instead.
-(def (make-call-next-method next args)
-  (case-lambda
-    (()       (apply next args))
-    (new-args (apply next new-args))))
+;; make-call-next-method : Next → Accepter → ArgList → CallNextMethod
+;;   Next     = ArgList → Result   (the remaining chain)
+;;   Accepter = the convention's accepter (k → curried collector)
+(def (make-call-next-method next accepter args)
+  (λ new
+    (if (null? new)
+      (next args)                          ;; (cnm) — replay the same arguments
+      (apply (accepter next) new))))       ;; (cnm x ...) — gather new args, then next
 
-;; call-chain : List(MethodFn) → OnExhausted → Self → EffectiveMethod
-;;   EffectiveMethod = Arg... → Result   (self already captured via closure)
-;;   Each MethodFn m is invoked curried: m cnm → fn-of-self,
-;;   then (fn-of-self self) → fn-of-args, then (apply fn-of-args args).
-(def (call-chain methods on-exhausted self)
+;; call-chain : List(RawMethodFn) → OnExhausted → Accepter → Invoker → EffectiveMethod
+;;   EffectiveMethod = ArgList → Result ;  OnExhausted has the same shape.
+;;   Each raw method m is applied via (invoker m (cons cnm args)).
+;;   A missing sub-method list is #f — treat it as empty.
+(def (call-chain methods on-exhausted accepter invoker)
   (foldr
     (lambda (m next)
-      (λ args
-        (apply ((m (make-call-next-method next args)) self) args)))
+      (λ (args)
+        (invoker m (cons (make-call-next-method next accepter args) args))))
     on-exhausted
-    methods))
+    (or methods '())))
 
-;; progn-methods-most-specific-first : List(MethodFn) → Self → Args → #f
+;; progn-methods-most-specific-first : List(RawMethodFn) → ArgList → Invoker → #f
 ;; Runs each method in order for side-effects; call-next-method = abort.
-(def (progn-methods-most-specific-first methods self args)
-  (foldl (lambda (m _) (apply ((m abort) self) args)) #f methods))
+(def (progn-methods-most-specific-first methods args invoker)
+  (foldl (lambda (m _) (invoker m (cons abort args))) #f (or methods '())))
 
-;; progn-methods-most-specific-last : List(MethodFn) → Self → Args → #f
-(def (progn-methods-most-specific-last methods self args)
-  (foldr (lambda (m _) (apply ((m abort) self) args)) #f methods))
+;; progn-methods-most-specific-last : List(RawMethodFn) → ArgList → Invoker → #f
+(def (progn-methods-most-specific-last methods args invoker)
+  (foldr (lambda (m _) (invoker m (cons abort args))) #f (or methods '())))
 
 ;; standard-no-applicable-method : MethodId → ...Args → Error
 (define (standard-no-applicable-method method-id . args)
@@ -2836,30 +2936,43 @@ let Y = f: (x: x x) (x: f (x x));
 
 (define no-applicable-method standard-no-applicable-method)
 
-;; standard-compute-effective-method : MethodId → SubMethods → Self → EffectiveMethod
-;;   SubMethods = record {before: List(MethodFn), after: ..., around: ..., primary: ...}
-(def (standard-compute-effective-method method-id sub-methods self)
-  (call-chain (sub-methods 'around)
-    (λ args
-      (progn-methods-most-specific-first (sub-methods 'before) self args)
-      (let ((result
-              (apply (call-chain (sub-methods 'primary)
-                       (λ args (apply no-applicable-method method-id args))
-                       self)
-                     args)))
-        (progn-methods-most-specific-last (sub-methods 'after) self args)
-        result))
-    self))
+;; standard-compute-effective-method : MethodId → SubMethods → Accepter → Invoker → EffectiveMethod
+;;   SubMethods = record {before/after/around/primary: List(RawMethodFn)} or #f when
+;;   the method-id has no sub-methods record at all.  `sub` yields #f (⇒ empty) for
+;;   a missing record or a missing tag; with no primary method, the primary chain
+;;   is just `no-applicable-method`.
+(def (standard-compute-effective-method method-id sub-methods accepter invoker)
+  (let ((sub (lambda (tag) (and sub-methods (sub-methods tag)))))
+    (call-chain (sub 'around)
+      (λ (args)
+        (progn-methods-most-specific-first (sub 'before) args invoker)
+        (let ((result
+                ((call-chain (sub 'primary)
+                   (λ (args) (apply no-applicable-method method-id args))
+                   accepter invoker)
+                 args)))
+          (progn-methods-most-specific-last (sub 'after) args invoker)
+          result))
+      accepter invoker)))
 
-;; standard-method-init-spec : MethodId → ModExt
-;; Initializes method-id to use the standard method combination.
-;; The stored value is an EffectiveMethod; self is captured from the field-spec closure.
-(def (standard-method-init-spec method-id)
-  (mix
-    (field-spec method-id
-       (λ (_inherited self)
-         (standard-compute-effective-method method-id (self 'sub-methods method-id) self)))
-    (method-combination-init-spec method-id standard-method-combination-init)))
+;; standard-method-init-spec : ConventionDesignator → MethodId → ModExt
+;;   The stored value is the convention's accepter pre-applied to the receiver
+;;   (dispatch argument 0); it gathers the rest of the call's arguments, then runs
+;;   the standard method combination, invoking each sub-method via the invoker.
+(def (standard-method-init-spec convention method-id)
+  (let* ((cc      (as-calling-convention convention))
+         (accepter (cc 'accepter))
+         (invoker  (cc 'invoker)))
+    (mix
+      (field-spec method-id
+        (λ (_inherited self)
+          ((accepter
+             (λ (args)
+               ((standard-compute-effective-method
+                  method-id (self-sub-methods self method-id) accepter invoker)
+                args)))
+           self)))
+      (method-combination-init-spec method-id standard-method-combination-init))))
 
 ;; Convenience specs for each standard qualifier (Tag → MethodId → MethodFn → ModExt)
 (def primary-method-spec (standard-sub-method-spec 'primary))
@@ -2867,145 +2980,291 @@ let Y = f: (x: x x) (x: f (x x));
 (def after-method-spec   (standard-sub-method-spec 'after))
 (def around-method-spec  (standard-sub-method-spec 'around))
 
-;; Tests for standard method combination
+;; Tests for standard method combination.
+;; The init-spec's first argument is a calling-convention designator: a number n
+;; = (default-convention n), n counting the receiver as dispatch argument 0.  A
+;; method is a plain curried lambda over what it needs: (λ (cnm self x ...) ...).
 
-;; Single primary method: (obj 'compute x) → (f x)
+;; Single primary method, convention 2 (receiver + one argument): (obj 'compute x)
 (def smc-obj-mul10
   (fix-record
     (mix*
-      (standard-method-init-spec 'compute)
-      (primary-method-spec 'compute (λ (_call-next-method _self x) (* x 10))))))
+      (standard-method-init-spec 2 'compute)
+      (primary-method-spec 'compute (λ (_cnm _self x) (* x 10))))))
 
 (expect
   (smc-obj-mul10 'compute 3) => 30
   (smc-obj-mul10 'compute 5) => 50)
 
-;; Around method wraps primary; (call-next-method) invokes primary with original args
+;; Around method wraps primary; (call-next-method) replays the same arguments,
+;; (call-next-method self v) re-runs the chain with a fresh argument list.
 (def smc-obj-around
   (fix-record
     (mix*
-      (standard-method-init-spec 'compute)
-      (primary-method-spec 'compute (constant-spec (λ (x) (* x 10))))
-      (around-method-spec 'compute (λ (call-next-method _self _x) (+ (call-next-method) 1))))))
+      (standard-method-init-spec 2 'compute)
+      (primary-method-spec 'compute (λ (_cnm _self x) (* x 10)))
+      (around-method-spec 'compute (λ (cnm _self _x) (+ (cnm) 1))))))
 
-(expect (smc-obj-around 'compute 3) => 31) ;; (* 3 10) = 30; around adds 1
+(expect (smc-obj-around 'compute 3) => 31    ;; (* 3 10) = 30; around adds 1
+        (((fix-record
+            (mix* (standard-method-init-spec 2 'compute)
+                  (primary-method-spec 'compute (λ (_c _self x) (* x 10)))
+                  (around-method-spec 'compute
+                    (λ (cnm self _x) (cnm self 9)))))
+          'compute)
+         3) => 90)  ;; around ignores 3, re-runs the chain with 9
+
+;; A primary method taking two arguments, convention 3 (receiver + two args).
+(def smc-obj-sum
+  (fix-record
+    (mix*
+      (standard-method-init-spec 3 'total)
+      (primary-method-spec 'total (λ (_cnm _self a b) (+ a b))))))
+
+(expect (smc-obj-sum 'total 3 4) => 7
+        (smc-obj-sum 'total 0 0) => 0)
 
 ;; Before/after run for side-effects; call-next-method = abort (must not be called)
 (define smc-log '())
 (def smc-obj-logged
   (fix-record
     (mix*
-      (standard-method-init-spec 'op)
-      (primary-method-spec 'op (constant-spec (λ (x) (* x x))))
-      (before-method-spec  'op (constant-spec (λ (x)
-                                 (set! smc-log (cons (list 'before x) smc-log)))))
-      (after-method-spec   'op (constant-spec (λ (x)
-                                 (set! smc-log (cons (list 'after x) smc-log))))))))
+      (standard-method-init-spec 2 'op)
+      (primary-method-spec 'op (λ (_c _s x) (* x x)))
+      (before-method-spec  'op (λ (_c _s x)
+                                 (set! smc-log (cons (list 'before x) smc-log))))
+      (after-method-spec   'op (λ (_c _s x)
+                                 (set! smc-log (cons (list 'after x) smc-log)))))))
 
 (expect (smc-obj-logged 'op 4) => 16)
 (expect smc-log => '((after 4) (before 4)))
 
+;; Empty sub-methods (#f record): standard-compute-effective-method doesn't crash
+;; on the missing tags — every tag reads as empty and it falls through to
+;; no-applicable-method rather than erroring on (#f 'around).
+(expect ((let ((cc (default-convention 2)))
+           (standard-compute-effective-method 'op #f (cc 'accepter) (cc 'invoker)))
+         '(recv 4)) =>fail!)
+
 ;;;; 9.2.3 Simple Method Combination
 
 ;; simple-compute-effective-method :
-;;   Name → Stop? → Op0 → Op1 → Op2 → Order → SubMethods → Self → EffectiveMethod
-;;   Name  = Symbol  (tag for the sub-method list)
-;;   Stop? = Result → Bool        (short-circuit: stop folding when true)
-;;   Op0   = #f → Result          (result when no methods; takes dummy arg)
-;;   Op1   = Result → Acc         (transforms first method result into initial accumulator)
-;;   Op2   = Result → Acc → Acc   (fold step; must be curried)
-;;   Order = 'most-specific-first | 'most-specific-last
+;;   Name → Stop? → Op0 → Op1 → Op2 → Finish → SubMethods → Accepter → Invoker → EffectiveMethod
+;;   Name   = Symbol  (tag for the sub-method list)
+;;   Stop?  = Result → Bool        (short-circuit: stop folding when true)
+;;   Op0    = #f → Result          (result when no methods; takes dummy arg)
+;;   Op1    = Result → Acc         (transforms first method result into initial accumulator)
+;;   Op2    = Result → Acc → Acc   (fold step; must be curried)
+;;   Finish = Acc → Result         (post-process the accumulator; e.g. reverse)
 ;;
-;; Simple MethodFn = CallNextMethod → Self → Result  (no user args; result is
-;;   the method's direct contribution, folded by Op1/Op2 across all methods).
-;; Each simple method m is called as ((m abort) self) with abort as cnm
-;;   (call-next-method must not be invoked in simple methods).
-;; Use (constant-spec v) for a method that contributes the constant value v.
+;; The methods are evaluated MOST-SPECIFIC-FIRST, exactly as Common Lisp's
+;; short-form method combinations do: the effective method is
+;; (operator (most-specific ...) ... (least-specific ...)) and `operator` (list,
+;; +, and, progn, …) evaluates its arguments left to right.  Op1/Op2 fold left in
+;; that order; `list` builds its accumulator reversed and Finish = reverse puts
+;; the result back into most-specific-first order.
+;;
+;; Simple MethodFn = same contract as a standard method (see 9.2.2): its own
+;;   curried lambda list, applied by `invoker`.  `run` invokes each with `abort`
+;;   as cnm (a simple primary method must not call-next-method; an `around` one
+;;   calls it to reach the folded inner value).  `around` sub-methods too.
 (def (simple-compute-effective-method
-       name stop? op0 op1 op2 order sub-methods self)
-  (let* ((arounds (sub-methods 'around))
-         (methods (sub-methods name))
-         (ordered (case order
-                    ((most-specific-first) methods)
-                    ((most-specific-last) (reverse methods)))))
+       name stop? op0 op1 op2 finish sub-methods accepter invoker)
+  (let* ((sub     (lambda (tag) (and sub-methods (sub-methods tag))))
+         (arounds (sub 'around))          ;; #f (⇒ empty) if never initialized
+         (methods (sub name)))            ;; most-specific-first, as in CL
    (call-chain arounds
-    (λ args
-      (letrec ((run (λ (m) (m abort self)))
+    (λ (args)
+      (letrec ((run (λ (m) (invoker m (cons abort args))))
                (f   (lambda (acc lst)
                       (if (and (not (stop? acc)) (pair? lst))
                         (let ((v (op2 (run (car lst)) acc)))
                           (if (stop? v) v (f v (cdr lst))))
                         acc))))
-        (if (pair? ordered)
-          (f (op1 (run (car ordered))) (cdr ordered))
-          (op0 #f))))
-    self)))
+        (finish
+          (if (pair? methods)
+            (f (op1 (run (car methods))) (cdr methods))
+            (op0 #f)))))
+    accepter invoker)))
 
 (def compute-effective-method/progn
   (simple-compute-effective-method
-    'progn (λ (_) #f) (λ (_) #f) (λ (x) x) (λ (r _) r)
-    'most-specific-first))
+    'progn (λ (_) #f) (λ (_) #f) (λ (x) x) (λ (r _) r) identity))
 
 (def compute-effective-method/and
   (simple-compute-effective-method
-    'and not (λ (_) #t) (λ (x) x) (λ (r _) r)
-    'most-specific-first))
+    'and not (λ (_) #t) (λ (x) x) (λ (r _) r) identity))
 
 (def compute-effective-method/+
   (simple-compute-effective-method
-    '+ (λ (_) #f) (λ (_) 0) (λ (x) x) (λ (x y) (+ x y))
-    'most-specific-first))
+    '+ (λ (_) #f) (λ (_) 0) (λ (x) x) (λ (x y) (+ x y)) identity))
 
 (def compute-effective-method/*
   (simple-compute-effective-method
-    '* (λ (_) #f) (λ (_) 1) (λ (x) x) (λ (x y) (* x y))
-    'most-specific-first))
+    '* (λ (_) #f) (λ (_) 1) (λ (x) x) (λ (x y) (* x y)) identity))
 
 (def compute-effective-method/list
   (simple-compute-effective-method
-    'list (λ (_) #f) (λ (_) '()) (λ (x) (list x)) (λ (x y) (cons x y))
-    'most-specific-last))
+    'list (λ (_) #f) (λ (_) '()) (λ (x) (list x)) (λ (x y) (cons x y)) reverse))
 
-;; list-method-init-spec : MethodId → ModExt
-;; Initializes method-id to collect contributions from all methods into a list.
-;; Most-specific method's contribution appears first in the result list.
-(def (list-method-init-spec method-id)
-  (mix
-    (field-spec method-id
-       (λ (_inherited self)
-         (compute-effective-method/list (self 'sub-methods method-id) self)))
-    (method-combination-init-spec method-id (simple-method-combination-init 'list))))
+;; simple-method-init-spec : ConventionDesignator → ComputeEffectiveMethod → Name → MethodId → ModExt
+;;   Like standard-method-init-spec but for a simple (operator) combination `cem`
+;;   named `cname`: accepter pre-applied to the receiver, invoker threaded through.
+(def (simple-method-init-spec convention cem cname method-id)
+  (let* ((cc      (as-calling-convention convention))
+         (accepter (cc 'accepter))
+         (invoker  (cc 'invoker)))
+    (mix
+      (field-spec method-id
+        (λ (_inherited self)
+          ((accepter
+             (λ (args)
+               ((cem (self-sub-methods self method-id) accepter invoker) args)))
+           self)))
+      (method-combination-init-spec method-id (simple-method-combination-init cname)))))
+
+;; list-method-init-spec : ConventionDesignator → MethodId → ModExt
+;; Initializes method-id to collect contributions from all methods into a list,
+;; most-specific first.
+(def (list-method-init-spec convention method-id)
+  (simple-method-init-spec convention compute-effective-method/list 'list method-id))
 
 ;; list-method-spec : MethodId → MethodFn → ModExt  (tag = 'list)
 (def list-method-spec (standard-sub-method-spec 'list))
 
-;; Tests for simple method combination (list)
-;; Methods taking no user args use (constant-spec value) as MethodFn
-;; ((constant-spec v) call-next-method self) = v
+;; Tests for simple method combination (list).  Convention 2 = receiver + one
+;; argument; a method is (λ (cnm self x) ...) — here it tags its part with x.
 (def list-parts-obj
   (fix-record
     (mix*
-      (list-method-init-spec 'parts)
-      (list-method-spec 'parts (constant-spec 'wheel))
-      (list-method-spec 'parts (constant-spec 'engine)))))
+      (list-method-init-spec 2 'parts)
+      (list-method-spec 'parts (λ (_cnm _self size) (list 'wheel size)))
+      (list-method-spec 'parts (λ (_cnm _self size) (list 'engine size))))))
 
-;; most-specific-last evaluation, most-specific-first in result list
-;; engine was added last (most specific) → appears first in result
-(expect ((list-parts-obj 'parts)) => '(engine wheel))
+;; most-specific-first evaluation (as in CL), most-specific-first result list
+;; engine was added last (most specific) → runs first, appears first in result
+(expect ((list-parts-obj 'parts) 'big) => '((engine big) (wheel big)))
 
-;; Tests for + combination
+;; + combination via simple-method-init-spec — each method scales its argument.
 (def sum-obj
   (fix-record
     (mix*
-      (mix
-        (field-spec 'total
-          (λ (_inherited self)
-            (compute-effective-method/+ (self 'sub-methods 'total) self)))
-        (method-combination-init-spec 'total (simple-method-combination-init '+)))
-      (standard-sub-method-spec '+ 'total (constant-spec 3))
-      (standard-sub-method-spec '+ 'total (constant-spec 4)))))
+      (simple-method-init-spec 2 compute-effective-method/+ '+ 'total)
+      (standard-sub-method-spec '+ 'total (λ (_cnm _self n) (* n 3)))
+      (standard-sub-method-spec '+ 'total (λ (_cnm _self n) (* n 4))))))
 
-(expect ((sum-obj 'total)) => 7)
+(expect ((sum-obj 'total) 2) => 14)
+
+;;; More tests for simple-compute-effective-method: the base case (no methods →
+;;; op0), the single-method seed, the fold (op2), receiver access, short-circuit
+;;; (stop?), repeatability, that the argument reaches every sub-method, and around
+;;; sub-methods.  `simple-cem-obj` takes a convention designator, a combination,
+;;; its name, then sub-method-specs, and returns the effective method (for
+;;; convention 1 that is already the folded value; for 2, apply it to one arg).
+(define (simple-cem-obj convention cem cname . sub-method-specs)
+  ((fix-record
+     (mix* (simple-method-init-spec convention cem cname 'm)
+           (mix/list sub-method-specs)))
+   'm))
+(def (simple-sub cname fn) (standard-sub-method-spec cname 'm fn))
+
+;; Base case: no methods at all ⇒ op0's neutral element, for every combinator.
+;; Convention 1 (receiver only) ⇒ (obj 'm) is already the value.
+(expect
+  (simple-cem-obj 1 compute-effective-method/list  'list)  => '()
+  (simple-cem-obj 1 compute-effective-method/+     '+)     => 0
+  (simple-cem-obj 1 compute-effective-method/*     '*)     => 1
+  (simple-cem-obj 1 compute-effective-method/progn 'progn) => #f
+  (simple-cem-obj 1 compute-effective-method/and   'and)   => #t)
+
+;; #f sub-methods (no init-spec / no sub-method): the compute functions treat a
+;; missing record — and any missing tag — as empty; no crash.
+(expect (let ((cc (default-convention 1)))
+          ((compute-effective-method/list #f (cc 'accepter) (cc 'invoker)) '(recv)))
+        => '()
+        (let ((cc (default-convention 1)))
+          ((compute-effective-method/+ #f (cc 'accepter) (cc 'invoker)) '(recv)))
+        => 0)
+
+;; Single method, convention 2: the call argument reaches it.
+(expect ((simple-cem-obj 2 compute-effective-method/list 'list
+           (simple-sub 'list (λ (_c _s x) (* x 2)))) 5) => '(10)
+        ((simple-cem-obj 2 compute-effective-method/+ '+
+           (simple-sub '+ (λ (_c _s x) (+ x 1)))) 4) => 5)
+
+;; Fold across several methods, evaluated most-specific-first; op2 combines, and
+;; for /list the reversed accumulator is put back in order by Finish = reverse.
+(expect ((simple-cem-obj 2 compute-effective-method/+ '+
+           (simple-sub '+ (λ (_c _s x) (* x 2)))
+           (simple-sub '+ (λ (_c _s x) (* x 3)))
+           (simple-sub '+ (λ (_c _s x) (* x 4)))) 1) => 9
+        ((simple-cem-obj 2 compute-effective-method/list 'list
+           (simple-sub 'list (λ (_c _s k) (list 'a k)))
+           (simple-sub 'list (λ (_c _s k) (list 'b k)))
+           (simple-sub 'list (λ (_c _s k) (list 'c k)))) 0)
+        => '((c 0) (b 0) (a 0)))
+
+;; Evaluation order is most-specific-first for every simple combination, as in
+;; CL's short-form combinations.  Three `list` methods (convention 1) log as they
+;; run: `most` (last mix* arg ⇒ most specific) runs first and lands first.
+(define lmc-log '())
+(expect (simple-cem-obj 1 compute-effective-method/list 'list
+          (simple-sub 'list (λ (_c _s) (set! lmc-log (cons 'least lmc-log)) 'least))
+          (simple-sub 'list (λ (_c _s) (set! lmc-log (cons 'mid   lmc-log)) 'mid))
+          (simple-sub 'list (λ (_c _s) (set! lmc-log (cons 'most  lmc-log)) 'most)))
+        => '(most mid least))
+(expect (reverse lmc-log) => '(most mid least))  ;; ran most-specific-first
+
+;; A method that reads the receiver: `self` is the fixpoint object, so it can look
+;; up its own fields.  21 * 2 + 21 * 2 = 84.
+(expect (((fix-record
+            (mix* (constant-field-spec 'x 21)
+                  (simple-method-init-spec 2 compute-effective-method/+ '+ 'm)
+                  (simple-sub '+ (λ (_cnm self k) (* k (self 'x))))
+                  (simple-sub '+ (λ (_cnm self k) (* k (self 'x))))))
+          'm)
+         2)
+        => 84)
+
+;; short-circuit: /and stops at the first falsy result; later methods don't run.
+(define scem-log '())
+(expect
+  (simple-cem-obj 1 compute-effective-method/and 'and
+    (simple-sub 'and (λ (_c _s) (set! scem-log (cons 1 scem-log)) 'ok))
+    (simple-sub 'and (λ (_c _s) (set! scem-log (cons 2 scem-log)) #f))
+    (simple-sub 'and (λ (_c _s) (set! scem-log (cons 3 scem-log)) 'never)))
+  => #f)
+;; most-specific-first: 3 (last mix* arg) ran, then 2 returned #f and folding
+;; stopped before 1.
+(expect scem-log => '(2 3))
+
+;; call-next-method inside a simple (non-around) method is abort ⇒ it errors.
+(expect (simple-cem-obj 1 compute-effective-method/+ '+
+          (simple-sub '+ (λ (cnm _s) (cnm)))) =>fail!)
+
+;; around sub-methods use the same contract; (call-next-method) yields the folded
+;; inner result, or (call-next-method self v …) re-runs the chain with a fresh
+;; argument list.  Innermost (most-specific) around is applied last.
+(expect
+  ((simple-cem-obj 2 compute-effective-method/list 'list
+     (simple-sub 'list   (λ (_c _s x) (list 'a x)))
+     (simple-sub 'around (λ (cnm _s _x) (cons 'x (cnm))))) 7) => '(x (a 7))
+  ;; around wrapping the empty base case (convention 1)
+  (simple-cem-obj 1 compute-effective-method/list 'list
+    (simple-sub 'around (λ (cnm _s) (cons 'x (cnm))))) => '(x)
+  ;; stacked arounds: x (more specific) outside y
+  ((simple-cem-obj 2 compute-effective-method/list 'list
+     (simple-sub 'list   (λ (_c _s x) (list 'a x)))
+     (simple-sub 'around (λ (cnm _s _x) (cons 'y (cnm))))
+     (simple-sub 'around (λ (cnm _s _x) (cons 'x (cnm))))) 1) => '(x y (a 1))
+  ;; an around may replace the result outright without calling cnm
+  ((simple-cem-obj 2 compute-effective-method/+ '+
+     (simple-sub '+      (λ (_c _s x) (* x 100)))
+     (simple-sub 'around (λ (_c _s _x) 7))) 3) => 7
+  ;; an around may re-run the chain with a fresh argument list (receiver included)
+  ((simple-cem-obj 2 compute-effective-method/+ '+
+     (simple-sub '+      (λ (_c _s x) (* x 10)))
+     (simple-sub 'around (λ (cnm self _x) (cnm self 5)))) 1) => 50)
 
 ;;;;; 9.3 Multiple Dispatch
 
@@ -3093,69 +3352,6 @@ let Y = f: (x: x x) (x: f (x x));
 ;;   2. look up method:      (sub-methods[gf])[s2-tag]
 ;;   3. apply:               (method obj1 obj2)
 
-;; uncurried-accepter : mandatory optionals → accepter function that returns args
-;; mandatory: exact number of required args
-;; optionals: 0 (none), a positive integer (max extra args), or #t (unlimited rest)
-;; Takes a continuation k, calls it with args, a flat list, as single argument when called.
-(def (uncurried-accepter mandatory optionals)
-  (λ (k . args)
-    (let ((n (length args)))
-      (or (>= n mandatory)
-          (error "uncurried-accepter: too few arguments" mandatory args))
-      (or (eq? optionals #t)
-          (<= n (+ mandatory optionals))
-          (error "uncurried-accepter: too many arguments" (+ mandatory optionals) args)))
-    (k args)))
-
-;; opposite of the uncurried-accepter: produce a invoker that takes a function and a list or arguments,
-;; and invokes the function.
-(def (uncurried-invoker mandatory optionals)
-  (λ (f all-args)
-    (let ((n (length all-args)))
-      (or (>= n mandatory)
-          (error "uncurried-invoker: too few arguments" mandatory all-args))
-      (or (eq? optionals #t)
-          (<= n (+ mandatory optionals))
-          (error "uncurried-invoker: too many arguments" (+ mandatory optionals) all-args)))
-    (apply f all-args)))
-
-;; curried-accepter : mandatory optionals optionals-with-last? → accepter
-;; mandatory: number of curried args collected one at a time
-;; optionals: 0 (none), positive integer (max extra), or #t (unlimited rest)
-;; optionals-with-last?: if #t, optionals bundled with last mandatory arg, otherwise, as extra call.
-;; Takes a continuation k, calls it with all-args, a flat list, as single argument when saturated.
-(def (curried-accepter mandatory optionals optionals-with-last?)
-  (λ (k)
-    (let loop ((remaining mandatory) (acc '()))
-      (cond
-        ((and (zero? remaining) (equal? optionals 0))
-         (k (reverse acc)))
-        ((or (zero? remaining)
-             (and optionals-with-last? (= remaining 1)))
-         (uncurried-accepter
-          remaining optionals
-          (λ (rest) (k (append (reverse acc) rest)))))
-        (else
-         (λ (x) (loop (- remaining 1) (cons x acc))))))))
-
-;; opposite of the accepter: produce a invoker that takes a function and a list or arguments,
-;; and invokes the function.
-(def (curried-invoker mandatory optionals optionals-with-last?)
-  (let* ((last? (and optionals-with-last? (> mandatory 0)))
-         (stop  (if last? (- mandatory 1) mandatory)))
-    (λ (f all-args)
-      (let ((n (length all-args)))
-        (or (>= n mandatory)
-            (error "curried-invoker: too few arguments" mandatory all-args))
-        (or (eq? optionals #t)
-            (<= n (+ mandatory optionals))
-            (error "curried-invoker: too many arguments" (+ mandatory optionals) all-args)))
-      (let* ((curried-args (take all-args stop))
-             (rest-args    (list-tail all-args stop))
-             (f1           (curry/list f curried-args)))
-        (if (equal? optionals 0)
-            f1
-            ((uncurried-invoker (if last? 1 0) optionals) f1 rest-args))))))
 
 (define (register-multimethod multimethods method-tag specializers method-fn)
   (@ (apply field-update~* method-tag specializers) (K method-fn) multimethods))
@@ -3168,52 +3364,32 @@ let Y = f: (x: x x) (x: f (x x));
              (register-multimethods new-multimethods))
    super))
 
-(def (make-calling-convention arity accepter invoker)
-  (record (arity arity)
-          (accepter accepter)
-          (invoker invoker)))
-
-(def (uncurried-convention arity extra-mandatory optionals)
-  (let ((mandatory (+ arity extra-mandatory)))
-    (make-calling-convention
-      arity
-      (uncurried-accepter mandatory optionals)
-      (uncurried-invoker (+ mandatory 1) optionals))))  ;; +1 for cnm
-
-(def (curried-convention arity extra-mandatory optionals optionals-with-last?)
-  (let ((mandatory (+ arity extra-mandatory)))
-    (make-calling-convention
-      arity
-      (curried-accepter mandatory optionals optionals-with-last?)
-      (curried-invoker (+ mandatory 1) optionals optionals-with-last?))))  ;; +1 for cnm
-
-(def (default-convention arity)
-  (curried-convention arity 0 0 #f))
 
 (def (poi-precedence-list-with-top poi)
   (append (poi-precedence-list poi) (list #t)))
 
-;; TODO/exercise: handle args redefinition by make-call-next-method
-(def (apply-generic-function arity accepter invoker compute-effective-method multimethods self)
+(def (apply-generic-function arity accepter invoker compute-effective-method multimethods)
   (accepter
     (λ (args)
       (let* ((pls (map poi-precedence-list-with-top (take args arity)))
              (sub-methods
+              ;; the raw multimethod fns applicable at this argument tuple, for a
+              ;; given method-tag; compute-effective-method invokes them via the
+              ;; invoker.  No receiver — a multiple-dispatch gf has none.
               (λ (method-tag)
-               (map (λ (m cnm args) (invoker m (cons cnm args)))
-                ((let loop ((mm (multimethods method-tag))
-                            (pls pls)
-                            (acc identity))
-                   (cond
-                    ((not mm) acc)
-                    ((null? pls) (compose acc (λ (x) (cons mm x))))
-                    (else
-                     (foldl
-                      (lambda (p acc) (loop (field-view~ p mm) (cdr pls) acc))
-                      acc
-                      (car pls)))))
-                 '())))))
-        ((compute-effective-method self sub-methods args))))))
+               ((let loop ((mm (multimethods method-tag))
+                           (pls pls)
+                           (acc identity))
+                  (cond
+                   ((not mm) acc)
+                   ((null? pls) (compose acc (λ (x) (cons mm x))))
+                   (else
+                    (foldl
+                     (lambda (p acc) (loop (field-view~ p mm) (cdr pls) acc))
+                     acc
+                     (car pls)))))
+                '()))))
+        ((compute-effective-method sub-methods accepter invoker) args)))))
 
 ;; Note that for a generic function to be both a function yet extensible with new multimethods,
 ;; it has to be both funcallable and modifiable.
@@ -3224,10 +3400,7 @@ let Y = f: (x: x x) (x: f (x x));
 ;; to a separate object that you modify (in a pure context, those two references would mean
 ;; separate lenses to access each of the latest function and its the backing object).
 (def (generic-function-spec calling-convention compute-effective-method multimethods)
-  (let ((calling-convention
-         (if (number? calling-convention)
-             (default-convention calling-convention)
-             calling-convention)))
+  (let ((calling-convention (as-calling-convention calling-convention)))
     (λ (super self x)
       (if (not x)
         (extend-record 'arity (calling-convention 'arity)
@@ -3242,7 +3415,7 @@ let Y = f: (x: x x) (x: f (x x));
                (invoker (spec 'invoker))
                (compute-effective-method (spec 'compute-effective-method))
                (multimethods (spec 'multimethods)))
-          (apply-generic-function arity accepter invoker compute-effective-method multimethods self x))))))
+          (apply-generic-function arity accepter invoker compute-effective-method multimethods x))))))
 
 (let ()
   (defpoi Shape)
@@ -3251,7 +3424,7 @@ let Y = f: (x: x x) (x: f (x x));
   (defpoi Square :e (constant-field-spec 'type 'square) :p Rectangle Lozenge)
   (defpoi known-ancestor-pairs
     :e (generic-function-spec
-        2 (K compute-effective-method/list)
+        2 compute-effective-method/list
         `((list (,Shape ,Shape) ,(constant-spec (K '(shape shape))))
           (list (,Rectangle ,Shape) ,(constant-spec (K '(rectangle shape))))
           (list (,Shape ,Rectangle) ,(constant-spec (K '(shape rectangle))))

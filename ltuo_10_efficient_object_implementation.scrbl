@@ -24,11 +24,11 @@ mappings from identifier to value.
 This is despite the fact that the rules of inheritance,
 that characterize the semantics of OO as such,
 say nothing whatsoever about records,
-as we saw in chapters @seclink["MOO"]{5} to @seclink["IMSMO"]{7}.
+as I discussed in chapters @seclink["MOO"]{5} to @seclink["IMSMO"]{7}.
 
 Instead, in an even more fundamental way, records matter tremendously to OO because
 the entire point of OO is to enable modular extensible programming,
-and records are the very unit of modularity, as we saw in chapter @seclink["OOaIEM"]{4}.
+and records are the very unit of modularity, as seen in chapter @seclink["OOaIEM"]{4}.
 Indeed, records, i.e. products of (mostly) independent values labelled by meaningful names,
 verily embody the combined efforts of the independent developers
 who contribute to some software project.
@@ -177,7 +177,7 @@ in chaining records-as-arbitrary-functions.
 @subsection[#:tag "RaFM"]{Records as Finite Maps}
 
 @subsubsection{From Implicit to Explicit Alists}
-The only primitive that we could afford given arbitrary functions as records,
+The only primitive that I could afford given arbitrary functions as records,
 was the @c{extend-record} primitive, that added one binding to an existing record,
 ultimately from the @c{empty-record}.
 I could use the @c{case} primitive of Scheme to add several bindings at a time,
@@ -723,7 +723,7 @@ yet the more sophisticated such methods get,
 the more discipline they will require from programmers, who are notoriously bad at it.
 And even such sophisticated protocols will have limitations
 that require the occasional use of uninitialized or null values.
-They will still not be as flexible as the simple pure functional protocol we defined
+They will still not be as flexible as the simple pure functional protocol I defined
 when used with laziness.
 
 @subsubsection{Initialization through Mutation is Too Low-level}
@@ -860,7 +860,7 @@ However you may suspend computations, here are efficient ways to organize and re
 
 @subsection{Objects From Computation to Structure}
 
-How do we arrange things in memory?
+How may I arrange things in memory?
 Field ordering and offsets.
 Classes, explicit or inferred
 (Self maps, V8 (Chrome) hidden classes, SpiderMonkey (Firefox) shapes, object descriptors,
@@ -903,7 +903,7 @@ The MOP as a reflective tower.
 
 Tying together all the bells and whistles in defining
 bindings, representations, objects, classes, methods, combinations, etc.
-We adapt and generalize the techniques from AMOP in a pure functional setting.
+I adapt and generalize the techniques from AMOP in a pure functional setting.
 
 
 @subsection{Reflection: Introspection and Intercession}
@@ -922,7 +922,7 @@ Different capabilities for objects and their meta-objects => more security.
 
 Controlling Meta-Objects,
 from Synchronous Message-Passing Proxies to Fully Abstract Asynchronous Containers.
-We can only briefly survey this topic, maybe reusing the Collapsing Towers of Interpreters.
+I can only briefly survey this topic, maybe reusing the Collapsing Towers of Interpreters.
 
 
 @subsection{Side-Effects}
