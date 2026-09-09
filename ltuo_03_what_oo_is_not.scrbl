@@ -466,7 +466,7 @@ you should, when that makes sense, do so as part of a smaller specification
 that you then compose as a target.
 Still, the above is a heuristic. “When that makes sense.” But what makes sense when?
 
-@subsubsection{Beyond Heuristics: Understanding}
+@subsubsection[#:tag "BHU"]{Beyond Heuristics: Understanding}
 
 It is always preferable to base decisions
 on an actual understanding of the domain being modeled,

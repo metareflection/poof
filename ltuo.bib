@@ -4536,6 +4536,21 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 
 %% 2005
 
+@InProceedings{Gonzalez2005,
+  author={Sebastián González and Wolfgang De Meuter and Kim Mens},
+  title={Multiple Dispatch for Ambient Intelligence},
+  booktitle={Proceedings of the First Workshop on Object Technology for Ambient Intelligence},
+  year={2005},
+  address={Glasgow, UK},
+  url={https://citeseerx.ist.psu.edu/document?doi=32a4ebc6a768b1d2195689b6d3f0d5c732875283},
+  note={
+    Argues for prototype-based multiple dispatch as a basis for ambient-intelligence systems,
+    using the model from Salzman 2005.
+    Particularly relevant to the book for its receiver-neutral view of multimethods
+    and its treatment of subjective dispatch,
+    where an implicit layer argument is prepended to the dispatch argument list.}
+}
+
 % https://github.com/nkaretnikov/OOHaskell
 % https://arxiv.org/pdf/cs/0509027
 % https://api.semanticscholar.org/CorpusID:13547784
@@ -4609,12 +4624,13 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     Multi-methods are internalized as objects (as in the CLOS MOP),
     allowing more flexibility than an second-class dispatch mechanism across a static ancestry.
     In an invocation, each argument, an object, plays a role, that correspond to its argument position.
-    Applicable methods are sorted in the total order of a depth-first by
-    argument position, time of method creation (for overrides), and method specificity;
-    the ordering is a bit like linearization in CLOS, but
-    happens dynamically due to dynamic inheritance.
+    Applicable methods are sorted in the total order of
+    a depth-first traversal (with visited-set maintenance to avoid exponential duplicates)
+    by argument position,
+    time of method creation (for overrides), and method specificity;
+    the ordering is a bit like linearization in CLOS, adapted to support dynamic inheritance.
     Some optimizations on traversing the applicable methods ensure that the usual case
-    of single-dispatch is efficiently implemented as part of the regular multiple dispatch algorithm.
+    of single-dispatch is efficiently implemented as part of the regular multiple dispatch algorithm.e
     There is even support for subjective dispatch, with
     a global implicit additional argument on which to dispatch in zeroth position.
     All in all quite an interesting innovative design for method dispatch,

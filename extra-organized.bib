@@ -44,6 +44,25 @@
   numpages={1}
 }
 
+%% 1965
+
+@TechReport{VanWijngaarden1965,
+  author={Adriaan van Wijngaarden},
+  title={Orthogonal Design and Description of a Formal Language},
+  institution={Mathematisch Centrum},
+  address={Amsterdam},
+  number={MR 76},
+  year={1965},
+  month={October},
+  url={https://ir.cwi.nl/pub/9208},
+  note={
+    Early and influential statement of orthogonality as a programming-language design principle:
+    language features should be chosen and combined systematically
+    rather than through a proliferation of special cases.
+    Written in the context of the work that led to ALGOL 68, and
+    useful as a historical source for the notion of orthogonal language design.}
+}
+
 %% 1966
 
 @Article{Landin1966,
@@ -1124,8 +1143,10 @@
   title={Object-Oriented Software Construction},
   publisher={Prentice Hall},
   year={1988},
-  note={Notably introduces the open–closed principle.}
-}
+  note={Notably introduces the open–closed principle:
+   open for extension, closed for modification.
+   i.e. there is code (classes) that you can extend but not in place.
+}}
 
 @Book{Rydeheard1988,
   author={David E. Rydeheard and Rod M. Burstall},
@@ -1952,6 +1973,19 @@
   doi={10.1007/978-1-4613-1437-0_5},
   url={https://doi.org/10.1007/978-1-4613-1437-0_5},
   note={Objects at the terminal side: observation, bisimilarity, final coalgebra}
+}
+
+@Article{Smith1996,
+  author={Randall B. Smith and David Ungar},
+  title={A Simple and Unifying Approach to Subjective Objects},
+  journal={Theory and Practice of Object Systems},
+  volume={2},
+  number={3},
+  pages={161--178},
+  year={1996},
+  doi={10.1002/(SICI)1096-9942(1996)2:3<161::AID-TAPO3>3.0.CO;2-Z},
+  url={https://citeseerx.ist.psu.edu/document?doi=dd53734e0e455e5ce9f1c0e20da1eccd5658fd75},
+  note={Introduces subjective objects and the perspective-receiver symmetry principle, contrasting them with ordinary objective objects whose behavior is independent of the observer. Provides the conceptual basis for treating subject and receiver as dual dimensions of dispatch.}
 }
 
 @InProceedings{Steyaert1996,
@@ -3334,6 +3368,38 @@
   doi={10.1017/S0956796808006928},
   url={https://doi.org/10.1017/S0956796808006928},
   note={Shows how extensible language layers can be constructed compositionally, relevant to metaobject protocols and language-oriented modularity.}
+}
+
+@Article{Gonzalez2008,
+  author={Sebastián González and Kim Mens and Alfredo Cádiz},
+  title={Context-Oriented Programming with the Ambient Object System},
+  journal={Journal of Universal Computer Science},
+  volume={14},
+  number={20},
+  pages={3307--3332},
+  year={2008},
+  doi={10.3217/jucs-014-20-3307},
+  url={https://www.jucs.org/jucs_14_20/context_oriented_programming_with/jucs_14_20_3307_3332_gonzalez.pdf},
+  note={Presents AmOS, the prototype-based core of Ambience, with first-class closures, multimethods and contexts. It develops subjective dispatch into a mechanism for dynamic method scoping, using an implicit context-related dispatch argument and dynamically changing delegation graphs. Relevant to the book mainly as a later development of subjective multimethod dispatch; the 2005 paper is the more direct citation for the choice to place the implicit argument first.}
+}
+
+@Article{Hirschfeld2008,
+  author={Robert Hirschfeld and Pascal Costanza and Oscar Nierstrasz},
+  title={Context-oriented Programming},
+  journal={Journal of Object Technology},
+  volume={7},
+  number={3},
+  pages={125--151},
+  year={2008},
+  month={March},
+  doi={10.5381/jot.2008.7.3.a4},
+  url={https://www.jot.fm/contents/issue_2008_03/article4.html},
+  note={.
+    Presents message dispatch as multidimensional:
+    procedural dispatch selects by name, ordinary OO additionally by receiver,
+    subjective programming additionally by sender,
+    and context-oriented programming additionally by execution context.
+    Particularly useful for understanding subject and object as orthogonal dispatch dimensions.}
 }
 
 % Code Compression
