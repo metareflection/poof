@@ -114,10 +114,10 @@ you still have a view function @c{s → a} to extract an inner value from the ou
 but your update function now has type @c{(a → b) → s → t},
 so that the inner change in value can involve different input and output types,
 and so can the outer change in context.
-But the starting points of the update function are the same as
-the start and end points of the view function,
-so that you are updating the same thing you are viewing.
-Monomorphic lenses are a special case of polymorphic lenses.
+But the type parameters @c{s} and @c{a} shared between the view and update types
+express the constraint that you are updating the same thing you are viewing.
+Monomorphic lenses are a special case of polymorphic lenses
+where the updates don’t affect the types of either the focused value of the context value.
 @Code{
 type PolyLens s t a b =
        { view : s → a ; update : (a → b) → s → t }
@@ -308,7 +308,7 @@ type SSkewLens inherited required newlyProvided
   ∀ previous, final : Type
     final ⊂ sequired final, previous ⊂ (jnherited final) ⇒
   ∃ super, self : Type
-    self ⊂ required self, super ⊂ (inherited self) ⇒
+    self ⊂ required self ∧ super ⊂ (inherited self) ∧
   { view: final → self ;
     update : (super → super ∩ (newlyProvided self)) →
              (previous → previous ∩ (newlyQrovided final)) }
@@ -406,7 +406,7 @@ prepending to the local order (as a total order, i.e. as a list of parents,
 or better, as a partial order, i.e. as a list of lists of parents,
 for multiple or optimal inheritance).
 This approach works well, and takes advantage of regular skew lenses
-with their usual simple laws.
+with their usual categorical laws.
 But it fails to specifically leverage the context view part of skew lenses,
 and only leverages their focus update part;
 thus it fails to extend the notion of focused specification
@@ -668,7 +668,10 @@ nor to insert heavy syntactic markers all over the place.
 Of course, dynamic OO languages, whether Prototype OO languages or Class OO languages with reflection,
 have always been able to express these nested specifications and their overriding the hard way.
 But credit where credit is due, BETA@~cite{Kristensen1987}
-was the first language that explicitly supported such nested specifications,
+was the first language that explicitly supported the overriding of nested specifications@xnote[","]{
+  Simula had nested classes, but not nested @emph{virtual} classes:
+  you couldn’t override a nested class while overriding a class.
+}
 with its virtual patterns, and the author of the successor gBeta @~cite{Ernst2000}
 explicitly explored the resulting notion of “family polymorphism”. @;TODO cite Ernst2001 Ernst2006
 This proves that the “Scandinavian school” advanced OO in more ways
@@ -715,7 +718,8 @@ nodes that are irrelevant with respect to their modular extension
 are actually relevant with respect to introducing conflicts (in the flavorless case)
 or ordering constraints (in the flavorful case).
 Thus, you can’t filter out ancestors based on their direct modular extension not modifying the focus;
-you can only filter out ancestors all of whose transitive ancestors do not modify the focus.
+you can only filter out an ancestor if neither it nor any of its transitive ancestors
+modifies the focus.
 
 Now how does ancestry management work when writing specifications with multiple inheritance?
 At the top-level, the parent DAG of a specification looks very much
@@ -882,7 +886,7 @@ in the ancestry so far, or maybe around the entire object—such global wrapping
 (you must make sure to run this wrapping last,
 or else every additional extension not in the currently wrapped set must coordinate).
 If possible, you are better off avoiding non-modular extensions and instead
-defining intermediate objects you can extend independently from the wrapping.
+defining intermediate objects you can extend independently of the wrapping.
 Systematizing this pattern is what method combinations do.
 Another non-modular extension, when using optimal inheritance,
 is to turn the suffix flag on for performance, or to turn it off for semantic compatibility
@@ -933,10 +937,13 @@ to be passed in the future, while the method has to be attached to the class som
 
 Moreover, since methods may use @c{next-method} to invoke the inherited behavior,
 the instance on which the method is called need not be an instance of the class
-in which a method is defined: it can be an instance of any subclass thereof
+on which a method is defined: it can be an instance of any subclass thereof
 (unless the class is somehow “final”).
-Thus the method body must not assume its argument’s type,
-but if needed dynamically extract it from the argument’s magic @c{#t} field,
+Thus the method body must not assume its argument’s type
+(reminder: as seen in @secref{TfOO}, subclasses do not induce subtypes,
+contrary to widespread belief).
+However, if needed the body can dynamically extract (a descriptor for) that type
+from the argument’s magic @c{#t} field,
 using dynamic dispatch rather than static dispatch (@secref{DvSD}).
 
 Yet again, for an @emph{efficient} @c{next-method},
@@ -952,8 +959,8 @@ Now, when using single inheritance, you can cheaply compute the method’s super
 from the current class only: it is the class’s parent.
 But when using multiple or mixin inheritance, this does not apply, and the super must instead
 be found in the precedence list, which from the current specification
-can be an O(n) sequential search, or
-a hash-table lookup which is O(1) but involves a large constant factor;
+can be an @c{O(n)} sequential search, or
+a hash-table lookup which is @c{O(1)} but involves a large constant factor;
 thus a more efficient implementation will somehow pass the rest of the precedence list.
 Also note that for the sake of efficiency, the computation of an effective method,
 though somewhat expensive, can be cached, and
@@ -1320,9 +1327,14 @@ during another rewrite of ASDF.
 
 These methods allow ASDF to be written in a very modular and extensible style, and
 to achieve in a few thousand lines of code (and a few more for Quicklisp)
-what takes ten times more code in other languages@xnote[","]{
+what takes many times more code in other languages@xnote[","]{
+  ASDF 3.3.7.4 has 6321 lines of heavily documented and commented code for the build logic,
+  plus 7820 lines of similar code for a general-purpose portability layer
+  to 17 different implementations.
+  ASDF manages build coherence across all source trees of all dependencies,
+  across multiple phases of extension of the build system from the build system @~cite{Rideau2014}.
   As an exercise, compare the size of ASDF to that of
-  a simple build system in these languages.
+  roughly equivalent build systems and toolchains in other languages.
 }
 all the while exposing an extension interface actually used by many extensions:
 support for compiling and linking C, Fortran or Python code,
@@ -1424,7 +1436,7 @@ Thus, the @c{primary} sub-method, the @c{before} sub-method, etc.
 Indeed, when manually expressing method combinations as a design pattern,
 each sub-method would be expanded into a separate method.
 
-@subsection{Representing sub-methods}
+@subsection{Representing Sub-Methods}
 
 The best way to store sub-methods would be if there were “funcallable instances”
 (to use CLOS terminology; like instances in T, that are funcallable in general)
@@ -1543,8 +1555,9 @@ methods try to invoke their @c{super} argument as a @c{call-next-method}@xnote["
   if there are no primary methods, without trying to run secondary methods,
   when my implementation instead evaluates a handler that could raise an error,
   but my simple method combination returns a neutral element.
-  CLOS raises a @c{no-next-method} error is raised when you try to @c{call-next-method}
-  without a next method, when I simply abort (Scheme lacks a condition system like Common Lisp).
+  CLOS invokes the generic function @c{no-next-method} (that by default raises an error)
+  when you try to @c{call-next-method} without a next method,
+  when I simply abort (Scheme lacks a condition system like Common Lisp).
   Modifying my code to account for all the subtleties of CLOS is left
   as an exercise to the reader.
 }
@@ -1639,7 +1652,8 @@ Users can also define their own simple method combinations as follows,
 where @c{name} is the name of the sub-method
 (and also conventionally that of the method combination),
 @c{stop?} a predicate on a result value saying whether to short circuit evaluation,
-@c{op0} a thunk to evaluate if there are no methods (takes one dummy argument for curried style),
+@c{op0} a notional thunk to evaluate if there are no methods
+(actually takes one dummy argument for curried style),
 @c{op1} a unary operator to run on the first method result to make it into a return value,
 @c{op2} the (curried) binary operator with which to combine
 the result from the next method and the return value from previous computations
@@ -2220,19 +2234,14 @@ I will present it with classes as is usual, but it generalizes to arbitrary spec
     with the current object (of class @c{Foo} indeed) as parameter.
     The visitor pattern is thus an instance of double dispatch,
     wherein programmers essentially create a translation
-    from the class namespace to the method namespace.
-  }
+    from the class namespace to the method namespace.}
   @item{
-    Each visitor can then provide a method for each of the classes it wants to support;
-    and visitors can themselves be extended with further methods to support further classes,
-    making them more extensible than e.g. pattern-matching on argument classes.
-  }
+    Each visitor can then provide a method for each of the classes it wants to support.}
   @item{
     By having the visitor object abstract over both the specific operation
     and the further arguments, you can use chains of visitors to implement all kinds of operations.
     Compared to regular double dispatch, the visitor pattern is more general, and
-    crucially allows for new visiting operations to be defined after the class is defined.
-  }]
+    crucially allows for new visiting operations to be defined after the class is defined.}]
 
 Compared to double dispatch, the visitor pattern involves even more boilerplate:
 having to define visitor classes with all the required information.
@@ -2250,6 +2259,12 @@ Importantly, and unlike double dispatch, the visitor pattern allows new visitors
 to be defined after a class was defined:
 its class-to-method namespace translation can be seen as a manual implementation of
 a runtime-reflection facility that can enable dynamic behavior even in a static language.
+However, in a statically typed second-class Class OO language,
+@emph{modularly} extending an existing visitor pattern to support new classes to dispatch on
+without modifying the old visitor protocol requires careful use of self-types
+for correct static types (F-bounded polymorphism, MyType, CRTP, etc.), and
+will also require a new subclass for every operation that needs to apply to the extended visitor.
+In other words, extensibility of visitors is possible, but noticeably tedious and costly.
 
 Finally, at least in the commonly described variants
 of either double dispatch or the visitor pattern,
@@ -2278,7 +2293,8 @@ as complex yet no-longer-helpful design patterns.
 They are replaced by “just use the system-provided multiple dispatch”.
 Suddenly, these methods become simple to write, extensible for both arguments,
 without the visibility issues of double dispatch and visitors
-(any method can see the state of any argument it matches);
+(assuming a method, if allowed to be written,
+is granted the right to see the state of any argument it matches);
 moreover, you can achieve full win-win composability of the methods
 if using flavorful multiple inheritance or optimal inheritance with multimethods (as in CLOS),
 and not something flavorless (as in Cecil).
@@ -2307,11 +2323,12 @@ And other languages sadly just adopt conflict all the way
 
 Yet, the same argument in favor of linearization applies
 for multiple dispatch as well as for multiple inheritance:
-Any side-effects in your methods (that, in the general case, exist)
+Any side-effects in those methods that will run (that, in the general case, exist)
 will necessarily be ordered one way or the other;
 the only question is whether the system automates a coherent order,
 or puts the onus onto users—at which point it will be both onerous and incoherent.
-Linearization is the necessary process that solves this ordering consistently
+Linearization is the necessary process that automatically solves this ordering consistently
+while also not dropping any method
 (see the desirable consistency constraints described in @secref{CiMR}).
 Any rejection of linearization leads to a “conflict” view of inheritance (or lack thereof),
 that is costly, inexpressive, lossy, and generally counter-productive.
@@ -2324,7 +2341,7 @@ it has a clear precedence based on the first argument,
 and it nicely extends single dispatch on the first argument,
 in that methods specialized on the first argument
 will be ordered relative to each other the same as if dispatching on just that argument.
-The linearization necessarily induces an asymmetry between arguments,
+The lexicographic linearization necessarily induces an asymmetry between arguments,
 and it is important to choose the correct order of arguments when designing a multimethod protocol:
 the argument that most crucially affects the behavior of the method
 should appear first in the signature.
@@ -2337,12 +2354,12 @@ code transpiled to Lisp, etc.)@xnote["."]{
   @hyperlink["https://asdf.common-lisp.dev/"]{ASDF} in 2001,
   chose this order correctly, when Kent Pitman’s
   @hyperlink["https://nhplace.com/kent/Papers/Large-Systems.html"]{much older design document}
-  that inspired him had the arguments in the reverse order.
-  I believe that order would have made things harder.
+  that inspired him had the arguments in the opposite order—which I believe
+  would have made things harder.
 }
-Of course, if the operation is commutative (e.g. addition)
-then the order of arguments does not matter, but this is the exception, not the rule;
-and small rare or hidden side-effects often make a commutative-looking operation not-so-commutative.
+Of course, if the operation is commutative (e.g. addition),
+the side-effects from evaluating the methods that yield the arguments to the operation
+do not usually commute, and the method order matters.
 
 Like the multiple inheritance that it extends (@secref{RSaDN}),
 multiple dispatch relies on the ability to reify the graph nature of computations
@@ -2434,6 +2451,8 @@ that filters which objects the specializer applies to.
 I have implemented multiple dispatch in the code accompanying this book.
 Here are the highlights of this implementation.
 You may skip this section if satisfied with its semantics.
+
+@subsection{Who Owns the Methods?}
 
 I started from an implementation of Prototypes with Optimal Inheritance (acronym POI),
 mixing the lessons of @secref{ROOfiMC} and @secref{IMSMO}. @; (ch 6 and 7)
@@ -2545,17 +2564,27 @@ if there was no global linearization order on which to pre-sort them@xnote["."]{
   but the composed list-prependers have the advantage of remaining pure without a monad.
 }
 In any case, effective method computation can be quite slow, and
-the results are better cached for efficiency. @;TODO @secref{ch10}
-Then, you only pay the price once per call “shape” (tuple of specifications),
+the results are better cached for efficiency, @;TODO @secref{ch10}
+after which further calls are cheaper than would be a naive implementation of visitors.
+Thus, in a proper implementation of multiple dispatch, you only pay the full price
+once per call “shape” (tuple of specifications),
 which if you are using static classes only happens a finite and relatively small
-number of times in the program—whereas emulating the same semantics the naive way
-with double-dispatch or the visitor pattern without system support for multiple dispatch
-is precisely what would make the entire thing inefficient at every call.
+number of times in the program.
 And in fact, in the rare case that call shapes are indeed very dynamic,
 so that the cache keeps missing, then you are precisely in the situation
 where you most need the expressiveness of multiple dispatch, since
-you are dynamically defining what would be extremely tedious with the visitor pattern
-(and mere double-dispatch is too static for that situation).
+you are dynamically defining what would be extremely tedious
+with the visitor pattern or double-dispatch.
+
+The naive way of using double-dispatch or the visitor pattern
+would both require a lot of boilerplate and be less performant,
+while introducing a heavy maintenance burden.
+A non-naive way of using double-dispatch or the visitor pattern
+to achieve the same semantic features and optimizations as properly implemented multiple dispatch
+would require even more boilerplate, still be less performant,
+and soon become a maintenance nightmare:
+having programmers manually do the job of a compiler and having to maintain
+a lot of invariants by hand as the system evolves, without the help of automated enforcement.
 
 Another issue with multiple dispatch, that only gets more “interesting”
 when using curried functions for handling arguments, is that the generic function
@@ -2611,9 +2640,11 @@ Subjective dispatch in first position can then enable context-dependent methods
 to completely override the meaning of programs in arbitrary ways, overriding any other method;
 whereas subjective dispatch in last position can only minimally alter program behavior,
 making it a weakly expressive mechanism that might not be worth the complexity it brings.
-That is how @citet{Gonzalez2005} found that to make subjective dispatch usable,
-and give it enough semantic weight to be worth the trouble,
-it was better to put the subjective argument first.
+a high-priority subject can provide methods that intercept and control behavior
+early in the effective method, when a low-priority cannot.
+That is how @citet{Gonzalez2005} found that subjective dispatch was more usable
+with the subjective argument first,
+and giving the feature more semantic weight, so it might be worth the trouble.
 @; TODO also cite Gonzalez2007 Gonzalez2008 Hirschfeld2008
 
 @subsection{Global Dispatch Tables}
@@ -2660,11 +2691,14 @@ the “expression problem”, etc@xnote["."]{
   But the point is that the independent definition of classes, protocols and methods is
   a huge feature, and not a bug, though it appears wrong if you look at it the wrong way.
 }
-The impossible extension ownership conflicts dissolve when one realizes
+The impossible extension ownership conflicts dissolve, when one realizes
 the unit of coherent extension was never the individual class or object or function,
-but the entire program or library being modified. Indeed, logical “laws” interrelating
-functions and data structures always prevented the unilateral extension of a single entity
+but the entire program or library being modified.
+Indeed, logical “laws” interrelating functions and data structures
+always prevented the unilateral extension of a single entity
 from ever being valid, except in the simplest and least meaningful of cases.
+Once the locus of coherent semantics is established,
+properly situated solutions become possible to address coherence extension.
 
 Extending a specification at a given “location” to declare additional methods
 is essentially “monkey patching”, i.e. modifying code in place,
@@ -2778,10 +2812,10 @@ etc.
 wherein a first-class entity, the object, or its “virtual dispatch table”,
 serves as a module that specifies at runtime what code to run.
 From this point of view, it is a feature @emph{in addition to}
-the second-class modularity (and modular extensibility) of Class OO.
+the second-class modularity (and modular extensibility) of second-class Class OO.
 By contrast, static dispatch embodies second-class modularity only,
 which is necessarily implied as a subset of
-the second-class modular extensibility of Class OO.
+the second-class modular extensibility of second-class Class OO.
 
 In Prototype OO, every prototype’s target is a first-class record
 that exists at runtime, the fields of which are looked up to determine the behavior of a program.
@@ -2794,18 +2828,21 @@ in that case, using Prototype OO to generate some algorithm
 involves first-class modular extensibility, whereas using the algorithm afterwards
 might not use it. But the two are not separated by formal execution “stages”.
 
-On the other hand, Class OO embodies second-class modular extensibility,
+On the other hand, second-class Class OO embodies second-class modular extensibility,
 and indeed introduces a formal separation between a compile-time execution stage
 during which classes are defined, and a runtime execution stage during which they are used.
 And second-class modular extensibility does not imply first-class modularity.
 
-Now, a few languages do offer Class OO as first-class modular extensibility
-through reflection facilities that can interleave or blur stages of evaluation;
-but these days, these languages and the use of those facilities even in those languages,
-are the exception rather than the rule.
+Now, even languages with first-class Class OO usually expose it through an API
+that looks like second-class Class OO, and that regular users use as if it were,
+even when they could do more: they write a finite set of classes known at compile-time, and
+these classes are constant at runtime after initialization,
+with a constant inheritance hierarchy, a constant set of fields and methods, etc.
+The dynamic features are mostly used for interactive development and debugging.
 
-In the opposite direction, you could very well have Class OO without first-class modularity,
-and indeed that is what happens when you stick to static dispatch in C++, Java or C#, etc.:
+In the opposite direction, you could very well have Class OO
+without first-class modularity, and indeed that is what happens
+when you stick to static methods and static dispatch in C++, Java or C#, etc.:
 the method selection is completely determined at compile-time,
 code paths not depending on runtime lookup of object type descriptors.
 It is easy to imagine a Class OO language that only has static dispatch
@@ -2845,7 +2882,7 @@ than the much more rigid static approach.
 Furthermore, there is now plenty of precedent for
 layering a typesystem on top of a dynamic language,
 as TypeScript demonstrated for JavaScript, bringing
-much of the safety and performance of static systems on top of dynamic systems,
+much of the safety and tooling of types on top of dynamic systems,
 though also much of their complexity.
 
 On the other hand, dynamic dispatch necessarily adds overhead at runtime
@@ -2885,7 +2922,7 @@ Developing with such a typesystem involves either a lot of programmer annotation
 or a lot of sophistication in type inference infrastructure
 that both human and machine understand and agree upon.
 Static dispatch is thus intrinsically more complex and costlier than dynamic dispatch
-to use and implement.
+to use and implement, once you factor the cost of this infrastructure.
 Static dispatch is also intimately tied to the specific details of whichever typesystem is used,
 which vary in myriad ways big and small from language to language, and version to version.
 
@@ -2938,7 +2975,7 @@ It was minimal in the sense of being the simplest that explains OO to a function
 A language can be even less capable and still meet the minimal requirements for supporting OO:
 it would have second-class Class OO with static dispatch only, not even dynamic dispatch.
 Thus, just because a language supports a minimally capable form of OO
-does not make its users somehow magically enjoy the benefits of the minimal OO model,
+does not make its users somehow magically enjoy the benefits of the Minimal OO model,
 much less those of the most advanced forms of OO.
 
 With this chapter, I have instead tried to suggest Maximal OO:
@@ -2972,7 +3009,7 @@ onto which to attach richer inheritance structures@xnote["."]{
   extending the prototype non-trivially may involve a polymorphic lens.
   These two prototypical prototype operations would not be possible
   if the lenses involved non-trivial skew.
-  And prototypes are also the locus of at which
+  And prototypes are also the locus at which
   efficient implementation techniques apply (@secref{EOI}).
 }
 Thus, my presentation of OO is maximal not because it includes every imaginable feature,
@@ -3027,7 +3064,14 @@ but because it offers a framework to keep expanding the scope of OO itself.
   @item{
     A function @c{class-constructor} that given a class and as many arguments as there are
     mandatory fields (curried the usual way), in order, constructs an element of the class
-    where each mandatory field has the value given from the arguments, in order.}]
+    where each mandatory field has the value given from the arguments, in order.}
+  @item{
+    A memoization mechanism, so that base-instance, or
+    instances generated by participating functions, do not generate
+    lots of new equivalent objects at every invocation with empty or otherwise equal keys.}
+  @item{
+    A dispatch-on-type mechanism so you can have multiple dispatch in Class OO,
+    rather than only in Prototype OO.}]
 
 @exercise[#:difficulty "Easy"]{
   Write efficient implementations of the missing simple CLOS method combinations,
