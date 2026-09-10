@@ -2859,43 +2859,118 @@ already stick to only using such a dialect.
 
 @subsubsection[#:tag "DD"]{Dynamic Dispatch}
 
-Dynamic dispatch is easy to implement in a few lines of code (again, as in @secref{SFCTD}).
-It requires much less mental and software scaffolding to implement and use than static dispatch,
-since it does away with the entire static type infrastructure.
-Indeed, dynamic dispatch is readily available to all programming languages,
-whether they are statically typed or not,
-and, importantly, to all programming language users and implementers,
-whether or not they are willing to invest upfront in the expensive type scaffolding.
+Dynamic dispatch for Class OO is easy to implement in a few lines of code (@secref{SFCTD}).
+It offers a semantics that all OO programmers can understand, implement, use, and agree on.
+By contrast, static dispatch presupposes some kind of static typesystem@xnote[","]{
+  The very notion of static dispatch supposes a decision on which method to use
+  is made based on some kind of static analysis.
+  @citet{Cousot1997} shows that any static analysis you’d use would be equivalent to a typesystem,
+  even if you don’t dare call it one, even if the typesystem is
+  neither writable nor legible enough for humans to manually produce and consume.
+}
+some staging between two layers of evaluation, one “static” and “dynamic”,
+none of which even exist in a dynamic language.
+Static dispatch is impossible to directly express in a dynamic language alone,
+even less possible to agree on@xnote["."]{
+  Any two static languages will each have their own static typesystem,
+  and the subtlest of differences between these two languages and their typesystems
+  lead to significantly different algorithms for method selection, such that even between
+  close dialects, there is no common semantic ground for agreement
+  on what static dispatch precisely means.
+  And then there’s the issue of unsoundness in typesystems.
+}
 
-Thus, only dynamic dispatch offers a semantics
-that all OO programmers can understand, implement, use, and agree on,
-whereas static dispatch is not even applicable to dynamic OO languages.
-Inasmuch as one is looking for a dispatch strategy that is “natural” to Class OO,
-and that can be universally adopted by both dynamic and static languages,
-then necessarily this dispatch strategy must be dynamic dispatch.
-That is why in practice all Class OO languages offer dynamic dispatch at least as an option
-(even though, as I mentioned, one could imagine a Class OO language with only static dispatch).
+When layering first-class Class OO on top of first-class Prototype OO (@secref{RCOO}),
+itself possibly layered on top of Minimal OO (@secref{RPOO}),
+itself possibly implemented in two lines of code (@secref{MOO}),
+dynamic dispatch is right there, whereas the mental and software scaffolding
+for a compiler, typesystem, code generator, staging, etc., are missing.
+Surely, this scaffolding can be built—and indeed has been built in the past—on top of
+any universal language, and even on top of a bare computer.
+But inasmuch as there is one semantics that is ready at hand,
+and that all OO programmers can understand and agree upon,
+it is dynamic dispatch, and not static dispatch.
+
+That is why dynamic dispatch is “natural” to Class OO,
+and has been universally adopted by both dynamic and static languages that support Class OO,
+whether first-class or second-class Class OO—at least as an option.
+And this holds even though, as I mentioned, one could imagine a second-class Class OO language
+with only static dispatch and no dynamic dispatch—at which point,
+it would just be first-class Prototype OO at compile-time
+in which to generate static code at a later “runtime” stage.
+And indeed you can do just that with C++ templates.
 
 The dynamic approach also allows for much more experimentation,
 and amplification of successes and correction of failures,
-than the much more rigid static approach.
+than the much more rigid static approach@xnote["."]{
+  A complete dynamic object system in Lisp ranges
+  from a dozen lines of code for a minimal one
+  (literally a first- or second-year programming exercise),
+  to a few kloc (thousand lines of code) with a lot of features and optimizations.
+  There have been hundreds of different object systems in Lisp;
+  experimentation is easy, with so little to change to achieve original effects,
+  yielding both the very first OO systems and the most far out.
+
+  By contrast, experimenting with a static object system involves having
+  a compiler and a typesystem, and enough variety of types
+  to make the static types worth using.
+  This will typically already set you back deca- or hecto- klocs,
+  but will also trap you in rigid infrastructure where you can’t make a small change somewhere
+  without making big changes everywhere, and any non-trivial innovation becomes a major undertaking.
+
+  A Lisper can hear of a feature and have implemented the next day.
+  A blubber may have to refactor significant parts of his system over weeks
+  to add the same feature to his system and fix all the types everywhere.
+  Maybe the advent of cheap AI will change this cost equation;
+  but there’s a reason why heretofore, first-class OO has run circles around second-class OO
+  in terms of breadth of features implemented and speed at which they could be experimented with.
+
+  Flavors, under 1.5 kloc in 1979, had richer OO features
+  than C++ with 12kloc in 1985 or 30kloc in 1989.
+  Meanwhile, tens of very different Lisp OO systems were built
+  in the same timeline that C++ went from one version to the next,
+  including several path-breaking innovations in the Flavors lineage alone.
+
+  Now, do the types of C++ or C# buy something? Certainly they do.
+  But it is important to understand the price you pay for them.
+}
 Furthermore, there is now plenty of precedent for
 layering a typesystem on top of a dynamic language,
 as TypeScript demonstrated for JavaScript, bringing
 much of the safety and tooling of types on top of dynamic systems,
-though also much of their complexity.
+though also much of their complexity@xnote["."]{
+  TypeScript erases its types from JavaScript it generates before it is read and evaluated
+  by the JavaScript runtime, and thus these types cannot directly guide runtime optimization.
+  And yet, the fact that the code did typecheck indirectly means that
+  the runtime’s own static analyses are more likely to succeed and lead to faster code;
+  and even when these analyses fail, or when the runtime doesn’t hard enough,
+  a simple dynamic cache for type-conscious generated code snippets,
+  as present in high-performance runtimes, will be much more effective than it would have been
+  without the uniform types brought that static typechecking guarantees.
+  Therefore, yes, static typing from TypeScript does improve performance of JavaScript code.
+  Just not in a very predictable way.
+}
 
-On the other hand, dynamic dispatch necessarily adds overhead at runtime
-to each method call that uses it. This overhead can be kept small in the common case,
-thanks to caching and sealing; but it remains irreducible in the worst case,
+On the other hand, dynamic dispatch necessarily adds overhead at runtime.
+The overhead can be kept small in the common case,
+but it remains irreducible in the worst case,
 especially in an interactively extensible system.
-Marking classes as sealed, final, or suffix, as well as a modicum of
-type declarations or type inference, can reduce dynamic dispatch to static dispatch,
-in many parts of a program where performance matters.
-And even when that is not possible, repetitive usage patterns mean that
-the results of dynamic method dispatch can be cached, so that most of the time,
-one only needs to access the same effective method as the last time or one of the last few times,
-which can be quickly checked.
+Common optimization techniques that reduce the overhead include:
+marking classes as sealed, final, or suffix;
+a modicum of type declarations or type inference;
+dynamic caching of just-in-time compiled code blocks based on
+previously seen combinations of relevant variable types.
+Thanks to these techniques, most code is executed without dynamic typechecks,
+as dynamic dispatch is practically reduced to static dispatch.
+Tight loops where performance matters most are especially likely to be optimized
+for their repetitive usage patterns.
+And even types change, they tend to not do it a lot, or not fast, such that
+shallow caches will still catch most uses.
+Yet, dynamic typechecks must still be executed to guard those code blocks
+against type changes or fixnum overflows that cannot be easily proven will never happen,
+even when they indeed never happen.
+And caches consume memory that incurs performance costs of its own.
+Therefore you still pay for the convenience of dynamic dispatch.
 
 @subsubsection[#:tag "SD"]{Static Dispatch}
 

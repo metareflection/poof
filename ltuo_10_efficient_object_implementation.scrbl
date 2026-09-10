@@ -881,6 +881,8 @@ Caching and invalidation for dynamic class hierarchies.
 Usual optimization techniques after having expanded the OO semantics;
 but also typical OO patterns for what is static|dynamic{JITable|random}.
 
+Space/time/flexibility tradeoff. C++ vs CLOS.
+
 @section[#:tag "MOP"]{Meta-Object Protocols}
 @epigraph{
   Metaobject protocols also disprove the adage that adding
