@@ -632,11 +632,6 @@ let Y = f: (x: x x) (x: f (x x));
       (if previous (mix* finalizer previous) finalizer))
     super))
 
-;; generate-tag: ... → Tag
-(define generate-tag
-  (let ((counter 101)) ;; start high enough that a tag is obvious while debugging.
-    (lambda _ (begin0 counter (set! counter (+ 1 counter))))))
-
 (def (sub-record-spec key spec)
   (mix*
     (constant-field-spec key empty-record)
@@ -976,6 +971,7 @@ let Y = f: (x: x x) (x: f (x x));
         (map (target←qproto point-rc-qproto) '(x y rho color)) => '(3 4 5 "blue"))
 
 ;;;; 6.1.4 Conflation for Records
+;; modular extension stored under magic record key #f
 
 (def (rproto-wrapper spec super self method-id)
   (if method-id (super method-id) spec))
@@ -1204,6 +1200,7 @@ let Y = f: (x: x x) (x: f (x x));
 ;;;; 6.2.2 Simple First-Class Type Descriptors
 ;;;; TODO: examples of SCFTP.
 
+;; type descriptor for dynamic dispatch stored under magic record key #t
 (def (type-of instance)
   (instance #t))
 (def (instance-call instance method-id)
@@ -1234,6 +1231,13 @@ let Y = f: (x: x x) (x: f (x x));
 (def (extendModDef mext parent self)
   (mext (parent self) self))
 (def (baseModDef _) top)
+
+;; 7.3.3 Representing Specifications as DAG Nodes
+
+;; generate-tag: ... → Tag
+(define generate-tag
+  (let ((counter 101)) ;; start high enough that a tag is obvious while debugging.
+    (lambda _ (begin0 counter (set! counter (+ 1 counter))))))
 
 ;;;; 7.3.7 Mixin Inheritance plus Precedence List
 
@@ -1275,9 +1279,9 @@ let Y = f: (x: x x) (x: f (x x));
      (define (eqht-set! t k v) (hashtable-set! t k v))))
   (else
    (begin
-     (define (make-eqht) (make-hash-table equal?)))
+     (define (make-eqht) (make-hash-table eq?))
      (define (eqht-ref t k default) (hash-table-ref/default t k default))
-     (define (eqht-set! t k v) (hash-table-set! t k v))))
+     (define (eqht-set! t k v) (hash-table-set! t k v)))))
 
 (def (memo f)
   (let ((t (make-eqht)))
@@ -1641,7 +1645,8 @@ let Y = f: (x: x x) (x: f (x x));
 
 ;;;; 7.4.6 Prototypes with Optimal Inheritance (POI)
 
-;; POI is a prototype in the style of rproto, the spec accessible via #f
+;; POI is a prototype in the style of rproto: target record conflated with its specification
+;; The specification metadata accessible in a magic record accessible via magic record key #f
 ;;   'mod-ext         → ModExt             -- this spec's own modular extension
 ;;   'parents         → List(List(POI))    -- local precedence chains of direct parents
 ;;   'suffix?         → Bool               -- requires the suffix property (single-inh chain)
@@ -1743,11 +1748,16 @@ let Y = f: (x: x x) (x: f (x x));
     ;; NB: :p and :pp must be used as LAST keywords, because they eat the rest of the argument list
     ((_ n e s _ :p p ...) (poi-internal n e s (list (list p ...))))
     ((_ n e s _ :pp pp ...) (poi-internal n e s (list pp ...)))))
-(def (struct-name? s)
-  (>= (char->integer (string-ref (symbol->string s) 0)) 96))
 (define-syntax defpoi
   (syntax-rules ()
-    ((_ name args ...) (def name (poi :n 'name :s (struct-name? 'name) args ...)))))
+    ((_ name args ...) (def name (poi :n 'name args ...)))))
+
+;; only use struct-name? and defPoi below in examples and tests, ***NEVER*** in normal code
+(def (struct-name? s)
+  (>= (char->integer (string-ref (symbol->string s) 0)) 96))
+(define-syntax defPoi ;; for use in in examples and tests, never in normal code
+  (syntax-rules ()
+    ((_ name args ...) (defpoi name :s (struct-name? 'name) args ...))))
 
 ;; memo-poi: poi that memoizes all method accesses
 ;; It is a suffix poi, because memoization must happen in the very beginning,
@@ -1761,10 +1771,10 @@ let Y = f: (x: x x) (x: f (x x));
 ;; because def-bound parameters become identifier macros that expand
 ;; (compute-value inherited self) to ((compute-value inherited) self).
 (let ()
-  (defpoi O)
-  (defpoi A :e (constant-field-spec 'a 1) :p O)
-  (defpoi B :e (constant-field-spec 'b 2) :p O)
-  (defpoi Z :e (constant-field-spec 'z 3) :p A B)
+  (defPoi O)
+  (defPoi A :e (constant-field-spec 'a 1) :p O)
+  (defPoi B :e (constant-field-spec 'b 2) :p O)
+  (defPoi Z :e (constant-field-spec 'z 3) :p A B)
 
   ;; Precedence lists
   (expect
@@ -1774,8 +1784,8 @@ let Y = f: (x: x x) (x: f (x x));
 
 ;; Suffix (single-inheritance) chain: s <- C  where s is a suffix spec
 (let ()
-  (defpoi s :e (constant-field-spec 's 0) :s #t)
-  (defpoi C :e (constant-field-spec 'C 99) :p s)
+  (defPoi s :e (constant-field-spec 's 0) :s #t)
+  (defPoi C :e (constant-field-spec 'C 99) :p s)
 
   ;; s-oisp is the last (least-specific) in C's PL, as required by the suffix property
   (expect
@@ -1801,7 +1811,7 @@ let Y = f: (x: x x) (x: f (x x));
 (define-syntax defhierarchy
   (syntax-rules ()
     ((_ (name . parents) ...)
-     (begin (defpoi name :e (constant-field-spec 'name 'name) :p . parents) ...))))
+     (begin (defPoi name :e (constant-field-spec 'name 'name) :p . parents) ...))))
 
 (let ()
   (defhierarchy ;; same as expected-pls
@@ -2239,10 +2249,6 @@ let Y = f: (x: x x) (x: f (x x));
 ;; values? in what order are field checks applied? are cross-field checks
 ;; allowed?  Any of these needs check-instance to thread results into a fresh
 ;; instance POI rather than iterating for-effect.
-
-;; apply-check : Check → Value →! Value
-(def (apply-check check value)
-  (if check (check value) value))
 
 ;; simple-check : String → (Any → Boolean) → Check
 (def (simple-check name pred)
@@ -2968,12 +2974,12 @@ let Y = f: (x: x x) (x: f (x x));
     on-exhausted
     (or methods '())))
 
-;; progn-methods-most-specific-first : List(RawMethodFn) → ArgList → MethodInvoker → #f
+;; progn-methods-most-specific-first : List(RawMethodFn) → ArgList → MethodInvoker → Any
 ;; Runs each method in order for side-effects; call-next-method = abort.
 (def (progn-methods-most-specific-first methods args method-invoker)
   (foldl (lambda (m _) (method-invoker m (cons abort args))) #f (or methods '())))
 
-;; progn-methods-most-specific-last : List(RawMethodFn) → ArgList → MethodInvoker → #f
+;; progn-methods-most-specific-last : List(RawMethodFn) → ArgList → MethodInvoker → Any
 (def (progn-methods-most-specific-last methods args method-invoker)
   (foldr (lambda (m _) (method-invoker m (cons abort args))) #f (or methods '())))
 
@@ -3125,7 +3131,8 @@ let Y = f: (x: x x) (x: f (x x));
          (methods (or (sub name) '()))    ;; most-specific-first, as stored
          (ordered (case order
                     ((most-specific-first) methods)
-                    ((most-specific-last)  (reverse methods)))))
+                    ((most-specific-last)  (reverse methods))
+                    (else                  (abort "bad method order")))))
    (call-chain arounds
     (λ (args)
       (letrec ((run (λ (m) (method-invoker m (cons abort args))))
@@ -3465,7 +3472,7 @@ let Y = f: (x: x x) (x: f (x x));
                            (acc identity))
                   (cond
                    ((not mm) acc)
-                   ((null? pls) (compose acc (λ (x) (cons mm x))))
+                   ((null? pls) (compose acc (λ (x) (cons mm x)))) ;; difference list! see 9.3.4
                    (else
                     (foldl
                      (lambda (p acc) (loop (field-view~ p mm) (cdr pls) acc))

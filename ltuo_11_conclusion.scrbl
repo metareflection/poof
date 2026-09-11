@@ -218,7 +218,7 @@ What is the value of debunking bad ideas about OO and
 saying mean words about a lot of good scientists?
 Yet how can I even explain the basic principles of OO if the readers misinterpret what I say
 because they are confused by those bad ideas about OO, spread by good people they respect?
-And what is the value of those basic principles if they have no correspondance to actual code?
+And what is the value of those basic principles if they have no correspondence to actual code?
 But how could I derive a minimal model from the principles without having examined them? etc.
 
 Each chapter of this book is worth something but only so much by itself,

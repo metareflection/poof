@@ -478,15 +478,15 @@ in terms of these more directly usable names: “is-a” vs “has-a” relation
   that over a decade later, @citet{Brachman1982} criticizes abuse of the term.
   @citet{Smith1977} compare and contrast close cousins of is-a and has-a together
   as “generalization” and “aggregation” respectively,
-  though he does not use the hyphenated short-hand names,
-  and studies these variants in the context of data modeling for databases
+  though they do not use the hyphenated short-hand names,
+  and study these variants in the context of data modeling for databases
   where they mean something subtly different (@secref{OiaMotW}).
   @citet{Wegner1987} uses is-a but not has-a,
   and @citet{Blake1987} use is-a and has-a-part together
-  (the latter a reverse of is-a-part-of).
+  (the latter the same as later has-a, and he notes the reverse of is-a-part-of).
   @citet{Meyers1992} has is-a (that he spells “isa”) and has-a firmly established.
 }
-The simple informal question “is an X a Y, or does an X have a Y?”
+The simple informal question “@emph{is} an X a Y, or does an X @emph{have} a Y?”
 then gives the answer as to whether to use inheritance (if the answer was the former),
 or composition (if the answer was the latter) in defining X from Y.
 
@@ -503,7 +503,7 @@ as you initialize them from the same computation.
 Now if you know your program will evolve to become interested in
 the width of objects as well as their length,
 you might have records with length and width rather than mere numbers,
-and still unify a car and its chassis.
+and still unify a car with its chassis, though no longer with its length.
 But if your program eventually becomes interested in the height, weight or price of objects,
 and those of their components when they need be replaced,
 you’ll soon enough see that the two entities may somehow share some attributes
@@ -511,13 +511,14 @@ yet be actually distinct: ultimately, both @c{car} and @c{chassis} @emph{are} @c
 but a @c{car} @emph{has} a @c{chassis} and @emph{is not} a @c{chassis}.
 
 Crucially, the design decision between inheritance and composition depends not just
-on the current structure of the program, but also on expectations for its future evolution,
+on the current structure of the program, but also on expectations about its future evolution,
 within a static or dynamically evolving schema of data structures and algorithms.
 If the schema is small, static, well-understood and won’t need to evolve
 it doesn’t really matter much which technique is used to model it.
 But as it grows, evolves and boggles the mind,
-a more modular and extensible approach is more likely to enable adapting the software
-to changing situations, at which point thoughtful uses of inheritance can help a lot.
+a more modular and extensible approach is more likely to
+enable the software to adapt to changing situations,
+at which point thoughtful uses of inheritance can help a lot.
 
 @subsubsection{The Real Opposition between OO and FP}
 
@@ -582,8 +583,8 @@ other forms of method invocation in nearly all OO languages are synchronous.
 Actor languages actually do support asynchronous message passing @~cite{Hewitt1979},
 but though somewhat influential on paper, they never got popular
 and always remained somewhat marginal in the tradition;
-and they only acquired OO a decade after Actors were invented.
-@; TODO cite Yonezawa ?
+and they only acquired OO a decade after Actors were invented. @; TODO cite Yonezawa ?
+
 Instead, the only widely-used language to truly embody this metaphor
 is Erlang@~cite{Johnson2010};
 yet Erlang is not part of the OO tradition,
@@ -625,6 +626,7 @@ that Alan Kay also identified as essential for OO@xnote["."]{
   or the process-oriented paradigm of Erlang between-processes.
   See also the discussion in @secref{UPSLC}.
 }
+
 Most OO languages have no support whatsoever for concurrency,
 or only support it as an afterthought added years or decades
 after the language was originally designed,
@@ -683,8 +685,7 @@ thus falls short compared to other explanations of OO that accommodate them@xnot
   Now, the message passing paradigm @; TODO cite PLANNER, Actors
   can be extended with a notion of “group messaging”
   where one object sends a “message” to a “group” of objects as a collective entity
-  (rather than each member of the target group)
-  @; TODO cite ABCL group messaging ?
+  (rather than each member of the target group) @; TODO cite ABCL group messaging ?
   or to a “chemical” paradigm where a “chemical reaction” may involve
   multiple entities in and multiple entities out, with “message” entities
   conveying the changes in intermediary steps. @; TODO cite CHAM

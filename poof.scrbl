@@ -1437,7 +1437,7 @@ passed around at runtime in implementations of typeclasses@~cite{ImplementingTyp
 in various FP languages.
 They also correspond to the “vtable” describing an “object”'s type at runtime
 in implementations of class-based OOP languages.
-Indeed, the correspondance can be made formal, with automated transformations
+Indeed, the correspondence can be made formal, with automated transformations
 between the two styles@~cite{LIL2012}.
 Note however how “object” denotes very different notions in the two styles:
 what is called “object” in class-based OOP is the notional pair of

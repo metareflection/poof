@@ -871,7 +871,7 @@ CommonLoops @~cite{Bobrow1986} adopted it as
 “local precedence”, “local ordering”, and “local precedence list”.
 CLOS @~cite{Bobrow1988 Steele1990} adopts it as “local precedence order”.
 Ducournau et al. speak of “local ordering” or “local precedence order”
-@~cite{Ducournau1992 Ducournau1994}@xnote["."]{
+@~cite{Ducournau1992 Ducournau1994}@xnote["."]{ @; TODO Ducournau1987
   @citet{Barrett1996} notes that the algorithm in @citet{Ducournau1994}
   fails to preserve the local precedence order in corner cases where
   a parent is also the ancestor of a previous parent. As an example,

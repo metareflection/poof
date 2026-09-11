@@ -1728,11 +1728,11 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     Sadly, it is often cited for the wrong parts rather than the right parts.
     Snyder brilliantly introduces parent, ancestor, child, descendant, instead of the
     awkward direct-superclass, superclass, direct-subclass, subclass.
-    He identifies the importance of modularity, but instead of that word,
-    somehow divides it in two separate properties “encapsulation” and “data abstraction”.
+    He identifies the importance of modularity, but fails to use that word, and instead
+    somehow divides the concept in two separate properties “encapsulation” and “data abstraction”.
     He notes the need for reflection to defeat this encapsulation for debugging purposes.
     He has good discussions of inheritance, visibility, subtyping, etc.
-    But multiple inheritance is a topic where he majorly fails, despite Snyder’s erudition.
+    But multiple inheritance is a topic where Snyder majorly fails, despite his erudition.
     He calls “graph oriented solutions” the conflict view of multiple inheritance,
     and identifies many problems with it.
     He calls “linear solutions” the Flavors and CommonLOOPS view,
@@ -1756,6 +1756,9 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     Next time, don’t kick down that Chesterton’s fence.
     Now what does it tell us that Stroustrup 1989 came up with sensibly
     the same solution for C++, just with less research behind it?
+    Meanwhile, CommonObjects, the system he is discussing, was written in Common Lisp, and
+    COOL, its reimplementation on top of PCL (the first implementation of CLOS),
+    can still be found.
   }
 }
 
@@ -3702,7 +3705,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   booktitle={Object Technologies for Advanced Software},
   editor={Kokichi Futatsugi and Satoshi Matsuoka},
   year=1996,
-  month={mar},
+  month=mar,
   pages={157--172},
   volume={1049},
   series={Lecture Notes in Computer Science},
@@ -5016,7 +5019,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     using flattened environments rather than shared DAGs of scopes.
     From an abstract argument about complexity, the authors thus identify concrete
     improvements to algorithms for program representation and analysis.
-    The correspondance between program analysis, abstract interpretation, and typesystems,
+    The correspondence between program analysis, abstract interpretation, and typesystems,
     may also suggest how this affects the complexity of types for OO
     in a closed program being optimized vs an open program being extended.
   }

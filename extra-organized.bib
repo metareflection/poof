@@ -572,7 +572,7 @@
   year={1980},
   pages={479--490},
   note={Manuscript originally circulated 1969.
-    Made popular what is now known as the Curry-Howard-de Bruijn correspondance
+    Made popular what is now known as the Curry-Howard-de Bruijn correspondence
     between logical implication and function types.}
 }
 
@@ -746,6 +746,16 @@
     Relevant to the independent history of taxonomic “is-a” relationships and
     inheritance in knowledge representation.
   }
+}
+
+@TechReport{Snyder1985Kernel,
+  author={Alan Snyder and Michael Creech and James Kempf},
+  title={A Common Lisp Objects Implementation Kernel},
+  institution={Software Technology Laboratory, Hewlett-Packard Laboratories},
+  address={Palo Alto, CA},
+  number={STL-85-08},
+  year={1985},
+  note={Describes the implementation kernel for CommonObjects, an early object system for Common Lisp. Directly relevant to the history and implementation of multiple inheritance and object representation in CommonObjects, one of the systems immediately preceding the development of CLOS.}
 }
 
 %% 1986
@@ -1511,32 +1521,6 @@
   }
 }
 
-% multimethods + types
-@Article{Millstein2002,
-  author={Todd Millstein and Craig Chambers},
-  title={Modular Statically Typed Multimethods},
-  journal={Information and Computation},
-  year={2002},
-  month=may,
-  volume={175},
-  number={1},
-  pages={76--118},
-  publisher={Elsevier},
-  issn={0890-5401},
-  doi={10.1006/inco.2002.3103},
-  url={https://www.cs.ucla.edu/~todd/research/iandc.pdf},
-  note={
-    Defines Dubious, a classless core object language with inheritance,
-    first-class generic functions, symmetric multimethods and separately
-    typechecked modules, and gives its formal static and dynamic semantics.
-    The core deliberately omits mutable state, dynamic object creation and
-    lexically nested closures, making its multimethod machinery essentially
-    functional; later sections show how those omitted features can be added.
-    Particularly relevant as prior art for first-class generic functions and
-    symmetric multiple dispatch in a small formal language.
-  }
-}
-
 @TechReport{Dylan1992,
   author={Apple Computer, Inc.},
   title={Dylan: An Object-Oriented Dynamic Language},
@@ -1582,6 +1566,19 @@
   doi={10.1145/141936.141971},
   url={https://doi.org/10.1145/141936.141971},
   note={The specialization interface named and examined}
+}
+
+@PhdThesis{Sakkinen1992,
+  author={Markku Sakkinen},
+  title={Inheritance and Other Main Principles of C++ and Other Object-Oriented Languages},
+  school={University of Jyväskylä},
+  address={Jyväskylä, Finland},
+  year={1992},
+  series={Jyväskylä Studies in Computer Science, Economics and Statistics},
+  number={20},
+  isbn={951-680-817-4},
+  url={https://jyx.jyu.fi/handle/123456789/27203},
+  note={Detailed critical study of C++ and object-oriented language design, with particular attention to inheritance. Distinguishes independent from fork-join multiple inheritance, models inheritance largely by composition, analyzes integrity problems and anomalies in several multiple-inheritance schemes including C++, and proposes more consistent principles. Directly relevant to the book's treatment of multiple inheritance and diamonds.}
 }
 
 @TechReport{Taivalsaari1992,
@@ -1916,6 +1913,20 @@
   doi={10.1145/217838.217861},
   url={https://doi.org/10.1145/217838.217861},
   note={Shows why open recursion and subclassing complicate local reasoning, a central cost of inheritance-based extensibility.}
+}
+
+@Article{Wulf1995,
+  author={Wm. A. Wulf and Sally A. McKee},
+  title={Hitting the Memory Wall: Implications of the Obvious},
+  journal={ACM SIGARCH Computer Architecture News},
+  volume={23},
+  number={1},
+  pages={20--24},
+  month={March},
+  year={1995},
+  doi={10.1145/216585.216588},
+  url={https://doi.org/10.1145/216585.216588},
+  note={Classic statement of the memory-wall problem: processor performance was improving substantially faster than DRAM latency, so memory access would increasingly dominate system performance despite caches. Directly relevant to the book's implementation discussion when comparing the relative cost of computation, indirection and memory access.}
 }
 
 %% 1996
@@ -2346,6 +2357,21 @@
   }
 }
 
+@Misc{Itanium1999,
+  author={Itanium C++ ABI},
+  title={Itanium C++ ABI},
+  year={1999},
+  howpublished={C++ ABI specification},
+  url={https://itanium-cxx-abi.github.io/cxx-abi/abi.html},
+  note={
+    De facto C++ ABI specification used by GCC, Clang and other implementations
+    on many non-Windows platforms. Specifies class-object layout,
+    virtual and non-virtual base subobjects, virtual tables, RTTI, member pointers,
+    calling conventions and name mangling.
+    Directly relevant to the book's discussion of the implementation cost and representation
+    of C++ multiple inheritance, especially repeated non-virtual versus shared virtual bases.}
+}
+
 % Prototypes
 @Book{Noble1999,
   editor={James Noble and Antero Taivalsaari and Ivan Moore},
@@ -2690,6 +2716,32 @@
   pages={6–20},
   year={2002},
   note={Formalizes mixin-style recursive module composition under call-by-value, illuminating initialization and recursion issues hidden by lazy models.}
+}
+
+% multimethods + types
+@Article{Millstein2002,
+  author={Todd Millstein and Craig Chambers},
+  title={Modular Statically Typed Multimethods},
+  journal={Information and Computation},
+  year={2002},
+  month=may,
+  volume={175},
+  number={1},
+  pages={76--118},
+  publisher={Elsevier},
+  issn={0890-5401},
+  doi={10.1006/inco.2002.3103},
+  url={https://www.cs.ucla.edu/~todd/research/iandc.pdf},
+  note={
+    Defines Dubious, a classless core object language with inheritance,
+    first-class generic functions, symmetric multimethods and separately
+    typechecked modules, and gives its formal static and dynamic semantics.
+    The core deliberately omits mutable state, dynamic object creation and
+    lexically nested closures, making its multimethod machinery essentially
+    functional; later sections show how those omitted features can be added.
+    Particularly relevant as prior art for first-class generic functions and
+    symmetric multiple dispatch in a small formal language.
+  }
 }
 
 % Code from 2001, article published 2002
@@ -3583,7 +3635,20 @@
 
 %% 2011
 
-@Article{Ducournau2011,
+@article{Ducournau2011Coloring,
+  author={Roland Ducournau},
+  title={Coloring, a versatile technique for implementing object-oriented languages},
+  journal={Software: Practice and Experience},
+  year={2011},
+  volume={41},
+  number={6},
+  pages={627--659},
+  doi={10.1002/spe.1022},
+  url={https://doi.org/10.1002/spe.1022},
+  note={Develops coloring techniques for compact constant-time implementation of method dispatch, attribute access and subtype tests, including multiple inheritance; directly relevant to alternatives to the conventional C++ subobject and vtable representation.}
+}
+
+@Article{Ducournau2011Implementing,
   author={Roland Ducournau},
   title={Implementing Statically Typed Object-Oriented Programming Languages},
   journal={ACM Computing Surveys},
@@ -3608,6 +3673,20 @@
     A major reference for distinguishing semantic language features from the
     implementation constraints historically associated with them.
   }
+}
+
+@Article{Ducournau2011Metamodeling,
+  author={Roland Ducournau and Jean Privat},
+  title={Metamodeling Semantics of Multiple Inheritance},
+  journal={Science of Computer Programming},
+  volume={76},
+  number={7},
+  pages={555--586},
+  month={July},
+  year={2011},
+  doi={10.1016/j.scico.2010.10.006},
+  url={https://doi.org/10.1016/j.scico.2010.10.006},
+  note={Develops a metamodel-based semantics of multiple inheritance that distinguishes the identity of inherited properties from their implementations, thereby separating syntactic from semantic conflicts. Surveys linearization-based approaches, relates linearization to method combination, compares the semantics of several multiple-inheritance languages and discusses interactions with static typing and virtual types. Directly relevant to the book's treatment of multiple inheritance, diamonds, property identity, linearization and method combination.}
 }
 
 %% 2012
