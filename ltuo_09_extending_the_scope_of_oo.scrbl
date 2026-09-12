@@ -8,6 +8,33 @@
   If I have seen further it is by standing on the shoulders of giants.
   @|#:- "Isaac Newton"|
 }
+In the previous chapters, I recreated the building blocks of OO on top of the λ-calculus:
+modular extensions, prototypes, classes, with single-, mixin- or multiple inheritance,
+flavorless or flavorful and even optimal, and a zest of types.
+All built out of pure functions and their fixpoints.
+
+In this chapter, I will show how to use algebra to assemble these building blocks
+into more elaborate features of OO—features that only more advanced OO languages possess
+(and even then, I know of no language that has all of them working together).
+The point is not to show off random advanced OO features;
+the point is to gradually widen the scope of OO to more sophisticated uses, and
+see how these underappreciated features appear naturally
+just by making more and larger things modularly extensible at the same time.
+Their semantics is unforced by arbitrary extrinsic decisions,
+but is instead the intrinsic consequence of the algebraic approach.
+
+So that I may continue to express OO in the logically simple context of FP,
+I will start by introducing optics, the pure functional way to edit nested data structures;
+I will show how the usual concept of a lens
+can be generalized to directly apply to modular extensions;
+how to use them to build prototypes, methods and classes piecemeal;
+how “advanced” concepts like family polymorphism, method combinations, multimethods,
+static and dynamic dispatch all arise naturally.
+And in the end, I will have reached a “Maximal OO”
+that contrasts with the “Minimal OO” of @secref{MOO}:
+not the largest possible object system, but
+a framework in which the scope of OO itself can keep expanding.
+
 @section[#:tag "OfOO"]{Optics for OO}
 
 @subsection{Optics: A Pure Functional Approach to Pointers (and more)}

@@ -559,6 +559,20 @@
 % Traces the origin of "inheritance of properties" to Quillian's "Semantic Memory" (1966/1968),
 % but that paper doesn't use "inherit" or "inheritance".
 
+@Article{Tarjan1979,
+  author={Robert E. Tarjan and Andrew C.-C. Yao},
+  title={Storing a Sparse Table},
+  journal={Communications of the ACM},
+  volume={22},
+  number={11},
+  pages={606--611},
+  month={November},
+  year={1979},
+  doi={10.1145/359168.359175},
+  url={https://doi.org/10.1145/359168.359175},
+  note={Studies compact representations of sparse static tables with good worst-case lookup time, motivated in part by compressed parsing tables. Relevant as an early foundation for compact dispatch-table representations and sparse-table implementation techniques.}
+}
+
 %% 1980
 
 % Curry-deBruijn-Howard isomorphism
@@ -724,6 +738,34 @@
   publisher={North-Holland},
   year={1983},
   note={The theorem that modularity works: representation independence}
+}
+
+%% 1984
+
+@InProceedings{Deutsch1984,
+  author={L. Peter Deutsch and Allan M. Schiffman},
+  title={Efficient Implementation of the Smalltalk-80 System},
+  booktitle={Proceedings of the 11th ACM SIGACT-SIGPLAN Symposium on Principles of Programming Languages},
+  pages={297--302},
+  publisher={ACM},
+  year={1984},
+  doi={10.1145/800017.800542},
+  url={https://web.cs.ucla.edu/~palsberg/course/cs232/papers/DeutschSchiffman-popl84.pdf?utm_source=chatgpt.com},
+  note={Describes a high-performance implementation of Smalltalk-80 on conventional microprocessor hardware, including object representation, dynamic message lookup and techniques for reducing the cost of dynamic dispatch. A foundational implementation paper for efficient dynamically dispatched object-oriented languages.}
+}
+
+@Article{Fredman1984,
+  author={Michael L. Fredman and János Komlós and Endre Szemerédi},
+  title={Storing a Sparse Table with O(1) Worst Case Access Time},
+  journal={Journal of the ACM},
+  volume={31},
+  number={3},
+  pages={538--544},
+  month={July},
+  year={1984},
+  doi={10.1145/828.1884},
+  url={https://doi.org/10.1145/828.1884},
+  note={Gives a linear-space representation of a static sparse table supporting worst-case constant-time membership queries, establishing the classic FKS perfect-hashing construction. Relevant to compact constant-time lookup structures underlying later object-dispatch and subtype-testing schemes.}
 }
 
 %% 1985
@@ -1345,6 +1387,18 @@
 
 %% 1990
 
+@InProceedings{Kiczales1990Dispatch,
+  author={Gregor J. Kiczales and Luis H. Rodriguez Jr.},
+  title={Efficient Method Dispatch in PCL},
+  booktitle={Proceedings of the 1990 ACM Conference on Lisp and Functional Programming},
+  pages={99--105},
+  publisher={ACM},
+  year={1990},
+  doi={10.1145/91556.91600},
+  url={https://doi.org/10.1145/91556.91600},
+  note={Describes efficient implementation techniques for generic-function dispatch in PCL, an implementation of CLOS, including specialized dispatchers and caching strategies that preserve the flexibility of the metaobject protocol while reducing dynamic-dispatch overhead. Directly relevant to efficient implementation of multiple dispatch and CLOS-style generic functions.}
+}
+
 % No PDF?
 @Article{Wegner1990,
   author={Peter Wegner},
@@ -1843,6 +1897,18 @@
     de Bruijn’s reflections on what became known as the Curry-Howard-de Bruijn correspondence
     between function types and logical implication.
   }
+}
+
+@InProceedings{Driesen1995,
+  author={Karel Driesen and Urs Hölzle},
+  title={Minimizing Row Displacement Dispatch Tables},
+  booktitle={Proceedings of the 10th Annual Conference on Object-Oriented Programming Systems, Languages, and Applications},
+  pages={141--155},
+  publisher={ACM},
+  year={1995},
+  doi={10.1145/217838.217852},
+  url={https://doi.org/10.1145/217838.217852},
+  note={Presents compact dispatch-table construction using row displacement, reducing the space cost of selector-based method lookup while retaining constant-time dispatch. Directly relevant to the book's discussion of efficient object representation and dynamic dispatch implementation.}
 }
 
 @InProceedings{FisherMitchell1995,
@@ -3648,6 +3714,20 @@
   note={Develops coloring techniques for compact constant-time implementation of method dispatch, attribute access and subtype tests, including multiple inheritance; directly relevant to alternatives to the conventional C++ subobject and vtable representation.}
 }
 
+@Article{Ducournau2011Hashing,
+  author={Roland Ducournau and Floréal Morandat},
+  title={Perfect Class Hashing and Numbering for Object-Oriented Implementation},
+  journal={Software: Practice and Experience},
+  volume={41},
+  number={6},
+  pages={661--694},
+  month={May},
+  year={2011},
+  doi={10.1002/spe.1024},
+  url={https://doi.org/10.1002/spe.1024},
+  note={Refines perfect hashing for subtype testing and method dispatch by optimizing class numbering, and evaluates the resulting time and space costs empirically. Directly relevant to compact constant-time implementation techniques for multiple inheritance, dynamic loading and interface dispatch.}
+}
+
 @Article{Ducournau2011Implementing,
   author={Roland Ducournau},
   title={Implementing Statically Typed Object-Oriented Programming Languages},
@@ -3664,14 +3744,12 @@
   doi={10.1145/1922649.1922655},
   url={https://citeseerx.ist.psu.edu/document?doi=b1d7ad44ebaa0f46b0550eaabfcf59ed640a387a&repid=rep1&type=pdf},
   note={
-    Comprehensive survey of implementation techniques for method dispatch,
-    attribute access and subtype testing in statically typed object-oriented
-    languages.
+    Comprehensive survey of implementation techniques for statically typed OO languages,
+    covering method dispatch, attribute access and subtype testing.
     Systematically contrasts single inheritance, multiple inheritance and
-    multiple subtyping under separate compilation, dynamic loading and global
-    compilation.
-    A major reference for distinguishing semantic language features from the
-    implementation constraints historically associated with them.
+    multiple interface subtyping under separate compilation, dynamic loading and global optimization.
+    A major reference for distinguishing semantic language features
+    from the implementation constraints historically associated with them.
   }
 }
 

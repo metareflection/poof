@@ -55,14 +55,14 @@ not of the thing they have discovered, not of themselves.
 
 @subsection{Implementing It Right}
 As for what it even means for something to be an implementation,
-this is another vast topic, but one I happen to master,
+this is another vast topic, but one I happen to have studied in depth,
 so I will direct you to my works @~cite{Rideau2018 FarePhD}.
 In short: consider that you have levels of abstraction
 for what is or ought to be “the same” computation.
 At each level, you are offered a set of possible interactions
 with some recognizable logical structure.
 
-An implementation is a correspondence between these two levels,
+An implementation is a correspondence between two levels of computation,
 one abstract (the system being implemented, typically pictured above),
 the other concrete (the underlying system doing the implementing, typically pictured below).
 For the implementation to be valid, and moreover for it to be useful,
@@ -74,7 +74,7 @@ they will be “intermediate” states between two observable states,
 or plain invalid states that should never be reached by the implementation (if correct).
 
 Thus, the two levels may have very different sets of states and interactions overall,
-most of them having no correspondence with anything in the other system.
+most of them not being in a correspondence with anything in the other system.
 Yet some subset of the concrete system will be in faithful correspondence
 with some subset of the abstract system in a way that preserves their interactions.
 The challenge is then to create configurations of the concrete system
@@ -82,7 +82,7 @@ that faithfully embody a subset of the abstract system’s interactions
 large enough to include all the interactions one wants to have with the abstract system.
 
 And that is how I will be able to implement the pure functional lazy objects I want
-with stateful von Neumann-style machines I have.
+with the stateful von Neumann-style machines I have.
 (Note how in other contexts I might want the implementation the other way around:
 for instance, to write formal proofs of correctness about executable code in type theory.)
 
@@ -93,18 +93,20 @@ for instance, to write formal proofs of correctness about executable code in typ
 @subsubsection{More Fundamental than Inheritance}
 One way or another, @principle{Object-Orientation involves dealing with @emph{records}},
 mappings from identifier to value.
-This is despite the fact that the rules of inheritance,
+This is all the more remarkable since the rules of inheritance,
 that characterize the semantics of OO as such,
 say nothing whatsoever about records,
 as I discussed in chapters @seclink["MOO"]{5} to @seclink["IMSMO"]{7}.
 
-Instead, in an even more fundamental way, records matter tremendously to OO because
-the entire point of OO is to enable modular extensible programming,
-and records are the very unit of modularity, as seen in chapter @seclink["OOaIEM"]{4}.
-Indeed, records, i.e. products of (mostly) independent values labeled by meaningful names,
-verily embody the combined efforts of the independent developers
+Yet, the entire point of OO is to enable modular extensible programming,
+and records are the very unit of modularity, as seen in chapter @seclink["OOaIEM"]{4}:
+products of (mostly) independent values labeled by meaningful names,
+records verily embody the combined efforts of the independent developers
 who contribute to some software project.
 And inheritance is only the means to that end.
+Applying inheritance to values other than records is definitely possible;
+but unless those values encode something record-like by other means,
+the opportunities for modularity to support will be very limited.
 
 Thus, a very important issue in implementing object systems is
 how to efficiently represent records, from the dual points of view of
@@ -161,19 +163,19 @@ the record itself was the fixpoint, its type was that of a regular function.
 There was no need for complicated ad hoc wrapping and unwrapping with types
 that are never 100% compatible from one language to the next,
 nor for language-specific record primitives with ever subtly different types,
-the explanations for which would have burdened an already concept-heavy exposé.
+the explanations for which would have burdened an already concept-heavy exposition.
 
 @subsubsection{Issues with Records as Arbitrary Functions}
 However, there are various drawbacks to representing records as arbitrary functions:
 @itemize[
-  @item{arbitrary functions are opaque, lacking introspection on which keys are valid@xnote[";"]{
+  @item{Arbitrary functions are opaque, lacking introspection on which keys are valid@xnote[";"]{
     On the plus side, the opacity of arbitrary functions can be seen as a feature
     in the context of parametric behavior (initial semantics), and/or
     of denying introspective capabilities in some security-sensitive contexts.
   }}
-  @item{everything being functions can make code harder to debug,
+  @item{Everything being opaque functions can make code harder to debug,
         with less distinctive error messages}
-  @item{records as opaque functions will perform poorly in time taken or space occupied.}]
+  @item{Records as opaque functions will perform poorly in both time and space.}]
 
 Indeed, if @emph{arbitrary} functions are accepted, then there is no trusting what
 is in functions that you extend, no knowing what keys they handle,
@@ -207,7 +209,7 @@ Now, trying to combine arbitrary functions that may follow incompatible protocol
 leads to the same miserable and decidedly not-so-arbitrary data structure as in the section above;
 however, not-so-arbitrary functions implementing a well-identified protocol
 can implement arbitrary data structures, including whichever best fits your needs—embodying
-the principle that closures are a poor man’s objects.
+the principle that closures are a poor man’s objects. @; VanStraaten2003
 
 For instance, a function could implement the same linear search for a key that I used,
 but also maintain a list of bound keys, that is returned if a “magic” value is given as input
@@ -235,7 +237,7 @@ and its direct compatibility with the Y combinator.
 Using this technique, introspection of keys is possible (though not necessary if unwanted),
 as is “extrospection” (second-class or external knowledge of keys from outside the runtime),
 if the data structure is maintained extra-linguistically via a design pattern.
-And through this introspection of extrospection,
+And through this introspection or extrospection,
 the space and time leak of shadowed bindings can be avoided.
 
 Now, to go further, I will strip the functional interface, and peer at what is hiding inside it.
@@ -275,11 +277,11 @@ lists, finite sequences, sets, etc.
 The alist works with any set of keys that you can compare for equality, and
 has acceptable performance for short maps, even though it is not particularly efficient:
 every random access requires a linear search
-in @c{O(l)} time where @c{l} is the length of the list@xnote["."]{
+in @c{O(n)} time where @c{n} is the length of the list@xnote["."]{
   I will keep all my “performance estimates” as general complexity classes,
   under the simplified model of a flat memory with @c{O(1)} random access time.
   Once you delve into details of layers of memory from CPU registers to L1, L2, L3 caches,
-  to local disk then remote server and its disk, you have to factor in a @c{O(√n)} slowdown
+  to local disk then remote server and its disk, you have to factor in an @c{O(√n)} slowdown
   (where @c{n} is the size of the “working set” of data one works with),
   to deal with the physical limits of the memory hierarchy @~cite{Ernerfeldt2014}.
 }
@@ -324,7 +326,7 @@ or a unique number assigned to them (guaranteeing no hash collision)@xnote[","]{
 }
 after having @emph{interned} the strings as symbols, as in Lisp or Scheme:
 Lisp “symbols” are essentially pre-registered strings, in a global table,
-to pre-pay the @c{O(l)} cost of string comparison once (where @c{l} is the length of the string)
+to pre-pay the @c{O(n)} cost of string comparison once (where @c{n} is the length of the string)
 and make each subsequent comparison for equality a cheaper @c{O(1)} operation@xnote["."]{
   Since the late 1970s, Lisp, as subsequently codified by Common Lisp,
   actually has a two-layer system, with a global table of @emph{packages},
@@ -343,7 +345,8 @@ and make each subsequent comparison for equality a cheaper @c{O(1)} operation@xn
   mapping symbols to such numbers.
 }
 Particularly popular among pure functional balanced tree algorithms are tries
-and their variants optimized for hash maps @~cite{Okasaki1998 Bagwell2001 Steindorfer2015},
+and their variants optimized for hash maps,
+Hash Array Mapped Tries (HAMTs) @~cite{Okasaki1998 Bagwell2001 Steindorfer2015},
 or weight-balanced trees. @;{TODO cite https://github.com/dco-dev/ordered-collections/blob/021-specialized-ropes/doc/why-weight-balanced-trees.md}
 
 @subsubsection{Mutable Records}
@@ -352,8 +355,8 @@ A traditional implementation with a mutable hash table or HashMap
 provides random access in @c{O(1)} (compared to @c{O(log n)} for immutable finite maps),
 albeit with a constant factor that is typically one or two orders of magnitude larger
 than a direct field access in a statically typed language.
-My above remarks about hashing, interning, and unique numbering apply to mutable hash tables
-as well as immutable ones.
+My above remarks about hashing, interning, and unique numbering apply
+to mutable hash tables as well as HAMTs.
 
 @subsubsection{A Note on Power}
 @epigraph{
@@ -363,7 +366,7 @@ as well as immutable ones.
                Forged to loose our rigid brains. @(linebreak)
            Structures, strictures, though they bind, @(linebreak)
                  Strangely liberate the mind.
-                 @|#:-"James Falen"|
+                 @|#:-"James Falen"| @; TODO get permission, or only include the last 2 verses
 }
 One might find it remarkable that,
 despite granting users the power to hide arbitrarily sophisticated
@@ -387,13 +390,21 @@ The more general lesson is that strictures on data structures enable better perf
 More precisely, @principle{strictures on what some operation consumes
 create a space in which past operations are free to be more efficient in what they produce;
 and strictures on what the operation produces
-create a space in which future operations are free to be more efficient in what they consume}.
+create a space in which future operations are free to be more efficient in what they consume}:
 From this dual constraint emerge various tradeoffs between strictures and freedoms.
+
+An operation doesn’t have to compute the outputs it knows won’t be used;
+it can efficiently access inputs that it knows were correctly encoded at a convenient place;
+wrappings and unwrappings can be cancelled away; sanity checks can be skipped.
+Each constraint makes the constrained operation’s slightly harder,
+but its upstream and downstream operations’ job slightly easier.
 
 Now, in general, the very same operations implemented by the very same algorithms,
 will be used in both the past and future of a data structure, in an often unpredictable way.
 Therefore, a balancing act is required from the programmer, to choose the compromises
 that will maximize the benefits and minimize the cost of the software over its expected lifespan.
+Wisely chosen constraints can overall smooth out the flow of information;
+foolishly chosen constraints can overall strangle it.
 
 Then again, sometimes past and future are not wholly unpredictable:
 there are often clear-cut or at least statistically expected @emph{stages} in the computation,
@@ -469,27 +480,48 @@ the checks can be moved wholly from runtime to compile-time.)
 
 Thus, an implementation for first-class records can represent records
 as a second-class record plus a first-class record descriptor.
-The first-class descriptor will, among other things perhaps,
+The first-class descriptor will, among other things,
 contain a mapping from field identifier to field offset.
-Accesses of a constant field can use a cache of record offsets for the field,
-depending on recently seen record descriptors.
+Field accesses with a constant field identifier can use
+an “inline cache” of record offsets for the field
+@~cite{Hoelzle1991} @; TODO cite Deutsch1984
+depending on recently seen record descriptors,
+per access point, or shared between access points with the same field.
 Most of the computation can be skipped, after checking that
 the contents of the cache indeed match expectations.
 Alternatively, or in addition, the mapping from field identifier to offset
 given a record shape can be optimized once using
 “perfect hashing” @;{ TODO cite
+  Tarjan1979 "Storing a Sparse Table"?
   Fredman1984 "Storing a Sparse Table with O(1) Worst Case Access Time"?
-  Tarjan1979 "Storing a Sparse Table"? }
+  Driesen1995
+  Ducournau2008
+  Ducournau2011Hashing
+  Ducournau2011Implementing }
 which at a one-time cost may speed up each subsequent access.
 
 In the case of specifications with suffix specifications (@secref{OISMIT}),
-where some of the offsets must be inherited, while others may be allocated via perfect hashing,
-an indirection can be used, mapping identifiers to offsets in a translation table
-that yields the offset in the record; thus, interestingly,
-support for suffix specifications slightly improves the performance of second-class record access,
-at the expense of slightly worsening the performance of first-class record access!
+you must distinguish record “shapes” not just by the set of identifiers they bind,
+but also by the “single inheritance” suffix that forces some identifiers in a given order.
+In exchange for the slight increase in memory pressure,
+second-class accesses to a static field in the suffix fragment of a prototype or class
+(including the entire prototype if itself declared suffix)
+can be uniformly compiled into constant offset accesses
+for all descendants of the prototype or class, making those accesses faster.
+Other accesses are not affected; but programmers can often organize their programs
+so that performance-critical parts of their programs can be optimized.
 
-@subsubsection{Some Concrete Encoding Considerations}
+Note that all these optimizations are based on the precidate that the access
+that must be optimized is the read or write with a known field in a record of known shape.
+Operations like extending a record with new fields, or removing fields from a record,
+are actually made @emph{slower} with these representations, because now you will need
+to find a new shape, register it in a global shape registry
+(a weak hash-table) if it hasn’t been seen yet, @; TODO cite weak hash tables???
+and reshuffle the contents to fit the new unrelated layout.
+If your set of fields is very dynamic, you will want an alist (if short)
+or regular balanced tree (if pure) or hash-table (if stateful).
+
+@subsubsection{The Means of Record Production}
 
 In any case, any host language you choose for your implementation
 will offer some kind of underlying low-level memory array or vector of nodes,
@@ -533,7 +565,7 @@ is a good task for modern AI to semi-automate.
 @subsection{Where did the Fixpoint Go?}
 
 @subsubsection{No Place for Fixpoints}
-Even more so than records, OO involves open recursion through fixpoints.
+Just as essential as records to OO is the open recursion through fixpoints from inheritance.
 Now, whichever specific data structure is used underneath to represent a finite map,
 importantly, a data structure is an “inert” @emph{value}:
 looking up bindings can be done in a “pure” way involving no meaningful side-effect,
@@ -634,6 +666,7 @@ I will also call the computation a @emph{suspended foo}
 If the computation fails to terminate, trying to extract its outcome will also not terminate,
 but will only produce the side-effects of the computation.
 
+@; TODO: will there be Scheme code in 1st Ed? Or only 2nd Ed?
 In my Scheme code, I will call @c{suspend} and @c{outcome}
 the primitives to suspend a computation and extract the outcome of a suspension.
 The resulting syntax is slightly verbose and awkward, but that is the whole point:
@@ -688,7 +721,8 @@ which would inefficiently recompute the entire record every time
 (or @c{(record-ref (half hyper half) method-id)} to support mixin or multiple inheritance).
 Instead, the ubiquitous isomorphic representation that everyone uses is actually
 a record of suspensions you invoke as @c{(record-ref half method-id half)}
-(or @c{(record-ref half method-id hyper half)} for mixin and multiple inheritance).
+(or @c{(record-ref half method-id hyper half)} for mixin inheritance,
+@c{(record-ref half method-id (precedence-list half) half)} for multiple inheritance).
 Note that @c{half} itself, by requiring a call with @c{half} as argument (and maybe @c{hyper}),
 is already a form of suspension. No further form of suspension is required,
 though such forms can be useful as caching mechanisms.
@@ -873,7 +907,8 @@ and the language allows for dependency-based re-ordering of slot-defining clause
 might topologically sort those definitions to accommodate a wider range of definitions
 that avoid initialization with temporary null values
 (assuming such a @emph{static} order exists, and not just a @emph{dynamic} one).
-Unhappily, I don’t know of any OO system that has chosen this semantics;
+Unhappily, I don’t know of any OO system that has chosen this semantics
+(outside OO, this is more or less the semantics of Scheme’s @c{letrec*}). @; TODO cite Waddell2005
 existing second-class OO systems tend to offer the worst of both worlds
 in terms of initialization protocols.
 
@@ -900,7 +935,7 @@ which would not be directly expressible in a pure applicative setting.
 
 @subsection{From Computation to Structure}
 
-So far in this chapter I've focused on the computational aspect
+So far in this chapter I’ve focused on the computational aspect
 of how objects are brought into existence:
 how to think about them algorithmically;
 the importance of staging (second-class vs first-class)
@@ -966,7 +1001,7 @@ And if you want an multiple As in your B, just declare as many A-typed fields as
 or an array, or a your favorite container full of As.
 
 But clown-ass Snyder with CommonObjects & Stroustrup with C++
-cooked up some fucked-up mess, then jerk to it like they Einstein. Nigga, you ain't.
+cooked up some fucked-up mess, then jerk to it like they Einstein. Nigga, you ain’t.
 
 Once you dig that, repeated inheritance becomes just the “optimization”
 of being able to say “I have an A but also a B that contains it” with a single pointer.
@@ -984,7 +1019,7 @@ How do C++ handle "non-virtual" repeated classes? Well, conceptually, they are f
 so they are handled like fields, with a special "vtable" header field
 that informs on their being part of something bigger.
 The kth occurrence of A in B would have a A#k-in-B vtable.
-That's 8 extra bytes per base class repeat. That shit adds up, then
+That’s 8 extra bytes per base class repeat. That shit adds up, then
 multiplies by the number of objects, even if you never use the feature
 (so much for "zero-cost abstraction"). It clogs your cache lines.
 
@@ -993,8 +1028,8 @@ But in practice, they remain shallow and this number remains small.
 
 Intel x64 has 64-bit addresses, but the hardware only manages only 48 or 57 bits of actual
 virtual address space. Recent variants are even kind enough to make 15 or 6 of those bits for us
-at no extra cost. That's a minimum of 6 free tag bits. There's also 3 low bits for cheap, and
-a few more if you're willing to accept a slightly smaller address space and mask bits yourself.
+at no extra cost. That’s a minimum of 6 free tag bits. There’s also 3 low bits for cheap, and
+a few more if you’re willing to accept a slightly smaller address space and mask bits yourself.
 But 6 should be plenty enough in practice, and 15 more than enough.
 Anyway, use those 6 bits in your A-typed pointer to index which #k of the A-in-B you are.
 And if you have subclasses with more than 64 copies of you... well, first, why?
@@ -1091,7 +1126,7 @@ I can only briefly survey this topic, maybe reusing the Collapsing Towers of Int
 @subsection{Side-Effects}
 
 I will revert to stateful OO, because I suspect
-that's what my public is interested in, will use, and has in their underlying language.
+that’s what my public is interested in, will use, and has in their underlying language.
 But you can do it all with pure functional data structures if you want (see exercises below).
 
 One man’s purity is another man’s side-effects.
@@ -1168,7 +1203,7 @@ Sandboxing and membrane patterns.
 @section{Finale: Putting It All Together}
 How does it all connect?
 A tour through an actual implementation: the Gerbil MOP.
-What this book's accompanying code does (and doesn’t) do.
+What this book’s accompanying code does (and doesn’t) do.
 
 @exercise[#:difficulty "Easy"]{
   Read and make sense of the code I wrote for this chapter,
