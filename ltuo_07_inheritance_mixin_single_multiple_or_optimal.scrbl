@@ -1063,7 +1063,7 @@ The original Flavors used a variant of such an algorithm,
 @;{ TODO cite the CADR code https://www.heeltoe.com/retro/mit/mit_cadr_lmss.html
     See MAP-OVER-COMPONENT-FLAVORS in src/lispm2/flavor.160
     https://github.com/mietek/mit-cadr-system-software }
-and Ruby still does to this day. @; Also NewtonScript, and probably more
+and Ruby still does to this day. @; Also NewtonScript (Smith1995), and probably more
 Unhappily, this approach fails at respecting either Local Order or Monotonicity.
 
 Another approach is to consider the precedence list a synthesized attribute,

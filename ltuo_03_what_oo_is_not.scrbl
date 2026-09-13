@@ -193,7 +193,7 @@ yet types are undoubtedly an important topic that occupies much of the theory an
 Actually, the analogy goes further since, as we’ll see,
 classes are precisely an application of OO to types (@secref{P&C}, @secref{RCOO}).
 
-@subsection{OO isn’t Imperative Programming}
+@subsection[#:tag "OOinIP"]{OO isn’t Imperative Programming}
 @epigraph{Objects are a poor man’s closures. @|#:- "Norman Adams"|}
 @epigraph{Closures are a poor man’s objects. @|#:- "Christian Queinnec"|
 }

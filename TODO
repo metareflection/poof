@@ -18,8 +18,16 @@
 - [ ] Actually implement the various typecheckers and counter-examples
 - [ ] Information-theoretic and quantitative analysis of inheritance
 - [ ] Modularity and Extensibility separately vs together
+- [ ] 
 
-It's not "recent research" so much as simplification and extraction of the essence of OO, as developed since the late 1960s, reduced to its core and implemented since the late 1970s, formalized since the late 1980s, made ubiquitous since the late 1990s, rediscovered in a pure functional setting in the late 2000s, and finally done right since the late 2010s.
+https://www.microsoft.com/en-us/research/academic-program/write-great-research-paper/
+
+
+It's not "recent research" so much as simplification and extraction of the essence of OO,
+as developed since the late 1960s, reduced to its core and implemented since the late 1970s,
+formalized since the late 1980s, made ubiquitous since the late 1990s,
+rediscovered in a pure functional setting in the late 2000s,
+and finally done right since the late 2010s.
 
 
 Is a Computation "just" a Promise?
@@ -101,24 +109,6 @@ PꚘF, pꚙf
 
 
 
-type Lens s t a b = forall f. Functor f => (a -> f b) -> (s -> f t)
-
-lens: Lens super self inherited field | self <: super | field <: inherited
-
-type Mixin self super = self <: super => self -> super -> self
-fix :: Mixin self super -> super -> self
-fix mixin base = let self = mixin self base in self
-mix :: Mixin self super -> Mixin super sup2 -> Mixin self sup2
-mix child parent self super = child self (parent self super)
-
-
-methodOverride :: (self <: super, method <: inherited) => Lens super self inherited method -> (self inherited -> method) -> Mixin self super
-methodOverride lens body self super = lens (body self) super
-
-lensedMixin :: (self <: super, method <: inherited) => Lens super self inherited method -> Mixin method inherited -> Mixin self super
-lensedMixin lens mixin self super = over lens (mixin (get lens self)) super
-
-
      ($slide "Pure Functional Prototypes are Cool"
         @Li{Great for Theory}
         @Li{Great for Practice}
@@ -158,8 +148,6 @@ lensedMixin lens mixin self super = over lens (mixin (get lens self)) super
 
 
 
-There is no OO whatsoever at runtime in C++, only plain procedural imperative stateful programming.
-
 There is no mutable state whatsoever at compile-time in C++, just a pure functional lazy language with Prototype OO—the C++ template language.
 
 Class OO is a lie. There is no such thing.
@@ -168,13 +156,25 @@ All OO is Prototype OO. Some of it is used to metaprogram types and procedures o
 Usually in an extremely restricted metalanguage, but not always.
 
 
-Cook's thesis only has a short section on multiple inheritance. His formalism allows him to see issues that most people fail to conceive, yet his two proposed solutions are shallow and bad, despite many actual working systems having existed for a decade already at that time.
 
-His first model has wrappers process a tuple of the direct parent's results. This can account the effects of unknown indirect parents exponentially many times, so wrappers must be CRDTs (which he fails to notice). Hence no one uses it.
+Cook's thesis only has a short section on multiple inheritance.
+His formalism allows him to see issues that most people fail to conceive,
+yet his two proposed solutions to these issues are shallow and bad,
+despite many actual working systems having existed for a decade already at that time.
 
-His second "strict" model just punts on "conflicts", i.e. cases where multiple parents define distinct methods. That's the least useful non-useless CRDT, and initial solution used by ThingLab, Smalltalk (and MESA?). But by 1989, Flavors and LOOPS did much better.
+His first model has wrappers process a tuple of the direct parent’s results.
+This can account for the effects of unknown indirect parents exponentially many times,
+so wrappers must be CRDTs (which he fails to notice). Hence no one uses it.
 
-The solution used by (almost?) everyone since before his thesis is to linearize the inheritance DAG; wrappers are the same as for single- and mixin- inheritance; works with any CRDT without users having to do it the hard way; hence method combinations, standard or not.
+His second "strict" model just punts on "conflicts",
+i.e. cases where multiple parents define distinct methods.
+That's the least useful non-useless CRDT, and initial solution used
+by ThingLab, Smalltalk (and MESA?). But by 1989, Flavors and LOOPS did much better.
+
+The solution used by (almost?) everyone since before his thesis is to linearize the inheritance DAG;
+wrappers are the same as for single- and mixin- inheritance;
+works with any CRDT without users having to do it the hard way;
+hence method combinations, standard or not.
 
 I don't want to dunk too much on Cook in particular: Most academic treatment of multiple inheritance is disappointing, especially by prestigious PL professors, who seem never to have used it nor studied how and why OO programmers actually use it.
 
@@ -186,7 +186,7 @@ Note that it's not a matter of bad people, but of bad incentives: universities d
 
 Of course, the industry has its own host of bad incentives. They notably explain a consistent neglect of FP and formal methods, except in a few companies that recruit at the high end. And then don't get me started about Applications and "IP". But that's for another thread.
 
-CRDT: I'm using the modern name—just a fancy way of saying that whichever way you encode your "wrapper" results must intrinsically avoid duplicating effects… which comes for free if you linearize your ancestors and apply a plain old wrapper (or one from your method combination).
+CRDT: I'm using the modern name—just a fancy way of saying that whichever way you encode your "wrapper" results must intrinsically avoid duplicating effects… which comes for free if you linearize your ancestonrs and apply a plain old wrapper (or one from your method combination).
 
 
 Look at "export" statements in objects of Scala 3.
@@ -219,6 +219,7 @@ e.g. How to Write a Great Research Paper, SPJ
 https://github.com/fare/projects/issues/7
 
 Ingalls 2020 => Smalltalk-76 work starts on the beach in August 1976--one month after KRL is published.
+
 
 
 @section{Inheritance as Code Compression}
@@ -833,9 +834,6 @@ that may not actually be essential to OO.
 @item{Discuss how purity and laziness make OO more modular,
   and solve difficult initialization order issues (@seclink{laziness}).}
 @; ^ and are actually used in practice in most OO languages—but only at the metalevel.
-
-@item{Clarify the relationship between Prototype OO and Class OO,
-  and why Prototypes, being first-class, enable more modularity (@seclink{classes}).}
 
 @item{Generalize OO methods from fixed slots to functional lenses,
   very simply enable modular features like method combinations (@seclink{optics}).}

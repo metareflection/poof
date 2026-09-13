@@ -880,6 +880,17 @@
     of deriving efficient functional programs by representation change.}
 }
 
+@inproceedings{LaLonde1986,
+  author={Wilf R. LaLonde and Dave A. Thomas and John R. Pugh},
+  title={An Exemplar Based Smalltalk},
+  booktitle={Conference Proceedings on Object-Oriented Programming Systems, Languages and Applications},
+  year={1986},
+  pages={322--330},
+  doi={10.1145/960112.28729},
+  url={https://doi.org/10.1145/960112.28729},
+  note={Reworks Smalltalk around exemplars (prototypes) while retaining first-class classes. Classes create instances by cloning a designated standard exemplar, and the paper describes the required image, VM and library changes. An unusually early, detailed precursor to implementing Class OO over Prototype OO.}
+}
+
 @InProceedings{Meyer1986,
   author={Bertrand Meyer},
   title={Genericity versus Inheritance},
@@ -1224,6 +1235,20 @@
 
 %% 1989
 
+@techreport{Agesen1989,
+  author={Ole Agesen and Svend Frølund and Michael Hoffmann Olsen},
+  title={Persistent and Shared Objects in BETA},
+  institution={Department of Computer Science, Aarhus University},
+  number={DAIMI IR-89},
+  year={1989},
+  month={apr},
+  url={https://beta.cs.au.dk/Papers/References.html},
+  note={
+    Introduces pattern variables to BETA, making patterns first-class values
+    that can be assigned, passed and returned;
+    motivated by the need to associate persistent objects with dynamically available patterns.}
+}
+
 @InProceedings{Baker1989,
   author={Henry G. Baker},
   title={The NIMBLE Project: Real-Time Common LISP for Embedded Expert Systems Applications},
@@ -1445,6 +1470,46 @@
     conventional in mainstream object-oriented practice around 1990.
   }
 }
+
+@Article{Cohen1991,
+  author={Norman H. Cohen},
+  title={Type-Extension Type Tests Can Be Performed In Constant Time},
+  journal={ACM Transactions on Programming Languages and Systems},
+  volume={13},
+  number={4},
+  pages={626--629},
+  month={October},
+  year={1991},
+  doi={10.1145/115372.115297},
+  url={https://doi.org/10.1145/115372.115297},
+  note={.
+    Adapts the classic display technique to constant-time subtype/type-extension tests
+    in a single-inheritance hierarchy.
+    Each type descriptor stores its base types indexed by depth,
+    so testing whether one type extends another requires a constant-time indexed lookup and comparison.
+    Directly relevant to efficient subtype testing and
+    to later generalizations for multiple inheritance.}
+}
+
+@Article{Wirth1991,
+  author={Niklaus Wirth},
+  title={Reply to “Type-Extension Tests Can Be Performed In Constant Time”},
+  journal={ACM Transactions on Programming Languages and Systems},
+  volume={13},
+  number={4},
+  pages={630},
+  month={October},
+  year={1991},
+  doi={10.1145/115372.214521},
+  url={https://doi.org/10.1145/115372.214521},
+  note={
+    Brief reply to Cohen 1991, rejoicing at Cohen’s
+    display-based constant-time type-extension test and observing that,
+    unlike procedure displays (for access at scoped variables in intermediate environments),
+    these type displays can be constructed statically and need not be updated at run time.
+  }
+}
+
 
 % multimethods + types
 @InProceedings{Mugridge1991,
@@ -1923,6 +1988,19 @@
   note={Distinguishes extensible prototype-like objects from sealed object values in a typed calculus, clarifying the interaction of delegation, extension and subtyping.}
 }
 
+@InProceedings{Myers1995,
+  author={Andrew C. Myers},
+  title={Bidirectional Object Layout for Separate Compilation},
+  booktitle={Proceedings of the 10th Annual Conference on Object-Oriented Programming Systems, Languages, and Applications},
+  pages={124--139},
+  publisher={ACM},
+  year={1995},
+  month={October},
+  doi={10.1145/217838.217849},
+  url={https://doi.org/10.1145/217838.217849},
+  note={Introduces bidirectional object layout, a separately compilable object representation designed to reduce the space and dispatch costs of multiple inheritance. It separates dispatch information from fields, exploits primary versus secondary supertypes and can support true multiple implementation inheritance while preserving compact objects and fast method calls. Directly relevant to the book's discussion of efficient multiple-inheritance representation and the tradeoff between fixed layouts, separate compilation and dispatch cost.}
+}
+
 % TODO Important to cite?
 % No prototypes, but good classes?
 % Addresses Conflation head-on: "Class Ambiguity"
@@ -1948,7 +2026,6 @@
   }
 }
 
-% Prototype NewtonScript
 @InProceedings{Smith1995,
   author={Walter R. Smith},
   title={Using a Prototype-Based Language for User Interface: The Newton Project's Experience},
@@ -1963,11 +2040,27 @@
   doi={10.1145/217838.217844},
   url={https://citeseerx.ist.psu.edu/document?doi=5ac9bfbe4b0cf203d25bc3a71e5f9885426a2b34&repid=rep1&type=pdf},
   note={
-    Describes Apple's use of prototype-based NewtonScript for the Newton user
-    interface framework.
-    Discusses advantages of prototype inheritance for user interfaces and for
-    memory-constrained machines.
+    Smith describes Apple’s use of prototype-based NewtonScript
+    for the Newton user interface framework.
+    The language is memory-constrained, and users create many unique objects
+    for which the overhead of introducing a class is not justified.
+    Smith explains the system’s “comb” inheritance mechanism.
   }
+}
+
+@inproceedings{SmithUngar1995,
+  author={Randall B. Smith and David Ungar},
+  title={Programming as an Experience: The Inspiration for Self},
+  booktitle={ECOOP '95: Object-Oriented Programming},
+  editor={Mario Tokoro and Remo Pareschi},
+  series={Lecture Notes in Computer Science},
+  volume={952},
+  pages={303--330},
+  publisher={Springer},
+  year={1995},
+  doi={10.1007/3-540-49538-X_15},
+  url={https://doi.org/10.1007/3-540-49538-X_15},
+  note={Explains the uniform prototype-based object model of Self and illustrates how a class-like abstraction can be constructed as an ordinary object holding a prototype and a method that copies it. It points toward the more complete Smalltalk-on-Self construction described by Wolczko.}
 }
 
 @InProceedings{StataGuttag1995,
@@ -2477,6 +2570,18 @@
   doi={10.1145/302405.302457},
   url={https://doi.org/10.1145/302405.302457},
   note={Argues that concerns are multi-dimensional and that available formalisms constrain decomposition; directly relevant to why single inheritance forces clumping.}
+}
+
+@incollection{Wolczko1999,
+  author={Mario Wolczko},
+  title={self includes: Smalltalk},
+  booktitle={Prototype-Based Programming: Concepts, Languages, and Applications},
+  editor={James Noble and Antero Taivalsaari and Ivan Moore},
+  publisher={Springer},
+  year={1999},
+  isbn={9789814021258},
+  url={https://www.merlintec.com/download/mario.pdf},
+  note={Describes a working implementation of Smalltalk entirely in the prototype-based language Self. First-class Smalltalk classes, metaclasses, methods and instances are represented by ordinary Self objects; each class includes a prototypical instance cloned by new, and class creation constructs the corresponding network of prototype objects. The closest prior publication found to a complete implementation of Class OO on top of Prototype OO.}
 }
 
 %% 2000
@@ -3578,29 +3683,6 @@
 
 %% 2009
 
-@InProceedings{Ducournau2009,
-  author={Roland Ducournau and Floréal Morandat and Jean Privat},
-  title={Empirical Assessment of Object-Oriented Implementations with Multiple Inheritance and Static Typing},
-  booktitle={Proceedings of the 24th ACM SIGPLAN Conference on Object-Oriented Programming, Systems, Languages, and Applications},
-  year={2009},
-  month=oct,
-  pages={41--60},
-  location={Orlando, Florida, USA},
-  publisher={Association for Computing Machinery},
-  address={New York, NY, USA},
-  doi={10.1145/1639949.1640093},
-  url={https://archipel.uqam.ca/4981/1/DucourEtal-oopsla09-OOImplementation.pdf},
-  note={
-    Empirically compares implementation techniques for statically typed
-    multiple inheritance, including C++ subobjects, coloring, perfect hashing,
-    binary-tree dispatch and caching.
-    Separates the effects of representation technique from compilation schemes
-    ranging from open-world separate compilation to closed-world compilation.
-    Useful for quantifying the runtime and space costs traditionally attributed
-    to multiple inheritance.
-  }
-}
-
 % Recursion Scheme, FP & OOP ???
 @Article{Gibbons2009,
   title={The essence of the iterator pattern},
@@ -3744,10 +3826,10 @@
   doi={10.1145/1922649.1922655},
   url={https://citeseerx.ist.psu.edu/document?doi=b1d7ad44ebaa0f46b0550eaabfcf59ed640a387a&repid=rep1&type=pdf},
   note={
-    Comprehensive survey of implementation techniques for statically typed OO languages,
+    A comprehensive survey of implementation techniques for statically typed OO languages,
     covering method dispatch, attribute access and subtype testing.
-    Systematically contrasts single inheritance, multiple inheritance and
-    multiple interface subtyping under separate compilation, dynamic loading and global optimization.
+    Systematically contrasts single inheritance, multiple inheritance and multiple interface subtyping.
+    Compares situations including separate compilation, dynamic loading and global optimization.
     A major reference for distinguishing semantic language features
     from the implementation constraints historically associated with them.
   }

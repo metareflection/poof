@@ -95,7 +95,7 @@ or some meta-level representation thereof across stages of evaluation.
 @;{ TODO see chapter 10 }
 
 Class OO is therefore a special case of Prototype OO,
-which is therefore the more general form of OO @~cite{Lieberman1986 Rideau2021}.
+which is therefore the more general form of OO @~cite{Lieberman1986 Rideau2021}. @; TODO Wolczko1999
 And indeed within Prototype OO, you can readily express
 prototypes for runtime type descriptors for your language,
 or prototypes for type descriptors for some other language you are processing as a meta-language.

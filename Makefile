@@ -59,7 +59,7 @@ build/slides-2021-scheme-workshop.pdf: slides-2021-scheme-workshop.rkt
 	slideshow -o $@ --pdf $<
 
 # Publishing it all on fare's server http://fare.tunes.org/files/cs/poof.pdf
-fare: poof.pdf
+fare: build/poof.pdf
 	cp $< ~/files/cs/
 	rsync -av $< bespin:files/cs/
 
@@ -117,7 +117,7 @@ ltuoview: ltuopdf
 	$(PDFVIEWER) build/ltuo.pdf $(P)
 ltuo: ltuohtml ltuopdf ltuowc ltuoview
 ltuo2: ltuohtml ltuopdf ltuowc ltuosync ltuoview
-ltuosync:
+ltuosync: build/ltuo.pdf build/ltuo.html
 	rsync -av $^ ~fare/files/cs/poof/
 	rsync -av $^ bespin:files/cs/poof/
 ltuowc:

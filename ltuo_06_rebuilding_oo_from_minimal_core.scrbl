@@ -875,6 +875,8 @@ yet no one seems to have been able to fully tease apart the concepts up until re
   The class syntax does not introduce a new object-oriented inheritance model to JavaScript.
     @|#:- "Mozilla Developer Network"|}
 
+@; TODO cite Wolczko1999
+
 @subsection{A Class is a Prototype for a Type}
 
 Having elucidated Prototype OO in the previous sections,
@@ -1431,60 +1433,100 @@ and how mutable state is therefore wholly unnecessary for OO.
 There have been plenty of pure functional object libraries since at least the 1990s,
 even for languages that support mutable objects;
 OO languages that do not support any mutation at all have also existed since at least the 1990s,
-and practical such languages with wide adoption exist since at least the early 2000s.
+and practical such languages with wide adoption have existed since at least the early 2000s.
 @;{TODO cite}
 
-Yet, historical OO languages (Lisp, Simula, Smalltalk),
+Yet, historical OO languages (Simula, Lisp, Smalltalk),
 just like historical OO-less languages of the same time (FORTRAN, ALGOL, Pascal),
 were stateful, heavily relying on mutation of variables and record fields.
 So are the more popular OO and OO-less languages of today, still,
 though there are now plenty of less-popular “pure (functional)” options.
-How then does mutation fit in my functional OO paradigm?
-The very same way it does on top of Functional Programming in general, with or without OO:
-by adding an implicit (or then again explicit) “store” argument to all (or select) functions,
-that gets linearly (or “monadically”) modified and passed along the semantics of those functions
-(the linearity, uniqueness or monadicity ensuring that there is one single shared state
-at a time for all parts of the program).
-Then, a mutable variable or record field is just
-a constant pointer into a mutable cell in that store,
+How then does mutation fit in my functional OO paradigm? Quite trivially.
+
+Consider the popular case of second-class Class OO:
+Not only are the @emph{specifications} immutable,
+even the @emph{targets} are immutable.
+Indeed the targets are type descriptors.
+It’s the @emph{elements} of those target types that are mutable, the “class instances”.
+But the mutability of a field itself is just an immutable boolean flag
+within an immutable type descriptor,
+that was computed purely functionally from an immutable modular specification.
+It’s all 100% pure functional programming—100% at the meta-level of class construction.
+Immutable first-class OO metaprograms, mutable object-based programs.
+And, well, granted, there are mutations happening at runtime:
+But there is no OO whatsoever left at runtime—no modular extensibility,
+only “object-based” programming—first-class modularity without extensibility.
+Popular second-class Class OO languages, and especially C++,
+are typical examples where OO and mutation are mutually exclusive;
+no mutation while the actual OO happens, no actual OO while mutation happens.
+
+Now you @emph{could} easily combine OO and mutation by making
+the @emph{targets} mutable within first-class OO,
+while the specifications remain immutable.
+From pure functional specification, you would purely instantiate records
+some of whose fields are mutable cells holding the immutable initial value,
+rather than the immutable value itself.
+Thus, while a read-only field could contain the number 42,
+a read-write field could instead contain an implicit cell with initial content 42.
+All the pure functional definitions I offered still directly apply.
+Slightly less pure but still quite functional, you could @emph{also}
+allow effectful interactions with the content of mutable cells during the instantiation itself.
+Now, that will indeed require, if not outright capitulation to side-effects, at least
+a monadic variant of a fixpoint operator. @; TODO Erkok2000 Friedman2000 Erkok2002 Erkok2002Semantics
+
+But this is no different from how mutability and side-effects
+are typically added to Functional Programming in general,
+and wholly orthogonal to OO.
+You can model side-effects externally to the language and its programs,
+wherein your language’s semantic function takes a “store” argument,
+that is consulted or modified to enact mutation, @; TODO cite
+Or you can internalize this semantic behavior within the programs of a pure language,
+using the “state monad”. @; TODO cite
+If the “store” argument is threaded linearly with a single active value at any time
+(which is the usual case in the external approach),
+then the non-duplication of the underlying state
+enables the use of the usual side-effect implementations and optimizations:
+a mutable variable or record field is just a constant pointer into a mutable cell in the store,
 a “(mutable) reference”.
 
-This approach perfectly models the mutability of object fields, as found in most OO languages.
-It has the advantages of keeping this concern orthogonal to others,
-so that indexed products, fixpoints, mutation, visibility rules and subtyping constraints
-(separately before and after fixpointing), etc.,
-can remain simple independent constructs each with simple reasoning rules,
-logically separable from each other yet harmoniously combinable together.
+Once you realize that the mutability of object fields, as commonly found in popular OO languages,
+is completely orthogonal to the essence of OO,
+you will cast aside the background noise of ignoramuses arguing for or against
+OO identified with Imperative Programming (@secref{OOinIP}).
+Instead, you will start thinking of how you can decompose OO (and non-OO) languages
+into more orthogonal concepts:
+indexed products, fixpoints, visibility rules and
+subtyping constraints (separately considered before and after fixpointing), etc.
+You can rebuild OO as a small assembly of independent elementary concepts
+that each are logically simple and separate from each other,
+yet harmoniously combine together.
+
 By contrast, the “solution” found in popular languages like C++, Java, or C#
 is all too often the opposite of offering simple orthogonal concepts:
 these languages instead introduce a single mother-of-all syntactic and semantic construct
-of immense complexity, the “class”, that frankly not a single person in the world fully understands,
-the complete informal specification of which takes thousand-page books
-(a complete formal specification never being attempted,
-and being wholly impossible for human programmers to fathom, much less understand, if ever completed),
+of immense complexity, the “class”,
+the complete informal specification of which occupies thousand-page books
+(a complete formal specification was never achieved, despite a few attempts,
+and may be wholly impossible for human programmers to fathom,
+much less understand, if ever completed),
 and of which scientific papers only dare study
 but simplified (yet still extremely complex) models.
+I doubt any single human in the world fully understands the semantics of classes,
+and those who claim they do are only more dangerous to themselves and others for believing it.
 
-Actually, when I remember that in most OO languages,
-OO is only ever relevant but at compile-time,
-I realize that of course mutation is orthogonal to OO,
-even in these languages, nay, especially so in these languages:
-since OO fragments are wholly evaluated at a time before any mutation whatsoever takes place,
-mutation cannot possibly be part of OO, even though it is otherwise part of these languages.
-Indeed the compile-time programming model of these languages, if any, is pure lazy functional.
-Thus, whether fields are mutable or immutable is of precious little concern
-to the compiler fragment that processes OO:
-it’s just a flag passed to the type checker and code generator after OO is processed away.
 
 @subsection[#:tag "MoIaCU"]{Mutability of Inheritance as Code Upgrade}
 
-Keeping mutability orthogonal to OO as above works great as long as the fields are mutable,
-but the inheritance structure of specifications is immutable.
+Keeping mutability orthogonal to OO as above works great
+as long as only the fields of target elements or targets are mutable,
+but the inheritance structure of specifications remains immutable.
 Happily, this covers every language with second-class classes (which is most OO languages),
-but also all everyday uses of OO even in languages with first-class prototypes and classes.
-Still, there are use cases in which changes to class or prototype hierarchies
-are actively supported by some dynamic OO systems such as Smalltalk or Lisp:
-to enable interactive development, or schema upgrade in long-lived persistent systems.
+but also most everyday uses of OO even in languages with first-class prototypes and classes.
+Still, there are use cases in which dynamic changes to class or prototype hierarchies at runtime
+are actively supported by some OO systems such as Smalltalk or Lisp:
+to enable interactive development, or schema upgrade in long-lived persistent systems,
+or merely user-defined scaffolding to build larger object structures at runtime
+through side-effects to lower-level representations.
 How then to model mutability of the inheritance structure itself,
 when the specification and targets of prototypes and classes are being updated?
 
@@ -1525,7 +1567,7 @@ is mostly not transposable to other languages@xnote["."]{
   This is possible because Erlang has only very restricted sharing of state between processes,
   so it can ensure PCLSRing @~cite{Bawden1989} without requiring user cooperation;
   this is useful because Erlang and its ecosystem have a deep-seated “let it fail” philosophy
-  wherein processes randomly dying is expected as a fact of life,
+  wherein processes unexpectedly dying is itself expected as a fact of life,
   and much infrastructure is provided for restarting failed processes,
   that developers are expected to use.
 }
@@ -1545,7 +1587,7 @@ for updating class definitions, including well-defined behavior with respect to 
 are updated when their classes change:
 see for instance the protocol around @c{update-instance-for-redefined-class}
 in CLOS, the Common Lisp Object System @~cite{Bobrow1988}.
-These facilities allow continuous concurrent processing of data elements
+These facilities allow continued processing of data elements
 with some identity preserved as the code evolves, even as
 the data associated to these identities evolves with the code.
 Even then, these languages do not provide precise and portable semantics
@@ -1571,7 +1613,7 @@ Should a class maintain at all times and at great cost a collection of all its i
 just so this protocol can be eagerly updated once in a rare while?
 Should some real-time system process such as the garbage collector
 ensure timely updates across the entire heap
-even in absence of such explicitly maintained collection?
+even in the absence of such an explicitly maintained collection?
 Are children responsible for “deep” validity checks at every use,
 or do parents make “deep and wide” invalidations at rare modifications,
 or must parents and children somehow deal with incoherence?
@@ -1581,12 +1623,35 @@ If anything, thinking in terms of objects with identity and mutable state
 both forces software designers to face these issues,
 inevitable in interactive or long-lived persistent systems,
 and provides them with a framework to give coherent answers to these questions.
-Languages that assume “purity” or absence of code upgrade, thereby deny these issues,
+Languages that assume “purity” or absence of code upgrade thereby deny these issues,
 and leave their users helpless, forced to reinvent entire frameworks of identity and update
 so they may then live in systems they build on top of these frameworks,
 rather than directly in the language that denies the issues.
 
-@subsubsection{Further Notes about Mutation}
+
+@subsection[#:tag "MoIaLLR"]{Mutability of Inheritance as Low-Level Scaffolding}
+
+Now, many languages make mutation of inheritance not a reflective feature for exceptional cases,
+but a pervasive reality of the language defining inheritance at a relatively low-level of abstraction:
+Self, JavaScript, gBeta, Slate, and many more languages, @; TODO cite
+usually prototype-based but not always (Python), take this view.
+One could even construe various Smalltalk dialects as being in this bucket.
+
+Even then, what makes these languages “OO” is that, in the end,
+the inheritance of an object is not supposed to change in the middle of a method resolution,
+such that the usual pure functional semantics reflect well enough the behavior of the system.
+If such change mid-method-call happens, the system may behave in weird ways,
+but at least the result is well-defined and contained enough that users know what to expect;
+in the worst case, some failsafe mechanism will prevent the system from crashing.
+
+Thus, the fine-grained details on how prototype chains are looked up during method lookup,
+and how programmers can use clever side-effects to create chains that do what they want,
+should be seen as low-level scaffolding for users to build their own OO semantics on top
+of a flexible system, with the actual OO happening in between two uses of the low-level side-effects,
+rather than as something that extends OO in novel or mysterious ways,
+that contradict the essential pure functional semantics of OO.
+
+@subsection{Further Notes about Mutation}
 
 Programmers can use mutation to build recursive data structures,
 either as a way to implement OO itself, or as a way to
@@ -1595,15 +1660,17 @@ There are various advantages to such a strategy,
 especially in terms of simplicity of implementation, performance and ergonomics
 on top of existing low-level languages and systems.
 But these advantages also come with significant drawbacks in terms of complexity of usage protocols,
-correctness and reasonability.
+correctness and reasonability @~cite{Wlaschin2015}.
 I explore these tradeoffs in @secref{RtM}.
 
 Finally, it is important to realize that mutation or lack thereof
-are not an intrinsic property of computations, but only of some representations of those computations.
+are not an intrinsic property of computations,
+but only of some representations of those computations.
+It is an attribute of the map, not of the territory.
 Some programmers get very excited about mutability or immutability
 as if they were essential properties of computations;
 they may even claim that only one of the two is the correct choice,
-and that those who use the other choice are wrong, stupid or crazy.
+and that those who make the other choice are wrong, stupid or crazy.
 But the computer executing the code does not care whether it was written in a language
 with or without mutability.
 And the very same algorithms can be written with mutable or immutable objects.

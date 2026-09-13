@@ -483,10 +483,11 @@ as a second-class record plus a first-class record descriptor.
 The first-class descriptor will, among other things,
 contain a mapping from field identifier to field offset.
 Field accesses with a constant field identifier can use
-an “inline cache” of record offsets for the field
-@~cite{Hoelzle1991} @; TODO cite Deutsch1984
-depending on recently seen record descriptors,
-per access point, or shared between access points with the same field.
+a cache of record offsets for the field
+depending on recently seen record descriptors:
+you can have a small “inline cache” per access site with one or very few entries,
+and another one shared between access sites with the same name
+@~cite{Hoelzle1991}. @; TODO cite Deutsch1984
 Most of the computation can be skipped, after checking that
 the contents of the cache indeed match expectations.
 Alternatively, or in addition, the mapping from field identifier to offset
@@ -1057,10 +1058,15 @@ If you flatten the tree into consecutive bytes, essentially the same memory stru
 
 ABI @; TODO cite Itanium1999
 
-But there are other implementation strategies
+But there are other implementation strategies @~cite{Ducournau2009}
+
+@; TODO FKS hashing Fredman1984
+
+@; budget: how long to search for better optimization vs how much to gain?
+
 @; TODO cite Ducournau2011Coloring
 
-@; TODO cite Ducournau2008 Ducournau2009 Ducournau2011Implementing Ducournau2012
+@; TODO cite Ducournau2008 Ducournau2011Implementing Ducournau2012
 
 @section[#:tag "ED"]{Efficient Dispatch}
 
