@@ -249,12 +249,12 @@ type SrModExt inherited required provided =
     self ⊂ required, super ⊂ inherited ⇒
     super → self → (super∩provided)
 
-mix : SrModExt i1 r1 p1 → SrModExt (i2∩p1) r2 p2 →
-  SrModExt (i1∩i2) (r1∩r2) (p1∩p2)
+mix : SrModExt i r p → SrModExt (j∩p) s q →
+  SrModExt (i∩j) (r∩s) (p∩q)
 fix : top → SrModExt top (top∩target) target → (top∩target)
 }
 
-Note how the parameters @c{i1} and @c{i2} can be used somewhat independently,
+Note how the parameters @c{i} and @c{j} can be used somewhat independently,
 when they had to be combined into the single parameter @c{i} in @c{SSModExt};
 that’s an expression of modularity at the type-level.
 Furthermore, the universal quantification (@c{∀}, forall)
@@ -268,9 +268,9 @@ the idiom where the body of a method specification
 “uses @c{(super method-id)} as a default when no overriding behavior is specified”,
 that I mentioned in @secref{MOI},
 is actually mandated by the above type’s universal quantifier!
-At least it is mandated in language fragments that do not allow for runtime reflection
+At least it is mandated in language fr/agments that do not allow for runtime reflection
 on records and their available identifiers,
-which is usually the case in languages with Static Types
+which is usually the case in languages //with Static Types
 (absent, say, a constraint on the typeclass @c{Data.Dynamic} in Haskell,
 that enables such runtime reflection).
 
@@ -743,7 +743,7 @@ fix : ∀ inherited, required, newlyProvided : Type → Type, ∀ self, top : Ty
       self ⊂ required self,
       top ⊂ inherited self ⇒
         top → ModExt inherited required newlyProvided → self
-mix : ModExt i1 r1 p1 → ModExt i2∩p1 r2 p2 → ModExt i1∩i2 r1∩r2 p1∩p2
+mix : ModExt i r p → ModExt j∩p s q → ModExt i∩j r∩s p∩pq
 }
 
 In the @c{fix} function, I implicitly define a fixpoint @c{self}

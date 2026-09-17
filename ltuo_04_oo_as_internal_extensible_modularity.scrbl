@@ -445,7 +445,7 @@ programmers may have to manage large interfaces to achieve small results@xnote["
   to the point of replacing many routine names
   by common idioms—known sequences of combinators.
   (The many talks by Aaron Hsu at LambdaConf are an amazing glimpse at this style of programming.)
-  @;{TODO cite - ask arcfide / sacrideo}
+  @;{TODO @~cite{Hsu2019 Hsu2023}}
   The programmer can then directly express the concepts of the domain being implemented
   in terms of concrete APL’s tables and functions, stripped of all the unnecessary abstractions,
   until the solution is both so simple and task-specific that there is no need for shared modules.
@@ -1145,8 +1145,8 @@ without the concept and name of OO itself (@secref{OOnaming})@xnote["."]{
   when the name and concept are not there,
   and the “concatenation semantics” is more primitive and less usable
   than what users expect of OO since Smalltalk-76.
-  But that is a bit like asking whether some archaic @emph{Homo sapiens}
-  should count as fully modern human:
+  But that is a bit like asking whether @emph{homo erectus} (or @emph{abilis})
+  should count as human:
   The exact label of an arbitrary delimitation matters less than
   the precise understanding of when each critical trait appeared.
   Simula is missing pieces from what one may today expect of an OO language,
@@ -1155,7 +1155,7 @@ without the concept and name of OO itself (@secref{OOnaming})@xnote["."]{
   or at least to classes with nested methods (its “virtual procedures”).
 }
 
-No other known form of internal modular extensibility appears before 1976.
+No other documented form of internal modular extensibility appears before 1976.
 
 @subsubsection[#:tag "OOitL"]{OO in the Lab: 1976-1988}
 
@@ -1181,7 +1181,21 @@ they also introduce “prototypes”, and mention classes, citing Simula)@xnote[
 Kay got the word “inheritance” from KRL, and Ingalls implemented it in Smalltalk-76@xnote[","]{
   Ingalls started working on Smalltalk-76 in August @~cite{Ingalls2020}.
 }
-simplifying it to single inheritance, and making it much more usable @~cite{Kay1993 Ingalls1978}.
+simplifying it to single inheritance,
+and making it much more usable @~cite{Kay1993 Ingalls1978}—not just an experimental language,
+but an entire system you could actually live in—moreover
+with the first “killer app” of OO, the GUI@xnote["."]{
+  And so to continue the previous analogy,
+  KRL may have been @emph{homo neanderthalensis},
+  stronger than modern man, and comparably clever, but less socially competent.
+  Now Smalltalk is definitely @emph{homo sapiens}, the modern man,
+  maybe less strong in many ways, but overall fitter—by whatever criteria
+  made it survive to this day, when its rival is largely forgotten.
+  The point being that the taxonomy of when precisely something starts to be OO or not OO
+  is less interesting than the properties of the various past systems, their interrelationships,
+  their successes and failures, and what you can learn by comparing them—to
+  each other, to what is done today, and what could be done tomorrow.
+}
 
 The Smalltalk team kept innovating from there.
 As early as 1977, ThingLab implemented prototypes (and multiple inheritance) on top of Smalltalk
@@ -1281,6 +1295,38 @@ New languages now had to compete with incumbents possessing large user and code 
 To be relevant, new features now needed to be backed by big corporations,
 and be backward compatible with their ecosystem.
 Radical redesigns became niche.
+
+@subsubsection{OO: So Normal It’s Boring: 2010-}
+@epigraph{
+  “Backwards compatible” means: “if it isn’t backwards, it’s not compatible.”
+  @|#:- "USENET Folklore"|
+  @; Janne Johansson 1999? Greg Newton?
+}
+At some point in the 2000s, OO became so ubiquitous it became the “new normal”:
+all the popular languages had it; even languages that had resisted it for decades adopted it.
+Even FORTRAN and COBOL adopted it! @; TODO cite
+And then, it stopped being exciting.
+There was a feeling of “business as usual”.
+Innovation, while it still existed, was finding diminishing returns;
+big languages had become institutionalized, and improvements, while still ongoing,
+became centralized or bureaucratic, and carried the weight of backward compatibility.
+OO was not a differentiator. If anything, new languages like Go or Rust
+differentiated themselves by conspicuously @emph{not} adopting OO.
+
+Meanwhile, highly concurrent and distributed systems, mapreduce,
+reactive functional interfaces, ever more formal methods,
+were challenging the theretofore dominant paradigm of imperative programming,
+with which OO had been sold as a package deal since the 1980s.
+Interest in OO as such waned.
+As a sign that tables had turned, the big OO conference OOPSLA became
+a broader programming language conference SPLASH, of which OOPSLA was but a track.
+
+Does that mean that there is “nothing new under the sun”, and
+everything about OO has already been found and invented? Not at all.
+Actually, many of the great advances of OO from the 1980s and 1990s
+have still not been adopted by the mainstream, and are still “new” in that sense.
+Meanwhile, my bibliography contains several papers with OO innovations from after 2010;
+not as many as before the mid-1990s by far, but still a few notable ones.
 
 @subsection{Modular Extensible Specifications}
 

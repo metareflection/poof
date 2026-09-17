@@ -1650,6 +1650,10 @@ should be seen as low-level scaffolding for users to build their own OO semantic
 of a flexible system, with the actual OO happening in between two uses of the low-level side-effects,
 rather than as something that extends OO in novel or mysterious ways,
 that contradict the essential pure functional semantics of OO.
+Indeed, the implementation of these languages (e.g. JavaScript)
+base their optimizations on the premise that most of the time the inheritance hierarchy won’t change,
+unless the language semantics itself (e.g. Self, gBeta) ensures that
+it can only change through limited means.
 
 @subsection{Further Notes about Mutation}
 

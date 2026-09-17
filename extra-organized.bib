@@ -16,7 +16,7 @@
   month=aug,
   pages={12–18},
   numpages={7},
-  note={.
+  note={
     The quest for a “Universal Computer Oriented Language”,
     an intermediary between all present and future Programming Oriented Languages
     and actual underlying machines, with an interesting diagrammatic approach
@@ -76,7 +76,7 @@
   month=mar,
   doi={10.1145/365230.365257},
   url={https://www.cs.cmu.edu/~crary/819-f09/Landin66.pdf},
-  note={.
+  note={
     This landmark paper introduces the hypothetical language ISWIM (If you See What I Mean),
     a specializable backbone for programming languages with on a spine based on
     functional programming and purely functional programming, terms Landin introduces.
@@ -104,7 +104,7 @@
   month=mar,
   pages={143–155},
   numpages={13},
-  note={.
+  note={
     Among other things, introduces object capabilities.
   }
 }
@@ -214,7 +214,7 @@
   booktitle={Structured programming},
   pages={175--220},
   year={1972},
-  note={.
+  note={
     The paper identifies a class with a procedure that computes an algorithm,
     constructs a record, and yields current values multiple times
     to other activities with “detach” (call again for next).
@@ -551,7 +551,7 @@
   series={IJCAI'79},
   url={https://purl.stanford.edu/sx979cd9891},
   doi={10.5555/1623050.1623105},
-  note={.
+  note={
     A simplified successor to KRL.
     Not particularly interesting or original with respect to the OO aspects.
   }
@@ -719,7 +719,7 @@
   month=jun,
   pages={170–177},
   numpages={8},
-  note={.
+  note={
     GLISP is an impressive Lisp dialect with a compiler to Lisp implemented in Lisp
     (ported to Interlisp, Maclisp, Franz Lisp, UCI Lisp, Elisp, Portable Standard Lisp),
     with type inference, and a message-passing object system with multiple inheritance;
@@ -752,20 +752,6 @@
   doi={10.1145/800017.800542},
   url={https://web.cs.ucla.edu/~palsberg/course/cs232/papers/DeutschSchiffman-popl84.pdf?utm_source=chatgpt.com},
   note={Describes a high-performance implementation of Smalltalk-80 on conventional microprocessor hardware, including object representation, dynamic message lookup and techniques for reducing the cost of dynamic dispatch. A foundational implementation paper for efficient dynamically dispatched object-oriented languages.}
-}
-
-@Article{Fredman1984,
-  author={Michael L. Fredman and János Komlós and Endre Szemerédi},
-  title={Storing a Sparse Table with O(1) Worst Case Access Time},
-  journal={Journal of the ACM},
-  volume={31},
-  number={3},
-  pages={538--544},
-  month={July},
-  year={1984},
-  doi={10.1145/828.1884},
-  url={https://doi.org/10.1145/828.1884},
-  note={Gives a linear-space representation of a static sparse table supporting worst-case constant-time membership queries, establishing the classic FKS perfect-hashing construction. Relevant to compact constant-time lookup structures underlying later object-dispatch and subtype-testing schemes.}
 }
 
 %% 1985
@@ -869,7 +855,7 @@
   year={1986},
   doi={10.1016/0020-0190(86)90059-1},
   url={https://doi.org/10.1016/0020-0190(86)90059-1},
-  note={.
+  note={
     Introduces what are now called difference lists (or Hughes lists),
     though the paper itself calls them a “functional representation” of lists:
     representing a list by a first-class function that appends it to a future tail.
@@ -910,7 +896,7 @@
   year={1986},
   doi={10.1145/323648.323751},
   url={https://doi.org/10.1145/323648.323751},
-  note={.
+  note={
     Nygaard’s concise insider account of objects, classes and conceptual modeling in the Simula tradition.}
 }
 
@@ -930,7 +916,7 @@
   numpages={23},
   doi={10.5555/13432.13433},
   url={https://www.researchgate.net/publication/220604957_Object-Oriented_Programming_Themes_and_Variations},
-  note={.
+  note={
   }
 }
 
@@ -960,15 +946,6 @@
   }
 }
 
-@InProceedings{Cointe1987,
-  author={Pierre Cointe},
-  title={Metaclasses are First Class: the ObjVlisp Model},
-  booktitle={Proc. OOPSLA '87},
-  pages={156–162},
-  year={1987},
-  note={The tower closed by self-instantiation: fix one level up}
-}
-
 @InProceedings{Ducournau1987,
   author={Roland Ducournau and Michel Habib},
   title={On Some Algorithms for Multiple Inheritance in Object-Oriented Programming},
@@ -981,7 +958,7 @@
   doi={10.1007/3-540-47891-4_23},
   url={https://link.springer.com/chapter/10.1007/3-540-47891-4_23},
   isbn={978-3-540-47891-1},
-  note={.
+  note={
     Ducournau and Habib exploring the graph properties of inheritance algorithms,
     but not yet having formulated monotonicity.
     They call “multiplicity” (why?) the local precedence order.
@@ -1086,7 +1063,7 @@
   year={1987},
   doi={10.1007/3-540-47891-4_6},
   url={https://www.stroustrup.com/whatis.pdf},
-  note={.
+  note={
     A study of what OOP is, and how it compares to mere “data abstraction”
     (parametric polymorphism), from Stroustrup’s eminently practical mind.
     Among other things, requires both inheritance and dynamic dispatch for OO.
@@ -1316,7 +1293,7 @@
   year={1989},
   month=oct,
   doi={10.1145/74877.74898},
-  note={.
+  note={
     Studies compatibility issues arising when classes with different
     metaclasses interact through inheritance.
     Extends the reflective architecture developed in ObjVLisp toward
@@ -1482,7 +1459,7 @@
   year={1991},
   doi={10.1145/115372.115297},
   url={https://doi.org/10.1145/115372.115297},
-  note={.
+  note={
     Adapts the classic display technique to constant-time subtype/type-extension tests
     in a single-inheritance hierarchy.
     Each type descriptor stores its base types indexed by depth,
@@ -1546,7 +1523,7 @@
   author={Pierce, Benjamin C},
   year={1991},
   publisher={Carnegie Mellon University},
-  note={.
+  note={
     Pierce studies a λ-calculus with polymorphism, meets and joins,
     and expresses naturals and other types in it.
     He discusses the need for type annotations due to undecidable typechecking without.
@@ -1582,7 +1559,7 @@
   numpages={24},
   keywords={abstraction, object-oriented programming, object-oriented technology, requests, services},
   url={https://shiftleft.com/mirrors/www.hpl.hp.com/techreports/91/HPL-91-50.pdf},
-  note={.
+  note={
     Alan Snyder tries to introduce and name the common concepts in OO,
     in a way mindful of the variety of OO languages and systems,
     from C++ to CLOS to the Iris db and more.
@@ -1879,7 +1856,7 @@
   pages={123--137},
   year={1994},
   doi={10.1145/174675.176927},
-  note={.
+  note={
     This paper brilliantly introduces what will become Modules and Functors for SML.
     One problem though is that subtyping is not decidable.
   }
@@ -1895,7 +1872,7 @@
   pages={1811–1841},
   year={1994},
   doi={10.1145/197320.197383},
-  note={.
+  note={
     Canonical formulation of behavioral subtyping and substitutability,
     supplying the specification-side discipline that inheritance alone does not provide.
   }
@@ -1958,7 +1935,7 @@
   year={1995},
   pages={27--54},
   url={http://alexandria.tue.nl/repository/freearticles/597627.pdf},
-  note={.
+  note={
     de Bruijn’s reflections on what became known as the Curry-Howard-de Bruijn correspondence
     between function types and logical implication.
   }
@@ -2256,7 +2233,7 @@
   year={1997},
   doi={10.1007/978-3-642-60831-5_75},
   url={https://link.springer.com/chapter/10.1007/978-3-642-60831-5_75},
-  note={.
+  note={
     Defines Object-Gofer, an OO extension of Gofer whose semantics is given
     by translation into pure Gofer using monads, higher-order polymorphism and overloading.
     It supports objects, inheritance, method redefinition, late binding and self-type specialization,
@@ -2509,7 +2486,7 @@
   booktitle={OOPSLA '99},
   year={1999},
   doi={10.1145/320384.320395},
-  note={.
+  note={
     Journal version: ACM TOPLAS 23(3):396–450, 2001.
     Minimal class-based calculus;
     its extra machinery relative to the sigma-calculus shows classes are derived, not primitive.
@@ -3089,7 +3066,7 @@
   publisher={ACM},
   doi={10.1145/1028976.1028987},
   url={https://doi.org/10.1145/1028976.1028987},
-  note={.
+  note={
     Contrasts subclass-controlled overriding through super
     with superclass-controlled augmentation through BETA-style inner, then
     presents a language supporting both mechanisms together,
@@ -3191,7 +3168,7 @@
   year={2005},
   doi={10.1007/11531142_15},
   url={https://doi.org/10.1007/11531142_15},
-  note={.
+  note={
     Shows how Smalltalk's reflective facilities can efficiently implement
     multimethod dispatch on top of an otherwise single-dispatch object model.
     Relevant to the treatment of multiple dispatch and to the distinction
@@ -3259,7 +3236,7 @@
   year={2006},
   doi={10.1145/1113034.1113040},
   url={https://doi.org/10.1145/1113034.1113040},
-  note={.
+  note={
     Frequency-count survey of definitions;
     evidence of the enumeration problem this definition resolves
   }
@@ -3343,7 +3320,7 @@
   year={2006},
   doi={10.1145/1140335.1140352},
   url={https://www.andres-loeh.de/OpenDatatypes.pdf},
-  note={.
+  note={
     Functional solution to two-dimensional extensibility through open data and functions.
     Not quite OO, just use of typeclasses.
     A useful non-OO comparison for the expression problem.}
@@ -3443,7 +3420,7 @@
   year={2007},
   doi={10.1145/1297081.1297094},
   url={https://doi.org/10.1145/1297081.1297094},
-  note={.
+  note={
     Explores runtime adaptation through prototypes and context-sensitive multimethod dispatch,
     relevant to the outer edge of dynamic object models.
   }
@@ -3520,7 +3497,7 @@
   isbn="978-3-540-73210-5",
   doi={10.1007/978-3-540-73210-5_31},
   url={https://www.cs.ox.ac.uk/jeremy.gibbons/publications/uto.pdf},
-  note={.
+  note={
     Meh, S&G just take a calculus from A&C
     (same as their 1996 article or chapter 6 of their 1996 book),
     with their magic λ renamed to ς to cheat their type system,
@@ -3617,7 +3594,7 @@
   month={March},
   doi={10.5381/jot.2008.7.3.a4},
   url={https://www.jot.fm/contents/issue_2008_03/article4.html},
-  note={.
+  note={
     Presents message dispatch as multidimensional:
     procedural dispatch selects by name, ordinary OO additionally by receiver,
     subjective programming additionally by sender,
@@ -3938,7 +3915,7 @@
   publisher={Springer},
   year={2012},
   doi={10.1007/978-3-642-31057-7_2},
-  note={.
+  note={
   }
 }
 
@@ -4014,7 +3991,7 @@
   timestamp={Mon, 13 Aug 2018 16:46:22 +0200},
   biburl={https://dblp.org/rec/journals/corr/GuhaSK15.bib},
   bibsource={dblp computer science bibliography, https://dblp.org},
-  note={.
+  note={
     This article is great in desugaring the prototype sublanguage of JS,
     but doesn't cover classes.
   }
@@ -4069,7 +4046,7 @@
   publisher={Association for Computing Machinery},
   year={2015},
   doi={10.1145/2741948.2741964},
-  note={.
+  note={
     Useful production context for Google’s declarative configuration lineage, including BCL/GCL,
     but the paper is primarily about cluster management rather than object systems.
   }
@@ -4154,30 +4131,6 @@
   bibsource={dblp computer science bibliography, https://dblp.org}
 }
 
-@Article{Bobrow2017,
-  author={Rusty Bobrow},
-  title={Danny Bobrow: A Personal Recollection},
-  journal={AI Magazine},
-  year={2017},
-  month=dec,
-  volume={38},
-  number={4},
-  pages={85--86},
-  publisher={Association for the Advancement of Artificial Intelligence},
-  issn={0738-4602},
-  doi={10.1609/aimag.v38i4.2770},
-  url={https://ojs.aaai.org/aimagazine/index.php/aimagazine/article/view/2770},
-  note={
-    Personal tribute to Daniel G. Bobrow by his brother Rusty Bobrow, himself an AI researcher.
-    Recounts Bobrow's work at BBN and PARC, including his role in assembling
-    research groups around natural language, Lisp, Interlisp, TENEX, DWIM and
-    Logo, and emphasizes his collaborative style and interest in building
-    tools that amplified researchers’ abilities.
-    Useful as a first-hand biographical source and for historical context,
-    though weak on technical details of Bobrow’s contributions.
-  }
-}
-
 @Article{Noble2017,
   author={James Noble and Andrew P. Black and Kim B. Bruce and Michael Homer and Timothy Jones},
   title={Grace's Inheritance},
@@ -4215,6 +4168,24 @@
 }
 
 %% 2019
+
+@PhdThesis{Hsu2019,
+  author={Aaron W. Hsu},
+  title={A Data Parallel Compiler Hosted on the GPU},
+  school={Indiana University},
+  address={Bloomington, IN},
+  year={2019},
+  month={November},
+  url={https://hdl.handle.net/2022/24749},
+  note={
+    Develops a data-parallel approach to compiler construction in APL,
+    representing syntax trees as flat arrays and expressing compiler passes
+    with array operations rather than pointer-based recursive traversal.
+    Relevant to the book’s implementation discussion as an extreme example
+    of choosing a radically different runtime representation and programming model
+    from the apparent source-level structure.
+  }
+}
 
 @Misc{Wayne2019,
   author={Hillel Wayne},
@@ -4261,23 +4232,6 @@
     lenses and related object-access mechanisms.}
 }
 
-% https://t.co/N9XvyHzwtO
-@WebPage{Siek2020,
-  author={IU Compiler Course},
-  title={Public Student Support Code},
-  year={2020},
-  organization={Indiana University},
-  url={https://github.com/IUCompilerCourse/public-student-support-code},
-  lastchecked={2026-09-06},
-  note={
-    Racket support code accompanying Jeremy G. Siek's Essentials of
-    Compilation, including executable interpreters, type checkers, runtime
-    support and testing infrastructure for the sequence of intermediate
-    languages developed in the book.
-    Useful as an executable specification of the languages and transformations
-    used in the incremental compiler construction.}
-}
-
 @InProceedings{Wickerson2020,
   author={John Wickerson and Paul Brunet},
   title={Pearl: Diagrams for Composing Compilers},
@@ -4289,7 +4243,7 @@
   year={2020},
   doi={10.4230/LIPIcs.ECOOP.2020.1},
   url={https://johnwickerson.github.io/papers/jdiagrams.pdf},
-  note={.
+  note={
     Modernizes the classic T-diagram (tombstone diagram) notation for compilers,
     formalizes its semantics, and illustrates bootstrapping, cross-compilation,
     and compiler composition.
@@ -4298,6 +4252,15 @@
 }
 
 %% 2021
+
+% https://treecalcul.us/
+@book{Jay2021,
+  author={Barry Jay},
+  title={Reflective Programs in Tree Calculus},
+  year={2021},
+  url={https://github.com/barry-jay-personal/tree-calculus},
+  note={Introduces Tree Calculus, a minimal reflective combinatory calculus whose values are binary trees and whose three reduction rules support both ordinary computation and direct structural analysis of programs without quotation or external encodings.}
+}
 
 @Book{Nystrom2021,
   author={Robert Nystrom},
@@ -4432,6 +4395,23 @@
   note={Modern library-learning system that grows a domain-specific language by discovering reusable abstractions; useful modern parallel to abstraction as corpus compression.}
 }
 
+@InProceedings{Hsu2023,
+  author={Aaron W. Hsu and Rodrigo Girão Serrão},
+  title={U-Net CNN in APL: Exploring Zero-Framework, Zero-Library Machine Learning},
+  booktitle={Proceedings of the 9th ACM SIGPLAN International Workshop on Libraries, Languages and Compilers for Array Programming},
+  pages={22--35},
+  publisher={ACM},
+  year={2023},
+  doi={10.1145/3589246.3595371},
+  url={https://doi.org/10.1145/3589246.3595371},
+  note={
+    Implements the U-Net convolutional neural-network architecture directly in APL,
+    without a machine-learning framework, and evaluates the resulting program against PyTorch
+    using the GPU-targeting Co-dfns compiler.
+    Relevant mainly as evidence for the expressive and implementation potential
+    of array programming rather than to object orientation.}
+}
+
 @Misc{Mosberger2023,
   author={Mosberger, Silvan},
   title={Improve the documentation of lib.extends and how it relates to overlays},
@@ -4501,53 +4481,7 @@
   }
 }
 
-@Book{Siek2023,
-  author={Jeremy G. Siek},
-  title={Essentials of Compilation: An Incremental Approach in Racket},
-  year={2023},
-  month=feb,
-  publisher={The MIT Press},
-  address={Cambridge, Massachusetts},
-  isbn={978-0-262-04776-0},
-  url={https://github.com/IUCompilerCourse/Essentials-of-Compilation},
-  note={
-    Presents compiler construction as a sequence of small language extensions
-    and compiler transformations, so that each new source-language feature
-    motivates a corresponding implementation technique.
-    Particularly relevant for its executable, incremental presentation of
-    language semantics and transformations, using Racket and a nanopass-style
-    organization rather than treating compilation as a sequence of large,
-    monolithic phases.
-  }
-}
-
 %% 2024
-
-@Article{Crichton2024,
-  author={Will Crichton and Shriram Krishnamurthi},
-  title={A Core Calculus for Documents: Or, Lambda: The Ultimate Document},
-  journal={Proceedings of the ACM on Programming Languages},
-  year={2024},
-  month=jan,
-  volume={8},
-  number={POPL},
-  pages={667--694},
-  eid={23},
-  numpages={28},
-  publisher={Association for Computing Machinery},
-  issn={2475-1421},
-  doi={10.1145/3632865},
-  url={https://cs.brown.edu/people/sk/Publications/Papers/Published/ck-core-calc-doc-lambda-ultimate-doc/paper.pdf},
-  note={Develops a formal calculus for document languages, classifying them by
-    document representation and by the computational power of their
-    constructors.
-    Particularly relevant for its analysis of how abstraction mechanisms such
-    as templates, interpolation, references and reactivity compose with an
-    underlying programming language.
-    Includes a case study of Scribble's @-expressions showing how apparently
-    straightforward syntactic embedding can interact unexpectedly with other
-    language constructs.}
-}
 
 % Code Compression
 @InProceedings{Grand2024,

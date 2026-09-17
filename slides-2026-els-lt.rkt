@@ -129,7 +129,7 @@ The Ultimate Book on Object-Orientation
                         (but also pure prototype library)})
 
       ($slide "C4 Algorithm"
-        @L{C3 is @emph{objectively} better than CLOS linearization @br
+        @L{C3 is @em{objectively} better than CLOS linearization @br
                  (Dylan, Python, Perl...)}
 
         @L{You can mix “classes and structs” @br

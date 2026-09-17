@@ -401,11 +401,52 @@
 
 %% 2017
 
+@Article{Bobrow2017,
+  author={Rusty Bobrow},
+  title={Danny Bobrow: A Personal Recollection},
+  journal={AI Magazine},
+  year={2017},
+  month=dec,
+  volume={38},
+  number={4},
+  pages={85--86},
+  publisher={Association for the Advancement of Artificial Intelligence},
+  issn={0738-4602},
+  doi={10.1609/aimag.v38i4.2770},
+  url={https://ojs.aaai.org/aimagazine/index.php/aimagazine/article/view/2770},
+  note={
+    Personal tribute to Daniel G. Bobrow by his brother Rusty Bobrow, himself an AI researcher.
+    Recounts Bobrow's work at BBN and PARC, including his role in assembling
+    research groups around natural language, Lisp, Interlisp, TENEX, DWIM and
+    Logo, and emphasizes his collaborative style and interest in building
+    tools that amplified researchers’ abilities.
+    Useful as a first-hand biographical source and for historical context,
+    though weak on technical details of Bobrow’s contributions.
+  }
+}
+
 %% 2018
 
 %% 2019
 
 %% 2020
+
+% https://t.co/N9XvyHzwtO
+@WebPage{Siek2020,
+  author={IU Compiler Course},
+  title={Public Student Support Code},
+  year={2020},
+  organization={Indiana University},
+  url={https://github.com/IUCompilerCourse/public-student-support-code},
+  lastchecked={2026-09-06},
+  note={
+    Racket support code accompanying Jeremy G. Siek's Essentials of
+    Compilation, including executable interpreters, type checkers, runtime
+    support and testing infrastructure for the sequence of intermediate
+    languages developed in the book.
+    Useful as an executable specification of the languages and transformations
+    used in the incremental compiler construction.}
+}
 
 %% 2021
 
@@ -425,7 +466,53 @@
 
 %% 2023
 
+@Book{Siek2023,
+  author={Jeremy G. Siek},
+  title={Essentials of Compilation: An Incremental Approach in Racket},
+  year={2023},
+  month=feb,
+  publisher={The MIT Press},
+  address={Cambridge, Massachusetts},
+  isbn={978-0-262-04776-0},
+  url={https://github.com/IUCompilerCourse/Essentials-of-Compilation},
+  note={
+    Presents compiler construction as a sequence of small language extensions
+    and compiler transformations, so that each new source-language feature
+    motivates a corresponding implementation technique.
+    Particularly relevant for its executable, incremental presentation of
+    language semantics and transformations, using Racket and a nanopass-style
+    organization rather than treating compilation as a sequence of large,
+    monolithic phases.
+  }
+}
+
 %% 2024
+
+@Article{Crichton2024,
+  author={Will Crichton and Shriram Krishnamurthi},
+  title={A Core Calculus for Documents: Or, Lambda: The Ultimate Document},
+  journal={Proceedings of the ACM on Programming Languages},
+  year={2024},
+  month=jan,
+  volume={8},
+  number={POPL},
+  pages={667--694},
+  eid={23},
+  numpages={28},
+  publisher={Association for Computing Machinery},
+  issn={2475-1421},
+  doi={10.1145/3632865},
+  url={https://cs.brown.edu/people/sk/Publications/Papers/Published/ck-core-calc-doc-lambda-ultimate-doc/paper.pdf},
+  note={Develops a formal calculus for document languages, classifying them by
+    document representation and by the computational power of their
+    constructors.
+    Particularly relevant for its analysis of how abstraction mechanisms such
+    as templates, interpolation, references and reactivity compose with an
+    underlying programming language.
+    Includes a case study of Scribble's @-expressions showing how apparently
+    straightforward syntactic embedding can interact unexpectedly with other
+    language constructs.}
+}
 
 %% 2025
 

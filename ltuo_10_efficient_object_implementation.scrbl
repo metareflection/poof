@@ -23,7 +23,7 @@ and convey some underappreciated perspectives from which to think about it.
 You won’t have all the solutions after reading this chapter,
 but you will hopefully know where and how to look for them.
 
-@section{The Meaning of Implementation}
+@section[#:tag "TMoI"]{The Meaning of Implementation}
 @epigraph{
   Efficiency is doing things right;
   effectiveness is doing the right things.
@@ -106,7 +106,7 @@ who contribute to some software project.
 And inheritance is only the means to that end.
 Applying inheritance to values other than records is definitely possible;
 but unless those values encode something record-like by other means,
-the opportunities for modularity to support will be very limited.
+the opportunities for supporting modularity will be very limited.
 
 Thus, a very important issue in implementing object systems is
 how to efficiently represent records, from the dual points of view of
@@ -147,14 +147,14 @@ taking some kind of identifier as input argument (symbols, in Scheme),
 and returning an arbitrary value as output (@secref{MOO}).
 
 This record representation strategy works, and
-is portable to any language with Higher-Order Functions.
+is portable to any language with higher-order functions.
 By using it, I have demonstrated a general recipe to implement OO
 directly on top of the λ-calculus only,
 which can itself be easily implemented on top of
 any language or virtual machine past, present or future.
 Indeed I have successfully deployed this very technique “in production”
 to build a lightweight pure functional HTML authoring tool for my slides;
-and so could anyone use that technique in a pinch to quickly build
+and anyone could likewise use that technique in a pinch to quickly build
 extensible configuration generators, or an extensible data structure library
 in an otherwise constrained environment.
 
@@ -185,14 +185,14 @@ necessarily shadows any previous binding without removing it, and thus leaks spa
 and the old bindings, though shadowed, will necessarily still be checked,
 when doing a linear search through previously extended records-as-arbitrary-functions;
 and the shadowed values associated with those keys, though no longer reachable that way,
-will still be considered reachable by the garbage collection.
+will still be considered reachable by the garbage collector.
 
 In the end, this representation strategy is only applicable for short-lived programs,
 such as a generator for HTML documents or configuration files, as previously discussed,
 for which it can help you get the job done quickly anytime anywhere on a small budget,
 with no dependencies on libraries of any kind.
-Larger or longer-running systems will require a better solution;
-happily, for larger or longer-running systems,
+Larger or longer-running systems will require a better solution.
+Happily, for larger or longer-running systems,
 one can afford the STEAM (Skill Time Energy Attention Money)
 to invest in a better solution, such as the ones I discuss below.
 
@@ -248,7 +248,7 @@ But then, I won’t be able to use the Y combinator the same way I did;
 I may be able to use the Y combinator still, through some indirection layer;
 or I may be able to achieve the self-recursion intrinsic to objects
 through a very different mechanism.
-But first, let’s examine what was the data structure implicit
+But first, let’s examine what data structure was implicit
 in chaining records-as-arbitrary-functions.
 
 @subsection[#:tag "RaFM"]{Records as Finite Maps}
@@ -276,10 +276,10 @@ lists, finite sequences, sets, etc.
 
 The alist works with any set of keys that you can compare for equality, and
 has acceptable performance for short maps, even though it is not particularly efficient:
-every random access requires a linear search
+every lookup requires a linear search
 in @c{O(n)} time where @c{n} is the length of the list@xnote["."]{
   I will keep all my “performance estimates” as general complexity classes,
-  under the simplified model of a flat memory with @c{O(1)} random access time.
+  under the simplified model of a flat memory with @c{O(1)} lookup time.
   Once you delve into details of layers of memory from CPU registers to L1, L2, L3 caches,
   to local disk then remote server and its disk, you have to factor in an @c{O(√n)} slowdown
   (where @c{n} is the size of the “working set” of data one works with),
@@ -309,7 +309,7 @@ maps, dictionaries, associative arrays, or associative containers@xnote["."]{
 }
 
 Now, finite maps can be more efficiently implemented using balanced binary trees,
-which allow random-access operations in @c{O(log n)} instead of @c{O(n)}.
+which allow lookup operations in @c{O(log n)} instead of @c{O(n)}.
 Comparing identifiers as strings can be somewhat expensive, however, and
 it is sometimes faster to compare their unique addresses,
 or their hash (which can be cached),
@@ -351,8 +351,8 @@ or weight-balanced trees. @;{TODO cite https://github.com/dco-dev/ordered-collec
 
 @subsubsection{Mutable Records}
 Mutable records, or records used with a linear discipline, are mutable finite maps.
-A traditional implementation with a mutable hash table or HashMap
-provides random access in @c{O(1)} (compared to @c{O(log n)} for immutable finite maps),
+A traditional implementation with a mutable hash table provides lookup in @c{O(1)}
+(compared to @c{O(log n)} for immutable finite maps),
 albeit with a constant factor that is typically one or two orders of magnitude larger
 than a direct field access in a statically typed language.
 My above remarks about hashing, interning, and unique numbering apply
@@ -396,28 +396,55 @@ From this dual constraint emerge various tradeoffs between strictures and freedo
 An operation doesn’t have to compute the outputs it knows won’t be used;
 it can efficiently access inputs that it knows were correctly encoded at a convenient place;
 wrappings and unwrappings can be cancelled away; sanity checks can be skipped.
-Each constraint makes the constrained operation’s slightly harder,
-but its upstream and downstream operations’ job slightly easier.
+Each constraint makes the constrained operation’s job slightly harder,
+but its upstream and downstream operations’ jobs slightly easier.
 
-Now, in general, the very same operations implemented by the very same algorithms,
+Now, in general, the very same operations, implemented by the very same algorithms,
 will be used in both the past and future of a data structure, in an often unpredictable way.
 Therefore, a balancing act is required from the programmer, to choose the compromises
 that will maximize the benefits and minimize the cost of the software over its expected lifespan.
 Wisely chosen constraints can overall smooth out the flow of information;
 foolishly chosen constraints can overall strangle it.
 
-Then again, sometimes past and future are not wholly unpredictable:
-there are often clear-cut or at least statistically expected @emph{stages} in the computation,
+@subsubsection{Staging the Evaluation}
+
+The flow of information in computations is not uniformly random through time,
+but itself follows larger structures:
+past and future are not wholly unpredictable, and there are often clear-cut
+or at least statistically expected @emph{stages} in the computation,
 during each of which the nature and frequency of operations used are different,
 such that each stage would best benefit from its own specific choice of tradeoffs
 that would not work well in other stages.
-A translation between different representations at the boundary between some or all of these stages
+A translation between different representations
+at the boundary between some or all of these stages
 may then take advantage of this discrepancy.
+
 Thus many algorithms involve setup and/or teardown phases whose purpose is
 just such a change of representation,
 from whatever general-purpose representation the inputs are in,
 to something that simplifies the algorithm,
 back to a general-purpose representation of the outputs after processing.
+
+But this principle can be applied to the code of entire programs,
+rather than just the data of local subroutines:
+Some “static” or “statically known” or just “known” computations can be
+wholly computed in the previous stage,
+their results directly used during the next stage in lieu of executing the computation again.
+Other computations can take advantage of some data that, though not known in advance,
+will remain invariant (i.e. not change) during the next stage.
+Many shortcuts can be taken, much dead code can be eliminated, a lot of simplifications can be made,
+formulas inlined, etc., thanks to the static foreknowledge from one phase to the next.
+Only some of the computations will be “dynamic”, producing values during the next stage
+that are not known at the current one.
+
+Beware though that each stage also has a finite lifespan.
+If you spend more time optimizing some computation
+than the unoptimized computation itself will take, you made a bad trade@xnote["."]{
+  @citet{Dybvig2006} explains how while developing Chez Scheme,
+  his benchmark for whether to accept an optimization was
+  whether applying it to the compiler improved the speed of the compiler enough
+  to repay the cost of performing the optimization.
+}
 
 @subsection[#:tag "RaR"]{Records as Records}
 
@@ -425,7 +452,7 @@ back to a general-purpose representation of the outputs after processing.
 
 Now here comes a disconnect: I have established that
 the semantics of first-class records is essentially that of a finite map,
-with a known performance profile much worse than what everyone expects of a record.
+with a performance profile much worse than what everyone expects of a record.
 Indeed, the name “record” itself, as per @citet{Hoare1965},
 suggests a low-level representation of data in terms of consecutive words of memory:
 Accessing a field should be just a matter of reading memory at a fixed offset from
@@ -461,12 +488,14 @@ can use different implementation strategies, yielding various optimizations.
 
 @subsubsection{The General vs The Common}
 
-The @emph{general} case of first-class records cannot be simplified beyond these finite maps,
-which are much slower than second-class records.
+The @emph{general} case of first-class records requires the full functionality of finite maps,
+whose general operations are necessarily more expensive
+than constant-offset access to second-class records.
 But the @emph{common} case of first-class records is about the same as for second-class records:
-most of the time, the shape of the record can be known or guessed in advance,
+most of the time, the shape of the record can be known or predicted in advance,
 and so can the identifiers used to label the fields being accessed;
-then, a fixed offset can be computed in advance and cached.
+then a fixed offset can be computed in advance or cached, or
+a likely shape can be speculatively assumed under a guard.
 
 @principle{An implementation must always support the general case} of what it is implementing,
 and be ready to fall back to less efficient but more general algorithms.
@@ -482,51 +511,40 @@ Thus, an implementation for first-class records can represent records
 as a second-class record plus a first-class record descriptor.
 The first-class descriptor will, among other things,
 contain a mapping from field identifier to field offset.
-Field accesses with a constant field identifier can use
-a cache of record offsets for the field
-depending on recently seen record descriptors:
-you can have a small “inline cache” per access site with one or very few entries,
-and another one shared between access sites with the same name
-@~cite{Hoelzle1991}. @; TODO cite Deutsch1984
-Most of the computation can be skipped, after checking that
-the contents of the cache indeed match expectations.
 Alternatively, or in addition, the mapping from field identifier to offset
 given a record shape can be optimized once using
-“perfect hashing” @;{ TODO cite
+“perfect hashing” @~cite{Fredman1984} @;{ TODO cite
   Tarjan1979 "Storing a Sparse Table"?
-  Fredman1984 "Storing a Sparse Table with O(1) Worst Case Access Time"?
   Driesen1995
   Ducournau2008
   Ducournau2011Hashing
   Ducournau2011Implementing }
-which at a one-time cost may speed up each subsequent access.
+which, at a one-time cost, may speed up each subsequent access.
 
-In the case of specifications with suffix specifications (@secref{OISMIT}),
-you must distinguish record “shapes” not just by the set of identifiers they bind,
-but also by the “single inheritance” suffix that forces some identifiers in a given order.
-In exchange for the slight increase in memory pressure,
-second-class accesses to a static field in the suffix fragment of a prototype or class
-(including the entire prototype if itself declared suffix)
-can be uniformly compiled into constant offset accesses
-for all descendants of the prototype or class, making those accesses faster.
-Other accesses are not affected; but programmers can often organize their programs
-so that performance-critical parts of their programs can be optimized.
+These common-case optimized representations target reads or writes of predictable fields
+in records of known or at least stable shape.
+An operation like extending a record with new fields, or removing fields from a record,
+are actually made @emph{slower} by these representations,
+because now you may need to construct or locate a new shape descriptor,
+perhaps through a global weak registry,
+and reshuffle the contents of the extende records to fit its new unrelated layout.
+If your set of fields is very dynamic, you may want an alist (if short)
+or a regular balanced tree (if pure) or a hash-table (if stateful).
 
-Note that all these optimizations are based on the precidate that the access
-that must be optimized is the read or write with a known field in a record of known shape.
-Operations like extending a record with new fields, or removing fields from a record,
-are actually made @emph{slower} with these representations, because now you will need
-to find a new shape, register it in a global shape registry
-(a weak hash-table) if it hasn’t been seen yet, @; TODO cite weak hash tables???
-and reshuffle the contents to fit the new unrelated layout.
-If your set of fields is very dynamic, you will want an alist (if short)
-or regular balanced tree (if pure) or hash-table (if stateful).
+At the extreme opposite, if your record is a known constant, and the field to be accessed
+is also a known constant, then the result of consulting the record is a known constant,
+and the access can be constant-folded into directly returning that constant result.
+In a lazy language, you can also fold away a record access returning not a constant result
+so much as a known shared lazy computation (from an eager point of view: a constant pointer
+to a lazy computation record with non-constant contents). That’s a very special case,
+not the common case and even less so the general case; yet the case is common enough
+that it is worth supporting in an optimizer.
 
 @subsubsection{The Means of Record Production}
 
-In any case, any host language you choose for your implementation
-will offer some kind of underlying low-level memory array or vector of nodes,
-that can be leveraged to implement a graph of records and other objects—in
+Any host environment you choose for your implementation
+will likely offer some kind of underlying low-level memory array or vector of nodes,
+that can be used to implement a graph of records and other @emph{objects}—in
 the 1950s sense of entities each occupying a contiguous chunk of memory.
 However every such host language will offer subtly different primitives
 that you then have to deal with:
@@ -553,9 +571,10 @@ redefining user-level vectors and all their primitives so that
 user-level vectors form a subset of system-level vectors
 disjoint from those I use to represent objects.
 I will leave that as an exercise to the reader.
-Presumably this problem disappears in the common case of using actual low-level primitives
-of an implementation language separated from the target language
-by compilation happening in a distinct evaluation stage.
+Presumably this problem disappears in the common case where compilation
+cleanly separates user-level objects and vectors as observed by the source language
+from the underlying system-level representations
+as seen by lower-level implementation primitives at a later stage.
 
 Happily, managing the details of translating a high-level representation strategy
 into a zoo of low-level primitives that change subtly with each host system
@@ -566,7 +585,7 @@ is a good task for modern AI to semi-automate.
 @subsection{Where did the Fixpoint Go?}
 
 @subsubsection{No Place for Fixpoints}
-Just as essential as records to OO is the open recursion through fixpoints from inheritance.
+Just as essential to OO as records is the open recursion through fixpoints from inheritance.
 Now, whichever specific data structure is used underneath to represent a finite map,
 importantly, a data structure is an “inert” @emph{value}:
 looking up bindings can be done in a “pure” way involving no meaningful side-effect,
@@ -604,9 +623,9 @@ depending on whether one uses Y-encoding (@secref{MOO}) or U-encoding (@secref{C
   @item{When using U-encoding, the whole point is that the recursion knot happens @emph{after}
     the data structure is built, when a caller invokes a method using the self-application
     operator @c{U} or an argument-swapping variant thereof—which corresponds to
-    the outer @c{U.} to the left of @c{Y = U.(.U)}.
+    the outer “@c{U.}” to the left of @c{Y = U.(.U)}.
     The generator is composed to the right with @c{U}—which corresponds to
-    the inner @c{.U} to the right—before returning the data structure,
+    the inner “@c{.U}” to the right—before returning the data structure,
     but that is deferred self-application, and does not involve any fixpoint yet.}]
 
 @subsubsection{Fixpoints are for Computations, not Values}
@@ -834,7 +853,7 @@ to solve the hard problems the hard way through extra layers of conventions—su
 “factory” classes, static factory methods, or the “builder” pattern.
 
 More advanced protocols, such as
-the @c{initialize-instance}, @c{shared-initialize} and related methods of CLOS
+the @c{initialize-instance}, @c{shared-initialize} and related generic functions of CLOS
 (that also offers a simple yet not verbose protocol
 based on the @c{:initform} or @c{:initarg} of each slot,
 and @c{:default-initargs} of each class),
@@ -842,7 +861,8 @@ allow for much more sophisticated orders of slot initialization
 that can involve the results of arbitrary intermediate computations,
 indeed intermediate method calls, etc.;
 yet the more sophisticated such methods get,
-the more discipline they will require from programmers, who are notoriously bad at it.
+the more discipline they will require from programmers,
+who are notoriously bad at maintaining such discipline.
 And even such sophisticated protocols will have limitations
 that require the occasional use of uninitialized or null values.
 They will still not be as flexible as the simple pure functional protocol I defined
@@ -872,9 +892,11 @@ The protocol can even detect circular dependencies@xnote["."]{
   even if tediously implemented in imperative languages.
 }
 No uninitialized fields, no nulls, no memory corruption, no double initialization,
-no race conditions, no ordering issues, no side-effects that complicate everything,
+no ordering issues, no side-effects that complicate everything,
 no factories, no builder patterns, no separate initialization protocol.
 Pure functional lazy prototypes just work.
+In a concurrent setting, appropriate use of atomic delay primitives
+can likewise prevent race conditions in the initialization of the suspension itself.
 
 An imperative initialization protocol, by contrast,
 necessarily requires programmers to explicitly deal with more details,
@@ -899,10 +921,12 @@ Yet such deferred definitions and overrides occur naturally in arbitrary OO code
 OO code is all about partial specifications, with incomplete initialization behavior,
 that are later extended and eventually completed by further partial specifications.
 
-First-class OO, and direct translation of second-class OO to first-class OO,
-necessarily require dynamic semantics;
-and attempts to project such dynamic semantics into a static straitjacket
+The general case of first-class OO necessarily includes dynamic semantics.
+Attempts to project such dynamic semantics into a static straitjacket
 necessarily bring pain in proportion to the impedance mismatch.
+A direct translation of second-class OO into first-class OO,
+that simply forgets static information, also forfeits the optimizations
+that this static information enabled.
 But second-class OO, when each class is monomorphized by the compiler,
 and the language allows for dependency-based re-ordering of slot-defining clauses,
 might topologically sort those definitions to accommodate a wider range of definitions
@@ -910,7 +934,7 @@ that avoid initialization with temporary null values
 (assuming such a @emph{static} order exists, and not just a @emph{dynamic} one).
 Unhappily, I don’t know of any OO system that has chosen this semantics
 (outside OO, this is more or less the semantics of Scheme’s @c{letrec*}). @; TODO cite Waddell2005
-existing second-class OO systems tend to offer the worst of both worlds
+Existing second-class OO systems tend to offer the worst of both worlds
 in terms of initialization protocols.
 
 @subsubsection{Mutation-over-Purity}
@@ -931,7 +955,7 @@ that is pure functional and total, so that you can reason inductively about prog
 the theorem prover ACL2 is based on doing exactly that in Lisp;
 and this is a common style in systems like Rocq, Lean, F*, ATS, Agda, Idris, etc.
 Mutable state, though awkwardly emulated,
-enables the expression of forward references and circular definitions,
+enables the indirect expression of forward references and circular definitions,
 which would not be directly expressible in a pure applicative setting.
 
 @subsection{From Computation to Structure}
@@ -973,7 +997,10 @@ But I’ll stop here for now with these lofty goals
 (that, lofty as they may be, sometimes involve very low-level details).
 Let us now focus instead on pragmatic and familiar details of
 how to concretely represent objects at the end of these computations.
-However you may suspend computations, here are efficient ways to organize and represent their outcomes.
+However computations are suspended,
+once enough is known about their outcomes,
+their residual structure can be represented directly
+and optimized for the operations that will consume it.
 
 @XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
 
@@ -992,6 +1019,43 @@ Classes, explicit or inferred
 inline cache structures) - adding fields dynamically (hash-consing; issue with suffix classes).
 Prefix layout for slots of suffix classes.
 Property storage (in-object vs external).
+
+@subsection{Caching}
+Field accesses with a constant field identifier can use
+a cache of record offsets for the field
+depending on recently seen record descriptors:
+you can have a small “inline cache” per access site with one or a very few entries,
+and another one shared between access sites with the same name
+@~cite{Hoelzle1991}. @; TODO cite Deutsch1984
+Most of the computation can be skipped, after checking that
+the contents of the cache indeed match expectations.
+
+@subsection{Suffix Specifications}
+When using single inheritance (@secref{SI}) or optimal inheritance (@secref{OISMIT}),
+second-class accesses to a static field in the suffix fragment of a prototype or class
+(including the entire prototype if itself declared suffix, or if using single inheritance)
+can be uniformly compiled into constant offset accesses
+for all descendants of the prototype or class, making those accesses faster.
+
+If fields are identified not just by name but also qualified
+by the name of the specification that first declared them
+(so field @c{x} introduced by specification @c{a} is @c{a#x} while
+field @c{x} introduced by specification @c{b} is @c{b#x}),
+then each field has a fixed offset, and a dynamic lookup need only check
+that the runtime object’s suffix was a descendant of the one that introduced the field.
+Since suffixes among each other are in a single inheritance relationship,
+each suffix’s suffix ancestors are in a total order, and descendant testing
+can be achieved in constant time in exchange for a slight increase in memory pressure:
+keeping the suffix ancestors in a totally ordered vector,
+and for any candidate descendant, see whether it has the speculative ancestor
+in nth position from the tail of its suffix ancestors,
+where n is the size of the ancestor’s own suffix ancestry.
+
+If using optimal inheritance, then fields defined after the suffix are to be treated
+as with multiple inheritance. However, when caching record shapes,
+mind that these shapes must be distinguished not just by the set of identifiers they bind,
+but also by the ordered subset of fields defined by their suffix as opposed to
+specifications not included in the suffix.
 
 @subsection[#:tag "RI"]{Repeated Inheritance}
 
@@ -1101,7 +1165,7 @@ you could just make object pointers slightly larger—a pair of
 }
 What is a MOP?
 Metaobjects: classes, slots, methods, generic functions.
-Metaclasses: classes whose instances are classes.
+Metaclasses: classes whose instances are classes. @~cite{Cointe1987 Kiczales1991}
 Introspection vs intercession.
 The MOP as a reflective tower.
 

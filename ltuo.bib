@@ -1472,6 +1472,28 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   }
 }
 
+@Article{Fredman1984,
+  author={Michael L. Fredman and János Komlós and Endre Szemerédi},
+  title={Storing a Sparse Table with O(1) Worst Case Access Time},
+  journal={Journal of the ACM},
+  volume={31},
+  number={3},
+  pages={538--544},
+  month={July},
+  year={1984},
+  doi={10.1145/828.1884},
+  url={https://doi.org/10.1145/828.1884},
+  note={
+    The paper introduces the classic FKS perfect-hashing construction
+    (as it will later be called), that achieves what the title says:
+    compact constant-time lookup structures for a static sparse table.
+    The search for a perfect solution can take a lot of time,
+    and the authors propose probabilistic search with high chances
+    of finding a good enough solution in a finite amount of time.
+    This kind of technique can be used to speed up field access in records with known shapes,
+    and thus also method lookup and subtype tests.}
+}
+
 % 1985
 
 @Book{Cardelli1985,
@@ -1788,6 +1810,38 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     It argues that inheritance and part-whole composition represent orthogonal
     dimensions of organization.
     Note that both “is-a” and “has-a-part” have direct and transitively closed relations.
+  }
+}
+
+% Also appeared in ACM SIGPLAN Notices 22(12), December 1987.
+@InProceedings{Cointe1987,
+  author={Pierre Cointe},
+  title={Metaclasses are First Class: The ObjVlisp Model},
+  booktitle={Proceedings of the 2nd ACM Conference on Object-Oriented Programming Systems, Languages, and Applications},
+  pages={156--167},
+  publisher={ACM},
+  year={1987},
+  month={October},
+  doi={10.1145/38807.38822},
+  url={https://doi.org/10.1145/38807.38822},
+  note={
+    Presents ObjVlisp, a reflective object model in which classes and metaclasses
+    are themselves ordinary first-class objects, with instantiation and inheritance
+    represented uniformly and extensibly.
+    Smalltalk-80 was generating an implicit ad hoc metaclass for each class
+    so as to specialize its behavior
+    (indeed making Smalltalk classes into prototypes without proper inheritance);
+    LOOPS had explicit metaclasses that could be extended through inheritance,
+    but required distinct representations for classes and objects.
+    ObjVlisp offers a uniformity of representation for objects and classes, at which point
+    a metaclass is just a class’s class—a principle later adopted by the CLOS MOP.
+    But whereas CLOS introduces a zoo of metaobjects, from
+    with several kinds of classes, functions, methods, slot-definitions, specializers, etc.,
+    ObjVlisp is minimalist: it has just Object and Class (with these instance variables (i_v):
+    isit name supers i_v methods), and a two-step bootstrap process: creating a skeleton Class,
+    and use it to define the complete Class.
+    The paper presents examples, and discusses potential and actual uses of metaclasses,
+    and includes a complete minimal implementation in two pages of code.
   }
 }
 
@@ -4674,6 +4728,25 @@ The report is hard to read: the authors are in their own world, with their own v
 
 %% 2006
 
+@InProceedings{Dybvig2006,
+  author={R. Kent Dybvig},
+  title={The Development of Chez Scheme},
+  booktitle={Proceedings of the Eleventh ACM SIGPLAN International Conference on Functional Programming},
+  pages={1--12},
+  publisher={ACM},
+  year={2006},
+  month={September},
+  doi={10.1145/1159803.1159805},
+  note={
+    Retrospective overview of the design and implementation of Chez Scheme
+    from its Z80 predecessor in 1981 to its beginnings in 1985 to version 7 in 2005.
+    The paper covers compiler organization, optimization strategy, language features,
+    runtime representation, garbage collection and other engineering choices.
+    But what makes it interesting to me is the perspective it gives on the long term
+    development of a complex piece of software.
+    No OO explicitly involved (but Chez will run my example code pommette—fast).}
+}
+
 @InProceedings{Flatt2006,
   author={Matthew Flatt and Robert Bruce Findler and Matthias Felleisen},
   title={Scheme with classes, mixins, and traits},
@@ -5347,7 +5420,18 @@ The report is hard to read: the authors are in their own world, with their own v
   url={https://arxiv.org/abs/1411.1607},
   note={
     The foundational description of Julia.
-    Julia still only has single inheritance in 2026, but does have multiple dispatch.
+    As far as OO support is concerned, Julia does not quite pass the bar of class OO languages,
+    yet is better than most other class OO languages in another way:
+    Julia has abstract classes that cannot define fields,
+    which disqualifies it as a regular class OO languages;
+    you can define accessors, but Julia won’t enforce their presence (easily caught by tests, though).
+    Your concrete classes must manually define all the fields and accessors.
+    Also, there is no call-next-method; but you can explicitly call a super class’s method,
+    which is not ergonomic but good enough when the language only has single-inheritance.
+    The saving grace of Julia is that it has a macro system that can bridge the gap,
+    though not in a standard way (unless someone adds the necessary macros to the standard library).
+    On the other hand, Julia also has multiple dispatch (sadly, with the conflict view of it),
+    which sets it ahead of most other OO languages. A wash overall.
   }
 }
 
