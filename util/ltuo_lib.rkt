@@ -74,6 +74,9 @@
   (when/list (render-latex?)
     (list (tex-addition
             (bytes-append
+              #"\\usepackage[paperwidth=6in, paperheight=9in, "
+              #"inner=0.80in, outer=0.55in, top=0.65in, bottom=0.75in]{geometry}"
+              #"\\usepackage{xurl}"
               #"\\DeclareUnicodeCharacter{3BB}{$\\lambda$}" ;; λ
               #"\\DeclareUnicodeCharacter{1D62}{${}_{i}$}" ;; ᵢ
               #"\\DeclareUnicodeCharacter{207F}{${}^{n}$}" ;; ⁿ

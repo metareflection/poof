@@ -10,9 +10,9 @@
 I absolutely loathe bibliographies that are just walls of references,
 without any guidance as to what matters about each work referred.
 Which of those hundreds of entries are relevant to which questions I have?
-And for each entry, what was good or bad about it? What made it worth citing?
+What was good or bad about each entry? What made it worth citing?
 What are its notable achievements, and especially the underrated gems?
-What traps did the author fall into that I as a reader should be wary of?
+What traps did the author fall into that a reader should be wary of?
 What historical context makes it important?
 Which of the now-obvious concepts it discusses was then non-obvious innovation?
 What crucial words shifted in meaning since it was written?
@@ -24,7 +24,7 @@ If yes, what need I know to make the best of the reading?
 
 As an author, I need to have those notes anyway, for my own use,
 because there are far too many entries for me to remember the details of each.
-Some of those writings I read, I even want to forget,
+Many of those writings, I even want to forget,
 to make space for more worthy readings in my quite limited brain attic;
 yet not without making a note of what was notable, so I never have to re-read them,
 even if need to revisit the topic—which I definitely do many times over while writing.
@@ -47,7 +47,7 @@ not always from their DOI (Digital Object Identifier).
 Surely my astute readers can circumvent “legal” monopoly middlemen to locate free copies.
 Hint: my source code got URLs.
 
-@(hhr)  @tex{~\\{}\\{}~}
+@(hhr)  @;@tex{~\\{}\\{}~}
 
 @(generate-bibliography #:sec-title #f)
 @(report-unused-bibtex)

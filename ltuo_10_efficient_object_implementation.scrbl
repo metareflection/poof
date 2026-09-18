@@ -30,7 +30,7 @@ but you will hopefully know where and how to look for them.
     @|#:- "Peter Drucker"|
 }
 @subsection{Implementing the Right Thing}
-One principle: @principle{Efficiently Implementing OO means Implementing OO}.
+First principle: @principle{Efficiently Implementing OO means Implementing OO}.
 This means respecting the semantics explored in the previous chapters.
 If you sacrifice faithfulness to the semantics for the sake of efficiency,
 you haven’t efficiently implemented OO—you have incorrectly implemented it.
@@ -158,7 +158,7 @@ and anyone could likewise use that technique in a pinch to quickly build
 extensible configuration generators, or an extensible data structure library
 in an otherwise constrained environment.
 
-Another advantage of this strategy is that it fitted nicely with the Y combinator:
+Another advantage of this strategy is that it fits nicely with the Y combinator:
 the record itself was the fixpoint, its type was that of a regular function.
 There was no need for complicated ad hoc wrapping and unwrapping with types
 that are never 100% compatible from one language to the next,
@@ -168,13 +168,13 @@ the explanations for which would have burdened an already concept-heavy expositi
 @subsubsection{Issues with Records as Arbitrary Functions}
 However, there are various drawbacks to representing records as arbitrary functions:
 @itemize[
-  @item{Arbitrary functions are opaque, lacking introspection on which keys are valid@xnote[";"]{
+  @item{Arbitrary functions are opaque, lacking introspection on which keys are valid@xnote["."]{
     On the plus side, the opacity of arbitrary functions can be seen as a feature
     in the context of parametric behavior (initial semantics), and/or
     of denying introspective capabilities in some security-sensitive contexts.
   }}
   @item{Everything being opaque functions can make code harder to debug,
-        with less distinctive error messages}
+        with less distinctive error messages.}
   @item{Records as opaque functions will perform poorly in both time and space.}]
 
 Indeed, if @emph{arbitrary} functions are accepted, then there is no trusting what
@@ -209,7 +209,7 @@ Now, trying to combine arbitrary functions that may follow incompatible protocol
 leads to the same miserable and decidedly not-so-arbitrary data structure as in the section above;
 however, not-so-arbitrary functions implementing a well-identified protocol
 can implement arbitrary data structures, including whichever best fits your needs—embodying
-the principle that closures are a poor man’s objects. @; VanStraaten2003
+the principle that closures are a poor man’s objects @~cite{VanStraaten2003}.
 
 For instance, a function could implement the same linear search for a key that I used,
 but also maintain a list of bound keys, that is returned if a “magic” value is given as input
@@ -276,10 +276,10 @@ lists, finite sequences, sets, etc.
 
 The alist works with any set of keys that you can compare for equality, and
 has acceptable performance for short maps, even though it is not particularly efficient:
-every lookup requires a linear search
+every access requires a linear search
 in @c{O(n)} time where @c{n} is the length of the list@xnote["."]{
   I will keep all my “performance estimates” as general complexity classes,
-  under the simplified model of a flat memory with @c{O(1)} lookup time.
+  under the simplified model of a flat memory with @c{O(1)} access time.
   Once you delve into details of layers of memory from CPU registers to L1, L2, L3 caches,
   to local disk then remote server and its disk, you have to factor in an @c{O(√n)} slowdown
   (where @c{n} is the size of the “working set” of data one works with),
@@ -309,11 +309,12 @@ maps, dictionaries, associative arrays, or associative containers@xnote["."]{
 }
 
 Now, finite maps can be more efficiently implemented using balanced binary trees,
-which allow lookup operations in @c{O(log n)} instead of @c{O(n)}.
+which allow access operations in @c{O(log n)} instead of @c{O(n)}.
 Comparing identifiers as strings can be somewhat expensive, however, and
 it is sometimes faster to compare their unique addresses,
 or their hash (which can be cached),
-or a unique number assigned to them (guaranteeing no hash collision)@xnote[","]{
+or a unique number assigned to them (guaranteeing no hash collision),
+after having @emph{interned} the strings as symbols, as in Lisp or Scheme@xnote[":"]{
   Applications that rely on cryptographically secure hash functions may already
   be “guaranteeing” no collision: more precisely, they make collisions vanishingly unlikely,
   and the entire system’s security is already predicated
@@ -324,7 +325,6 @@ or a unique number assigned to them (guaranteeing no hash collision)@xnote[","]{
   just for the no collision “guarantee”, unless that guarantee is supposed to be truly global,
   across large computer networks.
 }
-after having @emph{interned} the strings as symbols, as in Lisp or Scheme:
 Lisp “symbols” are essentially pre-registered strings, in a global table,
 to pre-pay the @c{O(n)} cost of string comparison once (where @c{n} is the length of the string)
 and make each subsequent comparison for equality a cheaper @c{O(1)} operation@xnote["."]{
@@ -344,14 +344,14 @@ and make each subsequent comparison for equality a cheaper @c{O(1)} operation@xn
   at least for symbols used as field names, at the cost of another interning table
   mapping symbols to such numbers.
 }
-Particularly popular among pure functional balanced tree algorithms are tries
-and their variants optimized for hash maps,
+Particularly popular among pure functional finite maps are tries
+and their hash-optimized variants
 Hash Array Mapped Tries (HAMTs) @~cite{Okasaki1998 Bagwell2001 Steindorfer2015},
-or weight-balanced trees. @;{TODO cite https://github.com/dco-dev/ordered-collections/blob/021-specialized-ropes/doc/why-weight-balanced-trees.md}
+and weight-balanced trees. @;{TODO cite https://github.com/dco-dev/ordered-collections/blob/021-specialized-ropes/doc/why-weight-balanced-trees.md}
 
 @subsubsection{Mutable Records}
 Mutable records, or records used with a linear discipline, are mutable finite maps.
-A traditional implementation with a mutable hash table provides lookup in @c{O(1)}
+A traditional implementation with a mutable hash table provides access in @c{O(1)}
 (compared to @c{O(log n)} for immutable finite maps),
 albeit with a constant factor that is typically one or two orders of magnitude larger
 than a direct field access in a statically typed language.
@@ -390,7 +390,7 @@ The more general lesson is that strictures on data structures enable better perf
 More precisely, @principle{strictures on what some operation consumes
 create a space in which past operations are free to be more efficient in what they produce;
 and strictures on what the operation produces
-create a space in which future operations are free to be more efficient in what they consume}:
+create a space in which future operations are free to be more efficient in what they consume}.
 From this dual constraint emerge various tradeoffs between strictures and freedoms.
 
 An operation doesn’t have to compute the outputs it knows won’t be used;
@@ -433,13 +433,13 @@ their results directly used during the next stage in lieu of executing the compu
 Other computations can take advantage of some data that, though not known in advance,
 will remain invariant (i.e. not change) during the next stage.
 Many shortcuts can be taken, much dead code can be eliminated, a lot of simplifications can be made,
-formulas inlined, etc., thanks to the static foreknowledge from one phase to the next.
+formulas inlined, etc., thanks to the static foreknowledge from one stage to the next.
 Only some of the computations will be “dynamic”, producing values during the next stage
 that are not known at the current one.
 
 Beware though that each stage also has a finite lifespan.
 If you spend more time optimizing some computation
-than the unoptimized computation itself will take, you made a bad trade@xnote["."]{
+than the unoptimized computation itself will take, you have made a bad trade@xnote["."]{
   @citet{Dybvig2006} explains how while developing Chez Scheme,
   his benchmark for whether to accept an optimization was
   whether applying it to the compiler improved the speed of the compiler enough
@@ -511,8 +511,7 @@ Thus, an implementation for first-class records can represent records
 as a second-class record plus a first-class record descriptor.
 The first-class descriptor will, among other things,
 contain a mapping from field identifier to field offset.
-Alternatively, or in addition, the mapping from field identifier to offset
-given a record shape can be optimized once using
+If stable, this mapping given a record shape can be optimized using
 “perfect hashing” @~cite{Fredman1984} @;{ TODO cite
   Tarjan1979 "Storing a Sparse Table"?
   Driesen1995
@@ -524,15 +523,16 @@ which, at a one-time cost, may speed up each subsequent access.
 These common-case optimized representations target reads or writes of predictable fields
 in records of known or at least stable shape.
 An operation like extending a record with new fields, or removing fields from a record,
-are actually made @emph{slower} by these representations,
+is actually made @emph{slower} by these representations,
 because now you may need to construct or locate a new shape descriptor,
 perhaps through a global weak registry,
-and reshuffle the contents of the extende records to fit its new unrelated layout.
+and reshuffle the contents of the extended records to fit its new unrelated layout.
 If your set of fields is very dynamic, you may want an alist (if short)
 or a regular balanced tree (if pure) or a hash-table (if stateful).
 
-At the extreme opposite, if your record is a known constant, and the field to be accessed
-is also a known constant, then the result of consulting the record is a known constant,
+With enough static information, optimization also can go beyond the common case:
+if a record is a known constant, and the field with which to access it is also a known constant,
+then the result of accessing the record is a known constant,
 and the access can be constant-folded into directly returning that constant result.
 In a lazy language, you can also fold away a record access returning not a constant result
 so much as a known shared lazy computation (from an eager point of view: a constant pointer
@@ -587,7 +587,7 @@ is a good task for modern AI to semi-automate.
 @subsubsection{No Place for Fixpoints}
 Just as essential to OO as records is the open recursion through fixpoints from inheritance.
 Now, whichever specific data structure is used underneath to represent a finite map,
-importantly, a data structure is an “inert” @emph{value}:
+that data structure is, importantly, an “inert” @emph{value}:
 looking up bindings can be done in a “pure” way involving no meaningful side-effect,
 and even adding, shadowing or removing bindings involves no side-effects
 except those specific to the data structure if mutable (and not even that if immutable).
@@ -680,14 +680,15 @@ and @emph{outcome} of the suspension the value that results
 from evaluating the computation to its end (if it terminates).
 I will speak of the suspended computation, but also, by extension, of the suspended value
 that is the outcome of the computation.
-If the computation yields a value of type foo,
+If the computation yields a value of type @c{foo},
 I will also call the computation a @emph{suspended foo}
 (e.g. suspended record, suspended integer).
 If the computation fails to terminate, trying to extract its outcome will also not terminate,
 but will only produce the side-effects of the computation.
 
 @; TODO: will there be Scheme code in 1st Ed? Or only 2nd Ed?
-In my Scheme code, I will call @c{suspend} and @c{outcome}
+@; In my Scheme code,
+I will call @c{suspend} and @c{outcome}
 the primitives to suspend a computation and extract the outcome of a suspension.
 The resulting syntax is slightly verbose and awkward, but that is the whole point:
 to make the transitions between values and computations explicit,
@@ -719,14 +720,14 @@ In the suspended record representation, a regular record of the method values
 is being computed as a fixpoint;
 but the actual target value is the suspension of this fixpoint computation,
 yielding the record as its outcome.
-A suspended variant of Y is used: @c{Suspended(Record(k:K,Vₖ))},
+A suspended variant of Y is used, of type @c{Suspended(Record(k:K,Vₖ))},
 where @c{Suspended(X)} is essentially equivalent to a thunk @c{1→X}.
 And @c{Record(k:K,Vₖ)} is the dependent type of records having
 for each key @c{k} a value of type @c{Vₖ}.
 @; TODO @Code{ ... } see pommette.scm
 By contrast, in the record-of-suspensions representation, the target is a record whose values
-are suspensions that each yield the method value for the given key:
-@c{Record(k:K,Suspended(Vₖ))}.
+are suspensions that each yield the method value for the given key,
+of type @c{Record(k:K,Suspended(Vₖ))}.
 A suspended variant of Y can be used,
 or an eager variant of Y specifically allowing forward reference for records (with language support).
 Finally, you can have both the record and its fields be suspensions, in a belt-and-suspenders move;
@@ -777,7 +778,7 @@ First, allocate a cell and retain a stable reference to it@xnote["."]{
   possibly coded or wrapped to fit the implementation and conventions of the programming language.
 }
 Then, use the reference to backpatch the value of the cell
-in a way that implements the generator.
+with the result of applying the generator to that reference.
 The cell is said to be @emph{initialized} after this mutation is complete,
 @emph{uninitialized} until then.
 
@@ -854,7 +855,7 @@ to solve the hard problems the hard way through extra layers of conventions—su
 
 More advanced protocols, such as
 the @c{initialize-instance}, @c{shared-initialize} and related generic functions of CLOS
-(that also offers a simple yet not verbose protocol
+(that also offers a simple declarative protocol
 based on the @c{:initform} or @c{:initarg} of each slot,
 and @c{:default-initargs} of each class),
 allow for much more sophisticated orders of slot initialization
@@ -896,7 +897,7 @@ no ordering issues, no side-effects that complicate everything,
 no factories, no builder patterns, no separate initialization protocol.
 Pure functional lazy prototypes just work.
 In a concurrent setting, appropriate use of atomic delay primitives
-can likewise prevent race conditions in the initialization of the suspension itself.
+can likewise prevent race conditions in the forcing of the suspension itself.
 
 An imperative initialization protocol, by contrast,
 necessarily requires programmers to explicitly deal with more details,
@@ -1006,11 +1007,16 @@ and optimized for the operations that will consume it.
 
 @section[#:tag "OL"]{Object Layout}
 
-@; TODO the layout is largely independence from how suspension is implemented.
-@; susp{i,R_i} ? {i,(susp(R_i)} ? {i,susp_i(R_i)} ? susp{i,susp_i(R_i)} ?
-
-
 @subsection{Objects From Computation to Structure}
+
+An object needs a usable representation even while its recursive initialization is in progress; layout is not only something chosen after computation “settles”.
+Different invariants become available at different lifetime stages: construction, initialized/mature object, perhaps later frozen/sealed stages.
+Therefore an implementation may change representation after initialization.
+Code usable across the boundary must either support both representations, use an invariant indirection or be specialized separately.
+General point: representations are stage-relative too.
+The lifetime-stage point (construction → mature → sealed)
+
+object lifetime as staging: during recursive construction the shape may already be invariant while contents are unresolved; after initialization contents acquire further invariants; sealing can expose still more. Put the suspension-placement alternatives here. This is also where your switch back to a stateful low-level OO implementation belongs: you have explained the semantic alternatives, and now deliberately choose mutation as an implementation technique.
 
 How may I arrange things in memory?
 Field ordering and offsets.
@@ -1019,6 +1025,11 @@ Classes, explicit or inferred
 inline cache structures) - adding fields dynamically (hash-consing; issue with suffix classes).
 Prefix layout for slots of suffix classes.
 Property storage (in-object vs external).
+
+@; TODO the layout is largely independent from how suspension is implemented.
+@; susp{i,R_i} ? {i,(susp(R_i)} ? {i,susp_i(R_i)} ? susp{i,susp_i(R_i)} ?
+
+@; TODO cite Myers1995 Itanium1999 Click2002 Stroustrup1989 Snyder1986
 
 @subsection{Caching}
 Field accesses with a constant field identifier can use
@@ -1041,7 +1052,7 @@ If fields are identified not just by name but also qualified
 by the name of the specification that first declared them
 (so field @c{x} introduced by specification @c{a} is @c{a#x} while
 field @c{x} introduced by specification @c{b} is @c{b#x}),
-then each field has a fixed offset, and a dynamic lookup need only check
+then each field has a fixed offset, and a dynamic access need only check
 that the runtime object’s suffix was a descendant of the one that introduced the field.
 Since suffixes among each other are in a single inheritance relationship,
 each suffix’s suffix ancestors are in a total order, and descendant testing

@@ -1,4 +1,4 @@
-#lang scribble/report
+#lang scribble/book
 @; -*- Scheme -*-
 @(require "util/ltuo_lib.rkt")
 
@@ -20,6 +20,7 @@
   He was, I discovered too late,
   the one person with whom I most wanted to argue about the ideas herein.
 }
+@book-abstract{
 @noindent[]
 @italic{This book, though well advanced, is still a work in progress}@xnote["."]{
   For your convenience, a current draft is available
@@ -28,9 +29,7 @@
   The source code is at @url{https://github.com/metareflection/poof}.
   Please send feedback to fahree@"@"gmail.
 }
-@linebreak[]@tex{\\{}}
-
-@book-abstract{
+@linebreak[]@linebreak[]@;@tex{\\{}}
 As a software practitioner, you have not only heard of Object Orientation (OO),
 but seen it or used it, loved it or hated it.
 Yet you may have been frustrated that there never seem to be clear answers as to

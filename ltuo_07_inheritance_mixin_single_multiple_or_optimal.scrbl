@@ -1095,14 +1095,16 @@ By extracting the list of these modular extensions in that order, and
 composing them as per mixin inheritance:
 
 @Code{
-compute-precedence-list : MISpec ? ? ? → DependentList ? (MISpec ? ? ?)
-effectiveModExt : MISpec r i p → ModExt r i p
+compute-precedence-list : MISpec ? ? ? →
+                            IndexedList ? (MISpec ? ? ?)
+effectiveModExt : MISpec i r p → ModExt i r p
 fixMISpec : top → MISpec p top p → p
 
-(define effectiveModExt (λ (mispec)
-  (foldr mix idModExt (map getModExt (compute-precedence-list mispec)))))
-(define fixMISpec (λ (top) (λ (mispec)
-  (fix top (effectiveModExt mispec)))))}
+(def (effectiveModExt mispec)
+  (foldr mix idModExt
+    (map getModExt (compute-precedence-list mispec))))
+(def (fixMISpec top mispec)
+  (fix top (effectiveModExt mispec)))}
 
 The @c{map} function is the standard Scheme function to map a function over a list.
 The @c{foldr} function is the standard Scheme function to fold a list with a function
@@ -2063,13 +2065,18 @@ Last but not least, the constructor for a @c{poi} is defined as follows:
         (delay (c4-linearize (list self) parents
                              poi-precedence-list
                              poi-suffix? eq? identity)))
-       (pre-precedence-list* (delay (car (force precedence-list-and-suffix*))))
-       (precedence-list* (delay (cons self (force pre-precedence-list*))))
-       (suffix* (delay (cdr (force precedence-list-and-suffix*))))
-       (effective-mod-ext* (delay (apply mix*
-                                    (reverse
-                                     (cons mod-ext
-                                           (map poi-mod-ext (force pre-precedence-list*)))))))
+       (pre-precedence-list*
+        (delay (car (force precedence-list-and-suffix*))))
+       (precedence-list*
+        (delay (cons self (force pre-precedence-list*))))
+       (suffix*
+        (delay (cdr (force precedence-list-and-suffix*))))
+       (effective-mod-ext*
+        (delay (apply mix*
+                      (reverse
+                       (cons mod-ext
+                             (map poi-mod-ext
+                                  (force pre-precedence-list*)))))))
        (spec
         (lambda (msg)
           (case msg
@@ -2079,7 +2086,8 @@ Last but not least, the constructor for a @c{poi} is defined as follows:
             ((suffix?)         suffix?)
             ((parents)         parents)
             (else #f))))
-       (self (η₁ (fix (record (#f spec)) (force effective-mod-ext*)))))
+       (self (η₁ (fix (record (#f spec))
+                      (force effective-mod-ext*)))))
     self))
 }
 

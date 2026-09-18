@@ -738,11 +738,13 @@ ready for instantiation via a fixpoint operator.
 
 My two OO primitives then have the following types:
 @Code{
-fix : ∀ inherited, required, newlyProvided : Type → Type, ∀ self, top : Type,
+fix : ∀ inherited, required, newlyProvided : Type → Type,
+      ∀ self, top : Type,
       self = inherited self ∩ newlyProvided self,
       self ⊂ required self,
       top ⊂ inherited self ⇒
         top → ModExt inherited required newlyProvided → self
+
 mix : ModExt i r p → ModExt j∩p s q → ModExt i∩j r∩s p∩pq
 }
 

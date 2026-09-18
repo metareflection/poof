@@ -210,16 +210,21 @@ compose-view : View s t → View r s → View r t
 (def (compose-view v w)
   (compose w v))
 
-compose-update : Update j q k r → Update i p j q → Update i p k r
+compose-update : Update j q k r →
+                  Update i p j q →
+                   Update i p k r
 (def compose-update compose)
 
-make-lens : View r s → Update i p j q → SkewLens i r p j s q
+make-lens : View r s →
+             Update i p j q →
+              SkewLens i r p j s q
 (def (make-lens v u)
   (extend-record 'view v
     (extend-record 'update u
       empty-record)))
 
-compose-lens : SkewLens j s q jj ss qq → SkewLens i r p j s q →
+compose-lens : SkewLens j s q jj ss qq →
+                SkewLens i r p j s q →
                  SkewLens i r p jj ss qq
 (def (compose-lens l k)
   (make-lens
@@ -859,9 +864,12 @@ When using multiple or optimal inheritance, you would use
   to avoid inconsistency (but will otherwise preserve the order whenever consistent).
 }
 @Code{
-(def (poi-mix/list parents) (make-poi idModExt #f (map list parents)))
-(define (poi-mix* . parents) (poi-mix/list parents))
-(def (poi-mix extension inherited) (poi-mix* extension inherited))
+(def (poi-mix/list parents)
+  (make-poi idModExt #f (map list parents)))
+(define (poi-mix* . parents)
+  (poi-mix/list parents))
+(def (poi-mix extension inherited)
+  (poi-mix* extension inherited))
 }
 
 You would use this combinator as part of modular extensions as follows:
@@ -1108,7 +1116,8 @@ a stable order in which to enumerate field names.
 (def (field-name-insert x lst)
   (cond ((null? lst) (list x))
         ((eq? x (car lst)) lst)
-        (else (cons (car lst) (field-name-insert x (cdr lst))))))
+        (else (cons (car lst)
+                    (field-name-insert x (cdr lst))))))
 (def (mix-maybe a b) (if a (if b (mix a b) a) b))
 }
 
@@ -1123,7 +1132,9 @@ I would use:
 @Code{
 (instance-field-spec 'price (λ (_inherited self)
   (* (self 'markup)
-     (foldl (λ (part acc) (+ acc (part 'price))) 0 (self 'parts)))))
+     (foldl (lambda (part acc) (+ acc (part 'price)))
+            0
+            (self 'parts)))))
 }
 To define a field @c{markup} that has no default initializer and must be provided by users,
 I would use:
@@ -1135,18 +1146,18 @@ A class could then define a default prototype for new instances as a derived fie
 @Code{
 (def base-class
   (make-poi
-    (field-spec 'base-instance
-      (λ (_inh self)
-        (make-poi
-          (mix (constant-field-spec #t self)
-            (mix/list
-              (filter identity
-                (map (λ (id)
-                       (let ((i (self 'instance-fields id 'init)))
-                         (and i (field-spec id i))))
-                     (or (self 'instance-field-names) '())))))
-          #f '())))
-    #f '()))
+   (field-spec 'base-instance
+    (λ (_inh self)
+     (make-poi
+      (mix (constant-field-spec #t self)
+           (mix/list
+            (filter identity
+             (map (λ (id)
+                   (let ((i (self 'instance-fields id 'init)))
+                     (and i (field-spec id i))))
+                  (or (self 'instance-field-names) '())))))
+      #f '())))
+   #f '()))
 }
 @c{base-instance} is a parentless POI: its magic @c{#t} key maps to the class POI itself,
 so @c{type-of} and dynamic method dispatch can resolve through it;
@@ -1632,13 +1643,14 @@ With no primary method the primary chain is just @c{no-applicable-method}.
     (and sm (sm method-id))))
 
 (def (standard-compute-effective-method method-id sub-methods)
-  (let ((sub (lambda (qualifier) (and sub-methods (sub-methods qualifier)))))
+  (let ((sub (λ (qualifier)
+               (and sub-methods (sub-methods qualifier)))))
     (call-chain (sub 'around)
       (λ (self)
         (progn-methods-most-specific-first (sub 'before) self)
         (let ((result
                 ((call-chain (sub 'primary)
-                   (λ (self) (no-applicable-method method-id self)))
+                   (no-applicable-method method-id))
                  self)))
           (progn-methods-most-specific-last (sub 'after) self)
           result)))))
@@ -1707,9 +1719,9 @@ reach the folded inner value).
 @Code{
 (def (simple-compute-effective-method
        name stop? op0 op1 op2 finish sub-methods)
-  (let* ((sub     (lambda (qualifier) (and sub-methods (sub-methods qualifier))))
-         (arounds (sub 'around))          ;; #f (⇒ empty) if never initialized
-         (methods (sub name)))            ;; most-specific-first, as in CL
+  (let* ((sub (λ (qualifier) (and sub-methods (sub-methods qualifier))))
+         (arounds (sub 'around)) ;; #f (⇒ empty) if never initialized
+         (methods (sub name)))   ;; most-specific-first, as in CL
    (call-chain arounds
     (λ (self)
       (letrec ((run (λ (m) ((m abort) self)))
@@ -1725,23 +1737,28 @@ reach the folded inner value).
 
 (def compute-effective-method/progn
   (simple-compute-effective-method
-    'progn (λ (_) #f) (λ (_) #f) (λ (x) x) (λ (r _) r) identity))
+    'progn (λ (_) #f) (λ (_) #f) (λ (x) x)
+    (λ (r _) r) identity))
 
 (def compute-effective-method/and
   (simple-compute-effective-method
-    'and not (λ (_) #t) (λ (x) x) (λ (r _) r) identity))
+    'and not (λ (_) #t) (λ (x) x)
+    (λ (r _) r) identity))
 
 (def compute-effective-method/+
   (simple-compute-effective-method
-    '+ (λ (_) #f) (λ (_) 0) (λ (x) x) (λ (x y) (+ x y)) identity))
+    '+ (λ (_) #f) (λ (_) 0) (λ (x) x)
+    (λ (x y) (+ x y)) identity))
 
 (def compute-effective-method/*
   (simple-compute-effective-method
-    '* (λ (_) #f) (λ (_) 1) (λ (x) x) (λ (x y) (* x y)) identity))
+    '* (λ (_) #f) (λ (_) 1) (λ (x) x)
+    (λ (x y) (* x y)) identity))
 
 (def compute-effective-method/list
   (simple-compute-effective-method
-    'list (λ (_) #f) (λ (_) '()) (λ (x) (list x)) (λ (x y) (cons x y)) reverse))
+    'list (λ (_) #f) (λ (_) '()) (λ (x) (list x))
+    (λ (x y) (cons x y)) reverse))
 }
 You then initialize a method that uses a non-standard method combination
 with a specification like this one:

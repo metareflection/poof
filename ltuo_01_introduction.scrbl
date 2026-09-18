@@ -86,7 +86,7 @@ that would have been useless earlier, and will soon be useless again.
 OO was first embodied in 1967 by Dahl and Nygaard with Simula,
 named that same year by Alan Kay whose vision would lead to Smalltalk,
 yet only formally conceptualized in 1976 by Bobrow and Winograd with KRL,
-then made practical by Ingalls with Smalltalk-76.@xnote["."]{
+then made practical by Ingalls with Smalltalk-76@xnote["."]{
   My historical account of OO is slightly different from the “standard” history,
   not in the facts (that I don’t think anyone disputes, given publication records),
   but in their interpretation:
@@ -162,7 +162,7 @@ that make concurrent programs slow and buggy.
 Because OO had been sold in a package deal with imperative programming,
 it fell out of fashion alongside it@xnote["."]{
   To make things worse, FP was also sold
-  in a package deal with typesystems incapable of supporting OO.
+  in a package deal—with typesystems incapable of supporting OO.
 }
 
 Grumpy old Lispers like me yell at the clouds that

@@ -796,8 +796,8 @@ and made it flesh, they failed to realize how momentous the discovery was,
 and shrugged it off as yet another one of those many pesky little implementation details
 they had to face along the way.
 
-% TODO cite Cook1989 distinguishes, but does not conflate back
-% TODO cite Simons1995 / 2005 distinguishes, and notes the conflation, calls it sad.
+@; TODO cite Cook1989 distinguishes, but does not conflate back
+@; TODO cite Simons1995 / 2005 distinguishes, and notes the conflation, calls it sad.
 
 Finally, the confusion between target and specification can be seen as a special case of
 the confusion between object and implementation discussed in @citet{Chiba1996},

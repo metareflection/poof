@@ -590,7 +590,8 @@ from a module context of type @c{∏R} that provides
 a function @c{ls} of type @c{String → List(String)} and
 a function @c{sort} that sorts a list of strings:
 @Code{
-type R = { ls: String → List(String), sort: List(String) → List(String) }
+type R = { ls: String → List(String),
+           sort: List(String) → List(String) }
 (def ls-sorted (λ (ctx) (compose (ctx 'sort) (ctx 'ls)))) ;; : R
 }
 
@@ -1142,7 +1143,7 @@ It is only the users of these languages who are somewhat shielded from the intri
 I have implemented variants of my minimal OO system in many combinations
 of the above solutions to these two issues, in Scheme and other languages.
 For the rest of this book, I will adopt a style where most functions are unary,
-but the syntax to define and use them implicitly uses curry with @c{def} and @c{λ};
+but the syntax to define and use them implicitly uses curry with @c{def} and @c{λ}.
 I will also be assuming @c{Y = Yes} (eager, stateful) as my fixed-point operator,
 unless explicitly mentioned otherwise.
 As a result, the reader should be able both to easily copy and test
@@ -1151,7 +1152,7 @@ and also easily translate it to any other language
 that sports first-class higher-order functions@xnote["."]{
   I can’t leave the topic of the Y combinator without citing Oleg’s fantastic page on the topic,
   even though it doesn’t directly address any of my concerns above: @citet{Kiselyov2024}.
-}.
+}
 
 And with these issues settled, I will close this section
 and return to rebuilding OO from first principles.
