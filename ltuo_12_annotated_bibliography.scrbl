@@ -47,7 +47,7 @@ not always from their DOI (Digital Object Identifier).
 Surely my astute readers can circumvent “legal” monopoly middlemen to locate free copies.
 Hint: my source code got URLs.
 
-@(hhr)  @;@tex{~\\{}\\{}~}
+@(hhr)
 
 @(generate-bibliography #:sec-title #f)
 @(report-unused-bibtex)

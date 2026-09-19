@@ -137,17 +137,88 @@
 
 %% 1968
 
+% TODO good structures have “minimal intermodular connections and maximum functional cohesiveness of module content.”. See Modularity, Technical Memo 7-09 (no PDF?)
+@Article{Constantine1968Programming,
+  author={Larry L. Constantine},
+  title={The Programming Profession, Programming Theory, and Programming Education},
+  journal={Computers and Automation},
+  volume={17},
+  number={2},
+  pages={14--19},
+  month=feb,
+  year={1968},
+  url={https://ftpmirror.your.org/pub/misc/bitsavers/magazines/Computers_And_Automation/196802.pdf},
+  note={
+    An early exposition of Constantine’s theory of modular program structure.
+    He models a program as a system of interconnected modules,
+    and argues for minimizing intermodular connections while maximizing
+    the “functional cohesiveness” of each module.
+    He further advocates functional decomposition down a hierarchy
+    to obtain highly decoupled systems.
+    The paper cites his still earlier technical memo “Modularity”.
+  }
+}
+
+@InProceedings{Constantine1968Control,
+  author={Larry L. Constantine},
+  title={Control of Sequence and Parallelism in Modular Programs},
+  booktitle={AFIPS Conference Proceedings: 1968 Spring Joint Computer Conference},
+  volume={32},
+  pages={409--414},
+  publisher={Thomson Book Company},
+  address={Washington, DC, USA},
+  month=apr,
+  year={1968},
+  doi={10.1145/1468075.1468135},
+  url={https://bitsavers.org/pdf/afips/1968-04_%2332.pdf},
+  note={
+    An early paper explicitly concerned with modular programs,
+    here focusing on control between modules.
+    Constantine argues that mechanisms for sequencing and parallelism
+    should exist at the procedure- and problem-oriented language level,
+    rather than merely exposing machine- or process-oriented operations.
+  }
+}
+
+% https://www.melconway.com/Home/Committees_Paper.html
 @Article{Conway1968,
   author={Melvin E. Conway},
   title={How Do Committees Invent?},
   journal={Datamation},
   volume={14},
   number={4},
-  pages={28–31},
+  pages={28--31},
   month=apr,
   year={1968},
-  url={https://www.melconway.com/Home/Committees_Paper.html},
-  note={Original statement of Conway’s law; relevant to the relation between modular software structure and the communication structure of the organizations that build it.}
+  url={https://bitsavers.org/magazines/Datamation/196804.pdf},
+  note={
+    The source of what would later be called Conway’s Law:
+    organizations that design systems tend to produce designs
+    reflecting their own communication structures.
+    An early recognition that the modular structure of software
+    cannot be considered independently from the modular structure
+    of the organization that builds it.
+  }
+}
+
+@Article{Hicks1968,
+  author={Harry T. Hicks, Jr.},
+  title={Modular Programming in COBOL},
+  journal={Datamation},
+  volume={14},
+  number={5},
+  pages={50--59},
+  month=may,
+  year={1968},
+  url={https://www.bitsavers.org/magazines/Datamation/196805.pdf},
+  note={
+    A contemporary practical account of modular programming,
+    based on COBOL’s then-new ability for separately compiled programs
+    to communicate with one another.
+    Hicks explicitly advocates divide-and-conquer decomposition
+    into smaller, logically independent programs,
+    whose separately developed solutions are then composed into a larger system.
+  }
 }
 
 % https://www.simula67.info/

@@ -48,27 +48,28 @@
 
     Ada Augusta King, Countess of Lovelace, translates to English
     an article (in French) about the Babbage Analytical Engine,
-    by Luigi Menabrae, who would later become Prime Minister of newly-unified Italy;
+    by Luigi Menabrea, who would later become Prime Minister of newly unified Italy;
     and her translator’s notes are fantastic.
     Only her initials appear (A.A.L, at one point mistyped A.L.L.),
     because a woman, especially a noble one, shall not write, especially not on such lowly topics.
-    But my, her understanding of “operations”, the general notion of pure computation,
+    But my! Her understanding of “operations”, the general notion of pure computation,
     is better than that of most computer scientists of today.
 
     “First the symbols of _operation_ are frequently _also_ the symbols of the _results_ of operations.
-    We say that symbols are apt to have both a _retrospective_ and a _prospective_ signification. […]”
+    We may say that symbols are apt to have both
+    a _retrospective_ and a _prospective_ signification. […]”
     She groks both that there is a conflation of multiple meanings, and that it is good,
     yet can lead to confusion if not made explicit:
     past vs future, passive vs active, values vs continuations.
     She also anticipates symbolic computing:
     “symbolical” vs “numerical” “results” or “data” (outputs or inputs);
-    and the equivalence of code and data:
+    and the dual use of symbols as code and data:
     “the symbols of _numerical magnitude_, are frequently _also_ the symbols of _operations_”.
 
     She understands that programmability (she lacks the word)
-    makes the Analytical engine vastly superior to the finite-configuration Difference Engine,
+    makes the Analytical engine vastly superior to the fixed-purpose Difference Engine,
     indeed makes it “the executive right hand of abstract algebra”.
-    She also confronts the problem that a variable may be bound to multiple values during an execution,
+    She also confronts the problem that a variable may take multiple values during an execution,
     and proposes an elegant solution, using a superscript to the left of a variable
     to number each successive binding, turning them into actual mathematical variables again.
     Way more advanced than most computer scientists even today.
@@ -86,12 +87,14 @@
   note={
     This novel, despite being named “The Three Musketeers”,
     famously has four musketeers as protagonists.
-    Admittedly, the main protagonist isn’t one yet
-    when he meets (and simultaneously duels!) the other three.
+    Admittedly, the main protagonist isn’t one yet when he meets the other three
+    (and arranges three successive duels with them on the same day!).
   }
 }
 
 % See comments in https://www.pls-lab.org/en/Theta_combinator
+% No more? :-( https://sci-hub.ru/https://www.jstor.org/stable/2268281
+% Curry had the essential self-application construction in a 1929 letter to Hilbert (not preserved).
 @Article{Turing1937,
   title={The 𝔭-function in λ-K-conversion},
   author={Alan Matheson Turing},
@@ -101,16 +104,14 @@
   year={1937},
   pages={164–164},
   doi={10.2307/2268281},
-  url={https://sci-hub.ru/https://www.jstor.org/stable/2268281},
+  url={https://www.google.com/books/edition/Alan_Turing/C9WQbm4ovFoC?hl=en&gbpv=1&pg=PA144},
   note={
-    In this 1-page banger, to solve the then-problem of how to compute
-    a “predecessor” function in the λ-calculus
-    (subtracting one from a natural number), Turing casually introduces
-    the first ever version of a fixpoint operator,
+    In this 1-page banger, Turing tackles a problem considerably more general
+    than the predecessor function that had notoriously troubled Church only a few years earlier:
+    unbounded linear search in the λ-calculus.
+    To do so, Turing casually introduces the first published fixpoint operator,
     as a λ-term that in my notation would be written
-    Θ ≜ ((λ (v u) (u (v v u))) (λ (v u) (u (v v u)))),
-    to solve a simple problem of recursive linear search of
-    the smallest integer nullifying a formula T (with Church numerals).
+    Θ ≜ ((λ (v u) (u (v v u))) (λ (v u) (u (v v u)))).
     The first Y combinator, just named “Θ formula”.
     Please update your documentation.
   }
@@ -124,14 +125,17 @@
   year={1947},
   note={
     This book impressed me when I read it as a young man (in a French translation),
-    and the words “Hier ist kein ‘Warum’!” (Here there is no ‘Why’!) still haunt me.
+    and the words “Hier ist kein warum!” (Here there is no why!) still haunt me:
+    the reply of a guard who snatched an icicle from the desperately thirsty Levi
+    when he asked why.
     A 1959 translation to English by Stuart Woolf was published as “If this is a man”,
-    or in later editions “Survival in Auschwitz”.
+    or in US editions “Survival in Auschwitz”.
   }
 }
 
 %% 1958
 
+% Section 7 p. 155
 @Book{Curry1958,
   author={Haskell B Curry and Robert Feys},
   title={Combinatory Logic},
@@ -142,27 +146,30 @@
   note={
     Curry rediscovered and systematized Schönfinkel’s work
     into what he (Curry) baptized “combinatory logic”.
-    This great classic explains how you can do all the things that the λ-calculus
+    This great classic explains how you can do all the things that the λ-calculus does
     without ever using λ, just with application of basic combinators.
 
-    The most famous complete base of combinators is S K I with
+    The most famous complete basis of combinators is {S, K, I} with
     S = λ x y z . x z (y z), K = λ x y . x, I = λ x . x,
     with a straightforward syntactic translation from λ-terms to combinations.
-    Also, I = S K K so S K is a base.
-    (Another famous base, with only one combinator, is
+    Also, I = S K K so {S, K} is a basis.
+    (Another famous basis, with only one combinator, is {X}, where
     X = λ f . f (λ x y z . x z (y z)) (λ x y z . x),
     discovered by Fokker in 1989; see also Tromp’s work on minimal such operators).
-    Section 7 fixed-point operators p. 155 discusses the usual (lazy) Y combinator,
-    and its relationship to Turing 1937’s Θ: Θ = Y (S I).
 
-    The book also notes the correspondence between logical implication and function types,
-    which will later be known as the Curry-Howard correspondence
-    (a.k.a. Curry-Howard-de Bruijn correspondence).
-    Curry, in his sequel volume II “Illative Combinatory Logic”, tried to introduce
-    combinators for mathematical reasoning completely with combinators,
-    such as Π and Σ for universal and existential quantification.
-    But he was never fully satisfied with the solutions offered to avoid paradoxes—that ultimately
-    are the same as for presentations of logic and computation not based on combinators.
+    Section 7 “fixed-point operators” discusses the usual (lazy) Y combinator
+    and its relationship to Turing 1937’s Θ formula: Θ = Y (S I).
+
+    The book also notes the correspondence between the types of S, K, etc.,
+    and implication axiom schemes, the seed of what would later be known as
+    the Curry-Howard (or Curry-Howard-de Bruijn) correspondence.
+    Curry also introduces his program of illative combinatory logic,
+    an attempt to express mathematical reasoning itself entirely within an applicative language,
+    with universal and existential quantification through combinatory operators such as Π and Σ.
+    Curry pursued this program in later works, but was never fully satisfied with
+    the solutions offered to avoid paradoxes—solutions
+    that ultimately involve the same kinds of restrictions as
+    in presentations of logic and computation not based on combinators.
   }
 }
 
@@ -177,18 +184,18 @@
   address={New York, NY, USA},
   url={https://doi.org/10.1145/1460690.1460736},
   doi={10.1145/1460690.1460736},
-  abstract={The present methods of determining the functional design of computers are critically reviewed and a new approach proposed. This is illustrated by explaining, in abstracted form, part of the control organization of a new and different machine based, in part, on the ALGOL 60 language. The concepts of expression and procedure lead directly to use of a Polish string program. A new arrangement of control registers results, which provides for automatic allocation of temporary storage within expressions and procedures, and a generalized subroutine linkage. The simplicity and power of these notions suggests that there is much room for improvement in present machines and that more attention should be given to control functions in new designs.},
   booktitle={Papers Presented at the May 9-11, 1961, Western Joint IRE-AIEE-ACM Computer Conference},
   pages={393–396},
   numpages={4},
   location={Los Angeles, California},
   series={IRE-AIEE-ACM ’61 (Western)},
   note={
-    This paper shows how the author architected the Burroughs B5000
-    to support the execution of high-level languages (notably ALGOL 60).
-    It is hard to read because it is dated; what was obvious then isn’t now,
+    This paper presents the architectural ideas behind the Burroughs B5000,
+    designed to support the execution of high-level languages, notably ALGOL 60,
+    “to the practical exclusion of machine language”.
+    It is hard to read because it is dated: what was obvious then isn’t now,
     while many ideas that were new then seem obvious now.
-    Still, Alan Kay cites the B5000 as a breakthrough, and I believe him.
+    Alan Kay cites the B5000 as a major influence.
   }
 }
 
@@ -204,11 +211,15 @@
   note={
     The paper presents the Burroughs B5000 computer architecture,
     one of the sources of inspiration cited by Alan Kay.
-    It features: a push-down stack (with “right-hand” Polish notation that prefigures FORTH!);
+    It features a push-down stack (with “right-hand” Polish notation,
+    prefiguring FORTH’s stack/RPN execution model);
     “independence of addressing” (memory position-independence for both code and data)
-    through a “program reference table” (relocatable table for indirect addressing,
-    prefigures not just global linker tables, but also an object’s virtual dispatch table).}
-}
+    through a “program reference table” (a relocatable table of values and descriptors
+    for indirect access to data and program segments,
+    prefiguring later linkage tables and, more distantly,
+    some of the indirection mechanisms used for object dispatch,
+    as well as execution environments and capability namespaces).
+}}
 
 %% 1963
 
@@ -225,18 +236,28 @@
   year={1963},
   url={https://dspace.mit.edu/handle/1721.1/6111},
   note={
-    The first paper on macros.
+    The first paper on Lisp macros.
     Note how LISP 1.5 was very primitive at the time:
-    S-expressions were always used to write code in practice,
+    S-expressions had been the primary notation for actual code among Lispers
+    since Steve Russell first hand-coded an implementation of EVAL in 1958;
     but M-expressions were still used for the theory;
     and toplevel definitions had a special syntax separate from expression syntax.
-    With the introduction of the read-eval-print loop
-    (concept introduced by L. Peter Deutsch in 1964,
-    on the first interactive Lisp interpreter, on the PDP-1;
-    renamed from cycle to loop by Moon in 1974; acronymized by Schemers as REPL in the 1980s),
-    S-expressions became primary, and M-expressions would fall into disuse.
-    Greenblatt’s PDP-6 LISP only had S-expressions, and, as it became MACLISP in 1969, also made
-    toplevel definitions uniform with expression syntax, replacing EVALQUOTE by EVAL for the REPL.
+    M-expressions would fall into complete disuse
+    as interactive Lisp made S-expressions a self-sufficient surface syntax
+    through the REPL:
+    once programmers could read, write, evaluate and define everything directly as S-expressions,
+    the never-fully-formalized M-expression notation could only introduce discrepancies.
+
+    The REPL concept was introduced by L. Peter Deutsch
+    on the first Lisp interpreter with a “READ-EVAL-PRINT cycle”,
+    his 1963 PDP-1 LISP, documented in 1964.
+    Moon called it “read-eval-print loop” in the Maclisp manual in 1974.
+    Schemers acronymized it as REPL in the 1980s.
+    Greenblatt’s PDP-6 LISP in 1966 used only S-expressions,
+    having made toplevel definitions uniform with expression syntax
+    by replacing EVALQUOTE by EVAL for the REPL. But he introduced
+    the more recognizable DEFUN syntax only as PDP-6 LISP evolved into MACLISP in 1969.
+
     The memo also has a variety of bugs, some more obvious (see acarrico’s transcript on GitHub),
     some more subtle (see Steele 1993), that you may find interesting to hunt.
   }
@@ -251,7 +272,6 @@
   address={New York, NY, USA},
   url={https://doi.org/10.1145/1461551.1461591},
   doi={10.1145/1461551.1461591},
-  abstract={The Sketchpad system makes it possible for a man and a computer to converse rapidly through the medium of line drawings. Heretofore, most interaction between man and computers has been slowed down by the need to reduce all communication to written statements that can be typed; in the past, we have been writing letters to rather than conferring with our computers. For many types of communication, such as describing the shape of a mechanical part or the connections of an electrical circuit, typed statements can prove cumbersome. The Sketchpad system, by eliminating typed statements (except for legends) in favor of line drawings, opens up a new area of man-machine communication.},
   booktitle={May 21-23, 1963, Spring Joint Computer Conference},
   pages={329–346},
   numpages={18},
@@ -259,25 +279,23 @@
   series={AFIPS ’63 (Spring)},
   note={
     This landmark paper describes Sketchpad, Sutherland’s MIT PhD thesis work,
-    the first interactive graphical program using a light pen on the TX-2 computer.
-    Sutherland introduces concepts like hierarchical object structures,
-    master drawings and instances,
-    rubber-banding, geometric constraints, zooming, and
-    dynamic manipulation—pioneering HCI and computer graphics.
-
+    the first interactive graphical program using a light pen,
+    written in assembly for the TX-2 computer.
     One of the most influential papers in computing history, it is seminal
     in graphical interfaces, object-oriented design patterns,
     constraint-based modeling, and interactive systems.
-    Written in assembly, its master and instance mechanism effectively implement
-    an early Prototype OO system as a fourth-class design pattern,
-    wherein each instance can have one master,
-    and “instance expansion” implements single inheritance of code as well as data.
 
-    Code was in the form of function pointers taking the instance as first argument.
-    Changes to a master propagated immediately to every instance (dynamic binding),
-    since the masters were shared and the properties recomputed,
-    instead of being eagerly copied at instance creation. Awesome.
-    No “super” mechanism to further inherit properties from a master-master.
+    The paper introduces two separate mechanisms that inspired OO:
+    masters-and-instances, and generic blocks.
+    Masters and instances provide a non-modular extensibility mechanism
+    wherein a master picture can contain scaled and rotated instances
+    of previously defined master pictures, and modifications to a master
+    are taken into account when displaying further pictures containing it.
+    Meanwhile, generic blocks provide a non-extensible modularity mechanism (no inheritance),
+    wherein each object carries a generic block identifying its type,
+    with the block containing type-specific entries such as DISPLAY, HOWBIG and MOVIT,
+    themselves pointers to subroutines that take the object as first argument (U-encoding).
+    Awesome.
   }
 }
 
@@ -296,15 +314,16 @@
     and many other notions now familiar and ubiquitous,
     including his infamous “million dollar mistake”, null.
     Hoare calls “objects” and “attributes” high-level entities being modeled, “classes” their types,
-    “records” and “fields” the low-level representations of the previous as
+    “records” and “fields” the low-level representations of those as
     “consecutive words of computer store”, and “record classes” their types.
     “References” are typed pointers, and “null” is a special reference
-    for when a correspondence is partial rather than total.
-    “Discrimination” is a form of type-safe pattern-matching between subclasses.
+    used when a correspondence is partial rather than total.
+    “Discrimination” is a form of type-safe pattern-matching among subclasses.
     Hoare considers recursive data structures, yet does not anticipate that
     for them, subclassing will differ from subtyping.}
 }
-% How original are the boxes-and-arrows drawings for pointers? The heap allocation?
+% Boxes-and-arrows drawings for pointers date back to
+% Newell and Shaw 1957 Programming the Logic Theory Machine
 % compacting garbage collection - Aha, he cites LISP. And SIMULA.
 
 %% 1966
@@ -321,23 +340,25 @@
     This thesis is very rich in ideas, but the one that matters most for OO
     is Teitelman’s introduction of ADVISE, a facility for extending a function with new behavior:
     advice to be run before or after the function, or somehow wrapping it,
-    that you add or remove dynamically.
+    which you add or remove dynamically.
 
-    The “somehow wrapping it” though was a happy accident of how the implementation
-    of ADVISE binds the previous function results to VALUE,
-    dynamic variable that subsequent after methods can read or write.
-    This was used and abused, and by the 1971 manual for the Tenex Lisp variant at BBN
+    The “somehow wrapping it”, though, was a happy accident of how the implementation
+    of ADVISE binds the previous function’s results to VALUE,
+    dynamic variable that subsequent “after” advice can read or write.
+    This was used and abused, and by the 1971 BBN-LISP TENEX manual
     (but not the 1969 BBN Lisp manual),
     the variable was renamed !VALUE to avoid unintentional capture,
-    while documenting as an official interface that it could be usefully read and written.
+    while explicitly documenting that it could be usefully read and written.
 
-    The ADVISE facility would later inspire Cannon 1979’s method combinations.
+    The ADVISE facility prefigured, and quite likely indirectly inspired,
+    Cannon 1979’s method combinations.
     Note that compared to ADVISE (and to later Lisp method combinations),
     the concatenation semantics of Simula 67, with its “inner” marker, is inside-out;
-    also ADVISE extension of functions is in-place (modifies the existing function),
-    and does not support nesting, whereas Simula extensions are pure at the metalevel,
-    a new class being generated for each extension, and allows nested virtual procedures
-    inside classes.
+    also, ADVISE extends functions in-place (modifying the existing function),
+    and does not support nested records of functions that can be extended as a unit,
+    whereas Simula extensions are pure at the metalevel,
+    with a new class generated for each extension,
+    while classes can contain nested virtual procedures.
   }
 }
 % https://www.bitsavers.org/pdf/bbn/The_BBN-LISP_System_Apr69.pdf section XIX
@@ -363,10 +384,10 @@
   pages={671--678},
   numpages={8},
   note={
-    SIMULA is an extension of ALGOL 60 for “quasi-parallel processing”.
-    In 1966, it doesn’t have classes yet, but has “activities”,
-    some variant of what MIT people will later call “Actors”,
-    with some kind of cooperative multithreading.
+    SIMULA is an extension of ALGOL 60 for cooperative “quasi-parallel processing”.
+    In 1966, it doesn’t yet have an internal notion of class,
+    but already has the notion of “activity”, defined as
+    “a class of processes described by the same declaration”.
     This version of SIMULA would later be retrospectively called SIMULA I.
   }
 }
@@ -386,48 +407,57 @@
     though we can debate whether it is itself OO as such—certainly not
     in the modern form made popular by Smalltalk, at least.
 
-    Dahl and Nygaard implement classes for the first time.
+    Dahl and Nygaard take Hoare 1965’s handwavy ideas about classes and subclassing seriously,
+    and actually implement them for the first time.
     They do not have the word “inheritance”, but the basic concept is there:
     a class may have a “prefix class” and “subclasses” of which it is the prefix class.
-    Its ancestry is its “prefix sequence”, interestingly kept in most- to least- specific order.
+    The class and its ancestry form its “prefix sequence”, interestingly kept
+    from most specific to least specific
+    (like Lispers would later do, but unlike
+    what the SIMULA 67 Common Base Language specification will do from 1968 onward).
     As in Hoare 1965, “objects” have “attributes”.
-    The keyword “this” is introduced that C++ will popularize
-    to refer to other attributes of the current object.
+    The keyword “this” is introduced, which C++ will popularize,
+    to refer to the current object—though in Simula
+    it is followed by the name of the class, as in “this C”.
 
     Because a prefix class may also include suffix code,
-    the “body” for subclasses can be “split” with the keyword “inner”
-    that pinpoints where to put the body of subclasses (by default, at the end).
+    the prefix class’s “body” can be “split” with the keyword “inner”,
+    which pinpoints where to put the body of subclasses (by default, at the end).
     Within classes, some procedures can be declared virtual,
     at which point subclasses can override them, and
     dynamic dispatch will be used to select which is called based on an object’s class;
     but no provision is made to call a superclass’s overridden procedure.
-    The successor BETA will generalize and smooth out those semantics (see Kristensen 1987)).
+    The successor BETA will generalize and smooth out those semantics (see Kristensen 1987).
 
-    Interestingly, the body of a class in Simula 67, as of an activity in Simula I (Dahl 1966),
-    does not “return”, but does “detach”. The body is invoked when a class is instantiated by a
-    x = new ClassName statement, that only returns after the class body first detaches.
-    Subsequently, the client can call(x) and evaluation will synchronously resume,
-    until the class body detaches again.
+    Interestingly, the body of a class in Simula 67,
+    like that of an activity in Simula I (Dahl 1966),
+    does not “return”, but does “detach”. The body is invoked when a class is instantiated,
+    by invoking the class name as a constructor-like expression with suitable arguments,
+    whose execution only returns after the class body first detaches (or terminates).
+    Subsequently, the client can call(x) and execution of the object will synchronously resume,
+    until the class body detaches or terminates again.
     Calling and detaching convey no messages and involve no locking:
-    programmers are expected to follow a hierarchical co-routine discipline,
+    programmers are expected to follow a hierarchical coroutine discipline,
     and communicate through side-effects to variables.
     Hierarchical behavior is facilitated by the ability to nest classes,
-    but those nested classes are not “virtual” and cannot be further-extended
+    but those nested classes are not “virtual” and cannot be further extended
     as part of family polymorphism as in BETA.
   }
 }
 
+% https://github.com/papers-we-love/papers-we-love/blob/main/languages-theory/fundamental-concepts-in-programming-languages.pdf
 @Misc{Strachey1967,
-  Author={Christopher Strachey},
-  Title={Fundamental Concepts in Programming Languages},
-  Year={1967},
-  url={http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.332.3161},
-  doi="10.1023/A:101000031310",
+  author={Christopher Strachey},
+  title={Fundamental Concepts in Programming Languages},
+  year={1967},
+  url={https://fpl.cs.depaul.edu/jriely/447/assets/articles/strachey-fundamental-concepts-in-programming-languages.pdf},
+  doi={10.1023/A:1010000313106},
   note={
     This classic paper, among many other things,
-    introduces notions such as “first and second class objects” or “ad hoc polymorphism”,
+    introduces notions such as “first- and second-class objects”
+    or “ad hoc polymorphism” and “parametric polymorphism”,
     and identifies or clarifies many more notions.
-    Widely circulated since 1967, but only officially published in HOSC(13)1, 2000.
+    Widely circulated since 1967, but only formally published in HOSC 13(1—2), 2000.
   }}
 
 %% 1968
@@ -444,13 +474,19 @@
   doi={10.1145/362929.362947},
   url={https://doi.org/10.1145/362929.362947},
   note={
-    This informal letter to the editor of the CACM became an instant classic
+    This short letter to the editor of the CACM became an instant classic
     that profoundly changed programming languages.
-    Before it, people had no problem using GOTO statements everywhere.
-    Dijkstra shamed them into defining and using higher-level control structures
+    Before it, programmers routinely used GOTO statements with little stigma.
+    Dijkstra helped shame them into defining and using higher-level control structures
     that are easier to reason about.
     Not by saying things they didn’t know or didn’t agree with—but by making it obvious
     to everyone that they and everyone else knew and agreed.
+
+    Amusingly, the famous title “Go To Statement Considered Harmful”
+    was supplied by CACM editor Niklaus Wirth, not Dijkstra;
+    Dijkstra’s manuscript was titled A Case against the GO TO Statement.
+    Yet Wirth’s formula was also an instant classic, and many a computer scientist
+    has since written a rant about something “considered harmful”.
   }
 }
 
@@ -459,7 +495,7 @@
 @InProceedings{Bobrow1972,
   author={Robert J. Bobrow},
   title={An Experimental Data Management System},
-  booktitle={Data Base Systems: Proceedings of the Courant Computer Science Symposium 3},
+  booktitle={Data Base Systems: Proceedings of the Courant Computer Science Symposium 6},
   editor={Rustin, Randall},
   year={1972},
   pages={125--142},
@@ -475,11 +511,11 @@
     but the word “object-oriented” appears just once, in the article by
     Robert J. “Rusty” Bobrow.
 
-    Robert, younger brother of Daniel, also working on BBN Lisp,
+    Robert, younger brother of Daniel and also working with BBN Lisp,
     informally describes his work on a data management system:
     “there is no inherent antagonism between the relational point of view and
     the object-oriented network viewpoint in database management”,
-    by which he refers to what we would now call graph databases,
+    by which he refers to what we would now call a graph database,
     not to object-oriented programming.
     Still, the word was in the air, if not yet the technical meaning.
   }
@@ -495,7 +531,7 @@
   month=jun,
   url={https://csg.csail.mit.edu/pubs/memos/Memo-70/Memo-70.pdf},
   note={
-    One of the very earliest papers on the notion of modularity as such.
+    One of the early papers on the notion of modularity as such.
     Dennis defines modularity as follows:
 
     “We take the following statements to be the objectives of modular programming:
@@ -509,12 +545,14 @@
     Dennis compares the modularity situation in Fortran, Algol 60, PL/I, Algol 68, Lisp,
     and at another level discusses Multics and dynamic linking. He cites Simula.
     He correctly identifies the issue with that of managing free and bound variables,
-    and offers as a basic model to represent modular programs
-    deterministic graph rewrite evaluation with static scoping,
-    which anticipates ideas later associated with object capability models.
+    and offers as a basic model for modular programs
+    an object-structured memory with a nondeterministic state-transition interpreter,
+    with closures explicitly pairing procedure text with values for its free variables,
+    which anticipates aspects of later object-capability programming models.
 
     Notes prepared for a course at the Technical University of Munich in February 1972,
-    later collected and published as “Software Engineering: An Advanced Course” in 1975.
+    first collected and published in “Advanced Course on Software Engineering” in 1973,
+    then reprinted as “Software Engineering: An Advanced Course” in 1975.
   }
 }
 
@@ -524,11 +562,11 @@
          de l’arithmétique d’ordre supérieur},
   school={Université Paris VII},
   year={1972},
-  url={https://girard.perso.math.cnrs.fr/thesis.pdf},
+  url={https://girard.perso.math.cnrs.fr/These.pdf},
   note={
-    Girard’s famous thesis introduced System F, a second-order intuitionnistic logic,
-    the proof system of which was later found to be equivalent to Reynolds 1974’s
-    typed λ-calculus with quantification over types.
+    Girard’s famous thesis introduced what is now called System F,
+    a second-order intuitionistic proof system whose computational counterpart
+    Reynolds independently rediscovered in 1974 as a polymorphic typed λ-calculus.
   }
 }
 
@@ -544,14 +582,19 @@
   issn={0001-0782},
   url={http://sunnyday.mit.edu/16.355/parnas-criteria.html},
   doi={10.1145/361598.361623},
-  abstract={This paper discusses modularization as a mechanism for improving the flexibility and comprehensibility of a system while allowing the shortening of its development time. The effectiveness of a “modularization” is dependent upon the criteria used in dividing the system into modules. A system design problem is presented and both a conventional and unconventional decomposition are described. It is shown that the unconventional decompositions have distinct advantages for the goals outlined. The criteria used in arriving at the decompositions are discussed. The unconventional decomposition, if implemented with the conventional assumption that a module consists of one or more subroutines, will be less efficient in most cases. An alternative approach to implementation which does not have this effect is sketched.},
   journal={Commun. ACM},
   month=dec,
   pages={1053--1058},
   numpages={6},
   keywords={modules, software, KWIC index, modularity, software engineering, software design},
   note={
-    A truly classic paper on Modularity.
+    A truly classic paper on modularity and the source of the information-hiding criterion:
+    decompose a system around design decisions likely to change,
+    hiding each such “secret” behind a stable interface.
+    Using two competing decompositions of the same KWIC system, Parnas argues that
+    modularization around the processing steps of a flowchart decomposition
+    is inferior to modularization around hidden design decisions likely to change,
+    because the latter permits modules to be understood and modified more independently.
   }
 }
 
@@ -568,10 +611,10 @@
   url={https://web.mit.edu/Saltzer/www/publications/rfc/csr-rfc-035.pdf},
   note={
     An early explicit statement of the principle of least privilege,
-    in the context of the Multics protection system.
+    in the context of the Multics protection system, which Saltzer credits to David J. Edwards.
     It predates Saltzer and Schroeder’s influential 1975 presentation of least privilege
     as one of the fundamental design principles for protection systems.
-    The principle was later reformulated as the Principle of Least Authority
+    The principle was later generalized as the Principle of Least Authority
     (POLA) in capability-security literature.
   }
 }
@@ -588,9 +631,9 @@
   note={
     Minsky describes his ideas on how to represent knowledge in a computer
     as part of his project for Artificial Intelligence,
-    in terms of a network of clear-cut named concepts or “frames”,
-    that relate to each other in various ways.
-    Minsky uses the words “prototype” and “inherit”, but incidentally,
+    in terms of structured “frames” representing stereotyped situations,
+    linked into frame-systems and containing slots, defaults and procedural information.
+    Minsky even uses the words “prototype” and “inherit”, but entirely incidentally,
     and NOT AT ALL to refer to the concepts at stake for OO.
   }
 }
@@ -607,9 +650,8 @@
   doi={10.1007/3-540-06859-7_148},
   url={https://link.springer.com/chapter/10.1007/3-540-06859-7_148},
   note={
-    Reynolds’s famous paper introducing a
-    typed λ-calculus with quantification over types,
-    later found to be equivalent to Girard 1972’s System F.
+    Reynolds’s famous paper independently introducing essentially
+    the same polymorphic typed λ-calculus as Girard 1972’s System F.
   }
 }
 
@@ -622,9 +664,8 @@
   isbn={9781450373852},
   publisher={Association for Computing Machinery},
   address={New York, NY, USA},
-  url={https://doi.org/10.1145/800027.808431},
+  url={https://www.cs.hmc.edu/~mike/courses/mike121/readings/intro/PgmgInLargeSmall-Kron.pdf},
   doi={10.1145/800027.808431},
-  abstract={We distinguish the activity of writing large programs from that of writing small ones. By large programs we mean systems consisting of many small programs (modules), possibly written by different people.We need languages for programming-in-the-small, i.e. languages not unlike the common programming languages of today, for writing modules. We also need a “module interconnection language” for knitting those modules together into an integrated whole and for providing an overview that formally records the intent of the programmer(s) and that can be checked for consistency by a compiler.We explore the software reliability aspects of such an interconnection language. Emphasis is placed on facilities for information hiding and for defining layers of virtual machines.},
   booktitle={International Conference on Reliable Software},
   pages={114–121},
   numpages={8},
@@ -642,20 +683,21 @@
     they never get to program much “in the large”;
     they only or mostly write programs “in the small”.)
 
-    The authors identify that most programming languages are (or at the time were) only
+    The authors observe that most programming languages are (or at the time were) only
     “languages for programming-in-the-small” (LPSs),
     and that to achieve large systems, the “modules” obtained from using them
     must somehow be assembled using a “module interconnection language” (MIL).
     They lay down requirements for what makes a good MIL,
     from being able to combine modules from different LPSs
-    up to and including the ability to prove software correct,
+    up to enabling proofs that correct modules work together correctly,
     and offer a design for a language MIL 75 that might satisfy them.
 
     Now, some modern languages, though LPS by the authors’ definition,
     have an advanced builtin module system—none better than Racket (see Felleisen 2015);
-    yet even LPSes with the most advanced such module system cannot do everything,
+    yet even LPSes with the most advanced such module systems cannot do everything,
     unless and until they actually cover an entire operating software distribution,
-    such as Nix (see Dolstra 2008), I think the ultimate MIL by these authors’ standards.
+    such as Nix (see Dolstra 2008),
+    arguably the ultimate realization of these authors’ programming-in-the-large ambition.
   }
 }
 
@@ -675,38 +717,36 @@
   address={New York, NY, USA},
   url={https://doi.org/10.1145/512976.512997},
   doi={10.1145/512976.512997},
-  abstract={In this paper, we define what exception conditions are, discuss the requirements exception handling language features must satisfy, survey and analyze existing approaches to exception handling, and propose some new language features for dealing with exceptions in an orderly and reliable way. Our objective is not solely to put forward a language proposal. It is also to analyze exception handling issues and principles in detail. The proposed language features serve to highlight exception handling issues by showing how deficiencies in current approaches could be remedied in a coherent and orderly way.},
   booktitle={2nd ACM SIGACT-SIGPLAN Symposium on Principles of Programming Languages},
   pages={204–224},
   numpages={21},
   location={Palo Alto, California},
   series={POPL '75},
   note={
-    Goodenough explains the PLEX approach to exception handling,
-    compared to contemporary approaches.
-    He notably describes Ross’s 1967 “AED free storage package”
+    Goodenough proposes an approach to exception handling, and
+    compares it to contemporary alternatives.
+    He notably describes his colleague Douglas Ross’s 1967 “AED free storage package”
     as having “object-oriented exception handlers”.
 
-    The description is 1975 retrospective characterization by Goodenough:
-    the original paper (by a PLEX colleague then at MIT)
-    mentions “error” rather than “exceptions” and does not speak of “object”
-    for the reified “zones” of storage allocation;
-    what Goodenough seems to mean by the moniker is that
+    The description is a retrospective characterization by Goodenough in 1975:
+    the original paper (written while Ross was at MIT)
+    mentions “error” rather than “exceptions” and speaks of “zones” of storage allocation
+    without calling their reified descriptors “objects”.
+    What Goodenough seems to mean by the term is that
     when allocation from a zone fails, an “error procedure FERR” (original term by Ross)
-    associated with the zone is called to handle the error;
-    as opposed to, e.g. lexical scoping of error handlers as in Goodenough’s paper.
+    associated with the zone is called to handle the error,
+    as opposed to, e.g., lexically scoped error handlers as in Goodenough’s approach.
 
     In my terminology (roughly descended from Wegner 1987),
     the AED free storage package approach counts as “object-based”,
-    but not “object-oriented” since
-    AED provides no inheritance mechanism through which
+    but not “object-oriented”, since AED provides no inheritance mechanism through which
     these object-associated handlers can be extended.
     However, Goodenough’s use of “object-oriented” shows that the term was “in the air” at the time.
   }
 }
 
 @TechReport{Sussman1975,
-  author={Sussman, Gerald Jay and Steele, Guy Lewis},
+  author={Gerald Jay Sussman and Guy Lewis Steele Jr.},
   title={Scheme: An Interpreter for Extended Lambda Calculus},
   institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
   year={1975},
@@ -714,34 +754,35 @@
   number={AIM-349},
   url={https://dspace.mit.edu/handle/1721.1/5794},
   note={
-    The original paper about Scheme, a Lisp dialect with lexical scoping
-    and first-class continuations.
-    The paper was born from an attempt to understand message handling and message response
-    in actor systems, and function calls and function returns, realizing that they were all
-    similar to each other.
+    The original paper on Scheme, a Lisp dialect with lexical scoping
+    and first-class escape continuations.
+
+    The paper was born from an attempt to understand message passing in Actors,
+    which led Sussman and Steele to realize that actors were essentially closures,
+    and that a function returning a value could equivalently be understood as
+    an actor sending the value to a continuation.
   }
 }
 
+% 1974 draft: https://digitalcollections.library.cmu.edu/node/3491?search_api_fulltext=winograd%201974%20frame%20representations --- but only the first page.
 % https://web.archive.org/web/20200511083536/https://hci.stanford.edu/winograd/papers/FrameRep.pdf
 @InCollection{Winograd1975,
   author={Terry Winograd},
   title={Frame Representations and the Declarative/Procedural Controversy},
   editor={Daniel G. Bobrow and Allan Collins},
   booktitle={Representation and Understanding},
-  publisher={Morgan Kaufmann},
-  address={San Diego},
+  publisher={Academic Press},
+  address={New York, NY, USA},
   pages={185-210},
   year={1975},
   isbn={978-0-12-108550-6},
   doi={10.1016/B978-0-12-108550-6.50012-4},
   url={https://www.sciencedirect.com/science/article/pii/B9780121085506500124},
-  abstract={Publisher Summary
-This chapter presents some criteria for evaluating ideas for representation. It also presents a rough sketch of a particular version of a frame representation, and discusses the ways in which it can deal with the issues raised. The proceduralists assert that human knowledge is primarily a knowing how. The human information processor is a stored program device, with its knowledge of the world embedded in the programs. The declarativists do not believe that knowledge of a subject is intimately bound with the procedures for its use. They see intelligence as resting on two bases: a quite general set of procedures for manipulating facts of all sorts, and a set of specific facts describing particular knowledge domains. In thinking, the general procedures are applied to the domain-specific data to make deductions. Often this process has been based on the model of axiomatic mathematics. The facts are axioms and the thought process involves proof procedures for drawing conclusions from them.},
   note={
-    This paper has so far as I can tell
+    This paper, already circulating in draft form in 1974, has so far as I can tell
     the earliest uses of “inheritance” in a context directly applicable to OO.
 
-    The word “inherit” does appears in other papers from MIT AI researchers at the time (e.g. Hewitt),
+    The word “inherit” does appear in other papers from MIT AI researchers at the time (e.g. Hewitt),
     but it is unclear who talks about it first and gets it from where.
     Winograd talks about “inheritance of properties”, p. 197,
     to compute properties of a frame based on its hierarchy.
@@ -762,7 +803,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     (4) definition: the essence of the concept being named is finally well understood.
 
     For “inheritance”, evocation may have happened in Minsky 1974, distinction in Winograd 1975,
-    and identification in Bobrow 1976, quite likely based on interaction with Kay’s team
+    and identification in Bobrow and Winograd 1976,
+    quite likely influenced by interaction with Kay’s team
     (and Kay later says Larry Tesler insisted on implementing “slot inheritance”
     the way he had done in previous desktop publishing projects).
     Informal but practical definition was clearly there by 1977 or 1978, and
@@ -795,55 +837,58 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     The paper describes KRL-0, a first iteration of the design of KRL,
     an extension to Lisp, as of May 1976.
     KRL is a Knowledge Representation Language built in terms of objects.
-    Bobrow and Winogard acknowledge the heritage of Minsky’s frames,
+    Bobrow and Winograd acknowledge the heritage of Minsky’s frames,
     as well as of Smalltalk and Simula for the “object-oriented” definition
     of “procedural attachments” (that we would now call methods).
-    An object is a “unit”, that has “slots”;
-    a “prototype” can provide one of multiple “perspectives” on the object
+    An object is a “unit” that has “slots”;
+    a “prototype” provides one of potentially multiple “perspectives” on the object
     (thereby constituting multiple inheritance, though the two words aren’t used together),
-    with each prototype slot either being a “further specification”
-    or being left with “default assumptions” from its “class”.
+    with slot descriptions supplying “further specifications”
+    that may refine or contradict the prototype’s “default assumptions”.
     Each slot, including a “self” slot for the object itself,
-    has a “description” made of one or many “descriptors”;
+    has a “description” made of one or more “descriptors”;
     descriptors can match more specific descriptors,
     thereby constituting a query language for the knowledge base.
     There are further notions of feature, category,
     category type (basic, abstract, specialization, individual, manifestation, relation, proposition),
-    subclass, multiprocessing, demons that trap on objects or trigger on classes, etc.
+    subclass, multiprocessing,
+    traps on individual objects and triggers on classes, either of which can be servants or demons,
+    etc.
     A very rich system for the day.
 
-    The paper demonstrates the birth of OO as an interaction between Bobrow and Kay:
-    “inheritance of properties” is used definitionally when Winograd 1975 used it descriptively,
-    and “object-oriented” is used three times, though Kay across-the-hall colleague of Bobrow,
-    is only cited indirectly through a paper of his Learning Research Group
+    The paper provides striking evidence of the interaction
+    between Bobrow’s KRL work and Kay’s Smalltalk work at PARC:
+    “inheritance of properties” is used definitionally,
+    whereas Winograd 1975 used it descriptively,
+    and “object-oriented” is used three times, though Kay, an across-the-hall colleague of Bobrow’s,
+    is only cited indirectly through a paper by his Learning Research Group
     that doesn’t use the expression.
     (Multi-process oriented is also used three times, but with slightly different words each time.)
-    If anything, Winograd tries to do too much, the system is too complex,
+    If anything, KRL tries to do too much; the system is too complex,
     and some of the solutions it offers are so general that they still require the user
     to do a lot of the work (e.g. to properly handle multiple inheritance),
     as the common usage patterns haven’t been identified yet.
   }
 }
 
-% TODO
+% https://sci-hub.ru/https://ieeexplore.ieee.org/abstract/document/1702384
 @Article{Jones1976,
   author={Anita Jones and Barbara Liskov},
   journal={IEEE Transactions on Software Engineering},
   title={A Language Extension for Controlling Access to Shared Data},
   year={1976},
-  month=apr,
+  month=dec,
   volume={SE-2},
   number={4},
   pages={277-285},
-  keywords={Computer languages;Operating systems;Control systems;Access control;Proposals;Programming profession;Writing;Buildings;Computer science;Protection;Access control;capabilities;data types;programming languages;type checking},
-  url={https://sci-hub.ru/https://ieeexplore.ieee.org/abstract/document/1702384},
+  url={https://csg.csail.mit.edu/pubs/memos/Memo-137/Memo-137.pdf},
   doi={10.1109/TSE.1976.233833},
   note={
-    Also MIT CSG Memo 137, this is one of the very first papers
+    Also MIT CSG Memo 137 from April 1976, this is one of the very first papers
     using the words “object-oriented”, and AFAICT
     the very first one to do it with a definition.
-    However, this not a definition that I or much anyone else accepts,
-    since J&L have it mean (in my words) modularity but without extensibility,
+    However, this not a definition that I, or much anyone else, accept,
+    since J&L have it mean, in my words, modularity but without extensibility,
     what Wegner calls “object-based”.
 
     J&L cite Simula 67, CLU and Alphard as their examples of OO,
@@ -852,7 +897,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     and the authors’ language CLU is at the forefront of internal modularity
     but completely ignores internal extensibility.
     J&L also cite Lisp, but only in the context of already offering the kind of functionality
-    they use as a code example. Their not including it in their list of examples of OO is correct,
+    they use as a code example. Their not including it among their examples of OO is correct,
     since KRL wasn’t a part of Lisp but an extension on top of it—and was published later.
 
     Still, a good paper, with some of CLU’s great contributions to the topic of modularity.
@@ -867,7 +912,6 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   publisher={Association for Computing Machinery},
   address={New York, NY, USA},
   doi={10.1145/1024273.1024278},
-  abstract={This paper describes a computer language based upon actor semantics designed especially for computer graphics and animation. The thesis that animation is best facilitated by considering each entity on the display screen as an independent process is discussed and demonstrated by examples. The system is built upon MacLisp and is compatible with Lisp-Logo. The language is designed to be used by both very sophisticated programmers and by school children.},
   booktitle={ACM/SIGGRAPH Workshop on User-Oriented Design of Interactive Graphics Systems},
   pages={37–43},
   numpages={7},
@@ -876,13 +920,12 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={https://dspace.mit.edu/handle/1721.1/41950},
   note={
     Kahn describes his yet unnamed language inspired by Hewitt’s actors (PLASMA) and Smalltalk-72,
-    later called “Director”.
-    It is Prototype-based (“objects” reply to “messages”, “prototype” not used).
-    Objects have “parents” or “children” (single inheritance is described;
-    “inheritance of properties” is used).
-    There are “classes” that handle otherwise unhandled messages, but the relationship between
-    classes and parents is not explained — are they the same hierarchy? a separate one?
-    Are the child/parent and class/instance relationships the same or different?
+    which would evolve into the language later called “Director”.
+    In modern terms it is prototype-based, though Kahn himself uses class-and-instance terminology
+    for what, in modern terms, is a prototype-based system:
+    An object has a “parent” and possibly “children” (single inheritance is described;
+    “inheritance of properties” is used);
+    the word “class” at times seems to be used as synonym for “parent”.
     Kahn cites Kay, and Hewitt, but not Bobrow and Winograd (though he later does in his thesis).
   }
 }
@@ -895,7 +938,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   isbn={9781450378987},
   publisher={Association for Computing Machinery},
   address={New York, NY, USA},
-  url={https://doi.org/10.1145/800237.807120},
+  url={https://sigmodrecord.org/?download_id=12508&smd_process_download=1},
   doi={10.1145/800237.807120},
   abstract={I have now written, have available from SofTech, and have submitted for publication elsewhere, the first two of a series of deep philosophical papers [1, 2] about Plex [3]. Among other things, I believe these papers begin to provide a proper foundation for our endeavors in computer science and software engineering. The trend of these developments is indicated in the following, which I call The Proem of Plex1 and Plex2 [“Proem: 1.) A preliminary discourse to a longer piece of writing. 2.) An introductory comment before a speech. 3.) Something that opens or begins.”—Webster’s].},
   booktitle={Proceedings of the 1976 Conference on Data: Abstraction, Definition and Structure},
@@ -904,10 +947,10 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   location={Salt Lake City, Utah, USA},
   note={
     In an unreadable manic publication that is more “philosophy” than science,
-    Ross first uses in print (March 1976) the word “object-oriented”
-    in a way that vaguely refers to thinking about data types in an abstract way.
+    Ross gives one of the earliest uses in print (March 1976) of the word “object-oriented”
+    in a way that vaguely refers to organizing language semantics around objects and types.
     But since it’s all poetic handwaving (despite the invocation of mathematical symbols),
-    this publication can be dismissed as worthless as a potential first definition of OO.
+    this publication can be dismissed as useless as a candidate for the first definition of OO.
   }
 }
 
@@ -922,13 +965,15 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={https://dspace.mit.edu/handle/1721.1/6091},
   note={
     The second “Lambda the Ultimate” paper.
-    It shows that λ-closures can be implemented efficiently,
-    arguing that λ-expressions are practical implementation entities
-    rather than merely semantic abstractions.
-    It demonstrates translations of many conventional language constructs
-    into λ-expressions while preserving efficient execution,
+    It develops an efficient implementation model for λ-expressions and closures:
+    LAMBDA is treated as an operator for GOTO combined with environment renaming.
+    The paper shows how conventional control and environment constructs
+    can be expressed in terms of λ-expressions and function invocation
+    while preserving efficient execution,
     establishing the λ-calculus as a practical implementation substrate for high-level languages,
     not merely a theoretical formalism for their semantics.
+    The paper also contains the striking section “Actors ≡ Closures (mod Syntax)”,
+    explicitly identifying actors and closures at the implementation level.
   }
 }
 
@@ -943,10 +988,13 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={https://dspace.mit.edu/handle/1721.1/5790},
   note={
     The first “Lambda the Ultimate” paper.
+    It systematically shows how imperative control constructs can be expressed
+    using λ-expressions, tail calls and continuations.
     The authors famously were trying to make sense of message dispatch in Hewitt’s Actors
-    based on continuations;
-    while writing tests for how the two should behave, their realized that there was no difference,
-    and this realization led to the design of Scheme.
+    in terms of continuations;
+    while building an experimental interpreter that intermixed actors and Lisp λ-expressions,
+    they realized that the two were identical in implementation,
+    and this realization had led to the design of Scheme.
   }
 }
 
@@ -957,7 +1005,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 @InProceedings{Borning1977,
   author={Alan Hamilton Borning},
   title={ThingLab — an Object-Oriented System for Building Simulations using Constraints},
-  booktitle={5th International Conference on Artificial Intelligence},
+  booktitle={Proceedings of the 5th International Conference on Artificial Intelligence},
   pages={497--498},
   month=aug,
   year={1977},
@@ -965,9 +1013,13 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   note={
     Very short overview of one of the very first prototype object systems,
     with KRL (cited) and Director (not).
-    On top of Smalltalk-72, and explicitly inspired by Sketchpad.
-    Uses the word prototype.
-    Has multiple inheritance, though it is simply called inheritance of properties after KRL.
+    Implemented on top of Smalltalk-72 and explicitly inspired by Sketchpad.
+    Uses the word prototype:
+    objects are made by “making descendants of prototypes” and
+    there are “prototypical objects” in the initial system.
+    It has multiple inheritance, though it is simply called “inheritance of properties”, as in KRL:
+    objects may have “one or more parents”.
+    “There is no distinction between classes and instances.”
   }
 }
 
@@ -987,13 +1039,14 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   note={
     Identifies aggregation and generalization as two fundamental and
     independent abstractions for conceptual data modeling in the context of databases.
-    Generalization organizes objects into generic hierarchies, while
+    Generalization organizes objects into hierarchies of generic objects, while
     aggregation constructs composite objects from relationships among objects.
     These anticipate the conceptual distinction later expressed in
     object-oriented terminology as “is-a” versus “has-a” or “part-of”,
     although Smith and Smith do not use those slogans.
-    However, lack of support for self-variables in types means this “generalization”
-    only matches inheritance in the trivial case where no recursion happens.
+    However, the lack of support for late-bound self-variables in types means this “generalization”
+    only matches inheritance in the trivial case where the inherited structure
+    does not recursively refer to its own type.
     See section 3.1.7.
   }
 }
@@ -1002,18 +1055,22 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   title={COMEX: A Support System for a Commodities Expert},
   author={Stansfield, James L},
   year={1977},
+  month=aug,
   institution={MIT},
   number={AIM-423},
   url={https://dspace.mit.edu/handle/1721.1/6281},
   note={
-    An early expert system for trading Commodities, written in Lisp,
+    An early expert system for trading commodities,
+    written in FRL, a frame-based Lisp system,
     and organizing data in a knowledge base of frames.
-    The paper is the earliest one to mention single and multiple inheritance, p.12 and p.13,
+    The paper is the earliest one to mention
+    “single inheritance” and “multiple inheritance”, p.12 and p.13,
     about the frame representation of the COMEX data.
   }
 }
 
 % https://dspace.mit.edu/bitstream/handle/1721.1/5753/AIM-443.pdf
+% doi={10.1145/800179.810196} for ACM ’77 conference paper, pp. 153–162
 @TechReport{Steele1977,
   author={Steele, Guy Lewis},
   title={Debunking the “Expensive Procedure Call” Myth or, Procedure Call Implementations Considered Harmful or, LAMBDA: The Ultimate GOTO},
@@ -1022,14 +1079,16 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   month=oct,
   number={AIM-443},
   url={https://dspace.mit.edu/handle/1721.1/5753},
-  doi={10.1145/800179.810196},
   note={
     The third “Lambda the Ultimate” paper.
-    It introduces continuations as a practical implementation technique
-    and shows that local and non-local control constructs such as
-    GOTO, coroutine, and non-local procedure exit can all be expressed in terms of them.
-    It establishes the λ-calculus extended with first-class continuations
-    as a practical implementation substrate and semantic foundation for arbitrary control flow.
+    It demolishes the folklore that procedure calls are inherently expensive,
+    showing that tail calls can be compiled directly as GOTOs,
+    and more generally that procedure calls can uniformly be regarded as GOTOs that pass parameters.
+    It argues that cheap procedure calls can serve as a general control mechanism,
+    capable even of expressing arbitrary flowcharts without explicit GOTOs,
+    while separating abstract control concepts from
+    the particular language constructs used to express them.
+    A version was published in the Proceedings of the 1977 ACM Annual Conference, pp. 153–162.
   }
 }
 
@@ -1045,6 +1104,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   publisher={Association for Computing Machinery},
   address={New York, NY, USA},
   doi={10.1145/512760.512762},
+  url={https://www.bitsavers.org/pdf/xerox/parc/techReports/The_Smalltalk-76_Programming_System_Design_and_Implementation.pdf},
   abstract={This paper describes a programming system based on the metaphor of communicating objects. Experience with a running system shows that this model provides flexibility, modularity and compactness. A compiled representation for the language is presented, along with an interpreter suitable for microcoding. The object-oriented model provides naturally efficient addressing; a corresponding virtual memory is described which offers dense utilization of resident space.},
   booktitle={the 5th ACM SIGACT-SIGPLAN Symposium on Principles of Programming Languages},
   pages={9–16},
@@ -1058,10 +1118,11 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     screenshots of their graphical user interface with overlapping windows,
     to description of the language with plenty of examples,
     including subclasses and inheritance (multiple inheritance is mentioned but not discussed),
-    to a low-level box-and-arrow diagrams for how objects are structured in memory
-    and description of the virtual machine, message passing and memory management,
+    to low-level box-and-arrow diagrams for how objects are structured in memory
+    and descriptions of the virtual machine, message passing and memory management,
     with a model implementation of the virtual machine interpreter in Smalltalk in appendix.
     Wow.
+
     Also note how this seminal paper about OO was published at POPL.
     I mourn at how much the focus of the conference has since narrowed
     to functional programming and formal methods.
@@ -1069,9 +1130,9 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 }
 
 @TechReport{Steele1978,
-  author={Steele, Jr., Guy L.},
+  author={Guy Lewis Steele Jr.},
   title={RABBIT: A Compiler for SCHEME (A Dialect of LISP)},
-  institution={Massachusetts Institute of Technology},
+  institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
   year={1978},
   month=may,
   type={Technical Report},
@@ -1079,9 +1140,12 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   address={Cambridge, MA},
   url={https://dspace.mit.edu/handle/1721.1/6913},
   note={
-    Steele’s Master’s thesis, describing his efficient compiler for Scheme,
+    Steele presents his optimizing compiler for Scheme,
     a Lisp dialect with lexical scoping.
-    Revised version of a dissertation submitted to
+    After macro expansion and source-to-source transformations,
+    source code is reduced to a small λ-calculus-based core
+    that is compiled with procedure integration and tail-recursion optimization.
+    Revised version of a Master’s dissertation submitted to
     the Department of Electrical Engineering and Computer Science.
   },
 }
@@ -1092,13 +1156,16 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   author={Alan Hamilton Borning},
   title={ThingLab --- A Constraint-Oriented Simulation Laboratory},
   biburl={https://www.bibsonomy.org/bibtex/263cae088243a5fd341d7d634d8176bb3/n770},
-  publisher={Palo Alto Research Center XEROX},
   url={https://constraints.cs.washington.edu/ui/thinglab-tr.pdf},
   school={Stanford University},
   year=1979,
+  month=mar,
   note={
-    Alan Borning’s thesis on ThingLab. A constraint system built on top of Smalltalk,
-    inspired by Sketchpad, with Prototype OO, and also classes.
+    Alan Borning’s thesis on ThingLab. A constraint system built on top of Smalltalk-76,
+    inspired by Sketchpad, with both prototypes and classes
+    (unlike the prototype-only ThingLab of 1977 on top of Smalltalk-72).
+    URL actually for the revised Xerox PARC report SSL-79-3 from July 1979,
+    also issued as Stanford CS report STAN-CS-79-746.
   }
 }
 
@@ -1107,42 +1174,58 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 @Misc{Cannon1979,
   title={Flavors: A Non-Hierarchical Approach to Object-Oriented Programming},
   author={Howard Cannon},
-  publisher={Symbolics Inc.},
   year=1979,
   url={https://www.softwarepreservation.org/projects/LISP/MIT/nnnfla1-20040122.pdf},
   note={
-    Cannon’s groundbreaking work unexpectedly solved the problem of multiple inheritance,
-    by harmoniously combining the methods in a way that generalizes Teitelman’s ADVISE facility.
-    The paper is full of ideas and genius insights, even though it is obviously unpolished,
+    Cannon’s groundbreaking work unexpectedly solved
+    the central problem of multiple inheritance—method resolution—by
+    harmoniously combining the methods in a way that generalizes Teitelman’s ADVISE facility.
+    The paper is full of ideas and genius insights, even though it is obviously unpolished
     and written by an inexperienced young man.
-    Cannon’s software and his report were widely circulated at MIT and in the Lisp community,
-    but unhappily the report was never officially published.
-    The MIT Lisp Machine Manual from 1981 on (3rd edition and later) includes Flavors.
-    The first academic publication on Flavors would be Moon 1986’s paper on New Flavors.
-    An October 1980 CADR backup tape shows Flavors was implemented as a short 1428 line program.
-    It has linearization by a two-pass depth-first search algorithm,
-    where parents are called “components” that a flavor “depends-on”,
-    but there are also other flavors it “includes” that go at the end to act as defaults,
-    which by default includes at the end the system-defined vanilla-flavor.
-    A mixin (or mix-in) is a flavor meant to be combined-in but not instantiated.
 
-    The Flavors paper describes the Smalltalk  “hierarchical”; discusses the conflict view
-    of multiple inheritance (from Borning, looking at his bibliography)
-    as “a scheme called _multiple superclasses_”, and how it fails
-    to support _modular_ interactions between orthogonal issues.
-    and itself “non-hierarchical” by comparison, with flavors instead of superclasses, so
+    Cannon’s software and his report were widely circulated at MIT
+    and in the Lisp community starting in 1979;
+    but unhappily the report was never officially published,
+    though citations include variants from MIT 1980 and Symbolics 1982.
+    Cannon transferred his report to Word in 1992 and eventually released a PDF in 2003.
+
+    The MIT Lisp Machine Manual from 1981 onward (3rd edition and later) includes Flavors.
+    The first academic publication on Flavors would be Moon 1986’s paper on New Flavors.
+    An October 1980 CADR backup tape shows Flavors implemented as a short, 1428-line program.
+    It linearizes the “component flavors” (ancestors in my book) that a flavor “depends-on”
+    by left-to-right depth-first search with duplicate elimination;
+    then, in a second pass, appends other flavors it “includes” to act as defaults
+    (which by default includes at the end the system-defined vanilla-flavor,
+    though the paper doesn’t discuss that part).
+    A mixin (or mix-in) is a flavor meant to be combined in but not instantiated.
+
+    Cannon claims his approach is “non-hierarchical” as opposed to
+    the “hierarchical” approach of Smalltalk, further claiming that
     “instead of a hierarchy, more of a lattice structure is formed”.
-    While 20-year old Cannon’s underlying concepts and arguments show his genius,
-    his incorrect wording shows his then lack of education:
-    the DAG of ancestors (words he doesn’t use) is still a hierarchy
-    (just a partial rather than total order), and not a lattice
-    (which requires existence and unicity of least upper and least lower bounds).
+    His wording is suggestive of the right concepts yet mathematically incorrect:
+    Both approaches involve a hierarchy, i.e. an order.
+    The actual difference is that Smalltalk’s single inheritance
+    induces a total order on each class’s ancestors,
+    whereas Cannon’s multiple inheritance only induces a partial order.
+    Moreover a lattice requires existence and uniqueness of least upper and greatest lower bounds,
+    which need not exist here.
+    While 20-year-old Cannon’s underlying concepts and arguments show his genius,
+    his imprecise mathematical wording shows his lack of education at the time
+    (he was an undergraduate student in 1979).
+
+    Cannon also discusses the conflict view of multiple inheritance as
+    “a scheme called _multiple superclasses_”, and how it fails
+    to support _modular_ interactions between orthogonal issues,
+    showing his deep understanding of the purpose that OO mechanisms serve.
+    (In his Acknowledgments, Cannon thanks Borning and Ingalls, who would have been the ones with
+    multiple-inheritance expertise from ThingLab and
+    experiments with multiple inheritance in Smalltalk.)
 
     Finally, note that Flavors as such offers no call-next-method.
     The default method combination, :DAEMON, supports only one primary method,
     lots of wrappers (macros with :around powers),
     and side-effects from :before and :after methods to combine methods;
-    but other method-combinations can combine things (:LIST :INVERSE-LIST :PROGN :AND :OR),
+    but other method combinations can combine things (:LIST :INVERSE-LIST :PROGN :AND :OR),
     and you could create your own method-combination that returns a function to compose.
   }
 }
@@ -1158,13 +1241,14 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   note={
     16 years before Rees 1995, the authors use scoping as a security mechanism
     in their Actor system ACT1.
-    They also implement both Prototype OO (“delegation”) and Class OO (“inheritance”).
+    They also implement both Prototype OO (“delegation”) and Class OO (“inheritance”),
+    mechanisms “developed jointly with Kahn” (author of Director, cited).
     Prototypes “increas[e] the modularity of the system”;
     classes allow “sharing of descriptions common to many actors”.
-    Actors have both When an actor delegates message handling to another,
-    messages it does not handle itself result in a call to the other actor
-    with a method “Buck_pass” that reifies the message and its context.
-    Cites Simula, Smalltalk and Director (Kahn) “developed jointly with Kahn”.
+    When an actor delegates message handling to another,
+    messages it does not handle itself are passed to the other actor
+    through a method “Buck_pass” that reifies the message and its context.
+    Cites Simula, Smalltalk and Director.
   }
 }
 
@@ -1176,12 +1260,12 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={https://dspace.mit.edu/handle/1721.1/16012},
   note={
     This paper is about the higher-level system Ani,
-    that generates turtle graphics plans on top of
+    which generates turtle graphics plans on top of
     the actor-based object system Director (see AIM-482b).
-    While Ani is a constraint solver based on a knowledge representation of the film being directed:
-    very crude 2d film with polygons as "performers" that move toward, away from,
-    around or between each other, at various speeds appropriate for the action,
-    as would humans on a stage.
+    Ani is a constraint solver based on a knowledge representation of the film being directed:
+    a very crude 2D film with polygons as "performers" that move toward, away from,
+    around or between one another, at various speeds appropriate to the action,
+    as humans would on a stage.
     Kahn cites Bobrow & Winograd, as well as Kay, Hewitt, Lieberman,
     and many more (Licklider, Catmull!)
   }
@@ -1197,13 +1281,13 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   note={
     This paper, revised from a previous 1978 edition,
     presents Director, the earliest Lisp OO system as such,
-    where inheritance exists in the context of programming
-    and not just knowledge representation from which it evolved (see Kahn 1976).
-    Dirctor by then had been extracted from Kahn’s wider animation project built atop it.
+    where inheritance exists in a programming context,
+    not just in the knowledge representation context from which it evolved; see Kahn 1976.
+    By then, Director had been extracted from Kahn’s wider animation project built atop it.
     Director implements single inheritance by message passing on top of an Actor system.
     It has an early form of call-next-method called continue-asking (p.40).
-    The Actor team would later adapt Kahn’s system, see Hewitt 1979.
-    Kahn cites Smalltalk and Actors as an influence for Director,
+    The Actor team would later adapt Kahn’s system; see Hewitt 1979.
+    Kahn cites Smalltalk and Actors as influences for Director,
     but not KRL (Kahn does cite KRL in other papers).
   }
 }
@@ -1229,8 +1313,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     This paper implements PIE, a knowledge representation system on top of Smalltalk.
     PIE implements the Frame model as descended from KRL via FRL,
     wherein each Node in the knowledge graph can be described via multiple Perspectives,
-    which constitutes form of multiple inheritance,
-    though one built as part of a layer on top of the Smalltalk language,
+    which constitutes a form of multiple inheritance,
+    though one built as a layer on top of the Smalltalk language,
     rather than as an extension to the language itself.
     This distinction is sharper in Smalltalk than in Lisp,
     where syntactic extensibility blurs the difference.
@@ -1258,11 +1342,11 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   pages={353--387},
   numpages={35},
   note={
-    ThingLab is an extension to Smalltalk that supports Prototype OO,
+    ThingLab is an extension of Smalltalk that supports Prototype OO,
     and integrates it with the Class OO of Smalltalk.
     On top of that, Borning builds a constraint-based graphic system
     that generalizes Sketchpad, and can be used to build simulations.
-    ThingLab also implements multiple inheritance, although
+    ThingLab also implements multiple inheritance, albeit
     the flavorless conflict kind (ThingLab predates Flavors).
   }
 }
@@ -1279,13 +1363,13 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   month=aug,
   url={https://www.worldradiohistory.com/Archive-Byte/80s/Byte-1981-08.pdf},
   note={
-    Special issue of BYTE Magazine devoted to Smalltalk-80, edited by Christopher P. Morgan,
+    Special issue of BYTE devoted to Smalltalk-80, edited by Christopher P. Morgan,
     containing articles by Adele Goldberg, Dan Ingalls, Larry Tesler and
     other members of the Xerox Learning Research Group.
     Conspicuously absent from the list of authors is Alan Kay, who had left Xerox.
     The issue brought Smalltalk and object-oriented programming to a broad audience
-    of microcomputer enthusiasts, and was an important milestone in the popularization
-    of the object-oriented paradigm.
+    of microcomputer enthusiasts, and was an important milestone in popularizing
+    the object-oriented paradigm.
   }
 }
 
@@ -1303,8 +1387,8 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={http://bitsavers.org/pdf/mit/cadr/chinual_3rdEd_Mar81.pdf},
   note={
      Also known as the “Chinual”, this legendary book explains the interface of the Lisp Machine,
-     then commercialized under license by Symbolics, Inc., the first .com.
-     Chapter 20 presents how to use Flavors, what are its concepts and its API;
+     then commercialized under license by Symbolics, Inc., the first .com company.
+     Chapter 20 presents how to use Flavors, along with its concepts and its API;
      but it does not include all the rationale from the Flavors paper.
    }
 }
@@ -1321,17 +1405,16 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={http://www.laputan.org/pub/papers/MI-Borning-Ingalls.PDF},
   note={
     A paper about yet another implementation of multiple inheritance in Smalltalk,
-    that does not teach us much new, except that the Smalltalk community
+    which does not teach us much new, except that the Smalltalk community
     still had trouble getting past the “conflict” view of multiple inheritance,
-    but could do that view over and over.
-    Uses the Link class from SIMULA, and ReadWriteStream as motivations for multiple inheritance.
-    Uses the “conflict” view of multiple inheritance.
-    Succeeds to ThingLab 1977, a Smalltalk experiment by Borning 1980,
-    and PIE in Smalltalk by Goldstein&Bobrow 1980.
-    Cites Flavors and LOOPS as contrasts.}
-}
+    but could implement that view over and over.
+    Uses the Link class from Simula, and ReadWriteStream
+    as motivations for using multiple inheritance.
+    Succeeds ThingLab 1977, a Smalltalk experiment by Borning 1980,
+    and PIE in Smalltalk by Goldstein and Bobrow 1980.
+    Cites Flavors and LOOPS as contrasts.
+}}
 
-% https://www.caiac.ca/sites/default/files/shared/canai-archives/1982_CSCSI_Proceedings-opt.pdf
 @InProceedings{Brachman1982,
   author={Ronald J. Brachman},
   title={What “ISA” Is and Isn't},
@@ -1348,7 +1431,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     A revised version, “What IS-A Is and Isn't: An Analysis of Taxonomic Links
     in Semantic Networks”, appeared in Computer in 1983.
     It documents sophisticated use and criticism of “ISA” terminology in
-    knowledge representation before its adoption as a characterization of
+    knowledge representation before its adoption to characterize
     inheritance in object-oriented programming.
   }
 }
@@ -1371,10 +1454,10 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   pages={1--9},
   numpages={9},
   note={
-    Introduces “traits”, for multiple inheritance in the Mesa programming language
-    used to implement WS, the Workstation Software of the legendary Xerox Star 8010,
-    since late 1979 (Mesa started early 1978 with Single-Inheritance).
-    p.6 conflict resolution is manual.
+    Introduces “traits” for flavorless multiple inheritance in the Mesa programming language.
+    Mesa was used to implement WS, the Workstation Software of the legendary Xerox Star 8010.
+    Mesa started in early 1978 with single inheritance and adopted multiple inheritance in late 1979.
+    p. 6: conflict resolution is manual.
   }
 }
 
@@ -1391,12 +1474,12 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   doi={10.1145/800068.802142},
   note={
     A short overview of the Yale T Scheme system, a dialect of Lisp
-    that is a lexically-scoped (which was not yet the norm at the time),
+    that is lexically scoped (which was not yet the norm at the time),
     and that among other things supports Prototype OO
     based on such lexically scoped closures.
     An object is essentially a record of methods
     that are invoked by passing them the object as first argument.
-    A “generic operation protocol” offers a functional syntax to object method invocation,
+    A “generic operation protocol” offers a functional syntax for object method invocation,
     which anticipates generic functions in New Flavors, CommonLoops and CLOS.
     See Adams 1988 for details.
   }
@@ -1418,12 +1501,12 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     LOOPS has multiple inheritance, but not quite right.
     The authors cite the right Flavors passage on _modular_ interactions
     between orthogonal issues. But instead of linearization,
-    they instead offer tools for methods to manually call methods from one or all
+    they offer tools for methods to manually call methods on one or all
     parents, or from a named ancestor. On the other hand, LOOPS also includes
     a rich slot access protocol, a metaclass protocol, and
     a knowledge base with a rule-oriented programming engine.
-    Interestingly, the paper has a mix of UPPERCASE primitives,
-    CamelCase functions and objects and classes, camelCase variables;
+    Interestingly, the manual has a mix of UPPERCASE primitives,
+    CamelCase functions, objects and classes, camelCase variables;
     good Lisp style hadn’t been standardized yet.
   }
 }
@@ -1440,10 +1523,10 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   note={
     This seminal book (often called the “Blue Book”) provides
     the definitive description of the Smalltalk-80 language,
-    including syntax, object model, classes/instances, metaclasses, protocols,
+    including syntax, object model, classes and instances, metaclasses, protocols,
     and the standard library classes.
     Single inheritance only.
-    Among many other things, introduces the words of abstract and concrete classes.
+    Among many other things, introduces the terms abstract class and concrete class.
   }
 }
 
@@ -1462,7 +1545,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   note={
     The classic book about the λ-calculus, with all the basics covered,
     though obviously none of the advanced discoveries since then.
-    A large volume, of which I admit to only reading a few chapters, back in graduate school.
+    A large volume, of which I admit to having read only a few chapters, back in graduate school.
     Still _the_ reference to cite on the topic.
   }
 }
@@ -1487,14 +1570,14 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   note={
     Despite its title, this paper barely discusses multiple inheritance
     and fails to provide a semantics for it.
-    Then Cardelli on page 4 assumes the NNOOTT, i.e. that subclassing is subtyping,
+    Then, on page 4, Cardelli assumes the NNOOTT, i.e. that subclassing is subtyping,
     and completely omits any further attempt at modeling inheritance from his formal treatment.
     Instead, he introduces a rich framework for subtyping
-    in a λ-calculus with records and fixed-points,
+    in a λ-calculus with records and fixpoints,
     including what may be the first Y-encoding of objects.
-    Both a seminal paper for so many great ideas,
+    A seminal paper for so many great ideas,
     yet an intellectual travesty with respect to what its title claims.
-    Expanded journal version: Information and Computation 76(2--3):138--164, 1988.
+    Expanded journal version: Information and Computation 76(2—3):138—164, 1988.
   }
 }
 
@@ -1511,30 +1594,35 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={https://doi.org/10.1145/828.1884},
   note={
     The paper introduces the classic FKS perfect-hashing construction
-    (as it will later be called), that achieves what the title says:
+    (as it would later be called), which achieves what the title says:
     compact constant-time lookup structures for a static sparse table.
     The search for a perfect solution can take a lot of time,
-    and the authors propose probabilistic search with high chances
-    of finding a good enough solution in a finite amount of time.
+    and the authors propose probabilistic search with a high probability
+    of finding a good-enough solution in finite time.
     This kind of technique can be used to speed up field access in records with known shapes,
     and thus also method lookup and subtype tests.}
 }
 
 % 1985
 
-@Book{Cardelli1985,
+@Article{Cardelli1985,
   title={On understanding types, data abstraction, and polymorphism},
   author={Luca Cardelli and Peter Wegner},
   year={1985},
-  publisher={Brown University. Department of Computer Science},
+  month=dec,
+  journal={ACM Computing Surveys},
+  volume={17},
+  number={4},
+  pages={471--522},
+  doi={10.1145/6041.6042},
   url={http://lucacardelli.name/Papers/OnUnderstanding.A4.pdf},
   note={
-    Wegner & Cardelli have plenty of good concepts, especially around types,
+    Cardelli & Wegner have plenty of good concepts, especially around types,
     including universal and existential quantification.
-    The paper inspired or launched an entire field of enquiry into formal types for OOP.
-    And then in section 6.1 they fall squarely into the NNOOTT,
+    The paper inspired or launched an entire field of inquiry into formal types for OOP.
+    And then, in section 6.1, they fall squarely into the NNOOTT,
     explicitly confusing inheritance and subtyping.
-    They also cite Smalltalk and Flavors in 6.3, just to immediately drop the ball.
+    They also cite Smalltalk and Flavors in 6.3, only to immediately drop the ball.
     Great in some ways, and beyond lame in others.
   }
 }
@@ -1553,14 +1641,12 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   note={
     Krogdahl extends Simula’s single-inheritance “prefix” mechanism
     to support multiple prefixes... but only for tree-shaped ancestries.
-    Quite lame, especially he cites both Borning and Cannon
+    Quite lame, especially since he cites both Borning and Cannon
     who did much better years earlier. He’s not even trying.
     But at least he doesn’t try to explode DAGs into trees like C++.
-    This 1985 extension is obviously not part of Simula67;
+    This 1985 extension is obviously not part of Simula 67;
     it was not included in the 1986 Simula Standard, either,
-    that retained single inheritance.
-  }
-}
+    which retained single inheritance.}}
 
 % Extended version of previous paper at POPL’85 https://dl.acm.org/doi/10.1145/318593.318606
 % journal={ACM Transactions on Programming Languages and Systems (TOPLAS)},
@@ -1573,7 +1659,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
 % the formal ground of the ADT pole of Reynolds’s duality
 @InProceedings{Mitchell1985,
   title={Abstract Types have Existential Type},
-  author={John C Mitchell and Gordon D Plotkin},
+  author={John C. Mitchell and Gordon D. Plotkin},
   booktitle={POPL ’85},
   pages={37–51},
   year={1985},
@@ -1581,10 +1667,10 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   url={https://homepages.inf.ed.ac.uk/gdp/publications/Abstract_existential.pdf},
   note={
     The title of this key paper captures the core contribution:
-    you should think of abstract types for data and functions that operate on them (i.e. modules),
+    you should think of abstract types for data and functions that operate on them (i.e. modules)
     as hiding the actual underlying type behind an existential quantifier.
     This enables reasoning about modules as first-class values in second-order logic.
-    An extended Journal version was published in TOPLAS 10(3) 1988.
+    An extended journal version was published in TOPLAS 10(3), 1988.
   }
 }
 
@@ -1606,7 +1692,7 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     the theory of subtypes and generic operators
     (Reynolds’s own earlier work on implicit conversions via category theory);
     and the polymorphic/second-order typed lambda calculus (Girard’s logical System F).
-    He illustrates all three on a common functional language with products, sums, and lists,
+    He illustrates all three in a common functional language with products, sums, and lists,
     comparing their expressiveness and trade-offs.
   }
 }
@@ -1618,9 +1704,9 @@ This chapter presents some criteria for evaluating ideas for representation. It 
   title={To Mock a Mockingbird and Other Logic Puzzles: Including an Amazing Adventure in Combinatory Logic},
   publisher={Knopf},
   year={1985},
-  isbn={0-19-280142-2},
+  isbn={0-394-53491-3},
   note={
-    One of Smullyan’s many delightful narrated puzzle books that prove deeper than they look,
+    One of Smullyan’s many delightful narrated puzzle books that prove deeper than they look:
     “To Mock a Mockingbird” takes the reader through the essentials of combinatory logic.
     Each chapter introduces more elaborate logical ideas,
     until, starting with chapter 9, the book follows Inspector Craig
@@ -1628,20 +1714,18 @@ This chapter presents some criteria for evaluating ideas for representation. It 
     the birds being combinators and the forests being
     sets of terms closed by application.
 
-    The self-application combinator, that I called U in this book,
+    The self-application combinator, which I call U in this book,
     is called M (Mockingbird) in Smullyan’s.
-    The fixpoint combinator (that I called Y) appears in chapter 10 as the notion of a Sage bird Θ,
-    the same symbol Turing used to first denote such a combinator;
-    though in chapter 13, Smullyan calls U the critical part of the sage bird
+    The fixpoint combinator (which I call Y) appears in chapter 10 as a Sage bird Θ,
+    the same symbol Turing first used to denote such a combinator;
+    though in chapter 13, Smullyan calls U the critical part of the Sage bird
     from Turing’s original paper (which is different from my U, Smullyan’s M).
 
     Smullyan then shows how to express logic and arithmetic with combinators, and
-    the book culminates in final chapter 25 with Gödel’s incompleteness theorem.
+    the book culminates in the final chapter, 25, with Gödel’s incompleteness theorem.
     The epilogue pleasantly notes that Moses Schönfinkel,
     whose work initiated what later became combinatory logic and the λ-calculus,
-    bore a surname that in German literally means “beautiful bird”.
-  }
-}
+    bore a surname that in German literally means “beautiful bird”.}}
 
 %% 1986
 
