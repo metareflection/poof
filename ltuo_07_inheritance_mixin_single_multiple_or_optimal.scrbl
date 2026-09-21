@@ -281,14 +281,12 @@ across all the subclasses of a given class.
   that you may find e.g. at
   @url{https://github.com/metareflection/poof/blob/main/pommette/pommette.scm}
 }
-
 @exercise[#:difficulty "Easy"]{
   Using the @c{extendModDef} function from this section,
   build a single-inheritance hierarchy with three levels: @c{Animal} → @c{Mammal} → @c{Dog}.
   Each should add one method, and override one (if there is one to override).
   Verify that a @c{Dog} instance has all three methods.
 }
-
 @exercise[#:difficulty "Easy"]{
   Identify a language with builtin mixin inheritance and first-class functions,
   but doesn’t provide builtin single inheritance.
@@ -299,7 +297,6 @@ across all the subclasses of a given class.
     and define single inheritance on top.
   }
 }
-
 @exercise[#:difficulty "Medium"]{
   Identify a language with single inheritance only,
   but either first-class OO and higher-order functions,
@@ -310,7 +307,6 @@ across all the subclasses of a given class.
     with second-class OO but powerful enough “templates”.
   }
 }
-
 @exercise[#:difficulty "Medium"]{
   Demonstrate the modularity limitation of single inheritance:
   Define a specification @c{Point} for a type with fields @c{x} and @c{y}.
@@ -320,7 +316,6 @@ across all the subclasses of a given class.
   With single inheritance, you must duplicate one of them.
   Show the duplication, then show how mixin inheritance avoids it.
 }
-
 @exercise[#:difficulty "Hard"]{
   Implement the optimization that makes single inheritance fast:
   assign fixed numeric indices to methods as they are declared,
@@ -1455,7 +1450,6 @@ prefer to use or implement single inheritance when offered the choice.
   @c{D} has parents @c{B} and @c{C} in this (local precedence) order.
   This is the classic “diamond”. Label each edge with the parent-child relationship.
 }
-
 @exercise[#:difficulty "Easy"]{
   Using the diamond from the previous exercise, manually compute the precedence list
   for @c{D} using depth-first left-to-right traversal
@@ -1463,7 +1457,6 @@ prefer to use or implement single inheritance when offered the choice.
   Then compute it respecting the constraints of C3.
   Are they the same? If not, what constraint does depth-first violate?
 }
-
 @exercise[#:difficulty "Medium"]{
   Using the @c{base-bill-of-parts} specification that tracks parts as a base,
   have a specification @c{A} that adds a chassis,
@@ -1478,13 +1471,11 @@ prefer to use or implement single inheritance when offered the choice.
   whichever way you “resolve” the conflict, whether in favor of @c{B} or @c{C}.
   Show that with proper linearization, each part appears exactly once and only once.
 }
-
 @exercise[#:difficulty "Medium"]{
   Implement a simple depth-first linearization algorithm.
   Which of the properties I listed does it preserve? Which does it fail to preserve?
   Can you exhibit a short counter-example for each case of property not preserved?
 }
-
 @exercise[#:difficulty "Hard"]{
   With the help of an AI if needed, implement then use flavorful multiple inheritance
   from @secref{IMSMO} on top of C++ templates.
@@ -1492,7 +1483,6 @@ prefer to use or implement single inheritance when offered the choice.
   patterns as Lisp, Ruby, Python, Scala do—but also how much effort that takes,
   and how uncolloquial the resulting style is.
 }
-
 @exercise[#:difficulty "Hard"]{
   With the help of an AI if needed, implement then use flavorless multiple inheritance
   from @secref{IMSMO} on top of CLOS.
@@ -2136,7 +2126,6 @@ equality of POIs and their specifications would then be defined as that of their
   Show an example of inheritance hierarchy for which the single-inheritance optimizations
   do not apply.
 }
-
 @exercise[#:difficulty "Medium"]{
   Consider this example lifted from Wikipedia @~cite{WikiC3},
   with a base specification @c{O},
@@ -2185,7 +2174,6 @@ when @c{Z} inherits from both @c{K2} and @c{K3}.
   Which would cause C4 to issue an error trying to compute a precedence list for @c{Z}
   if declared suffix?
 }
-
 @exercise[#:difficulty "Medium"]{
   Same questions with this example from @~cite{Ducournau1994},
   with the following lists of specification and its parents in local order:

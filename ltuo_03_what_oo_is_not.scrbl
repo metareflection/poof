@@ -1759,7 +1759,7 @@ a strong thing changes the meaning of a name.}
   Characterize the real thing under the original name,
   and the main variants that corrupt the name
   (though they may have interesting contributions of their own besides this corruption)@xnote["."]{
-If you have trouble with this question, you may consider digging on the etymology
-and early history of the word “ideology” itself.
-But it’s much better if you manage to find your own example of such hostile takeover of a word.
+    If you have trouble with this question, you may consider digging on the etymology
+    and early history of the word “ideology” itself.
+    But it’s much better if you manage to find your own example of such hostile takeover of a word.
 }}

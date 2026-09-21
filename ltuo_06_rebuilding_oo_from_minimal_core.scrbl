@@ -789,13 +789,12 @@ Yet though they offer correct models for typing OO,
 both authors fail to distinguish specification and target
 as syntactically and semantically separate entities in their languages,
 leading to much extraneous complexity in their respective typesystems.
-
 @citet{Simons1995} deserves special credit for having been explicit and adamant
 about the distinction between classes and types,
 including a clear syntactic distinction between a type @c{C} and a type generator @c{#C[ ]}.
 Sadly, his work was largely ignored,
 despite his very approachable later exposition in JOT @~cite{Simons2005}.
-Also, Simons, probably due to neglecting Prototype OO,
+Still, Simons, probably due to neglecting Prototype OO,
 fails to understand the positive appeal of conflation
 like he understands the negative consequences of confusion.
 
@@ -819,7 +818,7 @@ and shrugged it off as yet another one of those many pesky little implementation
 they had to face along the way.
 
 @; TODO cite Cook1989 distinguishes, but does not conflate back
-@; TODO cite Simons1995 / 2005 distinguishes, and notes the conflation, calls it sad.
+@; TODO cite Simons1995 / 2005 distinguishes, and notes the conflation
 
 Finally, the confusion between target and specification can be seen as a special case of
 the confusion between object and implementation discussed in @citet{Chiba1996},
@@ -883,7 +882,6 @@ yet no one seems to have been able to fully tease apart the concepts up until re
   between your modified YASOS encoding and the @c{rproto} encoding.
   What tradeoffs can you see between the two encodings?
 }
-
 @exercise[#:difficulty "Hard"]{
   Assuming you did exercise @exercise-ref{5alist},
   write a variant of @c{rproto} that uses your representation of records
@@ -1494,7 +1492,8 @@ All the pure functional definitions I offered still directly apply.
 Slightly less pure but still quite functional, you could @emph{also}
 allow effectful interactions with the content of mutable cells during the instantiation itself.
 Now, that will indeed require, if not outright capitulation to side-effects, at least
-a monadic variant of a fixpoint operator. @; TODO Erkok2000 Friedman2000 Erkok2002 Erkok2002Semantics
+a monadic variant of a fixpoint operator @~cite{Friedman2000}.
+@; TODO Erkok2000 Erkok2002 Erkok2002Semantics
 
 But this is no different from how mutability and side-effects
 are typically added to Functional Programming in general,
@@ -1712,7 +1711,6 @@ as I did in @citet{Rideau2012}.
 
 @exercise[#:difficulty "Easy"]{
   Implement a @c{Counter} prototype two ways:
-}
 @itemize[
   @item{Pure functional: @c{increment} returns a new counter with value increased by 1}
   @item{Mutable: @c{increment!} modifies the counter in place and returns @c{#f},
@@ -1721,6 +1719,7 @@ as I did in @citet{Rideau2012}.
   }]
 Show that both versions can be used to count from 0 to 10.
 What is the key difference in how client code must be written for each version?
+}
 
 @exercise[#:difficulty "Easy"]{
   The chapter claims that mutation is orthogonal to OO
@@ -1745,14 +1744,14 @@ What is the key difference in how client code must be written for each version?
 @exercise[#:difficulty "Medium"]{
   The chapter states that “laziness proves essential to OO,
   even and especially in presence of side-effects.”
-  Demonstrate this by:}
+  Demonstrate this by:
   @itemize[
     @item{Creating a specification that performs I/O (e.g., prints a message)
           during instantiation.}
     @item{Showing that without laziness, composing specifications via @c{mix}
           causes unwanted duplicate I/O.}
     @item{Showing that with lazy instantiation, I/O only happens once,
-          when the final target is forced.}]
+          when the final target is forced.}]}
 
 @exercise[#:difficulty "Medium, Recommended"]{
   If you did exercise @exercise-ref{05to06}, compare your previous answers with mine.
@@ -1798,7 +1797,7 @@ What is the key difference in how client code must be written for each version?
   Design and implement a simple protocol for updating instances
   when their class is redefined, inspired by CLOS’s
   @c{update-instance-for-redefined-class}.
-  Your protocol should handle:}
+  Your protocol should handle:
   @itemize[
     @item{Adding a new field with a default value}
     @item{Removing a field (what happens to its data?)}
@@ -1809,12 +1808,12 @@ What is the key difference in how client code must be written for each version?
   and adds @c{email}.
   Bonus: Make it a research topic by generalizing the issue to that
   of schema upgrade for a persistent object store with many indexes
-  that may require multiple phases to update.
+  that may require multiple phases to update.}
 
 @exercise[#:difficulty "Hard"]{
   The chapter discusses the question of what happens to computed targets
   when a specification is updated.
-  Implement and compare three strategies:}
+  Implement and compare three strategies:
   @itemize[
     @item{@emph{Eager invalidation}: all targets are immediately recomputed
           when any specification changes.}
@@ -1824,18 +1823,18 @@ What is the key difference in how client code must be written for each version?
           new accesses get new targets.}]
   Discuss the tradeoffs in terms of consistency, performance, and complexity.
   Which strategy is most appropriate for (a) interactive development,
-  (b) long-running servers, (c) real-time systems?
+  (b) long-running servers, (c) real-time systems?}
 
 @exercise[#:difficulty "Hard"]{
   The chapter mentions that Erlang is the only popular language
   that fully addresses code upgrade semantics.
   Research Erlang’s hot code loading mechanism and its interaction with processes.
-  Then design (and optionally implement) a similar mechanism for a Scheme-based OO system:}
+  Then design (and optionally implement) a similar mechanism for a Scheme-based OO system:
   @itemize[
     @item{How do you ensure “quiescence” before applying updates?}
     @item{How do you handle objects that are mid-operation during an upgrade?}
     @item{How do you handle objects referenced from the call stack?}]
-  What simplifying assumptions does your design make compared to Erlang?
+  What simplifying assumptions does your design make compared to Erlang?}
 
 @exercise[#:difficulty "Research"]{
   Add support for class update to an existing object system that doesn’t support it yet,

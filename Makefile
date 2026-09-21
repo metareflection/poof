@@ -115,8 +115,8 @@ ltuohtml: build/ltuo.html
 ltuopdf: build/ltuo.pdf
 ltuoview: ltuopdf
 	$(PDFVIEWER) build/ltuo.pdf $(P)
-ltuo: ltuohtml ltuopdf ltuowc ltuoview
-ltuo2: ltuohtml ltuopdf ltuowc ltuosync ltuoview
+ltuo: ltuohtml ltuopdf count-ltuo-citations ltuowc ltuoview
+ltuo2: ltuohtml ltuopdf count-ltuo-citations ltuowc ltuosync ltuoview
 ltuosync: build/ltuo.pdf build/ltuo.html
 	rsync -av $^ ~fare/files/cs/poof/
 	rsync -av $^ bespin:files/cs/poof/

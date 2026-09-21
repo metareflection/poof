@@ -4,7 +4,9 @@
 
 (require (only-in scribble/base ~ emph elem linebreak nested italic smaller bold para centered
                   section subsection include-section)
-         (only-in scribble/core make-paragraph make-style content->string)
+         (only-in scribble/core paragraph make-paragraph make-compound-paragraph
+                                make-style plain content->string)
+         (only-in scribble/decode decode-flow)
          (only-in scriblib/footnote note define-footnote)
          (only-in scriblib/render-cond cond-element cond-block)
          (only-in scribble/html-properties css-addition html-defaults)
@@ -148,15 +150,34 @@
 
 ;; Easy Medium Difficult Research
 (define (exercise #:difficulty (difficulty #f) #:tag (tag #f) . text)
-  (let* ((chapter (chapter-number))
-         (number (exercise-number))
-         (id (format "~a.~a" chapter number)))
-    (when tag (hash-set! tagged-exercises tag id))
-    (exercise-number (+ number 1))
-    (apply para (tex "~\\\\{}\\noindent")
-           (bold (elem "Exercise " id (if difficulty (elem " (" difficulty ")") "")))
-     " "
-     text)))
+  (define chapter (chapter-number))
+  (define number (exercise-number))
+  (define id (format "~a.~a" chapter number))
+  (when tag (hash-set! tagged-exercises tag id))
+  (exercise-number (add1 number))
+  (define heading
+    (list
+     (tex "~\\\\{}\\noindent")
+     (bold
+      (elem "Exercise " id
+            (if difficulty
+                (elem " (" difficulty ")")
+                "")))
+     " "))
+  (define blocks (decode-flow text))
+  (match blocks
+    [(cons (paragraph style content) rest)
+     (make-compound-paragraph
+      plain
+      (cons (make-paragraph style (append heading content))
+            rest))]
+    ['()
+     (make-paragraph plain heading)]
+    [_
+     (make-compound-paragraph
+      plain
+      (cons (make-paragraph plain heading)
+            blocks))]))
 
 (define (tex-linebreak)
   (when/list (render-latex?) (linebreak)))

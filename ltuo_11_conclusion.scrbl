@@ -160,7 +160,7 @@ But I am the first to tie it all together in one place with one coherent story, 
 (e) multiple dispatch,
 (f) static and dynamic dispatch@xnote["."]{
    The only side-effects I used, if they are effects, were
-   laziness (for adequate performance), recursion (for fixpoints), @; TODO cite Friedman2000
+   laziness (for adequate performance), recursion (for fixpoints),
    and generation of identity tags (for the DAGs of multiple and optimal inheritance).
    None of these “effects” breaks local reasoning, and thus they might not even count
    as side-effects for most people (and can be simply expressed in well-known monads).

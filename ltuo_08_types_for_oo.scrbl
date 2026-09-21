@@ -1311,7 +1311,6 @@ still I declare:
   Can you explain in each case what makes treating subclassing as subtyping the same
   sound or unsound?
 }
-
 @exercise[#:difficulty "Easy"]{
   The chapter claims that the very first example in the very first OO paper
   involves recursive types that defeat the NNOOTT.
@@ -1321,7 +1320,6 @@ still I declare:
   under standard subtyping rules and still actually be a linkage
   between elements of the same type only as intended.
 }
-
 @exercise[#:difficulty "Easy"]{
   Using the @c{ModExt} type, manually work through the types for the code in @secref{MOO}.
 }

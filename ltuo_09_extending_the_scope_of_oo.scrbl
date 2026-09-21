@@ -3143,7 +3143,6 @@ but because it offers a framework to keep expanding the scope of OO itself.
   Note that pommette sometimes already includes variants that diverge slightly from the book,
   with some additional features.
 }
-
 @exercise[#:difficulty "Easy"]{
   Implement the @emph{product} of two (or three, or more) lenses,
   that allows view and update of a pair (or list) of data each based on its lens.
@@ -3153,10 +3152,8 @@ but because it offers a framework to keep expanding the scope of OO itself.
   or the equivalent in your language to access the components of a triplet,
   whichever way you encode specifications for optimal inheritance.
 }
-
 @exercise[#:difficulty "Easy"]{
   Implement semantic and syntactic helpers for defining classes and their instances:
-}
 @itemize[
   @item{
     A function @c{poi-add-parent} that takes a parent and adds it at the very end
@@ -3190,7 +3187,7 @@ but because it offers a framework to keep expanding the scope of OO itself.
     lots of new equivalent objects at every invocation with empty or otherwise equal keys.}
   @item{
     A dispatch-on-type mechanism so you can have multiple dispatch in Class OO,
-    rather than only in Prototype OO.}]
+    rather than only in Prototype OO.}]}
 
 @exercise[#:difficulty "Easy"]{
   Write efficient implementations of the missing simple CLOS method combinations,
@@ -3211,7 +3208,6 @@ but because it offers a framework to keep expanding the scope of OO itself.
     Or they can define their own variant of @c{min} or @c{max}
     and corresponding method combinations that will avoid coercing the result.
 }}
-
 @exercise[#:difficulty "Easy"]{
   Implement generic algebra, wherein the objects you manipulate can be integers,
   rationals, floating point numbers, or vectors or matrices of the same.
@@ -3221,7 +3217,6 @@ but because it offers a framework to keep expanding the scope of OO itself.
   Which style is more amenable to generating high performance code
   (assuming enough inlining and optimization in the compiler)?
 }
-
 @exercise[#:difficulty "Medium"]{
   Traversals are a generalization of lenses that can focus on any number of elements,
   whereas a lens focuses on one and only one element.
@@ -3234,14 +3229,12 @@ but because it offers a framework to keep expanding the scope of OO itself.
   of which methods of which extensions are effectively called how many times
   during a program execution.
 }
-
 @exercise[#:difficulty "Medium"]{
   Implement optional validation and normalization for class elements.
   The default method will run validation checks on each field value.
   For each field with a defined validation check, check the field.
   The @c{make-instance} function will run those checks.
 }
-
 @exercise[#:difficulty "Medium"]{
   In a few lines of code, define a method combination that implements
   the concatenation semantics of Simula, and its “inner” keyword.
@@ -3255,7 +3248,6 @@ but because it offers a framework to keep expanding the scope of OO itself.
     See my notes on @citet{Kristensen1987}, or
     ask AI for help understanding BETA and its documentation.
 }}
-
 @exercise[#:difficulty "Medium"]{
   Implement method caching for generic functions:
   the generic function maintains an LRU cache of the last 8 times it was called,
@@ -3266,7 +3258,6 @@ but because it offers a framework to keep expanding the scope of OO itself.
   a 4-deep LRU cache of effective methods @emph{per (dynamic) call site}
   of a generic function.
 }
-
 @exercise[#:difficulty "Medium"]{
   Discuss how you would use flavorful multiple dispatch to implement
   a generic protocol to display objects onto a terminal.
@@ -3277,7 +3268,6 @@ but because it offers a framework to keep expanding the scope of OO itself.
   (unit and bounds for a number, language used, entering digits vs sliding a ruler
   or turning a knob, tying the number to some other visible effect, etc.).
 }
-
 @exercise[#:difficulty "Medium"]{
   Implement the richer kinds of skew lenses fit for optimal inheritance, as per @secref{FME},
   and use them to define more interesting prototypes than possible with mere modular extensions.
@@ -3305,12 +3295,10 @@ but because it offers a framework to keep expanding the scope of OO itself.
   How does the object system need to be extended (if at all)
   to support pure monadic operations that can fully replace stateful OO?
 }
-
 @exercise[#:difficulty "Hard"]{
   Start from my implementation of multiple dispatch, or one you wrote yourself, and
   implement @c{eql} specializers and predicate dispatch on top of it.
 }
-
 @exercise[#:difficulty "Hard"]{
    Give methods a full @emph{calling convention} that abstracts over
    how a function can take arguments beyond the (first) receiver:
@@ -3339,12 +3327,10 @@ but because it offers a framework to keep expanding the scope of OO itself.
    only the “tail” of the list of methods is the same,
    with that notion of “tail” depending crucially on the method combination.
 }
-
 @exercise[#:difficulty "Hard"]{
   Can you retroactively add methods to a generic function?
   In a pure functional way? With eager evaluation? With lazy evaluation?
 }
-
 @exercise[#:difficulty "Hard"]{
   Determine whether the scheme for nested POI inheritance suggested in @secref{IoNaI}
   matches BETA’s polymorphic families with single inheritance,
@@ -3354,7 +3340,6 @@ but because it offers a framework to keep expanding the scope of OO itself.
   when the inheritance DAG is a tree you can flatten into a list of mixins.
   Exhibit either formal proofs of equivalence, or counter-examples.
 }
-
 @exercise[#:difficulty "Research"]{
   Implement a programming language with static types that supports
   optimal inheritance, method combinations and multiple dispatch.

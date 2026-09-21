@@ -476,6 +476,11 @@ it makes sense for them to deploy distinct services.
 Indeed, Conway’s Law @~cite{Conway1968}
 states that the technical architecture of software follows its business or management architecture.
 
+The moral of the story is that Modularity can be done badly,
+and just because someone claims one technique makes things better doesn’t make it so—and
+that’s where on should be reminded of the criterion for Modularity:
+@emph{does the design enable developers to cooperate more while coordinating less?}
+
 @subsection{Implementing Modularity}
 
 To achieve modularity, the specification for a software computation
@@ -534,7 +539,7 @@ and the mutual recursion is achieved using a fixpoint combinator (@secref{UPSLC}
 lazy evaluation may be used as a dynamic protocol to ensure that
 each field is initialized before it is used.
 
-@subsubsection{Initializing Recursive Structures}
+@subsubsection[#:tag "IRS"]{Initializing Recursive Structures}
 
 When data structures constitute a tree or a DAG,
 there is an order in which they can be constructed such that at all times,
@@ -576,9 +581,9 @@ eagerly raise an exception immediately at the point of use-before-init,
 ensuring the programmer can then easily identify where and when the issue is happening,
 with complete contextual information.
 
-In even safer languages, lazy evaluation automatically ensures that you always have init-before-use,
-and if the compiler is well done may even detect and properly report finite dependency cycles;
-you may still experience resource exhaustion if you generate infinite new dynamic dependencies,
+In even safer languages, lazy evaluation automatically ensures that you always have init-before-use.
+If the compiler is well done, it may even detect and properly report finite dependency cycles.
+You may still experience resource exhaustion if you generate infinite new dynamic dependencies,
 but so would you in the less safe alternatives if you could reach that point.
 
 Safest languages may require you to statically prove init-before-use in finite time,
@@ -626,7 +631,8 @@ are initialized by side-effects, programmers need to follow some rigid protocol
 that may not be expressive enough to capture the modular dependencies between internal definitions,
 often leading to indirect solutions like “builder” classes in Java,
 that stage all the complex computations before
-the initialization of objects of the actually desired class.
+the initialization of objects of the actually desired class—essentially
+solving the initialization issue by abandoning modularity altogether.
 
 @exercise[#:difficulty "Easy"]{
   Identify languages with each of first-class, second-class, third-class and fourth-class
@@ -973,7 +979,6 @@ using “hot-patches” that were not foreseen by the original programmer.
   For each of the following, identify whether it is an example of
   first-class, second-class, third-class, or fourth-class extensibility,
   or not an example of extensibility at all:
-}
 @itemize[
   @item{
      Downloading a new version of some software.
@@ -1005,7 +1010,7 @@ using “hot-patches” that were not foreseen by the original programmer.
   }@item{
      Calling a function in a locally modified environment that overrides
      the values of variables it relies on.
-}]
+}]}
 
 @exercise[#:difficulty "Medium"]{
   Which variants of extensibility above have you used?

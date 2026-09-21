@@ -3,7 +3,7 @@
 @(require "util/ltuo_lib.rkt")
 
 @title[#:style (ltuo-style)]{
-  Lambda: the Ultimate Object
+  Lambda: The Ultimate Object
     @linebreak[] @tex-linebreak[]
     @smaller{Object Orientation Elucidated@|~~|}
     @linebreak[] @tex-linebreak[]
@@ -15,8 +15,9 @@
 
 @dedication{
   To William R. Cook, who first formalized inheritance in the λ-calculus,
-  and the discrepancy between inheritance and subtyping,
-  and also mixin inheritance—the foundations on which this book is built.
+  showed how it differs from subtyping and
+  introduced mixin inheritance—the foundations on which this book is built—yet
+  didn’t believe in the importance of inheritance.
   He was, I discovered too late,
   the one person with whom I most wanted to argue about the ideas herein.
 }
@@ -33,13 +34,13 @@
 As a software practitioner, you have not only heard of Object Orientation (OO),
 but seen it or used it, loved it or hated it.
 Yet you may have been frustrated that there never seem to be clear answers as to
-what exactly OO is or isn’t, what it is @emph{for}, when and how to use it or not use it.
+what exactly OO is or isn’t, what it is @emph{for}, when and how to use it or not to.
 There are many examples of OO—but everyone does it differently;
 every OO language offers an incompatible variant.
 There is no theory describing what common ground there is, if any,
 much less one describing the best way to do OO—certainly,
 none that two computer scientists can agree on.
-By comparison, you well understand Functional Programming (FP).
+By contrast, you well understand Functional Programming (FP).
 
 Can you explain OO in simple terms to an apprentice, or to yourself?
 Can you reason about OO programs and what they mean?
@@ -48,9 +49,9 @@ Maybe you’ve enjoyed OO in the past, or have heard enough from colleagues who 
 and are wondering what you are or aren’t missing?
 Maybe you’d fancy implementing OO on top of the non-OO language
 you are currently using or building, but from what you know this looks too complicated?
-Indeed do you really understand which to implement of no inheritance, single inheritance,
-mixin inheritance, or multiple inheritance, and why?
-Can you weigh the arguments for multiple inheritance done C++ or PHP style,
+Indeed, do you really understand which to implement of no inheritance, single inheritance,
+mixin inheritance or multiple inheritance, and why?
+Can you weigh the arguments for multiple inheritance done C++ style,
 versus Lisp, Ruby, Python or Scala style?
 Is there a best variant of inheritance anyway?
 And do prototypes, method combinations and multiple dispatch seem natural to you,

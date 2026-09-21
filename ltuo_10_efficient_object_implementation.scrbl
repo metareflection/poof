@@ -90,7 +90,7 @@ for instance, to write formal proofs of correctness about executable code in typ
 
 @subsection{Records Matter}
 
-@subsubsection{More Fundamental than Inheritance}
+@subsubsection{As Fundamental as Inheritance}
 One way or another, @principle{Object-Orientation involves dealing with @emph{records}},
 mappings from identifier to value.
 This is all the more remarkable since the rules of inheritance,
@@ -798,6 +798,8 @@ an easy punning between these subtly different but contextually easily disambigu
 
 @subsubsection[#:tag "IO"]{Initialization Order}
 
+@; @secref{IRS}
+
 Recursion-through-mutation involves a tradeoff in terms of complexity:
 references to mutable cells provide direct access to recursive data structures
 that are both very performant for the machine and quite ergonomic for the programmer;
@@ -1353,7 +1355,6 @@ What this book’s accompanying code does (and doesn’t) do.
   that you may find e.g. at
   @url{https://github.com/metareflection/poof/blob/main/pommette/pommette.scm}
 }
-
 @exercise[#:difficulty "Medium"]{
   Read about the Meta-Object Protocol in CLOS @~cite{Kiczales1991},
   particularly the protocols for class redefinition and instance update.
@@ -1362,14 +1363,12 @@ What this book’s accompanying code does (and doesn’t) do.
   What are the costs of that flexibility in terms of
   implementation complexity and reasoning difficulty?
 }
-
 @exercise[#:difficulty "Medium, Recommended"]{
   If you did exercise @exercise-ref{09to10}, compare
   your attempt at explaining implementation strategies for OO with mine.
   What aspects did you anticipate? What surprised you?
   What did you do better or worse?
 }
-
 @exercise[#:difficulty "Hard"]{
   Implement pure functional variants of vectors and hashmaps,
   in the style of Clojure Seq’s and Associative’s,
@@ -1377,3 +1376,4 @@ What this book’s accompanying code does (and doesn’t) do.
   or their Haskell equivalent, etc.
   Then implement a pure functional variant of a MOP on top of that.
 }
+n
