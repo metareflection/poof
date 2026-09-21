@@ -94,7 +94,7 @@ the alternatives used in any programming language so far.
 @include-section{ltuo_01_introduction.scrbl}
 @include-section{ltuo_02_what_oo_is_informal_overview.scrbl}
 @include-section{ltuo_03_what_oo_is_not.scrbl}
-@include-section{ltuo_04_oo_as_internal_extensible_modularity.scrbl}
+@include-section{ltuo_04_oo_as_internal_modular_extensibility.scrbl}
 @include-section{ltuo_05_minimal_oo.scrbl}
 @include-section{ltuo_06_rebuilding_oo_from_minimal_core.scrbl}
 @include-section{ltuo_07_inheritance_mixin_single_multiple_or_optimal.scrbl}
