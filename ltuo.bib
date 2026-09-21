@@ -221,6 +221,41 @@
     as well as execution environments and capability namespaces).
 }}
 
+@Article{Ross1961,
+  author={Douglas T. Ross},
+  title={A Generalized Technique for Symbol Manipulation and Numerical Calculation},
+  journal={Communications of the ACM},
+  volume={4},
+  number={3},
+  pages={147--150},
+  month={March},
+  year={1961},
+  doi={10.1145/366199.366256},
+  url={https://doi.org/10.1145/366199.366256},
+  note={
+    Introduces Ross's plex representation—built from what we would today call records, or structs—a
+    generalized structure in memory whose components may contain
+    data, links (pointers to more data), or even code to jump to
+    (not just a pointer to the address to jump to, but the actual transfer instruction,
+    which can itself be jumped to and will then typically transfer control
+    to the correct fixed-address subroutine).
+    One of the tricks Ross proposes and names “reversed use of index register”
+    consists in having a fixed offset from an object at a variable address in the register,
+    whereas the normal usage expected by everyone else was a variable offset in the register
+    to an object at a fixed address.
+    Very clever and low-level—the paper also illustrates the level of abstraction
+    at which most programmers were thinking at the time, for the paper to even be published.
+
+    Ross doesn’t say whether the index register is to be used as an argument
+    by the code being jumped to—which would be an early example of what I’d call U-encoding.
+    The indexed transfer certainly preserves the index register, and
+    for the routine being called to reuse the value in that register rather than clobber it
+    is the most natural extension of the idea, without even having to conceptualize it
+    as an argument being passed. Who today can guess what was obvious or needed to be
+    explicitly conceptualized at a time when Ross’s paper was worth publishing?
+    At least Sutherland 1963 will make that notion explicit.
+    Presented earlier at the ACM Conference on Symbolic Manipulation, May 20–21, 1960.}}
+
 %% 1963
 
 % https://bitsavers.org/pdf/mit/ai/aim/AIM-057.pdf
@@ -320,8 +355,7 @@
     used when a correspondence is partial rather than total.
     “Discrimination” is a form of type-safe pattern-matching among subclasses.
     Hoare considers recursive data structures, yet does not anticipate that
-    for them, subclassing will differ from subtyping.}
-}
+    for them, subclassing will differ from subtyping.}}
 % Boxes-and-arrows drawings for pointers date back to
 % Newell and Shaw 1957 Programming the Logic Theory Machine
 % compacting garbage collection - Aha, he cites LISP. And SIMULA.
@@ -358,9 +392,7 @@
     and does not support nested records of functions that can be extended as a unit,
     whereas Simula extensions are pure at the metalevel,
     with a new class generated for each extension,
-    while classes can contain nested virtual procedures.
-  }
-}
+    while classes can contain nested virtual procedures.}}
 % https://www.bitsavers.org/pdf/bbn/The_BBN-LISP_System_Apr69.pdf section XIX
 % https://softwarepreservation.computerhistory.org/LISP/bbnlisp/TenexLispRef_Jul71.pdf section XIX
 % https://softwarepreservation.computerhistory.org/LISP/uppsala/Haraldson-LISP_details.pdf section 26
@@ -461,6 +493,26 @@
   }}
 
 %% 1968
+
+% https://www.melconway.com/Home/Committees_Paper.html
+@Article{Conway1968,
+  author={Melvin E. Conway},
+  title={How Do Committees Invent?},
+  journal={Datamation},
+  volume={14},
+  number={4},
+  pages={28--31},
+  month=apr,
+  year={1968},
+  url={https://bitsavers.org/magazines/Datamation/196804.pdf},
+  note={
+    The source of what would later be called Conway’s Law:
+    organizations that design systems tend to produce designs
+    (including but not limited to software)
+    that reflect their own communication structures.
+    An early recognition of the relationship between the modular structure of software
+    and that of the organizations that build it.
+  }}
 
 @Article{Dijkstra1968,
   author={Edsger W. Dijkstra},
@@ -746,7 +798,7 @@
 }
 
 @TechReport{Sussman1975,
-  author={Gerald Jay Sussman and Guy Lewis Steele Jr.},
+  author={Gerald Jay Sussman and Guy Lewis Steele},
   title={Scheme: An Interpreter for Extended Lambda Calculus},
   institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
   year={1975},
@@ -956,7 +1008,7 @@
 
 % https://dspace.mit.edu/bitstream/handle/1721.1/6091/AIM-379.pdf
 @TechReport{Steele1976Declarative,
-  author={Steele, Guy Lewis},
+  author={Guy Lewis Steele},
   title={LAMBDA: The Ultimate Declarative},
   institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
   year={1976},
@@ -979,7 +1031,7 @@
 
 % https://dspace.mit.edu/bitstream/handle/1721.1/5790/AIM-353.pdf
 @TechReport{Steele1976Imperative,
-  author={Steele, Guy Lewis and Sussman, Gerald Jay},
+  author={Guy Lewis Steele and Gerald Jay Sussman},
   title={LAMBDA: The Ultimate Imperative},
   institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
   year={1976},
@@ -1072,7 +1124,7 @@
 % https://dspace.mit.edu/bitstream/handle/1721.1/5753/AIM-443.pdf
 % doi={10.1145/800179.810196} for ACM ’77 conference paper, pp. 153–162
 @TechReport{Steele1977,
-  author={Steele, Guy Lewis},
+  author={Guy Lewis Steele},
   title={Debunking the “Expensive Procedure Call” Myth or, Procedure Call Implementations Considered Harmful or, LAMBDA: The Ultimate GOTO},
   institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
   year={1977},
@@ -1130,7 +1182,7 @@
 }
 
 @TechReport{Steele1978,
-  author={Guy Lewis Steele Jr.},
+  author={Guy Lewis Steele},
   title={RABBIT: A Compiler for SCHEME (A Dialect of LISP)},
   institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
   year={1978},
@@ -1178,8 +1230,9 @@
   url={https://www.softwarepreservation.org/projects/LISP/MIT/nnnfla1-20040122.pdf},
   note={
     Cannon’s groundbreaking work unexpectedly solved
-    the central problem of multiple inheritance—method resolution—by
-    harmoniously combining the methods in a way that generalizes Teitelman’s ADVISE facility.
+    the central problem of multiple inheritance—method computation—by
+    harmoniously combining the methods in a way
+    that can be seen as generalizing Teitelman’s ADVISE facility.
     The paper is full of ideas and genius insights, even though it is obviously unpolished
     and written by an inexperienced young man.
 
@@ -1187,7 +1240,8 @@
     and in the Lisp community starting in 1979;
     but unhappily the report was never officially published,
     though citations include variants from MIT 1980 and Symbolics 1982.
-    Cannon transferred his report to Word in 1992 and eventually released a PDF in 2003.
+    In 2003, Cannon reformatted in Microsoft Word a surviving Scribe source of the report dated 1992;
+    the eventual PDF release dates from 2007.
 
     The MIT Lisp Machine Manual from 1981 onward (3rd edition and later) includes Flavors.
     The first academic publication on Flavors would be Moon 1986’s paper on New Flavors.
@@ -1197,18 +1251,17 @@
     then, in a second pass, appends other flavors it “includes” to act as defaults
     (which by default includes at the end the system-defined vanilla-flavor,
     though the paper doesn’t discuss that part).
-    A mixin (or mix-in) is a flavor meant to be combined in but not instantiated.
+    A mixin (or mix-in) is a flavor meant to be combined in but not (usually) instantiated.
 
     Cannon claims his approach is “non-hierarchical” as opposed to
     the “hierarchical” approach of Smalltalk, further claiming that
     “instead of a hierarchy, more of a lattice structure is formed”.
-    His wording is suggestive of the right concepts yet mathematically incorrect:
-    Both approaches involve a hierarchy, i.e. an order.
-    The actual difference is that Smalltalk’s single inheritance
-    induces a total order on each class’s ancestors,
-    whereas Cannon’s multiple inheritance only induces a partial order.
-    Moreover a lattice requires existence and uniqueness of least upper and greatest lower bounds,
-    which need not exist here.
+    His wording is suggestive of the right concepts yet mathematically inaccurate:
+    Both approaches induce an order, i.e. a hierarchy, on each class’s ancestors—a
+    total order for Smalltalk’s single inheritance
+    and a partial order for Cannon’s multiple inheritance.
+    Moreover a lattice requires existence and uniqueness
+    of least upper and greatest lower bounds, which need not exist here.
     While 20-year-old Cannon’s underlying concepts and arguments show his genius,
     his imprecise mathematical wording shows his lack of education at the time
     (he was an undergraduate student in 1979).
@@ -1217,16 +1270,21 @@
     “a scheme called _multiple superclasses_”, and how it fails
     to support _modular_ interactions between orthogonal issues,
     showing his deep understanding of the purpose that OO mechanisms serve.
-    (In his Acknowledgments, Cannon thanks Borning and Ingalls, who would have been the ones with
-    multiple-inheritance expertise from ThingLab and
-    experiments with multiple inheritance in Smalltalk.)
+    (In his Acknowledgments, Cannon thanks Borning and Ingalls, who both had experience with
+    multiple inheritance in ThingLab and Smalltalk;
+    but he does not credit them explicitly in this regard.)
 
-    Finally, note that Flavors as such offers no call-next-method.
-    The default method combination, :DAEMON, supports only one primary method,
-    lots of wrappers (macros with :around powers),
-    and side-effects from :before and :after methods to combine methods;
-    but other method combinations can combine things (:LIST :INVERSE-LIST :PROGN :AND :OR),
-    and you could create your own method-combination that returns a function to compose.
+    Finally, Flavors as such offers no call-next-method.
+    The default method combination, :DAEMON, calls only the most-specific primary method,
+    with :before and :after methods contributing through side-effects.
+    In addition to method combinations as such,
+    wrappers (macros with :around powers) can wrap the resulting combined method
+    (CLOS would later merge them into method combinations as :around methods).
+    But other method combinations can combine methods in other ways
+    (:LIST :INVERSE-LIST :AND :OR; soon also :PROGN, though not mentioned in the paper),
+    and you could conceivably create
+    your own method combination to generate an arbitrary combined method
+    (but AFAIK no one did it with function composition).
   }
 }
 
@@ -1239,15 +1297,16 @@
   number={AI-WP-180},
   url={https://dspace.mit.edu/handle/1721.1/41147},
   note={
-    16 years before Rees 1995, the authors use scoping as a security mechanism
-    in their Actor system ACT1.
-    They also implement both Prototype OO (“delegation”) and Class OO (“inheritance”),
-    mechanisms “developed jointly with Kahn” (author of Director, cited).
-    Prototypes “increas[e] the modularity of the system”;
+    16 years before Rees 1995, the authors use an early capability-based security mechanism
+    in their Actor system ACT1—by selectively granting users access to message constructors.
+    They also implement both Prototype OO (under the name “delegation”,
+    a mechanism “developed jointly with Kahn”, author of Director, cited).
+    and Class OO (under the name “inheritance”).
+    The delegation mechanism “increas[es] the modularity of the system”;
     classes allow “sharing of descriptions common to many actors”.
     When an actor delegates message handling to another,
     messages it does not handle itself are passed to the other actor
-    through a method “Buck_pass” that reifies the message and its context.
+    wrapped in a “Buck_pass” message that reifies the message and its context.
     Cites Simula, Smalltalk and Director.
   }
 }
@@ -1259,7 +1318,7 @@
   year={1979},
   url={https://dspace.mit.edu/handle/1721.1/16012},
   note={
-    This paper is about the higher-level system Ani,
+    This thesis is about the higher-level system Ani,
     which generates turtle graphics plans on top of
     the actor-based object system Director (see AIM-482b).
     Ani is a constraint solver based on a knowledge representation of the film being directed:
@@ -1280,17 +1339,21 @@
   url={https://dspace.mit.edu/handle/1721.1/6302},
   note={
     This paper, revised from a previous 1978 edition,
-    presents Director, the earliest Lisp OO system as such,
+    presents Director, the earliest Lisp OO programming system as such,
     where inheritance exists in a programming context,
     not just in the knowledge representation context from which it evolved; see Kahn 1976.
-    By then, Director had been extracted from Kahn’s wider animation project built atop it.
-    Director implements single inheritance by message passing on top of an Actor system.
-    It has an early form of call-next-method called continue-asking (p.40).
-    The Actor team would later adapt Kahn’s system; see Hewitt 1979.
+    By then, Director had been factored out as the actor language
+    underlying Kahn’s wider animation project Ani.
+    Director implements single inheritance by passing unhandled messages to a parent actor,
+    with the initial receiver’s identity as first argument.
+    An actor knows its parent, offspring, descendants, siblings and childless-descendants
+    as special variables (only the word “ancestor” does not appear).
+    Director has an early form of call-next-method called continue-asking (p.40).
+    The Actor team would later adapt Kahn’s inheritance mechanism
+    under the name “delegation”; see Hewitt 1979.
     Kahn cites Smalltalk and Actors as influences for Director,
-    but not KRL (Kahn does cite KRL in other papers).
-  }
-}
+    but not KRL (Kahn does cite KRL in his thesis).
+  }}
 
 %% 1980
 
@@ -1498,11 +1561,12 @@
   year={1983},
   publisher={Xerox Corporation Palo Alto, CA},
   note={
-    LOOPS has multiple inheritance, but not quite right.
+    LOOPS has multiple inheritance, but still the flavorless conflict view.
     The authors cite the right Flavors passage on _modular_ interactions
-    between orthogonal issues. But instead of linearization,
-    they offer tools for methods to manually call methods on one or all
-    parents, or from a named ancestor. On the other hand, LOOPS also includes
+    between orthogonal issues. Yet instead of linearization,
+    they still offer tools for methods to manually call methods on one or all
+    parents (←Super or ←SuperFringe), or from a named ancestor (DoMethod or ApplyMethod).
+    On the other hand, LOOPS also includes
     a rich slot access protocol, a metaclass protocol, and
     a knowledge base with a rule-oriented programming engine.
     Interestingly, the manual has a mix of UPPERCASE primitives,
@@ -1752,21 +1816,21 @@
     This reprint of a 1985 report presents CommonLoops, an evolution from LOOPS
     that integrates lessons from New Flavors, from which it takes
     linearization, method combinations and generic functions,
-    that it further extends to support multi-methods (multiple dispatch).
+    further extending the latter to support multimethods (multiple dispatch).
 
     As in LOOPS, there are metaclasses
-    (that control single or multiple inheritance, slot accessors).
-    CommonLoops introduces what will later be known as call-next-method, then named run-super,
+    (that control single or multiple inheritance and slot accessors).
+    CommonLoops introduces what would later be known as call-next-method, then named run-super,
     probably inspired by the equivalent functionality in Smalltalk,
     developed by colleagues of the authors at PARC, and previously used by at least Bobrow and Kahn
     (who also had such functionality in his earlier prototype object system at MIT).
     Method calls are compiled with various optimizations including local and global method caches.
     CommonLoops also introduces class variables, init-forms in slot descriptions
     instead of access-time default values as in LOOPS, slot properties,
-    “active values” (kind of method combination for slot accessors?).
-    More nice design discussions and comparisons.
+    “active values” (a method-combination-like mechanism for nestable wrappers around slot accesses).
+    More good design discussions and comparisons.
     Symbols are all lowercase, names are shortened (e.g. defmeth, not defmethod).
-    A direct predecessor to CLOS.
+    It is a direct predecessor to CLOS.
   }
 }
 
@@ -1779,9 +1843,9 @@
   doi={10.5555/324493.324538},
   note={
     Alan Borning proposes Prototype as an alternative to Classes for OO.
-    He shows the model, and how to use it and to implement it.
+    He shows the model and how to use it and to implement it.
     Sadly, he fails to explain how to express classes directly as Prototypes
-    (unlike Lieberman 1986, that he cites).
+    (unlike Lieberman 1986, which he cites).
   }
 }
 
@@ -1789,25 +1853,30 @@
 @InProceedings{Lieberman1986,
   title={Using Prototypical Objects to Implement Shared Behavior in Object-Oriented Systems},
   author={Henry Lieberman},
-  booktitle={OOPLSA},
+  booktitle={OOPSLA},
   pages={214--223},
   year={1986},
   url={https://web.media.mit.edu/~lieber/Lieberary/OOP/Delegation/Delegation.html},
   doi={10.1145/28697.28718},
   note={
-    This is a rightfully influential paper about Prototype OO, as compared to Class OO,
-    which he unhelpfully identifies with the respective underlying “delegation” and “inheritance”
-    mechanisms rather than the nature of the target of an identical specification mechanism.
+    This is a rightfully influential paper about Prototype OO, as compared to Class OO.
 
-    Lieberman starts with philosophical underpinnings of these two idea-complexes,
-    which is quite interesting from a historical and psychological point of view,
-    but has little relevance to a technical discussion decades later
+    Lieberman starts with the philosophical underpinnings of these two complexes of ideas,
+    which are quite interesting from a historical and psychological point of view,
+    but have little relevance to a technical discussion decades later
     on the semantics of OO, its proper use or implementation.
     He then contrasts how the two OO paradigms are typically used to represent knowledge,
-    how they compare in expressiveness, efficiency, concurrency issues,
-    suitability for interactive use.
+    how they compare in expressiveness, efficiency, concurrency issues
+    and suitability for interactive use.
     He even explains (section 6) how to implement inheritance (i.e. Classes)
-    in terms of delegation (i.e. Prototypes) and why a correspondence the other way is impossible.
+    in terms of delegation (i.e. Prototypes) and
+    why a correspondence in the other direction is impossible.
+
+    Sadly, this great paper has been largely cited for the one bad take of its author:
+    Lieberman unhelpfully identifies Prototype OO and Class OO with
+    the respective underlying “delegation” and “inheritance” mechanisms,
+    rather than distinguishing the nature of the targets of
+    otherwise identical specification mechanisms.
   }
 }
 
@@ -1832,13 +1901,13 @@
     According to Gabriel 2012, this was the first academic publication about Flavors,
     whereas Cannon’s 1979 report (this paper cites a 1982 copy) was privately circulated,
     mostly in Lisp circles at MIT and beyond
-    (however, the Lisp Machine Manual from 1981 on includes a chapter on Flavors).
+    (however, the Lisp Machine Manual from 1981 onward includes a chapter on Flavors).
 
     This paper describes the New Flavors system from Symbolics,
     after it acquired the new “generic function” syntax,
     respect for local precedence order, and other niceties.
     Moon rightfully insists on the modularity advantage of Flavors (already mentioned by Cannon).
-    This is a fantastic explanation on how to do multiple inheritance right, only way too short.
+    This is a fantastic explanation of how to do multiple inheritance right, only way too short.
   }
 }
 
@@ -1861,43 +1930,43 @@
   note={
     This very well-informed, very interesting paper, and its extended version in
     Research Directions in Object-Oriented Programming (1987),
-    gets a whole lot right about inheritance, yet enough crucially wrong.
-    Sadly, it is often cited for the wrong parts rather than the right parts.
+    get a whole lot right about inheritance, yet get enough crucially wrong.
+    Sadly, they are often cited for the wrong parts rather than the right parts.
 
-    Snyder brilliantly introduces parent, ancestor, child, descendant, instead of the
-    awkward direct-superclass, superclass, direct-subclass, subclass.
+    Snyder brilliantly introduces parent, ancestor, child, descendant, as systematic names
+    instead of the awkward direct-superclass, superclass, direct-subclass, subclass.
     He identifies the importance of modularity, but fails to use that word, and instead
-    somehow divides the concept in two separate properties “encapsulation” and “data abstraction”.
+    somehow divides the concept into two separate properties “encapsulation” and “data abstraction”.
     He notes the need for reflection to defeat this encapsulation for debugging purposes.
 
     Snyder has good discussions of inheritance, visibility, subtyping, etc.
     But multiple inheritance is a topic where Snyder majorly fails, despite his erudition.
     He calls “graph oriented solutions” the conflict view of multiple inheritance,
     and identifies many problems with it.
-    He calls “linear solutions” the Flavors and CommonLOOPS view,
-    and regrets lack of conflict where he expects one, then regrets lack of communication
+    He calls “linear solutions” the Flavors and CommonLoops view,
+    and regrets the lack of conflict where he expects one, then regrets the lack of communication
     with “real” parents (but… that’s what defining more methods is for),
-    for which he wishes for the “graph oriented solutions” ability
-    to directly call another specific method (which is a terrible idea and as he saw didn’t work),
+    so he wishes for the ability of “graph oriented solutions”
+    to directly call another specific method (which is a terrible idea and, as he saw, didn’t work),
     and finally worries about name clashes (yes, but that’s not specific to “linear solutions”).
 
     Dissatisfied for wrong reasons, and not having any theory of what OO should do and why,
     Snyder invents his own “tree solutions” for his system CommonObjects,
-    trying to wish his simple Tree to solve a problem
+    trying to wish his simple tree to solve a problem
     that obviously requires a DAG, admitting his solution
     “radically changes the semantics of inheritance” and that
     “[f]urther experimentation is needed to determine the practicality of
     this alternative programming style”.
-    In other words, he has no clue what he’s doing, try something random because
-    it is simple and convenient to him, and hoping his “solution” will stick.
-    But note that for his “solution” to stick would mean that his predecessors
-    have completely misidentified the problem, yet for reasons he cannot explain,
-    since he is lacking a theory. That’s, well, not respectful of them and himself.
-    Next time, don’t kick down that Chesterton’s fence.
+    In other words, he has no clue what he’s doing, tries something random because
+    it is simple and convenient for him, and hopes his “solution” will stick.
+    But for his “solution” to stick, his predecessors would have to
+    have completely misidentified the problem, for reasons he cannot explain,
+    since he is lacking a theory. That’s, well, not respectful of them or himself.
+    Next time, don’t kick down Chesterton’s fence.
 
-    Now what does it tell us that Stroustrup 1989 came up with sensibly
+    Now, what does it tell us that Stroustrup 1989 came up with essentially
     the same solution for C++, just with less research behind it?
-    Meanwhile, CommonObjects, the system he is discussing, was written in Common Lisp, and
+    Meanwhile, CommonObjects, the system Snyder is discussing, was written in Common Lisp, and
     COOL, its reimplementation on top of PCL (the first implementation of CLOS),
     can still be found.
   }
@@ -1921,14 +1990,14 @@
   note={
     Proposes explicit part hierarchies as an extension to Smalltalk, allowing
     structured whole-part relationships while preserving encapsulation,
-    such that an object can be seen as made of parts, that are themselves made of parts, etc.
+    such that an object can be seen as made of parts that are themselves made of parts, etc.
     It contrasts the class hierarchy’s “IS-A” or “IS-A-KIND-OF” relation with
     the part hierarchy’s “IS-A-PART-OF”, or conversely “HAS-A-PART”, relation,
     providing an early explicit comparison of the relationships later commonly
     described as “is-a” versus “has-a”.
     It argues that inheritance and part-whole composition represent orthogonal
     dimensions of organization.
-    Note that both “is-a” and “has-a-part” have direct and transitively closed relations.
+    Note that both “is-a” and “has-a-part” have direct and transitively closed variants.
   }
 }
 
@@ -2290,7 +2359,7 @@
 % https://www.cse.msu.edu/~cse870/Input/SS2002/MiniProject/Sources/DRC.pdf
 @Article{Johnson1988,
   title={Designing reusable classes},
-  author={Johnson, Ralph E and Foote, Brian},
+  author={Ralph E Johnson and Brian Foote},
   journal={Journal of object-oriented programming},
   volume={1},
   number={2},
@@ -2557,6 +2626,31 @@
   year={1989},
 }
 
+% OOPSLA 1988 ?
+@InCollection{King1989,
+  author={Roger King},
+  title={My Cat Is Object-Oriented},
+  booktitle={Object-Oriented Concepts, Databases, and Applications},
+  editor={Won Kim and Frederick H. Lochovsky},
+  year={1989},
+  publisher={ACM Press and Addison-Wesley},
+  isbn={0-201-14410-7},
+  chapter={2},
+  pages={23--30},
+  series={ACM Press Frontier Series},
+  address={New York, NY, USA},
+  doi={10.1145/63320.66469},
+  url={https://archive.org/details/objectorientedco0000unse},
+  note={
+    King mocks loose definitions of OO based on random desirable properties,
+    using the deliberately absurd example of classifying his cat as object-oriented.
+    While King mostly focuses on the difference between OO and semantic models for databases,
+    his more general point is valid for OO in general:
+    An early warning that memetic success had already turned “object-oriented”
+    into a hodgepodge based on marketing hype, for lack of a precise objective definition.
+  }
+}
+
 % Also appeared in BIGRE Bulletin 65, July 1989
 @TechReport{Lawall1989,
   Author={Julia L. Lawall and Daniel P. Friedman},
@@ -2737,7 +2831,7 @@
 }
 
 @Book{Steele1990,
-  author={Guy Steele},
+  author={Guy Lewis Steele},
   title={Common Lisp: The Language, 2nd edition},
   year={1990},
   isbn={0131515071},
@@ -3322,7 +3416,7 @@
 }
 
 @InProceedings{Steele1993,
-  author={Guy L. Steele Jr. and Richard P. Gabriel},
+  author={Guy Lewis Steele and Richard P. Gabriel},
   title={The Evolution of Lisp},
   booktitle={Proceedings of the Second ACM SIGPLAN Conference on History of Programming Languages (HOPL-II)},
   month=mar,
@@ -3745,6 +3839,46 @@
   note={
     Fantastic classic paper, Rees’s thesis introduces his “W7” security kernel,
     leveraging scoping as a natural mechanism for object capabilities based security.
+  }
+}
+
+% Addresses Conflation head-on: "Class Ambiguity"
+% Y-encoding
+% https://staffwww.dcs.shef.ac.uk/people/a.simons/classify/
+% Mention the later JOT series
+@PhdThesis{Simons1995,
+  author={Anthony James Howard Simons},
+  title={A Language with Class: The Theory of Classification Exemplified in an Object-Oriented Programming Language},
+  year={1995},
+  school={University of Sheffield},
+  address={Sheffield, UK},
+  url={https://staffwww.dcs.shef.ac.uk/people/A.Simons/research/thesis/},
+  note={
+    Simons develops a “Theory of Classification” and exemplifies it
+    in his Brunel 2.0 programming language.
+    He notably models classes as open, higher-order F-bounded constructs in the λ-calculus,
+    and distinguishes them from the types obtained as their least fixed points.
+    His entire writing is very accessible, and his presentation of types
+    is refreshingly clear and understandable compared to contemporary sources.
+    He then studies inheritance, genericity, mixins, multiple inheritance and polymorphism
+    all in one framework, before he introduces the language that embodies his theory.
+
+    Simons is uniquely explicit in clearly distinguishing class and type, and
+    in deploring their conflation in extent literature.
+    (He also calls “naïve” the model of inheritance confusing it with subtyping.)
+    He deserves big credits for his clairvoyance in this regard.
+    Simons is also astute in noting that the “self” argument (a regular variable!) is
+    an “alias” (reference) to an object of the desired type rather
+    than directly such an object, which actually matters a lot in a typed applicative language;
+    he fails to make the matter explicit, though, or to relate it to
+    the situation of “this C” in Simula or “this” in C++.
+
+    On the other hand, Simons’ main weakness is that his type-first approach
+    makes him completely miss on Prototype OO.
+    He also gives too much of a role to type generators as opposed to mixins:
+    mixins appear, briefly, but are never taken seriously as a central focus.
+    Simons’ discussion of multiple inheritance is also lacking, and
+    his mention of linearization is cursory.
   }
 }
 
@@ -4396,9 +4530,29 @@
     Dynamic inheritance means that the ancestry of a given object can change at runtime
     (though only in a monotonic way). Meanwhile, pattern variables
     can also be dynamically assigned to different objects (including in non-monotonic ways).
-    Runtime binding 
-  }
-}
+  }}
+% Runtime binding ....
+% TODO FINISH REVIEW!!!!
+
+% Y combinator
+% Recursion as Effect, Ref
+@TechReport{Friedman2000,
+  author={Daniel P. Friedman and Amr Sabry},
+  title={Recursion is a Computational Effect},
+  institution={Computer Science Department, Indiana University},
+  year={2000},
+  month=dec,
+  number={TR546},
+  address={Bloomington, Indiana, USA},
+  url={https://homes.luddy.indiana.edu/sabry/files/recursion-monads-tr.pdf},
+  note={
+    The authors compare unfolding and updating interpretations of fixed points,
+    and observe that they are equivalent in pure calculi but behave differently
+    in the presence of computational effects.
+    They then study three variants of monadic fixed points in Haskell,
+    and argue that recursion should itself be treated as a computational effect.
+    A good reference for distinguishing
+    pure, lazy and stateful operational realizations of recursion.}}
 
 % No DOI
 % https://www.math.nagoya-u.ac.jp/~garrigue/papers/variant-reuse.pdf
@@ -4859,6 +5013,32 @@
     maybe the most advanced and dynamic ever.
   }
 }
+
+@Misc{Simons2005,
+  author={Anthony J. H. Simons},
+  title={The Theory of Classification},
+  howpublished={Journal of Object Technology, 20-part monograph series, vols. 1–4, 2002–2005},
+  year={2005},
+  url={https://staffwww.dcs.shef.ac.uk/people/A.Simons/research/journal.html},
+  note={
+    A twenty-part monograph on object-oriented type theory, published serially
+    in the Journal of Object Technology from 2002 to 2005, expanding on Simons’s 1995 thesis.
+    Simons goes through a lot of basics, addressing OO programmers who may not be
+    all too familiar with the many formalisms he uses, making the text quite verbose as a whole.
+    A good overview of a vast topic: types vs classes, subtyping vs subclassing,
+    object encodings, recursive types, inheritance, self-reference, method combination, genericity,
+    mixins and multiple inheritance.
+    Simons crucially understands the problem most programmers have with conflating types and classes,
+    and the confusion that ensues; but he does not understand the modularity advantage of
+    conflation when used without confusion—probably because
+    his theory only covers classes and not prototypes, which is a shame.
+    His treatment of mixins and multiple inheritance is also weak, as Simons clings to
+    modular definitions (that he calls “type generators”) as the central entity of this theory,
+    and only reluctantly uses modular extensions (“mixins”) when forced,
+    without making them a subject of study as such,
+    indeed spending a lot of energy making super a pseudo-variable
+    rather than simply an actual variable.
+  }}
 
 %% 2006
 
@@ -5331,7 +5511,7 @@
 % TODO: see its bibliography for more papers to read
 @InProceedings{Allen2011,
   title={Type checking modular multiple dispatch with parametric polymorphism and multiple inheritance},
-  author={Allen, Eric and Hilburn, Justin and Kilpatrick, Scott and Luchangco, Victor and Ryu, Sukyoung and Chase, David and Steele, Guy},
+  author={Eric Allen and Justin Hilburn and Scott Kilpatrick and Victor Luchangco and Sukyoung Ryu and David Chase and Guy Lewis Steele},
   booktitle={OOPSLA},
   pages={973--992},
   doi={10.1145/2048066.2048140},
@@ -5358,6 +5538,28 @@
 }
 
 %% 2012
+
+% https://github.com/namin/dot
+% https://namin.seas.harvard.edu/pubs/fool-dot.pdf
+% More co-authors
+@InProceedings{Amin2012,
+  author={Nada Amin and Adriaan Moors and Martin Odersky},
+  title={Dependent Object Types},
+  booktitle={Proceedings of the 19th International Workshop on Foundations of Object-Oriented Languages (FOOL 2012)},
+  pages={1--12},
+  year={2012},
+  month=oct,
+  address={Tucson, Arizona, USA},
+  url={https://lampwww.epfl.ch/~amin/dot/},
+  note={
+    Proposes Dependent Object Types (DOT) as a type-theoretic foundation
+    for Scala, notably modeling path-dependent types, abstract type members,
+    refinement types and the interaction of nominal and structural typing.
+    A cool way to think about types for Scala,
+    but the formalism explicitly doesn’t even try to address inheritance
+    or mixin composition.
+  }
+}
 
 % My replies: https://twitter.com/Ngnghm/status/1791988260266234028
 % url={http://lambda-the-ultimate.org/node/4569},
@@ -5791,20 +5993,6 @@
 
 %% 2016
 
-% https://github.com/namin/dot
-% https://namin.seas.harvard.edu/pubs/fool-dot.pdf
-% More co-authors
-@InProceedings{Amin2016DependentOT,
-  title={Dependent Object Types},
-  author={Nada Amin and Adriaan Moors and Martin Odersky},
-  year={2016},
-  url={https://api.semanticscholar.org/CorpusID:265751928},
-  note={
-    A cool way to think about types for Scala,
-    but the formalism doesn’t even try to address inheritance.
-  }
-}
-
 @InProceedings{Amin2016Unsound,
   author={Nada Amin and Ross Tate},
   title={Java and scala’s type systems are unsound: the existential crisis of null pointers},
@@ -5976,7 +6164,33 @@
     you have no guarantees, and no power for good but still all the power for evil.
   }
 }
-;; TODO cite LangSec on unforeseen emergence of Turing-equivalence through “weird machines”?
+
+% https://www.youtube.com/watch?v=7HKbjYqqPPQ
+% https://www.youtube.com/watch?v=dCuZkaaou0Q
+@InProceedings{Steele2017,
+  author={Guy Lewis Steele},
+  title={It’s Time for a New Old Language},
+  booktitle={Proceedings of the 22nd ACM SIGPLAN Symposium on Principles and Practice of Parallel Programming},
+  pages={1--1},
+  publisher={ACM},
+  address={Austin, Texas, USA},
+  month=feb,
+  year={2017},
+  doi={10.1145/3018743.3018773},
+  url={https://apexapps.oracle.com/pls/apex/f?p=94065:10:113433518364425:4986},
+  note={
+    Steele identifies and analyzes “Computer Science Metanotation” (CSM),
+    the informal symbolic language widely used in computer-science publications
+    to define syntax, judgments, inference rules, substitution, repetition, etc.
+    Steele shows how this ubiquitous yet previously unnamed language has evolved its own
+    syntax, semantics and idioms, with ambiguities and inconsistencies.
+    He offers an initial attempt to formalize the ill-defined language,
+    and calls for interpreters, compilers, IDEs and proof checkers to support it.
+    A more detailed treatment appears in his 2016 manuscript
+    “Toward a More Carefully Specified Metanotation,” prepared for POPL 2017.
+  }}
+% Manuscript: https://labs.oracle.com/pls/apex/f?p=94065:10:4081129589733:5323
+% Follow ups: Feller&al 2018, Quinlan&al 2019, Quinlan 2023 (thesis), Xu 2023 (Redex Plus)
 
 @Article{Petricek2017,
   author={Tomas Petricek},
@@ -6237,6 +6451,23 @@
 }
 
 %% 2023
+
+@InProceedings{Hsu2023,
+  author={Aaron W. Hsu and Rodrigo Girão Serrão},
+  title={U-Net CNN in APL: Exploring Zero-Framework, Zero-Library Machine Learning},
+  booktitle={Proceedings of the 9th ACM SIGPLAN International Workshop on Libraries, Languages and Compilers for Array Programming},
+  pages={22--35},
+  publisher={ACM},
+  year={2023},
+  doi={10.1145/3589246.3595371},
+  url={https://doi.org/10.1145/3589246.3595371},
+  note={
+    Implements the U-Net convolutional neural-network architecture directly in APL,
+    without a machine-learning framework, and evaluates the resulting program against PyTorch
+    using the GPU-targeting Co-dfns compiler.
+    This paper is relevant as evidence for the expressive and implementation potential
+    of array programming at the radical opposite of object orientation.}}
+
 @InProceedings{Verna2023,
   author={Didier E Verna},
   title={A MOP-Based Implementation for Method Combinations},
@@ -6359,7 +6590,7 @@
   author={François-René Rideau},
   title={c4-mixins},
   url={https://github.com/fare/c4-mixins},
-  year={2021},
+  year={2026},
   note={
     My C++ implementation of optimal inheritance:
     header-only C++20 mixins with a c4-linearized “super” chain.

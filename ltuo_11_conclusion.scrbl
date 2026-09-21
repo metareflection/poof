@@ -166,6 +166,15 @@ But I am the first to tie it all together in one place with one coherent story, 
    as side-effects for most people (and can be simply expressed in well-known monads).
 }
 
+@subsection{A More Truthful History of OO}
+Having elucidated what OO is or isn’t, I was able to more precisely dig into historical archives
+to establish who first invented the key concepts of OO (@secref{HMEB}).
+Everybody knew the roles of Dahl & Nygaard, Kay & Ingalls, or the inspiration from Sutherland.
+But I identified the no-less foundational works of
+Bobrow & Winograd, Kahn, Borning, Cannon, and the inspiration from Teitelman.
+The entire Lisp school has been unjustly ignored, its key contributions unsung,
+and especially Bobrow’s quiet leadership in building the most advanced OO systems ever.
+
 @section{Why Bragging Matters}
 @subsection{Spreading New Ideas}
 @epigraph{Don’t have good ideas if you aren’t willing to be responsible for them.

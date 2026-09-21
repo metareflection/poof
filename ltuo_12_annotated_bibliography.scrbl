@@ -4,6 +4,7 @@
 @(set-chapter-number 12)
 
 @title[#:tag "AB" #:style 'unnumbered]{Annotated Bibliography}
+@tex{\markboth{ANNOTATED BIBLIOGRAPHY}{ANNOTATED BIBLIOGRAPHY}}
 @epigraph{If we knew what it was we were doing, it would not be called research, would it?
   @|#:- "Albert Einstein"|
 }

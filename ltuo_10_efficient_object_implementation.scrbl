@@ -1003,13 +1003,75 @@ once enough is known about their outcomes,
 their residual structure can be represented directly
 and optimized for the operations that will consume it.
 
-@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
-
 @section[#:tag "OL"]{Object Layout}
 
 @subsection{Objects From Computation to Structure}
 
-An object needs a usable representation even while its recursive initialization is in progress; layout is not only something chosen after computation “settles”.
+@subsubsection{Modular and Unmodular Object Initialization}
+
+An essential constraint about object representation, yet one easy to overlook at first,
+is that the object must be referenceable and usable during its own initialization.
+In the simple case of my Minimal OO (@secref{MOO}), one distinctive feature of OO
+was indeed the ability of modular definitions, and the modular extensions they are made out of,
+to reference the thing being defined it-@c{self},
+a.k.a. the modular @c{context} being resolved,
+a.k.a. or @c{final} value of the object being computed.
+This ability to self-reference, or open recursion, is quintessential to OO,
+and carries on to whatever variant of OO you use, with prototypes or classes, mutable or immutable.
+And this ability creates all the many challenges in how objects are represented.
+Inasmuch as you would like objects to be records of values (and not suspended computations),
+in the general case, you can’t—yet in the common case, often you can,
+and your performance will depend on being able to exploit this ability.
+
+@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+
+Now, Class OO allows some level of coping:
+Class OO only needs OO to apply to the class targets that are type descriptors
+(morever only at compile-time, for second-class Class OO);
+it doesn’t need to support modular extensibility or even just modularity to apply to
+the “class instances” that are only the elements of the described types.
+Class methods are defined using OO, instance fields are not.
+Thus, many Class OO languages only offer trivial object initialization, at least by default:
+All initial field values for the “object” (class instance)
+must be provided either as arguments to a constructor,
+or as simple default values or initialization expressions from a non-modular specification
+(though possibly one overridable by extensions).
+Every field not otherwise initialized is bound to some top value (zero, unit, null or “undefined”),
+or (in some languages) to a magic “unbound” marker that triggers an early error
+when dereferencing an unbound field ().
+
+In @emph{stateful} Class OO languages (which is most of them),
+a slightly more sophisticated protocol is often offered
+to further adjust these initial values before the object construction completes
+and “clients” may see the object:
+constructors or initializers will execute side-effects to modify fields,
+including calls to methods on the partially initialized object.
+It is up to the programmer to ensure that everything goes right,
+that methods called during initialization work properly
+despite the object only being partially-initialized.
+And if the constructor registers the object to some global table,
+from which some methods are called before the object is fully and successfully initialized,
+well, this as well as any other weird situation is the responsibility of the programmer.
+Methods should be careful not to rely on invariants of fully initialized objects
+if they are to be called before the object is fully initialized.
+“Use at your own risk”.
+
+To alleviate the lack of expressiveness of the first cope, or the unsafety of the second cope,
+many programmers of OO languages resort to the “builder pattern”:
+all complex wherein
+
+
+
+
+
+first-class pure functional OO
+
+An object needs a usable representation even while its recursive initialization is in progress;
+layout is not only something chosen after computation “settles”.
+Builder objects: “solves” initialization, but explicit staging,
+much reduces modularity in initialization.
+
+
 Different invariants become available at different lifetime stages: construction, initialized/mature object, perhaps later frozen/sealed stages.
 Therefore an implementation may change representation after initialization.
 Code usable across the boundary must either support both representations, use an invariant indirection or be specialized separately.

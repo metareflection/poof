@@ -1,3 +1,69 @@
+%% 1946
+
+@TechReport{Turing1946,
+  author={Alan M. Turing},
+  title={Proposals for Development in the Mathematics Division of an Automatic Computing Engine (ACE)},
+  institution={National Physical Laboratory},
+  number={E.882},
+  address={Teddington, UK},
+  month=feb,
+  year={1946},
+  url={https://en.wikisource.org/wiki/Proposed_Electronic_Calculator},
+  note={
+    Turing’s remarkably prescient design for the ACE stored-program computer,
+    written in late 1945 and submitted to the NPL in 1946.
+    Among many programming innovations, it gives what appears to be the earliest
+    explicit description of a return-address stack: when entering a “subsidiary operation,”
+    the location at which execution should resume is saved in a last-in-first-out list,
+    managed by standard routines BURY and UNBURY.
+    Thus return addresses are explicitly represented as data and may be nested,
+    anticipating modern procedure-call stacks and permitting recursion.
+  }
+}
+
+%% 1950
+
+@Article{Wheeler1950,
+  author={David J. Wheeler},
+  title={Programme Organization and Initial Orders for the EDSAC},
+  journal={Proceedings of the Royal Society of London. Series A, Mathematical and Physical Sciences},
+  volume={202},
+  number={1071},
+  pages={573--589},
+  year={1950},
+  month=aug,
+  doi={10.1098/rspa.1950.0121},
+  url={https://doi.org/10.1098/rspa.1950.0121},
+  note={
+    Describes the programming conventions of EDSAC, including Wheeler’s
+    implementation of closed subroutines with dynamically constructed return links,
+    the technique later known as the “Wheeler jump.”
+    This was an early practical implementation of a return-address calling convention
+    on a stored-program computer, following Turing’s earlier proposal for saving
+    return addresses in his ACE design.
+    Unlike Turing’s proposed BURY/UNBURY stack, however, the EDSAC convention
+    planted the return jump into the subroutine itself and therefore did not support
+    recursive invocations.
+  }
+}
+
+%% 1951
+
+@Book{Wilkes1951,
+  author={Maurice V. Wilkes and David J. Wheeler and Stanley Gill},
+  title={The Preparation of Programs for an Electronic Digital Computer: With Special Reference to the EDSAC and the Use of a Library of Subroutines},
+  publisher={Addison-Wesley Press},
+  address={Cambridge, Massachusetts},
+  year={1951},
+  url={https://archive.org/details/preparationofpro00wilk},
+  note={
+    The first book devoted to computer programming, based on experience with EDSAC.
+    Gives a systematic treatment of subroutines, subroutine libraries and the
+    calling convention known as the Wheeler jump, in which the return link is
+    constructed at run time and planted into the called routine.
+  }
+}
+
 %% 1958
 
 @Article{Strong1958,
@@ -177,27 +243,6 @@
     Constantine argues that mechanisms for sequencing and parallelism
     should exist at the procedure- and problem-oriented language level,
     rather than merely exposing machine- or process-oriented operations.
-  }
-}
-
-% https://www.melconway.com/Home/Committees_Paper.html
-@Article{Conway1968,
-  author={Melvin E. Conway},
-  title={How Do Committees Invent?},
-  journal={Datamation},
-  volume={14},
-  number={4},
-  pages={28--31},
-  month=apr,
-  year={1968},
-  url={https://bitsavers.org/magazines/Datamation/196804.pdf},
-  note={
-    The source of what would later be called Conway’s Law:
-    organizations that design systems tend to produce designs
-    reflecting their own communication structures.
-    An early recognition that the modular structure of software
-    cannot be considered independently from the modular structure
-    of the organization that builds it.
   }
 }
 
@@ -1372,31 +1417,6 @@
   }
 }
 
-% OOPSLA 1988 ?
-@InCollection{King1989,
-  author={Roger King},
-  title={My Cat Is Object-Oriented},
-  booktitle={Object-Oriented Concepts, Databases, and Applications},
-  editor={Won Kim and Frederick H. Lochovsky},
-  year={1989},
-  publisher={ACM Press and Addison-Wesley},
-  isbn={0-201-14410-7},
-  chapter={2},
-  pages={23--30},
-  series={ACM Press Frontier Series},
-  address={New York, NY, USA},
-  doi={10.1145/63320.66469},
-  url={https://archive.org/details/objectorientedco0000unse},
-  note={
-    Critiques attempts to define object orientation by accumulating a loose
-    collection of desirable properties, using the deliberately absurd example
-    of classifying the author’s cat as object-oriented.
-    Relevant as an early warning that “object-oriented” had already become an underspecified label
-    applied to systems sharing only partially overlapping characteristics,
-    motivating a search for a more precise account of the paradigm.
-  }
-}
-
 @InProceedings{Madsen1989,
   author={Ole Lehrmann Madsen and Birger Møller-Pedersen},
   title={Virtual Classes: A Powerful Mechanism in Object-Oriented Programming},
@@ -1767,6 +1787,25 @@
 
 %% 1993
 
+@InCollection{Bobrow1993,
+  author={Daniel G. Bobrow and Richard P. Gabriel and Jon L. White},
+  title={CLOS in Context: The Shape of the Design Space},
+  booktitle={Object-Oriented Programming: The CLOS Perspective},
+  editor={Andreas Paepcke},
+  pages={29--61},
+  publisher={MIT Press},
+  address={Cambridge, Massachusetts},
+  year={1993},
+  url={https://dreamsongs.com/Files/clos-book.pdf},
+  note={
+    Places CLOS in the broader design space of object-oriented languages,
+    comparing choices concerning classes, types, generic functions, inheritance,
+    method combination and related mechanisms.
+    Useful as a retrospective account by several of the principal CLOS designers
+    of why CLOS occupies its particular point in that design space.
+  }
+}
+
 @TechReport{Chambers1993,
   author={Craig Chambers},
   title={The Cecil Language: Specification and Rationale},
@@ -1811,8 +1850,25 @@
     were understood and distinguished by practitioners at the time.}
 }
 
+@InCollection{Kiczales1993MOP,
+  author={Gregor Kiczales and J. Michael Ashley and Luis H. Rodriguez Jr. and Amin Vahdat and Daniel G. Bobrow},
+  title={Metaobject Protocols: Why We Want Them and What Else They Can Do},
+  booktitle={Object-Oriented Programming: The CLOS Perspective},
+  editor={Andreas Paepcke},
+  pages={101--118},
+  publisher={MIT Press},
+  address={Cambridge, Massachusetts},
+  year={1993},
+  url={https://cseweb.ucsd.edu/~vahdat/papers/mop.pdf},
+  note={
+    A concise follow-up to the CLOS metaobject-protocol work,
+    explaining why language implementation mechanisms should themselves be exposed
+    through programmable protocols and sketching applications beyond the core CLOS MOP.
+  }
+}
+
 % https://link.springer.com/chapter/10.1007/3-540-57342-9_64
-@InProceedings{Kiczales1993,
+@InProceedings{Kiczales1993Traces,
   author="Kiczales, Gregor",
   editor="Nishio, Shojiro and Yonezawa, Akinori",
   title="Traces (A cut at the ‘‘make isn’t generic’’ problem)",
@@ -2047,31 +2103,6 @@
   doi={10.1145/217838.217849},
   url={https://doi.org/10.1145/217838.217849},
   note={Introduces bidirectional object layout, a separately compilable object representation designed to reduce the space and dispatch costs of multiple inheritance. It separates dispatch information from fields, exploits primary versus secondary supertypes and can support true multiple implementation inheritance while preserving compact objects and fast method calls. Directly relevant to the book's discussion of efficient multiple-inheritance representation and the tradeoff between fixed layouts, separate compilation and dispatch cost.}
-}
-
-% TODO Important to cite?
-% No prototypes, but good classes?
-% Addresses Conflation head-on: "Class Ambiguity"
-% Y-encoding
-% https://staffwww.dcs.shef.ac.uk/people/a.simons/classify/
-% Mention the later JOT series
-@PhdThesis{Simons1995,
-  author={Anthony James Howard Simons},
-  title={A Language with Class: The Theory of Classification Exemplified in an Object-Oriented Programming Language},
-  year={1995},
-  school={University of Sheffield},
-  address={Sheffield, UK},
-  url={https://staffwww.dcs.shef.ac.uk/people/A.Simons/research/thesis/},
-  note={
-    Develops the Theory of Classification and exemplifies it in the redesigned
-    Brunel 2.0 programming language.
-    Distinguishes classes as open, higher-order F-bounded constructs in the λ-calculus
-    from object types obtained as their least fixed points; and
-    studies inheritance, genericity, mixins, multiple inheritance and polymorphism in one framework.
-    Particularly relevant for its explicit diagnosis of ambiguity between
-    class and type and for Brunel’s attempt to expose the distinction syntactically
-    rather than deliberately conflating the two roles.
-  }
 }
 
 @InProceedings{Smith1995,
@@ -2690,27 +2721,6 @@
     Provides a compact precursor to Erkök's more comprehensive dissertation.}
 }
 
-% Y combinator
-% Recursion as Effect, Ref
-@TechReport{Friedman2000,
-  author={Daniel P. Friedman and Amr Sabry},
-  title={Recursion is a Computational Effect},
-  institution={Computer Science Department, Indiana University},
-  year={2000},
-  month=dec,
-  number={TR546},
-  address={Bloomington, Indiana, USA},
-  url={https://homes.luddy.indiana.edu/sabry/files/recursion-monads-tr.pdf},
-  note={
-    Directly compares unfolding and updating interpretations of fixed points,
-    observing that they are equivalent in pure calculi but behave differently
-    in the presence of computational effects.
-    Studies three variants of monadic fixed points in Haskell,
-    and argues that updating recursion should itself be treated as a computational effect.
-    Probably the most directly relevant reference for distinguishing pure,
-    lazy and stateful operational realizations of recursion.}
-}
-
 @WebPage{Logan2000,
   author={Patrick Logan and Erik Ernst},
   title={The Origins of Object Orientation},
@@ -2867,7 +2877,25 @@
   }
 }
 
-@inproceedings{Click2002,
+% Front matter only: https://cs.pomona.edu/~kim/FOOPL/prelim.pdf
+@Book{Bruce2002,
+  author={Kim B. Bruce},
+  title={Foundations of Object-Oriented Languages: Types and Semantics},
+  publisher={The MIT Press},
+  address={Cambridge, MA},
+  year={2002},
+  isbn={0-262-02523-X},
+  note={
+    Systematic treatment of the type theory and semantics of statically typed
+    class-based object-oriented languages.
+    Develops SOOL and related calculi, gives translational semantics into typed lambda calculi,
+    and treats subtyping, inheritance, super, multiple inheritance,
+    bounded polymorphism, MyType and matching.
+    Directly relevant to the book as one of the major formal accounts
+    of class-based OO preceding the present work.}
+}
+
+@InProceedings{Click2002,
   author={Cliff Click and John Rose},
   title={Fast Subtype Checking in the HotSpot JVM},
   booktitle={Proceedings of the 2002 Joint ACM-ISCOPE Conference on Java Grande},
@@ -3248,32 +3276,6 @@
     Relevant to the treatment of multiple dispatch and to the distinction
     between a language's primitive dispatch mechanism and
     more general method-combination mechanisms implementable within it.}
-}
-
-% Good types for OO. Part 9 talks about conflation of class and types
-% https://staffwww.dcs.shef.ac.uk/people/a.simons/classify/
-@Article{Simons2005,
-  author={Anthony J. H. Simons},
-  title={The Theory of Classification, Part 16: Rules of Extension and the Typing of Inheritance},
-  journal={Journal of Object Technology},
-  year={2005},
-  month=jan,
-  volume={4},
-  number={1},
-  pages={13--25},
-  publisher={ETH Zurich},
-  issn={1660-1769},
-  doi={10.5381/jot.2005.4.1.c2},
-  url={https://eprints.whiterose.ac.uk/id/eprint/79258/14/TheoryClass16.pdf},
-  note={
-    Develops a typed model of inheritance in a second-order F-bounded
-    λ-calculus, representing inheritance as constrained record extension with
-    overriding.
-    Distinguishes subtype-based and subclass-based models and shows that the
-    type produced by extension can be understood as an intersection type.
-    Relevant for its explicit separation of inheritance from subtyping and for
-    its attempt to state precise typing rules for record-based inheritance.
-  }
 }
 
 % Code Compression - MUST READ
@@ -4128,6 +4130,27 @@
 
 %% 2016
 
+@InProceedings{Amin2016Essence,
+  author={Nada Amin and Samuel Grütter and Martin Odersky and Tiark Rompf and Sandro Stucki},
+  title={The Essence of Dependent Object Types},
+  booktitle={A List of Successes That Can Change the World: Essays Dedicated to Philip Wadler on the Occasion of His 60th Birthday},
+  editor={Sam Lindley and Conor McBride and Philip W. Trinder and Donald Sannella},
+  series={Lecture Notes in Computer Science},
+  volume={9600},
+  pages={249--272},
+  publisher={Springer},
+  year={2016},
+  doi={10.1007/978-3-319-30936-1_14},
+  url={https://doi.org/10.1007/978-3-319-30936-1_14},
+  note={
+    Develops Dependent Object Types (DOT) as a foundation for Scala,
+    starting from dependent functions and adding records, intersection types
+    and recursion to model path-dependent types and other Scala constructs.
+    A more mature development of the DOT line than Amin, Moors and Odersky 2012,
+    though still primarily concerned with typing rather than inheritance semantics.
+  }
+}
+
 % features inversion of scope, though without that expression.
 @Book{Harper2016,
   author={Robert Harper},
@@ -4467,23 +4490,6 @@
   doi={10.1098/rsta.2022.0050},
   url={https://doi.org/10.1098/rsta.2022.0050},
   note={Modern library-learning system that grows a domain-specific language by discovering reusable abstractions; useful modern parallel to abstraction as corpus compression.}
-}
-
-@InProceedings{Hsu2023,
-  author={Aaron W. Hsu and Rodrigo Girão Serrão},
-  title={U-Net CNN in APL: Exploring Zero-Framework, Zero-Library Machine Learning},
-  booktitle={Proceedings of the 9th ACM SIGPLAN International Workshop on Libraries, Languages and Compilers for Array Programming},
-  pages={22--35},
-  publisher={ACM},
-  year={2023},
-  doi={10.1145/3589246.3595371},
-  url={https://doi.org/10.1145/3589246.3595371},
-  note={
-    Implements the U-Net convolutional neural-network architecture directly in APL,
-    without a machine-learning framework, and evaluates the resulting program against PyTorch
-    using the GPU-targeting Co-dfns compiler.
-    Relevant mainly as evidence for the expressive and implementation potential
-    of array programming rather than to object orientation.}
 }
 
 @Misc{Mosberger2023,

@@ -295,9 +295,11 @@ I will prefer speaking of specifications and their
 parents, ancestors, children and descendants@Note{
   As far as I can tell, “parent” in this meaning first appears in print
   as early as @citet{Borning1977};
-  “ancestors” and “descendents” (with a final e) in @citet{Goldberg1983},
-  and “child” only in @citet{Snyder1986}, who explicitly uses all of these words
-  in preference to the more common alternatives.
+  “child”, “descendant”, “sibling”, “offspring” appear in @citet{Kahn1979Director};
+  “ancestors” and “descendents” (with a final e) in @citet{Goldberg1983}.
+  @citet{Snyder1986} then explicitly uses all of these words together,
+  in preference to the more common alternatives involving direct or transitive
+  superclasses or subclasses (or the equivalent for prototypes, specifications, targets).
 }—also specifications.
 
 @subsection{Single Inheritance Overview}

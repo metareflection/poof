@@ -22,6 +22,11 @@ Note, however, that it is not so simple at all from the point of view of
 mid-1960s to mid-1970s computer technology, the time at which inheritance was first invented.
 This is why single inheritance historically came first.
 
+And if at any point the meaning of my formulas is not perfectly clear to you—because
+I cut some corners, you feel you lack prerequisites, or the topic has ramifications
+beyond what I wrote that you need to ascertain, etc.—just
+ask your favorite clanker for clarification.
+
 @section{Minimal First-Class Extensibility}
 
 @subsection{Extensions as Functions}

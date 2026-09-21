@@ -242,6 +242,7 @@ then the type of @c{pproto} is @c{R (Y M)},
 and that of @c{qproto} is @c{Y (R ∘ M)}, so in both cases I have
 a reference to a recursive data structure that follows the generator,
 but in the second case further recursive accesses also use the reference.
+
 Note that @c{Y (R ∘ M) = R (Y (M ∘ R))} and @c{Y (M ∘ R)} is the type of
 a raw record that follows the generator and uses references for recursion,
 instead of the type of reference to such, i.e. I have in turn @c{Y (M ∘ R) = M (Y (R ∘ M))};
@@ -249,10 +250,18 @@ people interested in low-level memory access might want to privilege this latter
 representation instead of @c{Y (R ∘ M)}, which indeed is a notable difference
 between the OO models of C++ vs Java: C++ makes you deal with raw data structures,
 Java with references to data structures.
+Thus, when we look carefully at Simula @~cite{Dahl1967},
+the special expression @c{this C} for class @c{C} is a “local reference” of type @c{ref C},
+an not an object of type @c{C};
+while in C++, the keyword @c{this} refers to an “implicit pointer” of type @c{C*},
+and not an object of type @c{C}.
+The reason the indirection through a reference isn’t obvious to users of
+Smalltalk, Lisp or Java is that in these languages, about everything nontrivial is a reference
+(though there are also “immediate values” that fit in one machine word).
 
 Now, it is not unusual in software for access to records, recursive or not,
 to be wrapped inside some kind of reference type:
-pointer into memory, index into a table,
+pointer into memory, but also index into a table,
 key into a database, cryptographic hash into a content-addressed store,
 location into a file, string or identifier used in a hash-table or tree, etc.
 In the case of recursive data structures implemented as data in contiguous regions of memory,
@@ -297,8 +306,12 @@ for which all extensions are trivially strict).
 The reference wrapper, pure isomorphism at one level,
 yet effectful non-isomorphism at another
 (requiring access to disk, database, network, credentials, user interface, etc.),
-also illustrates that @; TODO cite Friedman2000
+also illustrates that
 @principle{one man’s purity is another man’s side-effect} (to channel Alan Perlis).
+Indeed, @citet{Friedman2000} argue that recursion is a side-effect,
+because it interacts non-trivially with other side-effects.
+
+
 For instance, with merkleization, a reference uniquely identifies some pure data structure
 with a cryptographically secure hash that you can compute in a pure functional way;
 but dereferencing the hash is only possible if you already know the data
@@ -776,6 +789,15 @@ Yet though they offer correct models for typing OO,
 both authors fail to distinguish specification and target
 as syntactically and semantically separate entities in their languages,
 leading to much extraneous complexity in their respective typesystems.
+
+@citet{Simons1995} deserves special credit for having been explicit and adamant
+about the distinction between classes and types,
+including a clear syntactic distinction between a type @c{C} and a type generator @c{#C[ ]}.
+Sadly, his work was largely ignored,
+despite his very approachable later exposition in JOT @~cite{Simons2005}.
+Also, Simons, probably due to neglecting Prototype OO,
+fails to understand the positive appeal of conflation
+like he understands the negative consequences of confusion.
 
 Implementers of stateful object systems at runtime may not have realized the conflation of entities,
 because they are too focused on low-level mechanisms for “delegation” or “inheritance”;

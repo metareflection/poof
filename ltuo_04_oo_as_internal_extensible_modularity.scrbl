@@ -30,8 +30,8 @@ Otherwise, one won’t be able to distinguish the real thing from
 a broken version, a cheap plastic imitation, a mere representation, a decoy, a parody,
 a torture implement made to look like it.
 Or from a pile of toxic waste vaguely shaped like it.
-Would you sit on cactus arranged into a chair?
-Or on a drum full of radioactive material?
+Would you sit on a cactus arranged into a chair?
+Or on a metal drum full of radioactive material?
 Because this is what happens when you define a chair merely by its shape,
 or by the ability to sit on it, without regard for its larger purpose.
 And you will do the equivalent or inflict it upon others
@@ -91,7 +91,8 @@ but are not available as regular runtime values}@xnote["."]{
   and some clever hackers find ways to call a compiler and a dynamic linker,
   even in languages that don’t otherwise provide support APIs for it. @; TODO cite Goo
 }
-Either first-class or second-class entities are considered @emph{internal} to the language,
+Either first-class or second-class entities @~cite{Strachey1967}
+are considered @emph{internal} to the language,
 part of its semantics, handled by its processors (compiler, interpreter, typesystem, etc.).
 
 However, many languages offer no such internal notion of modules.
@@ -124,8 +125,8 @@ editors, copy-paste, and lots of debugging.
 Either third-class or fourth-class entities are considered @emph{external} to the language,
 not part of its semantics, not handled by its processors,
 yet conceptually present in the minds of the programmers@xnote["."]{
-  Whereas the terms “first-class” and “second-class” are well-established in the literature,
-  @;{TODO cite}
+  Whereas the terms “first-class” and “second-class”
+  are well-established in the literature @~cite{Strachey1967},
   I am hereby introducing the terms “third-class” and “fourth-class”,
   as well as the distinction between “internal” and “external” entities.
   Of course, depending on where you draw the line for “the language”,
@@ -144,7 +145,7 @@ Thus, programmers will:
 @item{copy and paste sections of code, or prefix identifiers, as poor man’s modules;}
 @item{preprocess files to concatenate, transform and generate code fragments;}
 @item{transclude “include” files to serve as libraries or interfaces to later-linked libraries;}
-@item{divide code in files they independently compile then “link” or “load” together;}
+@item{divide code into files they independently compile then “link” or “load” together;}
 @item{orchestrate incremental (re)building of software with utilities such as “make”;}
 @item{bundle software into “packages” they exchange and distribute with “package managers”;}
 @item{“containerize” consistent package installations into “images”.}]
@@ -171,7 +172,7 @@ More ability to code one’s part, while requiring less knowledge about other pe
   Hopefully, the coordination methods used come not only with benefits greater than the costs,
   but also with a greater profit (difference between benefits and costs) than
   possible alternative methods considering the total capital immobilized in the development process.
-  However there is nothing automatic to that, contrary to the apparent belief of many a manager.
+  However there is nothing automatic about that, contrary to the apparent belief of many a manager.
   If the benefits of active business practices in general
   tend to be commensurate with and superior to their costs,
   that is only the precarious result of market forces,
@@ -182,10 +183,10 @@ More ability to code one’s part, while requiring less knowledge about other pe
   if you persist in pursuing counter-productive practices.
 }
 
-For instance, the object-oriented design of the Common Lisp build system
+For instance, the OO design of the Common Lisp build system
 ASDF@~cite{Rideau2010 Rideau2014}
-made it simple to configure, to extend, and
-to refactor to use algorithms in @emph{O(n)} rather than @emph{O(n³)} or worse,
+made it simple to configure it, to extend it, and
+to refactor it to use algorithms in @emph{O(n)} rather than @emph{O(n³)} or worse,
 all without any of the clients having to change their code.
 This makes it arguably more modular than its predecessor MK-DEFSYSTEM@~cite{Kantrowitz1991}
 that shunned the use of objects (possibly for portability reasons at the time),
@@ -211,8 +212,8 @@ as units of modularity they have to think about quite often,
 naming, opening, visiting and closing them in their editors,
 manipulating them in their source control, etc.
 Although files as such embody a form of modularity external
-to most simple programming languages that they use,
-the more advanced programming languages, that they use most often,
+to most simple programming languages that programmers use,
+the more advanced programming languages that they use most often,
 tend to have some notion of those files,
 runtime and/or compile-time representation for those files,
 and often some correspondence between file names and names of internal module entities
@@ -240,7 +241,7 @@ files embody modularity internal to programming languages@xnote["."]{
   at several different scales of software construction,
   enabling division of labor across time for a single person, for a small team, for a large team,
   between several teams, etc., each time with different correspondences
-  between modules and files, that are never quite 1-to-1:
+  between modules and files that are never quite 1-to-1:
   even “just a file” is not merely a blob of data, but also the meta-data of
   a filename registered in a broader namespace, and some intended usage.
 }
@@ -257,31 +258,35 @@ formalized early on by Wilkes et al. in the 1940s @; TODO cite
 used by the earliest programmers in manually assembled code,
 part of the first programming language Plankalkül, @; TODO cite
 and of FORTRAN II. @; TODO cite
-Subroutines allow programmers to divide bigger problems into smaller ones
-at a fine grain, that can each be solved by a different programmer,
-while other programmers only have to know its calling convention.
+Subroutines allow programmers to divide bigger problems at a fine grain into smaller ones,
+each of which can be solved by a different programmer,
+while other programmers each only have to know the calling conventions of a few of them.
 
 No less important than subroutines as such yet also taken for granted
-was the concept of a return address allowing
-calls to a single copy of a subroutine from multiple sites,
-@; TODO CITE Turing 1946 report on ACE; implemented by Wilkes
-and later of a call stack of such return addresses and other caller and callee data.
-The call stack enabled reentrancy of subroutines,
-such that a subroutine can be recursively called by a subroutine it itself called;
-@; that only became common after LISP and ALGOL in the late 1950s.
-@; TODO cite McCarthy LISP 1957, Dijkstra ALGOL 1958
+were the concepts of a return address allowing
+calls to a single copy of a subroutine from multiple sites, @;{
+  TODO CITE Turing1946 LIFO call stack permitting recursion;
+  partially implemented in 1949 by Wheeler1950 on Wilkes’ EDSAC with one cell per procedure,
+  disallowing reentrancy (lame).
+}
+and of a call stack of such return addresses and other caller and callee data,
+enabling reentrancy of subroutines;
 thus, programmers do not have to care that their subroutines
 should not be reentered while being executed
-due to a direct or indirect subroutine call.
+due to a direct or indirect subroutine call. @;{
+  This only became common after LISP and ALGOL in the late 1950s.
+  TODO cite McCarthy LISP 1957, Dijkstra ALGOL 1958
+}
 Indeed, subroutines can now be reentered, not just accidentally, but intentionally,
 to express simpler recursive solutions to problems.
 The ability to cooperate more with less coordination
 with programmers from other parts of the software:
 that’s the very definition of modularity.
 
-Sadly, the generalization of call stacks to first-class continuations in the 1970s,
-@; TODO cite Steve Russell 1960, van Wijngaarden 1964, Landin 1964, Strachey 1974, Steele 1978
-and later to delimited control in 1988 and beyond @; TODO cite Felleisen 1988
+Sadly, the generalization of call stacks to first-class continuations in the 1970s, @;{
+  TODO cite Steve Russell 1960, van Wijngaarden 1964, Landin 1964, Strachey 1974, Steele 1978
+}
+and later to delimited control in 1988 and beyond @~cite{Felleisen1988}
 is still not available @; TODO cite
 in most programming languages, eschewing another advance in modularity,
 wherein programmers could otherwise abstract over the execution of some fragment of code
@@ -305,7 +310,9 @@ interfaces à la Java, and much more,
 provided second-class modularity as part of a language itself.
 Finally, objects in Smalltalk-72 (even before Smalltalk adopted inheritance in 1976),
 or first-class modules in ML @~cite{Russo1998},
-provided first-class modularity.
+provided first-class modularity—and long before them,
+even the notion of tuples or records once needed to be explicitly conceptualized
+as entities worth having a name @~cite{Ross1961}.
 
 @subsection{Modularity and Complexity}
 
@@ -317,7 +324,7 @@ by amateurs or tired experts.
 
 Use of modules also introduces overhead, though,
 at development time, compile-time and runtime alike:
-boiler plate to define and use modules,
+boilerplate to define and use modules,
 name management to juggle with all the modules,
 missing simplifications in using overly general solutions
 that are not specialized enough to the problems at hand,
@@ -326,117 +333,11 @@ extra work to cover the “impedance mismatch” between
 the representation used by the common solution
 and that used by the actual problems, etc.
 
-Modularity used incorrectly, with too many module boundaries,
-module boundaries drawn badly,
-resolved at the wrong evaluation stage,
-can increase complexity rather than reduce it:
-more parts and more crossings between parts cause more overhead;
-the factoring may fail to bring simplification in how programmers may reason about the system;
-subtle underdocumented interactions between features,
-especially involving implicit or mutable state,
-can increase the cognitive load of using the system;
-attempts at unifying mismatched concepts only to then re-distinguish them
-with lots of conditional behavior will cause confusion rather than enlightenment;
-modules may fail to offer code reuse between different situations;
-programmers may have to manage large interfaces to achieve small results@xnote["."]{
-  A notable trend in wrongheaded “modularity” is @emph{myopic} designs,
-  that achieve modest savings in a few modules under focus
-  by vastly increasing the development costs left out of focus,
-  in extra boilerplate and friction, in other modules having to adapt to the design,
-  in inter-module glue being made more complex, or
-  in module namespace curation getting more contentious.
-
-  For instance, the once vastly overrated and overfunded notions “microkernels” or “microservices”
-  consist in dividing a system in a lot of modules, “servers” or “services”
-  each doing a relatively small task within a larger system,
-  separated by extremely expensive hardware barriers
-  wherein data is marshalled and unmarshalled across processes or across machines.
-  Each service in isolation, that you may focus on,
-  looks and is indeed simpler than the overall software combining those services;
-  but this overall software kept out of focus
-  was made significantly more complex by dividing it into those services.
-  Another myopic design that is much rarer these days is to rewrite a program
-  from a big monolithic heap of code in a higher level language
-  into a lot of subroutines in a lower-level language (sometimes assembly language),
-  boasting how vastly simpler each of these subroutines is to the previous program;
-  yet obviously the sum total of those routines is much more complex to write and maintain
-  than a similarly factored program written in an appropriate higher level language
-  (that indeed the original language might not be).
-
-  While myopic designs might offer some small performance improvement in terms of
-  pipelining, locality and load-balancing for very large worksets,
-  they offer no improvement whatsoever in terms of modularity, quite the contrary:
-  @Xitemize[@;#:style enumparenalph
-  @Xitem{(1)
-    The modules must already exist or be made to exist at the language level,
-    before the division into services may be enacted.
-    Far from @emph{providing} a solution to any problem for the programmer,
-    these techniques @emph{require} programmers to already have solved
-    the important problem of module factoring before you can apply them,
-    at which point they hinder rather than help.
-  }
-  @Xitem{(2)
-    Given the factoring of a program into modules,
-    these techniques add runtime barriers
-    that do not improve safety compared to compile-time barriers
-    (e.g. using strong types, whether static or dynamic).
-  }
-  @Xitem{(3)
-    Yet those runtime barriers vastly decrease performance, and even more so
-    by the compile-time optimizations they prevent (whether builtin or user-defined with e.g. macros).
-  }
-  @Xitem{(4)
-    The interface of each module is made larger for having to include a specific marshalling,
-    and the constraints related to being marshalled.
-    This problem can be alleviated by the use of “interface description languages”,
-    but these languages tend to be both poorer and more complex
-    than a good programming language’s typesystem,
-    and introduce an impedance mismatch of their own.
-  }
-  @Xitem{(5)
-    Any alleged benefits from dividing a program in multiple distributed processes,
-    whether in terms of failure-resistance, modularity, safety or performance
-    are wholly lost if and when (as is often the case) persistent data
-    all ends up being centralized in database services,
-    that become a bottleneck for the dataflow.
-  }
-  @Xitem{(6)
-    The overall system is not made any smaller for being divided in smaller parts;
-    actually, all the artificial process crossings, marshallings and unmarshallings,
-    actually make the overall system noticeably larger in proportion to how small those parts are,
-    with more attack surface for bugs and vulnerabilities.
-    Lots of small problems are added at both runtime and compile-time,
-    while no actual problem whatsoever is solved.
-  }
-  @Xitem{(7)
-    These designs are thus actually detrimental in direct proportion to how much they are followed,
-    and in proportion to how beneficial they claim to be. They are, technically, a lie.
-  }
-  @Xitem{(8)
-    In practice, “successful” microkernels import all services into a monolithic “single server”,
-    and successful microservices are eventually successfully rebuilt
-    as vertically integrated single services.
-  }]
-
-  In the end, the technical justification for these misguided designs stem from the inability
-  to think about meta-levels and distinguish between compile-time and runtime organization of code:
-  Modularity is a matter of semantics, as manipulated by programmers at programming-time,
-  and by compilers at compile-time;
-  the runtime barrier crossings of these myopic designs
-  cannot conceivably do anything to help about that, only hinder.
-  @;{ TODO cite something about HURD? Footnote? }
-
-  Now, there are sometimes quite valid socioeconomic (and not technical) justifications
-  to dividing a program into multiple services:
-  when there are many teams having distinct incentives, feedback loops, responsibilities,
-  service level agreements they are financially accountable for, etc.,
-  it makes sense for them to deploy distinct services.
-  Indeed, Conway’s Law @;TODO CITE ?
-  states that the technical architecture of software follows its business or management architecture.
-
-  Finally, it is of note that some systems take a radically opposite approach
-  to modularity, or lack thereof:
-  instead of gratuitous division into ever more counter-productive modules,
+Thus, some programmers have achieved great results by taking approaches radically
+opposed to modularity, instead opting for extreme integration and terseness,
+eliminating all overhead associated with making things modular,
+and pushing the limits of what a single programmer can do@xnote["."]{
+  Instead of gratuitous division into ever more counter-productive modules,
   some prefer wanton avoidance of having to divide code into modules at all.
   For instance, APL reduces the @emph{need} for modules or even subroutines by being extremely terse,
   and by shunning abstraction in favor of concrete low-level data representations
@@ -444,24 +345,136 @@ programmers may have to manage large interfaces to achieve small results@xnote["
   of more popular languages),
   to the point of replacing many routine names
   by common idioms—known sequences of combinators.
-  (The many talks by Aaron Hsu at LambdaConf are an amazing glimpse at this style of programming.)
-  @;{TODO @~cite{Hsu2019 Hsu2023}}
+  (The many talks by Aaron Hsu at LambdaConf are an amazing glimpse at this style of programming;
+  see also @citet{Hsu2023}.) @;TODO @~cite{Hsu2019}
   The programmer can then directly express the concepts of the domain being implemented
-  in terms of concrete APL’s tables and functions, stripped of all the unnecessary abstractions,
+  in terms of the concrete tables and functions of APL, stripped of all the unnecessary abstractions,
   until the solution is both so simple and task-specific that there is no need for shared modules.
   By using his terse combinators to directly manipulate entire tables of data at a time,
   a competent APLer can find a complete solution to a problem
   in fewer lines of code than it takes for programmers in other
   languages just to name the structures, their fields and accessors.
-  Admittedly, there is only so much room in this direction:
-  as the software grows in scope, and the required features grow in intrinsic complexity,
-  there is a point at which it becomes too big to fit wholly in any programmer’s mind,
-  then it must be chipped away by moving parts into other modules,
-  notably by reusing common algorithms and data structures from libraries
-  rather than inline specialized versions.
-  But in practice, a lot of problems can be tackled this way by bright enough developers,
-  especially after having been divided into subproblems for socio-economic reasons.
 }
+Admittedly, there is only so much room in this direction:
+As the software grows in scope, and the required features grow in intrinsic complexity,
+there is a point at which it becomes too big to fit wholly in any programmer’s mind.
+Then the problem must be chipped away by moving parts into other modules,
+notably by reusing common algorithms and data structures from libraries
+rather than inline specialized versions.
+But in practice, a lot of problems can be tackled this way by bright enough developers,
+especially after having been divided into subproblems for socio-economic reasons.
+
+Modularity can also be abused:
+too many module boundaries,
+badly drawn module boundaries,
+modules resolved at the wrong evaluation stage,
+can increase complexity rather than reduce it.
+More parts and more crossings between parts cause more overhead;
+the factoring may fail to simplify how programmers may reason about the system;
+subtle underdocumented interactions between features,
+especially involving implicit or mutable state,
+can increase the cognitive load of using the system;
+attempts at unifying mismatched concepts only to then re-distinguish them
+with lots of conditional behavior will cause confusion rather than enlightenment;
+modules may fail to offer code reuse between different situations;
+programmers may have to manage large interfaces to achieve small results.
+
+@subsubsection{Runtime Processes Make Bad Compile-Time Modules}
+
+A notable trend in wrongheaded “modularity” is @emph{myopic} designs,
+that achieve modest savings in a few modules under focus
+by vastly increasing the development costs left out of focus,
+in extra boilerplate and friction, in other modules having to adapt to the design,
+in inter-module glue being made more complex, or
+in module namespace curation getting more contentious.
+
+For instance, the once vastly overrated and overfunded notions of “microkernels” or “microservices”
+consist in dividing a system in a lot of modules, “servers” or “services”
+each doing a relatively small task within a larger system,
+separated by extremely expensive hardware barriers
+wherein data is marshalled and unmarshalled across processes or across machines.
+Each service in isolation, when one focuses on it,
+looks and is indeed simpler than the overall software combining those services;
+but this overall software kept out of focus
+is made significantly more complex by dividing it into those services and adding all the barriers.
+Another myopic design that is much rarer these days is to rewrite a program
+from a big monolithic heap of code in a higher level language
+into a lot of subroutines in a lower-level language (sometimes assembly language),
+boasting how vastly simpler each of these subroutines is than the previous program;
+yet obviously the sum total of those routines is much more complex to write and maintain
+than a similarly factored program written in an appropriate higher level language
+(that indeed the original language might not be).
+
+While myopic designs might offer some small performance improvement in terms of
+pipelining, locality and load-balancing for very large working sets,
+they offer no improvement whatsoever in terms of modularity, quite the contrary:
+@itemize[#:style enumparenalph
+@item{
+  The modules must already exist or be made to exist at the language level,
+  before the division into services may be enacted.
+  Far from @emph{providing} a solution to any problem for the programmer,
+  these techniques @emph{require} programmers to already have solved
+  the important problem of module factoring before you can apply them,
+  at which point they hinder rather than help.
+}
+@item{
+  Given the factoring of a program into modules,
+  these techniques add runtime barriers
+  that do not improve safety compared to compile-time barriers
+  (e.g. using strong types, whether static or dynamic).
+}
+@item{
+  Yet those runtime barriers vastly decrease performance, and even more so
+  by the compile-time optimizations they prevent (whether builtin or user-defined with e.g. macros).
+}
+@item{
+  The interface of each module is made larger for having to include a specific marshalling,
+  and the constraints related to being marshalled.
+  This problem can be alleviated by the use of “interface description languages”,
+  but these languages tend to be both poorer and more complex
+  than a good programming language’s typesystem,
+  and introduce an impedance mismatch of their own.
+}
+@item{
+  Any alleged benefits from dividing a program into multiple distributed processes,
+  whether in terms of failure-resistance, modularity, safety or performance
+  are wholly lost if and when (as is often the case) persistent data
+  all ends up being centralized in database services
+  that become a bottleneck for the dataflow.
+}
+@item{
+  The overall system is not made any smaller for being divided into smaller parts;
+  actually, all the artificial process crossings, marshallings and unmarshallings,
+  make the overall system noticeably larger in proportion to how small those parts are,
+  with more attack surface for bugs and vulnerabilities.
+  Lots of small problems are added at both runtime and compile-time,
+  while no actual problem whatsoever is solved.
+}
+@item{
+  These designs are thus actually detrimental in direct proportion to how much they are followed,
+  and in proportion to how beneficial they claim to be. They are, technically, a lie.
+}
+@item{
+  In practice, “successful” microkernels import all services into a monolithic “single server”,
+  and successful microservices are eventually successfully rebuilt
+  as vertically integrated single services.
+}]
+
+In the end, the technical justification for these misguided designs stems from the inability
+to think about meta-levels and distinguish between compile-time and runtime organization of code:
+Modularity is a matter of semantics, as manipulated by programmers at programming-time,
+and by compilers at compile-time;
+the runtime barrier crossings of these myopic designs
+cannot conceivably do anything to help with that, only hinder.
+@;{ TODO cite something about HURD? Footnote? }
+
+Now, there are sometimes quite valid socioeconomic (and not technical) justifications
+for dividing a program into multiple services:
+when there are many teams having distinct incentives, feedback loops, responsibilities,
+service level agreements they are financially accountable for, etc.,
+it makes sense for them to deploy distinct services.
+Indeed, Conway’s Law @~cite{Conway1968}
+states that the technical architecture of software follows its business or management architecture.
 
 @subsection{Implementing Modularity}
 
@@ -485,7 +498,7 @@ language-internal processor, before the program starts.
 In either of the above cases, a whole-program optimizer might fully resolve
 those modules such that no trace of them is left at runtime.
 Without a whole-program optimizer, compilers usually generate global linkage tables
-for the module context, that will be resolved
+for the module context; this context will be resolved
 statically by a static linker when producing an executable file,
 or dynamically by a dynamic loader when loading shared object files,
 in either case, before any of the programmer’s regular code is run
@@ -493,9 +506,9 @@ in either case, before any of the programmer’s regular code is run
 
 At the other extreme, an implementation might defer
 all third-class or second-class module evaluation until runtime;
-the runtime representation of those modules would being no different
-than if first-class internal modularity was used.
-However, the semantics distinction remains,
+the runtime representation of those modules would be no different
+than if first-class internal modularity were used.
+However, the semantic distinction remains,
 as these representations will be inaccessible to regular programmers;
 and there might be benefits to keeping modularity compile-time only
 in terms of program analysis, synthesis or transformation.
@@ -509,91 +522,104 @@ by such a “dispatch table” at runtime—which in Class OO
 would be the type descriptor for each object, carried at runtime for dynamic dispatch.
 
 In a low-level computation with pointers into mutable memory,
-the module context is often being accessed through a global variable,
-or if not global, passed to functions implementing each module as a special context argument,
-and each field or subfield is initialized through side-effects,
-often with some static protocol to ensure that they are (hopefully, often all) initialized
+the module context is often accessed through a global variable,
+or if not global, passed to functions implementing each module as a special context argument;
+its fields or subfields are initialized through side-effects,
+often with some static protocol to ensure that they are (hopefully) all initialized
 before they are used.
 In a high-level computation without mutation,
-each module is implemented as a function taking the module context as argument,
-the fields are implemented as functional lenses (@secref{OfOO}),
+each module is implemented as a function taking the module context as argument;
+its fields are implemented as functional lenses (@secref{OfOO}),
 and the mutual recursion is achieved using a fixpoint combinator (@secref{UPSLC});
 lazy evaluation may be used as a dynamic protocol to ensure that
-each field is initialized before it is used@xnote["."]{
-  It is hard to ensure initialization before use;
-  a powerful enough language makes it impossible to predict whether that will be the case.
+each field is initialized before it is used.
 
-  In unsafe languages, your program will happily load nonsensical values from
-  uninitialized bindings, then silently corrupt the entire memory image,
-  “dance a fandango on core” @~cite{Raymond1996},
-  cause a segmentation fault and other low-level failures,
-  or even worse, veer off into arbitrary undefined behavior and yield
-  catastrophically wrong results to unsuspecting users.
-  The symptoms, if any, are seen long after the invalid use-before-init,
-  making the issue hard to pin-point and debugging extremely difficult
-  unless you have access to time-travel debugging at many levels of abstraction.
+@subsubsection{Initializing Recursive Structures}
 
-  In not-so-safe languages, a magic NULL value is used, or for the same semantics
-  just with additional syntactic hurdles, you may be forced to use some option type;
-  or you may have to use (and sometimes provide out of thin air) some default value
-  that will eventually prove wrong.
-  In the end, your program will fail with some exception,
-  which may happen long after the invalid use-before-init,
-  but at least the symptoms will be visible and you’ll have a vague idea
-  what happened, just no idea where or when.
+When data structures constitute a tree or a DAG,
+there is an order in which they can be constructed such that at all times,
+all references point to fully constructed and initialized objects,
+satisfying all the desired invariants of the system.
+However, when there are circularities in the data structures, then
+it is actually hard to ensure initialization before use;
+a powerful enough language makes it impossible
+to predict for sure whether that will be the case.
+And as I will show in the next chapter,
+circularities are the general case in the presence of modularity—and
+only more so with OO, i.e. modular extensibility.
 
-  Actually safe languages, when they can’t prove init-before-use,
-  will maintain and check a special “unbound” marker in the binding cell or next to it,
-  possibly even in a concurrency-protected way if appropriate,
-  to identify which bindings were or weren’t initialized already, and
-  eagerly raise an exception immediately at the point of use-before-init,
-  ensuring the programmer can then easily identify where and when the issue is happening,
-  with complete contextual information.
+In unsafe languages, your program will happily load nonsensical values from
+uninitialized bindings, then silently corrupt the entire memory image,
+“dance a fandango on core” @~cite{Raymond1996},
+cause a segmentation fault and other low-level failures,
+or even worse, veer off into arbitrary undefined behavior and yield
+catastrophically wrong results to unsuspecting users.
+The symptoms, if any, are seen long after the invalid use-before-init,
+making the issue hard to pinpoint and debugging extremely difficult
+unless you have access to time-travel debugging at many levels of abstraction.
 
-  In even safer languages, lazy evaluation automatically ensures that you always have init-before-use,
-  and if the compiler is well done may even detect and properly report finite dependency cycles;
-  you may still experience resource exhaustion if you generate infinite new dynamic dependencies,
-  but so would you in the less safe alternatives if you could reach that point.
+In not-so-safe languages, a magic NULL value is used;
+for the same semantics just with additional syntactic hurdles,
+you may be forced to use some option type;
+or you may have to use (and sometimes provide out of thin air) some default value
+that will eventually prove wrong.
+In the end, your program will fail with some exception,
+which may happen long after the invalid use-before-init,
+but at least the symptoms will be visible and you’ll have a vague idea
+what happened, just no idea where or when.
 
-  Safest languages may require you to statically prove init-before-use in finite time,
-  which may be very hard with full dependent types,
-  or very constraining with a more limited proof system,
-  possibly forcing you to fall back to only the “not-so-safe” alternative.
-  But this technology is onerous and not usable by programmers at large.
+Actually safe languages, when they can’t prove init-before-use,
+will maintain and check a special “unbound” marker in the binding cell or next to it,
+possibly even in a concurrency-protected way if appropriate,
+to identify which bindings were or weren’t initialized already, and
+eagerly raise an exception immediately at the point of use-before-init,
+ensuring the programmer can then easily identify where and when the issue is happening,
+with complete contextual information.
 
-  Some languages may let you choose between several of these operation modes depending
-  on compilation settings or program annotations.
+In even safer languages, lazy evaluation automatically ensures that you always have init-before-use,
+and if the compiler is well done may even detect and properly report finite dependency cycles;
+you may still experience resource exhaustion if you generate infinite new dynamic dependencies,
+but so would you in the less safe alternatives if you could reach that point.
 
-  Interestingly, whichever safety mode is used, programmers have to manually follow
-  some protocol to ensure init-before-use.
-  However the lazy evaluation approach minimizes artificial constraints on such protocol,
-  that when not sensible might force them to fall back to the not-so-safe variant.
+Safest languages may require you to statically prove init-before-use in finite time,
+which may be very hard with full dependent types,
+or very constraining with a more limited proof system,
+possibly forcing you to fall back to only the “not-so-safe” alternative.
+But this technology is onerous and not usable by programmers at large.
 
-  The init-before-use issue is well-known and exists outside of OO: it may happen
-  whenever there is mutual recursion between variables or initial elements of data structures.
-  However, we’ll see that “open recursion” @~cite{Cardelli1989 Pierce2002},
-  i.e. the use of operators meant to be the argument of a fixpoint combinator,
-  but also possibly composition before fixpointing,
-  is ubiquitous in OO,
-  wherein partial specifications define methods that use other methods that are yet to be defined
-  in other partial specifications, that may or may not follow any particular protocol
-  for initialization order.
-  Thus we see that the simplest, most natural and safest usable setting for OO is:
-  lazy evaluation.
+Some languages may let you choose between several of these operation modes depending
+on compilation settings or program annotations.
+But whichever safety mode is used, programmers have to manually follow
+some protocol to ensure init-before-use.
+However, protocols with overly restrictive constraints will force programmers
+to fall back to not-so-safe variants.
+Meanwhile, the protocol that minimizes artificial constraints is lazy evaluation.
 
-  This may come as a surprise to many who mistakenly believe the essence of OO
-  is in the domain it is commonly applied to
-  (defining mutable data structures and accompanying functions as “classes”),
-  rather than in the semantic mechanism that is being applied to these domains
-  (modular extensible definitions of arbitrary code using inheritance).
-  But this is no surprise to those who are deeply familiar with C++ templates, Jsonnet or Nix,
-  and other systems that allow programmers to directly use unrestricted OO
-  in a more fundamental purely functional setting wherein OO can be leveraged
-  into arbitrary programming and metaprogramming, not just for “classes” stricto sensu.
-  In the next subsection, I argue the case from the point of view of modularity
-  rather than initialization safety;
-  however, both can be seen as two aspects of the same argument about semantics.
-}
+The init-before-use issue is well-known and exists outside of OO: it may happen
+whenever there is mutual recursion between variables or initial elements of data structures.
+However, we’ll see that “open recursion” @~cite{Cardelli1989 Pierce2002},
+i.e. the use of operators meant to be the argument of a fixpoint combinator,
+but also possibly composition before fixpointing,
+is ubiquitous in OO:
+partial specifications define methods that use other methods that are yet to be defined
+in other partial specifications that may or may not follow any particular protocol
+for initialization order.
+Thus we see that the simplest, most natural and safest usable setting for OO is:
+lazy evaluation.
+
+This may come as a surprise to many who mistakenly believe the essence of OO
+is in the domain it is commonly applied to
+(defining mutable data structures and accompanying functions as “classes”),
+rather than in the semantic mechanism that is being applied to these domains
+(modular extensible definitions of arbitrary code using inheritance).
+But this is no surprise to those who are deeply familiar with C++ templates, Jsonnet or Nix,
+and other systems that allow programmers to directly use unrestricted OO
+in a more fundamental purely functional setting wherein OO can be leveraged
+into arbitrary programming and metaprogramming, not just for “classes” stricto sensu.
+In the next subsection, I argue the case from the point of view of modularity
+rather than initialization safety;
+however, both can be seen as two aspects of the same argument about semantics.
+
 The more programmers must agree on a protocol to follow, the less modular the approach.
 In a stateful applicative language, where the various modular definitions
 are initialized by side-effects, programmers need to follow some rigid protocol
@@ -616,8 +642,7 @@ the initialization of objects of the actually desired class.
 
 @exercise[#:difficulty "Easy"]{
   Consider software projects you have written or used.
-  Identify what are the units of modularity, and for each unit,
-  what are its interface vs its implementation.
+  Identify the units of modularity, and for each unit, its interface vs its implementation.
   How much of the interface is formal, versus how much is informal?
 }
 
@@ -637,7 +662,7 @@ the initialization of objects of the actually desired class.
   that mixes project-specific instructions with generic and conditional shared instructions.
   Or, if you manage several Unix machines,
   generate some machine-wide (in @c{/etc}) or personal configuration file
-  (in @c{~/.*} of @c{~/.config/*}) from a script specialized with machine-specific parameters.
+  (in @c{~/.*} or @c{~/.config/*}) from a script specialized with machine-specific parameters.
 }
 
 @exercise[#:difficulty "Medium"]{
@@ -655,7 +680,7 @@ the initialization of objects of the actually desired class.
 }
 
 @exercise[#:difficulty "Hard"]{
-  Identify a language with some modularity features that are less modular than could be:
+  Identify a language with some modularity features that are less modular than they could be:
   the feature still requires programmers to manually curate redundancies within or across files,
   to tightly couple changes in multiple locations, etc.
   Use macros or a preprocessor to reduce the coupling and offer a more modular abstraction
@@ -712,7 +737,7 @@ in terms of what modifications it affordably enables,
 yet less restricted than either in terms of enabling last-minute customization
 based on all the information available to the program.
 
-These notions of extensibility are complementary and not opposite, for often to extend a program,
+These notions of extensibility are complementary and not opposites, for often to extend a program,
 you will first extract from the existing code a shared subset that can be used as a library
 (which is an external extension, extra-linguistic, outside the programming language),
 and rewrite both the old and new functionality as extensions of that library
@@ -732,7 +757,7 @@ first-class to fourth-class are also all the same: things they can change and au
 even when playing with otherwise “dead” programs on “regular” computing systems.
 The demarcations are still useful though:
 division of labor can be facilitated or inhibited by software architecture.
-A system that empowers an end-user to make the simple changes they need and understand,
+A system that empowers an end-user to make the simple changes they need and understand
 might prove much more economical than a largely equivalent system that requires
 a high-agency world expert to make an analogous change.
 
@@ -755,7 +780,7 @@ in Java it involves changes throughout the code—straightforward but numerous�
 preserving the local program structure;
 in Lisp it requires minimal local changes; and
 in Haskell it requires one local change only.
-Thus, with respect to this and similar kinds of change, if expected,
+Thus, with respect to this and similar kinds of change, when they are expected,
 Haskell is more extensible than Lisp, which is more extensible than Java,
 which is more extensible than C.
 @;{TODO examples for C, Java, Lisp, Haskell}
@@ -809,7 +834,7 @@ Languages with higher-order functions or object orientation enable greater inter
 by allowing the creation of new in-language entities built from existing ones
 in more powerful ways.
 To demonstrate how OO enables more extensibility, consider
-a course or library about increasingly more sophisticated data structures:
+a course or library about increasingly sophisticated data structures:
 when using a functional language with simple Hindley-Milner typechecking,
 each variant requires a near-complete rewrite from scratch
 of the data structure and all associated functions@~cite{Okasaki1996};
@@ -827,7 +852,7 @@ it is worth explaining what extensibility without modularity means.
 
 Operating Systems, applications or games sometimes deliver updates via binary patch formats
 that minimize data transmitted while maximizing changes effected to the software.
-Such patches embody pure extensibility with total lack of modularity:
+Such patches embody pure extensibility with a total lack of modularity:
 they are meaningful only when applied to the exact previous version of the software.
 Text-based diff files can similarly serve as patches for source code,
 and are somewhat more modular, remaining applicable even in the presence
@@ -852,7 +877,7 @@ of the software they want to release, after which point they use automated tools
 to extract from the modularly-achieved new version some non-modular compressed patches.
 
 As for internal extensibility without modularity,
-UML, co-Algebras or relational modeling, as previously discussed in @secref{OiaMotW},
+UML, coalgebras or relational modeling, as previously discussed in @secref{OiaMotW},
 fail to model OO precisely because the “classes” they specify are mere types:
 they lack the module context that enables self-reference in actual OO classes.
 As in-language entities, they can be extended by adding new attributes,
@@ -863,7 +888,7 @@ they may not contain any self-reference to the entity being defined and its attr
 @subsection{Extensibility and Complexity}
 
 Extensibility of software entities means that variants of these software entities
-may be reused many times in as many different contexts @~cite{Johnson1988},
+may be reused in many different contexts @~cite{Johnson1988},
 so more software can be achieved with less effort.
 
 Now, external extensibility through editing (as opposed to e.g. preprocessing)
@@ -871,14 +896,14 @@ means that these entities are “forked”,
 which in turn reintroduces complexity in the maintenance process,
 as propagating bug fixes and other changes to all the forks
 becomes all the harder as the number of copies increases.
-External extensibility through preprocessing,
-and internal extensibility, do not have this issue,
+External extensibility through preprocessing
+and internal extensibility do not have this issue,
 and, if offered along a dimension that matters to users,
 enable the development of rich reusable libraries
 that overall decrease the complexity of the software development process@xnote["."]{
   Interestingly, detractors of OO will often count “code reuse” as a bad aspect of OO:
   they will claim that they appreciate inheritance of interfaces, but not of implementation.
-  Many OO language designers, as of Java or C#, will say the same of multiple inheritance
+  Many OO language designers, as in Java or C#, will say the same of multiple inheritance
   though not of single inheritance.
   Yet, many practitioners of OO have no trouble reusing and extending
   libraries of OO classes and prototypes,
@@ -886,9 +911,9 @@ that overall decrease the complexity of the software development process@xnote["
 
   It is quite likely that users bitten by the complexities yet limitations
   of multiple inheritance in C++ or PHP may see that
-  it does not bring benefits commensurable with its costs;
+  it does not bring benefits commensurate with its costs;
   and it is also quite likely that users fooled by the absurd “inheritance is subtyping” slogan
-  found that code written under this premise does not quite work as advertised.
+  may find that code written under this premise does not quite work as advertised.
   These disgruntled users may then blame OO in general
   for the failings of these languages to implement OO,
   or for their believing false slogans and false lessons propagated by bad teachers of OO.
@@ -902,8 +927,8 @@ Then the resulting code can be kept simple and easy to reason with.
 Internal and external extensibility are thus mutual friends, not mutual enemies.
 
 By decreasing not only overall complexity, but the complexity of @emph{incremental} changes,
-extensibility also supports shorter software development feedback loops,
-therefore more agile development.
+extensibility also supports shorter software development feedback loops
+and therefore more agile development.
 By contrast, without extensibility, developers may require more effort
 before any tangible incremental progress is achieved,
 leading to loss of direction, of motivation, of support from management
@@ -913,7 +938,7 @@ Extensibility can thus be essential to successful software development.
 @subsection{Implementing Extensibility}
 
 To enable extensibility, a software entity must be represented in a way
-that allows semantic manipulation in dimensions meaningful to programmers.
+that allows semantic manipulation along dimensions meaningful to programmers.
 By the very nature of programming, any such representation is enough to
 enable arbitrary extensions, given a universal programming language,
 though some representations may be simpler to work with than others:
@@ -935,7 +960,7 @@ an extension is a function that takes the original unextended value
 and returns the modified extended value.
 In a stateful model of extensibility,
 an extension can instead be a procedure that takes a mutable reference, table or structure
-containing a value, and modifies it in-place to extend that value—sometimes
+containing a value, and modifies it in place to extend that value—sometimes
 using “hot-patches” that were not foreseen by the original programmer.
 
 @;{TODO examples}
@@ -947,7 +972,7 @@ using “hot-patches” that were not foreseen by the original programmer.
 @exercise[#:difficulty "Easy"]{
   For each of the following, identify whether it is an example of
   first-class, second-class, third-class, or fourth-class extensibility,
-  or not extensibility at all:
+  or not an example of extensibility at all:
 }
 @itemize[
   @item{
@@ -990,7 +1015,7 @@ using “hot-patches” that were not foreseen by the original programmer.
 @exercise[#:difficulty "Medium"]{
   Consider various programming interactions you are having with colleagues,
   members of a community, or authors of libraries.
-  What are pieces of software you might want to extend
+  Which pieces of software might you want to extend
   but cannot extend in practice without reimplementing it completely?
   What prevents you?
   How could you (or the original authors) modify the software to make it more extensible?
@@ -999,7 +1024,7 @@ using “hot-patches” that were not foreseen by the original programmer.
 @exercise[#:difficulty "Hard"]{
   Use some text-processing tools to achieve third-class extensibility
   for a language lacking internal extensibility,
-  by programmatically extending some existing code without modifying the original function.
+  by programmatically extending some existing code without modifying the original code.
   You may insert markers in the original code for where things should be edited,
   without modifying its semantics;
   the third-class extension should use those markers, or contextual information,
@@ -1009,22 +1034,22 @@ using “hot-patches” that were not foreseen by the original programmer.
   @; TODO make a more concrete example
 
   Notice how much harder this is than with modularity,
-  because you have to deal non-trivially with programs as input, not just output.
+  because you have to deal nontrivially with programs as input, not just output.
 }
 
 @exercise[#:difficulty "Hard" #:tag "4polyinterpol"]{
   With the help of an AI if needed, write a simple numerical program,
   say polynomial interpolation using Newton’s or Lagrange’s method,
-  with floating point numbers.
+  with floating-point numbers.
   How much do you need to modify it to work with arbitrary-precision rational numbers?
-  With numbers from finite field @c{F_q}, yielding a Reed-Solomon code (say with q=256)?
+  With numbers from a finite field @c{F_q}, yielding a Reed-Solomon code (say with q=256)?
   Can you write a version that shares the logic between different number fields,
-  and gets instantiated into a variant with a specific field in a single line, or two to the most?
+  and gets instantiated into a variant with a specific field in a single line, or two at most?
   Compare the situation in C, Java, Lisp, Haskell.
 }
 
 @exercise[#:difficulty "Research"]{
-  Identify some existing software you actually use,
+  Identify some existing software you actually use
   that should be internally extensible in some way, but isn’t.
   Formalize a reasonable use case as code that ought to work if it were indeed extensible.
   Propose a change making the software extensible that way,
@@ -1088,7 +1113,7 @@ The B5000 @~cite{Lonergan1961 Barton1961} is a hardware architecture that
 among other innovations introduces a notion of “locator words”,
 whereby data and code are accessed indirectly through “program reference tables”.
 Two table registers are supported, a global one, that prefigures global linker tables,
-and local, that prefigures an object’s virtual dispatch table.
+and a local one, that prefigures an object’s virtual dispatch table.
 Writing code against such tables was modular;
 extending the tables was extensibility;
 furthermore this style enables what we’d now call position-independent code and data.
@@ -1105,34 +1130,36 @@ therefore I’ll call this third-and-a-half modular extensibility, which is exte
 
 Sketchpad @~cite{Sutherland1963} is an ancestor of graphical CAD programs,
 with a builtin constraint solver that you configure through a system
-of “masters and instances”: you could modularly define new objects as made
+that had modularity and extensibility almost but not quite together.
+With its “masters and instances”, you could modularly define new objects as made
 of components, each an instance of an existing object transformed by a similarity
-(affine transformation that preserves angles), and extensibly define new objects
+(affine transformation that preserves angles);
+you could thus extensibly (but not modularly) define new objects
 that further transformed previous objects or applied a composed similarity to an existing master.
-Modifications to a master would propagate to all their instances, recursively.
+Modifications to a master would propagate to all its instances, recursively.
 Sketchpad also had “generic blocks” to package graphical operations in a uniform way
-against a common interface—once again an instance of modularity.
-Sketchpad didn’t have “self” references, though, so modularity and extensibility didn’t interact
-the way needed to achieve modular extensibility. It was modularity and extensibility
-complementing each other rather than combined.
-I still include it here as one of Kay’s inspirations.
+against a common interface—providing modularity (but not extensibility),
+AFAICT the earliest explicitly documented variant of U-encoding (@secref{CfUe}).
+Sketchpad had modularity and extensibility complementing each other rather than combined,
+but all the basic ingredients for this combination were there.
+It was one of Kay’s inspirations.
 
-Not a direct influence to Alan Kay, but one to Daniel Bobrow,
-Howard Cannon @~cite{Cannon1979} and the Lisp school,
+Not a direct influence on Alan Kay, but one on Daniel Bobrow, the Lisp school
+and most probably through it Howard Cannon @~cite{Cannon1979},
 another breakthrough in modular extensibility was
 Warren Teitelman’s ADVISE facility @~cite{Teitelman1966}:
-ADVISE enabled programmers to dynamically extend a function with “advice”,
+ADVISE enabled programmers to dynamically extend a function with “advice”
 that would run before or after the function itself was called;
 those happening after could even consult or modify the value returned
 (though this was not originally an intended interface),
 or otherwise use side-effects to communicate with other advice.
 ADVISE is thus the earliest form of internal (first-class) modular extensibility,
-though it was a special-purpose form that only worked in-place at the level of named functions,
+though it was a special-purpose form that only worked in place at the level of named functions,
 with no nesting.
 
 Now of course, the modular extensibility breakthrough everyone knows about is
 Simula 67 @~cite{Dahl1967}: inspired by @citet{Hoare1965}, Dahl and Nygaard
-implement classes and sub-classes with single inheritance and “concatenation semantics”
+implement classes and subclasses with single inheritance and “concatenation semantics”
 (@secref{Inner}).
 As with ADVISE, the base and extended “inner” bodies of virtual classes and virtual procedures
 could only communicate with each other through side-effects to variables,
@@ -1151,7 +1178,7 @@ without the concept and name of OO itself (@secref{OOnaming})@xnote["."]{
   the precise understanding of when each critical trait appeared.
   Simula is missing pieces from what one may today expect of an OO language,
   yet it passes my criterion of Internal Modular Extensibility,
-  and is the first ever to pass and apply to general “objects”,
+  and is the first ever to pass it and apply to general “objects”,
   or at least to classes with nested methods (its “virtual procedures”).
 }
 
@@ -1168,12 +1195,13 @@ that includes “inheritance” (a word the authors also introduce in its modern
 they also introduce “prototypes”, and mention classes, citing Simula)@xnote["."]{
   The original intention in @citet{Winograd1975} was
   to model knowledge in terms of Frames @~cite{Minsky1974}, and not to write programs.
-  But by the time they were done in May @~cite{Bobrow1976}, the concern has shifted, and
+  But by the time they were done in May @~cite{Bobrow1976}, the concern had shifted, and
   while the frames model was still present, it had taken a secondary role,
   while defining procedures had taken a more prominent role.
-  The result was a layer on top of Lisp, what one would now call an “object system”.
+  The result was a layer on top of Lisp—what one would now call an “object system”.
   But Lisp, being extensible, blurs the distinction between a new language
-  and an extension to the existing language, and KRL was considered a language by then Lisp standards.
+  and an extension to the existing language,
+  and KRL was considered a language by Lisp standards of the time.
   The 1975 article introduces the expression “inheritance of properties” descriptively,
   without implementation;
   the 1976 article uses it as a more formal definition, with an implementation.
@@ -1194,7 +1222,7 @@ with the first “killer app” of OO, the GUI@xnote["."]{
   The point being that the taxonomy of when precisely something starts to be OO or not OO
   is less interesting than the properties of the various past systems, their interrelationships,
   their successes and failures, and what you can learn by comparing them—to
-  each other, to what is done today, and what could be done tomorrow.
+  each other, to what is done today, and to what could be done tomorrow.
 }
 
 The Smalltalk team kept innovating from there.
@@ -1218,16 +1246,15 @@ which became the vastly successful C++ in 1985. @; TODO cite
 OO became a phenomenon. The most interesting thing in programming languages.
 The future of computing. Existing languages were extended. @; TODO cite. Modula, Objective-C...
 New languages were designed specifically around OO—a notable and influential one being Eiffel,
-that included much more innovation than just the contracts it is remembered for. @; TODO cite Meyer
+which included much more innovation than just the contracts it is remembered for. @; TODO cite Meyer
 Conferences were organized and became big. @; TODO cite
-Commercial software started claiming to be OO, whether it actually was or not.
-@; TODO cite My cat is object-oriented
+Commercial software started claiming to be OO, whether it actually was or not @~cite{King1989}.
 
 Now, the standard history of OO @~cite{Black2013}
 treats Simula as the necessary and sufficient foundation of OO,
 and Smalltalk as its successor,
 while largely ignoring contributions from the Lisp tradition.
-This is not just a grave injustice, it is also a form of blindness
+This is not just a grave injustice—it is also a form of blindness
 that prevents those who commit it from understanding half of the OO tradition.
 
 Lispers quickly adopted OO in their experimental programming language
@@ -1244,11 +1271,11 @@ T @~cite{Rees1982 Adams1988},
 LOOPS @~cite{Bobrow1983},
 New Flavors @~cite{Moon1986},
 CommonLoops @~cite{Bobrow1986},
-and their crown achievement
+and their crowning achievement
 CLOS @~cite{DeMichiel1987 Bobrow1988 Keene1989 Baker1991 Gabriel1991 Graham1995}.
 That’s only for the “main line” of object systems that influenced CLOS.
 There are too many lesser-known variants to list, and I haven’t even started
-discussing the prolific French, German or Japanese schools, and many other authors world-wide.
+discussing the prolific French, German or Japanese schools, and many other authors worldwide.
 
 CLOS was an achievement, bringing together an unusually rich collection of OO mechanisms
 in a language, integrated with its standard library of functions and data structures:
@@ -1257,23 +1284,23 @@ abstraction over slot access, dynamic typechecking, an elaborate initialization 
 including re-initialization in case of changed or redefined classes,
 and even a Meta-Object Protocol @~cite{Kiczales1991} for reflection.
 It crowns the era of OO experimentation with an object system never attempted since,
-and features dearly missed by those
+and features sorely missed by those
 who have to use other programming languages after having tried Lisp.
 
 @subsubsection{OO at Work: 1989-}
 
 1989 is the year when OO becomes available to the masses.
-In 1989, Turbo Pascal 5.5 came out, and brought Object-Oriented Programming to anyone with a PC,
+In 1989, Turbo Pascal 5.5 came out and brought Object-Oriented Programming to anyone with a PC,
 with great documentation, an interactive text interface, and plenty of examples
 (it later became Delphi, bringing Rapid Application Development
 of graphical applications for Windows in 1995).
 C++ 2.0 also came out in 1989, with Turbo C++ the following year
-making it available to the mass market users of regular PCs,
+making it available to the mass-market users of regular PCs,
 when it was previously a luxury for power users with workstations or big PCs.
-Microsoft then adopted it and released its first version
+Microsoft then adopted the language and released its first version
 of a compiler and a class library in 1992.
 
-The following years brought many other successful OO languages to the industry:
+The following years saw many other OO languages rise to prominence:
 Python 1991, Lua 1993, Java and JavaScript 1995,
 Ada adopting objects 1995,
 Ruby 1995 (in Japan; Western breakout with Rails 2004–05),
@@ -1284,16 +1311,16 @@ Scala 2004, Dart 2011, Julia 2012, TypeScript 2012, Swift 2014, Kotlin 2016...
 these are just the most popular ones.
 New non-OO languages became the minority: Go 2009, Rust 2010.
 
-OO now being a serious industrial endeavor had consequences.
-Progress on the theory of OO didn’t stop, but often was refocused
+OO’s new status as a serious industrial endeavor had consequences.
+Progress on the theory of OO didn’t stop, but was often refocused
 on what industrial languages did or how to improve them.
 Java in particular became the locus of much recycling
 (but also furthering) of previous research.
-Experimentation of new or improved language features did continue—but
+Experimentation with new or improved language features did continue—but
 became slower or less relevant:
 New languages now had to compete with incumbents possessing large user and code bases.
-To be relevant, new features now needed to be backed by big corporations,
-and be backward compatible with their ecosystem.
+To be relevant, new features now needed both to be backed by big corporations,
+and to be backward compatible with their ecosystem.
 Radical redesigns became niche.
 
 @subsubsection{OO: So Normal It’s Boring: 2010-}
@@ -1303,23 +1330,36 @@ Radical redesigns became niche.
   @; Janne Johansson 1999? Greg Newton?
 }
 At some point in the 2000s, OO became so ubiquitous it became the “new normal”:
-all the popular languages had it; even languages that had resisted it for decades adopted it.
-Even FORTRAN and COBOL adopted it! @; TODO cite
+most mainstream languages had it;
+even languages with decades of pre-OO history had adopted it,
+including FORTRAN and COBOL! @; TODO cite
 And then, it stopped being exciting.
 There was a feeling of “business as usual”.
 Innovation, while it still existed, was finding diminishing returns;
 big languages had become institutionalized, and improvements, while still ongoing,
 became centralized or bureaucratic, and carried the weight of backward compatibility.
 OO was not a differentiator. If anything, new languages like Go or Rust
-differentiated themselves by conspicuously @emph{not} adopting OO.
-
-Meanwhile, highly concurrent and distributed systems, mapreduce,
-reactive functional interfaces, ever more formal methods,
+differentiated themselves by conspicuously @emph{rejecting} OO.
+Meanwhile, highly concurrent and distributed systems,
+data-parallel models such as MapReduce or SIMD,
+reactive functional interfaces, renewed interest in formal methods,
 were challenging the theretofore dominant paradigm of imperative programming,
-with which OO had been sold as a package deal since the 1980s.
-Interest in OO as such waned.
-As a sign that tables had turned, the big OO conference OOPSLA became
-a broader programming language conference SPLASH, of which OOPSLA was but a track.
+and its sequential, mutable state.
+And since OO had been sold as a package deal with imperative programming since the 1980s,
+interest in OO waned with it.
+
+As a sign that the tables had turned,
+conferences and workshops dedicated to OO disappeared or transformed around that time:
+As a response to a growing public demand, OOPSLA, the biggest OO conference since 1986,
+transformed into the broader programming language conference SPLASH in 2010,
+of which OOPSLA as such remained but a track.
+ECOOP, its European counterpart, transitioned from an OO-centric conference
+to generic Programming Language (PL) conference,
+slowly then quickly between 2009 and 2015, and by 2016 officially so.
+The TOOLS conference series, begun in 1989, paused after 2002,
+with revived from 2007 to 2012 with a broader scope, and
+had a last isolated appearance in 2019.
+The FOOL workshop ran from 1993 to 2014.
 
 Does that mean that there is “nothing new under the sun”, and
 everything about OO has already been found and invented? Not at all.
@@ -1327,6 +1367,9 @@ Actually, many of the great advances of OO from the 1980s and 1990s
 have still not been adopted by the mainstream, and are still “new” in that sense.
 Meanwhile, my bibliography contains several papers with OO innovations from after 2010;
 not as many as before the mid-1990s by far, but still a few notable ones.
+And several OO-capable languages have risen to prominence since then,
+including TypeScript, Swift, Dart or Kotlin—though
+OO was just one ordinary aspect of them, not the main selling point anymore.
 
 @subsection{Modular Extensible Specifications}
 
@@ -1337,19 +1380,19 @@ to refer to values defined and extended by other pieces of code.
 At this point, I reach the end of what can be clearly explained while remaining informal.
 I must introduce a formal model of modularity, of extensibility, and of the two together,
 to further convey the ideas behind OO without resorting to handwaving.
-The last task to carry informally is therefore a justification of my approach to formalization.
+The last task to carry out informally is therefore a justification of my approach to formalization.
 
 @section{Why a Minimal Model of First-Class OO using FP?}
 
 @subsection{Why a Formal Model?}
 
-The current section was largely appealing to well-established concepts in Computing.
+This chapter has so far relied largely on well-established concepts in computing.
 Inasmuch as it can be understood, it is only because I expect my readers
 to be seasoned programmers and scientists familiar with those concepts.
 My most complex explanations were in terms of functions from a modular context to a value,
 or from some (original) value to another (extended) value (of essentially the same type).
 As I try to combine these kinds of functions, the complexity is greater
-than can be explained away in a few words, and the devil will be in the details.
+than can be explained clearly in a few words, and the devil will be in the details.
 
 A formal model allows one to precisely define and discuss the building blocks of OO,
 in a way that is clear and unambiguous to everyone.
@@ -1363,7 +1406,7 @@ until teaching it to a @emph{computer}, i.e. expressing it as an algorithm.
   @|#:- "Donald Knuth"|
 }
 I seek a @emph{minimal} model because a non-minimal model means there are still concepts
-that haven’t been teased apart from each other, but are confused and confusing.
+that haven’t been teased apart from each other, but remain conflated and confusing.
 
 If I @emph{can} express classes in terms of prototypes, prototypes in terms of specifications,
 or multiple and single inheritance in terms of mixin inheritance,
@@ -1388,10 +1431,11 @@ Functional Programming (FP) is a computational model
 directly related to formal or mathematical logic
 whereby one can precisely reason about programs, their semantics (what they mean),
 how they behave, etc.
-The famous Curry-Howard Correspondence establishes a direct relationship
+The famous Curry-Howard Correspondence @~cite{Curry1958} @; TODO cite deBruijn1968 Howard1980 deBruijn1995 Herbelin2007
+establishes a direct relationship
 between the terms of the λ-calculus that is the foundation of FP,
-and the rules of logical deduction. That correspondence can also be extended
-to cover the Categories of mathematics, and more.
+and the rules of logical deduction.
+That correspondence can also be extended to cover Category Theory, and more.
 
 Therefore, in an essential sense, FP is indeed the “simplest” paradigm
 in which to describe the semantics of OO and other programming paradigms:
@@ -1404,10 +1448,9 @@ by using a theoretical variant of the λ-calculus,
 I and other people would not be able to directly run and test my algorithms
 without a costly and error-prone layer of translation or interpretation.
 
-An actual programming language that while very close to the λ-calculus
-comes with both additional features and additional restrictions,
-will introduce some complexity, and
-a barrier to entry to people not familiar with this particular language.
+An actual programming language that, while very close to the λ-calculus,
+comes with both additional features and additional restrictions—will introduce some complexity,
+and a barrier to entry to people not familiar with this particular language.
 But it will make it easy for me and my readers
 to run, to test, to debug, and to interact with
 the code I offer in this book,
@@ -1429,7 +1472,7 @@ language implementers still have to implement OO as a first-class construct
 within their compilers and other semantic processors.
 @principle{Anyone’s second-class entities are someone else’s first-class entities}.
 And you still don’t fully understand those entities until you have implemented them,
-at which point they are first class.
+at which point they are first-class.
 Thus, every useful minimal semantic model is always a first-class model,
 even if “only” for the implementation of a meta-level tool such as a typechecker.
 
@@ -1438,7 +1481,7 @@ even if “only” for the implementation of a meta-level tool such as a typeche
 I was flabbergasted when I first saw
 basic OO actually implemented in two function definitions,
 in the Nix standard library @~cite{Simons2015}.
-These two definitions can be ultimately traced in a long indirect line
+These two definitions can ultimately be traced in a long indirect line
 to the pioneering formalization by Bracha and Cook @~cite{Bracha1990},
 though the author wasn’t aware of the lineage, or indeed even that he was doing OO@xnote[";"]{
   Peter Simons, who implemented prototypes as a user-level library in Nix
@@ -1447,7 +1490,7 @@ though the author wasn’t aware of the lineage, or indeed even that he was doin
   but semi-independently reinvented them and their use,
   inspired by the Haskell support code by Russell O’Connor,
   and by examples and discussions with Andres Löh and Conor McBride;
-  These inspirers unlike Simons were well-versed in OO literature,
+  These authors, unlike Simons, were well-versed in OO literature,
   though they are usually known to advocate FP over OO.
 }
 however, Nix also implements conflation, a crucial element missing from Bracha and Cook.
@@ -1482,10 +1525,10 @@ Nix, that directly provides a λ-calculus with dynamic typing,
 is lazy, which actually makes the basic concepts simpler.
 But its laziness would require more care for implementers trying to port such an implementation
 to most programming contexts, that are applicative.
-Also, Nix is more recent, less well-known, its syntax and semantics less recognizable.
+Also, Nix is more recent, less well-known; its syntax and semantics are less recognizable.
 Finally, Nix, as compared to Scheme, is missing a key feature beyond the basic λ-calculus,
-that I will use when building multiple inheritance:
-the ability to test two specifications for identity.
+a feature that I will use when building multiple inheritance:
+the ability to test two specifications for identity (@secref{RSaDN}).
 
 Actually, Scheme is as far as I can tell the oldest @emph{surviving} language
 with a continuous user and code base that fully supports the λ-calculus
@@ -1494,7 +1537,7 @@ Thus, by the Lindy effect, @; TODO cite Ord2023
 it is also the language with the greatest expectation
 of continued relevance to future readers—much more so than Nix, or any other alternative.
 This means that Scheme in some form will probably survive longer than any more recent language,
-and likely much longer than whether ephemeral language is more popular today.
+and likely much longer than whatever ephemeral language is more popular today.
 Any other choice will likely make this book harder to read for potential readers across time.
 
 Therefore, I pick Scheme as the best compromise of a language in which to formalize OO.
@@ -1505,7 +1548,7 @@ Therefore, I pick Scheme as the best compromise of a language in which to formal
   I personally use Gerbil Scheme @~cite{Vyzovitis2016};
   but if you are a beginner, you will probably find it much easier to use
   the closely related language Racket @~cite{Felleisen2015};
-  or for a plain Scheme experience, I recommend Chez Scheme, that is very fast.
+  or for a plain Scheme experience, I recommend Chez Scheme, which is very fast.
   You can also play with these implementations on websites like replit.
   Another option is for you to do all exercises in your own programming language of choice,
   which will be much easier if your language at least supports first-class higher-order functions,
@@ -1514,7 +1557,7 @@ Therefore, I pick Scheme as the best compromise of a language in which to formal
 }
 
 @exercise[#:difficulty "Easy, Required"]{
-  Locate file @c{pommette/pommette.scm} that comes with the source code for this book,
+  Locate the file @c{pommette/pommette.scm} that comes with the source code for this book,
   e.g. at @url{https://github.com/metareflection/poof}.
   It contains all the examples in the book, and more, so you can run them,
   copy/paste them, modify them, play with them, etc.
@@ -1540,9 +1583,8 @@ Therefore, I pick Scheme as the best compromise of a language in which to formal
 @exercise[#:difficulty "Hard, Recommended" #:tag "04to05"]{
   Based on this informal explanation of modularity and extensibility, and
   before you read the next chapter, build your own minimal models
-  of what “modularity” and “extensibility” could mean
-  in terms of pure functional programming with first-class entities,
-  which would be “internality”.
+  of what “modularity”, “extensibility” and “internality” could mean
+  in terms of pure functional programming with first-class entities.
   In each case, make a first model that can adequately describe what you think it means;
   then strip it to the barest minimum, removing any feature not strictly necessary,
   anything that couldn’t be implemented by specializing a function argument,
