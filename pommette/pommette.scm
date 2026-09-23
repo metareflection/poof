@@ -2296,7 +2296,7 @@ let Y = f: (x: x x) (x: f (x x));
 (def empty-check-spec (constant-spec #f))
 
 ;; mix-maybe : (OrFalse Spec) → (OrFalse Spec) → (OrFalse Spec)
-(def (mix-maybe older newer)
+(def (mix-maybe newer older)
   (cond ((not newer) older)
         ((not older) newer)
         (else (mix newer older))))
@@ -2318,9 +2318,9 @@ let Y = f: (x: x x) (x: f (x x));
 (def (instance-field-spec field-id init-spec check-spec)
   (mix*
     ((field-spec~* 'instance-fields field-id 'check)
-      (λ (inh _self) (mix-maybe inh check-spec)))
+      (λ (inh _self) (mix-maybe check-spec inh)))
     ((field-spec~* 'instance-fields field-id 'init)
-      (λ (inh _self) (mix-maybe inh init-spec)))
+      (λ (inh _self) (mix-maybe init-spec inh)))
     (field-spec~ 'instance-field-names
       (λ (inh _self) (field-name-insert field-id (or inh '()))))))
 

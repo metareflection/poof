@@ -33,10 +33,10 @@ that mixin inheritance involves just
 one type constructor @c{ModExt} and two functions @c{fix} and @c{mix},
 repeated here more concisely from the previous chapter:
 @Code{
-mix : (t → s → u) → (u → s → v) → t → s → v
+mix : (u → s → v) → (t → s → u) → t → s → v
 fix : t → (t → s → s) → s
 
-(def (mix p c t s) (c (p t s) s))
+(def (mix c p t s) (c (p t s) s))
 (def (fix t m) (Y (m t)))}
 
 @section[#:tag "SI"]{Single Inheritance}
@@ -158,10 +158,10 @@ you can achieve the same effect by composing your list of modular extensions,
 and instantiate it as usual with the top value as the seed for inheritance.
 Single inheritance can be seen as a restrictive style in which to use mixin inheritance,
 wherein the modular extensions considered as specification will be tagged
-so they are only ever used but as the second argument (to the right) of the @c{mix} function,
-never the first.
-Meanwhile, those extensions used as the first argument (to the left) of the @c{mix} function
-must be constant, defined on the spot, and never reused afterwards.
+so they are only ever used but as the second argument (to the right, least specific end)
+of the @c{mix} function, never the first.
+Meanwhile, those extensions used as the first argument (to the left, most specific end)
+of the @c{mix} function must be constant, defined on the spot, and never reused afterwards.
 
 Thus, single inheritance is no more @emph{expressive} than mixin inheritance @~cite{Felleisen1990}.
 And this expressiveness corresponds to case of @emph{extensibility}
@@ -405,7 +405,7 @@ another “child” specification depends on, and the word “super” to the pa
 the value that is inherited as argument passed to the child’s modular extension.
 This is consistent with my naming the first argument to my modular extensions @c{super}
 (sometimes shortened to @c{t}, since @c{s} is taken for the @c{self} argument)
-and the first argument to my @c{mix} function @c{parent} (sometimes shortened to @c{p}).
+and the second argument to my @c{mix} function @c{parent} (sometimes shortened to @c{p}).
 Extant literature tends to confuse specification and target
 as the same entity “class” or “prototype” without being aware of a conflation,
 and so confusing “parent” and “super” is par for the course in that literature.
@@ -757,7 +757,7 @@ Since CommonLoops @~cite{Bobrow1986}, it has been customary to call this order
 the @emph{precedence list} of the class, prototype or specification, a term I will use;
 and it is also customry to keep it in most-specific-first order:
 descendants to the left, ancestors to the right,
-the opposite of the order used by my @c{mix} and @c{mix*} functions@xnote["."]{
+the same order used by my @c{mix} and @c{mix*} functions@xnote["."]{
   The Simula manual has a “prefix sequence” but it only involves single inheritance
   (that it calls concatenation semantics).
   The original Flavors paper just mentions that
@@ -2062,11 +2062,10 @@ Last but not least, the constructor for a @c{poi} is defined as follows:
        (suffix*
         (delay (cdr (force precedence-list-and-suffix*))))
        (effective-mod-ext*
-        (delay (apply mix*
-                      (reverse
-                       (cons mod-ext
-                             (map poi-mod-ext
-                                  (force pre-precedence-list*)))))))
+        (delay (mix/list
+                (cons mod-ext
+                      (map poi-mod-ext
+                           (force pre-precedence-list*))))))
        (spec
         (lambda (msg)
           (case msg

@@ -99,8 +99,8 @@ so you may call methods on it:
 (def spec←pproto car)
 (def target←pproto cdr)
 (def pproto-id (pproto←spec idModExt))
-(def (pproto-mix parent child)
-  (pproto←spec (mix (spec←pproto parent) (spec←pproto child))))
+(def (pproto-mix child parent)
+  (pproto←spec (mix (spec←pproto child) (spec←pproto parent))))
 (define pproto-mix* (op*←op1.1 pproto-mix pproto-id))
 }
 
@@ -137,7 +137,7 @@ However, the most common solution, given that most popular languages only have s
 is that the target is a type descriptor,
 that itself can always be computed without error in finite time,
 though the type may be empty, and trying to use it may result in static or dynamic errors.
-Execution in a latter stage of computation (runtime vs compile-time)
+Execution in a later stage of computation (runtime vs compile-time)
 can be seen as the ultimate form of delayed evaluation.
 
 @subsubsection{Second Issue: Recursion}
@@ -181,7 +181,7 @@ when instantiating the specification.
 This is achieved by having the instantiation function compose a “magic” wrapper specification
 added in the most-specific position to the user-given specification before it takes a fixpoint.
 Said magic wrapper will wrap any recursive reference to the target into
-an implicit conflation the specification and the target@xnote["."]{
+an implicit conflation of the specification and the target@xnote["."]{
   @citet{Abadi1996Primitive} struggle with variants of this problem,
   and fail to find a solution, because they @emph{want} to keep confusing target and specification
   even though at some level they can clearly see they are different things.
@@ -190,7 +190,7 @@ an implicit conflation the specification and the target@xnote["."]{
   they could have solved the problem and stayed on top of the λ-calculus.
   Instead, they abandon such attempts, and rebuild their own syntactic theory
   of a variant of the λ-calculus just for objects,
-  with hundreds of pages of greek symbols that still fail to properly model objects,
+  with hundreds of pages of Greek symbols that still fail to properly model objects,
   in an insanely complex @emph{abstraction inversion} @~cite{Baker1992}.
   Their futile theory can neither enlighten OO practitioners,
   nor make OO interesting to mathematical syntax theoreticians.
@@ -222,12 +222,12 @@ Note how the following functions are essentially unchanged compared to @c{pproto
 (def (qproto-wrapper spec super _self)
   (conflate spec super))
 (def (qproto←spec spec)
-  (fix-record (mix spec (qproto-wrapper spec))))
+  (fix-record (mix (qproto-wrapper spec) spec)))
 (def spec←qproto get-spec)
 (def target←qproto get-target)
 (def qproto-id (qproto←spec idModExt))
-(def (qproto-mix parent child)
-  (qproto←spec (mix (spec←qproto parent) (spec←qproto child))))
+(def (qproto-mix child parent)
+  (qproto←spec (mix (spec←qproto child) (spec←qproto parent))))
 (define qproto-mix* (op*←op1.1 qproto-mix qproto-id))
 }
 What changed from the previous @c{pproto} variant was that
@@ -252,7 +252,7 @@ between the OO models of C++ vs Java: C++ makes you deal with raw data structure
 Java with references to data structures.
 Thus, when we look carefully at Simula @~cite{Dahl1967},
 the special expression @c{this C} for class @c{C} is a “local reference” of type @c{ref C},
-an not an object of type @c{C};
+and not an object of type @c{C};
 while in C++, the keyword @c{this} refers to an “implicit pointer” of type @c{C*},
 and not an object of type @c{C}.
 The reason the indirection through a reference isn’t obvious to users of
@@ -369,13 +369,13 @@ you can often inline it away.
 (def (rproto-wrapper spec super _self method-id)
   (if method-id (super method-id) spec))
 (def (rproto←spec spec)
-  (fix-record (mix spec (rproto-wrapper spec))))
+  (fix-record (mix (rproto-wrapper spec) spec)))
 (def rproto-id (rproto←spec idModExt))
 (def (spec←rproto rproto)
   (rproto #f))
 (def target←rproto identity)
-(def (rproto-mix parent child)
-  (rproto←spec (mix (spec←rproto parent) (spec←rproto child))))
+(def (rproto-mix child parent)
+  (rproto←spec (mix (spec←rproto child) (spec←rproto parent))))
 (define rproto-mix* (op*←op1.1 rproto-mix rproto-id))
 }
 Once again, some special extension is used in most-specific position, that is not strict,
@@ -399,7 +399,11 @@ in a way that is subtly different from the encoding I have been using so far.
 It is notable for being the essence of the barebones object system of
 Yale T Scheme @~cite{Rees1982 Adams1988}
 later made portable as YASOS @~cite{Dickey1992},
-or of ORBIT @~cite{Steels1983}.
+or of ORBIT @~cite{Steels1983}@xnote["."]{
+  Confusingly, Steels’s ORBIT has an object system broadly similar to that of T,
+  and is contemporary with T, but is very different from
+  T’s later compiler, also named Orbit. @; TODO cite Kranz1986
+}
 And it was made famous by being standardized as
 the JavaScript (JS) object system @~cite{Eich1996}:
 a prototype is a record of methods encoded as functions that take
@@ -566,7 +570,7 @@ in theoretical semantic models
 and in practical implementations much later @~cite{Kiselyov2005 Simons2015 Rideau2021}.
 Interestingly, Haskell-based OO systems tend to use Y-encoding
 because it leads to simpler types @~cite{Kiselyov2005 Gale2015}@xnote["."]{
-  U-encoding is typeable in Haskell only isorecursively: @c{(newtype Half a = Half (Half a -> a)},
+  U-encoding is typeable in Haskell only isorecursively: @c{newtype Half a = Half (Half a -> a)},
   legal because Haskell imposes no positivity condition.
   Then, every self-application costs an explicit roll/unroll.
   OCaml can type it directly under the @c{-rectypes} option, which on the other hand
@@ -651,7 +655,7 @@ so as to get a fresh state to be modified by its own set of side effects,
 they can always clone the prototype,
 i.e. create a new prototype that uses the same specification.
 Equivalently, they can create a prototype that inherits from it
-using as extension the neutral element @c{(rproto←spec idModExt)}.
+using as extension the identity element @c{rproto-id}.
 
 Now, sharing rather than recomputing is an issue not just when computing a prototype as such,
 but also when computing each of its attributes—the fields of its target record.
@@ -746,7 +750,7 @@ as a paradigm to specify configuration and deployment of software on a world-wid
 each with hundreds of active developers, tens of thousands of active users,
 and millions of end-users.
 Despite its minimal semantics and relatively obscure existence,
-this mixin prototype object model has vastly outsized outreach.
+this mixin prototype object model has vastly outsized reach.
 It is hard to measure how much of this success is due to the feature of Conflation,
 yet this feature is arguably essential to the ergonomics of these languages.
 
@@ -850,8 +854,8 @@ yet no one seems to have been able to fully tease apart the concepts up until re
   and wraps it into a target record as per my minimal OO model.
 }
 @exercise[#:difficulty "Easy"]{
-  If given the half-resolved generator @c{g=(f . U)} for a prototype,
-  how do you recover the modular extension @c{f}?@Note{
+  If given the half-resolved generator @c{h=(f . U)} for a prototype,
+  how do you recover the modular extension @c{f}@xnote["?"]{
     Hint: Find a right-inverse to the self-application combinator U.
     While we’re at it, does U have a left-inverse?
   }
@@ -1048,8 +1052,8 @@ a type descriptor the methods of which may take extra parameters in front,
 one for the type descriptor of each type parameter.
 Methods that return non-function values may become functions of one or more type parameters.
 Thus, the type descriptor for a functor @c{F} may have a method @c{map}
-that takes two type parameters @c{A} and @c{B} and transforms an element of @c{F A}
-into an element of @c{F B}.
+that takes two type parameters @c{A} and @c{B}, and given a function of type @c{A → B}
+transforms an element of @c{F A} into an element of @c{F B}.
 This strategy eliminates the need to heap-allocate a lot of specialized type descriptors;
 but it requires more bookkeeping, to remember which method of which type descriptor
 takes how many extra type descriptor parameters.
@@ -1145,7 +1149,7 @@ There are many tradeoffs that can make one style preferable to the other, or not
     with different methods to work with them from a different point of view,
     parameterized by administrator-configured or user-specified parameters that vary at runtime.
     For instance, a given number may be used, in different contexts,
-    with type descriptor that will cause it to be interacted with as a decimal number text,
+    with a type descriptor that will cause it to be interacted with as a decimal number text,
     a hexadecimal number text, a position on a slide bar, or a block of varying color intensity;
     or to be serialized according to some encoding or some other.
     In a static language like Haskell, @c{newtype} enables compile-time selection between
@@ -1402,7 +1406,7 @@ i.e. putting the cart before the horse.
   with a method @c{area} that the @c{Square} and @c{Rectangle} classes should appropriately override.
   Can you figure out and implement the correct solution without reading the footnote?
   If you can’t, console yourself with the knowledge that many OO “experts” have given
-  a lot of wrong and sometimes idiotic “solutions” to this puzzle.@Note{
+  a lot of wrong and sometimes idiotic “solutions” to this puzzle@xnote["."]{
     The actual solution is of course that you should distinguish a
     @c{RectangleInterface} that has @emph{getter methods} @c{width} and @c{height},
     from @c{RectangleImplementation} that has @emph{fields} @c{%width} and @c{%height},
@@ -1432,7 +1436,7 @@ i.e. putting the cart before the horse.
 @exercise[#:difficulty "Hard"]{
   If you did the exercise @exercise-ref{4polyinterpol},
   redo it with parametric typeclass style type descriptors.
-  Throw a dice for which available representation to use
+  Roll a die for which available representation to use
   for records, for prototypes, for polymorphism.
 }
 @exercise[#:difficulty "Hard"]{
@@ -1501,8 +1505,8 @@ are typically added to Functional Programming in general,
 and wholly orthogonal to OO.
 You can model side effects externally to the language and its programs,
 wherein your language’s semantic function takes a “store” argument,
-that is consulted or modified to enact mutation, @; TODO cite
-Or you can internalize this semantic behavior within the programs of a pure language,
+that is consulted or modified to enact mutation; @; TODO cite
+or you can internalize this semantic behavior within the programs of a pure language,
 using the “state monad”. @; TODO cite
 If the “store” argument is threaded linearly with a single active value at any time
 (which is the usual case in the external approach),
@@ -1700,7 +1704,7 @@ and that those who make the other choice are wrong, stupid or crazy.
 But the computer executing the code does not care whether it was written in a language
 with or without mutability.
 And the very same algorithms can be written with mutable or immutable objects.
-Immutable computations can be expressed within an ubiquitously stateful setting
+Immutable computations can be expressed within a ubiquitously stateful setting
 by following conventions regarding never mutating objects after initialization
 and never using them before.
 And mutable computations can be expressed within a pure functional setting
@@ -1744,7 +1748,7 @@ What is the key difference in how client code must be written for each version?
 
 @exercise[#:difficulty "Medium"]{
   The chapter states that “laziness proves essential to OO,
-  even and especially in presence of side effects.”
+  even and especially in the presence of side effects.”
   Demonstrate this by:
   @itemize[
     @item{Creating a specification that performs I/O (e.g., prints a message)
@@ -1789,7 +1793,7 @@ What is the key difference in how client code must be written for each version?
   C++ is a pure functional lazy dynamic language—at compile-time.
   With the help of AI if needed, implement lazy streams, a lazy stream of all the integers,
   and a stream of all the factorial numbers, plus a test for the tenth one,
-  @c{using} a recent version of the C++ template metaprogramming language.
+  “using” a recent version of the C++ template metaprogramming language.
   If you feel gung ho about C++ templates, implement the λ-calculus,
   and on top of it the @c{mix} and @c{fix} functions and the examples from @secref{MOO}.
 }

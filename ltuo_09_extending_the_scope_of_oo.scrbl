@@ -851,10 +851,10 @@ which allows multiple inner extensions to be composed in whichever order respect
 the dependencies declared through the inheritance structure of the outer extension.
 
 When using mixin inheritance,
-you would use @c{(rproto-mix inherited extension)} (@secref{CfR})
+you would use @c{(rproto-mix extension inherited)} (@secref{CfR})
 to extend those sub-fields you want to edit.
 When using multiple or optimal inheritance, you would use
-@c{(poi-mix extension inherited)} (mind the opposite order of arguments) defined as follows@xnote[":"]{
+@c{(poi-mix extension inherited)} (always most-specific first) defined as follows@xnote[":"]{
   Most implementations of multiple inheritance do not support arbitrary DAGs, only total orders,
   for the local precedence order. This corresponds to using @c{(list parents)}
   instead of @c{(map list parents)} when specifying the local precedence order,
@@ -1108,11 +1108,11 @@ But there are many other use cases (such as I/O) for which it is beneficial to h
 a stable order in which to enumerate field names.
 @Code{
 (def (instance-field-spec field-id init-spec)
-  (mix*
+  (mix
     (field-spec~ 'instance-field-names
       (λ (inh _self) (field-name-insert field-id (or inh '()))))
     ((field-spec~* 'instance-fields field-id 'init)
-      (λ (inh _self) (mix-maybe inh init-spec)))))
+      (λ (inh _self) (mix-maybe init-spec inh)))))
 (def (field-name-insert x lst)
   (cond ((null? lst) (list x))
         ((eq? x (car lst)) lst)
@@ -1149,13 +1149,13 @@ A class could then define a default prototype for new instances as a derived fie
    (field-spec 'base-instance
     (λ (_inh self)
      (make-poi
-      (mix (constant-field-spec #t self)
-           (mix/list
+      (mix (mix/list
             (filter identity
              (map (λ (id)
                    (let ((i (self 'instance-fields id 'init)))
                      (and i (field-spec id i))))
-                  (or (self 'instance-field-names) '())))))
+                  (or (self 'instance-field-names) '()))))
+           (constant-field-spec #t self))
       #f '())))
    #f '()))
 }

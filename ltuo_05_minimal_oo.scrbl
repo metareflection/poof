@@ -35,7 +35,7 @@ I will start by formalizing First-Class Extensibility in pure FP,
 as it will be easier than modularity, and a good warmup.
 To make it clearer what kind of computational objects I am talking about,
 I will be using semi-formal types:
-purely human-enforced design-patterns, what I previously called “fourth-class” entities.
+purely human-enforced design patterns, what I previously called “fourth-class” entities.
 I leave a coherent automated “second-class” typesystem as an exercise to the reader;
 still I later offer some guidance and references to relevant literature (@secref{TfOO}).
 
@@ -154,7 +154,7 @@ With composition, strict extensions for a given type of values form a monoid
 (and general extensions form a category).
 Without composition, extensions are just disjointed second-class constants without structure.
 I will show later that this explains why in a second-class setting,
-Single inheritance is less expressive than mixin inheritance and multiple inheritance.
+single inheritance is less expressive than mixin inheritance and multiple inheritance.
 
 @subsection{Top Value}
 
@@ -189,8 +189,8 @@ the universal null pointer@xnote["."]{
   Now, to Hoare’s credit, his invention of classes in the same article,
   for which he vaguely suggests the semantics of single inheritance
   as Dahl and Nygaard would implement after his article,
-  yet that he (and they) wrongfully assimilate to subtyping,
-  was a trillion dollar happy mistake.
+  yet that he (and they) wrongfully conflate with subtyping,
+  was a trillion-dollar happy mistake.
   Overall, the effect of his article @~cite{Hoare1965} was probably net vastly positive.
 }}
 @item{For the type @c{Type} of types (in a compiler, at the meta-level),
@@ -316,8 +316,8 @@ Thus, as far as one cares about extensibility:
 }
 
 @exercise[#:difficulty "Medium"]{
-  Write a “discount” extension @c{(discount-spec percent)},
-  of the form @c{(λ (price _self) ...)}
+  Write a “discount” extension @c{(discount-ext percent)},
+  of the form @c{(λ (price) ...)}
   that takes a price and reduces it by some specified percentage.
   The percentage being a first argument to pass to the extension;
   or, if you want to be nitpicky,
@@ -337,7 +337,7 @@ Thus, as far as one cares about extensibility:
   applying an extension to a top value and using the Y combinator on the extension.
   Show a case where they produce different behaviors.
   Is the difference merely a matter of performance, or one of semantics?
-  In your example, which best corresponds to the notion of extending a specification?@Note{
+  In your example, which best corresponds to the notion of extending a specification@xnote["?"]{
     Hint: you may define a lazy stream extension: @c{(λ (x) (lazy-cons 1 x))}.
     Apply it to @c{top = (lazy ⊥)} and compare the behavior to that of @c{(Y f)}.
     What happens when you force the first few elements?
@@ -362,7 +362,7 @@ I need to address several issues, each time with functions:
 @itemize[
 @item{First, programmers must be able to define several independent entities.
 For that, I introduce records, as functions from identifiers to values.}
-@item{Second, programmers must be able to use existing modularly-defined entities.
+@item{Second, programmers must be able to use existing modularly defined entities.
 For that, I introduce the notions of module context as a record,
 and modular definition as function from module context to entity.}
 @item{Third, programmers must be able to publish the entities they define
@@ -429,9 +429,9 @@ scoping and provenance information, used for second-class macro-expansion).
 For example, where @c{Number} is the type of numbers and @c{String} the type of strings,
 I could have a record type
 @Code{
-type ∏R = {x: Number, y: Number, color: String}
+type R = {x: Number, y: Number, color: String}
 }
-and a point @c{point-c} of type @c{∏R} defined as follows:
+and a point @c{point-c} of type @c{R} defined as follows:
 @Code{
 (def point-c
   (record (x 3) (y 4) (color "blue")))
@@ -464,7 +464,7 @@ though they might be used (with caution) in the context of mutable objects.
 Also, many papers and experiments use a linked list of (key, value) pairs,
 known in the Lisp tradition as an alist (association list),
 as a simple implementation for records;
-alists don’t scale beyond a few hundreds of elements,
+alists don’t scale beyond a few hundred elements,
 but don’t need to in the context of the present experiments.
 Nevertheless to make the semantics of records clear, I will provide
 a trivial purely functional implementation, that has even more scaling issues,
@@ -477,13 +477,13 @@ The basic reference operator is just function application:
 The empty record can be represented as a function that always fails,
 such as @c{(λ (_) (error "empty record"))}@xnote["."]{
   As a convention, I will call @c{_} a generic variable that is never used,
-  and prefix with @c{_} the names of variables that are not used in a specific functions,
+  and prefix with @c{_} the names of variables that are not used in a specific function,
   even though they are used by other functions satisfying the same interface.
   Thus @c{_string} is a name for a string variable that is not used by the present function,
   @c{_self} a variable usually called @c{self} that is ignored in the current function, etc.
   This convention makes it easier to identify at a glance
   which parts of a higher-order functional interface are used or ignored by a given function.
-  Some compilers enforce this kind of conventions, making them part of the language.
+  Some compilers enforce this kind of convention, making them part of the language.
 }
 Now, the “fail if not present” representation is great when implementing a (notionally)
 statically typed model. But for a dynamic environment, a “nicer” representation
@@ -513,8 +513,8 @@ Not only does one not need these features to implement OO@xnote[","]{
   to show the feasibility and practicality of the approach;
   and this way the code can be directly ported to any language with higher-order functions.
 }
-they constitute a “reflection” API
-that if, exposed, would interfere with various compiler optimizations,
+they also constitute a “reflection” API
+that, if exposed, would interfere with various compiler optimizations,
 the use of which is actively rejected when statically typing records.
 However, there are other reasons why my implementation is not practical for long-running programs:
 it leaks space when a binding is overridden,
@@ -550,7 +550,7 @@ possibly extracted via reflection), you can merge the records along those sets o
 by converting in order each record to a list of bindings for its given set of identifiers,
 appending those lists, and converting the appended result to a record.
 
-@subsection{Modular definitions}
+@subsection{Modular Definitions}
 
 Now I can introduce and model the notion of modular definition:
 a modular definition is a way for a programmer to specify
@@ -595,9 +595,9 @@ from a module context of type @c{∏R} that provides
 a function @c{ls} of type @c{String → List(String)} and
 a function @c{sort} that sorts a list of strings:
 @Code{
-type R = { ls: String → List(String),
-           sort: List(String) → List(String) }
-(def ls-sorted (λ (ctx) (compose (ctx 'sort) (ctx 'ls)))) ;; : R
+type R2 = { ls: String → List(String),
+            sort: List(String) → List(String) }
+(def ls-sorted (λ (ctx) (compose (ctx 'sort) (ctx 'ls)))) ;; : ∏R2 → (String → List(String))
 }
 
 Note how in the above code snippet, I model records as functions from symbol to value,
@@ -662,7 +662,7 @@ Interestingly, I already mentioned a solution:
 the fixpoint combinator @c{Y}.
 And whereas it was the wrong solution to resolve extensions,
 it is precisely the right solution to resolve modular definitions:
-the @c{Y} combinator “ties the knots”,
+the @c{Y} combinator “ties the knot”,
 links each reference requiring an entity to the definition providing it,
 and closes all the open loops.
 It indeed does the same in an FP context that an object linker does
@@ -731,7 +731,7 @@ and even variable numbers of arguments, or, in some dialects, optional or keywor
 which does not map directly to mathematical variants of Functional Programming;
 but it is an error to call a function with the wrong number of arguments.
 
-@subsubsection{Lots of Insipid and Stupid Parentheses}
+@subsubsection{Lots of Irritating and Superfluous Parentheses}
 One approach to resolving this discrepancy is to just cope with
 the syntactic ugliness of unary functions in Scheme,
 with a lot of extra parentheses everywhere,
@@ -742,7 +742,7 @@ with an unusual accumulation of them to the left of expressions@xnote["."]{
   and is usually capitalized since—Lisp)
   and its many dialects and derivatives,
   among which Scheme is prominent, invented the backronym
-  “Lots of Insipid and Stupid Parentheses” to deride its syntax.
+  “Lots of Irritating and Superfluous Parentheses” to deride its syntax.
 
   While Lispers sometimes yearn for terser syntax—and
   at least one famous Schemer, Aaron Hsu, jumped ship to APL—to them,
@@ -871,7 +871,7 @@ the pure λ-calculus subset of Scheme is actually quite bad in practice.
 @subsubsection{Applicative Y}
 First, here is the applicative Y combinator, that I will call Ye (for Y, eager)
 expressed in terms of the composition combinator B and
-the self-application combinator U (called Ue for U, eager)@Note{
+the self-application combinator U (called Ue for U, eager)@xnote[":"]{
   A simple way to test the applicative/eager @c{Ye} combinator,
   or the subsequent variants @c{Yex} and @c{Yes}
   is to use it to define the factorial function:
@@ -880,7 +880,7 @@ the self-application combinator U (called Ue for U, eager)@Note{
   then you can define factorial as
   @c{(def fact (Ye eager-pre-fact))}
   and you can then test that e.g. @c{(fact 6)} returns @c{720}.
-}@Note{
+}@xnote[""]{
   Also note that the self-application combinator U @~cite{Kiselyov2024},
   sometimes called the duplication combinator Δ, or ω
   (because @c{Ω = ω ω} is the canonical λ-term that never terminates),
@@ -894,7 +894,7 @@ the self-application combinator U (called Ue for U, eager)@Note{
   the essence of the object encoding in @secref{CfUe}.
   This combinator is famously called M, the Mockingbird combinator,
   in the delightful @citet{Smullyan1985}.
-}:
+}
 @Code{
 (def (B x y z) ;; composition
   (x (y z)))
@@ -918,8 +918,8 @@ that would otherwise diverge is to protect this evaluation under a λ.
 I happen to have chosen a representation of records as functions,
 such that the applicative Y still directly applies,
 on which I depend a lot in this and subsequent chapters.
-If not, I may have had to somehow wrap my records in some sort of function,
-at which point I may as well use the lazy Y below,
+If not, I might have had to somehow wrap my records in some sort of function,
+at which point I might as well use the lazy Y below,
 or switch to representing modular contexts as records of functions,
 instead of functions implementing or returning records.
 
@@ -1229,10 +1229,10 @@ to compose each extension under the module context and bound identifier,
 an operation that for reasons that will soon become obvious
 I will call mixin inheritance (of modular extensions):
 @Code{
-(def (mix p c t s)
+(def (mix c p t s)
   (c (p t s) s))
 }
-The variables @c{p} and @c{c} stand for “parent” and “child” specifications,
+The variables @c{c} and @c{p} stand for “child” and “parent” specifications,
 wherein the target value @c{t} “inherited” by the composed function
 will be extended first by @c{p} then by @c{c},
 each time within the module context @c{s}.
@@ -1296,12 +1296,12 @@ for the same reasons@xnote["."]{
 Modular extensions and their composition have nice algebraic properties.
 Indeed, modular extensions for a given context form a category,
 wherein the operation is composition with the @c{mix} function,
-and the neutral element @c{idModExt} is the specification that “extends”
+and the identity element @c{idModExt} is the specification that “extends”
 any and every value by returning it unchanged, as follows@xnote[":"]{
-  As usual, a change of representation from @c{m} to @c{mm = (λ (p) (mix p m))},
+  As usual, a change of representation from @c{m} to @c{mm = (λ (p) (mix m p)) = (mix m)},
   with inverse transformation @c{m = mm idModExt},
   would enable use of the regular @c{compose} function
-  for composition of specifications (with information flow left-to-right).
+  for composition of specifications (with information flow right-to-left).
   Haskellers and developers using similar composition-friendly languages
   might prefer this kind of representation,
   the way they like van Laarhoven lenses @~cite{OConnor2012};
@@ -1314,19 +1314,22 @@ any and every value by returning it unchanged, as follows@xnote[":"]{
   to properly translate between calling conventions when consulting different sources.
 }
 @Code{
-(def (idModExt t _s)
-  t)
+(def (idModExt super _self)
+  super)
 }
-Note that since I decided to put the parent before the child as argument,
-this “mix” is contravariant with the composition of functions of @c{c} and @c{p},
-and the flow of information in this syntax goes left-to-right.
+Note that since I decided to put the child before the parent as argument,
+this “mix” is covariant with the composition of functions of @c{c} and @c{p},
+and the flow of information in this syntax goes right-to-left,
+same as it does in function composition itself.
 The opposite call convention is also possible, with various minor tradeoffs.
 Ultimately, the order of arguments is immaterial to the semantics, up to a simple isomorphism.
 Still, covariance is important for usability.
-The @c{super} parameter strongly corresponds to the @c{parent} specification;
-the @c{self} parameter corresponds to the @c{child}, but only weakly so;
-thus the contravariant @c{c p t s} and @c{p c s t} orders are slightly unaesthetic.
-Meanwhile, the left-to-right or right-to-left flow of information
+The @c{super} parameter strongly corresponds to the @c{parent} specification
+(it represents the partial computation of the target up until the parent);
+meanwhile, the @c{self} parameter corresponds to the @c{child}, but only weakly so
+(it represents the final computation of the target, which can be well past the child).
+Thus the @c{c p t s} and @c{p c s t} orders are slightly unaesthetic.
+Yet importantly, the left-to-right or right-to-left flow of information
 should match the general style of the rest of your language or its standard library,
 the order of the parents in the class definition syntax, and/or
 the order in which you store the precedence list (@secref{MI}).
@@ -1370,12 +1373,12 @@ or to inline @c{fix} in its definition:
 Note that the language-wide top type is too wide in some contexts:
 for instance I chose @c{Any} as my top type in Scheme, with @c{#f} as my top value; but
 you may want to choose the narrower @c{Record} as your top type,
-so as to be able define individual methods,
-with a @c{empty-record} as default value.
+so as to be able to define individual methods,
+with an @c{empty-record} as default value.
 
 Then you can mix to the right of your modular extension,
 a modular extension that follows it, and that throws away
-any the previous value or computation (i.e. ignores its @c{super} argument)
+any previous value or computation (i.e. ignores its @c{super} argument)
 and returns the new default value regardless of context (ignores its @c{self} argument;
 unless that default is extracted from the context):
 @Code{
@@ -1387,11 +1390,11 @@ specialized for records in any of the following ways:
 @Code{
 (def fix-record (fix empty-record))
 (def fix-record (λ (m) (Y (m empty-record))))
-(def (fix-record m) (fixt (mix record-spec m)))
+(def (fix-record m) (fixt (mix m record-spec)))
 }
 Note that because it ignores its @c{super} argument and thus throws away any inherited value,
-the @c{record-spec} modular extension must appear first (as parent), or at least
-before any modular extension the result of which isn’t to be ignored.
+the @c{record-spec} modular extension must appear last (as parent), or at least
+after any modular extension the result of which isn’t to be ignored.
 Why not make @c{empty-record} the language-wide default?
 Because the language-wide default will apply not just to the specification of records,
 but also to the specification of individual fields of each record,
@@ -1416,7 +1419,7 @@ and to the actual implementation of “extensions” in nixpkgs @~cite{Simons201
   that they universally apply to target values of any type, with a module context of any type.
   I can therefore claim as my innovation a wider, more general understanding of mixin inheritance,
   of which there is no evidence in earlier publications.
-}.
+}
 This style of inheritance was dubbed “mixin inheritance” by Bracha and Cook@xnote[";"]{
   The name “mixin” originally comes from Flavors @~cite{Cannon1979},
   inspired by the ice cream offerings at Emack & Bolio’s
@@ -1429,7 +1432,7 @@ This style of inheritance was dubbed “mixin inheritance” by Bracha and Cook@
   that does not include automatic linearization of transitive dependencies.
   Also, “mixins” in Flavors are not distinguished by the language syntax or by the compiler;
   they are just abstract classes not meant to be instantiated,
-  but to be inherited from (the word “abstract class” didn’t exist back then);
+  but to be inherited from (the term “abstract class” didn’t exist back then);
   a mixin in Flavors need not make sense as a base class, and
   can instead be inherited as part of many different hierarchies.
   Since the word implies no special processing by the compiler or by the human operator,
@@ -1516,7 +1519,8 @@ or would be wrapped in a thunk, to avoid unneeded computations (that might not e
 or for more power, the @c{compute-value} function
 would directly take @c{super} as its first argument,
 and @c{(super method-id)} would only be computed in the second branch.
-In a lazy context, @c{lazy-field-spec} could also directly use @c{extend-lazy-record}
+In a lazy context, a lazy variant @c{lazy-field-spec} of @c{field-spec}
+could also directly use a lazy variant @c{extend-lazy-record} of @c{extend-record}
 to add a binding to a record without having to eagerly compute the bound value.
 
 Whichever way simple modular extensions are defined,
@@ -1551,20 +1555,20 @@ Indeed, I will check that one can instantiate a point specified by combining
 the color and coordinate modular extensions above, and that the values
 for @c{x} and @c{color} are then as expected:
 @Code{
-(def point-ac (fix-record (mix coord-spec color-spec)))
+(def point-ac (fix-record (mix color-spec coord-spec)))
 (point-ac 'x) ;⇒ 2
 (point-ac 'color) ;⇒ "blue"}
 Consider how @c{x} is computed.
 @c{fix-record} provides the @c{empty-record} as the top value for composition of modular extensions.
 Then, modular extensions are applied under call-by-value evaluation,
-with left-to-right flow of information from parent to child.
+with right-to-left flow of information from parent to child.
 When querying the composed modular extension for method @c{x},
-the parent specification @c{coord-spec} is applied first (as it has the leftmost position),
+the parent specification @c{coord-spec} is applied first (as it has the rightmost position),
 and matches the key @c{x};
 it is then passed the top value @c{#f} extracted as a fallback default
 when trying to read a missing field from @c{empty-record};
 it proceeds to ignore that value, and return @c{2};
-that value is then returned unchanged by @c{color-spec} (the child, right position),
+that value is then returned unchanged by @c{color-spec} (the child, left position),
 since @c{x} does not match its key @c{color}.
 Similarly, the query for method @c{color} returns the string @c{"blue"}.
 
@@ -1608,14 +1612,14 @@ but have to be provided by other modular extensions to be composed with it using
 }
 I can check that the above definitions work,
 by instantiating the composed modular extensions
-@c{rho-spec}, @c{coord-spec} and @c{(add-x-spec 1)},
+@c{(add-x-spec 1)}, @c{coord-spec} and @c{rho-spec},
 and verifying that the @c{x} value is indeed @c{3}:
-i.e., first (parent-to-child, left-to-right) specified to be @c{2} by @c{coord-spec},
+i.e., first (parent-to-child, right-to-left) specified to be @c{2} by @c{coord-spec},
 then incremented by @c{1} by @c{(add-x-spec 1)}.
 Meanwhile @c{rho} is @c{5}, as computed by @c{rho-spec} from the @c{x} and @c{y} coordinates:
 @Code{
 (def point-r
-  (fix-record (mix rho-spec (mix coord-spec (add-x-spec 1)))))
+  (fix-record (mix (add-x-spec 1) (mix coord-spec rho-spec))))
 (point-r 'x) ;⇒ 3
 (point-r 'rho) ;⇒ 5
 }
@@ -1623,20 +1627,20 @@ This demonstrates how modular extensions work
 and indeed implement the basic design patterns of OO.
 
 Because @c{mix} is associative, instead of using long chains of nested binary calls to @c{mix},
-I will use an n-ary @c{mix*} that can defined as follows,
+I will use an n-ary @c{mix*} that can be defined as follows,
 given an appropriate wrapper @c{op*←op1.1} left as an exercise to the reader
 (you can look at the version I wrote in the @c{pommette.scm} file accompanying this book):
 @Code{
 (define mix* (op*←op1.1 mix idModExt))
 }
-With this @c{mix*}, the leftmost argument is the least specific ancestor,
-and the rightmost argument is the most specific descendant (overriding previous ones).
+With this @c{mix*}, the leftmost argument is the most specific descendant
+(overriding previous ones), and the rightmost argument is the least specific ancestor.
 Now, note how trying to instantiate @c{(add-x-spec 1)} or @c{rho-spec} alone would fail:
 the former relies on the @c{super} record to provide a useful inherited value to extend,
 whereas the latter relies on the @c{self} context to modularly provide @c{x} and @c{y} values.
 Neither modular extension is meant to stand alone,
 but instead to be a mixin, in the sense of Flavors—an abstract class, or a trait,
-members of some programming language ecosystems would say.
+as members of some programming language ecosystems would say.
 That not every specification can be successfully instantiated
 is actually an essential feature of modular extensibility,
 since the entire point of a specification is to contribute some @emph{partial} information
@@ -1779,7 +1783,7 @@ And now, on top of this Minimal OO, I will rebuild all the usual concepts of OO.
 
 @exercise[#:difficulty "Easy"]{
   Write a specification that defines polar coordinates for a 2d point
-  with defined cartesian coordinates, and another specification the other way around.
+  with defined Cartesian coordinates, and another specification the other way around.
   Test your specifications with various points.
   What happens if you compose those two specifications, try to instantiate them,
   and extract coordinates?
@@ -1792,7 +1796,7 @@ And now, on top of this Minimal OO, I will rebuild all the usual concepts of OO.
 @exercise[#:difficulty "Medium"]{
   Write modular extensible specifications that rely on @c{base-bill-of-parts}
   to contribute a chassis, axles, wheels, etc., where, to simplify, each part is just a string,
-  e.g. @c{"front left wheel"}, and each specification contribute one or many parts.
+  e.g. @c{"front left wheel"}, and each specification contributes one or many parts.
   Define overall specifications for a toy car, a toy truck, a toy motorcycle, a toy bicycle,
   while trying to share as much code as possible between the different toys.
   You may define functions that take arguments, manipulate strings, and return specifications.
@@ -1829,7 +1833,7 @@ And now, on top of this Minimal OO, I will rebuild all the usual concepts of OO.
   In the end, you will have bootstrapped a more efficient representation for records
   from a simple one.
   Write functions to convert between the two. Notice the limitations in one direction.
-  Can you use alist- or tree- based records directly with the Y combinator?
+  Can you use alist- or tree-based records directly with the Y combinator?
   If not, explain why not, and consider if wrapping in a thunk, delay or once may help.
   With or without wrapper, do it.
 }

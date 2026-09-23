@@ -121,13 +121,13 @@ making their role in inheritance more explicit:
 @Code{
 type TModExt inherited required provided =
   inherited → required → provided
-mix : TModExt i r j → TModExt j r p → TModExt i r p
+mix : TModExt j r p → TModExt i r j → TModExt i r p
 fix : top → TModExt top target target → target
 }
 
 The @c{mix} operator chains two modular extensions,
-wherein the information (parameter @c{j}) provided by the parent (first argument)
-is the information inherited by the child (second argument).
+wherein the information (parameter @c{j}) provided by the parent (second argument)
+is the information inherited by the child (first argument).
 The @c{fix} operator, first takes a top value as a seed,
 then second takes a specification for a target with the target itself as module context
 and starting with the top value as a seed, and returns the target fixpoint.
@@ -218,7 +218,7 @@ In this book, I will use a mix of intersection style and subtype style. I then h
 @Code{
 type SSModExt inherited required newlyProvided =
   inherited → required → (inherited∩newlyProvided)
-mix : SSModExt i r p → SSModExt i∩p s q → SSModExt i r∩s p∩q
+mix : SSModExt i∩p s q → SSModExt i r p → SSModExt i r∩s p∩q
 fix : top → SSModExt top top∩target target → top∩target
 }
 
@@ -249,7 +249,7 @@ type SrModExt inherited required provided =
     self ⊂ required, super ⊂ inherited ⇒
     super → self → (super∩provided)
 
-mix : SrModExt i r p → SrModExt (j∩p) s q →
+mix : SrModExt (j∩p) s q → SrModExt i r p →
   SrModExt (i∩j) (r∩s) (p∩q)
 fix : top → SrModExt top (top∩target) target → (top∩target)
 }
@@ -745,7 +745,7 @@ fix : ∀ inherited, required, newlyProvided : Type → Type,
       top ⊂ inherited self ⇒
         top → ModExt inherited required newlyProvided → self
 
-mix : ModExt i r p → ModExt j∩p s q → ModExt i∩j r∩s p∩q
+mix : ModExt j∩p s q → ModExt i r p → ModExt i∩j r∩s p∩q
 }
 
 In the @c{fix} function, I implicitly define a fixpoint @c{self}

@@ -1269,7 +1269,7 @@ while largely ignoring contributions from the Lisp tradition.
 This is not just a grave injustice—it is also a form of blindness
 that prevents those who commit it from understanding half of the OO tradition.
 
-Lispers quickly adopted OO in their experimental programming language
+Lispers quickly adopted OO in their experimental programming languages
 @~cite{Kahn1976 Stansfield1977 Kahn1979Ani Kahn1979Director}.
 In the 1980s Bobrow did work on Smalltalk projects like PIE @~cite{Goldstein1980}
 as well as Lisp projects like LOOPS @~cite{Bobrow1983},
@@ -1420,7 +1420,7 @@ identical words used with crucially different meanings by different people.
   are @emph{convinced} we know it when we can teach it,
   the fact is that we don’t @emph{really} know it until we can code it for an automatic computer!
     @|#:- "Alan Perlis, as quoted by George E. Forsythe"|
-    @; 1959, baby!
+    @; 1958, baby!
     @; https://sci-hub.ru/storage/2024/7569/e151f5a555fa67f40379bc748ee47e03/forsythe1959.pdf
     @; long predates Knuth on the same topic
 }
