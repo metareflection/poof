@@ -808,8 +808,10 @@ because they are too focused on low-level mechanisms for “delegation” or “
 moreover, the near-ubiquitous reliance on U-encoding (@secref{CfUe})
 may have made them unaware that there are even separate entities to think about.
 By contrast, writers of compilers for languages with second-class Class OO
-may not have realized the conflation because at their
-level it’s all pure functional specification with no target until runtime.
+may not have realized the conflation because
+the distinction is statically trivial and neatly staged into compiler passes:
+each pass can deal with either the specification or the target
+without ever having to confront their conflation explicitly.
 One group of people though, must explicitly deal with the conflation of specification and target
 embodied as a first-class value: implementers of pure functional prototype systems.
 Nix @~cite{Simons2015} explicitly remembers the specification by inserting

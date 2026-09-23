@@ -1757,7 +1757,7 @@ let Y = f: (x: x x) (x: f (x x));
   (poi←record (u poi)))
 (def (poi-target-update/NoMoreSpec u poi) ;; erase the magic spec field, no longer extensible
   (u (record←poi poi)))
-(def (poi-target-update/Error u poi) ;; signal an error — safest default
+(def (poi-target-update/Error _u _poi) ;; signal an error — safest default
   (abort "cannot update a poi target"))
 
 (define-syntax poi
@@ -2882,7 +2882,7 @@ let Y = f: (x: x x) (x: f (x x));
 
 ;; (accepter and method-invoker are curried — hence the @ / nesting below.)
 
-;; curried-method-invoker corner case (was a bug): optionals-with-last? = #t with
+;; curried-method-invoker corner case: optionals-with-last? = #t with
 ;; optionals = 0 must still apply the bundled last argument, not return a
 ;; partially-applied procedure.
 (expect
@@ -3003,11 +3003,13 @@ let Y = f: (x: x x) (x: f (x x));
 ;; progn-methods-most-specific-first : List(RawMethodFn) → ArgList → MethodInvoker → Any
 ;; Runs each method in order for side-effects; call-next-method = abort.
 (def (progn-methods-most-specific-first methods args method-invoker)
-  (foldl (lambda (m _) (method-invoker m (cons abort args))) #f (or methods '())))
+  (for-each (λ (m) (method-invoker m (cons abort args)))
+            (or methods '())))
 
 ;; progn-methods-most-specific-last : List(RawMethodFn) → ArgList → MethodInvoker → Any
 (def (progn-methods-most-specific-last methods args method-invoker)
-  (foldr (lambda (m _) (method-invoker m (cons abort args))) #f (or methods '())))
+  (for-each (λ (m) (method-invoker m (cons abort args)))
+            (reverse (or methods '()))))
 
 ;; standard-no-applicable-method : MethodId → ...Args → Error
 (define (standard-no-applicable-method method-id . args)
@@ -3711,9 +3713,9 @@ let Y = f: (x: x x) (x: f (x x));
 (def (^fix!^! base^ ^spec!^^) (^Y!! (^spec!^^ base^)))
 
 ;; Suspended mirror of (mix c p) = (λ (t s) (c (p t s) s)). The modexts already return a
-;; suspended record, so call them directly — an earlier `(^! …)` here re-suspended the
-;; parent's result, handing the child a promise where it expected a record (Gambit's `force`
-;; chains through and hides it; Racket's does not).
+;; suspended record, so call them directly rather than re-suspending: re-suspending would
+;; hand the child a promise where it expects a record (Gambit's `force` chains through and
+;; hides that; Racket's does not).
 (def (^mix!!! ^child!^^ ^parent!^^ super^ self^)
   (^child!^^ (^parent!^^ super^ self^) self^))
 

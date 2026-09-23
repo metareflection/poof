@@ -1363,6 +1363,16 @@ What this book’s accompanying code does (and doesn’t) do.
   What are the costs of that flexibility in terms of
   implementation complexity and reasoning difficulty?
 }
+@exercise[#:difficulty "Medium"]{
+  Implement method caching for generic functions:
+  the generic function maintains an LRU cache of the last 8 times it was called,
+  on what (tuples of) specifications it was called,
+  and what effective method resulted.
+
+  Harder: use macros to instead (or additionally) implement
+  a 4-deep LRU cache of effective methods @emph{per (dynamic) call site}
+  of a generic function.
+}
 @exercise[#:difficulty "Medium, Recommended"]{
   If you did exercise @exercise-ref{09to10}, compare
   your attempt at explaining implementation strategies for OO with mine.
@@ -1376,4 +1386,3 @@ What this book’s accompanying code does (and doesn’t) do.
   or their Haskell equivalent, etc.
   Then implement a pure functional variant of a MOP on top of that.
 }
-n

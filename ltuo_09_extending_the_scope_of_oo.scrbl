@@ -291,9 +291,11 @@ when applied to a context that is the default value @c{#f}
 treats it as if it had been the @c{empty-record}, and a variant @c{field-lens~*}
 that goes through a series of fields in order, with such defaulting at each level.
 Similarly, I use functions @c{field-view~}, @c{field-view~*},
-@c{field-update~} and @c{field-update~*} for the view and update aspects of those lenses,
-and @c{field-spec~} and @c{field-spec~*} for skew lenses that
-zoom the focus onto such defaulted fields@xnote["."]{
+@c{field-update~} and @c{field-update~*} for the view and update aspects of those lenses.
+Finally, I will use @c{field-spec~} and @c{field-spec~*}
+for the corresponding functions that refocus modular extensions
+using @c{skew-ext} with these skew lenses,
+defaulting to an @c{empty-record} at each intermediate level@xnote["."]{
   As an exercise, implement these functions.
   Or then again just look how I write them in pommette.
 }
@@ -679,7 +681,7 @@ by one of these respective functions:
   (make-poi (constant-spec (u poi)) #f '()))
 (def (poi-target-update/NoMoreSpec u poi)
   (u (extend-record #f #f poi)))
-(def (poi-target-update/Error u poi)
+(def (poi-target-update/Error _u _poi)
   (abort "cannot update a poi target"))
 }
 
@@ -1031,7 +1033,7 @@ on a class @c{Rectangle} of records with a @c{height} and a @c{width},
 with the following definition:
 @Code{
 (def (base-instance-method-spec method-id method-body)
-  (instance-method-spec method-id (K method-body)))
+  (instance-method-spec method-id (λ (_next-method) method-body)))
 
 (base-instance-method-spec 'area
   (λ (r) (* (r 'width) (r 'height))))
@@ -1370,7 +1372,8 @@ what takes many times more code in other languages@xnote[","]{
   plus 7820 lines of similar code for a general-purpose portability layer
   to 17 different implementations.
   ASDF manages build coherence across all source trees of all dependencies,
-  across multiple phases of extension of the build system from the build system @~cite{Rideau2014}.
+  across multiple nested phases in which the build system is extended
+  from inside the build system itself @~cite{Rideau2014}.
   As an exercise, compare the size of ASDF to that of
   roughly equivalent build systems and toolchains in other languages.
 }
@@ -1591,11 +1594,11 @@ methods try to invoke their @c{super} argument as a @c{call-next-method}@xnote["
   when there is no applicable method at all, which by default will raise an error;
   but the builtin method combinations will also raise an error
   if there are no primary methods, without trying to run secondary methods,
-  when my implementation instead evaluates a handler that could raise an error,
+  whereas my implementation instead evaluates a handler that could raise an error,
   but my simple method combination returns a neutral element.
   CLOS invokes the generic function @c{no-next-method} (that by default raises an error)
   when you try to @c{call-next-method} without a next method,
-  when I simply abort (Scheme lacks a condition system like Common Lisp).
+  whereas I simply abort (Scheme lacks a condition system like Common Lisp).
   Modifying my code to account for all the subtleties of CLOS is left
   as an exercise to the reader.
 }
@@ -1628,10 +1631,12 @@ With no primary method the primary chain is just @c{no-applicable-method}.
     (or methods '())))
 
 (def (progn-methods-most-specific-first methods self)
-  (foldl (lambda (m _) ((m abort) self)) #f (or methods '())))
+  (for-each (λ (m) (m abort self))
+            (or methods '())))
 
 (def (progn-methods-most-specific-last methods self)
-  (foldr (lambda (m _) ((m abort) self)) #f (or methods '())))
+  (for-each (λ (m) (m abort self))
+            (reverse (or methods '()))))
 
 (define (standard-no-applicable-method method-id . args)
   (error "no applicable method" method-id args))
@@ -1650,7 +1655,8 @@ With no primary method the primary chain is just @c{no-applicable-method}.
         (progn-methods-most-specific-first (sub 'before) self)
         (let ((result
                 ((call-chain (sub 'primary)
-                   (no-applicable-method method-id))
+                   ;; NB: η-convert to avoid an error too early too
+                   (λ (self) (no-applicable-method method-id self)))
                  self)))
           (progn-methods-most-specific-last (sub 'after) self)
           result)))))
@@ -2630,6 +2636,8 @@ and soon become a maintenance nightmare:
 having programmers manually do the job of a compiler and having to maintain
 a lot of invariants by hand as the system evolves, without the help of automated enforcement.
 
+@subsubsection{Calling Conventions}
+
 Another issue with multiple dispatch, that only gets more “interesting”
 when using curried functions for handling arguments, is that the generic function
 must accept all the arguments of each invocation before it may evaluate any individual method:
@@ -2661,7 +2669,7 @@ by optionally specifying them when calling @c{call-next-method}.
 A dynamic language might do all these computations at runtime, whereas
 a static language might inline as much of it as possible at compile-time.
 
-@subsubsection{Subjective Dispatch}
+@subsection{Subjective Dispatch}
 
 Some object systems with multiple dispatch offer an extension for
 “subjective dispatch” or “subjective multimethods” @~cite{Salzman2005},
@@ -2691,7 +2699,7 @@ with the subjective argument first,
 and giving the feature more semantic weight, so it might be worth the trouble.
 @; TODO also cite Gonzalez2007 Gonzalez2008 Hirschfeld2008
 
-@subsubsection{Global Dispatch Tables}
+@subsection{Global Dispatch Tables}
 The implementation I offered was minimal in terms of effects and scope:
 the only effect is tagging for identity, which is pure enough
 in a calculus that deals with terms as graphs rather than as trees;
@@ -2742,7 +2750,7 @@ Indeed, logical “laws” interrelating functions and data structures
 always prevented the unilateral extension of a single entity
 from ever being valid, except in the simplest and least meaningful of cases.
 Once the locus of coherent semantics is established,
-properly situated solutions become possible to address coherence extension.
+properly situated solutions to address coherence extension become possible.
 
 Extending a specification at a given “location” to declare additional methods
 is essentially “monkey patching”, i.e. modifying code in place,
@@ -2775,9 +2783,9 @@ a name path or location properly identifies
 an extensible “intention” rather than an immutable “extension”,
 a meeting point rather than fixed code.
 That was always the case since code evolves with bug fixes and new features,
-and the entire point of modularity is that names always were meeting points
+and the entire point of modularity is that names have always been meeting points
 for changing code the user doesn’t want to look into,
-rather than identifiers for exact code the user wants to always be bit-for-bit as specified.
+rather than identifiers for exact code the user wants always to be bit-for-bit as specified.
 If users wanted the latter, they would be using cryptographic hashes, not names.
 But thanks to OO, i.e. internal modular extensibility,
 this phenomenon of a constant name for changing content
@@ -2925,8 +2933,9 @@ It offers a semantics that all OO programmers can understand, implement, use, an
 By contrast, static dispatch presupposes some kind of static typesystem@xnote[","]{
   The very notion of static dispatch supposes a decision on which method to use
   is made based on some kind of static analysis.
-  @citet{Cousot1997} shows that any static analysis you’d use would be equivalent to a typesystem,
-  even if you don’t dare call it one, even if the typesystem is
+  @citet{Cousot1997} shows that any static analysis you’d use
+  would be equivalent to an abstract interpretation and to a typesystem,
+  even if you don’t dare call it one or the other, even if the typesystem is
   neither writable nor legible enough for humans to manually produce and consume.
 }
 some staging between two layers of evaluation, one “static” and “dynamic”,
@@ -3181,7 +3190,7 @@ but because it offers a framework to keep expanding the scope of OO itself.
     A macro @c{defclass} that defines a variable as a poi
     that always implicitly inherits from @c{base-class}.}
   @item{
-    A function @c{instance←class} that given a class and a poi
+    A function @c{instance←class} that, given a class and a poi,
     returns a new poi wherein the given poi extends the base-instance of the given class.}
   @item{
     A function @c{make-instance} that, given a class and the rest of its arguments as a plist
@@ -3189,13 +3198,10 @@ but because it offers a framework to keep expanding the scope of OO itself.
     given fields are bound to the given values, and other fields are as specified by
     the class’s @c{base-instance}, e.g. @c{(make-instance class 'x 1 'y 2)}.}
   @item{
-    An extension to @c{base-class} and @c{make-instance}
-    that includes user-specified validation checks.}
-  @item{
-    A function @c{mandatory-fields} that given a class, returns a list of the mandatory
+    A function @c{mandatory-fields} that, given a class, returns a list of the mandatory
     fields for the class—those without initialization data.}
   @item{
-    A function @c{class-constructor} that given a class and as many arguments as there are
+    A function @c{class-constructor} that, given a class and as many arguments as there are
     mandatory fields (curried the usual way), in order, constructs an element of the class
     where each mandatory field has the value given from the arguments, in order.}
   @item{
@@ -3247,7 +3253,9 @@ but because it offers a framework to keep expanding the scope of OO itself.
   during a program execution.
 }
 @exercise[#:difficulty "Medium"]{
-  Implement optional validation and normalization for class elements.
+  Extend @c{base-class} and its @c{make-instance} to
+  implement optional validation and normalization for class elements,
+  base on field meta-data.
   The default method will run validation checks on each field value.
   For each field with a defined validation check, check the field.
   The @c{make-instance} function will run those checks.
@@ -3266,14 +3274,20 @@ but because it offers a framework to keep expanding the scope of OO itself.
     ask AI for help understanding BETA and its documentation.
 }}
 @exercise[#:difficulty "Medium"]{
-  Implement method caching for generic functions:
-  the generic function maintains an LRU cache of the last 8 times it was called,
-  on what (tuples of) specifications it was called,
-  and what effective method resulted.
-
-  Harder: use macros to instead (or additionally) implement
-  a 4-deep LRU cache of effective methods @emph{per (dynamic) call site}
-  of a generic function.
+  Extend @c{call-next-method} to accept optional replacement arguments
+  for the remaining methods in the effective method,
+  as CLOS does.
+  When no arguments are supplied, reuse the original arguments.
+  What should happen if the replacement arguments change
+  which methods are applicable?
+}
+@exercise[#:difficulty "Medium"]{
+  Implement accepter and invoker functions for different calling conventions:
+  curried fixed-arity arguments, uncurried arguments, and
+  optionally positional, rest and keyword arguments.
+  Make method combinations and multiple dispatch independent
+  of the calling convention used.
+  Bonus: allow different generic functions to have different calling conventions.
 }
 @exercise[#:difficulty "Medium"]{
   Discuss how you would use flavorful multiple dispatch to implement
@@ -3289,14 +3303,21 @@ but because it offers a framework to keep expanding the scope of OO itself.
   Implement the richer kinds of skew lenses fit for optimal inheritance, as per @secref{FME},
   and use them to define more interesting prototypes than possible with mere modular extensions.
 }
-
 @exercise[#:difficulty "Medium, Recommended"]{
   If you did exercise @exercise-ref{08to09}, compare
   your attempt at explaining these advanced OO topics with how I did.
   What aspects did you anticipate? What surprised you?
   What did you do better or worse?
 }
-
+@exercise[#:difficulty "Medium"]{
+  Implement nested classes as POI-valued fields of other classes,
+  such that extending an outer class can extend its nested classes.
+  Define a family containing at least two mutually related nested classes,
+  then extend the family while preserving the relationships between them.
+  Bonus: construct a diamond of families and verify that
+  optimal inheritance correctly combines the extensions
+  to their nested classes.
+}
 @exercise[#:difficulty "Hard, Recommended" #:tag "09to10"]{
   Think about how to @emph{efficiently} implement objects.
   Also think about how to implement them in a @emph{flexible} way,
@@ -3306,7 +3327,6 @@ but because it offers a framework to keep expanding the scope of OO itself.
   What mechanisms will you need to expose to maximize both expressiveness and performance?
   Write down your answers before you read the next chapter.
 }
-
 @exercise[#:difficulty "Hard"]{
   Implement a pure functional monadic variant of the standard method dispatch.
   How does the object system need to be extended (if at all)
