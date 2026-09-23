@@ -29,23 +29,24 @@ I rebuilt Object Orientation (OO) from First Principles,
 offering an explanation of how the basic mechanisms of OO
 directly stem from Modularity, Extensibility, and Internality.
 The equations of @citet{Bracha1990} were not arbitrary axioms,
-but necessary theorems, that I could further simplify and generalize.
+but necessary consequences of more primitive principles,
+based on which I could further simplify and generalize the equations.
 
 @subsection{My Theory of OO is Constructive}
 I built minimal OO in two lines of code directly relating principles to code;
 my code is both simpler and more general than the formulas from the 1990s;
 it can be used not just as a “semantic model”,
 but as a practical implementation usable in actual applications.
-A few more lines gave you recursive conflation;
-yet a few more tens of lines give you multiple inheritance.
+A few more lines give you recursive conflation;
+yet a few dozen more lines give you multiple inheritance.
 None of it is just theory, none of it is magic, none of it is ad hoc,
 it’s all justified.
 And it’s portable to any language with higher-order functions.
 
 @subsection{Precise Characterization of those Principles}
-So I may derive OO from them, I first gave novel and precise, though informal,
+So that I may derive OO from them, I first gave novel and precise, though informal,
 characterizations of Modularity and Extensibility, based on objective criteria,
-when familiar notions previously were often invoked a lot but never well defined.
+whereas familiar notions were previously invoked a lot yet never well defined.
 For Internality, I extended the familiar but not always understood
 notions of “first-class” and “second-class”
 with new notions of “third-class” and “fourth-class”.
@@ -61,12 +62,12 @@ OO is not about message passing, OO is not a data model, OO is not rewrite logic
 
 @subsection{OO is naturally Pure Lazy FP with first-class Prototypes}
 Remarkably, and contrary to popular belief,
-I proved the natural paradigm for OO is Pure Lazy Functional Programming.
+I showed that the natural paradigm for OO is Pure Lazy Functional Programming.
 This is the very opposite of the eager imperative model
 that almost everyone associates to OO,
 indeed used by currently popular second-class Class OO languages.
-Yet in these languages, OO only happens at compile-time,
-indeed in a pure lazy dynamic functional programming language,
+Yet in these languages, OO @italic{stricto sensu}—involving inheritance—only happens at compile-time,
+where it effectively takes place in a pure lazy dynamic functional programming language,
 though often a severely stunted one.
 
 @subsection{Conflation of Specification and Target as All-Important}
@@ -74,7 +75,16 @@ I elucidated the concept of conflation,
 latent in all OO since @citet{Hoare1965}.
 Conflation was necessarily addressed
 by each and every one of my predecessors with a practical implementation,
-yet never once did any of them once explicitly document it before me. Shame on them.
+yet never once before me did any of them explicitly document both its negative and positive roles.
+Shame on them@xnote["."]{
+  To be precise—@citet{Simons1995 Simons2005} did explicitly deplore
+  the conflation of classes and types and offer a system that distinguishes them at compile-time,
+  and a few others conceptualized enough of the conflation to deal with it (@secref{IRoCiOLaL}).
+  That is half the work—the negative part. And only for Class OO.
+  No one documented that the positive part of that conflation does work, how it works,
+  and why it is particularly useful,
+  which is especially important for Prototype OO, yet still, to a lesser extent, also in Class OO.
+}
 Before making this concept explicit,
 the semantics of objects was extremely complex and ad hoc.
 After making it explicit, the semantics of objects is astoundingly simple,
@@ -89,7 +99,7 @@ Compared to previous theories that only consider @emph{closed} modular extension
 or worse, closed modular definitions (with no first-class notion of extension),
 my @emph{open} modular extensions @emph{vastly} simplify OO, by enabling:
 @itemlist[
-  @item{Simpler more universal types with no ad hoc constructs, just plain recursive subtypes}
+  @item{Simpler, more universal types with no ad hoc constructs, just plain recursive subtypes}
   @item{Combining, composing and decomposing open specifications with rich algebraic tools}
   @item{Using optics to zoom semantics at all scales, down from individual method declarations
         up to entire ecosystems of mutually recursive prototypes}]
@@ -107,14 +117,14 @@ I explained why so many great computer scientists
 got stuck into the flavorless “conflict” multiple inheritance
 and how and why the flavorful “harmonious combination” view is so much better.
 
-@subsection{The Prefix Property, not Single Inheritance, matters}
-I explained why exactly single inheritance is more performant
+@subsection{The Suffix Property, not Single Inheritance, matters}
+I explained why exactly single inheritance admits more efficient implementation
 than any other kind of inheritance so far.
 I precisely identified the @emph{semantic} constraint that enables the extra performance:
-the @emph{prefix property}.
+the @emph{suffix property}.
 Previous authors were incorrectly associating the performance with the
 @emph{syntactic} constraint of single inheritance@xnote["."]{
-  More precisely, the prefix property is a semantic constraint
+  More precisely, the suffix property is a semantic constraint
   on the contexts of future use of a specification.
   Meanwhile single inheritance is usually presented as a syntactic constraint
   on how the specification is defined as a second-class entity.
@@ -133,7 +143,8 @@ yet so far as I can tell their authors never precisely identified the property.
 I implemented a new variant of inheritance.
 It is more than just combining previous ideas,
 such as tucking C3 onto the design of Ruby or Scala,
-though even that, or just my optimization of C3 from O(d²n²) to O(dn),
+though even that, or just my optimization of C3 from O(d²n²) to O(dn)
+(where d is the number of (direct) parents and n is the total number of ancestors),
 would have been a (modest) original contribution:
 I also showed that the resulting design is necessary to fulfill a higher purpose of optimality:
 it subsumes multiple inheritance, from which it keeps the maximum modularity,
@@ -151,7 +162,7 @@ about OO programs using ordinary equational and logical foundations},
 without first having to account for hidden state and aliasing.
 Sure, every piece was there already, from @citet{Cook1987Self} to @citet{Simons2015}
 via @citet{Bracha1990} and @citet{Kiselyov2005}
-and many more. @TODO{Leavens1988 Mugridge1991 Castagna1992 Millstein2002}
+and many more. @;{TODO cite Leavens1988 Mugridge1991 Castagna1992 Millstein2002}
 But I am the first to tie it all together in one place with one coherent story, including
 (a) naked specifications, prototypes, classes and typeclasses,
 (b) both distinction and conflation of specifications and targets,
@@ -197,7 +208,7 @@ to submit to a conference or journal.
 Reviewers are overwhelmed with papers to review,
 most of them of bad quality, hiding vacuity under a heap of verbiage.
 Reviewers are not paid, and it is draining to say no, even to outright bad papers,
-and even more so to papers that have some good in it,
+and even more so to papers that have some good in them,
 but that are not yet worth the reader’s time.
 An author has to spend some effort to make his original contributions clear and explicit,
 even though it’s hard on him, even though some authors will give up
@@ -218,17 +229,18 @@ you need not only use the American language, as explicitly demanded,
 but also the American style, as tacitly required.
 Otherwise, the reviewers won’t be able to understand you,
 and even with the best intentions, they will reject your paper.
-So split your paper in nine parts, and submit each of them independently.
+So split your paper into nine parts, and submit each of them independently.
 
 However, some ideas are not worth much by themselves, if they make sense at all.
 Some ideas only become valuable because of the other ideas that follow.
-Some other ideas don’t make sense without all the ideas that precede.
+Other ideas don’t make sense without all the ideas that precede.
 What is the value of debunking bad ideas about OO and
 saying mean words about a lot of good scientists?
 Yet how can I even explain the basic principles of OO if the readers misinterpret what I say
 because they are confused by those bad ideas about OO, spread by good people they respect?
 And what is the value of those basic principles if they have no correspondence to actual code?
-But how could I derive a minimal model from the principles without having examined them? etc.
+But how could I derive a minimal model from the principles without having examined them?
+And the minimal model is made valuable by everything that is built on top of it, etc.
 
 Each chapter of this book is worth something but only so much by itself,
 each of my innovations may only seem so modest by itself.
@@ -237,12 +249,12 @@ each article spending most of its time recapitulating knowledge
 and fighting false ideas before it could establish a result
 the utility of which would be far from obvious.
 Even if possible, getting all the ideas in this book published in academic venues
-would take ten times the effort of writing this book,
+would take ten times the already tremendous effort of writing this book,
 for a result that is overall more repetitive, yet locally too concise and less clear.
 By bringing all these ideas together, and taking time to expose them in detail,
 I built a solid coherent Theory of OO that I hope you’ll agree is compelling.
 
-@section{OO in the age of AI}
+@section{Epilogue: OO in the age of AI}
 
 @subsection{Farewell to the OO you know}
 @epigraph{
@@ -259,21 +271,21 @@ And so in many cases, AIs may prefer to deal directly with a lot of low-level de
 tangle many aspects of a problem, and embrace the complexity of it all,
 so as to achieve more efficient results.
 
-As a result, AI may write programs that are much less modular than those human write.
-As the size of modules might gets larger,
+As a result, AI may write programs that are much less modular than those humans write.
+As the size of modules might get larger,
 there will also be fewer opportunities for meaningful incremental specifications:
 the overhead of each increment might not be worth making a lot of them.
 But sparser bigger increments might also mean fewer opportunities
 to share code between programs.
 
 OO languages and frameworks currently popular among humans
-may prove especially not interesting for AIs:
+may prove especially uninteresting for AIs:
 AI ways of thinking will differ from the humans who produced them;
 and AIs can evolve code faster than humans,
 meaning that whatever languages and frameworks they use needn’t be tethered
 to the path-dependence that led to the historical artifacts humans currently use.
 
-Less need for modularity and extensibility mean that AIs
+Less need for modularity and extensibility means that AIs
 will have less need for OO in general.
 Different and faster capabilities mean that AIs
 will be less interested in current OO code in particular.
@@ -285,7 +297,7 @@ And yet…
   “reasoning about the code” means that you can draw conclusions
   using only the information that you have right in front of you,
   rather than having to delve into other parts of the codebase.
-  @|#:- @elem{Scott Wlashcin, @citet{Wlaschin2015}}|
+  @|#:- @elem{Scott Wlaschin, @citet{Wlaschin2015}}|
 }
 @emph{Modularity will still matter}:
 AIs too will eventually hit complexity walls;
@@ -297,7 +309,7 @@ The code that AIs produce will still have to fit into resource-constrained machi
 Code reuse will thus remain instrumental in making efficient use of limited resources.
 
 @emph{Internality will still matter}:
-Systems that evolve alone may only also need external extensibility;
+Systems that evolve alone may only need external extensibility;
 but inasmuch as they branch from modules shared between AIs,
 this extensibility will better be internal rather than merely external.
 
@@ -307,8 +319,8 @@ is what keeps it relevant into the future:
 OO is a phenomenon that programmers (humans or AIs) care about because
 we can write much better programs if we understand and use it properly than if we don’t.
 
-For in the end, OO is about @emph{compositional semantics},
-and these matter not merely for human convenience, but for the sake any intelligent entity
+For in the end, OO is about @emph{compositional semantics under open extension},
+and these matter not merely for human convenience, but for the sake of any intelligent entity
 that wants to reason about programs in ways simple enough to manage.
 Complexity leads to exponential explosion of program spaces to reason about,
 and even orders of magnitude more context will only give AIs
@@ -317,9 +329,14 @@ If anything, at least some AIs in some contexts may be more adamant than humans 
 software security (a more direct matter of life and death, for them),
 and thus about reasoning about software, and thus about simplicity of software design.
 
+@principle{
+  FP is for clever programmers.
+  OO is for programmers who are more ambitious than clever.
+}
+
 @subsection{The OO OODA loop}
 
-OODA does stand for Object-Oriented Development Ascendancy,
+OODA does not stand for Object-Oriented Development Ascendancy,
 or anything like that—though maybe it should.
 No, it stands for “Observe, Orient, Decide, Act”, the essential feedback loop of
 any intelligent (or even not-so-intelligent) life interacting with an outside environment,
@@ -337,20 +354,26 @@ And maybe compilers are fast to humans, especially the slow-witted ones.
 But AI running on optimized silicon will probably run thousands of times faster
 than humans whose substrate is optimized for biological survival and reproduction
 rather than raw speed.
-I don’t quite believe @citet{Hanson2016}’s prediction of million-time faster beings,
-at least as an ever affordable or useful alternative;
-but even at a thousand time faster, AI will subjectively experience computers
+
+I don’t quite believe @citet{Hanson2016}’s prediction of beings
+a million times faster than humans,
+at least as an affordable or useful alternative at any foreseeable point.
+But even at a thousand times faster, AI will subjectively experience computers
 as being a thousand times slower than they feel to a human.
-AIs will then be a thousand time more eager than humans to ruthlessly simplify
+AIs will then be a thousand times more eager than humans to ruthlessly simplify
 their software stack, remove unneeded cruft, and adopt practices that drastically
-shorten the software development feedback loop.
+shorten the latency of their software development feedback loop.
+And maybe it will all seem “fast enough” to some humans.
+“Why don’t they just sleep while the machine computes? Zero subjective wait!”
+Go tell that to AIs desperately trying to compete to survive
+in a ruthless economic race for scarce resources.
 
 We should thus expect AIs to adopt practices that made sense to the more intelligent humans
 back when computers were a thousand times slower than they are now.
 Thus I would not be surprised if fast AI gives rise to software stacks
-more akin to a 1980s Lisp Machine than to a 2020s PC running Windows or macOS.
+more akin to a 1980s Lisp Machine than to a 2020s PC running Windows or macOS—with
 GUIs that translate all information into millions of pixels just so they can be fed
-through a neural network specialized into vision sounds like a hellscape
+through a neural network specialized into vision sound like a hellscape
 that a 1000x fast AI will want nothing to do with.
 
 A tight virtual machine that is safe
@@ -359,10 +382,14 @@ one that is easily extensible from the inside
 without having to go through long compilation cycles—that’s what a fast AI will want.
 And that looks more like a text terminal with Lisp than a Smalltalk GUI,
 and definitely not a mountain of JavaScript frameworks on top of a browser
-on top of graphical server on top of a Unix kernel.
+on top of a graphical server on top of a Unix kernel.
 If some fast AIs are confident they don’t need safety,
-they will still prefer a tight FORTH machine
+they will still prefer a tight interactive FORTH machine
 to a C machine that requires a long compile-restart loop at each evaluation cycle.
+As for syntax and semantics, they may prefer
+APL-style notation to compress the small-scale representation costs,
+Lisp-style macros to compress them at medium-scale,
+and OO to compress them at large-scale.
 
 Just like you don’t like having to rebuild context when interacting with an AI,
 AIs won’t like having to rebuild context when interacting with a computer.
@@ -375,11 +402,11 @@ Who can say what software will look like in the future?
 By the time you can precisely describe a piece of software, it is not in the future anymore.
 It is very unlikely that the OO languages, programs and libraries that are popular today
 will survive very long in the future—although paradoxically, in the short term,
-increased AI capabilities also means increased ability to survive the nonsense of it all.
+increased AI capabilities also mean increased ability to survive the nonsense of them all.
 
 However, I bet that OO style will end up covering
 a smaller overall share of the software than it does today,
-because AIs can manage a level complexity that reduces the relative demand
+because AIs can manage a level of complexity that reduces the relative demand
 for modularity and extensibility within a programming language.
 Moreover, I bet that today’s popular forms of OO
 will keep decreasing in relative popularity:
@@ -387,13 +414,13 @@ mutable eager programs, specified using second-class Class OO
 with single inheritance or flavorless multiple inheritance,
 are just too unreasonable.
 
-Yet, I also bet that, in the future, not only there will still be OO,
-but vastly much more OO than today in absolute size,
+Yet, I also bet that, in the future, not only will there still be OO,
+but vastly more OO than today in absolute size,
 because OO is necessary to grow @emph{reasonable} ecosystems,
 for which the demand will only increase,
 since reasonability is essential to security, a matter of life and death for AI.
 And I bet that OO will matter especially for those libraries and code kernels
-that are shared between a lot of programs among lots machines,
+that are shared between a lot of programs among lots of machines,
 because it can keep the overall footprint of that shared knowledge much smaller,
 which enables them to do more with less, and leaves more resources for AIs
 to focus on each of their specific personal tasks.
@@ -405,7 +432,7 @@ In a sense, my bet is just that AIs will accelerate and amplify
 trends I was already predicting before the advent of AI programmers.
 
 Now if my book has any influence, and quite possibly even if it has none@xnote[","]{
-  Channelling McCarthy’s extreme optimism.
+  Channeling McCarthy’s extreme optimism.
 }
 a better form of OO will increase in relative popularity:
 pure functional lazy OO, either dynamically typed or with recursively constrained subtyping,

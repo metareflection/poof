@@ -1704,7 +1704,7 @@ and a “trait” is an infix specification@xnote["."]{
   because its precedence list is the prefix of that of any transitive subclass
   (of which there is only one, itself); but that would only introduce more
   terminological confusion, without bringing any useful insight,
-  for this prefix property, while true, is not actionable.
+  for this suffix property, while true, is not actionable.
   It is better to leave suffix and prefix as twisted synonyms.
 }
 
