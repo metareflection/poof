@@ -116,7 +116,7 @@ of the wider state from “source” to an updated “target”@xnote["."]{
   In the Haskell lens libraries, the “update” function is instead called “over”;
   maybe because it “applies a function @emph{over} a change in focus”;
   maybe also because the word “update” was taken by other operations;
-  in any case, I don't find “over” a particularly revealing name.
+  in any case, I don’t find “over” a particularly revealing name.
   I’ll stick to “update”.
 }
 As a function from source to focus and back, it can thus also be seen as generalizing
@@ -144,7 +144,7 @@ and so can the outer change in context.
 But the type parameters @c{s} and @c{a} shared between the view and update types
 express the constraint that you are updating the same thing you are viewing.
 Monomorphic lenses are a special case of polymorphic lenses
-where the updates don’t affect the types of either the focused value of the context value.
+where the updates don’t affect the types of either the focused value or the context value.
 @Code{
 type PolyLens s t a b =
        { view : s → a ; update : (a → b) → s → t }
@@ -670,8 +670,8 @@ and so the error behavior is probably the safest one to use by default:
     unless you make it so again the hard way by explicitly providing a new metadata field.}
   @item{If you try to update the target, an error will be thrown,
     and you won’t later have to debug very surprising behavior.}]
-To a first approximation, this corresponds to these @c{poi-target-update} functions
-as the basis for what a @c{poi-target-update} will do:
+To a first approximation, @c{poi-target-update} could be implemented
+by one of these respective functions:
 @Code{
 (def (poi-target-update/OutOfSync u poi)
   (u poi))
@@ -1064,7 +1064,7 @@ as first-class objects.
 And you can build infrastructure that systematizes any design pattern you follow
 in writing these specifications.
 
-@TODO{FOR SECOND EDITION:
+@;{TODO FOR SECOND EDITION:
 Examples:
 - defining a method outside a class
 - modular extensions used repeatedly to add methods to different classes,
@@ -2496,7 +2496,7 @@ I have implemented multiple dispatch in the code accompanying this book.
 Here are the highlights of this implementation.
 You may skip this section if satisfied with its semantics.
 
-@subsection{Who Owns the Methods?}
+@subsubsection{Who Owns the Methods?}
 
 I started from an implementation of Prototypes with Optimal Inheritance (acronym POI),
 mixing the lessons of @secref{ROOfiMC} and @secref{IMSMO}. @; (ch 6 and 7)
@@ -2661,7 +2661,7 @@ by optionally specifying them when calling @c{call-next-method}.
 A dynamic language might do all these computations at runtime, whereas
 a static language might inline as much of it as possible at compile-time.
 
-@subsection{Subjective Dispatch}
+@subsubsection{Subjective Dispatch}
 
 Some object systems with multiple dispatch offer an extension for
 “subjective dispatch” or “subjective multimethods” @~cite{Salzman2005},
@@ -2684,14 +2684,14 @@ Subjective dispatch in first position can then enable context-dependent methods
 to completely override the meaning of programs in arbitrary ways, overriding any other method;
 whereas subjective dispatch in last position can only minimally alter program behavior,
 making it a weakly expressive mechanism that might not be worth the complexity it brings.
-a high-priority subject can provide methods that intercept and control behavior
+A high-priority subject can provide methods that intercept and control behavior
 early in the effective method, when a low-priority cannot.
 That is how @citet{Gonzalez2005} found that subjective dispatch was more usable
 with the subjective argument first,
 and giving the feature more semantic weight, so it might be worth the trouble.
 @; TODO also cite Gonzalez2007 Gonzalez2008 Hirschfeld2008
 
-@subsection{Global Dispatch Tables}
+@subsubsection{Global Dispatch Tables}
 The implementation I offered was minimal in terms of effects and scope:
 the only effect is tagging for identity, which is pure enough
 in a calculus that deals with terms as graphs rather than as trees;
@@ -2979,7 +2979,7 @@ than the much more rigid static approach@xnote["."]{
   but will also trap you in rigid infrastructure where you can’t make a small change somewhere
   without making big changes everywhere, and any non-trivial innovation becomes a major undertaking.
 
-  A Lisper can hear of a feature and have implemented the next day.
+  A Lisper can hear of a feature and have it implemented the next day.
   A blubber may have to refactor significant parts of his system over weeks
   to add the same feature to his system and fix all the types everywhere.
   Maybe the advent of cheap AI will change this cost equation;
@@ -3004,10 +3004,10 @@ though also much of their complexity@xnote["."]{
   by the JavaScript runtime, and thus these types cannot directly guide runtime optimization.
   And yet, the fact that the code did typecheck indirectly means that
   the runtime’s own static analyses are more likely to succeed and lead to faster code;
-  and even when these analyses fail, or when the runtime doesn’t hard enough,
+  and even when these analyses fail, or when the runtime doesn’t try hard enough,
   a simple dynamic cache for type-conscious generated code snippets,
   as present in high-performance runtimes, will be much more effective than it would have been
-  without the uniform types brought that static typechecking guarantees.
+  without the uniform types that static typechecking guarantees.
   Therefore, yes, static typing from TypeScript does improve performance of JavaScript code.
   Just not in a very predictable way.
 }
@@ -3025,7 +3025,7 @@ Thanks to these techniques, most code is executed without dynamic typechecks,
 as dynamic dispatch is practically reduced to static dispatch.
 Tight loops where performance matters most are especially likely to be optimized
 for their repetitive usage patterns.
-And even types change, they tend to not do it a lot, or not fast, such that
+And even when types change, they tend to not do it a lot, or not fast, such that
 shallow caches will still catch most uses.
 Yet, dynamic typechecks must still be executed to guard those code blocks
 against type changes or fixnum overflows that cannot be easily proven will never happen,

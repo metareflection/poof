@@ -189,7 +189,7 @@ We always have @c{(x ∩ y) ⊂ x} and @c{(x ∩ y) ⊂ y}.
 Furthermore, usual OO with records as targets requires those features
 to properly apply to indexed products for records,
 such that a record type with extra fields is a subtype of the record type with given fields,
-and a record type whose field types are subtypes or those of another is also a subtype.
+and a record type whose field types are subtypes of those of another is also a subtype.
 And for modular types that can type extensions separately,
 the typesystem also needs to be able to abstract over sets of extra fields
 to be specified in a later module, using what is known as “row polymorphism”.
@@ -198,9 +198,9 @@ Then, I can define a type for Simple Strict Modular Extensions,
 either in subtype-style or intersection-style,
 where @c{c ⇒ t} indicates a type @c{t} under a constraint @c{c}:
 @Code{
-type SSModExt_subtype inherited required extended =
+type SSModExt_subtype inherited required provided =
   provided ⊂ inherited ⇒
-  inherited → required → extended
+  inherited → required → provided
 
 type SSModExt_intersection inherited required newlyProvided =
   inherited → required → (newlyProvided ∩ inherited)
@@ -268,9 +268,9 @@ the idiom where the body of a method specification
 “uses @c{(super method-id)} as a default when no overriding behavior is specified”,
 that I mentioned in @secref{MOI},
 is actually mandated by the above type’s universal quantifier!
-At least it is mandated in language fr/agments that do not allow for runtime reflection
+At least it is mandated in language fragments that do not allow for runtime reflection
 on records and their available identifiers,
-which is usually the case in languages //with Static Types
+which is usually the case in languages with Static Types
 (absent, say, a constraint on the typeclass @c{Data.Dynamic} in Haskell,
 that enables such runtime reflection).
 
@@ -415,12 +415,12 @@ as being “(constant) sets” @~cite{Jacobs1995}@xnote[","]{
   her famous “Liskov Substitution Principle” as she did @~cite{Liskov1987};
   brilliant, though not OO.
   That said, she did use the word “object-oriented” in print as far back as @citet{Jones1976}
-  to describe her style of programming, a few month before Bobrow published
+  to describe her style of programming, a few months before Bobrow published
   the memo on KRL-0 that first used it right,
   so she did have a stake in the name, though
   her definition happily didn’t prevail.
   @citet{Wegner1987} rightfully calls it “object-based” but not “object-oriented”.
-  Are either those who talk and publish what turns out not to be OO at all at OO conferences,
+  Are those who talk and publish what turns out not to be OO at all at OO conferences,
   or those who invite them to talk and publish, being deliberately misleading?
   Probably not. Yet the public can be fooled just the same as if dishonesty were meant:
   though the expert of the day can probably make the difference,
@@ -430,7 +430,7 @@ as being “(constant) sets” @~cite{Jacobs1995}@xnote[","]{
   of domains of knowledge and the concepts that matter.
   The larger point here being that one should be skeptical of papers,
   even by some of the greatest scientists
-  (none of Jacobs’, Goguen’s nor Liskov’s expertises are in doubt),
+  (none of Jacobs’, Goguen’s nor Liskov’s expertise is in doubt),
   even published at some of the most reputable conferences in the field (e.g. OOPSLA, ECOOP),
   because science is casually corrupted by power and money,
   and only more cheaply so for the stakes being low.
@@ -442,7 +442,7 @@ as being “(constant) sets” @~cite{Jacobs1995}@xnote[","]{
   and higher-stake economically and politically.
 }
 which he elaborates in another paper @~cite{Jacobs1996InheritanceAC}
-as meaning «not depending on the “unknown” type X (of self).»
+as meaning “not depending on the ‘unknown’ type X (of self).”
 This makes his paper inapplicable to most OO, but interestingly,
 precisely identifies the subset of OO for which inheritance coincides with subtyping,
 or, to speak more precisely,
@@ -510,7 +510,7 @@ as well as in Hoare’s seminal paper that inspired it @~cite{Hoare1965}@xnote["
   Hoare probably intended subtyping initially indeed for his families of record types;
   yet subclassing is what he and the Simula authors discovered instead.
   Such is scientific discovery:
-  if you knew in advance what lied ahead, it would not be a discovery at all.
+  if you knew in advance what lay ahead, it would not be a discovery at all.
   Instead, you set out to discover something, but usually discover something else,
   that, if actually new, will be surprising when you eventually realize the mismatch.
   The greater the discovery, the greater the surprise.
@@ -542,7 +542,7 @@ is well worth examining.
 @item{
   The NNOOTT directly follows from the confusion between specification and target
   when conflating them without distinguishing them (@secref{PaC}).
-  The absurdity of the theory also follows from the categorical error of equating entities,
+  The absurdity of the theory also follows from the category error of equating entities,
   the specification and its target, that
   not only are not equivalent, but are not even of the same type.
   But no one @emph{intended} for “a class” to embody two very distinct semantic entities;
@@ -568,17 +568,17 @@ is well worth examining.
   In those languages, the “types” sometimes specified for record fields
   are often but suggestions in comments, dynamic checks,
   sometimes promises made by the user to the compiler;
-  and if they are actual static guarantees that only works outside of the recursive case,
+  and if they are actual static guarantees that only work outside of the recursive case,
   well, that is already most of the benefit of static guarantees
   when most of the work is not that recursive case.
   It takes an advanced functional programming language or style,
   or a rare care for total correctness, for the recursive case to dominate the issue,
   which was never a mainstream concern.}
 @item{
-  Even in the 1980s and 1990s, theorists and practitioners being mostly disjoint populations,
+  In the 1980s and 1990s, theorists and practitioners, being mostly disjoint populations,
   did not realize that they were not talking about precisely the same thing
   when talking about a “class”.
-  Those trained to be careful not to make categorical errors
+  Those trained to be careful not to make category errors
   might not have realized that others were doing it in ways that mattered.
   The few at the intersection may not have noticed
   the discrepancy, or understood its relevance, when scientific modeling
@@ -886,7 +886,7 @@ which embodies first-class modularity, but not modular extensibility.
 
 Now, if the typesystem includes subtypes, extensible records, and
 fixpoints involving open recursion,
-e.g. based on recursively constrained types @~cite{Eifrig1995isoop Eifrig1995iloop}, then
+e.g. based on recursively constrained types @~cite{Eifrig1995ISOOP Eifrig1995ILOOP}, then
 those first-class module values can be the targets of modular extensions.
 @;{TODO @~cite{Remy1994} ?}
 And there we have first-class OO capable of expressing classes.
@@ -1027,7 +1027,7 @@ including launching the field of research itself.
 @subsubsection{F-bounded Polymorphism}
 
 Now, @citet{Canning1989} introduced F-bounded quantification
-(of function-bounded quantification),
+(or function-bounded quantification),
 in which the bound on a type variable may refer to the variable itself:
 @c{∀X ≤ F[X], G[X]}.
 This technique provides self-reference in object types,
@@ -1089,7 +1089,7 @@ to the theory of types for Class OO with F-bounded polymorphism.
 @subsubsection{Recursively Constrained Types: Putting Constraints Apart}
 
 A more radical approach was developed by
-@citet{Eifrig1994} and @citet{Eifrig1995isoop},
+@citet{Eifrig1994} and @citet{Eifrig1995ISOOP},
 who introduced @emph{recursively constrained types}:
 type schemes of the form @c{∀X[C], T}
 where @c{C} is a conjunction of subtyping constraints
@@ -1104,7 +1104,7 @@ By moving constraints into a separate, first-order system
 with no quantifiers inside constraints,
 Eifrig, Smith, and Trifonov ensure that constraint solving
 reduces to well-understood fixpoint computations.
-@citet{Eifrig1995iloop} demonstrated that this framework
+@citet{Eifrig1995ILOOP} demonstrated that this framework
 is expressive enough to provide sound polymorphic type inference
 for objects with records, width and depth subtyping, and recursive types—all
 with a decidable algorithm that computes principal types,
@@ -1120,7 +1120,7 @@ Constrained types achieve decidable inference
 yet have seen less adoption in mainstream language design.
 
 The lesson of constrained types is that the expressiveness-decidability tradeoff
-is not as stark as @(Fsub)'s undecidability might suggest—one simply has
+is not as stark as @(Fsub)’s undecidability might suggest—one simply has
 to stop trying to do everything inside the subtyping judgment on quantified types.
 
 @subsection{OO Type Theory}
@@ -1135,7 +1135,7 @@ with the hope that the notes I wrote on these papers will be helpful to you@xnot
   as well as this book in general.
 }
 
-My very favorite papers are @citet{Eifrig1995isoop Eifrig1995iloop},
+My very favorite papers are @citet{Eifrig1995ISOOP Eifrig1995ILOOP},
 that take the exact right approach to types for OO:
 start from a sound, minimal yet expressive enough general-purpose type theory,
 then build OO in a couple of simple λ-terms under this type theory.
@@ -1271,6 +1271,7 @@ Yet this complexity derives directly from the conflation and confusion of specif
       eventually, a black hole into which all information disappears never to get out again.
       Languages like C++, Java, C#, Scala, have a concept of class so complex that it boggles the mind,
       and it keeps getting more complex with each release.
+      As I like to say:
       “C++, like Perl, is a Swiss-Army chainsaw of a programming language.
       But all the blades are permanently stuck half-open while running full throttle.”
     }
@@ -1293,7 +1294,7 @@ Yet this complexity derives directly from the conflation and confusion of specif
 And so, to the almost entirety of industry and academia alike,
 composed of people most of whom are better and cleverer than me in more ways than one,
 still I declare:
-@principle{Programming: You’re Doing It Completely Wrong.}@Note{
+@principle{Programming: You’re Doing It Completely Wrong.}@xnote[""]{
   Zach Beane @hyperlink["https://xach.livejournal.com/170311.html"]{famously made}
   a @hyperlink["https://www.xach.com/img/doing-it-wrong.jpg"]{funny meme of John McCarthy},
   inventor of Lisp, ostensibly uttering that condemnation.
@@ -1338,8 +1339,8 @@ still I declare:
     in languages with dynamic typing, where you can check the type of a value at runtime,
     comparisons can be done with all objects of the base type
     (e.g. @c{Any} in general, or @c{Real} in the above case),
-    and when types mismatch, the comparison returns or a symbol that means “incomparable”
-    (a boolean that is always false for equality; or the method can raise a dynamic error,
+    and when types mismatch, the comparison returns a symbol that means “incomparable”
+    (or a boolean that is always false for equality; or the method can raise a dynamic error,
     if the language allows it, or if using a monad).
     The base type for the second argument never changes.
     Note how that trick doesn’t work for addition.
@@ -1373,18 +1374,21 @@ still I declare:
   Implement a typesystem for a language including the applicative λ-calculus and
   an extension for lazy evaluation, with a type inference engine.
   Extend your typesystem so it should include
-  recursively constrained types as in @citet{Eifrig1995isoop},
+  recursively constrained types as in @citet{Eifrig1995ISOOP},
   or the more modern variant of @citet{Dolan2017}.
   Implement a minimal object system on top as in the previous chapter,
-  or as in @citet{Eifrig1995iloop}.
+  or as in @citet{Eifrig1995ILOOP}.
   Now extend it to support universal and existential quantification.
   Add it to Gerbil Scheme or some other language.
   Get your system published.
 }
 
-@TODO{FOR 2nd Edition
+@;{TODO FOR 2nd Edition
 Actually implement all those typesystems in Scheme, and
 retroactively apply them to pommette (where appropriate).
 Implement a UI for visualizing types, type constraints, or the many typesystems, on a given term.
 See how the type system interacts with macro expansion.
+Now while Dolan-style constraint-based type inference should be straightforward,
+dealing with record-as-functions, conflation, and finalization wrappers are still a research project.
+Definitely not a 1st Edition issue.
 }

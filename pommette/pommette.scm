@@ -3117,6 +3117,30 @@ let Y = f: (x: x x) (x: f (x x));
 (expect (smc-obj-logged 'op 4) => 16)
 (expect smc-log => '((after 4) (before 4)))
 
+;; Two before and two after methods: before runs most-specific-first, after
+;; runs most-specific-last (mirrors CLOS). "most" is listed first (dominant)
+;; among each qualifier's pair, matching mix*'s first-arg-is-most-specific
+;; convention.
+(define smc-log2 '())
+(def smc-obj-logged2
+  (fix-record
+    (mix*
+      (before-method-spec 'op (λ (_c _s x)
+                                (set! smc-log2 (cons (list 'before-most x) smc-log2))))
+      (after-method-spec  'op (λ (_c _s x)
+                                (set! smc-log2 (cons (list 'after-most x) smc-log2))))
+      (standard-method-init-spec 2 'op)
+      (primary-method-spec 'op (λ (_c _s x) (* x x)))
+      (before-method-spec 'op (λ (_c _s x)
+                                (set! smc-log2 (cons (list 'before-least x) smc-log2))))
+      (after-method-spec  'op (λ (_c _s x)
+                                (set! smc-log2 (cons (list 'after-least x) smc-log2)))))))
+
+(expect (smc-obj-logged2 'op 4) => 16)
+;; before-most, before-least, [primary], after-least, after-most: consed onto
+;; the log in that order, so the log (most-recent-first) reads back-to-front.
+(expect smc-log2 => '((after-most 4) (after-least 4) (before-least 4) (before-most 4)))
+
 ;; Empty sub-methods (#f record): standard-compute-effective-method doesn't crash
 ;; on the missing qualifiers — every qualifier reads as empty and it falls through to
 ;; no-applicable-method rather than erroring on (#f 'around).

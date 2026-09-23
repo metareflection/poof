@@ -54,14 +54,14 @@ simpler than the modular extensions of mixin inheritance from @secref{MFCME}@xno
   Even in the confines of my exploration of OO,
   I already used the term “wrapper” in a related yet more specific way
   when discussing wrapping references for recursive conflation in @secref{RC};
-  and a decade before Cook, Cannon @~cite{Cannon1979} also used a notion of “wrapper”
-  closer to what I use, in Flavors’s predecessor to CLOS @c{:around} methods @~cite{Steele1990},
-  or in the more general case, to CLOS declarative method combinations (@secref{MC}).
+  and a decade before Cook,
+  Flavors @~cite{Cannon1979} also used a notion of “wrapper” that is closer to what I use
+  (except in Flavors wrappers are macros).
   The term “generator” is also too generic, and could describe many concepts in this book,
   while being overused in other contexts, too (Python coroutines, Haskell lazy streams, etc.).
   I will thus stick with my expressions “modular definition” and “modular extension”
   that are not currently in widespread use in computer science, that are harder to confuse,
-  and that I semantically justified by reconstructing their meaning from first principle.
+  and that I semantically justified by reconstructing their meaning from first principles.
 }
 Modular definitions take a @c{self} as open recursion argument
 and return an extended value that may use @c{self} for self-reference.
@@ -73,7 +73,7 @@ The semantics can then be reduced to the following types and functions:
 @; TODO CITE Cook
 @Code{
 fixModDef : (s → s) → s
-extendModDef : s ⊂ t ⇒ (t → s → s) → (t → t) → s → s
+extendModDef : s ⊂ t ⇒ (t → s → s) → (s → t) → s → s
 baseModDef : s → top
 
 (def fixModDef Y)
@@ -87,7 +87,7 @@ the fixpoint combinator @c{Y}.
 The case of extending a modular definition is more interesting.
 First, I will simply remark that
 since extending works on open modular definitions, not just on closed ones like instantiating,
-the value under focus needs not be the same as the module context.
+the value under focus need not be the same as the module context.
 But more remarkably, extension in single inheritance requires
 you use a modular @emph{extension} in addition to an existing modular @emph{definition}.
 
@@ -119,7 +119,7 @@ But while Functional Programming and its basic concepts including
 lexical scoping and higher-order functions
 may be boringly obvious to the average programmer of 2026,
 they were only fully adopted by mainstream OO programming languages like
-C++, Java in the 2010s, and slightly earlier for C#,
+C++ and Java in the 2010s, and slightly earlier for C#,
 after JavaScript became popular in application development
 and made FP popular with it, in the mid to late 2000s.
 Back when single inheritance was invented in the 1960s,
@@ -139,12 +139,12 @@ only to forget it right afterwards;
 but instead, most OO languages support some special purpose syntax for the definition,
 and process it by applying the extension to its super specification as it is being parsed,
 without actually building any independent first-class entity embodying this extension.
-Instead of applying a second-order functions,
+Instead of applying a second-order function,
 OO languages follow a generation schema for first-order code,
 in a special metaprogram part of their compiler.
 The semantics of this special purpose syntax are
 quite complex to explain without introducing FP concepts;
-but neither implementors nor users need actually conceptualize that semantics
+but neither implementers nor users need actually conceptualize that semantics
 to implement or use it.
 @;{ As for those clever enough to figure out that semantics,
    they tend to be clever enough not to need it to be simplified for them,
@@ -164,7 +164,7 @@ Meanwhile, those extensions used as the first argument (to the left, most specif
 of the @c{mix} function must be constant, defined on the spot, and never reused afterwards.
 
 Thus, single inheritance is no more @emph{expressive} than mixin inheritance @~cite{Felleisen1990}.
-And this expressiveness corresponds to case of @emph{extensibility}
+And this expressiveness corresponds to cases of @emph{extensibility}
 that can be covered by mixin inheritance and not single inheritance,
 making mixin inheritance more extensible than single inheritance.
 
@@ -224,7 +224,7 @@ Thus, should a @c{WeightedColoredPoint} inherit from @c{ColoredPoint} and then
 have to duplicate the functionality from @c{WeightedPoint},
 or should it be the other way around?
 Single inheritance forces you not only to duplicate the functionality of a class,
-but also to make a choice each time of only one which will be inherited from to reuse code.
+but also to choose, each time, which single class to inherit from in order to reuse its code.
 Multiply this problem by the number of times you combine duplicated functionality.
 This limitation can cause a maintenance nightmare:
 bug fixes and added features must also be duplicated;
@@ -251,7 +251,7 @@ a series of performance optimizations.
 Using single inheritance, the system can walk the method declarations
 from base to most specific extension, assign an index number to each declared method,
 and be confident that every extension to a specification will assign
-the same index to each and every inherited methods.
+the same index to each and every inherited method.
 Similarly for the fields of a class.
 Method and field lookup with single inheritance can then be as fast as memory access
 at a fixed offset from the object header or its class descriptor (or “vtable”).
@@ -263,13 +263,13 @@ because the code for a method cannot predict in advance what other modular exten
 will have been mixed in before or after the current one, and thus cannot assume
 any common indexes between the many instances of the prototype or class being specified;
 in the general case, a hash-table lookup will be necessary to locate
-any method of element field provided by an instance of the current specification,
+any method or element field provided by an instance of the current specification,
 which is typically ten to a hundred times slower than fixed offset access.
 Some caching can speed up the common case somewhat, but it will remain noticeably slower
 than fixed offset access, and caching cannot wholly avoid the general case.
 
 The simplicity of implementation and performance superiority of single inheritance
-makes it an attractive feature to provide even on OO systems that otherwise support
+make it an attractive feature to provide even on OO systems that otherwise support
 mixin inheritance or multiple inheritance (that has the same performance issues as mixin inheritance).
 Thus, Racket’s default object system has both single and mixin inheritance,
 and Common Lisp, Ruby and Scala have both single and multiple inheritance.
@@ -289,7 +289,7 @@ across all the subclasses of a given class.
 }
 @exercise[#:difficulty "Easy"]{
   Identify a language with builtin mixin inheritance and first-class functions,
-  but doesn’t provide builtin single inheritance.
+  but that doesn’t provide builtin single inheritance.
   Implement single inheritance on top of mixin inheritance,
   and test it with simple inheritance hierarchies@xnote["."]{
     Jsonnet is an obvious choice. I admit I don’t know any other language.
@@ -350,7 +350,7 @@ which would result in an error, at compile-time in the more static systems@xnote
   to decide what precise behavior to follow.
   Very flexible, but also the sign that the authors did not yet understand
   what behavior was suitable.
-  LOOS @~cite{Bobrow1983} had something similar.
+  LOOPS @~cite{Bobrow1983} had something similar.
   But CommonLoops @~cite{Bobrow1986} then CLOS @~cite{Bobrow1988}
   adopt the solution from Flavors.
   Meanwhile the “conflict” languages provide no such general “strategy” functionality,
@@ -445,8 +445,9 @@ Implementation of multiple inheritance will also be significantly sped up if
 records can be sorted by tag, or by stable address or hash,
 so that looking up a record entry, merging records, etc., can be done efficiently;
 but I will leave that as an exercise to the reader.
-side effects could also be used to generate unique identifying numbers for each specification;
-but note that in the case of second-class OO, those effects would need be available at compile-time.
+Side effects could also be used to generate unique identifying numbers for each specification;
+but note that in the case of second-class OO,
+those effects would need to be available at compile-time.
 If the language lacks any of the above features, then users can still implement multiple inheritance
 by manually providing unique names for specifications; but maintaining those unique names
 is a burden on users that decreases the modularity of the object system, and
@@ -457,14 +458,14 @@ Interestingly,
 an externally provided tag, or some other side effect are required for a counter,
 possibly via a monad encoding (with a state monad for the counter).
 The inability of the plain λ-calculus to @emph{directly} manipulate graphs,
-when its very semantic is itself about graph reduction, suggests that
+when its very semantics is itself about graph reduction, suggests that
 @principle{to describe the reduction-level semantics of computing systems in general,
 the λ-calculus must be extended with some primitives for the manipulation of graph data},
 that indeed would include identity tagging and comparison—and, for the sake of performance,
 some kind of efficient association tables based on these tags
 (or these association tables would have to be done via linear search).
 Note however, there are plenty of “reflective” extensions of the λ-calculus
-that do not need such detailed view of graph,
+that do not need such detailed view of graphs,
 and instead happily abstract over it@~cite{Mogensen1995}.
 So the lack of a builtin graph support is actually a feature in other contexts@xnote["."]{
   In any case, functional programming isn’t so much about
@@ -501,7 +502,7 @@ So the lack of a builtin graph support is actually a feature in other contexts@x
 
 @;{
 AKSHULLY, the type can abstract away how the whole thing was built,
-and only show the synthetic r i p that intersect those of all ancestors @secref{StSfMuI}
+and only show the synthetic i r p that intersect those of all ancestors @secref{StSfMuI}
 
 The type for a multiple inheritance specification would thus look like the following,
 where @c{Nat} is the type of natural numbers,
@@ -511,14 +512,14 @@ where @c{Nat} is the type of natural numbers,
 and the @c{{...}} syntax introduces some kind of record type.
 
 @Code{
-type MISpec r i p =
-  ∀ r i p : Type → Type .
+type MISpec i r p =
+  ∀ i r p : Type → Type .
   ∀ l : Nat .
   ∀ pr pi pp : Iota l → Type → Type .
   r ⊂ Intersection pr,
   i ∩ Intersection pp ⊂ Intersection pi ⇒
-  { getModExt : ModExt r i p ;
-    parents : DependentList j: (ModExt (pr j) (pi j) (pp j)) ;
+  { getModExt : ModExt i r p ;
+    parents : DependentList j: (ModExt (pi j) (pr j) (pp j)) ;
     tag : Tag }}
 }
 
@@ -537,7 +538,7 @@ given the place of its specification in the ancestry DAG?
 @subsubsection{The Diamond Problem}
 One naïve approach could be to view the inheritance DAG as some kind of attribute grammar,
 and compute the (open modular definition for) the super at each node of the DAG
-as a synthetic attribute@xnote[","]{
+as a synthesized attribute@xnote[","]{
   Beware that what is typically called “child” and “parent” in an attribute grammar
   is inverted in this case relative to what is “child” and “parent” in the inheritance DAG.
   For this reason, computing effective modular extensions from ancestor to descendant
@@ -568,7 +569,7 @@ The contribution from A has already been baked into the modular definitions of e
 therefore trying to keep the modular definitions of both B1 and B2
 leads to duplication of what A contributed to each,
 which can cause too many side effects, resource explosion,
-yet possibly still the loss of what the B2 contributed,
+yet possibly still the loss of what B2 contributed,
 when the copy of A within B1 reinitializes the method
 (assuming B2 is computed before B1).
 Keeping only one of either B1 or B2 loses information from the other.
@@ -615,16 +616,16 @@ but it is probably the single least useful among all possible consistent behavio
         or the users could somehow retrieve a stable order from the metadata,
         then they could drop the commutative requirement of usual CRDTs.
         Given enough introspection capabilities into the system,
-        users could thus through extremely complex and roundabout way
+        users could thus through extremely complex and roundabout ways
         implement flavorful multiple inheritance as I describe below.
         But it would be an extremely expensive mess of an abstraction inversion @~cite{Baker1992}.
       }
-      Moreover, these solution will involve non-standard coding conventions
+      Moreover, these solutions will involve non-standard coding conventions
       that will not work across team boundaries.
       This is another big failure for Modularity (again see @secref{CfM}).}]
 
-Now, if computing a modular definition from parent modular definitions,
-conflict detection and picking a winner are the only consistent solutions,
+Now, if one insists on computing a modular definition from parent modular definitions,
+then conflict detection and picking a winner are the only consistent solutions;
 and the latter is not much better than the former, less symmetrical,
 and more prone to wasting hours of programmer time by silently doing the wrong thing.
 Which means, better behavior has to @emph{not} be simply based on
@@ -755,7 +756,7 @@ i.e. a total (“linear”) order that has the partial order of the DAG as a sub
 }
 Since CommonLoops @~cite{Bobrow1986}, it has been customary to call this order
 the @emph{precedence list} of the class, prototype or specification, a term I will use;
-and it is also customry to keep it in most-specific-first order:
+and it is also customary to keep it in most-specific-first order:
 descendants to the left, ancestors to the right,
 the same order used by my @c{mix} and @c{mix*} functions@xnote["."]{
   The Simula manual has a “prefix sequence” but it only involves single inheritance
@@ -940,8 +941,8 @@ This property allows extensions to partake in the same protocols as the specific
 being extended. Indeed, lack of this consistency property when the order of the extensions
 drives the acquisition and release of resources including but not limited to
 heap space, locks, file descriptors, stack space, time slots, network bandwidth, etc.,
-can cause memory leaks, deadlocks, kernel space leak, memory corruption,
-or security vulnerabilities instead of deadlocks.
+can cause memory leaks, deadlocks, kernel space leaks, memory corruption,
+or security vulnerabilities.
 By contrast, with this consistency property, developers may not even have to care
 what kind of resources their parents may be allocating, if any, much less in what order.
 
@@ -1020,7 +1021,7 @@ not just a tie-breaking heuristic in case of multiple possible solutions.
 Baker’s solution is great for statically compiling code,
 as long as the load order is guaranteed to be consistent
 in presence of separate compilation and incremental source code modifications.
-Dynamic code update, e.g. in an interactive environment, make this property harder to enforce;
+Dynamic code update, e.g. in an interactive environment, makes this property harder to enforce;
 some mechanism may trigger recompilation or reconfiguration of all subsequent specifications
 after a change to any given specification.
 
@@ -1187,7 +1188,7 @@ or within one programmer’s mind.
 Consequently, they lack any criterion for modularity,
 and how to compare no inheritance, single inheritance, mixin inheritance and multiple inheritance.
 Finally, a lot of language designers, industrial or academic,
-invent some primitives that embodies all the features of a small model of OO;
+invent some primitives that embody all the features of a small model of OO;
 they fail to enlighten in any way by introducing their own ad hoc logic,
 and still crumble under the complexity of the features they combined
 despite being way short of what an advanced OO system can provide.
@@ -1209,7 +1210,7 @@ with a compile-time language significantly weaker than the λ-calculus.
 The comparison can still inform us about first-class OO in that it tells us
 how much one can enjoy OO as if it were second-class,
 versus how much one has to painfully escape the illusion,
-when using this or that variants.
+when using this or that variant.
 The expressiveness comparison informs us about what some variants automate
 that has to be done manually under other variants.
 The modularity comparison informs us about what requires synchronization
@@ -1284,7 +1285,7 @@ More generally, a specification may depend on a method having been implemented i
 so that its inherited value may be modified in a wrapper (in this case, the “database” of parts),
 or, in some languages, just declared so it may be used (though with a proper typesystem
 this might not have to be in a parent).
-Dependency constraints between modular extensions are an ubiquitous phenomenon in mixin inheritance,
+Dependency constraints between modular extensions are a ubiquitous phenomenon in mixin inheritance,
 and these constraints exist even when they are not represented within the language
 as internal notions of “parent” and “ancestor”.
 
@@ -1324,9 +1325,9 @@ with multiple inheritance, a specification’s dependencies are part of its impl
 
 In practice, that means that with mixin inheritance, programmers must not just
 document the current direct dependencies of their specifications;
-they must keep it up to date with every indirect dependencies
+they must keep them up to date with all indirect dependencies
 from libraries they transitively depend on.
-And when a library makes a change to the dependencies of one of its specification,
+And when a library makes a change to the dependencies of one of its specifications,
 then every single library or program that directly or indirectly depends on that specification,
 must be suitably updated.
 Sensitivity to change in transitive dependencies more generally means
@@ -1351,10 +1352,10 @@ Tight coupling is the antithesis of modularity@xnote["."]{
   had broken every repository that uses ASDF, due to
   every user having to update their precedence list,
   then these changes might have been one or two orders of magnitude more expensive.
-  This would have been prohibitive, whether the cost is born solely by the maintainer,
+  This would have been prohibitive, whether the cost is borne solely by the maintainer,
   or distributed over the entire community.
   By contrast, my experience with the OCaml and Haskell ecosystems is that
-  their strong static types without lenient subtyping creates
+  their strong static types without lenient subtyping create
   very tight coupling between specific versions of libraries,
   with costly rippling of changes.
   What results is then “DLL hell”, as it becomes hard to find coherent sets
@@ -1365,8 +1366,8 @@ Tight coupling is the antithesis of modularity@xnote["."]{
 
 One thing that @emph{could} actually help deal with dependencies without multiple inheritance
 would be a rich enough strong static typesystem such that
-the @c{r}, @c{i} and @c{p} parameters (for required, inherited and provided)
-of my parameterized type @c{ModExt r i p} can identify whether modular extensions
+the @c{i}, @c{r} and @c{p} parameters (for inherited, required and provided)
+of my parameterized type @c{ModExt i r p} can identify whether modular extensions
 are composed in ways that make sense.
 This strategy can indeed greatly help in dealing with dependencies of modular extensions.
 However, it does not fully solve the problem:
@@ -1414,7 +1415,7 @@ because most OO hierarchies are shallow@xnote["."]{
   including the base class @c{Object}. But that is a language with single inheritance.
   A survey I ran on all Common Lisp classes defined by all projects in Quicklisp 2025-06-22
   (minus a few that couldn’t be loaded with the rest) using @c{ql-test/did}
-  shows that the 82% of the 18939 classes (including structs) have only 1 parent,
+  shows that 82% of the 18939 classes (including structs) have only 1 parent,
   99% have 3 or fewer,
   the most has 61, @c{MNAS-GRAPH::<GRAPH-ATTRIBUTES>};
   90% have 5 or fewer non-trivial ancestors,
@@ -1469,7 +1470,7 @@ prefer to use or implement single inheritance when offered the choice.
   would duplicate the effects of @c{A}, which is incorrect.
   Show that with the “conflict” semantics, the parts list is wrong
   whichever way you “resolve” the conflict, whether in favor of @c{B} or @c{C}.
-  Show that with proper linearization, each part appears exactly once and only once.
+  Show that with proper linearization, each part appears once and only once.
 }
 @exercise[#:difficulty "Medium"]{
   Implement a simple depth-first linearization algorithm.
@@ -1650,12 +1651,12 @@ These indexes are computed by walking the specification’s ancestry
 from least specific to most specific ancestor.
 In the terminology of multiple inheritance,
 this is a walk along the reverse of the precedence list.
-And for the walks to yield the same results,
-after putting those lists in the usual order,
+And the requirement that the walks yield the same results,
+even after putting those lists in the usual order,
 can be stated as the following property, that I will call the @emph{suffix property}:
 @principle{the precedence list of a struct is a suffix of that of every descendant of it}.
 
-Now this is semantic constraint, not a syntactic one,
+Now this is a semantic constraint, not a syntactic one,
 and it can very well be expressed and enforced
 in a system that has multiple inheritance.
 Thus it turns out that indeed, a struct can inherit from a class, and a class from a struct,
@@ -1694,14 +1695,14 @@ and a “trait” is an infix specification@xnote["."]{
   Now, since Simula only has single inheritance, all its classes are “prefix”
   (i.e. my “suffix”).
   by contrast, in a multiple inheritance system, regular classes are infix, and
-  their precedence list, while an ordered sublist of an descendant’s precedence list,
+  their precedence list, while an ordered sublist of a descendant’s precedence list,
   is not necessarily at the end of it, and is not necessarily contiguously embedded.
   It can also be confusing that Simula calls “prefix sequence” the list of superclasses
   that it keeps in the same order as the precedence list of Flavors and its successors,
   from most specific to least specific, which is opposite to the order of “prefixing”.
   Finally, a “final” class in Java or C++ could be called “prefix” by symmetry,
   because its precedence list is the prefix of that of any transitive subclass
-  (of which there is only one, itself); but that would be only introduce more
+  (of which there is only one, itself); but that would only introduce more
   terminological confusion, without bringing any useful insight,
   for this prefix property, while true, is not actionable.
   It is better to leave suffix and prefix as twisted synonyms.
@@ -1843,7 +1844,7 @@ where the steps tagged with (C4) are those added to the C3 algorithm
            @item{if the list is empty, discard it and go to the next list.}
            @item{otherwise, consider the next element, and look it up in the above hash-table;}
            @item{if it was present in the merged suffix list,
-               with an increased distance from its tail from the previous seen element if any,
+               with an increased distance from its tail from the previously seen element if any,
                then remove it from the candidate list and go to the next element;}
            @item{if it was present in the merged suffix list,
                but the distance from its tail decreased,
@@ -1870,7 +1871,7 @@ where the steps tagged with (C4) are those added to the C3 algorithm
                  @item{pop it off the candidate list;}
                  @item{if the rest of the candidate list is empty, remove it from the candidate lists;}
                  @item{otherwise the candidate list is not empty, promote its next element as head,
-                    and decrement its count of the new head in the ancestor count table.}]}]}]}
+                    and decrement the count of the new head in the ancestor count table.}]}]}]}
   @item{@bold{Join Step}: Append the merged prefix and the merged suffix.}
   @item{@bold{Return Step}: Return the resulting list; also the most specific suffix.}]
 
@@ -1879,13 +1880,13 @@ where the steps tagged with (C4) are those added to the C3 algorithm
    this example bug: direct supers (A) (S A) (B A S)).
 }
 
-Note that the C3 algorithm as published by @~cite{Barrett1996},
+Note that the C3 algorithm as published by @citet{Barrett1996},
 has complexity O(d²n²) where d is the number of parents, n of ancestors,
 because of the naïve way it does a linear membership scan
 in the tails of the lists for each parent@xnote["."]{
   A worst-case example is, two parameters d and n,
   to find a linear order of size n, more or less evenly divided in d segments of size n/d,
-  and for each segment head Sᵢ, define a specification Tᵢ that Sᵢ as its single parent;
+  and for each segment head Sᵢ, define a specification Tᵢ that has Sᵢ as its single parent;
   Make the local precedence order the Tᵢ sorted from shortest to longest ancestry.
   The Tᵢ serve to defeat the local order property in allowing the Sᵢ
   to be put on the tails list in this pessimal order.
@@ -1915,7 +1916,7 @@ their d and n values are I suspect even lower than in Common Lisp@xnote["."]{
 There is also a space vs time tradeoff to check subtyping of suffixes,
 by using a vector (O(1) time, O(k) space per struct,
 where k is the inheritance depth of the largest struct at stake)
-instead of a linked lists (O(k) time, O(1) space per struct).
+instead of a linked list (O(k) time, O(1) space per struct).
 However, if you skip the interstitial infix specifications,
 suffix hierarchies usually remain shallow@xnote[","]{
   As mentioned in a previous note, in loading almost all of Quicklisp 2025-06-22, I found
@@ -2000,7 +2001,7 @@ if the implementation were clever enough to opportunistically take advantage of 
 Interestingly, this is a property shared by the Ruby and Scala algorithm,
 but not by the original LOOPS algorithm that Scala tweaked.
 This seems to be an important property for a tie-break heuristic,
-that should probably be formalized and added to the constraints of C4.@xnote["."]{
+that should probably be formalized and added to the constraints of C4@xnote["."]{
   I haven’t thought hard enough to say what other interesting properties, if any,
   are sufficient to fully determine the tie-break heuristic of C3,
   or of a better variant that would also respect the hard constraints of C3.
@@ -2052,7 +2053,7 @@ Last but not least, the constructor for a @c{poi} is defined as follows:
 (def (make-poi mod-ext suffix? parents)
   (letrec*
       ((precedence-list-and-suffix*
-        (delay (c4-linearize (list self) parents
+        (delay (c4-linearize '() parents
                              poi-precedence-list
                              poi-suffix? eq? identity)))
        (pre-precedence-list*
@@ -2092,7 +2093,7 @@ and the target record itself (see the discussion in @secref{UPSLC})@xnote["."]{
 You may even notice the games I have to play to specially tuck
 the current prototype to the front of the precedence list,
 and its modular extension at the most specific end of the effective modular extension;
-I thus avoid avoid triggering some infinite circular evaluation between
+I thus avoid triggering some infinite circular evaluation between
 the @c{self} and the precedence-list.
 
 Even with the laziness in building the prototype,
@@ -2178,7 +2179,7 @@ when @c{Z} inherits from both @c{K2} and @c{K3}.
   with the following lists of specification and its parents in local order:
   @c{Boat},
   @c{DayBoat Boat},
-  @c{DayBoat WheelBoat},
+  @c{WheelBoat Boat},
   @c{EngineLess DayBoat},
   @c{PedalWheelBoat EngineLess WheelBoat},
   @c{SmallMultihull DayBoat},
@@ -2214,7 +2215,7 @@ when the methods defined or overridden by the swapped superclasses are disjoint,
 the swap will not otherwise change the semantics;
 otherwise, the subclass can suitably override methods to compensate for the change.
 And the other general solution in last resort is to introduce a do-nothing wrapper class
-to shield a superclass from a local local precedence order constraint,
+to shield a superclass from a local precedence order constraint,
 just like the @c{EngineLess} shields @c{DayBoat}.
 }
 
