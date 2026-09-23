@@ -4,14 +4,14 @@
 @(set-chapter-number 2)
 
 @title[#:tag "WOOiIO"]{What Object Orientation @emph{is} — Informal Overview}
-@epigraph{Ce qui se conçoit bien s'énonce clairement, @linebreak[]
+@epigraph{Ce que l'on conçoit bien s'énonce clairement, @linebreak[]
   Et les mots pour le dire arrivent aisément. @linebreak[]
   @~ @~ (What is clearly conceived is clearly expressed, @linebreak[]
   @~ @~ And the words to say it flow with ease.)
   @|#:- "Nicolas Boileau"|
 }
 In this chapter, I map out the important concepts of OO,
-that I will develop in the rest of this book.
+which I will develop in the rest of this book.
 This chapter will contain only what explanations are strictly necessary
 to relate concepts to one another and prevent their misinterpretation.
 More details, and justifications, will follow in subsequent chapters.
@@ -80,13 +80,13 @@ and @emph{classes} if second-class
 A language offers prototype-based object orientation (“Prototype OO”) if it has prototypes,
 and class-based object orientation (“Class OO”) if it only has classes.
 
-The first arguably OO language used classes @~cite{Dahl1967};
-but the first definitely OO language used prototypes @~cite{Bobrow1976},
-and was otherwise the second OO language.
+The first OO language used classes @~cite{Dahl1967};
+but the second OO language, and first OO language its authors called OO in print,
+used prototypes @~cite{Bobrow1976}.
 Some languages provide both @~cite{Hewitt1979 ECMA2015}.
 Class OO is the more popular form of OO.
 But the most popular OO language, JavaScript, started with just Prototype OO;
-Class OO was layered on top twenty years later. (@secref{OOinCO})
+Class OO was layered on top twenty years later (@secref{OOinCO}).
 
 @subsection[#:tag "CaPfT"]{Classes as Prototypes for Types}
 @principle{A class is a compile-time prototype for a type descriptor}:
@@ -94,8 +94,9 @@ a record of a type and accompanying type-specific methods,
 or some meta-level representation thereof across stages of evaluation.
 @;{ TODO see chapter 10 }
 
-Class OO is therefore a special case of Prototype OO,
-which is therefore the more general form of OO @~cite{Lieberman1986 Rideau2021}. @; TODO Wolczko1999
+Class OO is thus a special case of Prototype OO,
+which is therefore the more general form of OO
+@~cite{Lieberman1986 Wolczko1999 Rideau2021}.
 And indeed within Prototype OO, you can readily express
 prototypes for runtime type descriptors for your language,
 or prototypes for type descriptors for some other language you are processing as a meta-language.
@@ -130,7 +131,7 @@ exactly that way, with classes being prototypes for type descriptors. @;{ TODO c
 Static languages, on the other hand, tend to have very restricted sublanguages at compile-time
 with termination guarantees, such that their Class OO is vastly less expressive than Prototype OO,
 in exchange for which it is amenable to somewhat easier static analysis.
-A notable exception is C++, that has a full-fledged
+A notable exception is C++, which has a full-fledged
 Pure Functional Lazy Dynamically-Typed Prototype OO language at compile-time: templates.
 On the other hand, Java and after it Scala are also Turing-universal at compile-time,
 but not in an intentional way that enables practical metaprogramming,
@@ -144,7 +145,7 @@ only an unintentional way that defeats guarantees of termination
 }
 @subsection[#:tag "SaT"]{Specifications and Targets}
 As I reconstruct the semantics of OO from first principles,
-I will see that more than prototype, class, object, or method,
+I will show that more than prototype, class, object, or method,
 @principle{the fundamental notions of OO are @emph{specification} and @emph{target}}:
 @emph{target} computations are being specified by
 extensible and modular, partial @emph{specifications} (@secref{MOO}).
@@ -159,16 +160,16 @@ or of their compile-time or runtime representation.
 A (partial or complete) specification is a piece of information that
 (partially or completely) describes a computation.
 Multiple specifications can be combined into a larger specification.
-From a complete specification, a target computation is specified that can be extracted;
+From a complete specification, a target computation can be extracted;
 but most specifications are incomplete and you can’t extract any meaningful target from them.
 A specification is modular inasmuch as it can define certain aspects of the target
 while referring to other aspects to be defined in other specifications.
 A specification is extensible inasmuch as it can refer to some aspects of the target
 as partially defined so far by previous specifications, then amend or extend them.
-In Prototype OO, access to this modular context and to the previous value being extended
-are usually referred to through variables often named @c{self} and @c{super} respectively.
+In Prototype OO, this modular context and the previous value being extended
+are usually accessed through variables named @c{self} and @c{super} respectively.
 In Class OO, such variables may also exist, but there is an extra layer of indirection
-as they refer to an element of the target type rather than to the target itself.
+as they usually refer to an element of the target type rather than to the target itself.
 
 @subsection[#:tag "PaC"]{Prototypes as Conflation}
 A specification is not a prototype, not a class, not a type, not an object—it is not even
@@ -208,12 +209,12 @@ leads to an exponential explosion of bad decisions to make:
 Choosing target over specification everywhere would of course defeat extensibility;
 but choosing specification over target for the sake of extensibility,
 especially so without the shared computation cache afforded by conflation,
-would lead to an exponential explosion of runtime reevaluations.
-By letting programmers not have to make a decision they lack information to make,
+would lead to another exponential explosion, of runtime reevaluations.
+By sparing programmers a decision they lack information to make,
 the conflation of specification and target is an essential usability feature of Prototype OO:
 it increases intertemporal cooperation between programmers
 and their future collaborators (most usually including their future selves)
-without the need for communication between the two (that would require time-travel).
+without the need for communication between the two (which would require time-travel).
 Thus, in first-class OO, @principle{Conflation Increases Modularity}.
 
 This modularity advantage, however, is largely lost in
@@ -221,7 +222,7 @@ static languages with second-class Class OO@xnote["."]{
   Note that this does not include dynamic Class OO languages
   like Lisp, Smalltalk, Ruby or Python.
   In these languages, compilation can keep happening at runtime,
-  and so programmers still benefit from Conflation.
+  and so programmers still benefit from conflation.
 }
 In such languages, all class extensions happen at compile-time,
 usually in a restricted language.
@@ -239,18 +240,15 @@ Yet its major cost remains: the confusion it induces,
 not just among novice developers, but also experts, and even language authors.
 
 @subsection{Conflation and Confusion}
-@; TODO include historical examples
-
 @principle{Conflation without Distinction is Confusion}.
 Those who fail to distinguish between two very different concepts being conflated
-will make categorical errors of using one concept or its properties
+will make category errors of using one concept or its properties
 when the other should be used.
 Inconsistent theories will lead to bad choices.
 Developers will pursue doomed designs they think are sound,
-and eschew actual solutions their theories reject.
-@; { TODO examples, citations }
+and eschew actual solutions their theories reject. @; { TODO examples, citations }
 At times, clever papers will offer overly simple solutions that deal with only one entity,
-not noticing an actual solution needed to address two.
+not noticing that an actual solution needs to address two.
 In rare cases, heroic efforts will lead to overly complicated solutions
 that correctly deal with both conflated entities at all times.
 Either way, incapable of reasoning correctly about OO programs,
@@ -259,11 +257,10 @@ rather than adopt a good theory that no one is offering.
 Murky concepts will lead to bad tooling.
 Confused developers will write subtle and persistent application bugs.
 Researchers will waste years in absurd quests and publish nonsense along the way,
-while fertile fields lay unexplored.
+while fertile fields lie unexplored.
 See the NNOOTT (@secref{NNOOTT}) regarding decades of confusion
 between subtyping and subclassing due to
 confusing target (subtyping) and specification (subclassing).
-@;{TODO cite Meyer OOSC, see other section}
 
 Still, when you clearly tease the two notions apart,
 and are aware of when they are being conflated for practical purposes,
@@ -271,7 +268,7 @@ so you can distinguish which of the two aspects should be invoked in which conte
 then the semantics of OO becomes quite simple.
 Shockingly, conflation was first explicitly discussed only in @citet{Rideau2021} even though
 (a) the concept is implicitly older than OO, going at least as far back as @citet{Hoare1965},
-and (b) the implementation of various Prototype OO systems has to explicitly accommodate for it
+and (b) the implementation of various Prototype OO systems has to explicitly accommodate it
 (see e.g. the @c{__unfix__} attribute in @citet{Simons2015})
 even when the documentation is silent about it.
 
@@ -288,86 +285,117 @@ from which the specified target computation can be extracted.
 There have historically been three main variants of inheritance,
 with each object system using a variation on one or two of them:
 single inheritance, multiple inheritance and mixin inheritance.
+I will further distinguish two kinds of multiple inheritance,
+flavorful and flavorless (my coinage), and show that
+the flavorful one is superior to the others,
+while the flavorless one is inferior to mixin inheritance.
+
+Considering the most popular languages on the TIOBE index @~cite{TIOBE2026},
+we can see that most of these languages support some form of inheritance;
+single inheritance comes most often, still all the forms of inheritance (or lack thereof)
+appear among the top 10, and for the last two years the top position was held by
+a language with flavorful multiple inheritance (Python)@xnote["."]{
+  The list and rankings of the TIOBE index vary every month, so
+  I froze the latest archived snapshot available at the time of writing.
+  Other websites may maintain their own rankings based on different criteria @~cite{GitHub2022},
+  but while the exact list and rankings will differ,
+  the top languages will be approximately the same
+  (e.g. the top ten on GitHub are all among the top 50 on TIOBE).
+
+  Thus, consider the top 50 most popular languages in the TIOBE index of August 2026.
+  5 support flavorful multiple inheritance:
+      Python (#1), Ruby (#16), Perl (#18), Lisp (#40), Scala (#49).
+  2 support mixin inheritance:
+      R (#9), Dart (#32).
+  5 only support flavorless multiple inheritance:
+      C++ (#3), PHP (#13), COBOL (#19), MATLAB (#25), OCaml (#29).
+  21 only support single inheritance:
+      Java (#4), C# (#5), JavaScript (#6), Visual Basic (#7), Delphi/Object Pascal (#11), Fortran (#15), Swift (#17), Ada (#21), Objective-C (#23), SAS (#24), Julia (#26), Kotlin (#28), LabVIEW (#31), Lua (#34), GML (#35), ABAP (#38), PowerShell (#39), D (#43), TypeScript (#44), X++ (#46), (Visual) FoxPro (#50).
+  The remaining 17 (a minority!) don’t support inheritance at all:
+      C (#2), SQL (#8), Rust (#10), Scratch (#12), Go (#14), Assembly language (#20), Classic Visual Basic (#22), PL/SQL (#27), Transact-SQL (#30), Caml (#33), VHDL (#36), Prolog (#37), Zig (#41), VBScript (#42), C shell (#45), Ladder Logic (#47), Haskell (#48).
+
+  Note that at least JavaScript, Lua and GML support enough dynamic behavior
+  to implement better forms of inheritance as patterns or libraries;
+  and language-supported metaprogramming and/or type-level programming techniques can be used
+  (or at least could, in theory) to implement arbitrary forms of inheritance
+  in C++, Rust, Zig and Haskell.
+  R has multiple object systems: the most popular, S3, supports a variant of mixin inheritance;
+  S4 supports flavorless multiple inheritance, R6 and S7 support only single inheritance.
+  For Lisp, I assume TIOBE groups many dialects of Lisp under this category;
+  I counted it as flavorful multiple inheritance based on Common Lisp’s standard object system, CLOS;
+  other Lisps have their own standard and non-standard object systems with varying capabilities,
+  and as I show in this book one with flavorful multiple inheritance
+  is just a few functions and macros away (and many libraries to that effect have existed for years).
+  I also didn’t count as multiple inheritance the special support for interfaces in Java and Ada,
+  only actual “implementation inheritance”—though these features should be noted.
+}
+
 For historical reasons, I may speak of classes, subclasses and superclasses (direct or not)
-in this section, especially when discussing previous systems using those terms;
-but when discussing the general case of prototypes and specifications,
-I will prefer speaking of specifications and their
-parents, ancestors, children and descendants@Note{
+in this section, especially when discussing previous systems using those terms.
+But when discussing the general case of OO, including prototypes and raw specifications, instead
+@principle{I will speak of specifications and their parents, ancestors, children and descendants}@xnote["."]{
+  Indeed, these words are shorter, less ambiguous, and more general, than
+  “direct superclass”, “superclass”, “direct subclass” and “subclass” respectively.
   As far as I can tell, “parent” in this meaning first appears in print
   as early as @citet{Borning1977};
   “child”, “descendant”, “sibling”, “offspring” appear in @citet{Kahn1979Director};
-  “ancestors” and “descendents” (with a final e) in @citet{Goldberg1983}.
-  @citet{Snyder1986} then explicitly uses all of these words together,
-  in preference to the more common alternatives involving direct or transitive
-  superclasses or subclasses (or the equivalent for prototypes, specifications, targets).
-}—also specifications.
+  “ancestors” and “descendents” (spelled -ents) in @citet{Goldberg1983}.
+  @citet{Snyder1986} then explicitly uses all of these words together.
+}
 
 @subsection{Single Inheritance Overview}
 
 Historically, the first inheritance mechanism discovered
 was @emph{single inheritance} @~cite{Dahl1967},
-though it was not known by that name until a decade later @~cite{Stansfield1977}.
+though it was not known by that name until a decade later.
 In an influential paper@~cite{Hoare1965},
-Hoare introduced the notions of “class” and “subclass” of records
-(as well as, infamously, the @c{null} pointer).
+Hoare introduced the notions of “class” and “subclass” of records.
 The first implementation of the concept appeared in Simula 67 @~cite{Dahl1967}.
-Alan Kay later adopted this mechanism for Smalltalk-76 @~cite{Ingalls1978},
+Kay and Ingalls later adopted this mechanism for Smalltalk-76 @~cite{Ingalls1978},
 as a compromise instead of the more general but then less well understood multiple inheritance
 @~cite{Kay1993}.
 Kay took the word “inheritance” from KRL @~cite{Winograd1975 Bobrow1976},
-a “Knowledge Representation Language” implementing Minsky’s notion of Frames in Interlisp
-(@citet{Ingalls2020} also reveals that work on Smalltalk-76 started in August only,
-which is after the July 4th publication of the KRL paper.)
-KRL had “inheritance of properties”,
+that had “inheritance of properties”,
 which was what would now be called “multiple inheritance”.
-The expressions “single inheritance” and “multiple inheritance”
-are first found in print in @citet{Stansfield1977},
-another Lisp-based frame system.
-Many other languages adopted “inheritance” after Smalltalk,
-including Java that made it especially popular circa 1995.
+The expressions “single inheritance” and “multiple inheritance” to distinguish the two
+were first found in a spiritual successor to KRL, FRL @~cite{Stansfield1977}.
+Many other languages adopted (single) “inheritance” after Smalltalk,
+including Java, that made it especially popular circa 1995.
 
-In Simula, a class is defined starting from a previous class as a “prefix”.
-The effective text of a class (hence its semantics) is then the “concatenation”
+In Simula, a subclass is defined starting from a previous class as a “prefix”.
+The effective text of the subclass (hence its semantics) is then the “concatenation”
 of the direct text of all its transitive @emph{prefix classes},
 including all the field definitions, method functions and initialization actions,
 in order from least specific superclass to most specific@xnote["."]{
   The complete story is more complex and deserves a section of its own—see @secref{Inner}.
 }
-In modern terms, most authors call the prefix a superclass in general,
-or direct superclass when it is syntactically specified as a superclass by the user.
-I will be more precise, and after @citet{Snyder1986},
-I will speak of a parent for what users explicitly specify,
-or, when considering transitively reachable parents of parents, an ancestor;
-and in the other direction, I will speak of child and descendant.
-The words parent and ancestor, in addition to being less ambiguous,
-also do not presume Class OO.
-I will call @emph{inheritance hierarchy} of a specification,
+In modern terms, most authors call this prefix a superclass,
+or direct superclass to denote that it was syntactically specified as a superclass by the user;
+that’s where I will speak of parents and ancestors.
+I will call the @emph{inheritance hierarchy} of a specification,
 the set of its ancestors, ordered by the transitive parent relation.
 When using single inheritance, this hierarchy then constitutes a list,
 and the ancestor relation is a total order.
 
 Single inheritance is easy to implement without higher-order functions:
-method lookup can be compiled into a simple and efficient array lookup at a fixed index
-— as opposed to some variant of hash-table lookup in the general case
+method lookup can be compiled into a simple and efficient array lookup at a fixed index—as
+contrasted with some variant of hash-table lookup in the general case
 for mixin inheritance or multiple inheritance.
 Moreover, calls to the “super method” also have a simple obvious meaning.
 In olden days, when resources were scarce and before FP was mature,
 these features made single inheritance more popular
 than the more expressive but costlier and less understood alternatives.
-
-Even today, most languages that support OO only support single inheritance, for its simplicity.
-@;{TODO cite}
+Even today, most languages that support OO only support single inheritance,
+for its conceptual simplicity.
 
 @subsection[#:tag "MULIO"]{Multiple Inheritance Overview}
 
 Discovered a few years later, and initially just called @emph{inheritance},
-in what, in retrospect, was prototype OO, in KRL @~cite{Winograd1975 Bobrow1976},
-Multiple inheritance allows a specification (frame, class, prototype, etc.)
-to have multiple direct parents.
-The notion of (multiple) inheritance thus predates Smalltalk-76 @~cite{Ingalls1978}
-adopting the term, retroactively applying it to Simula.
-The terms “single” and “multiple” inheritance were subsequently invented
-to distinguish the two approaches as well as recognize their commonality @~cite{Stansfield1977}.
+in what, in retrospect, was Prototype OO, in KRL @~cite{Winograd1975 Bobrow1976},
+multiple inheritance allows a specification (frame, class, prototype, etc.)
+to have multiple parents.
+The notion of (multiple) inheritance thus predates Smalltalk-76
+adopting the term and retroactively applying it to Simula @~cite{Ingalls1978}.
 
 Although many early systems
 @~cite{Borning1977 Curry1982 Goldstein1980 Borning1982 Bobrow1983}
@@ -376,16 +404,32 @@ used multiple inheritance,
 @~cite{Cannon1979 Weinreb1981},
 refined and improved by successor Lisp object systems
 New Flavors@~cite{Moon1986}, CommonLoops@~cite{Bobrow1986}
-and CLOS@~cite{DeMichiel1987 Bobrow1988 Keene1989 Steele1990}.
+and CLOS@~cite{DeMichiel1987 Bobrow1988 Keene1989 Steele1990}@xnote["."]{
+  Be careful not to confuse dates of publications and dates of inception of systems being described.
+  Although the papers I cite for early systems with multiple inheritance
+  date from after 1979, the systems described therein existed before 1979.
+  As for Flavors, its report was never “officially” published @~cite{Cannon1979},
+  and the first academic publication on it was @citet{Moon1986}.
+  Still, the Flavors report did circulate at MIT and in Lisp circles as early as 1979,
+  and soon reached beyond:
+  @citet{Borning1982} cites a 1980 copy of the report,
+  and @citet{Stroustrup1989} cites the Lisp Machine Manual @~cite{Weinreb1981}
+  for its chapter on Flavors.
+  By comparison, Smalltalk-76 had no official publication until 1978,
+  and even a language like Ruby still arguably lacks academic publications
+  for some of its OO innovations.
+}
 Since then, many languages including Ruby, Perl, Python and Scala
 correctly adopted the basic design of Flavors (though none of its more advanced features)—I
 will call them @emph{flavorful}@xnote["."]{
   To be fair, these languages all include the capability for a method to call a super-method,
-  that was not @emph{directly} possible in Flavors (1979) without writing your own method-combination,
+  which was not @emph{directly} possible in Flavors (1979)
+  without writing your own method-combination,
   but only introduced by CommonLoops (1986) with its @c{run-super} function,
   known as @c{call-next-method} in CLOS (1987).
 }
-On the other hand, influential or popular languages including Smalltalk, Self, C++ and Ada
+On the other hand, influential or popular languages including
+Smalltalk, Self, C++, OCaml, MATLAB, COBOL, PHP
 failed to learn from Flavors and got multiple inheritance largely wrong—I
 will call them @emph{flavorless}.
 
@@ -400,25 +444,15 @@ at the end of their DAG; but it is possible to do without one@xnote["."]{
 
 The proper semantics for a specification inheriting multiple different methods
 from a non-linear ancestry proved tricky to get just right.
-The older (1976) “flavorless” viewpoint sees it as a conflict between methods you must override.
-The newer (1979) “flavorful” viewpoint sees it as a cooperation between methods you can combine.
-Regrettably, too many in both academia and industry are stuck in 1976,
+The older (1976) “flavorless” viewpoint sees it
+as a conflict to resolve between methods that override each other.
+The newer (1979) “flavorful” viewpoint sees it
+as a cooperation to harmonize between methods that combine with each other.
+Regrettably, too many people in both academia and industry are stuck in 1976,
 and haven’t even heard of the flavorful viewpoint, or, when they have, still don’t understand it.
-For this reason, despite its being more expressive and more modular than single inheritance,
-flavorless inheritance and mixin inheritance, flavorful multiple inheritance still
-isn’t as widely adopted as of 2026@xnote["."]{
-  Out of the top 50 most popular languages in the TIOBE index, June 2026 @~cite{TIOBE2026}
-  5 support flavorful multiple inheritance (Python, Perl, Ruby, Lisp, Scala),
-  3 only support flavorless multiple inheritance (C++, PHP, OCaml),
-  22 only support single inheritance (Java, C#, JavaScript, Visual Basic, R, Delphi, Swift, Fortran, MATLAB, Objective-C, Kotlin, COBOL, Ada, SAS, Julia, Dart, Lua, TypeScript, VBScript, ABAP, D, CFML),
-  and the rest don’t support inheritance at all (C, SQL, Scratch, Rust, Go, Assembly Language, Classic Visual Basic (up to VB6), PL/SQL, Transact-SQL, GML, Prolog, LabView, ML, Zig, Ladder Logic, X++, Erlang, PowerShell, Haskell, Caml).
-  Note that at least JavaScript, Lua, GML support enough higher-order dynamic behavior
-  to implement better forms of inheritance as patterns or libraries;
-  and language-supported metaprogramming and/or typelevel programming techniques can or could be used
-  to implement arbitrary forms of inheritance in C++, Rust, Zig, Haskell.
-  I also didn’t count as multiple inheritance the special support of multiple inheritance
-  for Java interfaces or Ada abstract classes.
-}
+For this reason, despite being the most expressive and most modular form of inheritance,
+flavorful multiple inheritance still isn’t widely adopted as of 2026
+(though one contender for most popular language, Python, has it!).
 
 @subsection[#:tag "MIXIO"]{Mixin Inheritance Overview}
 
@@ -426,10 +460,12 @@ Mixin inheritance was discovered last @~cite{Bracha1990},
 probably because it relies on a more abstract pure functional view of OO—maybe
 also because it was one of the first successful attempts at elucidating inheritance
 in the paradigm of programming language semantics,
-when the concept had previously been developed in paradigm of computing systems @~cite{Gabriel2012}.
+when the concept had previously been developed
+in the paradigm of computing systems @~cite{Gabriel2012}.
 Yet, for the same reasons,
 @principle{Mixin Inheritance is more fundamental than the other two variants}.
-It is the simplest kind of inheritance to formalize @emph{given the basis of FP},
+
+Mixin inheritance is the simplest kind of inheritance to formalize @emph{given the basis of FP},
 in a couple of higher-order functions.
 Specifications are simple functions, inheritance is just chaining them, and
 extracting their target computation is just computing their fixpoint.
@@ -450,13 +486,14 @@ Mixin inheritance is in some way simpler than single inheritance
 (but only if you understand FP yet are not bound by limitations of most of today’s FP typesystems),
 and as expressive as multiple inheritance
 (arguably slightly more, though not in a practically meaningful way),
-but is less modular than multiple inheritance because it doesn’t automatically handle
-transitive dependencies and instead forces developers to handle them manually,
+but is less modular than multiple inheritance (which matters in practice)
+because it doesn’t automatically handle transitive dependencies
+and instead forces developers to handle them manually,
 effectively making those transitive dependencies part of a specification’s interface.
 
 For all these reasons adoption of mixin inheritance remains relatively limited,
 to languages like
-StrongTalk @~cite{Bracha1993 Bak2002},
+Strongtalk @~cite{Bracha1993 Bak2002},
 Racket @~cite{Flatt1998 Flatt2006},
 Newspeak @~cite{Bracha2008},
 GCL @~cite{Bokharouss2008},
@@ -464,7 +501,7 @@ Jsonnet @~cite{Cunningham2014},
 Dart @~cite{Bracha2015},
 and Nix @~cite{Simons2015}.
 Yet it still has outsized outreach, for just the use of GCL at Google means
-a large part of the world computing infrastructure
+a large part of the world’s computing infrastructure
 is built upon configurations written using mixin inheritance@xnote["."]{
   There is some confidentiality around Google’s Configuration Language GCL.
   Still, my understanding from discussing with Googlers who have used it is that
@@ -476,9 +513,6 @@ is built upon configurations written using mixin inheritance@xnote["."]{
   Semantically, this is just the same trick as used by Racket to implement mixins
   on top of single inheritance.
 }
-One may also construe the way C++ handles non-“virtual” repeated superclasses
-as a form of mixin inheritance with automatic renaming,
-at which point mixin inheritance is actually very popular, just not well-understood.
 
 @exercise[#:difficulty "Easy"]{
   Identify one to three concepts from this chapter that you were not familiar with.
@@ -513,14 +547,17 @@ at which point mixin inheritance is actually very popular, just not well-underst
 }
 
 @exercise[#:difficulty "Medium"]{
-  Identify an OO language in a point of the OO design space you didn’t suspect existed.
+  Identify an OO language at a point of the OO design space you didn’t suspect existed.
   Read the tutorial for that language,
   look at examples exercising idioms not directly expressible in languages you know of.
   Play with it. Use it to extend programs or configurations that you or other people wrote.
+  Conscript some AI to help you explore that language, translate idioms to and from it.
+  Find things that are simple in that language and hard in other languages you know,
+  and vice versa.
 }
 
 @exercise[#:difficulty "Medium"]{
-  Consider among programs you are familiar with.
+  Consider the programs you are familiar with.
   For each, ask:
   Does it have multiple variants or configurations?
   Do different parts need to be modified independently?
@@ -544,7 +581,7 @@ at which point mixin inheritance is actually very popular, just not well-underst
   but not directly at the level of values. You might however define a separate “partial” record type
   with options on each field, as a feature outside the language
   (users manually define those partial record types)
-  if not inside it (some automated processor automatically define
+  if not inside it (some processor automatically defines
   the partial record types from the complete record types).
 }
 
@@ -582,8 +619,9 @@ at which point mixin inheritance is actually very popular, just not well-underst
   Try to “strongman” the theories on both sides, keeping only their very best arguments
   (though also recording their worst);
   use neutral parties or verifiable facts to assess the strength of arguments.
-  Then, use criteria about good theories from chapter 1 to determine whether the better
-  theories on either or both sides are failing to satisfy the properties of a good theory.
+  Then, use criteria about good theories from @seclink["Intro"]{chapter 1}
+  to determine whether the better theories on either or both sides
+  are failing to satisfy the properties of a good theory.
   After clarifying words and concepts and theories, make your own theory,
   possibly unifying concepts and arguments from the previous two, about the topic.
   Bonus: study the kind of bias that makes each party blind

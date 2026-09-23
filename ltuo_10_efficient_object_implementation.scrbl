@@ -588,8 +588,8 @@ is a good task for modern AI to semi-automate.
 Just as essential to OO as records is the open recursion through fixpoints from inheritance.
 Now, whichever specific data structure is used underneath to represent a finite map,
 that data structure is, importantly, an “inert” @emph{value}:
-looking up bindings can be done in a “pure” way involving no meaningful side-effect,
-and even adding, shadowing or removing bindings involves no side-effects
+looking up bindings can be done in a “pure” way involving no meaningful side effect,
+and even adding, shadowing or removing bindings involves no side effects
 except those specific to the data structure if mutable (and not even that if immutable).
 In particular, there is no place in such a data structure for an arbitrary
 @emph{computation} that a fixpoint may be part of.
@@ -598,7 +598,7 @@ must happen @emph{outside} of the data structure itself.
 
 This is very unlike the case of records-as-arbitrary-functions that I was using previously:
 calling the function could do more than consult a fixed list of bindings—it
-could evaluate arbitrary computations (and, in Scheme, issue arbitrary side-effects).
+could evaluate arbitrary computations (and, in Scheme, issue arbitrary side effects).
 Indeed, I specifically relied on some arbitrary computation happening when looking up bindings
 to make that computation itself the fixpoint of a modular definition.
 My computations would recursively refer to the @c{self} variable,
@@ -643,7 +643,7 @@ none of them more “natural” than the others, though each programming languag
 cheaper to express:
 @itemize[
   @item{Computations as thunks—functions from unit to the desired value type,
-    with some set of acceptable side-effects.}
+    with some set of acceptable side effects.}
   @item{Computations as delayed values—about the same as thunks, but
     the delayed value must be “forced” instead of a thunk being invoked,
     at which point the underlying computation happens at most once,
@@ -654,7 +654,7 @@ cheaper to express:
     and the lazy wrapper is idempotent, i.e. if a value is already lazy,
     you don’t have to force it twice (important since forcing is implicit).}
   @item{Computations as forks—as if a thunk were already scheduled to be evaluated in parallel,
-    and its side-effects may and will take place even if the computation isn’t explicitly invoked
+    and its side effects may and will take place even if the computation isn’t explicitly invoked
     to wait for its results.}
   @item{Computations as futures—same as a fork, but invoking the computation is implicit
     when the result is needed, as with lazy vs delayed values.}]
@@ -684,7 +684,7 @@ If the computation yields a value of type @c{foo},
 I will also call the computation a @emph{suspended foo}
 (e.g. suspended record, suspended integer).
 If the computation fails to terminate, trying to extract its outcome will also not terminate,
-but will only produce the side-effects of the computation.
+but will only produce the side effects of the computation.
 
 @; TODO: will there be Scheme code in 1st Ed? Or only 2nd Ed?
 @; In my Scheme code,
@@ -699,7 +699,7 @@ in whichever language you are using, in the context of the application you’re 
 In a lazy-by-default language such as Nix or Haskell, these two primitives
 may become implicit and invisible, as the language already hides and handles this complexity for you;
 at least, they will remain invisible until you want to think about performance and optimizations,
-or need to transform the code into monadic style to enable some side-effect
+or need to transform the code into monadic style to enable some side effect
 in the computations by which you define and build your objects.
 
 @subsection[#:tag "SRoRoS"]{Suspended Records or Records of Suspensions}
@@ -765,7 +765,7 @@ and expand to some optimized low-level code, à la C++.
 
 @subsubsection{A Popular Strategy to Implement Recursion}
 
-Interestingly, mutation, the commonly available side-effect whereby
+Interestingly, mutation, the commonly available side effect whereby
 programs may mutate variable bindings or memory cells, introduces a popular
 way of constructing recursive definitions in two separate steps:
 First, allocate a cell and retain a stable reference to it@xnote["."]{
@@ -895,7 +895,7 @@ The protocol can even detect circular dependencies@xnote["."]{
   even if tediously implemented in imperative languages.
 }
 No uninitialized fields, no nulls, no memory corruption, no double initialization,
-no ordering issues, no side-effects that complicate everything,
+no ordering issues, no side effects that complicate everything,
 no factories, no builder patterns, no separate initialization protocol.
 Pure functional lazy prototypes just work.
 In a concurrent setting, appropriate use of atomic delay primitives
@@ -1046,7 +1046,7 @@ In @emph{stateful} Class OO languages (which is most of them),
 a slightly more sophisticated protocol is often offered
 to further adjust these initial values before the object construction completes
 and “clients” may see the object:
-constructors or initializers will execute side-effects to modify fields,
+constructors or initializers will execute side effects to modify fields,
 including calls to methods on the partially initialized object.
 It is up to the programmer to ensure that everything goes right,
 that methods called during initialization work properly
@@ -1268,21 +1268,21 @@ from Synchronous Message-Passing Proxies to Fully Abstract Asynchronous Containe
 I can only briefly survey this topic, maybe reusing the Collapsing Towers of Interpreters.
 
 
-@subsection{Side-Effects}
+@subsection{Side Effects}
 
 I will revert to stateful OO, because I suspect
 that’s what my public is interested in, will use, and has in their underlying language.
 But you can do it all with pure functional data structures if you want (see exercises below).
 
-One man’s purity is another man’s side-effects.
-You can have side-effects in the implementation of a pure language,
+One man’s purity is another man’s side effects.
+You can have side effects in the implementation of a pure language,
 or a pure language implementing a stateful one.
 Indeed, the transition can happen many times in a same program:
 (a) some programmer writes a program in a language that for convenience,
-provides stateful side-effects;
+provides stateful side effects;
 (b) the program is translated into some pure functional semantics in which
 some security and robustness properties can be automatically specified and proven correct;
-(c) the program is then implemented efficiently by translating linearity into side-effects,
+(c) the program is then implemented efficiently by translating linearity into side effects,
 and using dynamic stateful caches to accelerate repetitive computations;
 (d) the execution is interpreted as pure transitions of a low-level virtual machine
 so a zero-knowledge proof of faithful execution can be produced;

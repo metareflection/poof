@@ -295,9 +295,9 @@
                  Springer, 1983, pp.~159--200}
 }
 
-%% 1970
+%% 1969
 
-@InProceedings{Hewitt1970,
+@InProceedings{Hewitt1969,
   author={Carl Hewitt},
   title={Description and Theoretical Analysis (Using Schemata) of PLANNER: A Language for Proving Theorems and Manipulating Models in a Robot},
   booktitle={Proceedings of the 1st International Joint Conference on Artificial Intelligence},
@@ -311,6 +311,8 @@
     Relevant to the history of message passing, procedural abstraction, logic programming, and
     ideas that later influenced actor systems and object-oriented programming.}
 }
+
+%% 1970
 
 @PhDThesis{Fisher1970,
   author={David A. Fisher},
@@ -374,7 +376,7 @@
   booktitle={Proc. 3rd International Joint Conference on Artificial Intelligence (IJCAI)},
   pages={235–245},
   year={1973},
-  note={Priority for the pure-message line; the fork that matured into concurrency rather than OOP}
+  note={First real ACTOR paper.}
 }
 
 %% 1974
@@ -397,16 +399,6 @@
     Important mainly as the origin of Goguen's broader mathematical notion of
     object, which he later reconnects with concurrent object systems.
   }
-}
-
-@InProceedings{Liskov1974,
-  author={Barbara Liskov and Stephen Zilles},
-  title={Programming with Abstract Data Types},
-  booktitle={Proc. ACM SIGPLAN Symposium on Very High Level Languages},
-  year={1974},
-  doi={10.1145/800233.807045},
-  url={https://doi.org/10.1145/800233.807045},
-  note={The rival abstraction discipline; the contrast defines the object side}
 }
 
 %% 1975
@@ -510,18 +502,6 @@
 
 %% 1976
 
-@InProceedings{Friedman1976,
-  author={Daniel P. Friedman and David S. Wise},
-  editor={S. Michaelson and Robin Milner},
-  title={CONS Should Not Evaluate Its Arguments},
-  booktitle={Automata, Languages and Programming: Third International Colloquium},
-  pages={257–284},
-  publisher={Edinburgh University Press},
-  year={1976},
-  url={https://hdl.handle.net/2022/33858},
-  note={Early formulation of lazy constructors and cyclic or infinite data; relevant to fixed-point object encodings and to the lazy recursive records used by Nix overlays.}
-}
-
 @TechReport{Hewitt1976,
   author={Carl Hewitt},
   title={Viewing Control Structures as Patterns of Passing Messages},
@@ -531,31 +511,6 @@
   year={1976},
   url={https://dspace.mit.edu/handle/1721.1/6272},
   note={Primary statement of the actor/message-passing view of control; useful for distinguishing the actor lineage from object-oriented dispatch and inheritance.}
-}
-
-@Article{Wulf1976,
-  author={William A. Wulf and Ralph L. London and Mary Shaw},
-  title={An Introduction to the Construction and Verification of Alphard Programs},
-  journal={IEEE Transactions on Software Engineering},
-  year={1976},
-  month=dec,
-  volume={SE-2},
-  number={4},
-  pages={253--265},
-  publisher={IEEE},
-  issn={0098-5589},
-  doi={10.1109/TSE.1976.233830},
-  url={https://www.cs.cmu.edu/~Compose/VerificationofAlphard1976.pdf},
-  note={
-    Presents Alphard, a language design integrating modular data abstraction
-    with explicit specifications and techniques for formal verification.
-    Its “forms” separate an abstraction’s public behavioral specification
-    from its representation and implementation, so clients can be verified using only the specification.
-    The project remained a language design rather than a working implementation,
-    and its specification discipline provides no general story for quantification,
-    limiting how far the approach scales beyond the examples developed here.
-    Alphard was for a long time a popular project to cite, but was never implemented.
-  }
 }
 
 %% 1977
@@ -569,60 +524,7 @@
   note={Early attempt to build a quantitative science of software from program vocabulary, length and volume; historically important even if not directly about abstraction as compression.}
 }
 
-@TechReport{Kristensen1977,
-  author={Bent Bruun Kristensen and Ole Lehrmann Madsen and Kristen Nygaard},
-  title={BETA Language Development: Survey Report, 1 November 1976},
-  institution={Department of Computer Science, Aarhus University},
-  number={DAIMI PB-65},
-  year={1977},
-  month=sep,
-  doi={10.7146/dpb.v6i65.6483},
-  url={https://tidsskrift.dk/daimipb/article/view/6483},
-  note={
-    Revised September 1977 version of the November 1976 survey report,
-    presenting the initial ideas behind BETA. Also published by the Norwegian
-    Computing Center as Publication No. 559. Useful as an early primary source
-    for the development of BETA and for determining the terminology used by
-    the Simula/BETA school before “object-oriented” became standard.
-  }
-}
-
-@Article{Liskov1977,
-  author={Barbara Liskov and Alan Snyder and Russell Atkinson and
-    Craig Schaffert},
-  title={Abstraction Mechanisms in CLU},
-  journal={Communications of the ACM},
-  volume={20},
-  number={8},
-  pages={564--576},
-  year={1977},
-  month=aug,
-  doi={10.1145/359763.359789},
-  url={https://web.eecs.umich.edu/~weimerw/2011-6610/reading/liskov-clu-abstraction.pdf},
-  note={
-    Presents CLU's mechanisms for procedural, data and control abstraction.
-    In particular, a cluster is a separately compiled module encapsulating
-    the representation and operations of an abstract type, and clusters may
-    be parameterized to define generic abstractions.
-    Clusters are not first-class values: their use and instantiation belong
-    to the static module and type structure rather than ordinary run-time
-    computation.
-  }
-}
-
 %% 1978
-
-@InProceedings{Nygaard1978,
-  author={Kristen Nygaard and Ole-Johan Dahl},
-  title={The Development of the SIMULA Languages},
-  booktitle={History of Programming Languages (HOPL-I)},
-  pages={439–480},
-  publisher={ACM},
-  year={1978},
-  doi={10.1145/800025.1198392},
-  url={https://doi.org/10.1145/800025.1198392},
-  note={Retrospective by the designers that documents how Simula I evolved into Simula 67 and why classes, prefixing and virtual procedures were introduced.}
-}
 
 %% 1979
 
@@ -691,36 +593,7 @@
 
 %% 1980
 
-% Curry-deBruijn-Howard isomorphism
-@InCollection{Howard1980,
-  author={William A. Howard},
-  title={The Formulae-as-Types Notion of Construction},
-  booktitle={To {H.B.} Curry: Essays on Combinatory Logic,
-               Lambda Calculus and Formalism},
-  editor={Jonathan P. Seldin and J. Roger Hindley},
-  publisher={Academic Press},
-  year={1980},
-  pages={479--490},
-  note={Manuscript originally circulated 1969.
-    Made popular what is now known as the Curry-Howard-de Bruijn correspondence
-    between logical implication and function types.}
-}
-
 %% 1981
-
-@Article{Bancilhon1981,
-  author={François Bancilhon and Nicolas Spyratos},
-  title={Update Semantics of Relational Views},
-  journal={ACM Transactions on Database Systems},
-  volume={6},
-  number={4},
-  pages={557--575},
-  month={December},
-  year={1981},
-  doi={10.1145/319628.319634},
-  url={https://doi.org/10.1145/319628.319634},
-  note={Classic treatment of the relational view-update problem. It characterizes update translation through a complementary view: choosing what information is kept invariant in the complement determines an update policy, and valid translators correspond to such constant-complement choices. Relevant to bidirectional transformations, lenses and the semantics of updating derived views rather than directly stored data.}
-}
 
 @Article{Ingalls1981,
   author={Daniel H. H. Ingalls},
@@ -732,28 +605,6 @@
   year={1981},
   url={https://www.cs.virginia.edu/~evans/cs655/readings/smalltalk.html},
   note={Compact statement of Smalltalk’s uniform object and message model, useful as a primary source for the Smalltalk tradition rather than later folklore.}
-}
-
-@Book{Liskov1981,
-  author={Barbara Liskov and Russell Atkinson and Toby Bloom and
-    J. Eliot B. Moss and Craig Schaffert and Robert Scheifler and
-    Alan Snyder},
-  title={CLU Reference Manual},
-  series={Lecture Notes in Computer Science},
-  volume={114},
-  publisher={Springer},
-  address={Berlin, Germany},
-  year={1981},
-  isbn={978-3-540-10836-8},
-  doi={10.1007/BFb0035014},
-  note={
-    Definitive reference manual for CLU.
-    Cluster definitions implement abstract types and may be parameterized,
-    but actual parameters used to instantiate generated types must be
-    constants computable at compile time.
-    Thus CLU's cluster mechanism provides static parametric modularity,
-    rather than first-class modules selectable or composed at run time.
-  }
 }
 
 %% 1982
@@ -786,37 +637,7 @@
   }
 }
 
-@InProceedings{Steels1982,
-  author={Luc Steels},
-  editor={Pierpaolo Degano and Erik Sandewall},
-  title={ORBIT: An Applicative View of Object-Oriented Programming},
-  booktitle={Integrated Interactive Computing Systems},
-  pages={193–205},
-  publisher={North-Holland},
-  year={1982},
-  url={https://dblp.org/rec/conf/ecics/Steels82},
-  note={Very early functional reconstruction of object-oriented programming, predating most later work on classes as functions and objects as fixed points.}
-}
-
 %% 1983
-
-@InProceedings{Kristensen1983,
-  author={Bent Bruun Kristensen and Ole Lehrmann Madsen and
-    Birger Møller-Pedersen and Kristen Nygaard},
-  title={Abstraction Mechanisms in the BETA Programming Language},
-  booktitle={Proceedings of the 10th ACM SIGACT-SIGPLAN Symposium on
-    Principles of Programming Languages},
-  year={1983},
-  pages={285--298},
-  publisher={ACM},
-  doi={10.1145/567067.567095},
-  url={https://doi.org/10.1145/567067.567095},
-  note={
-    Presents the abstraction mechanisms of BETA, developed as a successor to
-    Simula. An important primary source for the BETA school’s treatment of
-    classes, procedures, types and related abstraction mechanisms.
-  }
-}
 
 @Article{Novak1983,
   author={Gordon S. Novak},
@@ -846,17 +667,24 @@
   }
 }
 
-@InProceedings{Reynolds1983,
-  author={John C. Reynolds},
-  title={Types, Abstraction and Parametric Polymorphism},
-  booktitle={Information Processing 83 (IFIP Congress)},
-  pages={513–523},
-  publisher={North-Holland},
-  year={1983},
-  note={The theorem that modularity works: representation independence}
-}
-
 %% 1984
+
+@TechReport{DeSmedt1984,
+  author={Koenraad de Smedt},
+  title={ORBIT: An Object-Oriented Extension of Lisp},
+  institution={Psychologisch Laboratorium, University of Nijmegen},
+  type={Internal Report},
+  number={84-FU-13},
+  address={Nijmegen, Netherlands},
+  year={1984},
+  note={
+    An early follow-up to Steels’s ORBIT work by the researcher who would later
+    develop CommonORBIT.
+    Potentially important for clarifying the actual object model and implementation
+    behind Steels’s more abstract 1983 presentation.
+    I have not found a surviving copy online.
+  }
+}
 
 @InProceedings{Deutsch1984,
   author={L. Peter Deutsch and Allan M. Schiffman},
@@ -868,6 +696,26 @@
   doi={10.1145/800017.800542},
   url={https://web.cs.ucla.edu/~palsberg/course/cs232/papers/DeutschSchiffman-popl84.pdf?utm_source=chatgpt.com},
   note={Describes a high-performance implementation of Smalltalk-80 on conventional microprocessor hardware, including object representation, dynamic message lookup and techniques for reducing the cost of dynamic dispatch. A foundational implementation paper for efficient dynamically dispatched object-oriented languages.}
+}
+
+@InProceedings{Steels1984,
+  author={Luc Steels},
+  title={ORBIT: A Tool for Building AI Systems in an Object-Oriented Style},
+  booktitle={Artificial and Human Intelligence: Edited Review Papers Presented at the International NATO Symposium on Artificial and Human Intelligence},
+  editor={Alick Elithorn and Ranan B. Banerji},
+  publisher={North-Holland},
+  address={Amsterdam, Netherlands},
+  location={Lyon, France},
+  pages={131--140},
+  year={1984},
+  isbn={0-444-86545-4},
+  note={
+    A follow-up presentation of ORBIT by Steels, emphasizing its role as a
+    Lisp-based tool for constructing AI systems in an object-oriented style.
+    Although published in 1984, it derives from the International NATO Symposium
+    on Artificial and Human Intelligence held in Lyon in October 1981,
+    so its underlying material may actually predate Steels’s 1982 AI Memo 15.
+  }
 }
 
 %% 1985
@@ -890,16 +738,6 @@
     Relevant to the independent history of taxonomic “is-a” relationships and
     inheritance in knowledge representation.
   }
-}
-
-@TechReport{Snyder1985Kernel,
-  author={Alan Snyder and Michael Creech and James Kempf},
-  title={A Common Lisp Objects Implementation Kernel},
-  institution={Software Technology Laboratory, Hewlett-Packard Laboratories},
-  address={Palo Alto, CA},
-  number={STL-85-08},
-  year={1985},
-  note={Describes the implementation kernel for CommonObjects, an early object system for Common Lisp. Directly relevant to the history and implementation of multiple inheritance and object representation in CommonObjects, one of the systems immediately preceding the development of CLOS.}
 }
 
 %% 1986
@@ -1062,6 +900,25 @@
   }
 }
 
+@InCollection{DeSmedt1987,
+  author={Koenraad de Smedt},
+  title={Object-Oriented Programming in Flavors and CommonORBIT},
+  booktitle={Artificial Intelligence Programming Environments},
+  editor={Robert Hawley},
+  publisher={Ellis Horwood},
+  address={Chichester, UK},
+  pages={157--176},
+  year={1987},
+  isbn={0-85312-857-X},
+  note={
+    Describes CommonORBIT, de Smedt’s Common Lisp successor to Steels’s ORBIT,
+    and compares it explicitly with Flavors.
+    Particularly relevant for understanding ORBIT’s prototype-based,
+    delegation-oriented inheritance model and how that model evolved into a
+    more explicit object system.
+  }
+}
+
 @InProceedings{Ducournau1987,
   author={Roland Ducournau and Michel Habib},
   title={On Some Algorithms for Multiple Inheritance in Object-Oriented Programming},
@@ -1109,65 +966,6 @@
   }
 }
 
-@InCollection{Kristensen1987,
-  author={Bent Bruun Kristensen and Ole Lehrmann Madsen and
-    Birger Møller-Pedersen and Kristen Nygaard},
-  title={The BETA Programming Language},
-  booktitle={Research Directions in Object-Oriented Programming},
-  editor={Bruce Shriver and Peter Wegner},
-  publisher={MIT Press},
-  address={Cambridge, MA, USA},
-  year={1987},
-  pages={7--48},
-  isbn={0-262-19264-0},
-  url={https://www.sigmod.org/publications/dblp/db/books/collections/ShriverW87.html},
-  note={
-    Presents BETA in a collection explicitly devoted to object-oriented
-    programming. Useful for tracing the point by which the Simula/BETA school
-    had adopted “object-oriented programming” as the name for its tradition.
-  }
-}
-
-@TechReport{Madsen1987,
-  author={Ole Lehrmann Madsen and Birger Møller-Pedersen},
-  title={The BETA Programming Language},
-  institution={Department of Computer Science, Aarhus University},
-  number={DAIMI PB-229},
-  year={1987},
-  month=aug,
-  doi={10.7146/dpb.v16i229.7578},
-  url={https://tidsskrift.dk/daimipb/article/view/7578},
-  note={
-    A comprehensive description of BETA after more than a decade of language
-    development. Explicitly describes BETA as supporting an object-oriented
-    perspective on programming, making it useful for tracing the adoption of
-    “object-oriented” terminology within the Simula/BETA school.
-  }
-}
-
-% Nah, only has lazy Y. For lazy languages only.
-@Book{PeytonJones1987,
-  author={Simon L. Peyton Jones},
-  title={The Implementation of Functional Programming Languages},
-  year={1987},
-  month=apr,
-  publisher={Prentice Hall International},
-  series={Prentice Hall International Series in Computer Science},
-  address={Hemel Hempstead, UK},
-  isbn={0-13-453333-X},
-  doi={10.5555/1096899},
-  url={https://simon.peytonjones.org/slpj-book-1987/},
-  note={
-    Classic implementation text centered on lazy functional languages and graph
-    reduction.
-    Its treatment of recursion presents the ordinary Y combinator in the
-    setting of normal-order or lazy evaluation, but does not compare it with
-    eager or stateful fixed-point constructions.
-    Therefore useful for the lazy case, but not as a general account of the
-    operational differences among fixed-point mechanisms.
-  }
-}
-
 % URL has the 1991 revision
 @InProceedings{Stroustrup1987,
   author={Bjarne Stroustrup},
@@ -1190,10 +988,43 @@
 @InProceedings{Wand1987,
   author={Mitchell Wand},
   title={Complete Type Inference for Simple Objects},
-  booktitle={Proc. 2nd IEEE Symposium on Logic in Computer Science (LICS)},
-  pages={37–44},
+  booktitle={Proceedings of the Second Annual IEEE Symposium on Logic in Computer Science},
+  pages={37--44},
+  publisher={IEEE Computer Society Press},
+  address={Ithaca, NY, USA},
+  month=jun,
   year={1987},
-  note={Row variables: the type-level name for “the rest of self”}
+  isbn={0-8186-0793-6},
+  url={http://www.ccs.neu.edu/home/wand/papers/wand-lics-87.pdf},
+  note={
+    Develops type inference for a simple record-based model of objects,
+    claiming support for multiple inheritance.
+    This is not yet the later Cook-style account of inheritance through
+    open self-reference and a fixed point.
+    A corrigendum appeared at LICS 1988, p. 132, observing that the system
+    does not always have principal type schemes.
+  }
+}
+
+@InProceedings{Wolczko1987,
+  author={Mario Wolczko},
+  title={Semantics of Smalltalk-80},
+  booktitle={ECOOP '87: European Conference on Object-Oriented Programming},
+  editor={Jean Bézivin and Jean-Marie Hullot and Pierre Cointe and Henry Lieberman},
+  series={Lecture Notes in Computer Science},
+  volume={276},
+  pages={108--120},
+  publisher={Springer},
+  address={Berlin, Heidelberg},
+  year={1987},
+  doi={10.1007/3-540-47891-4_11},
+  url={https://doi.org/10.1007/3-540-47891-4_11},
+  note={
+    Gives a denotational-style formal semantics for much of Smalltalk-80,
+    including its object memory, classes, methods and message sending.
+    An early attempt to formalize the language as a whole rather than only
+    isolate inheritance or typing mechanisms.
+  }
 }
 
 %% 1988
@@ -1304,16 +1135,6 @@
    i.e. there is code (classes) that you can extend but not in place.
 }}
 
-@Book{Rydeheard1988,
-  author={David E. Rydeheard and Rod M. Burstall},
-  title={Computational category theory},
-  year={1988},
-  ISBN={0131627368},
-  doi={10.5555/49340},
-  publisher={Prentice Hall International (UK) Ltd.},
-  url={https://www.cs.man.ac.uk/~david/categories/book/book.pdf}
-}
-
 @InProceedings{Wegner1988,
   author={Peter Wegner and Stanley B. Zdonik},
   title={Inheritance as an Incremental Modification Mechanism, or What Like Is and Isn't Like},
@@ -1340,32 +1161,6 @@
     Introduces pattern variables to BETA, making patterns first-class values
     that can be assigned, passed and returned;
     motivated by the need to associate persistent objects with dynamically available patterns.}
-}
-
-@InProceedings{Baker1989,
-  author={Henry G. Baker},
-  title={The NIMBLE Project: Real-Time Common LISP for Embedded Expert Systems Applications},
-  booktitle={AIAA Computers in Aerospace Conference, 7th, Technical Papers, Part 2},
-  year={1989},
-  month=oct,
-  pages={1102--1107},
-  location={Monterey, California, USA},
-  organization={American Institute of Aeronautics and Astronautics},
-  publisher={American Institute of Aeronautics and Astronautics},
-  address={Washington, DC, USA},
-  number={AIAA Paper 89-3140},
-  doi={10.2514/6.1989-3140},
-  note={
-    Describes the NIMBLE compiler for delivering Common Lisp expert systems in
-    embedded real-time environments, compiling complete applications rather
-    than individual source files.
-    Of particular relevance for its whole-program compilation approach and its
-    generation of portable C or Ada while retaining Common Lisp as the source
-    language.
-    Provides an early example of aggressively compiling a highly dynamic
-    language for efficient deployment rather than restricting the source
-    language to fit conventional implementation techniques.
-  }
 }
 
 % Authors of EuLisp don't like multiple inheritance, want mixin inheritance
@@ -1396,6 +1191,22 @@
   }
 }
 
+@TechReport{DeSmedt1989,
+  author={Koenraad de Smedt},
+  title={Object-Oriented Knowledge Representation in CommonORBIT},
+  institution={Nijmegen Institute for Cognition Research and Information Technology, University of Nijmegen},
+  type={Internal Report},
+  number={89-NICI-01},
+  address={Nijmegen, Netherlands},
+  year={1989},
+  note={
+    A dedicated description of CommonORBIT, the Common Lisp successor to ORBIT.
+    Later accounts cite this report for the system’s object-oriented and
+    knowledge-representation machinery, including its inheritance mechanisms.
+    I have not found a surviving copy online.
+  }
+}
+
 % Also hard to locate a free PDF
 @InProceedings{Graube1989,
   author={Nicolas Graube},
@@ -1417,13 +1228,21 @@
   }
 }
 
-@InProceedings{Madsen1989,
-  author={Ole Lehrmann Madsen and Birger Møller-Pedersen},
-  title={Virtual Classes: A Powerful Mechanism in Object-Oriented Programming},
-  booktitle={Proc. OOPSLA '89},
-  pages={397–406},
+@PhdThesis{Mulder1989,
+  author={Elmarie Mulder},
+  title={Formalising the Object-Oriented Paradigm Using Automata Theory},
+  school={Rand Afrikaans University},
+  address={Johannesburg, South Africa},
   year={1989},
-  note={Openness extended to member types (BETA lineage)}
+  url={https://ujcontent.uj.ac.za/esploro/outputs/doctoral/Formalising-the-object-oriented-paradigm-using-automata/9912320907691},
+  note={
+    Formalizes object-oriented concepts using automata theory,
+    with class automata representing classes and explicit treatment of
+    objects, inheritance and delegation.
+    Historically notable here for citing Cook’s otherwise little-cited
+    1987 Brown University report “Self-Referential Models of Inheritance,”
+    showing that the report had circulated beyond Brown before Cook’s 1989 thesis.
+  }
 }
 
 % Incorrectly 2002 on https://www.researchgate.net/publication/2568977_A_Survey_of_Object-Oriented_Concepts
@@ -1475,6 +1294,30 @@
     a taxonomy of techniques and situations when one technique is preferable to the other,
     rather than explain how the techniques are semantically related to each other.
     A feeling / perception approach that maybe defuses conflict but doesn’t solve any problem.
+  }
+}
+
+@InProceedings{Wand1989,
+  author={Mitchell Wand},
+  title={Type Inference for Record Concatenation and Multiple Inheritance},
+  booktitle={Proceedings of the Fourth Annual IEEE Symposium on Logic in Computer Science},
+  editor={Rohit Parikh},
+  pages={92--97},
+  publisher={IEEE Computer Society Press},
+  address={Pacific Grove, California, USA},
+  month=jun,
+  year={1989},
+  doi={10.1109/LICS.1989.39162},
+  url={https://www.cs.tufts.edu/~nr/cs257/archive/mitch-wand/types-simple-objects.pdf},
+  note={
+    Develops type inference for a lambda calculus with records and record concatenation,
+    and encodes a simple object model with hidden instance variables,
+    multiple inheritance and first-class classes.
+    Particularly relevant historically because Wand credits Cook 1987,
+    alongside Kamin 1988 and Reddy 1988, for the insight that inherited methods
+    must have their self-reference redirected to the entire derived object.
+    Wand cites Cook’s unpublished manuscript under the title
+    “A Self-ish Model of Inheritance.”
   }
 }
 
@@ -2651,18 +2494,6 @@
   note={Argues that concerns are multi-dimensional and that available formalisms constrain decomposition; directly relevant to why single inheritance forces clumping.}
 }
 
-@incollection{Wolczko1999,
-  author={Mario Wolczko},
-  title={self includes: Smalltalk},
-  booktitle={Prototype-Based Programming: Concepts, Languages, and Applications},
-  editor={James Noble and Antero Taivalsaari and Ivan Moore},
-  publisher={Springer},
-  year={1999},
-  isbn={9789814021258},
-  url={https://www.merlintec.com/download/mario.pdf},
-  note={Describes a working implementation of Smalltalk entirely in the prototype-based language Self. First-class Smalltalk classes, metaclasses, methods and instances are represented by ordinary Self objects; each class includes a prototypical instance cloned by new, and class creation constructs the corresponding network of prototype objects. The closest prior publication found to a complete implementation of Class OO on top of Prototype OO.}
-}
-
 %% 2000
 
 @Book{Baldwin2000,
@@ -3230,33 +3061,6 @@
   }
 }
 
-% https://iolanguage.org/docs/Paper/index.html
-@InProceedings{Dekorte2005,
-  author={Steve Dekorte},
-  title={Io: A Small Programming Language},
-  booktitle={Companion to the 20th Annual ACM SIGPLAN Conference on Object-Oriented Programming, Systems, Languages, and Applications},
-  year={2005},
-  month=oct,
-  pages={166--167},
-  publisher={ACM},
-  address={New York, NY, USA},
-  isbn={1-59593-193-7},
-  doi={10.1145/1094855.1094916},
-  url={https://static.aminer.org/pdf/PDF/000/522/059/io_a_small_programming_language.pdf},
-  note={
-    The original published description of Io, a small prototype-based
-    object-oriented language created by Dekorte starting in 2002.
-    Io combines ideas from Smalltalk, Self, NewtonScript, Act1, Lisp and Lua.
-    Its objects contain slots and a list of prototypes; lookup recursively
-    searches these prototypes, and new objects are made by differential
-    inheritance through cloning.
-    The language also provides actors and futures for concurrency, coroutines,
-    runtime-accessible code and a deliberately minimal message-based syntax.
-    Multiple inheritance uses a simple depth-first lookup of messages through the ancestry
-    (which can explode exponentially with diamonds).
-  }
-}
-
 % multimethods and method combinations
 @InProceedings{Foote2005,
   author={Brian Foote and Ralph E. Johnson and James Noble},
@@ -3326,16 +3130,6 @@
     volume={16},
     pages={375-–414},
     year={2006},
-}
-
-@TechReport{Chambers2006,
-  author={Craig Chambers},
-  title={The Diesel Language: Specification and Rationale},
-  institution={Department of Computer Science and Engineering, University of Washington},
-  year={2006},
-  month={March},
-  note={Version 0.2. Specifies Diesel, a purely object-oriented successor to Cecil with explicit classes, singleton objects, multiple inheritance, generic functions with multiple dispatch, predicate classes, static typing and modules. Particularly relevant for its unusual object model, which separates methods and fields from classes, allows clients to extend existing classes and unifies inheritance with instantiation and subtyping.},
-  url={https://projectsweb.cs.washington.edu/research/projects/cecil/www/Internal/doc-diesel-lang/diesel-spec.pdf}
 }
 
 % Code Compression
@@ -4313,51 +4107,7 @@
     while necessarily reflecting Kay's own later interpretation of that history.}
 }
 
-@WebPage{Pillmore2020,
-  author={Emily Pillmore and Mario Román},
-  title={Profunctor Optics: The Categorical View},
-  year={2020},
-  month=jan,
-  organization={The n-Category Café},
-  url={https://golem.ph.utexas.edu/category/2020/01/profunctor_optics_the_categori.html},
-  lastchecked={2026-09-06},
-  note={Explains the categorical formulation of profunctor optics, unifying
-    lenses, prisms and other bidirectional accessors through monoidal actions,
-    coends and Tambara modules.
-    Relevant as a categorical account of compositional access and update of
-    structured data, and of the abstraction underlying modern functional
-    lenses and related object-access mechanisms.}
-}
-
-@InProceedings{Wickerson2020,
-  author={John Wickerson and Paul Brunet},
-  title={Pearl: Diagrams for Composing Compilers},
-  booktitle={34th European Conference on Object-Oriented Programming (ECOOP 2020)},
-  series={Leibniz International Proceedings in Informatics (LIPIcs)},
-  volume={166},
-  pages={1:1--1:14},
-  publisher={Schloss Dagstuhl -- Leibniz-Zentrum für Informatik},
-  year={2020},
-  doi={10.4230/LIPIcs.ECOOP.2020.1},
-  url={https://johnwickerson.github.io/papers/jdiagrams.pdf},
-  note={
-    Modernizes the classic T-diagram (tombstone diagram) notation for compilers,
-    formalizes its semantics, and illustrates bootstrapping, cross-compilation,
-    and compiler composition.
-    Useful as a contemporary treatment of the notation rather than as its original source.
-  }
-}
-
 %% 2021
-
-% https://treecalcul.us/
-@book{Jay2021,
-  author={Barry Jay},
-  title={Reflective Programs in Tree Calculus},
-  year={2021},
-  url={https://github.com/barry-jay-personal/tree-calculus},
-  note={Introduces Tree Calculus, a minimal reflective combinatory calculus whose values are binary trees and whose three reduction rules support both ordinary computation and direct structural analysis of programs without quotation or external encodings.}
-}
 
 @Book{Nystrom2021,
   author={Robert Nystrom},
@@ -4502,27 +4252,6 @@
   note={Primary record of Nixpkgs terminology and the distinction between extension before a fixed point and merging after one.}
 }
 
-% https://2023.splashcon.org/details/conflang-2023-papers/7/Evolving-a-configuration-language-in-place-at-Google-scale
-% https://www.youtube.com/watch?v=Dm8hygWaMXg
-% Talk about reimplementing the language and evolving its semantics a bit---but doesn't describe the semantics.
-@InProceedings{LaraReinhold2023,
-  author={Marcos Lara-Reinhold},
-  title={Evolving a Configuration Language in Place at Google Scale},
-  booktitle={2023 ACM SIGPLAN International Workshop on Configuration Languages (CONFLANG 2023)},
-  year={2023},
-  month=oct,
-  organization={ACM SIGPLAN},
-  location={Cascais, Portugal},
-  url={https://www.youtube.com/watch?v=Dm8hygWaMXg},
-  note={Experience report on the evolution of GCL, Google's internal
-    configuration language, originally created in 2003.
-    Describes reimplementing the language and gradually changing its semantics
-    while maintaining compatibility across Google's large existing codebase,
-    using large-scale differential testing and staged migrations.
-    Useful historical evidence for GCL and its evolution, but does not describe
-    the language’s semantics in enough detail to serve as a language specification.}
-}
-
 @Article{Ord2023,
   author={Toby Ord},
   title={The Lindy Effect},
@@ -4590,62 +4319,6 @@
     architectural structure to the complexity programmers must manage.}
 }
 
-@Book{Kaisler2024,
-  author={Stephen H. Kaisler},
-  title={Medley LOOPS: The Basic System},
-  year={2024},
-  month=jul,
-  volume={1},
-  series={Medley LOOPS},
-  edition={Version 1.2},
-  publisher={The Medley Interlisp Project},
-  url={https://interlisp.org/documentation/2024-loops-book-1.pdf},
-  note={
-    Modern documentation of LOOPS, the Lisp Object-Oriented Programming System
-    originally developed at Xerox PARC as an extension of Interlisp.
-    Describes its classes, instances, metaclasses, message sending, methods,
-    multiple inheritance and superclass precedence, as well as its unusual
-    active-value and rule-oriented facilities.
-    Particularly useful as a detailed operational reference for the revived
-    system, though written retrospectively rather than as a contemporary
-    account of the original LOOPS design.
-  }
-}
-
-@WebPage{Krishnamurthi2024,
-  author={Shriram Krishnamurthi},
-  title={Bicameral, Not Homoiconic},
-  year={2024},
-  organization={Parenthetically Speaking},
-  url={https://parentheticallyspeaking.org/articles/bicameral-not-homoiconic/},
-  lastchecked={2026-09-06},
-  note={Argues that ``homoiconicity'' is too vague to explain what is distinctive
-    about Lisp syntax, and proposes ``bicameral syntax'' instead: a reader first
-    constructs a well-formed tree, after which a parser checks language-specific
-    validity.
-    Particularly relevant for distinguishing reader-level tree structure from
-    abstract syntax, and for explaining why Lisp-family macro systems benefit
-    from a structured intermediate representation without requiring literal
-    code-as-data identity.}
-}
-
-@WebPage{Ma2024,
-  author={Noah Ma},
-  title={Category Theory in Programming},
-  year={2024},
-  organization={Racket},
-  url={https://docs.racket-lang.org/ctp/index.html},
-  lastchecked={2026-09-06},
-  note={
-    Tutorial connecting category-theoretic concepts with concrete programming
-    constructs in Racket.
-    Develops executable representations of categories, functors, natural
-    transformations and related constructions, emphasizing their interpretation
-    as programming abstractions rather than category theory in isolation.
-    Useful as a programming-oriented exposition with runnable examples.
-  }
-}
-
 @Misc{Nixcademy2024,
   author={Nixcademy},
   title={Mastering Nixpkgs Overlays: Techniques and Best Practice},
@@ -4666,48 +4339,6 @@
   }}
 
 %% 2025
-
-@WebPage{Haufe2025,
-  author={Michael L. Haufe},
-  title={Comb Inheritance},
-  year={2025},
-  month=dec,
-  organization={The New Objective},
-  url={https://thenewobjective.com/types-and-programming-languages/comb-inheritance/},
-  lastchecked={2026-09-06},
-  note={Explains comb inheritance, a NewtonScript technique that combines a
-    prototype-inheritance chain with a separate parent-instance delegation
-    chain.
-    Reimplements the mechanism in JavaScript using proxies and illustrates its
-    use for chain-of-responsibility, document hierarchies and event propagation.
-    Relevant as a modern explanation of an unusual multiple-inheritance lookup
-    strategy in which type inheritance and contextual delegation coexist as
-    distinct dimensions.}
-}
-
-% The author site hosts substantial freely accessible supplementary material
-% but not the complete book text
-@Book{Scott2025,
-  author={Michael L. Scott and Jonathan Aldrich},
-  title={Programming Language Pragmatics},
-  year={2025},
-  month=may,
-  edition={5},
-  publisher={Morgan Kaufmann},
-  address={Cambridge, Massachusetts},
-  isbn={978-0-323-99966-3},
-  url={https://mlscott14627.github.io/PLP5e_online/},
-  note={
-    Broad textbook on programming-language design and implementation,
-    emphasizing the interaction between semantics, language features and
-    implementation techniques.
-    Chapter 10 surveys data abstraction and object orientation, including
-    classes, inheritance, dynamic dispatch, multiple inheritance, traits and
-    related mechanisms.
-    Useful as a modern comparative reference for mainstream programming-language
-    treatments of object orientation, though its scope is much broader than OO.
-  }
-}
 
 %% 2026
 

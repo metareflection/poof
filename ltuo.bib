@@ -470,7 +470,7 @@
     until the class body detaches or terminates again.
     Calling and detaching convey no messages and involve no locking:
     programmers are expected to follow a hierarchical coroutine discipline,
-    and communicate through side-effects to variables.
+    and communicate through side effects to variables.
     Hierarchical behavior is facilitated by the ability to nest classes,
     but those nested classes are not “virtual” and cannot be further extended
     as part of family polymorphism as in BETA.
@@ -651,6 +651,30 @@
 }
 
 %% 1973
+
+% Bad scan: https://www.ijcai.org/Proceedings/73/Papers/027B.pdf
+@InProceedings{Hewitt1973Universal,
+  author={Carl Hewitt and Peter Bishop and Richard Steiger},
+  title={A Universal Modular ACTOR Formalism for Artificial Intelligence},
+  booktitle={Proceedings of the 3rd International Joint Conference on Artificial Intelligence},
+  editor={Nils J. Nilsson},
+  publisher={William Kaufmann},
+  address={Los Altos, CA, USA},
+  location={Stanford, California, USA},
+  pages={235--245},
+  month=aug,
+  year={1973},
+  isbn={0-86576-73-3},
+  url={https://eighty-twenty.org/files/Hewitt,%20Bishop,%20Steiger%20-%201973%20-%20A%20universal%20modular%20ACTOR%20formalism%20for%20artificial%20intelligence.pdf},
+  note={
+    The first published paper centered on the Actor model,
+    following a December 1972 technical report.
+    It unifies the formalism around the single concept of an ACTOR, an active object
+    whose behavior is ultimately expressed by sending messages to other actors.
+    Data structures, functions, processes and many other computational entities are
+    presented as special cases of actors.
+  }
+}
 
 % https://web.mit.edu/Saltzer/www/publications/memos.html
 @TechReport{Saltzer1973,
@@ -1276,7 +1300,7 @@
 
     Finally, Flavors as such offers no call-next-method.
     The default method combination, :DAEMON, calls only the most-specific primary method,
-    with :before and :after methods contributing through side-effects.
+    with :before and :after methods contributing through side effects.
     In addition to method combinations as such,
     wrappers (macros with :around powers) can wrap the resulting combined method
     (CLOS would later merge them into method combinations as :around methods).
@@ -1594,7 +1618,111 @@
   }
 }
 
+% https://www.cs.cmu.edu/afs/cs/project/ai-repository/ai/lang/lisp/oop/non_clos/corbit/0.html
+@InProceedings{Steels1983,
+  author={Luc Steels},
+  title={ORBIT: An Applicative View of Object-Oriented Programming},
+  booktitle={Integrated Interactive Computing Systems: Proceedings of the European Conference on Integrated Interactive Computing Systems, ECICS 82, Stresa, Italy, 1--3 September 1982},
+  editor={Pierpaolo Degano and Erik Sandewall},
+  publisher={North-Holland},
+  address={Amsterdam, Netherlands},
+  location={Stresa, Italy},
+  pages={193--205},
+  year={1983},
+  isbn={0-444-86595-0},
+  url={https://archive.org/details/integratedintera0000euro/page/192/mode/2up},
+  note={
+    A very interesting though somewhat frustrating paper,
+    that explains how to implement Prototype OO with U-encoding
+    and some kind of mixin inheritance (not in those words, obviously),
+    on top of a pure variant of the lambda calculus
+    (actually a subset of Schlumberger’s “applicative framework” called ORBIT, a Lisp in Lisp).
+    It took me some effort to translate the then-innovative ideas in more modern terms.
+
+    To piece together what ORBIT actually is, you may want to read the other paper on ORBIT
+    by Steels’s colleague S. Smoliar, “An Interactive Approach to Software Specification”,
+    which appears 30 pages later in the same proceedings.
+    ORBIT is some kind of simple knowledge base with its own Lisp dialect,
+    mainly implemented on top of Franz Lisp with EMACS as front-end,
+    and a Xerox (Interlisp) port underway
+    (the source for CommonORBIT, a later reimplementation on top of Common Lisp, survives).
+    The knowledge base essentially stores a Lisp expression for each symbol in a global database;
+    the expressions have their own simple and mostly pure dialect of Lisp.
+    So far, boring. But how this database is used is what makes it clever.
+
+    Generated symbols (such as rectangle-5 for a new rectangle)
+    are essentially used as pointers into the database,
+    which is used as a heap for fresh objects (unclear whether it is garbage-collected).
+    More interestingly, the values stored are lambda expressions
+    with the same trivial records-as-functions as in my book:
+    given a symbol as argument, return the value of the field named by the symbol for that record.
+    Then, Steels goes one step further, and instead of directly returning a value (e.g. an integer),
+    returns closures that, given the receiver object, return the value.
+    This is what I call U-encoding, with the slight indirection that ORBIT passes objects as
+    explicit symbolic locations in the database, rather than as an implicit (tagged) pointer
+    into the garbage-collected heap, as in lower-level Lisps.
+    By passing the receiver object around as an argument, Steels trivially implements
+    single and (flavorless) multiple inheritance of his objects via delegation,
+    implementing prototypes (terms not mentioned). Steels also chains object definitions
+    and effectively implements mixin inheritance (term obviously not mentioned),
+    seemingly taking advantage of the fact that records-as-functions return false
+    rather than a closure when a method is not found.
+    The only side effect mentioned is the allocation of new symbols
+    at which to store new closures in append-only style,
+    making the object semantics pure from the user point of view (all terms also not mentioned).
+    No doubt developers could also interactively modify the database,
+    but the object kernel does not depend on that feature.
+    Steels’s (whose f x) feature that reverses references of x via f only makes practical sense
+    if the database is small or suitably indexed (feature not mentioned).
+
+    Throughout, Steels explains what the code expands to rather than showing any implementation,
+    which conveys the ideas efficiently but remains somewhat unsatisfactory.
+    The design is broadly similar to contemporary T (Rees 1982),
+    without the low-level efficiency of T,
+    but with more direct support for inheritance than T
+    (T gave you building blocks to do inheritance by hand, but never fully automated the pattern).
+    Conceptually, poor man’s T (though with better support for inheritance);
+    materially, rich man’s T, considering the lavish use of workstation resources.
+    Flavors is cited at the end as a comparable system, but nothing is learned from it.
+
+    So if one is looking for an early semantics of OO in the pure λ-calculus,
+    this paper kind of has it, but in an indirect way, teaching the patterns
+    without either providing the implementation or articulating the concept.
+    No Cook-level insight, and indeed, no running code in the paper itself;
+    and yet—there you already have OO in FP.
+
+    Initially published as AI Memo 15 from Schlumberger-Doll Research, March 1982.
+  }
+}
+
 %% 1984
+
+% See also on OCW, a 1986 course based on SICP 1e:
+% https://ocw.mit.edu/courses/6-001-structure-and-interpretation-of-computer-programs-spring-2005/resources/1a-overview-and-introduction-to-lisp/
+@Book{Abelson1984,
+  author={Harold Abelson and Gerald Jay Sussman and Julie Sussman},
+  title={Structure and Interpretation of Computer Programs},
+  publisher={MIT Press},
+  address={Cambridge, MA, USA},
+  year={1984},
+  series={MIT Electrical Engineering and Computer Science Series},
+  isbn={978-0-262-01077-1},
+  url={https://archive.org/details/structureinterpr00abel},
+  note={
+    This classic book inspired generations of computer scientists.
+    It is somewhat outdated in its pedagogy or its treatment of some topics,
+    but many of its insights are timeless—and even its footnotes alone are gold.
+
+    Now, the authors do not discuss OO as such:
+    in chapter 3, they do build some notion of “objects” as message-handling functions,
+    same as my records-as-functions;
+    but this only deals with the “encapsulation” of state (modularity) aspect of OO,
+    while the authors explicitly avoid the topic of inheritance (extensibility).
+
+    MIT Press dates the hardcover to 1984, though many library records catalogue
+    the first edition as 1985 and the paperback appeared in 1985.
+  }
+}
 
 @Book{Barendregt1984,
   title={The lambda calculus},
@@ -2036,8 +2164,36 @@
   }
 }
 
-% Find a copy somehow? Seems to put Cook before Kamin & Reddy
-@TechReport{Cook1987,
+% https://dl.acm.org/doi/epdf/10.1145/62138.62143
+@InProceedings{Cook1987BOF,
+  author={William R. Cook},
+  title={OOPSLA'87 Inheritance BOF},
+  booktitle={Addendum to the Proceedings on Object-Oriented Programming Systems, Languages and Applications, OOPSLA 1987 Addendum},
+  editor={Leigh R. Power and Zvi Weiss},
+  year={1987},
+  pages={41--42},
+  location={Orlando, Florida, USA},
+  publisher={ACM},
+  address={New York, NY, USA},
+  isbn={978-0-89791-266-2},
+  doi={10.1145/62138.62143},
+  note={
+    A contemporary summary of a birds-of-a-feather session on inheritance at OOPSLA.
+    It shows that Cook already presented the essence of his future thesis:
+    the understanding of self and super and how inheritance works;
+    “[t]he meaning of a class is the fixed-point of its generator”;
+    subclasses as composing a delta to the generator _before_ taking the fixed-point
+    (“a special kind of composition”).
+
+    Useful historical evidence for how Cook scooped Kamin and Reddy in publishing
+    a semantic account of inheritance in terms of the λ-calculus,
+    when his more detailed 1987 writings otherwise seem to be lost.
+  }
+}
+
+% Find a copy somehow? Seems to put Cook before Kamin & Reddy.
+% Was is earlier than Kamin's 1987 writeup of his 1988 POPL paper?
+@TechReport{Cook1987Self,
   author={William R. Cook},
   title={Self-Referential Models of Inheritance},
   institution={Brown University},
@@ -2123,7 +2279,7 @@
     when used within P or code lexically nested inside P,
     while “inner P” can execute descendant-provided body extensions.
     Ugly: any communication of information between descendant and ancestor “do” blocks
-    must happen through side-effects to lexically shared variables.
+    must happen through side effects to lexically shared variables.
 
     Particularly remarkable is the treatment of
     how inheritance interacts with lexical nesting of patterns
@@ -2156,6 +2312,9 @@
     They never entered a mutually beneficial dialogue with the rest of the OO world,
     wherein they could exchange ideas in a common formalism, import good ideas from others,
     export good ideas from them. Very sad waste of great talent by self-imposed intellectual isolation.
+
+    Also published in Shriver & Wegner (eds.),
+    Research Directions in Object-Oriented Programming, MIT Press, 1987, pp. 7–48.
   }
 }
 
@@ -2402,7 +2561,7 @@
 }
 
 % https://core.ac.uk/download/pdf/42828491.pdf
-% TODO Rejoinder with common 1994 paper
+% See rejoinder with common 1994 paper
 @InProceedings{Reddy1988,
   author={Uday Reddy},
   title={Objects as Closures - Abstract Semantics of Object Oriented Languages},
@@ -3044,11 +3203,11 @@
   publisher={Elsevier},
   doi={10.1016/0890-5401(91)90052-4},
   note={
-    This seminal paper that explains how computations with all kinds of side-effects
+    This seminal paper that explains how computations with all kinds of side effects
     can be expressed on top of the pure λ-calculus using monads.
     Though presented as an abstract tool for reasoning about the semantics of programming languages,
     the technique would quickly be adapted as the concrete basis for
-    how Haskell exposes side-effects indeed.
+    how Haskell exposes side effects indeed.
     Math heavy with category theory diagrams.
   }
 }
@@ -3956,24 +4115,22 @@
   }
 }
 
+% SICP 2e
 @Book{Abelson1996,
-  Author={Harold Abelson and Gerald Sussman},
-  Title={Structure and Interpretation of Computer Program},
-  Edition={2nd},
-  Publisher={MIT Press},
-  Year={1996},
+  author={Harold Abelson and Gerald Jay Sussman and Julie Sussman},
+  title={Structure and Interpretation of Computer Program},
+  edition={2nd},
+  publisher={MIT Press},
+  year={1996},
   doi={10.5555/547755},
   isbn={978-0-262-01153-2},
   url={https://web.mit.edu/6.001/6.037/sicp.pdf},
   note={
-    This classic book, first published in 1984, inspired generations of computer scientists.
-    It is somewhat outdated in its style or its treatment of some topics,
-    but many of its insights are timeless.
-    Even its footnotes alone are gold.
-    However, the authors do not discuss OO as such:
-    in chapter 3, they do build some notion of “objects” as message-handling functions,
-    but this only deals with the “encapsulation” of state (modularity) aspect of OO,
-    while the authors explicitly avoid the topic of inheritance (extensibility).
+    Second edition of the famous 1984 classic,
+    revised and redesigned after a decade of teaching experience,
+    with code in more standard Scheme, discussion of concurrency and non-determinism,
+    pictures, more streams.
+    Same non-treatment of OO as in the first edition, though.
   }
 }
 
@@ -4506,6 +4663,27 @@
     at least some explicit type annotations on terms and their subterms.
   }
 }
+
+@InCollection{Wolczko1999,
+  author={Mario Wolczko},
+  title={self includes: Smalltalk},
+  booktitle={Prototype-Based Programming: Concepts, Languages, and Applications},
+  editor={James Noble and Antero Taivalsaari and Ivan Moore},
+  publisher={Springer},
+  year={1999},
+  isbn={9789814021258},
+  url={https://www.merlintec.com/download/mario.pdf},
+  note={
+    Describes a working implementation of Smalltalk entirely in the prototype-based language Self.
+    First-class Smalltalk classes, metaclasses, methods and instances
+    are represented by ordinary Self objects;
+    each class includes a prototypical instance cloned by new, and
+    class creation constructs the corresponding network of prototype objects.
+    The closest prior publication I found to a complete implementation
+    of Class OO on top of Prototype OO.
+
+    Already circulated in 1996.
+}}
 
 %% 2000
 
@@ -5265,8 +5443,8 @@
   }
 }
 
-@Book{Khrisnamurthi2008,
-  author={Shriram Khrisnamurthi},
+@Book{Krishnamurthi2008,
+  author={Shriram Krishnamurthi},
   title={Programming Languages: Application and Interpretation},
   edition={1st},
   year={2008},
@@ -5309,7 +5487,7 @@
   url={https://www.cs.utexas.edu/~wcook/Drafts/2009/sblp09-memo-mixins.pdf},
   note={
     Shows inheritance over functions through memoizing monadic mixins,
-    in the context of Haskell and monads for the side-effect of the memoization table.
+    in the context of Haskell and monads for the side effect of the memoization table.
   }
 }
 
@@ -5900,7 +6078,7 @@
 }
 
 @InProceedings{Felleisen2015,
-  author={Felleisen, Matthias and Findler, Robert Bruce and Flatt, Matthew and Krishnamurthi, Shriram and Barzilay, Eli and McCarthy, Jay and Tobin-Hochstadt, Sam},
+  author={Matthias Felleisen and Robert Bruce Findler and Matthew Flatt and Shriram Krishnamurthi and Eli Barzilay and Jay McCarthy and Sam Tobin-Hochstadt},
   title={The Racket Manifesto},
   booktitle={1st Summit on Advances in Programming Languages (SNAPL 2015)},
   pages={113--128},
@@ -6438,6 +6616,8 @@
 }
 
 %% 2022
+
+% New site since 2022: https://octoverse.github.com
 @WebPage{GitHub2022,
   author={GitHub},
   title={The top programming languages},
@@ -6604,13 +6784,63 @@
 
 @Misc{TIOBE2026,
   author={TIOBE Software BV},
-  title={TIOBE Programming Community Index, June 2026},
+  title={TIOBE Programming Community Index, August 2026},
   year={2026},
-  month=jun,
-  url={https://web.archive.org/web/20260629091910/https://www.tiobe.com/tiobe-index/},
+  month=aug,
+  url={https://web.archive.org/web/20260831063325/https://www.tiobe.com/tiobe-index/},
   note={
-    Monthly programming language popularity ranking. Accessed July 2026.
+    Monthly programming language popularity ranking. Accessed August 2026.
     Unhappily, the website does not offer historical data,
     and you must use the Internet Archive for that.
   }
 }
+%  1 Python
+%  2 C
+%  3 C++
+%  4 Java
+%  5 C#
+%  6 JavaScript
+%  7 Visual Basic
+%  8 SQL
+%  9 R
+% 10 Rust
+% 11 Fortran
+% 12 Go
+% 13 Delphi/Object Pascal
+% 14 PHP
+% 15 Scratch
+% 16 Assembly language
+% 17 Ada
+% 18 Swift
+% 19 Objective-C
+% 20 COBOL
+% 21 Julia
+% 22 Ruby
+% 23 Perl
+% 24 SAS
+% 25 Classic Visual Basic
+% 26 Kotlin
+% 27 MATLAB
+% 28 Caml
+% 29 Prolog
+% 30 GML
+% 31 Lua
+% 32 PowerShell
+% 33 D
+% 34 PL/SQL
+% 35 ABAP
+% 36 Transact-SQL
+% 37 VBScript
+% 38 OCaml
+% 39 TypeScript
+% 40 Zig
+% 41 Dart
+% 42 X++
+% 43 Lisp
+% 44 Scala
+% 45 LabVIEW
+% 46 Ladder Logic
+% 47 VHDL
+% 48 XSLT
+% 49 Haskell
+% 50 (Visual) FoxPro

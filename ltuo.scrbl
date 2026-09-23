@@ -13,6 +13,7 @@
 
 @(when/list (render-html?) (cube-logo))
 
+@; TODO find Cook manuscript, compare date with earlier Kamin manuscript, for "first"
 @dedication{
   To William R. Cook, who first formalized inheritance in the λ-calculus,
   showed how it differs from subtyping and
@@ -61,32 +62,32 @@ is still decades ahead of yours?
 
 If any of these questions bothers you, then this book is for you.
 It offers a Theory of OO, explained in simple terms on top of FP—as Internal Modular Extensibility.
-A mouthful, but actually all simple concepts you already use,
+A mouthful—but actually all simple concepts you already use,
 though you may not have clear names for them yet.
 This Theory of OO can answer all the questions above, and more.
 The answers almost always coincide with
 @emph{some} existing academic discourse or industry practice;
 but obviously, they cannot possibly coincide with
 @emph{all} the mutually conflicting discourses and practices out there;
-and, often enough, this theory will reject currently prevalent majority views and
+and, often enough, this theory will reject currently prevailing majority views and
 promote underrated answers.
 
-But this Theory of OO is not merely connecting previously known yet disparate lore;
+But this Theory of OO does not merely connect previously known yet disparate lore;
 nor is it yet another @italic{a posteriori} rationalization
 for the author’s arbitrary preferences.
 This theory is @emph{productive}, offering new, never-before-articulated ways to think about OO,
-based on which you can implement OO in radically simpler ways,
+that can radically simplify how you implement OO,
 in a handful of short functions you can write in any language that has higher-order functions;
 and it can @emph{objectively} (hey!) justify every design choice.
-This theory reconciles Class OO, Prototype OO, and even a more primitive classless OO
+This theory reconciles Class OO, Prototype OO—and a more primitive OO without objects(?!)
 that few computer scientists are even aware exists.
 What is easily underappreciated, this theory can demarcate
-this common domain of OO from a lot of related but quite distinct domains
+the domain of OO from a lot of related but quite distinct domains
 that may look like OO and even share some of its vocabulary,
 yet can be shown to be conceptually foreign.
-The crown of this Theory of OO, though, is a new algorithm, C4, that combines
+The crowning achievement of this Theory of OO, though, is a new algorithm, C4, that combines
 single and multiple inheritance in a way that is better—and provably so—than
-the alternatives used in any programming language so far.
+the alternatives used in any previous programming language so far.
 }
 
 @tex{\tableofcontents{}}

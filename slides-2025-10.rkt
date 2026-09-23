@@ -263,7 +263,7 @@ This document is available under the bugroff license.
            Isomorphism via macros: @(br)
            @(~ 8) class ≃ typeclass @(br)
            @(~ 8) (linear) pure ≃ stateful})
-     ($slide "What about side-effects?"
+     ($slide "What about side effects?"
         @L{Classes: pure lazy Prototype OO at compile-time}
         @L{Target types historically mutable, but don’t have to be}
         @L{Plenty of pure object libraries in Lisp, Java, Scala…}

@@ -452,7 +452,7 @@ let Y = f: (x: x x) (x: f (x x));
 
 
 ;;; 5.3.2 Composing Modular Extensions
-(def (mix p c t s) ;; parent child super self
+(def (mix c p t s) ;; child parent super self
   (c (p t s) s)) ;; chain p into c for their super argument, use the same self for both.
 
 (def (idModExt t _s) ;; super self, ignore self return super
@@ -471,9 +471,10 @@ let Y = f: (x: x x) (x: f (x x));
 
 (expect
   (fix 4 (mix*)) => 4
+  (fix 4 (mix* (op-super-spec add1))) => 5
   (fix 4 (mix* (op-super-spec add1) (op-super-spec add1))) => 6
-  (fix 4 (apply mix* (map op-super-spec (list add1 add1 mul10)))) => 60
-  (fix 4 (apply mix* (map op-super-spec (list add1 add1 mul10 add1)))) => 61)
+  (fix 4 (mix* (op-super-spec mul10) (op-super-spec add1) (op-super-spec add1))) => 60
+  (fix 4 (mix/list (map op-super-spec (list add1 mul10 add1 add1)))) => 61)
 
 ;;; 5.3.4 Default and non-default Top Type
 (def fixt (fix top))
@@ -500,7 +501,7 @@ let Y = f: (x: x x) (x: f (x x));
 (def (fix-record/inlined m)
   (Y (m empty-record)))
 (def (fix-record/fixt m)
-  (fixt (mix record-spec m)))
+  (fixt (mix m record-spec)))
 
 ;;; 5.3.5 Minimal OO Indeed
 (def (field-spec key compute-value super self method-id)
@@ -518,13 +519,13 @@ let Y = f: (x: x x) (x: f (x x));
 
 ;;; 5.3.6 Minimal Colored Point
 (def coord-spec
-  (mix* (field-spec 'x (λ (_inherited _self) 2))
-        (field-spec 'y (λ (_inherited _self) 4))))
+  (mix (field-spec 'x (λ (_inherited _self) 2))
+       (field-spec 'y (λ (_inherited _self) 4))))
 
 (def color-spec
   (field-spec 'color (λ (_inherited _self) "blue")))
 
-(def point-p (fix-record (mix* coord-spec color-spec)))
+(def point-p (fix-record (mix coord-spec color-spec)))
 
 (expect (point-p 'x) => 2
         (point-p 'color) => "blue"
@@ -553,7 +554,7 @@ let Y = f: (x: x x) (x: f (x x));
     (sqrt (+ (sqr (self 'x)) (sqr (self 'y)))))))
 
 (def point-r
-  (fix-record (mix* rho-spec coord-spec (add-x-spec 1))))
+  (fix-record (mix* (add-x-spec 1) coord-spec rho-spec)))
 
 (expect (point-r 'x) => 3
         (point-r 'rho) => 5
@@ -613,7 +614,7 @@ let Y = f: (x: x x) (x: f (x x));
 (def arms-spec (part-spec 'arms))
 (def legs-spec (part-spec 'legs))
 
-(def body-rec (fix-record (mix* base-bill-of-parts torso-spec legs-spec arms-spec head-spec)))
+(def body-rec (fix-record (mix* head-spec arms-spec legs-spec torso-spec base-bill-of-parts)))
 
 (expect (map body-rec '(parts part-count)) => '((head arms legs torso) 4))
 
@@ -623,21 +624,21 @@ let Y = f: (x: x x) (x: f (x x));
   (let ((finalizer ((field-view~* #f '__finalizer) super)))
     (if finalizer (finalizer super self) super)))
 
-(def (fix-record* m)
-  (fix-record (mix* finalize-spec m)))
+(define (fix-record* . m)
+  (fix-record (mix finalize-spec (mix/list m))))
 
 (def (register-finalizer-spec finalizer super _self)
   ((field-update~* #f '__finalizer)
     (λ (previous)
-      (if previous (mix* finalizer previous) finalizer))
+      (if previous (mix finalizer previous) finalizer))
     super))
 
 (def (sub-record-spec key spec)
   (mix*
-    (constant-field-spec key empty-record)
-    (skew-ext (field-lens key) spec)
     (register-finalizer-spec
-      (skew-ext (field-lens key) finalize-spec))))
+      (skew-ext (field-lens key) finalize-spec))
+    (skew-ext (field-lens key) spec)
+    (constant-field-spec key empty-record)))
 
 ;;;;; 5.x Order, Binary Tree Map, AVL Tree Map, Alist+AVL Hybrid Map
 
@@ -670,8 +671,8 @@ let Y = f: (x: x x) (x: f (x x));
     ((>) (λ (x y) (string>? x y)))
     (else (super method-id))))
 
-(def number-order (fix-record (mix* compare<-order-spec number-order-spec)))
-(def string-order (fix-record (mix* compare<-order-spec string-order-spec)))
+(def number-order (fix-record (mix compare<-order-spec number-order-spec)))
+(def string-order (fix-record (mix compare<-order-spec string-order-spec)))
 
 ;; symbol-order-spec : delegates '<, '=, '>, 'compare to string-order on symbol->string.
 (def (symbol-order-spec super _self method-id)
@@ -732,8 +733,8 @@ let Y = f: (x: x x) (x: f (x x));
     (else (super method-id))))
 
 (def symbol-tree-map
-  (fix-record (mix* (constant-field-spec 'Key symbol-order)
-                    binary-tree-map-spec)))
+  (fix-record (mix (constant-field-spec 'Key symbol-order)
+                   binary-tree-map-spec)))
 
 (def my-binary-dict
   (foldl (lambda (kv t) (symbol-tree-map 'acons (car kv) (cdr kv) t))
@@ -780,9 +781,9 @@ let Y = f: (x: x x) (x: f (x x));
 
 ;; Dict : AVL tree map with symbol keys.
 (def Dict
-  (fix-record (mix* (constant-field-spec 'Key symbol-order)
+  (fix-record (mix* avl-tree-rebalance-spec
                     binary-tree-map-spec
-                    avl-tree-rebalance-spec)))
+                    (constant-field-spec 'Key symbol-order))))
 
 (def my-avl-dict
   (foldl (lambda (kv t) (Dict 'acons (car kv) (cdr kv) t))
@@ -890,8 +891,8 @@ let Y = f: (x: x x) (x: f (x x));
 (def spec←pproto car)
 (def target←pproto cdr)
 (def pproto-id (pproto←spec idModExt))
-(def (pproto-mix parent child)
-  (pproto←spec (mix (spec←pproto parent) (spec←pproto child))))
+(def (pproto-mix child parent)
+  (pproto←spec (mix (spec←pproto child) (spec←pproto parent))))
 (def pproto-mix/list (op/list←op1.1 pproto-mix pproto-id))
 (define (pproto-mix* . args) (pproto-mix/list args))
 
@@ -905,8 +906,8 @@ let Y = f: (x: x x) (x: f (x x));
 
 (def (add-x-pproto dx) (pproto←spec (add-x-spec dx)))
 (def rho-pproto (pproto←spec rho-spec))
-(def point-r-pproto (pproto-mix* rho-pproto coord-pproto (add-x-pproto 1)))
-(def point-rc-pproto (pproto-mix* point-r-pproto color-pproto))
+(def point-r-pproto (pproto-mix* (add-x-pproto 1) coord-pproto rho-pproto))
+(def point-rc-pproto (pproto-mix point-r-pproto color-pproto))
 
 (expect (map (target←pproto point-r-pproto) '(x y rho color)) => '(3 4 5 #f)
         (map (target←pproto point-rc-pproto) '(x y rho color)) => '(3 4 5 "blue"))
@@ -943,12 +944,12 @@ let Y = f: (x: x x) (x: f (x x));
 (def (qproto-wrapper spec super _self)
   (conflate spec super))
 (def (qproto←spec spec)
-  (fix-record (mix spec (qproto-wrapper spec))))
+  (fix-record (mix (qproto-wrapper spec) spec)))
 (def spec←qproto get-spec)
 (def target←qproto get-target)
 (def qproto-id (qproto←spec idModExt))
-(def (qproto-mix parent child)
-  (qproto←spec (mix (spec←qproto parent) (spec←qproto child))))
+(def (qproto-mix child parent)
+  (qproto←spec (mix (spec←qproto child) (spec←qproto parent))))
 (def qproto-mix/list (op/list←op1.1 qproto-mix qproto-id))
 (define qproto-mix* (op*←op1.1 qproto-mix qproto-id))
 
@@ -959,8 +960,8 @@ let Y = f: (x: x x) (x: f (x x));
 (def area-qproto (qproto←spec (λ (super self) (area-spec super (η (get-target self))))))
 (def rho-qproto (qproto←spec (λ (super self) (rho-spec super (η (get-target self))))))
 (def point-q-qproto (qproto-mix area-qproto coord-qproto))
-(def point-r-qproto (qproto-mix* rho-qproto coord-qproto (add-x-qproto 1)))
-(def point-rc-qproto (qproto-mix* point-r-qproto color-qproto))
+(def point-r-qproto (qproto-mix* (add-x-qproto 1) coord-qproto rho-qproto))
+(def point-rc-qproto (qproto-mix point-r-qproto color-qproto))
 
 (expect (map (target←qproto coord-qproto) '(x y z color)) => '(2 4 #f #f)
         (map (target←qproto color-qproto) '(x y z color)) => '(#f #f #f "blue")
@@ -976,13 +977,13 @@ let Y = f: (x: x x) (x: f (x x));
 (def (rproto-wrapper spec super self method-id)
   (if method-id (super method-id) spec))
 (def (rproto←spec spec)
-  (fix-record (mix spec (rproto-wrapper spec))))
+  (fix-record (mix (rproto-wrapper spec) spec)))
 (def rproto-id (rproto←spec idModExt))
 (def (spec←rproto rproto)
   (rproto #f))
 (def target←rproto identity)
-(def (rproto-mix parent child)
-  (rproto←spec (mix (spec←rproto parent) (spec←rproto child))))
+(def (rproto-mix child parent)
+  (rproto←spec (mix (spec←rproto child) (spec←rproto parent))))
 (def rproto-mix/list (op/list←op1.1 rproto-mix rproto-id))
 (define rproto-mix* (op*←op1.1 rproto-mix rproto-id))
 (def (rproto←record r)
@@ -1000,8 +1001,8 @@ let Y = f: (x: x x) (x: f (x x));
   (rproto←spec (add-x-spec dx)))
 (def rho-rproto (rproto←spec rho-spec))
 
-(def point-r-rproto (rproto-mix* rho-rproto coord-rproto (add-x-rproto 1)))
-(def point-rc-rproto (rproto-mix* point-r-rproto color-rproto))
+(def point-r-rproto (rproto-mix* (add-x-rproto 1) coord-rproto rho-rproto))
+(def point-rc-rproto (rproto-mix point-r-rproto color-rproto))
 
 (expect (map (target←rproto point-r-rproto) '(x y rho color)) => '(3 4 5 #f)
         (map (target←rproto point-rc-rproto) '(x y rho color)) => '(3 4 5 "blue"))
@@ -1033,7 +1034,7 @@ let Y = f: (x: x x) (x: f (x x));
 (def (hspec-half hyper hspec) (hspec hyper))
 (def (hspec-fix hyper hspec) (hspec hyper (hspec hyper)))
 (def (half-ref half) (half half))
-(def (hspec-rmix hparent hchild hyper half)
+(def (hspec-rmix hchild hparent hyper half)
   (hchild (hparent hyper) half))
 (def hspec-rmix/list (rop/list←op1.1 hspec-rmix id-hspec))
 (define hspec-rmix* (rop*←op1.1 hspec-rmix id-hspec))
@@ -1049,15 +1050,15 @@ let Y = f: (x: x x) (x: f (x x));
 
 ;;; Reproducing earlier examples in this encoding
 (def coord-hspec
-  (hspec-rmix* (constant-field-hspec 'x 2)
-               (constant-field-hspec 'y 4)))
+  (hspec-rmix (constant-field-hspec 'x 2)
+              (constant-field-hspec 'y 4)))
 (def color-hspec
   (field-hspec 'color (λ (_half _hinherited) "blue")))
 (def point-24h (hspec-half-record (hspec-rmix coord-hspec color-hspec)))
 (def (add-x-hspec dx) (field-hspec 'x (λ (inherited _half) (+ dx inherited))))
 (def area-hspec (field-hspec 'area (λ (_inherited half) (* (half half 'x) (half half 'y)))))
 
-(def point-34ah (hspec-half-record (hspec-rmix* coord-hspec color-hspec (add-x-hspec 1) area-hspec)))
+(def point-34ah (hspec-half-record (hspec-rmix* area-hspec (add-x-hspec 1) color-hspec coord-hspec)))
 (def blue-h (hspec-half-record color-hspec))
 
 (expect (half-ref half-top) => #f
@@ -1076,7 +1077,7 @@ let Y = f: (x: x x) (x: f (x x));
 ;; misbehave (its `hyper` fallthrough only reaches `super`, never a later spec).
 (def (hspec→spec hspec super self)
   (hspec (λ (_half) super) (λ (_half) self)))
-(expect (map (fix-record (hspec→spec (hspec-rmix* coord-hspec color-hspec (add-x-hspec 1) area-hspec)))
+(expect (map (fix-record (hspec→spec (hspec-rmix* area-hspec (add-x-hspec 1) color-hspec coord-hspec)))
              '(x y z color area)) => '(3 4 #f "blue" 12))
 
 (def (spec→hspec spec hyper half)
@@ -1085,7 +1086,7 @@ let Y = f: (x: x x) (x: f (x x));
            (super (η (hyper half)))) ;; (λ (x) (hyper half x))
     (spec super self)))
 
-(def u-comp (spec→hspec (mix* coord-spec area-spec (add-x-spec 1) color-spec)))
+(def u-comp (spec→hspec (mix* color-spec (add-x-spec 1) area-spec coord-spec)))
 
 (expect (map (half-ref (hspec-half-record u-comp)) '(x y z color area)) => '(3 4 #f "blue" 12))
 
@@ -1099,40 +1100,66 @@ let Y = f: (x: x x) (x: f (x x));
 ;; on the inherited x) AND `half` (area-hspec reads the fixed x,y), converted to a
 ;; Y-spec and closed with fix-record.
 (expect (map (fix-record
-              (hspec→spec (hspec-rmix* coord-hspec (add-x-hspec 1) area-hspec)))
+              (hspec→spec (hspec-rmix* area-hspec (add-x-hspec 1) coord-hspec)))
              '(x y area color))
         => '(3 4 12 #f))
 
 ;; spec→hspec at instantiation: a Y-spec chain that uses `super` (add-x-spec) AND
 ;; `self` (area-spec, rho-spec), converted to a U-hspec and closed the U way.
 (expect (map (half-ref (hspec-half-record
-              (spec→hspec (mix* coord-spec (add-x-spec 1) area-spec rho-spec))))
+              (spec→hspec (mix* rho-spec area-spec (add-x-spec 1) coord-spec))))
              '(x y area rho color))
         => '(3 4 12 5 #f))
 
 ;; Round-trips are identity, with both inheritance channels in play.
 (expect (map (fix-record
               (hspec→spec (spec→hspec
-               (mix* coord-spec (add-x-spec 1) area-spec rho-spec))))
+               (mix* rho-spec area-spec (add-x-spec 1) coord-spec))))
              '(x y area rho color))
         => '(3 4 12 5 #f))
 (expect (map (half-ref (hspec-half-record
               (spec→hspec (hspec→spec
-               (hspec-rmix* coord-hspec (add-x-hspec 1) area-hspec)))))
+               (hspec-rmix* area-hspec (add-x-hspec 1) coord-hspec)))))
              '(x y area color))
         => '(3 4 12 #f))
 
-;; Mixed chain, Y-style `mix*` with a converted hspec in the middle:
-;; the hspec's `hyper` reads the Y-sibling to its left (x=10), and the Y-spec to
-;; its right (add-x-spec 1) then chains on the hspec's result. 10 +5 +1 = 16.
-(expect ((fix-record (mix* (constant-field-spec 'x 10)
+;; Mixed chains: Y-style (plain specs) and U-style (hspec→spec-converted
+;; hspecs) siblings alternate, in each of the two possible starting orders,
+;; to show the boundary crossing chains correctly regardless of which style
+;; is more specific. Closed the Y way with fix-record.
+(expect ((fix-record (mix* (hspec→spec (add-x-hspec 2))
+                           (add-x-spec 1)
                            (hspec→spec (add-x-hspec 5))
-                           (add-x-spec 1)))
+                           (constant-field-spec 'x 10)))
          'x)
-        => 16)
+        => 18)
+(expect ((fix-record (mix* (add-x-spec 7)
+                           (hspec→spec (add-x-hspec 3))
+                           (add-x-spec 20)
+                           (hspec→spec (constant-field-hspec 'x 100))))
+         'x)
+        => 130)
+
+;; Same idea, mirrored: U-style `hspec-rmix*` chains with Y-style
+;; (spec→hspec-converted) siblings, closed the U way with hspec-fix instead
+;; of hspec-half-record + half-ref.
+(expect ((hspec-fix half-empty-record
+           (hspec-rmix* (add-x-hspec 5)
+                        (spec→hspec (add-x-spec 4))
+                        (add-x-hspec 3)
+                        (spec→hspec (constant-field-spec 'x 2))))
+         'x)
+        => 14)
+(expect ((hspec-fix half-empty-record
+           (hspec-rmix* (spec→hspec (add-x-spec 1))
+                        (add-x-hspec 8)
+                        (spec→hspec (add-x-spec 6))
+                        (constant-field-hspec 'x 50)))
+         'x)
+        => 65)
 
 ;; Same, but the converted hspec uses `half`: area-hspec reads x,y contributed by
-;; native Y-specs (no field conflict with the more-specific color-spec).
+;; native Y-specs. Disjoint fields (x/y, area, color), so mixing order doesn't matter.
 (expect (map (fix-record (mix* coord-spec (hspec→spec area-hspec) color-spec))
              '(x area color))
         => '(2 8 "blue"))
@@ -1157,15 +1184,15 @@ let Y = f: (x: x x) (x: f (x x));
 ;; (mix* coord-spec area-spec) is converted, then x is overridden to 5 by a
 ;; more-specific native hspec; area recomputes as 5*4 = 20.
 (expect ((half-ref (hspec-half-record
-          (hspec-rmix* (spec→hspec (mix* coord-spec area-spec))
-                       (constant-field-hspec 'x 5))))
+          (hspec-rmix (constant-field-hspec 'x 5)
+                      (spec→hspec (mix coord-spec area-spec)))))
          'area)
         => 20)
 
 ;; A native hspec's `hyper` reading a converted-spec parent: 9 +4 = 13.
 (expect ((half-ref (hspec-half-record
-          (hspec-rmix* (spec→hspec (constant-field-spec 'x 9))
-                       (add-x-hspec 4))))
+          (hspec-rmix (add-x-hspec 4)
+                      (spec→hspec (constant-field-spec 'x 9)))))
          'x)
         => 13)
 
@@ -1173,26 +1200,25 @@ let Y = f: (x: x x) (x: f (x x));
 ;; and `half`), flanked by Y-specs that use `super`/`self`. All four channels in
 ;; one pipeline: x = 2 +3 = 5, y = 4, area = half.x*half.y = 20, rho = |(5,4)|.
 (expect (map (fix-record
-              (mix* coord-spec
-                    (hspec→spec (hspec-rmix* (add-x-hspec 3) area-hspec))
-                    rho-spec))
+              (mix* rho-spec
+                    (hspec→spec (hspec-rmix (add-x-hspec 3) area-hspec))
+                    coord-spec))
              '(x y area))
         => '(5 4 20))
 (expect ((fix-record
-          (mix* coord-spec
-                (hspec→spec (hspec-rmix* (add-x-hspec 3) area-hspec))
-                rho-spec))
+          (mix* rho-spec
+                (hspec→spec (hspec-rmix (add-x-hspec 3) area-hspec))
+                coord-spec))
          'rho)
         => (sqrt 41))
 
 ;; A converted hspec that is NOT the most-specific mixin still resolves its
 ;; `half`/self-references against the final object: `x` is overridden to 6 by a
-;; more-specific Y-spec to the right, and area-hspec (which reads x,y via `half`)
-;; recomputes 6*4 = 24. Works because hspec→spec threads its `self` argument into
-;; the `half` slot; it used to drop `self` and crash here on (* #f #f).
-(expect ((fix-record (mix* (hspec→spec area-hspec)
+;; more-specific Y-spec, and area-hspec (which reads x,y via `half`) recomputes
+;; 6*4 = 24, because hspec→spec threads its `self` argument into the `half` slot.
+(expect ((fix-record (mix* (constant-field-spec 'x 6)
                            coord-spec
-                           (constant-field-spec 'x 6)))
+                           (hspec→spec area-hspec)))
          'area)
         => 24)
 
@@ -1672,10 +1698,9 @@ let Y = f: (x: x x) (x: f (x x));
        (pre-precedence-list* (delay (car (force precedence-list-and-suffix*))))
        (precedence-list* (delay (cons self (force pre-precedence-list*))))
        (suffix* (delay (cdr (force precedence-list-and-suffix*))))
-       (effective-mod-ext* (delay (apply mix*
-                                    (reverse
-                                     (cons mod-ext
-                                           (map poi-mod-ext (force pre-precedence-list*)))))))
+       (effective-mod-ext* (delay (mix/list
+                                    (cons mod-ext
+                                          (map poi-mod-ext (force pre-precedence-list*))))))
        (spec
         (lambda (msg)
           (case msg
@@ -1702,8 +1727,8 @@ let Y = f: (x: x x) (x: f (x x));
 ;; poi-mix/list : List(POI) → POI — a fresh anonymous POI inheriting from the given POIs
 ;;   as independent singleton parent chains; C4 merges them.
 ;;   Its own mod-ext is idModExt, so it only finalizes what the parents contribute.
-;;   ARGUMENT ORDER: most-specific first, matching `:p` / defpoi / poi-precedence-list —
-;;   this is the opposite of mix, whose arguments parent child are most-specific last.
+;;   ARGUMENT ORDER: most-specific first, matching `:p` / defpoi / poi-precedence-list,
+;;   and mix/mix*, whose first argument (child) is most-specific too.
 ;;   poi-mix* is the varargs spelling, poi-mix the binary one.
 ;;   poi-mix-maybe is the variant that considers #f as a neutral element.
 (def (poi-mix/list pois) (make-poi #f idModExt #f (map list pois)))
@@ -2003,12 +2028,12 @@ let Y = f: (x: x x) (x: f (x x));
 (define (field-spec~* . keys) (field-spec~/list keys))
 
 (let ()
-  (def s (fix-record (mix* ((field-spec~* 'm 'a) (λ (_i _s) 1))
-                           ((field-spec~* 'm 'b) (λ (_i _s) 2))
-                           ((field-spec~* 'm 'a) (λ (i _s) (+ i 10)))
-                           ((field-spec~* 'p 'q 'r) (λ (i _s) (or i 'seed))))))
+  (def s (fix-record* ((field-spec~* 'p 'q 'r) (λ (i _s) (or i 'seed)))
+                      ((field-spec~* 'm 'a) (λ (i _s) (+ i 10)))
+                      ((field-spec~* 'm 'b) (λ (_i _s) 2))
+                      ((field-spec~* 'm 'a) (λ (_i _s) 1))))
   (expect
-   (s 'm 'a) => 11    ;; second 'a spec chains on the first (1 -> +10)
+   (s 'm 'a) => 11    ;; the more-specific 'a spec chains on the less-specific one (1 -> +10)
    (s 'm 'b) => 2
    (s 'm 'c) => #f
    (s 'p 'q 'r) => 'seed   ;; 3-key path: intermediate records auto-created
@@ -2169,6 +2194,7 @@ let Y = f: (x: x x) (x: f (x x));
   (compose-lens poi-spec-lens list-fourth-lens))
 
 ;;; 9.1.6.5. Nested Specifications
+;; The newly provided modext dominates those being updated (rp / poi).
 (def (update-rproto/mix modext rp)
   (rproto-mix (rproto←spec modext) rp))
 (def (update-poi-modext/mix modext poi)
@@ -2273,7 +2299,7 @@ let Y = f: (x: x x) (x: f (x x));
 (def (mix-maybe older newer)
   (cond ((not newer) older)
         ((not older) newer)
-        (else (mix older newer))))
+        (else (mix newer older))))
 
 ;; instance-field-spec : FieldId → InitSpec → CheckSpec → ModExt over the class descriptor.
 ;;   InitSpec  : inherited-value whole-object → value  -- CHAINS on the parent's init
@@ -2291,12 +2317,12 @@ let Y = f: (x: x x) (x: f (x x));
 ;;   this table (one field-spec per field that has an init).
 (def (instance-field-spec field-id init-spec check-spec)
   (mix*
-    (field-spec~ 'instance-field-names
-      (λ (inh _self) (field-name-insert field-id (or inh '()))))
+    ((field-spec~* 'instance-fields field-id 'check)
+      (λ (inh _self) (mix-maybe inh check-spec)))
     ((field-spec~* 'instance-fields field-id 'init)
       (λ (inh _self) (mix-maybe inh init-spec)))
-    ((field-spec~* 'instance-fields field-id 'check)
-      (λ (inh _self) (mix-maybe inh check-spec)))))
+    (field-spec~ 'instance-field-names
+      (λ (inh _self) (field-name-insert field-id (or inh '()))))))
 
 ;; simple-instance-field-spec : the book's name; no check.
 (def (simple-instance-field-spec field-id init-spec) (instance-field-spec field-id init-spec #f))
@@ -2319,12 +2345,12 @@ let Y = f: (x: x x) (x: f (x x));
 (def base-instance-builder
   (memo (λ (self)
           (make-poi 'base-instance
-            (mix (constant-field-spec #t self)
-              (mix/list (filter identity
-                         (map (λ (id)
-                                (let ((i (self 'instance-fields id 'init)))
-                                  (and i (field-spec id i))))
-                              (or (self 'instance-field-names) '())))))
+            (mix (mix/list (filter identity
+                            (map (λ (id)
+                                   (let ((i (self 'instance-fields id 'init)))
+                                     (and i (field-spec id i))))
+                                 (or (self 'instance-field-names) '()))))
+              (constant-field-spec #t self))
             #f '()))))
 
 (defpoi base-class :e
@@ -2444,7 +2470,7 @@ let Y = f: (x: x x) (x: f (x x));
   :p P0-Widget)
 ;; a bare instance: #t → class POI, plus a constant 'tag field, fixed against empty-record
 (def (bare cls tag)
-  (fix-record (mix* (constant-field-spec #t cls) (constant-field-spec 'tag tag))))
+  (fix-record (mix (constant-field-spec #t cls) (constant-field-spec 'tag tag))))
 (expect
  (instance-call (bare P0-Widget "b") 'render) => "<b>"
  (instance-call (bare P0-Boxed "b") 'render) => "[<b>]"     ;; call-next-method chains
@@ -2459,8 +2485,8 @@ let Y = f: (x: x x) (x: f (x x));
  (nfix P0-Sub  'n) => 10)   ;; chained: 1 → *10
 
 ;; minimal reflection layer
-(defclass P0-Rec :e (mix* (instance-field-spec 'tag #f string-check-spec)
-                          (instance-field-spec 'n (constant-spec 1) #f)))
+(defclass P0-Rec :e (mix (instance-field-spec 'n (constant-spec 1) #f)
+                         (instance-field-spec 'tag #f string-check-spec)))
 (expect
  (P0-Rec 'instance-field-names) => '(tag n)   ;; accumulation order: mandatory 'tag then 'n
  (@ P0-Rec 'instance-fields 'tag 'init) => #f
@@ -2539,8 +2565,8 @@ let Y = f: (x: x x) (x: f (x x));
 ;; NodeCodec: inner class in CONTRAVARIANT position -- CONSUMED by Node.serialize.
 ;;   write : (codec) → (node)   → string        read : (codec) → (string) → field-record
 (defclass line-codec :e
-  (mix* (base-instance-method-spec 'write (λ (_c node) (string-append "label=" (node 'label))))
-        (base-instance-method-spec 'read  (λ (_c s)    (record (label s))))))
+  (mix (base-instance-method-spec 'write (λ (_c node) (string-append "label=" (node 'label))))
+       (base-instance-method-spec 'read  (λ (_c s)    (record (label s))))))
 
 ;; The Graph family: the three inner classes as fields + family-instance factory methods.
 ;;   (type-of g) is the family class POI ⇒ new-node / new-edge build instances of THAT family.
@@ -2567,9 +2593,9 @@ let Y = f: (x: x x) (x: f (x x));
 ;; outer diamond over the Graph family -- covariant refinement of the Node inner class
 (defpoi ColorGraph
   :e (poi-mix-field-spec 'Node
-       (poi :e (mix* (instance-field-spec 'color (constant-spec "black") #f)
-                     (instance-method-spec 'describe
-                       (λ (cnm el) (string-append (cnm el) "@" (el 'color)))))))
+       (poi :e (mix (instance-field-spec 'color (constant-spec "black") #f)
+                    (instance-method-spec 'describe
+                      (λ (cnm el) (string-append (cnm el) "@" (el 'color)))))))
   :p Graph)
 (defpoi WeightedGraph
   :e (poi-mix-field-spec 'Node
@@ -2600,9 +2626,9 @@ let Y = f: (x: x x) (x: f (x x));
 ;; (1) lateral swap: JsonGraph replaces NodeCodec wholesale (a constant field ignores inherited).
 (defpoi JsonGraph
   :e (constant-field-spec 'NodeCodec
-       (poi :e (mix* (base-instance-method-spec 'write
-                       (λ (_c node) (string-append "{\"label\":\"" (node 'label) "\"}")))
-                     (base-instance-method-spec 'read (λ (_c s) (record (label s)))))
+       (poi :e (mix (base-instance-method-spec 'write
+                      (λ (_c node) (string-append "{\"label\":\"" (node 'label) "\"}")))
+                    (base-instance-method-spec 'read (λ (_c s) (record (label s)))))
             :p base-class))
   :p Graph)
 ;; (2) opposite-direction sibling: IdOnlyGraph makes Node SMALLER -- label init aborts, adds
@@ -2616,8 +2642,8 @@ let Y = f: (x: x x) (x: f (x x));
                            (instance-field-spec 'label (λ (_inh _obj) (abort "IdOnlyGraph: no label"))
                                                 empty-check-spec))))
            (constant-field-spec 'NodeCodec
-             (poi :e (mix* (base-instance-method-spec 'write (λ (_c node) (string-append "id=" (node 'id))))
-                           (base-instance-method-spec 'read  (λ (_c s) (record (id s)))))
+             (poi :e (mix (base-instance-method-spec 'write (λ (_c node) (string-append "id=" (node 'id))))
+                          (base-instance-method-spec 'read  (λ (_c s) (record (id s)))))
                   :p base-class))
            (base-instance-method-spec 'new-node
              (λ (g _label)
@@ -3040,7 +3066,7 @@ let Y = f: (x: x x) (x: f (x x));
 ;; Single primary method, convention 2 (receiver + one argument): (obj 'compute x)
 (def smc-obj-mul10
   (fix-record
-    (mix*
+    (mix
       (standard-method-init-spec 2 'compute)
       (primary-method-spec 'compute (λ (_cnm _self x) (* x 10))))))
 
@@ -3198,12 +3224,12 @@ let Y = f: (x: x x) (x: f (x x));
 (def list-parts-obj
   (fix-record
     (mix*
-      (list-method-init-spec 2 'parts)
+      (list-method-spec 'parts (λ (_cnm _self size) (list 'engine size)))
       (list-method-spec 'parts (λ (_cnm _self size) (list 'wheel size)))
-      (list-method-spec 'parts (λ (_cnm _self size) (list 'engine size))))))
+      (list-method-init-spec 2 'parts))))
 
 ;; most-specific-first evaluation (as in CL), most-specific-first result list
-;; engine was added last (most specific) → runs first, appears first in result
+;; engine is listed first (most specific) → runs first, appears first in result
 (expect ((list-parts-obj 'parts) 'big) => '((engine big) (wheel big)))
 
 ;; + combination via simple-method-init-spec — each method scales its argument.
@@ -3260,19 +3286,19 @@ let Y = f: (x: x x) (x: f (x x));
            (simple-sub '+ (λ (_c _s x) (* x 3)))
            (simple-sub '+ (λ (_c _s x) (* x 4)))) 1) => 9
         ((simple-cem-obj 2 compute-effective-method/list 'list
-           (simple-sub 'list (λ (_c _s k) (list 'a k)))
+           (simple-sub 'list (λ (_c _s k) (list 'c k)))
            (simple-sub 'list (λ (_c _s k) (list 'b k)))
-           (simple-sub 'list (λ (_c _s k) (list 'c k)))) 0)
+           (simple-sub 'list (λ (_c _s k) (list 'a k)))) 0)
         => '((c 0) (b 0) (a 0)))
 
 ;; Evaluation order is most-specific-first for every simple combination, as in
 ;; CL's short-form combinations.  Three `list` methods (convention 1) log as they
-;; run: `most` (last mix* arg ⇒ most specific) runs first and lands first.
+;; run: `most` (first mix* arg ⇒ most specific) runs first and lands first.
 (define lmc-log '())
 (expect (simple-cem-obj 1 compute-effective-method/list 'list
-          (simple-sub 'list (λ (_c _s) (set! lmc-log (cons 'least lmc-log)) 'least))
+          (simple-sub 'list (λ (_c _s) (set! lmc-log (cons 'most  lmc-log)) 'most))
           (simple-sub 'list (λ (_c _s) (set! lmc-log (cons 'mid   lmc-log)) 'mid))
-          (simple-sub 'list (λ (_c _s) (set! lmc-log (cons 'most  lmc-log)) 'most)))
+          (simple-sub 'list (λ (_c _s) (set! lmc-log (cons 'least lmc-log)) 'least)))
         => '(most mid least))
 (expect (reverse lmc-log) => '(most mid least))  ;; ran most-specific-first
 
@@ -3284,9 +3310,9 @@ let Y = f: (x: x x) (x: f (x x));
     'most-specific-last reverse))
 (define lmc-log2 '())
 (expect (simple-cem-obj 1 compute-effective-method/list-msl 'list
-          (simple-sub 'list (λ (_c _s) (set! lmc-log2 (cons 'least lmc-log2)) 'least))
+          (simple-sub 'list (λ (_c _s) (set! lmc-log2 (cons 'most  lmc-log2)) 'most))
           (simple-sub 'list (λ (_c _s) (set! lmc-log2 (cons 'mid   lmc-log2)) 'mid))
-          (simple-sub 'list (λ (_c _s) (set! lmc-log2 (cons 'most  lmc-log2)) 'most)))
+          (simple-sub 'list (λ (_c _s) (set! lmc-log2 (cons 'least lmc-log2)) 'least)))
         => '(least mid most))
 (expect (reverse lmc-log2) => '(least mid most))  ;; ran least-specific-first
 
@@ -3305,11 +3331,11 @@ let Y = f: (x: x x) (x: f (x x));
 (define scem-log '())
 (expect
   (simple-cem-obj 1 compute-effective-method/and 'and
-    (simple-sub 'and (λ (_c _s) (set! scem-log (cons 1 scem-log)) 'ok))
+    (simple-sub 'and (λ (_c _s) (set! scem-log (cons 3 scem-log)) 'never))
     (simple-sub 'and (λ (_c _s) (set! scem-log (cons 2 scem-log)) #f))
-    (simple-sub 'and (λ (_c _s) (set! scem-log (cons 3 scem-log)) 'never)))
+    (simple-sub 'and (λ (_c _s) (set! scem-log (cons 1 scem-log)) 'ok)))
   => #f)
-;; most-specific-first: 3 (last mix* arg) ran, then 2 returned #f and folding
+;; most-specific-first: 3 (first mix* arg) ran, then 2 returned #f and folding
 ;; stopped before 1.
 (expect scem-log => '(2 3))
 
@@ -3331,9 +3357,9 @@ let Y = f: (x: x x) (x: f (x x));
     (simple-sub 'around (λ (cnm _s) (cons 'x (cnm))))) => '(x)
   ;; stacked arounds: x (more specific) outside y
   ((simple-cem-obj 2 compute-effective-method/list 'list
-     (simple-sub 'list   (λ (_c _s x) (list 'a x)))
+     (simple-sub 'around (λ (cnm _s _x) (cons 'x (cnm))))
      (simple-sub 'around (λ (cnm _s _x) (cons 'y (cnm))))
-     (simple-sub 'around (λ (cnm _s _x) (cons 'x (cnm))))) 1) => '(x y (a 1))
+     (simple-sub 'list   (λ (_c _s x) (list 'a x)))) 1) => '(x y (a 1))
   ;; an around may replace the result outright without calling cnm
   ((simple-cem-obj 2 compute-effective-method/+ '+
      (simple-sub '+      (λ (_c _s x) (* x 100)))
@@ -3660,11 +3686,11 @@ let Y = f: (x: x x) (x: f (x x));
 
 (def (^fix!^! base^ ^spec!^^) (^Y!! (^spec!^^ base^)))
 
-;; Suspended mirror of (mix p c) = (λ (t s) (c (p t s) s)). The modexts already return a
+;; Suspended mirror of (mix c p) = (λ (t s) (c (p t s) s)). The modexts already return a
 ;; suspended record, so call them directly — an earlier `(^! …)` here re-suspended the
 ;; parent's result, handing the child a promise where it expected a record (Gambit's `force`
 ;; chains through and hides it; Racket's does not).
-(def (^mix!!! ^parent!^^ ^child!^^ super^ self^)
+(def (^mix!!! ^child!^^ ^parent!^^ super^ self^)
   (^child!^^ (^parent!^^ super^ self^) self^))
 
 ;; !extend-record!!!! : value-returning, value-arg form of extend-record (which already
@@ -3686,8 +3712,8 @@ let Y = f: (x: x x) (x: f (x x));
   (def px^ (^fix!^! base^ (^field-spec!! 'x (λ (_s^ _f^) 2))))
   (def pxy^ (^fix!^! base^ (^mix!!! (^field-spec!! 'x (λ (_s^ _f^) 2))
                                     (^field-spec!! 'y (λ (_s^ _f^) 4)))))
-  (def chained^ (^fix!^! base^ (^mix!!! (^field-spec!! 'x (λ (_s^ _f^) 10))
-                                        (^field-spec!! 'x (λ (super^ _f^) (+ 1 (! super^ 'x)))))))
+  (def chained^ (^fix!^! base^ (^mix!!! (^field-spec!! 'x (λ (super^ _f^) (+ 1 (! super^ 'x))))
+                                        (^field-spec!! 'x (λ (_s^ _f^) 10)))))
   ;; TODO: a self-referential field — one whose compute-value reads (! self^ 'other) — cannot
   ;;   be tested here yet: it forces p^ while p^ is still being forced (Gambit loops, Racket
   ;;   raises "reentrant promise"). The non-suspended `Yes` avoids this because `(η p)` is a

@@ -41,14 +41,14 @@ a framework in which the scope of OO itself can keep expanding.
 
 This section will introduce lenses and “optics” in general—tools
 functional programmers use to edit (sometimes deeply) nested data structures.
-Why bother? Why not “just” assume stateful side-effects, and
+Why bother? Why not “just” assume stateful side effects, and
 follow pointers along a path to the data you want to edit in place?
 
-Because when it comes to semantics, pointers and side-effects are actually
+Because when it comes to semantics, pointers and side effects are actually
 much more complex and indirect, involving some global store with non-local effects—which
 makes them much harder to reason about.
 By all means, when it comes to the efficient implementation of objects (@secref{EOI}),
-I will use side-effects galore.
+I will use side effects galore.
 But as long as one is investigating what objects @emph{mean},
 what can be expressed with them, and why—then
 the semantic simplicity of pure functional programming matters, a lot.
@@ -621,11 +621,11 @@ based on composing open modular extensions.
 I’ll assume for now that prototypes are records implemented with the @c{poi} encoding
 from @secref{POI}@xnote["."]{
   Note how POI and multiple inheritance in general rely on equality of generated identity tags,
-  which some of you may consider an unwanted side-effect.
+  which some of you may consider an unwanted side effect.
   In this case, you may use @c{rproto} from @secref{CfR} that relies only on mixin inheritance,
   which is pure. Or you may request users to manually provide identity tags.
   Or you may restrict your prototypes to the second-class usage at meta-level
-  where you somehow find this side-effect more acceptable
+  where you somehow find this side effect more acceptable
   (and where second-class restrictions might make source location alone
   enough to identify entities).
 }
@@ -1093,7 +1093,7 @@ A simple field descriptor would be a record of information about the field:
 how to initialize it,
 what (static or dynamic type) of value it should hold,
 what checkable invariants it should respect,
-whether it’s mutable or immutable (in a language with side-effects),
+whether it’s mutable or immutable (in a language with side effects),
 what documentation to show the user about it, etc.
 For a minimal model, I will store only a modular extension to initialize it in a field @c{init}
 that is a modular extension for the field value in the context of the class instance.
@@ -1258,14 +1258,14 @@ that used an operator like @c{progn} (sequential execution), @c{and} or @c{or}
 to combine the results of the methods, evaluated either in
 most-specific-first or most-specific-last order, as specified by the programmer.
 Typical other operators included @c{+ * max min list append nconc}@xnote["—"]{
-  @c{nconc} is a historical variant of @c{append} that uses side-effects
+  @c{nconc} is a historical variant of @c{append} that uses side effects
   to modify in place each non-empty list but the last, to link to the next one.
   It made sense in the slow and memory-constrained machines of the 1960s to 1980s,
   especially before modern garbage collection.
   But @c{nconc} rarely makes sense in modern times,
   where either the simpler and safer @c{append} is good enough,
   or optimization is better sought from a more sophisticated data representation than linked lists.
-  @c{nconc} is seldom more than the opportunity for bugs due to side-effects
+  @c{nconc} is seldom more than the opportunity for bugs due to side effects
   in unexpectedly shared data structures, which sharing, if not present yet,
   might happen after some later refactoring.
 }
@@ -1680,7 +1680,7 @@ with arguments @c{method-id method-fn}:
 CLOS allows users to define and use simple method combinations
 that combine the results of methods as if they had been passed to some operator.
 Predefined such simple method combinations use the operators
-@c{progn} (sequential execution of side-effects),
+@c{progn} (sequential execution of side effects),
 @c{and} (boolean short-circuiting logical and),
 @c{or} (boolean short-circuiting logical or),
 or the commutative functions
@@ -1865,7 +1865,7 @@ and yet still quite low-level.
 
 When using concatenation semantics, any information sharing or transfer
 between concatenated code fragments along the ancestry
-requires side-effects to some shared instance variable.
+requires side effects to some shared instance variable.
 This includes any effect to and from the result value to be returned:
 it is up to the users to roll their own protocol for that,
 each pattern declaring variables to be used for its results (or other purposes),
@@ -1901,7 +1901,7 @@ But this kind of design already felt quite low-level by the late 1970s.
 Being able to call the next method and use its result in a functional style
 was soon found to be much more ergonomic;
 and it is only more so after concurrency and large distributed systems eventually
-made people realize that side-effects can be more confusing than pure information flow.
+made people realize that side effects can be more confusing than pure information flow.
 Thus, while Simula was definitely a breakthrough,
 its particular form of inheritance was also a dead-end.
 There’s a good reason why almost no one outside Scandinavian academia is interested
@@ -1970,7 +1970,7 @@ is trivially expressible in terms of method combinations@xnote["."]{
 }
 In the end, Simula style inheritance, even updated by BETA, is a dinosaur with poor usability.
 Simula is extremely limited in what you can do and
-the side-effects it relies on are the opposite of modular.
+the side effects it relies on are the opposite of modular.
 BETA is more expressive, yet its strict inner mechanism requires
 a lot of forethought from each pattern author to make it extensible in just the right way.
 Smalltalk style inheritance, almost universally adopted, is much easier to use,
@@ -2367,7 +2367,7 @@ And other languages sadly just adopt conflict all the way
 
 Yet, the same argument in favor of linearization applies
 for multiple dispatch as well as for multiple inheritance:
-Any side-effects in those methods that will run (that, in the general case, exist)
+Any side effects in those methods that will run (that, in the general case, exist)
 will necessarily be ordered one way or the other;
 the only question is whether the system automates a coherent order,
 or puts the onus onto users—at which point it will be both onerous and incoherent.
@@ -2402,7 +2402,7 @@ code transpiled to Lisp, etc.)@xnote["."]{
   would have made things harder.
 }
 Of course, if the operation is commutative (e.g. addition),
-the side-effects from evaluating the methods that yield the arguments to the operation
+the side effects from evaluating the methods that yield the arguments to the operation
 do not usually commute, and the method order matters.
 
 Like the multiple inheritance that it extends (@secref{RSaDN}),
@@ -2510,7 +2510,7 @@ Then came the issue of where to store method information,
 which was especially important since I chose to stick to a pure functional implementation
 (modulo the ability to compare entities for identity without having to @emph{manually} assign them
 unique identifiers).
-Indeed, in a stateful implementation, one can “just” side-effect an entity to add a new multimethod;
+Indeed, in a stateful implementation, one can “just” side effect an entity to add a new multimethod;
 but in a pure implementation, one has to explicitly update “the” entity as identified by a lens,
 @emph{before} one computes the fixpoint of all the entities at stake—and
 then this opens the door to non-termination due to
@@ -2554,7 +2554,7 @@ to recurse into ancestors of the current prototype@xnote["."]{
   by involving increasingly complex method resolution algorithms.
 }
 However, this strategy requires either modifying the prototypes in place
-with stateful side-effects, or being able to lazily refer to incomplete prototypes
+with stateful side effects, or being able to lazily refer to incomplete prototypes
 before, during and after the fixpoint process
 as further declarations add new methods to prototypes.
 It is not compatible with the pure yet eager approach I chose to illustrate
@@ -2700,7 +2700,7 @@ that contains all the specifications at stake.
 
 But there are other possible representations for multiple dispatch:
 you could have a global table of methods, or one table per arity, or one table per gf,
-with a bigger state monad as side-effect, but no scope limitation requiring update to specifications;
+with a bigger state monad as side effect, but no scope limitation requiring update to specifications;
 specifications are then emptied of everything but their identity,
 all actual code information being moved to these tables.
 In this global table paradigm, it becomes simpler to think uniformly in terms of an API:
@@ -2721,7 +2721,7 @@ the “expression problem”, etc@xnote["."]{
   and a third package defines how the latter are “orphaned” instances of the former
   (which in OO would be methods for the generic functions specialized on prototypes)—orphaned
   because owned neither by the typeclasses nor by the data structures.
-  Orphaned instances act as compile-time side-effects on the semantics of the language—monkey patching.
+  Orphaned instances act as compile-time side effects on the semantics of the language—monkey patching.
   Yet they are necessary because indeed, neither the typeclass nor the data structure
   must depend on the other.
 
@@ -2752,6 +2752,23 @@ But this equation goes both ways: while some may cast aspersions on multiple dis
 by associating it with “dirty” low-level tricks some use to implement features in some languages,
 others will realize that those tricks can be seen as mere implementation details
 of legitimate high-level semantics to cleanly and purely extend programs in modular ways.
+
+Another way to reframe the issue is that absolutely all method declarations in a program
+are actually multimethod declarations for
+@emph{the} one and only generic function—the most generic of them all: method invocation—where
+the method name or identity is just the first dispatch argument.
+This mother-of-all generic function is like a knowledge base, database or tuple space
+of all specified behaviors, which takes us back to the very origins of OO
+as knowledge representation in KRL.
+And if your pure functional mindset abhors a single global object—no worries!
+You can make it a local object, either lexically bound or dynamically bound,
+updated at will, in pure functional ways@xnote["."]{
+  And if you’re a FP snob who abhors dynamic scoping,
+  please consider it under its snobbish name, the Reader Monad—but beware
+  you might in turn be outsnobbed by Category Theorists calling it
+  “the exponential monad induced by the canonical comonoid structure on R”
+  (where R is the object of dynamically bound environments).
+}
 
 In the end, this view of extensibility reminds us that
 a name path or location properly identifies
@@ -3193,7 +3210,7 @@ but because it offers a framework to keep expanding the scope of OO itself.
   Write efficient implementations of the missing simple CLOS method combinations,
   for those of @c{+ * max min progn list append nconc or and} that weren’t implemented yet.
   Hints: @c{progn} is just the Lisp operator for sequential evaluation of expressions,
-  returning the value of the last one. @c{nconc} is a variant of @c{append} that uses side-effects;
+  returning the value of the last one. @c{nconc} is a variant of @c{append} that uses side effects;
   and @c{append} and @c{nconc} done wrong
   will be quadratic rather than linear so be careful@xnote["."]{
     For @c{min} and @c{max}, note the existence

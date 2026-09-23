@@ -203,7 +203,7 @@ it transforms its input value into one that is @emph{not} a subtype of the input
 Instead, the input value is transformed into one that is in a strong sense isomorphic to it:
 you can recover one from the other, with an importantly added level of indirection.
 Second, to directly work with the eager variants of the @c{Y} combinator above,
-rather than requiring a lazy language or recursion through ad hoc stateful side-effects,
+rather than requiring a lazy language or recursion through ad hoc stateful side effects,
 the fixpoint needs to be a function, which is provided by the representation of records as functions.
 
 Thus, I will define and use functions @c{conflate}, @c{get-spec} and @c{get-target}
@@ -307,16 +307,16 @@ The reference wrapper, pure isomorphism at one level,
 yet effectful non-isomorphism at another
 (requiring access to disk, database, network, credentials, user interface, etc.),
 also illustrates that
-@principle{one man’s purity is another man’s side-effect} (to channel Alan Perlis).
-Indeed, @citet{Friedman2000} argue that recursion is a side-effect,
-because it interacts non-trivially with other side-effects.
+@principle{one man’s purity is another man’s side effect} (to channel Alan Perlis).
+Indeed, @citet{Friedman2000} argue that recursion is a side effect,
+because it interacts non-trivially with other side effects.
 
 
 For instance, with merkleization, a reference uniquely identifies some pure data structure
 with a cryptographically secure hash that you can compute in a pure functional way;
 but dereferencing the hash is only possible if you already know the data
 based on which to compute and verify the hash, that you indexed into a database
-that you need some side-effect to consult.
+that you need some side effect to consult.
 Many OO languages have an implicit builtin reference wrapper,
 as opposed to, e.g., explicit pointers as in C++;
 but the reference semantics doesn’t disappear for having been made implicit.
@@ -397,9 +397,10 @@ that just returns the record as a constant:
 One simple and quite common encoding of objects conflates specification and target
 in a way that is subtly different from the encoding I have been using so far.
 It is notable for being the essence of the barebones object system of
-Yale T Scheme @~cite{Rees1982 Adams1988},
-later made portable as YASOS @~cite{Dickey1992};
-and it was made famous by being standardized as
+Yale T Scheme @~cite{Rees1982 Adams1988}
+later made portable as YASOS @~cite{Dickey1992},
+or of ORBIT @~cite{Steels1983}.
+And it was made famous by being standardized as
 the JavaScript (JS) object system @~cite{Eich1996}:
 a prototype is a record of methods encoded as functions that take
 the record itself as parameter.
@@ -407,9 +408,9 @@ However, beyond these object systems exposing their internals,
 it is actually used as an implementation technique for countless programming languages@xnote["."]{
   This technique can be traced back to Sketchpad @~cite{Sutherland1963},
   which first documented a version of it:
-  an “instance” (already that word) is a record that includes a pointer
-  to a “generic block” containing pointers to operations
-  that you call with the instance as first argument.
+  “things” (objects) are represented as “blocks” (records)
+  that contain a “generic block” containing pointers to operations
+  that you call with the thing as first argument.
 }
 
 The difference between the two encodings is subtle but quite interesting:
@@ -561,7 +562,7 @@ by most implementations of most OO languages,
 since before OO was even invented @~cite{Sutherland1963}.
 Indeed, as far as I can tell, Y-encoding only appears in the literature
 in theoretical semantic models
-@~cite{Cardelli1984 Cook1987 Kamin1988 Reddy1988 Cook1989 CookPalsberg1989 Bracha1990},
+@~cite{Cardelli1984 Cook1987Self Cook1987BOF Kamin1988 Reddy1988 Cook1989 CookPalsberg1989 Bracha1990},
 and in practical implementations much later @~cite{Kiselyov2005 Simons2015 Rideau2021}.
 Interestingly, Haskell-based OO systems tend to use Y-encoding
 because it leads to simpler types @~cite{Kiselyov2005 Gale2015}@xnote["."]{
@@ -626,7 +627,7 @@ uses one encoding or another@xnote["."]{
 @subsection[#:tag "SSAoCPS"]{Small-Scale Advantages of Conflation: Performance, Sharing}
 
 First, note how, if a specification is pure functional,
-i.e. without side-effects, whether state, non-determinism, I/O, or otherwise,
+i.e. without side effects, whether state, non-determinism, I/O, or otherwise,
 then indeed there is only one target, uniquely specified up to behavioral equality:
 recomputing the target multiple times will lead to the same result in all contexts.
 It thus makes sense to consider “the” target for a specification,
@@ -639,14 +640,14 @@ by using a shared computation instead of repeated recomputations
 (see the related discussion on the applicative Y combinator in
 @secref{UPSLC}).
 
-If on the other hand, the specification has side-effects
-(which of course supposes the language has side-effects to begin with),
+If on the other hand, the specification has side effects
+(which of course supposes the language has side effects to begin with),
 then multiple computations of the target value will lead to different results,
 and caching a canonical target value next to the specification is
 not just a performance enhancement, but a critical semantic feature enabling
-the sharing of the state and side-effects of a prototype between all its users.
+the sharing of the state and side effects of a prototype between all its users.
 Meanwhile, if some users explicitly want to recompute the target,
-so as to get a fresh state to be modified by its own set of side-effects,
+so as to get a fresh state to be modified by its own set of side effects,
 they can always clone the prototype,
 i.e. create a new prototype that uses the same specification.
 Equivalently, they can create a prototype that inherits from it
@@ -657,7 +658,7 @@ but also when computing each of its attributes—the fields of its target record
 You might @emph{want} each access to some field to be a recomputation, but then
 it would be cleaner to have the field return a nullary function
 (or unary that ignores its argument),
-that can then be explicitly called for side-effects.
+that can then be explicitly called for side effects.
 Thus with no loss of generality you can assume you do want sharing
 rather than recomputation for every field.
 
@@ -690,14 +691,14 @@ but may be heavily relied upon during interactive development,
 or as part of implementing advanced infrastructure (@secref{SOO}).
 
 Last but not least, if your choice of representation for specifications and targets
-is such that instantiating a specification may itself issue side-effects such
+is such that instantiating a specification may itself issue side effects such
 as errors or non-termination or irreversible I/O—then it becomes essential
 to wrap your target behind lazy evaluation, or, in Scheme, a @c{delay} form.
 Thus you may still define prototypes from incomplete erroneous specifications,
 and use them through inheritance to build larger prototypes, that, when complete,
-will not have undesired side-effects.
+will not have undesired side effects.
 Once again, @principle{Laziness proves essential to OO,
-even and especially in the presence of side-effects}.
+even and especially in the presence of side effects}.
 
 @subsection[#:tag "LSAoCMM"]{Large-Scale Advantages of Conflation: More Modularity}
 
@@ -1491,14 +1492,14 @@ a read-write field could instead contain an implicit cell with initial content 4
 All the pure functional definitions I offered still directly apply.
 Slightly less pure but still quite functional, you could @emph{also}
 allow effectful interactions with the content of mutable cells during the instantiation itself.
-Now, that will indeed require, if not outright capitulation to side-effects, at least
+Now, that will indeed require, if not outright capitulation to side effects, at least
 a monadic variant of a fixpoint operator @~cite{Friedman2000}.
 @; TODO Erkok2000 Erkok2002 Erkok2002Semantics
 
-But this is no different from how mutability and side-effects
+But this is no different from how mutability and side effects
 are typically added to Functional Programming in general,
 and wholly orthogonal to OO.
-You can model side-effects externally to the language and its programs,
+You can model side effects externally to the language and its programs,
 wherein your language’s semantic function takes a “store” argument,
 that is consulted or modified to enact mutation, @; TODO cite
 Or you can internalize this semantic behavior within the programs of a pure language,
@@ -1506,7 +1507,7 @@ using the “state monad”. @; TODO cite
 If the “store” argument is threaded linearly with a single active value at any time
 (which is the usual case in the external approach),
 then the non-duplication of the underlying state
-enables the use of the usual side-effect implementations and optimizations:
+enables the use of the usual side effect implementations and optimizations:
 a mutable variable or record field is just a constant pointer into a mutable cell in the store,
 a “(mutable) reference”.
 
@@ -1547,7 +1548,7 @@ Still, there are use cases in which dynamic changes to class or prototype hierar
 are actively supported by some OO systems such as Smalltalk or Lisp:
 to enable interactive development, or schema upgrade in long-lived persistent systems,
 or merely user-defined scaffolding to build larger object structures at runtime
-through side-effects to lower-level representations.
+through side effects to lower-level representations.
 How then to model mutability of the inheritance structure itself,
 when the specification and targets of prototypes and classes are being updated?
 
@@ -1666,9 +1667,9 @@ but at least the result is well-defined and contained enough that users know wha
 in the worst case, some failsafe mechanism will prevent the system from crashing.
 
 Thus, the fine-grained details on how prototype chains are looked up during method lookup,
-and how programmers can use clever side-effects to create chains that do what they want,
+and how programmers can use clever side effects to create chains that do what they want,
 should be seen as low-level scaffolding for users to build their own OO semantics on top
-of a flexible system, with the actual OO happening in between two uses of the low-level side-effects,
+of a flexible system, with the actual OO happening in between two uses of the low-level side effects,
 rather than as something that extends OO in novel or mysterious ways,
 that contradict the essential pure functional semantics of OO.
 Indeed, the implementation of these languages (e.g. JavaScript)
@@ -1743,7 +1744,7 @@ What is the key difference in how client code must be written for each version?
 
 @exercise[#:difficulty "Medium"]{
   The chapter states that “laziness proves essential to OO,
-  even and especially in presence of side-effects.”
+  even and especially in presence of side effects.”
   Demonstrate this by:
   @itemize[
     @item{Creating a specification that performs I/O (e.g., prints a message)

@@ -641,7 +641,7 @@ without having to track and distinguish which parts are instantiated at which po
 No need to decide at every potential extension point whether and when to either
 compute a fixed-point or defer its computation, in what leads to a combinatorial explosion
 of potential interfaces. No need to defer everything until the last minute,
-and make it expensive to use any intermediary value to make a decision before that last minute,
+and make it expensive to use any intermediate value to make a decision before that last minute,
 while contaminating the entire computation to turn everything into explicit prototypes.
 No need to construct and remember access paths or lenses that you’ll have to use
 in two different contexts to access both aspects of the “same” object.
@@ -933,7 +933,7 @@ every module definition is a function that conventionally takes an argument @c{p
 that encompasses the entire ecosystem, a namespace hierarchy that includes
 not only all packages being defined, but also the standard library of functions @c{pkgs.lib}
 (though some like to redundantly pass it as an additional argument @c{lib})
-and all kind of intermediary data structures.
+and all kind of intermediate data structures.
 As we will soon see, when implementing OO, this modular context is typically called @c{self},
 to access (the rest of) the modularly (and extensibly) defined entity.
 
@@ -1223,3 +1223,8 @@ Not "did the victim die?" but "who is the victim?"
 
 The Gettysburg Address, as You’ve Never Considered It Before
 https://www.youtube.com/watch?v=2zfh3_tASxA
+
+
+https://cacm.acm.org/opinion/interview-donald-knuth-a-lifes-work-interrupted/
+Knuth:
+ I think it was George Forsythe who said, "People have said you don’t understand something until you’ve taught it in a class. The truth is you don’t really understand something until you’ve taught it to a computer, until you’ve been able to program it."

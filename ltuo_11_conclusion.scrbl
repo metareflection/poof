@@ -13,7 +13,7 @@
   If your ideas are any good, you’ll have to ram them down people’s throats.
   @|#:- "Howard Aiken"|}
 
-@section{Scientific Contributions}
+@section[#:tag "SC"]{Scientific Contributions}
 @epigraph{Early in life I had to choose between honest arrogance and hypocritical humility.
 I chose honest arrogance and have seen no occasion to change.
 @|#:- "Frank Lloyd Wright"|
@@ -149,7 +149,7 @@ in a pure functional style—which matters because
 @principle{A pure functional semantics crucially enables @emph{local}, compositional reasoning
 about OO programs using ordinary equational and logical foundations},
 without first having to account for hidden state and aliasing.
-Sure, every piece was there already, from @citet{Cook1987} to @citet{Simons2015}
+Sure, every piece was there already, from @citet{Cook1987Self} to @citet{Simons2015}
 via @citet{Bracha1990} and @citet{Kiselyov2005}
 and many more. @TODO{Leavens1988 Mugridge1991 Castagna1992 Millstein2002}
 But I am the first to tie it all together in one place with one coherent story, including
@@ -159,11 +159,11 @@ But I am the first to tie it all together in one place with one coherent story, 
 (d) method combinations,
 (e) multiple dispatch,
 (f) static and dynamic dispatch@xnote["."]{
-   The only side-effects I used, if they are effects, were
+   The only side effects I used, if they are effects, were
    laziness (for adequate performance), recursion (for fixpoints),
    and generation of identity tags (for the DAGs of multiple and optimal inheritance).
    None of these “effects” breaks local reasoning, and thus they might not even count
-   as side-effects for most people (and can be simply expressed in well-known monads).
+   as side effects for most people (and can be simply expressed in well-known monads).
 }
 
 @subsection{A More Truthful History of OO}

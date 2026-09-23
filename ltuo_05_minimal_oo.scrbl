@@ -939,7 +939,7 @@ as many times as computations are duplicated, which can grow exponentially fast
 as the computation involves deeper sub-computations.
 In some cases, the eager evaluation may never terminate at all when lazy evaluation would,
 or not before the end of the universe.
-And of course, if there are any non-idempotent side-effects,
+And of course, if there are any non-idempotent side effects,
 they too will be potentially duplicated a large number of times.
 
 There are several potential alternatives to
@@ -975,7 +975,7 @@ not to access the variable before it was initialized@xnote["."]{
 If the variable is only accessed after it is initialized,
 and the rest of the program is pure and
 doesn’t capture intermediate continuations with Scheme’s famous @c{call/cc},
-the mutation cannot be observed as a side-effect,
+the mutation cannot be observed as a side effect,
 and the computation remains overall pure (deterministic, referentially transparent),
 though not definable in terms of the pure applicative λ-calculus.
 Note however how in the definition below, @c{p} still needs to be a function,
@@ -1040,7 +1040,7 @@ However, if you consider that @c{delay} is no cheaper than a @c{λ} and indeed u
 a @c{λ} underneath, that’s not actually a gain, just a semantic shift.
 What the @c{delay} does buy you, on the other hand, compared to a simple applicative thunk,
 is naming and sharing of computations before they are evaluated,
-without duplication of computation costs or side-effects@xnote["."]{
+without duplication of computation costs or side effects@xnote["."]{
   Whether wrapped in a thunk, an explicit delay, an implicitly lazy variable,
   a call-by-name argument, or some other construct, what is interesting is that
   ultimately the fixpoint combinator iterates indefinitely on a @emph{computation},
@@ -1132,7 +1132,7 @@ to only be called at compile-time, as a metaprogram,
 and only on modular definitions that abide by some kind of structural restriction
 that guarantees the existence and well-formedness of a fixpoint,
 as well as e.g. induction principles to reason about said fixpoint.
-Also, the compile-time language processor usually doesn’t expose any side-effect to the user,
+Also, the compile-time language processor usually doesn’t expose any side effect to the user,
 such that there is no semantic difference whether its implementation is itself pure or impure,
 and uses a fixpoint combinator or any other representation for recursion.
 
@@ -1272,7 +1272,7 @@ for the same reasons@xnote["."]{
   many more languages, and in a lot of the literature about OO semantics.
   In the context of Nix extensions, it is sometimes called @c{final},
   indicating how it refers to the final result of the computation (the fixed-point),
-  as opposed to the input or output of any intermediary computation step (as in @c{previous} above).
+  as opposed to the input or output of any intermediate computation step (as in @c{previous} above).
   In Simula, and after it, in C++, Java, JavaScript or Scala, the @c{this} keyword is used instead
   for the same general purpose, but there are many differences
   that will confuse the untrained eye.
@@ -1502,7 +1502,7 @@ for many simple applications@xnote["."]{
   That specification uses the @c{self} context
   to extract the list of sections in the presentation,
   including sections not yet defined.
-  It might seem impossible in an eager language, and without side-effects,
+  It might seem impossible in an eager language, and without side effects,
   to import data from slides that will only be defined later
   into whichever slide is being defined now;
   and yet the Y combinator achieves this feat,
