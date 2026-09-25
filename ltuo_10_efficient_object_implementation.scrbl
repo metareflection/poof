@@ -57,23 +57,23 @@ not of the thing they have discovered, not of themselves.
 As for what it even means for something to be an implementation,
 this is another vast topic, but one I happen to have studied in depth,
 so I will direct you to my works @~cite{Rideau2018 FarePhD}.
-In short: consider that you have levels of abstraction
+In short: consider that you have layers of abstraction
 for what is or ought to be “the same” computation.
-At each level, you are offered a set of possible interactions
+At each layer, you are offered a set of possible interactions
 with some recognizable logical structure.
 
-An implementation is a correspondence between two levels of computation,
-one abstract (the system being implemented, typically pictured above),
-the other concrete (the underlying system doing the implementing, typically pictured below).
+An implementation is a correspondence between two layers of computation,
+one (relatively more) abstract, being implemented,
+the other (relatively more) concrete, doing the implementing.
 For the implementation to be valid, and moreover for it to be useful,
 this correspondence must satisfy various properties that can be formalized logically.
-Most importantly, some (not all) of the states in the concrete system will be “observable”,
+Most importantly, some (not all) of the concrete states will be “observable”,
 and will each have an abstract state that it “implements”.
 But most concrete states will not have any abstract state they implement;
-they will be “intermediate” states between two observable states,
-or plain invalid states that should never be reached by the implementation (if correct).
+they will be “intermediate” concrete states between two observable hyper states,
+or plain invalid concrete states that should never be reached by the implementation (if correct).
 
-Thus, the two levels may have very different sets of states and interactions overall,
+Thus, the two layers may have very different sets of states and interactions overall,
 most of them not being in a correspondence with anything in the other system.
 Yet some subset of the concrete system will be in faithful correspondence
 with some subset of the abstract system in a way that preserves their interactions.
@@ -85,6 +85,48 @@ And that is how I will be able to implement the pure functional lazy objects I w
 with the stateful von Neumann-style machines I have.
 (Note how in other contexts I might want the implementation the other way around:
 for instance, to write formal proofs of correctness about executable code in type theory.)
+
+@subsection{Naming the Layers} @; Representing Implementation ?
+
+Here is some vocabulary I coined @~cite{FarePhD}
+to precisely name the elements of an implementation.
+When considering how one computing system may or may not implement another,
+the more abstract system is typically pictured above, and I use the prefix “hyper” for it:
+the hyper-system, that hyper-states between which there are hyper-transitions.
+The more concrete system is typically pictured below, and I use the prefix “hypo” for it:
+the hypo-system, that hypo-states between which there are hypo-transitions.
+
+These terms are relative to a particular implementation:
+the very same system can be considered as the hypo-system of one implementation,
+and the hyper-system of another. Indeed, decomposing an implementation into
+a tower of implementations is how you can manage the complexity of it all:
+each implementation introduces or eliminates some concerns,
+applies optimizations, etc., such that you can (formally or informally)
+reason about the correctness properties of the overall implementation
+by reasoning piecewise about the more manageable correctness properties
+of the smaller individual implementations.
+
+I will call “layer” an implementation between two computing system,
+seen as part of some “tower” of such implementations that compose into a larger one.
+Each computing system can itself be viewed as a layer—an identity layer
+in which every state corresponds to itself. The space of all implementations
+is then a category—though you will want to consider not just implementations in general,
+but more constrained categories of enriched implementations
+that satisfy certain additional properties.
+
+Why spend so much time precisely naming all these concepts?
+For two related reasons:
+(1) so you can reason about them formally and write proofs about programs and their implementations.
+(2) so you don’t confuse them with sometimes conflated concepts that may be related yet different.
+
+What other concepts? Well, later in this chapter,
+together with @emph{layers of abstraction} (prefixes hypo-/hyper-)
+I’ll consider @emph{stages of computation} (prefixes pre-/post-),
+and @emph{planes of control} (prefixes back-/fore-),
+that are often conflated under the names or concepts of
+“reflection”, “representation”, “metaprogram”, “metaobject”, etc.
+By having distinct names for these independent concepts,
+we can better understand what they do and what they don’t.
 
 @section[#:tag "RR"]{Representing Records}
 

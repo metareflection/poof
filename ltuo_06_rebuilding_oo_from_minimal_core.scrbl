@@ -404,7 +404,8 @@ or of ORBIT @~cite{Steels1983}@xnote["."]{
   and is contemporary with T, but is very different from
   T’s later compiler, also named Orbit. @; TODO cite Kranz1986
 }
-And it was made famous by being standardized as
+It was notably formalized by @citet{Kamin1988} in a model of Smalltalk,
+and it was made famous by being standardized as
 the JavaScript (JS) object system @~cite{Eich1996}:
 a prototype is a record of methods encoded as functions that take
 the record itself as parameter.
@@ -427,7 +428,7 @@ The difference between the two encodings is subtle but quite interesting:
     whose fields directly contain the values users care about.
     Because this representation fully computes a fixpoint
     using (some variant of) the Y fixpoint combinator,
-    I will call it and its variants @emph{Y-encodings}.}
+    I will call it and its variants @emph{Y-encoding}.}
   @item{
     In the YASOS encoding that I am now discussing,
     instances are functions (or records of functions)
@@ -437,7 +438,10 @@ The difference between the two encodings is subtle but quite interesting:
     These instances are half way between specification and target;
     they use (some variant of) the self-application combinator U,
     where @c{U x = x x} (@secref{UPSLC}).
-    This is why I call this representation and its variants @emph{U-encodings}.}]
+    This is why I call this representation and its variants @emph{U-encoding}.}]
+
+@citet{Kamin1994} call Y-encoding and U-encoding respectively
+the fixed-point model and the self-application model.
 
 @subsubsection{Y: Double U}
 
@@ -560,7 +564,9 @@ But at that point, Y-encoding becomes simpler than U-encoding.
 In the end, U-encoding and Y-encoding are both equally capable for implementing
 the whole breadth of semantics of object systems, with many well-identified tradeoffs—and indeed
 were explicitly identified as “self-application model” and “fixed point model” by @citet{Kamin1994},
-who proved the two as equivalent.
+who proved the two as equivalent
+(and what is remarkable, the equivalence only involves @emph{local} transformations;
+see one of the exercises below).
 Yet, U-encoding seems by far more popular. It seems to have been adopted, in many variants,
 by most implementations of most OO languages,
 since before OO was even invented @~cite{Sutherland1963}.

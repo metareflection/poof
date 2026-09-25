@@ -93,6 +93,26 @@ With Gambit Scheme: gsi -:s pommette.scm
        (define-syntax @tmp (syntax-rules () ((_) (tmp)) ((_ . a) (@ tmp . a))))
        (define-identifier-macro v tmp @tmp)))))
 
+;;; Practical consequence of the above: every `def`/`λ`-defined function is curried
+;;; one argument at a time, even though it's written and called as ordinary `(f a b c)`.
+;;;   - A partial application like `(mix child)` is a perfectly good value — a function
+;;;     still waiting for `parent` (then `super`, `self`). You'll see this used directly,
+;;;     e.g. `(mix modext)` passed straight to a lens's `'update` as a one-argument updater.
+;;;   - Plain Scheme `lambda` and `define`, unlike `λ` and `def`, are NOT curried this
+;;;     way. Multi-argument functions meant to compose with the rest of this file must
+;;;     use `λ`/`def`, or you'll get a confusing arity error far from the actual mistake.
+;;;     (Plain `lambda`/`define` still have their place — e.g. for a rest-arg helper, or
+;;;     a self-recursive one — precisely because they opt out of auto-currying.)
+;;;   - The auto-currying `(f a b c)` → `(((f a) b) c)` rewrite only fires for an
+;;;     identifier `f` bound by `λ`/`def` (they install an identifier-macro that does the
+;;;     rewrite). A curried function reached some other way — e.g. bound to a plain
+;;;     variable, or received as a parameter — doesn't get that treatment automatically;
+;;;     apply it curried by hand with `@`, e.g. `(@ f a b c)`.
+;;;   - Going the other way, plain Scheme `apply` still calls a `λ`/`def`-bound `f`
+;;;     uncurried, all arguments at once: `(apply f x y '(z t))` behaves like `(f x y z t)`
+;;;     as an ordinary (non-curried) call, regardless of how `f` was introduced.
+;;;   - See function curry/list to "apply" a curried function to a list one element at a time.
+
 ;;; Expectations -- trivial test suite
 (define (check-expectation check-expr good-expr checked-thunk good-thunk)
   (let ((actual (checked-thunk))
@@ -464,6 +484,12 @@ let Y = f: (x: x x) (x: f (x x));
 
 (def mix/list (op/list←op1.1 mix idModExt))
 (define (mix* . args) (mix/list args))
+
+;; Standing convention for the rest of this file: wherever several mixins are combined
+;; (mix, mix*, pproto-mix, qproto-mix, rproto-mix, hspec-rmix, ...), the leftmost/first
+;; argument is the most specific (dominant) one, and specificity decreases to the right —
+;; the same covariant, right-to-left data flow as ordinary function composition. Assume
+;; this order at every call site below; it's not called out case by case.
 
 ;; Specification that calls a unary operation on the super value
 (def (op-super-spec op super _self)
@@ -1012,83 +1038,87 @@ let Y = f: (x: x x) (x: f (x x));
 ;;; HPROTO encoding
 ;;; (pass half before method-id, not after as in YASOS
 ;;; also take a late-bound hyper/htop for mixin semantics)
+;;; fixed-point (fixpoint) → self-application
+;;; Y → U
+;;; mixin super self → hybridizer hyper half  (see functions mixin←hybridizer and hybridizer←mixin)
+;;; generator self → hatchery half  (a hatchery takes a half, returns a value; you can hatch it)
+;;; mix child parent → hybridize heir hierarch
+;;; self → half           (self = half half = hatch half)
+;;; super → hyper         (super = hyper half = hitch half hyper)
+;;; child → heir
+;;; parent → hierarch
+;;; fix top mixin → hitch hull hybridizer  (hitch returns a hatchery, not a record)
+;;; top → hull
+;;; send → hatch
+;;;
+;;; a hybridizer is a function from hyper and half to some expression,
+;;; where you always apply things to half to get their semantics.
 
-;; Reversed (left-associative) fold — rop/list←op2 consumes a list, rop*←op2 is varargs.
-(define (rop/list←op2 op2 id)
-  (lambda (l)
-    (if (null? l) id
-        (let loop ((acc (car l)) (rest (cdr l)))
-          (if (null? rest) acc (loop (op2 acc (car rest)) (cdr rest)))))))
-(define (rop*←op2 op2 id)
-  (let ((go (rop/list←op2 op2 id)))
-    (lambda args (go args))))
-;; Variants of rop/list←op2 / rop*←op2 for a curried operator that takes one arg then the next.
-(define rop/list←op1.1 (lambda (op1.1 id)
-  (rop/list←op2 (lambda (x y) (@ op1.1 x y)) id)))
-(define rop*←op1.1 (lambda (op1.1 id)
-  (rop*←op2 (lambda (x y) (@ op1.1 x y)) id)))
-
-(def (id-hspec hyper half) hyper)
-(def (half-top half) #f)
-(def (half-empty-record half msg-id) #f)
-(def (hspec-half hyper hspec) (hspec hyper))
-(def (hspec-fix hyper hspec) (hspec hyper (hspec hyper)))
-(def (half-ref half) (half half))
-(def (hspec-rmix hchild hparent hyper half)
-  (hchild (hparent hyper) half))
-(def hspec-rmix/list (rop/list←op1.1 hspec-rmix id-hspec))
-(define hspec-rmix* (rop*←op1.1 hspec-rmix id-hspec))
-(def (hspec-half-top) (hspec-half half-top))
-(def (hspec-half-record) (hspec-half half-empty-record))
-(def (field-hspec key hcompute-value hyper half method-id)
-  (let ((inherited (hyper half method-id)))
-    (if (equal? key method-id)
-        (hcompute-value inherited half)
+(def (idHybridizer hyper half) hyper) ;; = idModExt
+(def (hybridize heir hierarch hyper half) ;; analogue to mix
+  (heir (hierarch hyper) half))
+(def (hitch hull hybridizer) (hybridizer hull)) ;; set the base, half of fix, return the half ready to hatch
+(def (hatch half) (half half)) ;; = U, half-ref, half of fix ;; called inside bodies to use half
+(def (hutch hull hybridizer) (hatch (hitch hull hybridizer))) ;; analogue to fix, fully resolve to record
+(def hull empty-record) ;; = empty-record, half that returns #f
+(def hull-record (K empty-record)) ;; = (λ (half msg-id) #f), half empty record
+(def hybridize/list (op/list←op1.1 hybridize idHybridizer))
+(define hybridize* (op*←op1.1 hybridize idHybridizer))
+(def (hitch-top) (hitch hull))
+(def (hitch-record) (hitch hull-record))
+(def (field-hybridizer key handler hyper half metHod-id)
+  (let ((inherited (hyper half metHod-id)))
+    (if (equal? key metHod-id)
+        (handler inherited half)
         inherited)))
-(def (constant-field-hspec key val)
-  (field-hspec key (constant-spec val)))
+(def (constant-field-hybridizer key val)
+  (field-hybridizer key (constant-spec val)))
 
 ;;; Reproducing earlier examples in this encoding
-(def coord-hspec
-  (hspec-rmix (constant-field-hspec 'x 2)
-              (constant-field-hspec 'y 4)))
-(def color-hspec
-  (field-hspec 'color (λ (_half _hinherited) "blue")))
-(def point-24h (hspec-half-record (hspec-rmix coord-hspec color-hspec)))
-(def (add-x-hspec dx) (field-hspec 'x (λ (inherited _half) (+ dx inherited))))
-(def area-hspec (field-hspec 'area (λ (_inherited half) (* (half half 'x) (half half 'y)))))
+(def coord-hybridizer
+  (hybridize (constant-field-hybridizer 'x 2)
+             (constant-field-hybridizer 'y 4)))
+(def color-hybridizer
+  (field-hybridizer 'color (λ (_half _hinherited) "blue")))
+(def point-24h (hitch-record (hybridize coord-hybridizer color-hybridizer)))
+(def (add-x-hybridizer dx) (field-hybridizer 'x (λ (inherited _half) (+ dx inherited))))
+(def area-hybridizer (field-hybridizer 'area (λ (_inherited half) (* (half half 'x) (half half 'y)))))
 
-(def point-34ah (hspec-half-record (hspec-rmix* area-hspec (add-x-hspec 1) color-hspec coord-hspec)))
-(def blue-h (hspec-half-record color-hspec))
+(def point-34ah (hitch-record (hybridize* area-hybridizer (add-x-hybridizer 1) color-hybridizer coord-hybridizer)))
+(def blue-h (hitch-record color-hybridizer))
 
-(expect (half-ref half-top) => #f
-        (half-ref blue-h 'color) => "blue"
-        (map (half-ref blue-h) '(x y z color area)) => '(#f #f #f "blue" #f)
-        (map (half-ref point-24h) '(x y z color area)) => '(2 4 #f "blue" #f)
-        (map (half-ref point-34ah) '(x y z color area)) => '(3 4 #f "blue" 12))
+(expect (hatch hull) => #f
+        (hatch blue-h 'color) => "blue"
+        (map (hatch blue-h) '(x y z color area)) => '(#f #f #f "blue" #f)
+        (map (hatch point-24h) '(x y z color area)) => '(2 4 #f "blue" #f)
+        (map (hatch point-34ah) '(x y z color area)) => '(3 4 #f "blue" 12))
 
 
-;; Wrappers to a Y-style spec from a U-style hspec, and back.
-;; hspec→spec threads the Y-style `super`/`self` straight into the hspec's
+;; Wrappers to a Y-style spec from a U-style hybridizer, and back.
+;; hybridizer→spec threads the Y-style `super`/`self` straight into the hybridizer's
 ;; `hyper`/`half` slots (each ignores the late-bound half it is handed and yields
 ;; the Y-style value): the parent record for `hyper`, the whole object for `half`.
-;; This is the mirror image of spec→hspec below. Correct at instantiation; a
-;; converted hspec used as a non-most-specific mixin in a further chain may still
+;; This is the mirror image of spec→hybridizer below. Correct at instantiation; a
+;; converted hybridizer used as a non-most-specific mixin in a further chain may still
 ;; misbehave (its `hyper` fallthrough only reaches `super`, never a later spec).
-(def (hspec→spec hspec super self)
-  (hspec (λ (_half) super) (λ (_half) self)))
-(expect (map (fix-record (hspec→spec (hspec-rmix* area-hspec (add-x-hspec 1) color-hspec coord-hspec)))
+;;
+;; These inverse transformations show that Kamin & Reddy 1994 were wrong to believe
+;; Reddy’s fixed-point model (Y-encoding) was more abstract than Kamin’s self-application model
+;; (U-encoding), when they are actually *locally* equivalent.
+(def (hybridizer→spec hybridizer super self)
+  (hybridizer (λ (_half) super) (λ (_half) self)))
+(expect (map (fix-record (hybridizer→spec (hybridize* area-hybridizer (add-x-hybridizer 1) color-hybridizer coord-hybridizer)))
              '(x y z color area)) => '(3 4 #f "blue" 12))
 
-(def (spec→hspec spec hyper half)
+(def (spec→hybridizer spec hyper half)
   ;; eta-conversions necessary in eager context
   (letrec ((self (η (half half))) ;; (λ (x) (half half x))
            (super (η (hyper half)))) ;; (λ (x) (hyper half x))
     (spec super self)))
 
-(def u-comp (spec→hspec (mix* color-spec (add-x-spec 1) area-spec coord-spec)))
+(def u-comp (spec→hybridizer (mix* color-spec (add-x-spec 1) area-spec coord-spec)))
 
-(expect (map (half-ref (hspec-half-record u-comp)) '(x y z color area)) => '(3 4 #f "blue" 12))
+(expect (map (hatch (hitch-record u-comp)) '(x y z color area)) => '(3 4 #f "blue" 12))
 
 ;;; More tests for the two converters under non-trivial inheritance.
 ;;; Naming: `super`/`self` are the Y-style channels (inherited value / whole object);
@@ -1096,103 +1126,103 @@ let Y = f: (x: x x) (x: f (x x));
 ;;; channels across a conversion boundary, and mixed-style chains where one mixin
 ;;; is a converted spec sitting among native ones (and vice versa).
 
-;; hspec→spec at instantiation: an hspec chain that uses `hyper` (add-x-hspec chains
-;; on the inherited x) AND `half` (area-hspec reads the fixed x,y), converted to a
+;; hybridizer→spec at instantiation: an hybridizer chain that uses `hyper` (add-x-hybridizer chains
+;; on the inherited x) AND `half` (area-hybridizer reads the fixed x,y), converted to a
 ;; Y-spec and closed with fix-record.
 (expect (map (fix-record
-              (hspec→spec (hspec-rmix* area-hspec (add-x-hspec 1) coord-hspec)))
+              (hybridizer→spec (hybridize* area-hybridizer (add-x-hybridizer 1) coord-hybridizer)))
              '(x y area color))
         => '(3 4 12 #f))
 
-;; spec→hspec at instantiation: a Y-spec chain that uses `super` (add-x-spec) AND
-;; `self` (area-spec, rho-spec), converted to a U-hspec and closed the U way.
-(expect (map (half-ref (hspec-half-record
-              (spec→hspec (mix* rho-spec area-spec (add-x-spec 1) coord-spec))))
+;; spec→hybridizer at instantiation: a Y-spec chain that uses `super` (add-x-spec) AND
+;; `self` (area-spec, rho-spec), converted to a U-hybridizer and closed the U way.
+(expect (map (hatch (hitch-record
+              (spec→hybridizer (mix* rho-spec area-spec (add-x-spec 1) coord-spec))))
              '(x y area rho color))
         => '(3 4 12 5 #f))
 
 ;; Round-trips are identity, with both inheritance channels in play.
 (expect (map (fix-record
-              (hspec→spec (spec→hspec
+              (hybridizer→spec (spec→hybridizer
                (mix* rho-spec area-spec (add-x-spec 1) coord-spec))))
              '(x y area rho color))
         => '(3 4 12 5 #f))
-(expect (map (half-ref (hspec-half-record
-              (spec→hspec (hspec→spec
-               (hspec-rmix* area-hspec (add-x-hspec 1) coord-hspec)))))
+(expect (map (hatch (hitch-record
+              (spec→hybridizer (hybridizer→spec
+               (hybridize* area-hybridizer (add-x-hybridizer 1) coord-hybridizer)))))
              '(x y area color))
         => '(3 4 12 #f))
 
-;; Mixed chains: Y-style (plain specs) and U-style (hspec→spec-converted
-;; hspecs) siblings alternate, in each of the two possible starting orders,
+;; Mixed chains: Y-style (plain specs) and U-style (hybridizer→spec-converted
+;; hybridizers) siblings alternate, in each of the two possible starting orders,
 ;; to show the boundary crossing chains correctly regardless of which style
 ;; is more specific. Closed the Y way with fix-record.
-(expect ((fix-record (mix* (hspec→spec (add-x-hspec 2))
+(expect ((fix-record (mix* (hybridizer→spec (add-x-hybridizer 2))
                            (add-x-spec 1)
-                           (hspec→spec (add-x-hspec 5))
+                           (hybridizer→spec (add-x-hybridizer 5))
                            (constant-field-spec 'x 10)))
          'x)
         => 18)
 (expect ((fix-record (mix* (add-x-spec 7)
-                           (hspec→spec (add-x-hspec 3))
+                           (hybridizer→spec (add-x-hybridizer 3))
                            (add-x-spec 20)
-                           (hspec→spec (constant-field-hspec 'x 100))))
+                           (hybridizer→spec (constant-field-hybridizer 'x 100))))
          'x)
         => 130)
 
-;; Same idea, mirrored: U-style `hspec-rmix*` chains with Y-style
-;; (spec→hspec-converted) siblings, closed the U way with hspec-fix instead
-;; of hspec-half-record + half-ref.
-(expect ((hspec-fix half-empty-record
-           (hspec-rmix* (add-x-hspec 5)
-                        (spec→hspec (add-x-spec 4))
-                        (add-x-hspec 3)
-                        (spec→hspec (constant-field-spec 'x 2))))
+;; Same idea, mirrored: U-style `hybridize*` chains with Y-style
+;; (spec→hybridizer-converted) siblings, closed the U way with hybridizer-fix instead
+;; of hitch-record + hatch.
+(expect ((hutch hull-record
+           (hybridize* (add-x-hybridizer 5)
+                       (spec→hybridizer (add-x-spec 4))
+                       (add-x-hybridizer 3)
+                       (spec→hybridizer (constant-field-spec 'x 2))))
          'x)
         => 14)
-(expect ((hspec-fix half-empty-record
-           (hspec-rmix* (spec→hspec (add-x-spec 1))
-                        (add-x-hspec 8)
-                        (spec→hspec (add-x-spec 6))
-                        (constant-field-hspec 'x 50)))
+(expect ((hutch hull-record
+           (hybridize* (spec→hybridizer (add-x-spec 1))
+                       (add-x-hybridizer 8)
+                       (spec→hybridizer (add-x-spec 6))
+                       (constant-field-hybridizer 'x 50)))
          'x)
         => 65)
 
-;; Same, but the converted hspec uses `half`: area-hspec reads x,y contributed by
+;; Same, but the converted hybridizer uses `half`: area-hybridizer reads x,y contributed by
 ;; native Y-specs. Disjoint fields (x/y, area, color), so mixing order doesn't matter.
-(expect (map (fix-record (mix* coord-spec (hspec→spec area-hspec) color-spec))
+(expect (map (fix-record (mix* coord-spec (hybridizer→spec area-hybridizer) color-spec))
              '(x area color))
         => '(2 8 "blue"))
 
-;; Mixed chain, U-style `hspec-rmix*` with a converted Y-spec:
+;; Mixed chain, U-style `hybridize*` with a converted Y-spec:
 ;; area-spec's `self` becomes the full U-fixpoint, so it reads x,y from the
-;; native hspecs regardless of whether it is the least- or most-specific mixin.
-(expect ((half-ref (hspec-half-record
-          (hspec-rmix* (spec→hspec area-spec)
-                       (constant-field-hspec 'x 3)
-                       (constant-field-hspec 'y 7))))
+;; native hybridizers regardless of whether it is the least- or most-specific mixin.
+(expect ((hatch (hitch-record
+          (hybridize* (spec→hybridizer area-spec)
+                      (constant-field-hybridizer 'x 3)
+                      (constant-field-hybridizer 'y 7))))
          'area)
         => 21)
-(expect ((half-ref (hspec-half-record
-          (hspec-rmix* (constant-field-hspec 'x 3)
-                       (constant-field-hspec 'y 7)
-                       (spec→hspec area-spec))))
+(expect ((hatch (hitch-record
+          (hybridize* (constant-field-hybridizer 'x 3)
+                      (constant-field-hybridizer 'y 7)
+                      (spec→hybridizer area-spec))))
          'area)
         => 21)
 
 ;; The converted spec's `self` sees a U-side override applied AFTER it:
 ;; (mix* coord-spec area-spec) is converted, then x is overridden to 5 by a
-;; more-specific native hspec; area recomputes as 5*4 = 20.
-(expect ((half-ref (hspec-half-record
-          (hspec-rmix (constant-field-hspec 'x 5)
-                      (spec→hspec (mix coord-spec area-spec)))))
+;; more-specific native hybridizer; area recomputes as 5*4 = 20.
+(expect ((hatch (hitch-record
+          (hybridize (constant-field-hybridizer 'x 5)
+                     (spec→hybridizer (mix coord-spec area-spec)))))
          'area)
         => 20)
 
-;; A native hspec's `hyper` reading a converted-spec parent: 9 +4 = 13.
-(expect ((half-ref (hspec-half-record
-          (hspec-rmix (add-x-hspec 4)
-                      (spec→hspec (constant-field-spec 'x 9)))))
+;; A native hybridizer's `hyper` reading a converted-spec parent: 9 +4 = 13.
+(expect ((hatch (hitch-record
+          (hybridize (add-x-hybridizer 4)
+                      (spec→hybridizer (constant-field-spec 'x 9)))))
          'x)
         => 13)
 
@@ -1201,24 +1231,24 @@ let Y = f: (x: x x) (x: f (x x));
 ;; one pipeline: x = 2 +3 = 5, y = 4, area = half.x*half.y = 20, rho = |(5,4)|.
 (expect (map (fix-record
               (mix* rho-spec
-                    (hspec→spec (hspec-rmix (add-x-hspec 3) area-hspec))
+                    (hybridizer→spec (hybridize (add-x-hybridizer 3) area-hybridizer))
                     coord-spec))
              '(x y area))
         => '(5 4 20))
 (expect ((fix-record
           (mix* rho-spec
-                (hspec→spec (hspec-rmix (add-x-hspec 3) area-hspec))
+                (hybridizer→spec (hybridize (add-x-hybridizer 3) area-hybridizer))
                 coord-spec))
          'rho)
         => (sqrt 41))
 
-;; A converted hspec that is NOT the most-specific mixin still resolves its
+;; A converted hybridizer that is NOT the most-specific mixin still resolves its
 ;; `half`/self-references against the final object: `x` is overridden to 6 by a
-;; more-specific Y-spec, and area-hspec (which reads x,y via `half`) recomputes
-;; 6*4 = 24, because hspec→spec threads its `self` argument into the `half` slot.
+;; more-specific Y-spec, and area-hybridizer (which reads x,y via `half`) recomputes
+;; 6*4 = 24, because hybridizer→spec threads its `self` argument into the `half` slot.
 (expect ((fix-record (mix* (constant-field-spec 'x 6)
                            coord-spec
-                           (hspec→spec area-hspec)))
+                           (hybridizer→spec area-hybridizer)))
          'area)
         => 24)
 

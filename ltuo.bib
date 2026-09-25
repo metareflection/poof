@@ -1385,24 +1385,25 @@
   author={Ira P. Goldstein and Daniel G. Bobrow},
   title={Extending Object Oriented Programming in Smalltalk},
   year={1980},
+  month=aug,
   isbn={9781450373968},
   publisher={Association for Computing Machinery},
   address={New York, NY, USA},
-  url={https://doi.org/10.1145/800087.802792},
+  url={https://docs.huihoo.com/smalltalk/esug/HistoricalDocuments/PIE/PIE%20four%20reports.pdf},
   doi={10.1145/800087.802792},
-  abstract={Smalltalk is an object oriented programming language with behavior invoked by passing messages between objects. Objects with similar behavior are grouped into classes. These classes form a hierarchy. When an object receives a message, the class or one of its superclasses provides the corresponding method to be executed. We have built an experimental Personal Information Environment (PIE) in Smalltalk that extends this paradigm in several ways. A PIE object, called a node, can have multiple perspectives, each of which provides independent specialized behaviors for the object as a whole, thus providing multiple inheritance for nodes. Nodes have metadescription to guide viewing of the objects during browsing, provide default values, constrain the values of attributes, and define procedures to be run when values are sought or set. All nodes have unique names which allow objects to migrate between users and machines. Finally attribute lookup for nodes is context sensitive, thereby allowing alternative descriptions to be created and manipulated.This paper first reviews Smalltalk, then discusses our implementation of each of the above capabilities within PIE, a Smalltalk system for representing and manipulating designs. We then describe our experience with PIE applied to software development and technical writing. Our conclusion is that the resulting hybrid is a viable offspring for exploring design problems.},
-  booktitle={1980 ACM Conference on LISP and Functional Programming},
-  pages={75–81},
+  booktitle={Proceedings of the 1980 ACM Conference on LISP and Functional Programming},
+  pages={75--81},
   numpages={7},
   location={Stanford University, California, USA},
   series={LFP ’80},
   note={
-    This paper implements PIE, a knowledge representation system on top of Smalltalk.
-    PIE implements the Frame model as descended from KRL via FRL,
-    wherein each Node in the knowledge graph can be described via multiple Perspectives,
-    which constitutes a form of multiple inheritance,
-    though one built as a layer on top of the Smalltalk language,
-    rather than as an extension to the language itself.
+    This paper describes PIE, a knowledge representation system implemented in Smalltalk-76.
+    PIE combines frame-based ideas from KRL and FRL:
+    each Node in its description network can acquire multiple Perspectives dynamically,
+    each supplying specialized behavior and its own state.
+    This constitutes a form of per-instance (flavorless) multiple inheritance,
+    implemented as a layer on top of Smalltalk rather
+    than as an extension to Smalltalk’s object system.
     This distinction is sharper in Smalltalk than in Lisp,
     where syntactic extensibility blurs the difference.
   }
@@ -1515,11 +1516,11 @@
     An analysis of the different relationships represented by “ISA” links in
     semantic networks, distinguishing genuine taxonomic relationships from
     several other kinds of links.
-    A revised version, “What IS-A Is and Isn't: An Analysis of Taxonomic Links
-    in Semantic Networks”, appeared in Computer in 1983.
     It documents sophisticated use and criticism of “ISA” terminology in
     knowledge representation before its adoption to characterize
     inheritance in object-oriented programming.
+    A revised version, “What IS-A Is and Isn't: An Analysis of Taxonomic Links
+    in Semantic Networks”, appeared in Computer in 1983.
   }
 }
 
@@ -1840,7 +1841,7 @@
     it was not included in the 1986 Simula Standard, either,
     which retained single inheritance.}}
 
-% Extended version of previous paper at POPL’85 https://dl.acm.org/doi/10.1145/318593.318606
+% Extended version of paper:
 % journal={ACM Transactions on Programming Languages and Systems (TOPLAS)},
 % volume={10},
 % number={3},
@@ -1852,16 +1853,19 @@
 @InProceedings{Mitchell1985,
   title={Abstract Types have Existential Type},
   author={John C. Mitchell and Gordon D. Plotkin},
-  booktitle={POPL ’85},
-  pages={37–51},
+  booktitle={Proceedings of the 12th ACM Symposium on Principles of Programming Languages (POPL ’85)},
+  pages={37--51},
   year={1985},
+  month=jan,
   doi={10.1145/318593.318606},
   url={https://homepages.inf.ed.ac.uk/gdp/publications/Abstract_existential.pdf},
   note={
     The title of this key paper captures the core contribution:
+    implementations of abstract data types, consisting of a representation type
+    and operations on it (i.e. modules), can hide their actual representation type
     you should think of abstract types for data and functions that operate on them (i.e. modules)
     as hiding the actual underlying type behind an existential quantifier.
-    This enables reasoning about modules as first-class values in second-order logic.
+    This enables reasoning about modules as first-class values in a second-order λ-calculus.
     An extended journal version was published in TOPLAS 10(3), 1988.
   }
 }
@@ -1965,15 +1969,25 @@
 @InProceedings{Borning1986,
   title={Classes Versus Prototypes in Object-Oriented Languages},
   author={Alan Hamilton Borning},
-  booktitle={1986 Fall Joint Computer Conference},
+  booktitle={Proceedings of the ACM/IEEE Fall Joint Computer Conference},
   pages={36--40},
   year={1986},
+  month=nov,
+  publisher={IEEE Computer Society Press},
+  isbn={0-8186-4743-4},
   doi={10.5555/324493.324538},
+  url={https://constraints.cs.washington.edu/object-oriented/fjcc-86.pdf},
   note={
-    Alan Borning proposes Prototype as an alternative to Classes for OO.
-    He shows the model and how to use it and to implement it.
-    Sadly, he fails to explain how to express classes directly as Prototypes
-    (unlike Lieberman 1986, which he cites).
+    Alan Borning proposes Prototypes as an alternative to Classes and Metaclasses for OO.
+    Objects are created by copying prototypes, with optional inheritance constraints
+    on field names, behavior and protocols, supporting multiple inheritance
+    and automatic propagation of changes.
+    He illustrates the model and sketches an implementation in Smalltalk,
+    retaining classes as an implementation technique.
+    When Lieberman 1986 showed how to implement classes on top of prototypes,
+    Borning instead shows how to implement prototypes on top of classes,
+    seemingly using Smalltalk’s reflective class-manipulation primitives
+    to add support for per-class prototypes.
   }
 }
 
@@ -1981,13 +1995,17 @@
 @InProceedings{Lieberman1986,
   title={Using Prototypical Objects to Implement Shared Behavior in Object-Oriented Systems},
   author={Henry Lieberman},
-  booktitle={OOPSLA},
+  booktitle={Proceedings of the 1986 ACM Conference on Object-Oriented Programming Systems, Languages and Applications (OOPSLA ’86)},
   pages={214--223},
   year={1986},
-  url={https://web.media.mit.edu/~lieber/Lieberary/OOP/Delegation/Delegation.html},
+  month=sep,
+  publisher={Association for Computing Machinery},
+  address={New York, NY, USA},
+  isbn={0-89791-204-7},
+  location={Portland, Oregon, USA},  url={https://web.media.mit.edu/~lieber/Lieberary/OOP/Delegation/Delegation.html},
   doi={10.1145/28697.28718},
   note={
-    This is a rightfully influential paper about Prototype OO, as compared to Class OO.
+    This is a rightly influential paper about Prototype OO, as compared to Class OO.
 
     Lieberman starts with the philosophical underpinnings of these two complexes of ideas,
     which are quite interesting from a historical and psychological point of view,
@@ -1998,15 +2016,17 @@
     and suitability for interactive use.
     He even explains (section 6) how to implement inheritance (i.e. Classes)
     in terms of delegation (i.e. Prototypes) and
-    why a correspondence in the other direction is impossible.
+    why a correspondence in the other direction is impossible
+    (because inheritance depends only on the class, known before the instance is bound;
+    the same argument as my “inheritance happens only at compile-time for 2nd-class classes,
+    whereas prototypes need it at runtime”, but with a finer-grained staging of computation “times”).
 
     Sadly, this great paper has been largely cited for the one bad take of its author:
     Lieberman unhelpfully identifies Prototype OO and Class OO with
     the respective underlying “delegation” and “inheritance” mechanisms,
     rather than distinguishing the nature of the targets of
     otherwise identical specification mechanisms.
-  }
-}
+  }}
 
 @Article{Moon1986,
   author={David A. Moon},
@@ -2019,14 +2039,15 @@
   number={11},
   issn={0362-1340},
   doi={10.1145/960112.28698},
-  url={https://dl.acm.org/doi/10.1145/960112.28698},
+  url={https://www.cs.tufts.edu/~nr/cs257/archive/david-moon/flavors.pdf},
   abstract={This paper describes Symbolics’ newly redesigned object-oriented programming system, Flavors. Flavors encourages program modularity, eases the development of large, complex programs, and provides high efficiency at run time. Flavors is integrated into Lisp and the Symbolics program development environment. This paper describes the philosophy and some of the major characteristics of Symbolics’ Flavors and shows how the above goals are addressed. Full details of Flavors are left to the programmers’ manual, Reference Guide to Symbolics Common Lisp. (5)},
   journal={SIGPLAN Not.},
-  month=jun,
+  month=nov,
   pages={1--8},
   numpages={8},
   note={
-    According to Gabriel 2012, this was the first academic publication about Flavors,
+    According to Gabriel 2012, this was “the first engineering publication about mixins”
+    (in the Lisp sense, as introduced by Flavors),
     whereas Cannon’s 1979 report (this paper cites a 1982 copy) was privately circulated,
     mostly in Lisp circles at MIT and beyond
     (however, the Lisp Machine Manual from 1981 onward includes a chapter on Flavors).
@@ -2044,6 +2065,7 @@
   author={Alan Snyder},
   title={Encapsulation and Inheritance in Object-Oriented Programming Languages},
   year={1986},
+  month=sep,
   isbn={0897912047},
   publisher={Association for Computing Machinery},
   address={New York, NY, USA},
@@ -2057,13 +2079,13 @@
   series={OOPSLA ’86},
   note={
     This very well-informed, very interesting paper, and its extended version
-    “Inheritance and the Development of Encapsulated Software Components” in
+    “Inheritance and the Development of Encapsulated Software Systems” in
     Research Directions in Object-Oriented Programming (1987),
     get a whole lot right about inheritance, yet get enough crucially wrong.
     Sadly, they are often cited for the wrong parts rather than the right parts.
 
-    Snyder brilliantly introduces parent, ancestor, child, descendant, as systematic names
-    instead of the awkward direct-superclass, superclass, direct-subclass, subclass.
+    Snyder systematically introduces parent, ancestor, child, descendant, as unambiguous names
+    substituting for the awkward direct-superclass, superclass, direct-subclass, subclass.
     He identifies the importance of modularity, but fails to use that word, and instead
     somehow divides the concept into two separate properties “encapsulation” and “data abstraction”.
     He notes the need for reflection to defeat this encapsulation for debugging purposes.
@@ -2095,9 +2117,9 @@
 
     Now, what does it tell us that Stroustrup 1989 came up with essentially
     the same solution for C++, just with less research behind it?
+    (At least Stroustrup also allowed virtual classes in addition to non-virtual one).
     Meanwhile, CommonObjects, the system Snyder is discussing, was written in Common Lisp, and
-    COOL, its reimplementation on top of PCL (the first implementation of CLOS),
-    can still be found.
+    COOL, its reimplementation on top of PCL (the first implementation of CLOS), can still be found.
   }
 }
 
@@ -3775,15 +3797,56 @@
   address={Cambridge, Massachusetts},
   url={https://openlibrary.org/books/OL1419064M/Theoretical_aspects_of_object-oriented_programming},
   note={
-    Kamin and Reddy join forces once again, and explicitly compare
-    updated versions of their two semantic models of OO.
-    The paper is heavy in formalism, which in the end drowns rather than highlights
-    the beautiful and important idea in the conclusion: the equivalence between
-    what they initially call “closure semantics” and “data structure semantics”
-    and finally call the fixed-point model and the self-application model—what in this book
+    Kamin and Reddy join forces once again after their famous 1988 papers,
+    and explicitly compare updated versions of their two semantic models of OO.
+    The paper is heavy on formalism, which in the end drowns rather than highlights
+    its beautiful conclusion: the equivalence between
+    what they finally call the fixed-point model and the self-application model—what in this book
     I call Y-encoding and U-encoding.
-  }
-}
+
+    I feel the paper is important enough that it deserves
+    my nitpicking everything wrong about it—because,
+    when stripped from those inessential mistakes,
+    the paper really shines for its essential achievement.
+
+    As for the complexity of the paper: the authors independently implement classes in both models,
+    rather than factoring out their common specification machinery,
+    which requires two separate layers of scaffolding whose equivalence must then be proved.
+    My presentation is much simpler for accepting specifications as more fundamental than classes;
+    equivalence between the two encodings becomes trivial, and the scaffolding for
+    classes on top of specifications can be built once and shared between encodings.
+
+    Also, Kamin and Reddy for most of the paper call the two models respectively
+    “closure semantics” and “data structure semantics”, because
+    the Y-encoding of Reddy 1988, like those of Cook 1987 and my chapter 5, involves
+    representing records as functions (closures) so as to directly invoke a fixpoint operator,
+    whereas the U-encoding from Kamin 1988, like most low-level implementations
+    all the way back to Sutherland 1963, represents objects as records of instance variables
+    plus a reference to the type descriptor containing the methods,
+    where each method is explicitly passed the record as argument.
+
+    But this is a trivial accident of their models,
+    independent of the essential distinction between Y-encoding and U-encoding.
+    Steels 1983 shows you can do U-encoding with closures
+    whereas my Rideau 2020 shows you can do Y-encoding with records.
+    (And Abelson 1984 shows you can have records-as-closures without either Y- or U-encoding.)
+    Note that Kiselyov 2005 and Simons 2015 also do kind of Y-encoding with records,
+    but both use lazy languages, where recursively defined values of any type, including records,
+    are considerably easier to construct, making that less remarkable than it sounds.
+    In any case, they get the naming right in the end—but I want the reader to avoid
+    being misled by this accident.
+
+    Finally, the authors claim that Y-encoding is more abstract than U-encoding.
+    I admit I thought so too at first, but surprisingly they are wrong to generalize
+    from the particular semantic domains of their separately constructed class models
+    to the encodings themselves:
+    purely local transformations can translate between the two encodings
+    at the level of open object specifications,
+    independently of any class scaffolding built on top of them.
+    Thus, neither encoding is intrinsically more abstract than the other.
+    Recovering these transformations is left as a fun exercise to the reader
+    (solutions are available in pommette, the code accompanying this book).}}
+
 
 @InProceedings{Remy1994,
   title={Programming objects with ML-ART an extension to ML with abstract and record types},
@@ -4682,7 +4745,7 @@
     The closest prior publication I found to a complete implementation
     of Class OO on top of Prototype OO.
 
-    Already circulated in 1996.
+    Previously presented at the ECOOP ’96 Workshop on Prototype-Based Object-Oriented Programming.
 }}
 
 %% 2000
