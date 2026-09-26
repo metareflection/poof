@@ -55,16 +55,18 @@
     But my! Her understanding of “operations”, the general notion of pure computation,
     is better than that of most computer scientists of today.
 
-    “First the symbols of _operation_ are frequently _also_ the symbols of the _results_ of operations.
+    “First the symbols of \emph{operation} are frequently \emph{also}
+    the symbols of the \emph{results} of operations.
     We may say that symbols are apt to have both
-    a _retrospective_ and a _prospective_ signification. […]”
+    a \emph{retrospective} and a \emph{prospective} signification. […]”
     She groks both that there is a conflation of multiple meanings, and that it is good,
     yet can lead to confusion if not made explicit:
     past vs future, passive vs active, values vs continuations.
     She also anticipates symbolic computing:
     “symbolical” vs “numerical” “results” or “data” (outputs or inputs);
     and the dual use of symbols as code and data:
-    “the symbols of _numerical magnitude_, are frequently _also_ the symbols of _operations_”.
+    “the symbols of \emph{numerical magnitude},
+    are frequently \emph{also} the symbols of \emph{operations}”.
 
     She understands that programmability (she lacks the word)
     makes the Analytical engine vastly superior to the fixed-purpose Difference Engine,
@@ -822,7 +824,7 @@
 }
 
 @TechReport{Sussman1975,
-  author={Gerald Jay Sussman and Guy Lewis Steele},
+  author={Gerald Jay Sussman and Guy Lewis {Steele Jr.}},
   title={Scheme: An Interpreter for Extended Lambda Calculus},
   institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
   year={1975},
@@ -1032,7 +1034,7 @@
 
 % https://dspace.mit.edu/bitstream/handle/1721.1/6091/AIM-379.pdf
 @TechReport{Steele1976Declarative,
-  author={Guy Lewis Steele},
+  author={Guy Lewis {Steele Jr.}},
   title={LAMBDA: The Ultimate Declarative},
   institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
   year={1976},
@@ -1055,7 +1057,7 @@
 
 % https://dspace.mit.edu/bitstream/handle/1721.1/5790/AIM-353.pdf
 @TechReport{Steele1976Imperative,
-  author={Guy Lewis Steele and Gerald Jay Sussman},
+  author={Guy Lewis {Steele Jr.} and Gerald Jay Sussman},
   title={LAMBDA: The Ultimate Imperative},
   institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
   year={1976},
@@ -1148,7 +1150,7 @@
 % https://dspace.mit.edu/bitstream/handle/1721.1/5753/AIM-443.pdf
 % doi={10.1145/800179.810196} for ACM ’77 conference paper, pp. 153–162
 @TechReport{Steele1977,
-  author={Guy Lewis Steele},
+  author={Guy Lewis {Steele Jr.}},
   title={Debunking the “Expensive Procedure Call” Myth or, Procedure Call Implementations Considered Harmful or, LAMBDA: The Ultimate GOTO},
   institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
   year={1977},
@@ -1206,7 +1208,7 @@
 }
 
 @TechReport{Steele1978,
-  author={Guy Lewis Steele},
+  author={Guy Lewis {Steele Jr.}},
   title={RABBIT: A Compiler for SCHEME (A Dialect of LISP)},
   institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
   year={1978},
@@ -1291,8 +1293,8 @@
     (he was an undergraduate student in 1979).
 
     Cannon also discusses the conflict view of multiple inheritance as
-    “a scheme called _multiple superclasses_”, and how it fails
-    to support _modular_ interactions between orthogonal issues,
+    “a scheme called \emph{multiple superclasses}”, and how it fails
+    to support \emph{modular} interactions between orthogonal issues,
     showing his deep understanding of the purpose that OO mechanisms serve.
     (In his Acknowledgments, Cannon thanks Borning and Ingalls, who both had experience with
     multiple inheritance in ThingLab and Smalltalk;
@@ -1587,7 +1589,7 @@
   publisher={Xerox Corporation Palo Alto, CA},
   note={
     LOOPS has multiple inheritance, but still the flavorless conflict view.
-    The authors cite the right Flavors passage on _modular_ interactions
+    The authors cite the right Flavors passage on \emph{modular} interactions
     between orthogonal issues. Yet instead of linearization,
     they still offer tools for methods to manually call methods on one or all
     parents (←Super or ←SuperFringe), or from a named ancestor (DoMethod or ApplyMethod).
@@ -1636,7 +1638,7 @@
     A very interesting though somewhat frustrating paper,
     that explains how to implement Prototype OO with U-encoding
     and some kind of mixin inheritance (not in those words, obviously),
-    on top of a pure variant of the lambda calculus
+    on top of a pure variant of the λ-calculus
     (actually a subset of Schlumberger’s “applicative framework” called ORBIT, a Lisp in Lisp).
     It took me some effort to translate the then-innovative ideas in more modern terms.
 
@@ -1654,7 +1656,7 @@
     Generated symbols (such as rectangle-5 for a new rectangle)
     are essentially used as pointers into the database,
     which is used as a heap for fresh objects (unclear whether it is garbage-collected).
-    More interestingly, the values stored are lambda expressions
+    More interestingly, the values stored are λ-expressions
     with the same trivial records-as-functions as in my book:
     given a symbol as argument, return the value of the field named by the symbol for that record.
     Then, Steels goes one step further, and instead of directly returning a value (e.g. an integer),
@@ -1739,7 +1741,7 @@
     The classic book about the λ-calculus, with all the basics covered,
     though obviously none of the advanced discoveries since then.
     A large volume, of which I admit to having read only a few chapters, back in graduate school.
-    Still _the_ reference to cite on the topic.
+    Still \emph{the} reference to cite on the topic.
   }
 }
 
@@ -1887,7 +1889,7 @@
     Milner’s type deduction/inference system (Hindley-Milner with the polymorphic let);
     the theory of subtypes and generic operators
     (Reynolds’s own earlier work on implicit conversions via category theory);
-    and the polymorphic/second-order typed lambda calculus (Girard’s logical System F).
+    and the polymorphic/second-order typed λ-calculus (Girard’s logical System F).
     He illustrates all three in a common functional language with products, sums, and lists,
     comparing their expressiveness and trade-offs.
   }
@@ -2149,8 +2151,7 @@
     It argues that inheritance and part-whole composition represent orthogonal
     dimensions of organization.
     Note that both “is-a” and “has-a-part” have direct and transitively closed variants.
-  }
-}
+  }}
 
 % Also appeared in ACM SIGPLAN Notices 22(12), December 1987.
 @InProceedings{Cointe1987,
@@ -2204,7 +2205,7 @@
     It shows that Cook already presented the essence of his future thesis:
     the understanding of self and super and how inheritance works;
     “[t]he meaning of a class is the fixed-point of its generator”;
-    subclasses as composing a delta to the generator _before_ taking the fixed-point
+    subclasses as composing a delta to the generator \emph{before} taking the fixed-point
     (“a special kind of composition”).
 
     Useful historical evidence for how Cook scooped Kamin and Reddy in publishing
@@ -2213,7 +2214,7 @@
   }
 }
 
-% Find a copy somehow? Seems to put Cook before Kamin & Reddy.
+% Kamin admit that he and Reddy had seen Cook’s work before they published.
 % Was is earlier than Kamin's 1987 writeup of his 1988 POPL paper?
 @TechReport{Cook1987Self,
   author={William R. Cook},
@@ -3013,7 +3014,7 @@
 }
 
 @Book{Steele1990,
-  author={Guy Lewis Steele},
+  author={Guy Lewis {Steele Jr.}},
   title={Common Lisp: The Language, 2nd edition},
   year={1990},
   isbn={0131515071},
@@ -3106,7 +3107,7 @@
     They also support cycles but say it’s too complex to explain how in the paper.
 
     All in all, authors claim to strive for “simplicity”, but shun theory,
-    and so end up doing _vastly_ complex things in the end.
+    and so end up doing \emph{vastly} complex things in the end.
  }
 }
 
@@ -3598,7 +3599,7 @@
 }
 
 @InProceedings{Steele1993,
-  author={Guy Lewis Steele and Richard P. Gabriel},
+  author={Guy Lewis {Steele Jr.} and Richard P. Gabriel},
   title={The Evolution of Lisp},
   booktitle={Proceedings of the Second ACM SIGPLAN Conference on History of Programming Languages (HOPL-II)},
   month=mar,
@@ -4057,7 +4058,7 @@
   school={Massachusetts Institute of Technology},
   address={USA},
   url={http://mumble.net/~jar/pubs/secureos/},
-  abstract={Cooperation between independent agents depends upon establishing a degree of security. Each of the cooperating agents needs assurance that the cooperation will not endanger resources of value to that agent. In a computer system, a computational mechanism can assure safe cooperation among the system’s users by mediating resource access according to desired security policy. Such a mechanism, which is called a security kernel, lies at the heart of many operating systems and programming environments. The dissertation describes Scheme 48, a programming environment whose design is guided by established principles of operating system security. Scheme 48’s security kernel is small, consisting of the call-by-value $lambda$-calculus with a few simple extensions to support abstract data types, object mutation, and access to hardware resources. Each agent (user or subsystem) has a separate evaluation environment that holds objects representing privileges granted to that agent. Because environments ultimately determine availability of object references, protection and sharing can be controlled largely by the way in which environments are constructed.I will describe experience with Scheme 48 that shows how it serves as a robust and flexible experimental platform. Two successful applications of Scheme 48 are the programming environment for the Cornell mobile robots, where Scheme 48 runs with no (other) operating system support; and a secure multi-user environment that runs on workstations. (Copies available exclusively from MIT Libraries, Rm. 14-0551, Cambridge, MA 02139-4307. Ph. 617-253-5668; Fax 617-253-1690.)},
+  abstract={Cooperation between independent agents depends upon establishing a degree of security. Each of the cooperating agents needs assurance that the cooperation will not endanger resources of value to that agent. In a computer system, a computational mechanism can assure safe cooperation among the system’s users by mediating resource access according to desired security policy. Such a mechanism, which is called a security kernel, lies at the heart of many operating systems and programming environments. The dissertation describes Scheme 48, a programming environment whose design is guided by established principles of operating system security. Scheme 48’s security kernel is small, consisting of the call-by-value λ-calculus with a few simple extensions to support abstract data types, object mutation, and access to hardware resources. Each agent (user or subsystem) has a separate evaluation environment that holds objects representing privileges granted to that agent. Because environments ultimately determine availability of object references, protection and sharing can be controlled largely by the way in which environments are constructed.I will describe experience with Scheme 48 that shows how it serves as a robust and flexible experimental platform. Two successful applications of Scheme 48 are the programming environment for the Cornell mobile robots, where Scheme 48 runs with no (other) operating system support; and a secure multi-user environment that runs on workstations. (Copies available exclusively from MIT Libraries, Rm. 14-0551, Cambridge, MA 02139-4307. Ph. 617-253-5668; Fax 617-253-1690.)},
   doi={10.5555/921818},
   note={
     Fantastic classic paper, Rees’s thesis introduces his “W7” security kernel,
@@ -4234,7 +4235,7 @@
     “The notions of type and class are often confounded
     in object-oriented programming languages” p. 5.
     But ultimately, the author still conflates specification and target without full awareness.
-    He successfully works around the issue by having a notion of subtyping _before_ the fixpoint,
+    He successfully works around the issue by having a notion of subtyping \emph{before} the fixpoint,
     which he calls “matching” (though this technique is not explained in those terms),
     with an ad hoc class primitive
     wherein the open recursion type is accessible via the special type variable MyType.
@@ -4328,6 +4329,26 @@
     But he doesn’t understand why that’s a wrong thing to do when you claim you’re doing OO.
   }
 }
+
+@WebPage{Hathaway1996,
+  author={Bob Hathaway},
+  title={comp.object FAQ},
+  year={1996},
+  month=apr,
+  edition={Version 1.0.9},
+  url={http://www.faqs.org/faqs/object-faq/},
+  lastchecked={2026-09-25},
+  note={
+    An extensive contemporary FAQ on object-oriented technology,
+    representing common lore from 1993 to 1996.
+    What I grew up believing OO to be, and what made me despise it for its hodgepodge complexity,
+    reminding me of the quip attributed to Whitehead: “taxonomy is the death of science”.
+    Still, a very rich compendium of information about all kinds of things OO
+    that may broaden your horizons.
+    Written by someone who was far too accepting of complexity,
+    but also much more open to the diversity of opinions and forms
+    than later mainstream practitioners would become,
+    as the success of C++ and Java narrowed attention to a much smaller range of OO forms.}}
 
 % In the context of how functional style without OO
 % requires you to rewrite everything for every variant of a data structure,
@@ -5094,7 +5115,7 @@
     of which he was one of the main authors. Actors taken seriously into production.
     Section 3.8 “Dynamic Code Change” describes support for hot code upgrade.
     Only 2 versions of the code allowed; at the 3rd, processes using the 1st are killed.
-    I _suppose_ that means there are again only 2 versions left, and
+    I \emph{suppose} that means there are again only 2 versions left, and
     only 1 after all processes are fully updated.
     That’s great in Erlang because failure is always a valid fallback,
     but may might not be good enough in less resilient systems.
@@ -5755,7 +5776,7 @@
 % TODO: see its bibliography for more papers to read
 @InProceedings{Allen2011,
   title={Type checking modular multiple dispatch with parametric polymorphism and multiple inheritance},
-  author={Eric Allen and Justin Hilburn and Scott Kilpatrick and Victor Luchangco and Sukyoung Ryu and David Chase and Guy Lewis Steele},
+  author={Eric Allen and Justin Hilburn and Scott Kilpatrick and Victor Luchangco and Sukyoung Ryu and David Chase and Guy Lewis {Steele Jr.}},
   booktitle={OOPSLA},
   pages={973--992},
   doi={10.1145/2048066.2048140},
@@ -5818,7 +5839,7 @@
     Then, at crucial times, in the most sophisticated way, he totally misses the point.
     For instance, he claims that “dynamic dispatch of operations is
     the essential characteristic of objects”. But no, all that means is that the object is
-    _first-class_, which was the topic of his previous section, yet he failed to notice.
+    \emph{first-class}, which was the topic of his previous section, yet he failed to notice.
     And being first-class is not specific to OO.
     Maybe Cook’s note on “dynamic dispatch” tells us something important
     about most Class OO languages:
@@ -5829,7 +5850,7 @@
     to enable runtime dispatch).
     Now, when Cook claims that inheritance is “useful but not absolutely essential” for OO:
     that’s where he loses track of the plot.
-    As for 2012 JavaScript (before classes), it _was_ OO already, because it had inheritance.
+    As for 2012 JavaScript (before classes), it \emph{was} OO already, because it had inheritance.
     What makes OO is inheritance, not existentially-quantified types.
     Cook claims that “inheritance can also be used for… extending ML-style modules”.
     Did he even try??? I did, it doesn’t type.
@@ -5955,7 +5976,7 @@
 
 @Misc{R7RS2013,
   author={R7RS Working Group},
-  title={Revised${}^7$ Report on the Algorithmic Language Scheme},
+  title={Revised⁷ Report on the Algorithmic Language Scheme},
   year={2013},
   month=jul,
   howpublished={Scheme Language Steering Committee},
@@ -6220,7 +6241,7 @@
   year=2015,
   lastchecked={2026-01-13},
   note={
-    This blogpost crystalizes the concept of _reasonability_ for a programming language,
+    This blogpost crystalizes the concept of \emph{reasonability} for a programming language,
     and for the programs written in it.
     Scott argues why OO, as found in Java and C#, makes program unreasonable—hard to reason about.
     However, Scott confuses OO with specific features of popular OO languages of his day,
@@ -6412,7 +6433,7 @@
 % https://www.youtube.com/watch?v=7HKbjYqqPPQ
 % https://www.youtube.com/watch?v=dCuZkaaou0Q
 @InProceedings{Steele2017,
-  author={Guy Lewis Steele},
+  author={Guy Lewis {Steele Jr.}},
   title={It’s Time for a New Old Language},
   booktitle={Proceedings of the 22nd ACM SIGPLAN Symposium on Principles and Practice of Parallel Programming},
   pages={1--1},
@@ -6825,7 +6846,7 @@
      ‘We can solve any problem by introducing an extra level of indirection.’”
     The many levels of indirection in the attribution
     are themselves an illustration of the so-called theorem.
-    Bonus points to whoever cites _this book_ regarding the FTSE,
+    Bonus points to whoever cites \emph{this book} regarding the FTSE,
     thereby adding yet another level of indirection.
   }
 }

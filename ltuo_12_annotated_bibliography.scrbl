@@ -26,7 +26,7 @@ If yes, what need I know to make the best of the reading?
 As an author, I need to have those notes anyway, for my own use,
 because there are far too many entries for me to remember the details of each.
 Many of those writings, I even want to forget,
-to make space for more worthy readings in my quite limited brain attic;
+to make space for more worthy readings in my quite limited @emph{brain attic};
 yet not without making a note of what was notable, so I never have to re-read them,
 even if I need to revisit the topic—which I definitely do many times over while writing.
 I deem it my duty as an author to share with my readers
@@ -43,7 +43,7 @@ Yet those are the best opinions I could form, and still worth sharing.
 that’s the only information you have before you may decide to even open the book.
 But be ready to revise your judgment after you get more information.
 
-All the publications listed below are available online for free—but
+All publications listed below are available online for free—but
 not always based on their DOI (Digital Object Identifier).
 Surely my astute readers can circumvent “legal” monopoly middlemen to locate free copies.
 Hint: my source code got URLs.

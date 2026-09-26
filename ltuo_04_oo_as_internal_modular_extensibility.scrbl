@@ -1275,8 +1275,8 @@ In the 1980s Bobrow did work on Smalltalk projects like PIE @~cite{Goldstein1980
 as well as Lisp projects like LOOPS @~cite{Bobrow1983},
 but it seems that—maybe after Kay’s and many others’ departure from PARC—the Smalltalk team
 stopped following or understanding OO developments from the Lisp world,
-and Interlisp had much more influence on the MIT Lispers
-than on the remaining co-located Smalltalkers.
+and Interlisp had much more influence on the MIT Lispers across the continent
+than on the remaining co-located Smalltalkers at PARC.
 But that doesn’t mean their progress stopped:
 ACT1 @~cite{Hewitt1979}, Flavors @~cite{Cannon1979},
 T @~cite{Rees1982 Adams1988},
@@ -1299,7 +1299,7 @@ It crowns the era of OO experimentation with an object system no one attempted t
 and features sorely missed by those
 who have to use other programming languages after having tried Lisp.
 
-@subsubsection{OO at Work: 1989-}
+@subsubsection{OO at Work: 1989-2009}
 
 1989 is the year when OO becomes available to the masses.
 In 1989, Turbo Pascal 5.5 came out and brought Object-Oriented Programming to anyone with a PC,

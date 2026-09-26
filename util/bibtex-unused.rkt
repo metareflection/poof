@@ -39,7 +39,7 @@
 ;; returns an empty Scribble element, so it can safely occur in a document.
 (define (setup-bibtex bib-path)
   (define-cite autobib-cite autobib-citet generate-bibliography
-     #:style number-style) ;; author+date-style
+     #:style author+date-style) ;; author+date-style (default) or number-style
   (define-bibtex-cite* bib-path
     autobib-cite autobib-citet
     raw-~cite raw-citet)

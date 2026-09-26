@@ -458,7 +458,8 @@ Therefore it is fair to say that, up to a linear transformation,
 Y crucially uses U twice; equivalently, U does half the work that Y does.
 
 In practice, the entities manipulated in the U-encoding, up to isomorphism,
-are functions @c{h = (f . U)}, where @c{f} is the generator of which you want the fixpoint.
+are “hatchery” functions @c{h = (f . U)},
+where @c{f} is the generator of which you want the fixpoint.
 The fixpoint of @c{f} is @c{self = f self = Y f = U h = h h}.
 Because U-encoding involves a recursion variable that is half-resolved,
 I like to call that variable @c{half} instead of @c{h}, so @principle{@c{self = half half}}.

@@ -461,11 +461,20 @@ A translation between different representations
 at the boundary between some or all of these stages
 may then take advantage of this discrepancy.
 
-Thus many algorithms involve setup and/or teardown phases whose purpose is
+Obvious stages of computation are compile-time and runtime,
+in language implementations that involve a compiler.
+But stages need not be so sharply and uniformly defined over the entire program.
+Even within one function call there can be many stages of computation:
+Many algorithms involve setup and/or teardown phases whose purpose is
 just such a change of representation,
 from whatever general-purpose representation the inputs are in,
 to something that simplifies the algorithm,
 back to a general-purpose representation of the outputs after processing.
+And these stages of computation within a procedure can often be the opportunities
+for optimizations, whether manually added by a programmer, or
+automatically detected by the implementation, or anything in-between.
+
+@XXXX{XXXXXXX}
 
 But this principle can be applied to the code of entire programs,
 rather than just the data of local subroutines:

@@ -79,6 +79,7 @@
               #"\\usepackage{xurl}"
               #"\\DeclareUnicodeCharacter{3BB}{$\\lambda$}" ;; λ
               #"\\DeclareUnicodeCharacter{1D62}{${}_{i}$}" ;; ᵢ
+              #"\\DeclareUnicodeCharacter{2077}{${}^7{k}$}" ;; ⁷
               #"\\DeclareUnicodeCharacter{207F}{${}^{n}$}" ;; ⁿ
               #"\\DeclareUnicodeCharacter{2096}{${}_{k}$}" ;; ₖ
               #"\\DeclareUnicodeCharacter{21DD}{$\\rightsquigarrow$}" ;; ⇝

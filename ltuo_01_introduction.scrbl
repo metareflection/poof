@@ -470,7 +470,7 @@ is why we want the theory to also be relevant.
 A theory of OO is @emph{relevant} to OO, and not to something else,
 if it matches the lore of OO:
 it will restate most if not all the things we know and care about with respect to OO,
-especially what has been well-known for decades.
+especially what has been well-known for decades @~cite{Hathaway1996}.
 
 To be both consistent and relevant at the same time in a lore full
 of controversial and mutually contradictory opinions,

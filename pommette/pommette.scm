@@ -409,7 +409,7 @@ let Y = f: (x: x x) (x: f (x x));
   (if (<= n 1) n (* n (Ue f (- n 1)))))
 
 (expect ((Ye eager-pre-fact) 6) => 720
-        ((Ye eager-pre-fact) 6) => 720
+        ((Yex eager-pre-fact) 6) => 720
         ((Yes eager-pre-fact) 6) => 720
         ((Yl lazy-pre-fact) 6) => 720
         ((Ylc lazy-pre-fact) 6) => 720
@@ -507,6 +507,10 @@ let Y = f: (x: x x) (x: f (x x));
 
 (def (fixt/inlined m)
   (Y (m top)))
+
+(expect (fixt idModExt) => top
+        (fixt/inlined idModExt) => top
+        (fixt idModExt) => (fixt/inlined idModExt))
 
 (def (record-spec _super _self)
   empty-record)
@@ -938,26 +942,6 @@ let Y = f: (x: x x) (x: f (x x));
 (expect (map (target←pproto point-r-pproto) '(x y rho color)) => '(3 4 5 #f)
         (map (target←pproto point-rc-pproto) '(x y rho color)) => '(3 4 5 "blue"))
 
-;;; TODO: find a simple yet meaningful example for recursive protos...
-;;; and their further specialization, nested or not
-
-#|
-(define web-config-spec
-  (mix*
-   (field-spec 'database
-      (mix*
-        (constant-field-spec 'port 80)
-        (field-spec 'allowed
-        (record!-spec)))
-   record!-spec))
-   (override-
-  (λ (self) (λ (super) (λ (method-id)
-    (case method-id
-      ((port) 80)
-      ((database) (length (self 'parts)))
-      (else (super method-id)))))))
-|#
-
 ;;;; 6.1.3 Recursive Conflation
 
 ;;; Trivial prototype conflation, as record of spec and target
@@ -977,7 +961,7 @@ let Y = f: (x: x x) (x: f (x x));
 (def (qproto-mix child parent)
   (qproto←spec (mix (spec←qproto child) (spec←qproto parent))))
 (def qproto-mix/list (op/list←op1.1 qproto-mix qproto-id))
-(define qproto-mix* (op*←op1.1 qproto-mix qproto-id))
+(define (qproto-mix* . args) (qproto-mix/list args))
 
 (def coord-qproto (qproto←spec coord-spec))
 (def color-qproto (qproto←spec color-spec))
@@ -1011,7 +995,7 @@ let Y = f: (x: x x) (x: f (x x));
 (def (rproto-mix child parent)
   (rproto←spec (mix (spec←rproto child) (spec←rproto parent))))
 (def rproto-mix/list (op/list←op1.1 rproto-mix rproto-id))
-(define rproto-mix* (op*←op1.1 rproto-mix rproto-id))
+(define (rproto-mix* . args) (rproto-mix/list args))
 (def (rproto←record r)
   (rproto←spec (constant-spec r)))
 
@@ -1022,6 +1006,10 @@ let Y = f: (x: x x) (x: f (x x));
 (expect (map (target←rproto coord-rproto) '(x y z color)) => '(2 4 #f #f)
         (map (target←rproto color-rproto) '(x y z color)) => '(#f #f #f "blue")
         (map (target←rproto point-p-rproto) '(x y z color)) => '(2 4 #f "blue"))
+
+;; rproto←record : wrap an existing plain record as an rproto (spec = constant-spec of it).
+(def rewrapped-rproto (rproto←record (target←rproto point-p-rproto)))
+(expect (map (target←rproto rewrapped-rproto) '(x y z color)) => '(2 4 #f "blue"))
 
 (def (add-x-rproto dx)
   (rproto←spec (add-x-spec dx)))
@@ -1856,6 +1844,22 @@ let Y = f: (x: x x) (x: f (x x));
    (base 'val) => 5
    (child 'val) => 15))   ;; child's +10 applied on top of base's 5
 
+;; Prototype Target Update options: same field update (5 → 6), different fate
+;; for the magic spec key.
+(let ()
+  (defpoi pt :e (constant-field-spec 'val 5))
+  (def (bump p) (extend-record 'val (+ 1 (p 'val)) p))
+  (expect
+   ((poi-target-update/OutOfSync bump pt) 'val) => 6
+   ;; spec untouched, still present — now stale/out of sync with the new value
+   (procedure? ((poi-target-update/OutOfSync bump pt) #f)) => #t
+   ((poi-target-update/OverwriteSpec bump pt) 'val) => 6
+   ;; spec replaced by a fresh constant-spec reflecting the new value
+   (@ ((poi-target-update/OverwriteSpec bump pt) #f) 'ignored-super 'ignored-self) => 6
+   ((poi-target-update/NoMoreSpec bump pt) 'val) => 6
+   ((poi-target-update/NoMoreSpec bump pt) #f) => #f   ;; spec erased
+   (poi-target-update/Error bump pt) =>fail!))
+
 ;;;; OISpec C4 hierarchy examples
 ;; The following tests replicate each major C4/C3 example hierarchy
 ;; but using OISpec instances instead of symbols.
@@ -2122,6 +2126,11 @@ let Y = f: (x: x x) (x: f (x x));
   (update-only-lens (compose mul10) 'view 7) => 7
   (update-only-lens (compose mul10) 'update add1 7) => 80)  ;; mul10 (add1 7)
 
+;; sub-record-spec : nest a spec's contributions under a key, with finalization wired in.
+(def point-holder (fix-record* (sub-record-spec 'point coord-spec)))
+(expect (point-holder 'point 'x) => 2
+        (point-holder 'point 'y) => 4)
+
 ;;; Broadening the Focus
 ;; reverse-view : s → MonoLens s a → View s a
 ;; reverse-update : s → MonoLens s a → Update s s a a
@@ -2229,6 +2238,18 @@ let Y = f: (x: x x) (x: f (x x));
   (rproto-mix (rproto←spec modext) rp))
 (def (update-poi-modext/mix modext poi)
   (poi-modext-lens 'update (mix modext) poi))
+
+;; update-rproto/mix: the new modext overrides x, but color still shows through
+;; from the existing rproto (coord-rproto's own x, absent an override, is gone).
+(def repointed-rproto
+  (update-rproto/mix (add-x-spec 98) point-p-rproto))
+(expect (map (target←rproto repointed-rproto) '(x y color)) => '(100 4 "blue"))
+
+;; update-poi-modext/mix: same dominance, but on a poi's mod-ext field via a lens.
+(let ()
+  (defpoi base :e (constant-field-spec 'val 5))
+  (def updated (update-poi-modext/mix (constant-field-spec 'val 42) base))
+  (expect (updated 'val) => 42))
 
 
 ;; Optics: poi-spec-lens / poi-name-lens / poi-modext-lens /
@@ -2523,6 +2544,11 @@ let Y = f: (x: x x) (x: f (x x));
  (procedure? (@ P0-Rec 'instance-fields 'n 'init)) => #t
  (procedure? (@ P0-Rec 'instance-fields 'tag 'check)) => #t)
 
+;; instance-field-lens agrees with the plain accessor.
+(expect
+ (instance-field-lens 'tag 'view P0-Rec) => (@ P0-Rec 'instance-fields 'tag)
+ (instance-field-lens 'n   'view P0-Rec) => (@ P0-Rec 'instance-fields 'n))
+
 ;; a whole plain class + subclass, built with the constructors
 (defclass P0-Thing :e
   (mix* (instance-field-spec 'name #f string-check-spec)
@@ -2538,6 +2564,9 @@ let Y = f: (x: x x) (x: f (x x));
  (make-instance P0-Thing 'name 42) =>fail!               ;; `name` check aborts at construction
  (instance←class P0-Thing (poi :e (mix (constant-field-spec 'name "y")
                                           (constant-field-spec 'size 9))) 'size) => 9)
+
+;; instance-method-lens agrees with the plain accessor.
+(expect (instance-method-lens 'show 'view P0-Thing) => (@ P0-Thing 'instance-methods 'show))
 
 (def positive-check-spec (simple-check-spec "positive" positive?))
 
@@ -3105,6 +3134,16 @@ let Y = f: (x: x x) (x: f (x x));
 (expect
   (smc-obj-mul10 'compute 3) => 30
   (smc-obj-mul10 'compute 5) => 50)
+
+;; Same combination, built on the uncurried calling convention instead of the
+;; (curried) default — conventions are pluggable, not baked into the combinator.
+(def smc-obj-uncurried
+  (fix-record
+    (mix
+      (standard-method-init-spec (uncurried-convention 2 0 0) 'compute)
+      (primary-method-spec 'compute (λ (_cnm _self x) (* x 10))))))
+
+(expect (smc-obj-uncurried 'compute 3) => 30)
 
 ;; Around method wraps primary; (call-next-method) replays the same arguments,
 ;; (call-next-method self v) re-runs the chain with a fresh argument list.

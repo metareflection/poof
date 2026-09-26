@@ -4,7 +4,7 @@
 @(set-chapter-number 2)
 
 @title[#:tag "WOOiIO"]{What Object Orientation @emph{is} — Informal Overview}
-@epigraph{Ce que l'on conçoit bien s'énonce clairement, @linebreak[]
+@epigraph{Ce que l’on conçoit bien s’énonce clairement, @linebreak[]
   Et les mots pour le dire arrivent aisément. @linebreak[]
   @~ @~ (What is clearly conceived is clearly expressed, @linebreak[]
   @~ @~ And the words to say it flow with ease.)
@@ -66,7 +66,7 @@ But the software development process remains larger than the software itself.
 @; TODO: examples, secref, etc.
 @section[#:tag "P&C"]{Prototypes and Classes}
 @epigraph{
-  Sir, I admit your gen'ral Rule @linebreak[]
+  Sir, I admit your gen’ral Rule @linebreak[]
   That every Poet is a Fool: @linebreak[]
   But you yourself may serve to show it, @linebreak[]
   That every Fool is not a Poet.
@@ -456,10 +456,10 @@ flavorful multiple inheritance still isn’t widely adopted as of 2026
 
 @subsection[#:tag "MIXIO"]{Mixin Inheritance Overview}
 
-Mixin inheritance was discovered last @~cite{Bracha1990},
+Mixin inheritance was last discovered @~cite{Steels1983} and articulated @~cite{Bracha1990},
 probably because it relies on a more abstract pure functional view of OO—maybe
-also because it was one of the first successful attempts at elucidating inheritance
-in the paradigm of programming language semantics,
+also because its articulation was one of the first successful attempts
+at elucidating inheritance in the paradigm of programming language semantics,
 when the concept had previously been developed
 in the paradigm of computing systems @~cite{Gabriel2012}.
 Yet, for the same reasons,
@@ -598,6 +598,9 @@ is built upon configurations written using mixin inheritance@xnote["."]{
   try to make a list of things many people claim are OO, but that aren’t really,
   at least not what programmers mean when they think of an OO language.
   You can later compare your list to mine after reading @secref{WOOin}.
+  If you are not familiar with propaganda about OO, then
+  read some of the common lore, from e.g. @citet{Hathaway1996}, and
+  identify something that doesn’t square with my theory so far.
 }
 
 @exercise[#:difficulty "Hard"]{

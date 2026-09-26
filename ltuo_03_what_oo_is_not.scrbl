@@ -253,7 +253,7 @@ as Haskell grew up to become a practical language@xnote["."]{
 Yet, there are:
 @itemize[
   @item{Pure models of OO such as those of
-    Kamin, Reddy, Cook and Bracha@~cite{Kamin1988 Reddy1988 Cook1989 CookPalsberg1989 Bracha1990},}
+    Kamin, Reddy, Cook and Bracha@~cite{Cook1987Self Kamin1988 Reddy1988 Cook1989 CookPalsberg1989 Bracha1990},}
   @item{pure lazy dynamic OO languages such as Jsonnet or Nix@~cite{Cunningham2014 Dolstra2008 Simons2015},
     and pure lazy OO systems for Scheme@~cite{Rideau2021},}
   @item{languages happily combining OO and FP such as Common Lisp or Scala,
@@ -323,7 +323,8 @@ sacrificing the ends to the means.
 One remarkable researcher made a particularly eloquent case
 for reducing “OO” to mere first-class modularity (my word, but with equivalent definitions):
 William R. Cook, the man who, each time with suitable collaborators,
-first formalized single inheritance in the λ-calculus @~cite{Cook1989 CookPalsberg1989},
+first formalized single inheritance in the λ-calculus
+@~cite{Cook1987Self Cook1987BOF Cook1989 CookPalsberg1989},
 dispelled the long-running belief that inheritance was subtyping @~cite{Cook1989Inheritance},
 introduced the first correct typesystem for inheritance @~cite{Canning1989},
 invented and formalized mixin inheritance @~cite{Bracha1990},
@@ -362,7 +363,7 @@ yet failed to see the big picture as a bird: he did take a bird’s view,
 and still couldn’t see what his paradigm couldn’t express.
 
 Cook’s view is marginal in that it goes against the vast majority of OO practitioners.
-And I will keep arguing why that view is objectively incorrect,
+And I will keep arguing why his view was objectively incorrect,
 even though it is positively cited by many academics.
 Yet Cook himself is not just some marginal author using unusual vocabulary:
 his view is worth mentioning precisely because Cook’s work is so influential—indeed a landmark.
@@ -834,7 +835,7 @@ into believing that they understand all there is to know about software modeling
   to import concepts from Category Theory to automate the handling of data structures
   or side effects. @; TODO cite?
 }
-Yet the nature and correctness of software lies precisely
+The nature and correctness of software lies precisely
 in this gap they are unable or unwilling to explore.
 
 To see what these methodologies lack, consider
