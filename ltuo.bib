@@ -1776,6 +1776,30 @@
   }
 }
 
+@InProceedings{Deutsch1984,
+  author={L. Peter Deutsch and Allan M. Schiffman},
+  title={Efficient Implementation of the Smalltalk-80 System},
+  booktitle={Proceedings of the 11th ACM SIGACT-SIGPLAN Symposium on Principles of Programming Languages},
+  pages={297--302},
+  publisher={ACM},
+  year={1984},
+  doi={10.1145/800017.800542},
+  url={https://web.cs.ucla.edu/~palsberg/course/cs232/papers/DeutschSchiffman-popl84.pdf},
+  note={
+    Is this foundational paper on the efficient implementation of dynamic languages,
+    the authors describe techniques they used for Smalltalk-80,
+    including dynamic translation of virtual machine code to native code,
+    elimination of redundant reference counting red tape,
+    stack allocation of most activation frames while preserving the ability
+    to materialize them on demand as heap-allocated, inspectable objects
+    (first-class activation records, baby!),
+    and a one-entry in-line cache for (native-translated) method addresses
+    at each message-send site, based on the previous receiver’s class.
+    The unifying principle is dynamic change of representation,
+    transparently converting code and data between forms optimized for
+    execution and forms required by the language’s semantics.
+    Measurement of performance improvements included.}}
+
 @Article{Fredman1984,
   author={Michael L. Fredman and János Komlós and Endre Szemerédi},
   title={Storing a Sparse Table with O(1) Worst Case Access Time},
@@ -2133,6 +2157,8 @@
   booktitle={ECOOP '87: European Conference on Object-Oriented Programming},
   editor={Jean Bézivin and Jean-Marie Hullot and Pierre Cointe and Henry Lieberman},
   year={1987},
+  month=jun,
+  location={Paris, France},
   series={Lecture Notes in Computer Science},
   volume={276},
   pages={41--50},
@@ -2144,6 +2170,9 @@
     Proposes explicit part hierarchies as an extension to Smalltalk, allowing
     structured whole-part relationships while preserving encapsulation,
     such that an object can be seen as made of parts that are themselves made of parts, etc.
+    Building on ThingLab, the authors introduce compound message selectors
+    and censored message forwarding, allowing a whole to intercept
+    messages addressed to its parts without exposing those parts directly.
     It contrasts the class hierarchy’s “IS-A” or “IS-A-KIND-OF” relation with
     the part hierarchy’s “IS-A-PART-OF”, or conversely “HAS-A-PART”, relation,
     providing an early explicit comparison of the relationships later commonly
@@ -2158,32 +2187,44 @@
   author={Pierre Cointe},
   title={Metaclasses are First Class: The ObjVlisp Model},
   booktitle={Proceedings of the 2nd ACM Conference on Object-Oriented Programming Systems, Languages, and Applications},
+  editor={Norman K. Meyrowitz},
   pages={156--167},
   publisher={ACM},
+  address={New York, NY, USA},
+  location={Orlando, Florida, USA},
+  isbn={0-89791-247-0},
   year={1987},
-  month={October},
+  month=oct,
   doi={10.1145/38807.38822},
-  url={https://doi.org/10.1145/38807.38822},
+  url={https://www.lirmm.fr/~dony/enseig/MR/notes-etudes/Objvlisp-BasePaper.pdf},
   note={
     Presents ObjVlisp, a reflective object model in which classes and metaclasses
     are themselves ordinary first-class objects, with instantiation and inheritance
     represented uniformly and extensibly.
 
-    Smalltalk-80 was generating an implicit ad hoc metaclass for each class
-    so as to specialize its behavior
-    (indeed making Smalltalk classes into prototypes without proper inheritance);
+    Smalltalk-80 automatically generated an implicit metaclass for each class
+    so as to specialize its behavior,
+    with metaclass inheritance constrained to parallel ordinary class inheritance
+    (indeed making Smalltalk classes into prototypes);
     LOOPS had explicit metaclasses that could be extended through inheritance,
-    but required distinct representations for classes and objects.
-    ObjVlisp offers a uniformity of representation for objects and classes, at which point
-    a metaclass is just a class’s class—a principle later adopted by the CLOS MOP.
-    But whereas CLOS introduces a zoo of metaobjects, from
-    with several kinds of classes, functions, methods, slot-definitions, specializers, etc.,
-    ObjVlisp is minimalist: it has just Object and Class (with these instance variables (i_v):
-    isit name supers i_v methods), and a two-step bootstrap process: creating a skeleton Class,
-    and use it to define the complete Class.
+    but fixed the metaclass levels and used distinct representations for classes and objects.
 
-    The paper presents examples, and discusses potential and actual uses of metaclasses,
-    and includes a complete minimal implementation in two pages of code.
+    ObjVlisp offers a uniformity of representation for objects and classes, at which point
+    a metaclass is just a class’s class—a principle also present in CLOS.
+    But whereas the CLOS MOP introduces a zoo of metaobjects,
+    with several kinds of classes, functions, methods, slot-definitions, specializers, etc.,
+    ObjVlisp is minimalist: its kernel has just \texttt{Object}
+    (defining the @emph{instance variable} \texttt{isit}),
+    and \texttt{Class} (its own instance and a subclass of \texttt{Object},
+    further defining the instance variables
+    \texttt{name}, \texttt{supers}, \texttt{i_v}, \texttt{methods}).
+    The bootstrap process is also very simple:
+    create a skeleton \texttt{Class}, use it to create \texttt{Object},
+    and then replace the skeleton with the complete, self-instantiating \texttt{Class}.
+
+    The paper presents examples, discusses potential and actual uses of metaclasses,
+    and includes a complete minimal implementation in two pages of code,
+    and a variant of it that statically resolves slot access.
   }
 }
 
@@ -4649,6 +4690,7 @@
   }
 }
 
+% https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.37.5452
 @InProceedings{Okasaki1998,
   author={Chris Okasaki and Andy Gill},
   title={Fast Mergeable Integer Maps},
@@ -4656,7 +4698,6 @@
   pages={77--86},
   month=sep,
   year={1998},
-  citeseer={https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.37.5452},
   url={http://www.ittc.ku.edu/csdl/fpg/files/Okasaki-98-IntMap.pdf},
   note={
     Original paper for a pure functional variant of big-endian Patricia tree (a.k.a. trie),
@@ -5175,21 +5216,6 @@
 }
 
 %% 2005
-
-@InProceedings{Gonzalez2005,
-  author={Sebastián González and Wolfgang De Meuter and Kim Mens},
-  title={Multiple Dispatch for Ambient Intelligence},
-  booktitle={Proceedings of the First Workshop on Object Technology for Ambient Intelligence},
-  year={2005},
-  address={Glasgow, UK},
-  url={https://citeseerx.ist.psu.edu/document?doi=32a4ebc6a768b1d2195689b6d3f0d5c732875283},
-  note={
-    Argues for prototype-based multiple dispatch as a basis for ambient-intelligence systems,
-    using the model from Salzman 2005.
-    Particularly relevant to the book for its receiver-neutral view of multimethods
-    and its treatment of subjective dispatch,
-    where an implicit layer argument is prepended to the dispatch argument list.}
-}
 
 % https://github.com/nkaretnikov/OOHaskell
 % https://arxiv.org/pdf/cs/0509027

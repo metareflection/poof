@@ -57,12 +57,8 @@ not of the thing they have discovered, not of themselves.
 As for what it even means for something to be an implementation,
 this is another vast topic, but one I happen to have studied in depth,
 so I will direct you to my works @~cite{Rideau2018 FarePhD}.
-In short: consider that you have layers of abstraction
-for what is or ought to be “the same” computation.
-At each layer, you are offered a set of possible interactions
-with some recognizable logical structure.
 
-An implementation is a correspondence between two layers of computation,
+An implementation is a correspondence between two computing systems,
 one (relatively more) abstract, being implemented,
 the other (relatively more) concrete, doing the implementing.
 For the implementation to be valid, and moreover for it to be useful,
@@ -73,7 +69,7 @@ But most concrete states will not have any abstract state they implement;
 they will be “intermediate” concrete states between two observable hyper states,
 or plain invalid concrete states that should never be reached by the implementation (if correct).
 
-Thus, the two layers may have very different sets of states and interactions overall,
+Thus, the two systems may have very different sets of states and interactions overall,
 most of them not being in a correspondence with anything in the other system.
 Yet some subset of the concrete system will be in faithful correspondence
 with some subset of the abstract system in a way that preserves their interactions.
@@ -86,7 +82,7 @@ with the stateful von Neumann-style machines I have.
 (Note how in other contexts I might want the implementation the other way around:
 for instance, to write formal proofs of correctness about executable code in type theory.)
 
-@subsection{Naming the Layers} @; Representing Implementation ?
+@subsection{Layers of Implementation}
 
 Here is some vocabulary I coined @~cite{FarePhD}
 to precisely name the elements of an implementation.
@@ -107,7 +103,8 @@ by reasoning piecewise about the more manageable correctness properties
 of the smaller individual implementations.
 
 I will call “layer” an implementation between two computing system,
-seen as part of some “tower” of such implementations that compose into a larger one.
+seen as part of such a “tower” of implementations.
+Contiguous layers compose into a larger implementation.
 Each computing system can itself be viewed as a layer—an identity layer
 in which every state corresponds to itself. The space of all implementations
 is then a category—though you will want to consider not just implementations in general,
@@ -120,9 +117,9 @@ For two related reasons:
 (2) so you don’t confuse them with sometimes conflated concepts that may be related yet different.
 
 What other concepts? Well, later in this chapter,
-together with @emph{layers of abstraction} (prefixes hypo-/hyper-)
-I’ll consider @emph{stages of computation} (prefixes pre-/post-),
-and @emph{planes of control} (prefixes back-/fore-),
+together with @emph{layers of implementation} (prefixes @emph{hypo-/hyper-})
+I’ll consider @emph{stages of computation} (prefixes @emph{pre-/post-}), @; TODO secref
+and @emph{planes of control} (prefixes @emph{back-/fore-}), @; TODO secref
 that are often conflated under the names or concepts of
 “reflection”, “representation”, “metaprogram”, “metaobject”, etc.
 By having distinct names for these independent concepts,
@@ -322,7 +319,7 @@ every access requires a linear search
 in @c{O(n)} time where @c{n} is the length of the list@xnote["."]{
   I will keep all my “performance estimates” as general complexity classes,
   under the simplified model of a flat memory with @c{O(1)} access time.
-  Once you delve into details of layers of memory from CPU registers to L1, L2, L3 caches,
+  Once you delve into details of levels of memory from CPU registers to L1, L2, L3 caches,
   to local disk then remote server and its disk, you have to factor in an @c{O(√n)} slowdown
   (where @c{n} is the size of the “working set” of data one works with),
   to deal with the physical limits of the memory hierarchy @~cite{Ernerfeldt2014}.
@@ -371,11 +368,11 @@ Lisp “symbols” are essentially pre-registered strings, in a global table,
 to pre-pay the @c{O(n)} cost of string comparison once (where @c{n} is the length of the string)
 and make each subsequent comparison for equality a cheaper @c{O(1)} operation@xnote["."]{
   Since the late 1970s, Lisp, as subsequently codified by Common Lisp,
-  actually has a two-layer system, with a global table of @emph{packages},
+  actually has a two-level system, with a global table of @emph{packages},
   each named by a string, and containing a table of @emph{symbols}.
   Common Lisp also has a notion of @emph{uninterned symbols} that have a name,
   but are really meant to be compared by address.
-  Scheme has a single-layer system of symbols;
+  Scheme has a single-level system of symbols;
   some implementations have uninterned symbols, but not all;
   on the other hand, most implementations have a notion of @emph{identifier}
   that is richer than a symbol, embodying some provenance information with the symbol,
@@ -448,7 +445,7 @@ that will maximize the benefits and minimize the cost of the software over its e
 Wisely chosen constraints can overall smooth out the flow of information;
 foolishly chosen constraints can overall strangle it.
 
-@subsubsection{Staging the Evaluation}
+@subsubsection{Staging the Computation}
 
 The flow of information in computations is not uniformly random through time,
 but itself follows larger structures:
@@ -465,7 +462,7 @@ Obvious stages of computation are compile-time and runtime,
 in language implementations that involve a compiler.
 But stages need not be so sharply and uniformly defined over the entire program.
 Even within one function call there can be many stages of computation:
-Many algorithms involve setup and/or teardown phases whose purpose is
+many algorithms involve setup and/or teardown stages whose purpose is
 just such a change of representation,
 from whatever general-purpose representation the inputs are in,
 to something that simplifies the algorithm,
@@ -474,23 +471,76 @@ And these stages of computation within a procedure can often be the opportunitie
 for optimizations, whether manually added by a programmer, or
 automatically detected by the implementation, or anything in-between.
 
-@XXXX{XXXXXXX}
+When some clear event separates two stages of computation,
+I will use the prefix @emph{pre-} to denote
+the computation that happens before the event, and its attributes,
+and the prefix @emph{post-} to denote those after the event.
+This chapter is about efficient implementation;
+therefore I will be focusing on those pre-computations that can be used
+to efficiently implement post-computations of some kind,
+i.e. generate a hypo-post-computation (a hypo-computation of the post-computation),
+as when running a compiler.
+But mind that in the general case, the two axes hypo/hyper and pre/post are independent@xnote["."]{
+  A pre-computation does not have to generate a hypo-computation.
+  Indeed, it could generate data at the same level of abstraction, to be used as regular input.
+  It could even be generating a computation at a higher rather than lower level of abstraction,
+  a hyper-computation of the post-computation:
+  a type or resource analysis, a permission check, a decompilation.
+  It might be a useful computation that helps the post-computation,
+  yet is itself definitely not a hypo-computation of it,
+  such as the identifier interning discussed above or the perfect hashing discussed below.
+  Or it might be doing something related to the post-computation,
+  yet largely independent from its computational aspect:
+  logging, bookkeeping, content-addressing, statistical analysis, sampling, access control, etc.
+  Of course, if a pre-computation is totally unrelated to a post-computation,
+  and the two do not interfere in any way, then no one will bother to consider them together.
 
-But this principle can be applied to the code of entire programs,
-rather than just the data of local subroutines:
-Some “static” or “statically known” or just “known” computations can be
-wholly computed in the previous stage,
-their results directly used during the next stage in lieu of executing the computation again.
-Other computations can take advantage of some data that, though not known in advance,
-will remain invariant (i.e. not change) during the next stage.
-Many shortcuts can be taken, much dead code can be eliminated, a lot of simplifications can be made,
-formulas inlined, etc., thanks to the static foreknowledge from one stage to the next.
-Only some of the computations will be “dynamic”, producing values during the next stage
-that are not known at the current one.
+  Conversely, a hypo- and a hyper-computation can be happening
+  at the same stage, one being just a view of the other.
+  Already in the examples given above,
+  a hyper-computation could be computed by a pre-computation as well as a hypo-computation.
+  They can also be computed by a post-computation:
+  a hyper-computation can be generated after the fact as summary
+  for resource accounting or security reporting;
+  or a hypo-computation can be generated after the fact for debugging
+  (e.g. time-travel debugging of a failed deterministic computation).
+
+  Finally be mindful that just as with @emph{hypo-} and @emph{hyper-},
+  the prefixes @emph{pre-} and @emph{post-} are not an absolute property of a computation,
+  but an attribute of its role in a staging relation with another computation.
+}
+
+A common pattern will be that during a pre-stage S0,
+some information about a post-stage S2 is @emph{static}, i.e. known in advance,
+as opposed to @emph{dynamic}, i.e. not known in advance.
+For instance, a variable @c{v} might hold a constant value @c{c} during S2.
+Then, during S0, a pre-computation may prepare the code meant to run during S2
+to take advantage of that information,
+e.g. by replacing variable operations using @c{v}
+by cheaper constant operations using @c{c},
+and by replacing pure computations on known constants by their results
+(a.k.a. constant folding).
+
+Some optimizations may involve more than two stages.
+Maybe at pre-stage S0 you already know that some variable won’t change during post-stage S2,
+but the exact value won’t be determined until intermediate stage S1.
+At stage S0, you may prepare for variables to be @emph{invariant} during stage S2,
+which you statically know to be the case, and apply many optimizations,
+even though the future constant value itself is still dynamic at this point:
+you might be able to take shortcuts, eliminate dead code, remove unnecessary checks,
+use preallocated buffers, etc., based on the partial knowledge of that future invariant.
 
 Beware though that each stage also has a finite lifespan.
-If you spend more time optimizing some computation
-than the unoptimized computation itself will take, you have made a bad trade@xnote["."]{
+The optimized stage S2 may itself have an end,
+after which the static information becomes invalid,
+and code and data may not assume a shape optimized for this static information anymore.
+The end can itself be statically known (e.g. the termination of a subroutine),
+or dynamically determined, by checking a guard condition to confirm the assumptions made,
+and falling back to an unoptimized code path when the guard fails.
+Often, the stage S2 is ephemeral enough
+that the cost of some further optimization or a guard would not be covered
+by the expected gains in performance—at which point the optimization would be a bad trade,
+and it is best to keep using a more general-purpose strategy@xnote["."]{
   @citet{Dybvig2006} explains how while developing Chez Scheme,
   his benchmark for whether to accept an optimization was
   whether applying it to the compiler improved the speed of the compiler enough
@@ -954,7 +1004,7 @@ can likewise prevent race conditions in the forcing of the suspension itself.
 
 An imperative initialization protocol, by contrast,
 necessarily requires programmers to explicitly deal with more details,
-as it separates object computation into allocation and initialization phases.
+as it separates object computation into allocation and initialization stages.
 The imperative protocol is therefore comparatively @emph{low-level},
 which might make sense in the relatively rare cases where you really care
 about the performance of such initialization operations.
@@ -1114,8 +1164,10 @@ many programmers of OO languages resort to the “builder pattern”:
 all complex wherein
 
 
-
-
+Make the compilation infrastructure itself Modularly Extensible?
+Why yes of course!
+Nano-passes, @; TODO cite Siek2023
+Ziggurat. @; TODO cite Fisher2008
 
 first-class pure functional OO
 
@@ -1152,7 +1204,8 @@ a cache of record offsets for the field
 depending on recently seen record descriptors:
 you can have a small “inline cache” per access site with one or a very few entries,
 and another one shared between access sites with the same name
-@~cite{Hoelzle1991}. @; TODO cite Deutsch1984
+@~cite{Deutsch1984 Hoelzle1991},
+trading space for time.
 Most of the computation can be skipped, after checking that
 the contents of the cache indeed match expectations.
 
@@ -1262,7 +1315,7 @@ But there are other implementation strategies @~cite{Ducournau2009}
 
 Object descriptor, vtables (works well with single inheritance / suffix classes), interfaces, etc.
 Multiple dispatch.
-Inline caching per call-site @~cite{Hoelzle1991}, caching per-function.
+Inline caching per call-site @~cite{Deutsch1984 Hoelzle1991}, caching per-function.
 Method combinations: precomputing effective methods.
 Sealing and devirtualization.
 Type feedback and speculation—JIT at the atomic block level, not call site level.
@@ -1275,7 +1328,7 @@ Space/time/flexibility tradeoff. C++ vs CLOS.
 Instead of making every object hundreds of bytes larger,
 you could just make object pointers slightly larger—a pair of
 
-@section[#:tag "MOP"]{Meta-Object Protocols}
+@section[#:tag "MOP"]{BOP: Meta-Object Protocol, Unconflated}
 @epigraph{
   Metaobject protocols also disprove the adage that adding
   more flexibility to a programming language reduces its performance.

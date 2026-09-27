@@ -15,11 +15,11 @@
 
 @dedication{
   To William R. Cook, who first formalized inheritance in the λ-calculus,
-  showed how it differs from subtyping, and
-  introduced mixin inheritance—the foundations on which this book is built—yet
-  didn’t believe in the significance of inheritance.
+  showed how it differs from subtyping,
+  introduced mixin inheritance, and more—the foundations on which this book is built—yet
+  who never believed in the significance of inheritance.
   He was, I discovered too late,
-  the one person with whom I most wanted to argue about the ideas herein.
+  the one person with whom I most wanted to argue about the ideas in this book.
 }
 @book-abstract{
 @noindent[]

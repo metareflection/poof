@@ -686,18 +686,6 @@
   }
 }
 
-@InProceedings{Deutsch1984,
-  author={L. Peter Deutsch and Allan M. Schiffman},
-  title={Efficient Implementation of the Smalltalk-80 System},
-  booktitle={Proceedings of the 11th ACM SIGACT-SIGPLAN Symposium on Principles of Programming Languages},
-  pages={297--302},
-  publisher={ACM},
-  year={1984},
-  doi={10.1145/800017.800542},
-  url={https://web.cs.ucla.edu/~palsberg/course/cs232/papers/DeutschSchiffman-popl84.pdf?utm_source=chatgpt.com},
-  note={Describes a high-performance implementation of Smalltalk-80 on conventional microprocessor hardware, including object representation, dynamic message lookup and techniques for reducing the cost of dynamic dispatch. A foundational implementation paper for efficient dynamically dispatched object-oriented languages.}
-}
-
 @InProceedings{Steels1984,
   author={Luc Steels},
   title={ORBIT: A Tool for Building AI Systems in an Object-Oriented Style},
@@ -1678,17 +1666,27 @@
   }
 }
 
-% Code Compression
 @InProceedings{Harrison1993,
   author={William Harrison and Harold Ossher},
-  title={Subject-Oriented Programming: A Critique of Pure Objects},
-  booktitle={Proceedings of the Eighth Annual Conference on Object-Oriented Programming Systems, Languages, and Applications},
+  title={Subject-Oriented Programming (A Critique of Pure Objects)},
+  booktitle={Proceedings of the Eighth Annual Conference on
+    Object-Oriented Programming Systems, Languages, and Applications},
+  publisher={ACM},
+  location={Washington, DC, USA},
   pages={411--428},
+  month={October},
   year={1993},
-  doi={10.1145/167962.165932},
+  isbn={0897915879},
+  doi={10.1145/165854.165932},
   url={https://doi.org/10.1145/167962.165932},
-  note={Early attack on the idea that one class hierarchy can capture all views of an object; relevant to the context-multiplicity failure of single inheritance.}
-}
+  note={Introduces Subject-Oriented Programming, allowing independently
+    developed subjective views of objects to be composed while
+    preserving shared object identity.
+    Challenges the assumption that a class must contain all the
+    properties and behavior associated with its instances.
+    An earlier version appeared as IBM Research Report RC 18826
+    on April 9, 1993.
+    }}
 
 @InCollection{Kiczales1993MOP,
   author={Gregor Kiczales and J. Michael Ashley and Luis H. Rodriguez Jr. and Amin Vahdat and Daniel G. Bobrow},
@@ -3058,6 +3056,29 @@
   }
 }
 
+@InProceedings{Costanza2005,
+  author={Pascal Costanza and Robert Hirschfeld},
+  title={Language Constructs for Context-Oriented Programming:
+    An Overview of {ContextL}},
+  booktitle={Proceedings of the 2005 Symposium on Dynamic Languages},
+  publisher={ACM},
+  location={San Diego, CA, USA},
+  pages={1--10},
+  month={October},
+  year={2005},
+  isbn={1595932836},
+  doi={10.1145/1146841.1146842},
+  url={https://www.hirschfeld.org/writings/media/CostanzaHirschfeld_2005_LanguageConstructsForContextOrientedProgrammingAnOverviewOfContextL_AuthorsVersionAcm.pdf},
+  note={Introduces ContextL, an extension of CLOS supporting
+    dynamically scoped activation of layers containing partial
+    class and method definitions.
+    Explains layered functions, slots and class extensions through
+    concrete Common Lisp examples.
+    Explicitly distinguishes Context-oriented Programming from
+    Subject-Oriented Programming and delegation layers.
+    }
+}
+
 % multimethods and method combinations
 @InProceedings{Foote2005,
   author={Brian Foote and Ralph E. Johnson and James Noble},
@@ -3127,6 +3148,31 @@
     volume={16},
     pages={375-–414},
     year={2006},
+}
+
+@InProceedings{Costanza2006,
+  author={Pascal Costanza and Robert Hirschfeld and Wolfgang De Meuter},
+  title={Efficient Layer Activation for Switching
+    Context-Dependent Behavior},
+  booktitle={Proceedings of the Joint Modular Languages Conference},
+  series={Lecture Notes in Computer Science},
+  volume={4228},
+  publisher={Springer},
+  location={Oxford, UK},
+  pages={84--103},
+  month={September},
+  year={2006},
+  doi={10.1007/11860990_7},
+  url={https://www.hirschfeld.org/writings/media/CostanzaHirschfeldDeMeuter_2006_EfficientLayerActivationForSwitchingContextDependentBehavior_AuthorsVersionLncs4228.pdf},
+  note={Describes an efficient implementation of COP in which
+    active layer combinations are represented by dynamically
+    generated classes.
+    These classes are cached and reused, while layered method
+    dispatch is implemented through multiple dispatch on the
+    receiver and the current layer combination.
+    Includes performance measurements across several Common Lisp
+    implementations.
+    }
 }
 
 % Code Compression
@@ -3437,38 +3483,6 @@
   note={Shows how extensible language layers can be constructed compositionally, relevant to metaobject protocols and language-oriented modularity.}
 }
 
-@Article{Gonzalez2008,
-  author={Sebastián González and Kim Mens and Alfredo Cádiz},
-  title={Context-Oriented Programming with the Ambient Object System},
-  journal={Journal of Universal Computer Science},
-  volume={14},
-  number={20},
-  pages={3307--3332},
-  year={2008},
-  doi={10.3217/jucs-014-20-3307},
-  url={https://www.jucs.org/jucs_14_20/context_oriented_programming_with/jucs_14_20_3307_3332_gonzalez.pdf},
-  note={Presents AmOS, the prototype-based core of Ambience, with first-class closures, multimethods and contexts. It develops subjective dispatch into a mechanism for dynamic method scoping, using an implicit context-related dispatch argument and dynamically changing delegation graphs. Relevant to the book mainly as a later development of subjective multimethod dispatch; the 2005 paper is the more direct citation for the choice to place the implicit argument first.}
-}
-
-@Article{Hirschfeld2008,
-  author={Robert Hirschfeld and Pascal Costanza and Oscar Nierstrasz},
-  title={Context-oriented Programming},
-  journal={Journal of Object Technology},
-  volume={7},
-  number={3},
-  pages={125--151},
-  year={2008},
-  month={March},
-  doi={10.5381/jot.2008.7.3.a4},
-  url={https://www.jot.fm/contents/issue_2008_03/article4.html},
-  note={
-    Presents message dispatch as multidimensional:
-    procedural dispatch selects by name, ordinary OO additionally by receiver,
-    subjective programming additionally by sender,
-    and context-oriented programming additionally by execution context.
-    Particularly useful for understanding subject and object as orthogonal dispatch dimensions.}
-}
-
 % Code Compression
 @Book{Li2008,
   author={Ming Li and Paul M. B. Vitányi},
@@ -3479,15 +3493,6 @@
   doi={10.1007/978-0-387-49820-1},
   url={https://doi.org/10.1007/978-0-387-49820-1},
   note={Foundational reference for algorithmic information theory; supplies the theoretical background behind program-size and compression-based notions of abstraction.}
-}
-
-@WebPage{Minsky2008,
-  author={Yaron Minsky},
-  title={The ML sweet spot},
-  year=2008,
-  month=apr,
-  url={https://blog.janestreet.com/the-ml-sweet-spot/},
-  lastchecked={2021-03-14}
 }
 
 @InProceedings{Rossberg2008,
@@ -3501,31 +3506,31 @@
   note={Open modules formalized; journal version TOPLAS 35(1), 2013}
 }
 
-@Article{Swierstra2008,
-  author={Wouter Swierstra},
-  title={Data Types à la Carte},
-  journal={Journal of Functional Programming},
-  year={2008},
-  month=jul,
-  volume={18},
-  number={4},
-  pages={423--436},
-  publisher={Cambridge University Press},
-  issn={0956-7968},
-  doi={10.1017/S0956796808006758},
-  url={https://www.cs.tufts.edu/~nr/cs257/archive/wouter-swierstra/DataTypesALaCarte.pdf},
-  note={
-    A solution to the Expression Problem in Haskell that constructs extensible
-    recursive data types by taking fixed points of sums of functors.
-    New variants can be added modularly without modifying existing definitions,
-    while type classes provide type-safe injection into larger sums.
-    It demonstrates that inheritance-like modular extension is useful for
-    constructing data types independently of conventional object-oriented
-    programming.
-  }
-}
-
 %% 2009
+
+@InProceedings{Clarke2009,
+  author={Dave Clarke and Ilya Sergey},
+  title={A Semantics for Context-Oriented Programming with Layers},
+  booktitle={Proceedings of the First International Workshop
+    on Context-Oriented Programming},
+  publisher={ACM},
+  location={Genoa, Italy},
+  eid={10},
+  pages={10:1--10:6},
+  numpages={6},
+  month={July},
+  year={2009},
+  doi={10.1145/1562112.1562122},
+  url={https://ilyasergey.net/assets/pdf/papers/semantics-cop09.pdf},
+  note={Provides a formal operational semantics for COP with
+    dynamically scoped layer activation and deactivation.
+    Extends a restricted Featherweight Java calculus with layers,
+    method delegation and a static type system.
+    Allows layers to introduce methods absent from the underlying
+    classes and proves method availability for well-typed programs.
+    Omits inheritance and subtyping.
+    }
+}
 
 % Recursion Scheme, FP & OOP ???
 @Article{Gibbons2009,
@@ -3693,6 +3698,29 @@
   note={Develops a metamodel-based semantics of multiple inheritance that distinguishes the identity of inherited properties from their implementations, thereby separating syntactic from semantic conflicts. Surveys linearization-based approaches, relates linearization to method combination, compares the semantics of several multiple-inheritance languages and discusses interactions with static typing and virtual types. Directly relevant to the book's treatment of multiple inheritance, diamonds, property identity, linearization and method combination.}
 }
 
+@InProceedings{Hirschfeld2011,
+  author={Robert Hirschfeld and Atsushi Igarashi and Hidehiko Masuhara},
+  title={{ContextFJ}: A Minimal Core Calculus for
+    Context-Oriented Programming},
+  booktitle={Proceedings of the Tenth International Workshop
+    on Foundations of Aspect-Oriented Languages},
+  publisher={ACM},
+  location={Pernambuco, Brazil},
+  pages={19--23},
+  month={March},
+  year={2011},
+  doi={10.1145/1960510.1960515},
+  url={https://www.hirschfeld.org/writings/media/HirschfeldIgarashiMasuhara_2011_ContextFJAMinimalCoreCalculusForContextOrientedProgramming_AcmDL.pdf},
+  note={Presents a minimal calculus with direct operational semantics
+    for layered method definitions, dynamic layer activation
+    and deactivation, inheritance, proceed and super calls.
+    Defines layered method lookup and a restrictive type system
+    intended to prevent undefined proceed calls.
+    Excludes first-class layers, layered state and before/after
+    methods.
+    }
+}
+
 %% 2012
 
 @Article{Ducournau2012,
@@ -3718,18 +3746,6 @@
   }
 }
 
-@TechReport{James2012,
-  author={Roshan P. James and Amr Sabry},
-  title={The Two Dualities of Computation: Negative and Fractional Types},
-  institution={Indiana University},
-  year={2012},
-  url={https://web.archive.org/web/20121229014345/https://www.cs.indiana.edu/~sabry/papers/rational.pdf},
-  note={
-    Unpublished technical report on negative and fractional types;
-    potentially useful for a bibliography on reversible computation or type dualities,
-    but not central to object orientation.}
-}
-
 @WebPage{Kay2012,
   author={Alan Kay},
   title={Re: [fonc] [IAEP] Barbarians at the gate! (Project Nell)},
@@ -3739,7 +3755,7 @@
   url={https://www.mail-archive.com/fonc@vpri.org/msg03121.html},
   lastchecked={2026-09-06},
   note={Kay retrospectively explains the design of the original 1972
-    Smalltalk ``one-pager'' interpreter and the ideas it attempted to unify.
+    Smalltalk “one-pager” interpreter and the ideas it attempted to unify.
     He describes objects as closure-like entities receiving messages through
     pattern matching, with functions and objects deliberately unified, and
     connects the design to Lisp, Meta II, IMP, Planner, FLEX and extensible
@@ -3846,24 +3862,6 @@
 
 %% 2015
 
-@Article{Guha2015,
-  author={Arjun Guha and Claudiu Saftoiu and Shriram Krishnamurthi},
-  title={The Essence of JavaScript},
-  journal={CoRR},
-  volume={abs/1510.00925},
-  year={2015},
-  url={http://arxiv.org/abs/1510.00925},
-  archivePrefix={arXiv},
-  eprint={1510.00925},
-  timestamp={Mon, 13 Aug 2018 16:46:22 +0200},
-  biburl={https://dblp.org/rec/journals/corr/GuhaSK15.bib},
-  bibsource={dblp computer science bibliography, https://dblp.org},
-  note={
-    This article is great in desugaring the prototype sublanguage of JS,
-    but doesn't cover classes.
-  }
-}
-
 @Misc{Kmett2015,
   author={Edward A. Kmett},
   title={History of Lenses},
@@ -3871,8 +3869,12 @@
   month={August},
   howpublished={lens project wiki},
   url={https://smunix.github.io/github.com/ekmett/lens/wiki/History-of-Lenses.html},
-  note={Informal historical account of the development of Haskell lenses and related abstractions, tracing the line from iterators and accessors through van Laarhoven lenses, polymorphic update, traversals and later generalizations. Useful as a map of the lineage and terminology, but not as a primary technical source for individual priority claims.}
-}
+  note={
+    Informal historical account of the development of Haskell lenses and related abstractions,
+    tracing the line from iterators and accessors through van Laarhoven lenses,
+    polymorphic update, traversals and later generalizations.
+    Useful as a map of the lineage and terminology,
+    but not as a primary technical source for individual priority claims.}}
 
 % https://www.reddit.com/r/cpp/comments/3hkfxr/bjarne_stroustrup_object_oriented_programming/
 @InProceedings{Stroustrup2015,

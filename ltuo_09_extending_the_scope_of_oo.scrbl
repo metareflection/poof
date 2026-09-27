@@ -2694,10 +2694,10 @@ whereas subjective dispatch in last position can only minimally alter program be
 making it a weakly expressive mechanism that might not be worth the complexity it brings.
 A high-priority subject can provide methods that intercept and control behavior
 early in the effective method, when a low-priority cannot.
-That is how @citet{Gonzalez2005} found that subjective dispatch was more usable
-with the subjective argument first,
-and giving the feature more semantic weight, so it might be worth the trouble.
-@; TODO also cite Gonzalez2007 Gonzalez2008 Hirschfeld2008
+Thus subjective dispatch is more usable with the subjective argument first
+in a CLOS-like linearization of multimethods, giving the feature more semantic weight,
+so that it might be worth the trouble.
+@; TODO also cite Gonzalez2007 Gonzalez2008 Hirschfeld2008 ?
 
 @subsection{Global Dispatch Tables}
 The implementation I offered was minimal in terms of effects and scope:

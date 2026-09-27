@@ -3,7 +3,7 @@
 @(require "util/ltuo_lib.rkt")
 @(set-chapter-number 2)
 
-@title[#:tag "WOOiIO"]{What Object Orientation @emph{is} — Informal Overview}
+@title[#:tag "WOOiIO"]{What Object Orientation @emph{is} (Informal Overview)}
 @epigraph{Ce que l’on conçoit bien s’énonce clairement, @linebreak[]
   Et les mots pour le dire arrivent aisément. @linebreak[]
   @~ @~ (What is clearly conceived is clearly expressed, @linebreak[]

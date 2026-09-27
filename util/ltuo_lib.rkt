@@ -75,8 +75,13 @@
     (list (tex-addition
             (bytes-append
               #"\\usepackage[paperwidth=6in, paperheight=9in, "
-              #"inner=0.80in, outer=0.55in, top=0.65in, bottom=0.75in]{geometry}"
+              #"  inner=0.80in, outer=0.55in, top=0.65in, bottom=0.75in]{geometry}"
               #"\\usepackage{xurl}"
+              #"\\AtBeginDocument{%\n"
+              #"  \\AutobibNeedlines=4\\relax\n"
+              #"  \\renewcommand{\\AutobibEntrySetup}{%\n"
+              #"    \\emergencystretch=2em\n"
+              #"    \\tolerance=1000}}%\n"
               #"\\DeclareUnicodeCharacter{3BB}{$\\lambda$}" ;; λ
               #"\\DeclareUnicodeCharacter{1D62}{${}_{i}$}" ;; ᵢ
               #"\\DeclareUnicodeCharacter{2077}{${}^7{k}$}" ;; ⁷

@@ -335,12 +335,15 @@ and thus about reasoning about software, and thus about simplicity of software d
 }
 
 @subsection{The OO OODA loop}
-
+@epigraph{
+  A good plan violently executed now is better than a perfect plan next week.
+  @|#:- "George S. Patton"|
+}
 OODA does not stand for Object-Oriented Development Ascendancy,
 or anything like that—though maybe it should.
 No, it stands for “Observe, Orient, Decide, Act”, the essential feedback loop of
 any intelligent (or even not-so-intelligent) life interacting with an outside environment,
-especially filled with rivals and enemies @~cite{Boyd1995}.
+especially when filled with rivals and enemies @~cite{Boyd1995}.
 Often, it is more important to have a faster feedback loop than the competition,
 as opposed to having more raw power, so as to beat them at whatever game matters,
 which can be life-or-death.
@@ -357,8 +360,8 @@ rather than raw speed.
 
 I don’t quite believe @citet{Hanson2016}’s prediction of beings
 a million times faster than humans,
-at least as an affordable or useful alternative at any foreseeable point.
-But even at a thousand times faster, AI will subjectively experience computers
+at least as an affordable or useful alternative in the foreseeable future.
+But even at a mere thousand times faster, AI will subjectively experience computers
 as being a thousand times slower than they feel to a human.
 AIs will then be a thousand times more eager than humans to ruthlessly simplify
 their software stack, remove unneeded cruft, and adopt practices that drastically

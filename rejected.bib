@@ -643,6 +643,22 @@
   }
 }
 
+@InProceedings{Gonzalez2005,
+  author={Sebastián González and Wolfgang De Meuter and Kim Mens},
+  title={Multiple Dispatch for Ambient Intelligence},
+  booktitle={Proceedings of the First Workshop on Object Technology for Ambient Intelligence},
+  year={2005},
+  address={Glasgow, UK},
+  url={https://www.academia.edu/download/54274865/techreport_2005.pdf},
+  note={
+    Argues for prototype-based multiple dispatch as a basis for ambient-intelligence systems,
+    using the model from Salzman 2005.
+
+    Not worth citing: More of a statement of intent that one of any results.
+    Go look for their 2007, 2008 papers, where they presumably did something.
+  }
+}
+
 %% 2006
 
 % 2Ed
@@ -672,6 +688,54 @@
 
 %% 2008
 
+@Article{Gonzalez2008,
+  author={Sebastián González and Kim Mens and Alfredo Cádiz},
+  title={Context-Oriented Programming with the Ambient Object System},
+  journal={Journal of Universal Computer Science},
+  volume={14},
+  number={20},
+  pages={3307--3332},
+  year={2008},
+  doi={10.3217/jucs-014-20-3307},
+  url={https://www.jucs.org/jucs_14_20/context_oriented_programming_with/jucs_14_20_3307_3332_gonzalez.pdf},
+  note={
+    Presents AmOS, the prototype-based core of Ambience, with first-class closures,
+    multimethods and contexts, built on top of Context-Oriented Programming in CL,
+    with a dynamically bound context passed as implicit first argument to methods.
+    A set of context implicitly becomes a context combination object
+    representing the conjunction of those contexts.
+    A sequel to Gonzalez 2005 that shows they did something, but apart from decent examples
+    (involving the context of a phone being @silent or @off-hook (in a call), etc.),
+    it doesn’t seem to bring much new technically compared to other papers on COP.}}
+
+@Article{Hirschfeld2008,
+  author={Robert Hirschfeld and Pascal Costanza and Oscar Nierstrasz},
+  title={Context-oriented Programming},
+  journal={Journal of Object Technology},
+  volume={7},
+  number={3},
+  pages={125--151},
+  year={2008},
+  month={March},
+  doi={10.5381/jot.2008.7.3.a4},
+  url={https://www.jot.fm/contents/issue_2008_03/article4.html},
+  note={
+    Overview of Context-Oriented Programming:
+    essentially, multiple dispatch with some dynamically bound context as first argument.
+    The concept as such is sound, but there are lots of verbiage and dubious analogies,
+    that make the presentation less than convincing about how just useful it is or isn’t.
+    When does it pull its weight?}
+}
+
+@WebPage{Minsky2008,
+  author={Yaron Minsky},
+  title={The ML sweet spot},
+  year=2008,
+  month=apr,
+  url={https://blog.janestreet.com/the-ml-sweet-spot/},
+  lastchecked={2021-03-14}
+}
+
 %% 2009
 
 @InProceedings{Kameyama2009,
@@ -687,17 +751,71 @@
     Introduces a typed two-level language combining staging with delimited control, permitting useful effects during code generation without sacrificing type or scope safety. Superseded by the substantially expanded 2011 Journal of Functional Programming version; only tangentially relevant to the book.}
 }
 
+@Article{Swierstra2008,
+  author={Wouter Swierstra},
+  title={Data Types à la Carte},
+  journal={Journal of Functional Programming},
+  year={2008},
+  month=jul,
+  volume={18},
+  number={4},
+  pages={423--436},
+  publisher={Cambridge University Press},
+  issn={0956-7968},
+  doi={10.1017/S0956796808006758},
+  url={https://www.cs.tufts.edu/~nr/cs257/archive/wouter-swierstra/DataTypesALaCarte.pdf},
+  note={
+    A solution to the Expression Problem in Haskell that constructs extensible
+    recursive data types by taking fixed points of sums of functors.
+    New variants can be added modularly without modifying existing definitions,
+    while type classes provide type-safe injection into larger sums.
+    It demonstrates that inheritance-like modular extension is useful for
+    constructing data types independently of conventional object-oriented
+    programming.
+  }
+}
+
 %% 2010
 
 %% 2011
 
 %% 2012
 
+@TechReport{James2012,
+  author={Roshan P. James and Amr Sabry},
+  title={The Two Dualities of Computation: Negative and Fractional Types},
+  institution={Indiana University},
+  year={2012},
+  url={https://web.archive.org/web/20121229014345/https://www.cs.indiana.edu/~sabry/papers/rational.pdf},
+  note={
+    Unpublished technical report on negative and fractional types;
+    potentially useful for a bibliography on reversible computation or type dualities,
+    but not central to object orientation.}
+}
+
 %% 2013
 
 %% 2014
 
 %% 2015
+
+@Article{Guha2015,
+  author={Arjun Guha and Claudiu Saftoiu and Shriram Krishnamurthi},
+  title={The Essence of JavaScript},
+  journal={CoRR},
+  volume={abs/1510.00925},
+  year={2015},
+  url={http://arxiv.org/abs/1510.00925},
+  archivePrefix={arXiv},
+  eprint={1510.00925},
+  timestamp={Mon, 13 Aug 2018 16:46:22 +0200},
+  biburl={https://dblp.org/rec/journals/corr/GuhaSK15.bib},
+  bibsource={dblp computer science bibliography, https://dblp.org},
+  note={
+    This article is great in desugaring the prototype sublanguage of JS,
+    but doesn't cover classes.
+  }
+}
 
 @InProceedings{Kiselyov2015,
   author={Oleg Kiselyov and Hiromi Ishii},
