@@ -75,7 +75,7 @@ who seek to understand what it is they are doing—or should be doing.
   @|#:- "Thomas Sowell"|
 }
 Why write a book about OO in 2026?
-It’s current year;
+@emph{It’s current year};
 don’t people know everything they need to know by now (about OO or otherwise),
 unlike the barbarians of times past?
 Wrong—people of past years were not barbarians,

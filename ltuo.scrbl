@@ -32,39 +32,40 @@
 }
 @linebreak[]@linebreak[]@;@tex{\\{}}
 You have seen or used Object Orientation (OO), loved it or hated it.
-But can you explain exactly what OO is, what it is @emph{for},
-and when and how to use it?
-Every OO language seems to offer an incompatible variant,
+But do you understand what exactly OO is,
+what it is @emph{for}, and when and how (not) to use it?
+OO languages each offer an incompatible variant,
 with no theory to explain their common ground…
 that two computer scientists can agree on.
 By contrast, Functional Programming (FP) has the λ-calculus.
 
-Can you explain OO to an apprentice, or to yourself?
+Can you explain OO to yourself, or to an apprentice?
 Reason about OO programs and what they mean?
 Make sense of the tribal warfare between OO and FP advocates?
 Implement OO in a language that lacks it?
-Objectively choose between forms of inheritance?
+@emph{Objectively} (hey!) choose between single, mixin and multiple inheritance in its many forms?
 Fit prototypes, method combinations and multiple dispatch into your notion of OO?
 Last but not least… are you tired of us Lispers bragging about how
 our 1988 OO system is still decades ahead of yours?
 
-If these questions bother you, this book is for you.
-It develops a Theory of OO on top of FP, as @emph{Internal Modular Extensibility}:
+If these questions bother you, this book has the answers.
+It develops a Theory of OO on top of FP,
+defining OO as @emph{Internal Modular Extensibility}:
 a mouthful for simple concepts you already use,
 though you may not yet have clear names for them.
 It connects disparate academic theories and industry practices,
-while challenging some widely accepted answers.
+while challenging some widely accepted views.
 
 More than a synthesis of existing lore, this theory is @emph{productive}:
 it offers new ways to reason about OO and implement OO
-in a handful of short functions in any language with higher-order functions.
-This theory reconciles Class OO, Prototype OO—and a more primitive OO without objects(?!)
-that few computer scientists are even aware exists.
-It also demarcates OO from related but conceptually distinct paradigms.
+in a few lines of code in any language with higher-order functions.
+It reconciles Class OO, Prototype OO—and a more primitive OO without objects(?!)
+that few computer scientists even know exists.
+It also demarcates OO from related but conceptually distinct domains that share its vocabulary.
 
 Its crowning achievement is C4, a new inheritance algorithm
 that combines single and multiple inheritance,
-with provable advantages over existing approaches.
+and is provably better than any used before.
 }
 
 @tex{\tableofcontents{}}
