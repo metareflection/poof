@@ -31,62 +31,40 @@
   Please send feedback to fahree@"@"gmail.
 }
 @linebreak[]@linebreak[]@;@tex{\\{}}
-As a software practitioner, you have not only heard of Object Orientation (OO),
-but seen it or used it, loved it or hated it.
-Yet you may have been frustrated that there never seem to be clear answers as to
-what exactly OO is or isn’t, what it is @emph{for}, when and how to use it or not to.
-There are many examples of OO—but everyone does it differently;
-every OO language offers an incompatible variant.
-There is no theory describing what common ground there is, if any,
-much less one describing the best way to do OO—certainly,
-none that two computer scientists can agree on.
-By contrast, you well understand Functional Programming (FP).
+You have seen or used Object Orientation (OO), loved it or hated it.
+But can you explain exactly what OO is, what it is @emph{for},
+and when and how to use it?
+Every OO language seems to offer an incompatible variant,
+with no theory to explain their common ground…
+that two computer scientists can agree on.
+By contrast, Functional Programming (FP) has the λ-calculus.
 
-Can you explain OO in simple terms to an apprentice, or to yourself?
-Can you reason about OO programs and what they mean?
-Can you make sense of the tribal warfare between OO and FP advocates?
-Maybe you’ve enjoyed OO in the past, or have heard enough from colleagues who have,
-and are wondering what you are or aren’t missing?
-Maybe you’d fancy implementing OO on top of the non-OO language
-you are currently using or building, but from what you know this looks too complicated?
-Indeed, do you really understand which to implement of no inheritance, single inheritance,
-mixin inheritance or multiple inheritance, and why?
-Can you weigh the arguments for multiple inheritance done C++ style,
-versus Lisp, Ruby, Python or Scala style?
-Is there a best variant of inheritance anyway?
-And do prototypes, method combinations and multiple dispatch seem natural to you,
-or are they mysteries that challenge your notion of OO?
-Last but not least… are you tired of us Lispers bragging about how our 1988 OO system
-is still decades ahead of yours?
+Can you explain OO to an apprentice, or to yourself?
+Reason about OO programs and what they mean?
+Make sense of the tribal warfare between OO and FP advocates?
+Implement OO in a language that lacks it?
+Objectively choose between forms of inheritance?
+Fit prototypes, method combinations and multiple dispatch into your notion of OO?
+Last but not least… are you tired of us Lispers bragging about how
+our 1988 OO system is still decades ahead of yours?
 
-If any of these questions bothers you, then this book is for you.
-It offers a Theory of OO, explained in simple terms on top of FP—as Internal Modular Extensibility.
-A mouthful—but actually all simple concepts you already use,
-though you may not have clear names for them yet.
-This Theory of OO can answer all the questions above, and more.
-The answers almost always coincide with
-@emph{some} existing academic discourse or industry practice;
-but obviously, they cannot possibly coincide with
-@emph{all} the mutually conflicting discourses and practices out there;
-and, often enough, this theory will reject currently prevailing majority views and
-promote underrated answers.
+If these questions bother you, this book is for you.
+It develops a Theory of OO on top of FP, as @emph{Internal Modular Extensibility}:
+a mouthful for simple concepts you already use,
+though you may not yet have clear names for them.
+It connects disparate academic theories and industry practices,
+while challenging some widely accepted answers.
 
-But this Theory of OO does not merely connect previously known yet disparate lore;
-nor is it yet another @italic{a posteriori} rationalization
-for the author’s arbitrary preferences.
-This theory is @emph{productive}, offering new, never-before-articulated ways to think about OO,
-that can radically simplify how you implement OO,
-in a handful of short functions you can write in any language that has higher-order functions;
-and it can @emph{objectively} (hey!) justify every design choice.
+More than a synthesis of existing lore, this theory is @emph{productive}:
+it offers new ways to reason about OO and implement OO
+in a handful of short functions in any language with higher-order functions.
 This theory reconciles Class OO, Prototype OO—and a more primitive OO without objects(?!)
 that few computer scientists are even aware exists.
-What is easily underappreciated, this theory can demarcate
-the domain of OO from a lot of related but quite distinct domains
-that may look like OO and even share some of its vocabulary,
-yet can be shown to be conceptually foreign.
-The crowning achievement of this Theory of OO, though, is a new algorithm, C4, that combines
-single and multiple inheritance in a way that is better—and provably so—than
-the alternatives used in any previous programming language so far.
+It also demarcates OO from related but conceptually distinct paradigms.
+
+Its crowning achievement is C4, a new inheritance algorithm
+that combines single and multiple inheritance,
+with provable advantages over existing approaches.
 }
 
 @tex{\tableofcontents{}}
