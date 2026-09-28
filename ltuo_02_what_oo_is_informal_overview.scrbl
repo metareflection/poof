@@ -3,7 +3,7 @@
 @(require "util/ltuo_lib.rkt")
 @(set-chapter-number 2)
 
-@title[#:tag "WOOiIO"]{What Object Orientation @emph{is} (Informal Overview)}
+@title[#:tag "WOOiIO"]{What Object Orientation @emph{is} (Overview)}
 @epigraph{Ce que l’on conçoit bien s’énonce clairement, @linebreak[]
   Et les mots pour le dire arrivent aisément. @linebreak[]
   @~ @~ (What is clearly conceived is clearly expressed, @linebreak[]
@@ -12,7 +12,7 @@
 }
 In this chapter, I map out the important concepts of OO,
 which I will develop in the rest of this book.
-This chapter will contain only what explanations are strictly necessary
+I provide only the explanations strictly necessary
 to relate concepts to one another and prevent their misinterpretation.
 More details, and justifications, will follow in subsequent chapters.
 
@@ -266,13 +266,20 @@ Still, when you clearly tease the two notions apart,
 and are aware of when they are being conflated for practical purposes,
 so you can distinguish which of the two aspects should be invoked in which context,
 then the semantics of OO becomes quite simple.
-Shockingly, conflation was first explicitly discussed only in @citet{Rideau2021} even though
-(a) the concept is implicitly older than OO, going at least as far back as @citet{Hoare1965},
-and (b) the implementation of various Prototype OO systems has to explicitly accommodate it
-(see e.g. the @c{__unfix__} attribute in @citet{Simons2015})
-even when the documentation is silent about it.
+Shockingly, the conflation of specification and target went largely unnoticed,
+even though it is older than OO, going at least as far back as @citet{Hoare1965};
+it was sometimes implicitly understood,
+and on a few rare occasions explicitly recognized (@secref{IRoCiOLaL});
+only one author elevated it to an issue worth addressing in its own right,
+namely @citet{Simons1995 Simons2005}, but only in the case of classes, and only as a problem.
+Implementations of various Prototype OO systems have to explicitly accommodate it
+(see e.g. the @c{__unfix__} attribute in @citet{Simons2015}—different Simons),
+but the documentation is silent about it.
+The conflation of specification and target in the general case of prototypes,
+together with its positive role,
+was first explicitly discussed in @citet{Rideau2021}.
 
-@section{Inheritance Overview}
+@section{Inheritance (Overview)}
 @epigraph{Discovery consists of seeing what everybody has seen and thinking what nobody has thought.
   @|#:- "Albert Szent-Györgyi"|
 }
@@ -300,7 +307,7 @@ a language with flavorful multiple inheritance (Python)@xnote["."]{
   Other websites may maintain their own rankings based on different criteria @~cite{GitHub2022},
   but while the exact list and rankings will differ,
   the top languages will be approximately the same
-  (e.g. the top ten on GitHub are all among the top 50 on TIOBE).
+  (e.g. the top ten on GitHub 2022 are all among the top 50 on the current TIOBE).
 
   Thus, consider the top 50 most popular languages in the TIOBE index of August 2026.
   5 support flavorful multiple inheritance:
@@ -343,7 +350,7 @@ But when discussing the general case of OO, including prototypes and raw specifi
   @citet{Snyder1986} then explicitly uses all of these words together.
 }
 
-@subsection{Single Inheritance Overview}
+@subsection{Single Inheritance (Overview)}
 
 Historically, the first inheritance mechanism discovered
 was @emph{single inheritance} @~cite{Dahl1967},
@@ -388,7 +395,7 @@ than the more expressive but costlier and less understood alternatives.
 Even today, most languages that support OO only support single inheritance,
 for its conceptual simplicity.
 
-@subsection[#:tag "MULIO"]{Multiple Inheritance Overview}
+@subsection[#:tag "MULIO"]{Multiple Inheritance (Overview)}
 
 Discovered a few years later, and initially just called @emph{inheritance},
 in what, in retrospect, was Prototype OO, in KRL @~cite{Winograd1975 Bobrow1976},
@@ -454,7 +461,7 @@ For this reason, despite being the most expressive and most modular form of inhe
 flavorful multiple inheritance still isn’t widely adopted as of 2026
 (though one contender for most popular language, Python, has it!).
 
-@subsection[#:tag "MIXIO"]{Mixin Inheritance Overview}
+@subsection[#:tag "MIXIO"]{Mixin Inheritance (Overview)}
 
 Mixin inheritance was last discovered @~cite{Steels1983} and articulated @~cite{Bracha1990},
 probably because it relies on a more abstract pure functional view of OO—maybe

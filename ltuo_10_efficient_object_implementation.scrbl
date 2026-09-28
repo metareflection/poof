@@ -618,11 +618,13 @@ a likely shape can be speculatively assumed under a guard.
 
 @principle{An implementation must always support the general case} of what it is implementing,
 and be ready to fall back to less efficient but more general algorithms.
-@principle{But an implementation can rely on the common case},
-and use a more efficient algorithm @emph{most of the time},
-as long as it guards it with checks that indeed the preconditions
+@principle{But an implementation can rely on the common case}.
+And in the words of Butler Lampson: @principle{Handle normal and worst case separately}
+@~cite{Lampson1983}.
+Use a more efficient algorithm @emph{most of the time},
+being careful to guards its use with checks that the preconditions
 for the validity of the more efficient algorithm still hold.
-And those checks can often be moved outside of performance-critical loops.
+Those checks can often be moved outside of performance-critical loops.
 (Indeed in the case of second-class records themselves,
 the checks can be moved wholly from runtime to compile-time.)
 
@@ -658,8 +660,6 @@ so much as a known shared lazy computation (from an eager point of view: a const
 to a lazy computation record with non-constant contents). That’s a very special case,
 not the common case and even less so the general case; yet the case is common enough
 that it is worth supporting in an optimizer.
-
-@; TODO cite Lampson1983
 
 @subsubsection{The Means of Record Production}
 

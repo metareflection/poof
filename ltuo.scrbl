@@ -2,7 +2,23 @@
 @; -*- Scheme -*-
 @(require "util/ltuo_lib.rkt")
 
-@title[#:style (ltuo-style)]{
+@tex{
+\hypersetup{
+  pdftitle={Lambda: the Ultimate Object},
+  pdfauthor={François-René Rideau},
+  pdfsubject={Object Orientation Elucidated},
+  pdfkeywords={object orientation, programming languages,
+               inheritance, functional programming, C4},
+  pdfinfo={
+    LtUOVersion={@|ltuo-version|},
+    CanonicalURL={https://fare.tunes.org/files/cs/poof/ltuo.html}
+  }
+}}
+
+@title[
+  #:style (ltuo-style)
+  #:version ltuo-version
+]{
   Lambda: The Ultimate Object
     @linebreak[] @tex-linebreak[]
     @smaller{Object Orientation Elucidated@|~~|}
@@ -21,29 +37,32 @@
   He was, I discovered too late,
   the one person with whom I most wanted to argue about the ideas in this book.
 }
-@book-abstract{
+
 @noindent[]
 @italic{This book, though well advanced, is still a work in progress}@xnote["."]{
-  You are reading manuscript @tt[(git-version "ltuo-*")].
   The latest draft is available in PDF at @url{https://fare.tunes.org/files/cs/poof/ltuo.pdf}
   and in HTML at @url{https://fare.tunes.org/files/cs/poof/ltuo.html}.
   The source code is at @url{https://github.com/metareflection/poof}.
   Please send feedback to fahree@"@"gmail.
 }
-@linebreak[]@linebreak[]@;@tex{\\{}}
+@tex-linebreak[]@tex-linebreak[]
+
+@book-abstract{
 You have seen or used Object Orientation (OO), loved it or hated it.
-But do you understand what exactly OO is,
+But do you understand what exactly OO @emph{is},
 what it is @emph{for}, and when and how (not) to use it?
-OO languages each offer an incompatible variant,
+How would you when OO languages each offer an incompatible variant,
 with no theory to explain their common ground…
-that two computer scientists can agree on.
+that two computer scientists can agree on?
 By contrast, Functional Programming (FP) has the λ-calculus.
 
 Can you explain OO to yourself, or to an apprentice?
 Reason about OO programs and what they mean?
 Make sense of the tribal warfare between OO and FP advocates?
 Implement OO in a language that lacks it?
-@emph{Objectively} (hey!) choose between single, mixin and multiple inheritance in its many forms?
+@emph{Objectively} (hey!) choose between
+single inheritance, mixin inheritance, multiple inheritance,
+and that @emph{other} multiple inheritance?
 Fit prototypes, method combinations and multiple dispatch into your notion of OO?
 Last but not least… are you tired of us Lispers bragging about how
 our 1988 OO system is still decades ahead of yours?

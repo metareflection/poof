@@ -119,7 +119,9 @@
            #"  margin: 2em auto 2em 2em; max-width: 90%;"
            #"  font-size: 0.92em; "
            #"  line-height: 1.2; }\n"
-           )))))
+           ))
+         (make-tex-addition
+          #"\\usepackage{changepage}"))))
 
 (define (book-abstract . text)
   (nested
@@ -127,11 +129,9 @@
    (tex-block
     (nested
      (exact-chars
-      (string-append "\n\\begin{center}\\begin{minipage}{0.90\\textwidth}"
-                     "\\setlength{\\parindent}{15pt}\\noindent" ;; restore regular indentation
-                     "\\small{}"))
+      "\n\\begin{adjustwidth}{0.05\\textwidth}{0.05\\textwidth}")
      text
-     (exact-chars "\\end{minipage}\\end{center}")))
+     (exact-chars "\\end{adjustwidth}")))
    (html-block
     (nested
      (nested

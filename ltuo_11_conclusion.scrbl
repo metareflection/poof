@@ -77,8 +77,8 @@ Conflation was necessarily addressed
 by each and every one of my predecessors with a practical implementation,
 yet never once before me did any of them explicitly document both its negative and positive roles.
 Shame on them@xnote["."]{
-  To be precise—@citet{Simons1995 Simons2005} did explicitly deplore
-  the conflation of classes and types and offer a system that distinguishes them at compile-time,
+  To be precise—@citet{Simons1995 Simons2005} should be praised for explicitly noticing and deploring
+  the conflation of classes and types and offer a system that distinguishes them syntactically,
   and a few others conceptualized enough of the conflation to deal with it (@secref{IRoCiOLaL}).
   That is half the work—the negative part. And only for Class OO.
   No one documented that the positive part of that conflation does work, how it works,

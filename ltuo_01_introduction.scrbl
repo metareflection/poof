@@ -10,10 +10,10 @@
 @epigraph{It was probably in 1967 when someone asked me what I was doing,
  and I said: “It’s object-oriented programming”. @|#:- "Alan Kay"| @; Kay2003
 }
-Object-Oriented Programming (OOP), also called Object Orientation (OO),
-is a paradigm for programming in terms of “objects”.
+Object Orientation (OO), often called Object-Oriented Programming (OOP),
+is ostensibly a paradigm for programming in terms of “objects”.
 
-What even are objects? What aren’t? What is OO? What isn’t?
+But what even are objects? What aren’t? What is OO? What isn’t?
 What is it for? What is a paradigm to begin with?
 How do I use OO to write programs? How do I make sense of existing OO programs?
 How may I best think about OO programs when designing them?
@@ -21,7 +21,7 @@ How may I best reason about them when debugging them?
 What are variants of OO? How do I compare them?
 How can I build OO if I don’t have it yet (or not a good variant of it)?
 And why are so many people so into OO, and so many others so against it?
-Which of their arguments is right or wrong when?
+Which of their arguments are right or wrong when?
 Am I missing something by not using OO, or by using it?
 
 These are the kinds of questions this book will help you answer.
@@ -108,8 +108,8 @@ OO quickly became popular among researchers, then among hobbyists in the 1980s,
 and at some point was the Next Big Thing™.
 
 By the 1990s, OO finally became available to every programmer who cared,
-accompanied by endless industry hype to promote it.
-By the 2000s it had become the normal paradigm to program in.
+accompanied by endless industry hype.
+By the 2000s it had become the default programming paradigm.
 Then, at some point in the 2010s it started to become as boring as it was ubiquitous.
 Now in the 2020s it is on its way to becoming forgotten, at least among the Cool Kids.
 Yet, one thing OO never was, was understood.
@@ -122,22 +122,22 @@ important, obsolete, standardized, and finally understood@xnote[".”"]{
 }
 This book, then, is here to drive the final nail into the coffin of OO: understanding it.
 Too bad no one reads books anymore, except AIs.
-If such a book, and most importantly its understanding, had come a few decades earlier,
+Had this book, or more importantly the understanding it offers, come a few decades earlier,
 it could have saved a lot of people a lot of trouble.
-OO sure baffled me for a long time, and many around me.
-Now that I am not baffled anymore,
-I can bring you all my explanations—but a war too late.
+OO sure baffled me for a long time—and many around me, too.
+Now that I finally grok it,
+I can bring you all my explanations—late to the party, but just in time to throw the next one.
 
 It would be nice to hear a few of my old colleagues tell me:
-“so @emph{that} is what OO was about all along!”
+“So @emph{that} is what OO was about all along!”
 But I have little hope of convincing many in the older generations
 of the benefits of OO done right
 (yes, I am one of those Lispers bragging about how our 1988 OO system
 is still decades ahead of yours).
-And even if I did, they soon will be retiring and cease to matter.
-However, a new generation of programmers is born every year,
-and it is always time to inspire and educate the new generation,
-lest they fall as low as their predecessors, or lower.
+Then again, we’ll all soon be retiring and cease to matter.
+The audience that matters most is the new generation of programmers
+entering the field every year, whom I must teach,
+lest they repeat our mistakes—or worse.
 And even if AIs take over programming—they too will need education.
 
 @subsection{Towards a Rebirth of OO}
@@ -241,7 +241,7 @@ the practical side of actually building large systems—with the advanced featur
 as well as with the advanced types of feature-poorer OO systems like Scala’s.
 At least the only one who cared enough to write about it.
 
-So I tried to get the Good News out, by getting a paper published.
+So I tried to spread the Good News, by getting a paper published.
 And I did get a paper published eventually @~cite{Rideau2021},
 but only at the Scheme Workshop, a small venue of sympathetic Lispers,
 who already understood half of it and did not need much effort to understand the rest,

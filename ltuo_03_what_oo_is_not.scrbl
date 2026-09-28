@@ -92,7 +92,7 @@ the modularity of languages with flavorful multiple inheritance@xnote["."]{
   Now even when C++ got multiple inheritance wrong,
   ignorance was no valid excuse,
   since Lisp got it right ten years earlier@~cite{Cannon1979}
-  and Stroustrup even cited it via @~cite{Weinreb1981}.
+  and Stroustrup even cited it via @citet{Weinreb1981}.
   Ignorance is even less excusable in the case of other languages
   copying C++’s “multiple inheritance” over two decades later.
   By contrast, many languages got it right in the same time frame,
@@ -515,7 +515,8 @@ and still unify a car with its chassis, though no longer with its length.
 But if your program eventually becomes interested in the height, weight or price of objects,
 and those of their components when they need be replaced,
 you’ll soon enough see that the two entities may somehow share some attributes
-yet be actually distinct: ultimately, both @c{car} and @c{chassis} @emph{are} @c{lengthy},
+yet be actually distinct: ultimately,
+both @c{car} and @c{chassis} @emph{have} a @c{length} and @emph{are} @c{lengthy},
 but a @c{car} @emph{has} a @c{chassis} and @emph{is not} a @c{chassis}.
 
 Crucially, the design decision between inheritance and composition depends not just

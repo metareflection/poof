@@ -119,3 +119,6 @@
   (list (html-elem (elem (bold x) "  "))
         (tex-elem (elem (tex "\\paragraph{") x (tex "}")))))
 (define Paragraph subsubsection)
+
+(define ltuo-version
+  (substring (git-version "ltuo-*") 5))
