@@ -24,8 +24,8 @@
 @book-abstract{
 @noindent[]
 @italic{This book, though well advanced, is still a work in progress}@xnote["."]{
-  For your convenience, a current draft is available
-  in PDF at @url{https://fare.tunes.org/files/cs/poof/ltuo.pdf}
+  You are reading manuscript @tt[(git-version "ltuo-*")].
+  The latest draft is available in PDF at @url{https://fare.tunes.org/files/cs/poof/ltuo.pdf}
   and in HTML at @url{https://fare.tunes.org/files/cs/poof/ltuo.html}.
   The source code is at @url{https://github.com/metareflection/poof}.
   Please send feedback to fahree@"@"gmail.

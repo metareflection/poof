@@ -397,6 +397,8 @@ than a direct field access in a statically typed language.
 My above remarks about hashing, interning, and unique numbering apply
 to mutable hash tables as well as HAMTs.
 
+@subsection{What One Knows When}
+
 @subsubsection{A Note on Power}
 @epigraph{
                 Every task involves constraint, @(linebreak)
@@ -587,6 +589,22 @@ Second-class records then are indeed a case of the staging discussed above, wher
 computations before and after the stage transition (in this case, compilation)
 can use different implementation strategies, yielding various optimizations.
 
+@subsubsection{Caching}
+
+@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+
+Field accesses with a constant field identifier can use
+a cache of record offsets for the field
+depending on recently seen record descriptors:
+you can have a small “inline cache” per access site with one or a very few entries,
+and another one shared between access sites with the same name
+@~cite{Deutsch1984 Hoelzle1991},
+trading space for time.
+Most of the computation can be skipped, after checking that
+the contents of the cache indeed match expectations.
+
+
+
 @subsubsection{The General vs The Common}
 
 The @emph{general} case of first-class records requires the full functionality of finite maps,
@@ -640,6 +658,8 @@ so much as a known shared lazy computation (from an eager point of view: a const
 to a lazy computation record with non-constant contents). That’s a very special case,
 not the common case and even less so the general case; yet the case is common enough
 that it is worth supporting in an optimizer.
+
+@; TODO cite Lampson1983
 
 @subsubsection{The Means of Record Production}
 
@@ -1198,16 +1218,7 @@ Property storage (in-object vs external).
 
 @; TODO cite Myers1995 Itanium1999 Click2002 Stroustrup1989 Snyder1986
 
-@subsection{Caching}
-Field accesses with a constant field identifier can use
-a cache of record offsets for the field
-depending on recently seen record descriptors:
-you can have a small “inline cache” per access site with one or a very few entries,
-and another one shared between access sites with the same name
-@~cite{Deutsch1984 Hoelzle1991},
-trading space for time.
-Most of the computation can be skipped, after checking that
-the contents of the cache indeed match expectations.
+
 
 @subsection{Suffix Specifications}
 When using single inheritance (@secref{SI}) or optimal inheritance (@secref{OISMIT}),

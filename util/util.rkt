@@ -201,13 +201,56 @@
      (tex "\\noindent")
      (bold "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"))))
 
+(define dedication-style
+  (make-style
+   "Dedication"
+   (list
+    (css-addition
+     #".Dedication {
+         box-sizing: border-box;
+         width: min(30em, calc(100% - 3rem));
+         margin: 0 auto;
+         font-size: 0.9em;
+         font-style: italic;
+         line-height: 1.6;
+         text-align: left;
+       }
+
+       .Dedication p {
+         text-indent: 0;
+       }"))))
+
 (define (dedication . x)
   (cond
    ((render-html?)
-    (centered (smaller (italic x))))
+    (nested #:style dedication-style (para x)))
    ((render-latex?)
     (list
      (tex "\\cleardoublepage\\thispagestyle{empty}\\vspace*{\\fill}
            \\begin{center}\\begin{minipage}{0.72\\textwidth}\\itshape{}")
      x
      (tex "\\end{minipage}\\end{center}\\vspace*{\\fill}\\cleardoublepage{}")))))
+
+
+(require racket/runtime-path
+          racket/system
+          racket/port
+          racket/string)
+
+(define-runtime-path book-dir ".")
+
+(define (git-version [match #f])
+   (define git (find-executable-path "git"))
+   (if git
+       (let ([ok? #f])
+         (define output
+           (with-output-to-string
+             (lambda ()
+               (set! ok?
+                 (parameterize ([current-directory book-dir])
+                   (apply system* git
+                          "describe"
+                          "--tags" "--long" "--always" "--dirty"
+                          (if match (list "--match" match) '())))))))
+         (if ok? (string-trim output) "unversioned"))
+       "unversioned"))
