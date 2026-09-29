@@ -88,9 +88,9 @@ Here is some vocabulary I coined @~cite{FarePhD}
 to precisely name the elements of an implementation.
 When considering how one computing system may or may not implement another,
 the more abstract system is typically pictured above, and I use the prefix “hyper” for it:
-the hyper-system, that hyper-states between which there are hyper-transitions.
+the hyper-system, its hyper-states between which there are hyper-transitions.
 The more concrete system is typically pictured below, and I use the prefix “hypo” for it:
-the hypo-system, that hypo-states between which there are hypo-transitions.
+the hypo-system, its hypo-states between which there are hypo-transitions.
 
 These terms are relative to a particular implementation:
 the very same system can be considered as the hypo-system of one implementation,
@@ -102,7 +102,7 @@ reason about the correctness properties of the overall implementation
 by reasoning piecewise about the more manageable correctness properties
 of the smaller individual implementations.
 
-I will call “layer” an implementation between two computing system,
+I will call “layer” an implementation between two computing systems,
 seen as part of such a “tower” of implementations.
 Contiguous layers compose into a larger implementation.
 Each computing system can itself be viewed as a layer—an identity layer
@@ -131,7 +131,7 @@ we can better understand what they do and what they don’t.
 
 @subsubsection{As Fundamental as Inheritance}
 One way or another, @principle{Object-Orientation involves dealing with @emph{records}},
-mappings from identifier to value.
+mappings from identifiers to values.
 This is all the more remarkable since the rules of inheritance,
 that characterize the semantics of OO as such,
 say nothing whatsoever about records,
@@ -226,7 +226,7 @@ when doing a linear search through previously extended records-as-arbitrary-func
 and the shadowed values associated with those keys, though no longer reachable that way,
 will still be considered reachable by the garbage collector.
 
-In the end, this representation strategy is only applicable for short-lived programs,
+In practice, this representation strategy is best suited only to short-lived programs,
 such as a generator for HTML documents or configuration files, as previously discussed,
 for which it can help you get the job done quickly anytime anywhere on a small budget,
 with no dependencies on libraries of any kind.
@@ -320,9 +320,13 @@ in @c{O(n)} time where @c{n} is the length of the list@xnote["."]{
   I will keep all my “performance estimates” as general complexity classes,
   under the simplified model of a flat memory with @c{O(1)} access time.
   Once you delve into details of levels of memory from CPU registers to L1, L2, L3 caches,
-  to local disk then remote server and its disk, you have to factor in an @c{O(√n)} slowdown
-  (where @c{n} is the size of the “working set” of data one works with),
-  to deal with the physical limits of the memory hierarchy @~cite{Ernerfeldt2014}.
+  to local disks then remote servers and their disks,
+  the cost of accessing memory depends on the size and locality of the working set.
+  When the size @c{n} of the working set grows large enough,
+  physical limits on information density and signal propagation speed
+  introduce a factor @c{Ω(³√n)} on random-access latency
+  for three-dimensional storage constrained by materials science,
+  which further degrades to @c{Ω(√n)} when gravity kicks in @~cite{Ernerfeldt2014}.
 }
 Even then, @emph{there is a clear advantage to explicitly using the alist}
 over implicitly letting its structure emerge from the use of @c{extend-record}:
@@ -347,7 +351,7 @@ maps, dictionaries, associative arrays, or associative containers@xnote["."]{
   so I will avoid it in this discussion.
 }
 
-Now, finite maps can be more efficiently implemented using balanced binary trees,
+Larger finite maps can be more efficiently implemented using balanced binary trees,
 which allow access operations in @c{O(log n)} instead of @c{O(n)}.
 Comparing identifiers as strings can be somewhat expensive, however, and
 it is sometimes faster to compare their unique addresses,
@@ -389,9 +393,10 @@ Hash Array Mapped Tries (HAMTs) @~cite{Okasaki1998 Bagwell2001 Steindorfer2015},
 and weight-balanced trees. @;{TODO cite https://github.com/dco-dev/ordered-collections/blob/021-specialized-ropes/doc/why-weight-balanced-trees.md}
 
 @subsubsection{Mutable Records}
-Mutable records, or records used with a linear discipline, are mutable finite maps.
-A traditional implementation with a mutable hash table provides access in @c{O(1)}
-(compared to @c{O(log n)} for immutable finite maps),
+Mutable records, or records used linearly and implemented with in-place updates,
+can be implemented by mutable finite maps.
+A traditional implementation with a mutable hash table provides access in expected @c{O(1)}
+(compared to @c{O(log n)} for balanced-tree finite maps),
 albeit with a constant factor that is typically one or two orders of magnitude larger
 than a direct field access in a statically typed language.
 My above remarks about hashing, interning, and unique numbering apply
@@ -478,10 +483,10 @@ I will use the prefix @emph{pre-} to denote
 the computation that happens before the event, and its attributes,
 and the prefix @emph{post-} to denote those after the event.
 This chapter is about efficient implementation;
-therefore I will be focusing on those pre-computations that can be used
-to efficiently implement post-computations of some kind,
-i.e. generate a hypo-post-computation (a hypo-computation of the post-computation),
-as when running a compiler.
+therefore I will focus on those pre-computations that can be used
+to efficiently implement post-computations,
+in particular those that generate a hypo-computation of a post-computation
+(in lay terms, an implementation of it)—as when running a compiler.
 But mind that in the general case, the two axes hypo/hyper and pre/post are independent@xnote["."]{
   A pre-computation does not have to generate a hypo-computation.
   Indeed, it could generate data at the same level of abstraction, to be used as regular input.
@@ -570,7 +575,8 @@ The key to this discrepancy is, of course,
 the difference between first-class records and second-class records:
 when compiling access to second-class records of known type or “shape”
 through fields labeled by second-class identifiers,
-a static analysis can assign a fixed offset to each of these accesses.
+a static analysis can assign a fixed offset to each of these accesses—at
+a previous stage, typically compile-time.
 But when implementing first-class records,
 you must be prepared for newly defined records,
 with newly defined sets of identifiers as keys,
@@ -589,21 +595,86 @@ Second-class records then are indeed a case of the staging discussed above, wher
 computations before and after the stage transition (in this case, compilation)
 can use different implementation strategies, yielding various optimizations.
 
-@subsubsection{Caching}
+@subsubsection{From Each According to Its Shape}
 
-@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+The static knowledge that makes second-class records reasonably fast is
+knowledge of their shape, i.e. of the mapping from identifier to offset,
+together with the knowledge of the identifier.
+Combined, they lead to the offset being static—a
+special case of constant-folding where the operation is table lookup,
+and the constants are the table (shape) and the key (identifier).
 
-Field accesses with a constant field identifier can use
-a cache of record offsets for the field
-depending on recently seen record descriptors:
-you can have a small “inline cache” per access site with one or a very few entries,
-and another one shared between access sites with the same name
-@~cite{Deutsch1984 Hoelzle1991},
-trading space for time.
-Most of the computation can be skipped, after checking that
-the contents of the cache indeed match expectations.
+When using dynamic lookup, often the identifier is still static, but the shape is not;
+sometimes both are dynamic.
+Either way, a good heuristic is that recently encountered combinations will likely recur,
+especially in repetitive loops for which performance matters;
+you may thus cache recent lookups and usually recover the value you seek
+with a cheap computation.
+The cache can be global based on a hash of the (table, key) data as in @citet{Goldberg1983},
+or it could be a simple per-lookup-site cache (or per-identifier cache)
+with a single entry as in the inline caches of @citet{Deutsch1984}
+or multiple entries as in the polymorphic inline caches of @citet{Hoelzle1991}.
+If using a hash, combining the table address with a random-looking salt derived from the field,
+multiplying the result by a suitable odd constant, then taking high bits as an index into the cache
+can be very fast on modern hardware. @; ((shape_address XOR field_salt) * C) >> shift
+The salt can be precomputed by hashing the field name, or using a bijective mixing function
+from a unique number assigned to each interned identifier.
 
+An alternative approach is to ensure efficient lookup
+by consulting a table associated to the shape,
+rather than to the field or combined shape+field.
+This table can typically be found from the record
+with one or two indirections.
+There again, a very simple hash function could transform the field salt
+to collision-free offsets into a hash-table containing the desired values...
+or, in the case of shapes, maybe even directly into the desired offset values,
+if you’re free to shuffle them and ready to pay for space overhead.
+(Either way, if you do not have a static guarantee that the shape being looked up
+contains a field with the given identifier, you will also have to include
+a dynamic check that your offset indeed corresponds to what you’re looking for.)
+This design is called “perfect hashing” @~cite{Fredman1984}. @;{ TODO cite
+  Tarjan1979 "Storing a Sparse Table"?
+  Driesen1995
+  Ducournau2008
+  Ducournau2011Hashing
+  Ducournau2011Implementing }
+Finding the perfect hash function is usually a matter of trying a lot of parameters
+within a family of functions of a certain simple shape,
+until satisfactory parameters are found;
+a fallback to a more generic representation is used
+if no good solution is found within the search budget@xnote["."]{
+  Most record shapes are relatively small, in which case finding suitable parameters
+  can be very fast. For larger shapes, finding the parameters can take time,
+  but much less so if you agree to make the hash less perfect and
+  trade more space in the descriptor.
+  How many resources to expend into finding better hash functions
+  depends on how much and how long you expect the shape tables to be used;
+  if the shapes are stable across many compilation attempts, many machines, etc.,
+  then search results can be cached, and randomized attempts at improving still-imperfect results
+  can be shared over the network, so that performance increases with time—at the expense of
+  compilation not being deterministic.
+  The pre-stage of computation for some optimizations has then been distributed.
+  Super-optimization tables can be viewed the same way. @; TODO cite
 
+  Also note that which of field-first or shape-first lookup approach to pick
+  can depend on the expected costs and benefits of each, determined while compiling,
+  or from runtime measurements on the current machine, during benchmarking,
+  or from measurements gathered in production. Representation choices
+  do not have to be made rigidly in advance according to blind strategies.
+}
+
+When using caches, you may have to guard the use of cached values with a check that
+the cache entry actually corresponds to the lookup keys you are using.
+You can view cache lookup as a speculative guess that you’re in that post-stage
+where some optimized fast path applies, and cache writeback as the pre-stage
+for a similar post-stage in the future, while double-checking the entry
+is the guard for the validity of that post-stage.
+In this broad sense, all temporal dependencies in data or code representation
+are cases of staging.
+
+In the end, @principle{an efficient implementation for first-class records is essentially
+a second-class record plus a first-class record descriptor}
+through which the mapping of identifier to offset can be efficiently recovered in the dynamic cases.
 
 @subsubsection{The General vs The Common}
 
@@ -628,19 +699,6 @@ Those checks can often be moved outside of performance-critical loops.
 (Indeed in the case of second-class records themselves,
 the checks can be moved wholly from runtime to compile-time.)
 
-Thus, an implementation for first-class records can represent records
-as a second-class record plus a first-class record descriptor.
-The first-class descriptor will, among other things,
-contain a mapping from field identifier to field offset.
-If stable, this mapping given a record shape can be optimized using
-“perfect hashing” @~cite{Fredman1984} @;{ TODO cite
-  Tarjan1979 "Storing a Sparse Table"?
-  Driesen1995
-  Ducournau2008
-  Ducournau2011Hashing
-  Ducournau2011Implementing }
-which, at a one-time cost, may speed up each subsequent access.
-
 These common-case optimized representations target reads or writes of predictable fields
 in records of known or at least stable shape.
 An operation like extending a record with new fields, or removing fields from a record,
@@ -650,6 +708,11 @@ perhaps through a global weak registry,
 and reshuffle the contents of the extended records to fit its new unrelated layout.
 If your set of fields is very dynamic, you may want an alist (if short)
 or a regular balanced tree (if pure) or a hash-table (if stateful).
+On the other hand, if you’re only or mostly using second-class Class OO
+(or some type system that ensures all record shapes are static),
+then you never remove fields, and adding fields only happens
+when you define new classes (or more generally write new code),
+which is rare enough indeed.
 
 With enough static information, optimization also can go beyond the common case:
 if a record is a known constant, and the field with which to access it is also a known constant,
@@ -662,6 +725,8 @@ not the common case and even less so the general case; yet the case is common en
 that it is worth supporting in an optimizer.
 
 @subsubsection{The Means of Record Production}
+@; TODO remove this section unless and until I provide code?
+@; TODO move this section to discussion of responsibilities in enforcing representation invariants?
 
 Any host environment you choose for your implementation
 will likely offer some kind of underlying low-level memory array or vector of nodes,

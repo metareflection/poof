@@ -2672,7 +2672,7 @@ a static language might inline as much of it as possible at compile-time.
 @subsection{Subjective Dispatch}
 
 Some object systems with multiple dispatch offer an extension for
-“subjective dispatch” or “subjective multimethods” @~cite{Salzman2005},
+“subjective dispatch” or “subjective multimethods”,
 wherein some context provides an @emph{implicit} extra argument to a method call.
 In particular, Slate allows for a @emph{dynamically bound} subject,
 to be similarly added as a hidden argument

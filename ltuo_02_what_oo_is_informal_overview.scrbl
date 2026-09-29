@@ -258,7 +258,7 @@ Murky concepts will lead to bad tooling.
 Confused developers will write subtle and persistent application bugs.
 Researchers will waste years in absurd quests and publish nonsense along the way,
 while fertile fields lie unexplored.
-See the NNOOTT (@secref{NNOOTT}) regarding decades of confusion
+See @secref{NNOOTT} regarding decades of confusion
 between subtyping and subclassing due to
 confusing target (subtyping) and specification (subclassing).
 
@@ -310,15 +310,15 @@ a language with flavorful multiple inheritance (Python)@xnote["."]{
   (e.g. the top ten on GitHub 2022 are all among the top 50 on the current TIOBE).
 
   Thus, consider the top 50 most popular languages in the TIOBE index of August 2026.
-  5 support flavorful multiple inheritance:
+  @emph{5 support flavorful multiple inheritance}:
       Python (#1), Ruby (#16), Perl (#18), Lisp (#40), Scala (#49).
-  2 support mixin inheritance:
+  @emph{2 support mixin inheritance}:
       R (#9), Dart (#32).
-  5 only support flavorless multiple inheritance:
+  @emph{5 only support flavorless multiple inheritance}:
       C++ (#3), PHP (#13), COBOL (#19), MATLAB (#25), OCaml (#29).
-  21 only support single inheritance:
+  @emph{21 only support single inheritance}:
       Java (#4), C# (#5), JavaScript (#6), Visual Basic (#7), Delphi/Object Pascal (#11), Fortran (#15), Swift (#17), Ada (#21), Objective-C (#23), SAS (#24), Julia (#26), Kotlin (#28), LabVIEW (#31), Lua (#34), GML (#35), ABAP (#38), PowerShell (#39), D (#43), TypeScript (#44), X++ (#46), (Visual) FoxPro (#50).
-  The remaining 17 (a minority!) don’t support inheritance at all:
+  @emph{The remaining 17 (a minority!) don’t support inheritance at all}:
       C (#2), SQL (#8), Rust (#10), Scratch (#12), Go (#14), Assembly language (#20), Classic Visual Basic (#22), PL/SQL (#27), Transact-SQL (#30), Caml (#33), VHDL (#36), Prolog (#37), Zig (#41), VBScript (#42), C shell (#45), Ladder Logic (#47), Haskell (#48).
 
   Note that at least JavaScript, Lua and GML support enough dynamic behavior

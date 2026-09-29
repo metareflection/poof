@@ -6,7 +6,7 @@
     bold nested elem subsubsection
     seclink verbatim linebreak image subscript)
   scriblib/bibtex
-  (only-in scribble/core make-style)
+  (only-in scribble/core make-style current-link-render-style link-render-style)
   (only-in scribble/manual racket racketblock code codeblock litchar itemize item)
   (only-in scriblib/autobib make-bib authors define-cite)
   (only-in scribble-abbrevs appendix)
@@ -122,3 +122,5 @@
 
 (define ltuo-version
   (substring (git-version "ltuo-*") 5))
+
+(current-link-render-style (link-render-style 'number-and-title))

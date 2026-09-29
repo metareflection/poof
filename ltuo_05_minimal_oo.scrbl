@@ -595,9 +595,11 @@ from a module context of type @c{∏R} that provides
 a function @c{ls} of type @c{String → List(String)} and
 a function @c{sort} that sorts a list of strings:
 @Code{
-type R2 = { ls: String → List(String),
-            sort: List(String) → List(String) }
-(def ls-sorted (λ (ctx) (compose (ctx 'sort) (ctx 'ls)))) ;; : ∏R2 → (String → List(String))
+type Ctx = { ls: String → List(String),
+             sort: List(String) → List(String) }
+
+;; : Ctx → (String → List(String))
+(def ls-sorted (λ (ctx) (compose (ctx 'sort) (ctx 'ls))))
 }
 
 Note how in the above code snippet, I model records as functions from symbol to value,
@@ -849,7 +851,7 @@ to automatically curry function definitions and function applications:
 The macros defining @c{λ}, @c{def} and @c["@"] fit within fifty lines of code.
 Production-quality Scheme might use native Scheme style instead, for extra performance;
 but the performance penalty for curried code should remain relatively small,
-especially with a sufficiently optimizing compiler.
+especially with a proverbial @emph{Sufficiently Smart Compiler}.
 I will thus write @c{(f x y)} where functional programmers write @c{f x y} or @c{(f x) y},
 and where plain Scheme would write @c{((f x) y)}.
 And I will write @c{(λ (x y) expr)} where functional programmers write
@@ -1627,22 +1629,27 @@ This demonstrates how modular extensions work
 and indeed implement the basic design patterns of OO.
 
 Because @c{mix} is associative, instead of using long chains of nested binary calls to @c{mix},
-I will use an n-ary @c{mix*} that can be defined as follows,
-given an appropriate wrapper @c{op*←op1.1} left as an exercise to the reader
-(you can look at the version I wrote in the @c{pommette.scm} file accompanying this book):
+I will use a function @c{mix/list} that takes a list of modular extensions to mix,
+that can be defined as follows,
+given an appropriate wrapper @c{op/list←op1.1} left as an exercise to the reader
+(you can look at the version I wrote in the @c{pommette.scm} file accompanying this book),
+as well as an n-ary convenience function @c{mix*} that calls @c{mix/list} on its arguments,
+making the syntax lighter by saving on explicit list construction:
 @Code{
-(define mix* (op*←op1.1 mix idModExt))
+(def mix/list (op/list←op1.1 mix idModExt))
+(define (mix* . args) (mix/list args))
 }
 With this @c{mix*}, the leftmost argument is the most specific descendant
 (overriding previous ones), and the rightmost argument is the least specific ancestor.
+
 Now, note how trying to instantiate @c{(add-x-spec 1)} or @c{rho-spec} alone would fail:
 the former relies on the @c{super} record to provide a useful inherited value to extend,
 whereas the latter relies on the @c{self} context to modularly provide @c{x} and @c{y} values.
 Neither modular extension is meant to stand alone,
 but instead to be a mixin, in the sense of Flavors—an abstract class, or a trait,
 as members of some programming language ecosystems would say.
-That not every specification can be successfully instantiated
-is actually an essential feature of modular extensibility,
+@principle{That not every specification can be successfully instantiated
+is actually an essential feature of modular extensibility},
 since the entire point of a specification is to contribute some @emph{partial} information
 about one small aspect of an overall computation,
 that in general depends on other aspects being defined by complementary specifications.

@@ -1604,7 +1604,6 @@
   }
 }
 
-% TODO: Also introduces metaclasses
 @Book{Goldberg1983,
   author={Adele Goldberg and David Robson},
   title={Smalltalk-80: The Language and its Implementation},
@@ -1617,9 +1616,13 @@
     This seminal book (often called the “Blue Book”) provides
     the definitive description of the Smalltalk-80 language,
     including syntax, object model, classes and instances, metaclasses, protocols,
-    and the standard library classes.
-    Single inheritance only.
-    Among many other things, introduces the terms abstract class and concrete class.
+    and the standard library classes; even the compiler and interpreter and their
+    optimizations.
+
+    The language has single inheritance only. Each class has its own “metaclass”
+    where metaclasses have an inheritance hierarchy parallel to classes,
+    such that class-level programming is effectively a form of Prototype OO.
+    Among many other things, the book introduces the terms abstract class and concrete class.
   }
 }
 
@@ -6913,7 +6916,7 @@
 }
 
 @Misc{TIOBE2026,
-  author={TIOBE Software BV},
+  author={{TIOBE Software BV}},
   title={TIOBE Programming Community Index, August 2026},
   year={2026},
   month=aug,
