@@ -652,23 +652,16 @@ let Y = f: (x: x x) (x: f (x x));
 
 (def (finalize-spec super self)
   (let ((finalizer ((field-view~* #f '__finalizer) super)))
-    (if finalizer (finalizer super self) super)))
+    (if finalizer (@ finalizer super self) super)))
 
 (define (fix-record* . m)
   (fix-record (mix finalize-spec (mix/list m))))
 
 (def (register-finalizer-spec finalizer super _self)
-  ((field-update~* #f '__finalizer)
+  (@ (field-update~* #f '__finalizer)
     (λ (previous)
       (if previous (mix finalizer previous) finalizer))
     super))
-
-(def (sub-record-spec key spec)
-  (mix*
-    (register-finalizer-spec
-      (skew-ext (field-lens key) finalize-spec))
-    (skew-ext (field-lens key) spec)
-    (constant-field-spec key empty-record)))
 
 ;;;;; 5.x Order, Binary Tree Map, AVL Tree Map, Alist+AVL Hybrid Map
 
@@ -1707,6 +1700,23 @@ let Y = f: (x: x x) (x: f (x x));
 (def (poi-suffix? poi) (poi-spec poi 'suffix?))
 (def (poi-parents poi) (poi-spec poi 'parents))
 
+;; poi-wrapper : Spec → ModExt — the most-specific wrapper that exposes a poi's
+;; own introspection at the magic key #f, in the same style as rproto-wrapper/
+;; qproto-wrapper above. Unlike those, at #f it MERGES with whatever metadata
+;; the parent mod-ext chain already placed there (e.g. a registered
+;; __finalizer, see register-finalizer-spec) instead of overriding it outright
+;; — so a mod-ext that overrides super entirely (e.g. constant-spec, as used
+;; by poi←record) still gets working introspection, and ordinary chains don't
+;; lose accumulated metadata to it.
+(def (poi-wrapper own-spec super _self method-id)
+  (if method-id
+      (super method-id)
+      (let ((inherited (super #f)))
+        (λ (msg)
+          (case msg
+            ((name precedence-list suffix mod-ext suffix? parents) (own-spec msg))
+            (else (and inherited (inherited msg))))))))
+
 (def (make-poi name mod-ext suffix? parents)
   (letrec
       ((precedence-list-and-suffix*
@@ -1727,9 +1737,8 @@ let Y = f: (x: x x) (x: f (x x));
             ((suffix)          (force suffix*))
             ((mod-ext)         mod-ext)
             ((suffix?)         suffix?)
-            ((parents)         parents)
-            (else #f))))
-       (self (η₁ (fix (record (#f spec)) (force effective-mod-ext*)))))
+            ((parents)         parents))))
+       (self (η₁ (fix-record (mix (poi-wrapper spec) (force effective-mod-ext*))))))
     self))
 
 #;(begin (for-each (lambda (x y) (display x) (display ": ") (display y) (newline))
@@ -1854,8 +1863,10 @@ let Y = f: (x: x x) (x: f (x x));
    ;; spec untouched, still present — now stale/out of sync with the new value
    (procedure? ((poi-target-update/OutOfSync bump pt) #f)) => #t
    ((poi-target-update/OverwriteSpec bump pt) 'val) => 6
-   ;; spec replaced by a fresh constant-spec reflecting the new value
-   (@ ((poi-target-update/OverwriteSpec bump pt) #f) 'ignored-super 'ignored-self) => 6
+   ;; spec replaced by a fresh one: its own name is #f (not pt's), and its
+   ;; mod-ext, once applied to (super self), exposes the record whose 'val is 6
+   (poi-name (poi-target-update/OverwriteSpec bump pt)) => #f
+   (@ (poi-mod-ext (poi-target-update/OverwriteSpec bump pt)) 'ignored-super 'ignored-self 'val) => 6
    ((poi-target-update/NoMoreSpec bump pt) 'val) => 6
    ((poi-target-update/NoMoreSpec bump pt) #f) => #f   ;; spec erased
    (poi-target-update/Error bump pt) =>fail!))
@@ -2033,19 +2044,27 @@ let Y = f: (x: x x) (x: f (x x));
 (def (field-lens~ key)
   (make-lens (field-view~ key) (field-update~ key)))
 
-(def (field-view~/list keys) (compose/list (map field-view~ (reverse keys))))
-(define (field-view~* . keys) (field-view~/list keys))
-
 ;; field-lens~/list / field-lens~* : Key... → Lens
 ;; Like field-lens* but each intermediate node is initialized to empty-record if #f.
 (def (field-lens~/list keys) (compose-lens/list (map field-lens~ keys)))
 (define (field-lens~* . keys) (field-lens~/list keys))
 
+;; field-view~/list, field-update~/list : derived from field-lens~/list rather than
+;; folded independently via compose/list, which only works for view: (field-view~ key)
+;; partially applied is unary (rec → value), so it composes like a plain function; but
+;; (field-update~ key) partially applied is (f, rec) → rec', not unary, so composing it
+;; the same way silently built a mis-shaped function (crashed with a bogus arity once
+;; actually called, e.g. via register-finalizer-spec's #f/__finalizer path). compose-lens
+;; already threads get/set pairs through correctly, so reuse it for both instead of
+;; maintaining a second, divergent fold.
+(def (field-view~/list keys) ((field-lens~/list keys) 'view))
+(define (field-view~* . keys) (field-view~/list keys))
+
 ;; field-update~/list : List(Key) → (Value → Value) → Record → Record
 ;;   field-update~ nested over a key path; every missing record on the way (including the
 ;;   target) ⇒ empty-record. Empty list ⇒ identity, i.e. the record itself is the leaf and
 ;;   the call reads as (f rec).
-(def (field-update~/list keys) (compose/list (map field-update~ keys)))
+(def (field-update~/list keys) ((field-lens~/list keys) 'update))
 (define (field-update~* . keys) (field-update~/list keys))
 
 ;; field-spec~/list : List(Key) → compute → ModExt   (compute = (inherited-leaf self) → leaf)
@@ -2127,6 +2146,25 @@ let Y = f: (x: x x) (x: f (x x));
   (update-only-lens (compose mul10) 'update add1 7) => 80)  ;; mul10 (add1 7)
 
 ;; sub-record-spec : nest a spec's contributions under a key, with finalization wired in.
+;; Needs field-lens, hence defined here rather than back with finalize-spec/
+;; register-finalizer-spec in the 5.x Finalization section.
+;; No (register-finalizer-spec (skew-ext (field-lens key) finalize-spec)) component:
+;; it would also force self (via field-lens's eager update, once finalize-spec
+;; actually invokes the registered finalizer) while self is still mid-tie-in in
+;; the *outer* fix. It's redundant anyway — building the sub-record below as its
+;; own independent fix-record* already finalizes whatever spec contributes,
+;; regardless of whether the outer context finalizes at all.
+(def (sub-record-spec key spec)
+  (mix*
+    ;; Not (skew-ext (field-lens key) spec): that would force self (via
+    ;; field-lens's eager update) while self is still mid-tie-in in the
+    ;; *outer* fix. Building the sub-record as its own independent
+    ;; fix-record* instead needs no self at all here, hence no delay/η —
+    ;; field-spec's own currying already defers this until key is queried.
+    (field-spec key
+      (λ (inherited _self) (fix-record* spec (constant-spec (or inherited empty-record)))))
+    (constant-field-spec key empty-record)))
+
 (def point-holder (fix-record* (sub-record-spec 'point coord-spec)))
 (expect (point-holder 'point 'x) => 2
         (point-holder 'point 'y) => 4)
@@ -2544,10 +2582,15 @@ let Y = f: (x: x x) (x: f (x x));
  (procedure? (@ P0-Rec 'instance-fields 'n 'init)) => #t
  (procedure? (@ P0-Rec 'instance-fields 'tag 'check)) => #t)
 
-;; instance-field-lens agrees with the plain accessor.
+;; instance-field-lens agrees with the plain accessor. Compare projections, not
+;; the raw field-descriptor closures: field-spec recomputes fresh on every
+;; access (no memoization anywhere in this chain), so two separately-rebuilt
+;; closures are never eq?/equal? to each other even when they agree on
+;; everything that matters.
 (expect
- (instance-field-lens 'tag 'view P0-Rec) => (@ P0-Rec 'instance-fields 'tag)
- (instance-field-lens 'n   'view P0-Rec) => (@ P0-Rec 'instance-fields 'n))
+ ((instance-field-lens 'tag 'view P0-Rec) 'init) => (@ P0-Rec 'instance-fields 'tag 'init)
+ (procedure? ((instance-field-lens 'tag 'view P0-Rec) 'check)) => #t
+ (procedure? ((instance-field-lens 'n 'view P0-Rec) 'init)) => #t)
 
 ;; a whole plain class + subclass, built with the constructors
 (defclass P0-Thing :e
@@ -2565,8 +2608,12 @@ let Y = f: (x: x x) (x: f (x x));
  (instance←class P0-Thing (poi :e (mix (constant-field-spec 'name "y")
                                           (constant-field-spec 'size 9))) 'size) => 9)
 
-;; instance-method-lens agrees with the plain accessor.
-(expect (instance-method-lens 'show 'view P0-Thing) => (@ P0-Thing 'instance-methods 'show))
+;; instance-method-lens agrees with the plain accessor. Compare by invoking
+;; (same reason as instance-field-lens above: not eq?/equal? across two
+;; separate, non-memoized rebuilds), the same way instance-call does.
+(expect
+ ((instance-method-lens 'show 'view P0-Thing) (make-instance P0-Thing 'name "x")) => "x×1"
+ ((@ P0-Thing 'instance-methods 'show) (make-instance P0-Thing 'name "x")) => "x×1")
 
 (def positive-check-spec (simple-check-spec "positive" positive?))
 
@@ -3137,11 +3184,13 @@ let Y = f: (x: x x) (x: f (x x));
 
 ;; Same combination, built on the uncurried calling convention instead of the
 ;; (curried) default — conventions are pluggable, not baked into the combinator.
+;; Under this convention the method-invoker gathers args and `apply`s them in
+;; one shot, so the method itself must be a plain (uncurried) `lambda`, not `λ`.
 (def smc-obj-uncurried
   (fix-record
     (mix
       (standard-method-init-spec (uncurried-convention 2 0 0) 'compute)
-      (primary-method-spec 'compute (λ (_cnm _self x) (* x 10))))))
+      (primary-method-spec 'compute (lambda (_cnm _self x) (* x 10))))))
 
 (expect (smc-obj-uncurried 'compute 3) => 30)
 
