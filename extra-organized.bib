@@ -524,7 +524,33 @@
   note={Early attempt to build a quantitative science of software from program vocabulary, length and volume; historically important even if not directly about abstraction as compression.}
 }
 
+@TechReport{Roberts1977Manual,
+  author={R. Bruce Roberts and Ira P. Goldstein},
+  title={The {FRL} Manual},
+  institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
+  type={AI Memo},
+  number={409},
+  year={1977},
+  month=sep,
+  address={Cambridge, Massachusetts},
+  url={https://hdl.handle.net/1721.1/5768}}
+
 %% 1978
+
+@InProceedings{Winograd1978,
+  author={Terry Winograd},
+  title={On Primitives, Prototypes, and Other Semantic Anomalies},
+  booktitle={Theoretical Issues in Natural Language Processing-2},
+  editor={David L. Waltz},
+  pages={25--32},
+  year={1978},
+  url={https://aclanthology.org/T78-1004.pdf},
+  note={
+    Discusses alternative foundations for semantic representation,
+    including primitives, abstractions and prototypes.
+    Explicitly characterizes KRL as a representation language
+    clearly based on prototypes and mutual descriptive relationships,
+    making this particularly relevant to the history of Prototype OO.}}
 
 %% 1979
 
@@ -570,8 +596,13 @@
   url={https://purl.stanford.edu/sx979cd9891},
   doi={10.5555/1623050.1623105},
   note={
-    A simplified successor to KRL.
-    Not particularly interesting or original with respect to the OO aspects.
+    Developed by Stefik at Stanford, “The Unit Package”
+    (refered to as “UNITS” by the author in later works)
+    was a knowledge representation system on top of an OO infrastructure,
+    inspired by KRL, but much simplified (e.g. single inheritance),
+    and probably more usable for it.
+
+    Later, Stefik joined PARC in 1980 and joined force with Bobrow to build LOOPS.
   }
 }
 % Traces the origin of "inheritance of properties" to Quillian's "Semantic Memory" (1966/1968),
@@ -590,6 +621,21 @@
   url={https://doi.org/10.1145/359168.359175},
   note={Studies compact representations of sparse static tables with good worst-case lookup time, motivated in part by compressed parsing tables. Relevant as an early foundation for compact dispatch-table representations and sparse-table implementation techniques.}
 }
+
+@Article{Bobrow1979KRL,
+  author={Daniel G. Bobrow and Terry Winograd},
+  title={KRL: Another Perspective},
+  journal={Cognitive Science},
+  volume={3},
+  number={1},
+  pages={29--42},
+  year={1979},
+  doi={10.1207/s15516709cog0301_2},
+  note={
+    A retrospective defense and reassessment of KRL,
+    responding to criticisms of its knowledge-representation approach.
+    Clarifies both the ambitions and limitations of KRL after practical experience
+    with its prototype-based representation mechanisms.}}
 
 %% 1980
 
@@ -707,6 +753,24 @@
 }
 
 %% 1985
+
+@InProceedings{Agha1985,
+  author={Gul Agha and Carl Hewitt},
+  title={Concurrent Programming Using Actors: Exploiting Large-Scale Parallelism},
+  booktitle={Foundations of Software Technology and Theoretical Computer Science},
+  editor={S. N. Maheshwari},
+  series={Lecture Notes in Computer Science},
+  volume={206},
+  pages={19--41},
+  publisher={Springer},
+  year={1985},
+  doi={10.1007/3-540-16042-6_2},
+  url={https://dspace.mit.edu/bitstream/handle/1721.1/6433/AIM-865.pdf},
+  note={
+    Presents Act3 and argues that the Actor model combines advantages of
+    Object-Oriented Programming with those of Functional Programming.
+    Particularly relevant as an early explicit connection between actors
+    and concurrent OO.}}
 
 @Article{Brachman1985,
   author={Ronald J. Brachman and James G. Schmolze},
@@ -875,6 +939,21 @@
   }
 }
 
+@InProceedings{Yonezawa1986,
+  author={Akinori Yonezawa and Jean-Pierre Briot and Etsuya Shibayama},
+  title={Object-Oriented Concurrent Programming in ABCL/1},
+  booktitle={Conference Proceedings on Object-Oriented Programming Systems, Languages and Applications},
+  editor={Norman Meyrowitz},
+  pages={258--268},
+  publisher={ACM},
+  year={1986},
+  doi={10.1145/28697.28722},
+  note={
+    Presents ABCL/1 and its explicitly object-oriented model of concurrent computation,
+    in which independently active objects communicate through several forms of message passing.
+    Particularly relevant to the convergence of actor-style concurrency
+    with Object-Oriented Programming.}}
+
 %% 1987
 
 @InProceedings{America1987,
@@ -1027,6 +1106,20 @@
     isolate inheritance or typing mechanisms.
   }
 }
+
+@Book{Yonezawa1987,
+  editor={Akinori Yonezawa and Mario Tokoro},
+  title={Object-Oriented Concurrent Programming},
+  publisher={MIT Press},
+  address={Cambridge, MA},
+  year={1987},
+  isbn={978-0-262-24026-0},
+  note={
+    Early collection establishing concurrent Object-Oriented Programming
+    as a research area, with chapters on Actors, ABCL/1, ConcurrentSmalltalk,
+    POOL-T and other concurrent object languages.
+    Useful evidence for the late-1980s convergence of object-oriented
+    and actor-style models of computation.}}
 
 %% 1988
 
@@ -1323,6 +1416,24 @@
 }
 
 %% 1990
+
+@Article{Agha1990,
+  author={Gul Agha},
+  title={Concurrent Object-Oriented Programming},
+  journal={Communications of the ACM},
+  volume={33},
+  number={9},
+  pages={125--141},
+  year={1990},
+  month=sep,
+  doi={10.1145/83880.84528},
+  url={https://osl.cs.illinois.edu/media/papers/agha-1990-cacm-concurrent_object_oriented_programming.pdf},
+  note={
+    Surveys concurrent Object-Oriented Programming and relates actor systems
+    to other concurrent object models.
+    Explicitly distinguishes objects from Object-Oriented Programming,
+    associating the latter with reusable patterns of classification
+    such as inheritance.}}
 
 @InProceedings{Kiczales1990Dispatch,
   author={Gregor J. Kiczales and Luis H. Rodriguez Jr.},
@@ -1631,6 +1742,19 @@
 
 %% 1993
 
+@Book{Agha1993,
+  editor={Gul Agha and Peter Wegner and Akinori Yonezawa},
+  title={Research Directions in Concurrent Object-Oriented Programming},
+  publisher={MIT Press},
+  address={Cambridge, MA},
+  year={1993},
+  doi={10.7551/mitpress/2087.001.0001},
+  isbn={978-0-262-01139-6},
+  note={
+    Broad survey of the foundations, language design, semantics,
+    systems and applications of concurrent Object-Oriented Programming,
+    documenting the field after its rapid development during the 1980s.}}
+
 @InCollection{Bobrow1993,
   author={Daniel G. Bobrow and Richard P. Gabriel and Jon L. White},
   title={CLOS in Context: The Shape of the Design Space},
@@ -1707,7 +1831,7 @@
 
 % https://link.springer.com/chapter/10.1007/3-540-57342-9_64
 @InProceedings{Kiczales1993Traces,
-  author="Kiczales, Gregor",
+  author="Gregor Kiczales",
   editor="Nishio, Shojiro and Yonezawa, Akinori",
   title="Traces (A cut at the ‘‘make isn’t generic’’ problem)",
   booktitle="Object Technologies for Advanced Software",
@@ -3026,6 +3150,21 @@
     not merely interchangeable implementations of the same operator.}
 }
 
+@Book{West2004,
+  author={David West},
+  title={Object Thinking},
+  publisher={Microsoft Press},
+  address={Redmond, WA},
+  year={2004},
+  isbn={978-0-7356-1965-4},
+  note={
+    Argues that Object-Oriented Programming is fundamentally a way of
+    conceptualizing domains and responsibilities rather than merely a collection
+    of language mechanisms or design techniques.
+    Develops a deliberately object-centered design philosophy drawing on the
+    Smalltalk tradition, responsibility-driven design, Agile practice and the
+    broader intellectual history of OO.}}
+
 %% 2005
 
 @InProceedings{Aldrich2005,
@@ -3393,6 +3532,23 @@
     programming built from more general language mechanisms.
   }
 }
+
+@Article{PeytonJones2007,
+  author={Simon Peyton Jones and Dimitrios Vytiniotis and Stephanie Weirich and Mark Shields},
+  title={Practical Type Inference for Arbitrary-Rank Types},
+  journal={Journal of Functional Programming},
+  volume={17},
+  number={1},
+  pages={1--82},
+  year={2007},
+  month=jan,
+  doi={10.1017/S0956796806006034},
+  url={https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/putting.pdf},
+  note={
+    Develops a practical type-inference algorithm for arbitrary-rank polymorphism,
+    combining explicit annotations with local type inference to reduce annotation burden.
+    Particularly relevant to the use of higher-rank types in ML-like languages,
+    including functions that accept polymorphic functions as arguments.}}
 
 % Not worth citing in the book; worth remembering why.
 @InProceedings{Smith2007,

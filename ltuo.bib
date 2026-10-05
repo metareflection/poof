@@ -173,9 +173,7 @@
     Curry pursued this program in later works, but was never fully satisfied with
     the solutions offered to avoid paradoxes—solutions
     that ultimately involve the same kinds of restrictions as
-    in presentations of logic and computation not based on combinators.
-  }
-}
+    in presentations of logic and computation not based on combinators.}}
 
 %% 1961
 
@@ -845,6 +843,7 @@
 }
 
 % 1974 draft: https://digitalcollections.library.cmu.edu/node/3491?search_api_fulltext=winograd%201974%20frame%20representations --- but only the first page.
+% Allen Newell Papers. Box 95, folder 6819. Can’t publish the whole thing because of copyright. :-(
 % https://web.archive.org/web/20200511083536/https://hci.stanford.edu/winograd/papers/FrameRep.pdf
 @InCollection{Winograd1975,
   author={Terry Winograd},
@@ -859,13 +858,20 @@
   doi={10.1016/B978-0-12-108550-6.50012-4},
   url={https://www.sciencedirect.com/science/article/pii/B9780121085506500124},
   note={
-    This paper, already circulating in draft form in 1974, has so far as I can tell
-    the earliest uses of “inheritance” in a context directly applicable to OO.
+    Winograd was already famous for his 1970 thesis on SHRDLU
+    and his 1972 book “Understanding Natural Language”
+    when he wrote this paper and circulated in 1974
+    (I could locate Draft version 2 from April 25
+    in the Allen Newell papers at CMU, box 95 folder 6819,
+    and verify the content was substantially the same as published in 1975).
+    This paper so far as I can tell the earliest uses of “inheritance”
+    in a context directly applicable to OO.
 
     The word “inherit” does appear in other papers from MIT AI researchers at the time (e.g. Hewitt),
-    but it is unclear who talks about it first and gets it from where.
+    and while it is not completely clear who talks about it first and gets it from where,
     Winograd talks about “inheritance of properties”, p. 197,
-    to compute properties of a frame based on its hierarchy.
+    to compute properties of a frame based on its hierarchy,
+    in what will clearly be the first OO language, KRL.
     Frame hierarchies are a form of multiple inheritance, though that word isn’t coined.
     The exact resolution algorithm is not explained.
     Frames are not quite data, not quite code,
@@ -882,14 +888,23 @@
     may not be clear;
     (4) definition: the essence of the concept being named is finally well understood.
 
-    For “inheritance”, evocation may have happened in Minsky 1974, distinction in Winograd 1975,
+    For “inheritance”, evocation may have happened in Minsky 1974,
+    distinction in Winograd 1974/1975 (this paper),
     and identification in Bobrow and Winograd 1976,
     quite likely influenced by interaction with Kay’s team
     (and Kay later says Larry Tesler insisted on implementing “slot inheritance”
     the way he had done in previous desktop publishing projects).
     Informal but practical definition was clearly there by 1977 or 1978, and
     more formal theoretical definitions around 1990 with e.g. Cook & Bracha,
-    refining their immediate predecessors like Kamin 1988, Reddy 1988, Cook 1989.
+    refining their immediate predecessors like Cook 1987, Kamin 1988, Reddy 1988, Cook 1989.
+
+    Winograd, having met Flores in 1976,
+    substantially changed his outlook and his research direction, and
+    stopped working on KRL around 1977
+    (though he did partake in the retrospective article in 1979).
+    Winograd and Flores’s 1986 book was a seminal publication of a completely different kind,
+    with deep consequences in AI, CSCW, HCI.
+    And Winograd also co-authored the PageRank paper that launched Google (he advised Page).
 }}
 
 %% 1976
@@ -1100,8 +1115,35 @@
     It has multiple inheritance, though it is simply called “inheritance of properties”, as in KRL:
     objects may have “one or more parents”.
     “There is no distinction between classes and instances.”
+
+    Note that the 1979 ThingLab code was recently (2015-2025) revived so
+    you can run it in your browser! @url{https://github.com/cdglabs/thinglab}
+    ... and then Borning himself reimplemented it in TypeScript in 2026!
+    @url{https://homes.cs.washington.edu/~borning/thinglab/}
   }
 }
+
+@TechReport{Roberts1977Primer,
+  author={R. Bruce Roberts and Ira P. Goldstein},
+  title={The {FRL} Primer},
+  institution={Massachusetts Institute of Technology, Artificial Intelligence Laboratory},
+  type={AI Memo},
+  number={408},
+  year={1977},
+  month=jul,
+  address={Cambridge, Massachusetts},
+  url={https://hdl.handle.net/1721.1/5767},
+  note={
+    A Frame Representation Language,
+    with inheritance of values along “AKO” links (A Kind Of).
+    p.19 “A frame can be a-kind-of more than one frame,
+    i.e. have more than one value in its AKO slot.
+    FGET traces each of the AKO paths, stopping at the first data encountered along each,
+    and returns a list of all data thus found appended together.”
+    The INSTANCE slot is maintained as an inverse of the AKO slot.
+    There are also functions to compute children and descendants along any slot,
+    not just the INSTANCE slot (or AKO slot!).
+  }}
 
 @Article{Smith1977,
   author={John Miles Smith and Diane C. P. Smith},
@@ -1141,11 +1183,13 @@
   url={https://dspace.mit.edu/handle/1721.1/6281},
   note={
     An early expert system for trading commodities,
-    written in FRL, a frame-based Lisp system,
+    written in FRL, a frame-based Lisp system developed at MIT by Goldstein.
     and organizing data in a knowledge base of frames.
     The paper is the earliest one to mention
-    “single inheritance” and “multiple inheritance”, p.12 and p.13,
+    “single inheritance” contrasted with “multiple inheritance”, p.12 and p.13,
     about the frame representation of the COMEX data.
+    However, it’s not obvious whether he discusses multiple inheritance
+    as something COMEX uses, or only a FRL feature he would like to use.
   }
 }
 
@@ -2286,13 +2330,18 @@
     An early formulation of Cook’s denotational account
     of inheritance in terms of self-referential structures.
     This work was subsequently developed in his 1989 dissertation.
+
     However, I haven’t been able to locate the text (yet?), and so
     only know what Wegner 1987 says: “Following Cook, we define a
     class-independent form of inheritance in terms of a
     particular mechanism for self-reference that allows
     remotely defined operations to be internalized as part
     of the extended identity of an object.” Then the next paragraph
-    describes in English the equations found in Cook.
+    describes in English the equations later found in Cook’s thesis.
+
+    Cook’s own bibliography instead lists
+    “A Self-ish Model of Inheritance,” unpublished manuscript, 1987.
+    I \emph{assume} that this was a different version of the same manuscript.
   }
 }
 
@@ -2300,22 +2349,28 @@
 @InProceedings{DeMichiel1987,
   author={Linda G. DeMichiel and Richard P. Gabriel},
   title={The Common Lisp Object System: An Overview},
-  booktitle={ECOOP 1987},
+  booktitle={ECOOP ’87: European Conference on Object-Oriented Programming},
+  editor={Jean Bézivin and Jean-Marie Hullot and Pierre Cointe and Henry Lieberman},
   series={Lecture Notes in Computer Science},
   volume={276},
   pages={151–170},
   publisher={Springer},
   year={1987},
+  month=jun,
   doi={10.1007/3-540-47891-4_15},
   url={https://dreamsongs.com/Files/clos-overview.pdf},
   note={
     Earliest published overview of CLOS, including
-    generic functions, multiple dispatch and method-combinations.
-    The 1987 version of CLOS was somewhat incomplete, compared the 1988 version
-    that officially made it to the standard: the API is not as nice
-    and notably lacking with respect to the object (re)initialization protocol.
+    generic functions, multiple dispatch and method combination.
+    The March 1987 version of CLOS as presented to X3J13 was somewhat incomplete,
+    compared to the specification formally accepted in June 1988
+    and eventually incorporated into ANSI Common Lisp:
+    the API is less polished and is notably lacking with respect to
+    the object (re)initialization protocol.
     Still, the essential design and most major features are there.
-    Journal version in LASC 1 (1989) updated for 1988 CLOS.
+
+    An updated overview by DeMichiel alone appeared in
+    LASC 1(3--4), 1989, pp. 227--244, reflecting the 1988 CLOS.
   }
 }
 
@@ -2323,9 +2378,9 @@
 % https://www.semanticscholar.org/paper/The-BETA-Programming-Language-Kristensen-Madsen/3971897f708518e13809d3c0772105bd86526e50
 % https://tidsskrift.dk/daimipb/article/view/7578
 @TechReport{Kristensen1987,
-  title={The BETA programming language},
+  title={The BETA Programming Language},
   author={Bent Bruun Kristensen and Ole Lehrmann Madsen and Birger Møller-Pedersen and Kristen Nygaard},
-  month=oct,
+  month=nov,
   institution={Department of Computer Science, Aarhus University},
   number={DAIMI PB-229},
   year={1987},
@@ -2337,32 +2392,35 @@
     as a single abstraction mechanism called “patterns”.
     Patterns are restricted prototypes that conflate first-class target records-or-procedures
     with second-class specifications of those targets that can be used with single inheritance
-    (later work by Agesen et al. 1989 would make BETA specifications first class too,
+    (later work by Agesen et al. 1989 would make BETA pattern specifications first-class values too,
     and the successor gBeta (Ernst 2000) would further expand the semantics of records
     into prototypes with dynamic (mutable) inheritance).
 
     A “do” body is executed when an object of the pattern is invoked,
-    with inputs bound to variables from an “enter” part (if any),
-    and outputs are computed from expressions specified by an “exit” part (if any).
+    with inputs bound to variables from an \texttt{enter} part (if any),
+    and outputs are computed from expressions specified by an \texttt{exit} part (if any).
     Multiple invocations of a given object will overwrite the enter variables
     and execute the body anew, and so the expected way to use a pattern P as a function is to
-    invoke a new object &P at each function call,
+    invoke a new object \texttt{&P} at each function call,
     making the analogy between object and call frame tangible.
 
     Inheritance works by extending a pattern
     and, recursively, any virtual subpatterns further-bound along with it,
     at each level generalizing Simula’s concatenation semantics:
-    in each “do” block, an “inner” keyword may specify
-    where to execute a subpattern’s additional “do” code
-    (if there is no “inner”, then any descendant-provided code
-    will be ignored and never executed, which is unlike Simula, and an improvement in this context).
+    in each \texttt{do} block, an \texttt{inner} keyword may specify
+    where to execute a subpattern’s additional \texttt{do} code
+    (if there is no \texttt{inner}, then any descendant-provided code
+    will be ignored and never executed,
+    making descendant extension explicitly opt-in in BETA—an improvement in this context;
+    BETA thus improves on Simula, that used to implicitly assume an \texttt{inner} at the end
+    if none was explicitly specified)
     In BETA, ancestors control the execution of descendants’ extensions, whereas in other languages,
     descendants’ extensions override and control the execution of ancestor-provided code.
     BETA patterns are open recursive, and this(P) denotes the current P object
     when used within P or code lexically nested inside P,
     while “inner P” can execute descendant-provided body extensions.
     Ugly: any communication of information between descendant and ancestor “do” blocks
-    must happen through side effects to lexically shared variables.
+    must happen through side effects to shared object attributes.
 
     Particularly remarkable is the treatment of
     how inheritance interacts with lexical nesting of patterns
@@ -2378,10 +2436,11 @@
     on top of it: inspired by the absurd premise that subclassing is subtyping (the NNOOTT),
     further binding specializes virtual patterns monotonically (correct)
     but BETA simultaneously treats specialization of the enclosing pattern as subtyping (incorrect);
-    thus if a virtual pattern occurs in an input position,
-    the result is required to be covariant parameter specialization, which is absurd.
-    Meanwhile their typechecker unifies types it shouldn’t by failing to distinguish
-    between the same pattern instantiated in different enclosing objects
+    thus a virtual pattern occurring in an input position is specialized,
+    the new types are assumed to covariantly be subtypes of the old ones,
+    which is absurd and requires runtime checks.
+    Meanwhile, the implementation’s static typechecker unifies types it shouldn’t
+    thus fails to distinguish between the same pattern instantiated in different enclosing objects
     and hence distinct lexical environments (e.g. x.V vs y.V).
     Ernst addresses these typing issues in gBeta.
 
@@ -2390,11 +2449,14 @@
     to something simple in terms of logic, or anything understandable by others.
     Nygaard, Kristensen, Madsen and soon Møller-Pedersen started the BETA project in 1976,
     when others already had better OO (except, it bears repeating, with regard to nested patterns).
-    By the time their design stabilized around 1980, they were far behind the OO state of the art,
-    and they never caught up with progress that came up after 1977. Quite underwhelming.
-    They never entered a mutually beneficial dialogue with the rest of the OO world,
-    wherein they could exchange ideas in a common formalism, import good ideas from others,
-    export good ideas from them. Very sad waste of great talent by self-imposed intellectual isolation.
+    By the time the design stabilized in the late 1986/1987,
+    they were far behind the OO state of the art. Quite underwhelming.
+    They only belatedly entered a broader dialogue with the rest of the OO world,
+    notably at the 1986 Hawthorne workshop and through Wegner.
+    But even, the years of self-imposed intellectual isolation
+    generated mutually unintelligible conceptual maps that makes translation hard,
+    making it hard to exchange ideas in a common formalism, import good ideas from others
+    and export their own. Very sad waste of great talent.
 
     Also published in Shriver & Wegner (eds.),
     Research Directions in Object-Oriented Programming, MIT Press, 1987, pp. 7–48.
@@ -2415,8 +2477,9 @@
     inheritance of implementation as “violating encapsulation”,
     a quick hack that doesn’t fit her semantic model focused on subtyping.
     She obviously does not understand the purpose and semantics on inheritance,
-    falls deep into the NNOOTT, and with inheritance of implementation
-    dismisses any actual OO. And yet, the same paper first introduces
+    falls deep into the NNOOTT, and
+    dismisses any actual OO together with inheritance of implementation.
+    And yet, the same paper first introduces
     a variant of her now famous “Liskov substitution principle”.
     So, is it a bad paper? Was it wrong to invite her at OOPSLA? Not at all.
     She is a great influential researcher who deserved her Turing Award.
@@ -3724,8 +3787,6 @@
   }
 }
 
-% TODO: Gotta re-read to check, but GPT says the implementation is U-encoded and so is the pro type,
-% whereas the obj type is the resolved fixpoint.
 @Article{Fisher1994,
   title={A Lambda-Calculus of Objects and Method Specialization},
   author={Kathleen Fisher and Furio Honsell and John C. Mitchell},
@@ -3735,20 +3796,25 @@
   pages={3-37},
   doi={10.1109/LICS.1993.287603},
   note={
-    Fisher extends the simply typed λ-calculus (STLC, terminating)
-    with simple objects and a typesystem, wherein you can add or override messages
-    (the difference between the two being meaningful because of the type system),
-    with a toy calculus that uses a U-encoding similar to T (that she cites).
-    She proves the typesystem sound with lots of formalism.
-    Then she explores how objects actually added recursion to the STLC,
-    and made it non-terminating.
+    Fisher, Honsell and Mitchell extend the λ-calculus
+    with a toy object calculus that uses a U-encoding similar to T
+    (cited, with a note that their development was independent—i.e. a reviewer suggestion).
+    A simple typesystem is offered:
+    The function-only fragment is simply typed and strongly normalizing;
+    object types use recursively self-referential @tt{class} types
+    with row variables to support method specialization under extension,
+    distinguishing between adding and overriding methods to keep label-management simple;
+    the authors note how objects actually add recursion to the STLC,
+    enabling the calculus to express any partial recursive function,
+    and thereby destroying termination.
+    The authors prove the typesystem sound with lots of formalism.
     Cool, but I find the entire approach upside-down.
     It would have been much easier to realize, based e.g. on Cook 1989 or Bracha and Cook 1990,
     that objects are a trivial case of using and exposing the Y combinator,
-    and then written or reused a general-purpose version of the λ-calculus with recursion,
+    and then written or reused a general-purpose λ-calculus with recursion,
     that would then work with any object system, not just a toy system.
-  }
-}
+    The mismatch between U-encoded terms and Y-encoded is a cool curiosity
+    that the authors note but do not build upon.}}
 
 % PDF: https://github.com/ansbilalgit/Books/blob/master/Erich%20Gamma,%20Richard%20Helm,%20Ralph%20Johnson,%20John%20M.%20Vlissides-Design%20Patterns_%20Elements%20of%20Reusable%20Object-Oriented%20Software%20%20-Addison-Wesley%20Professional%20(1994).pdf
 % https://z-lib.sk/book/M9pYZbPezO/design-patterns-elements-of-reusable-objectoriented-software.html
@@ -4352,29 +4418,36 @@
 }
 
 @PhDThesis{Fisher1996,
-  title={Type Systems for object-oriented programming languages},
+  title={Type Systems for Object-Oriented Programming Languages},
   author={Kathleen Shanahan Fisher},
   year={1996},
+  month=aug,
   school={Stanford University},
   url={http://i.stanford.edu/pub/cstr/reports/cs/tr/98/1602/CS-TR-98-1602.pdf},
   note={
-    Fisher goes through great lengths to define a sound type system for
-    a variant of the λ-calculus extended with a simple toy prototype object system.
-    A great deal of the complexity is tied to trying to type an entity that conflates
-    specification and target, that she calls the “pro” and “obj” types of her calculus.
-    Things would have been so much easier if she had stopped conflating them,
-    and just types them separately as semantically distinct entities
+    Fisher goes to great lengths to define sound type systems for
+    a variant of the λ-calculus extended with a simple toy prototype object system
+    then with subtyping, and finally with classes via data abstraction.
+
+    In the prototype calculus, the same object expression serves both
+    as an inheritance specification and as a target object;
+    the type system distinguishes these uses with what she calls
+    “pro” and “obj” types, respectively.
+    Things would have been so much simpler if she had stopped conflating the two aspects
+    and just typed them separately as semantically distinct entities
     that you are allowed but not required to pair together.
-    A lot of the restrictions and complexities in message typing are also linked
-    to having to track available message names, wherein it should be easy to
-    forget messages for the target, but not for the specification.
-    In particular, public and private fields exist because the system tries to manage
-    specification-level and target-level fields at the same time.
-    In the end, a technical tour de force, yet a huge waste of resource on a toy,
+
+    A lot of the restrictions and complexities in object typing are also linked
+    to having to track available message names:
+    It should be easy to forget messages for the target,
+    but you can’t do that for the specification.
+    Correspondingly, @tt{obj} types admit width subtyping whereas @tt{pro} types do not.
+
+    Her later classes have public, protected and private fields
+    for the system to entangle specification-level and target-level fields in the same machinery.
+    In the end, a technical tour de force, yet a huge waste of effort on a toy,
     when a better approach, for the same effort, could have yielded a general purpose
-    treatment of recursion in the λ-calculus and a trivial implementation of objects on top.
-  }
-}
+    treatment of recursion in the λ-calculus and a trivial implementation of objects on top.}}
 
 % https://sci-hub.ru/https://link.springer.com/chapter/10.1007/BFb0053063
 @InProceedings{Jacobs1996InheritanceAC,
@@ -4474,7 +4547,6 @@
 }
 
 % Or should we remove author and put Eric Raymond as editor?
-% See https://github.com/racket/scribble/pull/549 to enable that.
 @Book{Raymond1996,
   author={Eric S. Raymond and others},
   title={The New Hacker’s Dictionary},
@@ -5140,26 +5212,42 @@
 @Book{Pierce2002,
   Author={Pierce, Benjamin C.},
   Title={Types and Programming Languages},
-  Year={2002},
-  ISBN={0262162091},
+  Year=2002,
+  ISBN=0262162091,
   Publisher={MIT Press},
   Edition={1st},
   url={https://www.cis.upenn.edu/~bcpierce/tapl/},
   note={
-    TAPL treats objects in chapters 18, 19, 24, 32.
-    18 has a gradual approach to implementing not-quite-objects, and adding features
-    until the reader has actually implemented objects. It’s clever, but a bit long-winded;
-    also see my note on Pierce & Turner 1993 regarding letting the user provide a rep type.
-    32.10 Pierce does discuss the actual solution, recursive data types, but
-    leaves it as an exercise after pointing to the bibliography.
-    Pierce is technically masterful, but my impression is that he doesn’t understand the
-    purpose of OO, because it is a foreign paradigm (see Gabriel 2012);
-    and so not only he cannot drill into the essence of it,
-    he spends more time on the non-essentials (imperative programming),
-    and leaves the actually interesting essential (recursive types) out of his text,
-    using a shortcut (his rep type) to survive without it.
-  }
-}
+    TAPL is a great classic, which is why its treatment of objects deserves a great takedown:
+    Rarely has so much technical virtuosity been expended on so elaborate a dodge.
+
+    Objects are covered in chapters 18, 19, 24, 27, 32.
+    The presentation is clever, but long-winded and quite unsatisfactory:
+    §18 spends a lot of time implementing not-quite-objects,
+    gradually adding many common but non-essential features (including imperative programming),
+    until the reader has finally implemented actual objects with single inheritance in §18.9, §18.10...
+    modulo the same cheat as in Pierce & Turner 1993
+    (the user must tie the knot manually, providing the representation type).
+    §18.11 and §18.12 are tedious and not-so-enlightening subsets of my §5.3.2 and §6.1.5,
+    Y-encoding and U-encoding.
+    §19 has fake OO with no open recursion through self in types (the Jacobs dodge),
+    i.e. the NNOOTT with enough language restrictions to make it consistent—but useless.
+    §24 uses existential types to abstract over representation types, but still uses the same cheat.
+    §27 revisits his imperative objects, introducing bound polymorphism and subtyping,
+    §32, the final chapter discusses row polymorphism,
+    finally introduces real OO in the very last formal section, §32.9,
+    but without elaborating on the issues it raises.
+    §32.10 is a collection of citations, some good, some OK, some bad
+    (including plenty of bad Cardelli papers), and notably omitting Eifrig.
+
+    The interaction between recursive object types and inheritance is left unexplored,
+    or the notions of mixin inheritance and multiple inheritance and their necessary intersection types
+    are barely alluded to—the reader is referred to the bibliography for more information.
+    Pierce is technically masterful, but he doesn’t demonstrate
+    any interest of the purpose of OO—a foreign paradigm (see Gabriel 2012).
+    A meaningful approach to typing OO would focus on the essential, even if it has to sacrifice
+    the treatment of contingent, secondary and peripheral issues, or gloss over them—the
+    very opposite of Pierce’s approach of OOing types.}}
 
 %% 2003
 
@@ -5584,16 +5672,17 @@
   address={USA},
   url={https://plai.org/},
   note={
-    This is a great book about Programming Languages in general, and I love SK.
+    PLAI is a great book about Programming Languages in general, and I love SK.
+    I readily admit to putting language before application like SK does;
+    I reckon it’s a vice, at least in my case.
+
     SK introduces objects as closures, and even prototypes, in chapter 10.
     But one thing he just doesn’t get is multiple inheritance (10.3.3).
     In 10.3.5 he introduces mixins as a mechanism on top of first-class single-inheritance classes,
     which certainly works, but to me feels like putting the cart before the ox.
     Great stuff outside OO, and even the OO is decent,
     but in the end, like many academics, SK doesn’t grok OO.
-    (The third edition has some improvements, but is still not there.)
-  }
-}
+    (The third edition has some improvements, but is still not there.)}}
 
 @Book{OSullivan2008,
   title={Real World Haskell},
