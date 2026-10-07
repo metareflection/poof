@@ -121,7 +121,7 @@ together with @emph{layers of implementation} (prefixes @emph{hypo-/hyper-})
 I’ll consider @emph{stages of computation} (prefixes @emph{pre-/post-}), @; TODO secref
 and @emph{planes of control} (prefixes @emph{back-/fore-}), @; TODO secref
 that are often conflated under the names or concepts of
-“reflection”, “representation”, “metaprogram”, “metaobject”, etc.
+“metaprogram”, “metaobject”, “metacircular evaluator”, “reflection”, “representation”, etc.
 By having distinct names for these independent concepts,
 we can better understand what they do and what they don’t.
 
@@ -815,7 +815,7 @@ depending on whether one uses Y-encoding (@secref{MOO}) or U-encoding (@secref{C
     but that is deferred self-application, and does not involve any fixpoint yet.}]
 
 @subsubsection{Fixpoints are for Computations, not Values}
-Either way, as mentioned in @secref{UPSLC},
+Either way, as mentioned in @secref{DLCCF},
 fixpoints, and thus resolution of modular definitions and of modular extensions,
 are essentially operations on @emph{computations}, and not quite on @emph{values}.
 The distinction between computations and values, and their duality,
@@ -910,7 +910,7 @@ A suspended variant of Y is used, of type @c{Suspended(Record(k:K,Vₖ))},
 where @c{Suspended(X)} is essentially equivalent to a thunk @c{1→X}.
 And @c{Record(k:K,Vₖ)} is the dependent type of records having
 for each key @c{k} a value of type @c{Vₖ}.
-@; TODO @Code{ ... } see pommette.scm
+@; TODO @Code{ ... } see @(pommette)
 By contrast, in the record-of-suspensions representation, the target is a record whose values
 are suspensions that each yield the method value for the given key,
 of type @c{Record(k:K,Suspended(Vₖ))}.
@@ -944,8 +944,6 @@ In a spartan static system that was neatly designed to only define what is stric
 and use it all—suspensions are pure overhead.
 That said, the spartan system might want to use OO only at compile-time,
 and expand to some optimized low-level code, à la C++.
-
-@; TODO MORE CODE
 
 @subsection[#:tag "RtM"]{Recursion through Mutation}
 
@@ -1147,6 +1145,78 @@ Mutable state, though awkwardly emulated,
 enables the indirect expression of forward references and circular definitions,
 which would not be directly expressible in a pure applicative setting.
 
+As far as OO and other pure functional concepts go,
+@principle{Mutation is an implementation technique, not a semantics}.
+
+@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+
+@subsection{Dimensions of Modular Computations}
+
+@subsubsection{Availability of Partial Results}
+
+lazy evaluation? blocking wait on? mutable with error? mutable with null? mutable with undefined?
+Very short because Ch4 already did the work @secref{IRS}.
+Recall only the distinction needed by the rest of this section:
+defined but not yet evaluated versus genuinely not yet assigned.
+The rest of Ch10 takes that semantic choice as input.
+
+@subsubsection{Dependency Resolution}
+
+This absorbs the strongest material from the current Too Low-level subsection:
+lazy evaluation can discover dependencies dynamically;
+alternatively a compiler may construct a dependency graph and topologically order computations
+where possible (monomorphically? polymorphically?);
+hybrids can do both.
+static code cannot topologically sort definitions that do not yet exist.
+
+@subsubsection{Uniformity vs Specialization}
+
+See @secref{CSvTS}. Uniform / Monomorphic (one shape for all meanings, fewer shapes)
+vs Specialized / Polymorphic (each meaning its shape, more shapes).
+Although in C++ dual named: monomorphic (one meaning for each shape, more shapes)
+vs polymorphic (many meanings for each shape, fewer shapes).
+
+Generic promises/thunks/cells everywhere versus code specialized to each known modular structure;
+interpreter ↔ compiler ↔ JIT continuum.
+
+The current discussion of second-class OO, monomorphization and
+recovering optimizations from static information moves here.
+
+@subsubsection{Granularity}
+
+Suspended record versus record of suspensions versus intermediate groups/phases.
+This links directly back to the preceding Suspended Records or Records of Suspensions subsection,
+but now explains that choice as one instance of a general dimension:
+what is the unit of independently scheduled modular computation?
+
+@subsubsection{Lifetime Staging}
+Construction → initialized/mature → perhaps sealed/frozen. Different invariants become available over time and representation can change accordingly. This prepares Object Layout, where we later discuss bitmaps, sentinels, construction descriptors and mature layouts physically.
+
+@subsubsection{Concurrent Access}
+Construction may be thread-confined, published only when complete,
+safely observable while incomplete, or independently initialized in parallel.
+
+Those semantic/organizational choices determine the need for
+atomics, synchronization and publication barriers.
+Detailed mechanisms can wait for the later lower-level-interactions section.
+
+@subsubsection{Responsibility for invariants}
+
+Notionally comes first/last—define what the current level does vs layers above or below.
+
+Where does the obligation live?
+
+A higher implementation layer may guarantee safe access;
+a lower one may expose a precondition to its client, allows more performance.
+
+This is where some of the current rhetoric about low-level protocols belongs—not “imperative bad”,
+but the lower the abstraction boundary, the more obligations may be exposed.
+
+Decides what gets automated below, and automated or done manually above.
+
+
+@; TODO MORE CODE
+
 @subsection{From Computation to Structure}
 
 So far in this chapter I’ve focused on the computational aspect
@@ -1191,11 +1261,9 @@ once enough is known about their outcomes,
 their residual structure can be represented directly
 and optimized for the operations that will consume it.
 
-@section[#:tag "OL"]{Object Layout}
-
-@subsection{Objects From Computation to Structure}
-
 @subsubsection{Modular and Unmodular Object Initialization}
+
+TODO: Move the below to Recursion, @secref{IRS} @; Initializing Recursive Structures
 
 An essential constraint about object representation, yet one easy to overlook at first,
 is that the object must be referenceable and usable during its own initialization.
@@ -1211,11 +1279,10 @@ Inasmuch as you would like objects to be records of values (and not suspended co
 in the general case, you can’t—yet in the common case, often you can,
 and your performance will depend on being able to exploit this ability.
 
-@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
 
 Now, Class OO allows some level of coping:
 Class OO only needs OO to apply to the class targets that are type descriptors
-(morever only at compile-time, for second-class Class OO);
+(moreover only at compile-time, for second-class Class OO);
 it doesn’t need to support modular extensibility or even just modularity to apply to
 the “class instances” that are only the elements of the described types.
 Class methods are defined using OO, instance fields are not.
@@ -1226,7 +1293,7 @@ or as simple default values or initialization expressions from a non-modular spe
 (though possibly one overridable by extensions).
 Every field not otherwise initialized is bound to some top value (zero, unit, null or “undefined”),
 or (in some languages) to a magic “unbound” marker that triggers an early error
-when dereferencing an unbound field ().
+when dereferencing an unbound field (XXXXX).
 
 In @emph{stateful} Class OO languages (which is most of them),
 a slightly more sophisticated protocol is often offered
@@ -1246,15 +1313,9 @@ if they are to be called before the object is fully initialized.
 
 To alleviate the lack of expressiveness of the first cope, or the unsafety of the second cope,
 many programmers of OO languages resort to the “builder pattern”:
-all complex wherein
+all complex wherein XXXX
 
 
-Make the compilation infrastructure itself Modularly Extensible?
-Why yes of course!
-Nano-passes, @; TODO cite Siek2023
-Ziggurat. @; TODO cite Fisher2008
-
-first-class pure functional OO
 
 An object needs a usable representation even while its recursive initialization is in progress;
 layout is not only something chosen after computation “settles”.
@@ -1281,8 +1342,49 @@ Property storage (in-object vs external).
 @; TODO the layout is largely independent from how suspension is implemented.
 @; susp{i,R_i} ? {i,(susp(R_i)} ? {i,susp_i(R_i)} ? susp{i,susp_i(R_i)} ?
 
+@section[#:tag "OL"]{Object Layout}
+
+TODO: New structure = derive all OO-specific optimizations from generic optimizations above
+given the construction of OO in previous chapters:
+
+* first-class pure functional OO (higher-level) vs
+  some invariant responsibility to programmer (lower-level,
+  maybe only for first-class stuff, not second-class stuff)
+
+* specifications
+
+* fixpoints
+
+* records as targets
+
+* suffix property
+
+* prototypes as conflation of target and specification,
+
+* classes as type descriptors,
+
+* dynamic dispatch as using a special type descriptor field,
+
+* instance methods as getting instance-methods from classes
+(then passing self as first argument whether using U-encoding or Y-encoding), etc.
+
+* computing effective methods? See ch9.
+  With a bit of macrology / partial evaluation / code generation / open coding
+  to optimize the chaining of applicable methods.
+
+* static (or dynamic!) typed pointers as providing information
+  onto which interface(s) to use a dynamically typed object with.
+
+* repeated inheritance as compressed pair of pointer for container plus contained
 @; TODO cite Myers1995 Itanium1999 Click2002 Stroustrup1989 Snyder1986
 
+* ECS transparently possible with SoA instead of AoS.
+
+* become / change-class, cost of indirection vs read-barrier vs global rewrite
+
+At no point(?!) do we need to invent specific optimizations for OO,
+we can just apply generic record optimization. OO (especially (mostly) 2nd class Class OO)
+just provides context of structure, knowledge and expectations for optimizations.
 
 
 @subsection{Suffix Specifications}
@@ -1387,11 +1489,11 @@ But there are other implementation strategies @~cite{Ducournau2009}
 
 @; TODO cite Ducournau2008 Ducournau2011Implementing Ducournau2012
 
-@section[#:tag "ED"]{Efficient Dispatch}
+@subsection[#:tag "ED"]{Efficient Dispatch}
 
 Object descriptor, vtables (works well with single inheritance / suffix classes), interfaces, etc.
 Multiple dispatch.
-Inline caching per call-site @~cite{Deutsch1984 Hoelzle1991}, caching per-function.
+Inline caching per call-site @~cite{Deutsch1984 Hoelzle1991}, caching per-function. @~cite{Bobrow1986}
 Method combinations: precomputing effective methods.
 Sealing and devirtualization.
 Type feedback and speculation—JIT at the atomic block level, not call site level.
@@ -1418,27 +1520,52 @@ you could just make object pointers slightly larger—a pair of
   cache invalidation, naming things, and off-by-one errors.
 @|#:-"Leon Bambrick"| @; http://martinfowler.com/bliki/TwoHardThings.html
 }
+BOP: MOP rebranded for control-plane analogy
+
 What is a MOP?
-Metaobjects: classes, slots, methods, generic functions.
+
+Metaobjects (in CLOS MOP): classes, direct/effective slots,
+individual methods descriptors, effective functions, generic functions,
+specializers, method combinations (see Verna), etc.
+
 Metaclasses: classes whose instances are classes. @~cite{Cointe1987 Kiczales1991}
+
 Introspection vs intercession.
+
 The MOP as a reflective tower.
 
 Tying together all the bells and whistles in defining
 bindings, representations, objects, classes, methods, combinations, etc.
 I adapt and generalize the techniques from AMOP in a pure functional setting.
 
+Make the compilation infrastructure itself Modularly Extensible?
+Why yes of course!
+Nano-passes, @; TODO cite Siek2023
+Ziggurat. @; TODO cite Fisher2008
 
 @subsection{Reflection: Introspection and Intercession}
 
-@section{Tower of Implementation}
-Reflective towers (3-Lisp, Brown, etc.).
-Reification and reflection.
-Infinite towers vs truncated towers. Turtles all the way down, not hooks all the way up.
-Collapsing towers for efficiency.
-Partial evaluation and Futamura projections.
+Reflection:
+(a) merely describing/reifying something,
+(b) introspecting it,
+(c) actually interceding/controlling how it is implemented.
 
-@citet{Chiba1996}.
+Back-objects, fore-objects.
+
+@section{Tower of Implementation}
+
+Reflective towers (3-Lisp, Brown, etc.).
+
+Reification and reflection. Names... sometimes upside down.
+
+Infinite towers vs truncated towers. Turtles all the way down, not hooks all the way up.
+
+Collapsing towers for efficiency. Namin.
+
+Partial evaluation and Futamura projections (or move to generic computation/recursion section?)
+
+Meta-Helix @citet{Chiba1996}.
+
 Add serialization, persistence, to a meta-object, NOT to the object.
 
 Different capabilities for objects and their meta-objects => more security.
@@ -1449,6 +1576,8 @@ I can only briefly survey this topic, maybe reusing the Collapsing Towers of Int
 
 
 @subsection{Side Effects}
+
+TODO Move to Implementation Towers?
 
 I will revert to stateful OO, because I suspect
 that’s what my public is interested in, will use, and has in their underlying language.
@@ -1476,6 +1605,8 @@ What @emph{is} an intrinsic property of computation on the other hand is
 that it can and will be decomposed many layers of implementations.
 
 @section{Bootstrapping an Implementation}
+TODO move into Recursion above?
+
 The chicken-and-egg problem. Metacircular definition.
 At some level, “just” recursion and fixpoints.
 Tying the knot: how does Object have a class?
@@ -1483,6 +1614,8 @@ Bootstrapping CLOS (or Smalltalk, or your system).
 Staged bootstrapping.
 
 @section{Interactions with lower-level subsystems}
+TODO: Merge with MOP, or keep below? Probably the latter.
+
 Garbage collection.
 Weak references for method caches.
 Finalizers and instance cleanup.
@@ -1526,15 +1659,19 @@ Capability-based security via object references.
 Sandboxing and membrane patterns.
 
 @section{Finale: Putting It All Together}
+TODO: Just wrap up the chapter. Postpone most stuff to 2nd Ed.
+
 How does it all connect?
 A tour through an actual implementation: the Gerbil MOP.
 What this book’s accompanying code does (and doesn’t) do.
 
+@;{ No code yet :-( TODO: implement stuff for ch10
 @exercise[#:difficulty "Easy"]{
-  Read and make sense of the code I wrote for this chapter,
+  Read and make sense of the code I wrote for this chapter in @(pommette),
   that you may find e.g. at
   @url{https://github.com/metareflection/poof/blob/main/pommette/pommette.scm}
-}
+}}
+
 @exercise[#:difficulty "Medium"]{
   Read about the Meta-Object Protocol in CLOS @~cite{Kiczales1991},
   particularly the protocols for class redefinition and instance update.

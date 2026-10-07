@@ -27,6 +27,8 @@ I cut some corners, you feel you lack prerequisites, or the topic has ramificati
 beyond what I wrote that you need to ascertain, etc.—just
 ask your favorite clanker for clarification.
 
+A complete implementation of the code in this chapter is available as part of @(pommette).
+
 @section{Minimal First-Class Extensibility}
 
 @subsection{Extensions as Functions}
@@ -55,7 +57,7 @@ When that is the case, I will then speak of a “strict extension”.
 Obviously, if types are allowed to be too precise,
 then any value @c{v} is, among other things, an element of
 the singleton type that contains only @c{v}, at which point
-the only allowed transformation is a constant non-transformation.
+the only allowed transformation on that singleton type is the identity.
 This strongly suggests that rich subtyping is not and cannot be a constraint
 relative to inferred types, but only to declared types.
 Thus, consider a system in which developers can @emph{explicitly} declare
@@ -89,7 +91,7 @@ the symbol @c{x} to the number @c{2} and the symbol @c{y} to the number @c{4}.
 
 A sample (strict) extension would be the function @c{paint-blue} below:
 It extends a given record, lexically bound to @c{p} within the body of the function;
-it returns a record that is a copy of the previous
+it returns a record that is a copy of the previous record
 with a new or overriding binding;
 and that binding maps the symbol @c{color} to the string @c{"blue"}:
 @Code{(def (paint-blue p) (extend-record 'color "blue" p))}
@@ -114,7 +116,7 @@ of strict extensions for some given type:
 @itemize[
 @item{The values could be numbers, and then
   your extensions could be adding some increment to a previous number,
-  which could be useful to count the price, weight or number of parts in a project being specified.}
+  which could be useful to compute the price, weight or number of parts in a project being specified.}
 @item{The values could be bags of strings, and
   your extensions could append part identifiers to the list of spare parts or ingredients to order
   before starting assembly of a physical project.}
@@ -252,8 +254,8 @@ and propose the use of said combinator.
 
 The idea would indeed work in many cases, as far as extracting a value goes:
 for any lazy type @c{V} (and similarly for function types),
-any extension that yields a useful result applied to @c{(lazy ⊥)}
-passing it as argument to the lazy @c{Y} combinator will also yield a result.
+for any extension that yields a useful result applied to @c{(lazy ⊥)}
+passing that extension as argument to the lazy @c{Y} combinator will also yield a result.
 And indeed the results will be the same if the extension wholly ignores its argument,
 as is often the intent in those situations.
 Typically, you’d compose extensions, with one “to the right”
@@ -338,8 +340,8 @@ Thus, as far as one cares about extensibility:
   Show a case where they produce different behaviors.
   Is the difference merely a matter of performance, or one of semantics?
   In your example, which best corresponds to the notion of extending a specification@xnote["?"]{
-    Hint: you may define a lazy stream extension: @c{(λ (x) (lazy-cons 1 x))}.
-    Apply it to @c{top = (lazy ⊥)} and compare the behavior to that of @c{(Y f)}.
+    Hint: you may define a lazy stream extension: @c{lse = (λ (x) (lazy-cons 1 x))}.
+    Apply it to @c{top = (lazy ⊥)} and compare the behavior to that of @c{(Y lse)}.
     What happens when you force the first few elements?
   }
 }
@@ -697,15 +699,23 @@ then a “tree shaker” or global dead code optimizer may eliminate them.
   What limitation do you notice in one direction?
 }
 
-@section[#:tag "UPSLC"]{Underappreciated Practical Subtleties of the λ-calculus}
+@section[#:tag "DLCCF"]{Digression: λ-Calculus, Currying and Fixpoints}
 @epigraph{Purely applicative languages are poorly applicable. @|#:- "Alan Perlis"|
 }
-Here are two subtle ways in which
+@principle{There are underappreciated practical subtleties of the λ-calculus}
+that are important for fully understanding the semantics of OO.
+If you’re eager to get to OO, and can tolerate only dealing with approximations,
+then you may on a first reading skip to the conclusion of this section @secref{MEC}—especially if
+you are already familiar with autocurrying, and with lazy vs applicative λ-calculus.
+Just be sure to come back to this section before you delve too deeply into semantic details.
+
+Now, if you want to understand what OO @emph{really} means,
+keep reading about two subtle ways in which
 Scheme departs from the theoretical model of Functional Programming,
-that affect its suitability to modeling Object Orientation.
+and how these departures affect its suitability for modeling Object Orientation.
 These discrepancies also apply to most (but not all) other programming languages.
-What more, I suspect that most programmers who are familiar with the λ-calculus
-are unaware of these issues at all, or of how much they matter in practice.
+What’s more, I suspect that most programmers who are familiar with the λ-calculus
+are unaware of these issues, or of how much they matter in practice.
 
 @subsection{Function Arity and Currying}
 @subsubsection{Curried Syntax}
@@ -713,7 +723,7 @@ Functional Programming usually is written with unary functions (that take exactl
 and to express more than one argument, you “curry” it:
 you define a function of one argument that returns a function that processes the next argument, etc.,
 and when all the arguments are received you evaluate the desired function body.
-Then to apply a function to multiple arguments, you apply to the first argument,
+Then to apply a function to multiple arguments, you apply it to the first argument,
 and apply the function returned to the second argument, etc.
 
 The syntax for defining and using such curried functions is somewhat heavy in Scheme,
@@ -845,7 +855,7 @@ to automatically curry function definitions and function applications:
     I will still use the regular @c{lambda} and @c{define}.
     In other FP languages, you might instead use explicit list arguments,
     or record arguments for heterogeneous types.}
-  @item{Regular Scheme functions can use the @c["@"] macro to explicitly call curried function
+  @item{Regular Scheme functions can use the @c["@"] macro to explicitly call a curried function
     with uncurried arguments when the function isn’t bound to an autocurrying variable.}]
 
 The macros defining @c{λ}, @c{def} and @c["@"] fit within fifty lines of code.
@@ -857,7 +867,7 @@ and where plain Scheme would write @c{((f x) y)}.
 And I will write @c{(λ (x y) expr)} where functional programmers write
 @c{λ x . λ y . expr} or @c{λ x y . expr},
 and @c{(def (foo x y) expr)} where functional programmers write
-@c{foo x y = expr} or @c{f = λ x . λ y . expr}.
+@c{foo x y = expr} or @c{foo = λ x . λ y . expr}.
 And the code will actually run in Scheme after a short prelude.
 
 In the end, Scheme @emph{is} quite good for Functional Programming,
@@ -866,7 +876,7 @@ a little bit of macrology to adapt to a style not native to it.
 Meanwhile, mainstream languages lacking affordable macros will let their users down.
 
 @subsection[#:tag "MYC"]{Many Y Combinators}
-There are many variants to the fixpoint (or fixed-point) combinator Y,
+There are many variants of the fixpoint (or fixed-point) combinator Y,
 and the pure applicative Y combinator you could write in
 the pure λ-calculus subset of Scheme is actually quite bad in practice.
 
@@ -962,10 +972,10 @@ not to access the variable before it was initialized@xnote["."]{
   if you bind the variable to a function application expression,
   wherein the variable is passed as argument without wrapping it in a λ,
   or the λ it is wrapped in is called before the evaluation of this expression completes.
-  The Scheme language does not protect you in this case,
-  and, in general, no language could protect you
-  without either severely limiting the language expressiveness
-  or solving the halting problem.
+  Scheme does not portably guarantee a diagnostic in this case.
+  In general, no language could statically rule out every such access
+  without either restricting expressiveness or solving the halting problem;
+  runtime checks can nevertheless detect an access before initialization.
   Various languages and their implementations,
   depending on various safety settings they might have or not,
   may raise a “variable not bound” exception,
@@ -973,6 +983,7 @@ not to access the variable before it was initialized@xnote["."]{
   that is not usually part of the expected type,
   or access uninitialized memory potentially returning nonsensical results
   or causing a later fandango on core, etc.
+  @; TODO secref{IRS}
 }
 If the variable is only accessed after it is initialized,
 and the rest of the program is pure and
@@ -1008,7 +1019,7 @@ you would write@xnote[":"]{
   @c{(def fact (Yl lazy-pre-fact))}
   and you can then test that e.g. @c{(fact 6)} returns @c{720}.
   Note that I do without wrapping of @c{n} in a @c{delay},
-  but @c{f} itself is a delayed function value to fit the calling convention of @c{lazy-Y},
+  but @c{f} itself is a delayed function value to fit the calling convention of @c{Yl},
   and I therefore must @c{force} it before I call it.
   The subsequent variants of the lazy @c{Yl} can be tested in the same way.
   The earliest variant of @c{Yl} is Turing’s Θ formula @~cite{Turing1937 Curry1958}.
@@ -1062,8 +1073,8 @@ though a thread-safe variant, if needed, is somewhat trickier to achieve.)
 @subsubsection{Lazy on top of Applicative}
 Here is one implementation of laziness on top of the stateful applicative subset of Scheme,
 that works in a single-threaded environment:
-it takes a thunk as argument, and only calls the thunk the first time around,
-thereafter memoizes the result of that first invocation and returns it
+it takes a thunk as argument, calls it once on demand,
+memoizes the result and returns it on subsequent invocations
 (note the double check for @c{computed?}, to safely support reentrancy):
 @Code{
 (define (compute-once thunk)
@@ -1119,7 +1130,7 @@ For a non-function value—a pair, a number—there is no such function call und
 and, unless you use a lazy language that hides forcing behind every non-trivial evaluation,
 the consumer must do the forcing explicitly.
 
-Now, @c{η₁}, that can read as “η-expand but only evaluate once”,
+Now, @c{η₁}, which can be read as “η-expand but only evaluate once”,
 ensures the @emph{expression} for the function is only evaluated once.
 However, each invocation still does its own bit of computation.
 If you want repeated invocations with the same argument to remember
@@ -1146,11 +1157,11 @@ It is only the users of these languages who are somewhat shielded from the intri
 @; TODO CITE Aaron Stump from U Iowa, etc.
 @; TODO: Fix as a metaprogram. Kirill Golubev. https://popl26.sigplan.org/details/rocqpl-2026-papers/17/Lambda-JS-la-Carte
 
-@subsubsection{My Editorial Choice}
+@subsubsection[#:tag "MEC"]{My Editorial Choice}
 I have implemented variants of my minimal OO system in many combinations
 of the above solutions to these two issues, in Scheme and other languages.
 For the rest of this book, I will adopt a style where most functions are unary,
-but the syntax to define and use them implicitly uses curry with @c{def} and @c{λ}.
+but the syntax to define and use them implicitly performs currying with @c{def} and @c{λ}.
 I will also be assuming @c{Y = Yes} (eager, stateful) as my fixed-point operator,
 unless explicitly mentioned otherwise.
 As a result, the reader should be able both to easily copy and test
@@ -1281,7 +1292,7 @@ for the same reasons@xnote["."]{
   First, I am currently discussing a variant of Prototype OO,
   as in Self, Jsonnet, Nix, JavaScript, where the @c{self} or @c{this}
   is indeed the open recursion variable (@secref{RPOO});
-  by contrast, in Class OO language, the modularly incrementally defined entity
+  by contrast, in a Class OO language, the modularly incrementally defined entity
   is a type descriptor, a record, and the actual open recursion variable would instead
   be something like @c{Self}, @c{MyType} or @c{this.type},
   though there is even less standardization in this area (@secref{RCOO}).
@@ -1379,9 +1390,9 @@ so as to be able to define individual methods,
 with an @c{empty-record} as default value.
 
 Then you can mix to the right of your modular extension,
-a modular extension that follows it, and that throws away
-any previous value or computation (i.e. ignores its @c{super} argument)
-and returns the new default value regardless of context (ignores its @c{self} argument;
+a modular extension which will be applied first to the @c{super} argument,
+and which will throw away any previous value or computation (i.e. ignores @c{super}),
+and returns the new default value regardless of context (i.e. also ignores its @c{self} argument),
 unless that default is extracted from the context):
 @Code{
 (def (record-spec _super _self)
@@ -1527,7 +1538,7 @@ to add a binding to a record without having to eagerly compute the bound value.
 
 Whichever way simple modular extensions are defined,
 they can thereafter be composed into larger modular extensions
-using the @c{mix} function, and eventually instantiate a target record
+using the @c{mix} function, and a target record can eventually be instantiated
 from a modular extension using the @c{fix} function.
 Since I will be using records a lot,
 I will use the specialized @c{fix-record} function above.
@@ -1640,7 +1651,7 @@ making the syntax lighter by saving on explicit list construction:
 (define (mix* . args) (mix/list args))
 }
 With this @c{mix*}, the leftmost argument is the most specific descendant
-(overriding previous ones), and the rightmost argument is the least specific ancestor.
+(overriding those to its right), and the rightmost argument is the least specific ancestor.
 
 Now, note how trying to instantiate @c{(add-x-spec 1)} or @c{rho-spec} alone would fail:
 the former relies on the @c{super} record to provide a useful inherited value to extend,
@@ -1772,7 +1783,7 @@ And now, on top of this Minimal OO, I will rebuild all the usual concepts of OO.
 
 @exercise[#:difficulty "Easy"]{
   Read and make sense of the code I wrote for this chapter,
-  that you may find e.g. at
+  that you may find as part of @(pommette), e.g. at
   @url{https://github.com/metareflection/poof/blob/main/pommette/pommette.scm}
 }
 
@@ -1852,7 +1863,7 @@ And now, on top of this Minimal OO, I will rebuild all the usual concepts of OO.
   Make a library out of it that you actually use?
   (See for instance the slides next to the source code for this book,
   at @url{https://github.com/metareflection/poof}.)
-  Can you attract users beside yourself?
+  Can you attract users besides yourself?
   What patches to your language implementation did you need,
   or would you need to implement the system better?
   If your language has static types, how do you deal with them?

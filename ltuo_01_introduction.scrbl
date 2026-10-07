@@ -18,7 +18,7 @@ What is it for? What is a paradigm to begin with?
 How do I use OO to write programs? How do I make sense of existing OO programs?
 How may I best think about OO programs when designing them?
 How may I best reason about them when debugging them?
-What are variants of OO? How do I compare them?
+What are the variants of OO? How do I compare them?
 How can I build OO if I don’t have it yet (or not a good variant of it)?
 And why are so many people so into OO, and so many others so against it?
 Which of their arguments are right or wrong when?
@@ -75,8 +75,8 @@ who seek to understand what it is they are doing—or should be doing.
   @|#:- "Thomas Sowell"|
 }
 Why write a book about OO in 2026?
-@emph{It’s current year};
-don’t people know everything they need to know by now (about OO or otherwise),
+@emph{It’s current year!}
+Don’t people know everything they need to know by now (about OO or otherwise),
 unlike the barbarians of times past?
 Wrong—people of past years were not barbarians,
 though they were ignorant of what we now know;
@@ -195,19 +195,19 @@ In writing this book, I am sharing the treasure map with you.
 @exercise[#:difficulty "Easy"]{
   Rate from 0 to 10 (a) how well you understand OO, and
   (b) how well you understand FP.
-  You can redo the rating after reading this book
-  (and reflect on your earlier opinions), to see if it improved.
+  You can redo the ratings after reading this book
+  (and reflect on your earlier opinions), to see if your understanding improved.
 }
 
 @exercise[#:difficulty "Medium"]{
   In a paragraph, write what you expect from reading this book.
   You can later use this paragraph to decide which sections to skim and which to focus on.
-  But also after you read the book, to decide whether you were satisfied,
+  You can also revisit it after you read the book, to decide whether you were satisfied,
   and whether you were surprised.
 }
 
 @exercise[#:difficulty "Hard"]{
-  In one sentence to one page maximum, draft what you think is the essence of OO,
+  In anything from one sentence to one page, draft what you think is the essence of OO,
   as if you had to explain it to a junior programmer.
 }
 
@@ -244,7 +244,7 @@ At least the only one who cared enough to write about it.
 So I tried to spread the Good News, by getting a paper published.
 And I did get a paper published eventually @~cite{Rideau2021},
 but only at the Scheme Workshop, a small venue of sympathetic Lispers,
-who already understood half of it and did not need much effort to understand the rest,
+who already understood half of it and did not need to make much effort to understand the rest,
 and already had plenty of good object systems to play with.
 Meanwhile, my repeated attempts at publishing in more mainstream
 Computer Science conferences or journals were met with incomprehension—also
@@ -256,7 +256,8 @@ while making sense of it from an @emph{Incommensurable Paradigm}.
 
 Certainly, I could try to explain myself, to translate between their language and mine;
 spend time explaining the denotations and connotations of my words as I was using them,
-and defusing those that may mistakenly be heard by various readers from different communities;
+and defusing the mistaken interpretations of my words
+made by various readers from different communities;
 tell my readers to put aside the concepts they think they know,
 and somehow teach them the concepts I am putting behind the words, so they understand.
 
@@ -288,7 +289,7 @@ Or, I could take the time and space to explain things right.
 But then, I’d have to abandon the hope of fitting in existing venues.
 I would have to write a book. This book.
 
-@subsection{Ultimate Cause}
+@subsection[#:tag "UC"]{Ultimate Cause}
 @epigraph{
   Some mathematicians are birds, others are frogs.
   Birds fly high in the air and survey broad vistas of mathematics out to the far horizon.
@@ -306,7 +307,7 @@ I am not new to ideas that are hard to publish.
 My thesis on Reconciling Reflection and Semantics remains unpublished@~cite{FarePhD};
 none of the many ideas within it could be published in an academic venue,
 except for a very short summary in a small workshop@~cite{Rideau2018}@xnote["."]{
-  I still could present these ideas at less formal venues,
+  I was still able to present these ideas at less formal venues,
   including BostonHaskell, LispNYC—and LambdaConf.
   See these and other videos of mine at
   @url{https://youtube.com/playlist?list=PL12GbLXat-B6FUg_wWEGJ0il1tbiSmrXe}.
@@ -431,7 +432,7 @@ Yet remarkably, some programmers explicitly reject it, eminent professors even@x
   including by such luminaries of the topic as Alan Kay or William Cook,
   or of adjacent topics like Joseph Goguen or Barbara Liskov.
   In @secref{TfOO}, I will also criticize how many great researchers approach Types for OO.
-  And even in other chapters, I will issue my lot of opinions
+  And even in other chapters, I will offer my share of opinions
   that would no doubt make many respected scholars, cited or not, shake their heads.
   But my proving all these renowned scientists wrong on one question or another
   in no way diminishes their contribution to OO or to neighboring topics;
@@ -496,8 +497,8 @@ While I will discuss informal principles, I will include running code in Scheme
 that you can easily adapt to your favorite programming language
 (see @secref{WS} regarding choosing Scheme).
 I will explain which features are needed beyond the mere applicative λ-calculus, why,
-and how to typically implement them in existing programming languages.
-Remarkably, the main feature needed is lazy evaluation, or ways to emulate it (@secref{UPSLC}),
+and how to easily implement them in existing programming languages.
+Remarkably, the main feature needed is lazy evaluation, or ways to emulate it (@secref{DLCCF}),
 as OO is most naturally defined in a pure lazy functional setting,
 and eager evaluation of OO without side effects leads to exponential recomputations.
 
@@ -537,7 +538,7 @@ if any at all@xnote["."]{
   whenever you may come across them.
 
   That said, when, in old papers, I see pioneers struggling to find solutions to problems
-  few if anyone else suspected existed, then make mistakes, or take wrong turns—I
+  few if any others suspected existed, then make mistakes, or take wrong turns—I
   laugh, I cry, but I root for them.
   On the other hand, when, in more recent papers, I see researchers propose wrong solutions
   to problems that were solved long ago, I just shake my head, and express sadness that
@@ -592,7 +593,7 @@ usually, a researcher would publish it at some conference.
 However, C4 in isolation might only look mildly interesting:
 it “just” combines a couple of well-known ideas and a speed optimization.
 The concepts I develop are prerequisites for the optimality claim about C4 to even make sense,
-yet require this book to properly articulate.
+yet require this book to be properly articulated.
 C4 itself is a notable improvement, which crowns the theory as productive.
 But the theory behind it is the real achievement.
 
@@ -622,7 +623,7 @@ a better inheritance algorithm with which to improve your existing (or future) l
 @exercise[#:difficulty "Research"]{
   Pick some phenomenon you’re interested in and able to observe.
   It can be something small or large, but has to be something you can repeatedly interact with.
-  Some of your behavior or that of a member of your immediate family or colleague at work is fine,
+  Some of your behavior or that of an immediate family member or colleague at work is fine,
   but not the behavior of a random stranger you won’t meet again, unless it’s a general enough
   behavior that many people exhibit around you every week.
   Develop a meaningful, consistent, relevant, productive and constructive theory of that phenomenon.
@@ -633,7 +634,7 @@ a better inheritance algorithm with which to improve your existing (or future) l
   with divergent opinions on which variant is better,
   in a field you’re interested in.
   Determine whether you can devise an optimal variant of that technique,
-  or an optimal strategy to pick which variant in which circumstances.
+  or an optimal strategy for choosing which variant to use in which circumstances.
 }
 
 @section{How the Book}
@@ -730,11 +731,11 @@ The narrative goes from the most informal, most generic and most basic informati
 to the most formal, most specific and most advanced.
 Some readers may prefer to stop when the material becomes more formal.
 Others may want to skip the informal discussion and jump directly to the formal parts
-at @secref{MOO}, about a third into the book.
+at @secref{MOO}, about a third of the way into the book.
 
 The most enthusiastic among you will read the book cover to cover,
 including footnotes and bibliographical notes.
-You may even do every exercise, and go all the way into using and implementing
+You may even do every exercise, and go on to use and implement
 the most advanced OO techniques of the later chapters in your programming language of choice
 (@secref{EtSoO}, @secref{EOI}).
 You will end up building your own OO system, and writing a sequel to this book.
@@ -910,8 +911,8 @@ I will define those terms precisely in
 }
 
 @exercise[#:difficulty "Hard"]{
-  Identify a case where you were once bamboozled by someone using the word “we”
-  and your granting undue credit or accepting undue responsibility—or
+  Identify a case where someone once bamboozled you using the word “we”
+  so you granted undue credit or accepted undue responsibility—or
   a case where you bamboozled someone (typically a child or spouse)
   with the same technique.
 }

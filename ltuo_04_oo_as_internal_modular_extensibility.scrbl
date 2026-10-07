@@ -22,7 +22,7 @@ and which form of OO if any is most appropriate.
 Just as to distinguish a chair from a non-chair, or a better chair from a worse chair,
 one must understand the purpose of a chair.
 And only then may one decide when to use or not use a chair,
-and which best fits the purpose if any.
+and which, if any, best fits the purpose.
 
 Moreover, that understanding of the purpose of a thing
 is not a mere matter of formal boxes to check.
@@ -99,8 +99,8 @@ However, many languages offer no such internal notion of modules.
 Indeed modules are a complex and costly feature to design and implement,
 and few language designers and implementers will expend the necessary efforts toward it
 at the start of their language’s development;
-only the few that have success and see their codebase grow
-in size and complexity will generally bother to add a module system@xnote["."]{
+only the few whose languages have success, with codebases that grow in size and complexity,
+will generally bother to add a module system@xnote["."]{
   Unless they develop their language within an existing modular framework
   for language-oriented programming, such as Racket,
   @;TODO{cite. Also Stratego http://strategoxt.org/ ? Pypy https://pypy.org/ ?}
@@ -286,7 +286,7 @@ and later to delimited control in 1988 and beyond @~cite{Felleisen1988}
 is still not available @; TODO cite
 in most programming languages, forgoing another advance in modularity,
 wherein programmers could otherwise abstract over the execution of some fragment of code
-without having to worry about transformations to their control structure,
+without having to worry about transformations to its control structure,
 e.g. for the sake of non-deterministic search, @; TODO cite
 robust replaying of code in case of failure, @; TODO cite
 security checks of code behavior, @; TODO cite
@@ -313,8 +313,8 @@ as entities worth having a name @~cite{Ross1961}.
 @subsection{Modularity and Complexity}
 
 Modularity used correctly can tremendously simplify programs and improve their quality,
-by enabling the solutions to common problems to be solved once by experts at their best,
-and then shared by everyone,
+by enabling common problems to be solved once by experts at their best,
+with the solutions then shared by everyone,
 instead of the same problems being solved over and over, often badly,
 by amateurs or tired experts.
 
@@ -354,7 +354,7 @@ and pushing the limits of what a single programmer can do@xnote["."]{
 Admittedly, there is only so much room in this direction:
 As the software grows in scope, and the required features grow in intrinsic complexity,
 there is a point at which it becomes too big to fit wholly in any programmer’s mind.
-Then the problem must be chipped away by moving parts into other modules,
+Then the problem must be chipped away at by moving parts into other modules,
 notably by reusing common algorithms and data structures from libraries
 rather than inlining specialized versions.
 But in practice, a lot of problems can be tackled this way by bright enough developers,
@@ -418,7 +418,7 @@ they offer no improvement whatsoever in terms of modularity, quite the contrary:
   these techniques add low-level runtime barriers
   that do not improve safety compared to language barriers
   (e.g. using scope discipline and strong types,
-  preferrably with static compilation for performance).
+  preferably with static compilation for performance).
 }
 @item{
   Yet those low-level runtime barriers vastly decrease performance, and even more so
@@ -442,7 +442,7 @@ they offer no improvement whatsoever in terms of modularity, quite the contrary:
 }
 @item{
   The overall system is not made any smaller for being divided into smaller parts;
-  actually, all the artificial process crossings, marshallings and unmarshallings,
+  actually, all the artificial process crossings, marshallings and unmarshallings
   make the overall system noticeably larger in proportion to how small those parts are,
   with more attack surface for bugs and vulnerabilities.
   Lots of small problems are added at both runtime and compile-time,
@@ -510,7 +510,7 @@ in either case, before any of the programmer’s regular code is run
 At the other extreme, an implementation might defer
 all third-class or second-class module evaluation until runtime;
 the runtime representation of those modules would be no different
-than if first-class internal modularity were used.
+from that used with first-class internal modularity.
 However, the semantic distinction remains,
 as these representations will be inaccessible to regular programmers;
 and there might be benefits to keeping modularity compile-time only
@@ -533,7 +533,7 @@ before they are used.
 In a high-level computation without mutation,
 each module is implemented as a function taking the module context as argument;
 its fields are implemented as functional lenses (@secref{OfOO}),
-and the mutual recursion is achieved using a fixpoint combinator (@secref{UPSLC});
+and the mutual recursion is achieved using a fixpoint combinator (@secref{DLCCF});
 lazy evaluation may be used as a dynamic protocol to ensure that
 each field is initialized before it is used.
 
@@ -546,7 +546,7 @@ satisfying all the desired invariants of the system.
 However, when there are circularities in the data structures, then
 it is actually hard to ensure initialization before use;
 a powerful enough language makes it impossible
-to predict for sure whether that will be the case.
+to predict for sure in all cases whether initialization will precede use.
 And as I will show in the next chapter,
 circularities are the general case in the presence of modularity—and
 only more so with OO, i.e. modular extensibility.
@@ -619,7 +619,7 @@ But this is no surprise to those who are deeply familiar with C++ templates, Jso
 and other systems that allow programmers to directly use unrestricted OO
 in a more fundamental purely functional setting wherein OO can be leveraged
 into arbitrary programming and metaprogramming, not just for “classes” stricto sensu.
-In the next subsection, I argue the case from the point of view of modularity
+In the next paragraph, I argue the case from the point of view of modularity
 rather than initialization safety;
 however, both can be seen as two aspects of the same argument about semantics.
 
@@ -653,7 +653,8 @@ solving the initialization issue by abandoning modularity altogether.
 @exercise[#:difficulty "Easy"]{
   Consider various programming interactions you are having with colleagues,
   members of a community, or authors of libraries.
-  How much do you and other people have to synchronize for your software to work well with each other?
+  How much do you and other people have to synchronize
+  for your respective pieces of software to work well together?
   Did you have to modify the code of other people’s software? To read the code?
   To read only an interface? What did they need to do with respect to your code?
   How much cooperation could you achieve, with how much coordination?
@@ -673,7 +674,7 @@ solving the initialization issue by abandoning modularity altogether.
   Pick one of the features I list as making a language more modular, at random.
   Pick a language with the feature, and a program using that feature heavily.
   Explain how to reproduce the effect of that program without using the language feature.
-  Does it indeed involve authors of part of a program having to learn more
+  Does it indeed involve authors of parts of a program having to learn more
   about other parts of the program, having to manually enforce more complex invariants?
 }
 
@@ -792,8 +793,9 @@ which is more extensible than C@xnote["."]{
   whose builtin numeric tower already supports bignums, real numbers, complex numbers, etc.
   In a less biased example involving some kind of “number” not part of the builtin numeric tower,
   e.g. interval arithmetic, then Lisp would still require changes to user code.
-  Now, the changes required for Lisp code could be much more or much less than Haskell,
-  depending on the amount of code, style in which it was written, and investment in macros—still,
+  Now, the changes required for Lisp code could be much more or much less extensive
+  than for Haskell code, depending on the amount of code, style in which it was written,
+  and investment in macros—still,
   much fewer changes than for C or Java code in all cases.
 }
 
@@ -961,7 +963,7 @@ yet not so detailed that the programmer is drowned in minutiae.
 Now, in the case of second-class internal extensibility,
 or of first-class internal extensibility in a less-than-universal language,
 representations are no longer equivalent,
-as only a subset of computable extensions are possible.
+as only a subset of computable extensions is possible.
 This kind of limited extensibility is not uncommon in computing systems;
 the restrictions can help keep the developers safe and simplify the work of language implementers;
 on the other hand, they may push developers with more advanced needs towards
@@ -1027,7 +1029,7 @@ using “hot-patches” that were not foreseen by the original programmer.
   Consider various programming interactions you are having with colleagues,
   members of a community, or authors of libraries.
   Which pieces of software might you want to extend
-  but cannot extend in practice without reimplementing it completely?
+  but cannot extend in practice without reimplementing them completely?
   What prevents you?
   How could you (or the original authors) modify the software to make it more extensible?
 }
@@ -1039,7 +1041,7 @@ using “hot-patches” that were not foreseen by the original programmer.
   You may insert markers in the original code for where things should be edited,
   without modifying its semantics;
   the third-class extension should use those markers, or contextual information,
-  to generate modified code that extends the original one;
+  to generate modified code that extends the original code;
   simple modifications to the original file should be automatically reflected
   in the extended file after re-running the third-class extension.
   @; TODO make a more concrete example
@@ -1150,7 +1152,7 @@ that further transformed previous objects or applied a composed similarity to an
 Modifications to a master would propagate to all its instances, recursively.
 Sketchpad also had “generic blocks” to package graphical operations in a uniform way
 against a common interface—providing modularity (but not extensibility),
-As far as I can tell the earliest explicitly documented variant of U-encoding (@secref{CfUe}).
+and, as far as I can tell, the earliest explicitly documented variant of U-encoding (@secref{CfUe}).
 Sketchpad had modularity and extensibility complementing each other rather than combined,
 but all the basic ingredients for this combination were there.
 It was one of Kay’s inspirations.
@@ -1160,8 +1162,8 @@ and most probably through it Howard Cannon @~cite{Cannon1979},
 another breakthrough in modular extensibility was
 Warren Teitelman’s ADVISE facility @~cite{Teitelman1966}:
 ADVISE enabled programmers to dynamically extend a function with “advice”
-that would run before or after the function itself was called;
-those happening after could even consult or modify the value returned
+that would run before the function’s body was executed, or after it returned;
+advice running after could even consult or modify the value returned
 (though this was not originally an intended interface),
 or otherwise use side effects to communicate with other advice.
 ADVISE is thus the earliest form of internal (first-class) modular extensibility,
@@ -1295,7 +1297,7 @@ multiple inheritance with linearization, method combinations, generic functions,
 abstraction over slot access, dynamic typechecking, an elaborate initialization protocol,
 including re-initialization in case of changed or redefined classes,
 and even a Meta-Object Protocol @~cite{Kiczales1991} for reflection.
-It crowns the era of OO experimentation with an object system no one attempted to match since,
+It crowns the era of OO experimentation with an object system no one has attempted to match since,
 and features sorely missed by those
 who have to use other programming languages after having tried Lisp.
 
@@ -1403,7 +1405,7 @@ The last task to carry out informally is therefore a justification of my approac
 This chapter has so far relied largely on well-established concepts in computing.
 Inasmuch as it can be understood, it is only because I expect my readers
 to be seasoned programmers and scientists familiar with those concepts.
-My most complex explanations were in terms of functions from a modular context to a value,
+My most elaborate explanations were in terms of functions from a modular context to a value,
 or from some (original) value to another (extended) value (of essentially the same type).
 As I try to combine these kinds of functions, the complexity is greater
 than can be explained clearly in a few words, and the devil will be in the details.
@@ -1474,13 +1476,13 @@ to people not familiar with this particular language.
 But it will make it easy for me and my readers
 to run, to test, to debug, and to interact with
 the code I offer in this book,
-and to develop an intuition on how it runs and what it does,
+and to develop an intuition for how it runs and what it does,
 and later to extend and to adapt it.
 
 My code will also provide a baseline for implementers who would want to use my ideas,
 and who may just port my code to their programming language of choice,
 and be able to debug their port by comparing its behavior to that of the original I provide.
-They can implement basic OO in two lines of code in any modern programming language,
+They can implement basic OO in two lines of code in any suitable modern programming language,
 and have a full-featured OO system in a few hundred lines of code.
 
 @subsection{Why First-Class?}
@@ -1527,7 +1529,7 @@ is a relatively small language built around a variant of the applicative λ-calc
 as a dialect in the wider tradition of Lisp. @; TODO CITE
 It has many implementations, dialects and close cousins, @; cite Racket
 a lot of documentation, modern libraries, @; TODO cite SRFIs
-decades of established lore, code base, user base, academic recognition.
+decades of accumulated lore, an established code base and user base, and academic recognition.
 As an evolution from Lisp, it also has macros @~cite{Hart1963 Steele1993}
 that allow you to tailor the syntax of the language to your needs.
 
@@ -1572,11 +1574,11 @@ Therefore, I pick Scheme as the best compromise of a language in which to formal
   Another option is for you to do all exercises in your own programming language of choice,
   which will be much easier if your language at least supports first-class higher-order functions,
   and either dynamic typing, or recursively constrained (sub)types;
-  you’re on your own to translate the problems and their solutions in said language of your choice.
+  you’re on your own to translate the problems and their solutions into said language of your choice.
 }
 
 @exercise[#:difficulty "Easy, Required"]{
-  Locate the file @c{pommette/pommette.scm} that comes with the source code for this book,
+  Locate @(pommette), the example OO implementation that accompanies this book,
   e.g. at @url{https://github.com/metareflection/poof}.
   It contains all the examples in the book, and more, so you can run them,
   copy/paste them, modify them, play with them, etc.

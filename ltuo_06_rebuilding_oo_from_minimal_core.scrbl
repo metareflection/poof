@@ -13,6 +13,10 @@ those so omnipresent that most developers think they are necessary for OO,
 even though they are just affordances easily added on top of the above core.
 More advanced and less popular features will follow in subsequent sections.
 
+A complete working implementation of the constructions in this chapter
+including test examples is available in @(pommette)
+so you can run the examples while following the exposition.
+
 @section[#:tag "RPOO"]{Rebuilding Prototype OO}
 @epigraph{
   If you have built castles in the air, your work need not be lost;
@@ -186,7 +190,7 @@ an implicit conflation of the specification and the target@xnote["."]{
   and fail to find a solution, because they @emph{want} to keep confusing target and specification
   even though at some level they can clearly see they are different things.
   If they had conceptualized the two as being entities that need to be distinguished semantically,
-  and must then be explicitly re-grouped together as some kind of pair,
+  and can then be explicitly re-grouped together as some kind of pair,
   they could have solved the problem and stayed on top of the λ-calculus.
   Instead, they abandon such attempts, and rebuild their own syntactic theory
   of a variant of the λ-calculus just for objects,
@@ -201,10 +205,15 @@ First, it is a modular extension (though it doesn’t exercise the modular part)
 but importantly, in contrast to the usual pattern of OO extensions, it is non-strict:
 it transforms its input value into one that is @emph{not} a subtype of the input type.
 Instead, the input value is transformed into one that is in a strong sense isomorphic to it:
-you can recover one from the other, with an importantly added level of indirection.
+you can recover one from the other, with an importantly added level of indirection@xnote["."]{
+  For a fixed @c{spec}, @c{(conflate spec)} is an isomorphism onto its image,
+  basically just pairing the input value (@c{super}) with that @c{spec}.
+  However, recall that the choice of what to pair the final @c{super} with was not arbitrary:
+  it was the very @c{spec} from which that final value was computed.
+}
 Second, to directly work with the eager variants of the @c{Y} combinator above,
 rather than requiring a lazy language or recursion through ad hoc stateful side effects,
-the fixpoint needs to be a function, which is provided by the representation of records as functions.
+the fixpoint needs to be a function, which is provided by my representation of records as functions.
 
 Thus, I will define and use functions @c{conflate}, @c{get-spec} and @c{get-target}
 to explicitly store and extract the information in the @c{spec} and @c{target} fields of a record:
@@ -292,7 +301,8 @@ In the best case of a simple sequence of data,
 the sequence can be a contiguous array of memory and this fetching is constant time;
 in general, this fetching goes through the memory caching hierarchy,
 which logically requires a number of bits that grows logarithmically with the size of the working set,
-and physically requires a latency which grows as the square root of that size@~cite{Ernerfeldt2014}.
+and physically involves latency that increases as this size involves further removed storage mechanisms
+(see @secref{EOI} and @citet{Ernerfeldt2014}).
 
 Importantly, isomorphic as it might be at some abstract level,
 the reference type is not equal to the type being referenced,
@@ -423,7 +433,7 @@ The difference between the two encodings is subtle but quite interesting:
   @item{
     In the encoding that I have been discussing so far,
     a specification is a function (or record of functions)
-    that takes a fully resolved module (fixpoint) as first argument,
+    that takes a fully resolved module (fixpoint) as an argument,
     and a target is a fully resolved module (fixpoint),
     whose fields directly contain the values users care about.
     Because this representation fully computes a fixpoint
@@ -432,12 +442,12 @@ The difference between the two encodings is subtle but quite interesting:
   @item{
     In the YASOS encoding that I am now discussing,
     instances are functions (or records of functions)
-    that take instances as first argument,
+    that take instances as an argument,
     and users have to explicitly pass those instances as first argument
     every time they call a method to obtain the values they care about.
     These instances are half way between specification and target;
     they use (some variant of) the self-application combinator U,
-    where @c{U x = x x} (@secref{UPSLC}).
+    where @c{U x = x x} (@secref{DLCCF}).
     This is why I call this representation and its variants @emph{U-encoding}.}]
 
 @citet{Kamin1994} call Y-encoding and U-encoding respectively
@@ -484,11 +494,16 @@ with the Y-encoding you use @c{(self method-id)},
 and with the U-encoding you use the equivalent @c{(half half method-id)}.
 Now, most object implementations (including T, YASOS, JS)
 traditionally switch the order of arguments between the @c{half} and @c{method-id},
-so that you instead write @c{(half method-id half)};
-there are good reasons to do that
-from the point of view of low-level representation and efficiency.
+so that you instead write @c{(half method-id half)}.
 But semantically, that is just a trivial linear isomorphism
 (see @secref{SRoRoS} for a discussion).
+I prefer the @c{(half half method-id)} representation for pedagogical reasons:
+it realizes the target record @c{(half half)} as the first step in method resolution,
+thereby making the equivalence between U-encoding and Y-encoding obvious.
+Practical implementers prefer the @c{(half method-id half)} order for performance reasons:
+realizing the target record is expensive
+(you could cache it, but then you might as well just use Y-encoding),
+whereas the traditional order only realizes one method body at a time, on demand.
 
 @subsubsection{For or Against U, Y?}
 
@@ -565,7 +580,7 @@ But at that point, Y-encoding becomes simpler than U-encoding.
 In the end, U-encoding and Y-encoding are both equally capable for implementing
 the whole breadth of semantics of object systems, with many well-identified tradeoffs—and indeed
 were explicitly identified as “self-application model” and “fixed point model” by @citet{Kamin1994},
-who proved the two as equivalent
+who proved the two equivalent
 (and what is remarkable, the equivalence only involves @emph{local} transformations;
 see one of the exercises below).
 Yet, U-encoding seems by far more popular. It seems to have been adopted, in many variants,
@@ -573,7 +588,7 @@ by most implementations of most OO languages,
 since before OO was even invented @~cite{Sutherland1963}.
 Indeed, as far as I can tell, Y-encoding only appears in the literature
 in theoretical semantic models
-@~cite{Cardelli1984 Cook1987Self Cook1987BOF Kamin1988 Reddy1988 Cook1989 CookPalsberg1989 Bracha1990},
+@~cite{Cardelli1984 Cook1987Self Cook1987BOF Reddy1988 Cook1989 CookPalsberg1989 Bracha1990},
 and in practical implementations much later @~cite{Kiselyov2005 Simons2015 Rideau2021}.
 Interestingly, Haskell-based OO systems tend to use Y-encoding
 because it leads to simpler types @~cite{Kiselyov2005 Gale2015}@xnote["."]{
@@ -583,9 +598,12 @@ because it leads to simpler types @~cite{Kiselyov2005 Gale2015}@xnote["."]{
   OCaml can type it directly under the @c{-rectypes} option, which on the other hand
   has a reputation for hard-to-understand error messages.
   In a total language, it is not typeable at all—though neither is a first-class Y combinator.
-  Also, U-encoding forces specification/target conflation as a typing discipline,
-  since generator, @c{half} and @c{hyper} all inhabit one type
-  and no separate target type exists to be had.
+  Also, U-encoding naturally brings about conflation as a typing discipline,
+  since a hatchery (analog to generator), @c{half} and @c{hyper} are all of type @c{Half a},
+  which is the type of the “objects” you manipulate:
+  although in the Haskell formalism the target record type appears as @c{a},
+  in typical OO practice you never directly deal with values of that type,
+  only with halves that you interact with by calling methods (or equivalently sending messages).
 }
 
 Now while U-encoding is always a valid choice, I suspect there are times
@@ -604,9 +622,9 @@ By contrast, U-encoding muddies the two with its half-resolved instances,
 and its widespread adoption probably contributes to the confusion between the two,
 as well as to the general misunderstanding about the semantics and purpose of OO.
 
-For in the end, an implementer’s choice between U-encoding or Y-encoding
+For in the end, an implementer’s choice between U-encoding and Y-encoding
 needn’t be exposed to regular programmers.
-One is reducible to the other, and simpler wrappers transform one representation into the other.
+One is reducible to the other, and simple wrappers transform one representation into the other.
 The choice of one or the other can be thus hidden in the innards of an object system,
 such that users are none the wiser if an implementation changes from one to the other.
 
@@ -649,11 +667,11 @@ Indeed, in case of recursive access to the target, this performance enhancement
 can grow exponentially with the depth of the recursion,
 by using a shared computation instead of repeated recomputations
 (see the related discussion on the applicative Y combinator in
-@secref{UPSLC}).
+@secref{DLCCF}).
 
 If on the other hand, the specification has side effects
 (which of course supposes the language has side effects to begin with),
-then multiple computations of the target value will lead to different results,
+then multiple computations of the target value may lead to different results,
 and caching a canonical target value next to the specification is
 not just a performance enhancement, but a critical semantic feature enabling
 the sharing of the state and side effects of a prototype between all its users.
@@ -661,8 +679,9 @@ Meanwhile, if some users explicitly want to recompute the target,
 so as to get a fresh state to be modified by its own set of side effects,
 they can always clone the prototype,
 i.e. create a new prototype that uses the same specification.
-Equivalently, they can create a prototype that inherits from it
-using as extension the identity element @c{rproto-id}.
+Or they can create a prototype that inherits from it
+using as extension the identity element @c{rproto-id},
+which is equivalent to cloning when the original prototype never changes.
 
 Now, sharing rather than recomputing is an issue not just when computing a prototype as such,
 but also when computing each of its attributes—the fields of its target record.
@@ -764,9 +783,9 @@ yet this feature is arguably essential to the ergonomics of these languages.
 @subsection[#:tag "IRoCiOLaL"]{Implicit Recognition of Conflation in OO Lore and Literature}
 
 The notion of a @emph{conflation of specification and target},
-that I presented, is largely unknown by OO developers, and
+that I presented, is largely unknown to OO developers, and
 seems never to have been made explicit in the literature until
-I published @~cite{Rideau2021}, that itself remained confidential.
+I published @~cite{Rideau2021}, which itself remained little known.
 And yet, the knowledge of this conflation is necessarily present, if implicit,
 if not across the community of OO practitioners,
 at the very least among individual OO implementers—or else
@@ -777,16 +796,20 @@ Common practitioners of OO have long implicitly recognized
 the conflated concepts of specification and target.
 Back in 1979, Flavors @~cite{Cannon1979} introduced the concept of a @emph{mixin} as
 a flavor meant to be inherited from, but not to be instantiated,
-by opposition to an instantiatable flavor;
+in contrast to an instantiatable flavor;
 however, the nomenclature only stuck in the Lisp community
 (and even there, flavors yielded to classes though the term mixin stayed).
-In other communities, the decade-later terms of art are
+In other communities, the later terms of art are
 @emph{abstract classes} and @emph{concrete classes}@~cite{Goldberg1983 Johnson1988}:
-an abstract class is one that is only used for its specification—to inherit from it;
-a concrete class is one that is only used for its target type—to use its methods
+an abstract class is one meant to be used for its specification—to inherit from it;
+a concrete class is one meant to be used for its target type—to use its methods
 to create and process class instances.
-Experienced practitioners recommend keeping the two kinds of classes separate, and
-frown at inheriting from a concrete class,
+In some languages, such as Lisp and Smalltalk above for which the concepts were invented,
+the distinction is a matter of fourth-class convention;
+other languages internalize it as enforced second-class restrictions on classes.
+Even when language restrictions don’t fully enforce it,
+experienced practitioners often recommend keeping the two kinds of classes disjoint, and
+frown on inheriting from a concrete class,
 or trying to instantiate an abstract class.
 
 Theorists have also long implicitly recognized the conflated concepts
@@ -832,7 +855,6 @@ and shrugged it off as yet another one of those many pesky little implementation
 they had to face along the way.
 
 @; TODO cite Cook1989 distinguishes, but does not conflate back
-@; TODO cite Simons1995 / 2005 distinguishes, and notes the conflation
 
 Finally, the confusion between target and specification can be seen as a special case of
 the confusion between object and implementation discussed in @citet{Chiba1996},
@@ -847,9 +869,12 @@ to effectively distinguish specification and target,
 yet no one seems to have been able to fully tease apart the concepts up until recently.
 
 @exercise[#:difficulty "Easy"]{
-  Read and make sense of the code I wrote for this chapter,
+  Read and make sense of the code I wrote for this chapter in @(pommette),
   that you may find e.g. at
-  @url{https://github.com/metareflection/poof/blob/main/pommette/pommette.scm}
+  @url{https://github.com/metareflection/poof/blob/main/pommette/pommette.scm}.
+
+  Or then again, go the Hard route, and try to reimplement all the concepts in this chapter
+  by yourself before you read my solutions.
 }
 @exercise[#:difficulty "Easy"]{
   Reimplement the code from the previous chapter
@@ -880,9 +905,8 @@ yet no one seems to have been able to fully tease apart the concepts up until re
   but only for a small subset of packages?
 }
 @exercise[#:difficulty "Medium"]{
-  Implement a variant of @c{qproto} where instead of a pair,
-  your recursive proxy object is itself a record with fields @c{specification} and @c{target}.
-  Then add more metadata fields such as for object @c{type}, provenance annotation, etc.
+  Extend the recursive proxy record of @c{qproto} with
+  more metadata fields, such as object @c{type}, provenance annotations, etc.
   Notice you can also add metadata fields (or one master metadata field)
   in the @c{rproto} representation.
 }
@@ -1159,7 +1183,7 @@ There are many tradeoffs that can make one style preferable to the other, or not
     parameterized by administrator-configured or user-specified parameters that vary at runtime.
     For instance, a given number may be used, in different contexts,
     with a type descriptor that will cause it to be interacted with as a decimal number text,
-    a hexadecimal number text, a position on a slide bar, or a block of varying color intensity;
+    a hexadecimal number text, a position on a slider, or a block of varying color intensity;
     or to be serialized according to some encoding or some other.
     In a static language like Haskell, @c{newtype} enables compile-time selection between
     multiple different points of view on what is, underneath, a “same” low-level data representation;
@@ -1198,7 +1222,7 @@ There are many tradeoffs that can make one style preferable to the other, or not
     typeclass style treats all classes uniformly, yet can locally encapsulate
     an entire family of them, potentially infinite.
     There is, however, a way to retrieve most of these advantages of typeclass style
-    while remaining in class style, though only few languages support it:
+    while remaining in class style, though only a few languages support it:
     using multi-methods (see below). @; TODO secref
 }]
 
@@ -1234,8 +1258,8 @@ linear pure objects that become invalid if a use is attempted after mutation.
 
 Thus, programming with either (A1) classes or (A2) typeclasses,
 wherein objects are either (B1) mutable or (B2) pure,
-is a matter of style, with some tradeoffs with respect to performance,
-ease of reasoning, between the four combined styles.
+is a matter of style, with some tradeoffs in performance and ease of reasoning
+among the four combined styles.
 You could add more style variants, such as data representation as
 (C1) a graph of records, or (C2) tables of entities,
 (D1) dynamically typed, or (D2) statically typed, etc.
@@ -1328,7 +1352,7 @@ deliberately restricted in expressiveness so as to enable static analysis and op
 in which the types and the base-level functions operating on them
 are being modularly and extensibly specified.
 
-Programming language designers put restrictions on their type-level language
+Programming language designers put restrictions on their type-level languages
 as they attempt to keep them both (1) sound, and also, inasmuch as possible
 (2) terminating in finite and practically guaranteed short time.
 These attempts sometimes succeed, but more often than not utterly fail,
@@ -1337,7 +1361,7 @@ from unforeseen interactions as the languages grow in complexity over time
 (@secref{OOTP})@xnote["."]{
   Even the C preprocessor, with annoying rules added to “guarantee” termination in finite time,
   ends up allowing arbitrary metaprogramming in practice @~cite{Hirrolot2021}.
-  Henry Baker tried to explain it in old posts on USENET that I never understood,
+  I remember Henry Baker trying to explain it in old posts on USENET that I never understood,
   stupidly believing the guarantees, even though I could myself prove that
   the “finite time” of termination could easily be made longer than the age of the universe.
   @; TODO find and cite hbaker usenet
@@ -1372,10 +1396,10 @@ as I demonstrated above, Class OO can be easily expressed in terms of Prototype 
 and implemented on top of it,
 such that inheritance among classes is indeed a special case of
 inheritance among the underlying prototypes;
-however the opposite is not possible,
+however the opposite is not possible in second-class Class OO,
 since you cannot express Prototype OO’s first-class entities and their inheritance
 in terms of Class OO’s second-class entities and their inheritance:
-in most Class OO languages, all class inheritance ends with compile-time,
+in most Class OO languages, all class inheritance ends at compile-time,
 before any prototype inheritance even starts, at runtime.
 
 At best, Prototype OO can be implemented on top of those dynamic Class OO languages
@@ -1392,7 +1416,7 @@ i.e. putting the cart before the horse.
   Implement a simple type descriptor for a @c{Point} class with fields @c{x} and @c{y},
   and an @c{instance-methods} record containing a @c{distance-from-origin} method.
   What are the space and time tradeoffs of such a method
-  compared to the @c{rho-spec} of previous chapter?
+  compared to the @c{rho-spec} of the previous chapter?
 }
 @exercise[#:difficulty "Easy"]{
   If you did exercise @exercise-ref{alist0},
@@ -1419,7 +1443,7 @@ i.e. putting the cart before the horse.
     The actual solution is of course that you should distinguish a
     @c{RectangleInterface} that has @emph{getter methods} @c{width} and @c{height},
     from @c{RectangleImplementation} that has @emph{fields} @c{%width} and @c{%height},
-    and according @emph{setter methods}.
+    and corresponding @emph{setter methods}.
     Similarly, you should distinguish the @emph{SquareInterface} from the
     @emph{SquareImplementation}.
     The @c{SquareImplementation} inherits from @c{SquareInterface}
@@ -1614,7 +1638,7 @@ at that point, the compiler need only guarantee that calls to the upgradable ent
 will not have been inlined.
 Happily, since code upgrade events happen at a much larger timescale than regular evaluation,
 it is also generally quite acceptable for systems to wait until the right moment
-that the system is indeed quiescent, after possibly telling its activities to temporarily shutdown,
+that the system is indeed quiescent, after possibly telling its activities to temporarily shut down,
 before applying such code upgrades.
 
 Third, I must note how languages such as Smalltalk and Common Lisp include a lot of support
@@ -1635,7 +1659,7 @@ Lastly, as to providing a semantics for update in inheritance structure,
 language designers and/or programmers will have to face the question of what to do
 with previously computed targets when a specification is updated:
 Should a target once computed be left forever unchanged,
-now out-of-synch with the (possibly conflated) specification?
+now out of synch with the (possibly conflated) specification?
 Should a target be wholly invalidated, losing any local state updates since it was instantiated?
 Should a target have “direct” properties that override any computation involving inheritance,
 while “indirect” properties are recomputed from scratch just in case the inheritance structure changed?
@@ -1645,7 +1669,7 @@ Should a protocol such as @c{update-instance-for-redefined-class} be invoked to 
 Should this protocol be invoked in an eager or lazy way
 (i.e. for all objects right after code update, or on a need basis for each object)?
 Should a class maintain at all times and at great cost a collection of all its instances,
-just so this protocol can be eagerly updated once in a rare while?
+just so this update protocol can be eagerly invoked once in a rare while?
 Should some real-time system process such as the garbage collector
 ensure timely updates across the entire heap
 even in the absence of such an explicitly maintained collection?
@@ -1685,7 +1709,7 @@ should be seen as low-level scaffolding for users to build their own OO semantic
 of a flexible system, with the actual OO happening in between two uses of the low-level side effects,
 rather than as something that extends OO in novel or mysterious ways,
 that contradict the essential pure functional semantics of OO.
-Indeed, the implementation of these languages (e.g. JavaScript)
+Indeed, the implementations of these languages (e.g. JavaScript)
 base their optimizations on the premise that most of the time the inheritance hierarchy won’t change,
 unless the language semantics itself (e.g. Self, gBeta) ensures that
 it can only change through limited means.
@@ -1699,7 +1723,7 @@ There are various advantages to such a strategy,
 especially in terms of simplicity of implementation, performance and ergonomics
 on top of existing low-level languages and systems.
 But these advantages also come with significant drawbacks in terms of complexity of usage protocols,
-correctness and reasonability @~cite{Wlaschin2015}.
+correctness and “reasonability” (ease of reasoning, as dubbed by @citet{Wlaschin2015}).
 I explore these tradeoffs in @secref{RtM}.
 
 Finally, it is important to realize that mutation or lack thereof
@@ -1737,10 +1761,10 @@ What is the key difference in how client code must be written for each version?
 
 @exercise[#:difficulty "Easy"]{
   The chapter claims that mutation is orthogonal to OO
-  because OO is fully evaluated at compile-time in most languages.
-  Examine a simple class hierarchy in Java or C++.
-  Identify which computations happen at compile-time (class structure, method resolution)
-  versus runtime (field mutation, method execution).
+  because most languages fully evaluate inheritance at compile-time.
+  Examine a simple class hierarchy in a language that does, such as Java or C++.
+  Identify which computations happen at compile-time (class structure, method inheritance)
+  versus runtime (field mutation, method dispatch).
   Does mutation ever affect the compile-time OO computations? Why or why not?
 }
 
@@ -1762,10 +1786,13 @@ What is the key difference in how client code must be written for each version?
   @itemize[
     @item{Creating a specification that performs I/O (e.g., prints a message)
           during instantiation.}
-    @item{Showing that without laziness, composing specifications via @c{mix}
-          causes unwanted duplicate I/O.}
-    @item{Showing that with lazy instantiation, I/O only happens once,
-          when the final target is forced.}]}
+    @item{Showing that eager instantiation of specifications,
+          without sharing through laziness (or equivalent use of state),
+          may cause unwanted duplicate I/O when a
+          (complete, intermediate, or recursively called) target
+          is instantiated and called multiple times.}
+    @item{Showing that deferring and memoizing instantiation, through laziness or state,
+          can avoid this I/O duplication.}]}
 
 @exercise[#:difficulty "Medium, Recommended"]{
   If you did exercise @exercise-ref{05to06}, compare your previous answers with mine.

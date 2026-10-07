@@ -4,7 +4,7 @@
 (require
   (only-in scribble/base
     bold nested elem subsubsection
-    seclink verbatim linebreak image subscript)
+    seclink verbatim linebreak image subscript hyperlink)
   scriblib/bibtex
   (only-in scribble/core make-style current-link-render-style link-render-style)
   (only-in scribble/manual racket racketblock code codeblock litchar itemize item)
@@ -124,3 +124,6 @@
   (substring (git-version "ltuo-*") 5))
 
 (current-link-render-style (link-render-style 'number-and-title))
+
+(define (pommette)
+  (hyperlink "https://github.com/metareflection/poof/blob/main/pommette/pommette.scm" "pommette"))

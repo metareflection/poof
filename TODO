@@ -6,6 +6,7 @@
 - [X] Fix chapter 9
 - [X] support paragraph breaks in bibtex in html mode
 - [ ] Complete chapter 10
+      - [ ] Recursion: dimensions of modular computation https://claude.ai/chat/d26a3a92-ae03-49e4-8f3d-0d4d7f55be98 + secref to ch4
 - [ ] Include Ducournau & al on efficient multiple inheritance in chapter 10
 - [ ] Include Cointe, Briot & al on metaobjects in chapter 10
 - [ ] Finalize conclusion in chapter 11

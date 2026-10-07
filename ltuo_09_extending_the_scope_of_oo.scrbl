@@ -297,7 +297,7 @@ for the corresponding functions that refocus modular extensions
 using @c{skew-ext} with these skew lenses,
 defaulting to an @c{empty-record} at each intermediate level@xnote["."]{
   As an exercise, implement these functions.
-  Or then again just look how I write them in pommette.
+  Or then again just look how I write them in @(pommette).
 }
 
 @subsection[#:tag "FME"]{Focusing a Modular Extension}
@@ -2351,7 +2351,7 @@ and not something flavorless (as in Cecil).
 And you don’t have to write a lot of painful boilerplate—and, worse, keep that boilerplate
 up to date as the code evolves.
 
-@; TODO: footnote explaining that pommette.scm contains examples.
+@; TODO: footnote explaining that @(pommette) contains examples.
 
 @subsection{Multiple Multiple Inheritance}
 
@@ -3161,12 +3161,12 @@ Thus, my presentation of OO is maximal not because it includes every imaginable 
 but because it offers a framework to keep expanding the scope of OO itself.
 
 @exercise[#:difficulty "Easy"]{
-  Read and make sense of the example code I developed for this chapter,
+  Read and make sense of the example code I developed for this chapter in @(pommette),
   that you may find e.g. at
   @url{https://github.com/metareflection/poof/blob/main/pommette/pommette.scm}.
   Or to make things harder, first try as many of the exercises as possible
   without reading my code.
-  Note that pommette sometimes already includes variants that diverge slightly from the book,
+  Note that @(pommette) sometimes already includes variants that diverge slightly from the book,
   with some additional features.
 }
 @exercise[#:difficulty "Easy"]{

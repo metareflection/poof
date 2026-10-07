@@ -8,7 +8,6 @@
   Fools ignore complexity. Pragmatists suffer it. Some can avoid it. Geniuses remove it.
   @|#:- "Alan Perlis"|}
 
-
 @section{Thinking about Types for OO}
 
 @subsection{Dynamic Typing}
@@ -54,7 +53,7 @@ or would have required reverting to unitypes with extra verbosity@xnote["."]{
 
 Types can help reason about programs.
 Thinking in terms of types can help understand
-what programs do or don’t and how to write and use them.
+what programs do or don’t do and how to write and use them.
 Types thin down the space of valid programs in such ways that many common errors
 are automatically caught, as by an error-correcting code:
 if the error is not too large, the closest correct program can be automatically determined.
@@ -84,12 +83,12 @@ they neither provide nor require:
 indeed, these other entities will be linked together with their modules into a complete program,
 but may not have been written yet, and when they are, may be written by other people.
 
-Now, with only modularity, or only extensibility, what’s more second-class only,
+Now, with only modularity, or only extensibility, what’s more, second-class only,
 you could contrive a way for the typechecker to always exactly know all the types required,
 by prohibiting open recursion through the module context,
 and generating magic projections behind the scenes (and a magic merge during linking).
 But as I previously showed in @secref{IoMaE},
-once you combine modularity and extensibility, what’s more first-class,
+once you combine modularity and extensibility, what’s more, first-class,
 then open recursion through the module context becomes the entire point,
 and your typesystem must confront it.
 
@@ -105,7 +104,7 @@ and function types monotonically increase with their result types,
 and decrease with their argument types.
 Then, when modularly specifying a module extension, the modular type for the module context,
 that only contains “negative” constraints about types for the identifiers being required,
-will match the future actual module constraint, that may satisfy many more constraints;
+will match the future actual module context, that may satisfy many more constraints;
 meanwhile, the “positive” constraints about types for the identifiers being provided
 may satisfy many more constraints than those actually required from other modules using it.
 
@@ -143,18 +142,22 @@ but may also more broadly define an entire namespace.
 
 Now, these types are somewhat burdensome, and not modular:
 @itemize[
-  @item{All modular extensions must agree on the type
+  @item{The modular extensions being composed must agree on the type
     @c{required} or @c{target} of the module context.
-    This means there can be no separate compilation of modular extensions,
-    or typing of them before the entire program is written.
+    Each extension can be typed and compiled separately only after
+    that context type has been specified,
+    and cannot be reused with a different context type.
     In some languages with simple and rigid enough types, this means
     details of the target type may have to be wired in every extension,
     that are then not reusable with a different target type.
     Languages with existential types may alleviate this stricture to a point@~cite{Pierce1993}.}
   @item{
     Also, the user must provide a top value for that target type as initial seed for the fixpoint.
-    This works well enough when the target is a record of fields
-    that each have a null, empty or zero value that can be used as a top value;
+    That is simple enough when you can keep @c{top} separate from @c{target} and
+    make it a unit type or empty record type.
+    Some less-expressive typesystems may require you to identify the @c{top} and @c{target} type,
+    in which case the target may have to be a record of fields that each have
+    a null, empty or zero value that can be used as a top value;
     the downside being that the type is then “nullable”, and
     either does not distinguish “uninitialized” from “initialized to the default value”,
     or does distinguish them but then allows “uninitialized” at runtime after the fixpoint is computed.
@@ -190,39 +193,59 @@ Furthermore, usual OO with records as targets requires those features
 to properly apply to indexed products for records,
 such that a record type with extra fields is a subtype of the record type with given fields,
 and a record type whose field types are subtypes of those of another is also a subtype.
-And for modular types that can type extensions separately,
-the typesystem also needs to be able to abstract over sets of extra fields
-to be specified in a later module, using what is known as “row polymorphism”.
+For record-based extensions, row polymorphism @; TODO cite
+is one way to abstract over extra fields whose presence is determined by the context of use.
+It complements the inheritance types discussed here,
+but is not required by inheritance itself.
 
-Then, I can define a type for Simple Strict Modular Extensions,
-either in subtype-style or intersection-style,
-where @c{c ⇒ t} indicates a type @c{t} under a constraint @c{c}:
+Here is how I can define a type for Simple Strict Modular Extensions
+in subtype-style, where @c{c ⇒ t} indicates a type @c{t} under a constraint @c{c}.
+The strictness is expressed by the variable @c{provided} being constrained
+to be a subtype of @c{inherited};
+remove that constraint and you’re back to regular modular extensions:
 @Code{
-type SSModExt_subtype inherited required provided =
+type SModExt⊂ inherited required provided =
   provided ⊂ inherited ⇒
   inherited → required → provided
-
-type SSModExt_intersection inherited required newlyProvided =
-  inherited → required → (newlyProvided ∩ inherited)
+mix : parentProvided ⊂ childInherited,
+      required ⊂ childRequired,
+      required ⊂ parentRequired,
+      provided ⊂ inherited ⇒
+        SModExt⊂ childInherited childRequired provided →
+        SModExt⊂ inherited parentRequired parentProvided →
+        SModExt⊂ inherited required provided
+fix : self ⊂ required, provided ⊂ self ⇒ top → SModExt⊂ top required provided → self
 }
-In subtype style, the strictness is expressed by the variable @c{provided} being constrained
-to be a subtype of @c{inherited}.
+
+Intersection style requires types to constitute a meet-semilattice,
+which is stronger than just requiring them to constitute a partial order.
+Because intersection style is stronger, you can also use subtype constraints
+while using intersection style.
+Many uses of intersections can instead be expressed through fresh type variables
+with subtyping constraints, when only the common-subtype conditions are needed.
+These constraints do not by themselves identify the greatest common subtype.
+Even then, intersections make for simpler expressions and easier intuition.
+Therefore, in the rest of this chapter, I will just assume intersection style
+and use subtype constraints where only common-subtype conditions are needed.
+
 In intersection style, the strictness is expressed by the result type
-being the intersection of the @c{provided} type and the @c{inherited} type,
+being the intersection of the @c{providedExtension} type and the @c{inherited} type,
 thus a subtype of @c{inherited}.
 Whereas in subtype style, @c{provided} covers all the information being returned,
-in intersection style, @c{newlyProvided} only covers the new information.
+in intersection style, @c{providedExtension} only covers the new information.
 Note that the type @c{top} used with @c{fix} is usually chosen in practice at instantiation time
 such that @c{top∩target = target}.
-In this book, I will use a mix of intersection style and subtype style. I then have:
+Here are my types in intersection style;
+the strictness is in the intersection of the result with @c{inherited},
+that if omitted (returning just @c{providedExtension}) leads back to regular modular extensions:
 @Code{
-type SSModExt inherited required newlyProvided =
-  inherited → required → (inherited∩newlyProvided)
-mix : SSModExt i∩p s q → SSModExt i r p → SSModExt i r∩s p∩q
-fix : top → SSModExt top top∩target target → top∩target
+type SModExt∩ inherited required providedExtension =
+  inherited → required → (inherited∩providedExtension)
+mix : SModExt∩ i∩p s q → SModExt∩ i r p → SModExt∩ i r∩s p∩q
+fix : top → SModExt∩ top top∩target target → top∩target
 }
 
-These types refine the @c{V → C → V} from @secref{MOI}:
+In both styles above, the types refine the @c{V → C → V} from @secref{MOI}:
 @c{inherited} and @c{provided} each separately refine the value @c{V} being specified;
 that value can be anything: it need not be a record at all, and if it is,
 it can have any shape or type, and need not have the same as the module context.
@@ -230,51 +253,80 @@ Meanwhile, @c{required} refines the module context @c{C}, and is (almost) always
 The two need not be the same at all, and usually are not for (open) modular extensions,
 unless and until you’re ready to close the recursion, tie the loops and compute a fixpoint.
 
-Unhappily, these Simple Strict Types for Modular Extensions only work well for single inheritance:
-the @c{inherited} type parameter must encode all the information mixed “to the right”
-of the current modular extension, and that information is only available
-when following the discipline of single inheritance.
+The Simple Strict Types for Modular Extensions above work well
+when following a discipline of single inheritance:
+the @c{inherited} type parameter encodes all the information mixed “to the right”
+of the current modular extension,
+and the @c{required} and @c{provided} parameters can be inferred
+with all the information available.
+Using let-polymorphism, you might define a named mixin and
+apply it to several single-inheritance chains,
+with independent type instantiations at each use.
+Computing a fixpoint requires establishing the relevant recursive type constraints,
+but the resulting type may still contain generalized parameters.
 
 @subsection[#:tag "SrSfMMI"]{Stricter Subtypes for Modular Mixin Inheritance}
 
-I can generalize the previous types to work with mixin inheritance,
-by abstracting away (1) the type @c{super} of the @emph{effective} inherited value
-at the time of instantiation,
-by contrast with the type @c{inherited} of the information used from that value, and
-(2) similarly the type @c{self} of @emph{effective} module context at the time of instantiation,
-by contrast with the type @c{required} of the information used from that module context:
+With mixin inheritance, the @emph{effective} @c{super} information
+passed “from the right” of a modular extension may vary,
+and must be preserved and passed-through for processing by further modular extensions.
+However, it is guaranteed to contain @emph{at least} the @c{inherited} information
+expected by the current modular extension.
+The @c{inherited} parameter in a modular extension’s type will thus not represent
+the exact information passed as @c{super}, but a supertype thereof.
+Similarly, the @emph{effective} @c{self} information passed as context may vary,
+and contain more than the information known to be @c{required} by the current modular extension;
+the @c{required} parameter in a modular extension’s type will thus not represent
+the exact information passed as @c{self}, but a supertype thereof.
+This especially matters if the same mixin variable or expression is to be mixed
+with mixins of multiple different types.
+The polymorphic modular extension types for such modular extensions and their primitives
+are as follows:
 @Code{
-type SrModExt inherited required provided =
+type PModExt inherited required providedExtension =
   ∀ super, self : Type
     self ⊂ required, super ⊂ inherited ⇒
-    super → self → (super∩provided)
+    super → self → (super∩providedExtension)
 
-mix : SrModExt (j∩p) s q → SrModExt i r p →
-  SrModExt (i∩j) (r∩s) (p∩q)
-fix : top → SrModExt top (top∩target) target → (top∩target)
+mix : PModExt (j∩p) s q → PModExt i r p →
+  PModExt (i∩j) (r∩s) (p∩q)
+fix : top → PModExt top (top∩target) target → (top∩target)
 }
 
 Note how the parameters @c{i} and @c{j} can be used somewhat independently,
-when they had to be combined into the single parameter @c{i} in @c{SSModExt};
+when they had to be combined into the single parameter @c{i} in @c{SModExt∩};
 that’s an expression of modularity at the type-level.
 Furthermore, the universal quantification (@c{∀}, forall)
-of @c{super} and @c{self} ensure that the modular extension
+of @c{super} and @c{self} ensures that the modular extension
 can be defined once, and later be used in any way that satisfies the type dependencies.
-Mixin inheritance, not merely single inheritance, is now expressible.
+You can now further abstract over the context of use of a mixin.
 
-Type experts may also note how the quantification also forces modular extensions to
-“pass through” any information about methods not being handled as part of the @c{provided} type:
-the idiom where the body of a method specification
+Type experts may also note how
+the result type @c{super∩providedExtension} guarantees
+preservation of the effective inherited interface.
+Quantification over @c{super} further guarantees
+that any information not named in @c{inherited} @emph{must}
+be preserved and passed through, at least as far as type information goes.
+Furthermore, by parametricity, @; TODO @~cite{Reynolds1983 Wadler1989}
+and setting aside divergence, errors and reflection,
+the inherited value is the only source of information the extension can inspect
+outside its declared interface.
+This would justify the idiom where the body of a method specification
 “uses @c{(super method-id)} as a default when no overriding behavior is specified”,
-that I mentioned in @secref{MOI},
-is actually mandated by the above type’s universal quantifier!
-At least it is mandated in language fragments that do not allow for runtime reflection
-on records and their available identifiers,
-which is usually the case in languages with Static Types
-(absent, say, a constraint on the typeclass @c{Data.Dynamic} in Haskell,
-that enables such runtime reflection).
+that I mentioned in @secref{MOI}.
+I believe this can be made a precise free theorem:
+given suitable language restrictions on how methods may be defined,
+an extension can override a finite number of methods,
+possibly including all those in the explicitly inherited set,
+while methods outside the interface it can inspect are passed through.
+This restriction on extensions (and useful theorem for whoever analyses them)
+is lifted if the language allows for runtime reflection on records and their available identifiers,
+at which point an extension might respect the types yet
+intercept methods not covered by the @c{inherited} type.
+But many statically typed languages do not allow such reflection without using special extensions
+(such as constraints on the typeclass @c{Data.Data.Data} in Haskell).
 
-@subsection[#:tag "StSfMuI"]{Strictest Subtypes for Multiple Inheritance}
+@subsection[#:tag "TMI"]{Typing Multiple Inheritance}
 
 The precise meaning of specifications in multiple inheritance and optimal inheritance
 depends crucially on the outcome of the linearization algorithm.
@@ -292,7 +344,7 @@ Subtype polymorphism is monomorphized away and only instances of concrete classe
 at which point a precise monomorphic type is known.
 See for instance @~cite{Rideau2026cxx}.
 This strategy works because classes are second-class, and ancestry is a compile-time constant;
-it is not available for first-class OO.
+the strategy is not available for first-class OO.
 
 As for imprecise types, they impose on programmers the discipline
 of having the types for specifications constitute a meet-semilattice,
@@ -316,19 +368,91 @@ while the exact runtime behavior of a specification
 @emph{will} depend on the linearization order,
 its compile-time type will not and must not.
 
-The imprecise types then look like the @c{ModExt} I offered for mixin inheritance,
+The imprecise types then look like the @c{PModExt} I offered for mixin inheritance,
 except the @c{i r p} parameters will encode
 not only the types induced by the current modular extension,
 but also the transitive intersection of the types induced
 by all the specification’s ancestors.
+Here is how I would encode those types in what is increasingly pseudo-code,
+where
+@c{Tag} is the type of tag for the specification identities,
+@c{DAG} is a type of DAGs over some set of labels that is a finite subset of @c{Tag},
+and @c{lol} is the local order over those labels, and @c{Vertex(lol)}
+the type containing only the vertices of @c{lol}.
+@c{pr}, @c{pi}, @c{pp} are the @c{lol}-indexed families of
+@c{r}, @c{i}, @c{p} type parameters for the parents of the current specification,
+@c{⋂ x} is the intersection of types in the type family @c{x}, and
+@c{Π i:I . T} is the dependent product of types @c{T},
+type of expressions that may depend on @c{i} for each index @c{i} in @c{I},
+@c{Σ i:I . T} is the dependent sum of types @c{T},
+type of pairs of an index @c{i} and an element of @c{T} at @c{i}.
+Note how the polymorphic strictness of the modular extensions
+is essential in ensuring that the resulting type does not depend
+on the exact linearization order:
+@Code{
+type MISpec i r p =
+  Σ lol : DAG .
+  Σ pr pi pp : Vertex(lol) → Type .
+  Σ pe : Type .
+  p = pe ∩ ⋂ pp,
+  r ⊂ ⋂ pr,
+  i ∩ ⋂ pp ⊂ ⋂ pi ⇒
+  { modExt : PModExt (i ∩ ⋂ pp) r pe ;
+    parents : Π l : Vertex(lol) . MISpec (pi l) (pr l) (pp l) ;
+    tag : Tag }}
+
+The sketch above summarizes the interfaces contributed and required by the ancestors,
+but does not fully validate their ordered composition:
+The constraint @c{i ∩ ⋂ pp ⊂ ⋂ pi} checks that inherited requirements
+are covered by the initial information and the combined ancestor contributions;
+but it does not check that each contribution is available before it is required.
+Indeed, intersection makes accumulated type information independent of order,
+but does not make the availability of inherited inputs independent of order.
+A complete treatment must therefore also validate these requirements
+against the chosen linearization.
+For statically known ancestry, this can be checked after computing the linearization,
+as in the previous “precise” strategy;
+for first-class specifications, it requires additional static evidence
+or runtime validation supported by suitable representations of the contracts.
+I leave that additional obligation outside the type sketch above.
+
+@subsection[#:tag "LoST"]{Limitations of Simple Types}
+
+The preceding modular-extension types soundly describe composition and preservation,
+and the @c{MISpec} sketch additionally summarizes ancestry,
+subject to the validation obligation just discussed.
+Variants of them have often been independently reinvented
+by many a programming language researcher. @; TODO cite
+Now, given a parent modular extension with type @c{PModExt i r p},
+composing it with a child modular extension in the same context @c{r}
+may yield type @c{PModExt i r q} where @c{q} is a subtype of @c{p},
+extended with the information contributed by the child.
+However, the context is not preserved when computing a fixpoint:
+instead, changes to @c{p} will feed back into @c{r} and into the @c{i} of further extensions;
+this feedback can lead to a type @c{PModExt j s qq} whose relationship to @c{PModExt i r p} is unclear.
+
+Moreover, the inferences and analyses made for a specification and its target
+cannot in general be shared with an extension thereof and its own target,
+that has its own fixpoint, hence its own @c{r} parameter.
+Each concrete instantiation of a specification requires its own resolution to a self-type;
+hopefully achieved automatically, but if not, manually by the programmer. @; TODO cite Pierce???
+For the same reason, optimizations made, dynamic checks eliminated, cannot in general
+be shared across separately-analyzed and especially separately-monomorphized branches of the code.
+The @c{PModExt} formulation quantifies over effective self types,
+but its interface parameters remain fixed within that quantification, and do not vary with self,
+which limits the relationships expressible through this fixed contract.
+
+Wouldn’t it be nice if there were a simple way to reflect inheritance into the typesystem,
+such that you could analyze a specification once, and the analysis would directly apply
+to extensions to the specification?
+Thus you could regain some of the modularity that OO is supposed to help provide?
 
 @section[#:tag "NNOOTT"]{The NNOOTT: Naïve Non-recursive OO Type Theory}
 
 @subsection[#:tag "OST"]{Obvious Simple Theory}
 
-The @c{SSModExt} or @c{SrModExt} types, taken literally,
-or similar types independently reinvented by many a programming language researcher,
-lead to the simplest and most obvious theory for typing OO,
+Well, @citet{Hoare1965}, and for decades his successors,
+already had a theory that wholly simplified the issue of typing OO,
 that I will dub the Naïve Non-recursive Object-Oriented Type Theory (NNOOTT):
 it consists in considering subprototyping / subclassing (a relation between specifications)
 as the same as subtyping (a relation between targets).
@@ -342,20 +466,34 @@ is (supposedly) a subtype of the parent “superclass” being extended@xnote[".
   @;{ XXX Eiffel, Java, Smalltalk }
 }
 
-This model is simple and intuitive, and
-has good didactic value to explain how inheritance works:
-given two modular extensions, you can chain them as child and parent;
-the combined specification yields the intersection of the provided methods and fields,
-extending the intersection of the inherited methods and fields,
-while using the intersection of the required module context.
+In my above model, suppose a parent specification @c{A}
+produces a target of type @c{a} when independently instantiated,
+and its extension @c{(mix B A)} produces a target of type @c{b}.
+The NNOOTT infers @c{b ⊂ a} from this inheritance relationship alone,
+without accounting for the parent interface’s possible dependence
+on the different effective self types.
+The types of descendants are subtypes of those of ancestors.
+Type analyses and type-directed optimizations can be reused. All is well.
 
+The NNOOTT is simple and intuitive, and
+even has good didactic value to explain how inheritance works:
+infer from inheritance that the target of a specification
+is the subtype of the target of its parent or ancestor specifications.
 The model accurately captures most simple uses of OO—indeed,
-all the most common introductory examples to OO,
-with points, shapes, animals, vehicles, employees, bank accounts, or gui widgets.
-Don’t the types above seemingly tell us everything about the semantics of inheritance?
+most common introductory examples to OO, including
+points, shapes, animals, vehicles, employees, bank accounts, or GUI widgets.
+You start from a record or record type, add a few fields to it,
+valued in some constant type that doesn’t refer to “this” current type
+(because why make things needlessly complicated?),
+and there you are, with a subtype of the parent type.
+The theory is obviously true in all these cases where you add one or a few simple fields,
+surely by induction it’s true always?
 
 However, this “Naïve Non-recursive OO Type Theory”, as the name indicates,
-is a bit naïve indeed, and only works in simple non-recursive cases.
+is a bit naïve indeed:
+its conclusion holds in non-recursive cases,
+and can even be extended in some further useful cases,
+but does not hold in general.
 Yet the NNOOTT is important to understand,
 both for the simple cases it is good enough to cover,
 and for its failure modes that tripped so many good programmers
@@ -366,11 +504,14 @@ into wrongfully trying to equate inheritance and subtyping.
 The NNOOTT works well in the non-recursive case, i.e.
 when the types of fields do not depend on the type of the module context;
 or, more precisely, when there are no circular “open” references between
-types being provided by a modular extension,
-and types it requires from the module context.
-In his paper on objects as co-algebras,
+the type a modular extension provides
+and the type it inherits from the super it extends
+or the type it requires from its module context.
+In his paper on objects as coalgebras,
 Bart Jacobs characterizes the types for the arguments and results of his methods
-as being “(constant) sets” @~cite{Jacobs1995}@xnote[","]{
+as being “(constant) sets” @~cite{Jacobs1995},
+which he elaborates in another paper @~cite{Jacobs1996InheritanceAC}
+as meaning “not depending on the ‘unknown’ type X (of self)@xnote[".”"]{
   Jacobs (@secref{OOinDM}) is particularly egregious in smuggling this all-important restriction
   to how his paper fails to address the general and interesting case of OO
   in a single word, furthermore, in parentheses, at the end of section 2,
@@ -383,6 +524,7 @@ as being “(constant) sets” @~cite{Jacobs1995}@xnote[","]{
   (actually, the general case), by separating methods into a “core” part
   where fields are declared, that matter for typing inheritance,
   and for which his hypothesis applies, and “definitions” that must be reduced to the core part.
+
   The conference reviewing committees really dropped the ball on accepting those papers,
   though that section 2.1 was probably the result of at least one reviewer doing his job right.
   Did reviewers overall let themselves be impressed by formalism beyond their ability to judge,
@@ -393,6 +535,7 @@ as being “(constant) sets” @~cite{Jacobs1995}@xnote[","]{
   In the late 1980s, every new software product was claiming to be “object-oriented” @~cite{King1989},
   and in the 1990s, IBM would even hire comedians to become “evangelists”
   for their Visual Age Smalltalk technology, soon recycled into Java evangelists.
+
   Jacobs is not the only one, and he may even have extenuating circumstances.
   He may have been ill-inspired by Goguen (@secref{Goguen}),
   whom he cites, who also abuses the terminology from OO to make his own valid but loosely-related
@@ -409,6 +552,7 @@ as being “(constant) sets” @~cite{Jacobs1995}@xnote[","]{
   Java, Web2, Big Data, Mobile, Blockchain or AI, or whatever trendy topic of the year;
   and reviewers for the respective relevant conferences may have welcomed
   newcomers with unfamiliar points of view.
+
   Even Barbara Liskov, future Turing Award recipient, was invited to contribute to OO conferences,
   and quickly dismissed inheritance to focus on her own expertise,
   which involves modularity without extensibility—and stated
@@ -420,6 +564,7 @@ as being “(constant) sets” @~cite{Jacobs1995}@xnote[","]{
   so she did have a stake in the name, though
   her definition happily didn’t prevail.
   @citet{Wegner1987} rightfully calls it “object-based” but not “object-oriented”.
+
   Are those who talk and publish what turns out not to be OO at all at OO conferences,
   or those who invite them to talk and publish, being deliberately misleading?
   Probably not. Yet the public can be fooled just the same as if dishonesty were meant:
@@ -434,6 +579,7 @@ as being “(constant) sets” @~cite{Jacobs1995}@xnote[","]{
   even published at some of the most reputable conferences in the field (e.g. OOPSLA, ECOOP),
   because science is casually corrupted by power and money,
   and only more cheaply so for the stakes being low.
+
   This particular case from decades ago is easily corrected in retrospect;
   its underlying lie was of little consequence then and is of no consequence today;
   but the system that produced dishonest science hasn’t been reformed,
@@ -441,31 +587,50 @@ as being “(constant) sets” @~cite{Jacobs1995}@xnote[","]{
   that compared to the semantics of OO are both less objectively arguable,
   and higher-stake economically and politically.
 }
-which he elaborates in another paper @~cite{Jacobs1996InheritanceAC}
-as meaning “not depending on the ‘unknown’ type X (of self).”
 This makes his paper inapplicable to most OO, but interestingly,
-precisely identifies the subset of OO for which inheritance coincides with subtyping,
-or, to speak more precisely,
-for which subtyping of modular extensions coincides with subtyping of their targets.
+identifies a common subset of OO for which inheritance coincides with subtyping:
+under the stated restrictions, the target of an extended specification
+is a subtype of the target of the unextended specification.
 
-Indeed, in general, specifications may contain so called “binary methods”
+The result can be extended to also work in the presence of such “open” references,
+when they all occur in “positive” positions such that
+information added only feeds back positively through the fixpoint.
+@emph{Strict} extensions that satisfy this property are called “covariant”.
+Extensions where all open references occur in “negative” positions (such as function arguments)
+are called “contravariant”.
+Those with open references in both kinds of positions are called “invariant”.
+Finally, those strict extensions that contain no open references,
+I will call “constant” like Jacobs above.
+With suitable interpretation of (least) fixpoints for types,
+it can be proven that, under the monotonicity hypotheses stated in the exercise below,
+given two strict covariant extensions A and B,
+the target @c{(fix top (mix B A))} is a subtype of the target @c{(fix top A)},
+i.e. subclassing implies subtyping for classes defined covariantly only.
+
+Now, the @emph{general} case is “invariant”, and while the other cases make for fun papers
+and useful optimizations, they are a distraction as to how to lay the semantic foundations
+for understanding the meaning of OO.
+
+Indeed, in general, specifications may contain so-called “binary methods”
 that take another value of the same target type as argument,
 such as in very common comparison functions (e.g. equality or order)
 or algebraic operations (e.g. addition, multiplication, composition), etc.
-Beyond these, specifications may actually contain arbitrary higher-order functions
-involving the target type in zero, one or many positions,
-both “negative” (as an overall argument)
-or “positive” (as an overall result), @; TODO cite Felleisen???
-or as parameters to type-level functions, “templates”, etc.
-These methods will break the precondition for subclassing being subtyping.
+And beyond these already common methods,
+any occurrence in a negative position will break the precondition
+for the theorem that deduces subtyping from subclassing.
+This includes occurrences in the setters of mutable fields.
+And, in typeclass style (@secref{CSvTS}), this includes the arguments to constructors;
+this matters when an algorithm involves constructing elements of the described type,
+and not just consume existing ones.
 
-And such methods are not an “advanced” or “anomalous” case, but quintessential.
-The very first example in the very first paper about actual classes @~cite{Dahl1967},
+Such methods are not an “advanced” or “anomalous” case, but quintessential.
+Indeed the very first example in the very first paper about actual classes @~cite{Dahl1967},
 involves recursive data types:
 it is a class @c{linkage} that defines references @c{suc} and @c{pred} to the “same” type,
 that classes can inherit from so that their elements shall be part of a doubly linked list.
-This example, and any data structure defined using recursion,
-will defeat the NNOOTT if examined closely.
+This example, and any mutable data structure defined using recursion,
+as well as any binary method, or contravariant or invariant extension,
+will provide counterexamples to the general inference from inheritance to target subtyping.
 Not only is such recursion a most frequent occurrence, I showed above in @secref{IoMaE} that
 while you can eschew support for fixpoints through the module context
 when considering modularity or extensibility separately,
@@ -474,34 +639,50 @@ In the general and common case in which a class or prototype specification
 includes self-reference, subtyping and subclassing are very different,
 a crucial distinction that was first elucidated in @citet{Cook1989Inheritance}.
 
-Now, the NNOOTT can be “saved” by reserving static typing to non-self-referential methods,
-whereas any self-reference must be dynamically typed:
+Now, one simple trick to “save” the NNOOTT is
+to reserve static typing to non-self-referential methods,
+while self-references are given constant interface types:
 wherever a recursive self-reference to the whole would happen, e.g. in the type of a field,
 programmers must instead declare the value as being of a dynamic “Any” type,
-or some other “base” type or class,
+or some fixed base type (that doesn’t vary with inheritance),
 so that there is no self-reference in the type, and the static typechecker is happy.
-Thus, when defining a list of elements of type @c{A}, you could not write the usual recursive formula
-@c{List(A) = 1 + A*List(A)} or the fixpoint @c{List(A) = Y (λ Self . 1 + A*Self)},
-and would just write @c{List(A) = 1 + A*Any}.
-Similarly, for trees with leaves of type @c{B}, you couldn’t write the recursive formula
-@c{Tree(B) = B + List(Tree(B))}, and
-would instead write just the non-recursive and dynamically typed
-@c{Tree(B) = B + List(Any))}.
+Thus, in a class @c{A} binary method @c{add : A → A}
+(with the current element of type @c{A} as implicit first argument),
+a subclass @c{B} would not have a binary method with @c{add : B → B}
+with types that track the subclass, but still a binary method @c{add : A → A},
+that would need to typecheck its argument for being of type @c{B} and downcast it
+to use any B-specific information,
+while whoever uses the results would also have to check that they are indeed of type @c{B}
+and downcast them (again, to use any B-specific information from it).
+Actually, with proper language support, you could make it so designated positive occurrences
+may track the subclass, and the inherited method would then be @c{add : A → B},
+and only the negative occurrence in an argument requires a dynamic typecheck and downcast.
 
-To compensate for the imprecision of the typesystem
-when retrieving an element of the desired self-type,
-some kind of explicit dereference, typecast (downcast), or coercion
-is required from the programmer;
-that operation may be either safe (with a dynamic runtime check), or
-unsafe (program may silently misbehave at runtime if called with the wrong argument).
+@; TODO: we can improve the above by only adding dynamic checks in contravariant positions.
+@; Check: as in Eiffel ? BETA ? C++ ? Java ? C# ?
+
+In a language with support for dynamic types at runtime,
+the programmer can declare methods with overly permissive types,
+then compensate for the lack of a precise-enough type in the static typesystem
+by using dynamic checks, explicit dereferences, typecasts (downcasts),
+or (safe or unsafe) coercions.
+Programs without type errors will have to pay for those extra checks at runtime,
+while those with type errors will raise an error at runtime (or, in the unsafe case, misbehave).
 In some languages, self-reference already has to go through
-pointer indirection (e.g. in C++), or
-boxing (e.g. in Haskell, when using a @c{newtype Fix} generic constructor for fixpoints,
-while the open modular definition goes into a “generator”);
-thus the NNOOTT does not so much introduce an extra indirection step for recursion
-as it makes an existing indirection step obvious—and
-makes it dynamically rather than statically typed.
-In other words, it makes us realize once again that @emph{recursion is not free}.
+pointer indirection (e.g. in C++);
+in others, through an explicit type-level wrapping step
+(e.g. in Haskell, with a @c{newtype Fix} for fixpoints
+which introduces one level of syntactic and type-level wrapping and unwrapping
+every time you access the fixpoint,
+while the open modular definition goes into a “generator”;
+the (un)wrapping step is erased at compile time,
+the runtime indirection coming instead from Haskell’s ordinary boxed lazy values).
+Thus saving the NNOOTT may require dynamic checks to recover subclass-specific information
+lost due to weakening the static self-type contract;
+but examining where those checks go reveals that,
+in the representations discussed above,
+recursion itself already involves indirection even without such dynamic checks.
+In other words, it makes us realize once again that @emph{recursion is not free} (@secref{RC}).
 
 @subsection{Why NNOOTT?}
 
@@ -530,9 +711,8 @@ Even after that debunking, it has remained prevalent in popular opinion,
 and still very active in academia and industry alike,
 and continually reinvented even when not explicitly transmitted
 @~cite{Cartwright2013 AbdelGawad2014}.
-I readily admit it’s the first idea I too had
-when I tried to put types on my modular extensions,
-as you can see in @citet{Rideau2021}.
+I readily admit it’s a naïve belief I too had
+when I first tried to put types on my modular extensions.
 
 The reasons why, despite being inconsistent, the NNOOTT was and remains so popular,
 not just among the ignorant masses, but even among luminaries in computer science,
@@ -549,7 +729,7 @@ is well worth examining.
   quite on the contrary, Hoare, as well as the initial designers of
   Simula, KRL, Smalltalk, Director, etc.,
   were trying to have a unified concept of “class” or “frame” or “actor”, etc.
-  Consequently, the necessity of considering two distinct entities
+  Consequently, the necessity of considering the clumping together of two distinct entities
   was only fully articulated in the 2020s(!).}
 @item{
   In the 1960s and 1970s, when both OO and type theory were in their infancy,
@@ -557,12 +737,13 @@ is well worth examining.
   the NNOOTT was a good enough approximation that even top language theorists were fooled.
   Though the very first example in OO could have disproven the NNOOTT,
   still it requires careful examination and familiarity with both OO and Type Theory
-  to identify the error, and pioneers had more urgent problems to solve.}
+  to identify the error, and pioneers lacked the joint familiarity and
+  had more urgent problems to solve.}
 @item{
   The NNOOTT actually works quite well in the simple “non-recursive” case
   that I characterized above.
   In particular, the NNOOTT makes sense enough
-  in the dynamically typed languages that (beside the isolated precursor Simula)
+  in the dynamically typed languages that (besides the isolated precursor Simula)
   first experimented with OO in the 1970s and 1980s,
   mostly Smalltalk, Lisp and their respective close relatives.
   In those languages, the “types” sometimes specified for record fields
@@ -657,7 +838,7 @@ and their fixpoint targets are different;
 in other words, forgetting a field in a target record, or some of its precise type information,
 is not at all the same as forgetting that field or its precise type in its specification
 (which introduces incompatible behavior with respect to inheritance,
-since extra fields may be involved as intermediate step in the specification,
+since extra fields may be involved as an intermediate step in the specification,
 and must be neither forgotten, nor overridden with fields of incompatible types).
 
 If a language treats two entities as a single one syntactically and semantically,
@@ -680,10 +861,11 @@ fields marked @c{protected} (visible only to extensions of the specification, no
 and fields marked @c{private} (not visible to extensions of the specification,
 even less so to the target; redundant with just defining a variable in a surrounding @c{let} scope).
 @principle{The visibility annotations of mainstream OO languages
-are what you necessarily get when you require a single type
-for the conflation of a specification and its target.}
-I retrieve these familiar notions from C++ and Java just by reasoning from first principles
+become intelligible when you unbundle their conflated meaning for a specification and its target.}
+You can retrieve the familiar notions from C++ and Java just by reasoning from first principles
 and thinking about distinct but related types for a specification and its target.
+And if you didn’t conflate them and their types,
+you could just use simpler visibility annotations independently on specification and target.
 
 Now, my opinion is that it is actually better to fully decouple the types
 of the target and the specification, even in an “implicit pair” conflating the two:
@@ -695,22 +877,28 @@ because of effects somewhere else in the system, etc.,
 can be safely represented and typed,
 without having to fight the typesystem or the runtime.
 
-@subsubsection{Recursively Constrained Types}
-A more precise view of a modular extension is thus as
+@subsubsection[#:tag "AoSDI"]{Abstracting over Self-Dependent Interfaces}
+
+To describe the feedback relationship between self as provided result
+and self as required context, a more precise view of a modular extension is thus as
 an entity parameterized by the varying type @c{self} of the module context
 (that Bruce calls @c{MyType} @~cite{Bruce1996 Bruce1997}). @; TODO cite further
-As compared to the previous parametric type @c{SrModExt} that is parameterized by types @c{i r p},
+As compared to the previous parametric type @c{PModExt} that is parameterized by types @c{i r p},
 this parametric type @c{ModExt} is itself parameterized by parametric types @c{i r p}
-that each take the module context type @c{self} as parameter@xnote[":"]{
+that each take the module context type @c{self} as parameter@xnote["."]{
   The letters @c{r i p}, especially if reordered,
   by contrast to the @c{s t a b} commonly used for generalized lenses,
   suggest the mnemonic slogan: “Generalized lenses can stab, but modular extensions can rip!”
 }
+I am not competent to make claims with respect to how easy or hard it is
+to infer this kind of types:
 @Code{
-type ModExt inherited required newlyProvided =
+type ModExt (inherited : Type → Type)
+            (required : Type → Type)
+            (providedExtension : Type → Type) =
   ∀ super, self : Type
     self ⊂ required self, super ⊂ inherited self ⇒
-        super → self → super∩(newlyProvided self)
+        super → self → super∩(providedExtension self)
 }
 
 Notice how the type @c{self} of the module context
@@ -719,16 +907,26 @@ This recursion matters inasmuch as the @c{required} operator does vary with its 
 its body literally including @c{self}-references.
 Meanwhile, the type @c{super} of the value in focus being extended
 is constrained by @c{super ⊂ (inherited self)},
-but also appears in the returned value of type @c{super ∩ (newlyProvided self)}.
+but also appears in the returned value of type @c{super ∩ (providedExtension self)}.
 There again, @c{self} (and not e.g. @c{super}) is used as the parameter:
 self-references refer to the same fixpoint of the complete specification,
 not to a supertype thereof, and not to the fixpoint of an ancestor specification.
 That’s how the “extreme late binding” of Kay is translated into types.
 
-Finally, notice how, as with the simpler NNOOTT variant above,
+Recursive constraints could already arise in particular instantiations
+of the previous modular-extension types:
+When a modular extension mentioned the target type (from the information it requires)
+in the values it produces (from the information it provides),
+the type analysis for its fixpoint could already produce a recursive network of type constraints.
+The difference is that in this section, those networks of equations and inequations
+can now be abstracted into a variable @c{required}, and
+instead of discussing a particular type’s dependency on @c{self},
+I can now abstract over that dependency as a type-level function.
+
+Finally, notice how, as with the simpler modular extension types above,
 the types @c{self} and @c{required self} refer to the module context
 (and the part of it required by the extension),
-whereas the types @c{super}, @c{inherited self} and @c{newlyProvided self}
+whereas the types @c{super}, @c{inherited self} and @c{providedExtension self}
 refer to some value in focus: the actual value to be extended,
 the part specifically used by this extension, and the newly provided extensions to it.
 The context and the value in focus needn’t at all be the same
@@ -738,12 +936,12 @@ ready for instantiation via a fixpoint operator.
 
 My two OO primitives then have the following types:
 @Code{
-fix : ∀ inherited, required, newlyProvided : Type → Type,
+fix : ∀ inherited, required, providedExtension : Type → Type,
       ∀ self, top : Type,
-      self = inherited self ∩ newlyProvided self,
+      self = inherited self ∩ providedExtension self,
       self ⊂ required self,
       top ⊂ inherited self ⇒
-        top → ModExt inherited required newlyProvided → self
+        top → ModExt inherited required providedExtension → self
 
 mix : ModExt j∩p s q → ModExt i r p → ModExt i∩j r∩s p∩q
 }
@@ -751,19 +949,19 @@ mix : ModExt j∩p s q → ModExt i r p → ModExt i∩j r∩s p∩q
 In the @c{fix} function, I implicitly define a fixpoint @c{self}
 via suitable recursive subtyping constraints.
 I could instead replace the first constraint with a definition
-@c{self = Y (inherited ∩ newlyProvided)}
+@c{self = Y (inherited ∩ providedExtension)}
 and check the two subtyping constraints about @c{top} and @c{required}.
 As for the type of @c{mix}, it looks the same as
-the type I previously offered, and that turned out to be the NNOOTT,
-except with @c{SrModExt} replaced by @c{ModExt}.
+the type I previously offered, except with @c{PModExt} replaced by @c{ModExt}.
 However, there is an important though subtle difference:
 with @c{ModExt}, the arguments being intersected
-are not of kind @c{Type} as with @c{SrModExt},
+are not of kind @c{Type} as with @c{PModExt},
 but @c{Type → Type}, where
 given two parametric types @c{f} and @c{g},
 the intersection @c{f∩g} is defined by @c{(f∩g)(x) = f(x)∩g(x)}.
-Indeed, the intersection operation is defined polymorphically, and
-in a mutually recursive way for types, functions over types, etc.
+Indeed, the intersection operation is defined polymorphically by induction on kinds,
+so that it applies to operators of any arity that return types
+that can then be intersected pointwise.
 
 @subsection{Advantages of Typing OO as Modular Extensions}
 
@@ -813,7 +1011,7 @@ yet construct my object features to be as sophisticated as I want,
 without a gap in reasoning ability, or inconsistency in the primitives.
 
 My encoding of OO in terms of “modular extension”, functions of the form
-@c{mySpec (self : Context, super : Focus) : Focus}, where in the general “open” case,
+@c{mySpec (super : Focus, self : Context) : Focus}, where in the general “open” case,
 the value under @c{Focus} is different from the @c{Context}, is also very versatile
 by comparison to other encodings, that are typically quite rigid, specialized for classes,
 and unable to deal with OO features and extensions.
@@ -833,8 +1031,8 @@ that will be shaped by the evolving needs of the programmers,
 yet will at all times benefit from the modularity and extensibility of OO.
 
 OO can be one simple feature orthogonal to many other features
-(products and sums, scoping, etc.), thereby achieving @emph{reasonability}, @; TODO cite
-i.e. one may easily reason about OO programs this way.
+(products and sums, scoping, etc.), thereby achieving @emph{reasonability} @~cite{Wlaschin2015},
+i.e. ease of reasoning about OO programs.
 Instead, too many languages make “classes” into a be-all, end-all ball of mud of
 more features than can fit in anyone’s head, interacting in sometimes unpredictable ways,
 thereby making it practically impossible to reason about them,
@@ -1005,9 +1203,10 @@ is undecidable (and thus so is type inference), even on fully type-annotated ter
 while you can recursively enumerate all valid subtyping judgements,
 making subtyping semi-decidable by construction,
 there are types not subtypes of a type,
-and terms not part of a type, for which you can never decide in finite time whether that is the case.
+and terms not inhabiting a type, for which you can never decide in finite time whether that is the case.
 
-Even System F was later found to have semi-decidable type inference and type checking
+Even System F was later found to have undecidable (though semi-decidable)
+type inference and type checking,
 where terms carry no explicit polymorphic type information @~cite{Wells1999}
 (which is Curry-style, types separate from terms, and what most programmers use in practice).
 System F typechecking without type inference, however, remains trivially decidable given
@@ -1019,7 +1218,7 @@ to make System F work.
 However, no such remedy is available for @(Fsub):
 the subtyping relation is itself undecidable, even with fully specified types,
 so no amount of annotation can rescue the type checker against difficult cases.
-Thus, Cardelli’s initial programme for types for OO failed on both grounds
+Thus, Cardelli’s initial program for types for OO failed on both grounds
 of consistency (@secref{NNOOTT}) and decidability—which
 doesn’t diminish his great innovative contributions to the topic,
 including launching the field of research itself.
@@ -1054,9 +1253,8 @@ that prevent undecidability, or at least make it harder to fall into cases of no
         and also reduces the potential for undetected type confusion for programmers.}
   @item{Using nominal types rather than structural types makes type constraints more explicit,
         and generates finite class hierarchies that make subtyping easier;
-        however, it only applies to second-class Class OO, not to first-class OO;
-        also, type parameters and wildcards can still generate an infinite set of instantiated types
-        from a finite set of declarations.}
+        however, type parameters and wildcards can still generate
+        an infinite set of instantiated types from a finite set of declarations.}
   @item{Variance declarations can restrict the more problematic cases
         involving non-monotonic recursion,
         like those used by Pierce to prove undecidability.}]
@@ -1107,7 +1305,7 @@ reduces to well-understood fixpoint computations.
 @citet{Eifrig1995ILOOP} demonstrated that this framework
 is expressive enough to provide sound polymorphic type inference
 for objects with records, width and depth subtyping, and recursive types—all
-with a decidable algorithm that computes principal types,
+with a sound and complete, decidable type inference algorithm,
 requiring no type annotations from the programmer.
 
 The constrained-types approach influenced later theoretical work
@@ -1129,8 +1327,8 @@ Types for OO is a vast topic of which I am not a specialist,
 such that I am incapable of producing and presenting the Ultimate Theory.
 Instead, I invite you to read some of the better papers I’ve managed to identify
 and collect in my annotated bibliography at the end of this book,
-with the hope that the notes I wrote on these papers will be helpful to you@xnote["."]{
-  Inasmuch as I’m still alive to write a next edition to this book,
+in the hope that the notes I wrote on these papers will be helpful to you@xnote["."]{
+  If I’m still alive to write a next edition to this book,
   I appreciate your feedback in updating or improving the list below,
   as well as this book in general.
 }
@@ -1174,8 +1372,57 @@ A travesty, an inversion of right and wrong, and a waste of tremendous brainpowe
 @citet{Remy1994},
 @citet{Fisher1994}, @citet{Fisher1996}, @; TODO @citet{Fisher1999}
 @; TODO: Kim Bruce 1993 1994 1995, PolyTOIL
-@citet{Bruce1996}, @citet{Bruce1997}.
-@; TODO: mention how Fisher's operational semantics is U-encoded, but her types are Y-encoded. Cool.
+@citet{Bruce1996}, @citet{Bruce1997}@xnote["."]{
+  There’s this recurring attitude of “types first” in much PL academia,
+  as captured by the title of the book “Types and Programming Languages” @~cite{Pierce2002}
+  instead of the other way around: “Programming Languages and Types”.
+  In this approach, types are the main objects (ha!) of interest,
+  and programs are mere accessories that matter chiefly for what types they inhabit.
+  In the extreme case, that “chiefly” becomes “only”,
+  and the afflicted authors assume program-irrelevance,
+  i.e. proof-irrelevance seen through the Curry-Howard correspondence between programs and proofs.
+  Church-style typing is often a dead giveaway for this approach:
+  they consider that a program is not even a program until you’ve stated
+  what type you’re interested in (with the extreme type theorists
+  discarding the rest of the program after checking it inhabited the stated type).
+  In this approach, the only point of OO is a challenge between type theorists:
+  “can your typesystem do this?”
+  When an author shows that his typesystem can—applause, the end.
+  Most type theorists will gladly sacrifice what programs and software patterns can be expressed
+  if only it makes things easier for the typesystem.
+  The irony is that their only terms are then the types,
+  and the actual typesystem that @emph{they} use is the system of their “kinds”,
+  i.e. the types for types.
+  For a lot of them, there is only one kind, i.e. their typesystem itself is monotyped,
+  which is the same as for dynamic languages they loathe.
+  The more advanced among them tend to use the simply typed λ-calculus for their kinds,
+  something very basic. Then there are those who use dependent types,
+  which can indirectly express arbitrary programs inside the typesystem...
+  at which point they’re almost back to square one, just without any good tooling.
+
+  But to those of us who build software in the industry, OO is a tool
+  for the expression of otherwise unreachable or unaffordable patterns of thought,
+  within the toolbox that is a programming language.
+  Types in turn are meta-tools, that can make that toolbox even more useful, safer, handier,
+  by helping us reason about those software patterns.
+  Expressing those patterns is the purpose; OO enables it; types support it.
+  Giving simple types to the simplest OO patterns is where the type show starts in earnest,
+  not where it ends. Going further and covering as much of the useful pattern space as possible is
+  the point—which requires identifying that useful pattern space,
+  and if possible its meta-pattern. A problem largely shunned by type theorists.
+  We reckon that programs come first and embrace Curry-style types.
+  As for disregarding the differences between programs inhabiting the same type,
+  or making the software patterns harder or impossible to express
+  so as to go easy on the typesystem...
+  to us it’s entirely missing the point.
+
+  Now, type theorists do not owe developers submission to their priorities;
+  in return, developers do not owe type theorists any interest in their typesystems.
+  And so when you consider the OO vs FP flamewars again, you see that
+  the dispute is never an argument about the technical incompatibility between two fields;
+  it is a case of people disregarding each other’s concerns and
+  then complaining that the others disregard theirs.
+}
 
 @; TODO Cook 1987 A self-ish model of inheritance ?
 @; @citet{Cook1989 CookPalsberg1989}
@@ -1213,13 +1460,13 @@ they are only meant for compiler consumption under the assumption of
 a fixed program that won’t be extended during execution
 (at least not without invalidating the compiled code).
 A relevant and interesting paper that comes to mind in the context
-of modelling OOP in terms of FP is @citet{Might2010}.
+of modeling OO in terms of FP is @citet{Might2010}.
 I am sure there are many others, but once again this is not my specialty.
 
 @subsection[#:tag "OOTP"]{OO Type Practice}
 
 I shook my head at theorists who put types on top of toy object systems rather than underneath;
-but at least those I cited produced sound typesystems.
+but at least those I cited produced sound typesystems—unless otherwise stated.
 What then shall I say about practitioners who do this at industrial scale
 on top of object systems so overgrown that no one can conceivably hold them in their head,
 much less reason about their logical soundness?
@@ -1238,7 +1485,7 @@ Also no—typechecking is Turing-complete @~cite{Grigore2017}.
 Programmers are deprived of the power to do good,
 but the power to do bad hasn’t been stopped one bit.
 
-How could the endeavour fail despite such tremendous efforts?
+How could the endeavor fail despite such tremendous efforts?
 Well, I’ll say it failed @emph{because} of the tremendous effort.
 Not only do too many cooks spoil the broth, but
 the very approach of trying to fit a typesystem
@@ -1291,7 +1538,7 @@ Yet this complexity derives directly from the conflation and confusion of specif
     and the changes on top.
 }]
 
-And so, to the almost entirety of industry and academia alike,
+And so, to almost all of industry and academia alike,
 composed of people most of whom are better and cleverer than me in more ways than one,
 still I declare:
 @principle{Programming: You’re Doing It Completely Wrong.}@xnote[""]{
@@ -1309,7 +1556,7 @@ still I declare:
   of some language you know. Identify at least three classes and three method signatures
   for which the NNOOTT will give a good type, and at least three for which it will give a bad type.
   What is the criterion already?
-  Can you explain in each case what makes treating subclassing as subtyping the same
+  Can you explain in each case what makes treating subclassing the same as subtyping
   sound or unsound?
 }
 @exercise[#:difficulty "Easy"]{
@@ -1348,6 +1595,33 @@ still I declare:
 }
 
 @exercise[#:difficulty "Medium"]{
+  Validity of the NNOOTT in the covariant case:
+  Prove the monotonicity of fixpoints for monotone operators in general.
+  Let @c{D} be a complete lattice, and order functions @c{D → D} pointwise.
+  Prove that for monotone operators @c{F,G : D → D},
+  @c{F ⊑ G ⇒ μF ⊑ μG}.
+
+  Hint: Show that @c{μG} is a pre-fixpoint of @c{F}, then
+  use the characterization of @c{μF} as the least pre-fixpoint of @c{F}.
+
+  Now let @c{P,Q : D → D} be monotone, and @c{M : D × D → D} be monotone in both arguments.
+  Consider the modular extension
+    @c{ext(M,P) ≜ λs. M(P(s),s)},
+  show that
+    @c{P ⊑ Q  ⇒  ext(M,P) ⊑ ext(M,Q)},
+  and therefore
+    @c{μ(ext(M,P)) ⊑ μ(ext(M,Q))}.
+
+  In particular, if @c{ext(M,P) ⊑ P}, conclude that @c{μ(ext(M,P)) ⊑ μP}.
+
+  Relate the monotonicity hypotheses above to the requirement that
+  the corresponding openly recursive variables occur only in positive positions,
+  where @c{⊑} is @c{⊂} when @c{D} is a lattice of types.
+  @; TODO cite Tarski1955 Park1969 Constable1985 Cook1989
+  @; TODO maybe cite Scott1971/1972 Wand1979 Smyth1982(/Plotkin) Findler2002
+}
+
+@exercise[#:difficulty "Medium"]{
   If you did exercise @exercise-ref{07to08}, compare
   your attempt at typing OO with the treatment in this chapter.
   What aspects did you anticipate? What surprised you?
@@ -1383,12 +1657,44 @@ still I declare:
   Get your system published.
 }
 
-@;{TODO FOR 2nd Edition
-Actually implement all those typesystems in Scheme, and
-retroactively apply them to pommette (where appropriate).
+@;{TODO
+
+HOPEFULLY for 1st Edition:
+
+In a first pass, keep things minimal without adding examples,
+but justify in handwavy terms what each level of typing sophistication enables:
+
+At the introduction of each feature, add a sentence or short paragraph
+explaining the programming need it addresses:
+- Let-polymorphism: independently instantiate a named extension at each use.
+- Higher-rank polymorphism: preserve that flexibility when passing an extension to a function that uses it at several self types.
+- Higher-kinded abstraction: describe combinators uniformly over arbitrary self-dependent interfaces.
+- Intersections: express preservation and combination of compatible interfaces.
+
+Add a recap at the end.
+Cite Peyton Jones et al. for the machinery, and
+
+In a second pass, add the actual examples to pommette.
+
+A third one would integrate them into the chapter.
+
+HOPEFULLY for 2nd Edition:
+
+Build a series of gradually more sophisticated typecheckers in Scheme (using OO to extend them!)
+for all the example programs and example typesystems,
+showing the advantages and limitations of each typesystem.
+Include wrong programs that the typesystems catch,
+and correct programs that they nevertheless reject.
+Illustrate what is wrong with the NNOOTT.
+Include contortions by which some programs can nevertheless be typed with extra boilerplate.
+
 Implement a UI for visualizing types, type constraints, or the many typesystems, on a given term.
+Make it visually obvious which typesystem supports which program.
+
 See how the type system interacts with macro expansion.
+
 Now while Dolan-style constraint-based type inference should be straightforward,
 dealing with record-as-functions, conflation, and finalization wrappers are still a research project.
+
 Definitely not a 1st Edition issue.
 }

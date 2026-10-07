@@ -264,7 +264,7 @@ will have been mixed in before or after the current one, and thus cannot assume
 any common indexes between the many instances of the prototype or class being specified;
 in the general case, a hash-table lookup will be necessary to locate
 any method or element field provided by an instance of the current specification,
-which is typically ten to a hundred times slower than fixed offset access.
+which is substantially slower than fixed offset access.
 Some caching can speed up the common case somewhat, but it will remain noticeably slower
 than fixed offset access, and caching cannot wholly avoid the general case.
 
@@ -277,7 +277,7 @@ Users can selectively use single inheritance when they want more performance
 across all the subclasses of a given class.
 
 @exercise[#:difficulty "Easy"]{
-  Read and make sense of the code I wrote for this chapter,
+  Read and make sense of the code I wrote for this chapter as part of @(pommette),
   that you may find e.g. at
   @url{https://github.com/metareflection/poof/blob/main/pommette/pommette.scm}
 }
@@ -457,7 +457,7 @@ Interestingly,
 @emph{the λ-calculus itself crucially lacks the features needed for DAG node identity}:
 an externally provided tag, or some other side effect are required for a counter,
 possibly via a monad encoding (with a state monad for the counter).
-The inability of the plain λ-calculus to @emph{directly} manipulate graphs,
+The inability of the plain λ-calculus to @emph{directly} observe node identity and sharing,
 when its very semantics is itself about graph reduction, suggests that
 @principle{to describe the reduction-level semantics of computing systems in general,
 the λ-calculus must be extended with some primitives for the manipulation of graph data},
@@ -498,29 +498,6 @@ So the lack of a builtin graph support is actually a feature in other contexts@x
     Plotkin–Power, "Notions of Computation Determine Monads",
     Jacobs, "Affine Monads and Side-Effect-Freeness".
   }
-}
-
-@;{
-AKSHULLY, the type can abstract away how the whole thing was built,
-and only show the synthetic i r p that intersect those of all ancestors @secref{StSfMuI}
-
-The type for a multiple inheritance specification would thus look like the following,
-where @c{Nat} is the type of natural numbers,
-@c{Iota} introduces a finite dependent type of given size,
-@c{DependentList} introduces a dependent list,
-@c{Tag} is a type of tags giving the specifications an identity as nodes in a DAG,
-and the @c{{...}} syntax introduces some kind of record type.
-
-@Code{
-type MISpec i r p =
-  ∀ i r p : Type → Type .
-  ∀ l : Nat .
-  ∀ pr pi pp : Iota l → Type → Type .
-  r ⊂ Intersection pr,
-  i ∩ Intersection pp ⊂ Intersection pi ⇒
-  { getModExt : ModExt i r p ;
-    parents : DependentList j: (ModExt (pi j) (pr j) (pp j)) ;
-    tag : Tag }}
 }
 
 @subsection[#:tag "DMRMI"]{Difficulty of Method Resolution in Multiple Inheritance}
@@ -897,10 +874,8 @@ even if only with a list of lists of two elements, one list for each pair of com
 
 @subsubsection{Extended Precedence: Consistency in Preferences}
 @emph{If a parent specification @c{X} is chosen to appear before a parent specification @c{Y}
-in the linearization, then all the ancestors of @c{X} that aren’t ancestors of @c{Y}
-will also appear before @c{Y} in the linearization}
-(and therefore also before any of @c{Y}’s ancestors,
-that may or may not be shared with @c{X}).
+in the linearization, then every ancestor of @c{X} will also appear before @c{Y}
+in the linearization, unless doing so would violate the other ordering constraints.}
 Thus, even though @c{X} might itself be specified by composing many small specifications,
 the series of these specifications will not be interrupted in the middle, or otherwise
 interspersed with potentially contradictory specifications from @c{Y},
@@ -958,11 +933,13 @@ but Ruby, Scala and Lisp fail to.
 
 @subsubsection{Shape Determinism: Consistency across Equivalent Ancestries}
 Two specifications with equivalent inheritance DAGs
-(with an isomorphism between them, bijection preserving partial order both ways)
+(with an isomorphism that preserves local orders between the ancestors of the one and the other),
 will yield equivalent precedence lists, up to the same isomorphism.
 Renaming methods or specifications, moving code around, fixing typos,
 updating method bodies, adding or removing methods,
 changing filenames and line numbers, etc., will not change the precedence list.
+On the other hand, modifying the local order, by adding or removing elements,
+or swapping the order of elements, may change the precedence list.
 
 This property enables users to predict the “method resolution order” for a specification,
 based on the “shape” of its inheritance DAG alone.
@@ -975,7 +952,8 @@ with equivalent inheritance DAG, which subsumes the previous case,
 since the methods of a class or prototype are “just” open specifications
 that have been assembled together into a closed one, with a shared ancestry.
 Thanks to Shape Determinism, changes made while debugging won’t suddenly hide bad behavior, and
-changes made while refactoring or adding features won’t introduce unrelated bad or unexpected behavior.
+changes made while refactoring or adding features
+won’t introduce unrelated bad or unexpected behavior.
 
 This property was first described @~cite{Ducournau1992}
 under the nondescript name “acceptability”.
@@ -998,7 +976,7 @@ as a tie-breaking heuristic to choose which ancestor to pick next
 while computing a precedence list,
 whenever the constraints otherwise allow multiple solutions.
 But the instability of such a heuristic when the code changes
-would lead to many @emph{heisenbugs}.
+would lead to many @emph{heisenbugs} @~cite{Raymond1996}.
 
 @subsubsection{Global Precedence: Consistency across All Ancestries}
 
@@ -1162,7 +1140,7 @@ of programming languages in general and/or OO in particular
 The wider academic literature is also lacking in proper treatment of
 types for multiple inheritance, with some notable exceptions like
 @citet{Chambers1992} or @citet{Allen2011},
-and even then, there has been zero interest whatsoever in flavorful multiple inheritance
+and even then, there has been precious little interest in flavorful multiple inheritance
 in the programming language part of academia outside of the Lisp community@xnote["."]{
   Interestingly, work on flavorful multiple inheritance was done
   mostly by MIT students or graduates who had a career in the industry
@@ -1199,7 +1177,7 @@ to take its contents seriously.
 And yet languages that care more about expressiveness, modularity and incrementality
 than about ease of writing performant implementations with simpler typesystems,
 will choose multiple inheritance over the less expressive and less modular alternatives:
-see for instance Common Lisp, C++, Python, Scala, Rust.
+see for instance Common Lisp, C++, Python, Scala.
 @TODO{cite Scala OO model. What else? Kathleen Fisher’s thesis?}
 
 @subsection{Comparing Multiple and Mixin Inheritance}
@@ -1432,9 +1410,8 @@ because most OO hierarchies are shallow@xnote["."]{
 
 Multiple inheritance otherwise involves the same runtime performance issues as mixin inheritance
 compared to single inheritance (@secref{CMSI}):
-in general, method or field access requires a hash-table lookup
-instead of a fixed-offset array lookup, which is typically 10-100 times slower.
-
+in the most general case, method or field access requires a hash-table lookup
+instead of a substantially faster fixed-offset array lookup.
 Now, a lot of work has been done to improve the performance of multiple inheritance,
 through static method resolution when possible, @; TODO cite C++ ? type analysis ? sealing ?
 and otherwise through caching @~cite{Bobrow1986}. @; TODO cite SBCL?
@@ -1444,6 +1421,7 @@ even when successful at avoiding the full cost of the general case,
 while not eliminating the much slower behavior in case of cache miss.
 For all these reasons, many performance-conscious programmers
 prefer to use or implement single inheritance when offered the choice.
+@; TODO secref ch10 when ready
 
 @exercise[#:difficulty "Easy"]{
   Draw the inheritance DAG for the following specifications:
@@ -1787,21 +1765,17 @@ to determine if the specification is sealed,
 i.e. allows no further extensions @~cite{Shalit1996}.) @;{TODO cite Scala 2.9 ?}
 
 I give a complete Scheme implementation of C4 in the accompanying code for the book,
-the pommette library. It is also part of @(GerbilScheme) (in the v0.19 release branch and later),
+the @(pommette) library. It is also part of @(GerbilScheme) (in the v0.19 release branch and later),
 and of a C++ library I wrote, @c{c4-mixins}. Semi-informally, the algorithm is as follows,
-where the steps tagged with (C4) are those added to the C3 algorithm
-(remove them for plain C3):
+where splitting off, merging and cleaning up suffixes are the additions to C3:
 @itemize[#:style'ordered
   @item{@bold{Extract parent precedence lists}:
         For each parent appearing in the Local Order
         (which in general can be several lists of totally ordered parents),
         add the precedence list of the parent to the list of lists of candidates,
-        if said parent didn’t appear as ancestor already.
-        Maintain a table of ancestor counts, that counts how many times each ancestor appears
-        in the precedence lists so far;
-        use it to determine if a parent appeared already;
-        you will also use it later in the algorithm during candidate selection.}
-  @item{@bold{Split step}:
+        if said parent didn’t appear as ancestor already
+        (maintain a table to avoid duplicates).}
+  @item{@bold{Split step} (C4 only):
         Split each precedence list into:
         @itemize[
           @item{@bold{Prefix}:
@@ -1812,7 +1786,7 @@ where the steps tagged with (C4) are those added to the C3 algorithm
             (the empty list if no such suffix specification).}]
         If using singly linked lists, keep your prefixes in reverse order for later convenience.
         (In plain C3: everything is in the prefixes; the suffixes are empty.)}
-  @item{@bold{Suffix merge step}:
+  @item{@bold{Suffix merge step} (C4 only):
   Merge all suffix lists into a single merged suffix list.
   The suffix property requires these lists to be in total order: given any two suffix lists,
   one must be a suffix of the other. If not, raise an incompatibility error.
@@ -1830,7 +1804,7 @@ where the steps tagged with (C4) are those added to the C3 algorithm
      (if the prefix lists are kept reversed, also reverse each local order list for consistency;)
      call the elements of those lists “candidates”, the lists “candidate lists”,
      and this list the “candidate list list”.}
-  @item{@bold{Cleanup Step}:
+  @item{@bold{Cleanup Step} (C4 only):
      @itemlist[
        @item{Build a hash-table mapping elements of the merged suffix list
              to their (positive) distance from the tail of the list.}
@@ -1857,7 +1831,9 @@ where the steps tagged with (C4) are those added to the C3 algorithm
            ]}]}
   @item{@bold{C3 merge on cleaned prefixes}:
      @itemlist[
-       @item{From the table of ancestor counts created in the first step,
+       @item{Initialize a table of ancestor counts with the number of occurrences
+             of each ancestor across all cleaned candidate lists, including the local-order lists.}
+       @item{From the table of ancestor counts,
              for each candidate list, decrement the ancestor count of its head element.}
        @item{Repeatedly, and until all the lists are empty,
          identify the next winning candidate in the candidate list list:
@@ -1918,7 +1894,8 @@ by using a vector (O(1) time, O(k) space per struct,
 where k is the inheritance depth of the largest struct at stake)
 instead of a linked list (O(k) time, O(1) space per struct).
 However, if you skip the interstitial infix specifications,
-suffix hierarchies usually remain shallow@xnote[","]{
+suffix hierarchies usually remain shallow,
+so it’s a bit moot what to optimize for@xnote["."]{
   As mentioned in a previous note, in loading almost all of Quicklisp 2025-06-22, I found
   that k≤4 in 99.9% of cases, k=6 max.
   Note though that the pressure on struct inheritance is less for Lisp programs
@@ -1927,7 +1904,6 @@ suffix hierarchies usually remain shallow@xnote[","]{
   the same would probably still be said of structs, with behavior moved to classes
   that structs inherit from.
 }
-so it’s a bit moot what to optimize for.
 
 The description above was enough for an AI,
 trained before it was published and included in training sets (though long after C3 was),
@@ -2032,7 +2008,7 @@ You can access a prototype target’s field by passing its identifier to the @c{
 and you can access the prototype’s specification by instead passing a magic value
 (in Scheme I will use @c{#f});
 the specification field contains @c{e}, @c{s} and @c{p},
-but also a cache of the precedence list and the specification’s most specific suffix ancestor,
+but also a cache of the precedence list and the specification’s most specific strict suffix ancestor,
 as well as any other meta data.
 
 The accessors can be defined as below.
@@ -2076,15 +2052,16 @@ Last but not least, the constructor for a @c{poi} is defined as follows:
             ((suffix?)         suffix?)
             ((parents)         parents)
             (else #f))))
-       (self (η₁ (fix (record (#f spec))
-                      (force effective-mod-ext*)))))
+       (self (η₁ (fix-record
+                   (mix (rproto-wrapper spec)
+                        (force effective-mod-ext*))))))
     self))
 }
 
 Note how I crucially rely on explicit laziness with @c{delay} and @c{force}
 to avoid constantly recomputing the precedence list and the most specific suffix
 and, after them, the effective modular extension,
-and the target record itself (see the discussion in @secref{UPSLC})@xnote["."]{
+and the target record itself (see the discussion in @secref{DLCCF})@xnote["."]{
   As discussed then, eager pure functional programming could capture the expected answers
   by using η-conversion instead of laziness to defer evaluation,
   but that would cause a lot of recomputations and
@@ -2254,7 +2231,7 @@ flowchart BT
   and @c{:p*} for a single value that is itself a list of lists of parents.
   Replace @c{:e} and co. by the keyword syntax in your Lisp implementation (if any).
 
-  NB: I implemented those in pommette. Either don’t look at my solutions,
+  NB: I implemented those in @(pommette). Either don’t look at my solutions,
   or implement them for a different language or dialect.
 }
 

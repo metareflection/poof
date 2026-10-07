@@ -74,7 +74,7 @@ is not at all the same as what almost everyone else calls “multiple inheritanc
   not to mention its distant 1988 successor CLOS.
 }
 a subset of flavorless multiple inheritance (for @c{virtual} superclasses and member functions,
-with restriction from a “conflict” view of inheritance, see @secref{DMRMI}),
+with restrictions arising from a “conflict” view of inheritance, see @secref{DMRMI}),
 and something that is not OO (for non-@c{virtual} superclasses and member functions)@xnote["."]{
   C++ “repeated inheritance”, similar to “tree inheritance” from @citet{Snyder1986},
   can be seen either as object composition (@secref{CvI}) with systematic proxying of methods,
@@ -129,7 +129,7 @@ C++ will deliberately eschew the field sharing and “dynamic dispatch” of OO
 and use “static dispatch” instead for the sake of performance (at doing the wrong thing).
 In the end, C++ is many great and not-so-great things, but only a few of those things are OO;
 and even most of what looks like OO in C++ is often different enough from OO that
-@principle{C++ does not reliably inform about OO in general}.
+@principle{C++ does not reliably inform us about OO in general}.
 
 @subsubsection{OO isn’t Defined by Any Particular Language or System}
 OO is a general concept that is not defined by any single particular instantiation of it,
@@ -154,7 +154,7 @@ Many claim that classes, as first implemented by Simula 67@~cite{Dahl1967}
 are essential to OO, and only ever care to implement, use, formalize,
 study, teach, promote, or criticize class-based OO (a.k.a. Class OO).
 Books from luminaries in Programming Languages @~cite{Pierce2002 Krishnamurthi2008 Friedman2008},
-in their chapter about OO, barely even mention any other kind of OO if at all,
+in their chapters about OO, barely even mention any other kind of OO if at all,
 much less study it.
 
 Yet KRL@~cite{Bobrow1976}, the very first system
@@ -180,7 +180,7 @@ maybe the top one by users
 (though it relatively recently also adopted classes on top of prototypes @~cite{ECMA2015}).
 
 Moreover, I will argue that Prototype OO @~cite{Borning1986}
-is more general than Class OO, that is but a special case of it @~cite{Lieberman1986}
+is more general than Class OO, which is but a special case of it @~cite{Lieberman1986}
 (@secref{CaPfT}, @secref{RCOO}).
 And I will even argue that you can recognizably have OO
 with neither classes nor even prototypes
@@ -243,7 +243,7 @@ as Haskell grew up to become a practical language@xnote["."]{
   whichever reasonable yet somewhat arbitrary threshold criteria you choose,
   the answer would be at about the same time.
 
-  In any case, making a practical language pure functional was just not an option before 2005 or so,
+  In any case, making a practical language purely functional was just not an option before 2005 or so,
   and it is absurd to declare any programming language concept intrinsically stateful
   merely because all its practical implementations before 2005 were stateful.
   You could similarly make the absurd claim that logic programming, functional programming,
@@ -269,7 +269,7 @@ but is very compatible with FP, purity, and even with laziness and consistent st
 they are not—see @secref{CSvTS}.)
 Actually, I will argue from the semantics of OO, that
 @principle{Pure Lazy Functional Programming is the natural setting for OO}
-(@secref{UPSLC}).
+(@secref{DLCCF}).
 
 @subsection[#:tag "OOinE"]{OO isn’t Encapsulation}
 @epigraph{A half-truth is a whole lie. @|#:- "Yiddish proverb"|
@@ -289,8 +289,9 @@ with code on either side not caring which way the other side implements its part
 not even being able to distinguish between multiple such implementations,
 let alone look inside at the state of the other module.
 Viewed broadly, @principle{encapsulation is another name for modularity, which is only half of OO}.
-Meanwhile the word “modularity” much better than “encapsulation” identifies
-the broader purpose of the concept, beyond a mere technical property.
+Meanwhile the word “modularity” identifies
+the broader purpose of the concept much better than “encapsulation”,
+beyond a mere technical property.
 Whichever way you name it, people who try to equate OO with only that half of it
 crucially miss the other half—@emph{extensibility} (@secref{EO}, @secref{E})—and
 thus fail to properly identify OO.
@@ -353,12 +354,12 @@ In the end, Cook’s PhD and subsequent academic career grew out of
 brilliantly modeling the key mechanism of OO (Inheritance)
 from the foreign point of view of FP—its What and How.
 But his lack of appreciation and understanding for the OO tradition,
-indeed missing the point of it all—its Why and Wherefore—were such
-that they have become proverbial: immortalized in Gabriel’s essay
+indeed missing the point of it all—its Why and Wherefore—was such
+that it has become proverbial: immortalized in Gabriel’s essay
 “The Structure of a Programming Language Revolution” @~cite{Gabriel2012}
 as a prototypical failure to understand a phenomenon when viewed
 through a scientific paradigm incommensurable with the one that produced it.
-The problem is not that Cook solved Inheritance as frog
+The problem is not that Cook solved Inheritance as a frog (@secref{UC})
 yet failed to see the big picture as a bird: he did take a bird’s view,
 and still couldn’t see what his paradigm couldn’t express.
 
@@ -377,7 +378,10 @@ And yet, there are undeniably common practices, common phenomena, common concept
 common language features, common design patterns, common goals, common aspirations,
 worth understanding, conceptualizing, defining and naming
 in the rich (though sometimes mutually conflicting) traditions
-that grew around OO.
+that grew around OO@xnote["."]{
+  While this section puts Cook in the pillory for his silly informal notions about OO,
+  the rest of this book should be considered an homage to his formal elucidation of OO.
+}
 
 @subsection{OO isn’t Opposite to FP}
 @; I destroy my enemies when I make them my friends. — Lincoln
@@ -444,13 +448,15 @@ wherein the new class does not have that access.
 
 GoF argues against creating an exponential number of subclasses
 that specialize based on static information about what is or could be a runtime value,
-because classes are compile-time and human-developer-time objects
+because in their paradigm of second-class Class OO
+(even when used in languages capable of more, like Smalltalk)
+classes are compile-time and human-development-time objects
 that are less flexible and costlier in human effort than runtime entities,
 and limited in total number of combinations that can be made available at runtime.
-However, this argument, while correct in the context of Class OO,
+However, this argument, while correct in the context of second-class Class OO,
 does not apply to Prototype OO, wherein umpteen combinations of prototypes
 (and classes as a particular case) can be generated on demand at runtime
-out of an infinite amount of potential combinations,
+out of an infinite number of potential combinations,
 at no additional cost in terms of human effort.
 
 Once you understand the notion that prototypes in general and classes in particular
@@ -461,8 +467,8 @@ as a special case of the “Principle of Least Privilege” @~cite{Saltzer1973}:
 every module of a larger program.
 It’s easy enough to add a new privilege to an existing program when you need it;
 but it’s much harder to audit every use case of an existing program
-to see if you can safely remove an old privilege—or to fail to
-and later deal with bugs and vulnerabilities.
+to see if you can safely remove an old privilege—or alternatively,
+to fail to audit them and later deal with bugs and vulnerabilities.
 
 In this case, since you can compute a target from its specification,
 accessing the specification is a greater privilege than just holding a target;
@@ -478,7 +484,7 @@ Still, the above is a heuristic. “When that makes sense.” But what makes sen
 
 It is always preferable to base decisions
 on an actual understanding of the domain being modeled,
-rather than let a heuristic substitute for lack of understanding.
+rather than let a heuristic substitute for understanding.
 That is where it really helps to think of “inheritance” vs “composition”
 in terms of these more directly usable names: “is-a” vs “has-a” relationships@xnote["."]{
   I’m not sure who first introduced is-a and has-a in the vocabulary.
@@ -513,7 +519,7 @@ the width of objects as well as their length,
 you might have records with length and width rather than mere numbers,
 and still unify a car with its chassis, though no longer with its length.
 But if your program eventually becomes interested in the height, weight or price of objects,
-and those of their components when they need be replaced,
+and those of their components when they need to be replaced,
 you’ll soon enough see that the two entities may somehow share some attributes
 yet be actually distinct: ultimately,
 both @c{car} and @c{chassis} @emph{have} a @c{length} and @emph{are} @c{lengthy},
@@ -523,10 +529,10 @@ Crucially, the design decision between inheritance and composition depends not j
 on the current structure of the program, but also on expectations about its future evolution,
 within a static or dynamically evolving schema of data structures and algorithms.
 If the schema is small, static, well-understood and won’t need to evolve
-it doesn’t really matter much which technique is used to model it.
+then it doesn’t really matter much which technique is used to model it.
 But as it grows, evolves and boggles the mind,
 a more modular and extensible approach is more likely to
-enable the software to adapt to changing situations,
+enable the software to gracefully adapt to changing situations,
 at which point thoughtful uses of inheritance can help a lot.
 
 @subsubsection{The Real Opposition between OO and FP}
@@ -552,7 +558,7 @@ solve problems as tall as can entirely fit in their brains, neatly decomposing t
 into layers wherein each is reduced to the one below,
 which is what academic publishing rewards.
 
-A lot of opposition between OO and FP is thus struggle between various tribes of programmers,
+A lot of opposition between OO and FP is thus a struggle between various tribes of programmers,
 as much as clashes between people with different temperaments,
 in which each kind of programmer proves unable to fathom much less appreciate
 the kind of problems that the other kind faces and solves.
@@ -610,7 +616,7 @@ that Alan Kay also identified as essential for OO@xnote["."]{
   Now, as we’ll see, you need fixpoints to express the semantics of OO;
   but in a pure applicative context, you cannot directly express sharing the results of a computation,
   so the pure fixpoint combinators lead to exponential recomputations
-  as deeper self-references are involved (@secref{UPSLC}).
+  as deeper self-references are involved (@secref{DLCCF}).
   OO is therefore possible using the applicative pure functional fragment of the language
   within an Erlang process, but the result will not scale very well;
   see for instance the example “object-via-closure” that Duncan McGreggor wrote as part of LFE.
@@ -633,7 +639,7 @@ that Alan Kay also identified as essential for OO@xnote["."]{
   but only fits indirectly in other paradigms,
   including the pure applicative functional paradigm of Erlang in-process,
   or the process-oriented paradigm of Erlang between-processes.
-  See also the discussion in @secref{UPSLC}.
+  See also the discussion in @secref{DLCCF}.
 }
 
 Most OO languages have no support whatsoever for concurrency,
@@ -652,9 +658,9 @@ that handles the dispatch based on the types of its arguments@xnote["."]{
   The “generic function” functionality from the Common Lisp Object System (CLOS)
   @~cite{Bobrow1988} (@secref{GF})
   that Common Lispers often informally group in “protocols”,
-  the “protocols” of Clojure at its separate multimethods,
+  the “protocols” of Clojure and its separate multimethods,
   the “typeclasses” of Haskell,
-  or the “traits” of Rust (though the latter two do not inheritance),
+  or the “traits” of Rust (though the latter two do not support inheritance),
   are all mechanisms that move the focus of modularity away from the objects,
   toward functions or sets of functions (@secref{CSvTS}).
   These mechanisms are implemented differently for different configurations,
@@ -708,7 +714,7 @@ In conclusion, whatever historical role it may have had in inspiring the discove
 @principle{the paradigm of message-passing processes is wholly distinct from OO},
 with its own mostly disjoint tradition and very different concerns,
 that describes a different set of programming languages and patterns@xnote["."]{
-  Now, there is no doubt, from their later testimonies as well as then published papers,
+  Now, there is no doubt, from their later testimonies as well as papers published at the time,
   that Erlang’s Concurrency Oriented Programming is clearly
   what the authors of Simula, Smalltalk, Actors, etc., were all @emph{aiming at}.
   But, due to hardware as well as software limitations of the 1960s and 1970s,
@@ -764,12 +770,12 @@ drawing diagrams of relations between classes that ostensibly include inheritanc
 Besides the fact that classes are not essential to OO as seen previously,
 UML and similar languages do not even meaningfully have classes:
 there is no proper semantics to inheritance,
-especially in presence of fields that recursively refer back to a class:
+especially in the presence of fields that recursively refer back to a class:
 should the child class have a link to the parent class or to the child class?
 Assume a classic case of modeling humans as animals,
 wherein animals can have offspring that are animals of the same kind:
 Should human offspring be modeled as arbitrary animals,
-or should they be modeled as human only?
+or should they be modeled as humans only?
 Conversely, if some animals eat other animals,
 does that mean that humans automatically eat humans, or only some other animals?
 When trying to reason about recursion, UML falls apart,
@@ -836,7 +842,7 @@ into believing that they understand all there is to know about software modeling
   to import concepts from Category Theory to automate the handling of data structures
   or side effects. @; TODO cite?
 }
-The nature and correctness of software lies precisely
+The nature and correctness of software lie precisely
 in this gap they are unable or unwilling to explore.
 
 To see what these methodologies lack, consider
@@ -1091,15 +1097,15 @@ After 1976 came the explosion of OO (@secref{OOitL}).
 Before then, OO was all word of mouth, in the small world of
 (mostly US) programming language researchers.
 Unsurprisingly, early appearances of the word in print didn’t use the modern definition,
-but were used to denote something closer to what I after Wegner call “object-based”
+but denoted something closer to what I after @citet{Wegner1987} call “object-based”
 @~cite{Bobrow1972 Goodenough1975 Ross1976 Jones1976}.
 Some or all may have been independent reinventions,
 since the word “object” had a previous common meaning (as mentioned above),
 and the suffix “oriented” was common in those days @~cite{Bobrow1972}@xnote["."]{
-  The word “object-oriented” in those times appears in print
+  The word “object-oriented” in those times also appears in print
   in works about psychology and sociology, obviously with unrelated meanings.
 }
-The historical record doesn’t tell for sure, and I haven’t been able
+The historical record doesn’t tell us for sure, and I haven’t been able
 to reach the few remaining witnesses for comments.
 Still, the later mentions are much more likely to have been influenced by Kay
 than the earlier one @~cite{Bobrow1972}.
@@ -1127,10 +1133,11 @@ That is the standard by which I ask my definition of OO to be judged.
 I also discussed the case of Kay in @secref{OOinMP} and @secref{Kay}.
 As for Liskov, she is always careful to distinguish
 the meaning in which CLU was object-oriented
-(Wegner would say “object-based”; in my terms, it more precisely has @emph{second-class} modularity)
+(in my terms, it more precisely has @emph{second-class} modularity,
+and so is not even “object-based”, which requires first-class modularity)
 from “what are commonly called object-oriented languages” @~cite{Liskov1993}
-that she reckons is more common and includes inheritance,
-recognizing the significant difference between the two meanings
+a meaning she recognizes as more common and as including inheritance,
+acknowledging the significant difference between the two meanings
 without relinquishing her early claim to the word.
 
 Now, just because the word “object-oriented” was only defined in 1976
@@ -1161,7 +1168,7 @@ which was rather discovered (allegedly) and identified (arguably) years later by
 And the continent is named after the latter, even though Columbus is respected
 as the man who took the harder leap of faith,
 crossed an uncharted ocean beyond horizons past which no one dared venture,
-to find a domain no one else dreamed existed—and changed the world.
+to find a domain no one else dreamed existed (though he didn’t realize it)—and changed the world.
 
 Despite all the greatness of the very first pioneers,
 it is appropriate that a concept be named by or after those who identified it,
@@ -1204,7 +1211,7 @@ rejecting inheritance because it fails to fit into them, is absurd,
 akin to babies crying when they can’t fit a square peg in a round hole,
 and celebrating when they can.
 It demonstrates a deep misunderstanding of both the nature and purpose
-of subtyping as well as inheritance.
+of subtyping as well as of inheritance.
 
 @subsection{False Dichotomy between Inheritance and Delegation}
 @epigraph{
@@ -1250,7 +1257,7 @@ and notes that prototypes map to classes, not class instances
 (though strictly speaking she gets the mathematical direction of the map wrong).
 The real distinction and comparison that should have been made was between the relative
 expressiveness of prototypes and classes, especially if considered as second-class entities
-and in absence of reflection (or refraining from using it).
+and in absence of reflection (or when refraining from using it).
 But that is the conclusion that none of the authors who wrote on the topic made explicit,
 even though it is implicit in both @citet{Lieberman1986} and @citet{Stein1987}.
 And so the authors focus on arguing about different ways to name the same concept in two contexts;
@@ -1289,8 +1296,8 @@ meanwhile they fail to argue on the different contextual concepts that do matter
   instead of looking at the big picture of the semantics of inheritance,
   what it actually is or should be and why,
   what is or isn’t relevant to its semantics.
-  Concept delineation and naming is tremendously important;
-  it can bring clarity, or it can mislead hundreds of researchers into a dead end.
+  Concept delineation and naming are tremendously important;
+  they can bring clarity, or they can mislead hundreds of researchers into a dead end.
 }
 
 One confounding factor is that of mutable state.
@@ -1298,11 +1305,11 @@ Early OO, just like early FP, was usually part of systems with ubiquitous mutabl
 prototype inheritance (or “delegation”) algorithms thus often explicitly allow or cope with
 interaction with such state, including
 mutation and sharing or non-sharing of per-object or per-class variables,
-and especially tricky, mutation and sharing of a prototype’s inheritance structure.
+and, which is especially tricky, mutation and sharing of a prototype’s inheritance structure.
 However, class systems often had all their inheritance semantics resolved at compile-time,
 during which there is no interaction with user-visible side effects, and
 it doesn’t matter whether the compiler does or doesn’t itself use mutable state:
-from the user point of view it is as if it were pure functional and there is no mutation
+from the user’s point of view it is as if it were purely functional and there were no mutation
 in the inheritance structure or state-sharing structure of classes,
 at least not without using “magic” reflection primitives.
 One may then have been tempted to see Prototype Delegation as intrinsically stateful,
@@ -1316,8 +1323,8 @@ Meanwhile, old reflective Class OO systems like Lisp and Smalltalk
 @~cite{Cannon1979 Kay1993 Gabriel1991 Kiczales1991}
 also support mutable state to modify the inheritance structure at runtime,
 for the sake of dynamic redefinition of classes at runtime,
-in what remains semantically a pure functional model once when the structure is set.
-See how in CLOS you can define methods on generic function
+in what remains semantically a pure functional model once the structure is set.
+See how in CLOS you can define methods on the generic function
 @c{update-instance-for-redefined-class} to control how data is preserved, dropped or transformed
 when a class is redefined (@secref{MoIaCU}).
 Mutable state and mutable inheritance structure in particular are therefore
@@ -1364,9 +1371,9 @@ will only discuss the confounding matter of side effects much later
   Systems paradigm people (including the old Lisp, Smalltalk and Self communities)
   who freely mix or interleave runtime and compile-time in the very same language,
   might have had no trouble unifying the two across evaluation times,
-  but they tend not to publish articles about PL semantics,
-  and not to be read by most PL semanticians, or
-  not understood by those that do read the articles.
+  but they tend not to publish writings about PL semantics,
+  and not to be read by most PL semanticians;
+  what they write tends not to be understood by those semanticians who do read it.
 
   Revisiting these topics several decades after they were in vogue,
   and finding their then-treatment lacking, with errors from the time still uncorrected to this day,
@@ -1383,7 +1390,7 @@ and is both later and less general,
 from after the words “inheritance” and “prototypes” were better established,
 and it carries strong connotations of specific implementations using the message-passing paradigm.
 It also fell out of fashion some time in the 1990s,
-after JavaScript became a worldwide phenomenon, and (correctly) used the term “inheritance”
+after JavaScript became a worldwide phenomenon—and (correctly) used the term “inheritance”
 rather than delegation (as it isn’t particularly “message passing”, just calling functions)
 @~cite{ECMA1997}.
 
@@ -1395,7 +1402,7 @@ rather than delegation (as it isn’t particularly “message passing”, just c
 }
 Many people will inevitably quibble about my definition or characterization of OO
 as opposed to their own or someone else’s.
-Though a treatise of epistemology is beyond the scope of this book, @;{TODO cite}
+Though a treatise on epistemology is beyond the scope of this book, @;{TODO cite}
 I can briefly answer the most frequent epistemological questions as follows.
 
 This section is not essential to the formalization of OO in the chapters that follow,
@@ -1589,12 +1596,12 @@ No, experts, even after excluding the all too common outright fraudulent ones,
 remain a terrible authority on what precisely the right concepts to care about are:
 Some, more interested in the methods they master than in the problems people have,
 will happily define down a topic to whatever their limited methods can address.
-Others, interested in their impact upon people, will offer convincing sounding explanations
+Others, interested in their impact upon people, will offer convincing-sounding explanations
 to manipulate people and try to sway them from what they actually care about
 to what the expert would prefer for them to care about instead.
 The more ideologically motivated will happily lie, to the point of changing
 the official definitions of words to equivocate between the common meaning that people use
-and the made up meaning that makes their lies sound true.
+and the made-up meaning that makes their lies sound true.
 
 You might hope that at least on topics with little economic or political impact,
 there would be fewer incentives for bias. Unhappily, as per Sayre’s Law:
@@ -1610,7 +1617,7 @@ A rough public consensus about what a concept does and does not cover,
 while not precise around the edges, is actually much more reliable
 than any expert opinion regarding what people actually care about—because it matters to them.
 On the other hand, a rough public consensus is a feeling, incapable of either precision or logic.
-It can measure what concept people actually care about,
+It can indicate which concept people actually care about,
 but provides no consistent explanation for them.
 For that you will have to consider what experts say,
 who alone can get it right (though they more often than not get it terribly wrong).
@@ -1656,7 +1663,7 @@ I have identified the correct conceptual map of that domain,
 a map I am not choosing arbitrarily, one that acknowledges and documents what programmers care about.
 
 As to why to associate the particular term “object-oriented”
-to the particular concept first articulated by @citet{Bobrow1976},
+with the particular concept first articulated by @citet{Bobrow1976},
 and not use any other plausible name for that concept,
 or any other plausible concept for that name,
 I will conclude with this tweet by Harrison Ainsworth:
@@ -1703,7 +1710,7 @@ a strong thing changes the meaning of a name.}
 @exercise[#:difficulty "Medium"]{
   Identify an OO language that you’re familiar with (or else, one that is popular),
   and place it against each of the above axes.
-  Then, for each axis, find an example of OO language on the other side of the axis;
+  Then, for each axis, find an example of an OO language on the other side of the axis;
   and find a non-OO language on this side of the axis (if possible).
 }
 
@@ -1765,7 +1772,7 @@ a strong thing changes the meaning of a name.}
   Characterize the real thing under the original name,
   and the main variants that corrupt the name
   (though they may have interesting contributions of their own besides this corruption)@xnote["."]{
-    If you have trouble with this question, you may consider digging on the etymology
+    If you have trouble with this question, you may consider digging into the etymology
     and early history of the word “ideology” itself.
     But it’s much better if you manage to find your own example of such hostile takeover of a word.
 }}

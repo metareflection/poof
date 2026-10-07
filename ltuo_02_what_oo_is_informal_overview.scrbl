@@ -46,10 +46,10 @@ instead of having to understand in detail the much larger contents
 of the other modules so as to interact with them.
 
 @subsection[#:tag "EO"]{Extensibility (Overview)}
-A programmer can start from the existing specification and only need contribute
+A programmer can start from the existing specification and need only contribute
 as little incremental information as possible when specifying a part
 that modifies, extends, specializes or refines other parts,
-as opposed to having to know, understand and repeat existing code nearly in full
+as opposed to having to know, understand or repeat existing code nearly in full
 to make modifications to it.
 
 @subsection{Internality}
@@ -99,7 +99,7 @@ which is therefore the more general form of OO
 @~cite{Lieberman1986 Wolczko1999 Rideau2021}.
 And indeed within Prototype OO, you can readily express
 prototypes for runtime type descriptors for your language,
-or prototypes for type descriptors for some other language you are processing as a meta-language.
+or prototypes for type descriptors for some other language you are processing as its meta-language.
 
 In this book, I will discuss the general case of OO,
 and thus will seldom mention classes, since they are merely a special case of prototypes.
@@ -118,7 +118,7 @@ so they only support classes@xnote["."]{
   even when the authors are unaware that any OO exists beyond Class OO.
 }
 Still my discussion of OO, and my exploration of inheritance in particular,
-directly applies just as well to the special case that is Class OO.
+apply directly just as well to the special case that is Class OO.
 See @secref{RCOO}.
 
 @subsection{Classes in Dynamic and Static Languages}
@@ -154,7 +154,7 @@ The target can be any kind of computation, returning any type of value.
 In Prototype OO, the target most usually computes a record,
 which offers simpler opportunities for modularity than other types.
 In Class OO, the target is instead a record @emph{type},
-or rather a type descriptor, record of a record type and its associated methods,
+or rather a type descriptor, a record of a record type and its associated methods,
 or of their compile-time or runtime representation.
 
 A (partial or complete) specification is a piece of information that
@@ -205,10 +205,11 @@ In first-class OO without conflation,
 developers of reusable libraries are forced to decide in advance and in utter ignorance
 which parts of a system they or someone else may want to either extend or query in the future.
 Having to choose between specification and target at every potential extension point
-leads to an exponential explosion of bad decisions to make:
-Choosing target over specification everywhere would of course defeat extensibility;
-but choosing specification over target for the sake of extensibility,
-especially so without the shared computation cache afforded by conflation,
+leads not just to an exponential explosion of decisions to make,
+but of @emph{bad} decisions made:
+Choosing target over specification too often would of course defeat extensibility;
+but choosing specification over target too often for the sake of extensibility,
+especially without the shared computation cache afforded by conflation,
 would lead to another exponential explosion, of runtime reevaluations.
 By sparing programmers a decision they lack information to make,
 the conflation of specification and target is an essential usability feature of Prototype OO:
@@ -218,14 +219,16 @@ without the need for communication between the two (which would require time-tra
 Thus, in first-class OO, @principle{Conflation Increases Modularity}.
 
 This modularity advantage, however, is largely lost in
-static languages with second-class Class OO@xnote["."]{
+static languages with second-class Class OO yet without metaprogramming@xnote["."]{
   Note that this does not include dynamic Class OO languages
   like Lisp, Smalltalk, Ruby or Python.
   In these languages, compilation can keep happening at runtime,
   and so programmers still benefit from conflation.
+  This also excludes C++, whose template metaprogramming capabilities
+  makes conflation a modularity advantage again.
 }
 In such languages, all class extensions happen at compile-time,
-usually in a restricted language.
+in a restricted compile-time language.
 Only the type descriptors, targets of the specifications,
 may still exist at runtime (if not inlined away).
 The specifications as such are gone and cannot be composed or extended anymore.
@@ -235,14 +238,14 @@ used when describing the system from the outside
 but not a feature of the system itself.
 However, this also means that in these static OO languages,
 conflation of specification and target is but a minor syntactic shortcut
-with little to no semantic benefit.
+with little to no semantic benefit, that could be dispense with @~cite{Simons1995}.
 Yet its major cost remains: the confusion it induces,
 not just among novice developers, but also experts, and even language authors.
 
 @subsection{Conflation and Confusion}
 @principle{Conflation without Distinction is Confusion}.
 Those who fail to distinguish between two very different concepts being conflated
-will make category errors of using one concept or its properties
+will make category errors by using one concept or its properties
 when the other should be used.
 Inconsistent theories will lead to bad choices.
 Developers will pursue doomed designs they think are sound,
@@ -260,12 +263,12 @@ Researchers will waste years in absurd quests and publish nonsense along the way
 while fertile fields lie unexplored.
 See @secref{NNOOTT} regarding decades of confusion
 between subtyping and subclassing due to
-confusing target (subtyping) and specification (subclassing).
+confusing what applies to target (subtyping) and to specification (subclassing).
 
 Still, when you clearly tease the two notions apart,
 and are aware of when they are being conflated for practical purposes,
-so you can distinguish which of the two aspects should be invoked in which context,
-then the semantics of OO becomes quite simple.
+then you can distinguish which of the two aspects should be invoked in which context,
+and the semantics of OO becomes quite simple.
 Shockingly, the conflation of specification and target went largely unnoticed,
 even though it is older than OO, going at least as far back as @citet{Hoare1965};
 it was sometimes implicitly understood,
@@ -299,7 +302,7 @@ while the flavorless one is inferior to mixin inheritance.
 
 Considering the most popular languages on the TIOBE index @~cite{TIOBE2026},
 we can see that most of these languages support some form of inheritance;
-single inheritance comes most often, still all the forms of inheritance (or lack thereof)
+single inheritance is the most common, yet all the forms of inheritance (or lack thereof)
 appear among the top 10, and for the last two years the top position was held by
 a language with flavorful multiple inheritance (Python)@xnote["."]{
   The list and rankings of the TIOBE index vary every month, so
@@ -365,9 +368,10 @@ Kay took the word “inheritance” from KRL @~cite{Winograd1975 Bobrow1976},
 that had “inheritance of properties”,
 which was what would now be called “multiple inheritance”.
 The expressions “single inheritance” and “multiple inheritance” to distinguish the two
-were first found in a spiritual successor to KRL, FRL @~cite{Stansfield1977}.
+were first found in the description of an application @~cite{Stansfield1977}
+using a spiritual successor to KRL, FRL @~cite{Roberts1977Primer}.
 Many other languages adopted (single) “inheritance” after Smalltalk,
-including Java, that made it especially popular circa 1995.
+including Java, which made it especially popular circa 1995.
 
 In Simula, a subclass is defined starting from a previous class as a “prefix”.
 The effective text of the subclass (hence its semantics) is then the “concatenation”
@@ -454,7 +458,7 @@ from a non-linear ancestry proved tricky to get just right.
 The older (1976) “flavorless” viewpoint sees it
 as a conflict to resolve between methods that override each other.
 The newer (1979) “flavorful” viewpoint sees it
-as a cooperation to harmonize between methods that combine with each other.
+as cooperation to harmonize between methods that combine with each other.
 Regrettably, too many people in both academia and industry are stuck in 1976,
 and haven’t even heard of the flavorful viewpoint, or, when they have, still don’t understand it.
 For this reason, despite being the most expressive and most modular form of inheritance,
@@ -507,7 +511,7 @@ GCL @~cite{Bokharouss2008},
 Jsonnet @~cite{Cunningham2014},
 Dart @~cite{Bracha2015},
 and Nix @~cite{Simons2015}.
-Yet it still has outsized outreach, for just the use of GCL at Google means
+Yet it still has outsized reach, for just the use of GCL at Google means
 a large part of the world’s computing infrastructure
 is built upon configurations written using mixin inheritance@xnote["."]{
   There is some confidentiality around Google’s Configuration Language GCL.
@@ -571,7 +575,7 @@ is built upon configurations written using mixin inheritance@xnote["."]{
   Are there places the code could be extended, specialized or modified in different ways
   to satisfy different goals?
   Would there be a benefit to users if a shared core were maintained
-  on top of which users each have their own custom variant?
+  on top of which users would each have their own custom variant?
   See if you can devise a simple criterion (1-2 sentences) for what separates
   programs that would benefit from modular extensibility from those that wouldn’t.
 }
@@ -583,7 +587,7 @@ is built upon configurations written using mixin inheritance@xnote["."]{
   Find a typesystem you know (Java, Haskell, TypeScript, etc.) and explain:
   Can it represent incomplete specifications? If so, how?
   If not, what would need to be added?
-  Describe the transition from incomplete specification to complete.
+  Describe the transition from an incomplete specification to a complete one.
   Hint: Many typesystems can deal with incomplete specifications at the level of types,
   but not directly at the level of values. You might however define a separate “partial” record type
   with options on each field, as a feature outside the language
