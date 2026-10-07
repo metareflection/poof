@@ -135,6 +135,15 @@ type MonoLens s a =
        { view : s → a ; update : (a → a) → s → s }
 }
 
+Monomorphic lenses must also satisfy the usual lens laws.
+Writing @c{set a s = update (λ (_) a) s}, these are:
+@Code{
+set (view s) s = s
+view (set a s) = a
+set b (set a s) = set b s
+update f s = set (f (view s)) s
+}
+
 @subsubsection{Polymorphic Lens}
 A polymorphic lens (or “stabby” lens), of type @c{PolyLens s t a b}, generalizes the above:
 you still have a view function @c{s → a} to extract an inner value from the outer context,
@@ -168,6 +177,8 @@ type SkewLens i r p j s q =
        { view : s → r ; update : (i → p) → j → q }
 type PolyLens s t a b = SkewLens a a b s s t
 }
+Skew lenses generalize the view/update interface without imposing
+the round-trip laws of ordinary lenses.
 
 @subsubsection{View and Update}
 I can also give separate types for View and Update:
@@ -309,7 +320,7 @@ to parameterize a @c{SkewLens} (plus their successors)
 as to parameterize a @c{ModExt}. This is not a coincidence.
 You can focus a modular extension by looking at it through a matching skew lens:
 @Code{
-skew-ext : SkewLens i r p j s q → ModExt i r p → ModExt j s q
+skew-ext : SkewLens i r p j s q → TModExt i r p → TModExt j s q
 (def (skew-ext l m super self)
   (l 'update (λ (inner-super) (m inner-super (l 'view self)))
              super))
@@ -330,22 +341,22 @@ type TModExt inherited required provided =
 }
 But it is not enough to work with the stricter and recursive modular extensions of @secref{ST}:
 @Code{
-type ModExt inherited required newlyProvided =
+type ModExt inherited required providedExtension =
   ∀ super, self : Type
     self ⊂ required self, super ⊂ (inherited self) ⇒
-        super → self → super∩(newlyProvided self)
+        super → self → super∩(providedExtension self)
 }
 To work with @c{ModExt}, you need an accompanying stricter and recursive type for skew lenses:
 @Code{
-type SSkewLens inherited required newlyProvided
-               jnherited sequired newlyQrovided =
+type SSkewLens inherited required providedExtension
+               jnherited sequired qrovidedExtension =
   ∀ previous, final : Type
     final ⊂ sequired final, previous ⊂ (jnherited final) ⇒
   ∃ super, self : Type
     self ⊂ required self ∧ super ⊂ (inherited self) ∧
   { view: final → self ;
-    update : (super → super ∩ (newlyProvided self)) →
-             (previous → previous ∩ (newlyQrovided final)) }
+    update : (super → super ∩ (providedExtension self)) →
+             (previous → previous ∩ (qrovidedExtension final)) }
 }
 
 Alternatively, you could just change the point of view and define a lens
@@ -366,8 +377,8 @@ it has a sensor, the input from the module context,
 and an actuator, the output of an extension to the value under focus.
 
 A single skew lens can change both the module context and the extension focus.
-A @c{SkewLens i r p j s q} can transform an inner @c{ModExt i r p}
-into an outer @c{ModExt j s q}.
+A @c{SkewLens i r p j s q} can transform an inner @c{TModExt i r p}
+into an outer @c{TModExt j s q}.
 As always, note that in general, @c{r} (required, the module context)
 is largely independent from @c{i p} (inherited and provided, the extension focus).
 They only coincide just before the end of the specification,
@@ -1001,7 +1012,9 @@ a hash-table lookup which is @c{O(1)} but involves a large constant factor;
 thus a more efficient implementation will somehow pass the rest of the precedence list.
 Also note that for the sake of efficiency, the computation of an effective method,
 though somewhat expensive, can be cached, and
-need not be completed more than once per run of the program.
+will happen once and only once per run of the program
+for each generic function and dispatch shape that actually occurs
+(modulo the cache being invalidated by redefinitions of methods and ancestry if any).
 
 Here is the code in the simplified case of just modular extensions in mixin inheritance:
 the underlying machinery sees @c{self}, i.e. the class,
@@ -2195,15 +2208,6 @@ an arbitrary tuple of a generic function and any number of specifications—thou
 the same number for every method within a given generic function,
 the “generic arity” of the function (e.g. 2 for binary methods).
 
-Also, a protocol (a set of related generic functions)
-supporting dispatch on multiple arguments
-is akin to a typeclass that depends on multiple typeclass constraints.
-And indeed, you can desugar the latter into the former:
-a typeclass function with @c{n} typeclass constraints is like a generic function
-dispatching on @c{n} elements, being the “dictionaries” for each of those @c{n} constraints.
-The difference is that Haskell typeclasses do not support methods
-chaining into parent methods;
-but CLOS protocols do @~cite{Rideau2012}.
 If @c{n = 0}, the function is a constructor (if it returns an object) or else an arbitrary function.
 If @c{n = 1}, the function is a regular OO method.
 If @c{n = 2}, the function is a binary method.
@@ -2223,6 +2227,16 @@ as well as many Lisp and Scheme object systems (including Gerbil Scheme).
 Many past languages including Cecil, Dylan, Fortress or Slate also did.
 A few popular languages have libraries that implement some form of them.
 @; TODO CITE
+
+Also, a protocol (a set of related generic functions)
+supporting dispatch on multiple arguments can also express
+what in Haskell is done using typeclasses with multiple constraints.
+Indeed, you can desugar the latter into the former:
+a typeclass function with @c{n} typeclass constraints is like a generic function
+dispatching on @c{n} elements, being the “dictionaries” for each of those @c{n} constraints.
+The difference is that Haskell typeclasses do not support methods
+chaining into parent methods;
+but CLOS protocols do @~cite{Rideau2012}.
 
 @subsection{Binary Methods Done Right}
 @epigraph{
@@ -2688,12 +2702,20 @@ Assuming the common strategy as used by Slate and CLOS,
 wherein earlier arguments have higher-priority than later arguments in the dispatch process,
 then the first position has the highest priority, whereas the last position has the lowest.
 
-Subjective dispatch in first position can then enable context-dependent methods
-to completely override the meaning of programs in arbitrary ways, overriding any other method;
-whereas subjective dispatch in last position can only minimally alter program behavior,
-making it a weakly expressive mechanism that might not be worth the complexity it brings.
-A high-priority subject can provide methods that intercept and control behavior
-early in the effective method, when a low-priority cannot.
+Subjective dispatch in first position lets subject specificity take precedence
+over specificity in the other arguments, giving it greater control on overriding.
+In last position, subject specificity only distinguishes methods
+whose earlier specializers are otherwise tied, with almost no control on overriding.
+With the default method combination, this limits how radically a selected method may change behavior:
+a high-priority method can wholly ignore lower-priority methods,
+or wrap their execution and control their behavior early in the effective method,
+whereas a low-priority method cannot, and instead depends on
+none of the higher-priority methods ignoring it,
+and all their behaviors being always appropriate@xnote["."]{
+  Other method combinations may make the difference moot, or desirable,
+  but then again, a slightly different method combination with reverse order can recover
+  execute-this-method-last semantics from the subject-first priority, if desired.
+}
 Thus subjective dispatch is more usable with the subjective argument first
 in a CLOS-like linearization of multimethods, giving the feature more semantic weight,
 so that it might be worth the trouble.
@@ -3017,8 +3039,9 @@ though also much of their complexity@xnote["."]{
   a simple dynamic cache for type-conscious generated code snippets,
   as present in high-performance runtimes, will be much more effective than it would have been
   without the uniform types that static typechecking guarantees.
-  Therefore, yes, static typing from TypeScript does improve performance of JavaScript code.
-  Just not in a very predictable way.
+  Therefore, yes, static typing from TypeScript does improve performance of JavaScript code,
+  just as the indirect effect of encouraging application developers to follow patterns
+  that runtime developers are further encouraged to specifically recognize.
 }
 
 On the other hand, dynamic dispatch necessarily adds overhead at runtime.
@@ -3255,7 +3278,7 @@ but because it offers a framework to keep expanding the scope of OO itself.
 @exercise[#:difficulty "Medium"]{
   Extend @c{base-class} and its @c{make-instance} to
   implement optional validation and normalization for class elements,
-  base on field meta-data.
+  based on field meta-data.
   The default method will run validation checks on each field value.
   For each field with a defined validation check, check the field.
   The @c{make-instance} function will run those checks.
