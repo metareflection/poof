@@ -1,3 +1,11 @@
+% Candidates for inclusion in ltuo.bib.
+% NB:
+% - The notes are mostly slop from ChatGPT (or sometimes Claude).
+%   I do not stand by them.
+% - Most of the entries I haven’t read. Many I only skimmed.
+% - A few I read long ago, before I started writing LtUO, and
+%   didn’t write notes for back when I read them.
+
 %% 1946
 
 @TechReport{Turing1946,
@@ -537,6 +545,22 @@
   }
 }
 
+@InProceedings{Wand1975,
+  author={Mitchell Wand},
+  title={On the Recursive Specification of Data Types},
+  booktitle={Category Theory Applied to Computation and Control},
+  editor={Ernest G. Manes},
+  series={Lecture Notes in Computer Science},
+  volume={25},
+  pages={214--217},
+  publisher={Springer},
+  year={1975},
+  doi={10.1007/3-540-07142-3_85},
+  note={
+    Early categorical treatment of recursively specified data types,
+    part of the development of general methods for solving recursive
+    domain equations that Wand would later develop more fully.}}
+
 %% 1976
 
 @TechReport{Hewitt1976,
@@ -590,6 +614,21 @@
     making this particularly relevant to the history of Prototype OO.}}
 
 %% 1979
+
+@Article{Bobrow1979KRL,
+  author={Daniel G. Bobrow and Terry Winograd},
+  title={KRL: Another Perspective},
+  journal={Cognitive Science},
+  volume={3},
+  number={1},
+  pages={29--42},
+  year={1979},
+  doi={10.1207/s15516709cog0301_2},
+  note={
+    A retrospective defense and reassessment of KRL,
+    responding to criticisms of its knowledge-representation approach.
+    Clarifies both the ambitions and limitations of KRL after practical experience
+    with its prototype-based representation mechanisms.}}
 
 % Borrow unavailable: https://archive.org/details/associativenetwo00find/
 % https://link.springer.com/chapter/10.1007/978-94-015-7941-4_7
@@ -659,22 +698,55 @@
   note={Studies compact representations of sparse static tables with good worst-case lookup time, motivated in part by compressed parsing tables. Relevant as an early foundation for compact dispatch-table representations and sparse-table implementation techniques.}
 }
 
-@Article{Bobrow1979KRL,
-  author={Daniel G. Bobrow and Terry Winograd},
-  title={KRL: Another Perspective},
-  journal={Cognitive Science},
-  volume={3},
+% TODO
+@Article{Wand1979Final,
+  author={Mitchell Wand},
+  title={Final Algebra Semantics and Data Type Extensions},
+  journal={Journal of Computer and System Sciences},
+  volume={19},
   number={1},
-  pages={29--42},
+  pages={27--44},
   year={1979},
-  doi={10.1207/s15516709cog0301_2},
+  month=aug,
+  doi={10.1016/0022-0000(79)90011-4},
+  url={https://hdl.handle.net/2022/33877},
   note={
-    A retrospective defense and reassessment of KRL,
-    responding to criticisms of its knowledge-representation approach.
-    Clarifies both the ambitions and limitations of KRL after practical experience
-    with its prototype-based representation mechanisms.}}
+    Studies extension of abstract data types using a category of implementations,
+    giving the extended type a final-algebra semantics rather than the naive
+    initial-algebra semantics.
+    Relevant to the semantic treatment of specification, implementation
+    and modular extension.}}
+
+% TODO
+@Article{Wand1979Fixpoint,
+  author={Mitchell Wand},
+  title={Fixed-Point Constructions in Order-Enriched Categories},
+  journal={Theoretical Computer Science},
+  volume={8},
+  number={1},
+  pages={13--30},
+  year={1979},
+  doi={10.1016/0304-3975(79)90053-7},
+  url={https://www.khoury.northeastern.edu/home/wand/papers/wand-tcs-79.pdf},
+  note={
+    Generalizes fixed-point constructions for recursive domain equations
+    to order-enriched categories.
+    Relevant to the semantic foundations of open recursion and the
+    construction of recursive objects by fixpoints.}}
 
 %% 1980
+
+@Book{Wand1980,
+  author={Mitchell Wand},
+  title={Induction, Recursion, and Programming},
+  publisher={North-Holland},
+  address={New York},
+  year={1980},
+  note={
+    Systematic treatment of induction and recursive definitions in programming,
+    including fixpoint-based reasoning about recursively defined computations.
+    Useful background for the order-theoretic treatment of recursive programs
+    and recursive semantic constructions.}}
 
 %% 1981
 
@@ -719,6 +791,23 @@
     favor technologies that have already survived for a long time.
   }
 }
+
+% TODO ?
+@Article{Wand1982,
+  author={Mitchell Wand},
+  title={Specifications, Models, and Implementations of Data Abstractions},
+  journal={Theoretical Computer Science},
+  volume={20},
+  number={1},
+  pages={3--32},
+  year={1982},
+  month=mar,
+  doi={10.1016/0304-3975(82)90097-4},
+  note={
+    Distinguishes specifications, semantic models and implementations
+    of data abstractions, and studies their relationships formally.
+    Relevant to separating the specification of an abstraction
+    from the structures that realize it.}}
 
 %% 1983
 
@@ -847,6 +936,33 @@
     type theory. In particular, total recursive types are restricted to positive
     occurrences of the recursively defined type, connecting syntactic polarity
     with the monotonicity required for well-behaved recursive definitions.}}
+
+% Can a PDF be found???
+@Manual{Drescher1985,
+  author={Gary L. Drescher},
+  title={The ObjectLISP User Manual},
+  organization={LMI Corporation},
+  address={Cambridge, MA},
+  year={1985},
+  note={
+    Preliminary manual for LMI's ObjectLISP, an early Prototype OO system
+    in which objects are binding environments and inheritance is expressed
+    without a separate class/instance distinction.
+    Particularly relevant as an early Lisp-based realization of prototype
+    inheritance and delegation.}}
+
+@Manual{Drescher1985ObjectLISP,
+  author={Gary L. Drescher},
+  title={ObjectLISP for Experienced Programmers},
+  organization={Lisp Machines, Inc.},
+  address={Cambridge, MA},
+  number={1401-0000},
+  year={1985},
+  month=aug,
+  note={
+    Introduction to LMI's ObjectLISP for experienced Lisp programmers.
+    ObjectLISP is an early Prototype OO system based on objects as binding
+    environments, without a fundamental class/instance distinction.}}
 
 %% 1986
 
@@ -1121,6 +1237,7 @@
   }
 }
 
+% TODO ?
 @InProceedings{Wand1987,
   author={Mitchell Wand},
   title={Complete Type Inference for Simple Objects},
@@ -1313,6 +1430,21 @@
     motivated by the need to associate persistent objects with dynamically available patterns.}
 }
 
+@Manual{Apple1989MACL,
+  author={Apple Computer, Inc.},
+  title={Macintosh Allegro Common Lisp Reference Manual},
+  edition={Version 1.3},
+  organization={Apple Computer, Inc.},
+  address={Cupertino, CA},
+  year={1989},
+  note={
+    Reference manual for Macintosh Allegro Common Lisp 1.3,
+    including its Object Lisp object system.
+    Object Lisp provides prototype-style objects, cloning/extension,
+    delegation and multiple inheritance, and is the Object Lisp
+    cited by Dony, Malenfant and Bardou in their taxonomy of
+    prototype-based languages.}}
+
 % Authors of EuLisp don't like multiple inheritance, want mixin inheritance
 @Book{Bretthauer1989,
   title={Multiple Vs. Single Inheritance in Object-oriented Programming Languages: What Do We Really Want?},
@@ -1447,6 +1579,7 @@
   }
 }
 
+% TODO
 @InProceedings{Wand1989,
   author={Mitchell Wand},
   title={Type Inference for Record Concatenation and Multiple Inheritance},
@@ -1463,6 +1596,14 @@
     Develops type inference for a lambda calculus with records and record concatenation,
     and encodes a simple object model with hidden instance variables,
     multiple inheritance and first-class classes.
+    Encodes objects and classes using λ-calculus and records:
+    an object is a record of methods, a class is an openly recursive function
+    receiving self and producing such a record, and instantiation closes
+    the recursion with Y.
+    Inheritance applies the parent to the same eventual self before extending
+    its result, and record concatenation provides multiple inheritance.
+    Thus gives a particularly clear early account of inheritance as modular
+    extension under open recursion followed by fixpoint.
     Particularly relevant historically because Wand credits Cook 1987,
     alongside Kamin 1988 and Reddy 1988, for the insight that inherited methods
     must have their self-reference redirected to the entire derived object.
@@ -1470,6 +1611,21 @@
     “A Self-ish Model of Inheritance.”
   }
 }
+
+% TODO ?
+@TechReport{Wand1989Objects,
+  author={Mitchell Wand},
+  title={Type Inference for Objects with Instance Variables and Inheritance},
+  institution={Northeastern University College of Computer Science},
+  number={NU-CCS-89-2},
+  year={1989},
+  month=feb,
+  note={
+    Gives complete type inference for objects with protected instance variables,
+    public methods, first-class classes and single inheritance,
+    by extending Rémy-style polymorphic record typing.
+    Subsequently published in Theoretical Aspects of Object-Oriented Programming
+    (MIT Press, 1994), pp. 97--120.}}
 
 %% 1990
 
@@ -1634,23 +1790,6 @@
   }
 }
 
-@TechReport{Simons1991,
-  author={Anthony J. H. Simons},
-  title={Brunel: A Strongly-Typed, Portable Object-Oriented Language and Programming Environment},
-  year={1991},
-  institution={Department of Computer Science, University of Sheffield},
-  number={CS-91-07},
-  address={Sheffield, UK},
-  note={
-    Introduces Brunel, an experimental strongly and statically typed
-    object-oriented language intended to combine open-ended polymorphism with
-    efficient compilation and formal type checking.
-    This original version predates the redesign around F-bounded polymorphism
-    and the Theory of Classification;
-    the substantially revised Brunel 2.0 is described in Simons’s 1995 dissertation.
-  }
-}
-
 % A possibly shortened version also published in *IEEE Software*, January 1993
 % as "The Essence of Objects: Concepts and Terms"
 @Misc{Snyder1991,
@@ -1718,6 +1857,25 @@
     Superseded by an extended 1995 Information and Computation article.
   }
 }
+
+% https://www.lirmm.fr/~dony/research/r-proto.html
+@InProceedings{Dony1992,
+  author={Christophe Dony and Jacques Malenfant and Pierre Cointe},
+  title={Prototype-Based Languages: From a New Taxonomy to Constructive Proposals and Their Validation},
+  booktitle={Conference Proceedings on Object-Oriented Programming Systems, Languages, and Applications},
+  pages={201--217},
+  publisher={ACM},
+  year={1992},
+  month=oct,
+  doi={10.1145/141936.141954},
+  url={https://citeseerx.ist.psu.edu/document?doi=74ee94b01fddda24e0283e288f2594c436491588&repid=rep1&type=pdf},
+  note={
+    Develops a detailed taxonomy of Prototype OO languages, extending the Treaty of Orlando
+    by distinguishing alternative semantics for object representation, creation,
+    dynamic modification, delegation and the treatment of self and split objects.
+    Uses the taxonomy to propose a coherent prototype language model
+    and validates it experimentally through ProtoTalk, a Smalltalk implementation
+    in which the alternative prototype semantics are represented as a class hierarchy.}}
 
 @TechReport{Dylan1992,
   author={Apple Computer, Inc.},
@@ -2022,6 +2180,21 @@
     supplying the specification-side discipline that inheritance alone does not provide.
   }
 }
+
+@InCollection{Wand1994,
+  author={Mitchell Wand},
+  title={Type Inference for Objects with Instance Variables and Inheritance},
+  booktitle={Theoretical Aspects of Object-Oriented Programming: Types, Semantics, and Language Design},
+  editor={Carl A. Gunter and John C. Mitchell},
+  pages={97--120},
+  publisher={MIT Press},
+  year={1994},
+  note={
+    Gives complete type inference for objects with protected instance variables,
+    public methods, first-class classes and single inheritance,
+    by extending Rémy-style polymorphic record typing.
+    Originally issued as Northeastern University technical report
+    NU-CCS-89-2 in February 1989.}}
 
 %% 1995
 
@@ -2538,6 +2711,25 @@
   note={Fix crossing module boundaries, posed precisely}
 }
 
+% Update to Dony1992
+@InCollection{Dony1999,
+  author={Christophe Dony and Jacques Malenfant and Daniel Bardou},
+  title={Classifying Prototype-Based Programming Languages},
+  booktitle={Prototype-Based Programming: Concepts, Languages and Applications},
+  editor={James Noble and Antero Taivalsaari and Ivan Moore},
+  pages={17--45},
+  publisher={Springer},
+  address={Singapore},
+  year={1999},
+  isbn={978-981-4021-25-8},
+  url={https://www.lirmm.fr/~dony/postscript/proto-book.pdf},
+  note={
+    Revisits and refines earlier taxonomies of Prototype OO languages.
+    Distinguishes both the semantics of the virtual-machine primitives
+    underlying delegation and the higher-level mechanisms used to organize
+    groups of related objects, clarifying the semantic diversity hidden
+    behind the common label of prototype-based programming.}}
+
 @InProceedings{Ernst1999,
   author={Erik Ernst},
   title={Propagating Class and Method Combination},
@@ -2811,6 +3003,39 @@
   url={https://www.researchgate.net/publication/213878848_Family_Polymorphism},
   note={Co-varying families: type-level openness matured}
 }
+
+% OOPSLA 1999 doi:10.1145/320384.320395
+@Article{Igarashi2001,
+  author={Atsushi Igarashi and Benjamin C. Pierce and Philip Wadler},
+  title={Featherweight Java: A Minimal Core Calculus for Java and GJ},
+  journal={ACM Transactions on Programming Languages and Systems},
+  year={2001},
+  month={may},
+  volume={23},
+  number={3},
+  pages={396--450},
+  doi={10.1145/503502.503505},
+  url={https://www.cis.upenn.edu/~bcpierce/papers/fj-toplas.pdf},
+  note={
+    A minimal, purely functional calculus of Java-style classes,
+    with nominal subtyping, single inheritance, method overriding, (dynamic) casts.
+    As in Java, there is open recursion at the term level,
+    but not at the type level, where inheritance is subtyping.
+    As restrictions compared to Java, there is no mutation,
+    no super behavior in method (only trivially in constructors),
+    no covariant return types for methods, and plenty of other features are omitted
+    that are not essential to the core calculus
+    (interfaces, abstract classes or methods, method or field overloading by type,
+    access control, exceptions, reflection, null, primitive types,
+    inner classes, concurrency, loops, etc.).
+
+    Proves type safety, allowing runtime cast failures, and develops
+    Featherweight GJ with generic classes and methods and
+    an erasure translation to Featherweight Java.
+    Inheritance is modeled directly through class-based method lookup
+    and substitution of the receiver for this.
+
+    An earlier version appeared at OOPSLA 1999, pp. 132--146.}}
 
 @Book{Matsumoto2001,
   title={Ruby in a Nutshell: a Desktop Quick Reference},
@@ -3124,6 +3349,26 @@
   url={https://doi.org/10.1109/TSE.2004.23},
   note={Foundational feature-oriented/product-line paper; relevant to modeling useful concrete programs as combinations of feature refinements.}
 }
+
+% CONFLATION CELEBRATED!
+% Slides: https://www.bergel.eu/download/prototalk.pdf
+% https://www.researchgate.net/publication/47693607_Prototalk_an_Environment_for_Teaching_Understanding_Designing_and_Prototyping_Object-Oriented_Languages
+@InProceedings{Bergel2004,
+  author={Alexandre Bergel and Christophe Dony and Stéphane Ducasse},
+  title={Prototalk: an Environment for Teaching, Understanding, Designing and Prototyping Object-Oriented Languages},
+  booktitle={Proceedings of the 12th International Smalltalk Conference},
+  pages={107--130},
+  address={Köthen, Germany},
+  year={2004},
+  month=sep,
+  url={https://inria.hal.science/inria-00533452v1},
+  note={
+    Presents Prototalk, a framework for implementing and comparing alternative
+    semantics of Prototype OO languages. Notably states that in prototype-based
+    languages “concretization and abstraction are unified into a single concept,
+    a prototype,” making explicit the usual conflation of a prototype as target
+    with its role as specification for related objects, without separating those
+    two semantic roles.}}
 
 @InProceedings{Bettini2004,
   author={Lorenzo Bettini and Viviana Bono and Betti Venneri},
@@ -3934,6 +4179,24 @@
 }
 
 %% 2012
+
+@InProceedings{Ducournau2012Perfect,
+  author={Roland Ducournau},
+  title={Perfect Method Hashing in a Dynamic Setting},
+  booktitle={Proceedings of the 7th Workshop on the Implementation, Compilation, Optimization of Object-Oriented Languages, Programs and Systems},
+  year={2012},
+  month=jun,
+  publisher={ACM},
+  address={Beijing, China},
+  url={https://hal-lirmm.ccsd.cnrs.fr/lirmm-00684484},
+  note={
+    Applies perfect hashing to method dispatch in dynamically typed,
+    dynamically loaded object-oriented languages by hashing method selectors
+    rather than receiver classes.
+    To control space usage, only methods introduced independently by multiple
+    classes are hashed, while ordinary methods use conventional single-inheritance dispatch.
+    Relevant to constant-time method lookup without global selector coloring
+    or dependence on the receiver's static type.}}
 
 @Article{Ducournau2012,
   author={Roland Ducournau and Floréal Morandat},

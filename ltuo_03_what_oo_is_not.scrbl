@@ -172,7 +172,8 @@ ThingLab @~cite{Borning1977 Borning1979 Borning1981}@xnote["."]{
   and oscillated between having or not having classes in addition to prototypes.
   Meanwhile, Kahn, who wrote Director, joined PARC after graduating from MIT.}
 Plenty more Prototype OO or “class-less” OO languages followed
-@~cite{Hewitt1979 Rees1982 Steels1983 Adams1988 Ungar1987 Chambers1989 Lawall1989 Salzman2005 Cunningham2014 Simons2015 Rideau2021}. @; TODO Curtis1997 Sassenrath2000 Dekorte2005
+@~cite{Roberts1977Primer Hewitt1979 Rees1982 Steels1983 Adams1988 Ungar1987 Chambers1989 Lawall1989 Salzman2005 Cunningham2014 Simons2015 Rideau2021}.
+@; TODO Dony1992 Curtis1997 Taivalsaari1997 Dony1999 Noble1999 Sassenrath2000 Bergel2004 Dekorte2005
 There are a lot more Prototype OO languages than I could have time to review @~cite{WikiProto},
 but prominent among them is JavaScript @~cite{Eich1996},
 one of the most used programming languages in the world @~cite{GitHub2022},

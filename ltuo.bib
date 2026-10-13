@@ -3986,8 +3986,8 @@
   doi={10.1145/263699.263707},
   note={
     Rémy uses extensible records and a form of existential types,
-    plus “projective types” (to palliate lack for higher order kind *→*),
-    to emulate what Pierce and Turner do with Fω≤.
+    plus “projective types” (to palliate lack of higher order kind *→*),
+    to turn what Pierce and Turner do with Fω≤ into a complete solution.
     He implements flavorless multiple inheritance, with or without mutation.
     This is solid work as a typesystem, but not very usable as an object system,
     and the limited support for subtyping doesn’t help.
@@ -3995,9 +3995,7 @@
     in typesystems, not object systems.
     Yet, this work is the basis for what will be the O in OCaml.
     As I often jest, the O in OCaml actually stands for how much the authors of OCaml
-    actually care about Objects.
-  }
-}
+    actually care about Objects.}}
 
 @Article{Sernadas1994,
   author={Costa, J. and Sernadas, Amilcar and Sernadas, Cristina},
@@ -5231,8 +5229,9 @@
     (the user must tie the knot manually, providing the representation type).
     §18.11 and §18.12 are tedious and not-so-enlightening subsets of my §5.3.2 and §6.1.5,
     Y-encoding and U-encoding.
-    §19 has fake OO with no open recursion through self in types (the Jacobs dodge),
-    i.e. the NNOOTT with enough language restrictions to make it consistent—but useless.
+    §19 has fake OO with no open recursion through self in types
+    (the Jacobs dodge; but also the actual model of Java),
+    i.e. the NNOOTT with enough language restrictions to make it consistent.
     §24 uses existential types to abstract over representation types, but still uses the same cheat.
     §27 revisits his imperative objects, introducing bound polymorphism and subtyping,
     §32, the final chapter discusses row polymorphism,
@@ -6174,22 +6173,21 @@
   }
 }
 
+% https://dl.acm.org/doi/10.5555/2688794 -- not valid on doi.org
+% https://z-library.sk/book/pdRzZxxaRo/functional-programming-in-scala.html
 @Book{Chiusano2014,
   title={Functional Programming in Scala},
   author={Chiusano, Paul and Bjarnason, Rúnar},
   year={2014},
   publisher={Manning Publications},
-  doi={10.5555/2688794},
   isbn={9781617290657},
-  url={Standard/official URL (publisher page): https://www.manning.com/books/functional-programming-in-scala},
+  url={https://www.manning.com/books/functional-programming-in-scala},
   note={
     The authors, core contributors to the ScalaZ library,
     show how to write pure functional programs in Scala.
     ScalaZ uses multiple inheritance to encode mathematical relationships between abstractions
     (like “every monad is a functor”) in the style of Haskell typeclasses,
-    not to build traditional stateful imperative object-oriented class hierarchies.
-  }
-}
+    not to build traditional stateful imperative object-oriented class hierarchies.}}
 
 @WebPage{Cunningham2014,
   author={Dave Cunningham},
@@ -6207,9 +6205,7 @@
     Semantically equivalent to Nix, with a nicer syntax,
     but little tooling and a small ecosystem
     (Dave sadly never got much support from his then employer Google).
-    Learning Jsonnet then Nix was key to making me understand OO at long last.
-  }
-}
+    Learning Jsonnet then Nix was key to making me understand OO at long last.}}
 
 @WebPage{Ernerfeldt2014,
   author={Emil Ernerfeldt},
@@ -6246,9 +6242,7 @@
     on an operation and a component. The combination of flavorful multiple inheritance
     and multiple dispatch makes for an extremely modular and extensible design,
     that accomplishes in a few thousands of lines what other build systems do
-    in tens or hundreds of thousands of lines of code.
-  }
-}
+    in tens or hundreds of thousands of lines of code.}}
 
 %% 2015
 
@@ -6260,16 +6254,14 @@
   note={
     Long ago while at École Normale Supérieure, I learned a lot from Yves’s lecture notes.
     My memory fails regarding how this particular document compares to them.
-    The bibliography has more documents, in particular the classic Barendregt 1984.
-  }
-}
+    The bibliography has more documents, in particular the classic Barendregt 1984.}}
 
 % 5.9 on modularity
 @Book{Bracha2015,
   author={Gilad Bracha},
   title={The Dart Programming Language},
   year={2015},
-  month={dec},
+  month=dec,
   publisher={Addison-Wesley Professional},
   address={Boston, Massachusetts},
   isbn={978-0-13-342995-4},
@@ -6278,9 +6270,7 @@
     including its object model, libraries, optional type system and reflection.
     Section 2.15 develops Dart’s mixins and uses them to illustrate flexible reuse
     across class hierarchies, with further examples throughout the book.
-    Chapter 3 treats libraries, privacy, imports, exports and related modularity mechanisms.
-  }
-}
+    Chapter 3 treats libraries, privacy, imports, exports and related modularity mechanisms.}}
 
 @Book{ECMA2015,
   title={ECMAScript 2015 Language Specification},

@@ -978,7 +978,8 @@ But it might not be as obvious to a novice programmer introduced to a language w
 without a clear conceptual distinction between a variable (or memory cell),
 a reference to said variable or cell, and the current content or value of the variable or cell;
 indeed the very ergonomics of languages with mutation depend on
-an easy punning between these subtly different but contextually easily disambiguated notions.
+an easy punning between these subtly different notions
+that experts easily disambiguate from context—when they pay attention.
 
 @subsubsection[#:tag "IO"]{Initialization Order}
 
@@ -1148,28 +1149,178 @@ which would not be directly expressible in a pure applicative setting.
 As far as OO and other pure functional concepts go,
 @principle{Mutation is an implementation technique, not a semantics}.
 
-@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX HERE XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
-
 @subsection{Dimensions of Modular Computations}
+
+The preceding representations illustrate several dimensions of a larger design space.
+Object initialization is a particularly revealing example of modular computation:
+its parts may refer to the very context whose contents they are collectively computing.
+But the same questions arise whenever a modular computation makes some results available
+while others remain to be computed.
+Having discussed the semantics of initializing recursive structures in @secref{IRS},
+I will now focus on how implementations can organize such computations.
+
+I will distinguish seven dimensions:
+@itemize[
+  @item{@emph{Availability of partial results}:
+    what may be observed or requested before the whole computation is complete.}
+  @item{@emph{Granularity}:
+    which parts are separately suspended, computed or coordinated.}
+  @item{@emph{Dependency resolution}:
+    how the prerequisites of each computation are identified and satisfied.}
+  @item{@emph{Uniformity vs specialization}:
+    how much representation and code is shared between different modular computations.}
+  @item{@emph{Lifetime staging}:
+    which invariants and representations change as computation progresses.}
+  @item{@emph{Concurrent access}:
+    which computations may simultaneously produce or consume partial results.}
+  @item{@emph{Responsibility for invariants}:
+    what the current implementation guarantees and what it requires of its clients.}]
+
+These dimensions are not wholly independent:
+a uniform suspension protocol may already determine how availability is tracked,
+while a specialized representation may reopen that choice.
+Nor are they successive grades of sophistication.
+The appropriate combination depends on the semantics being implemented,
+the information available and the operations expected to be frequent.
+Throughout, the responsibilities of the implementation and its clients must be understood;
+the last dimension makes that boundary explicit.
 
 @subsubsection{Availability of Partial Results}
 
-lazy evaluation? blocking wait on? mutable with error? mutable with null? mutable with undefined?
-Very short because Ch4 already did the work @secref{IRS}.
-Recall only the distinction needed by the rest of this section:
-defined but not yet evaluated versus genuinely not yet assigned.
-The rest of Ch10 takes that semantic choice as input.
+As discussed in @secref{IRS},
+a component of a modular computation
+can already be defined without its value having been computed yet,
+or can remain uninitialized until an operation supplies that value.
+A request for an unavailable value may start its suspended computation,
+wait for a computation already underway,
+return a distinguished default if that is what the protocol specifies.
+signal an error, or silently misbehave.
+
+What matters with respect to this dimension is the semantics of partial availability,
+i.e. in what clients may observe while partial computations are underway.
+This is quite different from the matter of how how data is represented underneath.
+A promise may be represented by a standard-size mutable cell that contains
+a promise descriptor until it contains the non-promise result;
+or it may be represented by appropriate entry in a packed data structure
+(e.g. of one or a few bits or bytes), with a promise flag or descriptor out-of-band;
+that would be the same semantics.
+If, with the same underlying representation, the user must follow
+a lower-level protocol where cell assignment is explicit,
+and manually enforce the promise invariants,
+that might be the same representation, but different semantics.
+
+@subsubsection{Granularity}
+
+The availability protocol specifies what happens when an unavailable result is requested.
+A related but distinct question is what are the units
+of independently suspended or executed modular computations?
+I already described a concrete instance of this dimension in @secref{SRoRoS}:
+a suspended record versus a record of suspensions.
+One computation may produce the record, or separate computations may produce its fields.
+
+But there is a continuum between the two, and
+the @emph{granularity} of the computation protocol is a second dimension of design.
+At a finer grain, more fields of a structure, and subfields within substructures therein,
+may each have their own suspended computation or initialization protocol,
+that may be triggered and scheduled, or left unexecuted, independently from the others.
+At a coarser grain, groups of fields are computed together;
+many languages have a protocol in terms of separate “constructors” or initialization methods
+for each “object” in the data graph;
+more primitive languages let you register initialization hooks to be run
+for each compilation unit when it is (statically or dynamically) linked,
+or at the beginning of the entire program.
+
+Finer granularity provides more modularity in developing the software in independent bits;
+but also incurs more management overhead (whether at runtime or compile-time).
+Coarser granularity can be much more efficient by sharing or eliminating this overhead;
+but then, then the management of finer-grained dependencies between individual field values
+has been moved from first-class to fourth-class.
+Runtime automation was cut, but programmer-time manual work was increased.
+And depending on the system, one may make much more sense than the other.
+Another way of looking at it: there is always a protocol that covers each and every entity,
+but this protocol may have multiple tiers of entities with various levels of system support,
+possibly corresponding to multiple levels of languages
+at which different kinds of developers interact.
 
 @subsubsection{Dependency Resolution}
 
-This absorbs the strongest material from the current Too Low-level subsection:
-lazy evaluation can discover dependencies dynamically;
-alternatively a compiler may construct a dependency graph and topologically order computations
-where possible (monomorphically? polymorphically?);
-hybrids can do both.
-static code cannot topologically sort definitions that do not yet exist.
+The next dimension of design for modular computations is about how the
+dependencies between computation units are resolved.
+At one end, they may be discovered dynamically as the computation proceeds,
+each suspension activated no sooner and no later than when the resulting value is needed—as
+with my previous lazy field protocol.
+At the other end, dependencies may be statically analysized in an earlier stage of computation,
+so that a fixed dependency order may be prepared in advance,
+that can be efficiently executed without the runtime overhead involved by dynamic discovery,
+and guaranteed without circularity.
+
+The analysis can be elaborate, leaving a large space for implicit dependencies between entities;
+or it can be rudimentary, and require the programmer to spell out those dependencies.
+The more rudimentary the analysis, the less modular the language, since
+for programmers to spell out dependencies means that they must know more about each other’s modules,
+which defeats the principle of modularity: more cooperation with less coordination.
+But in a language with non-termination, even the most elaborate mandatory static analysis
+will be less modular than the full dynamic case: the analysis,
+not being able to predict non-termination in general,
+will either have to restrict its domain of applicability to cases where it can predict non-termination,
+which rejects valid programs, or to make conservative approximations of dependencies,
+which also rejects valid programs based on phantom loops.
+Either way, the analysis introduces coupling between entities that reduce modularity.
+An overly rigid order also defeats extensibility, since it cannot take into account
+computations that haven’t been defined yet.
+
+Then again, there’s a matter of semantics vs implementation.
+Of course you can have a completely dynamic language with a straightforward
+implementation that runs no compile-time analysis and
+discovers all dependencies at runtime the hard way.
+And you can also have a static language with an intended implementation
+that analyzes dependencies at compile-time, rejects programs on which the analysis fails,
+then optimizes accepted programs based on the analysis.
+But I can also imagine an implementation for language with static semantics
+that runs the compile-time analysis yet eschews optimization for the sake of simplicity;
+or an implementation for language with dynamic semantics that
+runs a compile-time analysis and optimizes what it can statically analyze,
+but falls back to dynamic discovery and runtime errors for what it cannot.
+
+As with granularity, sacrificing too much of modularity and extensibility for the sake
+of “efficiency” leads to moving the protocol from first-class to fourth-class:
+programmers will fallback to initializing fields with dummy values, then
+layering their own protocol on top to side-effect them into actual values;
+or programmers will move the actual computation of initial values to “builder” objects,
+that defeat modularity, but also make many regular methods unavailable during initialization,
+leading to more detours.
+
+@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
 
 @subsubsection{Uniformity vs Specialization}
+
+An implementation may use the same uniform representation and access code
+for all computations and their suspensions;
+or it may have many specialized representations each with its own access code,
+tailored to each data structure.
+
+
+In the uniform case, a general routine interprets information describing
+what remains to be computed and where its result belongs.
+In the specialized case, some of that information is embodied directly
+in the code and layout, rather than consulted as data.
+The distinction between shared and specialized representations
+also appears in @secref{CSvTS}.
+
+Specialization can remove indirections, checks and unused machinery,
+but may require more work at an earlier stage and generate more code.
+The resulting instruction-cache pressure can offset savings on individual operations.
+A uniform implementation can therefore be preferable even when specialization is possible,
+particularly when structures change frequently or each specialized case is used only briefly.
+Conversely, first-class specifications need not prevent specialization:
+a later stage can exploit information unavailable to an earlier compiler.
+Generic fallback and specialized common cases can coexist.
+@; Preserve the terminology note without making it another digression here:
+@; one concrete representation for many abstract types vs distinct representations;
+@; "monomorphic" and "polymorphic" depend on which side of that relation is being counted.
+@; Candidate exemplars: Lisp-style uniform tagged values; C++ per-structure code;
+@; JIT specialization with generic fallback. Compare mechanisms, not whole languages.
+
 
 See @secref{CSvTS}. Uniform / Monomorphic (one shape for all meanings, fewer shapes)
 vs Specialized / Polymorphic (each meaning its shape, more shapes).
@@ -1181,13 +1332,6 @@ interpreter ↔ compiler ↔ JIT continuum.
 
 The current discussion of second-class OO, monomorphization and
 recovering optimizations from static information moves here.
-
-@subsubsection{Granularity}
-
-Suspended record versus record of suspensions versus intermediate groups/phases.
-This links directly back to the preceding Suspended Records or Records of Suspensions subsection,
-but now explains that choice as one instance of a general dimension:
-what is the unit of independently scheduled modular computation?
 
 @subsubsection{Lifetime Staging}
 Construction → initialized/mature → perhaps sealed/frozen. Different invariants become available over time and representation can change accordingly. This prepares Object Layout, where we later discuss bitmaps, sentinels, construction descriptors and mature layouts physically.

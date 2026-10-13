@@ -317,7 +317,7 @@ defaulting to an @c{empty-record} at each intermediate level@xnote["."]{
 
 You may have noticed that I used the same letters @c{i r p}
 to parameterize a @c{SkewLens} (plus their successors)
-as to parameterize a @c{ModExt}. This is not a coincidence.
+as to parameterize a @c{TModExt}. This is not a coincidence.
 You can focus a modular extension by looking at it through a matching skew lens:
 @Code{
 skew-ext : SkewLens i r p j s q → TModExt i r p → TModExt j s q
@@ -483,7 +483,7 @@ with more or less elaborate computations in between.
 
 @subsection{Adjusting Context and Focus}
 
-@subsubsection{Adjusting both together}
+@subsubsection{Adjusting Both Together}
 
 A monomorphic lens, or simple lens, can refocus a closed specification focus
 into another closed specification focus, such that a local closed specification
@@ -2880,7 +2880,7 @@ and the dispatch could be optimized away at compile-time.
 If the set of Ilks allowed by the Type is too large or open, then the type analysis
 does not permit optimization of dynamic dispatch into static dispatch.
 
-@subsection{First-class vs second-class modularity}
+@subsection{First-Class vs Second-Class Modularity}
 
 Whichever dispatch strategy or set of available strategies you choose
 for your second-class Class OO language,

@@ -479,6 +479,9 @@ and just because someone claims one technique makes things better doesn’t make
 that’s where one should be reminded of the criterion for Modularity:
 @emph{does the design enable developers to cooperate more while coordinating less?}
 
+@; A tradeoff is not solved by moving its cost across an abstraction boundary.
+@; When a claimed solution makes one cost disappear, look for where the invariant reappears.
+
 @subsection{Implementing Modularity}
 
 To achieve modularity, the specification for a software computation

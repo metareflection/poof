@@ -39,7 +39,8 @@
 }
 
 @noindent[]
-@italic{This book, though well advanced, is still a work in progress}@xnote["."]{
+@italic{This book is almost but not quite complete,
+  as its chapter 10 is still a work in progress}@xnote["."]{
   The latest draft is available in PDF at @url{https://fare.tunes.org/files/cs/poof/ltuo.pdf}
   and in HTML at @url{https://fare.tunes.org/files/cs/poof/ltuo.html}.
   The source code is at @url{https://github.com/metareflection/poof}.

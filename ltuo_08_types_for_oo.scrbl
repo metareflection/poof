@@ -214,7 +214,8 @@ mix : parentProvided ⊂ childInherited,
         SModExt⊂ childInherited childRequired provided →
         SModExt⊂ inherited parentRequired parentProvided →
         SModExt⊂ inherited required provided
-fix : self ⊂ required, provided ⊂ self ⇒ top → SModExt⊂ top required provided → self
+fix : self ⊂ required, provided ⊂ self ⇒
+        top → SModExt⊂ top required provided → self
 }
 
 Intersection style requires types to constitute a meet-semilattice,
@@ -233,11 +234,16 @@ being the intersection of the @c{providedExtension} type and the @c{inherited} t
 thus a subtype of @c{inherited}.
 Whereas in subtype style, @c{provided} covers all the information being returned,
 in intersection style, @c{providedExtension} only covers the new information.
+Omitting to intersect with @c{inherited} and returning just @c{providedExtension}
+(or @c{provided}, as it would be, without constraint that it should be included in @c{inherited})
+leads back to regular (non-strict) modular extensions.
 Note that the type @c{top} used with @c{fix} is usually chosen in practice at instantiation time
 such that @c{top∩target = target}.
-Here are my types in intersection style;
-the strictness is in the intersection of the result with @c{inherited},
-that if omitted (returning just @c{providedExtension}) leads back to regular modular extensions:
+Also note how the child modular extension (on the left) has @c{i∩p} as inherited parameter,
+i.e. its inherited input includes all that was inherited by the parent (on the right)
+as well as what was provided by the parent
+(that would be just @c{p} for non-strict modular extensions).
+Here are my types in intersection style:
 @Code{
 type SModExt∩ inherited required providedExtension =
   inherited → required → (inherited∩providedExtension)
@@ -259,7 +265,7 @@ the @c{inherited} type parameter encodes all the information mixed “to the rig
 of the current modular extension,
 and the @c{required} and @c{provided} parameters can be inferred
 with all the information available.
-Using let-polymorphism, you might define a named mixin and
+Using let-polymorphism, you might define a named modular extension and
 apply it to several single-inheritance chains,
 with independent type instantiations at each use.
 Computing a fixpoint requires establishing the relevant recursive type constraints,
@@ -368,84 +374,51 @@ while the exact runtime behavior of a specification
 @emph{will} depend on the linearization order,
 its compile-time type will not and must not.
 
-The imprecise types then look like the @c{PModExt} I offered for mixin inheritance,
-except the @c{i r p} parameters will encode
-not only the types induced by the current modular extension,
-but also the transitive intersection of the types induced
-by all the specification’s ancestors.
-Here is how I would encode those types in what is increasingly pseudo-code,
-where
-@c{Tag} is the type of tag for the specification identities,
-@c{DAG} is a type of DAGs over some set of labels that is a finite subset of @c{Tag},
-and @c{lol} is the local order over those labels, and @c{Vertex(lol)}
-the type containing only the vertices of @c{lol}.
-@c{pr}, @c{pi}, @c{pp} are the @c{lol}-indexed families of
-@c{r}, @c{i}, @c{p} type parameters for the parents of the current specification,
-@c{⋂ x} is the intersection of types in the type family @c{x}, and
-@c{Π i:I . T} is the dependent product of types @c{T},
-type of expressions that may depend on @c{i} for each index @c{i} in @c{I},
-@c{Σ i:I . T} is the dependent sum of types @c{T},
-type of pairs of an index @c{i} and an element of @c{T} at @c{i}.
-Note how the polymorphic strictness of the modular extensions
-is essential in ensuring that the resulting type does not depend
-on the exact linearization order:
-@Code{
-type MISpec i r p =
-  Σ lol : DAG .
-  Σ pr pi pp : Vertex(lol) → Type .
-  Σ pe : Type .
-  p = pe ∩ ⋂ pp,
-  r ⊂ ⋂ pr,
-  i ∩ ⋂ pp ⊂ ⋂ pi ⇒
-  { modExt : PModExt (i ∩ ⋂ pp) r pe ;
-    parents : Π l : Vertex(lol) . MISpec (pi l) (pr l) (pp l) ;
-    tag : Tag }}
-
-The sketch above summarizes the interfaces contributed and required by the ancestors,
-but does not fully validate their ordered composition:
-The constraint @c{i ∩ ⋂ pp ⊂ ⋂ pi} checks that inherited requirements
-are covered by the initial information and the combined ancestor contributions;
-but it does not check that each contribution is available before it is required.
-Indeed, intersection makes accumulated type information independent of order,
-but does not make the availability of inherited inputs independent of order.
-A complete treatment must therefore also validate these requirements
-against the chosen linearization.
-For statically known ancestry, this can be checked after computing the linearization,
-as in the previous “precise” strategy;
-for first-class specifications, it requires additional static evidence
-or runtime validation supported by suitable representations of the contracts.
-I leave that additional obligation outside the type sketch above.
+I sketch such types in @secref{MIwST},
+after having introduced more elaborate self-dependent types.
 
 @subsection[#:tag "LoST"]{Limitations of Simple Types}
 
-The preceding modular-extension types soundly describe composition and preservation,
-and the @c{MISpec} sketch additionally summarizes ancestry,
-subject to the validation obligation just discussed.
+The preceding modular-extension types soundly describe composition and preservation.
 Variants of them have often been independently reinvented
 by many a programming language researcher. @; TODO cite
-Now, given a parent modular extension with type @c{PModExt i r p},
+
+Given a parent modular extension with type @c{PModExt i r p},
 composing it with a child modular extension in the same context @c{r}
-may yield type @c{PModExt i r q} where @c{q} is a subtype of @c{p},
+may yield type @c{PModExt i r p∩q},
 extended with the information contributed by the child.
 However, the context is not preserved when computing a fixpoint:
-instead, changes to @c{p} will feed back into @c{r} and into the @c{i} of further extensions;
+when interfaces depend on self, changes to @c{p} may feed back
+into @c{r} and into the @c{i} of further extensions;
 this feedback can lead to a type @c{PModExt j s qq} whose relationship to @c{PModExt i r p} is unclear.
+The central limitation here is that the @c{PModExt} formulation quantifies over effective self types,
+but its interface parameters remain fixed within that quantification, and do not vary with self.
 
-Moreover, the inferences and analyses made for a specification and its target
-cannot in general be shared with an extension thereof and its own target,
-that has its own fixpoint, hence its own @c{r} parameter.
-Each concrete instantiation of a specification requires its own resolution to a self-type;
-hopefully achieved automatically, but if not, manually by the programmer. @; TODO cite Pierce???
-For the same reason, optimizations made, dynamic checks eliminated, cannot in general
-be shared across separately-analyzed and especially separately-monomorphized branches of the code.
-The @c{PModExt} formulation quantifies over effective self types,
-but its interface parameters remain fixed within that quantification, and do not vary with self,
-which limits the relationships expressible through this fixed contract.
+Each concrete instantiation of a specification requires its own resolution to a self-type
+that will feed simultaneously into both @c{r} and @c{p} parameters of a closed modular extension,
+and the @c{r} parameter of every open modular extension that defines its parts.
+Those open modular extensions could be defined modularly;
+but with these fixed interface parameters, the recursive target type
+must still be established for the particular assembly:
+it can be a recursive type automatically inferred by a suitable algorithm
+@~cite{Eifrig1995ILOOP Eifrig1995ISOOP}
+from the type constraints gathered from its constituent contracts;
+or the programmer could manually tie the type knot and supply a solution
+@~cite{Pierce1993}.
+Either way, a single scope must bring together and lay flat
+enough type information to establish the recursive solution,
+whether by inference or by a programmer-supplied type.
+This limitation is often modest in practice:
+the approach readily accommodates second-class Class OO,
+where each class has a concrete declaration;
+but it does not support higher-order constructions
+that define classes while abstracting over the self-dependent interface constraints
+of their constituent specifications.
 
-Wouldn’t it be nice if there were a simple way to reflect inheritance into the typesystem,
+Now, wouldn’t it be nice if there were a simple way to reflect inheritance into the typesystem,
 such that you could analyze a specification once, and the analysis would directly apply
 to extensions to the specification?
-Thus you could regain some of the modularity that OO is supposed to help provide?
+Wouldn’t that lift some limitations to the modularity that OO is supposed to provide?
 
 @section[#:tag "NNOOTT"]{The NNOOTT: Naïve Non-recursive OO Type Theory}
 
@@ -595,15 +568,15 @@ is a subtype of the target of the unextended specification.
 The result can be extended to also work in the presence of such “open” references,
 when they all occur in “positive” positions such that
 information added only feeds back positively through the fixpoint.
-@emph{Strict} extensions that satisfy this property are called “covariant”.
+Extensions that satisfy this property are called “covariant”.
 Extensions where all open references occur in “negative” positions (such as function arguments)
 are called “contravariant”.
 Those with open references in both kinds of positions are called “invariant”.
-Finally, those strict extensions that contain no open references,
+Finally, those extensions that contain no open references,
 I will call “constant” like Jacobs above.
 With suitable interpretation of (least) fixpoints for types,
 it can be proven that, under the monotonicity hypotheses stated in the exercise below,
-given two strict covariant extensions A and B,
+given two @emph{strict} covariant extensions A and B,
 the target @c{(fix top (mix B A))} is a subtype of the target @c{(fix top A)},
 i.e. subclassing implies subtyping for classes defined covariantly only.
 
@@ -640,7 +613,7 @@ includes self-reference, subtyping and subclassing are very different,
 a crucial distinction that was first elucidated in @citet{Cook1989Inheritance}.
 
 Now, one simple trick to “save” the NNOOTT is
-to reserve static typing to non-self-referential methods,
+to reserve static typing for non-self-referential methods,
 while self-references are given constant interface types:
 wherever a recursive self-reference to the whole would happen, e.g. in the type of a field,
 programmers must instead declare the value as being of a dynamic “Any” type,
@@ -656,10 +629,9 @@ while whoever uses the results would also have to check that they are indeed of 
 and downcast them (again, to use any B-specific information from it).
 Actually, with proper language support, you could make it so designated positive occurrences
 may track the subclass, and the inherited method would then be @c{add : A → B},
-and only the negative occurrence in an argument requires a dynamic typecheck and downcast.
-
-@; TODO: we can improve the above by only adding dynamic checks in contravariant positions.
-@; Check: as in Eiffel ? BETA ? C++ ? Java ? C# ?
+and only the negative occurrence in an argument requires a dynamic typecheck and downcast;
+C++ and Java notably support such covariant return types.
+@; Check: Eiffel ? BETA ? C# ?
 
 In a language with support for dynamic types at runtime,
 the programmer can declare methods with overly permissive types,
@@ -714,9 +686,20 @@ and continually reinvented even when not explicitly transmitted
 I readily admit it’s a naïve belief I too had
 when I first tried to put types on my modular extensions.
 
-The reasons why, despite being inconsistent, the NNOOTT was and remains so popular,
-not just among the ignorant masses, but even among luminaries in computer science,
-is well worth examining.
+Then again, languages like C++ and Java started with the NNOOTT as their base typesystem:
+while method behavior provides open recursion,
+class definitions themselves offered no way to reference the openly recursive type variable.
+The result is a typesystem that doesn’t do quite what OO should do,
+where programmers and implementers must use various workarounds and
+insert subtle checks and casts to cross the gap between
+what a consistent OO type system should do and what the language provides.
+Happily, their typesystems were later extended with means to escape the NNOOTT:
+C++ template metaprogramming allows for CRTP @~cite{Coplien1995},
+while Java adopted F-bounded generics.
+
+The reasons why, despite being inconsistent (with OO, if not necessarily internally),
+the NNOOTT was and remains so popular, not just among the ignorant masses,
+but even among luminaries in computer science, is well worth examining.
 
 @itemize[
 @item{
@@ -786,7 +769,7 @@ is well worth examining.
 
 @section[#:tag "BtN"]{Beyond the NNOOTT}
 
-@subsection[#:tag "ST"]{Self Types}
+@subsection[#:tag "ST"]{Self-Dependent Types}
 
 @subsubsection{Deconfusing Types for Specification and Target}
 The key to fully dispelling the
@@ -877,7 +860,7 @@ because of effects somewhere else in the system, etc.,
 can be safely represented and typed,
 without having to fight the typesystem or the runtime.
 
-@subsubsection[#:tag "AoSDI"]{Abstracting over Self-Dependent Interfaces}
+@subsubsection[#:tag "AoSDI"]{Abstracting over Self-Dependent Types}
 
 To describe the feedback relationship between self as provided result
 and self as required context, a more precise view of a modular extension is thus as
@@ -963,6 +946,65 @@ Indeed, the intersection operation is defined polymorphically by induction on ki
 so that it applies to operators of any arity that return types
 that can then be intersected pointwise.
 
+@subsection[#:tag "MIwST"]{Typing Multiple Inheritance, with Self-Dependent Types}
+
+I can now apply the above self-dependent types to sketch
+types for multiple inheritance (@secref{TMI}) in the “imprecise” case
+(the precise types were a matter of staging
+the reduction of multiple inheritance to mixin inheritance
+before to start typing things).
+
+The type @c{MISpec} for a multiple inheritance specification can also be summarized
+by the same parameters self-dependent type parameters @c{i r p} as @c{ModExt};
+but underneath, they pack much more structure:
+not only the self-dependent types induced by the current modular extension,
+but also the transitive intersection of the self-dependent types induced
+by all the specification’s ancestors.
+Here is how I would encode those types in what is increasingly pseudo-code,
+where
+@c{Tag} is the type of tag for the specification identities,
+@c{DAG} is a type of DAGs over some set of labels that is a finite subset of @c{Tag},
+and @c{lol} is the local order over those labels, and @c{Vertex(lol)}
+the type containing only the vertices of @c{lol}.
+@c{pi}, @c{pr}, @c{pp} are the @c{lol}-indexed families of parameters for the parents,
+@c{i}, @c{r}, @c{p} are type parameters for the current specification,
+@c{pe} is the self-dependent type provided by the specification’s own modular extension
+over what it inherits,
+@c{⋂ x} is the intersection of types in the type family @c{x}, and
+@c{Π x:X . T} is the dependent product of types @c{T},
+type of expressions that may depend on @c{i} for each index @c{i} in @c{I},
+@c{Σ x:X . T} is the dependent sum of types @c{T},
+type of pairs of an index @c{i} and an element of @c{T} at @c{i}.
+Note how the polymorphic strictness of the modular extensions
+is essential in ensuring that the resulting type does not depend
+on the exact linearization order:
+@Code{
+type MISpec i r p =
+  Σ lol : DAG .
+  Σ pr pi pp : Vertex(lol) → Type → Type .
+  Σ pe : Type → Type .
+  p = pe ∩ ⋂ pp,
+  r ⊂ ⋂ pr,
+  i ∩ ⋂ pp ⊂ ⋂ pi ⇒
+  { modExt : ModExt (i ∩ ⋂ pp) r pe ;
+    parents : Π l : Vertex(lol) . MISpec (pi l) (pr l) (pp l) ;
+    tag : Tag }}
+
+The sketch above summarizes the interfaces contributed and required by the ancestors,
+but does not fully validate their ordered composition:
+The constraint @c{i ∩ ⋂ pp ⊂ ⋂ pi} checks that inherited requirements
+are covered by the initial information and the combined ancestor contributions;
+but it does not check that each contribution is available before it is required.
+Indeed, intersection makes accumulated type information independent of order,
+but does not make the availability of inherited inputs independent of order.
+A complete treatment must therefore also validate these requirements
+against the chosen linearization.
+For statically known ancestry, this can be checked after computing the linearization,
+as in the previous “precise” strategy;
+for first-class specifications, it requires additional static evidence
+or runtime validation supported by suitable representations of the contracts.
+I leave that additional obligation outside the type sketch above.
+
 @subsection{Advantages of Typing OO as Modular Extensions}
 
 By defining OO in terms of the λ-calculus, indeed in two definitions @c{mix} and @c{fix},
@@ -985,7 +1027,19 @@ Indeed, defining OO types in terms of LaTeX deduction rules for ad hoc OO primit
 is just programming in an informal, bug-ridden metalanguage that few are familiar with,
 with no tooling, no documentation, no tests, no actual implementation,
 and indeed no agreed upon syntax much less semantics @~cite{Steele2017},
-the very opposite of the formality the authors affect.
+the very opposite of the formality the authors affect@xnote["."]{
+  Using the logical metalanguage is appropriate when trying to lay the foundations of logic itself,
+  as when defining the λ-calculus, or linear logic, etc.
+  This is a case where you don’t have much else, and the alternatives are worse.
+  But it is totally inappropriate when trying to describe language features—unless
+  you’re making the explicit claim that your new features constitute
+  a replacement foundational paradigm for logic;
+  and even then you should probably only make the claim after
+  you’ve first described your new logic on top of previous logic foundations.
+  Deduction rules are for digging down, not building up,
+  and computer scientists who affect doing the former when they are or should be doing the latter
+  are outright confusing, and likely outright confused.
+}
 
 Not having OO-specific magic also means that when I add features to OO,
 as I will demonstrate in the rest of this book, such as single or multiple inheritance,
@@ -1465,7 +1519,8 @@ I am sure there are many others, but once again this is not my specialty.
 
 @subsection[#:tag "OOTP"]{OO Type Practice}
 
-I shook my head at theorists who put types on top of toy object systems rather than underneath;
+I shook my head at theorists who put types
+on top of toy object systems rather than underneath;
 but at least those I cited produced sound typesystems—unless otherwise stated.
 What then shall I say about practitioners who do this at industrial scale
 on top of object systems so overgrown that no one can conceivably hold them in their head,
@@ -1604,9 +1659,10 @@ still I declare:
   Hint: Show that @c{μG} is a pre-fixpoint of @c{F}, then
   use the characterization of @c{μF} as the least pre-fixpoint of @c{F}.
 
-  Now let @c{P,Q : D → D} be monotone, and @c{M : D × D → D} be monotone in both arguments.
-  Consider the modular extension
-    @c{ext(M,P) ≜ λs. M(P(s),s)},
+  Now let @c{P,Q : D → D} be monotone modular definitions, and
+  @c{M : D × D → D} be a modular extension that is monotone in both arguments.
+  Consider the modular definition
+    @c{ext(M,P) ≜ λs. M(P(s),s)};
   show that
     @c{P ⊑ Q  ⇒  ext(M,P) ⊑ ext(M,Q)},
   and therefore
@@ -1667,7 +1723,8 @@ but justify in handwavy terms what each level of typing sophistication enables:
 At the introduction of each feature, add a sentence or short paragraph
 explaining the programming need it addresses:
 - Let-polymorphism: independently instantiate a named extension at each use.
-- Higher-rank polymorphism: preserve that flexibility when passing an extension to a function that uses it at several self types.
+- Higher-rank polymorphism: preserve that flexibility when passing an extension
+  to a function that uses it at several self-dependent types.
 - Higher-kinded abstraction: describe combinators uniformly over arbitrary self-dependent interfaces.
 - Intersections: express preservation and combination of compatible interfaces.
 
