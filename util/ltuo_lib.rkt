@@ -82,8 +82,8 @@
               #"  \\renewcommand{\\AutobibEntrySetup}{%\n"
               #"    \\emergencystretch=2em\n"
               #"    \\tolerance=1000}}%\n"
-              ;; lualatex stuff
 
+              ;; lualatex stuff
               #"\\errorcontextlines=100\n"
               #"\\usepackage{newunicodechar}\n"
               #"\\providecommand{\\DeclareUnicodeCharacter}[2]{%\n"

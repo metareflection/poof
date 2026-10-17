@@ -1,0 +1,24 @@
+\DocumentMetadata{} %% new lualatex PDF-management infrastructure
+\documentclass{book}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+%% Restore things broken by pltstabular
+\makeatletter
+\let\SavedMkpream\@mkpream
+\let\SavedAddamp\@addamp
+\let\SavedXhline\@xhline
+\AtBeginDocument{%
+  \let\@mkpream\SavedMkpream
+  \let\@addamp\SavedAddamp
+  \let\@xhline\SavedXhline
+}
+\makeatother
+
+\AtBeginDocument{%
+  \renewcommand{\Autobibref}[1]{%
+    \begingroup
+    \hypersetup{linkbordercolor=green}%
+    #1%
+    \endgroup
+  }}%

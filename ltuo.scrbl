@@ -12,7 +12,11 @@
   pdfinfo={
     LtUOVersion={@|ltuo-version|},
     CanonicalURL={https://fare.tunes.org/files/cs/poof/ltuo.html}
-  }
+  },
+  colorlinks=false,
+  linkbordercolor=red,   % Internal links: red
+  urlbordercolor=blue,   % External URLs: blue
+  citebordercolor=green  % Citation links: green
 }}
 
 @title[
