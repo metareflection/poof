@@ -1061,9 +1061,9 @@ BruceCardelliPierce2006
 @subsection[#:tag "PFCTD"]{Parametric First-Class Type Descriptors}
 
 There are two main strategies to represent parametric types:
-“function of descriptors” vs “descriptor of functions”.
+“function-of-descriptors” vs “descriptor-of-functions”.
 
-In the “function of descriptors” strategy, a parametric type is represented as
+In the “function-of-descriptors” strategy, a parametric type is represented as
 a function from type descriptor to type descriptor:
 the function takes a type parameter as input, and
 returns a type descriptor specialized for that parameter as output.
@@ -1080,7 +1080,7 @@ It is useful when trying to statically inline away all traces of type descriptor
 but in a dynamic setting requires creation of more descriptors,
 or some memoization mechanism.
 
-In the “descriptor of functions” strategy, a parametric type is represented as
+In the “descriptor-of-functions” strategy, a parametric type is represented as
 a type descriptor the methods of which may take extra parameters in front,
 one for the type descriptor of each type parameter.
 Methods that return non-function values may become functions of one or more type parameters.
@@ -1109,11 +1109,12 @@ only one or a few of which are to be used at a time per tuple of descriptor argu
 and this tuple of descriptor arguments itself changes often.
 
 Even fixpoints can be done differently in the two strategies:
-the “function-of-descriptors” strategy leads to generating descriptors that embed the fixpoints
-so that clients never need to know they were even fixpoints;
-whereas the “descriptor-of-functions” strategy leads to descriptors the calling convention of which
-requires clients to systematically pass the descriptor itself to the methods it contains
-so as to close the fixpoint loop.
+the “function-of-descriptors” strategy works better with Y-encoding (@secref{MOO}),
+generating descriptors that embed the fixpoints
+so that clients never need to know they were even fixpoints,
+whereas the “descriptor-of-functions” strategy works better with U-encoding,
+with the calling convention wherein clients systematically pass the descriptor itself
+to the methods it contains so as to close the fixpoint loop (@secref{CfUe}).
 
 @subsection[#:tag "CSvTS"]{Class Style vs Typeclass Style}
 

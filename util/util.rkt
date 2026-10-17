@@ -2,7 +2,7 @@
 
 (provide (all-defined-out))
 
-(require (only-in scribble/base ~ emph elem linebreak nested italic smaller bold para centered
+(require (only-in scribble/base ~ emph elem linebreak nested italic smaller bold para
                   section subsection include-section)
          (only-in scribble/core paragraph make-paragraph make-compound-paragraph
                                 make-style plain content->string)
@@ -230,7 +230,6 @@
            \\begin{center}\\begin{minipage}{0.72\\textwidth}\\itshape{}")
      x
      (tex "\\end{minipage}\\end{center}\\vspace*{\\fill}\\cleardoublepage{}")))))
-
 
 (require racket/runtime-path
           racket/system

@@ -100,7 +100,7 @@ build/slides-2026-elte.html: slides-2026-elte.rkt util/reveal.rkt util/util.rkt 
 # Side paper became a book: LtUO
 # NB: trying to use --style header.tex causes my chapters to become 0.x !!!
 build/ltuo.pdf: ltuo.scrbl ltuo.bib util/util.rkt util/bibtex-unused.rkt util/ltuo_lib.rkt build/resources $(wildcard ltuo_*.scrbl) resources/pic/cube.pdf
-	RENDER_MODE=latex scribble --dest build --pdf ltuo.scrbl
+	RENDER_MODE=latex scribble --dest build --lualatex ltuo.scrbl
 build/ltuo.html: ltuo.scrbl ltuo.bib util/util.rkt util/bibtex-unused.rkt util/ltuo_lib.rkt build/resources $(wildcard ltuo_*.scrbl)
 	RENDER_MODE=html scribble --dest build --html ltuo.scrbl
 build/ltuo.tex: ltuo.scrbl ltuo.bib util/util.rkt util/bibtex-unused.rkt util/ltuo_lib.rkt $(wildcard ltuo_*.scrbl)

@@ -947,209 +947,115 @@ and expand to some optimized low-level code, à la C++.
 
 @subsection[#:tag "RtM"]{Recursion through Mutation}
 
-@subsubsection{A Popular Strategy to Implement Recursion}
+@subsubsection[#:tag "aPStIR"]{A Popular Strategy to Implement Recursion}
 
 Interestingly, mutation, the commonly available side effect whereby
-programs may mutate variable bindings or memory cells, introduces a popular
+programs may update record fields in place, provides a popular
 way of constructing recursive definitions in two separate steps:
-First, allocate a cell and retain a stable reference to it@xnote["."]{
-  I’ll speak of memory cells, to make mutation more explicit;
-  but your programming language might make it easier to think in terms
-  of mutable variables (as in Scheme), or mutable records (as in C).
-  Indeed, mutable variables would have been slightly easier to deal with in Scheme;
-  but my purpose is to make mutation semantics explicit, not to make its syntax easy.
-  The reference is then the address of the cell in memory or in the persistent store,
-  possibly coded or wrapped to fit the implementation and conventions of the programming language.
+First, allocate a record and retain a stable reference to it@xnote["."]{
+  In this paradigm, you can view a mutable memory cell as a single-field record,
+  and after a “boxing” transformation, a mutable variable as a mutable memory cell.
+  Any of those three could be a primitive to which the other ones are reduced:
+  a mutable record could be reduced to an immutable tuple of memory cells,
+  and a memory cell to a record-as-closure
+  whose @c{get} and @c{set} methods access a mutable variable.
+  Pick whichever your language or meta-language makes easier to reason with.
+  I picked mutable records as primitives, because their API better reflects
+  the performance expectations of today’s typical OO environments.
 }
-Then, use the reference to backpatch the value of the cell
-with the result of applying the generator to that reference.
-The cell is said to be @emph{initialized} after this mutation is complete,
+Then, use the reference to update the values of record fields in place
+by calling some initializer function with that reference as argument.
+A field is said to be @emph{initialized} after this update is complete,
 @emph{uninitialized} until then.
 
-In this mutable paradigm, the reference provides access to the future recursively defined object
-even before it is fully initialized (i.e. with all cells involved initialized),
-much like the delayed computation in the immutable paradigm.
-Meanwhile, the cell value, to be obtained by dereferencing the reference,
-provides access to the actual recursively defined object,
-but only after complete initialization.
-The same duality between computation and value, open future and closed past, exists,
-as in the immutable paradigm.
-But it might not be as obvious to a novice programmer introduced to a language with mutation
-without a clear conceptual distinction between a variable (or memory cell),
-a reference to said variable or cell, and the current content or value of the variable or cell;
-indeed the very ergonomics of languages with mutation depend on
-an easy punning between these subtly different notions
-that experts easily disambiguate from context—when they pay attention.
+In this mutable paradigm, references provide access to future recursively defined records
+even before they are fully initialized, much like suspensions in the immutable paradigm.
+With a uniform representation of fields, as in a typical dynamic language implementation,
+each word-sized field may mark itself uninitialized with a special “unbound” marker
+(with a uniform lazy representation, it would contain either a suspension or a computed value).
+With field representations specialized to their types, as in a typical static language implementation,
+an out-of-band bitmap could indicate which fields are still uninitialized.
+In some implementations, the bitmap could even be garbage collected
+after the object is fully initialized (@secref{LS})@xnote["."]{
+  An implementation of a pure lazy language could also implement records
+  with efficient packed values and out-of-band suspension information for narrow fields
+  that gets garbage collected when the record is fully computed.
+  By contrast, as of 2026, GHC 9.14 can unpack suitable strict fields into their enclosing records,
+  whereas ordinary fields that remain lazy are represented by pointers, even after evaluation.
+  An evaluated thunk can become a forwarding node pointing to its result,
+  much like a copying collector’s “broken heart”—except that the destination
+  is a computed result rather than a relocated copy.
 
-@subsubsection[#:tag "IO"]{Initialization Order}
-
-@; @secref{IRS}
-
-Recursion-through-mutation involves a tradeoff in terms of complexity:
-references to mutable cells provide direct access to recursive data structures
-that are both very performant for the machine and quite ergonomic for the programmer;
-but using them @emph{correctly} hinges on the programmer following a strict discipline
-with respect to making sure every cell is always suitably initialized before it is used.
-
-Failure to follow a proper initialization order can lead to catastrophic results,
-especially when trying to dereference an uninitialized cell:
-In a safe language like Common Lisp, the system will immediately raise an “unbound slot” error,
-wherein you can easily diagnose where the problem occurs and find a fix,
-and even restart the program with the fixed code when developing interactively.
-In a less safe language like Java or JavaScript, a slot accessed before it is initialized
-will contain a “null” or “undefined” value, a ticking time-bomb
-that will explode in the programmer’s face long after the invalid access,
-when the program eventually tries to use the value and fails
-with a “null pointer exception” or some other error,
-potentially wasting hours of the programmer’s time
-identifying the culprit and then fixing the bug,
-but at least avoiding bigger issues.
-In unsafe languages like C or C++, a slot accessed before it is initialized
-can result in “Undefined Behavior”, invalid memory patterns being used,
-pointers to nowhere or to the wrong place, silent memory corruption,
-unsuspected incorrect results, vulnerability to attacks by malicious actors,
-your money being stolen, your computer compromised, your AI subverted, etc.
-A more subtle and happily rarer problem arises when a cell is initialized more than once
-with inconsistent values, sometimes subtly so
-(e.g. apparently equivalent values that lack some expected pointer equality),
-causing difficult-to-explain failures later in the program,
-or worse, unsuspected incorrect results.
-Then again, concurrent object initialization
-can introduce another category of difficulty: race conditions.
-
-To avoid such costly failure modes, languages or libraries introduce
-various initialization protocols.
-But these protocols often fall short by being either
-too rudimentary or too complex—or, sometimes, both at once.
-
-A rudimentary protocol, as available in most languages,
-will be easy for compilers to enforce and programmers to follow:
-each constructor will have to explicitly and verbosely
-call parent constructors in repetitive boilerplate,
-in some constrained order with some constrained arguments,
-with little latitude in what these calls can do.
-But such a protocol has little room for intermediate computations,
-forward references, circularities, or divergence of orderings among descendants;
-thus programmers, forced to make decisions about ancestor initialization
-before they have the necessary information from descendants,
-soon find they have to leave fields uninitialized,
-initialize them with dummy values (like the infamous null),
-or worse, initialize them with incomplete temporary values,
-only to later mutate them to the actual initialized value.
-Rudimentary protocols thus solve the easy problems while leaving programmers on their own
-to solve the hard problems the hard way through extra layers of conventions—such as
-“factory” classes, static factory methods, or the “builder” pattern.
-
-More advanced protocols, such as
-the @c{initialize-instance}, @c{shared-initialize} and related generic functions of CLOS
-(that also offers a simple declarative protocol
-based on the @c{:initform} or @c{:initarg} of each slot,
-and @c{:default-initargs} of each class),
-allow for much more sophisticated orders of slot initialization
-that can involve the results of arbitrary intermediate computations,
-indeed intermediate method calls, etc.;
-yet the more sophisticated such methods get,
-the more discipline they will require from programmers,
-who are notoriously bad at maintaining such discipline.
-And even such sophisticated protocols will have limitations
-that require the occasional use of uninitialized or null values.
-They will still not be as flexible as the simple pure functional protocol I defined
-when used with laziness.
-
-@subsubsection{Initialization through Mutation is Too Low-level}
-@epigraph{
-  A programming language is low level when its programs require attention to the irrelevant.
-  @|#:-"Alan Perlis"|
+  Thunk updating and indirection-shortcutting by the garbage collector
+  can eliminate the suspension, but do not thereby pack its result into the enclosing record.
 }
-In our previous pure functional lazy (or otherwise suspended) protocol,
-fields are bound to lazy computations that yield their values,
-and these computations can in turn access other fields as well as inherited values.
-This protocol can dynamically infer which field computations
-depend on which other fields.
-That makes the protocol maximally modular, since it enables maximal cooperation
-between specifications with minimal coordination as to any initialization order,
-and supports arbitrary changes in initialization order due to overrides.
-Fields are defined using regular inheritance and overrides,
-without the need for a separate initialization protocol.
-The protocol can even detect circular dependencies@xnote["."]{
-  A lazy initialization protocol can still diverge into stack or heap overflow
-  due to infinite regress in producing more entities to initialize.
-  But such infinite regress cannot happen if programmers stick to common patterns
-  of static sets of identifiers without complex recursion;
-  and the same complex recursion patterns can cause infinite regress
-  even if tediously implemented in imperative languages.
-}
-No uninitialized fields, no nulls, no memory corruption, no double initialization,
-no ordering issues, no side effects that complicate everything,
-no factories, no builder patterns, no separate initialization protocol.
-Pure functional lazy prototypes just work.
-In a concurrent setting, appropriate use of atomic delay primitives
-can likewise prevent race conditions in the forcing of the suspension itself.
+The same duality between computation and value, open future and closed past,
+exists in both paradigms, though languages with mutation
+tend to blur it syntactically (@secref{IRS}).
 
-An imperative initialization protocol, by contrast,
-necessarily requires programmers to explicitly deal with more details,
-as it separates object computation into allocation and initialization stages.
-The imperative protocol is therefore comparatively @emph{low-level},
-which might make sense in the relatively rare cases where you really care
-about the performance of such initialization operations.
-But for most programmers, in most cases, this performance does not matter enough
-to justify having to care about all these irrelevant additional details.
-And most high-level languages will offer escape hatches to deal with such details
-in the rare cases where performance concerns justify the attention
-(indeed, those who write and extend compilers eventually need to get down to that level).
+I discussed the semantic difficulties with modularly initializing recursive structures
+in @secref{IRS}, with solutions ranging from unsafe uninitialized memory
+to null values to options to catching uninitialized reads
+to dynamic safety with suspensions to static safety with correctness proofs (manual or automated),
+or dodges like using “builder” methods.
+These solutions presented tradeoffs between
+performance, abstraction, expressiveness, complexity, modularity, etc.
+These difficulties, solutions and tradeoffs apply
+whenever data structures are computed modularly,
+including when some of these data structures are nested records,
+including when some of these records are prototype targets,
+including when some of these prototypes are classes,
+including when some of the records are instances (elements) of classes.
 
-A deep reason why a proper initialization order can be quite difficult to define,
-much less enforce, in such low-level imperative languages intended for performance-junkies,
-is that compilers must statically generate simple binary code for each piece of source code
-to achieve the intended performance.
-But such simple static code by construction cannot handle subtle dependencies
-of initialization that haven’t been specified yet;
-it cannot topologically sort cells that haven’t been defined or overridden yet.
-Yet such deferred definitions and overrides occur naturally in arbitrary OO code:
-OO code is all about partial specifications, with incomplete initialization behavior,
-that are later extended and eventually completed by further partial specifications.
-
-The general case of first-class OO necessarily includes dynamic semantics.
-Attempts to project such dynamic semantics into a static straitjacket
-necessarily bring pain in proportion to the impedance mismatch.
-A direct translation of second-class OO into first-class OO,
-that simply forgets static information, also forfeits the optimizations
-that this static information enabled.
-But second-class OO, when each class is monomorphized by the compiler,
-and the language allows for dependency-based re-ordering of slot-defining clauses,
-might topologically sort those definitions to accommodate a wider range of definitions
-that avoid initialization with temporary null values
-(assuming such a @emph{static} order exists, and not just a @emph{dynamic} one).
-Unhappily, I don’t know of any OO system that has chosen this semantics
-(outside OO, this is more or less the semantics of Scheme’s @c{letrec*}). @; TODO cite Waddell2005
-Existing second-class OO systems tend to offer the worst of both worlds
-in terms of initialization protocols.
-
-@subsubsection{Mutation-over-Purity}
+@subsubsection{Mutation over Purity, Purity over Mutation}
 
 Recursion-through-mutation provides a commonplace alternative to pure fixpoints
 in languages with mutation.
-But it is also a useful strategy to implement recursive data structures
-in pure functional languages!
+But the relationship between mutation and purity goes both ways,
+and each can usefully implement the other.
 
 Mutation can be expressed in a pure functional way, through a state monad
-that explicitly passes around a global record as a “mutable store”,
-the current mapping of identifiers to values.
+that explicitly passes around a record as a “mutable store”,
+the current mapping of identifiers (or locations) to values.
 Recursion-through-mutation can then be a valid implementation strategy
-in a pure @emph{applicative} programming language
-without any builtin primitive for lazy or delayed values.
-This is notably the case when restricting yourself to a proper subset of your language
-that is pure functional and total, so that you can reason inductively about programs:
-the theorem prover ACL2 is based on doing exactly that in Lisp;
-and this is a common style in systems like Rocq, Lean, F*, ATS, Agda, Idris, etc.
-Mutable state, though awkwardly emulated,
-enables the indirect expression of forward references and circular definitions,
-which would not be directly expressible in a pure applicative setting.
+in a pure @emph{applicative} programming language (or pure total language)
+without any builtin primitive for lazy or delayed values:
+mutable state, though awkwardly emulated,
+enables the indirect expression of forward references and circular data structures,
+without requiring primitive support for cyclic values.
+For instance, in proof assistants like Rocq, Lean, Agda, Idris,
+circular structures can be encoded as explicit stores indexed by keys.
+You can also use this technique to reason inductively about programs
+in a language with effects, using a pure functional and total subset of that language:
+in Common Lisp using ACL2,
+in F* using its pure fragment, etc.
 
-As far as OO and other pure functional concepts go,
+Conversely, a pure semantics can be implemented by mutation:
+A memoizing suspension may use mutation to replace a stored pure computation with its result,
+changing the representation without changing the value denoted.
+But mutation can also be used to represent a change of value denoted in a pure semantics,
+when some single-threaded record is replaced by a new record while the old one becomes unreachable;
+ACL2 and Clean can do it based on
+(type-based for Clean) static analysis, @; TODO cite Boyer2002 Barendsen1993
+while Lean 4 makes similar decisions based on dynamic reference counting; @; TODO cite Ullrich2019
+Haskell’s @c{ST} monad permits mutation behind a pure interface,
+the type of @c{runST} preventing access to the internal state from outside the computation,
+without requiring individual mutable references within it to be unique. @; TODO cite Launchbury1994
+Pure programs can thus often run with the performance of mutating ones.
+F* combines these perspectives: stateful programs can be specified and verified
+against a pure model of state passed through a monad,
+then compiled to actual mutation—to OCaml,
+or for its Low* subset, to C. @; TODO cite Swamy2016 Protzenko2017
+ATS exposes primitive mutation and pointer operations,
+whose safe use is established through linear types and proofs about memory;
+the proofs are erased before execution. @; TODO cite Xi
+
+Either way, as far as OO and other pure functional concepts go,
 @principle{Mutation is an implementation technique, not a semantics}.
+I will return to this point in a more general setting
+when discussing side effects in towers of implementation. @; TODO secref
 
-@subsection{Dimensions of Modular Computations}
+@section{Dimensions of Modular Computations}
 
 The preceding representations illustrate several dimensions of a larger design space.
 Object initialization is a particularly revealing example of modular computation:
@@ -1176,16 +1082,17 @@ I will distinguish seven dimensions:
   @item{@emph{Responsibility for invariants}:
     what the current implementation guarantees and what it requires of its clients.}]
 
-These dimensions are not wholly independent:
-a uniform suspension protocol may already determine how availability is tracked,
-while a specialized representation may reopen that choice.
-Nor are they successive grades of sophistication.
-The appropriate combination depends on the semantics being implemented,
-the information available and the operations expected to be frequent.
-Throughout, the responsibilities of the implementation and its clients must be understood;
-the last dimension makes that boundary explicit.
+These are not successive grades of sophistication,
+but somewhat independent dimensions.
+They still interact in ways that make
+some combinations cheaper or more expensive than others:
+For instance, a uniform data representation that supports suspensions
+may make it cheap to adopt dynamic availability of partial results at a fine granularity.
+The most appropriate combination depends on the precise semantics being implemented,
+and the last dimension makes explicit the boundary between which part of the overall semantics
+is to be provided by an implementation layer vs by the client layers above.
 
-@subsubsection{Availability of Partial Results}
+@subsection{Availability of Partial Results}
 
 As discussed in @secref{IRS},
 a component of a modular computation
@@ -1193,26 +1100,25 @@ can already be defined without its value having been computed yet,
 or can remain uninitialized until an operation supplies that value.
 A request for an unavailable value may start its suspended computation,
 wait for a computation already underway,
-return a distinguished default if that is what the protocol specifies.
+return a distinguished default if that is what the protocol specifies,
 signal an error, or silently misbehave.
 
 What matters with respect to this dimension is the semantics of partial availability,
-i.e. in what clients may observe while partial computations are underway.
-This is quite different from the matter of how how data is represented underneath.
+i.e. what clients may observe while partial computations are underway.
+This is quite different from the matter of how data is represented underneath.
 A promise may be represented by a standard-size mutable cell that contains
 a promise descriptor until it contains the non-promise result;
-or it may be represented by appropriate entry in a packed data structure
+or it may be represented by an appropriate entry in a packed data structure
 (e.g. of one or a few bits or bytes), with a promise flag or descriptor out-of-band;
 that would be the same semantics.
-If, with the same underlying representation, the user must follow
-a lower-level protocol where cell assignment is explicit,
-and manually enforce the promise invariants,
-that might be the same representation, but different semantics.
+If the user must follow a lower-level protocol where cell assignment is explicit,
+and must manually enforce the promise invariants—then
+the underlying representation might be the very same, yet the semantics are different.
 
-@subsubsection{Granularity}
+@subsection{Granularity}
 
 The availability protocol specifies what happens when an unavailable result is requested.
-A related but distinct question is what are the units
+A related but distinct question is: what are the units
 of independently suspended or executed modular computations?
 I already described a concrete instance of this dimension in @secref{SRoRoS}:
 a suspended record versus a record of suspensions.
@@ -1227,124 +1133,342 @@ At a coarser grain, groups of fields are computed together;
 many languages have a protocol in terms of separate “constructors” or initialization methods
 for each “object” in the data graph;
 more primitive languages let you register initialization hooks to be run
-for each compilation unit when it is (statically or dynamically) linked,
-or at the beginning of the entire program.
+for each compilation unit at program startup or upon dynamic loading.
 
-Finer granularity provides more modularity in developing the software in independent bits;
-but also incurs more management overhead (whether at runtime or compile-time).
-Coarser granularity can be much more efficient by sharing or eliminating this overhead;
-but then, then the management of finer-grained dependencies between individual field values
-has been moved from first-class to fourth-class.
-Runtime automation was cut, but programmer-time manual work was increased.
-And depending on the system, one may make much more sense than the other.
+Finer-grained support can provide more modularity in developing the software in independent parts;
+but it can also incur more management overhead (whether at runtime or compile-time).
+Coarser granularity can be much more efficient by sharing or eliminating this overhead.
+When the system only supports coarse-grained initialization and leaves
+finer-grained dependencies between individual field values to be managed manually,
+their management has been moved from first-class to fourth-class;
+runtime automation was cut, but programmer-time manual work was increased.
 Another way of looking at it: there is always a protocol that covers each and every entity,
 but this protocol may have multiple tiers of entities with various levels of system support,
-possibly corresponding to multiple levels of languages
+possibly corresponding to multiple levels of language
 at which different kinds of developers interact.
 
-@subsubsection{Dependency Resolution}
+For the “best of both worlds”,
+an implementation may analyze finer-grained dependencies at an earlier stage, then
+automatically group computations into coarser-grained units to reduce overhead—when
+the grouping preserves the semantics being implemented.
 
-The next dimension of design for modular computations is about how the
-dependencies between computation units are resolved.
-At one end, they may be discovered dynamically as the computation proceeds,
-each suspension activated no sooner and no later than when the resulting value is needed—as
-with my previous lazy field protocol.
-At the other end, dependencies may be statically analysized in an earlier stage of computation,
-so that a fixed dependency order may be prepared in advance,
-that can be efficiently executed without the runtime overhead involved by dynamic discovery,
-and guaranteed without circularity.
+@subsection{Dependency Resolution}
 
-The analysis can be elaborate, leaving a large space for implicit dependencies between entities;
-or it can be rudimentary, and require the programmer to spell out those dependencies.
-The more rudimentary the analysis, the less modular the language, since
-for programmers to spell out dependencies means that they must know more about each other’s modules,
-which defeats the principle of modularity: more cooperation with less coordination.
-But in a language with non-termination, even the most elaborate mandatory static analysis
-will be less modular than the full dynamic case: the analysis,
-not being able to predict non-termination in general,
-will either have to restrict its domain of applicability to cases where it can predict non-termination,
-which rejects valid programs, or to make conservative approximations of dependencies,
-which also rejects valid programs based on phantom loops.
-Either way, the analysis introduces coupling between entities that reduce modularity.
-An overly rigid order also defeats extensibility, since it cannot take into account
-computations that haven’t been defined yet.
+The third dimension is how dependencies between units of computation are resolved.
+At one end, they are discovered dynamically as the computation proceeds,
+for instance by forcing suspensions when their values are demanded,
+as in a pure functional protocol where every individual field is lazily defined.
+At the other end, they are analyzed statically at an earlier stage,
+so that a fixed order can be established in advance,
+with a guaranteed absence of circular demands.
+The computations can then follow that order without the overhead of dynamic discovery.
 
-Then again, there’s a matter of semantics vs implementation.
-Of course you can have a completely dynamic language with a straightforward
-implementation that runs no compile-time analysis and
-discovers all dependencies at runtime the hard way.
-And you can also have a static language with an intended implementation
-that analyzes dependencies at compile-time, rejects programs on which the analysis fails,
-then optimizes accepted programs based on the analysis.
-But I can also imagine an implementation for language with static semantics
-that runs the compile-time analysis yet eschews optimization for the sake of simplicity;
-or an implementation for language with dynamic semantics that
-runs a compile-time analysis and optimizes what it can statically analyze,
-but falls back to dynamic discovery and runtime errors for what it cannot.
+Requiring a statically established order can cost modularity and extensibility in three ways.
+First, the cruder the analysis, the more ordering information programmers may have to supply.
+Having to supply more information, or worse, revise earlier modules, erodes extensibility.
+Having to coordinate with other modules to figure out the information undermines modularity.
+Second, even the most elaborate sound, fully automated analysis
+cannot recognize all safe initialization patterns in a sufficiently expressive language:
+it must either restrict its domain to the cases it can decide,
+or approximate dependencies conservatively and reject programs over phantom loops;
+either way, it rejects valid programs, and couples entities that should be independent.
+Third, and most fundamentally for OO, an order fixed when a specification is compiled
+cannot take into account computations that have not been defined yet;
+it cannot topologically sort fields that will be defined or overridden
+in future descendants of the specification.
+Yet OO is all about partial specifications with incomplete initialization behavior,
+later extended and eventually completed by further partial specifications.
 
-As with granularity, sacrificing too much of modularity and extensibility for the sake
-of “efficiency” leads to moving the protocol from first-class to fourth-class:
-programmers will fallback to initializing fields with dummy values, then
-layering their own protocol on top to side-effect them into actual values;
-or programmers will move the actual computation of initial values to “builder” objects,
-that defeat modularity, but also make many regular methods unavailable during initialization,
-leading to more detours.
+The third problem can be avoided by compiling initialization anew for each class,
+once its whole ancestry is known,
+as when every class of second-class OO is monomorphized:
+the compiler can then analyze all its slot-defining clauses
+and schedule their computations without temporary null values or unbound markers,
+provided it can establish a suitable @emph{static} order,
+rather than only a @emph{dynamic} one.
+Compilers already perform related dependency analyses outside OO:
+Scheme implementations use them to optimize @c{letrec} and @c{letrec*}
+while preserving their initialization semantics
+@~cite{Waddell2005 Ghuloum2009}. @; TODO also cite Reynaud2021
+Unhappily, I don’t know of any OO system that has adopted
+this automatic derivation of initialization order.
+Existing second-class OO systems tend to offer the worst of both worlds,
+with neither the flexibility of dynamic dependency resolution,
+nor the guarantees of a statically validated and still modular initialization order.
 
-@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+Semantics and implementation of dependency resolution
+can also be chosen somewhat independently.
+A language permitting dynamic dependency resolution may be implemented naively,
+discovering all dependencies at runtime the hard way;
+or an implementation may analyze what it can at compile-time, optimize accordingly,
+and fall back to dynamic discovery for the rest,
+reporting errors at runtime when the initialization protocol is violated.
+A language requiring a statically validated order rejects programs
+for which no such order has been established,
+but its implementation may, for the sake of simplicity,
+eschew the runtime optimizations enabled by the analysis.
 
-@subsubsection{Uniformity vs Specialization}
+When a protocol sacrifices too much modularity and extensibility for the sake of “efficiency”,
+programmers do not stop needing the flexibility; they rebuild it themselves,
+initializing fields with dummy values and later updating them to their actual values,
+or moving the actual computation of initial values into “builder” objects (@secref{IRS}).
+As with granularity, the part of the protocol lacking first-class or second-class support
+didn’t disappear—it was relegated to fourth-class conventions.
+@;{ TODO
+Swift statically validates initialization, but only an order spelled out by hand.
+
+Scala and Kotlin offer lazy fields as opt-in dynamic resolution.
+
+Kotlin: with the usual member-property translation, each declaration
+using a fresh by lazy expression has its own delegate storage.
+Overriding the property with another by lazy does not reuse the inherited delegate.
+Check the target backend and generated code before quantifying the per-instance cost.
+Also distinguish laziness of the value from initialization of its delegate:
+access from a superclass initializer can reach a derived property
+before the derived delegate has been initialized.
+
+Scala: an overriding lazy val cannot use super.myVal to obtain
+the inherited lazy value. To compose initialization through super,
+one workaround is to retain lazy val myVal = initMyVal
+and override the method initMyVal, calling super.initMyVal as needed.
+}
+
+@subsection{Uniformity vs Specialization}
 
 An implementation may use the same uniform representation and access code
 for all computations and their suspensions;
-or it may have many specialized representations each with its own access code,
+or it may have many specialized representations, each with its own access code,
 tailored to each data structure.
+I already discussed cases of uniform and specialized representations
+in @secref{PFCTD} and @secref{aPStIR};
+the same tradeoff applies to all modular computations,
+regardless of whether the representations arise from interpreters, ahead-of-time compilers, or JITs.
 
-
-In the uniform case, a general routine interprets information describing
-what remains to be computed and where its result belongs.
-In the specialized case, some of that information is embodied directly
-in the code and layout, rather than consulted as data.
-The distinction between shared and specialized representations
-also appears in @secref{CSvTS}.
-
-Specialization can remove indirections, checks and unused machinery,
-but may require more work at an earlier stage and generate more code.
-The resulting instruction-cache pressure can offset savings on individual operations.
+Specialization may save time and space thanks to more efficient representations,
+fewer indirections, fewer checks, fewer wrappings and unwrappings, etc.
+But specialization requires more work at some earlier stage,
+and may generate more code to handle the many cases, increasing instruction-cache pressure.
 A uniform implementation can therefore be preferable even when specialization is possible,
-particularly when structures change frequently or each specialized case is used only briefly.
-Conversely, first-class specifications need not prevent specialization:
-a later stage can exploit information unavailable to an earlier compiler.
-Generic fallback and specialized common cases can coexist.
-@; Preserve the terminology note without making it another digression here:
-@; one concrete representation for many abstract types vs distinct representations;
-@; "monomorphic" and "polymorphic" depend on which side of that relation is being counted.
-@; Candidate exemplars: Lisp-style uniform tagged values; C++ per-structure code;
-@; JIT specialization with generic fallback. Compare mechanisms, not whole languages.
+and only more so when structures change frequently or each specialized case is used only briefly,
+such that specialization is not amortized over enough uses to save more than it costs.
 
+A compromise is to use uniform representations most of the time,
+and specialized representations for performance hotspots,
+either statically or dynamically (with a JIT).
+Runtime descriptors can also provide a uniform level of indirection
+to specialized implementations, as with first-class records
+implemented as second-class records plus a first-class descriptor (@secref{RaR}).
+Either way, specialization is best kept below an abstraction boundary:
+exposing specialized encodings across module interfaces decreases modularity,
+by forcing clients to know which encodings other modules use.
 
-See @secref{CSvTS}. Uniform / Monomorphic (one shape for all meanings, fewer shapes)
-vs Specialized / Polymorphic (each meaning its shape, more shapes).
-Although in C++ dual named: monomorphic (one meaning for each shape, more shapes)
-vs polymorphic (many meanings for each shape, fewer shapes).
+What can be specialized depends on what is known when.
+In second-class OO, classes are known at compile-time:
+the compiler can @emph{monomorphize} code,
+generating a specialized version for each class, at the cost of code size.
+In first-class OO, some information may be known at compile-time,
+especially under a Closed-World Assumption @~cite{Ducournau2009},
+and the same specializations may be available.
+However, under an Open-World Assumption,
+and especially in an interactive environment with reflective redefinition
+of variables, functions, prototypes, classes,
+many current assumptions may later be invalidated.
+Optimizations relying on such assumptions need guards
+or dependency tracking and invalidation, @; TODO @~cite{Chambers1989}, Hoelzle1992 ?
+with synchronization where concurrent changes are permitted.
+Runtime observations provide another opportunity for specialization:
+a call site or field access that has only seen one shape so far is @emph{monomorphic},
+and can be speculatively specialized for that shape under a guard,
+with polymorphic inline caches for a few shapes (@secref{RaR}),
+and a fallback to general lookup when no guard matches.
 
-Generic promises/thunks/cells everywhere versus code specialized to each known modular structure;
-interpreter ↔ compiler ↔ JIT continuum.
+Translating between second-class and first-class representations
+has its cost both ways:
+forcing first-class OO into a static straitjacket
+brings pain in proportion to the impedance mismatch;
+while translating second-class OO into first-class OO
+by simply forgetting static information
+forfeits the optimizations that this information enabled.
 
-The current discussion of second-class OO, monomorphization and
-recovering optimizations from static information moves here.
+@subsection[#:tag "LS"]{Lifetime Staging}
 
-@subsubsection{Lifetime Staging}
-Construction → initialized/mature → perhaps sealed/frozen. Different invariants become available over time and representation can change accordingly. This prepares Object Layout, where we later discuss bitmaps, sentinels, construction descriptors and mature layouts physically.
+A modular computation need not use the same representation throughout its lifetime.
+Its execution may involve distinctive stages that an implementation may exploit
+to pick efficient representations for each stage.
 
-@subsubsection{Concurrent Access}
-Construction may be thread-confined, published only when complete,
-safely observable while incomplete, or independently initialized in parallel.
+For instance, a mutable record may evolve quickly in the beginning,
+with a dynamic set of keys, and be represented as an alist at first.
+At some point, its set of keys may become fixed, and
+the record be implemented as a second-class record
+with a descriptor for its uniform field representation.
+In a later stage, the values of its fields may become more stable, or
+the information about the types of its fields may become more precise,
+enabling the record to gain a packed representation.
+Then, the record may itself become immutable,
+and be treated as invariant for a stage,
+and even folded as a constant when optimizing the next stage.
+In a yet further stage, it may become mutable again, or gain new fields that are mutable,
+returning to an alist or a hash-table at least for the new fields.
+See typical representation choices for objects in @secref{OL}.
+
+The stage transitions themselves can be based on a static analysis of the source code,
+with multiple versions of “the same” variable
+after transformation to static single assignment (SSA) form @; TODO cite Cytron1991
+helping to identify uses that can have different representations; @; TODO cite
+or they can be based on dynamic usage measurements and runtime detection of usage patterns.
+In either case, what is “the same” entity in source code, and can be tracked
+along its entire lifetime with the same identifier from the REPL, shell, debugger or GUI,
+has different representations underneath across time.
+
+The same low-level storage may be accompanied by a different descriptor,
+or an internal discriminator (number, tag or bitmap) that changes
+with each transition that is not static.
+C++ implementations already change virtual-table pointers
+during construction and destruction of each ancestor’s part of an object
+whenever virtual dispatch is involved @~cite{Stroustrup1989 Itanium1999}. @;{ TODO
+  Swift statically enforces a two-stage initialization:
+  all stored properties must be initialized before @c{self} may be used
+  or any method called, after which the object’s full interface becomes available.
+  @; TODO cite{} ???
+}
+In many JavaScript engines, as earlier in Self @~cite{Chambers1989},
+each object has a hidden and changing “shape” or “class” or “map”
+that describes its internal representation and guides specialized accesses;
+an object may change shape when fields are added or removed.
+Any method usable both before and after a transition must support both representations,
+use an interface that remains valid across the transition,
+or itself have separate specialized implementations used before and after the transition.
+
+If the transitions involve unpredictable growth, and
+reserving the maximum possible size for every object is not an affordable strategy,
+then new low-level storage may be required, which brings its own challenge:
+how to preserve references across stages when the actual storage record has moved?
+One simple solution is to introduce a level of indirection between
+the stable identity of an entity and the underlying storage record for its data:
+the identity might be a number in a table rather than a pointer in memory @~cite{Goldberg1983},
+or a pointer to a “header” record that embodies the identity but points
+to a “slot vector” to carry the data in its current shape @~cite{Kiczales1991}.
+Another solution is to readily change low-level storage records and their address,
+but leave a forwarding pointer or “broken heart” at the previous location,
+with a “read barrier” ensuring that the latest location is used before actual work
+@~cite{Weinreb1981}; @; TODO cite Cheney1970 Ungar1984 Baker1995Cheney Miranda2015
+alternatively, existing references can be located and rewritten
+before execution resumes, as in a stop-the-world copying collector @~cite{Abelson1996},
+trading a small tax at every read for a big tax at every move.
+Yet another solution is for the referenced entity to
+maintain a set of backpointers to those locations that reference it,
+so they are updated at each transition @~cite{Bawden1992}.
+Special attention can be given to the common (but not general) case
+where there is only one such reference, and the backpointer can be left implicit
+from whichever path was used to access the record to begin with.
+Rust-style affine types can be seen as static enforcement for this latter case.
+
+Choosing what static or dynamic transitions in representation to support
+is a design space of its own.
+As per the theme of this chapter, once you understand the desired semantics,
+finding efficient encodings for it is just an open puzzle for clever or cultured implementers.
+
+@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+
+@subsection{Concurrent Access}
+@;{
+A partially computed result may be confined to one thread,
+shared only after an agreed completion condition holds,
+or made referenceable by other threads before the computation completes,
+with some mechanism to block access until it completes.
+
+Separately, its components may be computed sequentially or concurrently.
+Concurrent access and concurrent computation are therefore different guarantees:
+several threads might demand the same suspension while only one evaluates it,
+or different threads might evaluate independent components.
+
+Sharing partial results requires a protocol for coordinating their production and use.
+A consumer must not observe a result as ready before the result itself is available;
+a change of representation must likewise preserve the meaning of concurrent accesses.
+Synchronization can make an otherwise cheap state transition expensive,
+and can affect the appropriate granularity of the computation.
+The important question here is which interactions the implementation supports;
+the detailed mechanisms belong with the later discussion of lower-level subsystems.
+@; Existing examples: non-thread-safe delay/force vs a synchronized suspension;
+@; thread-confined construction vs publication of completed objects.
+
+In a concurrent setting, appropriate use of atomic delay primitives
+can likewise prevent race conditions in the forcing of the suspension itself.
 
 Those semantic/organizational choices determine the need for
 atomics, synchronization and publication barriers.
 Detailed mechanisms can wait for the later lower-level-interactions section.
+}
 
-@subsubsection{Responsibility for invariants}
+@subsection{Responsibility for invariants}
+@epigraph{
+  A programming language is low level when its programs require attention to the irrelevant.
+  @|#:-"Alan Perlis"|
+}
+@;{
+Finally, each of these dimensions must be considered relative to
+where we place the boundary between an implementation and its clients.
+There is freedom in how a system is factored into implementation layers;
+but once a boundary is chosen, the semantics promised there determine
+which invariants the implementation must establish and which preconditions its clients must meet.
+At one boundary, demanding a field may automatically arrange its computation.
+At another, reading a cell may require the client to have initialized it already.
+A further implementation layer can use the latter mechanism to provide the former guarantee.
+
+Thus, exposing allocation and assignment does not by itself implement
+our lazy modular semantics, but can provide tools with which to implement it.
+The remaining responsibility need not fall on the application programmer:
+the client may itself be a library, generated code or another implementation component@xnote["."]{
+  Some languages deliberately stop at comparatively concrete primitives,
+  leaving higher-level protocols to their clients, traditionally human programmers.
+  Other systems supply those protocols while internally using similarly concrete primitives.
+  A low-level interface can be appropriate for a compiler or optimizer
+  even when its invariants would be unreasonable to maintain manually in application code.
+  Human-written and AI-generated code can occupy either side of such a boundary.
+}
+@; Preserve the existing CLOS example for the later BOP discussion:
+@; initialize-instance, shared-initialize, :initform, :initarg, :default-initargs.
+@; Here it illustrates protocols supplied by the system versus invariants still owed by clients.
+What must be explicit at a given boundary follows from this division of responsibility;
+it is not an additional, independent dimension of the design space.
+
+XXXX
+
+An imperative initialization protocol, by contrast,
+necessarily requires programmers to explicitly deal with more details,
+as it separates object computation into allocation and initialization stages.
+The imperative protocol is therefore comparatively @emph{low-level},
+which might make sense in the relatively rare cases where you really care
+about the performance of such initialization operations.
+But for most programmers, in most cases, this performance does not matter enough
+to justify having to care about all these irrelevant additional details.
+And most high-level languages will offer escape hatches to deal with such details
+in the rare cases where performance concerns justify the attention
+(indeed, those who write and extend compilers eventually need to get down to that level).
+
+More advanced protocols, such as
+the @c{initialize-instance}, @c{shared-initialize} and related generic functions of CLOS
+(that also offers a simple declarative protocol
+based on the @c{:initform} or @c{:initarg} of each slot,
+and @c{:default-initargs} of each class),
+allow for much more sophisticated orders of slot initialization
+that can involve the results of arbitrary intermediate computations,
+indeed intermediate method calls, etc.;
+yet the more sophisticated such methods get,
+the more discipline they will require from programmers,
+who are notoriously bad at maintaining such discipline.
+And even such sophisticated protocols will have limitations
+that require the occasional use of uninitialized or null values.
+They will still not be as flexible as the simple pure functional protocol I defined
+when used with laziness.
+
+Once these choices are fixed, implementations can still differ in how much effort
+they spend analyzing dependencies, specializing code or managing representations dynamically.
+That effort has to earn its keep through the savings discussed earlier.
+Being more clever underneath an abstraction boundary does not, by itself,
+change the semantics promised above it or the obligations imposed on its clients.
+
+
 
 Notionally comes first/last—define what the current level does vs layers above or below.
 
@@ -1360,7 +1484,9 @@ Decides what gets automated below, and automated or done manually above.
 
 
 @; TODO MORE CODE
+}
 
+@;{
 @subsection{From Computation to Structure}
 
 So far in this chapter I’ve focused on the computational aspect
@@ -1404,6 +1530,9 @@ However computations are suspended,
 once enough is known about their outcomes,
 their residual structure can be represented directly
 and optimized for the operations that will consume it.
+}
+
+@;{
 
 @subsubsection{Modular and Unmodular Object Initialization}
 
@@ -1455,9 +1584,6 @@ Methods should be careful not to rely on invariants of fully initialized objects
 if they are to be called before the object is fully initialized.
 “Use at your own risk”.
 
-To alleviate the lack of expressiveness of the first cope, or the unsafety of the second cope,
-many programmers of OO languages resort to the “builder pattern”:
-all complex wherein XXXX
 
 
 
@@ -1466,7 +1592,7 @@ layout is not only something chosen after computation “settles”.
 Builder objects: “solves” initialization, but explicit staging,
 much reduces modularity in initialization.
 
-
+TT
 Different invariants become available at different lifetime stages: construction, initialized/mature object, perhaps later frozen/sealed stages.
 Therefore an implementation may change representation after initialization.
 Code usable across the boundary must either support both representations, use an invariant indirection or be specialized separately.
@@ -1485,8 +1611,10 @@ Property storage (in-object vs external).
 
 @; TODO the layout is largely independent from how suspension is implemented.
 @; susp{i,R_i} ? {i,(susp(R_i)} ? {i,susp_i(R_i)} ? susp{i,susp_i(R_i)} ?
+}
 
 @section[#:tag "OL"]{Object Layout}
+@;{
 
 TODO: New structure = derive all OO-specific optimizations from generic optimizations above
 given the construction of OO in previous chapters:
@@ -1529,9 +1657,13 @@ given the construction of OO in previous chapters:
 At no point(?!) do we need to invent specific optimizations for OO,
 we can just apply generic record optimization. OO (especially (mostly) 2nd class Class OO)
 just provides context of structure, knowledge and expectations for optimizations.
+As usual, we follow our "understand semantics, and optimizations follow" principle.
 
+@; How many shapes for how many meanings? => object layout
+}
 
 @subsection{Suffix Specifications}
+@;{
 When using single inheritance (@secref{SI}) or optimal inheritance (@secref{OISMIT}),
 second-class accesses to a static field in the suffix fragment of a prototype or class
 (including the entire prototype if itself declared suffix, or if using single inheritance)
@@ -1557,84 +1689,143 @@ as with multiple inheritance. However, when caching record shapes,
 mind that these shapes must be distinguished not just by the set of identifiers they bind,
 but also by the ordered subset of fields defined by their suffix as opposed to
 specifications not included in the suffix.
+}
 
 @subsection[#:tag "RI"]{Repeated Inheritance}
-
-Repeated inheritance is gay and retarded. OO already got the fix:
-object composition, has-a, fields—slap a A-typed field & proxy the A-shaped calls to it—and
-macro that shit up unless you crazy bitch love reading and typing boilerplate all day.
-And if you want an multiple As in your B, just declare as many A-typed fields as you like;
+@epigraph{
+  @hyperlink["https://www.etsy.com/listing/682771837/signed-print-of-my-cartoon-those-who"]{
+    Those who don’t study history are doomed to repeat it.
+    Yet those who @emph{do} study history are doomed to stand by
+    helplessly while everyone else repeats it.}
+  @|#:- @elem{@hyperlink["https://tomtoro.com/"]{Tom Toro}, completing Santayana}|
+  @; TODO check provenance, add best URL for picture
+}
+The “tree inheritance” from Snyder’s CommonObjects @~cite{Snyder1986} and
+or the equivalent “repeated (non-virtual) inheritance” from Stroustrup’s C++ @~cite{Stroustrup1989}
+are totally misguided ideas born from extreme confusion.
+The simple and correct way to achieve the same effect with plain OO is object composition:
+put some data in a field of type A, and proxy A’s API to that field,
+at least within some scope (for “private” such inheritance),
+with appropriate wrappers for those proxied method calls where needed.
+Of course, use macros to automate the proxying—unless you’re a masochist
+who loves typing boilerplate, wasting tokens and context on boilerplate,
+and using blub languages without macros.
+You may standardize those macros if you do it a lot.
+If you want multiple As in your B, just declare as many A-typed fields as you like,
 or an array, or a your favorite container full of As.
+There is no need for this concept. Just regular fields.
 
-But clown-ass Snyder with CommonObjects & Stroustrup with C++
-cooked up some fucked-up mess, then jerk to it like they Einstein. Nigga, you ain’t.
+Snyder (for “encapsulation” reasons) and Stroustrup (for “performance” reasons)
+thought they could force a simpler tree data structure
+as a substitution for the more complex inheritance DAG of multiple inheritance,
+without understanding that multiple inheritance was solving a specific problem,
+and that its semantics was therefore not arbitrary.
+It’s as stupid as selling square pegs as solutions to fit a round holes
+just because you know how to manufacture square pegs for cheaper.
+Of course the real idiots in the story are the buyers, not the sellers.
+Snyder happily didn’t have many buyers because Lispers aren’t idiots.
+Unlike Stroustrup.
 
-Once you dig that, repeated inheritance becomes just the “optimization”
-of being able to say “I have an A but also a B that contains it” with a single pointer.
-Cool, bro. How often do you need that ability for it to be worth changing the language
-and making the compiler, the tools, the documentation, and all courses way more complex?
-How about, in the rare cases you do need to hold both an A and a containing B...
-you use two pointers instead of one, and stop polluting the language itself
-with your intellectual feces?
+Now, there is the additional problem that in C++ you are supposed to be able to fit
+a pointer to an “internal” A that also knows it is really an internal part of an enclosing
+descendant of type B.
+The only challenge is that C++ being a low-level language, a “pointer to an A”
+must fit in the usual fixed pointer size, even though it is notionally
+a pair of two pointers, one to the inner A, the other to the outer B
+(alternatively, it could be a pointer to B plus an inward path to the inner A,
+or a pointer to an A plus an outward path to the outer B).
+Anyway, in any other language you could just use a “fat pointer”
+made of two regular pointers, when for some twisted reason you truly wanted
+to be able to point within an object.
+But in C++ for historical and backwards compatibility reasons (“,
+you have to squeeze that fat pointer into regular pointer-size
+(or make all regular pointers fatter, which goes against the spirit of “performance”)@xnote["."]{
+  Pointers to C++ member functions, that are not subject to these historical compatibility reasons,
+  typically involve such fat pointers.
+  There is so much horror and compounding complexity
+  involved in the semantics and implementation of C++.
+}
+Once you understand that the semantics issues of repeated inheritance lie entirely
+in this pointer compression, it becomes an artificial problem of low-level representation.
 
-But since we gotta contend with Stroustrup’s bullshit
-(Snyder, sadly, is forgotten—he had lots of other good stuff beyond that brainfart),
-well, lets do it.
-
-How do C++ handle "non-virtual" repeated classes? Well, conceptually, they are fields,
-so they are handled like fields, with a special "vtable" header field
-that informs on their being part of something bigger.
-The kth occurrence of A in B would have a A#k-in-B vtable.
-That’s 8 extra bytes per base class repeat. That shit adds up, then
-multiplies by the number of objects, even if you never use the feature
-(so much for "zero-cost abstraction"). It clogs your cache lines.
-
-The number of copies of A may increase exponentially as the ancestry of your classes grows.
-But in practice, they remain shallow and this number remains small.
-
-Intel x64 has 64-bit addresses, but the hardware only manages only 48 or 57 bits of actual
-virtual address space. Recent variants are even kind enough to make 15 or 6 of those bits for us
-at no extra cost. That’s a minimum of 6 free tag bits. There’s also 3 low bits for cheap, and
-a few more if you’re willing to accept a slightly smaller address space and mask bits yourself.
-But 6 should be plenty enough in practice, and 15 more than enough.
-Anyway, use those 6 bits in your A-typed pointer to index which #k of the A-in-B you are.
-And if you have subclasses with more than 64 copies of you... well, first, why?
-then, maybe you want 15 or more bits of tag, but really, then you could use 8 or 16 bits
-of mini-header (not 8) to point back (or forward) to the main object header
-(only do that if your bits are 0 or 63, though, or the top bit 1, or something).
-Anyway, all that bitdiddling can be optimized automatically by your compiler and/or linker.
-You will save precious memory, much reduce the cache pressure, add a few instructions
-and one cached memory access to the first time you decode a pointer to an A
-into three actual pointers—to the actual object B, to the vtable for A#k-in-B,
-and to the copied data of A in B.
-
+The C++ standard ABI @~cite{Itanium1999}
+uses a particular representation of repeated classes:
+a potentially repeated polymorphic class A
+(those with virtual member functions or virtual base classes)
+must include a separate descriptor field (“vtable”) of pointer-width
+for each repetition of an ancestor A in the layout of a descendant B.
 @citet{Stroustrup1989} repeatedly justifies representation choices in terms of
-avoiding an indirection, an adjustment or a memory reference.
+avoiding an indirection, an adjustment or a memory reference. @; TODO reread Stroustrup1989
 That might have made good sense for 1989 machines when DRAM latency was 2-3 CPU cycles,
-but not on 2026 machines where DRAM latency is 150-600 CPU cycles.
+and pointers were very narrow (often still 16-bit, though already 32-bit for the rich).
+But it doesn’t make sense on 2026 machines where DRAM latency is 150-600 CPU cycles
+and pointers are wide with lots of spare bits
+(64-bit for significantly smaller actual address spaces).
 Today’s performance relies heavily on caching, and you can do a lot of work
 while waiting for the next information to be loaded from DRAM,
-or to avoid having to load it to begin with. @; Memory Wall: Wulf1995
+or to avoid having to load it to begin with. @; TODO cite Wulf1995 on the Memory Wall
+The separate vtables add up, then multiply by the number of objects in the system,
+even if you never actually want to use the feature of internal pointer
+(so much for the C++ slogan of “zero-cost abstraction”).
+They will also clog your cache lines.
+And so the short-sighted choices of Stroustrup and his successors
+for how to implement this bad feature are now a bad trade.
 
-Snyder’s CommonObjects: "Tree Inheritance". @~cite{Snyder1986}
-Written in Common Lisp in term of defstructs and/or vectors.
-Later reborn as COOL on top of PCL.
-If you flatten the tree into consecutive bytes, essentially the same memory structure as C++.
+A much better implementation of this C++ “feature” could be
+to conscript a few unused bits off from the pointers
+(that some hardware already mask for you, and that are also cheap to mask in software),
+and use them as a count for which repetition of A within B you mean; and if you “only”
+have 6 bits of “free” count, you can always fall back to the “many vtables” strategy
+if you have more than 64 repetitions of a class@xnote["."]{
+  As of 2026, the most popular CPU architecture, the Intel x64, has 64-bit addresses;
+  but the hardware only manages only 48 or 57 bits of actual virtual address space.
+  Recent CPU variants are even kind enough to make 15 or 6 of the high bits available
+  for use at no extra cost with a little bit of Operating System support
+  (reserving the sign bit for system space vs user space pointers).
+  That’s a minimum of 6 free count bits.
+  If you mask bits in software, you can have as many or as few counter bits as you want;
+  and there are also 3 extra low bits for cheap.
+  But 6 should be plenty enough in practice, and 15 more than enough.
+  Instead of a full 64-bit descriptor field, you could also point to an 8-bit
+  “extra count bits” field immediately following the main descriptor;
+  and those “extra count bits” fields could in turn be shared by all repeated classes.
+  But really, if your programs have more than 64 repeated polymorphic classes in C++,
+  you should be seriously reconsidering your life choices.
+}
+Happily, such large number of repetitions don’t seem to happen in practice in large C++ codebases,
+and you may as well have your compiler reject the code—even though
+in theory the number of repetitions may increase exponentially
+as the ancestry of your classes grows deeper.
+And in closed-world compilation, or with a suitable linker or JIT,
+you only need to pay the price of compressed pointers
+for polymorphic classes that are actually repeated.
 
-ABI @; TODO cite Itanium1999
+Now, whichever representation trick you use for repeated inheritance, it’s all fun and games,
+but a huge pointless waste of one of the scarce resources of the computing arts:
+the time and attention from authors of compilers.
+Really, shame on Stroustrup.
+All that for a dubious “feature” that is the non-solution to a non-problem
+because the language authors never stopped to understand what OO was actually about.
 
-But there are other implementation strategies @~cite{Ducournau2009}
+The larger point of this section is not to laugh at how bad C++ may be,
+but to realize that @principle{you should think in terms of the higher meaning of your programs},
+and then not only will you be able to find more efficient implementations for them,
+you will also be able to wholly avoid having to implement features
+that wouldn’t exist had you better designed your programs
+(including your programming languages).
 
-@; TODO FKS hashing Fredman1984
+@; But there are other implementation strategies @~cite{Ducournau2009}
+
+@; TODO FKS hashing Fredman1984 Ducournau2012
 
 @; budget: how long to search for better optimization vs how much to gain?
 
 @; TODO cite Ducournau2011Coloring
 
-@; TODO cite Ducournau2008 Ducournau2011Implementing Ducournau2012
+@; TODO cite Ducournau2008 Ducournau2009 Ducournau2011Implementing
 
 @subsection[#:tag "ED"]{Efficient Dispatch}
-
+@;{
 Object descriptor, vtables (works well with single inheritance / suffix classes), interfaces, etc.
 Multiple dispatch.
 Inline caching per call-site @~cite{Deutsch1984 Hoelzle1991}, caching per-function. @~cite{Bobrow1986}
@@ -1649,6 +1840,7 @@ but also typical OO patterns for what is static|dynamic{JITable|random}.
 Space/time/flexibility tradeoff. C++ vs CLOS.
 Instead of making every object hundreds of bytes larger,
 you could just make object pointers slightly larger—a pair of
+}
 
 @section[#:tag "MOP"]{BOP: Meta-Object Protocol, Unconflated}
 @epigraph{
@@ -1656,6 +1848,7 @@ you could just make object pointers slightly larger—a pair of
   more flexibility to a programming language reduces its performance.
   @|#:-"Kiczales, des Rivières, Bobrow"| @; Kiczales1991
 }
+@;{
 @epigraph{We can solve any problem by introducing an extra level of indirection.
 @|#:-`("Butler Lampson" , @~cite{WikiFTSE})|}
 @epigraph{Almost all programming can be viewed as an exercise in caching.
@@ -1680,7 +1873,8 @@ The MOP as a reflective tower.
 
 Tying together all the bells and whistles in defining
 bindings, representations, objects, classes, methods, combinations, etc.
-I adapt and generalize the techniques from AMOP in a pure functional setting.
+I adapt and generalize the techniques from AMOP @~cite{Kiczales1991}
+in a pure functional setting.
 
 Make the compilation infrastructure itself Modularly Extensible?
 Why yes of course!
@@ -1695,8 +1889,10 @@ Reflection:
 (c) actually interceding/controlling how it is implemented.
 
 Back-objects, fore-objects.
+}
 
 @section{Tower of Implementation}
+@;{
 
 Reflective towers (3-Lisp, Brown, etc.).
 
@@ -1717,10 +1913,10 @@ Different capabilities for objects and their meta-objects => more security.
 Controlling Meta-Objects,
 from Synchronous Message-Passing Proxies to Fully Abstract Asynchronous Containers.
 I can only briefly survey this topic, maybe reusing the Collapsing Towers of Interpreters.
-
+}
 
 @subsection{Side Effects}
-
+@;{
 TODO Move to Implementation Towers?
 
 I will revert to stateful OO, because I suspect
@@ -1747,8 +1943,10 @@ Purity or statefulness is a matter of the programmer’s point of view,
 not intrinsic properties of the underlying computation.
 What @emph{is} an intrinsic property of computation on the other hand is
 that it can and will be decomposed many layers of implementations.
+}
 
 @section{Bootstrapping an Implementation}
+@;{
 TODO move into Recursion above?
 
 The chicken-and-egg problem. Metacircular definition.
@@ -1756,8 +1954,10 @@ At some level, “just” recursion and fixpoints.
 Tying the knot: how does Object have a class?
 Bootstrapping CLOS (or Smalltalk, or your system).
 Staged bootstrapping.
+}
 
 @section{Interactions with lower-level subsystems}
+@;{
 TODO: Merge with MOP, or keep below? Probably the latter.
 
 Garbage collection.
@@ -1801,13 +2001,16 @@ Security Considerations.
 Encapsulation enforcement at runtime.
 Capability-based security via object references.
 Sandboxing and membrane patterns.
+}
 
 @section{Finale: Putting It All Together}
+@;{
 TODO: Just wrap up the chapter. Postpone most stuff to 2nd Ed.
 
 How does it all connect?
 A tour through an actual implementation: the Gerbil MOP.
 What this book’s accompanying code does (and doesn’t) do.
+}
 
 @;{ No code yet :-( TODO: implement stuff for ch10
 @exercise[#:difficulty "Easy"]{

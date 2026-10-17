@@ -359,6 +359,23 @@
 
 %% 1970
 
+@Article{Cheney1970,
+  author={Chris J. Cheney},
+  title={A Nonrecursive List Compacting Algorithm},
+  journal={Communications of the ACM},
+  volume={13},
+  number={11},
+  pages={677--678},
+  year={1970},
+  month=nov,
+  doi={10.1145/362790.362798},
+  note={
+    Introduces the classic breadth-first copying garbage collector:
+    live objects are copied into a new semispace while the already copied
+    portion of that space itself serves as the work queue, avoiding recursion
+    or an auxiliary traversal stack. The resulting Cheney scan remains the
+    standard basis of many copying and generational collectors.}}
+
 @PhDThesis{Fisher1970,
   author={David A. Fisher},
   title={Control Structures for Programming Languages},
@@ -877,6 +894,23 @@
     so its underlying material may actually predate Steels’s 1982 AI Memo 15.
   }
 }
+
+@InProceedings{Ungar1984,
+  author={David Ungar},
+  title={Generation Scavenging: A Non-Disruptive High Performance Storage Reclamation Algorithm},
+  booktitle={Proceedings of the First ACM SIGSOFT/SIGPLAN Software Engineering Symposium on Practical Software Development Environments},
+  pages={157--167},
+  publisher={ACM},
+  year={1984},
+  month=apr,
+  doi={10.1145/800020.808261},
+  note={
+    Introduces generation scavenging in Berkeley Smalltalk,
+    a generational copying collector designed for interactive systems.
+    Copied objects leave forwarding information while references are repaired,
+    allowing compaction without permanent object-table indirection.
+    Relevant to forwarding pointers, relocation and the replacement of
+    persistent identity indirection by temporary forwarding state.}}
 
 %% 1985
 
@@ -1726,6 +1760,24 @@
     to later generalizations for multiple inheritance.}
 }
 
+@Article{Cytron1991,
+  author={Ron Cytron and Jeanne Ferrante and Barry K. Rosen and Mark N. Wegman and F. Kenneth Zadeck},
+  title={Efficiently Computing Static Single Assignment Form and the Control Dependence Graph},
+  journal={ACM Transactions on Programming Languages and Systems},
+  volume={13},
+  number={4},
+  pages={451--490},
+  year={1991},
+  month=oct,
+  doi={10.1145/115372.115320},
+  url={https://people.cs.umass.edu/~emery/classes/cmpsci710-spring2003/cytron91efficiently.pdf},
+  note={
+    Gives efficient algorithms for constructing Static Single Assignment form
+    and control-dependence graphs for arbitrary control-flow graphs,
+    introducing dominance frontiers as the key device for placing φ-functions.
+    Establishes SSA as a practical sparse representation for data-flow information
+    and a foundation for many modern compiler analyses and optimizations.}}
+
 @Article{Wirth1991,
   author={Niklaus Wirth},
   title={Reply to “Type-Extension Tests Can Be Performed In Constant Time”},
@@ -1821,6 +1873,39 @@
 
 %% 1992
 
+@Article{Baker1992Linear,
+  author={Henry G. Baker},
+  title={Lively Linear Lisp: “Look Ma, No Garbage!”},
+  journal={ACM SIGPLAN Notices},
+  volume={27},
+  number={8},
+  pages={89--98},
+  year={1992},
+  month=aug,
+  doi={10.1145/142137.142162},
+  url={https://www.cs.utexas.edu/~hunt/research/hash-cons/hash-cons-papers/BakerLinearLisp.pdf},
+  note={
+    Presents Linear Lisp, in which linear objects cannot be shared and may therefore
+    be updated in place and reclaimed without tracing garbage collection.
+    Relevant to the use of linearity and uniqueness to expose aliasing,
+    ownership and storage-management costs explicitly.}}
+
+@Article{Baker1995Linear,
+  author={Henry G. Baker},
+  title={“Use-Once” Variables and Linear Objects—Storage Management, Reflection and Multi-Threading},
+  journal={ACM SIGPLAN Notices},
+  volume={30},
+  number={1},
+  pages={45--52},
+  year={1995},
+  month=jan,
+  doi={10.1145/199818.199860},
+  note={
+    Advocates explicit use-once variables for linear, unshared objects,
+    permitting controlled in-place update, cheap resource management
+    and safe manipulation of single-use implementation objects.
+    An important precursor to modern ownership and uniqueness disciplines.}}
+
 @InProceedings{Bracha1992,
   author={Gilad Bracha and Gary Lindstrom},
   title={Modularity Meets Inheritance},
@@ -1913,6 +1998,26 @@
   }
 }
 
+@InProceedings{Hoelzle1992,
+  author={Urs Hölzle and Craig Chambers and David Ungar},
+  title={Debugging Optimized Code with Dynamic Deoptimization},
+  booktitle={Proceedings of the ACM SIGPLAN 1992 Conference on Programming Language Design and Implementation},
+  pages={32--43},
+  publisher={ACM},
+  year={1992},
+  month=jun,
+  doi={10.1145/143095.143114},
+  url={https://bibliography.selflanguage.org/_static/dynamic-deoptimization.pdf},
+  note={
+    Introduces dynamic deoptimization in Self: optimized activations can be
+    reconstructed on demand as equivalent unoptimized activations using
+    compiler-generated metadata at interrupt points.
+    This permits aggressive specialization, inlining and other global optimizations
+    while retaining source-level debugging and allowing changes to a running program;
+    code invalidated by such changes can likewise be deoptimized and recompiled.
+    Seminal for speculative optimization with recovery to a less optimized
+    representation, subsequently central to adaptive virtual machines and JIT compilers.}}
+
 @InProceedings{Kiczales1992,
   author={Gregor Kiczales and John Lamping},
   title={Issues in the Design and Specification of Class Libraries},
@@ -1923,6 +2028,27 @@
   url={https://doi.org/10.1145/141936.141971},
   note={The specialization interface named and examined}
 }
+
+@InProceedings{Rozas1992,
+  author={Guillermo Juan Rozas},
+  title={Taming the Y Operator},
+  booktitle={Proceedings of the 1992 ACM Conference on Lisp and Functional Programming},
+  pages={226--234},
+  publisher={ACM},
+  year={1992},
+  month=jun,
+  doi={10.1145/141471.141545},
+  url={https://3e8.org/pub/scheme/doc/lisp-pointers/v5i1/p226-rozas.pdf},
+  note={
+    Shows that recursive procedures expressed through suitable applicative-order
+    Y combinators need not incur the closure-allocation and indirect-call overhead
+    suggested by a naive implementation: general data-flow, environment and effect
+    analyses in the MIT Scheme compiler LIAR can compile them to the same machine
+    code as ordinary letrec.
+    Relevant evidence that a simple fixpoint-based semantics need not constrain
+    the implementation to resemble its source encoding.
+    Also discusses limits of the optimization and the possibility of optimizing
+    away divergence when termination is not treated as an observable property.}}
 
 @PhdThesis{Sakkinen1992,
   author={Markku Sakkinen},
@@ -2197,6 +2323,43 @@
     NU-CCS-89-2 in February 1989.}}
 
 %% 1995
+
+@Article{Baker1995Cheney,
+  author={Henry G. Baker},
+  title={CONS Should Not CONS Its Arguments, Part II: Cheney on the M.T.A.},
+  journal={ACM SIGPLAN Notices},
+  volume={30},
+  number={9},
+  pages={17--20},
+  year={1995},
+  month=sep,
+  doi={10.1145/214448.214454},
+  url={https://mirror.lisp.fi/hbaker/CheneyMTA.pdf},
+  note={
+    Shows how to implement properly tail-recursive Scheme efficiently on top of C
+    without a trampoline: translate the program to continuation-passing style,
+    never return from generated C functions, and use the C stack pointer itself
+    as the allocation pointer for a Cheney-style copying collector.
+    When the stack fills, its live continuation frames are copied to a fresh stack,
+    turning an otherwise problematic C stack into a garbage-collected heap.
+    Relevant to compiling continuations, proper tail calls and exploiting an
+    ostensibly unsuitable target-machine mechanism by changing its interpretation.}}
+
+@Article{Baker1995Linear,
+  author={Henry G. Baker},
+  title={“Use-Once” Variables and Linear Objects—Storage Management, Reflection and Multi-Threading},
+  journal={ACM SIGPLAN Notices},
+  volume={30},
+  number={1},
+  pages={45--52},
+  year={1995},
+  month=jan,
+  doi={10.1145/199818.199860},
+  note={
+    Advocates explicit use-once variables for linear, unshared objects,
+    permitting controlled in-place update, cheap resource management
+    and safe manipulation of single-use implementation objects.
+    An important precursor to modern ownership and uniqueness disciplines.}}
 
 @Misc{Blome1995,
   author={Rainer Blome},
@@ -2596,6 +2759,23 @@
   note={Standard MDL reference: useful for grounding the analogy between choosing abstractions and choosing models that minimize model plus data-description length.}
 }
 
+@TechReport{Bawden1998,
+  author={Alan Bawden and Harry G. Mairson},
+  title={Linear Naming: Experimental Software for Optimizing Communication Protocols},
+  institution={Department of Computer Science, Brandeis University},
+  number={Working Paper No. 1},
+  address={Waltham, MA},
+  year={1998},
+  month=oct,
+  url={https://www.researchgate.net/publication/2485749_Linear_Naming_Experimental_Software_for_Optimizing_Communication_Protocols},
+  note={
+    Develops linear naming and linear graph reduction as implementation techniques
+    that make the costs of sharing explicit, especially in distributed computation.
+    Proposes network protocols in which uniquely named processes and data may migrate
+    while avoiding much of the bookkeeping required by unrestricted aliases.
+    Relevant to linear references, ownership, process migration and the implementation
+    cost of sharing in distributed systems.}}
+
 @InProceedings{Ernst1998,
   author={Ernst, Michael and Kaplan, Craig and Chambers, Craig},
   title={Predicate dispatching: a unified theory of dispatch},
@@ -2805,21 +2985,6 @@
   }
 }
 
-@Misc{Itanium1999,
-  author={Itanium C++ ABI},
-  title={Itanium C++ ABI},
-  year={1999},
-  howpublished={C++ ABI specification},
-  url={https://itanium-cxx-abi.github.io/cxx-abi/abi.html},
-  note={
-    De facto C++ ABI specification used by GCC, Clang and other implementations
-    on many non-Windows platforms. Specifies class-object layout,
-    virtual and non-virtual base subobjects, virtual tables, RTTI, member pointers,
-    calling conventions and name mangling.
-    Directly relevant to the book's discussion of the implementation cost and representation
-    of C++ multiple inheritance, especially repeated non-virtual versus shared virtual bases.}
-}
-
 % Prototypes
 @Book{Noble1999,
   editor={James Noble and Antero Taivalsaari and Ivan Moore},
@@ -2973,6 +3138,26 @@
 }
 
 %% 2001
+
+@InProceedings{Anderson2001,
+  author={Ross J. Anderson},
+  title={Why Information Security is Hard—An Economic Perspective},
+  booktitle={Proceedings of the 17th Annual Computer Security Applications Conference},
+  pages={358--365},
+  publisher={IEEE Computer Society},
+  year={2001},
+  month=dec,
+  doi={10.1109/ACSAC.2001.991552},
+  url={https://www.acsac.org/2001/papers/110.pdf},
+  note={
+    Argues that information insecurity is often caused less by inadequate
+    technical mechanisms than by misaligned economic incentives, including
+    network externalities, asymmetric information, moral hazard, adverse
+    selection, liability dumping and tragedies of the commons.
+    Seminal in establishing the economics of information security as a field,
+    and particularly relevant to security problems that cannot be solved by
+    moving technical costs or responsibilities without examining the incentives
+    created elsewhere in the system.}}
 
 @InProceedings{Costanza2001,
   author={Costanza, Pascal},
@@ -3551,17 +3736,6 @@
   note={Probably the closest precedent: explicitly analyzes software reuse as compression using information theory and Kolmogorov complexity, and argues that domain entropy bounds possible reuse.}
 }
 
-@Article{Waddell2005,
-  author={Oscar Waddell and Dipanwita Sarkar and R. Kent Dybvig},
-  title={Fixing Letrec: A Faithful Yet Efficient Implementation of Scheme's Recursive Binding Construct},
-  journal={Higher-Order and Symbolic Computation},
-  volume={18},
-  number={3–4},
-  pages={299–326},
-  year={2005},
-  note={Effects × fix: closure is not atomic; R6RS letrec* is the language absorbing the lesson}
-}
-
 %% 2006
 
 @Article{Armstrong2006,
@@ -3989,6 +4163,23 @@
     }
 }
 
+@InProceedings{Gal2009,
+  author={Andreas Gal and Brendan Eich and Mike Shaver and David Anderson and David Mandelin and Mohammad R. Haghighat and Blake Kaplan and Graydon Hoare and Boris Zbarsky and Jason Orendorff and Jesse Ruderman and Edwin Smith and Rick Reitmaier and Michael Bebenita and Mason Chang and Michael Franz},
+  title={Trace-Based Just-in-Time Type Specialization for Dynamic Languages},
+  booktitle={Proceedings of the 2009 ACM SIGPLAN Conference on Programming Language Design and Implementation},
+  pages={465--478},
+  publisher={ACM},
+  year={2009},
+  month=jun,
+  doi={10.1145/1542476.1542528},
+  url={https://web.stanford.edu/class/cs343/resources/tracemonkey.pdf},
+  note={
+    Presents TraceMonkey's tracing JIT for JavaScript.
+    Object representations are identified by integer shape keys,
+    allowing specialized property access to guard on the current shape
+    even though an object's representation may change dynamically.
+    Relevant to efficient implementation of objects whose layouts evolve at runtime.}}
+
 % Recursion Scheme, FP & OOP ???
 @Article{Gibbons2009,
   title={The essence of the iterator pattern},
@@ -4351,6 +4542,25 @@
     Useful as a map of the lineage and terminology,
     but not as a primary technical source for individual priority claims.}}
 
+@InProceedings{Miranda2015,
+  author={Eliot Miranda and Clément Béra},
+  title={A Partial Read Barrier for Efficient Support of Live Object-Oriented Programming},
+  booktitle={Proceedings of the 2015 International Symposium on Memory Management},
+  pages={93--104},
+  publisher={ACM},
+  year={2015},
+  month=jun,
+  doi={10.1145/2754169.2754186},
+  url={https://hal.inria.fr/hal-01152610/file/partialReadBarrier.pdf},
+  note={
+    Presents an efficient implementation of Smalltalk's \texttt{become} primitive
+    and live object-schema migration in the Spur object memory.
+    Instead of imposing a universal level of indirection or scanning the entire heap,
+    forwarding objects are handled through a partial read barrier that is needed
+    only on the relatively few operations that can encounter forwarded references.
+    Relevant to live OO systems, object identity, representation changes
+    and implementation techniques for dynamically evolving object layouts.}}
+
 % https://www.reddit.com/r/cpp/comments/3hkfxr/bjarne_stroustrup_object_oriented_programming/
 @InProceedings{Stroustrup2015,
   author={Bjarne Stroustrup},
@@ -4543,6 +4753,25 @@
 
 %% 2018
 
+@Article{Jung2018,
+  author={Ralf Jung and Jacques-Henri Jourdan and Robbert Krebbers and Derek Dreyer},
+  title={RustBelt: Securing the Foundations of the Rust Programming Language},
+  journal={Proceedings of the ACM on Programming Languages},
+  volume={2},
+  number={POPL},
+  articleno={66},
+  numpages={34},
+  year={2018},
+  month=jan,
+  doi={10.1145/3158154},
+  url={https://hal.science/hal-01633165/document},
+  note={
+    Gives a machine-checked semantic account of Rust's ownership and borrowing
+    discipline, in which capabilities to access mutable resources are uniquely
+    owned and may be transferred or temporarily borrowed.
+    Relevant to affine ownership, unique mutable references and controlled aliasing
+    as practical alternatives to unrestricted shared references.}}
+
 @Misc{Klabnik2018,
   author={Steve Klabnik and Carol Nichols and the Rust Community},
   title={The Rust Programming Language: What Does Object-Oriented Mean?},
@@ -4580,6 +4809,22 @@
     for objects, classes and messages. Commentary rather than primary source.
   }
 }
+
+@Misc{Weiss2019,
+  author={Aaron Weiss and Olek Gierczak and Daniel Patterson and Amal Ahmed},
+  title={Oxide: The Essence of Rust},
+  year={2019},
+  doi={10.48550/arXiv.1903.00982},
+  url={https://arxiv.org/abs/1903.00982},
+  eprint={1903.00982},
+  archivePrefix={arXiv},
+  primaryClass={cs.PL},
+  note={
+    Gives a source-level formalization of Rust ownership and borrowing using
+    substructural typing, with lifetimes interpreted as approximations of
+    reference provenances.
+    Relevant to the affine treatment of owned values and the disciplined creation
+    and use of shared and unique borrowed references.}}
 
 %% 2020
 
@@ -4620,6 +4865,28 @@
     dispatch machinery rather than only its surface syntax.
   }
 }
+
+@Article{Reynaud2021,
+  author={Alban Reynaud and Gabriel Scherer and Jeremy Yallop},
+  title={A Practical Mode System for Recursive Definitions},
+  journal={Proceedings of the ACM on Programming Languages},
+  volume={5},
+  number={POPL},
+  articleno={45},
+  numpages={44},
+  year={2021},
+  month=jan,
+  doi={10.1145/3434326},
+  url={https://www.cl.cam.ac.uk/~jdy22/papers/a-practical-mode-system-for-recursive-definitions.pdf},
+  note={
+    Develops a static mode analysis for determining whether mutually recursive
+    definitions in a call-by-value language can be initialized safely,
+    distinguishing delayed, guarded and immediately dereferenced uses.
+    The analysis replaced OCaml's earlier fragile syntactic restriction on
+    recursive definitions and is proved sound against an operational semantics.
+    Relevant to classifying dependencies in recursive initialization more
+    semantically than the lambda/simple/complex distinctions of earlier
+    \texttt{letrec} compilation work.}}
 
 @Article{Zhang2021,
   author={Weixin Zhang and Yaozhu Sun and Bruno C. d. S. Oliveira},

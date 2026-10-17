@@ -82,16 +82,27 @@
               #"  \\renewcommand{\\AutobibEntrySetup}{%\n"
               #"    \\emergencystretch=2em\n"
               #"    \\tolerance=1000}}%\n"
-              #"\\DeclareUnicodeCharacter{3BB}{$\\lambda$}" ;; λ
-              #"\\DeclareUnicodeCharacter{1D62}{${}_{i}$}" ;; ᵢ
-              #"\\DeclareUnicodeCharacter{2077}{${}^7{k}$}" ;; ⁷
-              #"\\DeclareUnicodeCharacter{207F}{${}^{n}$}" ;; ⁿ
-              #"\\DeclareUnicodeCharacter{2096}{${}_{k}$}" ;; ₖ
-              #"\\DeclareUnicodeCharacter{21DD}{$\\rightsquigarrow$}" ;; ⇝
-              #"\\DeclareUnicodeCharacter{225C}{$\\triangleq$}" ;; ≜
-              #"\\DeclareUnicodeCharacter{2264}{$\\leq$}" ;; ≤
-              #"\\DeclareUnicodeCharacter{22C2}{$\\bigcap$}" ;; ⋂
-              #"\\DeclareUnicodeCharacter{1D52D}{$\\mathfrak{p}$}"))))) ;; 𝔭
+              ;; lualatex stuff
+
+              #"\\errorcontextlines=100\n"
+              #"\\usepackage{newunicodechar}\n"
+              #"\\providecommand{\\DeclareUnicodeCharacter}[2]{%\n"
+              #"  \\begingroup\n"
+              #"  \\lccode`\\~=\"#1\\relax\n"
+              #"  \\lowercase{\\endgroup\\newunicodechar{~}}{#2}%\n"
+              #"}\n"
+
+              #"\\DeclareUnicodeCharacter{3BB}{\\ensuremath{\\lambda}}" ;; λ
+              #"\\DeclareUnicodeCharacter{1D62}{\\ensuremath{{}_{i}}}" ;; ᵢ
+              #"\\DeclareUnicodeCharacter{2026}{\\ifmmode\\ldots\\else\\textellipsis\\fi}" ;; …
+              #"\\DeclareUnicodeCharacter{2077}{\\ensuremath{{}^7{}}}" ;; ⁷
+              #"\\DeclareUnicodeCharacter{207F}{\\ensuremath{{}^{n}}}" ;; ⁿ
+              #"\\DeclareUnicodeCharacter{2096}{\\ensuremath{{}_{k}}}" ;; ₖ
+              #"\\DeclareUnicodeCharacter{21DD}{\\ensuremath{\\rightsquigarrow}}" ;; ⇝
+              #"\\DeclareUnicodeCharacter{225C}{\\ensuremath{\\triangleq}}" ;; ≜
+              #"\\DeclareUnicodeCharacter{2264}{\\ensuremath{\\leq}}" ;; ≤
+              #"\\DeclareUnicodeCharacter{22C2}{\\ensuremath{\\bigcap}}" ;; ⋂
+              #"\\DeclareUnicodeCharacter{1D52D}{\\ensuremath{\\mathfrak{p}}}"))))) ;; 𝔭
 
 (define (ltuo-style)
   (make-style "ltuo" ; name is arbitrary, just needs to be non-false

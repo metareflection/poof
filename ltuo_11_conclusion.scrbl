@@ -62,7 +62,8 @@ OO is not about message passing, OO is not a data model, OO is not rewrite logic
 
 @subsection{OO is naturally Pure Lazy FP with first-class Prototypes}
 Remarkably, and contrary to popular belief,
-I showed that the natural paradigm for OO is Pure Lazy Functional Programming.
+I showed that the natural paradigm for OO is Pure Lazy Functional Programming
+(@secref{IRS}, @secref{DLCCF}).
 This is the very opposite of the eager imperative model
 that almost everyone associates to OO,
 indeed used by currently popular second-class Class OO languages.
@@ -99,10 +100,12 @@ Compared to previous theories that only consider @emph{closed} modular extension
 or worse, closed modular definitions (with no first-class notion of extension),
 my @emph{open} modular extensions @emph{vastly} simplify OO, by enabling:
 @itemlist[
-  @item{Simpler, more universal types with no ad hoc constructs, just plain recursive subtypes}
-  @item{Combining, composing and decomposing open specifications with rich algebraic tools}
+  @item{Simpler, more universal types with no ad hoc constructs, just plain recursive subtypes.}
+  @item{Wrappers that are not strict extensions, that can notably and crucially control
+         how self-reference is used, including the implementation of conflation.}
+  @item{Combining, composing and decomposing open specifications with rich algebraic tools.}
   @item{Using optics to zoom semantics at all scales, down from individual method declarations
-        up to entire ecosystems of mutually recursive prototypes}]
+        up to entire ecosystems of mutually recursive prototypes.}]
 
 @subsection{Flavorful Multiple Inheritance is Most Modularly Extensible}
 Using my characterization of modularity, I could prove that the following variants of inheritance
@@ -145,12 +148,14 @@ It is more than just combining previous ideas,
 such as tucking C3 onto the design of Ruby or Scala,
 though even that, or just my optimization of C3 from O(d²n²) to O(dn)
 (where d is the number of (direct) parents and n is the total number of ancestors),
-would have been a (modest) original contribution:
+would have been a (modest) original contribution.
+
 I also showed that the resulting design is necessary to fulfill a higher purpose of optimality:
 it subsumes multiple inheritance, from which it keeps the maximum modularity,
 and single inheritance, from which it keeps the maximum performance.
 It is not arbitrary, not just a clever hack made necessary
 for backward compatibility with existing infrastructure.
+
 This Optimal Inheritance, as implemented by my C4 algorithm, is now part of @(GerbilScheme);
 you can easily port my code to add this feature to your own language.
 
@@ -170,7 +175,7 @@ But I am the first to tie it all together in one place with one coherent story, 
 (d) method combinations,
 (e) multiple dispatch,
 (f) static and dynamic dispatch@xnote["."]{
-   The only side effects I used, if they are effects, were
+   The only side effects I used, @emph{if} they are effects, were
    laziness (for adequate performance), recursion (for fixpoints),
    and generation of identity tags (for the DAGs of multiple and optimal inheritance).
    None of these “effects” breaks local reasoning, and thus they might not even count
@@ -187,7 +192,7 @@ The entire Lisp school has been unjustly ignored, its key contributions unsung,
 and especially Bobrow’s quiet leadership in building the most advanced OO systems ever.
 
 @section{Why Bragging Matters}
-@subsection{Spreading New Ideas}
+@subsection{Proclaiming the Good News}
 @epigraph{Don’t have good ideas if you aren’t willing to be responsible for them.
 @|#:- "Alan Perlis"|
 }
@@ -242,8 +247,8 @@ And what is the value of those basic principles if they have no correspondence t
 But how could I derive a minimal model from the principles without having examined them?
 And the minimal model is made valuable by everything that is built on top of it, etc.
 
-Each chapter of this book is worth something but only so much by itself,
-each of my innovations may only seem so modest by itself.
+Each chapter of this book is only worth so much by itself;
+each of my innovations may only seem modest by itself.
 Trying to publish them separately would be a lot of effort,
 each article spending most of its time recapitulating knowledge
 and fighting false ideas before it could establish a result

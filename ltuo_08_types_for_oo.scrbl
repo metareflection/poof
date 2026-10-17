@@ -1598,13 +1598,16 @@ composed of people most of whom are better and cleverer than me in more ways tha
 still I declare:
 @principle{Programming: You’re Doing It Completely Wrong.}@xnote[""]{
   Zach Beane @hyperlink["https://xach.livejournal.com/170311.html"]{famously made}
-  a @hyperlink["https://www.xach.com/img/doing-it-wrong.jpg"]{funny meme of John McCarthy},
-  inventor of Lisp, ostensibly uttering that condemnation.
-  The actual McCarthy, of course, was not the kind who would say anything like that,
-  even if he might have thought so at times.
+  a @hyperlink["https://www.xach.com/img/doing-it-wrong.jpg"]{funny demotivator meme of John McCarthy},
+  inventor of Lisp, ostensibly condoning that condemnation.
+  The actual McCarthy, of course, was not the kind who would say anything like that.
   Instead, he called himself an “extreme optimist”, viz,
   “a man who believes that humanity will probably survive even if it doesn’t take his advice.”
+  I recreated the meme as line-art AI slop.
 }
+
+@; max: about 0.45 0.33
+@centered[@image[#:scale (if (render-html?) 0.22 0.16)]{resources/pic/mccarthy.png}]
 
 @exercise[#:difficulty "Easy"]{
   Browse some OO library you wrote, or know, or else the standard library

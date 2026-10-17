@@ -484,6 +484,8 @@ that’s where one should be reminded of the criterion for Modularity:
 
 @subsection{Implementing Modularity}
 
+@subsubsection{Compiling Modularity Away, or Not}
+
 To achieve modularity, the specification for a software computation
 is divided into independently specified modules.
 Modules may reference other modules and the subcomputations they define,
@@ -542,76 +544,143 @@ each field is initialized before it is used.
 
 @subsubsection[#:tag "IRS"]{Initializing Recursive Structures}
 
-When data structures constitute a tree or a DAG,
-there is an order in which they can be constructed such that at all times,
+When data structures are made of many entities,
+whether organized in trees or DAGs of nested records and arrays and tables and so on,
+there is an order in which these entities can be constructed such that at all times,
 all references point to fully constructed and initialized objects,
-satisfying all the desired invariants of the system.
+satisfying all the desired invariants of the system,
+before they are dereferenced.
 However, when there are circularities in the data structures, then
 it is actually hard to ensure initialization before use;
 a powerful enough language makes it impossible
 to predict for sure in all cases whether initialization will precede use.
-And as I will show in the next chapter,
+And as I will show in the next chapter (@secref{MOO}),
 circularities are the general case in the presence of modularity—and
 only more so with OO, i.e. modular extensibility.
 
-In unsafe languages, your program will happily load nonsensical values from
-uninitialized bindings, then silently corrupt the entire memory image,
+In unsafe languages like C or C++, your program will happily load nonsensical values
+from uninitialized bindings, then use and propagate invalid data patterns,
+follow pointers to nowhere or to the wrong place,
+silently corrupt the entire memory image,
 “dance a fandango on core” @~cite{Raymond1996},
 cause a segmentation fault and other low-level failures,
 or even worse, veer off into arbitrary undefined behavior and yield
-catastrophically wrong results to unsuspecting users.
+catastrophically wrong results to unsuspecting users;
+furthermore, errors like that often yield vulnerability to attacks by malicious actors,
+leading to your money being stolen, your computer compromised, your AI subverted, etc.
 The symptoms, if any, are seen long after the invalid use-before-init,
 making the issue hard to pinpoint and debugging extremely difficult
 unless you have access to time-travel debugging at many levels of abstraction.
 
-In not-so-safe languages, a magic NULL value is used;
-for the same semantics just with additional syntactic hurdles,
-you may be forced to use some option type;
-or you may have to use (and sometimes provide out of thin air) some default value
-that will eventually prove wrong.
-In the end, your program will fail with some exception,
-which may happen long after the invalid use-before-init,
-but at least the symptoms will be visible and you’ll have a vague idea
-what happened, just no idea where or when.
+In not-so-safe languages, a magic value is used (null, undefined, etc.).
+Or, for essentially the same semantics, just with additional syntactic hurdles
+that force you to explicitly confront the null case at every use site,
+some languages instead offer or impose option types.
+Where nulls or options are not available (e.g. for primitive numeric types),
+you may also sometimes have to use (and sometimes provide out of thin air)
+some default value (often but not always 0) that will soon enough prove wrong,
+but in ways that will be dangerously less obvious.
+In the end, the placeholder value is actually a ticking time-bomb,
+and your program will blow up with some error or yield nonsensical results,
+which will happen long after the invalid use-before-init.
+At least the symptoms will be visible long before a catastrophe occurs;
+but you’ll only have a vague idea what happened, with no idea where or when,
+and may still potentially waste hours before you identify the culprit then fix the bug.
 
-Actually safe languages, when they can’t prove init-before-use,
+Actually safe languages, when they can’t prove init-once-before-use,
 will maintain and check a special “unbound” marker in the binding cell or next to it,
 possibly even in a concurrency-protected way if appropriate,
 to identify which bindings were or weren’t initialized already, and
 eagerly raise an exception immediately at the point of use-before-init,
 ensuring the programmer can then easily identify where and when the issue is happening,
 with complete contextual information.
+Common Lisp will even let you fix the issue and restart the (possibly modified) program
+at the point just before the issue arose.
 
-In even safer languages, lazy evaluation automatically ensures that you always have init-before-use.
+Whether safe or unsafe, mutation in general also leads to interesting issues:
+decoupling the declaration and initialization of fields and other entities means that
+entities may get initialized more than once with inconsistent values, sometimes
+subtly so (e.g. apparently equivalent values that lack some expected pointer equality),
+causing difficult-to-explain failures later in the program,
+or worse, unsuspected incorrect results.
+Then again, concurrent object initialization can introduce new categories of bugs:
+race conditions and deadlocks.
+
+Safer languages offer lazy evaluation to automatically ensure that
+you always initialize each field before you use it, and do it once and only once.
+This approach will dynamically detect and enforce dependencies between entities
+being initialized or otherwise computed.
+That makes it maximally modular, since it enables maximal cooperation
+between specifications with minimal coordination about the initialization order,
+and supports arbitrary changes in initialization order from future modifications or overrides.
 If the compiler is well done, it may even detect and properly report finite dependency cycles.
 You may still experience resource exhaustion if you generate infinite new dynamic dependencies,
-but so would you in the less safe alternatives if you could reach that point.
+but so would you in the less safe alternatives—if you could reach that point.
+Also note that in a @emph{pure} lazy setting, initializing a structure and computing it
+are one and the same thing, since you don’t update the structure after initializing it.
 
-Safest languages may require you to statically prove init-before-use in finite time,
-which may be very hard with full dependent types,
-or very constraining with a more limited proof system,
-possibly forcing you to fall back to only the “not-so-safe” alternative.
-But this technology is onerous and not usable by programmers at large.
+Safest languages may require you to statically prove init-once-before-use in finite time.
+The proof may be automated with a necessarily limited analysis,
+or manually provided by the programmer the hard way.
+Tools such as dependent types can prove more than automated analyses,
+but the proofs are correspondingly harder to write.
+Either way, the static requirement may be too constraining, forcing the programmer to
+fall back in practice to the less safe alternatives.
+Moreover, this technology is onerous, is not yet usable by programmers at large,
+and has its own limitations with respect to modularity.
 
-Some languages may let you choose between several of these operation modes depending
+Whichever way you implement recursive initialization,
+you have to distinguish a reference to an entity from its contents;
+the reference is necessarily available before the contents are initialized,
+so it may be shared with other modular entities as part of the same initialization computation.
+Many languages use the very same syntax for the two, disambiguated by context,
+or by one character (e.g. in C, @c{x} denotes the contents of the variable as an rvalue,
+but a reference as an lvalue, while @c{&x} denotes a reference as an rvalue).
+Most of the time, this syntactic conflation is ergonomic for programmers,
+who can pun between those two notions, easily disambiguating from context—if they pay attention.
+But at other times, it may mislead some of them into confusing the two
+when the distinction matters.
+In lazy languages, the conflation is total but safe,
+because the language automatically manages the distinction for you.
+
+@subsubsection{Choosing Initialization Protocols}
+
+Some languages may let you choose between several of the above operation modes depending
 on compilation settings or program annotations.
-But whichever safety mode is used, programmers have to manually follow
-some protocol to ensure init-before-use.
-However, protocols with overly restrictive constraints will force programmers
-to fall back to not-so-safe variants.
-Meanwhile, the protocol that minimizes artificial constraints is lazy evaluation.
+But every mode short of lazy evaluation
+requires programmers to manually follow some protocol to ensure init-once-before-use.
 
-The init-before-use issue is well-known and exists outside of OO: it may happen
-whenever there is mutual recursion between variables or initial elements of data structures.
-However, we’ll see that “open recursion” @~cite{Cardelli1989 Pierce2002},
+Simplistic protocols with overly restrictive constraints will force programmers
+to fall back to not-so-safe variants, by using placeholder values then manually reinventing
+their own actual initialization protocol on top of mutation
+after the fake language-supported boilerplate “initialization”.
+Some protocols require programmers to have omniscience about other modules
+(and, in OO, the known ancestors of a specification as well as unknowable future descendants)
+to make the proper ordering decisions;
+they are thereby both simplistic and not modular at all.
+On the other hand, overly complex protocols will waste more resources to implement
+(especially programmer time), and as the complexity boggles the mind,
+may fool unsuspecting programmers into doing subtly wrong things.
+And semi-clever protocols can often be simplistic in some ways and overly complex in others,
+with both failure modes at once.
+One common approach to deal with these issues is to use “builder” or “factory” classes and methods,
+that stage all the complex computations before the records at stake are initialized—essentially
+solving the initialization issue by abandoning modularity altogether (with respect to initialization).
+Meanwhile, @principle{the initialization protocol that maximizes modularity while minimizing
+both artificial constraints and complexity is lazy evaluation}.
+
+The init-once-before-use issue is well-known and exists outside of OO: it may happen
+whenever there is mutual recursion between variables or initial elements of
+algorithms and data structures.
+However, we’ll see that what is now called “open recursion” @~cite{Cardelli1989 Pierce2002},
 i.e. the use of operators meant to be the argument of a fixpoint combinator,
 but also possibly composition before fixpointing,
 is ubiquitous in OO:
 partial specifications define methods that use other methods that are yet to be defined
 in other partial specifications that may or may not follow any particular protocol
 for initialization order.
-Thus we see that the simplest, most natural and safest usable setting for OO is:
-lazy evaluation.
+Thus we see that the simplest, most natural and safest usable setting for modularity,
+and therefore for OO, is lazy evaluation.
 
 This may come as a surprise to many who mistakenly believe the essence of OO
 is in the domain it is commonly applied to
@@ -622,18 +691,13 @@ But this is no surprise to those who are deeply familiar with C++ templates, Jso
 and other systems that allow programmers to directly use unrestricted OO
 in a more fundamental purely functional setting wherein OO can be leveraged
 into arbitrary programming and metaprogramming, not just for “classes” stricto sensu.
-In the next paragraph, I argue the case from the point of view of modularity
-rather than initialization safety;
-however, both can be seen as two aspects of the same argument about semantics.
-
-The more programmers must agree on a protocol to follow, the less modular the approach.
-In a stateful applicative language, where the various modular definitions
-are initialized by side effects, programmers need to follow some rigid protocol
-that may not be expressive enough to capture the modular dependencies between internal definitions,
-often leading to indirect solutions like “builder” classes in Java,
-that stage all the complex computations before
-the initialization of objects of the actually desired class—essentially
-solving the initialization issue by abandoning modularity altogether.
+Note that I argued the case from the point of view of both modularity and safety;
+indeed both can be seen as two aspects of the same argument about semantics:
+once you understand the purpose of modularity,
+safety is the matter of whether the system automates the intended semantics for the programmer,
+or some of it is left as the responsibility of the programmer,
+who in exchange for the extra burden of control
+gains the opportunity to make things perform better.
 
 @exercise[#:difficulty "Easy"]{
   Identify languages with each of first-class, second-class, third-class and fourth-class
@@ -768,7 +832,6 @@ division of labor can be facilitated or inhibited by software architecture.
 A system that empowers an end-user to make the simple changes they need and understand
 might prove much more economical than a largely equivalent system that requires
 a high-agency world expert to make an analogous change.
-
 
 @subsection[#:tag "CfE"]{A Criterion for Extensibility}
 
@@ -1342,9 +1405,10 @@ Radical redesigns became niche.
 
 @subsubsection{OO: So Normal It’s Boring: 2010-}
 @epigraph{
-  “Backwards compatible” means: “if it isn’t backwards, it’s not compatible.”
-  @|#:- "USENET Folklore"|
-  @; Janne Johansson 1999? Greg Newton?
+  What a lot of trouble to prove in political economy that two and two make four;
+  and if you succeed in doing so, people cry, “It is so clear that it is boring.”
+  Then they vote as if you had never proved anything at all.
+  #|#:- "Frederic Bastiat"|#
 }
 At some point in the 2000s, OO had become so ubiquitous it was the “new normal”:
 most mainstream languages had it;
@@ -1355,7 +1419,7 @@ There was a feeling of “business as usual”.
 Innovation, while it still existed, was finding diminishing returns;
 big languages had become institutionalized, and improvements, while still ongoing,
 became centralized or bureaucratic, and carried the weight of backward compatibility.
-OO was not a differentiator. If anything, new languages like Go or Rust
+OO was not a differentiator. If anything, some new languages like Go or Rust
 differentiated themselves by conspicuously @emph{rejecting} OO.
 Meanwhile, highly concurrent and distributed systems,
 data-parallel models such as MapReduce or SIMD,

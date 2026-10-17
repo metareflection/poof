@@ -336,8 +336,11 @@ a language with flavorful multiple inheritance (Python)@xnote["."]{
   other Lisps have their own standard and non-standard object systems with varying capabilities,
   and as I show in this book one with flavorful multiple inheritance
   is just a few functions and macros away (and many libraries to that effect have existed for years).
-  I also didn’t count as multiple inheritance the special support for interfaces in Java and Ada,
-  only actual “implementation inheritance”—though these features should be noted.
+  I also only counted actual “implementation inheritance”, but
+  it is worth noting that a majority of the languages offering single inheritance also support
+  some variant of “interfaces” with extremely restricted multiple inheritance:
+  Java, C#, Visual Basic, Delphi, Swift, Ada, Objective-C,
+  Kotlin, LabVIEW, ABAP, D, TypeScript, and X++.
 }
 
 For historical reasons, I may speak of classes, subclasses and superclasses (direct or not)
@@ -349,7 +352,7 @@ But when discussing the general case of OO, including prototypes and raw specifi
   As far as I can tell, “parent” in this meaning first appears in print
   as early as @citet{Borning1977};
   “child”, “descendant”, “sibling”, “offspring” appear in @citet{Kahn1979Director};
-  “ancestors” and “descendents” (spelled -ents) in @citet{Goldberg1983}.
+  “ancestors” and “descendents” (spelled -ents not -ants) in @citet{Goldberg1983}.
   @citet{Snyder1986} then explicitly uses all of these words together.
 }
 

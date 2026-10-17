@@ -2804,7 +2804,7 @@
   isbn={0897913337},
   publisher={Association for Computing Machinery},
   address={New York, NY, USA},
-  url={https://doi.org/10.1145/74877.74884},
+  url={https://bibliography.selflanguage.org/_static/implementation.pdf},
   doi={10.1145/74877.74884},
   booktitle={OOPSLA},
   pages={49–70},
@@ -2996,7 +2996,7 @@
     Notably, “virtual” members correspond to actual OO, with dynamic dispatch
     over shared items, using the flavorless conflict view of multiple inheritance
     in case of “ambiguities”.
-    the non-“virtual” members are duplicated (potentially exponentially),
+    The non-“virtual” members are duplicated (potentially exponentially),
     making their inheritance a tree rather than a DAG like in Snyder 1986
     (not cited—some bad ideas are easy to come by).
     Lisp is cited via the Chinual (a reference manual, not an explanation,
@@ -3379,6 +3379,22 @@
     I recommend the entire archive of his writings.
   }
 }
+
+@PhDThesis{Bawden1992,
+  author={Alan Bawden},
+  title={Linear Graph Reduction: Confronting the Cost of Naming},
+  school={Massachusetts Institute of Technology},
+  year={1992},
+  url={https://hdl.handle.net/1721.1/13191},
+  note={
+    Bawden proposes a model of computation based on linear graph reduction,
+    in which linear names may be used only once
+    and nonlinear naming and sharing must be constructed explicitly.
+    Thus makes the implementation cost of aliasing visible rather than implicit.
+    He implements Scheme on top of this model, and
+    studies distributed implementations of his graph model.
+    Also develops an account of state as dependence on nonlocal structure,
+    arguing that the usual metaphor for state is flawed.}}
 
 % p. 24 Says "diamond problem", quoted Bertrand Meyer who says "repeated inheritance",
 % Gilad says he didn’t invent "diamond" but probably got it from C++ community newsgroups.
@@ -4847,6 +4863,20 @@
   }
 }
 
+@Misc{Itanium1999,
+  author={Itanium C++ ABI},
+  title={Itanium C++ ABI},
+  year={1999},
+  howpublished={C++ ABI specification},
+  url={https://itanium-cxx-abi.github.io/cxx-abi/abi.html},
+  note={
+    De facto C++ ABI specification used by GCC, Clang and other implementations
+    on many non-Windows platforms. Specifies class-object layout,
+    virtual and non-virtual base subobjects, virtual tables, RTTI, member pointers,
+    calling conventions and name mangling.
+    Each design choice herein may have been justified when originally made,
+    yet it became entrenched for backwards compatibility reason, even when no longer justified.}}
+
 @InProceedings{Levy1999,
   title={Call-by-Push-Value: A Subsuming Paradigm},
   year={1999},
@@ -5442,6 +5472,31 @@
     rather than simply an actual variable.
   }}
 
+@Article{Waddell2005,
+  author={Oscar Waddell and Dipanwita Sarkar and R. Kent Dybvig},
+  title={Fixing Letrec: A Faithful Yet Efficient Implementation of Scheme's Recursive Binding Construct},
+  journal={Higher-Order and Symbolic Computation},
+  volume={18},
+  number={3–4},
+  pages={299–326},
+  year={2005},
+  doi={10.1007/s10990-005-4878-3},
+  url={https://guenchi.github.io/Scheme/doc/Fixing%20Letrec%20A%20Faithful%20Yet%20Efficient%20Implementation%20of%20Scheme%E2%80%99s%20Recursive%20Binding%20Construct.pdf},
+  note={
+    The authors show how to more efficiently compile \texttt{letrec},
+    and introduce an effect-ordered variant \texttt{letrec*}
+    into which to expand internal \texttt{define} statements.
+    They classify bindings as
+    unreferenced (used for side-effects only),
+    simple (can be evaluated outside the recursive environment),
+    lambda (an unassigned variable initialized by a lambda, and thus
+            eligible for the pure fixpoint case), and
+    complex (the general case, requiring the partially initialized environment during initialization).
+    They then lower the recursive definitions to more efficient low-level code
+    based on the classification, eliminating most administrative assignments,
+    while inserting essentially cost-free checks for invalid premature access
+    to recursively bound variables.}}
+
 %% 2006
 
 @InProceedings{Dybvig2006,
@@ -5779,6 +5834,29 @@
     A great paper if you’re deep into the implementation of OO languages.
   }
 }
+
+@InProceedings{Ghuloum2009,
+  author={Abdulaziz Ghuloum and R. Kent Dybvig},
+  title={Fixing Letrec (reloaded)},
+  booktitle={Proceedings of the 2009 Workshop on Scheme and Functional Programming},
+  editor={John Clements},
+  pages={57--65},
+  publisher={California Polytechnic State University},
+  address={San Luis Obispo, CA},
+  year={2009},
+  month=aug,
+  url={https://www.schemeworkshop.org/2009/scheme2009.pdf},
+  note={
+    The authors extend the earlier Waddell--Sarkar--Dybvig treatment
+    of \texttt{letrec} and \texttt{letrec*} in R6RS Scheme.
+    They build a dependency graph among bindings,
+    compute strongly connected components using Tarjan's algorithm, and
+    process them in dependency order so that independent components
+    can be initialized separately, while mutually dependent components
+    retain the machinery required for recursive initialization.
+    Relevant to separating recursive initialization into
+    topologically ordered mutually recursive components
+    before lowering them efficiently.}}
 
 @WebPage{Hoare2009,
   author={Hoare, C.A.R.},
