@@ -9,8 +9,8 @@ simultaneously a printable document and a runnable library.
 One version of this paper was published and presented at the
 [Scheme and Functional Programming Workshop 2021](https://icfp21.sigplan.org/home/scheme-2021),
 see the [presentation video](https://www.youtube.com/watch?v=2szKoUQoNm8&list=PLyrlk8Xaylp7NvZ1r-eTIUHdyHQg0auvo&index=10),
-with the source code at git tags `Scheme-Workshop-2021-paper` for the paper as published then,
-and `Scheme-Workshop-2021-slides` for the [slides](poof-slides.rkt) as presented.
+with the source code at git tags [`Scheme-Workshop-2021-paper`](https://github.com/metareflection/poof/tree/Scheme-Workshop-2021-paper) for the paper as published then,
+and `Scheme-Workshop-2021-slides` for the [slides](slides-2021-scheme-workshop.rkt)) as presented.
 
 A presentation was made at LambdaConf 2024, with a longer variant later made online for
 [Legends of LambdaConf](https://youtu.be/oAzBfY8OtG0).
