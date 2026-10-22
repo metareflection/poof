@@ -5248,7 +5248,7 @@
   doi={10.1145/2661136.2661147},
   url={https://worrydream.com/refs/Ungar_2014_-_Korz_Simple,_Symmetric,_Subjective,_Context-Oriented_Programming.pdf},
   note={
-    Korz combines implicit named arguments, multiple dispatch and
+    GPT: Korz combines implicit named arguments, multiple dispatch and
     a uniform model of data and method slots to support
     contextual variation along multiple dimensions.
     Slots inhabit a multidimensional space rather than belonging
@@ -5257,6 +5257,15 @@
     Relevant to subjective objects, the symmetry of multiple dispatch
     and alternatives to organizing programs around a single receiver.
     A prototype interpreter and development environment were implemented in Self.
+
+    Faré: While the ability to add a dimension to a function after the fact is cute,
+    it is something quite seldom useful in practice compared to the additional complexity;
+    it would require large code bases with lots of modules you don't own yet somehow have to use
+    before it pays back for its cost, which wouldn't happen in an experimental language,
+    and with no incremental path to adoption in the language or out.
+    Moreover, the "symmetry" of multiple dispatch, which like flavorless multiple inheritance,
+    is conflict-based, then defeats the modularity gains from those additional dimensions
+    by introducing conflicts that no one owns and become a hell to fix.
   }}
 
 %% 2015

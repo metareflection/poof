@@ -90,6 +90,7 @@ It also demarcates OO from related but conceptually distinct domains that share 
 Its crowning achievement is C4, a new inheritance algorithm
 that combines single and multiple inheritance,
 and is provably better than any used before.
+@tex{\\[1.4in]}
 }
 
 @tex{\tableofcontents{}}

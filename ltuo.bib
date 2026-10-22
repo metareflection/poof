@@ -389,12 +389,20 @@
     The ADVISE facility prefigured, and quite likely indirectly inspired,
     Cannon 1979’s method combinations.
     Note that compared to ADVISE (and to later Lisp method combinations),
-    the concatenation semantics of Simula 67, with its “inner” marker, is inside-out;
-    also, ADVISE extends functions in-place (modifying the existing function),
+    the concatenation semantics of Simula 67, with its “inner” marker, is inside-out.
+    Also, ADVISE extends functions in-place (modifying the existing function),
     and does not support nested records of functions that can be extended as a unit,
-    whereas Simula extensions are pure at the metalevel,
+    whereas Simula extensions, and later OO, are pure at the metalevel,
     with a new class generated for each extension,
-    while classes can contain nested virtual procedures.}}
+    while classes can contain nested virtual procedures.
+
+    In-place modification is actually the more useful feature, for a function,
+    as it simultaneously extends all the existing callers.
+    If you didn’t want the original touched, you could retrieve the pure semantics
+    by simply defining a new function that calls the original one;
+    and then you could further modify the new one in place or purely, if desired.
+
+}}
 % https://www.bitsavers.org/pdf/bbn/The_BBN-LISP_System_Apr69.pdf section XIX
 % https://softwarepreservation.computerhistory.org/LISP/bbnlisp/TenexLispRef_Jul71.pdf section XIX
 % https://softwarepreservation.computerhistory.org/LISP/uppsala/Haraldson-LISP_details.pdf section 26
