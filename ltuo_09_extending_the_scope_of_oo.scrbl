@@ -1323,6 +1323,14 @@ My presentation will therefore be more directly inspired by CLOS than by Flavors
 
 @subsection{Uses of Method Combinations}
 
+I showed in @secref{IoMaE} how a “bill of parts” protocol could involve methods that
+each contribute to the computation of a list of parts by appending
+its list of additional parts to the list inherited so far.
+The appending was done as a matter of manual convention,
+with no enforcement beyond the discipline of each participating programmer.
+With a suitable @c{append} method combination, each method could instead return a list,
+and the convention of appending its contents would be automatically enforced.
+
 It would take a lot of space to reproduce and explain @italic{in extenso}
 some real-world examples that motivate the use of method combinations:
 they would probably have to be in Common Lisp
@@ -1618,7 +1626,7 @@ methods try to invoke their @c{super} argument as a @c{call-next-method}@xnote["
 
 To keep this presentation minimal, a method here takes just two things:
 a @c{call-next-method} function and @c{self}, the object the generic function was
-invoked on—@c{CallNextMethod → Self → Result}.
+invoked on, i.e. it has type @c{CallNextMethod → Self → Result}.
 Every combination below is single-dispatch, and a method that needs more than the
 receiver reads the object’s other fields straight from @c{self}.
 @c{make-call-next-method} builds the @c{call-next-method} argument from the
@@ -1738,8 +1746,9 @@ reach the folded inner value).
 @Code{
 (def (simple-compute-effective-method
        name stop? op0 op1 op2 finish sub-methods)
-  (let* ((sub (λ (qualifier) (and sub-methods (sub-methods qualifier))))
-         (arounds (sub 'around)) ;; #f (⇒ empty) if never initialized
+  (let* ((sub (λ (qualifier)
+                (and sub-methods (sub-methods qualifier))))
+         (arounds (sub 'around)) ;; #f if never initialized
          (methods (sub name)))   ;; most-specific-first, as in CL
    (call-chain arounds
     (λ (self)

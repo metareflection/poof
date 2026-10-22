@@ -1039,6 +1039,7 @@ the very opposite of the formality the authors affect@xnote["."]{
   Deduction rules are for digging down, not building up,
   and computer scientists who affect doing the former when they are or should be doing the latter
   are outright confusing, and likely outright confused.
+  @; TODO cite Rossberg2014 ?
 }
 
 Not having OO-specific magic also means that when I add features to OO,

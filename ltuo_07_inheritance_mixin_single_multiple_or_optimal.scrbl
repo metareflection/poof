@@ -1299,7 +1299,8 @@ in which order, including subtler details of local order and monotonicity
 if their specifications ever drive order-dependent resource management such as with locking.
 In other words,
 with multiple inheritance, a specification’s dependencies are part of its implementation, but
-@principle{with Mixin Inheritance, a specification’s dependencies become part of its interface}.
+@principle{with Mixin Inheritance, a specification’s transitive dependencies
+become part of its interface}.
 
 In practice, that means that with mixin inheritance, programmers must not just
 document the current direct dependencies of their specifications;
@@ -2121,7 +2122,7 @@ in its own precedence list.
 
 @(if (render-html?)
   @image[#:scale 0.7]{C3_linearization_example.png}
-  @image[#:scale 0.55]{C3_linearization_example.eps})
+  @image[#:scale 0.45]{C3_linearization_example.eps})
 
 @;{
 If, using the C4 algorithm, @c{C} were declared a suffix specification, then
@@ -2166,7 +2167,7 @@ when @c{Z} inherits from both @c{K2} and @c{K3}.
 
 @(if (render-html?) ;; 0.16, 0.10
   @image[#:scale 0.14]{C3_linearization_example_2.png}
-  @image[#:scale 0.10]{C3_linearization_example_2.png})
+  @image[#:scale 0.9]{C3_linearization_example_2.png})
 
 @;{
 The precedence list is:

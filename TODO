@@ -11,8 +11,45 @@
 - [ ] Include Cointe, Briot & al on metaobjects in chapter 10
 - [ ] Finalize conclusion in chapter 11
 - [ ] Go over all TODOs in the book
+- [ ] I'll make sure each opening (ch2) and closing (ch11) statement is accompanied
+      by a section number for the argument.
+- [ ] Remove (most) citations from ch2 and ch11 and make sure they are in the argument sections instead.
+
 
 2nd Ed
+- [ ] Put C4 into SBCL:
+  - [ ] Run cl-test-grid tests before any change
+  - [ ] Load all of QL that can into an image.
+    - [ ] Dump the image.
+    - [ ] Dump the inheritance data: direct superclasses, CPL, metaclasses, errors, etc.
+    - [ ] Include tentative source location from sb-introspect. Coarse location from the loading.
+  - [ ] Implement C4 as algorithm for SBCL (classes only)
+    - [ ] Implement a portable metaclass-based version of C4
+    - [ ] Implement a portable metaclass-based version of ANSI CLOS CPL
+    - [ ] Implement a compilation flag for one versus the other as default
+    - [ ] Implement a version that computes CPL both ways and warns about discrepancies
+  - [ ] Run experiments like Hivert & Thiéry, until it all QL hierarchies work with C4 in toy model.
+  - [ ] Now modify the code based on model, and have it actually load in both algorithms.
+    - Propose a variant that overspecifies the direct-superclasses so it works on both algorithms
+    - Propose a minimal variant that works only with C4
+  - [ ] Record changes in CPL, changes in GF behavior when they use call-next-method.
+  - [ ] Run cl-test-grid tests after changes
+  - [ ] Send patches to respective authors with "minimal-for-both-algorithms"
+     - Send patches in least-specific to most-specific order. (How deep the DAG, grouping by author?)
+     - Now there is a smooth transition plan!!!
+  - [ ] Problem with the incremental migration plan: when proposing a patch to some library,
+     we must also offer a patch to all the libraries it depends on.
+     Fine it the dependencies were on QL and accepted our patch. But if not?
+     Well, you could try to rewire the class structure in-place using reflection, but... ouch.
+     Put (up to) the entire CPL in your local order? I suppose that works well...
+     but is fragile when your libraries change, or to work on multiple implementations, etc.
+     #+precedence-hints (:precedence-hints (a b c) (d e) #+sbcl (sb-gray:fundamental-stream foo))
+     No need to overengineer that shit until after we saw how much of it is actually needed for QL.
+  - [ ] (in parallel) Integrate structs and classes with C4
+    - [ ] write examples
+  - [ ] Port algorithm to CCL, ECL, ABCL, Clasp, CLISP, Genera
+  - [ ] Code with slightly over-specified precedence list can run in both CLHS and C4,
+        so we can arrange for smooth migration with no flag day, over several years.
 - [ ] "Four Pillars"
 - [ ] Who killed OO?
 - [ ] Split pommette into files that can be re-concatenated, ASDF-style
@@ -1194,6 +1231,8 @@ Failed to reply:
 https://www.quora.com/How-did-Alan-Kays-vision-of-object-oriented-circulate-before-Smalltalk-76-I-saw-papers-by-Bobrow-1971-Robert-the-younger-brother-Goodenough-1975-Ross-1976-Jones-Liskov-1976-ab-using-the-term-I-guess-inspired-by-Kay
 My understanding is that OOZE continuously saved the image. Did Smalltalk-80 also do that? If so, how did they ensure consistency of the image? (database people would speak of “ACID” properties) Could you end up with an inconsistent image?
 By contrast, my understanding of east coast Lisp images is that you have to explicitly dump/save the image, and any change not included in such an explicit save would be lost—but could of course be replayed from file, if saved to a file—Lisp was still primarily file-based, which I understand was the opposite of image-first Smalltalk. Actually, I think Bobrow’s Interlisp tried harder to be both image-based and file-based, but I don’t understand what consistency mechanisms it did or didn’t have.
+
+OOZE: 
 
 
 

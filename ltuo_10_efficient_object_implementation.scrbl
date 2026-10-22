@@ -1055,10 +1055,14 @@ Either way, as far as OO and other pure functional concepts go,
 I will return to this point in a more general setting
 when discussing side effects in towers of implementation. @; TODO secref
 
+@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+
 @section{Dimensions of Modular Computations}
 
+TODO: This is a prelude to the MOP, where these can be configured in a modular extensible way!
+
 The preceding representations illustrate several dimensions of a larger design space.
-Object initialization is a particularly revealing example of modular computation:
+Object initialization actually encompasses the full generality of modular computation:
 its parts may refer to the very context whose contents they are collectively computing.
 But the same questions arise whenever a modular computation makes some results available
 while others remain to be computed.
@@ -1368,52 +1372,423 @@ is a design space of its own.
 As per the theme of this chapter, once you understand the desired semantics,
 finding efficient encodings for it is just an open puzzle for clever or cultured implementers.
 
-@XXXX{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
-
 @subsection{Concurrent Access}
-@;{
-A partially computed result may be confined to one thread,
-shared only after an agreed completion condition holds,
-or made referenceable by other threads before the computation completes,
-with some mechanism to block access until it completes.
 
+A partially computed entity may be confined to one thread,
+shared only after an agreed completion condition holds;
+or it may be referenceable by other threads before its computation completes,
+with some mechanism to make them wait for the parts they need.
 Separately, its components may be computed sequentially or concurrently.
 Concurrent access and concurrent computation are therefore different guarantees:
 several threads might demand the same suspension while only one evaluates it,
 or different threads might evaluate independent components.
 
-Sharing partial results requires a protocol for coordinating their production and use.
-A consumer must not observe a result as ready before the result itself is available;
-a change of representation must likewise preserve the meaning of concurrent accesses.
+Sharing partial results requires a protocol for coordinating their production and use:
+A consumer must not try to access a result before it can actually see the actually completed result.
+A change of representation (@secref{LS}) must likewise preserve the meaning of concurrent accesses.
+For instance, Java guarantees that other threads see an object’s @c{final} fields as initialized
+if no other thread can obtain a reference to the object before its constructor completes,
+even when subsequent publication uses no explicit synchronization—a
+publication protocol whose obligations fall on the programmer.
+A suspension may also be forced by several threads at once:
+a synchronized suspension makes all but one of them wait for its outcome,
+whereas a non-thread-safe @c{delay} and @c{force} may evaluate it twice, or worse.
+For pure computations, duplicate evaluation is merely wasted work
+(though it still requires proper support),
+which some implementations accept as cheaper than synchronizing on every force. @; TODO cite Harris2005
+Meanwhile, circular demands may instead become deadlocks between threads waiting on each other;
+with some effort, multithreaded as well as single-threaded implementations
+can detect and report such issues.
+
 Synchronization can make an otherwise cheap state transition expensive,
-and can affect the appropriate granularity of the computation.
-The important question here is which interactions the implementation supports;
-the detailed mechanisms belong with the later discussion of lower-level subsystems.
-@; Existing examples: non-thread-safe delay/force vs a synchronized suspension;
-@; thread-confined construction vs publication of completed objects.
+and affects the appropriate granularity of the computation:
+the finer the grain, the more potential points of synchronization.
+These choices determine the need for atomic operations, synchronization and publication barriers;
+the detailed mechanisms belong with the later discussion
+of interactions with lower-level subsystems. @; TODO secref
 
-In a concurrent setting, appropriate use of atomic delay primitives
-can likewise prevent race conditions in the forcing of the suspension itself.
-
-Those semantic/organizational choices determine the need for
-atomics, synchronization and publication barriers.
-Detailed mechanisms can wait for the later lower-level-interactions section.
-}
-
-@subsection{Responsibility for invariants}
+@subsection{Responsibility for Invariants}
 @epigraph{
   A programming language is low level when its programs require attention to the irrelevant.
   @|#:-"Alan Perlis"|
 }
-@;{
-Finally, each of these dimensions must be considered relative to
-where we place the boundary between an implementation and its clients.
-There is freedom in how a system is factored into implementation layers;
-but once a boundary is chosen, the semantics promised there determine
-which invariants the implementation must establish and which preconditions its clients must meet.
-At one boundary, demanding a field may automatically arrange its computation.
-At another, reading a cell may require the client to have initialized it already.
-A further implementation layer can use the latter mechanism to provide the former guarantee.
+@subsubsection{Semantics Second}
+
+The above dimensions each offered a menu of techniques you could apply
+to achieve more performance in computing OO programs...
+in exchange for invariants that would have to be enforced somehow.
+Now here’s the rub: when you pursue one of these techniques,
+who is responsible for enforcing the necessary invariant:
+the “system”, or the “user”?
+
+In my @emph{semantics first} approach, the obvious reply is that
+the only 100% “correct” answer is: the system.
+Otherwise, the system is not even implementing the semantics that matters!
+As for discovering optimization invariants dynamically or enforcing them statically,
+the only 100% “correct” answer is: dynamically.
+Or else you're cheating by only implementing the semantics in the necessarily limited easy cases
+that your static analysis recognizes, while dropping the ball when the going gets tough.
+Anything else is 100% wrong.
+
+And yet... OO itself, or whichever semantic feature, language or system is being considered,
+is but the means of writing the higher programs that actually matter:
+whatever the actual end-user needs, that the programmer means—or at least means to mean.
+Implementing the general case the naive way is inefficient.
+Dynamic optimizations may improve on it, but consume more time and more space, and
+rely on fallible heuristics that sometimes make things worse—and are tricky to get 100% right.
+Forgoing the ability to efficiently implement that which you really mean
+just so a semantic system can be implemented in a 100% correct way
+is just a case of sacrificing the ends to the means.
+
+One way of reframing things is that the @emph{actual} system is more than
+one particular layer of implementation.
+The user and the programmer are part of this larger system,
+as well as the underlying software system they use.
+And the implementation of this larger system that matters is divided into layers.
+Some layers are implemented by software algorithms, other layers below by electronic hardware,
+and yet other layers above by humans... or AIs.
+Each layer contributes to the larger semantics by trading invariants for behavior
+with the layers below and above:
+“give me some invariant, I will give you some efficient behavior that exploits it”.
+That’s not wrong, that’s a fact, a necessity.
+
+The question then is what makes overall economic sense for the participants.
+Focusing too much on one specific layer and trying to make it more correct than makes economic sense,
+ignoring the cost of getting it right, is a common failure mode for experts.
+Not focusing enough on the same layer and not caring about its correctness,
+ignoring the cost of getting it wrong, is a common failure mode for non-experts.
+In both cases, the issue is a myopia wherein everyone fails to look at the bigger picture,
+because it involves uncomfortable areas one doesn’t understand—and doesn’t personally care about.
+
+@subsubsection{Layering Negotiations}
+
+Inasmuch as this chapter @emph{does} advocate “semantics first”,
+the slogan should not be understood as putting
+some specific semantic system, term, object, feature or language first,
+be it my model of OO or otherwise;
+it is not “my semantics first, yours be damned”.
+Instead it should be understood as putting the notion of semantics first,
+putting the understanding of what you mean, of what really matters, first;
+and then the details follow from what matters.
+I cannot tell you what matters—to you, or to your users, clients, customers, patrons;
+I can only give you intellectual tools to discover what it may be
+and how you may then implement it after you figure it out.
+
+And so, in my “semantics first” approach, the issue of implementation layers
+is one of @emph{negotiation} between providers and consumers of development services:
+what are economically beneficial ways to divide labor between developers
+in terms of semantic levels of abstraction?
+This is the familiar question of modularity—now not just for programs in a given language,
+but for languages and compilers and elements thereof@xnote["."]{
+  As for what modular @emph{extensibility} means in this context, I’ll say:
+  macros (as in Lisp or Scheme),
+  language workbenches like Racket or Stratego,
+  and ideas like attribute grammars, object algebras, tagless-final interpreters,
+  extensible compilers, nanopass compilers, etc.
+  @; TODO cite Visser2001 Nystrom2003 Visser2003Stratego Ekman2007 Fisher2008 Carette2009 VanWyk2010 Rompf2010 Kaminski2012 Oliveira2012 Felleisen2015 Siek2020 Siek2023
+}
+
+Given the goals considered and the resources at hand,
+programmers get to negotiate what semantic systems to use as interfaces
+that some will implement and that others will use.
+The systems at a higher level of abstraction may be closer to some ideal,
+and expose safer primitives that are easier to reason about for the user.
+Systems at a lower level of abstraction may be closer to what implementers can efficiently implement.
+Then the negotiation has to do with which primitives are overall cheaper or more onerous
+for the participants to use.
+The lower the abstraction boundary, the more obligations may be exposed that fall
+on the user to fulfill instead of the system.
+The user takes on these responsibilities in exchange for more control and performance—if
+the interface is well-designed. If it isn’t, all the user gets is extra mind-numbing drudgery.
+
+Either way, programmers must know what they’re trying to do (which is sadly not always the case).
+With an ideally high-level system, that’s all they will need to know,
+and they will be able to function more efficiently, whereas
+a lower-level system will only introduce irrelevant implementation details that slow them down.
+If the resulting system performance is not economically acceptable, though,
+programmers may have to descend into lower levels of abstraction
+to extract the performance they need. At that point, the details are not irrelevant anymore.
+
+Note that “high-level” does not automatically mean easier for the user,
+and “low-level” does not automatically mean easier for the implementer;
+there are plenty of high-level systems offering abstract nonsense, or misleading concepts,
+and plenty of low-level systems that are a mismatch with the available hardware
+such that implementers then have to do their best to reconstitute some higher-level meaning
+before lowering it down to the actual system they target.
+The causality goes the other way around:
+the things that are very easy to do on existing hardware are low-level by definition,
+and building up from that towards concepts that make sense to users takes time and resources;
+whereas the things that make sense to users and programmers are high-level by definition,
+and digging down from those concepts to code that runs on existing hardware takes time and resources.
+
+Once the abstraction level has been accepted, it decides
+what the implementer below is responsible for automating, and
+what the user, programmer, AI or algorithmic layer above is responsible for providing—both
+in terms of semantic gap between the “actual intended behavior” above,
+and in terms of invariants expected by the implementation below.
+
+
+@subsubsection{Defaulting and Reneg...otiating}
+@epigraph{
+  [In Lisp, as compared to other languages]
+  You can get fast programs, but you have to work for them.
+  In this respect, using Lisp is like living in a rich country instead of a poor one:
+  it may seem unfortunate that one has to work so as to stay thin,
+  but surely this is better than working to stay alive, and being thin as a matter of course.
+  @|#:- @elem{Paul Graham @~cite{Graham1994}}| @; p.285
+}
+Negotiations are expensive—economists speak of their @emph{transaction costs}. @; TODO cite Coase1937
+Which is why most people just accept the default,
+and why setting the initial terms is a power move in a negotiation.
+Most programmers, or their managers, will use the “default” platform their users expect,
+the “default” programming language on that platform,
+the “default” programming style in that language,
+with the “default” set of libraries (“standard” or not),
+and the “default” settings for most of the entities in their code.
+Each of these is an expensive negotiation averted.
+Conversely, candidates for hire will cultivate those “default” skills to improve their chances.
+Thus, even though general-purpose computers may enable one to do anything in theory,
+most programs will stay very close to the @emph{Schelling point} of only using defaults everywhere.
+This means it is very important for the designers of a software platform
+to get its defaults right (or at least, righter than the competition’s)—it drives
+the economic efficiency of the platform... or its inefficiency,
+with a potentially huge multiplier commensurate with its success.
+
+@; TODO cite Farrell1985 Baldwin2000 Sullivan2001 Baldwin2006
+@; TODO maybe cite David1985 Katz1985 MacCormack2012 Erbas2015 Colfer2016
+
+Now, here’s a funny thing about contracts and rules in general,
+in software as in the broader world:
+the real rule is not what is said on paper, it is what is actually enforced.
+If your software has a bug that contradicts its documented promises,
+you don’t have to fix it until someone calls you out on it;
+and even then, you may deprioritize a fix based on economic incentives.
+Conversely, if your software has an undocumented feature that you never promised to support,
+but some users start depending on it,
+then ceasing to support said feature, however much of an abomination of a misfeature it may be,
+has an economic cost that your user will pin on you@xnote["."]{
+  When I stepped up as maintainer of ASDF, one of the very first features I implemented
+  was integrating into ASDF the very useful @c{asdf-binary-locations} extension,
+  because it could not be modularly loaded after the fact due to bootstrapping issues;
+  I both added sensible defaults, and vastly improved the way the extension could be configured,
+  to satisfy the variety of conflicting requests from users.
+  While users were overwhelmingly happy with the change,
+  it did trigger loud opposition from a grumpy power user whose carefully crafted configuration
+  had stopped working due to incompatibility with the old hack
+  that was the original @c{asdf-binary-locations}.
+  You can never please everyone @~cite{Rideau2010 Rideau2014}.
+}
+As the author of some software, you define the defaults, you write the contract—both
+the theoretical one in the documentation, and the practical one in what you implement and enforce.
+Those claims that are never enforced on either side of the contract, fall into desuetude.
+That’s legal realism for software.
+
+As another dose of realism, realize that those contracts are not symmetrical.
+Any individual user does not have much say or much sway, unless
+he pays serious money to fund development.
+But the same individual user has the option to exit @; TODO cite Hirschman1970 Vetter2006 Viseur2021
+and stop using your software, and use a competitor,
+and possibly fork your project (if opensource),
+or restart a competiting project from scratch (easier than ever with AI).
+On the other hand, as per Hyrum’s Law @~cite{Wright2018}, @; TODO cite Winters2020 Harrand2022
+given enough success with enough users,
+every change in your software, as much of an improvement as it may be,
+may be considered a bug by @emph{some} users,
+who came to rely on the previous behavior, however terrible.
+Every change presumably offers improvements to some users (or it presumably wouldn’t be funded),
+yet every change potentially reneges—defaults—on an implicit promise to some users
+that their software will keep running@xnote["."]{
+  There are many stories about the lengths that Microsoft took at times
+  to keep old application software running in new releases of Windows. @; TODO cite Chen2007  Chen2003Compatibility Chen2017BugCompatibility
+  There are also stories about the lengths that Microsoft took at times
+  to prevent its competitors’ software from running in new releases of Windows.
+  @; TODO cite Schulman1994 UnitedStatesMicrosoft1999
+}
+
+Every change is thus an economic renegotiation between providers and consumers of software.
+Certainly, some renegotiations are much easier than others,
+and if you do things right, most are painless and obvious.
+But even a “slam dunk” may have malcontents,
+though they may be vastly outnumbered by satisfied old and new users.
+And many renegotiations are unexpectedly painful,
+especially when insufficient care was taken to test software on the other side,
+and ensure either backward compatibility or at least a seamless, modular, migration path.
+Even changes that are undoubtedly for the better come with the cost of migrating
+users from the old ways to the new ways;
+and an important point part of keep this cost low is precisely to support
+modular partial upgrades of code and data where users do @emph{not} need
+to coordinate so as to upgrade all at the same time@xnote["."]{
+  Common Lispers have continuously maintained backward compatibility with older programs;
+  programs from the 1980s on can run largely unmodified,
+  and even those from the 1950s-1970s can often be run
+  with a small compatibility layer and local changes.
+  Maintaining that stability has required care from implementers and library maintainers.
+
+  For my main contribution to Common Lisp, the build system ASDF @~cite{Rideau2010 Rideau2014},
+  I was in the habit of testing new versions against all free software packages
+  in the Quicklisp distribution (thousands of them), and
+  sending patches to all those that were negatively affected (often tens of them),
+  by sometimes even the slightest incompatible change to ASDF.
+  The approach does not scale directly to larger ecosystems,
+  yet can still generalize somewhat to those ecosystems:
+  between having more resources from a broader community,
+  and working with a panel of popular, interesting and feature-exercising packages,
+  it is very possible to check that you’re not breaking things faster than you’re fixing them,
+  and that you can provide a workable migration path for software you do break.
+
+  Lispers therefore do not look kindly upon
+  Pythonistas, who bungled a 12-year long migration from Python 2 to incompatible Python 3,
+  because their design never allowed for a modular, incremental migration:
+  the same source code couldn’t support both Python 2 and 3 at the same time,
+  and you couldn’t mix and match the two kinds of packages, therefore
+  an application switching to Python 3 required all its transitive dependencies
+  to support Python 3 too, even though individual packages could be prepared
+  incrementally to support both versions.
+  Rubyists took “only” 4-5 years to migrate from Ruby 1.8 to incompatible 1.9
+  because their ecosystem is more centralized, and moved with Ruby-on-Rails.
+  Meanwhile, wholly incompatible Perl 6 was a migration too far for Perl Mongers,
+  and the community waned: nothing kills a language like knowing it has no future.
+}
+Thus, @principle{modularity is an important property of programs as they evolve}
+and not just as they may be snapshotted.
+It is what allows modules to be upgraded independently from each other:
+if you don’t have to know what is in the module, you don’t have to know when that thing changes.
+
+The ideas in the three previous paragraphs interact when a system defaults on its defaults,
+and behavior that was commonly relied on suddenly stops being supported.
+And this defaulting on defaults notably happens a lot due to @emph{undefined behavior}:
+whenever a language specification leaves some behavior undefined in certain conditions,
+every implementation perforce has to have some behavior actually defined by its code;
+and by Hyrum’s Law, some users will eventually depend on it.
+Indeed, one reason to leave the behavior undefined is precisely because
+by the time a specification comes out, multiple ports and variants exist with divergent behavior,
+and for portability reasons the standard must accommodate them all.
+
+The least bad thing implementers can do for undefined behavior is
+to raise an error when the conditions are detected,
+if possible at compile-time, or else a runtime:
+presumably, there are easier ways to raise an error,
+so the condition will not be @emph{intentionally} used for error
+(though Hyrum’s Law might prove otherwise),
+and thus chances are no existing correct program that anyone wrote
+depends on this error (especially if it was raised at compile-time);
+then it’s OK to later replace the error by
+some new useful behavior that could be agreed upon:
+chances are minimal it will break anything of value.
+Still, feature probes and error handlers could depend on failure.
+By contrast, returning a value, whether meaningless or sometimes useful,
+is much more likely to conjure users who will depend on it
+and will complain about any future change.
+Of course, the conditions for undefined behavior are not always possible or affordable to detect
+either at compile-time or runtime, especially if they involve concurrency;
+a much stricter static typing regime might make it possible to detect them at compile-time (as in Rust)
+but that isn’t a price every language and every programmer may want to afford.
+In those cases, it is better to leave the result incompletely specified,
+while restricting as much as possible the effects the implementation may produce.
+
+The very worst thing implementers can do is to declare that undefined behavior is
+the opportunity for the compiler to optimize code
+under the assumption that the offending conditions will never arise,
+and silently produce nonsense or security vulnerabilities when they do arise,
+especially so when it cannot prove that the condition won’t be met, and doesn’t have explicit
+instruction from the programmers to make the specific assumption.
+This approach turns the language into an unlabeled minefield, and
+an attractive nuisance in proportion to its other benefits.
+That the language standard permits it does not imply
+it is an economically sensible default contract between implementers and users@xnote["."]{
+  “To have a right to do a thing is not at all the same as to be right in doing it.”
+    — G.K. Chesterton
+}
+In other words, the authors of the C and C++ compilers are culpable of the utmost malpractice
+in the name of winning pointless benchmarks, especially so under default compiler settings.
+
+There are many known tools for renegotiation:
+versioning, especially pride versioning, and deprecation are the everyday variants@xnote["."]{
+  Pride versioning @~cite{Prokopov2024} is the honest variant of
+  the “semantic versioning” (SemVer) @~cite{PrestonWerner2013} formalization
+  of a three-number versioning practice dating back to at least the 1990s,
+  itself building on two-number versioning dating back to at least the 1950s.
+  SemVer tried to legislate that the first number (as in the 3 in ASDF 3.1.7)
+  should change when there is an “incompatible change” in the public API,
+  the second for backward-compatible additions,
+  the third for backward-compatible bug fixes.
+
+  But by Hyrum’s Law, we know that compatibility with the documented public API
+  does not guarantee compatibility with everything users actually rely on.
+  The practical question is how much pain your users will experience
+  when transitioning from one version to the next:
+  not only must the benefits you offer be more than costs of upgrading
+  (which I assume, or else you’re a bad maintainer and your software will be forked or replaced),
+  but the costs are a barrier to adoption, regardless of benefits.
+  You should always strive to make adoption cost very low, and provide a seamless migration path
+  for those users who somehow relied on the bugs you fixed or “features” you eliminated.
+  And if no such seamless path exists, if you changed the API so much that clients of your software
+  will need substantial rewrite, maybe even non-local refactorings—then it is malpractice
+  to merely bump the first version number; you should change your package’s name
+  (if only to add a number at the end, or bump an existing such number),
+  and have it distributed as a related but different line of software.
+}
+For instance, I added to ASDF 3 a deprecation infrastructure wherein deprecated features
+automatically “graduate” from issuing style-warnings,
+to issuing full warnings (a step up, in Common Lisp),
+to issuing errors, to being wholly removed from the software.
+A respite is usually granted, extending the schedule,
+if a version is introduced earlier than anticipated, e.g. because of an urgent bug fix.
+Some features actually went through the whole cycle.
+Such a schedule enables users to become aware of compatibility issues before they are critical,
+and address them when they are under less pressure from more urgent issues, thereby decreasing
+the overall cost of using your software over time.
+
+
+@subsubsection{Reflections on Trusting Trust}
+
+Some “clever” people will reply that instead of having human programmers
+enforce the invariants “by hand” at great cost, you could instead
+have AIs enforce them “by token” at comparatively low cost, at scale.
+Why of course. But how much will or should you trust a metric ton of slop?
+The AIs can code well, much better than humans, maybe even perfectly—but
+the problem is the cost of trusting them.
+The AIs can also be biased, lazy, malicious, or controled by your enemies.
+
+Well, say the “clever” people, AIs in this regard are no worse than humans!
+But the means of trusting humans, and the cost of those means,
+where and when they succeed, and where and when they fail, have been developed for millenia.
+The issue is largely priced into the cost of software development already.
+And those means are social, civil, criminal and ultimately military accountability—do
+a bad deed, pay a dear price.
+There is no accountability for “AI”, at least as currently used in 2026
+(when there are actual autonomous agents, they will be more like humans
+from the economic point of view, and the issue is back to square one,
+just at larger scales and higher speeds.)
+Therefore, even though those AIs may scale well, trust in “them” doesn’t.
+Though the actual trust is in the supply chain that provides and hosts the AIs @~cite{Thompson1984}:
+Good luck trying to get accountability for AI bugs from your current of future AI provider.
+
+To avoid misplaced trust, programmers will be well inspired to have
+those AIs produce as little code as possible,
+of as high level of abstraction as possible,
+while the bulk of the “code” is processed by algorithms.
+i.e. produce auditable specifications (in the sense of formal methods) @; TODO cite Goguen1978 Guttag1978 Guttag1980 Jones1986
+at as high-level of abstraction as possible,
+while their implementation is algorithmically proven correct.
+Where AI scaling can change what those algorithms do is that instead
+of having so many approximations and heuristics in necessarily limited static analyzers,
+it becomes affordable, even necessary, to move the static analyzers out of the interface,
+and abolish the “bondage and discipline” of static types with standardized typesystems,
+to replace them by correctness specifications where the AIs provide proofs of correctness
+(that they can indeed at times generate with static analyzers as available strategies),
+which both allows arbitrary clever low-level code that no standardized typesystem accepts
+and would be prohibitive to get the world to accept in the next version of the standard,
+yet brings the correctness that static types promise and consistently fail to provide.
+
+This strategy has been argued for humans before, but was never affordable at their scale.
+At its heart is the @emph{de Bruijn criterion} for a system:
+the system should have a small trusted kernel that is well audited,
+definitions that can be agreed upon, and the bulk of the code
+can be automatically verified correct from there.
+@; TODO cite DeBruijn1968 DeBruijn1970 Milner1972LCF Barendregt2001 Barendregt2005
+
+@subsubsection{Blah Bloh Blih}
 
 Thus, exposing allocation and assignment does not by itself implement
 our lazy modular semantics, but can provide tools with which to implement it.
@@ -1426,25 +1801,47 @@ the client may itself be a library, generated code or another implementation com
   even when its invariants would be unreasonable to maintain manually in application code.
   Human-written and AI-generated code can occupy either side of such a boundary.
 }
-@; Preserve the existing CLOS example for the later BOP discussion:
-@; initialize-instance, shared-initialize, :initform, :initarg, :default-initargs.
-@; Here it illustrates protocols supplied by the system versus invariants still owed by clients.
+
+The lower the boundary, the more obligations it exposes.
+An imperative initialization protocol splits the computation of an object
+into allocation and initialization stages,
+and leaves it to its clients to ensure that every field is initialized once before it is used.
+That is the right interface for a compiler, an optimizer,
+or a library implementing a higher-level protocol,
+which can discharge those obligations systematically,
+and needs control over them for the sake of performance;
+it is the wrong interface for most application programmers,
+for whom it means attending to the irrelevant.
+High-level languages therefore supply protocols at a higher boundary,
+with escape hatches to the lower one for the rare cases
+where performance justifies the attention.
+Richer system-supplied protocols, such as the initialization protocol of CLOS (@secref{MOP}),
+move more of the work below the boundary;
+but the more elaborate they become, the more discipline they still require from their clients,
+and none is as flexible as lazy evaluation.
+
 What must be explicit at a given boundary follows from this division of responsibility;
 it is not an additional, independent dimension of the design space.
+Once these choices are fixed, implementations can still differ in how much effort
+they spend analyzing dependencies, specializing code or managing representations dynamically.
+That effort has to earn its keep through the savings discussed earlier.
+Being more clever underneath an abstraction boundary does not, by itself,
+change the semantics promised above it or the obligations imposed on its clients.
 
-XXXX
 
-An imperative initialization protocol, by contrast,
-necessarily requires programmers to explicitly deal with more details,
-as it separates object computation into allocation and initialization stages.
-The imperative protocol is therefore comparatively @emph{low-level},
-which might make sense in the relatively rare cases where you really care
-about the performance of such initialization operations.
 But for most programmers, in most cases, this performance does not matter enough
 to justify having to care about all these irrelevant additional details.
 And most high-level languages will offer escape hatches to deal with such details
 in the rare cases where performance concerns justify the attention
 (indeed, those who write and extend compilers eventually need to get down to that level).
+
+XXXX
+
+@; Preserve the existing CLOS example for the later BOP discussion:
+@; initialize-instance, shared-initialize, :initform, :initarg, :default-initargs.
+@; Here it illustrates protocols supplied by the system versus invariants still owed by clients.
+What must be explicit at a given boundary follows from this division of responsibility;
+it is not an additional, independent dimension of the design space.
 
 More advanced protocols, such as
 the @c{initialize-instance}, @c{shared-initialize} and related generic functions of CLOS
@@ -1468,25 +1865,6 @@ That effort has to earn its keep through the savings discussed earlier.
 Being more clever underneath an abstraction boundary does not, by itself,
 change the semantics promised above it or the obligations imposed on its clients.
 
-
-
-Notionally comes first/last—define what the current level does vs layers above or below.
-
-Where does the obligation live?
-
-A higher implementation layer may guarantee safe access;
-a lower one may expose a precondition to its client, allows more performance.
-
-This is where some of the current rhetoric about low-level protocols belongs—not “imperative bad”,
-but the lower the abstraction boundary, the more obligations may be exposed.
-
-Decides what gets automated below, and automated or done manually above.
-
-
-@; TODO MORE CODE
-}
-
-@;{
 @subsection{From Computation to Structure}
 
 So far in this chapter I’ve focused on the computational aspect
@@ -1530,9 +1908,6 @@ However computations are suspended,
 once enough is known about their outcomes,
 their residual structure can be represented directly
 and optimized for the operations that will consume it.
-}
-
-@;{
 
 @subsubsection{Modular and Unmodular Object Initialization}
 
@@ -1611,10 +1986,8 @@ Property storage (in-object vs external).
 
 @; TODO the layout is largely independent from how suspension is implemented.
 @; susp{i,R_i} ? {i,(susp(R_i)} ? {i,susp_i(R_i)} ? susp{i,susp_i(R_i)} ?
-}
 
 @section[#:tag "OL"]{Object Layout}
-@;{
 
 TODO: New structure = derive all OO-specific optimizations from generic optimizations above
 given the construction of OO in previous chapters:
@@ -1660,10 +2033,9 @@ just provides context of structure, knowledge and expectations for optimizations
 As usual, we follow our "understand semantics, and optimizations follow" principle.
 
 @; How many shapes for how many meanings? => object layout
-}
 
 @subsection{Suffix Specifications}
-@;{
+
 When using single inheritance (@secref{SI}) or optimal inheritance (@secref{OISMIT}),
 second-class accesses to a static field in the suffix fragment of a prototype or class
 (including the entire prototype if itself declared suffix, or if using single inheritance)
@@ -1825,7 +2197,7 @@ that wouldn’t exist had you better designed your programs
 @; TODO cite Ducournau2008 Ducournau2009 Ducournau2011Implementing
 
 @subsection[#:tag "ED"]{Efficient Dispatch}
-@;{
+
 Object descriptor, vtables (works well with single inheritance / suffix classes), interfaces, etc.
 Multiple dispatch.
 Inline caching per call-site @~cite{Deutsch1984 Hoelzle1991}, caching per-function. @~cite{Bobrow1986}
@@ -1848,7 +2220,6 @@ you could just make object pointers slightly larger—a pair of
   more flexibility to a programming language reduces its performance.
   @|#:-"Kiczales, des Rivières, Bobrow"| @; Kiczales1991
 }
-@;{
 @epigraph{We can solve any problem by introducing an extra level of indirection.
 @|#:-`("Butler Lampson" , @~cite{WikiFTSE})|}
 @epigraph{Almost all programming can be viewed as an exercise in caching.
@@ -1889,10 +2260,8 @@ Reflection:
 (c) actually interceding/controlling how it is implemented.
 
 Back-objects, fore-objects.
-}
 
 @section{Tower of Implementation}
-@;{
 
 Reflective towers (3-Lisp, Brown, etc.).
 
@@ -1913,10 +2282,9 @@ Different capabilities for objects and their meta-objects => more security.
 Controlling Meta-Objects,
 from Synchronous Message-Passing Proxies to Fully Abstract Asynchronous Containers.
 I can only briefly survey this topic, maybe reusing the Collapsing Towers of Interpreters.
-}
 
 @subsection{Side Effects}
-@;{
+
 TODO Move to Implementation Towers?
 
 I will revert to stateful OO, because I suspect
@@ -1943,10 +2311,9 @@ Purity or statefulness is a matter of the programmer’s point of view,
 not intrinsic properties of the underlying computation.
 What @emph{is} an intrinsic property of computation on the other hand is
 that it can and will be decomposed many layers of implementations.
-}
 
 @section{Bootstrapping an Implementation}
-@;{
+
 TODO move into Recursion above?
 
 The chicken-and-egg problem. Metacircular definition.
@@ -1954,10 +2321,9 @@ At some level, “just” recursion and fixpoints.
 Tying the knot: how does Object have a class?
 Bootstrapping CLOS (or Smalltalk, or your system).
 Staged bootstrapping.
-}
 
 @section{Interactions with lower-level subsystems}
-@;{
+
 TODO: Merge with MOP, or keep below? Probably the latter.
 
 Garbage collection.
@@ -2001,16 +2367,14 @@ Security Considerations.
 Encapsulation enforcement at runtime.
 Capability-based security via object references.
 Sandboxing and membrane patterns.
-}
 
 @section{Finale: Putting It All Together}
-@;{
+
 TODO: Just wrap up the chapter. Postpone most stuff to 2nd Ed.
 
 How does it all connect?
 A tour through an actual implementation: the Gerbil MOP.
 What this book’s accompanying code does (and doesn’t) do.
-}
 
 @;{ No code yet :-( TODO: implement stuff for ch10
 @exercise[#:difficulty "Easy"]{

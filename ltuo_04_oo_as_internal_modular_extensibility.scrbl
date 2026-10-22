@@ -71,6 +71,9 @@ of the module, such that users need only know and understand the interface to en
 of the module, whereas the implementers have freedom to build and modify the module internals
 as long as they satisfy the interface.
 
+@; TODO cite Baldwin2000 Sullivan2001 MacCormack2012 Erbas2015 Colfer2016
+@; TODO cite Farrell1985 Katz1985 Baldwin2000 Baldwin2006 Sullivan2001 MacCormack2012 Erbas2015 Colfer2016
+
 @subsection{First- to Fourth-class, Internal or External}
 @epigraph{I object to doing things that computers can do.
   @|#:- "Olin Shivers"|

@@ -2,9 +2,32 @@
 % NB:
 % - The notes are mostly slop from ChatGPT (or sometimes Claude).
 %   I do not stand by them.
-% - Most of the entries I haven’t read. Many I only skimmed.
+% - Most of the works listed I haven’t read. Many I only skimmed.
 % - A few I read long ago, before I started writing LtUO, and
 %   didn’t write notes for back when I read them.
+
+%% 1937
+
+@Article{Coase1937,
+  author={R. H. Coase},
+  title={The Nature of the Firm},
+  journal={Economica},
+  volume={4},
+  number={16},
+  pages={386--405},
+  year={1937},
+  month=nov,
+  doi={10.1111/j.1468-0335.1937.tb00002.x},
+  url={https://onlinelibrary.wiley.com/doi/full/10.1111/j.1468-0335.1937.tb00002.x},
+  note={
+    Introduces the transaction-cost explanation of firms:
+    activities are organized within a firm rather than through market exchange
+    when the costs of using the price mechanism exceed the costs of internal coordination.
+    The boundary of the firm therefore reflects a tradeoff between alternative
+    mechanisms for coordinating dependent activities.
+    Relevant by analogy to software modularity and abstraction boundaries,
+    which trade internal coordination against the costs of explicit interfaces
+    and transactions between independently developed components.}}
 
 %% 1946
 
@@ -118,6 +141,21 @@
     to representing how programs are generated and executed across machines, real or virtual.
   }
 }
+
+%% 1960
+
+@Book{Schelling1960,
+  author={Thomas C. Schelling},
+  title={The Strategy of Conflict},
+  publisher={Harvard University Press},
+  address={Cambridge, MA},
+  year={1960},
+  note={
+    Develops the theory of strategic coordination, including focal points:
+    salient solutions on which agents can coordinate because each expects
+    the others to recognize the same solution.
+    Relevant to conventions and standards whose usefulness derives less from
+    intrinsic superiority than from common expectations of adoption.}}
 
 %% 1961
 
@@ -275,6 +313,43 @@
   }
 }
 
+% https://www.simula67.info/
+@TechReport{Dahl1968,
+  Author={Ole-Johan Dahl and Bjørn Myhrhaug and Kristen Nygaard},
+  Title={The SIMULA 67 Common Base Language},
+  number={S-2},
+  institution={Norwegian Computing Center},
+  Year={1968},
+  url={https://web.archive.org/web/20131225084408/http://www.edelweb.fr/Simula/scb-1.pdf},
+  note={
+    Authoritative early specification of Simula 67.
+    More condensed than the 1967 presentation on classes, but with more language context.
+    Revised 1970 as S-22, also in 1982, 1984.
+  }
+}
+
+% Curry-deBruijn-Howard isomorphism
+@TechReport{DeBruijn1968,
+  author={N. G. de Bruijn},
+  title={Automath: A Language for Mathematics},
+  institution={Technische Hogeschool Eindhoven},
+  number={68-WSK-05},
+  address={Eindhoven},
+  year={1968},
+  url={https://research.tue.nl/en/publications/automath-a-language-for-mathematics/},
+  note={
+    Introduces Automath, de Bruijn's pioneering system for expressing
+    mathematical definitions, statements and proofs in a formal language
+    suitable for mechanical verification.
+    Automath anticipates dependent type theory and modern proof assistants,
+    with complicated proof construction separated from verification by
+    a comparatively small and trustworthy checker.
+
+    Reprinted in revised form in: Automation and
+                 Reasoning, vol.~2, Classical Papers on
+                 Computational Logic 1967--1970,
+                 Springer, 1983, pp.~159--200}}
+
 @Article{Hicks1968,
   author={Harry T. Hicks, Jr.},
   title={Modular Programming in COBOL},
@@ -295,35 +370,6 @@
   }
 }
 
-% https://www.simula67.info/
-@TechReport{Simula1968,
-  Author={Ole-Johan Dahl and Bjørn Myhrhaug and Kristen Nygaard},
-  Title={The SIMULA 67 Common Base Language},
-  number={S-2},
-  institution={Norwegian Computing Center},
-  Year={1968},
-  url={https://web.archive.org/web/20131225084408/http://www.edelweb.fr/Simula/scb-1.pdf},
-  note={
-    Authoritative early specification of Simula 67.
-    More condensed than the 1967 presentation on classes, but with more language context.
-    Revised 1970 as S-22, also in 1982, 1984.
-  }
-}
-
-% Curry-deBruijn-Howard isomorphism
-@TechReport{deBruijn1968,
-  author={Nicolaas Govert de Bruijn},
-  title={Automath, a Language for Mathematics},
-  institution={Department of Mathematics, Eindhoven University
-                 of Technology},
-  number={68-WSK-05},
-  year={1968},
-  note={Reprinted in revised form in: Automation and
-                 Reasoning, vol.~2, Classical Papers on
-                 Computational Logic 1967--1970,
-                 Springer, 1983, pp.~159--200}
-}
-
 %% 1969
 
 @InProceedings{Hewitt1969,
@@ -340,6 +386,26 @@
     Relevant to the history of message passing, procedural abstraction, logic programming, and
     ideas that later influenced actor systems and object-oriented programming.}
 }
+
+% The canonical Hoare logic paper:
+% Also final fragment on p. 583 !
+@Article{Hoare1969,
+  author={C. A. R. Hoare},
+  title={An Axiomatic Basis for Computer Programming},
+  journal={Communications of the ACM},
+  volume={12},
+  number={10},
+  pages={576--580},
+  year={1969},
+  month=oct,
+  doi={10.1145/363235.363259},
+  url={https://dl.acm.org/doi/pdf/10.1145/363235.363259},
+  note={
+    Introduces the axiomatic method for reasoning about imperative programs
+    using assertions describing required relationships between initial and final states,
+    giving rise to what are now called Hoare triples.
+    Foundational for formal program specification and verification through
+    preconditions, postconditions and invariants.}}
 
 % Fixpoint
 @InCollection{Park1969,
@@ -376,6 +442,26 @@
     or an auxiliary traversal stack. The resulting Cheney scan remains the
     standard basis of many copying and generational collectors.}}
 
+@InProceedings{DeBruijn1970,
+  author={N. G. de Bruijn},
+  title={The Mathematical Language AUTOMATH, Its Usage and Some of Its Extensions},
+  booktitle={Symposium on Automatic Demonstration},
+  editor={M. Laudet and D. Lacombe and L. Nolin and M. Schützenberger},
+  series={Lecture Notes in Mathematics},
+  volume={125},
+  pages={29--61},
+  publisher={Springer},
+  address={Berlin},
+  year={1970},
+  doi={10.1007/BFb0060623},
+  url={https://pure.tue.nl/ws/portalfiles/portal/1988576/597597.pdf},
+  note={
+    Published exposition of Automath, presented at the 1968 Symposium
+    on Automatic Demonstration.
+    Describes a formal language in which mathematical developments can be
+    represented for machine checking, establishing many of the ideas later
+    associated with dependent-type proof assistants and small trusted kernels.}}
+
 @PhDThesis{Fisher1970,
   author={David A. Fisher},
   title={Control Structures for Programming Languages},
@@ -385,6 +471,23 @@
   url={https://cds.cern.ch/record/697456/files/CM-P00068047.pdf},
   note={Early argument that control structures should be abstractions rather than a fixed language inventory; useful historical context for extensible language mechanisms.}
 }
+
+@Book{Hirschman1970,
+  author={Albert O. Hirschman},
+  title={Exit, Voice, and Loyalty: Responses to Decline in Firms, Organizations, and States},
+  publisher={Harvard University Press},
+  address={Cambridge, MA},
+  year={1970},
+  isbn={978-0-674-27660-4},
+  url={https://www.fulcrum.org/concern/monographs/fn106z184},
+  note={
+    Introduces exit and voice as alternative responses to declining quality:
+    a dissatisfied participant may leave for an alternative, or remain and
+    attempt to change the organization from within.
+    Loyalty affects the balance between the two, while switching costs and
+    availability of substitutes determine how effective exit can be.
+    Foundational for analyzing choice among competing systems, standards
+    and organizations.}}
 
 %% 1972
 
@@ -421,6 +524,34 @@
     their internal representation.
   }
 }
+
+@InProceedings{Milner1972IASLCF,
+  author={Robin Milner},
+  title={Implementation and Applications of Scott's Logic for Computable Functions},
+  booktitle={Proceedings of the ACM Conference on Proving Assertions about Programs},
+  pages={1--6},
+  publisher={ACM},
+  year={1972},
+  doi={10.1145/800235.807067},
+  note={
+    Describes an early implementation of LCF, an interactive proof checker
+    for Scott's logic of computable functions.
+    Historically important as the precursor of the LCF architecture,
+    in which arbitrarily sophisticated proof tactics are separated from
+    a small trusted core of primitive inference rules.}}
+
+@TechReport{Milner1972LCFDMI,
+  author={Robin Milner},
+  title={Logic for Computable Functions: Description of a Machine Implementation},
+  institution={Stanford Artificial Intelligence Laboratory},
+  number={AI Memo 169},
+  address={Stanford, CA},
+  year={1972},
+  month=may,
+  note={
+    Describes the original Stanford LCF interactive proof-checking system.
+    The work initiated the LCF tradition of isolating soundness in a small
+    trusted inference kernel while permitting complex user-programmed proof tactics.}}
 
 %% 1973
 
@@ -505,6 +636,26 @@
   number={AITR-346},
   url={https://dspace.mit.edu/handle/1721.1/6897}
 }
+
+@misc{Ingalls1975OOZE,
+  author={Daniel H. H. Ingalls},
+  title={OOZE},
+  year={1975},
+  month=may,
+  day={13},
+  howpublished={Xerox PARC inter-office memorandum, draft},
+  url={https://archive.computerhistory.org/resources/access/text/2024/06/102739346-05-0001-acc.pdf#page=74},
+  note={
+    An early internal design memorandum continuing earlier discussions about OOZE,
+    an “object-oriented virtual environment” (the Z stands for zoned in a later memorandum),
+    a virtual memory system for the Smalltalk-74 implementation (and later Smalltalk-76),
+    that would also provide orthogonal persistence (term not invented yet).
+    This is the earliest surviving contemporary written evidence I could find
+    of the term “object-oriented” being used at PARC
+    (not that anyone I know disputes the origin of the term).
+
+    Preserved in the Computer History Museum's Virtual Memory Interest Group
+    collection, beginning at PDF page 74.}}
 
 % Y combinator
 @Article{Plotkin1975,
@@ -614,6 +765,41 @@
   url={https://hdl.handle.net/1721.1/5768}}
 
 %% 1978
+
+@InCollection{Goguen1978,
+  author={Joseph A. Goguen and James W. Thatcher and Eric G. Wagner},
+  title={An Initial Algebra Approach to the Specification, Correctness, and Implementation of Abstract Data Types},
+  booktitle={Current Trends in Programming Methodology IV: Data Structuring},
+  editor={Raymond T. Yeh},
+  pages={80--149},
+  publisher={Prentice-Hall},
+  address={Englewood Cliffs, NJ},
+  year={1978},
+  note={
+    Develops initial-algebra semantics for abstract data types and explicitly
+    separates specification, correctness and implementation.
+    Specifications determine abstract behavior algebraically, while
+    implementations are concrete representations required to satisfy them.
+    Particularly relevant to distinguishing a specification from its target
+    or realization.
+
+    That chapter originated as IBM report RC 6487 in 1976}}
+
+@Article{Guttag1978,
+  author={John V. Guttag and James J. Horning},
+  title={The Algebraic Specification of Abstract Data Types},
+  journal={Acta Informatica},
+  volume={10},
+  number={1},
+  pages={27--52},
+  year={1978},
+  doi={10.1007/BF00260922},
+  note={
+    Develops algebraic specifications of abstract data types by describing
+    operations through axioms independently of particular representations
+    or implementations.
+    A foundational source for the formal-methods notion of specification
+    as an abstract behavioral description.}}
 
 @InProceedings{Winograd1978,
   author={Terry Winograd},
@@ -752,6 +938,20 @@
     construction of recursive objects by fixpoints.}}
 
 %% 1980
+
+@InProceedings{Guttag1980,
+  author={John V. Guttag and James J. Horning},
+  title={Formal Specification as a Design Tool},
+  booktitle={Proceedings of the 7th ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
+  pages={251--261},
+  publisher={ACM},
+  year={1980},
+  month=jan,
+  note={
+    Argues that formal specifications are valuable as design artifacts in their
+    own right, independently of subsequent program verification.
+    Treats specification as the abstract characterization and analysis of an
+    interface before committing to an implementation.}}
 
 @Book{Wand1980,
   author={Mitchell Wand},
@@ -971,6 +1171,25 @@
     occurrences of the recursively defined type, connecting syntactic polarity
     with the monotonicity required for well-behaved recursive definitions.}}
 
+@Article{David1985,
+  author={Paul A. David},
+  title={Clio and the Economics of QWERTY},
+  journal={American Economic Review},
+  volume={75},
+  number={2},
+  pages={332--337},
+  year={1985},
+  month=may,
+  url={https://www.jstor.org/stable/1805621},
+  note={
+    Classic account of path dependence and technological lock-in.
+    Uses QWERTY to illustrate how technical interdependence, increasing returns,
+    learning costs and compatibility can make an initially contingent convention
+    self-reinforcing, so that decentralized locally rational choices need not
+    converge on the intrinsically best design.
+    Relevant to standards, APIs and software ecosystems whose value depends
+    strongly on accumulated adoption and compatibility.}}
+
 % Can a PDF be found???
 @Manual{Drescher1985,
   author={Gary L. Drescher},
@@ -997,6 +1216,65 @@
     Introduction to LMI's ObjectLISP for experienced Lisp programmers.
     ObjectLISP is an early Prototype OO system based on objects as binding
     environments, without a fundamental class/instance distinction.}}
+
+@Article{Farrell1985,
+  author={Joseph Farrell and Garth Saloner},
+  title={Standardization, Compatibility, and Innovation},
+  journal={The RAND Journal of Economics},
+  volume={16},
+  number={1},
+  pages={70--83},
+  year={1985},
+  doi={10.2307/2555589},
+  url={https://hdl.handle.net/1721.1/64210},
+  note={
+    Analyzes the coordination economics of technical standards and compatibility,
+    including conditions under which users and firms may become trapped by
+    an established but inferior standard.
+    Relevant to programming-language, API, protocol and representation conventions
+    whose value depends heavily on others adopting the same choice.}}
+
+@Article{Katz1985,
+  author={Michael L. Katz and Carl Shapiro},
+  title={Network Externalities, Competition, and Compatibility},
+  journal={American Economic Review},
+  volume={75},
+  number={3},
+  pages={424--440},
+  year={1985},
+  month=jun,
+  note={
+    Develops the economics of compatibility and network externalities:
+    the value of adopting a technology can depend on how many others adopt
+    compatible technologies.
+    Relevant to standards, platforms, programming ecosystems and other
+    software choices where coordination can dominate intrinsic technical merit.}}
+
+% Meta-commentary https://stuartmarks.wordpress.com/2026/02/24/naurs-theory-building-as-internet-samizdat/
+% With other appendixes from "Agile Software Development": https://gwern.net/doc/cs/algorithm/1985-naur.pdf
+% Scan: https://pages.cs.wisc.edu/~remzi/Naur.pdf
+% Markdown: https://gist.github.com/onlurking/fc5c81d18cfce9ff81bc968a7f342fb1
+% Good PDF: https://pablorauzy.fr/dev/naur1985programming.pdf
+@Article{Naur1985,
+  author={Peter Naur},
+  title={Programming as Theory Building},
+  journal={Microprocessing and Microprogramming},
+  year={1985},
+  month=may,
+  volume={15},
+  number={5},
+  pages={253--261},
+  doi={10.1016/0165-6074(85)90032-8},
+  url={https://archive.org/details/computinghumanac0000naur/page/36/mode/2up},
+  note={
+    Naur argues that the primary achievement of programming is
+    the theory developed by programmers of how a program solves
+    the problems at hand, rather than the program text itself.
+    This perspective makes software maintenance and evolution
+    depend on preserving and developing that understanding.
+    Relevant to the human purposes of software design and abstraction,
+    though not specifically concerned with object orientation.
+  }}
 
 %% 1986
 
@@ -1077,6 +1355,21 @@
     by its action as a higher-order function, and
     of deriving efficient functional programs by representation change.}
 }
+
+@Book{Jones1986,
+  author={Cliff B. Jones},
+  title={Systematic Software Development Using VDM},
+  publisher={Prentice Hall},
+  address={Englewood Cliffs, NJ},
+  year={1986},
+  isbn={978-0-13-880725-2},
+  note={
+    Presents VDM as a formal method based on abstract functional specifications
+    and verified development.
+    Explicitly distinguishes a specification of what a system is required to do
+    from implementation concerns, which should be abstracted away.
+    A particularly clear source for the formal-methods sense of specification
+    as distinct from implementation.}}
 
 % See also 2002 retrospective
 @InProceedings{Kranz1986,
@@ -2307,6 +2600,43 @@
   }
 }
 
+@Book{Nederpelt1994,
+  editor={R. P. Nederpelt and J. H. Geuvers and R. C. de Vrijer},
+  title={Selected Papers on Automath},
+  series={Studies in Logic and the Foundations of Mathematics},
+  volume={133},
+  publisher={North-Holland},
+  address={Amsterdam},
+  year={1994},
+  isbn={0-444-89822-0},
+  url={https://research.tue.nl/en/publications/selected-papers-on-automath},
+  note={
+    Comprehensive collection of the principal papers, reports and historical
+    material on Automath, including language definitions, metatheory,
+    formalized mathematics and verification.
+    The standard retrospective source on de Bruijn's Automath project and
+    its role as a precursor of dependent type theory, proof assistants and
+    the de Bruijn criterion of independently checkable proof objects.}}
+
+@Book{Schulman1994,
+  author={Andrew Schulman and Ralf Brown and David Maxey and Raymond J. Michels and Jim Kyle},
+  title={Undocumented DOS: A Programmer's Guide to Reserved MS-DOS Functions and Data Structures},
+  edition={2},
+  publisher={Addison-Wesley},
+  address={Reading, MA},
+  year={1994},
+  isbn={0-201-63287-X},
+  url={https://archive.org/details/undocumenteddosp00andr_0},
+  note={
+    Extensive documentation of undocumented MS-DOS and Windows interfaces
+    and the compatibility consequences of relying on them.
+    The opening chapter discusses Microsoft's Windows AARD detection code,
+    which distinguished Microsoft-compatible DOS implementations from alternatives
+    such as DR-DOS, as well as other tests for non-Microsoft DOS environments.
+    Relevant both to accidental dependencies on undocumented interfaces
+    and to deliberate incompatibility as a competitive strategy.
+    Copyright 1994; first printing November 1993.}}
+
 @InCollection{Wand1994,
   author={Mitchell Wand},
   title={Type Inference for Objects with Instance Variables and Inheritance},
@@ -3026,6 +3356,24 @@
   note={Argues that concerns are multi-dimensional and that available formalisms constrain decomposition; directly relevant to why single inheritance forces clumping.}
 }
 
+@Misc{UnitedStatesMicrosoft1999,
+  author={{United States District Court for the District of Columbia}},
+  title={United States v. Microsoft Corporation: Findings of Fact},
+  year={1999},
+  month=nov,
+  howpublished={84 F. Supp. 2d 9 (D.D.C. 1999)},
+  url={https://www.justice.gov/atr/us-v-microsoft-courts-findings-fact},
+  note={
+    Findings of fact in the Microsoft antitrust litigation.
+    Documents Microsoft's efforts to preserve the Windows applications barrier
+    by impeding competing middleware, notably Netscape and cross-platform Java.
+    The court found that Microsoft deliberately introduced Windows-specific Java
+    incompatibilities, omitted portable mechanisms, encouraged developers to use
+    proprietary extensions, and pursued these tactics even though they resulted
+    in fewer applications being able to run on Windows.
+    A striking contrast with Microsoft's extraordinary efforts to preserve
+    compatibility with established Windows applications.}}
+
 %% 2000
 
 @Book{Baldwin2000,
@@ -3035,8 +3383,14 @@
   year={2000},
   isbn={978-0-262-02466-2},
   url={https://mitpress.mit.edu/9780262291859/design-rules-volume-1/},
-  note={Develops modularity as an option-generating economic structure and identifies modular operators; useful background for the book’s purpose-level account of extensibility.}
-}
+  note={
+    Develops an economic theory of modular design using the computer industry
+    as its principal case.
+    Interfaces and design rules partition technical dependencies, enabling
+    independent experimentation and creating real options while reducing
+    coordination costs.
+    Particularly relevant to understanding modularity as an economic as well
+    as a technical structure.}}
 
 @InProceedings{Clifton2000,
   author={Clifton, Curtis and Leavens, Gary T. and Chambers, Craig and Millstein, Todd},
@@ -3159,6 +3513,24 @@
     moving technical costs or responsibilities without examining the incentives
     created elsewhere in the system.}}
 
+@InCollection{Barendregt2001,
+  author={Henk Barendregt and Herman Geuvers},
+  title={Proof-Assistants Using Dependent Type Systems},
+  booktitle={Handbook of Automated Reasoning},
+  editor={Alan Robinson and Andrei Voronkov},
+  volume={2},
+  pages={1149--1238},
+  publisher={Elsevier},
+  year={2001},
+  doi={10.1016/B978-044450813-3/50020-5},
+  url={https://www.infomath-bib.de/tmp/data/Proof-assistants-using-dependent-type-systems.pdf},
+  note={
+    Surveys proof assistants based on dependent type systems and formulates
+    the de Bruijn criterion: independently generated proof objects should be
+    checkable by a small, simple verifier whose correctness can itself be
+    inspected with high confidence.
+    Relevant to reducing the trusted computing base of formal verification.}}
+
 @InProceedings{Costanza2001,
   author={Costanza, Pascal},
   title={Dynamic Object Replacement and Implementation-Only Classes},
@@ -3245,14 +3617,40 @@
   address={New York, NY, USA},
   url={https://doi.org/10.1145/503209.503224},
   doi={10.1145/503209.503224},
-  abstract={The concept of information hiding modularity is a cornerstone of modern software design thought, but its formulation remains casual and its emphasis on changeability is imperfectly related to the goal of creating added value in a given context. We need better explanatory and prescriptive models of the nature and value of information hiding. We evaluate the potential of a new theory---developed to account for the influence of modularity on the evolution of the computer industry---to inform software design. The theory uses design structure matrices to model designs and real options techniques to value them. To test the potential utility of the theory for software we apply it to Parnas's KWIC designs. We contribute an extension to design structure matrices, and we show that the options results are consistent with Parnas's conclusions. Our results suggest that such a theory does have potential to help inform software design.},
+  abstract={
+    The concept of information hiding modularity is a cornerstone of modern software design thought, but its formulation remains casual and its emphasis on changeability is imperfectly related to the goal of creating added value in a given context. We need better explanatory and prescriptive models of the nature and value of information hiding. We evaluate the potential of a new theory---developed to account for the influence of modularity on the evolution of the computer industry---to inform software design. The theory uses design structure matrices to model designs and real options techniques to value them. To test the potential utility of the theory for software we apply it to Parnas's KWIC designs. We contribute an extension to design structure matrices, and we show that the options results are consistent with Parnas's conclusions. Our results suggest that such a theory does have potential to help inform software design.},
   booktitle={8th European Software Engineering Conference Held Jointly with 9th ACM SIGSOFT International Symposium on Foundations of Software Engineering},
   pages={99–108},
   numpages={10},
   keywords={real options, design structure matrix, modularity, software},
   location={Vienna, Austria},
-  series={ESEC/FSE-9}
-}
+  series={ESEC/FSE-9},
+  note={
+    Applies Baldwin and Clark's economic theory of modularity directly to
+    software design, using Parnas's KWIC example.
+    Models technical dependencies with design-structure matrices and treats
+    modularity as creating real options for independent experimentation
+    and replacement.
+    Particularly relevant to explaining why information hiding has economic value.}}
+
+@InProceedings{Visser2001,
+  author={Eelco Visser},
+  title={Stratego: A Language for Program Transformation Based on Rewriting Strategies},
+  booktitle={Rewriting Techniques and Applications},
+  editor={Aart Middeldorp},
+  series={Lecture Notes in Computer Science},
+  volume={2051},
+  pages={357--362},
+  publisher={Springer},
+  year={2001},
+  doi={10.1007/3-540-45127-7_27},
+  url={https://eelcovisser.org/publications/2001/Visser01.pdf},
+  note={
+    Presents Stratego, a program-transformation language that separates
+    rewrite rules from programmable strategies controlling their application.
+    Generic traversal strategies can be composed independently of
+    transformation-specific rules, supporting modular construction
+    of compiler and source-transformation passes.}}
 
 %% 2002
 
@@ -3461,6 +3859,22 @@
 
 %% 2003
 
+@Webpage{Chen2003Compatibility,
+  author={Raymond Chen},
+  title={Why Not Just Block the Apps That Rely on Undocumented Behavior?},
+  year={2003},
+  month=dec,
+  url={https://devblogs.microsoft.com/oldnewthing/20031224-00/?p=41363},
+  lastchecked={2026-10-18},
+  note={
+    Explains Microsoft's extensive preservation of applications that depend
+    on undocumented or erroneous Windows behavior.
+    Describes both per-application compatibility databases and historical cases
+    where core operating-system components were changed for all applications
+    to preserve compatibility with particular broken programs.
+    Explicitly connects this effort to the economic cost of making existing
+    applications fail when users upgrade Windows.}}
+
 % https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=693f61d2515ac9b032801dd7a603c34f1b725071
 % Wrongly claims that multidispatch forgoes modular typechecking
 % Has no definition of modularity, except maybe for typechecking
@@ -3472,6 +3886,24 @@
   doi={10.5555/997550},
   url={https://web.cs.ucla.edu/~todd/research/dissertation.pdf},
 }
+
+@InProceedings{Nystrom2003,
+  author={Nathaniel Nystrom and Michael R. Clarkson and Andrew C. Myers},
+  title={Polyglot: An Extensible Compiler Framework for Java},
+  booktitle={Compiler Construction},
+  series={Lecture Notes in Computer Science},
+  volume={2622},
+  pages={138--152},
+  publisher={Springer},
+  year={2003},
+  month=apr,
+  doi={10.1007/3-540-36579-6_11},
+  url={https://www.cs.cornell.edu/nystrom/papers/polyglot.pdf},
+  note={
+    Presents an extensible Java compiler framework in which language extensions
+    can modify both abstract syntax and compiler passes without copying the base compiler.
+    Uses ordinary OO mechanisms including abstract factories, delegation and proxies
+    to support scalable extension and mixin-like augmentation of syntax classes.}}
 
 % e.g. http://www.catb.org/~esr/writings/taoup/html/ch04s02.html#orthogonality
 @Book{Raymond2003,
@@ -3506,6 +3938,25 @@
   url={https://doi.org/10.1007/978-3-540-45070-2_12},
   note={Fourth derivation device}
 }
+
+@InProceedings{Visser2003Stratego,
+  author={Eelco Visser},
+  title={Program Transformation with Stratego/XT: Rules, Strategies, Tools, and Systems in Stratego/XT 0.9},
+  booktitle={Domain-Specific Program Generation},
+  editor={Christian Lengauer and Don S. Batory and Charles Consel and Martin Odersky},
+  series={Lecture Notes in Computer Science},
+  volume={3016},
+  pages={216--238},
+  publisher={Springer},
+  year={2003},
+  doi={10.1007/978-3-540-25935-0_13},
+  url={https://eelcovisser.org/publications/2003/Visser03.pdf},
+  note={
+    Presents Stratego/XT as a framework for composing program-transformation systems
+    from rewriting rules, traversal strategies, transformation tools and complete
+    transformation pipelines.
+    Relevant to modular compiler construction in which transformation logic
+    and traversal/control structure are independently reusable and extensible.}}
 
 %% 2004
 
@@ -3681,6 +4132,24 @@
   }
 }
 
+@Article{Barendregt2005,
+  author={Henk Barendregt and Freek Wiedijk},
+  title={The Challenge of Computer Mathematics},
+  journal={Philosophical Transactions of the Royal Society A},
+  volume={363},
+  number={1835},
+  pages={2351--2375},
+  year={2005},
+  month=oct,
+  doi={10.1098/rsta.2005.1650},
+  url={https://cs.ru.nl/~henk/2005BarWiedijk.pdf},
+  note={
+    Discusses the reliability of computer-checked mathematics and gives
+    a canonical formulation of the de Bruijn criterion:
+    formal proofs should admit independent checking by a small trusted verifier.
+    The criterion separates potentially complex proof search and interaction
+    from a minimal proof-checking kernel.}}
+
 @InProceedings{Costanza2005,
   author={Pascal Costanza and Robert Hirschfeld},
   title={Language Constructs for Context-Oriented Programming:
@@ -3725,6 +4194,26 @@
     more general method-combination mechanisms implementable within it.}
 }
 
+@InProceedings{Harris2005,
+  author={Tim Harris and Simon Marlow and Simon Peyton Jones},
+  title={Haskell on a Shared-Memory Multiprocessor},
+  booktitle={Proceedings of the 2005 ACM SIGPLAN Workshop on Haskell},
+  pages={49--61},
+  publisher={ACM},
+  year={2005},
+  month=sep,
+  doi={10.1145/1088348.1088354},
+  url={https://timharris.uk/papers/2005-haskell.pdf},
+  note={
+    Describes the first full-scale shared-memory multiprocessor implementation
+    of GHC, including support for Concurrent Haskell, transactional memory,
+    exceptions and the foreign-function interface.
+    Its main technical contribution is a lock-free protocol for evaluating
+    shared thunks, avoiding the contention caused by conventional black-holing
+    while permitting a bounded amount of semantically harmless duplicate evaluation.
+    Relevant to synchronization and representation of lazily initialized shared
+    values in a parallel runtime.}}
+
 % Code Compression - MUST READ
 @InProceedings{Veldhuizen2005,
   author={Todd L. Veldhuizen},
@@ -3753,6 +4242,25 @@
     evidence of the enumeration problem this definition resolves
   }
 }
+
+@Article{Baldwin2006,
+  author={Carliss Y. Baldwin and Kim B. Clark},
+  title={The Architecture of Participation:
+    Does Code Architecture Mitigate Free Riding in the Open Source Development Model?},
+  journal={Management Science},
+  volume={52},
+  number={7},
+  pages={1116--1127},
+  year={2006},
+  month=jul,
+  doi={10.1287/mnsc.1060.0546},
+  note={
+    Uses a game-theoretic model of open-source participation to show that
+    code architecture itself changes contributors' incentives.
+    Modularity and option value can increase participation and reduce
+    free riding in equilibrium by creating opportunities for independent
+    contributors to exchange valuable work.
+    A direct example of software architecture affecting an economic equilibrium.}}
 
 % http://citeseerx.ist.psu.edu/viewdoc/similar?doi=10.1.1.211.6777&type=cc
 @InProceedings{Bruce2006,
@@ -3904,6 +4412,25 @@
   note={Uses computability theory to reason about tradeoffs among succinctness, expressive power and safety in metaprogramming; relevant to the cost of stronger abstraction mechanisms.}
 }
 
+@Article{Vetter2006,
+  author={Greg R. Vetter},
+  title={Exit and Voice in Free and Open Source Software Licensing:
+    Moderating the Rein over Software Users},
+  journal={Oregon Law Review},
+  volume={85},
+  number={1},
+  pages={183--274},
+  year={2006},
+  url={https://hdl.handle.net/1794/4740},
+  note={
+    Applies Hirschman's exit-and-voice framework directly to software users.
+    Proprietary software principally offers exit through switching to another
+    product, often at significant switching cost, whereas free and open-source
+    licensing additionally gives users forms of voice and the ability to modify
+    or fork the software.
+    Relevant to how licensing and architecture alter users' alternatives when
+    software evolves in undesirable directions.}}
+
 %% 2007
 
 @Book{Booch2007,
@@ -3927,6 +4454,23 @@
   }
 }
 
+@Book{Chen2007,
+  author={Raymond Chen},
+  title={The Old New Thing: Practical Development Throughout the Evolution of Windows},
+  publisher={Addison-Wesley Professional},
+  address={Upper Saddle River, NJ},
+  year={2007},
+  isbn={978-0-321-44030-3},
+  note={
+    Insider account of the historical evolution of Windows, with an entire chapter
+    and appendix devoted to backward compatibility.
+    Documents the great lengths Windows takes to preserve applications that depend
+    on bugs, undocumented behavior, accidental message ordering, and other behavior
+    outside the nominal API contract, including application-specific compatibility
+    shims and, historically, changes to core operating-system behavior.
+    Particularly relevant to Hyrum's Law and to the cost accumulated when
+    observable implementation behavior becomes a de facto interface.}}
+
 @InProceedings{Dreyer2007,
   author={Derek Dreyer},
   title={A Type System for Recursive Modules},
@@ -3935,6 +4479,23 @@
   year={2007},
   note={Double vision: seal × fix interference at the type level (named in his 2005 thesis)}
 }
+
+@InProceedings{Ekman2007,
+  author={Torbjörn Ekman and Görel Hedin},
+  title={The JastAdd Extensible Java Compiler},
+  booktitle={Proceedings of the 22nd Annual ACM SIGPLAN Conference on Object-Oriented Programming Systems and Applications},
+  pages={1--18},
+  publisher={ACM},
+  year={2007},
+  month=oct,
+  doi={10.1145/1297027.1297029},
+  url={https://fileadmin.cs.lth.se/sde/publications/papers/2007-Ekman-OOPSLA.html},
+  note={
+    Describes an extensible Java compiler built with JastAdd,
+    combining object-oriented abstract syntax trees, reference attribute grammars,
+    static aspect-oriented extension and declarative semantic analyses.
+    New syntax and compiler analyses can be added modularly without rewriting
+    the base compiler.}}
 
 % TODO: Read. What language?
 @InProceedings{Gonzalez2007,
@@ -4139,6 +4700,26 @@
 
 %% 2009
 
+@Article{Carette2009,
+  author={Jacques Carette and Oleg Kiselyov and Chung-chieh Shan},
+  title={Finally Tagless, Partially Evaluated: Tagless Staged Interpreters for Simpler Typed Languages},
+  journal={Journal of Functional Programming},
+  volume={19},
+  number={5},
+  pages={509--543},
+  year={2009},
+  month=sep,
+  doi={10.1017/S0956796809007205},
+  url={https://www.cambridge.org/core/services/aop-cambridge-core/content/view/7B2DC44A2127EBBA71ADE63809D9425F/S0956796809007205a.pdf/finally_tagless_partially_evaluated_tagless_staged_interpreters_for_simpler_typed_languages.pdf},
+  note={
+    Develops the finally-tagless representation of typed object languages:
+    terms are represented by their interpretations in an abstract semantic algebra
+    rather than by an explicit syntax tree.
+    Evaluators, compilers, partial evaluators and transformations become modular
+    interpretations while remaining statically typed.
+    Relevant to extensible interpreters and to functional encodings that avoid
+    committing to a fixed initial representation of syntax.}}
+
 @InProceedings{Clarke2009,
   author={Dave Clarke and Ilya Sergey},
   title={A Semantics for Context-Oriented Programming with Layers},
@@ -4241,6 +4822,28 @@
     call-by-need recursion where evaluation is shared and memoized.}
 }
 
+@InProceedings{Noble2009,
+  author={James Noble},
+  title={The Myths of Object-Orientation},
+  booktitle={ECOOP 2009—Object-Oriented Programming},
+  editor={Sophia Drossopoulou},
+  series={Lecture Notes in Computer Science},
+  volume={5653},
+  pages={619--629},
+  publisher={Springer},
+  year={2009},
+  doi={10.1007/978-3-642-03013-0_29},
+  url={https://www.cs.tufts.edu/comp/150FP/archive/james-noble/myths-of-oo.pdf},
+  note={
+    Playful but substantive reflection on the folklore and received principles
+    of Object-Oriented Programming, presented as a collection of “myths” that
+    shape how programmers understand objects.
+    Identifies state, behavior and identity as the founding trinity of OO,
+    then discusses abstraction, encapsulation, inheritance, polymorphism
+    and other recurring claims about the paradigm.
+    Originally delivered as the ECOOP 2008 banquet speech and published
+    in the ECOOP 2009 proceedings.}}
+
 %% 2010
 
 @InProceedings{Bracha2010,
@@ -4277,6 +4880,41 @@
   pages={109--120},
   year={2010}
 }
+
+@InProceedings{Rompf2010,
+  author={Tiark Rompf and Martin Odersky},
+  title={Lightweight Modular Staging: A Pragmatic Approach to Runtime Code Generation and Compiled DSLs},
+  booktitle={Proceedings of the Ninth International Conference on Generative Programming and Component Engineering},
+  pages={127--136},
+  publisher={ACM},
+  year={2010},
+  month=oct,
+  doi={10.1145/1868294.1868314},
+  url={https://www.researchgate.net/publication/45581394_Lightweight_Modular_Staging_A_Pragmatic_Approach_to_Runtime_Code_Generation_and_Compiled_DSLs},
+  note={
+    Presents Lightweight Modular Staging, a library-based approach to staged
+    compilation of embedded DSLs in Scala.
+    Compiler and language components are assembled and extended using traits,
+    mixin composition and abstract types, while staging specializes away
+    abstraction overhead.
+    Relevant to building extensible compiler stages directly through OO modular extension.}}
+
+@Article{VanWyk2010,
+  author={Eric Van Wyk and Derek Bodin and Jimin Gao and Lijesh Krishnan},
+  title={Silver: An Extensible Attribute Grammar System},
+  journal={Science of Computer Programming},
+  volume={75},
+  number={1--2},
+  pages={39--54},
+  year={2010},
+  month=jan,
+  doi={10.1016/j.scico.2009.07.004},
+  url={https://www-users.cse.umn.edu/~evw/pubs/vanwyk10scp/vanwyk10scp.pdf},
+  note={
+    Presents Silver, an extensible attribute-grammar system in which language features
+    are implemented as modular extensions, notably using forwarding to translate
+    extensions into semantically equivalent host-language constructs.
+    Relevant to independently developed language extensions and their modular composition.}}
 
 %% 2011
 
@@ -4412,6 +5050,25 @@
   }
 }
 
+@InProceedings{Kaminski2012,
+  author={Ted Kaminski and Eric Van Wyk},
+  title={Modular Well-Definedness Analysis for Attribute Grammars},
+  booktitle={Software Language Engineering},
+  series={Lecture Notes in Computer Science},
+  volume={7745},
+  pages={352--371},
+  publisher={Springer},
+  year={2012},
+  doi={10.1007/978-3-642-36089-3_20},
+  url={https://www-users.cse.umn.edu/~evw/pubs/kaminski12sle/kaminski12sle.pdf},
+  note={
+    Gives a modular analysis ensuring completeness and non-circularity of attribute
+    grammars assembled from independently developed extensions.
+    Each extension can be checked using only information from its dependencies,
+    guaranteeing that arbitrary similarly checked extensions compose into a
+    well-defined language implementation.
+    Relevant as a formal, checkable discipline for negotiating modular extensions.}}
+
 @WebPage{Kay2012,
   author={Alan Kay},
   title={Re: [fonc] [IAEP] Barbarians at the gate! (Project Nell)},
@@ -4455,18 +5112,42 @@
   }
 }
 
+@Article{MacCormack2012,
+  author={Alan MacCormack and Carliss Y. Baldwin and John Rusnak},
+  title={Exploring the Duality between Product and Organizational Architectures:
+    A Test of the Mirroring Hypothesis},
+  journal={Research Policy},
+  volume={41},
+  number={8},
+  pages={1309--1324},
+  year={2012},
+  month=oct,
+  doi={10.1016/j.respol.2012.04.011},
+  url={https://dash.harvard.edu/bitstream/handle/1/34403525/maccormack,baldwin,rusnak_exploring-the-duality.pdf},
+  note={
+    Empirically tests the mirroring hypothesis on software systems,
+    showing a relationship between organizational coupling and technical coupling.
+    Relevant to the economic and organizational costs created by dependencies
+    in software architecture.}}
+
 @InProceedings{Oliveira2012,
-  author={Bruno C. d. S. Oliveira, and William R. Cook},
+  author={Bruno C. d. S. Oliveira and William R. Cook},
   title={Extensibility for the Masses: Practical Extensibility with Object Algebras},
-  booktitle={Proc. ECOOP 2012, LNCS 7313},
-  series={LNCS 7313},
-  pages={2–27},
+  booktitle={ECOOP 2012—Object-Oriented Programming},
+  series={Lecture Notes in Computer Science},
+  volume={7313},
+  pages={2--27},
   publisher={Springer},
   year={2012},
   doi={10.1007/978-3-642-31057-7_2},
+  url={https://www.cs.utexas.edu/~wcook/Drafts/2012/ecoop2012.pdf},
   note={
-  }
-}
+    Presents object algebras as a solution to the expression problem using only
+    ordinary generics in mainstream OO languages.
+    Object algebras are closely related to Church encodings and extensible visitors,
+    allowing both syntax and interpretations to be extended modularly.
+    Relevant to modularly extensible interpreters and the relationship between
+    functional encodings and OO extension mechanisms.}}
 
 @InProceedings{Politz2012,
   author={Joe Gibbs Politz and Arjun Guha and Shriram Krishnamurthi},
@@ -4526,7 +5207,75 @@
   }
 }
 
+%% 2014
+
+@Article{Rossberg2014,
+  author={Andreas Rossberg and Claudio Russo and Derek Dreyer},
+  title={F-ing Modules},
+  journal={Journal of Functional Programming},
+  volume={24},
+  number={5},
+  pages={529--607},
+  year={2014},
+  month=sep,
+  doi={10.1017/S0956796814000264},
+  url={https://people.mpi-sws.org/~dreyer/papers/f-ing/journal.pdf},
+  note={
+    Gives a compositional elaboration semantics for a full-featured ML-style
+    module language by translation into ordinary System Fω.
+    Shows that generative and applicative functors, abstract types, higher-order
+    modules and related module mechanisms can largely be understood as a
+    particular disciplined use of higher-order polymorphism rather than as
+    requiring an exotic foundational calculus.
+    Particularly relevant to reducing sophisticated modularity mechanisms
+    to an established λ-calculus substrate.
+
+    This one is almost comically aligned with your recent complaint about
+    repeatedly inventing bespoke foundational rule systems:
+    their whole rhetorical point is essentially
+    “ML modules are just a mode of use of System Fω;
+    stop treating them as mysterious primitive machinery.”}}
+
+@InProceedings{Ungar2014,
+  author={David Ungar and Harold Ossher and Doug Kimelman},
+  title={Korz: Simple, Symmetric, Subjective, Context-Oriented Programming},
+  booktitle={Proceedings of the 2014 ACM International Symposium on New Ideas, New Paradigms, and Reflections on Programming \& Software},
+  series={Onward! 2014},
+  year={2014},
+  month=oct,
+  pages={113--131},
+  publisher={ACM},
+  doi={10.1145/2661136.2661147},
+  url={https://worrydream.com/refs/Ungar_2014_-_Korz_Simple,_Symmetric,_Subjective,_Context-Oriented_Programming.pdf},
+  note={
+    Korz combines implicit named arguments, multiple dispatch and
+    a uniform model of data and method slots to support
+    contextual variation along multiple dimensions.
+    Slots inhabit a multidimensional space rather than belonging
+    to a single object; objects emerge as context-dependent groupings of slots.
+    No dimension has privileged status in dispatch.
+    Relevant to subjective objects, the symmetry of multiple dispatch
+    and alternatives to organizing programs around a single receiver.
+    A prototype interpreter and development environment were implemented in Self.
+  }}
+
 %% 2015
+
+@Article{Erbas2015,
+  author={Cengiz Erbas and Bahar Celikkol Erbas},
+  title={Modules and Transactions: Building Blocks for a Theory of Software Engineering},
+  journal={Science of Computer Programming},
+  volume={101},
+  pages={6--20},
+  year={2015},
+  month=apr,
+  doi={10.1016/j.scico.2014.11.006},
+  note={
+    Applies transaction-cost economics directly to software engineering.
+    Models software development as transactions organized under alternative
+    governance structures and relates module boundaries, reuse, uncertainty
+    and asset specificity to the costs of coordinating development.
+    An unusually explicit attempt to ground software modularity in economic theory.}}
 
 @Misc{Kmett2015,
   author={Edward A. Kmett},
@@ -4629,6 +5378,24 @@
   }
 }
 
+@Article{Colfer2016,
+  author={Lyra J. Colfer and Carliss Y. Baldwin},
+  title={The Mirroring Hypothesis: Theory, Evidence, and Exceptions},
+  journal={Industrial and Corporate Change},
+  volume={25},
+  number={5},
+  pages={709--738},
+  year={2016},
+  month=oct,
+  doi={10.1093/icc/dtw027},
+  url={https://dash.harvard.edu/bitstream/handle/1/34403524/colfer,baldwin_mirroring-hypothesis.pdf},
+  note={
+    Reviews the theory and empirical evidence that organizational relationships
+    tend to mirror technical dependencies.
+    Connects modular architecture, information hiding, transaction costs
+    and cognitive constraints, while also identifying important exceptions,
+    particularly in open-source software development.}}
+
 % features inversion of scope, though without that expression.
 @Book{Harper2016,
   author={Robert Harper},
@@ -4723,6 +5490,23 @@
   biburl={https://dblp.org/rec/journals/corr/abs-1712-06906.bib},
   bibsource={dblp computer science bibliography, https://dblp.org}
 }
+
+@Webpage{Chen2017BugCompatibility,
+  author={Raymond Chen},
+  title={If You Configure a Program to Run in Windows 2000 Compatibility Mode,
+    Then It Is Also Vulnerable to Windows 2000 Security Issues},
+  year={2017},
+  month=sep,
+  url={https://devblogs.microsoft.com/oldnewthing/?p=96995},
+  lastchecked={2026-10-18},
+  note={
+    Explicitly describes Windows application compatibility as providing
+    “bug-for-bug compatibility” when applications depend on obsolete behavior.
+    Gives examples including restoration of the Windows 2000 DLL-loading rules
+    and an EmulateHeap shim reproducing the Windows 95 heap manager.
+    A striking concrete instance of undocumented or defective implementation
+    behavior becoming part of an effective interface that later implementations
+    must reproduce.}}
 
 @Article{Noble2017,
   author={James Noble and Andrew P. Black and Kim B. Bruce and Michael Homer and Timothy Jones},
@@ -4844,6 +5628,20 @@
     while necessarily reflecting Kay's own later interpretation of that history.}
 }
 
+@Book{Winters2020,
+  author={Titus Winters and Tom Manshreck and Hyrum Wright},
+  title={Software Engineering at Google: Lessons Learned from Programming Over Time},
+  publisher={O'Reilly Media},
+  address={Sebastopol, CA},
+  year={2020},
+  isbn={978-1-4920-8274-3},
+  url={https://research.google/pubs/software-engineering-at-google/},
+  note={
+    Presents Hyrum's Law as a central constraint on long-lived software:
+    with enough users, undocumented but observable behavior becomes part of
+    the effective interface and therefore constrains future implementation changes.
+    Relevant to API evolution, compatibility and the erosion of abstraction boundaries over time.}}
+
 %% 2021
 
 @Book{Nystrom2021,
@@ -4888,6 +5686,26 @@
     semantically than the lambda/simple/complex distinctions of earlier
     \texttt{letrec} compilation work.}}
 
+@InProceedings{Viseur2021,
+  author={Robert Viseur and Amel Charleux},
+  title={Open Source Communities and Forks:
+    A Rereading in the Light of Albert Hirschman's Writings},
+  booktitle={Open Source Systems},
+  series={IFIP Advances in Information and Communication Technology},
+  volume={624},
+  pages={59--67},
+  publisher={Springer},
+  year={2021},
+  month=may,
+  doi={10.1007/978-3-030-75251-4_6},
+  url={https://hdl.handle.net/20.500.12907/15378},
+  note={
+    Applies Hirschman's exit, voice and loyalty framework to open-source
+    communities, treating a software fork as a distinctive form of exit
+    enabled by open-source licensing.
+    Relevant to software ecosystems in which dissatisfied users or developers
+    can leave organizational governance without abandoning the existing codebase.}}
+
 @Article{Zhang2021,
   author={Weixin Zhang and Yaozhu Sun and Bruno C. d. S. Oliveira},
   title={Compositional Programming},
@@ -4921,6 +5739,24 @@
     mutable state, providing a contemporary comparison of programming styles
     that overlap substantially with the topics of this book.}
 }
+
+@Article{Harrand2022,
+  author={Nicolas Harrand and Amine Benelallam and César Soto-Valero and François Bettega and Olivier Barais and Benoit Baudry},
+  title={API Beauty Is in the Eye of the Clients: 2.2 Million Maven Dependencies Reveal the Spectrum of Client-API Usages},
+  journal={Journal of Systems and Software},
+  volume={184},
+  pages={111134},
+  year={2022},
+  month=feb,
+  doi={10.1016/j.jss.2021.111134},
+  url={https://arxiv.org/abs/1908.09757},
+  note={
+    Empirically investigates Hyrum's Law using more than two million Maven
+    client-API dependencies.
+    Finds that with sufficiently many clients most API types are eventually used,
+    while a small core of types accounts for most client usage.
+    Provides large-scale empirical support for the claim that widely exposed
+    behavior tends to accumulate dependents, while also showing that usage is highly uneven.}}
 
 @InProceedings{Madsen2022,
   author={Ole Lehrmann Madsen and Birger Møller-Pedersen},

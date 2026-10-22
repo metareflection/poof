@@ -1885,6 +1885,26 @@
     and thus also method lookup and subtype tests.}
 }
 
+@Article{Thompson1984,
+  author={Ken Thompson},
+  title={Reflections on Trusting Trust},
+  journal={Communications of the ACM},
+  volume={27},
+  number={8},
+  pages={761--763},
+  year={1984},
+  month=aug,
+  doi={10.1145/358198.358210},
+  url={https://www.cs.cmu.edu/~rdriley/487/papers/Thompson_1984_ReflectionsonTrustingTrust.pdf},
+  note={
+    Thompson's 1983 Turing Award lecture demonstrates that trusting source code is insufficient
+    when the compiler or other tools used to produce it may themselves be subverted.
+    A malicious compiler can recognize selected source programs, inject hidden behavior,
+    and reproduce the attack when compiling a clean copy of itself,
+    leaving no trace in the apparent compiler source.
+    Foundational for reasoning about trusting trust, bootstrapping, supply-chain
+    security and the limits of source-level verification.}}
+
 % 1985
 
 @Article{Cardelli1985,
@@ -1955,9 +1975,7 @@
     you should think of abstract types for data and functions that operate on them (i.e. modules)
     as hiding the actual underlying type behind an existential quantifier.
     This enables reasoning about modules as first-class values in a second-order λ-calculus.
-    An extended journal version was published in TOPLAS 10(3), 1988.
-  }
-}
+    An extended journal version was published in TOPLAS 10(3), 1988.}}
 
 @InProceedings{Reynolds1985,
   author={John C. Reynolds},
@@ -6189,6 +6207,19 @@
   }
 }
 
+@Webpage{PrestonWerner2013,
+  author={Tom Preston-Werner},
+  title={Semantic Versioning 2.0.0},
+  year={2013},
+  url={https://semver.org/},
+  lastchecked={2026-10-20},
+  note={
+    Defines Semantic Versioning (SemVer): MAJOR versions for incompatible
+    public-API changes, MINOR versions for backward-compatible additions,
+    and PATCH versions for backward-compatible bug fixes.
+    Requires a declared public API whose compatibility is supposed to determine
+    the semantic interpretation of version-number changes.}}
+
 @Misc{R7RS2013,
   author={{R7RS Working Group}},
   title={Revised⁷ Report on the Algorithmic Language Scheme},
@@ -6759,6 +6790,21 @@
   }
 }
 
+@WebPage{Wright2018,
+  author={Hyrum Wright},
+  title={Hyrum's Law},
+  year={2018},
+  url={https://www.hyrumslaw.com/},
+  lastchecked={2026-10-18},
+  note={
+    Formulates Hyrum's Law: with enough users of an API,
+    all observable behavior tends eventually to become depended upon,
+    regardless of what the documented contract promises.
+    Particularly relevant to implicit interfaces, compatibility constraints
+    and the difficulty of changing widely used implementations.
+
+    The page is undated; it was publicly linked by February 2018.}}
+
 %% 2020
 
 @WebPage{Kay2020,
@@ -6795,9 +6841,10 @@
   note={
     Dan Ingalls retreads the evolution of Smalltalk.
     Of particular interest to me was Ted Kaehler’s OOZE, the Object-Oriented Zoned Environment,
-    an object-granular virtual memory system that made Smalltalk images orthogonally persistent
-    between 1973 and 1978. Also evidence, if any was needed, that the word “Object-Oriented”
-    was definitely in active use in Kay’s group in 1973 and earlier.
+    an object-granular virtual memory system that made Smalltalk-74 and Smalltalk-76 images
+    orthogonally persistent between 1975 and 1978.
+    Also evidence, if any was needed, that the word “Object-Oriented”
+    was definitely in active use in Kay’s group in 1975 and earlier.
     But Ingalls also explains how Kay’s team was aspiring to “superclasses” and
     the yet-unnamed concept of inheritance in 1973 and probably earlier,
     though they only got them with Smalltalk-76.
@@ -7003,6 +7050,27 @@
     Started in the early 2000s, last updated in 2024 (as of my reading the page).
   }
 }
+
+@Webpage{Prokopov2024,
+  author={Nikita Prokopov},
+  title={I propose we replace semantic versioning with pride versioning},
+  year={2024},
+  month=dec,
+  day={21},
+  url={https://mastodon.online/@nikitonsky/113691789641950263},
+  lastchecked={2026-10-20},
+  note={
+    Niki offers a more honest reinterpretation of “Semantic Versioning” (SemVer).
+    Whereas SemVer prescribes three-number versions such as 4.19.325,
+    where the first “major” number is supposed to be bumped for incompatible changes,
+    the second “minor” for backward-compatible new functionality,
+    and the third “patch” for backward-compatible bug fixes,
+    pride versioning instead acknowledges that you bump the first “proud version”
+    when you’re proud of the release, the second “default version” for regular releases,
+    and the third “shame version” when fixing things too embarrassing to admit.
+    Proponents of “semantic versioning” are vain, self-aggrandizing or deluded
+    to believe that the first number does, should or possibly could represent
+    an objective criterion rather than a social and subjective judgment.}}
 
 %% 2025
 
